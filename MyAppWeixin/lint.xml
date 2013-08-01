@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="MangledCRLF">
+        <ignore path="res/layout/exit_dialog_from_settings.xml" />
+    </issue>
+    <issue id="MissingPrefix">
+        <ignore path="res/layout/dialog.xml" />
+    </issue>
+    <issue id="WrongFolder" severity="ignore" />
+</lint>
