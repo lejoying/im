@@ -22,28 +22,49 @@
     <RelativeLayout
         android:id="@+id/rl_chatcontent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="15dp" >
+        android:layout_height="wrap_content" 
+        android:layout_marginTop="5dp">
+        
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/speakframe_up" >
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tv_chatcontent"
-            style="@style/chat_content_date_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="3dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
+            android:layout_below="@+id/relativeLayout1"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="23dp"
-            android:lineSpacingExtra="4dp"
-            android:background="@drawable/chatfrom_bg"
+            android:background="@drawable/speakframe_mid"
             android:focusable="false"
-            android:paddingBottom="23dp"
-            android:paddingLeft="50dp"
+            android:lineSpacingExtra="4dp"
+            android:paddingLeft="53dp"
             android:paddingRight="30dp"
-            android:paddingTop="20dp"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tv_chatcontent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/speakframe_down" >
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/imageView2"
@@ -51,6 +72,7 @@
             android:layout_height="60dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dp"
             android:background="@drawable/faceborder" />
 
         <ImageView
@@ -59,7 +81,7 @@
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="9dp"
             android:layout_marginTop="5dp" />
     </RelativeLayout>
 

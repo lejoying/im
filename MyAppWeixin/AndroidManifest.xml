@@ -39,9 +39,9 @@
         <activity android:name="LoadingActivity" android:theme="@style/MyDialogStyle" />             
         <activity android:name="MainTopRightDialog" android:theme="@style/MyDialogStyleTop" />  
         <activity android:name="SearchFriendsDialog" android:theme="@style/MyDialogStyleTop" /> 
-        <activity android:name="MainTopCenterDialog" android:theme="@style/MyDialogStyleTop" /> 
-        <activity android:name="ServiceMenu" android:theme="@style/ServiceMenu" /> 
-        
+        <activity android:name="MainTopCenterDialog" android:theme="@style/MyDialogStyleTop" />
+        <activity android:name="RegisterActivity" android:theme="@android:style/Theme.NoTitleBar"></activity> 
+        <activity android:name="MyBusinessCardActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
     </application>
 
 </manifest>

@@ -35,6 +35,12 @@ public class MainTopRightDialog extends Activity {
 		finish();
 		return true;
 	}
+	
+	public void showMyBusinessCard(View v){
+		Intent intent = new Intent(MainTopRightDialog.this,MyBusinessCardActivity.class);
+		startActivity(intent);
+		this.finish();
+	}
 	/*
 	public void exitbutton1(View v) {  
     	this.finish();    	

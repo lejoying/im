@@ -4,25 +4,29 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import cn.buaa.myweixin.utils.HeadImageUtils;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import cn.buaa.myweixin.utils.HeadImageUtils;
 
 /**
  * 
@@ -34,14 +38,13 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	private final static int SEND_MESSAGE = 0x11;
 	private Handler handler;
-	
 	private Button mBtnSend;
 	private Button mBtnBack;
 	private EditText mEditTextContent;
 	private ListView mListView;
 	private ChatMsgViewAdapter mAdapter;
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
-	private RelativeLayout rl_bottom ;
+	private RelativeLayout rl_bottom;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,8 +55,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 		initView();
 
 		initData();
-		
-		handler = new Handler(){
+
+		handler = new Handler() {
 
 			@Override
 			public void handleMessage(Message msg) {
@@ -62,14 +65,13 @@ public class ChatActivity extends Activity implements OnClickListener {
 				int what = msg.what;
 				switch (what) {
 				case SEND_MESSAGE:
-					mListView.setSelection(mListView.getCount()-1);
+					mListView.setSelection(mListView.getCount() - 1);
 					break;
-
 				default:
 					break;
 				}
 			}
-			
+
 		};
 	}
 
@@ -83,9 +85,9 @@ public class ChatActivity extends Activity implements OnClickListener {
 		mEditTextContent = (EditText) findViewById(R.id.et_sendmessage);
 
 		rl_bottom = (RelativeLayout) findViewById(R.id.rl_bottom);
-		
-		//实现自动添加行
-		
+
+		// 实现自动添加行
+
 		final int lineHeight = mEditTextContent.getLayoutParams().height;
 		final int rlHeight = rl_bottom.getLayoutParams().height;
 		mEditTextContent.addTextChangedListener(new TextWatcher() {
@@ -97,17 +99,17 @@ public class ChatActivity extends Activity implements OnClickListener {
 				int linecount = mEditTextContent.getLineCount();
 				LayoutParams params = mEditTextContent.getLayoutParams();
 				LayoutParams rl_params = rl_bottom.getLayoutParams();
-				if(linecount == 1){
+				if (linecount == 1) {
 					params.height = lineHeight;
 					rl_params.height = rlHeight;
 				}
-				if(linecount == 2){
-					params.height = (int) (lineHeight+lineHeight/1.8);
-					rl_params.height = (int) (rlHeight + lineHeight/1.8);
+				if (linecount == 2) {
+					params.height = (int) (lineHeight + lineHeight / 1.8);
+					rl_params.height = (int) (rlHeight + lineHeight / 1.8);
 				}
-				if(linecount >=3 ){
-					params.height = (int) (lineHeight+lineHeight*2/1.8);
-					rl_params.height = (int) (rlHeight + lineHeight*2/1.8);
+				if (linecount >= 3) {
+					params.height = (int) (lineHeight + lineHeight * 2 / 1.8);
+					rl_params.height = (int) (rlHeight + lineHeight * 2 / 1.8);
 				}
 				rl_bottom.setLayoutParams(rl_params);
 				mEditTextContent.setLayoutParams(params);
@@ -127,6 +129,19 @@ public class ChatActivity extends Activity implements OnClickListener {
 			}
 		});
 
+		mListView.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				// TODO Auto-generated method stub
+				mListView.requestFocus();
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(mEditTextContent.getWindowToken(),
+						0);			
+				return false;
+			}
+		});
+
 	}
 
 	private String[] msgArray = new String[] { "有大吗", "有！你呢？", "我也有", "那上吧",
@@ -139,17 +154,22 @@ public class ChatActivity extends Activity implements OnClickListener {
 	private final static int COUNT = 8;
 
 	public void initData() {
+		HeadImageUtils hiu = new HeadImageUtils();
+		Bitmap headfrom = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.renma));
+		Bitmap headto = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.xiaohei));
 		for (int i = 0; i < COUNT; i++) {
 			ChatMsgEntity entity = new ChatMsgEntity();
-			HeadImageUtils hiu = new HeadImageUtils();
+
 			entity.setDate(dataArray[i]);
 			if (i % 2 == 0) {
 				entity.setName("小黑");
-				entity.setHead(hiu.returnHeadBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.xiaohei)));
+				entity.setHead(headto);
 				entity.setMsgType(true);
 			} else {
 				entity.setName("人马");
-				entity.setHead(hiu.returnHeadBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.renma)));
+				entity.setHead(headfrom);
 				entity.setMsgType(false);
 			}
 
@@ -177,12 +197,13 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	private void send() {
 		String contString = mEditTextContent.getText().toString();
-			
+
 		if (contString.length() > 0) {
 			ChatMsgEntity entity = new ChatMsgEntity();
 			entity.setDate(getDate());
 			entity.setName("人马");
-			entity.setHead(new HeadImageUtils().returnHeadBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.renma)));
+			entity.setHead(new HeadImageUtils().returnHeadBitmap(BitmapFactory
+					.decodeResource(getResources(), R.drawable.renma)));
 			entity.setMsgType(false);
 			entity.setText(contString);
 			mDataArrays.add(entity);
@@ -213,9 +234,4 @@ public class ChatActivity extends Activity implements OnClickListener {
 		startActivity(intent);
 	}
 
-	public void show_service(View v) { // 显示服务按钮
-		Intent showServiceMenu = new Intent(ChatActivity.this,
-				ServiceMenu.class);
-		startActivity(showServiceMenu);
-	}
 }

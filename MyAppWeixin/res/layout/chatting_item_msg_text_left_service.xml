@@ -19,12 +19,10 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-   <RelativeLayout
+    <RelativeLayout
         android:id="@+id/rl_chatcontent"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
-        >
+        android:layout_height="wrap_content" >
 
         <TextView
             android:id="@+id/tv_chatcontent"
@@ -38,14 +36,13 @@
             android:layout_marginTop="23dp"
             android:background="@drawable/chatfrom_bg"
             android:focusable="false"
+            android:lineSpacingExtra="4dp"
             android:paddingBottom="23dp"
             android:paddingLeft="50dp"
             android:paddingRight="30dp"
             android:paddingTop="20dp"
-            android:lineSpacingExtra="4dp"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
-
 
         <ImageView
             android:id="@+id/imageView2"
@@ -54,30 +51,41 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/faceborder" />
-        
+
         <ImageView
             android:id="@+id/iv_userhead"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp" />
 
-
-        <ImageView
-            android:id="@+id/iv_service"
+        <RelativeLayout
+            android:id="@+id/rl_service"
             android:layout_width="65dp"
             android:layout_height="65dp"
-            android:layout_alignRight="@+id/tv_chatcontent"
             android:layout_alignBottom="@+id/tv_chatcontent"
-            android:layout_marginRight="15dp"
+            android:layout_alignRight="@+id/tv_chatcontent"
             android:layout_marginBottom="-30dp"
-            android:focusable="true"
-            android:onClick="show_service"
-            android:src="@drawable/chatfrom_btn_service"
-            tools:ignore="ContentDescription" />
+            android:layout_marginRight="15dp"
+            android:onClick="show_service" >
 
+            <ImageView
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:src="@drawable/service_bg"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/service_life" />
+
+        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>

@@ -7,35 +7,35 @@ import android.graphics.Color;
 
 public class HeadImageUtils {
 
-	private int[] colorArray;
-
 	public HeadImageUtils() {
 
 	}
 
-	public Bitmap returnHeadBitmap(Bitmap source) {
-		Bitmap bitmap = Bitmap.createBitmap(source.getWidth(),
+	public Bitmap returnHeadBitmap(final Bitmap source) {
+		// 创建新的bitmap
+		final Bitmap bitmap = Bitmap.createBitmap(source.getWidth(),
 				source.getHeight(), Config.ARGB_8888);
-		colorArray = new int[source.getHeight() * source.getWidth()];
-		int count = 0;
+		// 获取半径
+		final int radius = source.getWidth() / 2;
+
 		for (int i = 0; i < source.getWidth(); i++) {
 			for (int j = 0; j < source.getHeight(); j++) {
-				int radius = source.getWidth()/2;
+
 				int color = source.getPixel(i, j);
-				colorArray[count] = color;
 				int newColor;
-				if ((radius-i)*(radius-i)+(radius-j)*(radius-j)>radius*radius)
+				if ((radius - i) * (radius - i) + (radius - j) * (radius - j) > radius
+						* radius)
 					newColor = Color.argb(0, Color.red(color),
 							Color.green(color), Color.blue(color));
 				else
 					newColor = Color.argb(255, Color.red(color),
 							Color.green(color), Color.blue(color));
-				bitmap.setPixel(i, j, newColor);
-				count++;
+				synchronized (bitmap) {
+					bitmap.setPixel(i, j, newColor);
+				}
 			}
 		}
 
-		
 		return bitmap;
 	}
 }

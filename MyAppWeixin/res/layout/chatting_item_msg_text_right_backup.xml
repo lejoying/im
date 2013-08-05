@@ -21,73 +21,67 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-   <RelativeLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp" >
-		<RelativeLayout
-            android:id="@+id/relativeLayout1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/speakframe_up" >
-        </RelativeLayout>
+     >
+
+        <!-- 不显示姓名 -->
+        <!--
+	            <TextView 
+	            android:id="@+id/tv_username" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/iv_userhead"
+	            android:layout_alignParentRight="true"
+	            android:layout_toRightOf="@id/tv_chatcontent"
+	            android:textSize="15sp"
+	            android:gravity="center"
+	            android:textColor="#818181"/>
+        -->
 
         <TextView
             android:id="@+id/tv_chatcontent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="3dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/relativeLayout1"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:background="@drawable/speakframe_mid"
-            android:focusable="false"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/chatto_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="left|center"
             android:lineSpacingExtra="4dp"
+            android:minHeight="50dp"
+            android:paddingBottom="13dp"
             android:paddingLeft="15dp"
             android:paddingRight="50dp"
+            android:paddingTop="13dp"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
-        <RelativeLayout
-            android:id="@+id/rl_speakbottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/tv_chatcontent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/speakframe_down" >
-        </RelativeLayout>
-
-      
-        
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignBottom="@id/rl_speakbottom"
-            android:layout_marginBottom="-5dp"
+            android:layout_alignBottom="@id/tv_chatcontent"
+            android:layout_marginBottom="-2dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="4dp"
+            android:layout_marginRight="2dp"
             android:background="@drawable/faceborder" />
         <ImageView
             android:id="@+id/iv_userhead"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignBottom="@id/imageView2"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="9dp"
+            android:layout_alignBottom="@id/tv_chatcontent"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentRight="true"/>
-        
     </RelativeLayout>
 
 </LinearLayout>
