@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/bottom_bar"
+        android:background="@drawable/main_bottom"
         android:orientation="vertical" >
 
         <ImageView

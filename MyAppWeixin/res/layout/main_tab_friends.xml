@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/chat_bg_default3"
+    android:orientation="vertical"
+    tools:context=".MainWeixin" >
+
+    <LinearLayout
+        android:id="@+id/title"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#eee"
-        android:orientation="vertical" >
-        
-        <LinearLayout 
-  			android:layout_width="fill_parent"
-  			android:layout_height="45dp"
-  			android:id="@+id/title" 
-  			android:background="@drawable/title_bar"
-  			android:gravity="center_horizontal|center_vertical"  >  
-      		 <RelativeLayout
+        android:layout_height="45dp"
+        android:background="@drawable/title_bar"
+        android:gravity="center_horizontal|center_vertical" >
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true" 
-            android:onClick="showMainTopCenterDialog">
+            android:layout_centerInParent="true"
+            android:onClick="showMainTopCenterDialog" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -25,106 +28,113 @@
                 android:text="天通苑站"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
-
-        </RelativeLayout>   
-			</LinearLayout>
-		<RelativeLayout      				    
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginTop="14dp"
-            android:clickable="true"
-            android:background="@drawable/preference_first_item" >
-      		<ImageView
-      		    android:id="@+id/community"
-            	android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"        	     	
-        		android:scaleType="matrix"
-        		android:layout_centerVertical="true"
-        		android:layout_alignParentLeft="true"
-        		android:src="@drawable/find_more_friend_addfriend_icon" />    
-            <TextView
-        		android:layout_width="wrap_content" 
-        		android:layout_height="wrap_content"
-        		android:layout_toRightOf="@id/community"
-        		android:layout_centerVertical="true"
-        		android:padding="8dp" 
-        		android:text="社区服务站"
-        		android:textSize="17sp"		
-				android:textColor="#000" /> 
-			<ImageView
-            	android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"        	     	
-        		android:scaleType="matrix"
-        		android:layout_centerVertical="true"
-        		android:layout_alignParentRight="true"
-        		android:src="@drawable/mm_submenu" />     
-        		 					
-   		</RelativeLayout>
-   		
-		<RelativeLayout      				    
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:background="@drawable/preference_item"
-             >
-      		<ImageView
-      		    android:id="@+id/add_friend_shake"
-            	android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"        	     	
-        		android:scaleType="matrix"
-        		android:layout_centerVertical="true"
-        		android:layout_alignParentLeft="true"
-        		android:src="@drawable/find_more_friend_shake" />    
-            <TextView
-        		android:layout_width="wrap_content" 
-        		android:layout_height="wrap_content"
-        		android:layout_toRightOf="@id/add_friend_shake"
-        		android:layout_centerVertical="true"
-        		android:padding="8dp" 
-        		android:text="信息栏"
-        		android:textSize="17sp"		
-				android:textColor="#000" /> 
-			<ImageView
-            	android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"        	     	
-        		android:scaleType="matrix"
-        		android:layout_centerVertical="true"
-        		android:layout_alignParentRight="true"
-        		android:src="@drawable/mm_submenu" />      					
-   		</RelativeLayout>
-   		<RelativeLayout      				    
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:background="@drawable/preference_last_item"
-             >
-      		<ImageView
-      		    android:id="@+id/add_friend_shake"
-            	android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"        	     	
-        		android:scaleType="matrix"
-        		android:layout_centerVertical="true"
-        		android:layout_alignParentLeft="true"
-        		android:src="@drawable/find_more_friend_shake" />    
-            <TextView
-        		android:layout_width="wrap_content" 
-        		android:layout_height="wrap_content"
-        		android:layout_toRightOf="@id/add_friend_shake"
-        		android:layout_centerVertical="true"
-        		android:padding="8dp" 
-        		android:text="好友动态"
-        		android:textSize="17sp"		
-				android:textColor="#000" /> 
-			<ImageView
-            	android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"        	     	
-        		android:scaleType="matrix"
-        		android:layout_centerVertical="true"
-        		android:layout_alignParentRight="true"
-        		android:src="@drawable/mm_submenu" />      					
-   		</RelativeLayout>
-
+        </RelativeLayout>
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/preference_first_item"
+        android:clickable="true"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/community"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:scaleType="matrix"
+            android:src="@drawable/find_more_friend_addfriend_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/community"
+            android:padding="8dp"
+            android:text="社区服务站"
+            android:textColor="#fff"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:scaleType="matrix"
+            android:src="@drawable/mm_submenu" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="@drawable/preference_item"
+        android:clickable="true"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/add_friend_shake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:scaleType="matrix"
+            android:src="@drawable/find_more_friend_shake" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/add_friend_shake"
+            android:padding="8dp"
+            android:text="信息栏"
+            android:textColor="#fff"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:scaleType="matrix"
+            android:src="@drawable/mm_submenu" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="@drawable/preference_last_item"
+        android:clickable="true"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/add_friend_shake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:scaleType="matrix"
+            android:src="@drawable/find_more_friend_shake" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/add_friend_shake"
+            android:padding="8dp"
+            android:text="好友动态"
+            android:textColor="#fff"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:scaleType="matrix"
+            android:src="@drawable/mm_submenu" />
+    </RelativeLayout>
+
+</LinearLayout>

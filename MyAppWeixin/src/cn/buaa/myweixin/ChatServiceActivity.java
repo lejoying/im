@@ -41,7 +41,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import cn.buaa.myweixin.utils.HeadImageUtils;
+import cn.buaa.myweixin.utils.HeadImageTool;
 
 /**
  * 
@@ -226,7 +226,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 	private final static int COUNT = 8;
 
 	public void initData() {
-		HeadImageUtils hiu = new HeadImageUtils();
+		HeadImageTool hiu = new HeadImageTool();
 		Bitmap headfrom = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.renma));
 		Bitmap headservice = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
@@ -297,7 +297,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 			ChatMsgEntity entity = new ChatMsgEntity();
 			entity.setDate(getDate());
 			entity.setName("»À¬Ì");
-			entity.setHead(new HeadImageUtils().returnHeadBitmap(BitmapFactory
+			entity.setHead(new HeadImageTool().returnHeadBitmap(BitmapFactory
 					.decodeResource(getResources(), R.drawable.renma)));
 			entity.setMsgType(false);
 			entity.setText(contString);

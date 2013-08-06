@@ -37,7 +37,7 @@
     </RelativeLayout>
 
     <EditText
-        android:id="@+id/login_passwd_edit"
+        android:id="@+id/register_number_edit"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/textView3"
@@ -47,7 +47,7 @@
         android:layout_marginTop="25dp"
         android:background="@drawable/login_editbox"
         android:hint="请输入你的手机号码"
-        android:phoneNumber="true"
+        android:inputType="number"
         android:singleLine="true"
         android:textColor="#000"
         android:textSize="15sp" />
@@ -56,9 +56,9 @@
         android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/login_passwd_edit"
-        android:layout_alignRight="@+id/login_passwd_edit"
-        android:layout_below="@+id/login_passwd_edit"
+        android:layout_alignLeft="@+id/register_number_edit"
+        android:layout_alignRight="@+id/register_number_edit"
+        android:layout_below="@+id/register_number_edit"
         android:layout_marginTop="15dp" >
 
         <RelativeLayout
@@ -66,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_centerVertical="true" >
+
             <ImageView
                 android:id="@+id/iv_agreeprovision"
                 android:layout_width="wrap_content"
@@ -73,24 +74,24 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="2dp"
-                android:src="@drawable/reg_checkbox_normal" />
+                android:src="@drawable/reg_checkbox_checked" />
 
             <TextView
                 android:id="@+id/tv_agreeprovision"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
-                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:paddingLeft="17dp"
-                android:onClick="agreeProvision"
+                android:layout_centerVertical="true"
                 android:clickable="true"
                 android:gravity="center_vertical"
+                android:onClick="agreeProvision"
+                android:paddingLeft="17dp"
                 android:text="已阅读并同意"
-                android:textColor="@color/reg_agreeprovision"/>
+                android:textColor="@color/reg_agreeprovision" />
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tv_registernumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -102,8 +103,8 @@
     <Button
         android:id="@+id/login_login_btn"
         android:layout_width="90dp"
-        android:layout_height="36dp"
-        android:layout_alignRight="@+id/login_passwd_edit"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/register_number_edit"
         android:layout_below="@+id/relativeLayout1"
         android:layout_marginTop="15dp"
         android:background="@drawable/btn_style_green"
@@ -116,10 +117,18 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/login_passwd_edit"
+        android:layout_alignLeft="@+id/register_number_edit"
         android:layout_below="@+id/login_top_layout"
         android:layout_marginTop="20dp"
         android:background="#3d3d3d"
         android:text="TextView" />
+
+    <ImageView
+        android:id="@+id/temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/relativeLayout1"
+        android:layout_below="@+id/login_login_btn"
+        android:layout_marginTop="66dp" />
 
 </RelativeLayout>

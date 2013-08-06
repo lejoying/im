@@ -3,6 +3,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/card_background"
     tools:context=".MyBusinessCardActivity" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="名片"
+            android:textColor="#fff"
+            android:textSize="23sp" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="63dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/card_btn_left"
+            android:onClick="back" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="63dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/card_btn_right" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="68dp"
+        android:layout_marginLeft="27dp"
+        android:text="冯志成" 
+        android:textColor="#fff"
+        android:textSize="28dp"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="34dp"
+        android:text="主要业务:群聊，技术，吃。" 
+        android:textColor="#fff"/>
 
 </RelativeLayout>

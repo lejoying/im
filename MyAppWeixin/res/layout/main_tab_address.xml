@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#eee"
-    android:orientation="vertical" >
+    android:background="@drawable/chat_bg_default3"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/title"
@@ -43,9 +43,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:background="#fff"
+        android:layout_height="60dp"
+        android:background="@drawable/mm_listitem_grey_normal"
         android:clickable="true"
         android:gravity="center_vertical"
         android:paddingBottom="3dp"
@@ -55,8 +54,8 @@
 
         <ImageView
             android:id="@+id/community"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:src="@drawable/find_more_friend_addfriend_icon" />
@@ -67,8 +66,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/community"
-            android:text="同社好友"
-            android:textColor="#000"
+            android:text="公众账号"
+            android:textColor="#fff"
             android:textSize="16sp" />
 
         <ImageView
@@ -81,10 +80,10 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tv_registernumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#8f8f8f"
+        android:background="#163358"
         android:paddingBottom="3dp"
         android:paddingLeft="15dp"
         android:paddingTop="3dp"
@@ -93,19 +92,19 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff"
+        android:layout_height="60dp"
         android:clickable="true"
         android:gravity="center_vertical"
         android:paddingBottom="3dp"
         android:paddingLeft="18dp"
         android:paddingRight="18dp"
-        android:paddingTop="3dp" >
+        android:paddingTop="3dp" 
+        android:background="@drawable/mm_listitem_grey_normal">
 
         <ImageView
             android:id="@+id/imageView1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:src="@drawable/xiaohei" />
@@ -118,7 +117,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/imageView1"
             android:text="小黑"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:textSize="16sp" />
 
         <TextView
@@ -127,7 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="#e7e7e7"
+            android:background="#0000"
             android:ellipsize="end"
             android:lines="2"
             android:maxLines="2"
