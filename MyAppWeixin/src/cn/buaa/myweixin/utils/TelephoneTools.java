@@ -9,5 +9,6 @@ public class TelephoneTools {
 		TelephonyManager telephonyManager = (TelephonyManager) context
 				.getSystemService(Context.TELEPHONY_SERVICE);
 		return telephonyManager.getLine1Number();
-	}
-}
+	}  
+	
+}  
