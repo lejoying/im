@@ -43,9 +43,14 @@
         <activity android:name="MainTopRightDialog" android:theme="@style/MyDialogStyleTop" />  
         <activity android:name="SearchFriendsDialog" android:theme="@style/MyDialogStyleTop" /> 
         <activity android:name="MainTopCenterDialog" android:theme="@style/MyDialogStyleTop" />
+        <activity android:name="CallingCardRightDialog" android:theme="@style/MyDialogStyleTop" />
         <activity android:name="RegisterActivity" android:theme="@android:style/Theme.NoTitleBar"/> 
         <activity android:name="RegisterCheckingActivity" android:theme="@android:style/Theme.NoTitleBar"/> 
-        <activity android:name="MyBusinessCardActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="CallingCardActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="CallingCardModifyActivity" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask"/>
+        <activity android:name="CallingCardModifyNameActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="CallingCardModifyPhoneActivity" android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name="CallingCardModifyYeWuActivity" android:theme="@android:style/Theme.NoTitleBar"/>
     </application>
 
 </manifest>

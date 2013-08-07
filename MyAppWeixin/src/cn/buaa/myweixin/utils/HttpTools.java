@@ -27,6 +27,17 @@ public class HttpTools {
 
 	public static byte[] sendGet(String path, Map<String, String> params)
 			throws IOException {
+		byte data[] = null;
+		InputStream is = sendGetForInputStream(path, params);
+		if(is!=null){
+			data = StreamTools.isToData(is);
+		}
+		return data;
+	}
+
+	public static InputStream sendGetForInputStream(String path, Map<String, String> params)
+			throws IOException {
+		InputStream is = null;
 		// 拼接请求参数
 		if (params != null) {
 			Set<String> keys = params.keySet();
@@ -51,13 +62,12 @@ public class HttpTools {
 		// 判断服务器响应
 		byte[] data = null;
 		if (httpURLConnection.getResponseCode() == 200) {
-			InputStream is = httpURLConnection.getInputStream();
-			data = StreamTools.isToData(is);
+			is = httpURLConnection.getInputStream();
 		}
 		httpURLConnection.disconnect();
-		return data;
+		return is;
 	}
-
+	
 	public static byte[] sendPost(String path, Map<String, String> params)
 			throws IOException {
 		//拼接请求参数

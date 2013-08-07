@@ -6,10 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import android.R.anim;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,10 +27,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.ScaleAnimation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -40,7 +36,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import cn.buaa.myweixin.utils.HeadImageTool;
 
 /**
@@ -370,10 +365,9 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 		final int topHeight = screenHeight
 				- getWindow().findViewById(Window.ID_ANDROID_CONTENT)
 						.getHeight();
-
 		// 设置service menu按钮可见
 		rl_service_life.setVisibility(View.VISIBLE);
-
+		rl_service_life.bringToFront();
 		// TranslateAnimation
 		float fromX = viewX - rl_service_life.getX()
 				- ((rl_service_life.getWidth() - v.getWidth()) / 2);

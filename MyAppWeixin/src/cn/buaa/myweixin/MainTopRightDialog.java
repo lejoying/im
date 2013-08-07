@@ -37,7 +37,7 @@ public class MainTopRightDialog extends Activity {
 	}
 	
 	public void showMyBusinessCard(View v){
-		Intent intent = new Intent(MainTopRightDialog.this,MyBusinessCardActivity.class);
+		Intent intent = new Intent(MainTopRightDialog.this,CallingCardActivity.class);
 		startActivity(intent);
 		this.finish();
 	}
