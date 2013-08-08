@@ -34,7 +34,7 @@ public class HttpTools {
 		}
 		return data;
 	}
-
+ 
 	public static InputStream sendGetForInputStream(String path, Map<String, String> params)
 			throws IOException {
 		InputStream is = null;
