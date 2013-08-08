@@ -54,6 +54,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/rl_layout"
         android:inputType="text"
+        android:maxLength="10"
         android:hint="请输入新名字"/>
 
 </RelativeLayout>

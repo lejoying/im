@@ -5,9 +5,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 
-public class HeadImageTool {
+public class ImageTools {
 
-	public HeadImageTool() {
+	public ImageTools() {
 
 	}
 
