@@ -221,10 +221,9 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 	private final static int COUNT = 8;
 
 	public void initData() {
-		ImageTools hiu = new ImageTools();
-		Bitmap headfrom = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
+		Bitmap headfrom = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.renma));
-		Bitmap headservice = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
+		Bitmap headservice = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.service_head));
 		for (int i = 0; i < COUNT; i++) {
 			ChatMsgEntity entity = new ChatMsgEntity();
@@ -292,7 +291,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 			ChatMsgEntity entity = new ChatMsgEntity();
 			entity.setDate(getDate());
 			entity.setName("ÈËÂí");
-			entity.setHead(new ImageTools().returnHeadBitmap(BitmapFactory
+			entity.setHead(ImageTools.getCircleBitmap(BitmapFactory
 					.decodeResource(getResources(), R.drawable.renma)));
 			entity.setMsgType(false);
 			entity.setText(contString);

@@ -15,6 +15,11 @@ import android.net.NetworkInfo;
 
 public class HttpTools {
 
+	/**
+	 * 判断网络是否可用,返回true时网络可用
+	 * @param context
+	 * @return
+	 */
 	public static boolean hasNetwork(Context context) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -25,6 +30,13 @@ public class HttpTools {
 		return false;
 	}
 
+	/**
+	 * 用get方法发送params到地址为path的服务器，并返回服务器响应的byte[]
+	 * @param path
+	 * @param params
+	 * @return
+	 * @throws IOException
+	 */
 	public static byte[] sendGet(String path, Map<String, String> params)
 			throws IOException {
 		byte data[] = null;

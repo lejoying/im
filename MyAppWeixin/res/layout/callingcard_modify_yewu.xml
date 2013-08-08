@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:background="@drawable/title_btn_back"
-            android:onClick="chat_back"
+            android:onClick="top_back"
             android:text="个人信息"
             android:textColor="#fff"
             android:textSize="14sp" />

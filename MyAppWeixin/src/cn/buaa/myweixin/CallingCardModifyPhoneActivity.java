@@ -25,7 +25,7 @@ public class CallingCardModifyPhoneActivity extends Activity {
 		modifyphone = (EditText) findViewById(R.id.modifyphone);
 	}
 
-	public void chat_back(View v) {
+	public void top_back(View v) {
 		finish();
 	}
 

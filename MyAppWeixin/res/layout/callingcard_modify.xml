@@ -42,7 +42,8 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/preference_single_item"
         android:clickable="true"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical" 
+        android:onClick="modifyheadmenu">
 
         <TextView
             android:layout_width="wrap_content"

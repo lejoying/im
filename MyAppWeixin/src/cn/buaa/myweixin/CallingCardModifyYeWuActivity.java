@@ -66,7 +66,7 @@ public class CallingCardModifyYeWuActivity extends Activity {
 		yewu.add("我从家里带来一个脸盆，晚上没人的时候，就用饮水机里的热水泡脚。");
 	}
 
-	public void chat_back(View v) {
+	public void top_back(View v) {
 		finish();
 	}
 

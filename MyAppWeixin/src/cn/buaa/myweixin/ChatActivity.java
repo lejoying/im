@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
@@ -33,6 +33,7 @@ import cn.buaa.myweixin.utils.ImageTools;
  * @author geniuseoe2012 更多精彩，请关注我的CSDN博客http://blog.csdn.net/geniuseoe2012
  *         android开发交流群：200102476
  */
+@SuppressLint("HandlerLeak")
 public class ChatActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 
@@ -154,10 +155,9 @@ public class ChatActivity extends Activity implements OnClickListener {
 	private final static int COUNT = 8;
 
 	public void initData() {
-		ImageTools hiu = new ImageTools();
-		Bitmap headfrom = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
+		Bitmap headfrom = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.renma));
-		Bitmap headto = hiu.returnHeadBitmap(BitmapFactory.decodeResource(
+		Bitmap headto = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.xiaohei));
 		for (int i = 0; i < COUNT; i++) {
 			ChatMsgEntity entity = new ChatMsgEntity();
@@ -202,7 +202,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 			ChatMsgEntity entity = new ChatMsgEntity();
 			entity.setDate(getDate());
 			entity.setName("人马");
-			entity.setHead(new ImageTools().returnHeadBitmap(BitmapFactory
+			entity.setHead(ImageTools.getCircleBitmap(BitmapFactory
 					.decodeResource(getResources(), R.drawable.renma)));
 			entity.setMsgType(false);
 			entity.setText(contString);
