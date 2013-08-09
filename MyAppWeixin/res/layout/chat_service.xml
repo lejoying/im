@@ -138,11 +138,23 @@
 
                 <ImageView
                     android:id="@+id/imageView2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/service_life" />
+
+                <TextView
+                    android:id="@+id/textView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView2"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/service_life" />
+                    android:text="生活服务" 
+                    android:textColor="#eee"
+                    android:textSize="8sp"/>
+
             </RelativeLayout>
         </RelativeLayout>
 
@@ -160,12 +172,24 @@
                 android:layout_height="fill_parent"
                 android:src="@drawable/service_bg" />
 
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dp"
+                android:text="历史订单"
+                android:textColor="#eee"
+                android:textSize="12sp" />
+
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="15dp"
                 android:src="@drawable/service_history" />
         </RelativeLayout>
 
@@ -184,12 +208,24 @@
                 android:layout_height="fill_parent"
                 android:src="@drawable/service_bg" />
 
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView4"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dp"
+                android:text="顺丰快递"
+                android:textColor="#eee"
+                android:textSize="12sp" />
+
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="15dp"
                 android:src="@drawable/service_kuaidi" />
         </RelativeLayout>
 
@@ -208,12 +244,24 @@
                 android:layout_height="fill_parent"
                 android:src="@drawable/service_bg" />
 
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView5"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dp"
+                android:text="家政服务"
+                android:textColor="#eee"
+                android:textSize="12sp" />
+
             <ImageView
                 android:id="@+id/imageView5"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="15dp"
                 android:src="@drawable/service_jiazheng" />
         </RelativeLayout>
 
@@ -230,13 +278,24 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:src="@drawable/service_bg" />
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/imageView6"
+                android:textSize="12sp"
+                android:layout_marginTop="-10dp"
+                android:text="按摩服务" 
+                android:textColor="#eee"/>
 
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_centerHorizontal="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
                 android:src="@drawable/service_anmo" />
         </RelativeLayout>
 
@@ -253,13 +312,23 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:src="@drawable/service_bg" />
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/imageView7"
+                android:textSize="12sp"
+                android:layout_marginTop="-10dp"
+                android:text="更多" 
+                android:textColor="#eee"/>
 
             <ImageView
                 android:id="@+id/imageView7"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_centerHorizontal="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
                 android:src="@drawable/service_more" />
         </RelativeLayout>
 
@@ -277,13 +346,24 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:src="@drawable/service_bg" />
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/imageView8"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"
+                android:text="送水服务" 
+                android:textColor="#eee"/>
 
             <ImageView
                 android:id="@+id/imageView8"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="15dp"
                 android:src="@drawable/service_water" />
         </RelativeLayout>
     </RelativeLayout>

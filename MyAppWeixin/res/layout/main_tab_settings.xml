@@ -37,7 +37,7 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="55dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/preference_single_item"
                 android:clickable="true"
                 android:gravity="center_vertical" >
@@ -64,7 +64,7 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="55dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/preference_single_item"
                 android:clickable="true"
                 android:gravity="center_vertical" >
@@ -90,7 +90,7 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="55dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/preference_single_item"
                 android:clickable="true"
                 android:gravity="center_vertical" >
@@ -112,21 +112,20 @@
                     android:scaleType="matrix"
                     android:src="@drawable/mm_submenu" />
             </RelativeLayout>
-
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="55dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="25dp"
-                android:background="@drawable/btn_style_red"
-                android:gravity="center"
-                android:onClick="exit_settings"
-                android:padding="4dp"
-                android:text="退出登录"
-                android:textColor="#fff"
-                android:textSize="18sp" />
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/btn_style_red"
+        android:gravity="center"
+        android:onClick="exit_settings"
+        android:padding="4dp"
+        android:text="退出登录"
+        android:textColor="#fff"
+        android:textSize="18sp" />
 
 </RelativeLayout>

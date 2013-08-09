@@ -9,12 +9,18 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class HttpTools {
 
+	public static final int SEND_GET = 0xff01; 
+	public static final int SEND_POST = 0xff02; 
+	
 	/**
 	 * 判断网络是否可用,返回true时网络可用
 	 * @param context
@@ -46,7 +52,14 @@ public class HttpTools {
 		}
 		return data;
 	}
- 
+
+	/**
+	 * 用get方法发送params到地址为path的服务器，并返回服务器响应的InputStream
+	 * @param path
+	 * @param params
+	 * @return
+	 * @throws IOException
+	 */
 	public static InputStream sendGetForInputStream(String path, Map<String, String> params)
 			throws IOException {
 		InputStream is = null;
@@ -79,7 +92,13 @@ public class HttpTools {
 		httpURLConnection.disconnect();
 		return is;
 	}
-	
+	/**
+	 *  用post方法发送params到地址为path的服务器，并返回服务器响应的byte[]
+	 * @param path
+	 * @param params
+	 * @return
+	 * @throws IOException
+	 */
 	public static byte[] sendPost(String path, Map<String, String> params)
 			throws IOException {
 		//拼接请求参数
@@ -127,4 +146,26 @@ public class HttpTools {
 		httpURLConnection.disconnect();
 		return data;
 	}
+	/**
+	 * 使用method方法将params参数发送到地址为path的服务器，返回JSONObject对象。
+	 * @param path
+	 * @param params
+	 * @param method
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static JSONObject sendForJSONObject(String path,Map<String, String> params,int method) throws IOException, JSONException{
+		JSONObject jsonObject = null;
+		if(method == SEND_GET){
+			byte[] data = sendGet(path, params);
+			jsonObject = new JSONObject(data.toString());
+		}
+		if(method == SEND_POST){
+			byte[] data = sendPost(path, params);
+			jsonObject = new JSONObject(data.toString());
+		}
+		return jsonObject;
+	}
+	
 }

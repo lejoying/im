@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 
+import cn.buaa.myweixin.utils.ImageTools;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -46,19 +48,11 @@ public class CallingCardModifyHeadActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode == RESULT_OK){
-			long time0 = new Date().getTime();
 			if(requestCode == TAKEPHOTO){
 				Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 				iv_head.setImageBitmap(bitmap);
 			}		
 			if(requestCode == CHOICEFROMNATIVE){
-				iv_head.setImageURI(data.getData());
-				long time1 = new Date().getTime();
-				BitmapDrawable bd = (BitmapDrawable) iv_head.getDrawable();
-				Bitmap bitmap = bd.getBitmap();
-				long time2 = new Date().getTime();
-				System.out.println(bitmap.getWidth()+":"+(time2-time0)+".."+(time2-time1)+".."+(time1-time0));
-				long time3 = new Date().getTime();
 				InputStream is = null;
 				try {
 					is = getContentResolver().openInputStream(data.getData());
@@ -66,10 +60,11 @@ public class CallingCardModifyHeadActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				Bitmap bitmap2 = BitmapFactory.decodeStream(is);
-				iv_head.setImageBitmap(bitmap2);
-				long time4 = new Date().getTime();
-				System.out.println(bitmap2.getHeight()+".."+bitmap2.getWidth()+".."+(time4-time3));
+				if(is == null){
+					finish();
+				}
+				Bitmap bitmap = ImageTools.getZoomBitmapFromStream(is, 720, 800);
+				iv_head.setImageBitmap(bitmap);
 			}
 		}
 		if(resultCode == RESULT_CANCELED){

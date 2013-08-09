@@ -246,6 +246,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 
 		mAdapter = new ChatMsgViewAdapter(this, mDataArrays);
 		mListView.setAdapter(mAdapter);
+		mListView.setSelection(mListView.getCount() - 1);
 	}
 
 	@Override
@@ -253,13 +254,42 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.btn_send:
-			send();
+			String contString = mEditTextContent.getText().toString();
+			send(contString);
 			break;
 		case R.id.btn_back:
 			finish();
 			break;
 		case R.id.rl_shade:
 			hideServiceMenu();
+			break;
+		case R.id.rl_service_history:
+			hideServiceMenu();
+			send("历史记录");
+			break;
+		case R.id.rl_service_kuaidi:
+			hideServiceMenu();
+			send("快递服务");
+			break;
+		case R.id.rl_service_jiazheng:
+			hideServiceMenu();
+			send("家政服务");
+			break;
+		case R.id.rl_service_anmo:
+			hideServiceMenu();
+			send("按摩服务");
+			break;
+		case R.id.rl_service_more:
+			hideServiceMenu();
+			send("更多");
+			break;
+		case R.id.rl_service_water:
+			hideServiceMenu();
+			send("送水服务");
+			break;
+		case R.id.rl_service_life:
+			hideServiceMenu();
+			send("生活服务");
 			break;
 		}
 	}
@@ -285,16 +315,15 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 
 	}
 
-	private void send() {
-		String contString = mEditTextContent.getText().toString();
-		if (contString.length() > 0) {
+	private void send(String msg) {
+		if (msg.length() > 0) {
 			ChatMsgEntity entity = new ChatMsgEntity();
 			entity.setDate(getDate());
 			entity.setName("人马");
 			entity.setHead(ImageTools.getCircleBitmap(BitmapFactory
 					.decodeResource(getResources(), R.drawable.renma)));
 			entity.setMsgType(false);
-			entity.setText(contString);
+			entity.setText(msg);
 			mDataArrays.add(entity);
 			mAdapter.notifyDataSetChanged();
 			mEditTextContent.setText("");
@@ -420,7 +449,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 			TranslateAnimation translateAnimation = new TranslateAnimation(
 					rl_service_life.getX() - rl.getX(), 1,
 					rl_service_life.getY() - rl.getY(), 1);
-			translateAnimation.setDuration(100);
+			translateAnimation.setDuration(70);
 			translateAnimation.setFillAfter(true);
 			rl.startAnimation(translateAnimation);
 		}
