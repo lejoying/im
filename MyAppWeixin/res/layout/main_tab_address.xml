@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/chat_bg_default3"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/title"
@@ -13,9 +13,11 @@
         android:gravity="center_vertical" >
 
         <RelativeLayout
+            android:id="@+id/relativeLayout1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
             android:onClick="showMainTopCenterDialog" >
 
             <TextView
@@ -28,17 +30,31 @@
                 android:textSize="20sp" />
         </RelativeLayout>
 
-        <Button
-            android:layout_width="67dp"
-            android:layout_height="wrap_content"
+        <RelativeLayout
+            android:layout_width="50dp"
+            android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/title_btn_right"
-            android:onClick="btnsearchfriends"
-            android:text="好友"
-            android:textColor="#fff"
-            android:textSize="15dp" />
+            android:onClick="btnsearchfriends" >
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/new_setting" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/arrow_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="3dp"
+            android:layout_toRightOf="@+id/relativeLayout1"
+            android:onClick="showMainTopCenterDialog"
+            android:src="@drawable/new_arrow_donw" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -50,7 +66,7 @@
         android:paddingBottom="3dp"
         android:paddingLeft="18dp"
         android:paddingRight="18dp"
-        android:paddingTop="3dp">
+        android:paddingTop="3dp" >
 
         <ImageView
             android:id="@+id/community"
@@ -93,13 +109,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="@drawable/mm_listitem_grey_normal"
         android:clickable="true"
         android:gravity="center_vertical"
+        android:onClick="chat_friend_xiaohei"
         android:paddingBottom="3dp"
         android:paddingLeft="18dp"
         android:paddingRight="18dp"
-        android:paddingTop="3dp" 
-        android:background="@drawable/mm_listitem_grey_normal">
+        android:paddingTop="3dp" >
 
         <ImageView
             android:id="@+id/imageView1"

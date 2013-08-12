@@ -12,16 +12,21 @@
         android:background="@drawable/title_bar"
         android:gravity="center_vertical" >
 
-        <Button
-            android:id="@+id/btn_back"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
+        <RelativeLayout
+            android:layout_width="60dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/title_btn_back"
-            android:onClick="chat_back"
-            android:text="返回"
-            android:textColor="#fff"
-            android:textSize="14sp" />
+            android:onClick="chat_back" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/new_arrow_top" />
+        </RelativeLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,7 +44,8 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:background="@drawable/title_btn_right"
-            android:src="@drawable/mm_title_btn_contact_normal" />
+            android:src="@drawable/mm_title_btn_contact_normal" 
+            android:onClick="showCC"/>
     </RelativeLayout>
 
     <!-- android:background="@drawable/chat_footer_bg" -->

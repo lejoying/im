@@ -13,9 +13,11 @@
         android:gravity="center_vertical" >
 
         <RelativeLayout
+            android:id="@+id/relativeLayout1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
             android:onClick="showMainTopCenterDialog" >
 
             <TextView
@@ -28,16 +30,31 @@
                 android:textSize="20sp" />
         </RelativeLayout>
 
-        <ImageButton
-            android:id="@+id/right_btn"
-            android:layout_width="67dp"
-            android:layout_height="wrap_content"
+        <RelativeLayout
+            android:layout_width="50dp"
+            android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/title_btn_right"
-            android:onClick="btnmainright"
-            android:src="@drawable/title_btn_function" />
+            android:onClick="btnmainright" >
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/new_setting" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/arrow_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="3dp"
+            android:layout_toRightOf="@+id/relativeLayout1"
+            android:onClick="showMainTopCenterDialog"
+            android:src="@drawable/new_arrow_donw" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -89,7 +106,7 @@
         android:background="@drawable/mm_listitem"
         android:clickable="true"
         android:gravity="center_vertical"
-        android:onClick="startservicechat">
+        android:onClick="startservicechat" >
 
         <ImageView
             android:id="@+id/servicehead"

@@ -47,6 +47,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
 	private RelativeLayout rl_bottom;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.chat_xiaohei);
@@ -231,6 +232,11 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	public void head_xiaohei(View v) { // 标题栏 返回按钮
 		Intent intent = new Intent(ChatActivity.this, InfoXiaohei.class);
+		startActivity(intent);
+	}
+	
+	public void showCC(View v){ //标题栏显示对方名片
+		Intent intent = new Intent(ChatActivity.this,CallingCardActivity.class);
 		startActivity(intent);
 	}
 

@@ -80,6 +80,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 
 	private boolean isServiceMenuShow;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.chat_service);
@@ -300,17 +301,17 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 		rl_service_life.clearAnimation();
 		hideServiceButton();
 		// 隐藏遮罩层
-		rl_shade.setVisibility(ImageView.INVISIBLE);
+		rl_shade.setVisibility(View.INVISIBLE);
 		// 显示被隐藏的按钮
-		rl_hide.setVisibility(RelativeLayout.VISIBLE);
+		rl_hide.setVisibility(View.VISIBLE);
 	}
 
 	public void hideServiceButton() {
 		// 隐藏菜单按钮
-		rl_service_life.setVisibility(RelativeLayout.INVISIBLE);
+		rl_service_life.setVisibility(View.INVISIBLE);
 		for (RelativeLayout rl : serviceMainBtnArray) {
 			rl.clearAnimation();
-			rl.setVisibility(RelativeLayout.INVISIBLE);
+			rl.setVisibility(View.INVISIBLE);
 		}
 
 	}
@@ -383,11 +384,11 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 		int moveTime = moveLength * 100 / moveSpeed;
 
 		// 显示遮罩层
-		rl_shade.setVisibility(ImageView.VISIBLE);
+		rl_shade.setVisibility(View.VISIBLE);
 		
 		// 隐藏被点击的按钮
 		rl_hide = (RelativeLayout) v;
-		rl_hide.setVisibility(ImageView.INVISIBLE);
+		rl_hide.setVisibility(View.INVISIBLE);
 
 		// 获取状态栏高度
 		final int topHeight = screenHeight
@@ -414,8 +415,8 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 		float resizeY = (float) rl_service_life.getHeight()
 				/ (float) rl_service_scale.getWidth();
 		ScaleAnimation serviceShowScale = new ScaleAnimation(1, resizeX, 1,
-				resizeY, ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
-				ScaleAnimation.RELATIVE_TO_SELF, 0.5f);
+				resizeY, Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
 		serviceShowScale.setDuration(moveTime);
 		serviceShowScale.setFillAfter(true);
 		rl_service_scale.startAnimation(serviceShowScale);
@@ -435,7 +436,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 			@Override
 			public void onAnimationEnd(Animation arg0) {
 				for (RelativeLayout rl : serviceMainBtnArray) {
-					rl.setVisibility(RelativeLayout.VISIBLE);
+					rl.setVisibility(View.VISIBLE);
 				}
 				setAnimation(serviceMainBtnArray);
 			}

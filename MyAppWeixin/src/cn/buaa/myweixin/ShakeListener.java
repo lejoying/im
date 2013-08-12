@@ -65,6 +65,7 @@ public class ShakeListener implements SensorEventListener {
 	}
 
 	// 重力感应器感应获得变化数据
+	@Override
 	public void onSensorChanged(SensorEvent event) {
 		// 现在检测时间
 		long currentUpdateTime = System.currentTimeMillis();
@@ -101,6 +102,7 @@ public class ShakeListener implements SensorEventListener {
 		}
 	}
 
+	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
 	}

@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class Login extends Activity {
 	private EditText mUser; // ÕÊºÅ±à¼­¿ò

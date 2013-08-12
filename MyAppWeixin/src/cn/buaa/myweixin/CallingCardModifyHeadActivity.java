@@ -2,15 +2,11 @@ package cn.buaa.myweixin;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Date;
-
 import cn.buaa.myweixin.utils.ImageTools;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;

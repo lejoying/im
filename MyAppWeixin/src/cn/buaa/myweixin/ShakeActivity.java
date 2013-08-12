@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.app.Activity;
-import android.content.Intent;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -47,7 +45,8 @@ public class ShakeActivity extends Activity{
 		mDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer1);
         mDrawerBtn = (Button) findViewById(R.id.handle);
         mDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener()
-		{	public void onDrawerOpened()
+		{	@Override
+		public void onDrawerOpened()
 			{	
 				mDrawerBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.shake_report_dragger_down));
 				TranslateAnimation titleup = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,-1.0f);
@@ -58,7 +57,8 @@ public class ShakeActivity extends Activity{
 		});
 		 /* 设定SlidingDrawer被关闭的事件处理 */
 		mDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener()
-		{	public void onDrawerClosed()
+		{	@Override
+		public void onDrawerClosed()
 			{	
 				mDrawerBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.shake_report_dragger_up));
 				TranslateAnimation titledn = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,-1.0f,Animation.RELATIVE_TO_SELF,0f);
@@ -70,6 +70,7 @@ public class ShakeActivity extends Activity{
 		
 		mShakeListener = new ShakeListener(this);
         mShakeListener.setOnShakeListener(new OnShakeListener() {
+			@Override
 			public void onShake() {
 				//Toast.makeText(getApplicationContext(), "抱歉，暂时没有找到在同一时刻摇一摇的人。\n再试一次吧！", Toast.LENGTH_SHORT).show();
 				startAnim();  //开始 摇一摇手掌动画

@@ -14,16 +14,17 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
-public class MainWeixin extends Activity {
+public class MainWeixin extends Activity{
 	
 	public static MainWeixin instance = null;
 	 
@@ -41,6 +42,7 @@ public class MainWeixin extends Activity {
 	private boolean menu_display = false;
 	private PopupWindow menuWindow;
 	private LayoutInflater inflater;
+	private ImageView arrow_down;
 	//private Button mRightBtn;
 	
     @Override
@@ -68,6 +70,7 @@ public class MainWeixin extends Activity {
         mTab3 = (ImageView) findViewById(R.id.img_friends);
         mTab4 = (ImageView) findViewById(R.id.img_settings);
         mTabImg = (ImageView) findViewById(R.id.img_tab_now);
+        
         /*  mTab1.setOnClickListener(new MyOnClickListener(0));
         mTab2.setOnClickListener(new MyOnClickListener(1));
         mTab3.setOnClickListener(new MyOnClickListener(2));
@@ -244,7 +247,7 @@ public class MainWeixin extends Activity {
 				layout = inflater.inflate(R.layout.main_menu, null);
 				
 				//下面我们要考虑了，我怎样将我的layout加入到PopupWindow中呢？？？很简单
-				menuWindow = new PopupWindow(layout,LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT); //后两个参数是width和height
+				menuWindow = new PopupWindow(layout,android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT); //后两个参数是width和height
 				//menuWindow.showAsDropDown(layout); //设置弹出效果
 				//menuWindow.showAsDropDown(null, 0, layout.getHeight());
 				menuWindow.showAtLocation(this.findViewById(R.id.mainweixin), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0); //设置layout在PopupWindow中显示的位置
@@ -314,6 +317,10 @@ public class MainWeixin extends Activity {
 		startActivity(intent);
 	}
 	
+	public void chat_friend_xiaohei(View v){
+		Intent intent = new Intent(MainWeixin.this,ChatActivity.class);
+		startActivity(intent);
+	}
 	
 	//重新设置头标点击监听
 	public void showMessagePanel(View v){
@@ -331,6 +338,7 @@ public class MainWeixin extends Activity {
 	public void showSettings(View v){
 		mTabPager.setCurrentItem(3,false);
 	}
+
 }
     
     

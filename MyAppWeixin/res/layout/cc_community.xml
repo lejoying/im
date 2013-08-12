@@ -6,7 +6,7 @@
     android:background="@drawable/card_background"
     tools:context=".CallingCardActivity" >
 
-    <RelativeLayout
+   <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -19,25 +19,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="名片"
+            android:text="社区"
             android:textColor="#fff"
             android:textSize="23sp" />
 
-        <RelativeLayout
-            android:layout_width="50dp"
-            android:layout_height="25dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:onClick="back" >
-
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/new_arrow_top" />
-        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="50dp"
@@ -54,6 +39,23 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/new_setting" />
         </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:onClick="back" >
+
+            <ImageView
+                android:id="@+id/ImageView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/new_arrow_top" />
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <TextView
@@ -64,9 +66,9 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="68dp"
         android:layout_marginLeft="27dp"
-        android:text="冯志成"
+        android:text="天通苑站" 
         android:textColor="#fff"
-        android:textSize="28dp" />
+        android:textSize="28dp"/>
 
     <TextView
         android:id="@+id/textView3"
@@ -75,7 +77,16 @@
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="34dp"
-        android:text="主要业务:  群聊，技术，吃。"
-        android:textColor="#fff" />
+        android:text="社区站长:  小黑" 
+        android:textColor="#fff"/>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="14dp"
+        android:background="@drawable/new_join_btn" />
 
 </RelativeLayout>
