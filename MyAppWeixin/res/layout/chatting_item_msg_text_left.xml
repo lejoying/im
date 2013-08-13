@@ -74,7 +74,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="4dp"
-            android:background="@drawable/faceborder" />
+            android:background="@drawable/faceborder" 
+            android:onClick="showCC"/>
 
         <ImageView
             android:id="@+id/iv_userhead"

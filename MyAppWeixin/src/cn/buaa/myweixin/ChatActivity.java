@@ -81,8 +81,6 @@ public class ChatActivity extends Activity implements OnClickListener {
 		mListView = (ListView) findViewById(R.id.listview);
 		mBtnSend = (Button) findViewById(R.id.btn_send);
 		mBtnSend.setOnClickListener(this);
-		mBtnBack = (Button) findViewById(R.id.btn_back);
-		mBtnBack.setOnClickListener(this);
 
 		mEditTextContent = (EditText) findViewById(R.id.et_sendmessage);
 
@@ -229,13 +227,17 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 		return sbBuffer.toString();
 	}
-
-	public void head_xiaohei(View v) { // 标题栏 返回按钮
+	//返回按钮
+	public void chat_back(View v){
+		finish();
+	}
+	
+	public void head_xiaohei(View v) {
 		Intent intent = new Intent(ChatActivity.this, InfoXiaohei.class);
 		startActivity(intent);
 	}
 	
-	public void showCC(View v){ //标题栏显示对方名片
+	public void showCC(View v){ //点击头像/标题栏右侧按钮显示对方名片
 		Intent intent = new Intent(ChatActivity.this,CallingCardActivity.class);
 		startActivity(intent);
 	}

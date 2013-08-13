@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class StreamTools {
+public final class StreamTools {
 	/**
 	 * 将InputStream读取到byte[]中
 	 * @param is

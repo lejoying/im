@@ -120,8 +120,9 @@
         android:layout_alignLeft="@+id/register_number_edit"
         android:layout_below="@+id/login_top_layout"
         android:layout_marginTop="20dp"
-        android:background="#3d3d3d"
-        android:text="TextView" />
+        android:textColor="#3d3d3d"
+        android:text="请输入你的手机号："
+         />
 
     <ImageView
         android:id="@+id/temp"

@@ -119,8 +119,6 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 		mListView = (ListView) findViewById(R.id.listview);
 		mBtnSend = (Button) findViewById(R.id.btn_send);
 		mBtnSend.setOnClickListener(this);
-		mBtnBack = (Button) findViewById(R.id.btn_back);
-		mBtnBack.setOnClickListener(this);
 
 		// service menu
 		rl_shade = (RelativeLayout) findViewById(R.id.rl_shade);
@@ -455,5 +453,8 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 			rl.startAnimation(translateAnimation);
 		}
 	}
-
+	//·µ»Ø°´Å¥
+	public void chat_back(View v){
+		finish();
+	}
 }

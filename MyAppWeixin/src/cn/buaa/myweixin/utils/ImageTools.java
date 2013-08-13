@@ -8,60 +8,83 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-public class ImageTools {
+public final class ImageTools {
 
 	/**
-	 * 返回圆形图片,source须为正方形图片
+	 * 返回圆形图片,source必须为正方形图片
 	 * 
 	 * @param source
 	 * @return
 	 */
 	public static Bitmap getCircleBitmap(Bitmap source) {
-		return getCircleBitmap(source, null);
+		return getCircleBitmap(source, false, null, null);
 	}
 
 	/**
-	 * 返回直径为diameter个像素的圆形图片,source须为正方形图片
+	 * 返回带1px颜色为borderColor的边框的圆形图片，source必须为正方形图片
 	 * 
 	 * @param source
-	 * @param diameter
+	 * @param showBorder
+	 * @param borderColor
 	 * @return
 	 */
-	public static Bitmap getCircleBitmap(Bitmap source, Integer diameter) {
-		// 创建新的bitmap
-		Bitmap bitmap = Bitmap.createBitmap(source.getWidth(),
-				source.getHeight(), Config.ARGB_8888);
-		// 获取半径
-		int radius = 0;
-		if (diameter == null || diameter == 0) {
-			radius = source.getWidth() / 2;
-		} else {
-			radius = diameter / 2;
+	public static Bitmap getCircleBitmap(Bitmap source, boolean showBorder,
+			Integer borderWidth, Integer borderColor) {
+		int sourceWidth = source.getWidth();
+		int sourceHeight = source.getHeight();
+
+		if (!showBorder || borderWidth == null) {
+			borderWidth = 0;
 		}
+		// 创建新的bitmap
+		Bitmap bitmap = Bitmap.createBitmap(sourceWidth + borderWidth * 2,
+				sourceHeight + borderWidth * 2, Config.ARGB_8888);
 
-		for (int i = 0; i < source.getWidth(); i++) {
-			for (int j = 0; j < source.getHeight(); j++) {
+		int bitmapWidth = bitmap.getWidth();
+		int bitmapHeight = bitmap.getHeight();
 
-				int color = source.getPixel(i, j);
-				int newColor;
-				if ((radius - i) * (radius - i) + (radius - j) * (radius - j) > radius
-						* radius)
-					newColor = Color.argb(0, Color.red(color),
-							Color.green(color), Color.blue(color));
-				else
-					newColor = Color.argb(255, Color.red(color),
-							Color.green(color), Color.blue(color));
-				synchronized (bitmap) {
-					bitmap.setPixel(i, j, newColor);
+		// 获取原图片半径
+		int radius = 0;
+		radius = source.getWidth() / 2;
+
+		// 获取生成图片半径
+		int newRandius = 0;
+		newRandius = bitmap.getWidth() / 2;
+
+		for (int i = 0; i < bitmapWidth; i++) {
+			for (int j = 0; j < bitmapHeight; j++) {
+				int newColor = 0;
+				if (i < sourceWidth && j < sourceHeight) {
+					int color = source.getPixel(i, j);
+					if (Math.hypot(radius - i, radius - j) > radius) {
+						newColor = Color.argb(0, 0, 0, 0);
+
+					} else {
+						newColor = Color.argb(255, Color.red(color),
+								Color.green(color), Color.blue(color));
+					}
+					bitmap.setPixel(i + borderWidth, j + borderWidth, newColor);
+				}
+				if (showBorder) {
+					double sqrt = Math.hypot(newRandius - i, newRandius - j);
+					if (sqrt <= newRandius && sqrt > radius) {
+						if (borderColor == null) {
+							newColor = Color.rgb(0, 0, 0);
+						} else {
+							newColor = borderColor;
+						}
+						bitmap.setPixel(i, j, newColor);
+					}
 				}
 			}
 		}
-
 		return bitmap;
 	}
 
 	/**
-	 * 缩放图片，返回图片宽度小于等于maxWidth,高度小于等于maxHeight.如果maxWidth大于原图片宽度并且maxHeight大于原图片高度则返回原图片
+	 * 缩放图片，返回图片宽度小于等于maxWidth,高度小于等于maxHeight.
+	 * 如果maxWidth大于原图片宽度并且maxHeight大于原图片高度则返回原图片
+	 * 
 	 * @param is
 	 * @param maxWidth
 	 * @param maxHeight
@@ -76,17 +99,18 @@ public class ImageTools {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// 得到options对象
 		BitmapFactory.Options boptions = new BitmapFactory.Options();
 		// 只解析图片边框
 		boptions.inJustDecodeBounds = true;
 		// 解析流
-		Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, boptions);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,
+				boptions);
 		// 得到原图片的宽高
 		int width = boptions.outWidth;
 		int height = boptions.outHeight;
-		System.out.println(maxWidth+".."+maxHeight+".."+width+".."+height);
+
 		if (maxWidth == null || maxWidth == 0) {
 			maxWidth = width;
 		}
@@ -108,9 +132,10 @@ public class ImageTools {
 
 			boptions.inJustDecodeBounds = false;
 			boptions.inSampleSize = scale;
-			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,boptions );
+			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,
+					boptions);
 		}
-		
+
 		return bitmap;
 	}
 }
