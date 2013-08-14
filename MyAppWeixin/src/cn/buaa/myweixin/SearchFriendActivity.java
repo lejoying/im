@@ -3,6 +3,7 @@ package cn.buaa.myweixin;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 
 public class SearchFriendActivity extends Activity {
 
@@ -11,6 +12,9 @@ public class SearchFriendActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchfriends);
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
 	}
 
 	public void back(View v) {

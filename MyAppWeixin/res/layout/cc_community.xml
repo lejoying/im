@@ -44,6 +44,7 @@
             android:layout_width="50dp"
             android:layout_height="25dp"
             android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
             android:layout_alignParentTop="true"
             android:onClick="back" >
 

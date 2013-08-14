@@ -26,8 +26,10 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -403,7 +405,7 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 		TranslateAnimation serviceShowTranslate = new TranslateAnimation(fromX,
 				0, fromY, 0);
 		serviceShowTranslate.setDuration(moveTime);
-
+		serviceShowTranslate.setInterpolator(new AccelerateDecelerateInterpolator());
 		serviceShowTranslate.setFillAfter(true);
 		rl_service_life.startAnimation(serviceShowTranslate);
 
