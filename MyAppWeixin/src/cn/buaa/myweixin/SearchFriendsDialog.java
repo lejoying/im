@@ -34,4 +34,9 @@ public class SearchFriendsDialog extends Activity {
 		finish();
 	}
 
+	// 打开社区服务站
+	public void showServiceStation(View v) {
+		Intent intent = new Intent(this, ServiceStationActivity.class);
+		startActivity(intent);
+	}
 }

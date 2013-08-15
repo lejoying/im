@@ -31,8 +31,10 @@ public class ServiceStationActivity extends Activity {
 	private LinearLayout ll_bottom;
 	private List<ImageView> page_ivs;
 
-	private Bitmap head1;
-	private Bitmap head2;
+	private Bitmap water;
+	private Bitmap anmo;
+	private Bitmap kuaidi;
+	private Bitmap jiazheng;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,32 +53,22 @@ public class ServiceStationActivity extends Activity {
 
 		GridView gv1 = (GridView) inflater.inflate(
 				R.layout.service_station_singlepage, null);
-		GridView gv2 = (GridView) inflater.inflate(
-				R.layout.service_station_singlepage, null);
-		GridView gv3 = (GridView) inflater.inflate(
-				R.layout.service_station_singlepage, null);
-		GridView gv4 = (GridView) inflater.inflate(
-				R.layout.service_station_singlepage, null);
-		GridView gv5 = (GridView) inflater.inflate(
-				R.layout.service_station_singlepage, null);
 
-		gv1.setAdapter(new GVAdapter(15));
-		gv2.setAdapter(new GVAdapter(15));
-		gv3.setAdapter(new GVAdapter(15));
-		gv4.setAdapter(new GVAdapter(15));
-		gv5.setAdapter(new GVAdapter(6));
+		gv1.setAdapter(new GVAdapter(4));
 
 		views.add(gv1);
-		views.add(gv2);
-		views.add(gv3);
-		views.add(gv4);
-		views.add(gv5);
 
-		head1 = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
-				getResources(), R.drawable.xiaohei), true, 3 ,Color.rgb(242, 242, 242));
+		water = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.ss_water), true, 3 ,Color.rgb(242, 242, 242));
 
-		head2 = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
-				getResources(), R.drawable.service_head), true, 6 ,Color.rgb(242, 242, 242));
+		anmo = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.ss_anmo), true, 3 ,Color.rgb(242, 242, 242));
+		
+		jiazheng = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.ss_jiazheng), true, 3 ,Color.rgb(242, 242, 242));
+		
+		kuaidi = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.ss_kuaidi), true, 3 ,Color.rgb(242, 242, 242));
 
 		PagerAdapter pagerAdapter = new PagerAdapter() {
 
@@ -181,13 +173,22 @@ public class ServiceStationActivity extends Activity {
 					R.layout.service_station_singleitem, null);
 			ImageView iv_head = (ImageView) rl.findViewById(R.id.iv_head);
 			TextView tv_name = (TextView) rl.findViewById(R.id.tv_name);
-			if (position % 2 == 0) {
-				iv_head.setImageBitmap(head1);
-				tv_name.setText("小黑");
-			} else {
-				iv_head.setImageBitmap(head2);
-				tv_name.setText("客服MM");
-			}
+			if (position == 0) {
+				iv_head.setImageBitmap(jiazheng);
+				tv_name.setText("家政服务");
+			} 
+			if (position == 1) {
+				iv_head.setImageBitmap(anmo);
+				tv_name.setText("按摩服务");
+			} 
+			if (position == 2) {
+				iv_head.setImageBitmap(water);
+				tv_name.setText("送水服务");
+			} 
+			if (position == 3) {
+				iv_head.setImageBitmap(kuaidi);
+				tv_name.setText("顺丰快递");
+			} 
 
 			return rl;
 		}

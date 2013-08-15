@@ -63,6 +63,7 @@
         android:background="@drawable/mm_listitem_grey_normal"
         android:clickable="true"
         android:gravity="center_vertical"
+        android:onClick="showServiceStation"
         android:paddingBottom="3dp"
         android:paddingLeft="18dp"
         android:paddingRight="18dp"
