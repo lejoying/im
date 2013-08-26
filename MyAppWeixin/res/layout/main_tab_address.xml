@@ -25,8 +25,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:clickable="true"
+                android:onClick="showMainTopCenterDialog"
                 android:text="天通苑站"
-                android:textColor="#ffffff"
+                android:textColor="@color/station_color"
                 android:textSize="20sp" />
         </RelativeLayout>
 
@@ -34,8 +36,7 @@
             android:layout_width="50dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:onClick="btnsearchfriends" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -43,7 +44,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_setting" />
+                android:clickable="true"
+                android:onClick="btnsearchfriends"
+                android:src="@drawable/btn_setting_topbar" />
         </RelativeLayout>
 
         <ImageView
@@ -54,13 +57,13 @@
             android:layout_marginLeft="3dp"
             android:layout_toRightOf="@+id/relativeLayout1"
             android:onClick="showMainTopCenterDialog"
-            android:src="@drawable/new_arrow_donw" />
+            android:src="@drawable/btn_arrow" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@drawable/mm_listitem_grey_normal"
+        android:background="@drawable/mm_listitem"
         android:clickable="true"
         android:gravity="center_vertical"
         android:onClick="showServiceStation"
@@ -110,7 +113,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@drawable/mm_listitem_grey_normal"
+        android:background="@drawable/mm_listitem"
         android:clickable="true"
         android:gravity="center_vertical"
         android:onClick="chat_friend_xiaohei"

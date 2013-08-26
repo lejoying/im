@@ -16,8 +16,7 @@
             android:layout_width="60dp"
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:onClick="chat_back" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -25,7 +24,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_arrow_top" />
+                android:clickable="true"
+                android:onClick="chat_back"
+                android:src="@drawable/btn_return_topbar" />
         </RelativeLayout>
 
         <TextView
@@ -44,8 +45,8 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:background="@drawable/title_btn_right"
-            android:src="@drawable/mm_title_btn_contact_normal" 
-            android:onClick="showCC"/>
+            android:onClick="showCC"
+            android:src="@drawable/mm_title_btn_contact_normal" />
     </RelativeLayout>
 
     <!-- android:background="@drawable/chat_footer_bg" -->
@@ -61,8 +62,8 @@
             android:id="@+id/btn_send"
             android:layout_width="55dp"
             android:layout_height="37dp"
+            android:layout_alignBottom="@id/et_sendmessage"
             android:layout_alignParentRight="true"
-			android:layout_alignBottom="@id/et_sendmessage"
             android:layout_marginRight="11dp"
             android:background="@drawable/chat_send_btn"
             android:text="发送"
@@ -74,10 +75,10 @@
             android:layout_height="38dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
-            android:lineSpacingExtra="1dp"
             android:layout_toLeftOf="@id/btn_send"
             android:layout_toRightOf="@+id/imageView1"
             android:background="@drawable/login_edit_normal"
+            android:lineSpacingExtra="1dp"
             android:singleLine="false"
             android:textSize="18sp" />
 
@@ -85,7 +86,7 @@
             android:id="@+id/imageView1"
             android:layout_width="37dp"
             android:layout_height="37dp"
-			android:layout_alignBottom="@id/et_sendmessage"
+            android:layout_alignBottom="@id/et_sendmessage"
             android:layout_marginLeft="11dp"
             android:layout_marginRight="6dp"
             android:src="@drawable/chat_picture_btn"

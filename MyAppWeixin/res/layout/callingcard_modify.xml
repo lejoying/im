@@ -17,8 +17,7 @@
             android:layout_width="60dp"
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:onClick="chat_back" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -26,7 +25,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_arrow_top" />
+                android:clickable="true"
+                android:onClick="chat_back"
+                android:src="@drawable/btn_return_topbar" />
         </RelativeLayout>
 
         <TextView
@@ -38,173 +39,168 @@
             android:textSize="20sp" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout2"
-        android:layout_width="fill_parent"
-        android:layout_height="55dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/rl_layout"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/preference_single_item"
-        android:clickable="true"
-        android:gravity="center_vertical" 
-        android:onClick="modifyheadmenu">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:text="头像："
-            android:textColor="#fff"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:scaleType="matrix"
-            android:src="@drawable/mm_submenu" />
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/imageView2"
-            android:src="@drawable/xiaohei" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout3"
-        android:layout_width="fill_parent"
-        android:layout_height="55dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/relativeLayout2"
-        android:background="@drawable/preference_single_item"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:onClick="modifyname" >
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:text="名字："
-            android:textColor="#fff"
-            android:textSize="17sp" />
-
-        <TextView
-            android:id="@+id/cc_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/textView1"
-            android:padding="8dp"
-            android:text="小黑"
-            android:textColor="#fff"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:scaleType="matrix"
-            android:src="@drawable/mm_submenu" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="55dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/relativeLayout3"
-        android:background="@drawable/preference_single_item"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:onClick="modifyphone" >
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:text="手机："
-            android:textColor="#fff"
-            android:textSize="17sp" />
-
-        <TextView
-            android:id="@+id/cc_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/textView2"
-            android:padding="8dp"
-            android:text="12312312312"
-            android:textColor="#fff"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:scaleType="matrix"
-            android:src="@drawable/mm_submenu" />
-    </RelativeLayout>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/relativeLayout1"
-        android:background="@drawable/preference_single_item"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:onClick="modifyyewu"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp" >
+        android:layout_below="@+id/rl_layout"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/frame_background"
+        android:orientation="vertical"
+        android:paddingBottom="7dp" >
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:text="主要业务："
-            android:textColor="#fff"
-            android:textSize="17sp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingBottom="6dp"
+            android:paddingTop="6dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="修改个人信息"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </RelativeLayout>
 
         <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:scaleType="matrix"
-            android:src="@drawable/mm_submenu" />
+            android:id="@+id/imageView4"
+            android:layout_width="fill_parent"
+            android:layout_height="2px"
+            android:background="#addd" />
 
-        <TextView
-            android:id="@+id/cc_yewu"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/cc_item_pressed"
+            android:clickable="true"
+            android:onClick="modifyheadmenu"
+            android:paddingBottom="6dp"
+            android:paddingTop="6dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="头像"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/xiaohei" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="fill_parent"
+            android:layout_height="2px"
+            android:background="@drawable/barometer" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/cc_item_pressed"
+            android:clickable="true"
+            android:onClick="modifyname"
+            android:paddingBottom="6dp"
+            android:paddingTop="6dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="名字"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/cc_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="冯志成"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="fill_parent"
+            android:layout_height="2px"
+            android:background="@drawable/barometer" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingBottom="6dp"
+            android:paddingTop="6dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="手机"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="12312312312"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="fill_parent"
+            android:layout_height="2px"
+            android:background="@drawable/barometer" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/imageView3"
-            android:layout_toRightOf="@id/textView3"
-            android:padding="8dp"
-            android:text="黑暗游侠！！！"
-            android:textColor="#fff"
-            android:textSize="17sp" />
-    </RelativeLayout>
+            android:background="@drawable/cc_item_pressed"
+            android:clickable="true"
+            android:onClick="modifyyewu"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:id="@+id/tv_yewu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="主要业务"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/cc_yewu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@id/tv_yewu"
+                android:text="冯志成冯志成冯志成冯志成冯志成冯志成冯志成冯志成冯成冯志成冯志成冯志成冯志成冯志成冯成冯志成冯志成冯志成冯志成冯志成冯成冯志成冯志成冯志成冯志成冯志成冯志成冯志成"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

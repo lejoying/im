@@ -10,7 +10,6 @@
         android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp" >
 
@@ -19,16 +18,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:text="名片"
             android:textColor="#fff"
             android:textSize="23sp" />
 
         <RelativeLayout
             android:layout_width="50dp"
-            android:layout_height="25dp"
+            android:layout_height="45dp"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:onClick="back" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -36,15 +35,16 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_arrow_top" />
+                android:clickable="true"
+                android:onClick="back"
+                android:src="@drawable/btn_return" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="50dp"
-            android:layout_height="25dp"
+            android:layout_height="45dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:onClick="callcardRightDialog" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -52,7 +52,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_setting" />
+                android:clickable="true"
+                android:onClick="callcardRightDialog"
+                android:src="@drawable/btn_setting" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -62,9 +64,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:overScrollMode="never"
         android:layout_alignParentRight="true"
-        android:scrollbars="none"
-        android:layout_below="@+id/relativeLayout1" >
+        android:layout_below="@+id/relativeLayout1"
+        android:scrollbars="none" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,40 +79,89 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/rl_show"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="27dp"
-                android:text="冯志成"
-                android:layout_marginBottom="10dp"
-                android:textColor="#fff"
-                android:textSize="28dp" />
+                android:padding="20dp" >
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="27dp"
-                android:text="主要业务:  群聊，技术，吃。"
-                android:textColor="#fff" />
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="冯志成"
+                    android:textColor="#fff"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView2"
+                    android:layout_marginTop="10dp"
+                    android:text="主要业务:  "
+                    android:textColor="#fff" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView2"
+                    android:layout_marginTop="10dp"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    android:paddingLeft="75dp"
+                    android:text="三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。 "
+                    android:textColor="#fff" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_spacing2"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="25dp" />
 
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:src="@drawable/qrcode" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="280dp"
+                android:background="@drawable/frame_background"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="7dp" >
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:text="二维码"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="fill_parent"
+                    android:layout_height="2px"
+                    android:layout_alignLeft="@+id/textView4"
+                    android:layout_below="@+id/textView4"
+                    android:layout_marginTop="8dp"
+                    android:background="#9fff" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_below="@id/imageView4"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/qrcode" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_spacing3"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 

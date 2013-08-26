@@ -124,6 +124,8 @@
         android:gravity="center"
         android:onClick="exit_settings"
         android:padding="4dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:text="退出登录"
         android:textColor="#fff"
         android:textSize="18sp" />

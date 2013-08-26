@@ -3,4 +3,7 @@
     <color name="window_bg">#ffeef1f3</color>
     <color name="qqblue">#ff54acea</color>
     <color name="transparent">#00000000</color>
+    
+    <color name="item_normal">#0000</color>
+    <color name="item_press">#5fff</color>
 </resources>

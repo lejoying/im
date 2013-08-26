@@ -10,7 +10,6 @@
         android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp" >
 
@@ -19,16 +18,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:text="名片"
             android:textColor="#fff"
             android:textSize="23sp" />
 
         <RelativeLayout
             android:layout_width="50dp"
-            android:layout_height="25dp"
+            android:layout_height="45dp"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:onClick="back" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -36,15 +35,16 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_arrow_top" />
+                android:clickable="true"
+                android:onClick="back"
+                android:src="@drawable/btn_return" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="50dp"
-            android:layout_height="25dp"
+            android:layout_height="45dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:onClick="callcardRightDialog" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -52,7 +52,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_setting" />
+                android:clickable="true"
+                android:onClick="callcardRightDialog"
+                android:src="@drawable/btn_setting" />
         </RelativeLayout>
     </RelativeLayout>
 

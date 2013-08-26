@@ -31,8 +31,10 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:onClick="showMainTopCenterDialog"
                     android:text="天通苑站"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/station_color"
                     android:textSize="20sp" />
             </RelativeLayout>
 
@@ -43,8 +45,9 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="3dp"
                 android:layout_toRightOf="@+id/relativeLayout1"
+                android:clickable="true"
                 android:onClick="showMainTopCenterDialog"
-                android:src="@drawable/new_arrow_donw" />
+                android:src="@drawable/btn_arrow" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -54,8 +57,8 @@
         android:layout_marginTop="14dp"
         android:background="@drawable/preference_first_item"
         android:clickable="true"
-        android:onClick="showServiceStation"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:onClick="showServiceStation" >
 
         <ImageView
             android:id="@+id/community"

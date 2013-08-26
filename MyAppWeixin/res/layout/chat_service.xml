@@ -16,8 +16,7 @@
             android:layout_width="60dp"
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:onClick="chat_back" >
+            android:layout_centerVertical="true" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -25,7 +24,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_arrow_top" />
+                android:clickable="true"
+                android:onClick="chat_back"
+                android:src="@drawable/btn_return_topbar" />
         </RelativeLayout>
 
         <TextView

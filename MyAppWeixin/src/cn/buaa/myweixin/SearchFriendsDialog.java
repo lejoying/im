@@ -38,5 +38,6 @@ public class SearchFriendsDialog extends Activity {
 	public void showServiceStation(View v) {
 		Intent intent = new Intent(this, ServiceStationActivity.class);
 		startActivity(intent);
+		finish();
 	}
 }

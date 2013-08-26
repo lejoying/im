@@ -46,24 +46,6 @@ public class CallingCardModifyHeadActivity extends Activity {
 		lp.height = screenW - 10;
 		rl_cut.setLayoutParams(lp);
 
-		rl_cut.setOnTouchListener(new OnTouchListener() {
-
-			int location[] = new int[2];
-			MotionEvent me;
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				iv_head.getLocationOnScreen(location);
-				float xc = event.getX() - location[0];
-				float yc = event.getY() - location[1];
-				if (event.getPointerCount() == 1) {
-					me = event;
-					me.setLocation(location[0],location[1]);
-					iv_head.onTouchEvent(me);
-				}
-				return true;
-			}
-		});
 	}
 
 	public void choiceWay() {
