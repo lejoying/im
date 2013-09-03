@@ -143,6 +143,48 @@
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@id/servicehead"
             android:padding="7dp"
+            android:text="..."
+            android:textColor="#fff" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/mm_listitem"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:onClick="startservicewaterchat" >
+
+        <ImageView
+            android:id="@+id/servicehead"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="5dp"
+            android:src="@drawable/ss_water" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/servicehead"
+            android:padding="7dp"
+            android:text="送水服务"
+            android:textColor="#fff" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="7dp"
+            android:text="今天 下午"
+            android:textColor="#fff" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/servicehead"
+            android:padding="7dp"
             android:text="还没开始聊天哦"
             android:textColor="#fff" />
     </RelativeLayout>

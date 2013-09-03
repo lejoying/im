@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,6 +16,8 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -54,7 +57,18 @@ public class ServiceStationActivity extends Activity {
 		GridView gv1 = (GridView) inflater.inflate(
 				R.layout.service_station_singlepage, null);
 
-		gv1.setAdapter(new GVAdapter(4));
+		GVAdapter gvadapter = new GVAdapter(4);
+		
+		gv1.setAdapter(gvadapter);
+		
+		gv1.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent(ServiceStationActivity.this,ChatServiceWaterActivity.class);
+				startActivity(intent);
+			}
+		});
 
 		views.add(gv1);
 

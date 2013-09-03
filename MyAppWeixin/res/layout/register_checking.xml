@@ -99,7 +99,7 @@
             android:layout_alignBottom="@+id/login_passwd_edit"
             android:layout_alignParentRight="true"
             android:background="@drawable/btn_style_green"
-            android:onClick="registerMobileNext"
+            android:onClick="registerCheckingNext"
             android:text="下一步"
             android:textColor="#ffffff"
             android:textSize="18sp" />

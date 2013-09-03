@@ -329,6 +329,11 @@ public class MainWeixin extends Activity {
 		Intent intent = new Intent(MainWeixin.this, ChatServiceActivity.class);
 		startActivity(intent);
 	}
+	// 和送水服务开始聊天
+	public void startservicewaterchat(View v) {
+		Intent intent = new Intent(MainWeixin.this, ChatServiceWaterActivity.class);
+		startActivity(intent);
+	}
 
 	// 好友界面查找好友按钮
 	public void btnsearchfriends(View v) {
@@ -367,6 +372,11 @@ public class MainWeixin extends Activity {
 	// 打开社区服务站
 	public void showServiceStation(View v) {
 		Intent intent = new Intent(this, ServiceStationActivity.class);
+		startActivity(intent);
+	}
+	
+	public void showCallingcard(View v){
+		Intent intent = new Intent(this,CallingCardActivity.class);
 		startActivity(intent);
 	}
 }

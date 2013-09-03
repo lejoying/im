@@ -34,6 +34,7 @@
         <activity android:name=".Whatsnew"  android:theme="@style/Anim_style2" />
         <activity android:name=".ChatActivity"  android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name=".ChatServiceActivity"  android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".ChatServiceWaterActivity"  android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name=".ShakeActivity"  android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name=".InfoXiaohei"  android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name="Exit" android:theme="@style/MyDialogStyle" />        

@@ -14,16 +14,11 @@
             android:layout_height="wrap_content"
             android:gravity="center" >
             
-            <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/copyright" />
-            
             <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="微信"
+            android:text="微型公社"
             android:textColor="#000000"
             android:textSize="35sp" />
             
@@ -34,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="By：谜@BUAA"
+            android:text=""
             android:textColor="#000"
             android:textSize="30dp" />
 
@@ -56,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:text="使用QQ号或者微信号登录"
+            android:text=""
             android:textSize="14sp"
             android:textColor="#444" />
 
@@ -79,7 +74,7 @@
             android:layout_height="wrap_content"
             android:padding="6dp"
             android:gravity="center"
-            android:text="【点击跳转到主界面】\n如果你没有QQ号，请注册"
+            android:text=""
             android:textSize="14sp"
             android:textColor="#444"  />
     </LinearLayout>

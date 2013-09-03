@@ -51,23 +51,11 @@ public class RegisterActivity extends Activity {
 				int what = msg.what;
 				switch (what) {
 				case REGISTER_NEXT:
-					System.out.println("手机号码为："
-							+ register_number_edit.getText().toString());
-					System.out.println("验证码为：" + new String(data));
-					System.out.println("本机号码为："
-							+ TelephoneTools
-									.getPhoneNumber(RegisterActivity.this));
-					Toast.makeText(
-							RegisterActivity.this,
-							TelephoneTools
-									.getPhoneNumber(RegisterActivity.this),
-							Toast.LENGTH_SHORT).show();
-
 					Intent intent = new Intent(RegisterActivity.this,
 							RegisterCheckingActivity.class);
 					Bundle bundle = new Bundle();
-					bundle.putInt("checkingcode",
-							Integer.valueOf(new String(data)));
+				//	bundle.putInt("checkingcode",
+				//			Integer.valueOf(new String(data)));
 					bundle.putString("number", registerNumber);
 					intent.putExtras(bundle);
 					RegisterActivity.this.startActivity(intent);
@@ -88,11 +76,11 @@ public class RegisterActivity extends Activity {
 	// 点击下一步
 	public void registerMobileNext(View v) {
 		if (isAgreeProvision) {
-			boolean hasNetwork = HttpTools.hasNetwork(this);
+			/*boolean hasNetwork = HttpTools.hasNetwork(this);
 			if (!hasNetwork)
 				Toast.makeText(RegisterActivity.this, "无网络连接",
 						Toast.LENGTH_SHORT).show();
-			else {
+			else {*/
 				String number = register_number_edit.getText().toString();
 				if (number == null || number.equals("")) {
 					Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT)
@@ -106,21 +94,16 @@ public class RegisterActivity extends Activity {
 						// TODO Auto-generated method stub
 						super.run();
 
-						try {
-							Map<String, String> map = new HashMap<String, String>();
+							/*Map<String, String> map = new HashMap<String, String>();
 							map.put("number", String.valueOf(registerNumber));
 							data = HttpTools
 									.sendPost(
 											"http://192.168.0.100:8080/weixinService/weixin/reg_register",
-											map);
+											map);*/
 							handler.sendEmptyMessage(REGISTER_NEXT);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
 					}
-				}.start();
-			}
+				}.start();/*
+			}*/
 		} else {
 			Toast.makeText(this, "请同意使用条款和隐私政策", Toast.LENGTH_SHORT).show();
 		}

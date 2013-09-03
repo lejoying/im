@@ -281,16 +281,16 @@ public class ChatServiceActivity extends Activity implements OnClickListener {
 			send("按摩服务");
 			break;
 		case R.id.rl_service_more:
-			hideServiceMenu();
-			send("更多");
+			//hideServiceMenu();
+			//send("更多");
 			break;
 		case R.id.rl_service_water:
 			hideServiceMenu();
 			send("送水服务");
 			break;
 		case R.id.rl_service_life:
-			hideServiceMenu();
-			send("生活服务");
+			//hideServiceMenu();
+			//send("生活服务");
 			break;
 		}
 	}

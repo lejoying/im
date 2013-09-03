@@ -14,11 +14,17 @@ public class CCommunityActivity extends Activity {
 		setContentView(R.layout.cc_community);
 	}
 
-	public void back(View v){
+	public void back(View v) {
 		finish();
 	}
-	public void callcardRightDialog(View v){
-		Intent intent = new Intent(this,CCommunityRightDialog.class);
+
+	public void callcardRightDialog(View v) {
+		Intent intent = new Intent(this, CCommunityRightDialog.class);
+		startActivity(intent);
+	}
+
+	public void joinC(View v) {
+		Intent intent = new Intent(this, MainWeixin.class);
 		startActivity(intent);
 	}
 }

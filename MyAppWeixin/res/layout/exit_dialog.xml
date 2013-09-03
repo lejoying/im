@@ -14,7 +14,7 @@
             android:padding="5dp"
             android:textColor="#333"
             android:textSize="20sp"
-            android:text="退出微信公社" />
+            android:text="退出微型公社" />
         
         <TextView
             android:layout_width="wrap_content"
