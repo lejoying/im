@@ -11,6 +11,7 @@ function route(routemap, url, request, response) {
         return;
     }
     var handlemethod = null;
+
     if (request.method == "GET") {
         handlemethod = routemap.get;
     } else if (request.method == "PUT") {
@@ -81,6 +82,7 @@ function routepath(pathvalue, url) {
                 return null;
             }
         }
+
         return pathObject;
     }
     return null;

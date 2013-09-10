@@ -1,4 +1,6 @@
+var sessionID;
 $(document).ready(function(){
+    sessionID = "user1" + new Date().getTime();
     getMessage();
     $(".chatSend").click(function(){
         $.ajax({
@@ -20,18 +22,21 @@ $(document).ready(function(){
 
 function getMessage(){
     $.ajax({
-        type:"POST",
+        type:"GET",
         url:"/api2/message/get",
         timeout:30000,
         data:{
-            "uid":"user1"
+            "uid":"user1",
+            "sessionID":  sessionID
         },
         success:function(data){
             proccessMessage(data);
-            getmessage();
-        },
-        failed:function(){
             getMessage();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            if (textStatus == "timeout") {
+                getMessage();
+            }
         }
 
     });

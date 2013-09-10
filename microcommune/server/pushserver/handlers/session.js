@@ -13,17 +13,37 @@ var access = 0;
 var sessionPool = {};
 var accountSession = {};
 
-session.event = function (uid, sessionID, response) {
+session.get = function (uid, sessionID, response) {
     response.asynchronous = 1;
 
+    console.log("1");
     var sessionResponse = sessionPool[sessionID];
     if (sessionResponse != null) {
         sessionResponse.end();
     }
+    console.log("2");
 
     sessionPool[sessionID] = response;
     accountSession[uid] = accountSession[uid] || [];
     accountSession[uid][sessionID] = response;
+
+   // console.log(accountSession);
+
+    for(var sid in accountSession[user1]){
+
+    }
+
+}
+
+function getMsg(uid,sessionID){
+    var array = accountSession[uid];
+
+    var reponse = accountSession[uid][sessionID];
+    event = {
+       "a":1
+    }
+    reponse.write(JSON.stringify(event));
+    reponse.end();
 }
 
 session.notify = notify;

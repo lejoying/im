@@ -19,11 +19,11 @@ requestHandlers.session = function (request, response, pathObject, getParam) {
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "event") {
+    if (operation == "get") {
         var uid = getParam["uid"];
         var sessionID = getParam["sessionID"];
         var eventID = getParam["eventID"];
-        session.event(uid, sessionID, response);
+        session.get(uid, sessionID, response);
     }
     else if (operation == "notify") {
         var uid = getParam["uid"];
