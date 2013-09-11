@@ -1,8 +1,3 @@
-/**
- * Date: 2013.04.15
- * The request processor for the route mapping.
- */
-
 function route(routemap, url, request, response) {
     var pathObject = null;
     var err = true;
@@ -14,13 +9,9 @@ function route(routemap, url, request, response) {
 
     if (request.method == "GET") {
         handlemethod = routemap.get;
-    } else if (request.method == "PUT") {
-        handlemethod = routemap.put;
-    } else if (request.method == "POST") {
+    }else if (request.method == "POST") {
         handlemethod = routemap.post;
-    } else if (request.method == "DELETE") {
-        handlemethod = routemap.del;
-    } else {
+    }else {
         return404();
         return;
     }

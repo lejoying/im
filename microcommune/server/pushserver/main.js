@@ -1,5 +1,4 @@
 /**
- * Date: 2013.04.15
  * The simplest framework for RESTful api server.
  * Run "$ sudo node main.js" to start the server.
  */
@@ -7,7 +6,6 @@
 var http = require("http");
 var route = require("./lib/route");
 var routemap = require("./routemap");
-
 
 var i = 1;
 

@@ -13,6 +13,9 @@ var access = 0;
 var sessionPool = {};
 var accountSession = {};
 
+var redis = require("redis");
+var redisClient = redis.createClient();
+
 session.get = function (uid, sessionID, response) {
     response.asynchronous = 1;
 
@@ -24,34 +27,43 @@ session.get = function (uid, sessionID, response) {
     sessionPool[sessionID] = response;
     accountSession[uid] = accountSession[uid] || [];
     accountSession[uid][sessionID] = response;
-}
-
-function getMessages(){
 
 }
 
-session.notify = notify;
-function notify(uid, sessionID, eventID, event, response) {
+session.send = send;
+function send(uid, userlist, messages, response) {
 
-    event = event || {eventID: eventID};
-    if (sessionID == "*") {
-        var sessions = accountSession[uid];
-        for (var sessionID in sessions) {
-            var sessionResponse = sessions[sessionID];
-            sessionResponse.write(JSON.stringify(event));
+    for (var count in userlist) {
+        processResponse(userlist[count], function process(sessionResponse) {
+            sessionResponse.write(JSON.stringify(messages));
             sessionResponse.end();
-        }
+        });
     }
-    else {
-        var sessionResponse = sessionPool[sessionID];
-        sessionResponse.write(JSON.stringify(event));
-        sessionResponse.end();
+
+    function processResponse(touid, process) {
+        var sessions = accountSession[touid];
+        if (sessions != undefined) {
+            for (var sessionID in sessions) {
+                var sessionResponse = sessions[sessionID];
+                process(sessionResponse);
+            }
+        } else {
+            console.log(touid+"为离线状态");
+        }
     }
 
     response.write(JSON.stringify({
-        "information": "notify success"
+        "information": "send success"
     }));
     response.end();
+}
+
+function saveMessages(){
+
+}
+
+function getMessages (){
+
 }
 
 module.exports = session;

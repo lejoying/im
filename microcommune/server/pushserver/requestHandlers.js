@@ -1,8 +1,3 @@
-/**
- * Date: 2013.04.15
- * requestHandles dispatch.
- */
-
 var requestHandlers = {};
 
 var globaldata = root.globaldata;
@@ -25,16 +20,11 @@ requestHandlers.session = function (request, response, pathObject, getParam) {
         var eventID = getParam["eventID"];
         session.get(uid, sessionID, response);
     }
-    else if (operation == "notify") {
+    else if (operation == "send") {
         var uid = getParam["uid"];
-        var sessionID = getParam["sessionID"];
-        var eventID = getParam["eventID"];
-        var eventStr = getParam["event"];
-        var event;
-        if (eventStr != null) {
-            event = JSON.parse(eventStr);
-        }
-        session.notify(uid, sessionID, eventID, event, response);
+        var userlist = JSON.parse(getParam["userlist"]);
+        var messages = JSON.parse(getParam["messages"]);
+        session.send(uid, userlist, messages, response);
     }
 };
 
