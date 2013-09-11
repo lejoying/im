@@ -20,7 +20,7 @@ api = {
      ***************************************/
     "message_get": {
         request: {
-            typical: {"uid": "XXX"}
+            typical: {"uid": "XXX","sessionID":"XXX"}
         },
         response: {
             success: {"提示信息": "消息获取成功", "messages":[{"content":"xxx","time":"123123123","timeline":"xxx"},{"content":"xxx","time":"123123123","timeline":"xxx"}]},
