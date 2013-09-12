@@ -8,7 +8,7 @@
     <file path="/apiDefintion.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378866392796" ignored="false" />
     <file path="/message.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378876498500" ignored="false" />
     <file path="/route.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378870775406" ignored="false" />
-    <file path="/session.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378886432343" ignored="false" />
+    <file path="/session.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378958944312" ignored="false" />
     <file path="/requestHandlers.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378872196078" ignored="false" />
     <file path="/routemap.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378805919859" ignored="false" />
     <file path="/main.js" changelist="e0c17bff-5603-4789-ad75-ba1171b5043a" time="1378867802234" ignored="false" />
@@ -40,19 +40,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="routemap.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/pushserver/routemap.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="65" selection-start="271" selection-end="271" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="route.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/pushserver/lib/route.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="73" selection-start="968" selection-end="978" vertical-scroll-proportion="0.0">
+            <state line="120" column="47" selection-start="3806" selection-end="3806" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -61,36 +52,25 @@
       <file leaf-file-name="requestHandlers.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/pushserver/requestHandlers.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="55" selection-start="939" selection-end="939" vertical-scroll-proportion="0.0">
+            <state line="26" column="0" selection-start="941" selection-end="941" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="message.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/microCommune/u1/static/js/message.js">
+      <file leaf-file-name="session.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/pushserver/handlers/session.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="32" selection-start="450" selection-end="450" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1378876534390" expanded="true" signature="5974:5994" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="default.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/microCommune/u1/default.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="292" column="18" selection-start="19730" selection-end="19730" vertical-scroll-proportion="-8.821428">
+            <state line="83" column="38" selection-start="2192" selection-end="2192" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="default.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/microCommune/u2/default.html">
+      <file leaf-file-name="apiDefintion.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/server/apiDefintion.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="292" column="0" selection-start="19730" selection-end="19730" vertical-scroll-proportion="-22.285715">
+            <state line="10" column="85" selection-start="445" selection-end="445" vertical-scroll-proportion="0.20971303">
               <folding />
             </state>
           </provider>
@@ -100,26 +80,6 @@
         <entry file="file://$PROJECT_DIR$/web/microCommune/u2/static/js/message.js">
           <provider selected="true" editor-type-id="text-editor">
             <state line="5" column="50" selection-start="194" selection-end="227" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1378876521843" expanded="true" signature="2366:2386" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="session.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/server/pushserver/handlers/session.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="55" selection-start="1334" selection-end="1334" vertical-scroll-proportion="1.1891892">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="79" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -207,6 +167,84 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="microCommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microcommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microcommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microCommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="u2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microcommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microcommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microCommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="u2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microcommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microcommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="microCommune" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="u2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -357,18 +395,38 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
     <frame x="1276" y="-4" width="1928" height="1088" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290461" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24986821" sideWeight="0.7824223" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24986821" sideWeight="0.6677385" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39978564" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21757771" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290461" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33194155" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -438,35 +496,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="2" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/server/apiDefintion.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="53" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/pushserver/routemap.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavascriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/EcmaScript.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="0" selection-start="497" selection-end="497" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/microCommune/static/js/sendMsg.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.WebStorm6/system/extLibs/nodejs-v0.10.17-src/core-modules-sources/lib/events.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="0" selection-start="2741" selection-end="2741" vertical-scroll-proportion="1.7769784" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server/pushserver/main.js">
@@ -476,51 +512,61 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="79" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/pushserver/lib/route.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="73" selection-start="968" selection-end="978" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/pushserver/routemap.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="65" selection-start="271" selection-end="271" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="4" column="65" selection-start="271" selection-end="271" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/pushserver/requestHandlers.js">
+    <entry file="file://$PROJECT_DIR$/web/microCommune/static/js/jquery.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="55" selection-start="939" selection-end="939" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="1" column="33233" selection-start="33286" selection-end="33286" vertical-scroll-proportion="0.03259005" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/apiDefintion.js">
+    <entry file="file://$PROJECT_DIR$/node_modules/redis/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="52" selection-start="839" selection-end="839" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="989" column="57" selection-start="35527" selection-end="35527" vertical-scroll-proportion="0.30033556" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/microCommune/u1/default.html">
+    <entry file="file://$PROJECT_DIR$/server/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="292" column="18" selection-start="19730" selection-end="19730" vertical-scroll-proportion="-8.821428">
-          <folding />
-        </state>
+        <state line="0" column="79" selection-start="49" selection-end="49" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/microCommune/u2/default.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="292" column="0" selection-start="19730" selection-end="19730" vertical-scroll-proportion="-22.285715">
+        <state line="292" column="0" selection-start="19730" selection-end="19730" vertical-scroll-proportion="0.034234233" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/microCommune/u1/default.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="292" column="18" selection-start="19730" selection-end="19730" vertical-scroll-proportion="0.034234233" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/microCommune/u1/static/js/message.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="32" selection-start="450" selection-end="450" vertical-scroll-proportion="0.03259005" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/pushserver/requestHandlers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="0" selection-start="941" selection-end="941" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.WebStorm6/system/extLibs/nodejs-v0.10.17-src/core-modules-sources/lib/_stream_readable.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="919" column="0" selection-start="25485" selection-end="25513" vertical-scroll-proportion="0.60787994" />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.WebStorm6/system/extLibs/nodejs-v0.10.17-src/core-modules-sources/lib/events.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="0" selection-start="3165" selection-end="3165" vertical-scroll-proportion="0.33208254" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/pushserver/lib/route.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="120" column="47" selection-start="3806" selection-end="3806" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -528,24 +574,20 @@
     <entry file="file://$PROJECT_DIR$/web/microCommune/u2/static/js/message.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="50" selection-start="194" selection-end="227" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1378876521843" expanded="true" signature="2366:2386" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/microCommune/u1/static/js/message.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="32" selection-start="450" selection-end="450" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1378876534390" expanded="true" signature="5974:5994" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server/pushserver/handlers/session.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="55" selection-start="1334" selection-end="1334" vertical-scroll-proportion="1.1891892">
+        <state line="83" column="38" selection-start="2192" selection-end="2192" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/apiDefintion.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="85" selection-start="445" selection-end="445" vertical-scroll-proportion="0.20971303">
           <folding />
         </state>
       </provider>

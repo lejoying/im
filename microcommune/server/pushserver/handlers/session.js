@@ -14,7 +14,8 @@ var sessionPool = {};
 var accountSession = {};
 
 var redis = require("redis");
-var redisClient = redis.createClient();
+var saveClient;
+var getClient;
 
 session.get = function (uid, sessionID, response) {
     response.asynchronous = 1;
@@ -32,9 +33,10 @@ session.get = function (uid, sessionID, response) {
 
 session.send = send;
 function send(uid, userlist, messages, response) {
-
+    saveMessages(messages);
     for (var count in userlist) {
         processResponse(userlist[count], function process(sessionResponse) {
+            getMessages();
             sessionResponse.write(JSON.stringify(messages));
             sessionResponse.end();
         });
@@ -48,7 +50,7 @@ function send(uid, userlist, messages, response) {
                 process(sessionResponse);
             }
         } else {
-            console.log(touid+"为离线状态");
+            console.log(touid + "为离线状态");
         }
     }
 
@@ -58,11 +60,29 @@ function send(uid, userlist, messages, response) {
     response.end();
 }
 
-function saveMessages(){
-
+function saveMessages(messages) {
+    saveClient = redis.createClient();
+    saveClient.hmset("aa", messages, function (err, reply) {
+        if (err != null) {
+            console.log(err);
+            saveClient.end();
+            return;
+        }
+        saveClient.end();
+    });
 }
 
-function getMessages (){
+function getMessages() {
+    getClient = redis.createClient();
+    getClient.hgetall("aa", function (err, reply) {
+        if (err != null) {
+            console.log(err);
+            getClient.end();
+            return;
+        }
+        console.log(reply);
+        getClient.end();
+    });
 
 }
 
