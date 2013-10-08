@@ -16,7 +16,7 @@ accountManage.verifypass = function(data, response){
 
 }
 accountManage.auth = function(data, response){
-
+    response.asynchronous = 1;
 }
 accountManage.trash = function(data, response){
 
