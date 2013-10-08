@@ -22,7 +22,6 @@ function route(routemap, url, request, response) {
             err = false;
             var getParam = parseUrl(url);
             getPostData(request, response, function (postData) {
-                console.log(postData);
                 if (request.method == "GET") {
                     handlemethod[pathvalue](request, response, pathObject, getParam);
                 } else if (request.method == "POST") {

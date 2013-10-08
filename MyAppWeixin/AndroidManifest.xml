@@ -49,6 +49,7 @@
         <activity android:name="CCommunityRightDialog" android:theme="@style/MyDialogStyleTop" />
         <activity android:name="RegisterActivity" android:theme="@android:style/Theme.NoTitleBar"/> 
         <activity android:name="RegisterCheckingActivity" android:theme="@android:style/Theme.NoTitleBar"/> 
+        <activity android:name="RegisterSetPassActivity" android:theme="@android:style/Theme.NoTitleBar"/> 
         <activity android:name="CallingCardActivity" android:theme="@android:style/Theme.NoTitleBar"/>
         <activity android:name="CallingCardModifyActivity" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask"/>
         <activity android:name="CallingCardModifyNameActivity" android:theme="@android:style/Theme.NoTitleBar"/>

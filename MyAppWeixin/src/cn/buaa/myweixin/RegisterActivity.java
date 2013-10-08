@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import cn.buaa.myweixin.utils.HttpTools;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -40,6 +43,7 @@ public class RegisterActivity extends Activity {
 		// 启动activity时自动弹出软键盘
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
 		initView();
 		handler = new Handler() {
 
@@ -53,10 +57,30 @@ public class RegisterActivity extends Activity {
 					Intent intent = new Intent(RegisterActivity.this,
 							RegisterCheckingActivity.class);
 					Bundle bundle = new Bundle();
-					bundle.putInt("phone",
-							Integer.valueOf(new String(data)));
-					intent.putExtras(bundle);
-					RegisterActivity.this.startActivity(intent);
+					try {
+						JSONObject jo = new JSONObject(new String(data));
+						String info = jo.getString("提示消息");
+						String number = jo.getString("phone");
+						if (info.equals("手机号验证成功")) {
+							if (number.equals(registerNumber)) {
+								bundle.putString("number", registerNumber);
+								intent.putExtras(bundle);
+								RegisterActivity.this.startActivity(intent);
+
+							} else {
+								Toast.makeText(RegisterActivity.this, "出现异常",
+										Toast.LENGTH_SHORT).show();
+
+							}
+						} else {
+							String err = jo.getString("失败原因");
+							Toast.makeText(RegisterActivity.this, err,
+									Toast.LENGTH_SHORT).show();
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				default:
 					break;
@@ -74,11 +98,11 @@ public class RegisterActivity extends Activity {
 	// 点击下一步
 	public void registerMobileNext(View v) {
 		if (isAgreeProvision) {
-			/*boolean hasNetwork = HttpTools.hasNetwork(this);
+			boolean hasNetwork = HttpTools.hasNetwork(this);
 			if (!hasNetwork)
 				Toast.makeText(RegisterActivity.this, "无网络连接",
 						Toast.LENGTH_SHORT).show();
-			else {*/
+			else {
 				String number = register_number_edit.getText().toString();
 				if (number == null || number.equals("")) {
 					Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT)
@@ -92,21 +116,21 @@ public class RegisterActivity extends Activity {
 						// TODO Auto-generated method stub
 						super.run();
 
-							Map<String, String> map = new HashMap<String, String>();
-							map.put("phone", String.valueOf(registerNumber));
-							try {
-								data = HttpTools
-										.sendPost(
-												"http://192.168.3.252:8071/api2/account/verifyphone",
-												map);
-								handler.sendEmptyMessage(REGISTER_NEXT);
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("phone", String.valueOf(registerNumber));
+						try {
+							data = HttpTools
+									.sendPost(
+											"http://192.168.3.252:8071/api2/account/verifyphone",
+											map);
+							handler.sendEmptyMessage(REGISTER_NEXT);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-				}.start();/*
-			}*/
+				}.start();
+			}
 		} else {
 			Toast.makeText(this, "请同意使用条款和隐私政策", Toast.LENGTH_SHORT).show();
 		}
@@ -115,11 +139,9 @@ public class RegisterActivity extends Activity {
 	// 同意条款
 	public void agreeProvision(View v) {
 		if (isAgreeProvision) {
-			System.out.println("disagree");
 			iv_agreeprovision.setImageResource(R.drawable.reg_checkbox_normal);
 			isAgreeProvision = false;
 		} else {
-			System.out.println("agree");
 			iv_agreeprovision.setImageResource(R.drawable.reg_checkbox_checked);
 			isAgreeProvision = true;
 		}

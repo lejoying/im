@@ -76,7 +76,7 @@
 
         <EditText
             android:layout_marginTop="15dp"
-            android:id="@+id/login_passwd_edit"
+            android:id="@+id/tv_checkingcode"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/relativeLayout1"
@@ -96,7 +96,7 @@
             android:id="@+id/login_login_btn"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/login_passwd_edit"
+            android:layout_alignBottom="@+id/tv_checkingcode"
             android:layout_alignParentRight="true"
             android:background="@drawable/btn_style_green"
             android:onClick="registerCheckingNext"

@@ -18,7 +18,7 @@ public class Login extends Activity {
         setContentView(R.layout.login);
         
         mUser = (EditText)findViewById(R.id.login_user_edit);
-        mPassword = (EditText)findViewById(R.id.login_passwd_edit);
+        mPassword = (EditText)findViewById(R.id.tv_password);
         
     }
 

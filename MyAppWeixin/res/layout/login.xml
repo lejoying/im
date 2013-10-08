@@ -46,7 +46,7 @@
 	    android:background="@drawable/login_editbox"
 	    android:hint="QQ号/微信号/手机号（请输入buaa）"/>
 	<EditText 
-	    android:id="@+id/login_passwd_edit"
+	    android:id="@+id/tv_password"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/login_user_edit"
@@ -63,7 +63,7 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="20dp"
-	    android:layout_below="@+id/login_passwd_edit"
+	    android:layout_below="@+id/tv_password"
 	    >
 	    <Button
 	        android:id="@+id/forget_passwd" 
