@@ -35,8 +35,13 @@ session.send = send;
 function send(uid, userlist, messages, response) {
     saveMessages(messages);
     for (var count in userlist) {
+        var nowTime = new Date().getTime();
         processResponse(userlist[count], function process(sessionResponse) {
-            getMessages();
+            console.log();
+            while(new Date().getTime() - nowTime < 10000){
+
+            }
+            //getMessages();
             sessionResponse.write(JSON.stringify(messages));
             sessionResponse.end();
         });

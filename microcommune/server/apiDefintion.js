@@ -4,11 +4,11 @@
 
 api = {
     /***************************************
-     *     URL：/api2/message/send
+     *     URL：/api2/message/sendmessage
      ***************************************/
     "message_send": {
         request: {
-            typical: {"uid": "XXX", "userlist": [1,2,3], "message": {"content":"xxx","time":"123123123","timeline":"xxx"}}
+            typical: {"uid": "XXX", "userlist": [1,2,3], "message": {"content":"xxx","time":"123123123"}}
         },
         response: {
             success: {"提示信息": "消息发送成功"},
@@ -16,14 +16,14 @@ api = {
         }
     },
     /***************************************
-     *     URL：/api2/message/get
+     *     URL：/api2/message/getmessages
      ***************************************/
     "message_get": {
         request: {
             typical: {"uid": "XXX","sessionID":"XXX"}
         },
         response: {
-            success: {"提示信息": "消息获取成功", "messages":[{"content":"xxx","time":"123123123","timeline":"xxx"},{"content":"xxx","time":"123123123","timeline":"xxx"}]},
+            success: {"提示信息": "消息获取成功", "messages":[{"content":"xxx","time":"123123123"},{"content":"xxx","time":"123123123"}]},
             failed: {"提示信息": "消息获取失败", "失败原因": []}}
         }
     }

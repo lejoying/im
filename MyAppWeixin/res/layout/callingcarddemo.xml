@@ -89,7 +89,7 @@
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="冯志成"
+                    android:text="李伟"
                     android:textColor="#fff"
                     android:textSize="28sp" />
 
@@ -111,7 +111,7 @@
                     android:maxLines="3"
                     android:ellipsize="end"
                     android:paddingLeft="75dp"
-                    android:text="三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。三百元后给六折优惠。 "
+                    android:text="送水服务，多买多送！！"
                     android:textColor="#fff" />
             </RelativeLayout>
 
