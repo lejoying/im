@@ -94,12 +94,17 @@ public class RegisterActivity extends Activity {
 						// TODO Auto-generated method stub
 						super.run();
 
-							/*Map<String, String> map = new HashMap<String, String>();
-							map.put("number", String.valueOf(registerNumber));
-							data = HttpTools
-									.sendPost(
-											"http://192.168.0.100:8080/weixinService/weixin/reg_register",
-											map);*/
+							Map<String, String> map = new HashMap<String, String>();
+							map.put("phone", String.valueOf(registerNumber));
+							try {
+								data = HttpTools
+										.sendPost(
+												"http://192.168.3.252:8071/api2/account/verifyphone",
+												map);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							handler.sendEmptyMessage(REGISTER_NEXT);
 					}
 				}.start();/*

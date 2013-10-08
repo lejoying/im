@@ -1,1 +1,1 @@
-var pushserver = require("./pushserver/main.js");
+var pushserver = require("./mcserver/main.js");
