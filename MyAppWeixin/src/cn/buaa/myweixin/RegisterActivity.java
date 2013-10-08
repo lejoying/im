@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.buaa.myweixin.utils.HttpTools;
-import cn.buaa.myweixin.utils.TelephoneTools;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -54,9 +53,8 @@ public class RegisterActivity extends Activity {
 					Intent intent = new Intent(RegisterActivity.this,
 							RegisterCheckingActivity.class);
 					Bundle bundle = new Bundle();
-				//	bundle.putInt("checkingcode",
-				//			Integer.valueOf(new String(data)));
-					bundle.putString("number", registerNumber);
+					bundle.putInt("phone",
+							Integer.valueOf(new String(data)));
 					intent.putExtras(bundle);
 					RegisterActivity.this.startActivity(intent);
 					break;
@@ -101,11 +99,11 @@ public class RegisterActivity extends Activity {
 										.sendPost(
 												"http://192.168.3.252:8071/api2/account/verifyphone",
 												map);
+								handler.sendEmptyMessage(REGISTER_NEXT);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							handler.sendEmptyMessage(REGISTER_NEXT);
 					}
 				}.start();/*
 			}*/
