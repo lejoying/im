@@ -1,11 +1,13 @@
+var serverSetting = root.globaldata.serverSetting;
 var accountManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
+//var ajax = require("./../ajax.js");
 
 accountManage.verifyphone = function(data, response){
     var phone = data.phone;
     var time = new Date().getTime().toString();
-    console.log(phone+"--"+time.substr(time.length-4));
+    console.log("1--"+phone+"--"+time.substr(time.length-4));
     var account = {
         phone: phone,
         code: time.substr(time.length-4),
@@ -15,8 +17,8 @@ accountManage.verifyphone = function(data, response){
     checkPhone();
     function checkPhone(){
         var query = [
-            'MATCH account:Account',
-            'WHERE account.phone! ={phone}',
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
             'RETURN account'
         ].join('\n');
         var params = {
@@ -25,6 +27,7 @@ accountManage.verifyphone = function(data, response){
         db.query(query, params, function (error, results){
             if(error){
                 console.error(error);
+                console.log("++++");
                 return;
             }else if(results.length == 0){
                 createAccountNode();
@@ -40,7 +43,7 @@ accountManage.verifyphone = function(data, response){
                     var time = new Date().getTime().toString();
                     accountNode.data.code = time.substr(time.length-4);
                     accountNode.save();
-                    console.log(phone+"--"+time.substr(time.length-4));
+                    console.log("2--"+phone+"--"+time.substr(time.length-4));
                     response.write(JSON.stringify({
                         "提示信息":"手机号验证成功",
                         "phone": account.phone
@@ -52,7 +55,7 @@ accountManage.verifyphone = function(data, response){
     }
     function createAccountNode() {
         var query = [
-            'CREATE account:Account{account}',
+            'CREATE (account:Account{account})',
             'SET account.uid=ID(account)',
             'RETURN  account'
         ].join('\n');
@@ -67,6 +70,7 @@ accountManage.verifyphone = function(data, response){
                 return;
             } else {
                 var accountNode = results.pop().account;
+                console.log("获取验证码成功---");
                 response.write(JSON.stringify({
                     "提示信息":"手机号验证成功",
                     "phone": accountNode.data.phone
@@ -77,15 +81,14 @@ accountManage.verifyphone = function(data, response){
     }
 }
 accountManage.verifycode = function(data, response){
-    console.log(data);
     var phone = data.phone;
     var code = data.code;
 
     checkPhoneCode();
     function checkPhoneCode(){
         var query = [
-            'MATCH account:Account',
-            'WHERE account.phone! ={phone} AND account! ={status}',
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone} AND account.status={status}',
             'RETURN account'
         ].join('\n');
         var params = {
@@ -97,13 +100,24 @@ accountManage.verifycode = function(data, response){
                 console.error(error);
                 return;
             }else{
-                var accountNode = results.pop().account;
-                if(account.data.code == code){
-                    response.write(JSON.stringify({
-                        "提示信息":"验证成功",
-                        "phone":accountNode.data.phone
-                    }));
-                    response.end();
+                var accountData = results.pop().account.data;
+                if(accountData.code == code){
+                    var time = new Date().getTime();
+                    var bad = time-parseInt(accountData.time);
+                    if(bad > 600000){
+                        response.write(JSON.stringify({
+                            "提示信息":"验证失败",
+                            "失败原因":"验证码超时"
+                        }));
+                        response.end();
+                    }else{
+                        console.log("验证成功---");
+                        response.write(JSON.stringify({
+                            "提示信息":"验证成功",
+                            "phone":phone
+                        }));
+                        response.end();
+                    }
                 }else{
                     response.write(JSON.stringify({
                         "提示信息":"验证失败",
@@ -122,8 +136,8 @@ accountManage.verifypass = function(data, response){
     checkPhone();
     function checkPhone(){
         var query = [
-            'MATCH account:Account',
-            'WHERE account.phone! ={phone}',
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
             'RETURN account'
         ].join('\n');
         var params = {
@@ -140,17 +154,17 @@ accountManage.verifypass = function(data, response){
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 accountData.password = password;
-                accountData.status = "success";
+                accountData.status = "unjoin";
                 accountNode.save();
+                console.log("注册成功---");
                 response.write(JSON.stringify({
                     "提示信息":"注册成功",
-                    "account":accountData
+                    "status":"unjoin"
                 }));
                 response.end();
             }
         });
     }
-
 }
 /***************************************
  *     URL：/api2/account/auth
@@ -159,13 +173,14 @@ accountManage.auth = function(data, response){
     response.asynchronous = 1;
     var phone = data.phone;
     var password = data.password;
-
+    var longitude = data.longitude;
+    var latitude = data.latitude;
     checkAccountNode();
 
     function checkAccountNode(){
         var query = [
-            'MATCH account:Account',
-            'WHERE account.phone! ={phone}',
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
             'RETURN  account'
         ].join('\n');
 
@@ -183,19 +198,28 @@ accountManage.auth = function(data, response){
                 }));
                 response.end();
             } else {
-                var accountNode = results.pop().account;
-                if (accountNode.data.password == password) {
-                    response.write(JSON.stringify({
-                        "提示信息": "账号登录成功",
-                        "account":accountNode.data
-                    }));
-                    response.end();
-                } else {
+                var accountData = results.pop().account.data;
+                if(accountData.status == "init"){
                     response.write(JSON.stringify({
                         "提示信息": "账号登录失败",
-                        "失败原因": "密码不正确"
+                        "失败原因": "手机号不存在"
                     }));
                     response.end();
+                }else{
+                    if (accountData.password == password) {
+                        console.log("账号登录成功---");
+                        response.write(JSON.stringify({
+                            "提示信息": "账号登录成功",
+                            "status":accountData.status
+                        }));
+                        response.end();
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "账号登录失败",
+                            "失败原因": "密码不正确"
+                        }));
+                        response.end();
+                    }
                 }
             }
         });
