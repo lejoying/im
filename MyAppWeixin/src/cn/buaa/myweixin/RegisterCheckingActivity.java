@@ -117,7 +117,7 @@ public class RegisterCheckingActivity extends Activity {
 					try {
 						data = HttpTools
 								.sendPost(
-										"http://192.168.3.252:8071/api2/account/verifycode",
+										"http://apisum.com/api2/account/verifycode",
 										map);
 						handler.sendEmptyMessage(REGISTER_NEXT);
 					} catch (IOException e) {

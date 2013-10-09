@@ -44,7 +44,7 @@
 	    android:layout_marginRight="20dp"
 	    android:singleLine="true"
 	    android:background="@drawable/login_editbox"
-	    android:hint="QQ号/微信号/手机号（请输入buaa）"/>
+	    android:hint="请输入手机号"/>
 	<EditText 
 	    android:id="@+id/tv_password"
 	    android:layout_width="fill_parent"
@@ -58,7 +58,7 @@
 	    android:background="@drawable/login_editbox"
 	    android:password="true"
 	    android:singleLine="true"
-	    android:hint="密码(请输入123)"/>
+	    android:hint="请输入密码"/>
 	<RelativeLayout 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"

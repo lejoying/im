@@ -106,7 +106,7 @@ public class RegisterSetPassActivity extends Activity {
 					try {
 						data = HttpTools
 								.sendPost(
-										"http://192.168.3.252:8071/api2/account/verifypass",
+										"http://apisum.com/api2/account/verifypass",
 										map);
 						handler.sendEmptyMessage(REGISTER_NEXT);
 					} catch (IOException e) {

@@ -15,10 +15,10 @@ public class Welcome extends Activity {
     }
     public void welcome_login(View v) {  
       	Intent intent = new Intent();
-		//intent.setClass(Welcome.this,Login.class);//启动到登录界面
-      	intent.setClass(Welcome.this,MainWeixin.class);
+		intent.setClass(Welcome.this,Login.class);//启动到登录界面
+//      	intent.setClass(Welcome.this,MainWeixin.class);//直接登录到主界面
 		startActivity(intent);
-		//this.finish();
+		this.finish();
       }  
     public void welcome_register(View v) {  
       	Intent intent = new Intent();
