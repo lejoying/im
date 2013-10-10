@@ -54,7 +54,7 @@ api = {
         },
         response: {
             success: {"提示信息": "验证成功","phone":"XXX"},
-            failed: {"提示信息": "验证失败","失败原因": ["验证码不正确"]}
+            failed: {"提示信息": "验证失败","失败原因": ["验证码不正确" || "验证码超时"]}
         }
     },
     /***************************************
@@ -65,7 +65,7 @@ api = {
             typical: {"phone": "XXX", "password":"XXX"}
         },
         response: {
-            success: {"提示信息": "注册成功",account:{}},
+            success: {"提示信息": "注册成功",status:"XXX"},
             failed: {"提示信息": "注册失败", "失败原因": ["保存数据遇到错误"]}
         }
     },
@@ -77,7 +77,7 @@ api = {
             typical: {"phone": "XXX", "password": "XXX"}
         },
         response: {
-            success: {"提示信息": "账号登录成功",account:{}},
+            success: {"提示信息": "账号登录成功",status:"XXX"},
             failed: {"提示信息": "账号登录失败", "失败原因": ["手机号不存在" || "密码不正确"]}
         }
     },
