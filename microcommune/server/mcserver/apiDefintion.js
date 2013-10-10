@@ -62,11 +62,23 @@ api = {
      ***************************************/
     "account_verifypass": {
         request: {
-            typical: {"phone": "XXX", "password":"XXX"}
+            typical: {"phone": "XXX", "password":"XXX","longitude":"XXX","latitude":"XXX"}
         },
         response: {
-            success: {"提示信息": "注册成功",status:"XXX"},
+            success: {"提示信息": "注册成功",status:"XXX",community:[{}]},
             failed: {"提示信息": "注册失败", "失败原因": ["保存数据遇到错误"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/join
+     ***************************************/
+    "account_join": {
+        request: {
+            typical: {"cid": "XXX","phone":"XXX"}
+        },
+        response: {
+            success: {"提示信息": "加入成功"},
+            failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
         }
     },
     /***************************************
@@ -74,10 +86,10 @@ api = {
      ***************************************/
     "account_auth": {
         request: {
-            typical: {"phone": "XXX", "password": "XXX"}
+            typical: {"phone": "XXX", "password": "XXX","longitude":"XXX","latitude":"XXX"}
         },
         response: {
-            success: {"提示信息": "账号登录成功",status:"XXX"},
+            success: {"提示信息": "账号登录成功",account:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
             failed: {"提示信息": "账号登录失败", "失败原因": ["手机号不存在" || "密码不正确"]}
         }
     },

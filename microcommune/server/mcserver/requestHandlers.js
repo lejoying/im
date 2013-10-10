@@ -44,6 +44,19 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
         accountManage.trash(data, response);
     }
 }
+var communityManage = require("./handlers/communityManage.js");
+requestHandlers.communityManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "add") {
+        communityManage.add(data, response);
+    }
+    else if (operation == "getall") {
+        communityManage.getall(data, response);
+    }
+}
 
 
 var paccountManage = require("./handlers/paccountManage.js");
