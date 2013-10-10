@@ -51,11 +51,12 @@ public class RegisterCheckingActivity extends Activity {
 					Intent intent = new Intent(RegisterCheckingActivity.this,
 							RegisterSetPassActivity.class);
 					Bundle bundle = new Bundle();
+					System.out.println(new String(data));
 					try {
 						JSONObject jo = new JSONObject(new String(data));
-						String info = jo.getString("提示消息");
-						String number = jo.getString("phone");
-						if (info.equals("验证码正确")) {
+						String info = jo.getString("提示信息");
+						if (info.equals("验证成功")) {
+							String number = jo.getString("phone");
 							if (number.equals(registerNumber)) {
 								bundle.putString("number", registerNumber);
 								intent.putExtras(bundle);
@@ -72,8 +73,6 @@ public class RegisterCheckingActivity extends Activity {
 									Toast.LENGTH_SHORT).show();
 						}
 					} catch (JSONException e) {
-						Toast.makeText(RegisterCheckingActivity.this, "出现异常",
-								Toast.LENGTH_SHORT).show();
 						e.printStackTrace();
 					}
 					break;
@@ -117,7 +116,7 @@ public class RegisterCheckingActivity extends Activity {
 					try {
 						data = HttpTools
 								.sendPost(
-										"http://apisum.com/api2/account/verifycode",
+										"http://192.168.0.198:8071/api2/account/verifycode",
 										map);
 						handler.sendEmptyMessage(REGISTER_NEXT);
 					} catch (IOException e) {

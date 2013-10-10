@@ -59,7 +59,7 @@ public class RegisterActivity extends Activity {
 					Bundle bundle = new Bundle();
 					try {
 						JSONObject jo = new JSONObject(new String(data));
-						String info = jo.getString("提示消息");
+						String info = jo.getString("提示信息");
 						String number = jo.getString("phone");
 						if (info.equals("手机号验证成功")) {
 							if (number.equals(registerNumber)) {
@@ -121,7 +121,7 @@ public class RegisterActivity extends Activity {
 						try {
 							data = HttpTools
 									.sendPost(
-											"http://apisum.com/api2/account/verifyphone",
+											"http://192.168.0.198:8071/api2/account/verifyphone",
 											map);
 							handler.sendEmptyMessage(REGISTER_NEXT);
 						} catch (IOException e) {

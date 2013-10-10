@@ -52,7 +52,7 @@ public class RegisterSetPassActivity extends Activity {
 					Bundle bundle = new Bundle();
 					try {
 						JSONObject jo = new JSONObject(new String(data));
-						String info = jo.getString("提示消息");
+						String info = jo.getString("提示信息");
 						if (info.equals("注册成功")) {							
 								bundle.putString("number", registerNumber);
 								intent.putExtras(bundle);
@@ -106,7 +106,7 @@ public class RegisterSetPassActivity extends Activity {
 					try {
 						data = HttpTools
 								.sendPost(
-										"http://apisum.com/api2/account/verifypass",
+										"http://192.168.0.198:8071/api2/account/verifypass",
 										map);
 						handler.sendEmptyMessage(REGISTER_NEXT);
 					} catch (IOException e) {

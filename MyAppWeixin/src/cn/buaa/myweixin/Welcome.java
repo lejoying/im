@@ -1,6 +1,7 @@
 package cn.buaa.myweixin;
 
 
+import cn.buaa.myweixin.utils.LocationTools;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -18,7 +19,6 @@ public class Welcome extends Activity {
 		intent.setClass(Welcome.this,Login.class);//启动到登录界面
 //      	intent.setClass(Welcome.this,MainWeixin.class);//直接登录到主界面
 		startActivity(intent);
-		this.finish();
       }  
     public void welcome_register(View v) {  
       	Intent intent = new Intent();
