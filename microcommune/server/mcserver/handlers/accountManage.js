@@ -4,6 +4,9 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 //var ajax = require("./../ajax.js");
 
+/***************************************
+ *     URL：/api2/account/verifyphone
+ ***************************************/
 accountManage.verifyphone = function(data, response){
     var phone = data.phone;
     var time = new Date().getTime().toString();
@@ -80,6 +83,9 @@ accountManage.verifyphone = function(data, response){
         });
     }
 }
+/***************************************
+ *     URL：/api2/account/verifycode
+ ***************************************/
 accountManage.verifycode = function(data, response){
     var phone = data.phone;
     var code = data.code;
@@ -129,10 +135,15 @@ accountManage.verifycode = function(data, response){
         });
     }
 }
+/***************************************
+ *     URL：/api2/account/verifypass
+ ***************************************/
 accountManage.verifypass = function(data, response){
     response.asynchronous = 1;
     var phone = data.phone;
     var password = data.password;
+    var longitude = data.longitude;
+    var latitude = data.latitude;
     checkPhone();
     function checkPhone(){
         var query = [
