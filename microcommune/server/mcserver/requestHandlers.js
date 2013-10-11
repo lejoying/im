@@ -40,6 +40,12 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     if (operation == "auth") {
         accountManage.auth(data, response);
     }
+    if (operation == "join") {
+        accountManage.join(data, response);
+    }
+    if (operation == "unjoin") {
+        accountManage.unjoin(data, response);
+    }
     if (operation == "trash") {
         accountManage.trash(data, response);
     }

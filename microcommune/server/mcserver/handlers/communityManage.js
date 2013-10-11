@@ -8,14 +8,13 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
  ***************************************/
 communityManage.add = function(data, response){
 
-    var locations = {
-        "x1":100,
-        "y1":200,
-        "x2":200,
-        "y2":400
+    var locations = { lat1: 40,
+        lng1: 116,
+        lat2: 40,
+        lng2: 116
     };
     var community = {
-        "name":"天通苑站",
+        "name":"天通苑北站",
         "locations":JSON.stringify(locations)
     };
     var query = [
@@ -41,7 +40,7 @@ communityManage.add = function(data, response){
     });
 }
 /***************************************
- *     URL：/api2/account/verifyphone
+ *     URL：/api2/account/getall
  ***************************************/
 communityManage.getall = function(data, response){
 
