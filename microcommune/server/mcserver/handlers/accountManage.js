@@ -170,12 +170,12 @@ accountManage.verifypass = function(data, response){
                 accountData.status = "unjoin";
                 accountNode.save();
                 console.log("注册成功---");
-                getCommunity(latitude, longitude);
+                getCommunity(latitude, longitude, accountData, "注册成功");
             }
         });
     }
 }
-function getCommunity(latitude, longitude){
+function getCommunity(latitude, longitude, accountData, msg){
     console.log(latitude+"----"+longitude);
     ajax.ajax({
         type:"GET",
@@ -202,6 +202,7 @@ function getCommunity(latitude, longitude){
                 }else{
                     var flag = false;
                     var community = {};
+                    var nowcommunity = {};
                     var i = 0;
                     for(var index in results){
                         i++;
@@ -212,27 +213,101 @@ function getCommunity(latitude, longitude){
                         }
                         if(((parseFloat(locations.lat1)<lat) && (lat<parseFloat(locations.lat2))) && ((parseFloat(locations.lng1)<lng) && (lng<parseFloat(locations.lng2)))){
                             flag = true;
-                            response.write(JSON.stringify({
-                                "提示信息":"注册成功",
-                                "nowcommunity": it
-                            }));
-                            response.end();
-                            break;
+                            nowcommunity = it;
+                            if(accountData.status == "unjoin"){
+                                response.write(JSON.stringify({
+                                    "提示信息": msg,
+                                    "nowcommunity": it
+                                }));
+                                response.end();
+                                break;
+                            }else{
+                                getCommunities(accountData, nowcommunity);
+                                break;
+                            }
                         }
                         if(i == results.length){
                             delete community.locations;
-                            if(flag == false){
-                                response.write(JSON.stringify({
-                                    "提示信息":"注册成功",
-                                    "nowcommunity": community
-                                }));
-                                response.end();
+                            if(accountData.status == "unjoin"){
+                                if(flag == false){
+                                    response.write(JSON.stringify({
+                                        "提示信息": msg,
+                                        "nowcommunity": community
+                                    }));
+                                    response.end();
+                                }
+                            }else{
+                                getCommunities(accountData, nowcommunity);
                             }
                         }
                     }
-
                 }
             });
+        }
+    });
+}
+function getCommunities(accountData, nowcommunity){
+    var query = [
+        'MATCH (account:Account)-[r:HAS_COMMUNITY]->(community:Community)',
+        'WHERE account.uid={uid}',
+        'RETURN community'
+    ].join('\n');
+    var params = {
+        uid:accountData.uid
+    };
+    db.query(query, params, function(error, results){
+        if(error){
+            console.log(error);
+            return;
+        }else{
+            console.log("获取社区成功---");
+            var communities = [];
+            if(results.length != 0){
+                for(var index in results){
+                    var it = results[index].community.data;
+                    communities.push(it);
+                }
+                getFriends(accountData, nowcommunity, communities);
+            }else{
+                getFriends(accountData, nowcommunity, communities);
+            }
+        }
+    });
+}
+function getFriends(accountData, nowcommunity, communities){
+    var query = [
+        'MATCH (account1:Account)-[r:HAS_FRIEND]->(account2:Account)',
+        'WHERE account1.uid={uid}',
+        'RETURN account2'
+    ].join('\n');
+    var params = {
+        uid:accountData.uid
+    };
+    db.query(query, params, function(error, results){
+        if(error){
+            console.log(error);
+            return;
+        }else{
+            console.log("获取好友成功---");
+            var friends = [];
+            if(results.length != 0){
+                var i = 0;
+                for(var index in results){
+                    i++;
+                    var it = results[index].account2.data;
+                    friends.push(it);
+                }
+                if(i == results.length){
+                    response.write(JSON.stringify({
+                        "提示信息" :  "账号登录成功",
+                        "account": accountData,
+                        "nowcommunity": nowcommunity,
+                        "communities": communities,
+                        "friends": friends
+                    }));
+                    response.end();
+                }
+            }
         }
     });
 }
@@ -278,11 +353,7 @@ accountManage.auth = function(data, response){
                 }else{
                     if (accountData.password == password) {
                         console.log("账号登录成功---");
-                        response.write(JSON.stringify({
-                            "提示信息": "账号登录成功",
-                            "account":accountData
-                        }));
-                        response.end();
+                        getCommunity(latitude, longitude, accountData, "账号登录成功");
                     } else {
                         response.write(JSON.stringify({
                             "提示信息": "账号登录失败",
@@ -310,7 +381,7 @@ accountManage.join = function(data, response){
             'MATCH (account:Account)',
             'WHERE account.phone={phone}',
             'CREATE UNIQUE account-[r:HAS_COMMUNITY]->community',
-            'RETURN  r'
+            'RETURN  account, r'
         ].join('\n');
 
         var params = {
@@ -329,6 +400,11 @@ accountManage.join = function(data, response){
                 response.end();
             } else {
                 console.log("加入成功---");
+                var accountNode = results.pop().account;
+                if(accountNode.data.status == "unjoin"){
+                    accountNode.data.status = "success";
+                    accountNode.save;
+                }
                 response.write(JSON.stringify({
                     "提示信息": "加入成功"
                 }));
