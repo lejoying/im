@@ -65,7 +65,7 @@ api = {
             typical: {"phone": "XXX", "password":"XXX","longitude":"XXX","latitude":"XXX"}
         },
         response: {
-            success: {"提示信息": "注册成功",community:[{}]},
+            success: {"提示信息": "注册成功",account:{},nowcommunity:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
             failed: {"提示信息": "注册失败", "失败原因": ["保存数据遇到错误"]}
         }
     },
@@ -77,7 +77,7 @@ api = {
             typical: {"cid": "XXX","phone":"XXX","status":"first" || "true"}
         },
         response: {
-            success: {"提示信息": "加入成功",account:{},nowcommunity:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
+            success: {"提示信息": "加入成功"},
             failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
         }
     },
@@ -101,7 +101,7 @@ api = {
             typical: {"phone": "XXX", "password": "XXX","longitude":"XXX","latitude":"XXX"}
         },
         response: {
-            success: {"提示信息": "账号登录成功",account:{},nowcommunity:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
+            success: {"提示信息": "账号登录成功",account:{},nowcommunity:{},communities:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
             failed: {"提示信息": "账号登录失败", "失败原因": ["手机号不存在" || "密码不正确"]}
         }
     },
@@ -120,7 +120,7 @@ api = {
 }
 
 /*************************************** ***************************************
- * *    Class：paccount
+ * *    Class：commounity
  *************************************** ***************************************/
 
 api = {
