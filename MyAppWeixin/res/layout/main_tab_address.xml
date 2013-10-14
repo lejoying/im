@@ -131,7 +131,7 @@
             android:src="@drawable/xiaohei" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_agent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

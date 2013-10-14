@@ -1,7 +1,12 @@
 package cn.buaa.myweixin;
 
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +44,14 @@ public class ExitFromSettings extends Activity {
     	this.finish();    	
       }  
 	public void exitbutton0(View v) {  
+		try {
+			OutputStream os = openFileOutput("account", Context.MODE_PRIVATE);
+			ObjectOutputStream oos = new ObjectOutputStream(os);
+			oos.writeObject(null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	this.finish();
     	MainWeixin.instance.finish();//¹Ø±ÕMain Õâ¸öActivity
       }  

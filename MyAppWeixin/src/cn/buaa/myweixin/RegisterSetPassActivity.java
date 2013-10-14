@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.buaa.myweixin.utils.HttpTools;
+import cn.buaa.myweixin.utils.LocationTools;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,10 +25,13 @@ public class RegisterSetPassActivity extends Activity {
 	private String registerNumber;
 	private TextView tv_password;
 	private Handler handler;
-	
+
 	private String password;
 
 	private byte[] data;
+
+	private double longitude;
+	private double latitude;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +57,12 @@ public class RegisterSetPassActivity extends Activity {
 					try {
 						JSONObject jo = new JSONObject(new String(data));
 						String info = jo.getString("提示信息");
-						if (info.equals("注册成功")) {							
-								bundle.putString("number", registerNumber);
-								intent.putExtras(bundle);
-								RegisterSetPassActivity.this.startActivity(intent);
+						if (info.equals("注册成功")) {
+							JSONObject community = jo
+									.getJSONObject("nowcommunity");
+							bundle.putString("nowcommunity", community.toString());
+							intent.putExtras(bundle);
+							RegisterSetPassActivity.this.startActivity(intent);
 
 						} else {
 							String err = jo.getString("失败原因");
@@ -83,38 +89,62 @@ public class RegisterSetPassActivity extends Activity {
 		tv_password = (TextView) findViewById(R.id.tv_setpass);
 	}
 
-	public void registerCheckingNext(View v) {
-		boolean hasNetwork = HttpTools.hasNetwork(this);
-		if (!hasNetwork)
-			Toast.makeText(RegisterSetPassActivity.this, "无网络连接",
-					Toast.LENGTH_SHORT).show();
-		else {
-			password = tv_password.getText().toString();
-			if (password == null || password.equals("")) {
-				Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			new Thread() {
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					super.run();
+	private boolean flag = true;
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
 
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("password", String.valueOf(password));
-					map.put("phone", String.valueOf(registerNumber));
-					try {
-						data = HttpTools
-								.sendPost(
-										"http://192.168.0.198:8071/api2/account/verifypass",
-										map);
-						handler.sendEmptyMessage(REGISTER_NEXT);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+		flag = true;
+	}
+
+	public void registerCheckingNext(View v) {
+		if (flag) {
+			double[] location = LocationTools
+					.getLocation(RegisterSetPassActivity.this);
+			longitude = location[0];
+			latitude = location[1];
+			boolean hasNetwork = HttpTools.hasNetwork(this);
+
+			if (!hasNetwork)
+				Toast.makeText(RegisterSetPassActivity.this, "无网络连接",
+						Toast.LENGTH_SHORT).show();
+			else {
+
+				password = tv_password.getText().toString();
+				if (password == null || password.equals("")) {
+					Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
+					return;
 				}
-			}.start();
+				new Thread() {
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						super.run();
+
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("password", String.valueOf(password));
+						map.put("phone", String.valueOf(registerNumber));
+						map.put("longitude", String.valueOf(longitude));
+						map.put("latitude", String.valueOf(latitude));
+
+						try {
+							flag = false;
+							data = HttpTools
+									.sendPost(
+											"http://192.168.0.19:8071/api2/account/verifypass",
+											map);
+							handler.sendEmptyMessage(REGISTER_NEXT);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							flag = true;
+							e.printStackTrace();
+						}
+					}
+				}.start();
+			}
+		} else {
+
 		}
 	}
 

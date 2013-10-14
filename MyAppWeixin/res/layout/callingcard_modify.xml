@@ -155,7 +155,7 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/tv_agent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

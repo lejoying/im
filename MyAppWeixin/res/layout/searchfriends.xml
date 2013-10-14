@@ -74,7 +74,7 @@
         </EditText>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tv_community"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignRight="@+id/button1"

@@ -51,7 +51,6 @@ public class RegisterCheckingActivity extends Activity {
 					Intent intent = new Intent(RegisterCheckingActivity.this,
 							RegisterSetPassActivity.class);
 					Bundle bundle = new Bundle();
-					System.out.println(new String(data));
 					try {
 						JSONObject jo = new JSONObject(new String(data));
 						String info = jo.getString("提示信息");
@@ -60,17 +59,19 @@ public class RegisterCheckingActivity extends Activity {
 							if (number.equals(registerNumber)) {
 								bundle.putString("number", registerNumber);
 								intent.putExtras(bundle);
-								RegisterCheckingActivity.this.startActivity(intent);
+								RegisterCheckingActivity.this
+										.startActivity(intent);
 
 							} else {
-								Toast.makeText(RegisterCheckingActivity.this, "出现异常",
-										Toast.LENGTH_SHORT).show();
-
+								Toast.makeText(RegisterCheckingActivity.this,
+										"出现异常", Toast.LENGTH_SHORT).show();
+								flag = true;
 							}
 						} else {
 							String err = jo.getString("失败原因");
 							Toast.makeText(RegisterCheckingActivity.this, err,
 									Toast.LENGTH_SHORT).show();
+							flag = true;
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -93,38 +94,50 @@ public class RegisterCheckingActivity extends Activity {
 		tv_checkingcode = (TextView) findViewById(R.id.tv_checkingcode);
 	}
 
-	public void registerCheckingNext(View v) {
-		boolean hasNetwork = HttpTools.hasNetwork(this);
-		if (!hasNetwork)
-			Toast.makeText(RegisterCheckingActivity.this, "无网络连接",
-					Toast.LENGTH_SHORT).show();
-		else {
-			checkingcode = tv_checkingcode.getText().toString();
-			if (checkingcode == null || checkingcode.equals("")) {
-				Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			new Thread() {
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					super.run();
+	private boolean flag = true;
 
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("code", String.valueOf(checkingcode));
-					map.put("phone", String.valueOf(registerNumber));
-					try {
-						data = HttpTools
-								.sendPost(
-										"http://192.168.0.198:8071/api2/account/verifycode",
-										map);
-						handler.sendEmptyMessage(REGISTER_NEXT);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+
+		flag = true;
+	}
+
+	public void registerCheckingNext(View v) {
+		if (flag) {
+			boolean hasNetwork = HttpTools.hasNetwork(this);
+			if (!hasNetwork)
+				Toast.makeText(RegisterCheckingActivity.this, "无网络连接",
+						Toast.LENGTH_SHORT).show();
+			else {
+				checkingcode = tv_checkingcode.getText().toString();
+				if (checkingcode == null || checkingcode.equals("")) {
+					Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
+					return;
 				}
-			}.start();
+				new Thread() {
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						super.run();
+
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("code", String.valueOf(checkingcode));
+						map.put("phone", String.valueOf(registerNumber));
+						try {
+							data = HttpTools
+									.sendPost(
+											"http://192.168.0.19:8071/api2/account/verifycode",
+											map);
+							handler.sendEmptyMessage(REGISTER_NEXT);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}.start();
+			}
 		}
 	}
 

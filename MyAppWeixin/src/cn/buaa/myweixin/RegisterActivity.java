@@ -60,8 +60,8 @@ public class RegisterActivity extends Activity {
 					try {
 						JSONObject jo = new JSONObject(new String(data));
 						String info = jo.getString("提示信息");
-						String number = jo.getString("phone");
 						if (info.equals("手机号验证成功")) {
+							String number = jo.getString("phone");
 							if (number.equals(registerNumber)) {
 								bundle.putString("number", registerNumber);
 								intent.putExtras(bundle);
@@ -76,8 +76,11 @@ public class RegisterActivity extends Activity {
 							String err = jo.getString("失败原因");
 							Toast.makeText(RegisterActivity.this, err,
 									Toast.LENGTH_SHORT).show();
+							
 						}
 					} catch (JSONException e) {
+
+						
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -95,44 +98,56 @@ public class RegisterActivity extends Activity {
 		register_number_edit = (EditText) findViewById(R.id.register_number_edit);
 	}
 
+	private boolean flag = true;
+
 	// 点击下一步
 	public void registerMobileNext(View v) {
-		if (isAgreeProvision) {
-			boolean hasNetwork = HttpTools.hasNetwork(this);
-			if (!hasNetwork)
-				Toast.makeText(RegisterActivity.this, "无网络连接",
-						Toast.LENGTH_SHORT).show();
-			else {
-				String number = register_number_edit.getText().toString();
-				if (number == null || number.equals("")) {
-					Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT)
-							.show();
-					return;
-				}
-				registerNumber = number;
-				new Thread() {
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						super.run();
-
-						Map<String, String> map = new HashMap<String, String>();
-						map.put("phone", String.valueOf(registerNumber));
-						try {
-							data = HttpTools
-									.sendPost(
-											"http://192.168.0.198:8071/api2/account/verifyphone",
-											map);
-							handler.sendEmptyMessage(REGISTER_NEXT);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+		if (flag) {
+			if (isAgreeProvision) {
+				boolean hasNetwork = HttpTools.hasNetwork(this);
+				if (!hasNetwork)
+					Toast.makeText(RegisterActivity.this, "无网络连接",
+							Toast.LENGTH_SHORT).show();
+				else {
+					String number = register_number_edit.getText().toString();
+					if (number == null || number.equals("")) {
+						Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT)
+								.show();
+						return;
 					}
-				}.start();
+					registerNumber = number;
+					new Thread() {
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							super.run();
+
+							Map<String, String> map = new HashMap<String, String>();
+							map.put("phone", String.valueOf(registerNumber));
+							try {
+								flag = false;
+								data = HttpTools
+										.sendPost(
+												"http://192.168.0.19:8071/api2/account/verifyphone",
+												map);
+								handler.sendEmptyMessage(REGISTER_NEXT);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								flag = true;
+								e.printStackTrace();
+							}
+						}
+					}.start();
+				}
+			} else {
+				Toast.makeText(this, "请同意使用条款和隐私政策", Toast.LENGTH_SHORT).show();
 			}
-		} else {
-			Toast.makeText(this, "请同意使用条款和隐私政策", Toast.LENGTH_SHORT).show();
+		} else if(data!=null){
+			if(registerNumber.equals(register_number_edit.getText().toString())){
+			handler.sendEmptyMessage(REGISTER_NEXT);}else{
+				flag = true;
+				registerMobileNext(new View(this));
+			}
 		}
 	}
 
