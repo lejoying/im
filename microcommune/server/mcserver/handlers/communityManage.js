@@ -4,18 +4,17 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 
 /***************************************
- *     URL：/api2/account/verifyphone
+ *     URL：/api2/community/add
  ***************************************/
 communityManage.add = function(data, response){
 
-    var locations = {
-        "x1":100,
-        "y1":200,
-        "x2":200,
-        "y2":400
+    var locations = { lat1: 40,
+        lng1: 116,
+        lat2: 40,
+        lng2: 116
     };
     var community = {
-        "name":"天通苑站",
+        "name":"天通苑北站",
         "locations":JSON.stringify(locations)
     };
     var query = [
@@ -33,15 +32,23 @@ communityManage.add = function(data, response){
             console.log(error);
             return;
         }else{
-            response.write(JSON.stringify({
-                "提示信息":"创建服务站成功"
-            }));
-            response.end();
+            if(results.length == 0){
+                response.write(JSON.stringify({
+                    "提示信息":"创建服务站失败",
+                    "失败原因":"数据异常"
+                }));
+                response.end();
+            }else{
+                response.write(JSON.stringify({
+                    "提示信息":"创建服务站成功"
+                }));
+                response.end();
+            }
         }
     });
 }
 /***************************************
- *     URL：/api2/account/verifyphone
+ *     URL：/api2/community/getall
  ***************************************/
 communityManage.getall = function(data, response){
 
@@ -57,15 +64,24 @@ communityManage.getall = function(data, response){
             console.log(error);
             return;
         }else{
-            for(var index in results){
-                var it = results[index];
-                console.log(JSON.stringify(it.community.data));
+            if(results.length == 0){
+                response.write(JSON.stringify({
+                    "提示信息": "获取所有社区失败",
+                    "失败原因": "无社区数据"
+                }));
+                response.end();
+            }else{
+                var communities = [];
+                for(var index in results){
+                    var it = results[index].community.data;
+                    communities.push(it);
+                }
+                response.write(JSON.stringify({
+                    "提示信息": "获取所有社区成功",
+                    "communities": communities
+                }));
+                response.end();
             }
-            response.write(JSON.stringify({
-                "提示信息": "获取所有成功",
-                "count": JSON.stringify(results)
-            }));
-            response.end();
         }
     });
 }

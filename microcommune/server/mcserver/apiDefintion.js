@@ -65,7 +65,7 @@ api = {
             typical: {"phone": "XXX", "password":"XXX","longitude":"XXX","latitude":"XXX"}
         },
         response: {
-            success: {"提示信息": "注册成功",status:"XXX",community:[{}]},
+            success: {"提示信息": "注册成功",community:[{}]},
             failed: {"提示信息": "注册失败", "失败原因": ["保存数据遇到错误"]}
         }
     },
@@ -74,11 +74,23 @@ api = {
      ***************************************/
     "account_join": {
         request: {
+            typical: {"cid": "XXX","phone":"XXX","status":"first" || "true"}
+        },
+        response: {
+            success: {"提示信息": "加入成功",account:{},nowcommunity:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
+            failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/unjoin
+     ***************************************/
+    "account_unjoin": {
+        request: {
             typical: {"cid": "XXX","phone":"XXX"}
         },
         response: {
-            success: {"提示信息": "加入成功"},
-            failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
+            success: {"提示信息": "移除成功"},
+            failed: {"提示信息": "移除失败", "失败原因": ["数据异常"]}
         }
     },
     /***************************************
@@ -89,7 +101,7 @@ api = {
             typical: {"phone": "XXX", "password": "XXX","longitude":"XXX","latitude":"XXX"}
         },
         response: {
-            success: {"提示信息": "账号登录成功",account:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
+            success: {"提示信息": "账号登录成功",account:{},nowcommunity:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
             failed: {"提示信息": "账号登录失败", "失败原因": ["手机号不存在" || "密码不正确"]}
         }
     },
@@ -112,6 +124,29 @@ api = {
  *************************************** ***************************************/
 
 api = {
-
+    /***************************************
+     *     URL：/api2/community/add
+     ***************************************/
+    "community_add": {
+        request: {
+            typical: {}
+        },
+        response: {
+            success: {"提示信息": "创建服务站成功"},
+            failed: {"提示信息": "创建服务站失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/community/getall
+     ***************************************/
+    "community_getall": {
+        request: {
+            typical: {}
+        },
+        response: {
+            success: {"提示信息": "获取所有社区成功",communities:[{},{},{}]},
+            failed: {"提示信息": "获取所有社区成功", "失败原因": ["无社区数据"]}
+        }
+    }
 }
 
