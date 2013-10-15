@@ -170,12 +170,12 @@ accountManage.verifypass = function(data, response){
                 accountData.status = "unjoin";
                 accountNode.save();
                 console.log("注册成功---");
-                getCommunity(latitude, longitude, accountData, "注册成功");
+                getCommunity(latitude, longitude, accountData, "注册成功", response);
             }
         });
     }
 }
-function getCommunity(latitude, longitude, accountData, msg){
+function getCommunity(latitude, longitude, accountData, msg, response){
     console.log(latitude+"----"+longitude);
     ajax.ajax({
         type:"GET",
@@ -217,12 +217,13 @@ function getCommunity(latitude, longitude, accountData, msg){
                             if(accountData.status == "unjoin"){
                                 response.write(JSON.stringify({
                                     "提示信息": msg,
+                                    "account":accountData,
                                     "nowcommunity": it
                                 }));
                                 response.end();
                                 break;
                             }else{
-                                getCommunities(accountData, nowcommunity);
+                                getCommunities(accountData, nowcommunity, response);
                                 break;
                             }
                         }
@@ -230,14 +231,16 @@ function getCommunity(latitude, longitude, accountData, msg){
                             delete community.locations;
                             if(accountData.status == "unjoin"){
                                 if(flag == false){
+                                    console.log("unjoin false");
                                     response.write(JSON.stringify({
                                         "提示信息": msg,
+                                        "account":accountData,
                                         "nowcommunity": community
                                     }));
                                     response.end();
                                 }
                             }else{
-                                getCommunities(accountData, nowcommunity);
+                                getCommunities(accountData, nowcommunity, response);
                             }
                         }
                     }
@@ -246,7 +249,7 @@ function getCommunity(latitude, longitude, accountData, msg){
         }
     });
 }
-function getCommunities(accountData, nowcommunity){
+function getCommunities(accountData, nowcommunity, response){
     var query = [
         'MATCH (account:Account)-[r:HAS_COMMUNITY]->(community:Community)',
         'WHERE account.uid={uid}',
@@ -267,14 +270,14 @@ function getCommunities(accountData, nowcommunity){
                     var it = results[index].community.data;
                     communities.push(it);
                 }
-                getFriends(accountData, nowcommunity, communities);
+                getFriends(accountData, nowcommunity, communities, response);
             }else{
-                getFriends(accountData, nowcommunity, communities);
+                getFriends(accountData, nowcommunity, communities, response);
             }
         }
     });
 }
-function getFriends(accountData, nowcommunity, communities){
+function getFriends(accountData, nowcommunity, communities, response){
     var query = [
         'MATCH (account1:Account)-[r:HAS_FRIEND]->(account2:Account)',
         'WHERE account1.uid={uid}',
@@ -296,17 +299,27 @@ function getFriends(accountData, nowcommunity, communities){
                     i++;
                     var it = results[index].account2.data;
                     friends.push(it);
+                    if(i == results.length){
+                        response.write(JSON.stringify({
+                            "提示信息" :  "账号登录成功",
+                            "account": accountData,
+                            "nowcommunity": nowcommunity,
+                            "communities": communities,
+                            "friends": friends
+                        }));
+                        response.end();
+                    }
                 }
-                if(i == results.length){
-                    response.write(JSON.stringify({
-                        "提示信息" :  "账号登录成功",
-                        "account": accountData,
-                        "nowcommunity": nowcommunity,
-                        "communities": communities,
-                        "friends": friends
-                    }));
-                    response.end();
-                }
+            }else{
+                console.log("无好友信息---");
+                response.write(JSON.stringify({
+                    "提示信息" :  "账号登录成功",
+                    "account": accountData,
+                    "nowcommunity": nowcommunity,
+                    "communities": communities,
+                    "friends": friends
+                }));
+                response.end();
             }
         }
     });
@@ -316,6 +329,7 @@ function getFriends(accountData, nowcommunity, communities){
  ***************************************/
 accountManage.auth = function(data, response){
     response.asynchronous = 1;
+    console.log(JSON.stringify(data));
     var phone = data.phone;
     var password = data.password;
     var longitude = data.longitude;
@@ -353,7 +367,7 @@ accountManage.auth = function(data, response){
                 }else{
                     if (accountData.password == password) {
                         console.log("账号登录成功---");
-                        getCommunity(latitude, longitude, accountData, "账号登录成功");
+                        getCommunity(latitude, longitude, accountData, "账号登录成功", response);
                     } else {
                         response.write(JSON.stringify({
                             "提示信息": "账号登录失败",
