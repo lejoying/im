@@ -26,6 +26,8 @@ public class Welcome extends Activity {
         super.onCreate(savedInstanceState);
         Account account = MCTools.getLoginedAccount(Welcome.this);
         if(account!=null){
+			Intent intent = new Intent(this,MainWeixin.class);
+			startActivity(intent);
 		}
         SharedPreferences config = getSharedPreferences("config", MODE_PRIVATE);        
         if(config.getString("first", "none").equals("none")){

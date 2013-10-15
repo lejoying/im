@@ -61,7 +61,7 @@ public class RegisterCheckingActivity extends Activity {
 		map.put("phone", String.valueOf(registerNumber));
 
 		MCTools.postForJSON(this,
-				"http://192.168.0.19:8071/api2/account/verifycode", map, true,
+				"/api2/account/verifycode", map, true,
 				new HttpStatusListener() {
 
 					@Override

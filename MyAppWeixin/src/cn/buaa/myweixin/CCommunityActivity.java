@@ -65,7 +65,7 @@ public class CCommunityActivity extends Activity {
 		param.put("cid", cid);
 
 		MCTools.postForJSON(this,
-				"http://192.168.0.19:8071/api2/account/join", param, true,
+				"/api2/account/join", param, true,
 				new HttpStatusListener() {
 
 					@Override
