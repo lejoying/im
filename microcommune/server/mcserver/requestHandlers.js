@@ -56,6 +56,9 @@ requestHandlers.communityManage = function (request, response, pathObject, data)
     if (operation == "find") {
         communityManage.find(data, response);
     }
+    else if (operation == "finddefault") {
+        communityManage.finddefault(data, response);
+    }
 }
 
 
