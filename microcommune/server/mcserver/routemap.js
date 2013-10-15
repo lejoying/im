@@ -11,13 +11,13 @@ var routemap = {
         "/api2/message/:operation": requestHandlers.session,
         "/api2/account/:operation": requestHandlers.accountManage,
         "/api2/community/:operation": requestHandlers.communityManage,
-        "/api2/paccount/:operation": requestHandlers.paccountManage
+        "/api2/relation/:operation": requestHandlers.relationManage
     },
     "post": {
         "/api2/message/:operation": requestHandlers.session,
         "/api2/account/:operation": requestHandlers.accountManage,
         "/api2/community/:operation": requestHandlers.communityManage,
-        "/api2/paccount/:operation": requestHandlers.paccountManage
+        "/api2/relation/:operation": requestHandlers.relationManage
     }
 };
 
