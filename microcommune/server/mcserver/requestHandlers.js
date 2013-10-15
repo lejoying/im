@@ -31,23 +31,20 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     if (operation == "verifyphone") {
         accountManage.verifyphone(data, response);
     }
-    if (operation == "verifycode") {
+    else if (operation == "verifycode") {
         accountManage.verifycode(data, response);
     }
-    if (operation == "verifypass") {
+    else if (operation == "verifypass") {
         accountManage.verifypass(data, response);
     }
-    if (operation == "auth") {
+    else if (operation == "auth") {
         accountManage.auth(data, response);
     }
-    if (operation == "join") {
-        accountManage.join(data, response);
+    else if (operation == "exit") {
+        accountManage.exit(data, response);
     }
-    if (operation == "unjoin") {
-        accountManage.unjoin(data, response);
-    }
-    if (operation == "trash") {
-        accountManage.trash(data, response);
+    else if (operation == "help") {
+        accountManage.help(data, response);
     }
 }
 var communityManage = require("./handlers/communityManage.js");
@@ -56,34 +53,24 @@ requestHandlers.communityManage = function (request, response, pathObject, data)
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "add") {
-        communityManage.add(data, response);
-    }
-    else if (operation == "getall") {
-        communityManage.getall(data, response);
+    if (operation == "find") {
+        communityManage.find(data, response);
     }
 }
 
 
-var paccountManage = require("./handlers/paccountManage.js");
-requestHandlers.paccountManage = function (request, response, pathObject, data) {
+var relationManage = require("./handlers/relationManage.js");
+requestHandlers.relationManage = function (request, response, pathObject, data) {
     if (data == null) {
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "get") {
-        var uid = getParam["uid"];
-        var sessionID = getParam["sessionID"];
-        var eventID = getParam["eventID"];
-        paccountManage.get(uid, sessionID, response);
+    if (operation == "join") {
+        relationManage.join(data, response);
     }
-    else if (operation == "send") {
-        var uid = getParam["uid"];
-        var userlist = JSON.parse(getParam["userlist"]);
-        var messages = JSON.parse(getParam["messages"]);
-        paccountManage.send(uid, userlist, messages, response);
+    else if (operation == "addfriend") {
+        relationManage.addfriend(data, response);
     }
 }
-
 
 module.exports = requestHandlers;

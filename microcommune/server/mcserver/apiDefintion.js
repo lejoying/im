@@ -62,55 +62,31 @@ api = {
      ***************************************/
     "account_verifypass": {
         request: {
-            typical: {"phone": "XXX", "password":"XXX","longitude":"XXX","latitude":"XXX"}
+            typical: {"phone": "XXX", "password":"XXX"}
         },
         response: {
-            success: {"提示信息": "注册成功",account:{},nowcommunity:{},community:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
+            success: {"提示信息": "注册成功",account:{}},
             failed: {"提示信息": "注册失败", "失败原因": ["保存数据遇到错误"]}
-        }
-    },
-    /***************************************
-     *     URL：/api2/account/join
-     ***************************************/
-    "account_join": {
-        request: {
-            typical: {"cid": "XXX","phone":"XXX","status":"first" || "true"}
-        },
-        response: {
-            success: {"提示信息": "加入成功"},
-            failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
-        }
-    },
-    /***************************************
-     *     URL：/api2/account/unjoin
-     ***************************************/
-    "account_unjoin": {
-        request: {
-            typical: {"cid": "XXX","phone":"XXX"}
-        },
-        response: {
-            success: {"提示信息": "移除成功"},
-            failed: {"提示信息": "移除失败", "失败原因": ["数据异常"]}
         }
     },
     /***************************************
      *     URL：/api2/account/auth
      ***************************************/
-    "account_auth": {
+        "account_auth": {
         request: {
-            typical: {"phone": "XXX", "password": "XXX","longitude":"XXX","latitude":"XXX"}
+            typical: {"phone": "XXX", "password": "XXX"}
         },
         response: {
-            success: {"提示信息": "账号登录成功",account:{},nowcommunity:{},communities:[{},{},{}],friends:[{"nickName":"XXX","phone":"XXX","head":"XXX"},{},{}]},
+            success: {"提示信息": "账号登录成功",account:{}},
             failed: {"提示信息": "账号登录失败", "失败原因": ["手机号不存在" || "密码不正确"]}
         }
     },
     /***************************************
-     *     URL：/api2/account/trash
+     *     URL：/api2/account/exit
      ***************************************/
-    "account_trash": {
+    "account_exit": {
         request: {
-            typical: {"uid": "XXX", "userlist": [1,2,3], "message": {"content":"xxx","time":"123123123"}}
+            typical: {}
         },
         response: {
             success: {"提示信息": "消息发送成功"},
@@ -120,32 +96,86 @@ api = {
 }
 
 /*************************************** ***************************************
+ * *    Class：relation
+ *************************************** ***************************************/
+
+api = {
+    /***************************************
+     *     URL：/api2/relation/join
+     ***************************************/
+    "relation_join": {
+        request: {
+            typical: {"cid": "XXX","phone":"XXX"}
+        },
+        response: {
+            success: {"提示信息": "加入成功"},
+            failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/relation/addfriend
+     ***************************************/
+    "relation_addfriend": {
+        request: {
+            typical: {"phoneform": "XXX","phoneto":"XXX"}
+        },
+        response: {
+            success: {"提示信息": "添加成功"},
+            failed: {"提示信息": "添加失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/relation/getfriends
+     ***************************************/
+    "relation_getfriends": {
+        request: {
+            typical: {"phone": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取好友成功",friends:[{},{},{}]},
+            failed: {"提示信息": "获取好友失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/relation/getcommunities
+     ***************************************/
+    "relation_getcommunities": {
+        request: {
+            typical: {"phone": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取社区成功",communities:[{},{},{}]},
+            failed: {"提示信息": "获取社区失败", "失败原因": ["数据异常"]}
+        }
+    }
+}
+/*************************************** ***************************************
  * *    Class：commounity
  *************************************** ***************************************/
 
 api = {
     /***************************************
-     *     URL：/api2/community/add
+     *     URL：/api2/community/find
      ***************************************/
-    "community_add": {
+    "community_find": {
         request: {
-            typical: {}
+            typical: {longitude:"XXX",latitude:"XXX"}
         },
         response: {
-            success: {"提示信息": "创建服务站成功"},
-            failed: {"提示信息": "创建服务站失败", "失败原因": ["数据异常"]}
+            success: {"提示信息": "获取成功",community:{}},
+            failed: {"提示信息": "获取失败", "失败原因": ["社区不存在"]}
         }
     },
     /***************************************
-     *     URL：/api2/community/getall
+     *     URL：/api2/community/finddefault
      ***************************************/
-    "community_getall": {
+    "community_finddefault": {
         request: {
             typical: {}
         },
         response: {
-            success: {"提示信息": "获取所有社区成功",communities:[{},{},{}]},
-            failed: {"提示信息": "获取所有社区成功", "失败原因": ["无社区数据"]}
+            success: {"提示信息": "获取成功",community:{}},
+            failed: {"提示信息": "获取失败", "失败原因": ["社区不存在"]}
         }
     }
 }
