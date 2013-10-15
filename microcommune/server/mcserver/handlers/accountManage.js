@@ -7,7 +7,8 @@ var serverSetting = root.globaldata.serverSetting;
     /***************************************
      *     URL：/api2/account/verifyphone
      ***************************************/
-    accountManage.verifyphone = function(data, response){
+accountManage.verifyphone = function(data, response){
+    response.asynchronous = 1;
     var phone = data.phone;
     var time = new Date().getTime().toString();
     console.log("1--"+phone+"--"+time.substr(time.length-6));
@@ -105,6 +106,7 @@ var serverSetting = root.globaldata.serverSetting;
  *     URL：/api2/account/verifycode
  ***************************************/
 accountManage.verifycode = function(data, response){
+    response.asynchronous = 1;
     var phone = data.phone;
     var code = data.code;
 
@@ -187,161 +189,16 @@ accountManage.verifypass = function(data, response){
                 accountNode.save();
                 console.log("注册成功---");
                 delete accountData.password;
-                getCommunity(latitude, longitude, accountData, "注册成功", response);
+                response.write(JSON.stringify({
+                    "提示信息": "注册成功" ,
+                    "account":accountData
+                }));
+                response.end();
             }
         });
     }
 }
-function getCommunity(latitude, longitude, accountData, msg, response){
-    console.log(latitude+"----"+longitude);
-    ajax.ajax({
-        type:"GET",
-        url:"http://map.yanue.net/gpsApi.php",
-        data:{
-            lng:parseFloat(longitude),
-            lat:parseFloat(latitude)
-        },
-        success:function(serverData){
-            var localObj = JSON.parse(serverData);
-            var lat = parseFloat(localObj.baidu.lat);
-            var lng = parseFloat(localObj.baidu.lng);
-//                var lat = 40.060000;
-//                var lng = 116.420000;
-            var query = [
-                'MATCH (community:Community)',
-                'RETURN community'
-            ].join('\n');
-            var params = {};
-            db.query(query, params, function(error, results){
-                if(error){
-                    console.log(error);
-                    return;
-                }else{
-                    var flag = false;
-                    var community = {};
-                    var nowcommunity = {};
-                    var i = 0;
-                    for(var index in results){
-                        i++;
-                        var it = results[index].community.data;
-                        var locations = JSON.parse(it.locations);
-                        if(it.name == "天通苑站"){
-                            community = it;
-                        }
-                        if(((parseFloat(locations.lat1)<lat) && (lat<parseFloat(locations.lat2))) && ((parseFloat(locations.lng1)<lng) && (lng<parseFloat(locations.lng2)))){
-                            flag = true;
-                            nowcommunity = it;
-                            if(accountData.status == "unjoin"){
-                                response.write(JSON.stringify({
-                                    "提示信息": msg,
-                                    "account":accountData,
-                                    "nowcommunity": it
-                                }));
-                                response.end();
-                                break;
-                            }else{
-                                getCommunities(accountData, nowcommunity, response);
-                                break;
-                            }
-                        }
-                        if(i == results.length){
-                            delete community.locations;
-                            if(accountData.status == "unjoin"){
-                                if(flag == false){
-                                    console.log("unjoin false");
-                                    response.write(JSON.stringify({
-                                        "提示信息": msg,
-                                        "account":accountData,
-                                        "nowcommunity": community
-                                    }));
-                                    response.end();
-                                }
-                            }else{
-                                getCommunities(accountData, nowcommunity, response);
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    });
-}
-function getCommunities(accountData, nowcommunity, response){
-    var query = [
-        'MATCH (account:Account)-[r:HAS_COMMUNITY]->(community:Community)',
-        'WHERE account.uid={uid}',
-        'RETURN community'
-    ].join('\n');
-    var params = {
-        uid:accountData.uid
-    };
-    db.query(query, params, function(error, results){
-        if(error){
-            console.log(error);
-            return;
-        }else{
-            console.log("获取社区成功---");
-            var communities = [];
-            if(results.length != 0){
-                for(var index in results){
-                    var it = results[index].community.data;
-                    delete it.locations;
-                    communities.push(it);
-                }
-                getFriends(accountData, nowcommunity, communities, response);
-            }else{
-                getFriends(accountData, nowcommunity, communities, response);
-            }
-        }
-    });
-}
-function getFriends(accountData, nowcommunity, communities, response){
-    var query = [
-        'MATCH (account1:Account)-[r:HAS_FRIEND]->(account2:Account)',
-        'WHERE account1.uid={uid}',
-        'RETURN account2'
-    ].join('\n');
-    var params = {
-        uid:accountData.uid
-    };
-    db.query(query, params, function(error, results){
-        if(error){
-            console.log(error);
-            return;
-        }else{
-            console.log("获取好友成功---");
-            var friends = [];
-            if(results.length != 0){
-                var i = 0;
-                for(var index in results){
-                    i++;
-                    var it = results[index].account2.data;
-                    friends.push(it);
-                    if(i == results.length){
-                        response.write(JSON.stringify({
-                            "提示信息" :  "账号登录成功",
-                            "account": accountData,
-                            "nowcommunity": nowcommunity,
-                            "communities": communities,
-                            "friends": friends
-                        }));
-                        response.end();
-                    }
-                }
-            }else{
-                console.log("无好友信息---");
-                response.write(JSON.stringify({
-                    "提示信息" :  "账号登录成功",
-                    "account": accountData,
-                    "nowcommunity": nowcommunity,
-                    "communities": communities,
-                    "friends": friends
-                }));
-                response.end();
-            }
-        }
-    });
-}
+
 /***************************************
  *     URL：/api2/account/auth
  ***************************************/

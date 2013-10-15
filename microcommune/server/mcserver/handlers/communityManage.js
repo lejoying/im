@@ -2,12 +2,16 @@ var serverSetting = root.globaldata.serverSetting;
 var communityManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
+var ajax = require("./../lib/ajax.js");
+/*
 
+*/
 /***************************************
  *     URL：/api2/community/add
- ***************************************/
-communityManage.add = function(data, response){
+ ***************************************//*
 
+communityManage.add = function(data, response){
+    response.asynchronous = 1;
     var locations = { lat1: 40,
         lng1: 116,
         lat2: 40,
@@ -47,11 +51,13 @@ communityManage.add = function(data, response){
         }
     });
 }
+*/
 /***************************************
  *     URL：/api2/community/getall
- ***************************************/
-communityManage.getall = function(data, response){
+ ***************************************//*
 
+communityManage.getall = function(data, response){
+    response.asynchronous = 1;
     var query = [
         'MATCH (community:Community)',
         'RETURN community'
@@ -84,5 +90,113 @@ communityManage.getall = function(data, response){
             }
         }
     });
+}
+*/
+/***************************************
+ *     URL：/api2/community/find
+ ***************************************/
+communityManage.find = function(data, response){
+    response.asynchronous = 1;
+    var longitude = data.longitude;
+    var latitude = data.latitude;
+    findCommunity(longitude, latitude);
+
+    function findCommunity(longitude, latitude){
+        ajax.ajax({
+            type:"GET",
+            url:"http://map.yanue.net/gpsApi.php",
+            data:{
+                lng:parseFloat(longitude),
+                lat:parseFloat(latitude)
+            },
+            success:function(serverData){
+                var localObj = JSON.parse(serverData);
+                var lat = parseFloat(localObj.baidu.lat);
+                var lng = parseFloat(localObj.baidu.lng);
+                var query = [
+                    'MATCH (community:Community)',
+                    'RETURN community'
+                ].join('\n');
+                var params = {};
+                db.query(query, params, function(error, results){
+                    if(error){
+                        console.log(error);
+                        return;
+                    }else{
+                        var flag = false;
+                        var i = 0;
+                        for(var index in results){
+                            i++;
+                            var it = results[index].community.data;
+                            var locations = JSON.parse(it.locations);
+                            if(((parseFloat(locations.lat1)<lat) && (lat<parseFloat(locations.lat2))) && ((parseFloat(locations.lng1)<lng) && (lng<parseFloat(locations.lng2)))){
+                                flag = true;
+                                delete it.locations;
+                                response.write(JSON.stringify({
+                                    "提示信息": "获取成功",
+                                    "community": it
+                                }));
+                                response.end();
+                                break;
+
+                            }
+                            if(i == results.length){
+                                if(flag == false){
+                                    response.write(JSON.stringify({
+                                        "提示信息": "获取失败",
+                                        "失败原因": "社区不存在"
+                                    }));
+                                    response.end();
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+}
+/***************************************
+ *     URL：/api2/community/finddefault
+ ***************************************/
+communityManage.finddefault = function(data, response){
+    response.asynchronous = 1;
+    findDefaultCommunity();
+
+    function findDefaultCommunity(){
+        var query = [
+            'MATCH (community:Community)',
+            'RETURN community'
+        ].join('\n');
+        var params = {};
+        db.query(query, params, function(error, results){
+            if(error){
+                console.log(error);
+                return;
+            }else if(results.length == 0){
+                response.write(JSON.stringify({
+                    "提示信息": "获取失败",
+                    "失败原因": "社区不存在"
+                }));
+                response.end();
+            }else{
+                var flag = false;
+                for(var index in results){
+                    var it = results[index].community.data;
+                    var locations = JSON.parse(it.locations);
+                    if(it.name == "天通苑站"){
+                        flag = true;
+                        delete it.locations;
+                        response.write(JSON.stringify({
+                            "提示信息": "获取成功",
+                            "community": it
+                        }));
+                        response.end();
+                        break;
+                    }
+                }
+            }
+        });
+    }
 }
 module.exports = communityManage;
