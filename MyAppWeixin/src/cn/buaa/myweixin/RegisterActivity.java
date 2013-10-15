@@ -1,19 +1,18 @@
 package cn.buaa.myweixin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.buaa.myweixin.utils.HttpTools;
+import cn.buaa.myweixin.utils.MCTools;
+import cn.buaa.myweixin.utils.MCTools.HttpStatusListener;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -22,14 +21,10 @@ import android.widget.Toast;
 
 public class RegisterActivity extends Activity {
 
-	private final int REGISTER_NEXT = 0x22;
-
+	public static RegisterActivity instance = null;
 	private boolean isAgreeProvision;
 
 	private ImageView iv_agreeprovision;
-
-	private Handler handler;
-	private byte[] data;
 
 	private String registerNumber;
 	private EditText register_number_edit;
@@ -45,110 +40,102 @@ public class RegisterActivity extends Activity {
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 		initView();
-		handler = new Handler() {
-
-			@Override
-			public void handleMessage(Message msg) {
-				// TODO Auto-generated method stub
-				super.handleMessage(msg);
-				int what = msg.what;
-				switch (what) {
-				case REGISTER_NEXT:
-					Intent intent = new Intent(RegisterActivity.this,
-							RegisterCheckingActivity.class);
-					Bundle bundle = new Bundle();
-					try {
-						JSONObject jo = new JSONObject(new String(data));
-						String info = jo.getString("提示信息");
-						if (info.equals("手机号验证成功")) {
-							String number = jo.getString("phone");
-							if (number.equals(registerNumber)) {
-								bundle.putString("number", registerNumber);
-								intent.putExtras(bundle);
-								RegisterActivity.this.startActivity(intent);
-
-							} else {
-								Toast.makeText(RegisterActivity.this, "出现异常",
-										Toast.LENGTH_SHORT).show();
-
-							}
-						} else {
-							String err = jo.getString("失败原因");
-							Toast.makeText(RegisterActivity.this, err,
-									Toast.LENGTH_SHORT).show();
-							
-						}
-					} catch (JSONException e) {
-
-						
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		};
+	
 	}
 
 	public void initView() {
+		instance = this;
 		isAgreeProvision = true;
 		iv_agreeprovision = (ImageView) findViewById(R.id.iv_agreeprovision);
 		register_number_edit = (EditText) findViewById(R.id.register_number_edit);
 	}
 
-	private boolean flag = true;
-
 	// 点击下一步
 	public void registerMobileNext(View v) {
-		if (flag) {
-			if (isAgreeProvision) {
-				boolean hasNetwork = HttpTools.hasNetwork(this);
-				if (!hasNetwork)
-					Toast.makeText(RegisterActivity.this, "无网络连接",
-							Toast.LENGTH_SHORT).show();
-				else {
-					String number = register_number_edit.getText().toString();
-					if (number == null || number.equals("")) {
-						Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT)
-								.show();
-						return;
-					}
-					registerNumber = number;
-					new Thread() {
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							super.run();
+		registerNumber = register_number_edit.getText().toString();
+		if (isAgreeProvision) {
 
-							Map<String, String> map = new HashMap<String, String>();
-							map.put("phone", String.valueOf(registerNumber));
+			String number = register_number_edit.getText().toString();
+			if (number == null || number.equals("")) {
+				Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+				return;
+			}
+
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("phone", String.valueOf(registerNumber));
+
+			MCTools.postForJSON(this,
+					"http://192.168.0.19:8071/api2/account/verifyphone", map,
+					true, new HttpStatusListener() {
+						@Override
+						public void shortIntervalTime() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void noInternet() {
+							new AlertDialog.Builder(RegisterActivity.this)
+									.setIcon(
+											getResources()
+													.getDrawable(
+															R.drawable.login_error_icon))
+									.setTitle("网络错误")
+									.setMessage("无网络连接,请连接网络后\n重试！").create()
+									.show();
+
+						}
+
+						@Override
+						public void getJSONSuccess(JSONObject data) {
+							Intent intent = new Intent(RegisterActivity.this,
+									RegisterCheckingActivity.class);
+							Bundle bundle = new Bundle();
 							try {
-								flag = false;
-								data = HttpTools
-										.sendPost(
-												"http://192.168.0.19:8071/api2/account/verifyphone",
-												map);
-								handler.sendEmptyMessage(REGISTER_NEXT);
-							} catch (IOException e) {
+								String info = data.getString("提示信息");
+								if (info.equals("手机号验证成功")) {
+									String number = data.getString("phone");
+									if (number.equals(registerNumber)) {
+										bundle.putString("number", registerNumber);
+										intent.putExtras(bundle);
+										RegisterActivity.this.startActivity(intent);
+
+									} else {
+										Toast.makeText(RegisterActivity.this, "出现异常",
+												Toast.LENGTH_SHORT).show();
+
+									}
+								} else {
+									String err = data.getString("失败原因");
+
+									System.out.println(err);
+									new AlertDialog.Builder(RegisterActivity.this)
+									.setIcon(
+											getResources()
+													.getDrawable(
+															R.drawable.login_error_icon))
+									.setTitle("验证失败")
+									.setMessage(err).create()
+									.show();
+
+								}
+							} catch (JSONException e) {
 								// TODO Auto-generated catch block
-								flag = true;
 								e.printStackTrace();
 							}
 						}
-					}.start();
-				}
-			} else {
-				Toast.makeText(this, "请同意使用条款和隐私政策", Toast.LENGTH_SHORT).show();
-			}
-		} else if(data!=null){
-			if(registerNumber.equals(register_number_edit.getText().toString())){
-			handler.sendEmptyMessage(REGISTER_NEXT);}else{
-				flag = true;
-				registerMobileNext(new View(this));
-			}
+					});
+		} else {
+			new AlertDialog.Builder(RegisterActivity.this)
+			.setIcon(
+					getResources()
+							.getDrawable(
+									R.drawable.login_error_icon))
+			.setTitle("同意条款")
+			.setMessage("请同意使用条款和隐私政策！").create()
+			.show();
 		}
+
 	}
 
 	// 同意条款

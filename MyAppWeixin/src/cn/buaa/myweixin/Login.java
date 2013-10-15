@@ -19,8 +19,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import cn.buaa.myweixin.utils.Account;
-import cn.buaa.myweixin.utils.MCHttpTools;
-import cn.buaa.myweixin.utils.MCHttpTools.HttpStatusListener;
+import cn.buaa.myweixin.utils.MCTools;
+import cn.buaa.myweixin.utils.MCNowUser;
+import cn.buaa.myweixin.utils.MCTools.HttpStatusListener;
 
 public class Login extends Activity {
 	private EditText mUser; // ÕÊºÅ±à¼­¿ò
@@ -51,7 +52,7 @@ public class Login extends Activity {
 		map.put("phone", mUser.getText().toString());
 		map.put("password", String.valueOf(mPassword.getText().toString()));
 
-		MCHttpTools.postForJSON(Login.this,
+		MCTools.postForJSON(Login.this,
 				"http://192.168.0.19:8071/api2/account/auth", map, true, true,
 				new HttpStatusListener() {
 					public void noInternet() {
@@ -72,20 +73,17 @@ public class Login extends Activity {
 										.getJSONObject("account");
 								String status = jaccount.getString("status");
 								Account account = new Account();
-								account.setPhone(jaccount.getString("phone"));
-								try {
-									OutputStream os = openFileOutput("account",
-											Context.MODE_PRIVATE);
-									ObjectOutputStream oos = new ObjectOutputStream(
-											os);
-									oos.writeObject(account);
-								} catch (FileNotFoundException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+								String phone = jaccount.getString("phone");
+								String nickName=  jaccount.getString("nickName");
+								String mainBusiness = jaccount.getString("mainBusiness");
+								String head = jaccount.getString("head");
+								account.setPhone(phone);
+								account.setNickName(nickName);
+								account.setHead(head);
+								account.setMainBusiness(mainBusiness);
+								account.setStatus(status);
+								MCNowUser.setNowUser(account);
+								MCTools.saveAccount(Login.this, account);
 								if (status.equals("success")) {
 									Intent intent = new Intent();
 									intent.setClass(Login.this,

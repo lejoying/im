@@ -1,18 +1,17 @@
 package cn.buaa.myweixin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.buaa.myweixin.utils.HttpTools;
+import cn.buaa.myweixin.utils.MCTools;
+import cn.buaa.myweixin.utils.MCTools.HttpStatusListener;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -20,15 +19,12 @@ import android.widget.Toast;
 
 public class RegisterCheckingActivity extends Activity {
 
-	private final int REGISTER_NEXT = 0x22;
+	public static RegisterCheckingActivity instance = null;
 	private String registerNumber;
 	private TextView tv_registernumber;
 	private TextView tv_checkingcode;
-	private Handler handler;
 
 	private String checkingcode;
-
-	private byte[] data;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,52 +35,10 @@ public class RegisterCheckingActivity extends Activity {
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		initView();
-		handler = new Handler() {
-
-			@Override
-			public void handleMessage(Message msg) {
-				// TODO Auto-generated method stub
-				super.handleMessage(msg);
-				int what = msg.what;
-				switch (what) {
-				case REGISTER_NEXT:
-					Intent intent = new Intent(RegisterCheckingActivity.this,
-							RegisterSetPassActivity.class);
-					Bundle bundle = new Bundle();
-					try {
-						JSONObject jo = new JSONObject(new String(data));
-						String info = jo.getString("提示信息");
-						if (info.equals("验证成功")) {
-							String number = jo.getString("phone");
-							if (number.equals(registerNumber)) {
-								bundle.putString("number", registerNumber);
-								intent.putExtras(bundle);
-								RegisterCheckingActivity.this
-										.startActivity(intent);
-
-							} else {
-								Toast.makeText(RegisterCheckingActivity.this,
-										"出现异常", Toast.LENGTH_SHORT).show();
-								flag = true;
-							}
-						} else {
-							String err = jo.getString("失败原因");
-							Toast.makeText(RegisterCheckingActivity.this, err,
-									Toast.LENGTH_SHORT).show();
-							flag = true;
-						}
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		};
 	}
 
 	public void initView() {
+		instance = this;
 		Bundle bundle = getIntent().getExtras();
 		registerNumber = bundle.getString("number");
 
@@ -94,51 +48,78 @@ public class RegisterCheckingActivity extends Activity {
 		tv_checkingcode = (TextView) findViewById(R.id.tv_checkingcode);
 	}
 
-	private boolean flag = true;
-
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-
-		flag = true;
-	}
-
 	public void registerCheckingNext(View v) {
-		if (flag) {
-			boolean hasNetwork = HttpTools.hasNetwork(this);
-			if (!hasNetwork)
-				Toast.makeText(RegisterCheckingActivity.this, "无网络连接",
-						Toast.LENGTH_SHORT).show();
-			else {
-				checkingcode = tv_checkingcode.getText().toString();
-				if (checkingcode == null || checkingcode.equals("")) {
-					Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
-					return;
-				}
-				new Thread() {
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						super.run();
 
-						Map<String, String> map = new HashMap<String, String>();
-						map.put("code", String.valueOf(checkingcode));
-						map.put("phone", String.valueOf(registerNumber));
+		checkingcode = tv_checkingcode.getText().toString();
+		if (checkingcode == null || checkingcode.equals("")) {
+			Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("code", String.valueOf(checkingcode));
+		map.put("phone", String.valueOf(registerNumber));
+
+		MCTools.postForJSON(this,
+				"http://192.168.0.19:8071/api2/account/verifycode", map, true,
+				new HttpStatusListener() {
+
+					@Override
+					public void shortIntervalTime() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void noInternet() {
+						new AlertDialog.Builder(RegisterCheckingActivity.this)
+						.setIcon(
+								getResources()
+										.getDrawable(
+												R.drawable.login_error_icon))
+						.setTitle("网络错误")
+						.setMessage("无网络连接,请连接网络后\n重试！").create()
+						.show();
+					}
+
+					@Override
+					public void getJSONSuccess(JSONObject data) {
+						Intent intent = new Intent(
+								RegisterCheckingActivity.this,
+								RegisterSetPassActivity.class);
+						Bundle bundle = new Bundle();
 						try {
-							data = HttpTools
-									.sendPost(
-											"http://192.168.0.19:8071/api2/account/verifycode",
-											map);
-							handler.sendEmptyMessage(REGISTER_NEXT);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
+							String info = data.getString("提示信息");
+							if (info.equals("验证成功")) {
+								String number = data.getString("phone");
+								if (number.equals(registerNumber)) {
+									bundle.putString("number", registerNumber);
+									intent.putExtras(bundle);
+									RegisterCheckingActivity.this
+											.startActivity(intent);
+
+								} else {
+									Toast.makeText(
+											RegisterCheckingActivity.this,
+											"出现异常", Toast.LENGTH_SHORT).show();
+								}
+							} else {
+								String err = data.getString("失败原因");
+								new AlertDialog.Builder(RegisterCheckingActivity.this)
+								.setIcon(
+										getResources()
+												.getDrawable(
+														R.drawable.login_error_icon))
+								.setTitle("验证失败")
+								.setMessage(err).create()
+								.show();
+							}
+						} catch (JSONException e) {
 							e.printStackTrace();
 						}
 					}
-				}.start();
-			}
-		}
+				});
+
 	}
 
 	// 返回按钮

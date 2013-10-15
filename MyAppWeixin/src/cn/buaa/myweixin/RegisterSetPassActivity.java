@@ -1,19 +1,18 @@
 package cn.buaa.myweixin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.buaa.myweixin.utils.HttpTools;
-import cn.buaa.myweixin.utils.LocationTools;
+import cn.buaa.myweixin.utils.MCTools;
+import cn.buaa.myweixin.utils.MCNowUser;
+import cn.buaa.myweixin.utils.MCTools.HttpStatusListener;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -21,17 +20,10 @@ import android.widget.Toast;
 
 public class RegisterSetPassActivity extends Activity {
 
-	private final int REGISTER_NEXT = 0x22;
 	private String registerNumber;
 	private TextView tv_password;
-	private Handler handler;
 
 	private String password;
-
-	private byte[] data;
-
-	private double longitude;
-	private double latitude;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,44 +34,6 @@ public class RegisterSetPassActivity extends Activity {
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		initView();
-		handler = new Handler() {
-
-			@Override
-			public void handleMessage(Message msg) {
-				// TODO Auto-generated method stub
-				super.handleMessage(msg);
-				int what = msg.what;
-				switch (what) {
-				case REGISTER_NEXT:
-					Intent intent = new Intent(RegisterSetPassActivity.this,
-							CCommunityActivity.class);
-					Bundle bundle = new Bundle();
-					try {
-						JSONObject jo = new JSONObject(new String(data));
-						String info = jo.getString("提示信息");
-						if (info.equals("注册成功")) {
-							JSONObject community = jo
-									.getJSONObject("nowcommunity");
-							bundle.putString("nowcommunity", community.toString());
-							intent.putExtras(bundle);
-							RegisterSetPassActivity.this.startActivity(intent);
-
-						} else {
-							String err = jo.getString("失败原因");
-							Toast.makeText(RegisterSetPassActivity.this, err,
-									Toast.LENGTH_SHORT).show();
-						}
-					} catch (JSONException e) {
-						Toast.makeText(RegisterSetPassActivity.this, "出现异常",
-								Toast.LENGTH_SHORT).show();
-						e.printStackTrace();
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		};
 	}
 
 	public void initView() {
@@ -89,63 +43,85 @@ public class RegisterSetPassActivity extends Activity {
 		tv_password = (TextView) findViewById(R.id.tv_setpass);
 	}
 
-	private boolean flag = true;
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-
-		flag = true;
-	}
-
 	public void registerCheckingNext(View v) {
-		if (flag) {
-			double[] location = LocationTools
-					.getLocation(RegisterSetPassActivity.this);
-			longitude = location[0];
-			latitude = location[1];
-			boolean hasNetwork = HttpTools.hasNetwork(this);
 
-			if (!hasNetwork)
-				Toast.makeText(RegisterSetPassActivity.this, "无网络连接",
-						Toast.LENGTH_SHORT).show();
-			else {
+		password = tv_password.getText().toString();
+		if (password == null || password.equals("")) {
+			Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("password", String.valueOf(password));
+		map.put("phone", String.valueOf(registerNumber));
 
-				password = tv_password.getText().toString();
-				if (password == null || password.equals("")) {
-					Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
-					return;
-				}
-				new Thread() {
+		MCTools.postForJSON(this,
+				"http://192.168.0.19:8071/api2/account/verifypass", map, true,
+				true, new HttpStatusListener() {
+
 					@Override
-					public void run() {
+					public void shortIntervalTime() {
 						// TODO Auto-generated method stub
-						super.run();
 
-						Map<String, String> map = new HashMap<String, String>();
-						map.put("password", String.valueOf(password));
-						map.put("phone", String.valueOf(registerNumber));
-						map.put("longitude", String.valueOf(longitude));
-						map.put("latitude", String.valueOf(latitude));
+					}
 
+					@Override
+					public void noInternet() {
+						new AlertDialog.Builder(RegisterSetPassActivity.this)
+								.setIcon(
+										getResources().getDrawable(
+												R.drawable.login_error_icon))
+								.setTitle("网络错误")
+								.setMessage("无网络连接,请连接网络后\n重试！").create()
+								.show();
+					}
+
+					@Override
+					public void getJSONSuccess(JSONObject data) {
+						Intent intent = new Intent(
+								RegisterSetPassActivity.this,
+								CCommunityActivity.class);
+						Bundle bundle = new Bundle();
 						try {
-							flag = false;
-							data = HttpTools
-									.sendPost(
-											"http://192.168.0.19:8071/api2/account/verifypass",
-											map);
-							handler.sendEmptyMessage(REGISTER_NEXT);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							flag = true;
+							String info = data.getString("提示信息");
+							if (info.equals("注册成功")) {
+								JSONObject account = data
+										.getJSONObject("account");
+
+								MCNowUser.setNowUser(
+										account.getString("phone"),
+										account.getString("head"),
+										account.getString("nickName"),
+										account.getString("mainBusiness"),
+										account.getString("status"));
+								JSONObject community = data
+										.getJSONObject("nowcommunity");
+								bundle.putString("nowcommunity",
+										community.toString());
+								intent.putExtras(bundle);
+								RegisterSetPassActivity.this
+										.startActivity(intent);
+								finish();
+								RegisterActivity.instance.finish();
+								RegisterCheckingActivity.instance.finish();
+
+							} else {
+								String err = data.getString("失败原因");
+								new AlertDialog.Builder(
+										RegisterSetPassActivity.this)
+										.setIcon(
+												getResources()
+														.getDrawable(
+																R.drawable.login_error_icon))
+										.setTitle("出错了").setMessage(err)
+										.create().show();
+							}
+						} catch (JSONException e) {
+							Toast.makeText(RegisterSetPassActivity.this,
+									"出现异常", Toast.LENGTH_SHORT).show();
 							e.printStackTrace();
 						}
 					}
-				}.start();
-			}
-		} else {
-
-		}
+				});
 	}
 
 	// 返回按钮

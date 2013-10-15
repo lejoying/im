@@ -8,6 +8,7 @@ public class Account implements Serializable {
 	private String head;
 	private String nickName;
 	private String mainBusiness;
+	private String status; 
 	private List<Account> friends;
 	private List<Community> myCommunitys;
 	
@@ -16,25 +17,44 @@ public class Account implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 	
+	
+
 	public Account(String phone, String head, String nickName,
-			String mainBusiness, List<Account> friends,
+			String mainBusiness, String status, List<Account> friends,
 			List<Community> myCommunitys) {
 		super();
 		this.phone = phone;
 		this.head = head;
 		this.nickName = nickName;
 		this.mainBusiness = mainBusiness;
+		this.status = status;
 		this.friends = friends;
 		this.myCommunitys = myCommunitys;
 	}
-	
+
+
 
 	@Override
 	public String toString() {
 		return "Account [phone=" + phone + ", head=" + head + ", nickName="
-				+ nickName + ", mainBusiness=" + mainBusiness + ", friends="
-				+ friends + ", myCommunitys=" + myCommunitys + "]";
+				+ nickName + ", mainBusiness=" + mainBusiness + ", status="
+				+ status + ", friends=" + friends + ", myCommunitys="
+				+ myCommunitys + "]";
 	}
+
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
 
 	public String getPhone() {
 		return phone;
