@@ -13,9 +13,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
-import cn.buaa.myweixin.utils.Account;
-import cn.buaa.myweixin.utils.MCNowUser;
-import cn.buaa.myweixin.utils.MCTools;
+import cn.buaa.myweixin.apiutils.Account;
+import cn.buaa.myweixin.apiutils.MCNowUser;
+import cn.buaa.myweixin.apiutils.MCTools;
 public class Welcome extends Activity {
 	
 

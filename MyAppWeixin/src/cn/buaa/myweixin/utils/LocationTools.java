@@ -11,10 +11,8 @@ import android.widget.Toast;
 
 public class LocationTools {
 
-	private static LocationManager lm;
-
 	public static double[] getLocation(Activity activity) {
-		lm = (LocationManager) activity
+		LocationManager lm = (LocationManager) activity
 				.getSystemService(Context.LOCATION_SERVICE);
 		// 返回所有已知的位置提供者的名称列表，包括未获准访问或调用活动目前已停用的。
 		List<String> lp = lm.getAllProviders();
@@ -32,18 +30,16 @@ public class LocationTools {
 
 		if (providerName != null) {
 			Location location = lm.getLastKnownLocation(providerName);
-			System.out.println("-------" + location);
 			// 获取维度信息
 			double latitude = location.getLatitude();
 			// 获取经度信息
 			double longitude = location.getLongitude();
-			return new double[]{longitude,latitude};
+			return new double[] { longitude, latitude };
 		} else {
 			Toast.makeText(activity, "1.请检查网络连接 \n2.请打开我的位置",
 					Toast.LENGTH_SHORT).show();
 		}
-		
-	
+
 		return null;
 	}
 }

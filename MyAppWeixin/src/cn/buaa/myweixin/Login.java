@@ -1,9 +1,5 @@
 package cn.buaa.myweixin;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,17 +8,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import cn.buaa.myweixin.utils.Account;
-import cn.buaa.myweixin.utils.LocationTools;
-import cn.buaa.myweixin.utils.MCTools;
-import cn.buaa.myweixin.utils.MCNowUser;
-import cn.buaa.myweixin.utils.MCTools.HttpStatusListener;
+import cn.buaa.myweixin.apiutils.Account;
+import cn.buaa.myweixin.apiutils.MCNowUser;
+import cn.buaa.myweixin.apiutils.MCTools;
+import cn.buaa.myweixin.utils.HttpTools;
 
 public class Login extends Activity {
 	private EditText mUser; // 帐号编辑框
@@ -53,20 +47,13 @@ public class Login extends Activity {
 		map.put("phone", mUser.getText().toString());
 		map.put("password", String.valueOf(mPassword.getText().toString()));
 
-//		MCTools.postForJSON(Login.this,
-//				"/api2/account/auth", map, true, true,
-//				new HttpStatusListener() {
-//					public void noInternet() {
-//						new AlertDialog.Builder(Login.this)
-//								.setIcon(
-//										getResources().getDrawable(
-//												R.drawable.login_error_icon))
-//								.setTitle("网络错误")
-//								.setMessage("无网络连接,请连接网络后\n重试！").create()
-//								.show();
+//		MCTools.sendForJSON(Login.this, "/api2/account/auth", map, true,
+//				HttpTools.SEND_POST, new HttpStatusListener() {
+//					public boolean noInternet() {
+//						return false;
 //					}
 //
-//					public void getJSONSuccess(JSONObject data) {
+//					public void getJSONSuccess(String api, JSONObject data) {
 //						try {
 //							String info = data.getString("提示信息");
 //							if (info.equals("账号登录成功")) {
@@ -75,8 +62,10 @@ public class Login extends Activity {
 //								String status = jaccount.getString("status");
 //								Account account = new Account();
 //								String phone = jaccount.getString("phone");
-//								String nickName=  jaccount.getString("nickName");
-//								String mainBusiness = jaccount.getString("mainBusiness");
+//								String nickName = jaccount
+//										.getString("nickName");
+//								String mainBusiness = jaccount
+//										.getString("mainBusiness");
 //								String head = jaccount.getString("head");
 //								account.setPhone(phone);
 //								account.setNickName(nickName);
@@ -90,20 +79,41 @@ public class Login extends Activity {
 //									intent.setClass(Login.this,
 //											LoadingActivity.class);
 //									startActivity(intent);
+//									finish();
 //								}
 //								if (status.equals("unjoin")) {
-//									Intent intent = new Intent();
-//									Bundle bundle = new Bundle();
-//									JSONObject community = data
-//											.getJSONObject("nowcommunity");
-//									bundle.putString("nowcommunity",
-//											community.toString());
-//									intent.putExtras(bundle);
-//									intent.setClass(Login.this,
-//											CCommunityActivity.class);
-//									startActivity(intent);
+//									MCTools.getLocation(Login.this,
+//											new GetCommunityListener() {
+//												@Override
+//												public void getCommunitySuccess(
+//														JSONObject data) {
+//													try {
+//														Intent intent = new Intent();
+//														Bundle bundle = new Bundle();
+//														JSONObject community = null;
+//
+//														community = data
+//																.getJSONObject("community");
+//
+//														bundle.putString(
+//																"nowcommunity",
+//																community
+//																		.toString());
+//														intent.putExtras(bundle);
+//														intent.setClass(
+//																Login.this,
+//																CCommunityActivity.class);
+//														startActivity(intent);
+//														finish();
+//													} catch (JSONException e) {
+//														// TODO Auto-generated
+//														// catch block
+//														e.printStackTrace();
+//													}
+//												}
+//											});
+//
 //								}
-//								finish();
 //							} else {
 //								new AlertDialog.Builder(Login.this)
 //										.setIcon(
@@ -126,44 +136,6 @@ public class Login extends Activity {
 //
 //					}
 //				});
-		Map<String,Map<String,String>> requests = new HashMap<String, Map<String,String>>();
-		Map<String,String> param1 = new HashMap<String, String>();
-		Map<String,String> param2 = new HashMap<String, String>();
-		Map<String,String> param3 = new HashMap<String, String>();
-		double[] location = LocationTools.getLocation(Login.this);
-		param1.put("latitude", location[1]+"");
-		param1.put("longitude", location[0]+"");
-		
-		param2.put("phone", "123");
-		
-		param3.put("phone", "1425");
-		param3.put("code", "123123");
-		
-		requests.put("/api2/community/find", param1);
-		requests.put("/api2/account/verifyphone", param2);
-		//requests.put("/api2/account/verifycode", param3);
-		
-		
-		MCTools.postForJSON(Login.this, requests, true, new HttpStatusListener() {
-			
-			@Override
-			public void shortIntervalTime() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void noInternet() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void getJSONSuccess(JSONObject data) {
-				// TODO Auto-generated method stub
-				System.out.println(data);
-			}
-		});
 	}
 
 	public void login_back(View v) { // 标题栏 返回按钮

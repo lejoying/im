@@ -6,11 +6,14 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.buaa.myweixin.utils.MCTools;
-import cn.buaa.myweixin.utils.MCNowUser;
-import cn.buaa.myweixin.utils.MCTools.HttpStatusListener;
+import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.AccountManager;
+import cn.buaa.myweixin.api.CommunityManager;
+import cn.buaa.myweixin.apiimpl.AccountManagerImpl;
+import cn.buaa.myweixin.apiimpl.CommunityManagerImpl;
+import cn.buaa.myweixin.apiutils.MCNowUser;
+import cn.buaa.myweixin.apiutils.MCTools;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +27,9 @@ public class RegisterSetPassActivity extends Activity {
 	private TextView tv_password;
 
 	private String password;
+
+	private AccountManager accountManager;
+	private CommunityManager communityManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,74 +60,77 @@ public class RegisterSetPassActivity extends Activity {
 		map.put("password", String.valueOf(password));
 		map.put("phone", String.valueOf(registerNumber));
 
-//		MCTools.postForJSON(this,
-//				"/api2/account/verifypass", map, true,
-//				true, new HttpStatusListener() {
-//
-//					@Override
-//					public void shortIntervalTime() {
-//						// TODO Auto-generated method stub
-//
-//					}
-//
-//					@Override
-//					public void noInternet() {
-//						new AlertDialog.Builder(RegisterSetPassActivity.this)
-//								.setIcon(
-//										getResources().getDrawable(
-//												R.drawable.login_error_icon))
-//								.setTitle("网络错误")
-//								.setMessage("无网络连接,请连接网络后\n重试！").create()
-//								.show();
-//					}
-//
-//					@Override
-//					public void getJSONSuccess(JSONObject data) {
-//						Intent intent = new Intent(
-//								RegisterSetPassActivity.this,
-//								CCommunityActivity.class);
-//						Bundle bundle = new Bundle();
-//						try {
-//							String info = data.getString("提示信息");
-//							if (info.equals("注册成功")) {
-//								JSONObject account = data
-//										.getJSONObject("account");
-//
-//								MCNowUser.setNowUser(
-//										account.getString("phone"),
-//										account.getString("head"),
-//										account.getString("nickName"),
-//										account.getString("mainBusiness"),
-//										account.getString("status"));
-//								JSONObject community = data
-//										.getJSONObject("nowcommunity");
-//								bundle.putString("nowcommunity",
-//										community.toString());
-//								intent.putExtras(bundle);
-//								RegisterSetPassActivity.this
-//										.startActivity(intent);
-//								finish();
-//								RegisterActivity.instance.finish();
-//								RegisterCheckingActivity.instance.finish();
-//
-//							} else {
-//								String err = data.getString("失败原因");
-//								new AlertDialog.Builder(
-//										RegisterSetPassActivity.this)
-//										.setIcon(
-//												getResources()
-//														.getDrawable(
-//																R.drawable.login_error_icon))
-//										.setTitle("出错了").setMessage(err)
-//										.create().show();
-//							}
-//						} catch (JSONException e) {
-//							Toast.makeText(RegisterSetPassActivity.this,
-//									"出现异常", Toast.LENGTH_SHORT).show();
-//							e.printStackTrace();
-//						}
-//					}
-//				});
+		accountManager = new AccountManagerImpl(this);
+		communityManager = new CommunityManagerImpl(this);
+
+		accountManager.verifypass(map, new MCResponseAdapter(this) {
+
+			@Override
+			public void success(JSONObject data) {
+				final Intent intent = new Intent(RegisterSetPassActivity.this,
+						CCommunityActivity.class);
+				final Bundle bundle = new Bundle();
+				try {
+					JSONObject account = data.getJSONObject("account");
+
+					MCNowUser.setNowUser(account.getString("phone"),
+							account.getString("head"),
+							account.getString("nickName"),
+							account.getString("mainBusiness"),
+							account.getString("status"));
+
+					communityManager.find(
+							MCTools.getLocationParam(RegisterSetPassActivity.this),
+							new MCResponseAdapter(RegisterSetPassActivity.this) {
+								@Override
+								public void success(JSONObject data) {
+									try {
+
+										JSONObject community = data
+												.getJSONObject("community");
+										bundle.putString("nowcommunity",
+												community.toString());
+										intent.putExtras(bundle);
+										RegisterSetPassActivity.this
+												.startActivity(intent);
+										RegisterSetPassActivity.this.finish();
+										RegisterActivity.instance.finish();
+										RegisterCheckingActivity.instance
+												.finish();
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+
+								@Override
+								public void failed(JSONObject data) {
+									try {
+
+										JSONObject community = data
+												.getJSONObject("community");
+										bundle.putString("nowcommunity",
+												community.toString());
+										intent.putExtras(bundle);
+										RegisterSetPassActivity.this
+												.startActivity(intent);
+										RegisterSetPassActivity.this.finish();
+										RegisterActivity.instance.finish();
+										RegisterCheckingActivity.instance
+												.finish();
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+
+							});
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
 	}
 
 	// 返回按钮

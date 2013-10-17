@@ -2,7 +2,8 @@ package cn.buaa.myweixin;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import cn.buaa.myweixin.utils.ImageTools;
+
+import cn.buaa.myweixin.apiutils.ImageTools;
 
 import android.app.Activity;
 import android.content.Intent;

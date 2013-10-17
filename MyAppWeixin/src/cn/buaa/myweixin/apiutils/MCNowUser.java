@@ -1,4 +1,5 @@
-package cn.buaa.myweixin.utils;
+package cn.buaa.myweixin.apiutils;
+
 
 public class MCNowUser {
 	private static Account account;

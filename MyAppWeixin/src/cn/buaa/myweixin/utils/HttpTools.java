@@ -47,36 +47,7 @@ public final class HttpTools {
 	 */
 	public static byte[] sendGet(String path, Map<String, String> params)
 			throws IOException {
-		return new HttpTools().sendGet(path, params, true);
-	}
 
-	private byte[] sendGet(String path, Map<String, String> params,
-			boolean mustnew) throws IOException {
-		byte data[] = null;
-		InputStream is = sendGetForInputStream(path, params);
-		if (is != null) {
-			data = StreamTools.isToData(is);
-		}
-		return data;
-	}
-
-	/**
-	 * 用get方法发送params到地址为path的服务器，并返回服务器响应的InputStream
-	 * 
-	 * @param path
-	 * @param params
-	 * @return
-	 * @throws IOException
-	 */
-	public static InputStream sendGetForInputStream(String path,
-			Map<String, String> params) throws IOException {
-		HttpTools ht = new HttpTools();
-		return ht.sendGetForInputStream(path, params, true);
-	}
-
-	private InputStream sendGetForInputStream(String path,
-			Map<String, String> params, boolean mustnew) throws IOException {
-		InputStream is = null;
 		// 拼接请求参数
 		if (params != null) {
 			Set<String> keys = params.keySet();
@@ -99,11 +70,13 @@ public final class HttpTools {
 		// 设置超时
 		httpURLConnection.setConnectTimeout(5000);
 		// 判断服务器响应
+		byte data[] = null;
 		if (httpURLConnection.getResponseCode() == 200) {
-			is = httpURLConnection.getInputStream();
+			InputStream is = httpURLConnection.getInputStream();
+			data = StreamTools.isToData(is);
 		}
 		httpURLConnection.disconnect();
-		return is;
+		return data;
 	}
 
 	/**
@@ -116,11 +89,6 @@ public final class HttpTools {
 	 */
 	public static byte[] sendPost(String path, Map<String, String> params)
 			throws IOException {
-		return new HttpTools().sendPost(path, params, true);
-	}
-
-	private byte[] sendPost(String path, Map<String, String> params,
-			boolean mustnew) throws IOException {
 		// 拼接请求参数
 		String paramData = "";
 		if (params != null) {
@@ -180,20 +148,16 @@ public final class HttpTools {
 	public static JSONObject sendForJSONObject(String path,
 			Map<String, String> params, int method) throws IOException,
 			JSONException {
-		return new HttpTools().sendForJSONObject(path, params, method, true);
-	}
-
-	private JSONObject sendForJSONObject(String path,
-			Map<String, String> params, int method, boolean mustnew)
-			throws IOException, JSONException {
 		JSONObject jsonObject = null;
 		if (method == SEND_GET) {
 			byte[] data = sendGet(path, params);
-			jsonObject = new JSONObject(new String(data));
+			if (data != null)
+				jsonObject = new JSONObject(new String(data));
 		}
 		if (method == SEND_POST) {
 			byte[] data = sendPost(path, params);
-			jsonObject = new JSONObject(new String(data));
+			if (data != null)
+				jsonObject = new JSONObject(new String(data));
 		}
 		return jsonObject;
 	}

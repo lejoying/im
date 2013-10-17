@@ -1,7 +1,9 @@
-package cn.buaa.myweixin.utils;
+package cn.buaa.myweixin.apiutils;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import cn.buaa.myweixin.utils.StreamTools;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;

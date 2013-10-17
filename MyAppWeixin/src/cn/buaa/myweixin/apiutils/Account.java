@@ -1,9 +1,14 @@
-package cn.buaa.myweixin.utils;
+package cn.buaa.myweixin.apiutils;
 
 import java.io.Serializable;
 import java.util.List;
 
+
 public class Account implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String phone;
 	private String head;
 	private String nickName;

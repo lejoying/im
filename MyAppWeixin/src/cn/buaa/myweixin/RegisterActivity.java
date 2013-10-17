@@ -6,8 +6,9 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.buaa.myweixin.utils.MCTools;
-import cn.buaa.myweixin.utils.MCTools.HttpStatusListener;
+import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.AccountManager;
+import cn.buaa.myweixin.apiimpl.AccountManagerImpl;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,9 +39,8 @@ public class RegisterActivity extends Activity {
 		// 启动activity时自动弹出软键盘
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
 		initView();
-	
+
 	}
 
 	public void initView() {
@@ -64,76 +64,37 @@ public class RegisterActivity extends Activity {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("phone", String.valueOf(registerNumber));
 
-			MCTools.postForJSON(this,
-					"/api2/account/verifyphone", map,
-					true, new HttpStatusListener() {
-						@Override
-						public void shortIntervalTime() {
-							// TODO Auto-generated method stub
+			AccountManager accountManager = new AccountManagerImpl(this);
 
+			accountManager.verifyphone(map, new MCResponseAdapter(this) {
+				@Override
+				public void success(JSONObject data) {
+					Intent intent = new Intent(RegisterActivity.this,
+							RegisterCheckingActivity.class);
+					Bundle bundle = new Bundle();
+					try {
+						String number = data.getString("phone");
+						if (number.equals(registerNumber)) {
+							bundle.putString("number", registerNumber);
+							intent.putExtras(bundle);
+							RegisterActivity.this.startActivity(intent);
+
+						} else {
+							Toast.makeText(RegisterActivity.this, "出现异常",
+									Toast.LENGTH_SHORT).show();
 						}
-
-						@Override
-						public void noInternet() {
-							new AlertDialog.Builder(RegisterActivity.this)
-									.setIcon(
-											getResources()
-													.getDrawable(
-															R.drawable.login_error_icon))
-									.setTitle("网络错误")
-									.setMessage("无网络连接,请连接网络后\n重试！").create()
-									.show();
-
-						}
-
-						@Override
-						public void getJSONSuccess(JSONObject data) {
-							Intent intent = new Intent(RegisterActivity.this,
-									RegisterCheckingActivity.class);
-							Bundle bundle = new Bundle();
-							try {
-								String info = data.getString("提示信息");
-								if (info.equals("手机号验证成功")) {
-									String number = data.getString("phone");
-									if (number.equals(registerNumber)) {
-										bundle.putString("number", registerNumber);
-										intent.putExtras(bundle);
-										RegisterActivity.this.startActivity(intent);
-
-									} else {
-										Toast.makeText(RegisterActivity.this, "出现异常",
-												Toast.LENGTH_SHORT).show();
-
-									}
-								} else {
-									String err = data.getString("失败原因");
-
-									System.out.println(err);
-									new AlertDialog.Builder(RegisterActivity.this)
-									.setIcon(
-											getResources()
-													.getDrawable(
-															R.drawable.login_error_icon))
-									.setTitle("验证失败")
-									.setMessage(err).create()
-									.show();
-
-								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					});
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			});
 		} else {
 			new AlertDialog.Builder(RegisterActivity.this)
-			.setIcon(
-					getResources()
-							.getDrawable(
+					.setIcon(
+							getResources().getDrawable(
 									R.drawable.login_error_icon))
-			.setTitle("同意条款")
-			.setMessage("请同意使用条款和隐私政策！").create()
-			.show();
+					.setTitle("同意条款").setMessage("请同意使用条款和隐私政策！").create()
+					.show();
 		}
 
 	}
