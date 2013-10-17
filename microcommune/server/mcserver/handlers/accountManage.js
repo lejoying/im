@@ -1,12 +1,13 @@
 var serverSetting = root.globaldata.serverSetting;
-    var accountManage = {};
-    var neo4j = require('neo4j');
-    var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
-    var ajax = require("./../lib/ajax.js");
+var accountManage = {};
+var neo4j = require('neo4j');
+var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
+var sms = require("./../lib/SMS.js");
+var sms_power = false;
 
-    /***************************************
-     *     URL：/api2/account/verifyphone
-     ***************************************/
+/***************************************
+*     URL：/api2/account/verifyphone
+***************************************/
 accountManage.verifyphone = function(data, response){
     response.asynchronous = 1;
     var phone = data.phone;
@@ -51,8 +52,10 @@ accountManage.verifyphone = function(data, response){
                     accountNode.data.time = new Date().getTime();
                     accountNode.save();
                     console.log("2--"+phone+"--"+time.substr(time.length-6));
-                    var message = "乐家品质生活服务手机验证码：" + time.substr(time.length-6) + "，欢迎您使用【乐家生活】";
-//                    sendPhoneMessage("18612450783",message);
+                    var message = "微型公社手机验证码：" + time.substr(time.length-6) + "，欢迎您使用【微型公社】";
+                    if(sms_power == true){
+                        sms.sendMsg(phone, message);
+                    }
                     response.write(JSON.stringify({
                         "提示信息":"手机号验证成功",
                         "phone": account.phone
@@ -80,8 +83,10 @@ accountManage.verifyphone = function(data, response){
             } else {
                 var accountNode = results.pop().account;
                 console.log("获取验证码成功---");
-                var message = "乐家品质生活服务手机验证码：" + account.code + "，欢迎您使用【乐家生活】";
-//                sendPhoneMessage("18612450783",message);
+                var message = "微型公社手机验证码：" + account.code + "，欢迎您使用【微型公社】";
+                if(sms_power == true){
+                    sms.sendMsg(phone, message);
+                }
                 response.write(JSON.stringify({
                     "提示信息":"手机号验证成功",
                     "phone": accountNode.data.phone
@@ -90,16 +95,6 @@ accountManage.verifyphone = function(data, response){
             }
 
         });
-    }
-    function sendPhoneMessage(phone, message) {
-            ajax.ajax({
-                type: 'GET',
-                url: "http://11529-c9239.sms-api.63810.com/api/SmsSend/user/wsds/hash/54c0b95f55a8851cc15f0ccaaea116ae/encode/utf-8/smstype/notify",
-                data: {mobile: phone, content: message},
-                success: function (dataStr) {
-                    //todo check if the message sent failed.
-                }
-            });
     }
 }
 /***************************************
@@ -261,169 +256,6 @@ accountManage.auth = function(data, response){
 accountManage.exit = function(data, response){
 
 }
-accountManage.help = function(data, response){
-    var md5 = function(){return require('crypto').createHash('md5')};
 
-    var ACCOUNT_ID = '0000000041b645530141b9d1b56c0054'; //账户ID
-    var ACCOUNT_TOKEN = 'a84c27dd1c3646e280ee7b9cdd4041f8'; //账户TOKEN
-    var APP_ID = 'aaf98fda41b64df00141b9df8c16003d'; //APP的ID
-    var SUB_ID = '965266509@qq.com'; //子账户ID
-
-//计算签名和头
-    console.log("---+++");
-    var sign = function(){
-        var now = new Date();
-        var dt = ''; var a = null;
-        a = (now.getFullYear()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getMonth() + 1); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getDate()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getHours()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getMinutes()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getSeconds()); a < 10 ? dt += '0' + a : dt += a;
-
-        var sign = md5().update(ACCOUNT_ID + ACCOUNT_TOKEN + dt).digest('hex').toUpperCase();
-        var header = new Buffer(ACCOUNT_ID + ':' + dt).toString('base64');
-
-        return {sign: sign, header: header};
-    };
-    ajax.ajax({
-        type:"POST",
-        url:"https://app.cloopen.com:8883/2013-03-22/Accounts/0000000041b645530141b9d1b56c0054/SubAccounts?sig="+sign.sign,
-        data:{
-            appId:"aaf98fda41b64df00141b9df8c16003d",
-            friendlyName:"965266509@qq.com"
-        },
-        headers: {
-            'Authorization': sign.header,
-            'Content-Type': 'application/xml;charset=utf-8',
-            'Accept': 'application/xml'
-        },
-        success:function(serverData){
-            console.log("---");
-            console.log(serverData);
-            response.write(JSON.stringify({
-                "str":serverData
-            }));
-            response.end();
-        },
-        error:function(error){
-            console.log("---+++=="+error);
-        }
-    });
-/*    var https = require('https');
-    var md5 = function(){return require('crypto').createHash('md5')};
-
-    var ACCOUNT_ID = '0000000041b645530141b9d1b56c0054'; //账户ID
-    var ACCOUNT_TOKEN = 'a84c27dd1c3646e280ee7b9cdd4041f8'; //账户TOKEN
-    var APP_ID = 'aaf98fda41b64df00141b9df8c16003d'; //APP的ID
-    var SUB_ID = '965266509@qq.com'; //子账户ID
-
-//计算签名和头
-    var get_sign = function(){
-        var now = new Date();
-        var dt = ''; var a = null;
-        a = (now.getFullYear()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getMonth() + 1); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getDate()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getHours()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getMinutes()); a < 10 ? dt += '0' + a : dt += a;
-        a = (now.getSeconds()); a < 10 ? dt += '0' + a : dt += a;
-
-        var sign = md5().update(ACCOUNT_ID + ACCOUNT_TOKEN + dt).digest('hex').toUpperCase();
-        var header = new Buffer(ACCOUNT_ID + ':' + dt).toString('base64');
-
-        return {sign: sign, header: header};
-    }
-
-//发送信息
-    var send_msg = function(to, msg){
-        var sign = get_sign();
-        var opt = {
-            hostname: 'app.cloopen.com',
-            port: 8883,
-            path: '/2013-03-22/Accounts/%s/SMS/Messages'.replace('%s', ACCOUNT_ID) + '?sig=' + sign.sign,
-            method: 'POST',
-            headers: {
-                'Authorization': sign.header,
-                'Content-Type': 'application/xml;charset=utf-8',
-                'Accept': 'application/xml'
-            }
-        }
-
-        var raw = '<?xml version="1.0" encoding="utf-8"?>'
-            + '<SMSMessage>'
-            +   '<appId>%(app_id)s</appId>'
-            +   '<to>%(to)s</to>'
-            +   '<body>%(msg)s</body>'
-            +   '<msgType>0</msgType>'
-            +   '<subAccountSid>%(sub_id)s</subAccountSid>'
-            + '</SMSMessage>';
-        raw = raw.replace('%(app_id)s', APP_ID).replace('%(sub_id)s', SUB_ID);
-        raw = raw.replace('%(to)s', to).replace('%(msg)s', msg);
-
-        return {opt: opt, body: raw};
-    }
-
-
-//创建子账户
-    var create_sub = function(name){
-        var sign = get_sign();
-        var opt = {
-            hostname: 'app.cloopen.com',
-            port: 8883,
-            path: '/2013-03-22/Accounts/%s/SubAccounts'.replace('%s', ACCOUNT_ID) + '?sig=' + sign.sign,
-            method: 'POST',
-            headers: {
-                'Authorization': sign.header,
-                'Content-Type': 'application/xml;charset=utf-8',
-                'Accept': 'application/xml'
-            }
-        }
-
-        var raw = '<?xml version="1.0" encoding="utf-8"?>'
-            + '<SubAccount>'
-            +   '<appId>%(app_id)s</appId>'
-            +   '<friendlyName>%(name)s</friendlyName>'
-            +   '<accountSid>%(account_id)s</accountSid>'
-            + '</SubAccount>';
-        raw = raw.replace('%(app_id)s', APP_ID).replace('%(accoun_id)s', ACCOUNT_ID);
-        raw = raw.replace('%(name)s', name);
-
-        return {opt: opt, body: raw};
-    }
-
-
-//发出请求
-    var request = function(obj){
-        var req = https.request(obj.opt, function(res){
-            var buffer = '';
-            res.on('data', function(chunk){
-                buffer += chunk;
-            });
-
-            res.on('end', function(){
-                console.log(res.statusCode);
-                console.log(buffer);
-            });
-        });
-
-        if (obj.opt.method == 'POST') {
-            req.write(obj.body || '');
-        }
-
-        req.end();
-    }
-
-
-
-    if (require.main === module) {
-        var obj = send_msg('15210721344', '中文');
-        var obj = create_sub('965266509@qq.com');
-        request(obj);
-    }
-    var obj = send_msg('15210721344', '中文');
-    var obj = create_sub('965266509@qq.com');
-    request(obj);*/
-}
 
 module.exports = accountManage;

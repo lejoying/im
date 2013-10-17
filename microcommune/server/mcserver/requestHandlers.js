@@ -56,9 +56,6 @@ requestHandlers.communityManage = function (request, response, pathObject, data)
     if (operation == "find") {
         communityManage.find(data, response);
     }
-    else if (operation == "finddefault") {
-        communityManage.finddefault(data, response);
-    }
 }
 
 
@@ -73,6 +70,17 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     }
     else if (operation == "addfriend") {
         relationManage.addfriend(data, response);
+    }
+}
+
+var circleManage = require("./handlers/circleManage.js");
+requestHandlers.circleManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "add") {
+        relationManage.add(data, response);
     }
 }
 

@@ -102,6 +102,7 @@ communityManage.find = function(data, response){
     findCommunity(longitude, latitude);
 
     function findCommunity(longitude, latitude){
+        console.log(new Date().getTime());
         ajax.ajax({
             type:"GET",
             url:"http://map.yanue.net/gpsApi.php",
@@ -110,6 +111,7 @@ communityManage.find = function(data, response){
                 lat:parseFloat(latitude)
             },
             success:function(serverData){
+                console.log(new Date().getTime());
                 var localObj = JSON.parse(serverData);
                 var lat = parseFloat(localObj.baidu.lat);
                 var lng = parseFloat(localObj.baidu.lng);
@@ -125,13 +127,18 @@ communityManage.find = function(data, response){
                     }else{
                         var flag = false;
                         var i = 0;
+                        var community = {};
                         for(var index in results){
                             i++;
                             var it = results[index].community.data;
+                            if(it.name == "天通苑站"){
+                                community = it;
+                            }
                             var locations = JSON.parse(it.locations);
                             if(((parseFloat(locations.lat1)<lat) && (lat<parseFloat(locations.lat2))) && ((parseFloat(locations.lng1)<lng) && (lng<parseFloat(locations.lng2)))){
                                 flag = true;
                                 delete it.locations;
+                                console.log("获取当前社区成功-"+JSON.stringify(it));
                                 response.write(JSON.stringify({
                                     "提示信息": "获取成功",
                                     "community": it
@@ -141,10 +148,13 @@ communityManage.find = function(data, response){
 
                             }
                             if(i == results.length){
+                                delete community.locations;
                                 if(flag == false){
+                                    console.log("获取默认社区成功--"+JSON.stringify(community));
                                     response.write(JSON.stringify({
                                         "提示信息": "获取失败",
-                                        "失败原因": "社区不存在"
+                                        "失败原因": "社区不存在",
+                                        community: community
                                     }));
                                     response.end();
                                 }
@@ -152,49 +162,6 @@ communityManage.find = function(data, response){
                         }
                     }
                 });
-            }
-        });
-    }
-}
-/***************************************
- *     URL：/api2/community/finddefault
- ***************************************/
-communityManage.finddefault = function(data, response){
-    response.asynchronous = 1;
-    findDefaultCommunity();
-
-    function findDefaultCommunity(){
-        var query = [
-            'MATCH (community:Community)',
-            'RETURN community'
-        ].join('\n');
-        var params = {};
-        db.query(query, params, function(error, results){
-            if(error){
-                console.log(error);
-                return;
-            }else if(results.length == 0){
-                response.write(JSON.stringify({
-                    "提示信息": "获取失败",
-                    "失败原因": "社区不存在"
-                }));
-                response.end();
-            }else{
-                var flag = false;
-                for(var index in results){
-                    var it = results[index].community.data;
-                    var locations = JSON.parse(it.locations);
-                    if(it.name == "天通苑站"){
-                        flag = true;
-                        delete it.locations;
-                        response.write(JSON.stringify({
-                            "提示信息": "获取成功",
-                            "community": it
-                        }));
-                        response.end();
-                        break;
-                    }
-                }
             }
         });
     }
