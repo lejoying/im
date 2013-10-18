@@ -2,85 +2,61 @@ var session = {};
 
 var access = 0;
 
-var sessionPool = {};
-var accountSession = {};
-
-var redis = require("redis");
-var saveClient;
-var getClient;
-
-session.get = function (uid, sessionID, response) {
+sessionPool = {};
+accessKeyPool = {};
+accountSession = {};
+var count = 0;
+session.eventweb = function (data, response) {
     response.asynchronous = 1;
-
+    var sessionID = data.sessionID;
     var sessionResponse = sessionPool[sessionID];
     if (sessionResponse != null) {
         sessionResponse.end();
     }
-
     sessionPool[sessionID] = response;
-    accountSession[uid] = accountSession[uid] || [];
-    accountSession[uid][sessionID] = response;
-
+    count++;
+    console.log(count);
+    if(count>100000){
+        var index = 0;
+        for(var key in sessionPool){
+            delete sessionPool.key;
+            index++;
+            if(index == 20000)
+                break;
+        }
+        count = count-index;
+    }
+}
+session.event = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var sessionID = data.sessionID;
+    accountSession[phone] = accountSession[phone] || [];
+    accountSession[phone][sessionID] = response;
 }
 
-session.send = send;
-function send(uid, userlist, messages, response) {
-    saveMessages(messages);
-    for (var count in userlist) {
-        var nowTime = new Date().getTime();
-        processResponse(userlist[count], function process(sessionResponse) {
-            console.log();
-            while(new Date().getTime() - nowTime < 10000){
+session.notify = notify;
+function notify(phone, sessionID, eventID, event, response) {
 
-            }
-            //getMessages();
-            sessionResponse.write(JSON.stringify(messages));
+    event = event || {eventID: eventID};
+    if (sessionID == "*") {
+        var sessions = accountSession[phone];
+        for (var sessionID in sessions) {
+            var sessionResponse = sessions[sessionID];
+            sessionResponse.write(JSON.stringify(event));
             sessionResponse.end();
-        });
-    }
-
-    function processResponse(touid, process) {
-        var sessions = accountSession[touid];
-        if (sessions != undefined) {
-            for (var sessionID in sessions) {
-                var sessionResponse = sessions[sessionID];
-                process(sessionResponse);
-            }
-        } else {
-            console.log(touid + "为离线状态");
         }
+    }
+    else {
+        var sessionResponse = sessionPool[sessionID];
+        sessionResponse.write(JSON.stringify(event));
+        sessionResponse.end();
     }
 
     response.write(JSON.stringify({
-        "information": "send success"
+        "information": "notify success"
     }));
     response.end();
-}
-
-function saveMessages(messages) {
-    saveClient = redis.createClient();
-    saveClient.hmset("aa", messages, function (err, reply) {
-        if (err != null) {
-            console.log(err);
-            saveClient.end();
-            return;
-        }
-        saveClient.end();
-    });
-}
-
-function getMessages() {
-    getClient = redis.createClient();
-    getClient.hgetall("aa", function (err, reply) {
-        if (err != null) {
-            console.log(err);
-            getClient.end();
-            return;
-        }
-        console.log(reply);
-        getClient.end();
-    });
-
 }
 
 module.exports = session;

@@ -2,23 +2,20 @@ var requestHandlers = {};
 
 var globaldata = root.globaldata;
 
-var session = require('./handlers/session');
-requestHandlers.session = function (request, response, pathObject, getParam) {
-    if (getParam == null) {
+var session = require('./handlers/session.js');
+requestHandlers.session = function (request, response, pathObject, data) {
+    if (data == null) {
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "get") {
-        var uid = getParam["uid"];
-        var sessionID = getParam["sessionID"];
-        var eventID = getParam["eventID"];
-        session.get(uid, sessionID, response);
+    if (operation == "eventweb") {
+        session.eventweb(data, response);
     }
-    else if (operation == "send") {
-        var uid = getParam["uid"];
-        var userlist = JSON.parse(getParam["userlist"]);
-        var messages = JSON.parse(getParam["messages"]);
-        session.send(uid, userlist, messages, response);
+    else if (operation == "event") {
+        session.event(data, response);
+    }
+    else if(operation == "notify"){
+        session.notify(data, response);
     }
 };
 

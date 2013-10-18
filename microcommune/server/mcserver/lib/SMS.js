@@ -113,8 +113,8 @@ var create_sub = function (name) {
 
 //发出请求
 var request = function (obj) {
+    var buffer = '';
     var req = https.request(obj.opt, function (res) {
-        var buffer = '';
         res.on('data', function (chunk) {
             buffer += chunk;
         });
@@ -130,6 +130,7 @@ var request = function (obj) {
     }
 
     req.end();
+
 }
 
 /*if (require.main === module) {
