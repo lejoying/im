@@ -112,7 +112,7 @@ var create_sub = function (name) {
 
 
 //发出请求
-var request = function (obj) {
+var request = function (obj, next) {
     var buffer = '';
     var req = https.request(obj.opt, function (res) {
         res.on('data', function (chunk) {
@@ -122,6 +122,7 @@ var request = function (obj) {
         res.on('end', function () {
             console.log(res.statusCode);
             console.log(buffer);
+            next(buffer);
         });
     });
 
@@ -138,9 +139,9 @@ var request = function (obj) {
  var obj = create_sub('965266509@qq.com');
  request(obj);
  }*/
-sms.sendMsg = function(to, msg){
-    var obj = send_msg(to, msg);
-    request(obj);
+sms.sendMsg = function(to, msg, next){
+    var obj = send_msg(to, msg, next);
+    request(obj, next);
 }
 sms.createsub = function(email){
     var obj = create_sub(email);

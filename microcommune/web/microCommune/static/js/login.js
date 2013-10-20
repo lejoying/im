@@ -22,7 +22,13 @@ function request(str){
             sessionID: str
         },
         success: function(data){
-
+            if(data["提示信息"] == "登录成功"){
+                alert("登录成功");
+                location.href = "default.html";
+            }else{
+                request(str);
+            }
+            request(str);
         },
         failed: function(){
             request(str);

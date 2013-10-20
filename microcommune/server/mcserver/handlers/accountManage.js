@@ -5,6 +5,7 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var sms = require("./../lib/SMS.js");
 //sms.createsub("coolspan@sina.cn");此子账户已创建
 var sms_power = false;
+//sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
 
 /***************************************
 *     URL：/api2/account/verifyphone
@@ -62,13 +63,23 @@ accountManage.verifyphone = function(data, response){
                     console.log("注册验证码--"+phone+"--"+code);
                     var message = "微型公社手机验证码：" + code + "，欢迎您使用";
                     if(sms_power == true){
-                        sms.sendMsg(phone, message);
+                        sms.sendMsg(phone, message,function(data){
+                            var smsObj = JSON.parse(data);
+                            if(smsObj.statusCode == "000000"){
+                                response.write(JSON.stringify({
+                                    "提示信息":"手机号验证成功",
+                                    "phone": account.phone
+                                }));
+                                response.end();
+                            }else{
+                                response.write(JSON.stringify({
+                                    "提示信息":"手机号验证失败",
+                                    "失败原因": "手机号不正确"
+                                }));
+                                response.end();
+                            }
+                        });
                     }
-                    response.write(JSON.stringify({
-                        "提示信息":"手机号验证成功",
-                        "phone": account.phone
-                    }));
-                    response.end();
                 }
             }
         });
@@ -94,13 +105,23 @@ accountManage.verifyphone = function(data, response){
                 var message = "微型公社手机验证码：" + account.code + "，欢迎您使用";
                 console.log(accountNode.data.code);
                 if(sms_power == true){
-                    sms.sendMsg(phone, message);
+                    sms.sendMsg(phone, message,function(data){
+                        var smsObj = JSON.parse(data);
+                        if(smsObj.statusCode == "000000"){
+                            response.write(JSON.stringify({
+                                "提示信息":"手机号验证成功",
+                                "phone": accountNode.data.phone
+                            }));
+                            response.end();
+                        }else{
+                            response.write(JSON.stringify({
+                                "提示信息":"手机号验证失败",
+                                "失败原因": "手机号不正确"
+                            }));
+                            response.end();
+                        }
+                    });
                 }
-                response.write(JSON.stringify({
-                    "提示信息":"手机号验证成功",
-                    "phone": accountNode.data.phone
-                }));
-                response.end();
             }
 
         });
@@ -204,13 +225,23 @@ accountManage.verifyloginphone = function(data, response){
                     console.log("登录验证码--"+phone+"--"+code);
                     var message = "微型公社手机验证码：" + code + "，欢迎您使用";
                     if(sms_power == true){
-                        sms.sendMsg(phone, message);
+                        sms.sendMsg(phone, message,function(data){
+                            var smsObj = JSON.parse(data);
+                            if(smsObj.statusCode == "000000"){
+                                response.write(JSON.stringify({
+                                    "提示信息":"验证码发送成功",
+                                    "phone": account.phone
+                                }));
+                                response.end();
+                            }else{
+                                response.write(JSON.stringify({
+                                    "提示信息":"验证码发送成功",
+                                    "失败原因": "服务器异常"
+                                }));
+                                response.end();
+                            }
+                        });
                     }
-                    response.write(JSON.stringify({
-                        "提示信息":"验证码发送成功",
-                        "phone": account.phone
-                    }));
-                    response.end();
                 }else{
                     response.write(JSON.stringify({
                         "提示信息":"验证码发送失败",
