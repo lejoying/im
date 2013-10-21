@@ -24,7 +24,7 @@ import android.os.Looper;
 
 public class MCTools {
 
-	private static final String DOMAIN = "http://192.168.0.19:8071";
+	private static final String DOMAIN = "http://192.168.2.43:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;

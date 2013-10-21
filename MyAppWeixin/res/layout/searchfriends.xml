@@ -20,12 +20,14 @@
             android:onClick="back" >
 
             <ImageView
-                android:id="@+id/imageView1"
+                android:id="@+id/ImageView01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/new_arrow_top" />
+                android:clickable="true"
+                android:onClick="back"
+                android:src="@drawable/btn_return_topbar" />
         </RelativeLayout>
 
         <TextView

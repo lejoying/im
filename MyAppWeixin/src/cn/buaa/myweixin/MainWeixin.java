@@ -129,6 +129,8 @@ public class MainWeixin extends Activity {
 		};
 
 		mTabPager.setAdapter(mPagerAdapter);
+		if (Login.instance != null)
+			Login.instance.finish();
 	}
 
 	/**
@@ -329,9 +331,11 @@ public class MainWeixin extends Activity {
 		Intent intent = new Intent(MainWeixin.this, ChatServiceActivity.class);
 		startActivity(intent);
 	}
+
 	// 和送水服务开始聊天
 	public void startservicewaterchat(View v) {
-		Intent intent = new Intent(MainWeixin.this, ChatServiceWaterActivity.class);
+		Intent intent = new Intent(MainWeixin.this,
+				ChatServiceWaterActivity.class);
 		startActivity(intent);
 	}
 
@@ -374,9 +378,9 @@ public class MainWeixin extends Activity {
 		Intent intent = new Intent(this, ServiceStationActivity.class);
 		startActivity(intent);
 	}
-	
-	public void showCallingcard(View v){
-		Intent intent = new Intent(this,CallingCardActivity.class);
+
+	public void showCallingcard(View v) {
+		Intent intent = new Intent(this, CallingCardActivity.class);
 		startActivity(intent);
 	}
 }

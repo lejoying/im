@@ -40,4 +40,9 @@ public class SearchFriendsDialog extends Activity {
 		startActivity(intent);
 		finish();
 	}
+	
+	//ɨһɨ
+	public void richScan(View v) {
+		
+	}
 }

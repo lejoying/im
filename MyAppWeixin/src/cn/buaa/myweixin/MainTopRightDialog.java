@@ -1,6 +1,7 @@
 package cn.buaa.myweixin;
 
 
+import cn.buaa.myweixin.tdcode.EncodeActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,17 +18,6 @@ public class MainTopRightDialog extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_top_right_dialog);
-		//dialog=new MyDialog(this);
-		layout=(LinearLayout)findViewById(R.id.main_dialog_layout);
-		layout.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Toast.makeText(getApplicationContext(), "提示：点击窗口外部关闭窗口！", 
-						Toast.LENGTH_SHORT).show();	
-			}
-		});
 	}
 
 	@Override
@@ -36,18 +26,17 @@ public class MainTopRightDialog extends Activity {
 		return true;
 	}
 	
+	//扫一扫
+	public void richScan(View v){
+		Intent intent = new Intent(this,CaptureActivity.class);
+		startActivity(intent);
+		finish();
+	}
+	
+	//打开我的名片
 	public void showMyBusinessCard(View v){
 		Intent intent = new Intent(MainTopRightDialog.this,CallingCardActivity.class);
 		startActivity(intent);
 		this.finish();
 	}
-	/*
-	public void exitbutton1(View v) {  
-    	this.finish();    	
-      }  
-	public void exitbutton0(View v) {  
-    	this.finish();
-    	MainWeixin.instance.finish();//关闭Main 这个Activity
-      }  
-	*/
 }
