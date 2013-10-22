@@ -79,6 +79,12 @@ accountManage.verifyphone = function(data, response){
                                 response.end();
                             }
                         });
+                    }else{
+                        response.write(JSON.stringify({
+                            "提示信息":"手机号验证成功",
+                            "phone": account.phone
+                        }));
+                        response.end();
                     }
                     response.write(JSON.stringify({
                         "提示信息":"手机号验证成功",
@@ -126,6 +132,12 @@ accountManage.verifyphone = function(data, response){
                             response.end();
                         }
                     });
+                }else{
+                    response.write(JSON.stringify({
+                        "提示信息":"手机号验证成功",
+                        "phone": accountNode.data.phone
+                    }));
+                    response.end();
                 }
                 response.write(JSON.stringify({
                     "提示信息":"手机号验证成功",
@@ -251,6 +263,12 @@ accountManage.verifyloginphone = function(data, response){
                                 response.end();
                             }
                         });
+                    }else{
+                        response.write(JSON.stringify({
+                            "提示信息":"验证码发送成功",
+                            "phone": account.phone
+                        }));
+                        response.end();
                     }
                     response.write(JSON.stringify({
                         "提示信息":"验证码发送成功",

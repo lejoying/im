@@ -16,19 +16,12 @@ $(document).ready(function(){
             });
             index= index+35;
             if(index%10 == 0){
-//                alert(index);
                 i=i+0.1;
             }
             if(index > 640){
                 clearInterval(timer);
             }
         },50);
-
-//        for(var i=20;i<622;i++){
-//            $("#phoneimg").css({
-//                "margin-left": i+"px"
-//            });
-//        }
     }).mouseout(function(){
             $("body").css({
                 "background-color":"#444"
@@ -40,7 +33,6 @@ $(document).ready(function(){
                 });
                 index= index-35;
                 if(index%10 == 0){
-//                alert(index);
                     i=i-0.1;
                 }
                 if(index < 220){
@@ -48,18 +40,7 @@ $(document).ready(function(){
                     $("#phoneimg").hide();
                 }
             },50);
-            /*for(var i=622;i>20;i--){
-                $("#phoneimg").css({
-                    "margin-left": i+"px"
-                });
-                if(i==21){
-                    $("#phoneimg").hide();
-                }
-            }*/
     });
-    /*$("#tdcode").onmouseup(function(){
-        alert(":-----");
-    });*/
     var chars = [
         "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
         "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
@@ -89,7 +70,12 @@ function request(str){
             accessKey: str
         },
         success: function(data){
-
+            if(data["提示信息"] == "登录成功"){
+                alert("登录成功");
+                location.href = "default.html";
+            }else{
+                request(str);
+            }
         },
         failed: function(){
             request(str);
