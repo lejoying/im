@@ -3,6 +3,10 @@ var relationManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 
+/*************************************** ***************************************
+ * *    Relation：Account Community
+ *************************************** ***************************************/
+
 /***************************************
  *     URL：/api2/relation/join
  ***************************************/
@@ -51,6 +55,54 @@ relationManage.join = function(data, response){
     }
 }
 /***************************************
+ *     URL：/api2/relation/getCommunities
+ ***************************************/
+relationManage.getCommunities = function(data, response){
+    response.asynchronous = 1;
+
+    var phone = data.phone;
+    var query = [
+        'MATCH (account:Account)-[r:HAS_COMMUNITY]->(community:Community)',
+        'WHERE account.phone={phone}',
+        'RETURN community'
+    ].join('\n');
+    var params = {
+        phone: phone
+    };
+    db.query(query, params, function(error, results){
+        if(error){
+            console.log(error);
+            response.write(JSON.stringify({
+                "提示信息" :  "获取社区失败",
+                "错误原因": "数据异常"
+            }));
+            response.end();
+            return;
+        }else{
+            console.log("获取社区成功---");
+            var communities = [];
+            var i=0;
+            for(var index in results){
+                i++;
+                var it = results[index].community.data;
+                delete it.locations;
+                communities.push(it);
+                if(i == results.length){
+                    response.write(JSON.stringify({
+                        "提示信息" :  "获取社区成功",
+                        "communities": communities
+                    }));
+                    response.end();
+                }
+            }
+        }
+    });
+}
+/*************************************** ***************************************
+ * *    Relation：Account Account
+ *************************************** ***************************************/
+
+/***************************************
  *     URL：/api2/relation/addfriend
  ***************************************/
 relationManage.addfriend = function(data, response){
@@ -62,7 +114,8 @@ relationManage.addfriend = function(data, response){
 
     function addFriendNode(){
         var query = [
-            'START account1=node:nodeIndexName(phone={phonefrom}),account2=node:nodeIndexName(phone={phoneto})',
+            'MATCH (account1:Account),(account2:Account)',
+            'WHERE account1.phone={phonefrom} AND account2.phone={phoneto}',
             'CREATE UNIQUE account1-[r:HAS_FRIEND]->account2',
             'RETURN  r'
         ].join('\n');
@@ -129,48 +182,9 @@ relationManage.getfriends = function(data, response){
         }
     });
 }
-/***************************************
- *     URL：/api2/relation/getCommunities
- ***************************************/
-relationManage.getCommunities = function(data, response){
-    response.asynchronous = 1;
+/*************************************** ***************************************
+ * *    Relation：Account Circle
+ *************************************** ***************************************/
 
-    var phone = data.phone;
-    var query = [
-        'MATCH (account:Account)-[r:HAS_COMMUNITY]->(community:Community)',
-        'WHERE account.phone={phone}',
-        'RETURN community'
-    ].join('\n');
-    var params = {
-        phone: phone
-    };
-    db.query(query, params, function(error, results){
-        if(error){
-            console.log(error);
-            response.write(JSON.stringify({
-                "提示信息" :  "获取社区失败",
-                "错误原因": "数据异常"
-            }));
-            response.end();
-            return;
-        }else{
-            console.log("获取社区成功---");
-            var communities = [];
-            var i=0;
-            for(var index in results){
-                i++;
-                var it = results[index].community.data;
-                delete it.locations;
-                communities.push(it);
-                if(i == results.length){
-                    response.write(JSON.stringify({
-                        "提示信息" :  "获取社区成功",
-                        "communities": communities
-                    }));
-                    response.end();
-                }
-            }
-        }
-    });
-}
+
 module.exports = relationManage;
