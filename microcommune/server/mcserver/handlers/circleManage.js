@@ -4,18 +4,42 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 
 /***************************************
- *     URL：/api2/circle/add
+ *     URL：/api2/circle/modify
  ***************************************/
-circleManage.add = function(data, response){
+circleManage.modify = function(data, response){
     response.asynchronous = 1;
-    var phone = data.phone;
+    var rid = data.rid;
     var name = data.name;
+    var circle = {
+        name: name
+    };
     var query = [
-        'MATCH (account:Account)',
-        'WHERE account.phone={phone}',
-        'CREATE UNIQUE account-[r:HAS_CIRCLE]->circle:Circle{circle}',
-        'SET circle.rid=ID(circle)',
+        'MATCH (circle:Circle)',
+        'WHERE circle.rid={rid}',
+        'SET circle.name={name}',
         'RETURN circle'
-    ];0
+    ].join('\n');
+    var params = {
+        rid: parseInt(rid),
+        name: name
+    };
+    db.query(query, params, function(error, results){
+        if(error){
+            console.log(error);
+            return;
+        }else if(results.length>0){
+            console.log("添加密友圈成功---");
+            response.write(JSON.stringify({
+                "提示信息": "修改成功"
+            }));
+            response.end();
+        }else{
+            response.write(JSON.stringify({
+                "提示信息": "修改失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+        }
+    });
 }
 module.exports = circleManage;

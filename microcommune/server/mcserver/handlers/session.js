@@ -8,12 +8,12 @@ accountSession = {};
 var count = 0;
 session.eventweb = function (data, response) {
     response.asynchronous = 1;
-    var sessionID = data.sessionID;
-    var sessionResponse = sessionPool[sessionID];
+    var accessKey = data.accessKey;
+    var sessionResponse = sessionPool[accessKey];
     if (sessionResponse != null) {
         sessionResponse.end();
     }
-    sessionPool[sessionID] = response;
+    sessionPool[accessKey] = response;
     count++;
     console.log(count);
     if(count>100000){
@@ -30,9 +30,13 @@ session.eventweb = function (data, response) {
 session.event = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    var sessionID = data.sessionID;
-    accountSession[phone] = accountSession[phone] || [];
-    accountSession[phone][sessionID] = response;
+    var accessKey = data.accessKey;
+    console.log(data);
+    if(accountSession[phone][accessKey] == null){
+//        accountSession[phone] = accountSession[phone] || [];
+        console.log("常连接--event");
+        accountSession[phone][accessKey] = response;
+    }
 }
 
 session.notify = notify;

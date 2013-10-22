@@ -80,6 +80,11 @@ accountManage.verifyphone = function(data, response){
                             }
                         });
                     }
+                    response.write(JSON.stringify({
+                        "提示信息":"手机号验证成功",
+                        "phone": account.phone
+                    }));
+                    response.end();
                 }
             }
         });
@@ -122,6 +127,11 @@ accountManage.verifyphone = function(data, response){
                         }
                     });
                 }
+                response.write(JSON.stringify({
+                    "提示信息":"手机号验证成功",
+                    "phone": accountNode.data.phone
+                }));
+                response.end();
             }
 
         });
@@ -242,6 +252,11 @@ accountManage.verifyloginphone = function(data, response){
                             }
                         });
                     }
+                    response.write(JSON.stringify({
+                        "提示信息":"验证码发送成功",
+                        "phone": account.phone
+                    }));
+                    response.end();
                 }else{
                     response.write(JSON.stringify({
                         "提示信息":"验证码发送失败",
@@ -314,6 +329,7 @@ accountManage.verifypass = function(data, response){
     response.asynchronous = 1;
     var phone = data.phone;
     var password = data.password;
+    var accessKey = data.accessKey;
     var longitude = data.longitude;
     var latitude = data.latitude;
     checkPhone();
@@ -341,11 +357,37 @@ accountManage.verifypass = function(data, response){
                 accountNode.save();
                 console.log("注册成功---");
                 delete accountData.password;
+                createCircleNode(accountData.uid);
+                accountSession[phone] = accountSession[phone] || [];
+                accountSession[phone][accessKey] = null;
                 response.write(JSON.stringify({
                     "提示信息": "注册成功" ,
                     "account":accountData
                 }));
                 response.end();
+            }
+        });
+    }
+    function createCircleNode(uid){
+        var circle = {
+            name: "密友圈1"
+        };
+        var query = [
+            'START account=node({uid})',
+            'CREATE UNIQUE account-[r:HAS_CIRCLE]->(circle:Circle{circle})',
+            'SET circle.rid=ID(circle)',
+            'RETURN circle'
+        ];
+        var params = {
+            uid: uid,
+            circle: circle
+        };
+        db.query(query, params, function(error, results){
+            if(error){
+                console.log(error);
+                return;
+            }else{
+                console.log("注册成功，并创建默认密友圈");
             }
         });
     }
@@ -356,8 +398,10 @@ accountManage.verifypass = function(data, response){
  ***************************************/
 accountManage.auth = function(data, response){
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var password = data.password;
+    var accessKey = data.accessKey;
     checkAccountNode();
 
     function checkAccountNode(){
@@ -397,6 +441,8 @@ accountManage.auth = function(data, response){
                             "account": accountData
                         }));
                         response.end();
+                        accountSession[phone] = accountSession[phone] || [];
+                        accountSession[phone][accessKey] = null;
                     } else {
                         response.write(JSON.stringify({
                             "提示信息": "账号登录失败",
@@ -412,6 +458,114 @@ accountManage.auth = function(data, response){
 
 accountManage.exit = function(data, response){
 
+}
+accountManage.verifywebcode = function(data, response){
+    response.asynchronous = 1;
+    console.log(data);
+    var accessKey = data.accessKey;
+    var it = sessionPool;
+    var count = 0;
+//    var flag = false;
+    var resp = it[accessKey];
+    /*for(var index in it){
+        console.log(index);
+        count++;
+        if(count == 1){
+            delete it[index];
+        }
+    }*/
+    if(resp != null && resp != undefined){
+        try{
+            console.log("bbbbbbbbbbbbbbbbbbbb");
+            var flag = false;
+            resp.write(JSON.stringify({
+                "提示信息": "等待验证"
+            }), function(){
+                flag = true;
+                console.log("cccccccccccccccccccccc");
+            });
+            console.log(resp);
+            resp.end(JSON.stringify({
+                "提示信息2": "结束"
+            }),function(){
+                console.log("eeeeeeeeeeeeeeee"+flag);
+            });
+            console.log(resp);
+            console.log("ddddddddddddddd---------");
+        }catch(error){
+            console.log(error);
+        }
+
+        response.write(JSON.stringify({
+            "提示信息": "二维码验证成功"
+        }));
+        response.end();
+    }else{
+        response.write(JSON.stringify({
+            "提示信息": "二维码验证失败",
+            "失败原因": "二维码超时"
+        }));
+        response.end();
+    }
+    /*for(var index in it){
+        count++;
+        if(accessKey.equals(index)){
+            var post = it[index];
+
+            flag = true;
+            break;
+        }
+        if(count = it.length){
+            if(flag == false){
+                response.write(JSON.stringify({
+                    "提示信息": "二维码验证失败",
+                    "失败原因": "二维码超时"
+                }));
+                response,end();
+            }
+        }
+    }*/
+}
+accountManage.verifywebcodelogin = function(data, response){
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var status = data.status;
+    if(status == false){
+        delete sessionPool.accessKey;
+        response.write(JSON.stringify({
+            "提示信息": "登录失败",
+            "失败原因": "取消登录"
+        }));
+        response.end();
+    }else{
+       getAccountNode();
+        account
+    }
+    function getAccountNode(){
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function(error, results){
+            if(error){
+                console.log(error);
+                return;
+            }else{
+                var accountData = results.pop().account.data;
+                delete accountData.password;
+                response.write(JSON.stringify({
+                    "提示信息": "登录成功",
+                    "account": accountData
+                }));
+                response.end();
+            }
+        });
+    }
 }
 
 
