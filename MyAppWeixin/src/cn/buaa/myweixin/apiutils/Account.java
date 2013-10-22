@@ -1,7 +1,9 @@
 package cn.buaa.myweixin.apiutils;
 
 import java.io.Serializable;
-import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Account implements Serializable {
 	/**
@@ -14,17 +16,41 @@ public class Account implements Serializable {
 	private String mainBusiness;
 	private String status;
 	private String accessKey;
-	private List<Account> friends;
-	private List<Community> myCommunitys;
 
 	public Account() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+	
+	public Account(JSONObject jaccount){
+		try {
+			this.phone = jaccount.getString("phone");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.head = jaccount.getString("head");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.nickName = jaccount.getString("nickName");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.mainBusiness = jaccount.getString("mainBusiness");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.status = jaccount.getString("status");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Account(String phone, String head, String nickName,
-			String mainBusiness, String status, String accessKey,
-			List<Account> friends, List<Community> myCommunitys) {
+			String mainBusiness, String status,String accessKey) {
 		super();
 		this.phone = phone;
 		this.head = head;
@@ -32,10 +58,36 @@ public class Account implements Serializable {
 		this.mainBusiness = mainBusiness;
 		this.status = status;
 		this.accessKey = accessKey;
-		this.friends = friends;
-		this.myCommunitys = myCommunitys;
 	}
 
+	public void setAccount(JSONObject jaccount){
+		try {
+			this.phone = jaccount.getString("phone");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.head = jaccount.getString("head");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.nickName = jaccount.getString("nickName");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.mainBusiness = jaccount.getString("mainBusiness");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.status = jaccount.getString("status");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public String getPhone() {
 		return phone;
 	}
@@ -83,21 +135,4 @@ public class Account implements Serializable {
 	public void setAccessKey(String accessKey) {
 		this.accessKey = accessKey;
 	}
-
-	public List<Account> getFriends() {
-		return friends;
-	}
-
-	public void setFriends(List<Account> friends) {
-		this.friends = friends;
-	}
-
-	public List<Community> getMyCommunitys() {
-		return myCommunitys;
-	}
-
-	public void setMyCommunitys(List<Community> myCommunitys) {
-		this.myCommunitys = myCommunitys;
-	}
-
 }

@@ -24,6 +24,8 @@ import android.os.Looper;
 
 public class MCTools {
 
+	private static Account nowAccount;
+
 	private static final String DOMAIN = "http://192.168.2.43:8071";
 
 	private static String lasturl;
@@ -78,17 +80,14 @@ public class MCTools {
 								}
 							}
 						}
-
-						if (b == null) {
-							responseListener.failed();
-						}
-
-						Looper.loop();
+						
 					} catch (IOException e) {
+						responseListener.failed();
 						e.printStackTrace();
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
+					Looper.loop();
 				}
 			}.start();
 		}
@@ -103,6 +102,9 @@ public class MCTools {
 	}
 
 	public static void saveAccount(Activity activity, Account account) {
+
+		MCTools.nowAccount = account;
+
 		try {
 			OutputStream os = activity.openFileOutput("account",
 					Context.MODE_PRIVATE);
@@ -116,7 +118,10 @@ public class MCTools {
 	}
 
 	public static Account getLoginedAccount(Activity activity) {
-		Account account = null;
+		Account account = MCTools.nowAccount;
+		if (account != null) {
+			return account;
+		}
 		try {
 			InputStream is = activity.openFileInput("account");
 			ObjectInputStream ois = new ObjectInputStream(is);
@@ -143,7 +148,11 @@ public class MCTools {
 				"6", "7", "8", "9" };
 		int count = 20;
 		String str = "";
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < 9; i++) {
+			str += strs[(int) Math.floor(Math.random() * strs.length)];
+		}
+		str += "a";
+		for (int i = 0; i < count - 10; i++) {
 			str += strs[(int) Math.floor(Math.random() * strs.length)];
 		}
 		return str;

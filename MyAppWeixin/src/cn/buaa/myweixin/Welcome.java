@@ -1,12 +1,5 @@
 package cn.buaa.myweixin;
 
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.StreamCorruptedException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +7,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
 import cn.buaa.myweixin.apiutils.Account;
-import cn.buaa.myweixin.apiutils.MCNowUser;
 import cn.buaa.myweixin.apiutils.MCTools;
 public class Welcome extends Activity {
 	

@@ -20,8 +20,8 @@ public class SessionImpl implements Session {
 	@Override
 	public void event(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/session/event", param, true,
-				HttpTools.SEND_POST, 30000, responseListener);
+		MCTools.ajax(activity, "/api2/session/event", param, false,
+				HttpTools.SEND_POST, 3000, responseListener);
 	}
 
 }

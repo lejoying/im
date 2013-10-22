@@ -22,7 +22,7 @@ public class RelationManagerImpl implements RelationManager {
 	public void join(Map<String, String> param,
 			ResponseListener responseListener) {
 		MCTools.ajax(activity, "/api2/relation/join", param, true,
-				HttpTools.SEND_POST, 5000, responseListener);
+				HttpTools.SEND_POST, 5000,responseListener);
 	}
 
 	@Override

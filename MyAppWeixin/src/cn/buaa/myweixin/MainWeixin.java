@@ -1,13 +1,14 @@
 package cn.buaa.myweixin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import cn.buaa.myweixin.apiutils.MCNowUser;
-import cn.buaa.myweixin.apiutils.MCTools;
+import org.json.JSONObject;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -16,15 +17,16 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.Session;
+import cn.buaa.myweixin.apiimpl.SessionImpl;
+import cn.buaa.myweixin.apiutils.MCTools;
 
 public class MainWeixin extends Activity {
 
@@ -46,7 +48,7 @@ public class MainWeixin extends Activity {
 	private LayoutInflater inflater;
 	private ImageView arrow_down;
 
-	private String accessKey;
+	private Session session;
 
 	// private Button mRightBtn;
 
@@ -136,12 +138,41 @@ public class MainWeixin extends Activity {
 		mTabPager.setAdapter(mPagerAdapter);
 		if (Login.instance != null)
 			Login.instance.finish();
-		
-		accessKey = MCNowUser.getNowUser().getAccessKey();
-		if(accessKey==null){
-			accessKey = MCTools.createAccessKey();
-		}
-		
+
+		session = new SessionImpl(this);
+		createSession();
+	}
+
+	public void createSession() {
+		Map<String, String> param = new HashMap<String, String>();
+
+		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
+		param.put("accessKey", MCTools.getLoginedAccount(this).getAccessKey());
+
+		session.event(param, new MCResponseAdapter(this) {
+
+			@Override
+			public void success(JSONObject data) {
+				System.out.println(data.toString());
+
+				//重新建立长连接
+				createSession();
+			}
+
+			@Override
+			public void unsuccess(JSONObject data) {
+				//重新建立长连接
+				createSession();
+			}
+
+			@Override
+			public void failed() {
+				System.out.println("长连接超时");
+				//重新建立长连接
+				createSession();
+			}			
+		});
+
 	}
 
 	/**

@@ -15,7 +15,6 @@ import android.widget.TextView;
 import cn.buaa.myweixin.adapter.MCResponseAdapter;
 import cn.buaa.myweixin.api.RelationManager;
 import cn.buaa.myweixin.apiimpl.RelationManagerImpl;
-import cn.buaa.myweixin.apiutils.MCNowUser;
 import cn.buaa.myweixin.apiutils.MCTools;
 import cn.buaa.myweixin.utils.HttpTools;
 
@@ -65,7 +64,7 @@ public class CCommunityActivity extends Activity {
 	public void joinC(View v) {
 
 		Map<String, String> param = new HashMap<String, String>();
-		param.put("phone", MCNowUser.getNowUser().getPhone());
+		param.put("phone", MCTools.getLoginedAccount(CCommunityActivity.this).getPhone());
 		param.put("cid", cid);
 
 		relationManager = new RelationManagerImpl(this);

@@ -11,7 +11,7 @@ import cn.buaa.myweixin.api.AccountManager;
 import cn.buaa.myweixin.api.CommunityManager;
 import cn.buaa.myweixin.apiimpl.AccountManagerImpl;
 import cn.buaa.myweixin.apiimpl.CommunityManagerImpl;
-import cn.buaa.myweixin.apiutils.MCNowUser;
+import cn.buaa.myweixin.apiutils.Account;
 import cn.buaa.myweixin.apiutils.MCTools;
 import android.app.Activity;
 import android.content.Intent;
@@ -71,13 +71,11 @@ public class RegisterSetPassActivity extends Activity {
 						CCommunityActivity.class);
 				final Bundle bundle = new Bundle();
 				try {
-					JSONObject account = data.getJSONObject("account");
+					JSONObject jaccount = data.getJSONObject("account");
 
-					MCNowUser.setNowUser(account.getString("phone"),
-							account.getString("head"),
-							account.getString("nickName"),
-							account.getString("mainBusiness"),
-							account.getString("status"),null);
+					Account account = new Account(jaccount);
+
+					MCTools.saveAccount(RegisterSetPassActivity.this, account);
 
 					communityManager.find(
 							MCTools.getLocationParam(RegisterSetPassActivity.this),

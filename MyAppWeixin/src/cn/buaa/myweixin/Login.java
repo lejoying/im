@@ -19,7 +19,6 @@ import cn.buaa.myweixin.api.CommunityManager;
 import cn.buaa.myweixin.apiimpl.AccountManagerImpl;
 import cn.buaa.myweixin.apiimpl.CommunityManagerImpl;
 import cn.buaa.myweixin.apiutils.Account;
-import cn.buaa.myweixin.apiutils.MCNowUser;
 import cn.buaa.myweixin.apiutils.MCTools;
 
 public class Login extends Activity {
@@ -30,7 +29,9 @@ public class Login extends Activity {
 
 	private AccountManager accountManager;
 	private CommunityManager communityManager;
-
+	
+	private String accessKey;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,30 +54,25 @@ public class Login extends Activity {
 			return;
 		}
 
+		accessKey = MCTools.createAccessKey();
+		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("phone", mUser.getText().toString());
 		map.put("password", String.valueOf(mPassword.getText().toString()));
+		map.put("accessKey", accessKey);
 
+		
 		accountManager = new AccountManagerImpl(this);
-
+		
 		accountManager.auth(map, new MCResponseAdapter(this) {
 			@Override
 			public void success(JSONObject data) {
 				try {
 					JSONObject jaccount = data.getJSONObject("account");
 					String status = jaccount.getString("status");
-					Account account = new Account();
-					String phone = jaccount.getString("phone");
-					String nickName = jaccount.getString("nickName");
-					String mainBusiness = jaccount.getString("mainBusiness");
-					String head = jaccount.getString("head");
-					account.setPhone(phone);
-					account.setNickName(nickName);
-					account.setHead(head);
-					account.setMainBusiness(mainBusiness);
-					account.setStatus(status);
-					MCNowUser.setNowUser(account);
-					MCTools.saveAccount(Login.this, account);
+					Account account = new Account(jaccount);	
+					account.setAccessKey(accessKey);
+					MCTools.saveAccount(Login.this, account);					
 					if (status.equals("success")) {
 						Intent intent = new Intent();
 						intent.setClass(Login.this, LoadingActivity.class);
