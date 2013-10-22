@@ -77,7 +77,7 @@ public class RegisterSetPassActivity extends Activity {
 							account.getString("head"),
 							account.getString("nickName"),
 							account.getString("mainBusiness"),
-							account.getString("status"));
+							account.getString("status"),null);
 
 					communityManager.find(
 							MCTools.getLocationParam(RegisterSetPassActivity.this),
@@ -104,7 +104,7 @@ public class RegisterSetPassActivity extends Activity {
 								}
 
 								@Override
-								public void failed(JSONObject data) {
+								public void unsuccess(JSONObject data) {
 									try {
 
 										JSONObject community = data

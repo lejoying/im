@@ -2,6 +2,9 @@ package cn.buaa.myweixin;
 
 import java.util.ArrayList;
 
+import cn.buaa.myweixin.apiutils.MCNowUser;
+import cn.buaa.myweixin.apiutils.MCTools;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -42,6 +45,8 @@ public class MainWeixin extends Activity {
 	private PopupWindow menuWindow;
 	private LayoutInflater inflater;
 	private ImageView arrow_down;
+
+	private String accessKey;
 
 	// private Button mRightBtn;
 
@@ -131,6 +136,12 @@ public class MainWeixin extends Activity {
 		mTabPager.setAdapter(mPagerAdapter);
 		if (Login.instance != null)
 			Login.instance.finish();
+		
+		accessKey = MCNowUser.getNowUser().getAccessKey();
+		if(accessKey==null){
+			accessKey = MCTools.createAccessKey();
+		}
+		
 	}
 
 	/**

@@ -13,8 +13,6 @@ public class RelationManagerImpl implements RelationManager {
 
 	private Activity activity;
 
-	
-
 	public RelationManagerImpl(Activity activity) {
 		super();
 		this.activity = activity;
@@ -23,29 +21,29 @@ public class RelationManagerImpl implements RelationManager {
 	@Override
 	public void join(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.sendForJSON(activity, "/api2/relation/join", param, true,
-				HttpTools.SEND_POST, responseListener);
+		MCTools.ajax(activity, "/api2/relation/join", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void addfriend(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.sendForJSON(activity, "/api2/relation/addfriend", param, true,
-				HttpTools.SEND_POST, responseListener);
+		MCTools.ajax(activity, "/api2/relation/addfriend", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void getfriends(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.sendForJSON(activity, "/api2/relation/getfriends", param, true,
-				HttpTools.SEND_POST, responseListener);
+		MCTools.ajax(activity, "/api2/relation/getfriends", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void getcommunities(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.sendForJSON(activity, "/api2/relation/getcommnities", param, true,
-				HttpTools.SEND_POST, responseListener);
+		MCTools.ajax(activity, "/api2/relation/getcommnities", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 }

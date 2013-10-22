@@ -36,7 +36,7 @@ public class MCResponseAdapter implements ResponseListener {
 	}
 
 	@Override
-	public void failed(JSONObject data) {
+	public void unsuccess(JSONObject data) {
 		Context context = activity;
 		try {
 			String err = data.getString(" ß∞‹‘≠“Ú");
@@ -50,6 +50,12 @@ public class MCResponseAdapter implements ResponseListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void failed() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

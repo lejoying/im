@@ -109,7 +109,7 @@ public class Login extends Activity {
 									}
 
 									@Override
-									public void failed(JSONObject data) {
+									public void unsuccess(JSONObject data) {
 										try {
 
 											Intent intent = new Intent();

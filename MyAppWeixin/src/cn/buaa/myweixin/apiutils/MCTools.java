@@ -30,13 +30,11 @@ public class MCTools {
 	private static Map<String, String> lastparam;
 	private static long lasttime;
 
-	public static void sendForJSON(Activity activity, final String url,
+	public static void ajax(Activity activity, final String url,
 			final Map<String, String> param, boolean lock, final int method,
-			final ResponseListener responseListener) {
-//		if (new Date().getTime() - lasttime < 500) {
-//			httpStatusListener.shortIntervalTime();
-//			return;
-//		}
+			final int timeout, final ResponseListener responseListener) {
+		boolean hasNetwork = HttpTools.hasNetwork(activity);
+
 		if (lock) {
 			if ((url.equals(lasturl) && param.equals(lastparam))
 					&& new Date().getTime() - lasttime < 5000) {
@@ -46,7 +44,7 @@ public class MCTools {
 		lasturl = url;
 		lastparam = param;
 		lasttime = new Date().getTime();
-		boolean hasNetwork = HttpTools.hasNetwork(activity);
+
 		if (!hasNetwork) {
 			responseListener.noInternet();
 		} else {
@@ -55,21 +53,37 @@ public class MCTools {
 				public void run() {
 					super.run();
 					try {
-						JSONObject data = HttpTools.sendForJSONObject(
-								MCTools.DOMAIN + url, param, method);
-						if (data != null) {
-							String info = data.getString("提示信息");
-							info = info.substring(info.length() - 2,
-									info.length());
-							Looper.prepare();
-							if (info.equals("成功")) {
-								responseListener.success(data);
+						byte[] b = null;
+						if (method == HttpTools.SEND_GET) {
+							b = HttpTools.sendGet(DOMAIN + url, timeout, param);
+						}
+						if (method == HttpTools.SEND_POST) {
+							b = HttpTools
+									.sendPost(DOMAIN + url, timeout, param);
+						}
+
+						Looper.prepare();
+						if (b != null) {
+							JSONObject data = new JSONObject(new String(b));
+							if (data != null) {
+								String info = data.getString("提示信息");
+								info = info.substring(info.length() - 2,
+										info.length());
+
+								if (info.equals("成功")) {
+									responseListener.success(data);
+								}
+								if (info.equals("失败")) {
+									responseListener.unsuccess(data);
+								}
 							}
-							if (info.equals("失败")) {
-								responseListener.failed(data);
-							}
-							Looper.loop();
-						} 
+						}
+
+						if (b == null) {
+							responseListener.failed();
+						}
+
+						Looper.loop();
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (JSONException e) {
@@ -117,6 +131,22 @@ public class MCTools {
 			e.printStackTrace();
 		}
 		return account;
+	}
+
+	public static String createAccessKey() {
+
+		String[] strs = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
+				"k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
+				"w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H",
+				"I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+				"U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5",
+				"6", "7", "8", "9" };
+		int count = 20;
+		String str = "";
+		for (int i = 0; i < count; i++) {
+			str += strs[(int) Math.floor(Math.random() * strs.length)];
+		}
+		return str;
 	}
 
 }

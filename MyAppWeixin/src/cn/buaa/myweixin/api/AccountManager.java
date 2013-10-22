@@ -8,6 +8,12 @@ public interface AccountManager {
 	public void verifyphone(Map<String, String> param,
 			ResponseListener responseListener);
 
+	public void verifyloginphone(Map<String, String> param,
+			ResponseListener responseListener);
+	
+	public void verifylogincode(Map<String, String> param,
+			ResponseListener responseListener);
+	
 	public void verifycode(Map<String, String> param,
 			ResponseListener responseListener);
 
@@ -18,5 +24,11 @@ public interface AccountManager {
 			ResponseListener responseListener);
 
 	public void exit(Map<String, String> param,
+			ResponseListener responseListener);
+	
+	public void verifywebcode(Map<String, String> param,
+			ResponseListener responseListener);
+	
+	public void verifywebcodelogin(Map<String, String> param,
 			ResponseListener responseListener);
 }

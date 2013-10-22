@@ -48,6 +48,12 @@ public final class HttpTools {
 	public static byte[] sendGet(String path, Map<String, String> params)
 			throws IOException {
 
+		return sendGet(path, 5000, params);
+	}
+
+	public static byte[] sendGet(String path, int timeout,
+			Map<String, String> params) throws IOException {
+
 		// 拼接请求参数
 		if (params != null) {
 			Set<String> keys = params.keySet();
@@ -68,7 +74,7 @@ public final class HttpTools {
 		// 设置请求方式
 		httpURLConnection.setRequestMethod("GET");
 		// 设置超时
-		httpURLConnection.setConnectTimeout(5000);
+		httpURLConnection.setConnectTimeout(timeout);
 		// 判断服务器响应
 		byte data[] = null;
 		if (httpURLConnection.getResponseCode() == 200) {
@@ -89,6 +95,11 @@ public final class HttpTools {
 	 */
 	public static byte[] sendPost(String path, Map<String, String> params)
 			throws IOException {
+		return sendPost(path, 5000, params);
+	}
+
+	public static byte[] sendPost(String path, int timeout,
+			Map<String, String> params) throws IOException {
 		// 拼接请求参数
 		String paramData = "";
 		if (params != null) {
@@ -112,7 +123,7 @@ public final class HttpTools {
 		// 设置请求方法
 		httpURLConnection.setRequestMethod("POST");
 		// 设置请求超时
-		httpURLConnection.setConnectTimeout(5000);
+		httpURLConnection.setConnectTimeout(timeout);
 		httpURLConnection.setDoOutput(true);
 		// 设置Content-Type
 		httpURLConnection.setRequestProperty("Content-Type",

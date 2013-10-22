@@ -16,7 +16,44 @@
 
 package cn.buaa.myweixin;
 
-import cn.buaa.myweixin.R;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.text.ClipboardManager;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
+import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.AccountManager;
+import cn.buaa.myweixin.apiimpl.AccountManagerImpl;
 import cn.buaa.myweixin.tdcode.AmbientLightManager;
 import cn.buaa.myweixin.tdcode.BeepManager;
 import cn.buaa.myweixin.tdcode.CameraManager;
@@ -32,61 +69,17 @@ import cn.buaa.myweixin.tdcode.InactivityTimer;
 import cn.buaa.myweixin.tdcode.IntentSource;
 import cn.buaa.myweixin.tdcode.Intents;
 import cn.buaa.myweixin.tdcode.PreferencesActivity;
-import cn.buaa.myweixin.tdcode.ResultButtonListener;
 import cn.buaa.myweixin.tdcode.ResultHandler;
 import cn.buaa.myweixin.tdcode.ResultHandlerFactory;
 import cn.buaa.myweixin.tdcode.ScanFromWebPageManager;
 import cn.buaa.myweixin.tdcode.ShareActivity;
-import cn.buaa.myweixin.tdcode.SupplementalInfoRetriever;
 import cn.buaa.myweixin.tdcode.ViewfinderView;
-import cn.buaa.myweixin.tdcode.Intents.History;
-import cn.buaa.myweixin.tdcode.Intents.Scan;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.text.ClipboardManager;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This activity opens the camera and does the actual scanning on a background
@@ -137,6 +130,8 @@ public final class CaptureActivity extends Activity implements
 	private InactivityTimer inactivityTimer;
 	private BeepManager beepManager;
 	private AmbientLightManager ambientLightManager;
+	
+	private AccountManager accountManager;
 
 	public ViewfinderView getViewfinderView() {
 		return viewfinderView;
@@ -548,11 +543,28 @@ public final class CaptureActivity extends Activity implements
 	private void handleDecodeInternally(Result rawResult,
 			ResultHandler resultHandler, Bitmap barcode) {
 
-		CharSequence content = resultHandler.getDisplayContents();
+		final CharSequence content = resultHandler.getDisplayContents();
 
-		System.out.println(content);
+		Map<String,String> param = new HashMap<String, String>();
 		
+		param.put("accessKey", content.toString());
+		
+		accountManager = new AccountManagerImpl(this);
+		
+		accountManager.verifywebcode(param, new MCResponseAdapter(this){
+
+			@Override
+			public void success(JSONObject data) {
+				Intent intent = new Intent(CaptureActivity.this,AccessWebLoginActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putString("accessKey", content.toString());
+				intent.putExtras(bundle);
+				startActivity(intent);
+			}
+			
+		});
 		restartPreviewAfterDelay(0L);
+		//restartPreviewAfterDelay(0L);
 		
 		
 		// viewfinderView.setVisibility(View.GONE);
