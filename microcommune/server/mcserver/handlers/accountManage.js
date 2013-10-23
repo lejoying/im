@@ -585,6 +585,38 @@ accountManage.verifywebcodelogin = function(data, response){
         });
     }
 }
+accountManage.getaccount = function(data, response){
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var query = [
+        'MATCH (account:Account)',
+        'WHERE account.phone={phone}',
+        'RETURN account'
+    ].join('\n');
+    var params = {
+        phone: phone
+    };
+    db.query(query, params, function(error, results){
+        if(error){
+            console.log(error);
+            return;
+        }else if(results.length == 0){
+            response.write(JSON.stringify({
+                "提示信息": "获取失败",
+                "失败原因": "用户不存在"
+            }));
+            response.end();
+        }else{
+            var accountData = results.pop().account.data;
+            delete accountData.password;
+            response.write(JSON.stringify({
+                "提示信息": "获取成功",
+                account: accountData
+            }));
+            response.end();
+        }
+    });
+}
 
 
 module.exports = accountManage;

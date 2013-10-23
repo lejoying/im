@@ -32,10 +32,18 @@ session.event = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     console.log(data);
-    if(accountSession[phone][accessKey] == null){
+    if(accountSession[phone]!=undefined){
+        if(accountSession[phone][accessKey] != undefined){
 //        accountSession[phone] = accountSession[phone] || [];
-        console.log("常连接--event");
-        accountSession[phone][accessKey] = response;
+            console.log("常连接--event");
+            accountSession[phone][accessKey] = response;
+        }
+    }else{
+        response.write(JSON.stringify({
+            "提示信息": "登录失败",
+            "失败原因": "请重新登录"
+        }));
+        response.end();
     }
 }
 

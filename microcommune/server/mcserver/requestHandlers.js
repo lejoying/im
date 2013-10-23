@@ -46,6 +46,9 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     else if (operation == "verifywebcodelogin") {
         accountManage.verifywebcodelogin(data, response);
     }
+    else if (operation == "getaccount") {
+        accountManage.getaccount(data, response);
+    }
 }
 var communityManage = require("./handlers/communityManage.js");
 requestHandlers.communityManage = function (request, response, pathObject, data) {
