@@ -32,6 +32,7 @@ session.event = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     console.log(data);
+    console.log(new Date().getTime()+"----");
     if(accountSession[phone]!=undefined){
         if(accountSession[phone][accessKey] != undefined){
 //        accountSession[phone] = accountSession[phone] || [];

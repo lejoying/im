@@ -116,7 +116,7 @@ relationManage.addfriend = function (data, response) {
         var query = [
             'MATCH (account1:Account),(account2:Account)',
             'WHERE account1.phone={phonefrom} AND account2.phone={phoneto}',
-            'CREATE UNIQUE account1-[r:HAS_FRIEND]->account2',
+            'CREATE UNIQUE account1-[r:FRIEND]->account2',
             'RETURN  r'
         ].join('\n');
 
@@ -152,7 +152,7 @@ relationManage.getfriends = function (data, response) {
 
     var phone = data.phone;
     var query = [
-        'MATCH (account1:Account)-[r:HAS_FRIEND]-(account2:Account)',
+        'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
         'WHERE account1.phone={phone}',
         'RETURN account2'
     ].join('\n');
@@ -232,29 +232,32 @@ relationManage.getcirclefriends = function (data, response) {
     response.asynchronous = 1;
     var rid = data.rid;
     var query = [
-        'MATCH (account:Account)',
-        'WHERE account.phone={phone}',
-        'CREATE UNIQUE account-[r:HAS_CIRCLE]->(circle:Circle{circle})',
-        'SET circle.rid=ID(circle)',
-        'RETURN circle'
+        'MATCH (account:Account)-[r:HAS_FRIEND]->(circle:Circle)',
+        'WHERE circle.rid={rid}',
+        'RETURN account'
     ].join('\n');
     var params = {
-        phone: phone,
-        circle: circle
+        rid: rid
     };
     db.query(query, params, function (error, results) {
         if (error) {
             console.log(error);
             return;
         } else if (results.length > 0) {
-            console.log("添加密友圈成功---");
+            console.log("获取密友圈成员成功---");
+            var accounts = [];
+            for(var index in results){
+                var it = results[index].account.data;
+                accounts.push(it);
+            }
             response.write(JSON.stringify({
-                "提示信息": "添加成功"
+                "提示信息": "获取密友圈好友成功",
+                accounts: accounts
             }));
             response.end();
         } else {
             response.write(JSON.stringify({
-                "提示信息": "添加失败",
+                "提示信息": "获取密友圈好友失败",
                 "失败原因": "数据异常"
             }));
             response.end();

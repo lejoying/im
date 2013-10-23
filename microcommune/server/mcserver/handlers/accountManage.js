@@ -609,6 +609,7 @@ accountManage.getaccount = function(data, response){
         }else{
             var accountData = results.pop().account.data;
             delete accountData.password;
+            console.log(accountData.phone);
             response.write(JSON.stringify({
                 "提示信息": "获取成功",
                 account: accountData

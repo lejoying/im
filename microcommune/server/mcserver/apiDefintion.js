@@ -87,7 +87,7 @@ api = {
      ***************************************/
     "account_verifypass": {
         request: {
-            typical: {"phone": "XXX", "password": "XXX"}
+            typical: {"phone": "XXX", "password": "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "注册成功", account: {}},
@@ -234,7 +234,7 @@ api = {
      ***************************************/
     "relation_getcirclefriends": {
         request: {
-            typical: {"phone": "XXX"}
+            typical: {"rid": "XXX"}
         },
         response: {
             success: {"提示信息": "获取密友圈好友成功", accounts: [{},{},{}]},
