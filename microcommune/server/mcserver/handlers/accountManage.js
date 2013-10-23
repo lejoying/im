@@ -4,7 +4,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var sms = require("./../lib/SMS.js");
 //sms.createsub("coolspan@sina.cn");此子账户已创建
-var sms_power = false;
+var sms_power = true;
 //sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
 
 /***************************************
