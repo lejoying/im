@@ -42,4 +42,38 @@ circleManage.modify = function(data, response){
         }
     });
 }
+/***************************************
+ *     URL：/api2/circle/delete
+ ***************************************/
+circleManage.delete = function(data, response){
+    response.asynchronous = 1;
+    var rid = data.rid;
+    var query = [
+        'MATCH other-[r]-(circle:Circle)',
+        'WHERE circle.rid={rid}',
+        'DELETE circle,r',
+        'RETURN circle,r'
+    ].join('\n');
+    var params = {
+        rid: parseInt(rid)
+    };
+    db.query(query, params, function(error, results){
+        if(error){
+            console.log(error);
+            return;
+        }else if(results.length>0){
+            console.log("删除密友圈成功---");
+            response.write(JSON.stringify({
+                "提示信息": "删除成功"
+            }));
+            response.end();
+        }else{
+            response.write(JSON.stringify({
+                "提示信息": "删除失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+        }
+    });
+}
 module.exports = circleManage;

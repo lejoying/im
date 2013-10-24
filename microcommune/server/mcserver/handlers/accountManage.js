@@ -494,26 +494,26 @@ accountManage.verifywebcode = function(data, response){
     }*/
     if(resp != null && resp != undefined){
         try{
-            console.log("bbbbbbbbbbbbbbbbbbbb");
+            console.log("bbbbbbbbbbbbbbbbbbbb"+resp.code);
+            console.log(resp);
             var flag = false;
             resp.write(JSON.stringify({
                 "提示信息": "等待验证"
-            }), function(){
+            }), function(r){
                 flag = true;
-                console.log("cccccccccccccccccccccc");
+                console.log("cccccccccccccccccccccc"+r);
             });
-            console.log(resp);
             resp.end(JSON.stringify({
                 "提示信息2": "结束"
             }),function(){
                 console.log("eeeeeeeeeeeeeeee"+flag);
             });
-            console.log(resp);
-            console.log("ddddddddddddddd---------");
+
         }catch(error){
             console.log(error);
+        }finally{
+            console.log("fffffffffffffffffff"+flag);
         }
-
         response.write(JSON.stringify({
             "提示信息": "二维码验证成功"
         }));

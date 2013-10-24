@@ -94,6 +94,9 @@ requestHandlers.circleManage = function (request, response, pathObject, data) {
     if (operation == "modify") {
         circleManage.modify(data, response);
     }
+    else if (operation == "delete") {
+        circleManage.delete(data, response);
+    }
 }
 
 module.exports = requestHandlers;

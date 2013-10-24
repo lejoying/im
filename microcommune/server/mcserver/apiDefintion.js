@@ -26,6 +26,18 @@ api = {
             success: {"提示信息": "成功"},
             failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
         }
+    },
+    /***************************************
+     *     URL：/api2/session/nitify
+     ***************************************/
+    "session_notify": {
+        request: {
+            typical: {}
+        },
+        response: {
+            success: {"information": "notify success"},
+            failed: {}
+        }
     }
 }
 
@@ -287,6 +299,18 @@ api = {
         response: {
             success: {"提示信息": "修改成功"},
             failed: {"提示信息": "修改失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/circle/delete
+     ***************************************/
+    "circle_modify": {
+        request: {
+            typical: {rid: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "删除成功"},
+            failed: {"提示信息": "删除失败", "失败原因": "数据异常"}
         }
     }
 }
