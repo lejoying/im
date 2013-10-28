@@ -40,8 +40,17 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     else if (operation == "exit") {
         accountManage.exit(data, response);
     }
-    else if (operation == "help") {
-        accountManage.help(data, response);
+    else if (operation == "verifywebcode") {
+        accountManage.verifywebcode(data, response);
+    }
+    else if (operation == "verifywebcodelogin") {
+        accountManage.verifywebcodelogin(data, response);
+    }
+    else if (operation == "getaccount") {
+        accountManage.getaccount(data, response);
+    }
+    else if (operation == "modify") {
+        accountManage.modify(data, response);
     }
 }
 var communityManage = require("./handlers/communityManage.js");
@@ -65,8 +74,17 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     if (operation == "join") {
         relationManage.join(data, response);
     }
+    else if (operation == "getcommunities") {
+        relationManage.getcommunities(data, response);
+    }
     else if (operation == "addfriend") {
         relationManage.addfriend(data, response);
+    }
+    else if (operation == "getfriends") {
+        relationManage.getfriends(data, response);
+    }
+    else if (operation == "addcircle") {
+        relationManage.addcircle(data, response);
     }
 }
 
@@ -76,8 +94,11 @@ requestHandlers.circleManage = function (request, response, pathObject, data) {
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "add") {
-        relationManage.add(data, response);
+    if (operation == "modify") {
+        circleManage.modify(data, response);
+    }
+    else if (operation == "delete") {
+        circleManage.delete(data, response);
     }
 }
 

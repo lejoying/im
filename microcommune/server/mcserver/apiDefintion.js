@@ -6,13 +6,37 @@ api = {
     /***************************************
      *     URL：/api2/session/event
      ***************************************/
-    "session_event": {
+    "session_eventweb": {
         request: {
-            typical: {"phone": "XXX", "sessionID": "XXX"}
+            typical: {"accessKey": "XXX"}
         },
         response: {
             success: {"提示信息": "成功"},
             failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/session/event
+     ***************************************/
+    "session_event": {
+        request: {
+            typical: {"phone": "XXX", "accessKey": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "成功"},
+            failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/session/nitify
+     ***************************************/
+    "session_notify": {
+        request: {
+            typical: {}
+        },
+        response: {
+            success: {"information": "notify success"},
+            failed: {}
         }
     }
 }
@@ -75,7 +99,7 @@ api = {
      ***************************************/
     "account_verifypass": {
         request: {
-            typical: {"phone": "XXX", "password": "XXX"}
+            typical: {"phone": "XXX", "password": "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "注册成功", account: {}},
@@ -87,7 +111,7 @@ api = {
      ***************************************/
     "account_auth": {
         request: {
-            typical: {"phone": "XXX", "password": "XXX"}
+            typical: {"phone": "XXX", "password": "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "账号登录成功", account: {}},
@@ -104,6 +128,54 @@ api = {
         response: {
             success: {"提示信息": "消息发送成功"},
             failed: {"提示信息": "消息发送失败", "失败原因": []}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/verifywebcode
+     ***************************************/
+    "account_verifywebcode": {
+        request: {
+            typical: {accessKey:"XXX"}
+        },
+        response: {
+            success: {"提示信息": "二维码验证成功"},
+            failed: {"提示信息": "二维码验证失败", "失败原因": ["二维码超时"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/verifywebcodelogin
+     ***************************************/
+    "account_verifywebcodelogin": {
+        request: {
+            typical: {phone:"XXX", accessKey: "", status:true || false}
+        },
+        response: {
+            success: {"提示信息": "登录成功"},
+            failed: {"提示信息": "登录失败", "失败原因": ["二维码超时" || "取消登录"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/getaccount
+     ***************************************/
+    "account_getaccount": {
+        request: {
+            typical: {phone:"XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取成功", account:{}},
+            failed: {"提示信息": "获取失败", "失败原因": "用户不存在"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/modify
+     ***************************************/
+    "account_modify": {
+        request: {
+            typical: {phone: "XXX", nickName:"XXX", mainBusiness:"XXX"}
+        },
+        response: {
+            success: {"提示信息": "修改成功"},
+            failed: {"提示信息": "修改失败", "失败原因": "数据异常"}
         }
     }
 }
@@ -168,6 +240,30 @@ api = {
             ]},
             failed: {"提示信息": "获取社区失败", "失败原因": ["数据异常"]}
         }
+    },
+    /***************************************
+     *     URL：/api2/relation/addcircle
+     ***************************************/
+    "relation_addcircle": {
+        request: {
+            typical: {"phone": "XXX", name: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "添加成功"},
+            failed: {"提示信息": "添加失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/relation/getcirclefriends
+     ***************************************/
+    "relation_getcirclefriends": {
+        request: {
+            typical: {"rid": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取密友圈好友成功", accounts: [{},{},{}]},
+            failed: {"提示信息": "获取密友圈好友失败", "失败原因": "数据异常"}
+        }
     }
 }
 /*************************************** ***************************************
@@ -186,6 +282,18 @@ api = {
             success: {"提示信息": "获取成功", community: {}},
             failed: {"提示信息": "获取失败", "失败原因": "社区不存在", community: {}}
         }
+    },
+    /***************************************
+     *     URL：/api2/community/getcommunityfriends
+     ***************************************/
+    "community_getcommunityfriends": {
+        request: {
+            typical: {name: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取社区好友成功", accounts: [{},{},{}]},
+            failed: {"提示信息": "获取社区好友失败", "失败原因": "数据异常"}
+        }
     }
 }
 /*************************************** ***************************************
@@ -194,15 +302,27 @@ api = {
 
 api = {
     /***************************************
-     *     URL：/api2/circle/add
+     *     URL：/api2/circle/modify
      ***************************************/
-    "circle_add": {
+    "circle_modify": {
         request: {
-            typical: {phone: "XXX", name: "XXX"}
+            typical: {rid: "XXX", name: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取成功", community: {}},
-            failed: {"提示信息": "获取失败", "失败原因": "社区不存在", community: {}}
+            success: {"提示信息": "修改成功"},
+            failed: {"提示信息": "修改失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/circle/delete
+     ***************************************/
+    "circle_delete": {
+        request: {
+            typical: {rid: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "删除成功"},
+            failed: {"提示信息": "删除失败", "失败原因": "数据异常"}
         }
     }
 }

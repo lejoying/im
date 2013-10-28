@@ -8,12 +8,12 @@ accountSession = {};
 var count = 0;
 session.eventweb = function (data, response) {
     response.asynchronous = 1;
-    var sessionID = data.sessionID;
-    var sessionResponse = sessionPool[sessionID];
+    var accessKey = data.accessKey;
+    var sessionResponse = sessionPool[accessKey];
     if (sessionResponse != null) {
         sessionResponse.end();
     }
-    sessionPool[sessionID] = response;
+    sessionPool[accessKey] = response;
     count++;
     console.log(count);
     if(count>100000){
@@ -30,9 +30,22 @@ session.eventweb = function (data, response) {
 session.event = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    var sessionID = data.sessionID;
-    accountSession[phone] = accountSession[phone] || [];
-    accountSession[phone][sessionID] = response;
+    var accessKey = data.accessKey;
+    console.log(data);
+    console.log(new Date().getTime()+"----");
+    if(accountSession[phone]!=undefined){
+        if(accountSession[phone][accessKey] != undefined){
+//        accountSession[phone] = accountSession[phone] || [];
+            console.log("常连接--event");
+            accountSession[phone][accessKey] = response;
+        }
+    }else{
+        response.write(JSON.stringify({
+            "提示信息": "登录失败",
+            "失败原因": "请重新登录"
+        }));
+        response.end();
+    }
 }
 
 session.notify = notify;
