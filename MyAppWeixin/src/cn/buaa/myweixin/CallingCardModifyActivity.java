@@ -1,5 +1,7 @@
 package cn.buaa.myweixin;
 
+import cn.buaa.myweixin.apiutils.Account;
+import cn.buaa.myweixin.apiutils.MCTools;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,12 +35,15 @@ public class CallingCardModifyActivity extends Activity {
 			int item = bundle.getInt("item");
 			String value = bundle.getString("value");
 			if (item == MODIFY_NAME) {
+				Account account = MCTools.getLoginedAccount(this);
+				account.setNickName(value);
+				MCTools.saveAccount(this, account);
 				cc_name.setText(value);
 			}
-			if (item == MODIFY_PHONE) {
-				cc_phone.setText(value);
-			}
 			if (item == MODIFY_YEWU) {
+				Account account = MCTools.getLoginedAccount(this);
+				account.setMainBusiness(value);
+				MCTools.saveAccount(this, account);
 				cc_yewu.setText(value);
 			}
 		}
@@ -48,6 +53,11 @@ public class CallingCardModifyActivity extends Activity {
 		cc_name = (TextView) findViewById(R.id.cc_name);
 		cc_phone = (TextView) findViewById(R.id.cc_phone);
 		cc_yewu = (TextView) findViewById(R.id.cc_yewu);
+		Account account = MCTools.getLoginedAccount(this);
+		System.out.println(account.toString());
+		cc_name.setText(account.getNickName());
+		cc_phone.setText(account.getPhone());
+		cc_yewu.setText(account.getMainBusiness());
 	}
 
 	public void chat_back(View v) {

@@ -30,6 +30,8 @@ public class RegisterSetPassActivity extends Activity {
 
 	private AccountManager accountManager;
 	private CommunityManager communityManager;
+	
+	private String accessKey;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +58,12 @@ public class RegisterSetPassActivity extends Activity {
 			Toast.makeText(this, "«Î ‰»Î√‹¬Î", Toast.LENGTH_SHORT).show();
 			return;
 		}
+		
+		accessKey = MCTools.createAccessKey();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("password", String.valueOf(password));
 		map.put("phone", String.valueOf(registerNumber));
-
+		map.put("accessKey", accessKey);
 		accountManager = new AccountManagerImpl(this);
 		communityManager = new CommunityManagerImpl(this);
 

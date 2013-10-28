@@ -3,6 +3,9 @@
     <issue id="ContentDescription">
         <ignore path="res/layout/main_tab_settings.xml" />
     </issue>
+    <issue id="CutPasteId">
+        <ignore path="src/cn/buaa/myweixin/CallingCardActivity.java" />
+    </issue>
     <issue id="HardcodedText">
         <ignore path="res/layout/main_tab_settings.xml" />
     </issue>

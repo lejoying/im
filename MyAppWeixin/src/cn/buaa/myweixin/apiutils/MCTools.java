@@ -26,7 +26,7 @@ public class MCTools {
 
 	private static Account nowAccount;
 
-	private static final String DOMAIN = "http://192.168.2.43:8071";
+	private static final String DOMAIN = "http://192.168.0.102:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;
@@ -80,14 +80,13 @@ public class MCTools {
 								}
 							}
 						}
-						
-					} catch (IOException e) {
-						responseListener.failed();
-						e.printStackTrace();
+						if(b == null){
+							responseListener.failed();
+						}
+						Looper.loop();
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					Looper.loop();
 				}
 			}.start();
 		}

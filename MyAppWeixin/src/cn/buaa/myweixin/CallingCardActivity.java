@@ -1,5 +1,6 @@
 package cn.buaa.myweixin;
 
+import cn.buaa.myweixin.apiutils.MCTools;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -24,6 +26,10 @@ public class CallingCardActivity extends Activity {
 	private TextView tv_spacing3;
 	private RelativeLayout rl_show;
 	private RelativeLayout relativeLayout1;
+
+	private TextView tv_name;
+	private TextView tv_mainbusiness;
+	private ImageView iv_tdcode;
 
 	private TextView textView4;
 
@@ -82,7 +88,7 @@ public class CallingCardActivity extends Activity {
 		tv_spacing3 = (TextView) findViewById(R.id.tv_spacing3);
 		tv_spacing3.setHeight((int) (dm.heightPixels * 0.2));
 
-		textView4 = (TextView) findViewById(R.id.textView4);
+		textView4 = (TextView) findViewById(R.id.tv_mainbusiness);
 
 		scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
 
@@ -107,12 +113,12 @@ public class CallingCardActivity extends Activity {
 								e.printStackTrace();
 							}
 							int stop = scrollView1.getScrollY();
-							if(start == stop){
+							if (start == stop) {
 								stopSend = false;
 							}
 							System.out.println("aaa");
 						}
-						
+
 						super.run();
 					}
 
@@ -121,6 +127,22 @@ public class CallingCardActivity extends Activity {
 			}
 		});
 
+		tv_name = (TextView) findViewById(R.id.tv_name);
+		tv_mainbusiness = (TextView) findViewById(R.id.tv_mainbusiness);
+		iv_tdcode = (ImageView) findViewById(R.id.iv_tdcode);
+
+		tv_name.setText(MCTools.getLoginedAccount(this).getNickName());
+		tv_mainbusiness.setText(MCTools.getLoginedAccount(this)
+				.getMainBusiness());
+	}
+
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();;
+		tv_name.setText(MCTools.getLoginedAccount(this).getNickName());
+		tv_mainbusiness.setText(MCTools.getLoginedAccount(this)
+				.getMainBusiness());
 	}
 
 	@Override

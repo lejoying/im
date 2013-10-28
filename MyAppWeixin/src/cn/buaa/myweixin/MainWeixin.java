@@ -161,8 +161,9 @@ public class MainWeixin extends Activity {
 
 			@Override
 			public void unsuccess(JSONObject data) {
-				//重新建立长连接
-				createSession();
+				Intent intent = new Intent(MainWeixin.this,Login.class);
+				startActivity(intent);
+				finish();
 			}
 
 			@Override
