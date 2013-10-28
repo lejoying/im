@@ -50,15 +50,16 @@ accountManage.verifyphone = function (data, response) {
                     response.end();
                 } else {
                     var time = new Date().getTime().toString();
-                    var bad = time - parseInt(accountNode.data.time);
+                    var accountData = accountNode.data;
+                    var bad = time - parseInt(accountNode.time);
                     var code = "";
                     if (bad > 600000) {
-                        accountNode.data.code = time.substr(time.length - 6);
-                        accountNode.data.time = new Date().getTime();
+                        accountData.code = time.substr(time.length - 6);
+                        accountData.time = new Date().getTime();
                         accountNode.save();
                         code = time.substr(time.length - 6);
                     } else {
-                        code = accountNode.data.code;
+                        code = accountData.code;
                     }
                     console.log("注册验证码--" + phone + "--" + code);
                     var message = "微型公社手机验证码：" + code + "，欢迎您使用";
@@ -248,7 +249,7 @@ accountManage.verifyloginphone = function (data, response) {
                                 response.end();
                             } else {
                                 response.write(JSON.stringify({
-                                    "提示信息": "验证码发送成功",
+                                    "提示信息": "验证码发送失败",
                                     "失败原因": "服务器异常"
                                 }));
                                 response.end();
@@ -261,11 +262,6 @@ accountManage.verifyloginphone = function (data, response) {
                         }));
                         response.end();
                     }
-                    response.write(JSON.stringify({
-                        "提示信息": "验证码发送成功",
-                        "phone": account.phone
-                    }));
-                    response.end();
                 } else {
                     response.write(JSON.stringify({
                         "提示信息": "验证码发送失败",
@@ -339,8 +335,6 @@ accountManage.verifypass = function (data, response) {
     var phone = data.phone;
     var password = data.password;
     var accessKey = data.accessKey;
-    var longitude = data.longitude;
-    var latitude = data.latitude;
     checkPhone();
     function checkPhone() {
         var query = [
@@ -389,12 +383,13 @@ accountManage.verifypass = function (data, response) {
             'RETURN circle'
         ];
         var params = {
-            uid: uid,
+            uid: parseInt(uid),
             circle: circle
         };
         db.query(query, params, function (error, results) {
             if (error) {
                 console.log(error);
+                console.log("----");
                 return;
             } else {
                 console.log("注册成功，并创建默认密友圈");
@@ -469,6 +464,9 @@ accountManage.auth = function (data, response) {
 accountManage.exit = function (data, response) {
 
 }
+/***************************************
+ *     URL：/api2/account/verifywebcode
+ ***************************************/
 accountManage.verifywebcode = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
@@ -487,7 +485,6 @@ accountManage.verifywebcode = function (data, response) {
     if (resp != null && resp != undefined) {
         try {
             console.log("bbbbbbbbbbbbbbbbbbbb" + resp.code);
-            console.log(resp);
             var flag = false;
             resp.write(JSON.stringify({
                 "提示信息": "等待验证"
@@ -536,6 +533,9 @@ accountManage.verifywebcode = function (data, response) {
      }
      }*/
 }
+/***************************************
+ *     URL：/api2/account/verifywebcodelogin
+ ***************************************/
 accountManage.verifywebcodelogin = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -550,7 +550,6 @@ accountManage.verifywebcodelogin = function (data, response) {
         response.end();
     } else {
         getAccountNode();
-        account
     }
     function getAccountNode() {
         var query = [
@@ -569,14 +568,24 @@ accountManage.verifywebcodelogin = function (data, response) {
                 var accountData = results.pop().account.data;
                 delete accountData.password;
                 response.write(JSON.stringify({
-                    "提示信息": "登录成功",
-                    "account": accountData
+                    "提示信息": "登录成功"
                 }));
                 response.end();
+                var resp = sessionPool[accessKey];
+                if (resp != null && resp != undefined) {
+                    resp.write(JSON.stringify({
+                        "提示信息": "登录成功",
+                        account: accountData
+                    }));
+                    resp.end();
+                }
             }
         });
     }
 }
+/***************************************
+ *     URL：/api2/account/getaccount
+ ***************************************/
 accountManage.getaccount = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -610,10 +619,13 @@ accountManage.getaccount = function (data, response) {
         }
     });
 }
+/***************************************
+ *     URL：/api2/account/modify
+ ***************************************/
 accountManage.modify = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    var name = data.name;
+    var nickName = data.nickName;
     var mainBusiness = data.mainBusiness;
 
     var query = [
@@ -636,8 +648,8 @@ accountManage.modify = function (data, response) {
             response.end();
         } else {
             var accountData = results.pop().account.data;
-            if (name != undefined && name != null) {
-                accountData.name = name;
+            if (nickName != undefined && nickName != null) {
+                accountData.nickName = nickName;
             }
             if (mainBusiness != undefined && mainBusiness != null) {
                 accountData.mainBusiness = mainBusiness;
@@ -650,6 +662,5 @@ accountManage.modify = function (data, response) {
         }
     });
 }
-
 
 module.exports = accountManage;

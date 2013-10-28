@@ -12,6 +12,7 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
  ***************************************/
 relationManage.join = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var cid = data.cid;
     var phone = data.phone;
     joinCommunityNode();
