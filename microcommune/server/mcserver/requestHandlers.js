@@ -49,6 +49,9 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     else if (operation == "getaccount") {
         accountManage.getaccount(data, response);
     }
+    else if (operation == "modify") {
+        accountManage.modify(data, response);
+    }
 }
 var communityManage = require("./handlers/communityManage.js");
 requestHandlers.communityManage = function (request, response, pathObject, data) {

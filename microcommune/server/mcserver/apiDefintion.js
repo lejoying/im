@@ -165,6 +165,18 @@ api = {
             success: {"提示信息": "获取成功", account:{}},
             failed: {"提示信息": "获取失败", "失败原因": "用户不存在"}
         }
+    },
+    /***************************************
+     *     URL：/api2/account/modify
+     ***************************************/
+    "account_modify": {
+        request: {
+            typical: {phone: "XXX", nickName:"XXX", mainBusiness:"XXX"}
+        },
+        response: {
+            success: {"提示信息": "修改成功"},
+            failed: {"提示信息": "修改失败", "失败原因": "数据异常"}
+        }
     }
 }
 
@@ -304,7 +316,7 @@ api = {
     /***************************************
      *     URL：/api2/circle/delete
      ***************************************/
-    "circle_modify": {
+    "circle_delete": {
         request: {
             typical: {rid: "XXX"}
         },
