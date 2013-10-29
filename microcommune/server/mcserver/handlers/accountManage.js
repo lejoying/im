@@ -39,11 +39,11 @@ accountManage.verifyphone = function (data, response) {
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                createAccountNode();
+                createAccountNode(account);
             } else {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
-                if (accountData.status == "unjoin" || accountData.status == "success") {
+                if (accountData.status == "success") {
                     response.write(JSON.stringify({
                         "提示信息": "手机号验证失败",
                         "失败原因": "手机号已被注册"
@@ -94,11 +94,11 @@ accountManage.verifyphone = function (data, response) {
         });
     }
 
-    function createAccountNode() {
+    function createAccountNode(account) {
         var query = [
             'CREATE (account:Account{account})',
             'SET account.uid=ID(account)',
-            'RETURN  account'
+            'RETURN account'
         ].join('\n');
 
         var params = {
@@ -167,6 +167,7 @@ accountManage.verifycode = function (data, response) {
                 console.error(error);
                 return;
             } else {
+                console.log(results.length);
                 var accountData = results.pop().account.data;
                 if (accountData.code == code) {
                     var time = new Date().getTime();
@@ -206,13 +207,12 @@ accountManage.verifyloginphone = function (data, response) {
     function checkPhone() {
         var query = [
             'MATCH (account:Account)',
-            'WHERE (account.phone={phone}) AND (account.status={status1} OR account.status={status2})',
+            'WHERE (account.phone={phone}) AND account.status={status}',
             'RETURN account'
         ].join('\n');
         var params = {
             phone: phone,
-            status1: "unjoin",
-            status2: "success"
+            status: "success"
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -226,7 +226,7 @@ accountManage.verifyloginphone = function (data, response) {
                 response.end();
             } else {
                 var accountNode = results.pop().account;
-                if (accountNode.data.status == "unjoin" || accountNode.data.status == "success") {
+                if (accountNode.data.status == "success") {
                     var time = new Date().getTime().toString();
                     var bad = time - parseInt(accountNode.data.time);
                     var code = "";
@@ -358,7 +358,7 @@ accountManage.verifypass = function (data, response) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 accountData.password = password;
-                accountData.status = "unjoin";
+                accountData.status = "success";
                 accountNode.save();
                 console.log("注册成功---");
                 delete accountData.password;
@@ -383,7 +383,7 @@ accountManage.verifypass = function (data, response) {
             'CREATE UNIQUE account-[r:HAS_CIRCLE]->(circle:Circle{circle})',
             'SET circle.rid=ID(circle)',
             'RETURN circle'
-        ];
+        ].join('\n');
         var params = {
             uid: parseInt(uid),
             circle: circle
@@ -391,10 +391,11 @@ accountManage.verifypass = function (data, response) {
         db.query(query, params, function (error, results) {
             if (error) {
                 console.log(error);
-                console.log("----");
                 return;
-            } else {
-                console.log("注册成功，并创建默认密友圈");
+            } else if(results.length == 0){
+                console.log("创建默认密友圈失败");
+            }else{
+                console.log("创建默认密友圈成功");
             }
         });
     }

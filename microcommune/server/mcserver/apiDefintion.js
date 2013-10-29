@@ -246,7 +246,7 @@ api = {
      ***************************************/
     "relation_addcircle": {
         request: {
-            typical: {"phone": "XXX", name: "XXX"}
+            typical: {"phone": "XXX", circleName: "XXX"}
         },
         response: {
             success: {"提示信息": "添加成功"},
@@ -306,7 +306,7 @@ api = {
      ***************************************/
     "circle_modify": {
         request: {
-            typical: {rid: "XXX", name: "XXX"}
+            typical: {rid: "XXX", circleName: "XXX"}
         },
         response: {
             success: {"提示信息": "修改成功"},

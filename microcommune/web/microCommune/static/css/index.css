@@ -1232,7 +1232,7 @@ a.btnSecondary:active {
     text-shadow: none;
 }
 .me .cloudText .cloudArrow {
-    background: url("../images/cloud/bubble_right_guid17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/bubble_right_guid17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     position: absolute;
     right: -10px;
@@ -1251,7 +1251,7 @@ a.btnSecondary:active {
     border-radius: 7px 7px 7px 7px;
 }
 .me .cloudMesg .cloudArrow {
-    background: url("../images/cloud/filetype_guid_right17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/filetype_guid_right17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     position: absolute;
     right: -13px;
@@ -1443,7 +1443,7 @@ a.btnSecondary:active {
     float: left;
 }
 .you .cloud .cloudPannel .cloudFileArrow {
-    background: url("../images/cloud/filetype_guid_left17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/filetype_guid_left17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     left: -8px;
     position: absolute;
@@ -1451,7 +1451,7 @@ a.btnSecondary:active {
     width: 17px;
 }
 .me .cloudVideo .cloudBody {
-    border-image: url("../images/cloud/cloud_img_body_white17ced3.png") 8 8 9 8;
+    border-image: url("../images/cloud_img_body_white17ced3.png") 8 8 9 8;
     border-style: solid;
     border-width: 8px 8px 9px;
 }
@@ -1465,7 +1465,7 @@ a.btnSecondary:active {
 .me .cloudImg .imageBorder, .me .cloudVideo .imageBorder {
 }
 .me .cloudVideo .cloudArrow {
-    background: url("../images/cloud/cloud_img_arrow_white17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/cloud_img_arrow_white17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     position: absolute;
     right: -8px;
@@ -1476,7 +1476,7 @@ a.btnSecondary:active {
     margin-right: 10px;
 }
 .me .cloudVoice .cloudBody {
-    background: url("../images/cloud/cloud_voide_body_white17ced3.png") repeat-x scroll 0 0 transparent;
+    background: url("../images/cloud_voide_body_white17ced3.png") repeat-x scroll 0 0 transparent;
     border: 1px solid #AFAFAF;
     border-radius: 6px 6px 6px 6px;
     box-shadow: 0 1px 0 #DBDBDB;
@@ -1491,7 +1491,7 @@ a.btnSecondary:active {
     padding: 7px;
 }
 .me .cloudVoice .cloudArrow {
-    background: url("../images/cloud/bubble_right_guid17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/bubble_right_guid17ced3.png") no-repeat scroll 0 0 transparent;
     height: 25px;
     position: absolute;
     right: -7px;
@@ -1573,7 +1573,7 @@ a.btnSecondary:active {
     text-shadow: none;
 }
 .you .cloudText .cloudArrow {
-    background: url("../images/cloud/bubble_left_guid17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/bubble_left_guid17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     left: -6px;
     position: absolute;
@@ -1587,7 +1587,7 @@ a.btnSecondary:active {
     box-shadow: 0 1px 0 #DBDBDB;
 }
 .me .cloudImg .cloudBody, .me .cloudVideo .cloudBody {
-    border-image: url("../images/cloud/cloud_img_body_white17ced3.png") 8 8 9 8;
+    border-image: url("../images/cloud_img_body_white17ced3.png") 8 8 9 8;
     border-style: solid;
     border-width: 8px 8px 9px;
 }
@@ -1612,7 +1612,7 @@ a.btnSecondary:active {
 .me .cloudImg .imageBorder {
 }
 .you .cloudImg .cloudArrow, .you .cloudVideo .cloudArrow {
-    background: url("../images/cloud/bubble_left_guid17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/bubble_left_guid17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     left: -6px;
     position: absolute;
@@ -1620,7 +1620,7 @@ a.btnSecondary:active {
     width: 17px;
 }
 .me .cloudImg .cloudArrow {
-    background: url("../images/cloud/cloud_text_arrow_white17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/cloud_text_arrow_white17ced3.png") no-repeat scroll 0 0 transparent;
     height: 25px;
     position: absolute;
     right: -13px;
@@ -1640,7 +1640,7 @@ a.btnSecondary:active {
     position: relative;
 }
 .you .cloudVoice .cloudArrow {
-    background: url("../images/cloud/bubble_left_guid17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/bubble_left_guid17ced3.png") no-repeat scroll 0 0 transparent;
     height: 25px;
     left: 1px;
     position: absolute;
@@ -1843,7 +1843,7 @@ a.btnSecondary:active {
     width: 90px;
 }
 .me .cloudMesg .cloudArrow {
-    background: url("../images/cloud/bubble_openapi_right17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/bubble_openapi_right17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     position: absolute;
     right: -12px;
@@ -1851,7 +1851,7 @@ a.btnSecondary:active {
     width: 13px;
 }
 .you .cloudMesg .cloudArrow {
-    background: url("../images/cloud/bubble_openapi17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/bubble_openapi17ced3.png") no-repeat scroll 0 0 transparent;
     height: 24px;
     left: -8px;
     position: absolute;
@@ -4348,7 +4348,7 @@ a.btnBlue:active .btnBluePanel {
     color: #53575A;
 }
 .me .cloud .cloudPannel .cloudFileArrow {
-    background: url("../images/cloud/filetype_guid_right17ced3.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/filetype_guid_right17ced3.png") no-repeat scroll 0 0 transparent;
     height: 25px;
     position: absolute;
     right: -15px;
@@ -4439,7 +4439,7 @@ a.btnBlue:active .btnBluePanel {
     width: 62px;
 }
 .fileLoad .fileLoadPanel .closeFileLoad {
-    background: url("http://dev.web.weixin.qq.com/zh_CN/htmledition/images/button0217ced3.png") no-repeat scroll -74px -18px transparent;
+    background: url("../images/button0217ced3.png") no-repeat scroll -74px -18px transparent;
     border-image: initial;
     display: block;
     height: 15px;
