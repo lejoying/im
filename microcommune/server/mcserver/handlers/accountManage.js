@@ -4,7 +4,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var sms = require("./../lib/SMS.js");
 //sms.createsub("coolspan@sina.cn");此子账户已创建
-var sms_power = true;
+var sms_power = false;
 //sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
 
 /***************************************
@@ -42,7 +42,8 @@ accountManage.verifyphone = function (data, response) {
                 createAccountNode();
             } else {
                 var accountNode = results.pop().account;
-                if (accountNode.data.status == "unjoin" || accountNode.data.status == "success") {
+                var accountData = accountNode.data;
+                if (accountData.status == "unjoin" || accountData.status == "success") {
                     response.write(JSON.stringify({
                         "提示信息": "手机号验证失败",
                         "失败原因": "手机号已被注册"
@@ -50,10 +51,11 @@ accountManage.verifyphone = function (data, response) {
                     response.end();
                 } else {
                     var time = new Date().getTime().toString();
-                    var accountData = accountNode.data;
-                    var bad = time - parseInt(accountNode.time);
+
+                    var bad = time - parseInt(accountData.time);
                     var code = "";
                     if (bad > 600000) {
+                        console.log("++++--"+accountData.code);
                         accountData.code = time.substr(time.length - 6);
                         accountData.time = new Date().getTime();
                         accountNode.save();
@@ -624,6 +626,7 @@ accountManage.getaccount = function (data, response) {
  ***************************************/
 accountManage.modify = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var nickName = data.nickName;
     var mainBusiness = data.mainBusiness;
@@ -647,14 +650,15 @@ accountManage.modify = function (data, response) {
             }));
             response.end();
         } else {
-            var accountData = results.pop().account.data;
+            var accountNode = results.pop().account;
+            var accountData = accountNode.data;
             if (nickName != undefined && nickName != null) {
                 accountData.nickName = nickName;
             }
             if (mainBusiness != undefined && mainBusiness != null) {
                 accountData.mainBusiness = mainBusiness;
             }
-            accountData.save();
+            accountNode.save();
             response.write(JSON.stringify({
                 "提示信息": "修改成功"
             }));

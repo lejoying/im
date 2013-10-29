@@ -3,7 +3,7 @@ $(document).ready(function(){
         type: "POST",
         url: "/api2/account/getaccount?",
         data: {
-            phone: "123"
+            phone: "18612450783"
         },
         success: function(data){
 //            alert(data);
