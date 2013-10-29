@@ -17,6 +17,10 @@ public class SearchFriendActivity extends Activity {
 
 	}
 
+	public void searchFriend(View v) {
+		
+	}
+
 	public void back(View v) {
 		finish();
 	}

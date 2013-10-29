@@ -1,6 +1,7 @@
 package cn.buaa.myweixin;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +50,11 @@ public class MainWeixin extends Activity {
 	private ImageView arrow_down;
 
 	private Session session;
+
+	private boolean longajax;
+
+	private int count = 0;
+	private long createtime;
 
 	// private Button mRightBtn;
 
@@ -140,10 +146,14 @@ public class MainWeixin extends Activity {
 			Login.instance.finish();
 
 		session = new SessionImpl(this);
+		longajax = true;
+		createtime = new Date().getTime();
+		count = 0;
 		createSession();
 	}
 
 	public void createSession() {
+		count++;
 		Map<String, String> param = new HashMap<String, String>();
 
 		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
@@ -154,26 +164,44 @@ public class MainWeixin extends Activity {
 			@Override
 			public void success(JSONObject data) {
 				System.out.println(data.toString());
-
-				//重新建立长连接
-				createSession();
+				// 重新建立长连接
+				if (longajax)
+					createSession();
 			}
 
 			@Override
 			public void unsuccess(JSONObject data) {
-				Intent intent = new Intent(MainWeixin.this,Login.class);
+				MCTools.saveAccount(MainWeixin.this, null);
+				Intent intent = new Intent(MainWeixin.this, Login.class);
 				startActivity(intent);
 				finish();
 			}
 
 			@Override
 			public void failed() {
+				if (new Date().getTime() - createtime < 5000) {
+					count++;
+					if (count > 5) {
+						MCTools.saveAccount(MainWeixin.this, null);
+						Intent intent = new Intent(MainWeixin.this, Login.class);
+						startActivity(intent);
+						finish();
+					}
+				}
+				createtime = new Date().getTime();
 				System.out.println("长连接超时");
-				//重新建立长连接
-				createSession();
-			}			
+				// 重新建立长连接
+				if (longajax)
+					createSession();
+			}
 		});
+	}
 
+	@Override
+	public void finish() {
+		// TODO Auto-generated method stub
+		super.finish();
+		longajax = false;
 	}
 
 	/**

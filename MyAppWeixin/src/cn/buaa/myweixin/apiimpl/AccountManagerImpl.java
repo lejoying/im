@@ -81,4 +81,11 @@ public class AccountManagerImpl implements AccountManager {
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
+	@Override
+	public void modify(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/account/modify", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
+	}
+
 }

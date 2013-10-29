@@ -116,7 +116,6 @@ public class CallingCardActivity extends Activity {
 							if (start == stop) {
 								stopSend = false;
 							}
-							System.out.println("aaa");
 						}
 
 						super.run();

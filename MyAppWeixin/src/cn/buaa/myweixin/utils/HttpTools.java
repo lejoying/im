@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -58,12 +57,13 @@ public final class HttpTools {
 					path += "?";
 					for (String key : keys) {
 						path += key + "="
-								+ URLEncoder.encode(params.get(key), "UTF-8")
+								+ params.get(key)
 								+ "&";
 					}
 					path = path.substring(0, path.length() - 2);
 				}
 			}
+			System.out.println(path);
 			URL url = new URL(path);
 			// 创建请求链接
 			httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -106,7 +106,7 @@ public final class HttpTools {
 				Set<String> keys = params.keySet();
 				if (keys != null) {
 					for (String key : keys) {
-						paramData += key + "=" + params.get(key) + "&";
+						paramData += key + "=" + URLEncoder.encode(params.get(key), "UTF-8") + "&";
 					}
 					paramData = paramData.substring(0, paramData.length() - 1);
 				}

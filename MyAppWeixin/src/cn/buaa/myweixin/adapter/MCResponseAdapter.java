@@ -54,7 +54,6 @@ public class MCResponseAdapter implements ResponseListener {
 
 	@Override
 	public void failed() {
-		// TODO Auto-generated method stub
 		
 	}
 
