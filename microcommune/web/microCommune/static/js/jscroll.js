@@ -2,7 +2,7 @@
  * Created with JetBrains WebStorm.
  * User: CC
  * Date: 13-8-26
- * Time: ����12:09
+ * Time: ????12:09
  * To change this template use File | Settings | File Templates.
  */
 $(document).ready(function(){
@@ -23,18 +23,18 @@ $(document).ready(function(){
         //alert(1);
         var moused = true;
     });
+    $(document).mousemove(function(e){
+        //alert(e.pageY);
+        if(moused==true){
+            alert(e.pageX);
+        }
+    });
 //    $(".listContent").mouseover(function(){
 //        $(".scrollbar").animate({opacity:"1"});
 //    });
 //    $(".listContent").mouseout(function(){
 //        $(".scrollbar").animate({opacity:"0"});
 //    });
-});
-$(document).mousemove(function(e){
-    //alert(e.pageY);
-    if(moused==true){
-        alert(e.pageX);
-    }
 });
 window.onload = function(){
     $(".listContentWrap").height(document.body.clientHeight-245);

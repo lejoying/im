@@ -159,7 +159,7 @@ api = {
      ***************************************/
     "account_getaccount": {
         request: {
-            typical: {phone:"XXX"}
+            typical: {phone:"XXX", accessKey:"XXX"}
         },
         response: {
             success: {"提示信息": "获取成功", account:{}},
@@ -171,7 +171,7 @@ api = {
      ***************************************/
     "account_modify": {
         request: {
-            typical: {phone: "XXX", nickName:"XXX", mainBusiness:"XXX"}
+            typical: {phone: "XXX", accessKey:"XXX", nickName:"XXX", mainBusiness:"XXX"}
         },
         response: {
             success: {"提示信息": "修改成功"},

@@ -4,7 +4,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var sms = require("./../lib/SMS.js");
 //sms.createsub("coolspan@sina.cn");此子账户已创建
-var sms_power = true;
+var sms_power = false;
 //sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
 
 /***************************************
@@ -42,7 +42,8 @@ accountManage.verifyphone = function (data, response) {
                 createAccountNode();
             } else {
                 var accountNode = results.pop().account;
-                if (accountNode.data.status == "unjoin" || accountNode.data.status == "success") {
+                var accountData = accountNode.data;
+                if (accountData.status == "unjoin" || accountData.status == "success") {
                     response.write(JSON.stringify({
                         "提示信息": "手机号验证失败",
                         "失败原因": "手机号已被注册"
@@ -50,15 +51,17 @@ accountManage.verifyphone = function (data, response) {
                     response.end();
                 } else {
                     var time = new Date().getTime().toString();
-                    var bad = time - parseInt(accountNode.data.time);
+
+                    var bad = time - parseInt(accountData.time);
                     var code = "";
                     if (bad > 600000) {
-                        accountNode.data.code = time.substr(time.length - 6);
-                        accountNode.data.time = new Date().getTime();
+                        console.log("++++--"+accountData.code);
+                        accountData.code = time.substr(time.length - 6);
+                        accountData.time = new Date().getTime();
                         accountNode.save();
                         code = time.substr(time.length - 6);
                     } else {
-                        code = accountNode.data.code;
+                        code = accountData.code;
                     }
                     console.log("注册验证码--" + phone + "--" + code);
                     var message = "微型公社手机验证码：" + code + "，欢迎您使用";
@@ -248,7 +251,7 @@ accountManage.verifyloginphone = function (data, response) {
                                 response.end();
                             } else {
                                 response.write(JSON.stringify({
-                                    "提示信息": "验证码发送成功",
+                                    "提示信息": "验证码发送失败",
                                     "失败原因": "服务器异常"
                                 }));
                                 response.end();
@@ -261,11 +264,6 @@ accountManage.verifyloginphone = function (data, response) {
                         }));
                         response.end();
                     }
-                    response.write(JSON.stringify({
-                        "提示信息": "验证码发送成功",
-                        "phone": account.phone
-                    }));
-                    response.end();
                 } else {
                     response.write(JSON.stringify({
                         "提示信息": "验证码发送失败",
@@ -339,8 +337,6 @@ accountManage.verifypass = function (data, response) {
     var phone = data.phone;
     var password = data.password;
     var accessKey = data.accessKey;
-    var longitude = data.longitude;
-    var latitude = data.latitude;
     checkPhone();
     function checkPhone() {
         var query = [
@@ -389,12 +385,13 @@ accountManage.verifypass = function (data, response) {
             'RETURN circle'
         ];
         var params = {
-            uid: uid,
+            uid: parseInt(uid),
             circle: circle
         };
         db.query(query, params, function (error, results) {
             if (error) {
                 console.log(error);
+                console.log("----");
                 return;
             } else {
                 console.log("注册成功，并创建默认密友圈");
@@ -469,6 +466,9 @@ accountManage.auth = function (data, response) {
 accountManage.exit = function (data, response) {
 
 }
+/***************************************
+ *     URL：/api2/account/verifywebcode
+ ***************************************/
 accountManage.verifywebcode = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
@@ -487,7 +487,6 @@ accountManage.verifywebcode = function (data, response) {
     if (resp != null && resp != undefined) {
         try {
             console.log("bbbbbbbbbbbbbbbbbbbb" + resp.code);
-            console.log(resp);
             var flag = false;
             resp.write(JSON.stringify({
                 "提示信息": "等待验证"
@@ -536,6 +535,9 @@ accountManage.verifywebcode = function (data, response) {
      }
      }*/
 }
+/***************************************
+ *     URL：/api2/account/verifywebcodelogin
+ ***************************************/
 accountManage.verifywebcodelogin = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -550,7 +552,6 @@ accountManage.verifywebcodelogin = function (data, response) {
         response.end();
     } else {
         getAccountNode();
-        account
     }
     function getAccountNode() {
         var query = [
@@ -569,14 +570,24 @@ accountManage.verifywebcodelogin = function (data, response) {
                 var accountData = results.pop().account.data;
                 delete accountData.password;
                 response.write(JSON.stringify({
-                    "提示信息": "登录成功",
-                    "account": accountData
+                    "提示信息": "登录成功"
                 }));
                 response.end();
+                var resp = sessionPool[accessKey];
+                if (resp != null && resp != undefined) {
+                    resp.write(JSON.stringify({
+                        "提示信息": "登录成功",
+                        account: accountData
+                    }));
+                    resp.end();
+                }
             }
         });
     }
 }
+/***************************************
+ *     URL：/api2/account/getaccount
+ ***************************************/
 accountManage.getaccount = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -610,10 +621,14 @@ accountManage.getaccount = function (data, response) {
         }
     });
 }
+/***************************************
+ *     URL：/api2/account/modify
+ ***************************************/
 accountManage.modify = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
-    var name = data.name;
+    var nickName = data.nickName;
     var mainBusiness = data.mainBusiness;
 
     var query = [
@@ -635,14 +650,15 @@ accountManage.modify = function (data, response) {
             }));
             response.end();
         } else {
-            var accountData = results.pop().account.data;
-            if (name != undefined && name != null) {
-                accountData.name = name;
+            var accountNode = results.pop().account;
+            var accountData = accountNode.data;
+            if (nickName != undefined && nickName != null) {
+                accountData.nickName = nickName;
             }
             if (mainBusiness != undefined && mainBusiness != null) {
                 accountData.mainBusiness = mainBusiness;
             }
-            accountData.save();
+            accountNode.save();
             response.write(JSON.stringify({
                 "提示信息": "修改成功"
             }));
@@ -650,6 +666,5 @@ accountManage.modify = function (data, response) {
         }
     });
 }
-
 
 module.exports = accountManage;
