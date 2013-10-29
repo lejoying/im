@@ -85,7 +85,9 @@ public class RegisterSetPassActivity extends Activity {
 					Intent intent = new Intent(RegisterSetPassActivity.this,
 							LoadingActivity.class);
 					startActivity(intent);
-						
+					RegisterSetPassActivity.this.finish();
+					RegisterActivity.instance.finish();
+					RegisterCheckingActivity.instance.finish();
 					// communityManager.find(
 					// MCTools.getLocationParam(RegisterSetPassActivity.this),
 					// new MCResponseAdapter(RegisterSetPassActivity.this) {

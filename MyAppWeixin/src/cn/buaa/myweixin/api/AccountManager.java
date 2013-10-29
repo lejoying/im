@@ -34,4 +34,8 @@ public interface AccountManager {
 	
 	public void modify(Map<String, String> param,
 			ResponseListener responseListener);
+	
+	public void getaccount(Map<String, String> param,
+			ResponseListener responseListener);
+	
 }

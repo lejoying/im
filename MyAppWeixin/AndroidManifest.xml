@@ -130,6 +130,9 @@
             android:name="CallingCardRightDialog"
             android:theme="@style/MyDialogStyleTop" />
         <activity
+            android:name="FriendCallingCardRightDialog"
+            android:theme="@style/MyDialogStyleTop" />
+        <activity
             android:name="CCModifyMenuDialog"
             android:theme="@style/CCHeadMenu" />
         <activity
@@ -146,6 +149,9 @@
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity
             android:name="CallingCardActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name="FriendCallingCardActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity
             android:name="CallingCardModifyActivity"

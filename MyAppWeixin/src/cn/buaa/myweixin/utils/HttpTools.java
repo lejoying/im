@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -35,19 +34,10 @@ public final class HttpTools {
 		return false;
 	}
 
-	/**
-	 * 用get方法发送params到地址为path的服务器，并返回服务器响应的byte[]
-	 * 
-	 * @param path
-	 * @param params
-	 * @return
-	 * @throws IOException
-	 */
-	public static byte[] sendGet(String path, int timeout,
-			Map<String, String> params) {
-		byte data[] = null;
+	public static void sendGet(String path, int timeout,
+			Map<String, String> params,HttpListener httpListener) {
+		InputStream is = null;
 		// 设置请求路径
-		
 		HttpURLConnection httpURLConnection = null;
 		try {
 			// 拼接请求参数
@@ -74,30 +64,19 @@ public final class HttpTools {
 			// 判断服务器响应
 
 			if (httpURLConnection.getResponseCode() == 200) {
-				InputStream is = httpURLConnection.getInputStream();
-				data = StreamTools.isToData(is);
+				 is = httpURLConnection.getInputStream();			
 			}
-		} catch (SocketTimeoutException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} finally {
+			httpListener.handleInputStream(is);
 			httpURLConnection.disconnect();
 		}
-		return data;
 	}
 
-	/**
-	 * 用post方法发送params到地址为path的服务器，并返回服务器响应的byte[]
-	 * 
-	 * @param path
-	 * @param params
-	 * @return
-	 * @throws IOException
-	 */
-	public static byte[] sendPost(String path, int timeout,
-			Map<String, String> params) {
-		byte data[] = null;
+	public static void sendPost(String path, int timeout,
+			Map<String, String> params,HttpListener httpListener) {
+		InputStream is = null;
 		HttpURLConnection httpURLConnection = null;
 		try {
 			// 拼接请求参数
@@ -139,16 +118,17 @@ public final class HttpTools {
 
 			// 判断返回状态
 			if (httpURLConnection.getResponseCode() == 200) {
-				InputStream is = httpURLConnection.getInputStream();
-				data = StreamTools.isToData(is);
+				is = httpURLConnection.getInputStream();
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} finally {
+			httpListener.handleInputStream(is);
 			httpURLConnection.disconnect();
 		}
-		httpURLConnection.disconnect();
-		return data;
+	}
+	
+	public interface HttpListener{
+		public void handleInputStream(InputStream is);
 	}
 }
