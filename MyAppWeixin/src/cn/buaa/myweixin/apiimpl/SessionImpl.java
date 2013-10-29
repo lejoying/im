@@ -21,7 +21,7 @@ public class SessionImpl implements Session {
 	public void event(Map<String, String> param,
 			ResponseListener responseListener) {
 		MCTools.ajax(activity, "/api2/session/event", param, false,
-				HttpTools.SEND_POST, 3000, responseListener);
+				HttpTools.SEND_POST, 30000, responseListener);
 	}
 
 }

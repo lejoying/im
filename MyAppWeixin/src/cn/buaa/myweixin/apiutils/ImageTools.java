@@ -1,6 +1,5 @@
 package cn.buaa.myweixin.apiutils;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import cn.buaa.myweixin.utils.StreamTools;
@@ -95,13 +94,7 @@ public final class ImageTools {
 	public static Bitmap getZoomBitmapFromStream(InputStream is,
 			Integer maxWidth, Integer maxHeight) {
 		byte[] data = null;
-		try {
-			data = StreamTools.isToData(is);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	    data = StreamTools.isToData(is);
 		// 得到options对象
 		BitmapFactory.Options boptions = new BitmapFactory.Options();
 		// 只解析图片边框

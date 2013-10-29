@@ -9,9 +9,6 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,140 +34,101 @@ public final class HttpTools {
 		return false;
 	}
 
-	/**
-	 * 用get方法发送params到地址为path的服务器，并返回服务器响应的byte[]
-	 * 
-	 * @param path
-	 * @param params
-	 * @return
-	 * @throws IOException
-	 */
-	public static byte[] sendGet(String path, Map<String, String> params)
-			throws IOException {
-
-		return sendGet(path, 5000, params);
-	}
-
-	public static byte[] sendGet(String path, int timeout,
-			Map<String, String> params) throws IOException {
-
-		// 拼接请求参数
-		if (params != null) {
-			Set<String> keys = params.keySet();
-			if (keys != null) {
-				path += "?";
-				for (String key : keys) {
-					path += key + "="
-							+ URLEncoder.encode(params.get(key), "UTF-8") + "&";
-				}
-				path = path.substring(0, path.length() - 2);
-			}
-		}
+	public static void sendGet(String path, int timeout,
+			Map<String, String> params,HttpListener httpListener) {
+		InputStream is = null;
 		// 设置请求路径
-		URL url = new URL(path);
-		// 创建请求链接
-		HttpURLConnection httpURLConnection = (HttpURLConnection) url
-				.openConnection();
-		// 设置请求方式
-		httpURLConnection.setRequestMethod("GET");
-		// 设置超时
-		httpURLConnection.setConnectTimeout(timeout);
-		// 判断服务器响应
-		byte data[] = null;
-		if (httpURLConnection.getResponseCode() == 200) {
-			InputStream is = httpURLConnection.getInputStream();
-			data = StreamTools.isToData(is);
-		}
-		httpURLConnection.disconnect();
-		return data;
-	}
-
-	/**
-	 * 用post方法发送params到地址为path的服务器，并返回服务器响应的byte[]
-	 * 
-	 * @param path
-	 * @param params
-	 * @return
-	 * @throws IOException
-	 */
-	public static byte[] sendPost(String path, Map<String, String> params)
-			throws IOException {
-		return sendPost(path, 5000, params);
-	}
-
-	public static byte[] sendPost(String path, int timeout,
-			Map<String, String> params) throws IOException {
-		// 拼接请求参数
-		String paramData = "";
-		if (params != null) {
-			Set<String> keys = params.keySet();
-			if (keys != null) {
-				for (String key : keys) {
-					paramData += key + "=" + params.get(key) + "&";
+		HttpURLConnection httpURLConnection = null;
+		try {
+			// 拼接请求参数
+			if (params != null) {
+				Set<String> keys = params.keySet();
+				if (keys != null) {
+					path += "?";
+					for (String key : keys) {
+						path += key + "="
+								+ params.get(key)
+								+ "&";
+					}
+					path = path.substring(0, path.length() - 2);
 				}
-				paramData = paramData.substring(0, paramData.length() - 1);
 			}
+			System.out.println(path);
+			URL url = new URL(path);
+			// 创建请求链接
+			httpURLConnection = (HttpURLConnection) url.openConnection();
+			// 设置请求方式
+			httpURLConnection.setRequestMethod("GET");
+			// 设置超时
+			httpURLConnection.setReadTimeout(timeout);
+			// 判断服务器响应
+
+			if (httpURLConnection.getResponseCode() == 200) {
+				 is = httpURLConnection.getInputStream();			
+			}
+		} catch (IOException e) {
+			//e.printStackTrace();
+		} finally {
+			httpListener.handleInputStream(is);
+			httpURLConnection.disconnect();
 		}
-		// 请求参数不能为空
-		if (paramData.length() == 0) {
-			throw new NullPointerException("请求参数为空");
-		}
-		// 设置请求路径
-		URL url = new URL(path);
-		// 创建请求链接
-		HttpURLConnection httpURLConnection = (HttpURLConnection) url
-				.openConnection();
-		// 设置请求方法
-		httpURLConnection.setRequestMethod("POST");
-		// 设置请求超时
-		httpURLConnection.setConnectTimeout(timeout);
-		httpURLConnection.setDoOutput(true);
-		// 设置Content-Type
-		httpURLConnection.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-		// 设置Content-Length
-		httpURLConnection.setRequestProperty("Content-Length",
-				paramData.length() + "");
-		OutputStream os = httpURLConnection.getOutputStream();
-		byte buffer[] = paramData.getBytes();
-		os.write(buffer);
-		os.flush();
-		os.close();
-		byte data[] = null;
-		// 判断返回状态
-		if (httpURLConnection.getResponseCode() == 200) {
-			InputStream is = httpURLConnection.getInputStream();
-			data = StreamTools.isToData(is);
-		}
-		httpURLConnection.disconnect();
-		return data;
 	}
 
-	/**
-	 * 使用method方法将params参数发送到地址为path的服务器，返回JSONObject对象。
-	 * 
-	 * @param path
-	 * @param params
-	 * @param method
-	 * @return
-	 * @throws IOException
-	 * @throws JSONException
-	 */
-	public static JSONObject sendForJSONObject(String path,
-			Map<String, String> params, int method) throws IOException,
-			JSONException {
-		JSONObject jsonObject = null;
-		if (method == SEND_GET) {
-			byte[] data = sendGet(path, params);
-			if (data != null)
-				jsonObject = new JSONObject(new String(data));
-		}
-		if (method == SEND_POST) {
-			byte[] data = sendPost(path, params);
-			if (data != null)
-				jsonObject = new JSONObject(new String(data));
-		}
-		return jsonObject;
-	}
+	public static void sendPost(String path, int timeout,
+			Map<String, String> params,HttpListener httpListener) {
+		InputStream is = null;
+		HttpURLConnection httpURLConnection = null;
+		try {
+			// 拼接请求参数
+			String paramData = "";
+			if (params != null) {
+				Set<String> keys = params.keySet();
+				if (keys != null) {
+					for (String key : keys) {
+						paramData += key + "=" + URLEncoder.encode(params.get(key), "UTF-8") + "&";
+					}
+					paramData = paramData.substring(0, paramData.length() - 1);
+				}
+			}
+			// 请求参数不能为空
+			if (paramData.length() == 0) {
+				throw new NullPointerException("请求参数为空");
+			}
+			// 设置请求路径
+			URL url = new URL(path);
+			// 创建请求链接
+			httpURLConnection = (HttpURLConnection) url
+					.openConnection();
+			// 设置请求方法
+			httpURLConnection.setRequestMethod("POST");
+			// 设置请求超时
+			httpURLConnection.setReadTimeout(timeout);
+			httpURLConnection.setDoOutput(true);
+			// 设置Content-Type
+			httpURLConnection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+			// 设置Content-Length
+			httpURLConnection.setRequestProperty("Content-Length",
+					paramData.length() + "");
+			OutputStream os = httpURLConnection.getOutputStream();
+			byte buffer[] = paramData.getBytes();
+			os.write(buffer);
+			os.flush();
+			os.close();
 
+			// 判断返回状态
+			if (httpURLConnection.getResponseCode() == 200) {
+				is = httpURLConnection.getInputStream();
+			}
+		} catch (IOException e) {
+			//e.printStackTrace();
+		} finally {
+			httpListener.handleInputStream(is);
+			httpURLConnection.disconnect();
+		}
+	}
+	
+	public interface HttpListener{
+		public void handleInputStream(InputStream is);
+	}
 }

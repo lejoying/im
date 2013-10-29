@@ -86,7 +86,7 @@
                 android:padding="20dp" >
 
                 <TextView
-                    android:id="@+id/tv_community"
+                    android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="李伟"
@@ -97,16 +97,16 @@
                     android:id="@+id/tv_agent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_community"
+                    android:layout_below="@+id/tv_name"
                     android:layout_marginTop="10dp"
                     android:text="主要业务:  "
                     android:textColor="#fff" />
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/tv_mainbusiness"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_community"
+                    android:layout_below="@+id/tv_name"
                     android:layout_marginTop="10dp"
                     android:maxLines="3"
                     android:ellipsize="end"
@@ -129,7 +129,7 @@
                 android:paddingTop="7dp" >
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/tv_mainbusiness"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -142,13 +142,13 @@
                     android:id="@+id/imageView4"
                     android:layout_width="fill_parent"
                     android:layout_height="2px"
-                    android:layout_alignLeft="@+id/textView4"
-                    android:layout_below="@+id/textView4"
+                    android:layout_alignLeft="@+id/tv_mainbusiness"
+                    android:layout_below="@+id/tv_mainbusiness"
                     android:layout_marginTop="8dp"
                     android:background="#9fff" />
 
                 <ImageView
-                    android:id="@+id/imageView3"
+                    android:id="@+id/iv_tdcode"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:layout_below="@id/imageView4"

@@ -29,9 +29,9 @@ public class Login extends Activity {
 
 	private AccountManager accountManager;
 	private CommunityManager communityManager;
-	
+
 	private String accessKey;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,78 +55,81 @@ public class Login extends Activity {
 		}
 
 		accessKey = MCTools.createAccessKey();
-		
+
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("phone", mUser.getText().toString());
 		map.put("password", String.valueOf(mPassword.getText().toString()));
 		map.put("accessKey", accessKey);
 
-		
 		accountManager = new AccountManagerImpl(this);
-		
+
 		accountManager.auth(map, new MCResponseAdapter(this) {
 			@Override
 			public void success(JSONObject data) {
 				try {
 					JSONObject jaccount = data.getJSONObject("account");
 					String status = jaccount.getString("status");
-					Account account = new Account(jaccount);	
+					Account account = new Account(jaccount);
 					account.setAccessKey(accessKey);
-					MCTools.saveAccount(Login.this, account);					
-					if (status.equals("success")) {
-						Intent intent = new Intent();
-						intent.setClass(Login.this, LoadingActivity.class);
-						startActivity(intent);
-					}
-					if (status.equals("unjoin")) {
-						communityManager = new CommunityManagerImpl(Login.this);
-						communityManager.find(
-								MCTools.getLocationParam(Login.this),
-								new MCResponseAdapter(Login.this) {
-									@Override
-									public void success(JSONObject data) {
-										try {
-
-											Intent intent = new Intent();
-											intent.setClass(Login.this,
-													CCommunityActivity.class);
-											Bundle bundle = new Bundle();
-											JSONObject community = data
-													.getJSONObject("community");
-											bundle.putString("nowcommunity",
-													community.toString());
-											intent.putExtras(bundle);
-											startActivity(intent);
-											finish();
-										} catch (JSONException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									}
-
-									@Override
-									public void unsuccess(JSONObject data) {
-										try {
-
-											Intent intent = new Intent();
-											intent.setClass(Login.this,
-													CCommunityActivity.class);
-											Bundle bundle = new Bundle();
-											JSONObject community = data
-													.getJSONObject("community");
-											bundle.putString("nowcommunity",
-													community.toString());
-											intent.putExtras(bundle);
-											startActivity(intent);
-											finish();
-										} catch (JSONException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									}
-
-								});
-					}
+					MCTools.saveAccount(Login.this, account);
+					Intent intent = new Intent();
+					intent.setClass(Login.this, LoadingActivity.class);
+					startActivity(intent);
+					
+					// if (status.equals("success")) {
+					//Intent intent = new Intent();
+					//intent.setClass(Login.this, LoadingActivity.class);
+					//startActivity(intent);
+					// }
+					// if (status.equals("unjoin")) {
+					// communityManager = new CommunityManagerImpl(Login.this);
+					// communityManager.find(
+					// MCTools.getLocationParam(Login.this),
+					// new MCResponseAdapter(Login.this) {
+					// @Override
+					// public void success(JSONObject data) {
+					// try {
+					//
+					// Intent intent = new Intent();
+					// intent.setClass(Login.this,
+					// CCommunityActivity.class);
+					// Bundle bundle = new Bundle();
+					// JSONObject community = data
+					// .getJSONObject("community");
+					// bundle.putString("nowcommunity",
+					// community.toString());
+					// intent.putExtras(bundle);
+					// startActivity(intent);
+					// finish();
+					// } catch (JSONException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
+					// }
+					//
+					// @Override
+					// public void unsuccess(JSONObject data) {
+					// try {
+					//
+					// Intent intent = new Intent();
+					// intent.setClass(Login.this,
+					// CCommunityActivity.class);
+					// Bundle bundle = new Bundle();
+					// JSONObject community = data
+					// .getJSONObject("community");
+					// bundle.putString("nowcommunity",
+					// community.toString());
+					// intent.putExtras(bundle);
+					// startActivity(intent);
+					// finish();
+					// } catch (JSONException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
+					// }
+					//
+					// });
+					// }
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

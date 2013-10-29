@@ -30,6 +30,8 @@ public class RegisterSetPassActivity extends Activity {
 
 	private AccountManager accountManager;
 	private CommunityManager communityManager;
+	
+	private String accessKey;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +58,12 @@ public class RegisterSetPassActivity extends Activity {
 			Toast.makeText(this, "«Î ‰»Î√‹¬Î", Toast.LENGTH_SHORT).show();
 			return;
 		}
+		
+		accessKey = MCTools.createAccessKey();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("password", String.valueOf(password));
 		map.put("phone", String.valueOf(registerNumber));
-
+		map.put("accessKey", accessKey);
 		accountManager = new AccountManagerImpl(this);
 		communityManager = new CommunityManagerImpl(this);
 
@@ -67,62 +71,69 @@ public class RegisterSetPassActivity extends Activity {
 
 			@Override
 			public void success(JSONObject data) {
-				final Intent intent = new Intent(RegisterSetPassActivity.this,
-						CCommunityActivity.class);
+				
 				final Bundle bundle = new Bundle();
 				try {
 					JSONObject jaccount = data.getJSONObject("account");
 
 					Account account = new Account(jaccount);
+					
+					account.setAccessKey(accessKey);
 
 					MCTools.saveAccount(RegisterSetPassActivity.this, account);
-
-					communityManager.find(
-							MCTools.getLocationParam(RegisterSetPassActivity.this),
-							new MCResponseAdapter(RegisterSetPassActivity.this) {
-								@Override
-								public void success(JSONObject data) {
-									try {
-
-										JSONObject community = data
-												.getJSONObject("community");
-										bundle.putString("nowcommunity",
-												community.toString());
-										intent.putExtras(bundle);
-										RegisterSetPassActivity.this
-												.startActivity(intent);
-										RegisterSetPassActivity.this.finish();
-										RegisterActivity.instance.finish();
-										RegisterCheckingActivity.instance
-												.finish();
-									} catch (JSONException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
-
-								@Override
-								public void unsuccess(JSONObject data) {
-									try {
-
-										JSONObject community = data
-												.getJSONObject("community");
-										bundle.putString("nowcommunity",
-												community.toString());
-										intent.putExtras(bundle);
-										RegisterSetPassActivity.this
-												.startActivity(intent);
-										RegisterSetPassActivity.this.finish();
-										RegisterActivity.instance.finish();
-										RegisterCheckingActivity.instance
-												.finish();
-									} catch (JSONException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
-
-							});
+					
+					Intent intent = new Intent(RegisterSetPassActivity.this,
+							LoadingActivity.class);
+					startActivity(intent);
+					RegisterSetPassActivity.this.finish();
+					RegisterActivity.instance.finish();
+					RegisterCheckingActivity.instance.finish();
+					// communityManager.find(
+					// MCTools.getLocationParam(RegisterSetPassActivity.this),
+					// new MCResponseAdapter(RegisterSetPassActivity.this) {
+					// @Override
+					// public void success(JSONObject data) {
+					// try {
+					//
+					// JSONObject community = data
+					// .getJSONObject("community");
+					// bundle.putString("nowcommunity",
+					// community.toString());
+					// intent.putExtras(bundle);
+					// RegisterSetPassActivity.this
+					// .startActivity(intent);
+					// RegisterSetPassActivity.this.finish();
+					// RegisterActivity.instance.finish();
+					// RegisterCheckingActivity.instance
+					// .finish();
+					// } catch (JSONException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
+					// }
+					//
+					// @Override
+					// public void unsuccess(JSONObject data) {
+					// try {
+					//
+					// JSONObject community = data
+					// .getJSONObject("community");
+					// bundle.putString("nowcommunity",
+					// community.toString());
+					// intent.putExtras(bundle);
+					// RegisterSetPassActivity.this
+					// .startActivity(intent);
+					// RegisterSetPassActivity.this.finish();
+					// RegisterActivity.instance.finish();
+					// RegisterCheckingActivity.instance
+					// .finish();
+					// } catch (JSONException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
+					// }
+					//
+					// });
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

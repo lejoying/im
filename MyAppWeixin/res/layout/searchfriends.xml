@@ -61,7 +61,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editText1"
+            android:id="@+id/tv_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -79,8 +79,8 @@
             android:id="@+id/tv_community"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/button1"
-            android:layout_below="@+id/button1"
+            android:layout_alignRight="@+id/btn_search"
+            android:layout_below="@+id/btn_search"
             android:layout_marginRight="15dp"
             android:layout_marginTop="5dp"
             android:text="邀请好友>>"
@@ -88,15 +88,16 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_search"
             android:layout_width="180dp"
             android:layout_height="35dp"
-            android:layout_alignRight="@+id/editText1"
-            android:layout_below="@+id/editText1"
+            android:layout_alignRight="@+id/tv_phone"
+            android:layout_below="@+id/tv_phone"
             android:layout_marginTop="5dp"
             android:background="@drawable/preference_single_item"
             android:text="查找"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:onClick="searchFriend" />
     </RelativeLayout>
 
 </RelativeLayout>

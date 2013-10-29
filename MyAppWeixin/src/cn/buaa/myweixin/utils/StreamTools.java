@@ -7,21 +7,34 @@ import java.io.InputStream;
 public final class StreamTools {
 	/**
 	 * 将InputStream读取到byte[]中
+	 * 
 	 * @param is
 	 * @return
 	 * @throws IOException
 	 */
-	public static byte[] isToData(InputStream is) throws IOException{
+	public static byte[] isToData(InputStream is) {
+		System.out.println(is);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		byte buffer[] = new byte[1024];
 		int len = 0;
-		while((len = is.read(buffer))!=-1){
-			bos.write(buffer,0,len);
+		byte data[] = null;
+		try {
+			while ((len = is.read(buffer)) != -1) {
+				bos.write(buffer, 0, len);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				bos.flush();
+				data = bos.toByteArray();
+				bos.close();
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		byte data[] = bos.toByteArray();
-		bos.flush();
-		bos.close();
-		is.close();
+		
 		return data;
 	}
 }

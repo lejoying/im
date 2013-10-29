@@ -16,7 +16,9 @@ import org.json.JSONObject;
 
 import cn.buaa.myweixin.listener.ResponseListener;
 import cn.buaa.myweixin.utils.HttpTools;
+import cn.buaa.myweixin.utils.HttpTools.HttpListener;
 import cn.buaa.myweixin.utils.LocationTools;
+import cn.buaa.myweixin.utils.StreamTools;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,7 +28,7 @@ public class MCTools {
 
 	private static Account nowAccount;
 
-	private static final String DOMAIN = "http://192.168.2.43:8071";
+	private static final String DOMAIN = "http://192.168.0.102:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;
@@ -54,42 +56,102 @@ public class MCTools {
 				@Override
 				public void run() {
 					super.run();
-					try {
-						byte[] b = null;
-						if (method == HttpTools.SEND_GET) {
-							b = HttpTools.sendGet(DOMAIN + url, timeout, param);
-						}
-						if (method == HttpTools.SEND_POST) {
-							b = HttpTools
-									.sendPost(DOMAIN + url, timeout, param);
-						}
 
-						Looper.prepare();
-						if (b != null) {
-							JSONObject data = new JSONObject(new String(b));
-							if (data != null) {
-								String info = data.getString("提示信息");
-								info = info.substring(info.length() - 2,
-										info.length());
+					if (method == HttpTools.SEND_GET) {
+						HttpTools.sendGet(DOMAIN + url, timeout, param,
+								new HttpListener() {
+									@Override
+									public void handleInputStream(InputStream is) {
+										try {
+											Looper.prepare();
+											if (is != null) {
+												byte[] b = StreamTools.isToData(is);
+												JSONObject data = new JSONObject(new String(b));
+												if (data != null) {
+													String info = data.getString("提示信息");
+													info = info.substring(info.length() - 2, info.length());
 
-								if (info.equals("成功")) {
-									responseListener.success(data);
-								}
-								if (info.equals("失败")) {
-									responseListener.unsuccess(data);
-								}
-							}
-						}
-						
-					} catch (IOException e) {
-						responseListener.failed();
-						e.printStackTrace();
-					} catch (JSONException e) {
-						e.printStackTrace();
+													if (info.equals("成功")) {
+														responseListener.success(data);
+													}
+													if (info.equals("失败")) {
+														responseListener.unsuccess(data);
+													}
+												}
+											}
+											if (is == null) {
+												responseListener.failed();
+											}
+											Looper.loop();
+										} catch (JSONException e) {
+											e.printStackTrace();
+										}
+									}
+								});
 					}
-					Looper.loop();
+					if (method == HttpTools.SEND_POST) {
+						HttpTools.sendPost(DOMAIN + url, timeout, param,
+								new HttpListener() {
+									@Override
+									public void handleInputStream(InputStream is) {
+										try {
+											Looper.prepare();
+											if (is != null) {
+												byte[] b = StreamTools.isToData(is);
+												JSONObject data = new JSONObject(new String(b));
+												if (data != null) {
+													String info = data.getString("提示信息");
+													info = info.substring(info.length() - 2, info.length());
+
+													if (info.equals("成功")) {
+														responseListener.success(data);
+													}
+													if (info.equals("失败")) {
+														responseListener.unsuccess(data);
+													}
+												}
+											}
+											if (is == null) {
+												responseListener.failed();
+											}
+											Looper.loop();
+										} catch (JSONException e) {
+											e.printStackTrace();
+										}
+									}
+								});
+					}
+
 				}
 			}.start();
+		}
+	}
+
+	private void handleInputStream(InputStream is,
+			ResponseListener responseListener) {
+		try {
+			Looper.prepare();
+			if (is != null) {
+				byte[] b = StreamTools.isToData(is);
+				JSONObject data = new JSONObject(new String(b));
+				if (data != null) {
+					String info = data.getString("提示信息");
+					info = info.substring(info.length() - 2, info.length());
+
+					if (info.equals("成功")) {
+						responseListener.success(data);
+					}
+					if (info.equals("失败")) {
+						responseListener.unsuccess(data);
+					}
+				}
+			}
+			if (is == null) {
+				responseListener.failed();
+			}
+			Looper.loop();
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 	}
 

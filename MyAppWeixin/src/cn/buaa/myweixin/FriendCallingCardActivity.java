@@ -17,7 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class CallingCardActivity extends Activity {
+public class FriendCallingCardActivity extends Activity {
 
 	private static final int SCROLL = 0x51;
 
@@ -126,22 +126,17 @@ public class CallingCardActivity extends Activity {
 			}
 		});
 
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		String nickName = bundle.getString("nickName");
+		String mainBusiness = bundle.getString("mainBusiness");
+		
 		tv_name = (TextView) findViewById(R.id.tv_name);
 		tv_mainbusiness = (TextView) findViewById(R.id.tv_mainbusiness);
 		iv_tdcode = (ImageView) findViewById(R.id.iv_tdcode);
 
-		tv_name.setText(MCTools.getLoginedAccount(this).getNickName());
-		tv_mainbusiness.setText(MCTools.getLoginedAccount(this)
-				.getMainBusiness());
-	}
-
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();;
-		tv_name.setText(MCTools.getLoginedAccount(this).getNickName());
-		tv_mainbusiness.setText(MCTools.getLoginedAccount(this)
-				.getMainBusiness());
+		tv_name.setText(nickName);
+		tv_mainbusiness.setText(mainBusiness);
 	}
 
 	@Override
@@ -162,7 +157,7 @@ public class CallingCardActivity extends Activity {
 	}
 
 	public void callcardRightDialog(View v) {
-		Intent intent = new Intent(this, CallingCardRightDialog.class);
+		Intent intent = new Intent(this, FriendCallingCardRightDialog.class);
 		startActivity(intent);
 	}
 }
