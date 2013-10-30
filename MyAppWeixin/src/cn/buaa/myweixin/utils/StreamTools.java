@@ -13,7 +13,6 @@ public final class StreamTools {
 	 * @throws IOException
 	 */
 	public static byte[] isToData(InputStream is) {
-		System.out.println(is);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		byte buffer[] = new byte[1024];
 		int len = 0;

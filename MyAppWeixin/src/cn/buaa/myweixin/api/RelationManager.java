@@ -16,4 +16,16 @@ public interface RelationManager {
 
 	public void getcommunities(Map<String, String> param,
 			ResponseListener responseListener);
+
+	public void addcircle(Map<String, String> param,
+			ResponseListener responseListener);
+
+	public void getcirclesandfriends(Map<String, String> param,
+			ResponseListener responseListener);
+
+	public void getaskfriends(Map<String, String> param,
+			ResponseListener responseListener);
+
+	public void addfriendagree(Map<String, String> param,
+			ResponseListener responseListener);
 }

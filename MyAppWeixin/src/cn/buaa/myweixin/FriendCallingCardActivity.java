@@ -158,6 +158,7 @@ public class FriendCallingCardActivity extends Activity {
 
 	public void callcardRightDialog(View v) {
 		Intent intent = new Intent(this, FriendCallingCardRightDialog.class);
+		intent.putExtras(getIntent().getExtras());
 		startActivity(intent);
 	}
 }

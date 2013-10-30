@@ -25,7 +25,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.RelationManager;
 import cn.buaa.myweixin.api.Session;
+import cn.buaa.myweixin.apiimpl.RelationManagerImpl;
 import cn.buaa.myweixin.apiimpl.SessionImpl;
 import cn.buaa.myweixin.apiutils.MCTools;
 
@@ -50,6 +52,7 @@ public class MainWeixin extends Activity {
 	private ImageView arrow_down;
 
 	private Session session;
+	private RelationManager relationManager;
 
 	private boolean longajax;
 
@@ -146,13 +149,15 @@ public class MainWeixin extends Activity {
 			Login.instance.finish();
 
 		session = new SessionImpl(this);
+		relationManager = new RelationManagerImpl(this);
 		longajax = true;
 		createtime = new Date().getTime();
 		count = 0;
 		createSession();
+		getFriends();
 	}
 
-	public void createSession() {
+	private void createSession() {
 		count++;
 		Map<String, String> param = new HashMap<String, String>();
 
@@ -194,6 +199,19 @@ public class MainWeixin extends Activity {
 				if (longajax)
 					createSession();
 			}
+		});
+	}
+	
+	private void getFriends(){
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
+		param.put("accessKey", MCTools.getLoginedAccount(this).getAccessKey());
+		relationManager.getcirclesandfriends(param, new MCResponseAdapter(this){
+			@Override
+			public void success(JSONObject data) {
+				System.out.println(data);
+			}
+			
 		});
 	}
 

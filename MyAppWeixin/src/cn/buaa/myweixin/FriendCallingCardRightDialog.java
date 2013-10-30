@@ -5,11 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 
-public class FriendCallingCardRightDialog extends Activity{
+public class FriendCallingCardRightDialog extends Activity {
 
-	private LinearLayout main_dialog_layout;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -17,8 +16,11 @@ public class FriendCallingCardRightDialog extends Activity{
 		setContentView(R.layout.friendcallingcard_right_dialog);
 	}
 
-	public void addFriend(View v){
-		
+	public void addFriend(View v) {
+		Intent intent = new Intent(this, SelectCircleActivity.class);
+		intent.putExtras(getIntent().getExtras());
+		startActivity(intent);
+		finish();
 	}
 
 	@Override
@@ -27,6 +29,5 @@ public class FriendCallingCardRightDialog extends Activity{
 		finish();
 		return super.onTouchEvent(event);
 	}
-	
-	
+
 }

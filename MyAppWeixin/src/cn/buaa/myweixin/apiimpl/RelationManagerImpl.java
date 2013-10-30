@@ -46,4 +46,34 @@ public class RelationManagerImpl implements RelationManager {
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
+	@Override
+	public void addcircle(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/relation/addcircle", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
+	}
+
+	@Override
+	public void getcirclesandfriends(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/relation/getcirclesandfriends", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
+	}
+
+	@Override
+	public void getaskfriends(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/relation/getaskfriends", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
+	}
+
+	@Override
+	public void addfriendagree(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/relation/addfriendagree", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
+	}
+
+	
+
 }
