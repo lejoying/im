@@ -67,7 +67,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
             <div class="listOperatorContent">
               <div id="chooseConversationBtn" un="conversation" click="switchPanel" class="conmu left active"><a title="聊天" href="javascript:;" class="conmuButton"><span class="bag"></span><span style="display:none;" class="unreadDot" id="totalUnreadDot">0</span></a></div>
               <div class="cutOffRule"></div>
-              <div un="contact" click="switchPanel" class="addr notChooseOpera right"><a title="通讯录" href="javascript:;" class="addrButton "><span class="bag"></span></a></div>
+              <div un="contact" id="txl" click="switchPanel" class="addr notChooseOpera right"><a title="通讯录" href="javascript:;" class="addrButton "><span class="bag"></span></a></div>
             </div>
             <div class="chatListSearchInput left"> <span class="chatListSearchIcon left"></span>
               <input type="text" id="conv_search" placeholder="搜索" keyup="search@.chatListSearchInput" keydown="preSearch" value="" name="search" class="left">
@@ -103,6 +103,39 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
 
                 <div click="loadMoreConv" id="conv_load_more"> <a href="javascript:;" class="chatListColumn loadMoreConv"> <span class="tipPic"></span> <span class="desc">点击显示更多</span> </a> </div>
               </div>
+              <div class="js_circlesFriends">
+
+              </div>
+                <div class="templates hide">
+                    <div class="circles_friends" id="circles_friends">
+                        <?js for (var index in it) { ?>
+                        <?js post=it[index]; ?>
+                        <?js if(post==null) { ?>
+                        <?js continue; ?>
+                        <?js } ?>
+                        <div class="groupTitle">
+                        <span class="groupTitleLetter">#{post.name}</span>
+                        </div>
+                        <?js var it1 = post.accounts; ?>
+                        <?js for (var index1 in it1) { ?>
+                        <?js post1=it1[index1]; ?>
+                        <?js if(post1==null) { ?>
+                        <?js continue; ?>
+                        <?js } ?>
+                        <a class="friendDetail" click="showProfile" id="con_item_dq754090910" username="dq754090910">
+
+                            <span class="avatar" mouseover1="showProfile@.friendDetail">
+                                <img src="/static/images/face.jpg"/></span>
+                            <div class="nickName">
+                                <div class="left name" style="">#{post1.nickName}</div>
+                                <div class="clr"></div>
+                            </div>
+                            <span class="clr"></span>
+                        </a>
+                        <?js } ?>
+                        <?js } ?>
+                    </div>
+                </div>
             </div>
           </div>
         </div>

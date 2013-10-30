@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    SetCookie("phone_cookie","123");
+    $.getScript("/static/js/nTenjin.js");
+    SetCookie("phone_cookie", "123");
 //    alert(GetCookie("wxgs"));
     $.ajax({
         type: "POST",
@@ -12,7 +13,31 @@ $(document).ready(function () {
             $($(".nickName")[0]).html(data.account.nickName);
         }
     });
-
+    var i = 0;
+    $("#txl").click(function () {
+        $("#conversationContainer").hide();
+        $(".js_circlesFriends").show();
+        if (i == 0) {
+            i =1;
+            $.ajax({
+                type: "POST",
+                url: "/api2/relation/getcirclesandfriends?",
+                data: {
+                    phone: GetCookie("phone_cookie")
+                },
+                success: function (data) {
+                    if (data["提示信息"] == "获取密友圈成功") {
+                        var circles_friends = getTemplate("circles_friends");
+                        $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
+                    }
+                }
+            });
+        }
+    });
+    $("#chooseConversationBtn").click(function () {
+        $("#conversationContainer").show();
+        $(".js_circlesFriends").hide();
+    });
 
     $(".chatSend").click(function () {
         alert($("#textInput").val());
@@ -29,6 +54,19 @@ $(document).ready(function () {
 
     });
 });
+//根据id获取模版
+function getTemplate(id) {
+    var tenjin = nTenjin;
+    var templateDiv = $('.templates #' + id).parent();
+    var string = templateDiv.html();
+    string = string.replace(/\<\!\-\-\?/g, "<?");
+    string = string.replace(/\?\-\-\>/g, "?>");
+    string = string.replace(/比较符号大于/g, ">");
+    string = string.replace(/比较符号兄小于/g, "<");
+    var template = new tenjin.Template();
+    template.convert(string);
+    return template;
+}
 function SetCookie(name, value)
 //设定Cookie值
 {

@@ -294,7 +294,7 @@ api = {
      ***************************************/
     "relation_addfriendagree": {
         request: {
-            typical: {"phone": "XXX", accessKey: "XXX", phoneask: "XXX", rid: "XXX"}
+            typical: {"phone": "XXX", accessKey: "XXX", phoneask: "XXX", rid: "XXX", status: true || false}
         },
         response: {
             success: {"提示信息": "添加成功"},

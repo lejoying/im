@@ -488,7 +488,7 @@ accountManage.qrcode = function (data, response) {
                  }
                  response.setHeaders(headers);*/
 //            response.setHeader("Content-Type","image/png");
-                response.write(data.toString());
+                response.write(Base64.decode(data.toString()));
                 response.end();
             }
         }
@@ -641,6 +641,8 @@ accountManage.getaccount = function (data, response) {
         } else {
             var accountData = results.pop().account.data;
             delete accountData.password;
+            delete accountData.time;
+            delete accountData.code;
             console.log(accountData.phone);
             response.write(JSON.stringify({
                 "提示信息": "获取成功",
