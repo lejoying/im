@@ -90,7 +90,7 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
         relationManage.addcircle(data, response);
     }
     else if (operation == "getcirclesandfriends") {
-        relationManage.getcircles(data, response);
+        relationManage.getcirclesandfriends(data, response);
     }
 }
 
