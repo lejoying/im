@@ -108,21 +108,22 @@ relationManage.getcommunities = function (data, response) {
  ***************************************/
 relationManage.addfriend = function (data, response) {
     response.asynchronous = 1;
-
-    var phonefrom = data.phonefrom;
+    var phone = data.phone;
     var phoneto = data.phoneto;
+    var rid = data.rid;
+    var accessKey = data.accessKey;
     addFriendNode();
 
     function addFriendNode() {
         var query = [
             'MATCH (account1:Account),(account2:Account)',
-            'WHERE account1.phone={phonefrom} AND account2.phone={phoneto}',
+            'WHERE account1.phone={phone} AND account2.phone={phoneto}',
             'CREATE UNIQUE account1-[r:FRIEND]->account2',
             'RETURN  r'
         ].join('\n');
 
         var params = {
-            phonefrom: phonefrom,
+            phone: phone,
             phoneto: phoneto
         };
         db.query(query, params, function (error, results) {
@@ -136,7 +137,36 @@ relationManage.addfriend = function (data, response) {
                 }));
                 response.end();
             } else {
-                console.log("添加成功---");
+                console.log("添加FRIEND成功---");
+                addAccountCircleNode(rid, phoneto);
+            }
+        });
+    }
+    function addAccountCircleNode(rid, phoneto){
+        var query = [
+            'START circle=node({rid})',
+            'MATCH (account:Account)',
+            'WHERE account.phone={phoneto}',
+            'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
+            'RETURN  r'
+        ].join('\n');
+
+        var params = {
+            rid: rid,
+            phoneto: phoneto
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "添加失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+            } else {
+                console.log("添加HAS_FRIEND成功---");
                 response.write(JSON.stringify({
                     "提示信息": "添加成功"
                 }));
@@ -242,9 +272,14 @@ relationManage.getcirclefriends = function (data, response) {
     };
     db.query(query, params, function (error, results) {
         if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "获取密友圈好友失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
             console.log(error);
             return;
-        } else if (results.length > 0) {
+        } else{
             console.log("获取密友圈成员成功---");
             var accounts = [];
             for(var index in results){
@@ -256,14 +291,49 @@ relationManage.getcirclefriends = function (data, response) {
                 accounts: accounts
             }));
             response.end();
-        } else {
+        }
+    });
+}
+/***************************************
+ *     URL：/api2/relation/getcirclesandfriends
+ ***************************************/
+relationManage.getcirclesandfriends = function(data, response){
+    response.asynchronous = 1;
+    console.log(data);
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var query = [
+        'MATCH (account1:Account)-[r1:HAS_CIRCLE]->(circle:Circle)-[r2:HAS_FRIEND]->(account2:Account)',
+        'WHERE account1.phone={phone} AND ',
+        'RETURN circle'
+    ].join('\n');
+    var params = {
+        phone: phone
+    };
+    db.query(query, params, function(error, results){
+        if(error){
             response.write(JSON.stringify({
-                "提示信息": "获取密友圈好友失败",
+                "提示信息": "获取密友圈失败",
                 "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        }else{
+            var circles = [];
+            for(var index in results){
+                var it = results[index].circle.data;
+                circles.push(it);
+            }
+            response.write(JSON.stringify({
+                "提示信息": "获取密友圈成功",
+                circles: circles
             }));
             response.end();
         }
     });
+
 }
+
 
 module.exports = relationManage;

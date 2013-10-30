@@ -2,6 +2,7 @@ var serverSetting = root.globaldata.serverSetting;
 var accountManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
+var ajax = require("./../lib/ajax.js");
 var sms = require("./../lib/SMS.js");
 //sms.createsub("coolspan@sina.cn");此子账户已创建
 var sms_power = false;
@@ -55,7 +56,7 @@ accountManage.verifyphone = function (data, response) {
                     var bad = time - parseInt(accountData.time);
                     var code = "";
                     if (bad > 600000) {
-                        console.log("++++--"+accountData.code);
+                        console.log("++++--" + accountData.code);
                         accountData.code = time.substr(time.length - 6);
                         accountData.time = new Date().getTime();
                         accountNode.save();
@@ -392,9 +393,9 @@ accountManage.verifypass = function (data, response) {
             if (error) {
                 console.log(error);
                 return;
-            } else if(results.length == 0){
+            } else if (results.length == 0) {
                 console.log("创建默认密友圈失败");
-            }else{
+            } else {
                 console.log("创建默认密友圈成功");
             }
         });
@@ -466,6 +467,33 @@ accountManage.auth = function (data, response) {
 
 accountManage.exit = function (data, response) {
 
+}
+accountManage.qrcode = function (data, response) {
+    response.asynchronous = 1;
+    var code = data.code;
+    ajax.ajax({
+            type: "GET",
+            url: "http://qr.liantu.com/api.php",
+            data: {
+                text: code
+            },
+            success: function (data) {
+                /*var reader = new FileReader();
+                reader.readAsDataURL(data);
+                reader.onload = function (e) {
+
+                }*/
+                /*var headers = {
+                 "Content-Type":"image/png"
+                 }
+                 response.setHeaders(headers);*/
+//            response.setHeader("Content-Type","image/png");
+                response.write(data.toString());
+                response.end();
+            }
+        }
+    )
+    ;
 }
 /***************************************
  *     URL：/api2/account/verifywebcode

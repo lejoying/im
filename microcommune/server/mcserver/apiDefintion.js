@@ -135,7 +135,7 @@ api = {
      ***************************************/
     "account_verifywebcode": {
         request: {
-            typical: {accessKey:"XXX"}
+            typical: {accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "二维码验证成功"},
@@ -147,7 +147,7 @@ api = {
      ***************************************/
     "account_verifywebcodelogin": {
         request: {
-            typical: {phone:"XXX", accessKey: "", status:true || false}
+            typical: {phone: "XXX", accessKey: "", status: true || false}
         },
         response: {
             success: {"提示信息": "登录成功"},
@@ -159,10 +159,10 @@ api = {
      ***************************************/
     "account_getaccount": {
         request: {
-            typical: {phone:"XXX", accessKey:"XXX"}
+            typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取成功", account:{}},
+            success: {"提示信息": "获取成功", account: {}},
             failed: {"提示信息": "获取失败", "失败原因": "用户不存在"}
         }
     },
@@ -171,7 +171,7 @@ api = {
      ***************************************/
     "account_modify": {
         request: {
-            typical: {phone: "XXX", accessKey:"XXX", nickName:"XXX", mainBusiness:"XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", mainBusiness: "XXX"}
         },
         response: {
             success: {"提示信息": "修改成功"},
@@ -202,7 +202,7 @@ api = {
      ***************************************/
     "relation_addfriend": {
         request: {
-            typical: {"phoneform": "XXX", "phoneto": "XXX"}
+            typical: {"phone": "XXX", "phoneto": "XXX", rid: "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "添加成功"},
@@ -254,15 +254,51 @@ api = {
         }
     },
     /***************************************
-     *     URL：/api2/relation/getcirclefriends
+     *     URL：/api2/relation/getcirclesandfriends
      ***************************************/
-    "relation_getcirclefriends": {
+    "relation_getcirclesandfriends": {
         request: {
-            typical: {"rid": "XXX"}
+            typical: {"phone": "XXX", accessKey: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取密友圈好友成功", accounts: [{},{},{}]},
-            failed: {"提示信息": "获取密友圈好友失败", "失败原因": "数据异常"}
+            success: {"提示信息": "获取密友圈成功", circles: [
+                {circle: "", accounts: [
+                    {},
+                    {},
+                    {}
+                ]},
+                {},
+                {}
+            ]},
+            failed: {"提示信息": "获取密友圈失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/relation/getaskfriends
+     ***************************************/
+    "relation_getaskfriends": {
+        request: {
+            typical: {"phone": "XXX", accessKey: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取好友请求成功", accounts: [
+                {},
+                {},
+                {}
+            ]},
+            failed: {"提示信息": "获取好友请求失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/relation/addfriendagree
+     ***************************************/
+    "relation_addfriendagree": {
+        request: {
+            typical: {"phone": "XXX", accessKey: "XXX", phoneask: "XXX", rid: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "添加成功"},
+            failed: {"提示信息": "添加失败", "失败原因": ["数据异常"]}
         }
     }
 }
@@ -291,7 +327,11 @@ api = {
             typical: {name: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取社区好友成功", accounts: [{},{},{}]},
+            success: {"提示信息": "获取社区好友成功", accounts: [
+                {},
+                {},
+                {}
+            ]},
             failed: {"提示信息": "获取社区好友失败", "失败原因": "数据异常"}
         }
     }

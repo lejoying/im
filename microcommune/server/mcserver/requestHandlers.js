@@ -52,6 +52,9 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     else if (operation == "modify") {
         accountManage.modify(data, response);
     }
+    else if (operation == "qrcode") {
+        accountManage.qrcode(data, response);
+    }
 }
 var communityManage = require("./handlers/communityManage.js");
 requestHandlers.communityManage = function (request, response, pathObject, data) {
@@ -85,6 +88,9 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     }
     else if (operation == "addcircle") {
         relationManage.addcircle(data, response);
+    }
+    else if (operation == "getcirclesandfriends") {
+        relationManage.getcircles(data, response);
     }
 }
 
