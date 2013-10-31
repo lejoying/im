@@ -1,6 +1,8 @@
 package cn.buaa.myweixin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -10,6 +12,7 @@ import org.json.JSONObject;
 import cn.buaa.myweixin.adapter.MCResponseAdapter;
 import cn.buaa.myweixin.api.RelationManager;
 import cn.buaa.myweixin.apiimpl.RelationManagerImpl;
+import cn.buaa.myweixin.apiutils.Circle;
 import cn.buaa.myweixin.apiutils.MCTools;
 import android.app.Activity;
 import android.content.Context;
@@ -45,24 +48,10 @@ public class SelectCircleActivity extends Activity {
 
 		sp_selectcircle = (Spinner) findViewById(R.id.sp_selectcircle);
 		relationManager = new RelationManagerImpl(this);
-		Map<String, String> param = new HashMap<String, String>();
-		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
-		param.put("accessKey", MCTools.getLoginedAccount(this).getAccessKey());
 
-//		relationManager.getcircles(param, new MCResponseAdapter(this) {
-//
-//			@Override
-//			public void success(JSONObject data) {
-//				try {
-//					JSONArray circles = data.getJSONArray("circles");
-//					sp_selectcircle.setAdapter(new MCSpinnerAdapter(circles));
-//				} catch (JSONException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//
-//		});
+		sp_selectcircle.setAdapter(new MCSpinnerAdapter(MCTools
+				.getCircles(this)));
+
 	}
 
 	public void addFriendToCircle(View v) {
@@ -71,14 +60,14 @@ public class SelectCircleActivity extends Activity {
 		param.put("phoneto", getIntent().getExtras().getString("phone"));
 		param.put("rid", String.valueOf(sp_selectcircle.getSelectedItemId()));
 		param.put("accessKey", MCTools.getLoginedAccount(this).getAccessKey());
-		
-		relationManager.addfriend(param, new MCResponseAdapter(this){
+
+		relationManager.addfriend(param, new MCResponseAdapter(this) {
 
 			@Override
 			public void success(JSONObject data) {
 				System.out.println(data);
 			}
-			
+
 		});
 	}
 
@@ -88,9 +77,9 @@ public class SelectCircleActivity extends Activity {
 
 	private class MCSpinnerAdapter implements SpinnerAdapter {
 
-		private JSONArray circles = new JSONArray();
+		private List<Circle> circles = new ArrayList<Circle>();
 
-		public MCSpinnerAdapter(JSONArray circles) {
+		public MCSpinnerAdapter(List<Circle> circles) {
 			super();
 			this.circles = circles;
 		}
@@ -109,28 +98,17 @@ public class SelectCircleActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return circles.length();
+			return circles.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			try {
-				return circles.getJSONObject(position);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return null;
+			return circles.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			try {
-				return Long.valueOf(circles.getJSONObject(position).getString(
-						"rid"));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return 0;
+			return circles.get(position).getRid();
 		}
 
 		@Override
@@ -144,11 +122,9 @@ public class SelectCircleActivity extends Activity {
 			RelativeLayout rl = (RelativeLayout) inflater.inflate(
 					R.layout.selectcircleitem, null);
 			TextView tv = (TextView) rl.findViewById(R.id.tv_circle);
-			try {
-				tv.setText(circles.getJSONObject(position).getString("name"));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+
+			tv.setText(circles.get(position).getName());
+
 			return rl;
 		}
 
@@ -176,11 +152,7 @@ public class SelectCircleActivity extends Activity {
 			RelativeLayout rl = (RelativeLayout) inflater.inflate(
 					R.layout.selectcircleitem, null);
 			TextView tv = (TextView) rl.findViewById(R.id.tv_circle);
-			try {
-				tv.setText(circles.getJSONObject(position).getString("name"));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+			tv.setText(circles.get(position).getName());
 			return rl;
 		}
 
