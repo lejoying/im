@@ -10,7 +10,8 @@ session.eventweb = function (data, response) {
     response.asynchronous = 1;
     var accessKey = data.accessKey;
     var sessionResponse = sessionPool[accessKey];
-    if (sessionResponse != null) {
+    if (sessionResponse != null && sessionResponse != undefined) {
+        sessionResponse.write("aaaaa");
         sessionResponse.end();
     }
     sessionPool[accessKey] = response;

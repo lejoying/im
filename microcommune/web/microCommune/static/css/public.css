@@ -158,3 +158,65 @@ input[type="checkbox"] {
 	border:4px solid #0099cd;	
 	
 }
+/*sssssssssssssssssssssssssssssssssssssssssss*/
+.circles_friends a.friendDetail {display:block;padding:5px 10px 5px 32px;background:#F5F5F5;cursor:pointer;}
+.circles_friends a.friendDetail .name{
+    width:300px;
+    max-width:306px;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+}
+.circles_friends a.friendDetail span.photoEnter { display:none; }
+.circles_friends a.friendDetail:hover { background:#eef3f4;text-decoration:none; }
+.circles_friends a.friendDetail:hover span.photoEnter { display:inline; }
+.circles_friends .friendDetail .checkbox { display:block;float:left;width:34px;height:34px;margin:3px 5px 3px 0;background:url(../images/button_chat1832d7.png) no-repeat 0 -493px;  }
+.circles_friends .friendDetail .checkbox img{ width:34px;height:34px; }
+.circles_friends .friendDetail .checked img{ width:34px;height:34px;background:url(../images/button_chat1832d7.png) no-repeat -34px -493px;  }
+.circles_friends .friendDetail .avatar{ display:block;float:left;width:36px;height:36px;}
+.circles_friends .friendDetail .avatar img{ display:block;width:33px;height:33px;border:1px solid #FFF;}
+.circles_friends .friendDetail .nickName { display:block;float:left;font-size:12px;color:#343434;margin-left:10px;text-shadow:0 1px 0 rgba(255,255,255,1); word-wrap:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;margin-top:5px;padding-top:4px; }
+.circles_friends .friendDetail .photoEnter{
+    display:block;
+    height:25px;
+    width:23px;
+    margin-top:4px;
+    background:url(../images/button0217ced3.png) no-repeat -116px -124px;
+}
+.circles_friends .friendDetail .photoEnter:active{
+    background-position:-143px -124px;
+}
+.circles_friends .friendDetail .nickName .emoji{
+    margin-top:-5px;
+    margin-top:0px\9;
+    vertical-align:bottom;
+}
+.circles_friends .friendDetail .nickName .name{ max-width: 187px; width:180px\9; padding-top:4px; margin-top:-4px; white-space:nowrap; text-overflow:ellipsis; -o-text-overflow:ellipsis; overflow:hidden;}
+.clr { clear:both; height:1px; overflow:hidden;display:block; }
+.circles_friends .groupTitle {display:block; text-decoration:none; font-size:12px; color: #5B7991; padding:8px 31px 3px;border-top: 1px solid #D0D8E2; color:#536175; text-shadow:none;line-height:20px;text-align:left; }
+.circles_friends .groupTitle .lapIcon{
+    width:17px;
+    height:20px;
+    display:block;
+    background:url(../images/button0217ced3.png) no-repeat -109px -34px;
+}
+.circles_friends a.groupTitle:active .lapIcon{
+    background-position:-121px -34px;
+}
+.circles_friends .groupTitle .lapedIcon{
+    background-position:-135px -34px;
+}
+.circles_friends a.groupTitle:active .lapedIcon{
+    background-position:-149px -34px;
+}
+.circles_friends .groupTitle .lapIcon
+	.createNewChat .starFriendsTitle {
+    border-top:1px solid #F7F7F7;
+}
+.circles_friends .groupTitle .iconFavoriteFriend { width:22px;height:18px;margin-left:-24px;background:url(../images/button0217ced3.png) no-repeat -91px -35px;vertical-align:top; }
+.circles_friends .groupTitle .groupTitleLetter{
+    font-size:14px;
+    font-weight:bold;
+}

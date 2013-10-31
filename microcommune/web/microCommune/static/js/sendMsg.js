@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    SetCookie("phone_cookie","123");
+    $.getScript("/static/js/nTenjin.js");
+    SetCookie("phone_cookie", "123");
 //    alert(GetCookie("wxgs"));
     $.ajax({
         type: "POST",
@@ -12,8 +13,54 @@ $(document).ready(function () {
             $($(".nickName")[0]).html(data.account.nickName);
         }
     });
+    $(".js_circlesFriends").hide();
+//    $(".prompteds").hide();
+    $.ajax({
+        type: "POST",
+        url: "/api2/relation/getcirclesandfriends?",
+        data: {
+            phone: GetCookie("phone_cookie")
+        },
+        success: function (data) {
+            if (data["提示信息"] == "获取密友圈成功") {
+                setTimeout(showNotification(), 10000);
+                window.sessionStorage.setItem("circles",JSON.stringify(data.circles));
+                var circles_friends = getTemplate("circles_friends");
+                $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
+                $(".circles_friends").click(function () {
+                    var obj = JSON.parse(window.sessionStorage.getItem("circles"));
+                    alert(this.circleid+":"+this.phone);
+                    for(var index1 in obj){
+                        var it1 = obj[index1];
+                        if(it1.rid == this.circleid){
+                            var accounts = it1.accounts;
+                            for(var index2 in accounts){
+                                var it2 = accounts[index2];
+                                if(it2.phone == this.phone){
+                                    showBlackPage(it2);
+                                }
+                            }
+                        }
+                    }
+                });
 
+            }
+        }
+    });
 
+    var i = 0;
+    $("#txl").click(function () {
+        $("#conversationContainer").hide();
+        $(".js_circlesFriends").show();
+        if (i == 0) {
+            i = 1;
+
+        }
+    });
+    $("#chooseConversationBtn").click(function () {
+        $("#conversationContainer").show();
+        $(".js_circlesFriends").hide();
+    });
     $(".chatSend").click(function () {
         alert($("#textInput").val());
         $.ajax({
@@ -28,7 +75,38 @@ $(document).ready(function () {
         );
 
     });
+
 });
+if(!window.webkitNotifications){
+    alert("您的浏览器不支持Notification桌面通知!");
+}
+function RequestPermission (callback) {
+    window.webkitNotifications.requestPermission(callback);
+}
+var notification;
+function showNotification(){
+    if (window.webkitNotifications.checkPermission() > 0) {
+        RequestPermission(showNotification);
+    }else {
+        notification = window.webkitNotifications.createNotification("http://d.hiphotos.baidu.com/album/w%3D2048/sign=e5974229adaf2eddd4f14ee9b92800e9/bd315c6034a85edf1e2fc20c48540923dd547579.jpg", "乔晓松", "下班吧！");
+        notification.onshow = function() { setTimeout('notification.cancel()', 5000); }
+        notification.onclick = function(){}
+        notification.show();
+    }
+}
+//根据id获取模版
+function getTemplate(id) {
+    var tenjin = nTenjin;
+    var templateDiv = $('.templates #' + id).parent();
+    var string = templateDiv.html();
+    string = string.replace(/\<\!\-\-\?/g, "<?");
+    string = string.replace(/\?\-\-\>/g, "?>");
+    string = string.replace(/比较符号大于/g, ">");
+    string = string.replace(/比较符号兄小于/g, "<");
+    var template = new tenjin.Template();
+    template.convert(string);
+    return template;
+}
 function SetCookie(name, value)
 //设定Cookie值
 {
