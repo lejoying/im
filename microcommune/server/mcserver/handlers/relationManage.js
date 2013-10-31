@@ -109,7 +109,7 @@ relationManage.getcommunities = function (data, response) {
 relationManage.addfriend = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    var phoneto = data.phoneto;
+    var phoneTo = data.phoneto;
     var rid = data.rid;
     var accessKey = data.accessKey;
     addFriendNode();
@@ -117,14 +117,14 @@ relationManage.addfriend = function (data, response) {
     function addFriendNode() {
         var query = [
             'MATCH (account1:Account),(account2:Account)',
-            'WHERE account1.phone={phone} AND account2.phone={phoneto}',
+            'WHERE account1.phone={phone} AND account2.phone={phoneTo}',
             'CREATE UNIQUE account1-[r:FRIEND]->account2',
             'RETURN  r'
         ].join('\n');
 
         var params = {
             phone: phone,
-            phoneto: phoneto
+            phoneTo: phoneTo
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -132,33 +132,33 @@ relationManage.addfriend = function (data, response) {
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
-                    "提示信息": "添加失败",
+                    "提示信息": "发送请求失败",
                     "失败原因": "数据异常"
                 }));
                 response.end();
             } else {
-                console.log("添加FRIEND成功---");
+                console.log("发送请求FRIEND成功---");
                 var rNode = results.pop().r;
                 var rData = rNode.data;
                 rData.status = 0;
                 rNode.save();
-                addAccountCircleNode(rid, phoneto);
+                addAccountCircleNode(rid, phoneTo);
             }
         });
     }
 
-    function addAccountCircleNode(rid, phoneto) {
+    function addAccountCircleNode(rid, phoneTo) {
         var query = [
             'START circle=node({rid})',
             'MATCH (account:Account)',
-            'WHERE account.phone={phoneto}',
+            'WHERE account.phone={phoneTo}',
             'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
             'RETURN  r'
         ].join('\n');
 
         var params = {
-            rid: rid,
-            phoneto: phoneto
+            rid: parseInt(rid),
+            phoneTo: phoneTo
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -166,14 +166,14 @@ relationManage.addfriend = function (data, response) {
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
-                    "提示信息": "添加失败",
+                    "提示信息": "发送请求失败",
                     "失败原因": "数据异常"
                 }));
                 response.end();
             } else {
-                console.log("添加HAS_FRIEND成功---");
+                console.log("发送请求HAS_FRIEND成功---");
                 response.write(JSON.stringify({
-                    "提示信息": "添加成功"
+                    "提示信息": "发送请求成功"
                 }));
                 response.end();
             }
@@ -350,7 +350,7 @@ relationManage.getcirclesandfriends = function (data, response) {
         var query = [
             'MATCH (circle:Circle)-[r:HAS_FRIEND]->(account1:Account)-[r1:FRIEND]-(account2:Account)',
             'WHERE account2.phone={phone} AND circle.rid={rid} AND r1.status in[1,2,3]',
-            'RETURN account1'
+            'RETURN account1, r1'
         ].join('\n');
         var params = {
             phone: phone,
@@ -373,6 +373,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                     delete it.password;
                     delete it.time;
                     delete it.code;
+                    it.status = results[index].r1.data.status;
 
                     accounts.push(it);
                     if (i == results.length) {
@@ -396,57 +397,95 @@ relationManage.getcirclesandfriends = function (data, response) {
  ***************************************/
 relationManage.addfriendagree = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
-    var phoneAsk = data.phoneask;
+    var phoneAsk = data.phoneto;
     var rid = data.rid;
     var status = data.status;
     var accessKey = data.accessKey;
-    if (status) {
-        agreeAddFriendNode(phone, phoneAsk);
+    if (status == "true") {
+        agreeAddFriendNode(phone, phoneAsk, rid);
     } else {
-        refuseAddFriend(rid, phoneAsk, phone);
+        refuseAddFriend(phone, phoneAsk, rid);
     }
-    function agreeAddFriendNode(phone, phoneAsk) {
-        var query = [
-            'MATCH (account1:Account)-[r:FRIEND]->(account2:Account)',
-            'WHERE account2.phone={phone} AND account1.phone={phoneAsk}',
-            'RETURN r'
-        ].join('\n');
-        var params = {
-            phone: phone,
-            phoneAsk: phoneAsk
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "添加失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-                console.log(error);
-                return;
-            } else if (results.length == 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "添加失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-            } else {
-                var rNode = results.pop().r;
-                var rData = rNode.data;
-                rData.status = 1;
-                rNode.save();
-                response.write(JSON.stringify({
-                    "提示信息": "添加成功"
-                }));
-                response.end();
-            }
-        });
+    function agreeAddFriendNode(phone, phoneAsk, rid) {
+        modifyStatusNode(phone, phoneAsk, rid);
+        function modifyStatusNode(phone, phoneAsk, rid) {
+            var query = [
+                'MATCH (account1:Account)-[r:FRIEND]->(account2:Account)',
+                'WHERE account2.phone={phone} AND account1.phone={phoneAsk}',
+                'RETURN r'
+            ].join('\n');
+            var params = {
+                phone: phone,
+                phoneAsk: phoneAsk
+            };
+            db.query(query, params, function (error, results) {
+                if (error) {
+                    response.write(JSON.stringify({
+                        "提示信息": "添加失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                    console.log(error);
+                    return;
+                } else if (results.length == 0) {
+                    response.write(JSON.stringify({
+                        "提示信息": "添加失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                } else {
+                    var rNode = results.pop().r;
+                    var rData = rNode.data;
+                    rData.status = 1;
+                    rNode.save();
+                    addCircleAccountRelation(rid, phoneAsk);
+                }
+            });
+        }
+
+        function addCircleAccountRelation(rid, phoneAsk) {
+            var query = [
+                'START circle=node({rid})',
+                'MATCH (account:Account)',
+                'WHERE account.phone={phone}',
+                'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
+                'RETURN r'
+            ].join('\n');
+            var params = {
+                rid: parseInt(rid),
+                phone: phoneAsk
+            };
+            db.query(query, params, function (error, results) {
+                if (error) {
+                    response.write(JSON.stringify({
+                        "提示信息": "添加失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                    console.log(error);
+                    return;
+                } else if (results.length == 0) {
+                    response.write(JSON.stringify({
+                        "提示信息": "添加失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                } else {
+                    console.log("添加好友成功");
+                    response.write(JSON.stringify({
+                        "提示信息": "添加成功"
+                    }));
+                    response.end();
+                }
+            });
+        }
     }
 
-    function refuseAddFriend(rid, phoneAsk, phone) {
-        deleteFriend();
-        function deleteFriend() {
+    function refuseAddFriend(phone, phoneAsk, rid) {
+        deleteFriend(phone, phoneAsk, rid);
+        function deleteFriend(phone, phoneAsk, rid) {
             var query = [
                 'MATCH (account1:Account)-[r:FRIEND]->(account2:Account)',
                 'WHERE account2.phone={phone} AND account1.phone={phoneAsk}',
@@ -476,7 +515,9 @@ relationManage.addfriendagree = function (data, response) {
         function deleteCircleAccountRelation(rid, phoneAsk) {
             var query = [
                 'MATCH (circle:Circle)-[r:HAS_FRIEND]->（account:Account)',
-                'WHERE circle.rid={rid} AND account.phone={phoneAsk}'
+                'WHERE circle.rid={rid} AND account.phone={phoneAsk}',
+                'DELETE r',
+                'RETURN r'
             ].join('\n');
             var params = {
                 rid: rid,
@@ -501,6 +542,58 @@ relationManage.addfriendagree = function (data, response) {
             });
         }
     }
+}
+
+/***************************************
+ *     URL：/api2/relation/getaskfriends
+ ***************************************/
+relationManage.getaskfriends = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+
+    var query = [
+        'MATCH (account1:Account)-[r:FRIEND]->(account2:Account)',
+        'WHERE account2.phone={phone} AND r.status={status}',
+        'RETURN account1, r'
+    ].join('\n');
+    var params = {
+        phone: phone,
+        status: 0
+    };
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "获取好友请求失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        } else if (results.length > 0) {
+            console.log("获取好友请求成功---");
+            var accounts = [];
+            for (var index in results) {
+                var it = results[index].account1.data;
+                delete it.password;
+                delete it.time;
+                delete it.code;
+                it.status = results[index].r.data.status;
+                accounts.push(it);
+            }
+            response.write(JSON.stringify({
+                "提示信息": "获取好友请求成功",
+                accounts: accounts
+            }));
+            response.end();
+        } else {
+            response.write(JSON.stringify({
+                "提示信息": "获取好友请求成功",
+                accounts: []
+            }));
+            response.end();
+        }
+    });
 }
 
 module.exports = relationManage;

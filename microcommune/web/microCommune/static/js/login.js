@@ -71,16 +71,18 @@ $(document).ready(function () {
 //    request(str);
 });
 function request(str) {
+    var timeold = new Date().getTime();
     $.ajax({
         type: "POST",
         url: "/api2/session/eventweb?",
+        timeout:30000,
         data: {
             accessKey: str
         },
-        complete: function (XMLHttpRequest, textStatus) {
+        /*complete: function (XMLHttpRequest, textStatus) {
             XMLHttpRequest.abort();
             alert(textStatus + "---complete--"+XMLHttpRequest);
-        },
+        },*/
         success: function (data) {
             if (data["提示信息"] == "验证成功") {
                 alert("验证成功");
@@ -88,15 +90,16 @@ function request(str) {
                 alert("登录成功");
                 location.href = "default.html";
             } else {
-                request(str);
+//                request(str);
+                alert(data);
+                setTimeout(request(str), 30000);
             }
         },
-        failed: function () {
-            alert("----failed-");
-        },
         error: function () {
-
-            alert("error");
+            setTimeout(request(str), 30000);
+//            var timenew = new Date().getTime();
+//            alert(timeold+"-dddededdd-"+timenew);
+//            alert("error");
         }
     });
 }

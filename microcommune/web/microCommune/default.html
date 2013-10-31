@@ -30,6 +30,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
 <script src="static/js/jquery.js"></script>
 <script src="static/js/jscroll.js"></script>
 <script src="static/js/sendMsg.js"></script>
+<script src="static/js/index.js"></script>
 </head>
 <body>
 <div style="" id="container">
@@ -42,10 +43,10 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
       <div class="list" id="chat_leftpanel" ctrl="1">
         <div class="top">
           <div class="title" id="profile">
-            <div class="myProfile"> <img un="avatar_wxid_7832428324312" src="static/images/face.jpg">
+            <div class="myProfile"> <img un="avatar_wxid_7832428324312" src="static/images/webwxgeticonhead.jpg">
               <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar"></div>
               <a style="display:none;" href="javascript:;" id="unreadTotalCount" class="unreadTotalCount">0</a>
-              <div class="info"> <span class="nickName">123</span> </div>
+              <div class="info"> <span class="nickName"></span> </div>
               <div id="operaterBox" style="display:none;" class="operaterBox js_operaterBox">
                 <div class="operaterBoxPanel"> <a click="createChatroom" class="addFriends" href="javascript:;"> <span class="iconPic left"></span> <span class="operaterBoxTitle left">发起聊天</span>
                   <div class="clr"></div>
@@ -113,7 +114,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                         <?js if(post==null) { ?>
                         <?js continue; ?>
                         <?js } ?>
-                        <div class="groupTitle">
+                        <div class="groupTitle" style="background-color: #A7B0BC">
                         <span class="groupTitleLetter">#{post.name}</span>
                         </div>
                         <?js var it1 = post.accounts; ?>
@@ -122,8 +123,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                         <?js if(post1==null) { ?>
                         <?js continue; ?>
                         <?js } ?>
-                        <a class="friendDetail" click="showProfile" id="con_item_dq754090910" username="dq754090910">
-
+                        <a class="friendDetail" click="showProfile" id="con_item_#{post1.uid}" circleid="#{post.rid}" phone="#{post1.phone}">
                             <span class="avatar" mouseover1="showProfile@.friendDetail">
                                 <img src="/static/images/face.jpg"/></span>
                             <div class="nickName">
@@ -240,5 +240,20 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
     </div>
   </div>
 </div>
+<!--<div class='templetedialog hide'>
+<div class='prompteds' id='promptedShows'>
+    <div class='topWord'><span class='topleft'>详细信息</span><span class='topright'>信息</span></div>
+    <div class='message'>
+        <table border='1px;'>
+            <tr><td rowspan='3'>#{post.nickName}</td><td>bb1</td></tr>
+            <tr><td>bb2</td></tr>
+            <tr><td>bb3</td></tr>
+            <tr><td colspan='2'>bb4</td></tr>
+            </table>
+        </div>
+    <div><a class='buttonblue changeSaveButton' href='javascript:closeBlackBackground();'>确定</a>
+        </div>
+    </div>
+    </div>-->
 </body>
 </html>

@@ -92,6 +92,12 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     else if (operation == "getcirclesandfriends") {
         relationManage.getcirclesandfriends(data, response);
     }
+    else if (operation == "getaskfriends") {
+        relationManage.getaskfriends(data, response);
+    }
+    else if (operation == "addfriendagree") {
+        relationManage.addfriendagree(data, response);
+    }
 }
 
 var circleManage = require("./handlers/circleManage.js");
