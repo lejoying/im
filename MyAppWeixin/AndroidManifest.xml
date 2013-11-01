@@ -173,6 +173,9 @@
             android:name="CCommunityActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity
+            android:name="NewFriendsActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
             android:name="SearchFriendActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity

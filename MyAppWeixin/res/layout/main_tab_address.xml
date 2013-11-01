@@ -61,6 +61,65 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_shownewfriends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:id="@+id/rl_newfriends"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/mm_listitem"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:onClick="showNewFriends"
+            android:paddingBottom="3dp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:paddingTop="3dp" >
+
+            <ImageView
+                android:id="@+id/community"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/find_more_friend_addfriend_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/community"
+                android:text="新的朋友"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="matrix"
+                android:src="@drawable/mm_submenu" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_registernumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/rl_newfriends"
+            android:background="#163358"
+            android:paddingBottom="3dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="3dp"
+            android:textColor="#d6d6d6" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/mm_listitem"
@@ -139,7 +198,7 @@
             android:layout_toRightOf="@id/imageView1"
             android:text="小黑"
             android:textColor="#fff"
-            android:textSize="16sp" />
+            android:textSize="17sp" />
 
         <TextView
             android:id="@+id/textView1"

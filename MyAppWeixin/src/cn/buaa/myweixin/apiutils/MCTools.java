@@ -33,6 +33,8 @@ public class MCTools {
 
 	private static Account nowAccount;
 
+	private static List<Friend> newFriends;
+
 	private static Handler MCHandler = new Handler();
 
 	private static final String DOMAIN = "http://192.168.0.102:8071";
@@ -119,18 +121,34 @@ public class MCTools {
 						HttpTools.sendPost(DOMAIN + url, timeout, param,
 								httpListener);
 					}
-
 				}
 			}.start();
 		}
 	}
 
-	public static Map<String, String> getLocationParam(Activity activity) {
+	public static Map<String, String> getParamsWithLocation(Activity activity) {
 		double[] location = LocationTools.getLocation(activity);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("latitude", String.valueOf(location[1]));
 		map.put("longitude", String.valueOf(location[0]));
 		return map;
+	}
+
+	public static List<Friend> getNewFriends() {
+		return newFriends;
+	}
+
+	public static void setNewFriends(JSONArray accounts) {
+		List<Friend> newFriends = new ArrayList<Friend>();
+		for (int i = 0; i < accounts.length(); i++) {
+			try {
+				Friend friend = new Friend(accounts.getJSONObject(i));
+				newFriends.add(friend);
+			} catch (JSONException e) {
+				//e.printStackTrace();
+			}
+		}
+		MCTools.newFriends = newFriends;
 	}
 
 	public static void saveAccount(Activity activity, Account account) {
@@ -204,17 +222,17 @@ public class MCTools {
 		return circles;
 	}
 
-	public static List<Account> getFriends(Activity activity, int rid) {
-		List<Account> accounts = new ArrayList<Account>();
+	public static List<Friend> getFriends(Activity activity, int rid) {
+		List<Friend> accounts = new ArrayList<Friend>();
 		DBManager dbManager = new DBManager(activity);
-		accounts = dbManager.queryAccount(rid);
+		accounts = dbManager.queryFriends(rid);
 		dbManager.closeDB();
 		return accounts;
 	}
 
-	public static Map<String, List<Account>> getCirclesFriends(
+	public static Map<String, List<Friend>> getCirclesFriends(
 			Activity activity, JSONArray friends) {
-		Map<String, List<Account>> map = new HashMap<String, List<Account>>();
+		Map<String, List<Friend>> map = new HashMap<String, List<Friend>>();
 		DBManager dbManager = new DBManager(activity);
 		map = dbManager.getCirclesFriends();
 		dbManager.closeDB();
@@ -238,14 +256,14 @@ class DBHelper extends SQLiteOpenHelper {
 				+ "(rid INTEGER, uid INTEGER)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS circle"
 				+ "(rid INTEGER PRIMARY KEY, name VARCHAR, fuid INTEGER)");
-		db.execSQL("CREATE TABLE IF NOT EXISTS account"
-				+ "(uid INTEGER PRIMARY KEY, nickName VARCHAR, head VARCHAR, phone VARCHAR, mainBusiness TEXT,status VARCHAR)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS friend"
+				+ "(uid INTEGER PRIMARY KEY, nickName VARCHAR, head VARCHAR, phone VARCHAR, mainBusiness TEXT)");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("ALTER TABLE circle ADD COLUMN other STRING");
-		db.execSQL("ALTER TABLE account ADD COLUMN other STRING");
+		db.execSQL("ALTER TABLE friend ADD COLUMN other STRING");
 		db.execSQL("ALTER TABLE relation ADD COLUMN other STRING");
 	}
 }
@@ -272,16 +290,14 @@ class DBManager {
 				JSONArray accounts = friends.getJSONObject(i).getJSONArray(
 						"accounts");
 				for (int j = 0; j < accounts.length(); j++) {
-					Account account = new Account(accounts.getJSONObject(j));
+					Friend friend = new Friend(accounts.getJSONObject(j));
 					db.execSQL(
-							"INSERT INTO account VALUES(?, ?, ?, ?, ?, ?)",
-							new Object[] { account.getUid(),
-									account.getNickName(), account.getHead(),
-									account.getPhone(),
-									account.getMainBusiness(),
-									account.getStatus() });
+							"INSERT INTO friend VALUES(?, ?, ?, ?, ?)",
+							new Object[] { friend.getUid(),
+									friend.getNickName(), friend.getHead(),
+									friend.getPhone(), friend.getMainBusiness() });
 					db.execSQL("INSERT INTO relation VALUES(null,?,?)",
-							new Object[] { circle.getRid(), account.getUid() });
+							new Object[] { circle.getRid(), friend.getUid() });
 				}
 
 			}
@@ -291,7 +307,6 @@ class DBManager {
 		} finally {
 			db.endTransaction(); // ½áÊøÊÂÎñ
 		}
-		System.out.println(queryAccount(36));
 	}
 
 	public List<Circle> queryCircle() {
@@ -305,7 +320,7 @@ class DBManager {
 		}
 		;
 		return circles;
-		
+
 	}
 
 	private Cursor queryCircleCursor() {
@@ -315,36 +330,34 @@ class DBManager {
 		return c;
 	}
 
-	public List<Account> queryAccount(int rid) {
-		List<Account> accounts = new ArrayList<Account>();
-		Cursor c = queryAccountCursor(rid);
+	public List<Friend> queryFriends(int rid) {
+		List<Friend> friends = new ArrayList<Friend>();
+		Cursor c = queryFriendsCursor(rid);
 		while (c.moveToNext()) {
-			Account account = new Account();
-			account.setNickName(c.getString(c.getColumnIndex("nickName")));
-			account.setHead(c.getString(c.getColumnIndex("head")));
-			account.setPhone(c.getString(c.getColumnIndex("phone")));
-			account.setStatus(c.getString(c.getColumnIndex("status")));
-			account.setMainBusiness(c.getString(c
-					.getColumnIndex("mainBusiness")));
-			accounts.add(account);
+			Friend friend = new Friend();
+			friend.setNickName(c.getString(c.getColumnIndex("nickName")));
+			friend.setHead(c.getString(c.getColumnIndex("head")));
+			friend.setPhone(c.getString(c.getColumnIndex("phone")));
+			friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
+			friends.add(friend);
 		}
 		;
-		return accounts;
+		return friends;
 	}
 
-	private Cursor queryAccountCursor(int rid) {
+	private Cursor queryFriendsCursor(int rid) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT nickName,head,phone,mainBusiness,status FROM account WHERE uid IN (select uid from relation where rid=?)",
+						"SELECT nickName,head,phone,mainBusiness FROM friend WHERE uid IN (select uid from relation where rid=?)",
 						new String[] { String.valueOf(rid) });
 		return c;
 	}
 
-	public Map<String, List<Account>> getCirclesFriends() {
-		Map<String, List<Account>> map = new HashMap<String, List<Account>>();
+	public Map<String, List<Friend>> getCirclesFriends() {
+		Map<String, List<Friend>> map = new HashMap<String, List<Friend>>();
 		List<Circle> circles = queryCircle();
 		for (Circle circle : circles) {
-			map.put(circle.getName(), queryAccount(circle.getRid()));
+			map.put(circle.getName(), queryFriends(circle.getRid()));
 		}
 		return map;
 	}
@@ -355,7 +368,7 @@ class DBManager {
 		try {
 			for (Circle circle : circles) {
 				db.execSQL(
-						"DELETE FROM account WHERE uid IN(select uid from relation where rid=?)",
+						"DELETE FROM friend WHERE uid IN(select uid from relation where rid=?)",
 						new Object[] { circle.getRid() });
 				db.execSQL("DELETE FROM relation WHERE rid=?",
 						new Object[] { circle.getRid() });
