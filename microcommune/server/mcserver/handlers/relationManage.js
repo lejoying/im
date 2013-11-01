@@ -232,9 +232,9 @@ relationManage.getcirclesandfriends = function (data, response) {
     var accessKey = data.accessKey;
     var count = 0;
     var query = [
-        'MATCH (account:Account)-[r1:HAS_CIRCLE]->(circle:Circle)',
+        'MATCH (account:Account)-[r:FRIEND]->(account1:Account)',
         'WHERE account.phone={phone}',
-        'RETURN circle'
+        'RETURN r, account1'
     ].join('\n');
     var params = {
         phone: phone
@@ -248,36 +248,39 @@ relationManage.getcirclesandfriends = function (data, response) {
             response.end();
             console.log(error);
             return;
-        } else {
-            var circles = [];
-            var i = 0;
+        } else if(results.length >0) {
+            var accounts = {};
             for (var index in results) {
-                i++;
-                var it = results[index].circle.data;
-                var accounts = [];
-                getCircleFriends(it.rid, phone, accounts, it, circles, next);
+                var rData = results[index].r.data;
+                var accountData = results[index].account1.data;
+                var account = {
+                    phone: accountData.phone,
+                    mainBusiness: accountData.mainBusiness,
+                    head: accountData.head,
+                    byPhone: accountData.byPhone,
+                    nickName: accountData.nickName,
+                    friendStatus: rData.friendStatus
+                };
+                accounts[accountData.phone] = account;
             }
-            function next(circles) {
-                if (count == results.length) {
-                    response.write(JSON.stringify({
-                        "提示信息": "获取密友圈成功",
-                        circles: circles
-                    }));
-                    response.end();
-                }
-            }
+            getCircleFriends(accounts);
+        }else{
+            response.write(JSON.stringify({
+                "提示信息": "获取密友圈成功",
+                circles: []
+            }));
+            response.end();
         }
     });
 
-    function getCircleFriends(rid, phone, accounts, its, circles, next) {
+    function getCircleFriends(accounts) {
         var query = [
-            'MATCH (circle:Circle)-[r:HAS_FRIEND]->(account1:Account)-[r1:FRIEND]-(account2:Account)',
-            'WHERE account2.phone={phone} AND circle.rid={rid} AND r1.status in[1,2,3]',
-            'RETURN account1, r1'
+            'MATCH (account1:Account)-[r1:HAS_CIRCLE]->(circle:Circle)-[r2:HAS_FRIEND]->(account2:Account)',
+            'WHERE account1.phone={phone}',
+            'RETURN circle, account2'
         ].join('\n');
         var params = {
-            phone: phone,
-            rid: rid
+            phone: phone
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -289,29 +292,34 @@ relationManage.getcirclesandfriends = function (data, response) {
                 console.log(error);
                 return;
             } else if (results.length > 0) {
-                var i = 0;
+                var circles = [];
+                var arr = {};
                 for (var index in results) {
-                    i++;
-                    var it = results[index].account1.data;
-                    delete it.password;
-                    delete it.time;
-                    delete it.code;
-                    it.status = results[index].r1.data.status;
-
-                    accounts.push(it);
-                    if (i == results.length) {
-                        its.accounts = accounts;
-                        circles.push(its);
-                        count++;
-                        next(circles);
+                    var circleData = results[index].circle.data;
+                    var accountData = results[index].account2.data;
+                    if (arr[circleData.rid] == null) {
+                        var accounts = [];
+                        accounts.push(accountData);
+                        circleData.accounts = accounts;
+                        arr[circleData.rid] = circleData;
+                        circles.push(circleData);
+                    }else{
+                        var accounts = arr[circleData.rid].accounts;
+                        accounts.push(accounts[accountData.phone]);
                     }
                 }
-            } else {
-                its.accounts = accounts;
-                circles.push(its);
-                count++;
-                next(circles);
+                response.write(JSON.stringify({
+                    "提示信息": "获取密友圈成功",
+                    circles: circles
+                }));
+                response.end();
             }
+            /* else {
+             its.accounts = accounts;
+             circles.push(its);
+             count++;
+             next(circles);
+             }*/
         });
     }
 }
