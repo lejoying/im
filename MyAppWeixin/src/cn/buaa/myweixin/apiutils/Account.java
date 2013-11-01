@@ -15,7 +15,6 @@ public class Account implements Serializable {
 	private String head;
 	private String nickName;
 	private String mainBusiness;
-	private String status;
 	private String accessKey;
 
 	public Account() {
@@ -49,11 +48,6 @@ public class Account implements Serializable {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		try {
-			this.status = jaccount.getString("status");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public Account(String phone, String head, String nickName,
@@ -63,7 +57,6 @@ public class Account implements Serializable {
 		this.head = head;
 		this.nickName = nickName;
 		this.mainBusiness = mainBusiness;
-		this.status = status;
 		this.accessKey = accessKey;
 	}
 
@@ -105,14 +98,6 @@ public class Account implements Serializable {
 
 	public void setMainBusiness(String mainBusiness) {
 		this.mainBusiness = mainBusiness;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getAccessKey() {

@@ -28,4 +28,12 @@ public class CommunityManagerImpl implements CommunityManager {
 	}
 
 
+	@Override
+	public void getcommunityfriends(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/community/getcommunityfriends", param, true,
+				HttpTools.SEND_GET, 5000,responseListener);
+	}
+
+
 }

@@ -25,6 +25,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import cn.buaa.myweixin.adapter.MCResponseAdapter;
 import cn.buaa.myweixin.api.RelationManager;
 import cn.buaa.myweixin.api.Session;
@@ -60,12 +61,16 @@ public class MainWeixin extends Activity {
 	private int count = 0;
 	private long createtime;
 
+	private RelativeLayout rl_shownewfriends;
+	
 	// private Button mRightBtn;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_weixin);
+		
+		
 		// 启动activity时不自动弹出软键盘
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -109,6 +114,8 @@ public class MainWeixin extends Activity {
 		View view3 = mLi.inflate(R.layout.main_tab_friends, null);
 		View view4 = mLi.inflate(R.layout.main_tab_settings, null);
 
+		rl_shownewfriends = (RelativeLayout) view2.findViewById(R.id.rl_shownewfriends);
+		
 		// 每个页面的view数据
 		final ArrayList<View> views = new ArrayList<View>();
 		views.add(view1);
@@ -231,40 +238,49 @@ public class MainWeixin extends Activity {
 
 			@Override
 			public void success(JSONObject data) {
+				System.out.println(data);
 				try {
-					if (data.getJSONArray("accounts").length() != 0) {
-						Map<String, String> param = new HashMap<String, String>();
-						param.put("phone",
-								MCTools.getLoginedAccount(MainWeixin.this)
-										.getPhone());
-
-						param.put("phoneto", data.getJSONArray("accounts")
-								.getJSONObject(0).getString("phone"));
-
-						param.put("status", "true");
-						param.put(
-								"rid",
-								String.valueOf(MCTools
-										.getCircles(MainWeixin.this).get(0)
-										.getRid()));
-						param.put("accessKey",
-								MCTools.getLoginedAccount(MainWeixin.this)
-										.getAccessKey());
-						relationManager.addfriendagree(param,
-								new MCResponseAdapter(MainWeixin.this) {
-
-									@Override
-									public void success(JSONObject data) {
-										// TODO Auto-generated method stub
-										super.success(data);
-									}
-
-								});
+					if(data.getJSONArray("accounts").length()!=0){
+						rl_shownewfriends.setVisibility(RelativeLayout.VISIBLE);
+						MCTools.setNewFriends(data.getJSONArray("accounts"));
 					}
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				};
+//				try {
+//					if (data.getJSONArray("accounts").length() != 0) {
+//						Map<String, String> param = new HashMap<String, String>();
+//						param.put("phone",
+//								MCTools.getLoginedAccount(MainWeixin.this)
+//										.getPhone());
+//
+//						param.put("phoneto", data.getJSONArray("accounts")
+//								.getJSONObject(0).getString("phone"));
+//
+//						param.put("status", "true");
+//						param.put(
+//								"rid",
+//								String.valueOf(MCTools
+//										.getCircles(MainWeixin.this).get(0)
+//										.getRid()));
+//						param.put("accessKey",
+//								MCTools.getLoginedAccount(MainWeixin.this)
+//										.getAccessKey());
+//						relationManager.addfriendagree(param,
+//								new MCResponseAdapter(MainWeixin.this) {
+//
+//									@Override
+//									public void success(JSONObject data) {
+//										// TODO Auto-generated method stub
+//										super.success(data);
+//									}
+//
+//								});
+//					}
+//				} catch (JSONException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 
 		});
@@ -517,6 +533,12 @@ public class MainWeixin extends Activity {
 		mTabPager.setCurrentItem(3, false);
 	}
 
+	//新朋友
+	public void showNewFriends(View v){
+		Intent intent = new Intent(this,NewFriendsActivity.class);
+		startActivity(intent);
+	}
+	
 	// 打开社区服务站
 	public void showServiceStation(View v) {
 		Intent intent = new Intent(this, ServiceStationActivity.class);
@@ -527,4 +549,5 @@ public class MainWeixin extends Activity {
 		Intent intent = new Intent(this, CallingCardActivity.class);
 		startActivity(intent);
 	}
+	
 }
