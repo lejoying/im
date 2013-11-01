@@ -8,10 +8,8 @@ RETURN n
 
 CREATE INDEX ON :Account(phone)
 CREATE INDEX ON :Account(email)
-CREATE INDEX ON :Account(code)
 
 CREATE INDEX ON :Circle(rid)
-CREATE INDEX ON :Circle(name)
 
 CREATE INDEX ON :Community(cid)
 

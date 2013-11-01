@@ -214,11 +214,11 @@ api = {
      ***************************************/
     "relation_addfriend": {
         request: {
-            typical: {"phone": "XXX", "phoneto": "XXX", rid: "XXX", accessKey: "XXX"}
+            typical: {"phone": "XXX", "phoneto": "XXX", rid: "XXX", accessKey: "XXX", message: "XXX"}
         },
         response: {
-            success: {"提示信息": "发送请求成功"},
-            failed: {"提示信息": "发送请求失败", "失败原因": ["数据异常"]}
+            success: {"提示信息": "添加成功" || "发送请求成功"},
+            failed: {"提示信息": "添加失败", "失败原因": ["数据异常" || "用户拒绝"]}
         }
     },
     /***************************************
@@ -308,7 +308,7 @@ api = {
      ***************************************/
     "community_add": {
         request: {
-            typical: {name: "XXX",description: "XXX",longitude: "XXX", latitude: "XXX"}
+            typical: {name: "XXX", description: "XXX", longitude: "XXX", latitude: "XXX"}
         },
         response: {
             success: {"提示信息": "创建服务站成功", community: {}},

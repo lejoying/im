@@ -23,7 +23,10 @@ accountManage.verifyphone = function (data, response) {
         time: new Date().getTime(),
         head: "",
         nickName: "用户" + phone,
-        mainBusiness: ""
+        mainBusiness: "",
+        byPhone: "checked",
+        byScan: "checked",
+        byScanNearBy: "allowed"
     };
     checkPhone();
     function checkPhone() {
@@ -479,10 +482,10 @@ accountManage.qrcode = function (data, response) {
             },
             success: function (data) {
                 /*var reader = new FileReader();
-                reader.readAsDataURL(data);
-                reader.onload = function (e) {
+                 reader.readAsDataURL(data);
+                 reader.onload = function (e) {
 
-                }*/
+                 }*/
                 /*var headers = {
                  "Content-Type":"image/png"
                  }
@@ -640,13 +643,17 @@ accountManage.getaccount = function (data, response) {
             response.end();
         } else {
             var accountData = results.pop().account.data;
-            delete accountData.password;
-            delete accountData.time;
-            delete accountData.code;
+            var account = {
+                phone: accountData.phone,
+                mainBusiness: accountData.mainBusiness,
+                head: accountData.head,
+                byPhone: accountData.byPhone,
+                nickName: accountData.nickName
+            };
             console.log(accountData.phone);
             response.write(JSON.stringify({
                 "提示信息": "获取成功",
-                account: accountData
+                account: account
             }));
             response.end();
         }

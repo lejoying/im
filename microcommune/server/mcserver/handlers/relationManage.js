@@ -3,9 +3,6 @@ var relationManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var push = require('../lib/push.js');
-/*************************************** ***************************************
- * *    Relation：Account Community
- *************************************** ***************************************/
 
 /*************************************** ***************************************
  * *    Relation：Account Account
@@ -19,15 +16,16 @@ relationManage.addfriend = function (data, response) {
     var phone = data.phone;
     var phoneTo = data.phoneto;
     var rid = data.rid;
+    var message = data.message;
     var accessKey = data.accessKey;
     addFriendNode();
 
     function addFriendNode() {
         var query = [
             'MATCH (account1:Account),(account2:Account)',
-            'WHERE account1.phone={phone} AND account2.phone={phoneTo}',
+            'WHERE account1.phone={phone} AND account2.phone={phoneTo} AND account2.byPhone IN ["allowed","cheked"]',
             'CREATE UNIQUE account1-[r:FRIEND]->account2',
-            'RETURN  r'
+            'RETURN  account2, r'
         ].join('\n');
 
         var params = {
@@ -36,21 +34,38 @@ relationManage.addfriend = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "添加失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
                 console.error(error);
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
-                    "提示信息": "发送请求失败",
-                    "失败原因": "数据异常"
+                    "提示信息": "添加失败",
+                    "失败原因": "用户拒绝"
                 }));
                 response.end();
             } else {
-                console.log("发送请求FRIEND成功---");
-                var rNode = results.pop().r;
-                var rData = rNode.data;
-                rData.status = 0;
-                rNode.save();
-                addAccountCircleNode(rid, phoneTo);
+                var accountData = results.pop().account2.data;
+                if (accountData.byPhone == "allowed") {
+                    var rNode = results.pop().r;
+                    var rData = rNode.data;
+                    rData.status = 1;
+                    rNode.save();
+                    addAccountCircleNode(rid, phoneTo);
+                } else {
+                    /*var rNode = results.pop().r;
+                     var rData = rNode.data;
+                     rData.status = 0;
+                     rNode.save();
+                     response.write(JSON.stringify({
+                     "提示信息": "发送请求成功"
+                     }));
+                     response.end();
+                     console.log("发送请求FRIEND成功---");*/
+                }
             }
         });
     }
@@ -74,17 +89,16 @@ relationManage.addfriend = function (data, response) {
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
-                    "提示信息": "发送请求失败",
+                    "提示信息": "添加失败",
                     "失败原因": "数据异常"
                 }));
                 response.end();
             } else {
-                console.log("发送请求HAS_FRIEND成功---");
                 response.write(JSON.stringify({
-                    "提示信息": "发送请求成功"
+                    "提示信息": "添加成功"
                 }));
                 response.end();
-                push.inform(phoneTo, "*", {event: 1});
+//                push.inform(phoneTo, "*", {event: 1});
             }
         });
     }
