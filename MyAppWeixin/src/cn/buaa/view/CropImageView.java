@@ -49,5 +49,6 @@ public class CropImageView extends ImageView {
 		}
 		return true;
 	}
+	
 
 }

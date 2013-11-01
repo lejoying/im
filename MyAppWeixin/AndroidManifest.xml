@@ -178,6 +178,9 @@
         <activity
             android:name="ServiceStationActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name="SelectCircleActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
 
         <!-- two-dimension code -->
         <activity

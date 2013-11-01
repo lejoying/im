@@ -53,7 +53,6 @@ public final class HttpTools {
 					path = path.substring(0, path.length() - 2);
 				}
 			}
-			System.out.println(path);
 			URL url = new URL(path);
 			// 创建请求链接
 			httpURLConnection = (HttpURLConnection) url.openConnection();

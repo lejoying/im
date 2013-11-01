@@ -17,6 +17,7 @@ public class Welcome extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Account account = MCTools.getLoginedAccount(Welcome.this);
+        MCTools.saveAccount(Welcome.this, account);
         if(account!=null){
 			Intent intent = new Intent(this,MainWeixin.class);
 			startActivity(intent);

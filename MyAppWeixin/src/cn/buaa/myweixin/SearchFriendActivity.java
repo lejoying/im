@@ -51,6 +51,7 @@ public class SearchFriendActivity extends Activity {
 					Intent intent = new Intent(SearchFriendActivity.this,
 							FriendCallingCardActivity.class);
 					Bundle bundle = new Bundle();
+					bundle.putString("phone", tv_phone.getText().toString());
 					bundle.putString("nickName", nickName);
 					bundle.putString("mainBusiness", mainBusiness);
 					intent.putExtras(bundle);

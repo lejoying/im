@@ -7,26 +7,33 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Handler;
 import cn.buaa.myweixin.listener.ResponseListener;
 import cn.buaa.myweixin.utils.HttpTools;
 import cn.buaa.myweixin.utils.HttpTools.HttpListener;
 import cn.buaa.myweixin.utils.LocationTools;
 import cn.buaa.myweixin.utils.StreamTools;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Looper;
-
 public class MCTools {
 
 	private static Account nowAccount;
+
+	private static Handler MCHandler = new Handler();
 
 	private static final String DOMAIN = "http://192.168.0.102:8071";
 
@@ -56,102 +63,65 @@ public class MCTools {
 				@Override
 				public void run() {
 					super.run();
+					HttpListener httpListener = new HttpListener() {
 
-					if (method == HttpTools.SEND_GET) {
-						HttpTools.sendGet(DOMAIN + url, timeout, param,
-								new HttpListener() {
-									@Override
-									public void handleInputStream(InputStream is) {
-										try {
-											Looper.prepare();
-											if (is != null) {
-												byte[] b = StreamTools.isToData(is);
-												JSONObject data = new JSONObject(new String(b));
-												if (data != null) {
-													String info = data.getString("提示信息");
-													info = info.substring(info.length() - 2, info.length());
+						@Override
+						public void handleInputStream(InputStream is) {
+							try {
+								if (is != null) {
+									byte[] b = StreamTools.isToData(is);
+									final JSONObject data = new JSONObject(
+											new String(b));
+									if (data != null) {
+										String info = data.getString("提示信息");
+										info = info.substring(
+												info.length() - 2,
+												info.length());
 
-													if (info.equals("成功")) {
-														responseListener.success(data);
-													}
-													if (info.equals("失败")) {
-														responseListener.unsuccess(data);
-													}
+										if (info.equals("成功")) {
+											MCHandler.post(new Runnable() {
+												@Override
+												public void run() {
+													responseListener
+															.success(data);
 												}
-											}
-											if (is == null) {
-												responseListener.failed();
-											}
-											Looper.loop();
-										} catch (JSONException e) {
-											e.printStackTrace();
+											});
+										}
+										if (info.equals("失败")) {
+											MCHandler.post(new Runnable() {
+												@Override
+												public void run() {
+													responseListener
+															.unsuccess(data);
+												}
+											});
 										}
 									}
-								});
+								}
+								if (is == null) {
+									MCHandler.post(new Runnable() {
+										@Override
+										public void run() {
+											responseListener.failed();
+										}
+									});
+								}
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+						}
+					};
+					if (method == HttpTools.SEND_GET) {
+						HttpTools.sendGet(DOMAIN + url, timeout, param,
+								httpListener);
 					}
 					if (method == HttpTools.SEND_POST) {
 						HttpTools.sendPost(DOMAIN + url, timeout, param,
-								new HttpListener() {
-									@Override
-									public void handleInputStream(InputStream is) {
-										try {
-											Looper.prepare();
-											if (is != null) {
-												byte[] b = StreamTools.isToData(is);
-												JSONObject data = new JSONObject(new String(b));
-												if (data != null) {
-													String info = data.getString("提示信息");
-													info = info.substring(info.length() - 2, info.length());
-
-													if (info.equals("成功")) {
-														responseListener.success(data);
-													}
-													if (info.equals("失败")) {
-														responseListener.unsuccess(data);
-													}
-												}
-											}
-											if (is == null) {
-												responseListener.failed();
-											}
-											Looper.loop();
-										} catch (JSONException e) {
-											e.printStackTrace();
-										}
-									}
-								});
+								httpListener);
 					}
 
 				}
 			}.start();
-		}
-	}
-
-	private void handleInputStream(InputStream is,
-			ResponseListener responseListener) {
-		try {
-			Looper.prepare();
-			if (is != null) {
-				byte[] b = StreamTools.isToData(is);
-				JSONObject data = new JSONObject(new String(b));
-				if (data != null) {
-					String info = data.getString("提示信息");
-					info = info.substring(info.length() - 2, info.length());
-
-					if (info.equals("成功")) {
-						responseListener.success(data);
-					}
-					if (info.equals("失败")) {
-						responseListener.unsuccess(data);
-					}
-				}
-			}
-			if (is == null) {
-				responseListener.failed();
-			}
-			Looper.loop();
-		} catch (JSONException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -220,4 +190,185 @@ public class MCTools {
 		return str;
 	}
 
+	public static void saveFriends(Activity activity, JSONArray friends) {
+		DBManager dbManager = new DBManager(activity);
+		dbManager.add(friends);
+		dbManager.closeDB();
+	}
+
+	public static List<Circle> getCircles(Activity activity) {
+		List<Circle> circles = new ArrayList<Circle>();
+		DBManager dbManager = new DBManager(activity);
+		circles = dbManager.queryCircle();
+		dbManager.closeDB();
+		return circles;
+	}
+
+	public static List<Account> getFriends(Activity activity, int rid) {
+		List<Account> accounts = new ArrayList<Account>();
+		DBManager dbManager = new DBManager(activity);
+		accounts = dbManager.queryAccount(rid);
+		dbManager.closeDB();
+		return accounts;
+	}
+
+	public static Map<String, List<Account>> getCirclesFriends(
+			Activity activity, JSONArray friends) {
+		Map<String, List<Account>> map = new HashMap<String, List<Account>>();
+		DBManager dbManager = new DBManager(activity);
+		map = dbManager.getCirclesFriends();
+		dbManager.closeDB();
+		return map;
+	}
+
+}
+
+class DBHelper extends SQLiteOpenHelper {
+
+	private static final String DATABASE_NAME = "mc.db";
+	private static final int DATABASE_VERSION = 1;
+
+	public DBHelper(Context context) {
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL("CREATE TABLE IF NOT EXISTS relation"
+				+ "(rid INTEGER, uid INTEGER)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS circle"
+				+ "(rid INTEGER PRIMARY KEY, name VARCHAR, fuid INTEGER)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS account"
+				+ "(uid INTEGER PRIMARY KEY, nickName VARCHAR, head VARCHAR, phone VARCHAR, mainBusiness TEXT,status VARCHAR)");
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		db.execSQL("ALTER TABLE circle ADD COLUMN other STRING");
+		db.execSQL("ALTER TABLE account ADD COLUMN other STRING");
+		db.execSQL("ALTER TABLE relation ADD COLUMN other STRING");
+	}
+}
+
+class DBManager {
+	private DBHelper helper;
+	private SQLiteDatabase db;
+
+	public DBManager(Context context) {
+		helper = new DBHelper(context);
+		db = helper.getWritableDatabase();
+	}
+
+	public void add(JSONArray friends) {
+		delete();
+		db.beginTransaction(); // 开始事务
+		try {
+			for (int i = 0; i < friends.length(); i++) {
+				Circle circle = new Circle(friends.getJSONObject(i));
+				db.execSQL("INSERT INTO circle VALUES(?, ?, ?)", new Object[] {
+						circle.getRid(), circle.getName(),
+						MCTools.getLoginedAccount(null).getUid() });
+
+				JSONArray accounts = friends.getJSONObject(i).getJSONArray(
+						"accounts");
+				for (int j = 0; j < accounts.length(); j++) {
+					Account account = new Account(accounts.getJSONObject(j));
+					db.execSQL(
+							"INSERT INTO account VALUES(?, ?, ?, ?, ?, ?)",
+							new Object[] { account.getUid(),
+									account.getNickName(), account.getHead(),
+									account.getPhone(),
+									account.getMainBusiness(),
+									account.getStatus() });
+					db.execSQL("INSERT INTO relation VALUES(null,?,?)",
+							new Object[] { circle.getRid(), account.getUid() });
+				}
+
+			}
+			db.setTransactionSuccessful(); // 设置事务成功完成
+		} catch (JSONException e) {
+			// e.printStackTrace();
+		} finally {
+			db.endTransaction(); // 结束事务
+		}
+		System.out.println(queryAccount(36));
+	}
+
+	public List<Circle> queryCircle() {
+		List<Circle> circles = new ArrayList<Circle>();
+		Cursor c = queryCircleCursor();
+		while (c.moveToNext()) {
+			Circle circle = new Circle();
+			circle.setRid(c.getInt(c.getColumnIndex("rid")));
+			circle.setName(c.getString(c.getColumnIndex("name")));
+			circles.add(circle);
+		}
+		;
+		return circles;
+		
+	}
+
+	private Cursor queryCircleCursor() {
+		Cursor c = db.rawQuery("SELECT rid,name FROM circle WHERE fuid = ?",
+				new String[] { String.valueOf(MCTools.getLoginedAccount(null)
+						.getUid()) });
+		return c;
+	}
+
+	public List<Account> queryAccount(int rid) {
+		List<Account> accounts = new ArrayList<Account>();
+		Cursor c = queryAccountCursor(rid);
+		while (c.moveToNext()) {
+			Account account = new Account();
+			account.setNickName(c.getString(c.getColumnIndex("nickName")));
+			account.setHead(c.getString(c.getColumnIndex("head")));
+			account.setPhone(c.getString(c.getColumnIndex("phone")));
+			account.setStatus(c.getString(c.getColumnIndex("status")));
+			account.setMainBusiness(c.getString(c
+					.getColumnIndex("mainBusiness")));
+			accounts.add(account);
+		}
+		;
+		return accounts;
+	}
+
+	private Cursor queryAccountCursor(int rid) {
+		Cursor c = db
+				.rawQuery(
+						"SELECT nickName,head,phone,mainBusiness,status FROM account WHERE uid IN (select uid from relation where rid=?)",
+						new String[] { String.valueOf(rid) });
+		return c;
+	}
+
+	public Map<String, List<Account>> getCirclesFriends() {
+		Map<String, List<Account>> map = new HashMap<String, List<Account>>();
+		List<Circle> circles = queryCircle();
+		for (Circle circle : circles) {
+			map.put(circle.getName(), queryAccount(circle.getRid()));
+		}
+		return map;
+	}
+
+	private void delete() {
+		List<Circle> circles = queryCircle();
+		db.beginTransaction();
+		try {
+			for (Circle circle : circles) {
+				db.execSQL(
+						"DELETE FROM account WHERE uid IN(select uid from relation where rid=?)",
+						new Object[] { circle.getRid() });
+				db.execSQL("DELETE FROM relation WHERE rid=?",
+						new Object[] { circle.getRid() });
+			}
+			db.execSQL("DELETE FROM circle WHERE fuid=?",
+					new Object[] { MCTools.getLoginedAccount(null).getUid() });
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	public void closeDB() {
+		db.close();
+	}
 }

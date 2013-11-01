@@ -68,68 +68,12 @@ public class Login extends Activity {
 			public void success(JSONObject data) {
 				try {
 					JSONObject jaccount = data.getJSONObject("account");
-					String status = jaccount.getString("status");
 					Account account = new Account(jaccount);
 					account.setAccessKey(accessKey);
 					MCTools.saveAccount(Login.this, account);
 					Intent intent = new Intent();
 					intent.setClass(Login.this, LoadingActivity.class);
 					startActivity(intent);
-					
-					// if (status.equals("success")) {
-					//Intent intent = new Intent();
-					//intent.setClass(Login.this, LoadingActivity.class);
-					//startActivity(intent);
-					// }
-					// if (status.equals("unjoin")) {
-					// communityManager = new CommunityManagerImpl(Login.this);
-					// communityManager.find(
-					// MCTools.getLocationParam(Login.this),
-					// new MCResponseAdapter(Login.this) {
-					// @Override
-					// public void success(JSONObject data) {
-					// try {
-					//
-					// Intent intent = new Intent();
-					// intent.setClass(Login.this,
-					// CCommunityActivity.class);
-					// Bundle bundle = new Bundle();
-					// JSONObject community = data
-					// .getJSONObject("community");
-					// bundle.putString("nowcommunity",
-					// community.toString());
-					// intent.putExtras(bundle);
-					// startActivity(intent);
-					// finish();
-					// } catch (JSONException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
-					// }
-					//
-					// @Override
-					// public void unsuccess(JSONObject data) {
-					// try {
-					//
-					// Intent intent = new Intent();
-					// intent.setClass(Login.this,
-					// CCommunityActivity.class);
-					// Bundle bundle = new Bundle();
-					// JSONObject community = data
-					// .getJSONObject("community");
-					// bundle.putString("nowcommunity",
-					// community.toString());
-					// intent.putExtras(bundle);
-					// startActivity(intent);
-					// finish();
-					// } catch (JSONException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
-					// }
-					//
-					// });
-					// }
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

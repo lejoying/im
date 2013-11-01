@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -25,7 +26,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.RelationManager;
 import cn.buaa.myweixin.api.Session;
+import cn.buaa.myweixin.apiimpl.RelationManagerImpl;
 import cn.buaa.myweixin.apiimpl.SessionImpl;
 import cn.buaa.myweixin.apiutils.MCTools;
 
@@ -50,6 +53,7 @@ public class MainWeixin extends Activity {
 	private ImageView arrow_down;
 
 	private Session session;
+	private RelationManager relationManager;
 
 	private boolean longajax;
 
@@ -146,13 +150,16 @@ public class MainWeixin extends Activity {
 			Login.instance.finish();
 
 		session = new SessionImpl(this);
+		relationManager = new RelationManagerImpl(this);
 		longajax = true;
 		createtime = new Date().getTime();
 		count = 0;
 		createSession();
+		getFriends();
+		getAskFriends();
 	}
 
-	public void createSession() {
+	private void createSession() {
 		count++;
 		Map<String, String> param = new HashMap<String, String>();
 
@@ -194,6 +201,72 @@ public class MainWeixin extends Activity {
 				if (longajax)
 					createSession();
 			}
+		});
+	}
+
+	private void getFriends() {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
+		param.put("accessKey", MCTools.getLoginedAccount(this).getAccessKey());
+		relationManager.getcirclesandfriends(param,
+				new MCResponseAdapter(this) {
+					@Override
+					public void success(JSONObject data) {
+						try {
+							MCTools.saveFriends(MainWeixin.this,
+									data.getJSONArray("circles"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+
+				});
+	}
+
+	private void getAskFriends() {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
+		param.put("accessKey", MCTools.getLoginedAccount(this).getAccessKey());
+		relationManager.getaskfriends(param, new MCResponseAdapter(this) {
+
+			@Override
+			public void success(JSONObject data) {
+				try {
+					if (data.getJSONArray("accounts").length() != 0) {
+						Map<String, String> param = new HashMap<String, String>();
+						param.put("phone",
+								MCTools.getLoginedAccount(MainWeixin.this)
+										.getPhone());
+
+						param.put("phoneto", data.getJSONArray("accounts")
+								.getJSONObject(0).getString("phone"));
+
+						param.put("status", "true");
+						param.put(
+								"rid",
+								String.valueOf(MCTools
+										.getCircles(MainWeixin.this).get(0)
+										.getRid()));
+						param.put("accessKey",
+								MCTools.getLoginedAccount(MainWeixin.this)
+										.getAccessKey());
+						relationManager.addfriendagree(param,
+								new MCResponseAdapter(MainWeixin.this) {
+
+									@Override
+									public void success(JSONObject data) {
+										// TODO Auto-generated method stub
+										super.success(data);
+									}
+
+								});
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 		});
 	}
 

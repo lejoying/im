@@ -10,6 +10,7 @@ public class Account implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private int uid;
 	private String phone;
 	private String head;
 	private String nickName;
@@ -20,8 +21,14 @@ public class Account implements Serializable {
 	public Account() {
 		super();
 	}
-	
-	public Account(JSONObject jaccount){
+
+	public Account(JSONObject jaccount) {
+
+		try {
+			this.uid = jaccount.getInt("uid");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		try {
 			this.phone = jaccount.getString("phone");
 		} catch (JSONException e) {
@@ -50,7 +57,7 @@ public class Account implements Serializable {
 	}
 
 	public Account(String phone, String head, String nickName,
-			String mainBusiness, String status,String accessKey) {
+			String mainBusiness, String status, String accessKey) {
 		super();
 		this.phone = phone;
 		this.head = head;
@@ -60,34 +67,14 @@ public class Account implements Serializable {
 		this.accessKey = accessKey;
 	}
 
-	public void setAccount(JSONObject jaccount){
-		try {
-			this.phone = jaccount.getString("phone");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		try {
-			this.head = jaccount.getString("head");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		try {
-			this.nickName = jaccount.getString("nickName");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		try {
-			this.mainBusiness = jaccount.getString("mainBusiness");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		try {
-			this.status = jaccount.getString("status");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+	public int getUid() {
+		return uid;
 	}
-	
+
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
+
 	public String getPhone() {
 		return phone;
 	}
