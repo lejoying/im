@@ -32,7 +32,31 @@ api = {
      ***************************************/
     "session_notify": {
         request: {
-            typical: {}
+            typical: {phone: "XX", sessionID: "XXX", event: "XXX"}
+        },
+        response: {
+            success: {"information": "notify success"},
+            failed: {}
+        }
+    },
+    /***************************************
+     *     URL：/api2/session/send
+     ***************************************/
+    "session_send": {
+        request: {
+            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
+        },
+        response: {
+            success: {"information": "notify success"},
+            failed: {}
+        }
+    },
+    /***************************************
+     *     URL：/api2/session/get
+     ***************************************/
+    "session_get": {
+        request: {
+            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
         },
         response: {
             success: {"information": "notify success"},
@@ -186,18 +210,6 @@ api = {
 
 api = {
     /***************************************
-     *     URL：/api2/relation/join
-     ***************************************/
-    "relation_join": {
-        request: {
-            typical: {"cid": "XXX", "phone": "XXX"}
-        },
-        response: {
-            success: {"提示信息": "加入成功"},
-            failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
-        }
-    },
-    /***************************************
      *     URL：/api2/relation/addfriend
      ***************************************/
     "relation_addfriend": {
@@ -226,22 +238,6 @@ api = {
         }
     },
     /***************************************
-     *     URL：/api2/relation/getcommunities
-     ***************************************/
-    "relation_getcommunities": {
-        request: {
-            typical: {"phone": "XXX"}
-        },
-        response: {
-            success: {"提示信息": "获取社区成功", communities: [
-                {},
-                {},
-                {}
-            ]},
-            failed: {"提示信息": "获取社区失败", "失败原因": ["数据异常"]}
-        }
-    },
-    /***************************************
      *     URL：/api2/relation/addcircle
      ***************************************/
     "relation_addcircle": {
@@ -262,7 +258,7 @@ api = {
         },
         response: {
             success: {"提示信息": "获取密友圈成功", circles: [
-                {circle: "", accounts: [
+                {rid: "XX", name: "XX", accounts: [
                     {},
                     {},
                     {}
@@ -308,6 +304,18 @@ api = {
 
 api = {
     /***************************************
+     *     URL：/api2/community/add
+     ***************************************/
+    "community_add": {
+        request: {
+            typical: {name: "XXX",description: "XXX",longitude: "XXX", latitude: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "创建服务站成功", community: {}},
+            failed: {"提示信息": "创建服务站失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
      *     URL：/api2/community/find
      ***************************************/
     "community_find": {
@@ -316,7 +324,47 @@ api = {
         },
         response: {
             success: {"提示信息": "获取成功", community: {}},
-            failed: {"提示信息": "获取失败", "失败原因": "社区不存在", community: {}}
+            failed: {"提示信息": "获取失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/community/join
+     ***************************************/
+    "community_join": {
+        request: {
+            typical: {"cid": "XXX", "phone": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "加入成功"},
+            failed: {"提示信息": "加入失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/community/unjoin
+     ***************************************/
+    "community_unjoin": {
+        request: {
+            typical: {"cid": "XXX", "phone": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "退出成功"},
+            failed: {"提示信息": "退出失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/community/getcommunities
+     ***************************************/
+    "community_getcommunities": {
+        request: {
+            typical: {"phone": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取社区成功", communities: [
+                {},
+                {},
+                {}
+            ]},
+            failed: {"提示信息": "获取社区失败", "失败原因": ["数据异常"]}
         }
     },
     /***************************************

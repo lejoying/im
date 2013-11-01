@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $.getScript("/static/js/nTenjin.js");
-    SetCookie("phone_cookie", "123");
+    SetCookie("phone_cookie", "121");
 //    alert(GetCookie("wxgs"));
     $.ajax({
         type: "POST",
@@ -88,7 +88,7 @@ function showNotification(){
     if (window.webkitNotifications.checkPermission() > 0) {
         RequestPermission(showNotification);
     }else {
-        notification = window.webkitNotifications.createNotification("http://d.hiphotos.baidu.com/album/w%3D2048/sign=e5974229adaf2eddd4f14ee9b92800e9/bd315c6034a85edf1e2fc20c48540923dd547579.jpg", "乔晓松", "下班吧！");
+        notification = window.webkitNotifications.createNotification("http://d.hiphotos.baidu.com/album/w%3D2048/sign=e5974229adaf2eddd4f14ee9b92800e9/bd315c6034a85edf1e2fc20c48540923dd547579.jpg", "乔晓松", "上班中...！");
         notification.onshow = function() { setTimeout('notification.cancel()', 5000); }
         notification.onclick = function(){}
         notification.show();

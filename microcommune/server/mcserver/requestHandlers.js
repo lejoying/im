@@ -14,8 +14,16 @@ requestHandlers.session = function (request, response, pathObject, data) {
     else if (operation == "event") {
         session.event(data, response);
     }
-    else if(operation == "notify"){
-        session.notify(data, response);
+    else if (operation == "notify") {
+        var uid = getParam["uid"];
+        var sessionID = getParam["sessionID"];
+        var eventID = getParam["eventID"];
+        var eventStr = getParam["event"];
+        var event;
+        if (eventStr != null) {
+            event = JSON.parse(eventStr);
+        }
+        session.notify(uid, sessionID, eventID, event, response);
     }
 };
 
@@ -62,8 +70,20 @@ requestHandlers.communityManage = function (request, response, pathObject, data)
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "find") {
+    if (operation == "add") {
+        communityManage.add(data, response);
+    }
+    else if (operation == "find") {
         communityManage.find(data, response);
+    }
+    else if (operation == "join") {
+        communityManage.join(data, response);
+    }
+    else if (operation == "unjoin") {
+        communityManage.unjoin(data, response);
+    }
+    else if (operation == "getcommunities") {
+        communityManage.getcommunities(data, response);
     }
 }
 
@@ -74,13 +94,7 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "join") {
-        relationManage.join(data, response);
-    }
-    else if (operation == "getcommunities") {
-        relationManage.getcommunities(data, response);
-    }
-    else if (operation == "addfriend") {
+    if (operation == "addfriend") {
         relationManage.addfriend(data, response);
     }
     else if (operation == "getfriends") {

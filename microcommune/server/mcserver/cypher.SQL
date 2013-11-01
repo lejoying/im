@@ -6,18 +6,14 @@ RETURN n
  *     schema
  ***************************************/
 
-CREATE INDEX ON :Account(accountName)
 CREATE INDEX ON :Account(phone)
 CREATE INDEX ON :Account(email)
 CREATE INDEX ON :Account(code)
 
 CREATE INDEX ON :Circle(rid)
 CREATE INDEX ON :Circle(name)
-CREATE INDEX ON :Weixin(weixinOpenID)
 
-CREATE INDEX ON :User(id)
-
-CREATE INDEX ON :App(appid)
+CREATE INDEX ON :Community(cid)
 
 
 /***************************************

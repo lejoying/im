@@ -1,0 +1,26 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+<script type="text/javascript" src="../microCommune/static/js/jquery.js"></script>
+<script type="text/javascript">
+function commit(){
+	var loca_long = document.getElementById("long").value;
+	var loca_lati = document.getElementById("lati").value;
+	$.ajax({
+		type:"POST",
+		url:"/api2/community/find",
+		data:{
+			longitude:loca_long,
+			latitude:loca_lati
+		}
+	});
+}
+</script>
+</head>
+<body>
+location_longitude:<input type="text" id="long"><br>
+location_latitude :<input type="text" id="lati"><br>
+<input type="submit" value="查询" onclick="commit()">
+</body>
+</html>

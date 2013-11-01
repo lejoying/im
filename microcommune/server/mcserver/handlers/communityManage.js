@@ -3,55 +3,55 @@ var communityManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var ajax = require("./../lib/ajax.js");
-/*
 
- */
-/***************************************
- *     URL：/api2/community/add
- ***************************************//*
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *URL：/api2/community / add
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
- communityManage.add = function(data, response){
- response.asynchronous = 1;
- var locations = { lat1: 40,
- lng1: 116,
- lat2: 40,
- lng2: 116
- };
- var community = {
- "name":"天通苑北站",
- "locations":JSON.stringify(locations)
- };
- var query = [
- 'CREATE (community:Community{community})',
- 'SET community.cid=ID(community)',
- 'RETURN community'
- ].join('\n');
+communityManage.add = function (data, response) {
+    response.asynchronous = 1;
+    var name = data.name;
+    var description = data.description;
+    var longitude = data.longitude;
+    var latitude = data.latitude;
+    var location = {
+        longitude: longitude,
+        latitude: latitude
+    };
+    var community = {
+        "name": name,
+        "description": description,
+        "location": JSON.stringify(location)
+    };
+    var query = [
+        'CREATE (community:Community{community})',
+        'SET community.cid=ID(community)',
+        'RETURN community'
+    ].join('\n');
 
- var params = {
- community:community
- };
+    var params = {
+        community: community
+    };
 
- db.query(query, params, function(error, results){
- if(error){
- console.log(error);
- return;
- }else if(results.length == 0){
- if(results.length == 0){
- response.write(JSON.stringify({
- "提示信息":"创建服务站失败",
- "失败原因":"数据异常"
- }));
- response.end();
- }else{
- response.write(JSON.stringify({
- "提示信息":"创建服务站成功"
- }));
- response.end();
- }
- }
- });
- }
- */
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "创建服务站失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        } else {
+            var communityData = results.pop().community.data;
+            response.write(JSON.stringify({
+                "提示信息": "创建服务站成功",
+                community: communityData
+            }));
+            response.end();
+        }
+    });
+}
 /***************************************
  *     URL：/api2/community/getall
  ***************************************//*
@@ -97,74 +97,177 @@ var ajax = require("./../lib/ajax.js");
  ***************************************/
 communityManage.find = function (data, response) {
     response.asynchronous = 1;
-    var longitude = data.longitude;
-    var latitude = data.latitude;
+    var longitude = parseFloat(data.longitude);
+    var latitude = parseFloat(data.latitude);
+    console.log(longitude + "---" + latitude);
     findCommunity(longitude, latitude);
 
     function findCommunity(longitude, latitude) {
-        console.log(new Date().getTime());
-        ajax.ajax({
-            type: "GET",
-            url: "http://map.yanue.net/gpsApi.php",
-            data: {
-                lng: parseFloat(longitude),
-                lat: parseFloat(latitude)
-            },
-            success: function (serverData) {
-                console.log(new Date().getTime());
-                var localObj = JSON.parse(serverData);
-                var lat = parseFloat(localObj.baidu.lat);
-                var lng = parseFloat(localObj.baidu.lng);
-                var query = [
-                    'MATCH (community:Community)',
-                    'RETURN community'
-                ].join('\n');
-                var params = {};
-                db.query(query, params, function (error, results) {
-                    if (error) {
-                        console.log(error);
-                        return;
+        var query = [
+            'MATCH (community:Community)',
+            'RETURN community'
+        ].join('\n');
+        var params = {};
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else {
+                var community = {};
+                var num = -1;
+                for (var index in results) {
+                    var it = results[index].community.data;
+                    var location = JSON.parse(it.location);
+                    var longitude2 = parseFloat(location.longitude);
+                    var latitude2 = parseFloat(location.latitude);
+                    if (num == -1) {
+                        num = (longitude - longitude2) * (longitude - longitude2) + (latitude - latitude2 ) * (latitude - latitude2);
+                        community = it;
                     } else {
-                        var flag = false;
-                        var i = 0;
-                        var community = {};
-                        for (var index in results) {
-                            i++;
-                            var it = results[index].community.data;
-                            if (it.name == "天通苑站") {
-                                community = it;
-                            }
-                            var locations = JSON.parse(it.locations);
-                            if (((parseFloat(locations.lat1) < lat) && (lat < parseFloat(locations.lat2))) && ((parseFloat(locations.lng1) < lng) && (lng < parseFloat(locations.lng2)))) {
-                                flag = true;
-                                delete it.locations;
-                                console.log("获取当前社区成功-" + JSON.stringify(it));
-                                response.write(JSON.stringify({
-                                    "提示信息": "获取成功",
-                                    "community": it
-                                }));
-                                response.end();
-                                break;
-
-                            }
-                            if (i == results.length) {
-                                delete community.locations;
-                                if (flag == false) {
-                                    console.log("获取默认社区成功--" + JSON.stringify(community));
-                                    response.write(JSON.stringify({
-                                        "提示信息": "获取失败",
-                                        "失败原因": "社区不存在",
-                                        community: community
-                                    }));
-                                    response.end();
-                                }
-                            }
+                        var num1 = (longitude - longitude2) * (longitude - longitude2) + (latitude - latitude2) * (latitude - latitude2);
+                        if (num1 < num) {
+                            num = num1;
+                            community = it;
                         }
                     }
-                });
+                }
+                response.write(JSON.stringify({
+                    "提示信息": "获取成功",
+                    community: community
+                }));
+                response.end();
             }
         });
     }
+}
+/***************************************
+ *     URL：/api2/community/join
+ ***************************************/
+communityManage.join = function (data, response) {
+    response.asynchronous = 1;
+    console.log(data);
+    var cid = data.cid;
+    var phone = data.phone;
+    joinCommunityNode();
+
+    function joinCommunityNode() {
+        var query = [
+            'START community=node({cid})',
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'CREATE UNIQUE account-[r:JOIN]->community',
+            'RETURN r'
+        ].join('\n');
+
+        var params = {
+            cid: parseInt(cid),
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "加入失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else {
+                console.log("加入成功---");
+                response.write(JSON.stringify({
+                    "提示信息": "加入成功"
+                }));
+                response.end();
+            }
+        });
+    }
+}
+/***************************************
+ *     URL：/api2/community/unjoin
+ ***************************************/
+communityManage.unjoin = function (data, response) {
+    response.asynchronous = 1;
+    console.log(data);
+    var cid = data.cid;
+    var phone = data.phone;
+    unJoinCommunityNode();
+
+    function unJoinCommunityNode() {
+        var query = [
+            'MATCH (account:Account)-[r:JOIN]->(community:Community)',
+            'WHERE account.phone={phone} AND community.cid={cid}',
+            'DELETE r'
+        ].join('\n');
+
+        var params = {
+            phone: phone,
+            cid: parseInt(cid)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "退出失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else {
+                console.log("退出成功---");
+                response.write(JSON.stringify({
+                    "提示信息": "退出成功"
+                }));
+                response.end();
+            }
+        });
+    }
+}
+/***************************************
+ *     URL：/api2/community/getcommunities
+ ***************************************/
+communityManage.getcommunities = function (data, response) {
+    response.asynchronous = 1;
+
+    var phone = data.phone;
+    var query = [
+        'MATCH (account:Account)-[r:JOIN]->(community:Community)',
+        'WHERE account.phone={phone}',
+        'RETURN community'
+    ].join('\n');
+    var params = {
+        phone: phone
+    };
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "获取社区失败",
+                "错误原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        } else {
+            console.log("获取社区成功---");
+            var communities = [];
+            var i = 0;
+            for (var index in results) {
+                i++;
+                var it = results[index].community.data;
+                delete it.location;
+                communities.push(it);
+            }
+            response.write(JSON.stringify({
+                "提示信息": "获取社区成功",
+                "communities": communities
+            }));
+            response.end();
+        }
+    });
 }
 /***************************************
  *     URL：/api2/community/getcommunityfriends

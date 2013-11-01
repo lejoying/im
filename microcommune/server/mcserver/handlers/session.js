@@ -2,8 +2,8 @@ var session = {};
 
 var access = 0;
 
-sessionPool = {};
-accessKeyPool = {};
+var sessionPool = {};
+var accessKeyPool = {};
 accountSession = {};
 var count = 0;
 session.eventweb = function (data, response) {
@@ -11,7 +11,9 @@ session.eventweb = function (data, response) {
     var accessKey = data.accessKey;
     var sessionResponse = sessionPool[accessKey];
     if (sessionResponse != null && sessionResponse != undefined) {
-        sessionResponse.write("aaaaa");
+        sessionResponse.write(JSON.stringify({
+            "提示信息": "超时"
+        }));
         sessionResponse.end();
     }
     sessionPool[accessKey] = response;
@@ -34,6 +36,7 @@ session.event = function (data, response) {
     var accessKey = data.accessKey;
     console.log(data);
     console.log(new Date().getTime()+"----");
+
     if(accountSession[phone]!=undefined){
         if(accountSession[phone][accessKey] != undefined){
 //        accountSession[phone] = accountSession[phone] || [];

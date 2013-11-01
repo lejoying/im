@@ -1,0 +1,50 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="../microCommune/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var loca_long = document.getElementById("long").value;
+            var loca_lati = document.getElementById("lati").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/community/join",
+                data: {
+                    phone: loca_long,
+                    cid: loca_lati
+                }
+            });
+        }
+        function commit1() {
+            var loca_long = document.getElementById("long").value;
+            var loca_lati = document.getElementById("lati").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/community/unjoin",
+                data: {
+                    phone: loca_long,
+                    cid: loca_lati
+                }
+            });
+        }
+        function commit2() {
+            var loca_long = document.getElementById("long").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/community/getcommunities",
+                data: {
+                    phone: loca_long
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+phone:<input type="text" id="long"><br>
+cid :<input type="text" id="lati"><br>
+<input type="submit" value="加入社区" onclick="commit()">
+<input type="submit" value="退出社区" onclick="commit1()">
+<input type="submit" value="查看已加入社区" onclick="commit2()">
+</body>
+</html>
