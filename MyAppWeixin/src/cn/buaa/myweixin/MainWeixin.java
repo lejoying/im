@@ -219,6 +219,7 @@ public class MainWeixin extends Activity {
 				new MCResponseAdapter(this) {
 					@Override
 					public void success(JSONObject data) {
+						System.out.println(data);
 						try {
 							MCTools.saveFriends(MainWeixin.this,
 									data.getJSONArray("circles"));
@@ -247,40 +248,6 @@ public class MainWeixin extends Activity {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				};
-//				try {
-//					if (data.getJSONArray("accounts").length() != 0) {
-//						Map<String, String> param = new HashMap<String, String>();
-//						param.put("phone",
-//								MCTools.getLoginedAccount(MainWeixin.this)
-//										.getPhone());
-//
-//						param.put("phoneto", data.getJSONArray("accounts")
-//								.getJSONObject(0).getString("phone"));
-//
-//						param.put("status", "true");
-//						param.put(
-//								"rid",
-//								String.valueOf(MCTools
-//										.getCircles(MainWeixin.this).get(0)
-//										.getRid()));
-//						param.put("accessKey",
-//								MCTools.getLoginedAccount(MainWeixin.this)
-//										.getAccessKey());
-//						relationManager.addfriendagree(param,
-//								new MCResponseAdapter(MainWeixin.this) {
-//
-//									@Override
-//									public void success(JSONObject data) {
-//										// TODO Auto-generated method stub
-//										super.success(data);
-//									}
-//
-//								});
-//					}
-//				} catch (JSONException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 			}
 
 		});
