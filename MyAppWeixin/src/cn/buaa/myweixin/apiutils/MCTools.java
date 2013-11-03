@@ -172,18 +172,20 @@ public class MCTools {
 		if (account != null) {
 			return account;
 		}
-		try {
-			InputStream is = activity.openFileInput("account");
-			ObjectInputStream ois = new ObjectInputStream(is);
-			account = (Account) ois.readObject();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (StreamCorruptedException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if (activity != null) {
+			try {
+				InputStream is = activity.openFileInput("account");
+				ObjectInputStream ois = new ObjectInputStream(is);
+				account = (Account) ois.readObject();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (StreamCorruptedException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 		return account;
 	}
@@ -210,7 +212,7 @@ public class MCTools {
 
 	public static void saveFriends(Activity activity, JSONArray friends) {
 		DBManager dbManager = new DBManager(activity);
-		dbManager.add(friends);
+		dbManager.addFriends(friends);
 		dbManager.closeDB();
 	}
 
@@ -230,15 +232,28 @@ public class MCTools {
 		return accounts;
 	}
 
-	public static Map<String, List<Friend>> getCirclesFriends(
-			Activity activity, JSONArray friends) {
+	public static Map<String, List<Friend>> getCirclesFriends(Activity activity) {
 		Map<String, List<Friend>> map = new HashMap<String, List<Friend>>();
 		DBManager dbManager = new DBManager(activity);
-		map = dbManager.getCirclesFriends();
+		map = dbManager.queryCirclesFriends();
 		dbManager.closeDB();
 		return map;
 	}
+	
+	public static void saveCommunities(Activity activity, JSONArray communities){
+		DBManager dbManager = new DBManager(activity);
+		dbManager.addCommunities(communities);
+		dbManager.closeDB();
+	}
 
+	public static List<Community> getCommunities(Activity activity) {
+		List<Community> community = new ArrayList<Community>();
+		DBManager dbManager = new DBManager(activity);
+		community = dbManager.queryCommunities(MCTools.getLoginedAccount(null).getUid());
+		dbManager.closeDB();
+		return community;
+	}
+	
 }
 
 class DBHelper extends SQLiteOpenHelper {
@@ -252,19 +267,25 @@ class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE IF NOT EXISTS relation"
+		db.execSQL("CREATE TABLE IF NOT EXISTS circlerelation"
 				+ "(rid INTEGER, uid INTEGER)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS circle"
 				+ "(rid INTEGER PRIMARY KEY, name VARCHAR, fuid INTEGER)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS friend"
-				+ "(uid INTEGER PRIMARY KEY, nickName VARCHAR, head VARCHAR, phone VARCHAR, mainBusiness TEXT)");
+				+ "(uid INTEGER PRIMARY KEY, nickName VARCHAR, head VARCHAR, phone VARCHAR, mainBusiness TEXT,friendStatus VARCHAR)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS community"
+				+ "(cid INTEGER PRIMARY KEY, name VARCHAR, description TEXT)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS communityrelation"
+				+ "(cid INTEGER, fuid INTEGER)");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("ALTER TABLE circle ADD COLUMN other STRING");
 		db.execSQL("ALTER TABLE friend ADD COLUMN other STRING");
-		db.execSQL("ALTER TABLE relation ADD COLUMN other STRING");
+		db.execSQL("ALTER TABLE circlerelation ADD COLUMN other STRING");
+		db.execSQL("ALTER TABLE community ADD COLUMN other STRING");
+		db.execSQL("ALTER TABLE communityrelation ADD COLUMN other STRING");
 	}
 }
 
@@ -277,8 +298,8 @@ class DBManager {
 		db = helper.getWritableDatabase();
 	}
 
-	public void add(JSONArray friends) {
-		delete();
+	public void addFriends(JSONArray friends) {
+		deleteFriends();
 		db.beginTransaction(); // 开始事务
 		try {
 			for (int i = 0; i < friends.length(); i++) {
@@ -299,17 +320,18 @@ class DBManager {
 				for (int j = 0; j < accounts.length(); j++) {
 					Friend friend = new Friend(accounts.getJSONObject(j));
 					db.execSQL(
-							"INSERT INTO friend VALUES(?, ?, ?, ?,?)",
+							"INSERT OR REPLACE INTO friend VALUES(?, ?, ?, ?, ?, ?)",
 							new Object[] { friend.getUid(),
 									friend.getNickName(), friend.getHead(),
 									friend.getPhone(),
-									friend.getMainBusiness()});
+									friend.getMainBusiness(),
+									friend.getFriendStatus() });
 					if (circle.getRid() != 0) {
 						db.execSQL(
-								"INSERT INTO relation VALUES(?,?)",
+								"INSERT INTO circlerelation VALUES(?,?)",
 								new Object[] { circle.getRid(), friend.getUid() });
 					} else {
-						db.execSQL("INSERT INTO relation VALUES(?,?)",
+						db.execSQL("INSERT INTO circlerelation VALUES(?,?)",
 								new Object[] {
 										-MCTools.getLoginedAccount(null)
 												.getUid(), friend.getUid() });
@@ -325,6 +347,54 @@ class DBManager {
 		}
 	}
 
+	public void addCommunities(JSONArray communities) {
+		db.beginTransaction(); // 开始事务
+		try {
+			db.execSQL("DELETE FROM communityrelation WHERE fuid=?",
+					new Object[] { MCTools.getLoginedAccount(null) });
+			for (int i = 0; i < communities.length(); i++) {
+				Community community = new Community(
+						communities.getJSONObject(i));
+				db.execSQL("INSERT OR REPLACE INTO community VALUES(?, ?, ? )",
+						new Object[] { community.getCid(), community.getName(),
+								community.getDescription() });
+
+				db.execSQL(
+						"INSERT INTO communityrelation VALUES(?, ?)",
+						new Object[] { community.getCid(),
+								MCTools.getLoginedAccount(null) });
+
+			}
+			db.setTransactionSuccessful(); // 设置事务成功完成
+		} catch (JSONException e) {
+			// e.printStackTrace();
+		} finally {
+			db.endTransaction(); // 结束事务
+		}
+	}
+	
+	public List<Community> queryCommunities(int fuid){
+		List<Community> communities = new ArrayList<Community>();
+		Cursor c = queryCommunitiesCursor();
+		while (c.moveToNext()) {
+			Community community = new Community();
+			community.setCid(c.getInt(c.getColumnIndex("cid")));
+			community.setName(c.getString(c.getColumnIndex("name")));
+			community.setDescription(c.getString(c.getColumnIndex("description")));
+			communities.add(community);
+		}
+		;
+		return communities;
+
+	}
+
+	private Cursor queryCommunitiesCursor() {
+		Cursor c = db.rawQuery("SELECT cid,name,description FROM community WHERE cid IN(select cid from communityrelation where fuid=?)",
+				new String[] { String.valueOf(MCTools.getLoginedAccount(null)
+						.getUid()) });
+		return c;
+	}
+	
 	public List<Circle> queryCircle() {
 		List<Circle> circles = new ArrayList<Circle>();
 		Cursor c = queryCircleCursor();
@@ -355,6 +425,7 @@ class DBManager {
 			friend.setHead(c.getString(c.getColumnIndex("head")));
 			friend.setPhone(c.getString(c.getColumnIndex("phone")));
 			friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
+			friend.setFriendStatus(c.getString(c.getColumnIndex("friendStatus")));
 			friends.add(friend);
 		}
 		;
@@ -364,12 +435,12 @@ class DBManager {
 	private Cursor queryFriendsCursor(int rid) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT nickName,head,phone,mainBusiness FROM friend WHERE uid IN (select uid from relation where rid=?)",
+						"SELECT nickName,head,phone,mainBusiness,friendStatus FROM friend WHERE uid IN (select uid from circlerelation where rid=?)",
 						new String[] { String.valueOf(rid) });
 		return c;
 	}
 
-	public Map<String, List<Friend>> getCirclesFriends() {
+	public Map<String, List<Friend>> queryCirclesFriends() {
 		Map<String, List<Friend>> map = new HashMap<String, List<Friend>>();
 		List<Circle> circles = queryCircle();
 		for (Circle circle : circles) {
@@ -378,15 +449,15 @@ class DBManager {
 		return map;
 	}
 
-	private void delete() {
+	private void deleteFriends() {
 		List<Circle> circles = queryCircle();
 		db.beginTransaction();
 		try {
 			for (Circle circle : circles) {
 				db.execSQL(
-						"DELETE FROM friend WHERE uid IN(select uid from relation where rid=?)",
+						"DELETE FROM friend WHERE uid IN(select uid from circlerelation where rid=?)",
 						new Object[] { circle.getRid() });
-				db.execSQL("DELETE FROM relation WHERE rid=?",
+				db.execSQL("DELETE FROM circlerelation WHERE rid=?",
 						new Object[] { circle.getRid() });
 			}
 			db.execSQL("DELETE FROM circle WHERE fuid=?",

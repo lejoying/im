@@ -131,7 +131,7 @@ public class FriendCallingCardActivity extends Activity {
 		String nickName = bundle.getString("nickName");
 		String mainBusiness = bundle.getString("mainBusiness");
 		
-		tv_name = (TextView) findViewById(R.id.tv_name);
+		tv_name = (TextView) findViewById(R.id.tv_nickName);
 		tv_mainbusiness = (TextView) findViewById(R.id.tv_mainbusiness);
 		iv_tdcode = (ImageView) findViewById(R.id.iv_tdcode);
 

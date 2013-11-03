@@ -126,7 +126,7 @@ public class CallingCardActivity extends Activity {
 			}
 		});
 
-		tv_name = (TextView) findViewById(R.id.tv_name);
+		tv_name = (TextView) findViewById(R.id.tv_nickName);
 		tv_mainbusiness = (TextView) findViewById(R.id.tv_mainbusiness);
 		iv_tdcode = (ImageView) findViewById(R.id.iv_tdcode);
 

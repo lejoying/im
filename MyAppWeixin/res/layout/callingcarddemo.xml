@@ -86,7 +86,7 @@
                 android:padding="20dp" >
 
                 <TextView
-                    android:id="@+id/tv_name"
+                    android:id="@+id/tv_nickName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="李伟"
@@ -97,7 +97,7 @@
                     android:id="@+id/tv_agent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_name"
+                    android:layout_below="@+id/tv_nickName"
                     android:layout_marginTop="10dp"
                     android:text="主要业务:  "
                     android:textColor="#fff" />
@@ -106,7 +106,7 @@
                     android:id="@+id/tv_mainbusiness"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_name"
+                    android:layout_below="@+id/tv_nickName"
                     android:layout_marginTop="10dp"
                     android:maxLines="3"
                     android:ellipsize="end"

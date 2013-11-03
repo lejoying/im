@@ -186,7 +186,7 @@ public class ServiceStationActivity extends Activity {
 			RelativeLayout rl = (RelativeLayout) inflater.inflate(
 					R.layout.service_station_singleitem, null);
 			ImageView iv_head = (ImageView) rl.findViewById(R.id.iv_head);
-			TextView tv_name = (TextView) rl.findViewById(R.id.tv_name);
+			TextView tv_name = (TextView) rl.findViewById(R.id.tv_nickName);
 			if (position == 0) {
 				iv_head.setImageBitmap(jiazheng);
 				tv_name.setText("家政服务");

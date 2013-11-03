@@ -3,12 +3,15 @@ package cn.buaa.myweixin;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -19,18 +22,26 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.CommunityManager;
 import cn.buaa.myweixin.api.RelationManager;
 import cn.buaa.myweixin.api.Session;
+import cn.buaa.myweixin.apiimpl.CommunityManagerImpl;
 import cn.buaa.myweixin.apiimpl.RelationManagerImpl;
 import cn.buaa.myweixin.apiimpl.SessionImpl;
+import cn.buaa.myweixin.apiutils.Community;
+import cn.buaa.myweixin.apiutils.Friend;
 import cn.buaa.myweixin.apiutils.MCTools;
 
 public class MainWeixin extends Activity {
@@ -55,6 +66,7 @@ public class MainWeixin extends Activity {
 
 	private Session session;
 	private RelationManager relationManager;
+	private CommunityManager communityManager;
 
 	private boolean longajax;
 
@@ -62,15 +74,23 @@ public class MainWeixin extends Activity {
 	private long createtime;
 
 	private RelativeLayout rl_shownewfriends;
-	
+
+	private ListView lv_friends;
+
+	private TextView tv_community1;
+	private TextView tv_community2;
+	private TextView tv_community3;
+	private TextView tv_communityflag1;
+	private TextView tv_communityflag2;
+	private TextView tv_communityflag3;
+
 	// private Button mRightBtn;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_weixin);
-		
-		
+
 		// 启动activity时不自动弹出软键盘
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -114,8 +134,17 @@ public class MainWeixin extends Activity {
 		View view3 = mLi.inflate(R.layout.main_tab_friends, null);
 		View view4 = mLi.inflate(R.layout.main_tab_settings, null);
 
-		rl_shownewfriends = (RelativeLayout) view2.findViewById(R.id.rl_shownewfriends);
-		
+		rl_shownewfriends = (RelativeLayout) view2
+				.findViewById(R.id.rl_shownewfriends);
+		lv_friends = (ListView) view2.findViewById(R.id.lv_friends);
+
+		tv_community1 = (TextView) view1.findViewById(R.id.tv_community);
+		tv_community2 = (TextView) view2.findViewById(R.id.tv_community);
+		tv_community3 = (TextView) view3.findViewById(R.id.tv_community);
+		tv_communityflag1 = (TextView) view1.findViewById(R.id.tv_communityflag);
+		tv_communityflag2 = (TextView) view2.findViewById(R.id.tv_communityflag);
+		tv_communityflag3 = (TextView) view3.findViewById(R.id.tv_communityflag);
+
 		// 每个页面的view数据
 		final ArrayList<View> views = new ArrayList<View>();
 		views.add(view1);
@@ -158,13 +187,130 @@ public class MainWeixin extends Activity {
 
 		session = new SessionImpl(this);
 		relationManager = new RelationManagerImpl(this);
+		communityManager = new CommunityManagerImpl(this);
 		longajax = true;
 		createtime = new Date().getTime();
 		count = 0;
+
+		initFriends();
 		createSession();
 		getFriends();
 		getAskFriends();
+		getCommunities();
 	}
+
+	public void getCommunities() {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("phone", MCTools.getLoginedAccount(null).getPhone());
+		communityManager.getcommunities(param, new MCResponseAdapter(this) {
+			@Override
+			public void success(JSONObject data) {
+				System.out.println(data);
+				try {
+					MCTools.saveCommunities(MainWeixin.this,
+							data.getJSONArray("communities"));
+					findCommunity();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		});
+
+	}
+
+	public void findCommunity() {
+		Map<String, String> param = MCTools.getParamsWithLocation(this);
+		communityManager.find(param, new MCResponseAdapter(this) {
+			@Override
+			public void success(JSONObject data) {
+				System.out.println(data);
+				List<Community> communities = MCTools
+						.getCommunities(MainWeixin.this);
+				try {
+					Community community = new Community(data
+							.getJSONObject("community"));
+					boolean flag = false;
+					for (Community c : communities) {
+						if (community.getCid() == c.getCid()) {
+							flag = true;
+						}
+					}
+					if (flag) {
+						tv_community1.setText(community.getName());
+						tv_community2.setText(community.getName());
+						tv_community3.setText(community.getName());
+					} else {
+						String m = "\n";
+						tv_community1.setText(community.getName() + m);
+						tv_community2.setText(community.getName() + m);
+						tv_community3.setText(community.getName() + m);
+						tv_communityflag1.setVisibility(View.VISIBLE);
+						tv_communityflag2.setVisibility(View.VISIBLE);
+						tv_communityflag3.setVisibility(View.VISIBLE);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+	}
+
+	public void initFriends() {
+		inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final Map<String, List<Friend>> friends = MCTools
+				.getCirclesFriends(this);
+
+		if (friends.size() == 0) {
+			return;
+		}
+
+		Set<String> circles = friends.keySet();
+		final List<Friend> allFriends = new ArrayList<Friend>();
+		for (String circle : circles) {
+			allFriends.addAll(friends.get(circle));
+		}
+		BaseAdapter baseAdapter = new BaseAdapter() {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				RelativeLayout rl = (RelativeLayout) inflater.inflate(
+						R.layout.friendsitem, null);
+				ImageView iv_head = (ImageView) rl.findViewById(R.id.iv_head);
+				TextView tv_nickName = (TextView) rl
+						.findViewById(R.id.tv_nickname);
+				TextView tv_mainBusiness = (TextView) rl
+						.findViewById(R.id.tv_mainbusiness);
+				tv_nickName.setText(allFriends.get(position).getNickName());
+				tv_mainBusiness.setText(allFriends.get(position)
+						.getMainBusiness());
+				return rl;
+			}
+
+			@Override
+			public long getItemId(int position) {
+				// TODO Auto-generated method stub
+				return position;
+			}
+
+			@Override
+			public Object getItem(int position) {
+				// TODO Auto-generated method stub
+				return allFriends.get(position);
+			}
+
+			@Override
+			public int getCount() {
+				// TODO Auto-generated method stub
+				return allFriends.size();
+			}
+		};
+
+		lv_friends.setAdapter(baseAdapter);
+
+	};
 
 	private void createSession() {
 		count++;
@@ -223,6 +369,7 @@ public class MainWeixin extends Activity {
 						try {
 							MCTools.saveFriends(MainWeixin.this,
 									data.getJSONArray("circles"));
+							initFriends();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -241,13 +388,14 @@ public class MainWeixin extends Activity {
 			public void success(JSONObject data) {
 				System.out.println(data);
 				try {
-					if(data.getJSONArray("accounts").length()!=0){
+					if (data.getJSONArray("accounts").length() != 0) {
 						rl_shownewfriends.setVisibility(RelativeLayout.VISIBLE);
 						MCTools.setNewFriends(data.getJSONArray("accounts"));
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
-				};
+				}
+				;
 			}
 
 		});
@@ -500,12 +648,12 @@ public class MainWeixin extends Activity {
 		mTabPager.setCurrentItem(3, false);
 	}
 
-	//新朋友
-	public void showNewFriends(View v){
-		Intent intent = new Intent(this,NewFriendsActivity.class);
+	// 新朋友
+	public void showNewFriends(View v) {
+		Intent intent = new Intent(this, NewFriendsActivity.class);
 		startActivity(intent);
 	}
-	
+
 	// 打开社区服务站
 	public void showServiceStation(View v) {
 		Intent intent = new Intent(this, ServiceStationActivity.class);
@@ -516,5 +664,5 @@ public class MainWeixin extends Activity {
 		Intent intent = new Intent(this, CallingCardActivity.class);
 		startActivity(intent);
 	}
-	
+
 }

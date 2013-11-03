@@ -9,4 +9,6 @@ public interface CommunityManager {
 			ResponseListener responseListener);
 	public void getcommunityfriends(Map<String, String> param,
 			ResponseListener responseListener);
+	public void getcommunities(Map<String, String> param,
+			ResponseListener responseListener);
 }

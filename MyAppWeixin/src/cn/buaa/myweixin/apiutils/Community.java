@@ -3,34 +3,51 @@ package cn.buaa.myweixin.apiutils;
 import java.io.Serializable;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Community implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String cid;
+
+public class Community{
+	
+	private int cid;
 	private String name;
-	private List<Serves> serves;
+	private String description;
 	public Community() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Community(String cid, String name, List<Serves> serves) {
+	public Community(int cid, String name, String description) {
 		super();
 		this.cid = cid;
 		this.name = name;
-		this.serves = serves;
+		this.description = description;
 	}
-	@Override
-	public String toString() {
-		return "Community [cid=" + cid + ", name=" + name + ", serves="
-				+ serves + "]";
+	
+	public Community(JSONObject jcommunity){
+		try {
+			this.cid = jcommunity.getInt("cid");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			this.name = jcommunity.getString("name");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			this.description = jcommunity.getString("description");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
-	public String getCid() {
+	public int getCid() {
 		return cid;
 	}
-	public void setCid(String cid) {
+	public void setCid(int cid) {
 		this.cid = cid;
 	}
 	public String getName() {
@@ -39,11 +56,19 @@ public class Community implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<Serves> getServes() {
-		return serves;
+	public String getDescription() {
+		return description;
 	}
-	public void setServes(List<Serves> serves) {
-		this.serves = serves;
+	public void setDescription(String description) {
+		this.description = description;
 	}
+	@Override
+	public String toString() {
+		return "Community [cid=" + cid + ", name=" + name + ", description="
+				+ description + "]";
+	}
+	
+	
+	
 	
 }

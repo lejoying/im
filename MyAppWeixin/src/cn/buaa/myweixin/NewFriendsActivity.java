@@ -1,21 +1,30 @@
 package cn.buaa.myweixin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cn.buaa.myweixin.adapter.MCResponseAdapter;
+import cn.buaa.myweixin.api.RelationManager;
+import cn.buaa.myweixin.apiimpl.RelationManagerImpl;
 import cn.buaa.myweixin.apiutils.Friend;
 import cn.buaa.myweixin.apiutils.MCTools;
 
@@ -23,6 +32,8 @@ public class NewFriendsActivity extends Activity {
 
 	private ListView lv_newfriends;
 	private LayoutInflater inflater;
+	
+	private RelationManager relationManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +44,7 @@ public class NewFriendsActivity extends Activity {
 	}
 
 	public void initView() {
+		relationManager = new RelationManagerImpl(this);
 		inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		lv_newfriends = (ListView) findViewById(R.id.lv_newfriends);
 		List<Friend> newFriends = MCTools.getNewFriends();
@@ -80,7 +92,7 @@ public class NewFriendsActivity extends Activity {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			RelativeLayout rl_item = (RelativeLayout) inflater.inflate(
 					R.layout.newfriendsitem, null);
 			ImageView iv_head = (ImageView) rl_item.findViewById(R.id.iv_head);
@@ -90,7 +102,24 @@ public class NewFriendsActivity extends Activity {
 					.findViewById(R.id.tv_message);
 
 			tv_nickname.setText(newFriends.get(position).getNickName());
-
+			Button btn_agree = (Button) rl_item.findViewById(R.id.btn_agree);
+			btn_agree.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Map<String, String> param = new HashMap<String, String>();
+					param.put("phone", MCTools.getLoginedAccount(null).getPhone());
+					param.put("phoneto", newFriends.get(position).getPhone());
+					//param.put("rid", value);
+					relationManager.addfriendagree(param, new MCResponseAdapter(NewFriendsActivity.this){
+						@Override
+						public void success(JSONObject data) {
+							System.out.println(data);
+						}
+						
+					});
+				}
+			});
+			
 			return rl_item;
 		}
 

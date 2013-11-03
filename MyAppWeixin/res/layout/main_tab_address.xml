@@ -21,15 +21,27 @@
             android:onClick="showMainTopCenterDialog" >
 
             <TextView
+                android:id="@+id/tv_communityflag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:clickable="true"
+                android:text="(未加入)"
+                android:textColor="@color/station_color"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_community"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
+                android:layout_alignParentTop="true"
                 android:clickable="true"
                 android:onClick="showMainTopCenterDialog"
-                android:text="天通苑站"
                 android:textColor="@color/station_color"
-                android:textSize="20sp" />
+                android:textSize="19sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -169,6 +181,10 @@
         android:text="全部好友"
         android:textColor="#d6d6d6" />
 
-    
+    <ListView
+        android:id="@+id/lv_friends"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </LinearLayout>
