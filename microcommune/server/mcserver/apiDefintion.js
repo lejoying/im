@@ -38,30 +38,6 @@ api = {
             success: {"information": "notify success"},
             failed: {}
         }
-    },
-    /***************************************
-     *     URL：/api2/session/send
-     ***************************************/
-    "session_send": {
-        request: {
-            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
-        },
-        response: {
-            success: {"information": "notify success"},
-            failed: {}
-        }
-    },
-    /***************************************
-     *     URL：/api2/session/get
-     ***************************************/
-    "session_get": {
-        request: {
-            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
-        },
-        response: {
-            success: {"information": "notify success"},
-            failed: {}
-        }
     }
 }
 
@@ -411,6 +387,35 @@ api = {
         response: {
             success: {"提示信息": "删除成功"},
             failed: {"提示信息": "删除失败", "失败原因": "数据异常"}
+        }
+    }
+}
+/*************************************** ***************************************
+ * *    Class：message
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/api2/message/send
+     ***************************************/
+    "message_send": {
+        request: {
+            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
+        },
+        response: {
+            success: {"information": "send success"},
+            failed: {}
+        }
+    },
+    /***************************************
+     *     URL：/api2/message/get
+     ***************************************/
+    "message_get": {
+        request: {
+            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
+        },
+        response: {
+            success: {"information": "notify success"},
+            failed: {}
         }
     }
 }

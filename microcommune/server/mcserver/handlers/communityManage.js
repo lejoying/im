@@ -136,6 +136,7 @@ communityManage.find = function (data, response) {
                         }
                     }
                 }
+                delete community.location;
                 response.write(JSON.stringify({
                     "提示信息": "获取成功",
                     community: community
@@ -293,12 +294,17 @@ communityManage.getcommunityfriends = function (data, response) {
             response.end();
             console.log(error);
             return;
-        } else if (results.length) {
+        } else if (results.length > 0) {
             var accounts = [];
             var count = 0;
             for (var index in results) {
                 var it = results[index].account.data;
-                accounts.push(it);
+                var community = {
+                    cid: it.cid,
+                    name: it.name,
+                    description: it.description
+                };
+                accounts.push(community);
                 if (count == results.length) {
                     response.write(JSON.stringify({
                         "提示信息": "获取社区好友成功",

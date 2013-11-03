@@ -127,5 +127,18 @@ requestHandlers.circleManage = function (request, response, pathObject, data) {
         circleManage.delete(data, response);
     }
 }
+var messageManage = require("./handlers/messageManage.js");
+requestHandlers.messageManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "send") {
+        messageManage.send(data, response);
+    }
+    else if (operation == "get") {
+        messageManage.get(data, response);
+    }
+}
 
 module.exports = requestHandlers;
