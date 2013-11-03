@@ -166,54 +166,9 @@
         android:paddingBottom="3dp"
         android:paddingLeft="15dp"
         android:paddingTop="3dp"
-        android:text="同社好友"
+        android:text="全部好友"
         android:textColor="#d6d6d6" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@drawable/mm_listitem"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:onClick="chat_friend_xiaohei"
-        android:paddingBottom="3dp"
-        android:paddingLeft="18dp"
-        android:paddingRight="18dp"
-        android:paddingTop="3dp" >
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/xiaohei" />
-
-        <TextView
-            android:id="@+id/tv_agent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/imageView1"
-            android:text="小黑"
-            android:textColor="#fff"
-            android:textSize="17sp" />
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="#0000"
-            android:ellipsize="end"
-            android:lines="2"
-            android:maxLines="2"
-            android:padding="2dp"
-            android:text="黑暗游侠！！！！！！"
-            android:textColor="#a0a0a0"
-            android:textSize="11sp" />
-    </RelativeLayout>
+    
 
 </LinearLayout>

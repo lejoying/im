@@ -37,7 +37,7 @@ public class MCTools {
 
 	private static Handler MCHandler = new Handler();
 
-	private static final String DOMAIN = "http://192.168.0.102:8071";
+	private static final String DOMAIN = "http://192.168.1.102:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;
@@ -145,7 +145,7 @@ public class MCTools {
 				Friend friend = new Friend(accounts.getJSONObject(i));
 				newFriends.add(friend);
 			} catch (JSONException e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 		MCTools.newFriends = newFriends;
@@ -283,21 +283,37 @@ class DBManager {
 		try {
 			for (int i = 0; i < friends.length(); i++) {
 				Circle circle = new Circle(friends.getJSONObject(i));
-				db.execSQL("INSERT INTO circle VALUES(?, ?, ?)", new Object[] {
-						circle.getRid(), circle.getName(),
-						MCTools.getLoginedAccount(null).getUid() });
-
+				if (circle.getRid() != 0) {
+					db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
+							new Object[] { circle.getRid(), circle.getName(),
+									MCTools.getLoginedAccount(null).getUid() });
+				} else {
+					db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
+							new Object[] {
+									-MCTools.getLoginedAccount(null).getUid(),
+									"没有分组",
+									MCTools.getLoginedAccount(null).getUid() });
+				}
 				JSONArray accounts = friends.getJSONObject(i).getJSONArray(
 						"accounts");
 				for (int j = 0; j < accounts.length(); j++) {
 					Friend friend = new Friend(accounts.getJSONObject(j));
 					db.execSQL(
-							"INSERT INTO friend VALUES(?, ?, ?, ?, ?)",
+							"INSERT INTO friend VALUES(?, ?, ?, ?,?)",
 							new Object[] { friend.getUid(),
 									friend.getNickName(), friend.getHead(),
-									friend.getPhone(), friend.getMainBusiness() });
-					db.execSQL("INSERT INTO relation VALUES(null,?,?)",
-							new Object[] { circle.getRid(), friend.getUid() });
+									friend.getPhone(),
+									friend.getMainBusiness()});
+					if (circle.getRid() != 0) {
+						db.execSQL(
+								"INSERT INTO relation VALUES(?,?)",
+								new Object[] { circle.getRid(), friend.getUid() });
+					} else {
+						db.execSQL("INSERT INTO relation VALUES(?,?)",
+								new Object[] {
+										-MCTools.getLoginedAccount(null)
+												.getUid(), friend.getUid() });
+					}
 				}
 
 			}
