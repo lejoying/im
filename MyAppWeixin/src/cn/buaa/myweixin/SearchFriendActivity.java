@@ -54,6 +54,7 @@ public class SearchFriendActivity extends Activity {
 					bundle.putString("phone", tv_phone.getText().toString());
 					bundle.putString("nickName", nickName);
 					bundle.putString("mainBusiness", mainBusiness);
+					bundle.putString("friendStatus", "0");
 					intent.putExtras(bundle);
 					SearchFriendActivity.this.startActivity(intent);
 				} catch (JSONException e) {

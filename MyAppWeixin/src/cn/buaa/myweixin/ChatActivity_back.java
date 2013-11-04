@@ -2,14 +2,7 @@ package cn.buaa.myweixin;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -27,19 +20,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import cn.buaa.myweixin.adapter.MCResponseAdapter;
-import cn.buaa.myweixin.api.MessageManager;
-import cn.buaa.myweixin.apiimpl.MessageManagerImpl;
-import cn.buaa.myweixin.apiutils.Friend;
 import cn.buaa.myweixin.apiutils.ImageTools;
-import cn.buaa.myweixin.apiutils.MCTools;
 
 /**
  * 
@@ -47,11 +34,9 @@ import cn.buaa.myweixin.apiutils.MCTools;
  *         android开发交流群：200102476
  */
 @SuppressLint("HandlerLeak")
-public class ChatActivity extends Activity implements OnClickListener {
+public class ChatActivity_back extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 
-	private MessageManager messageManager;
-	
 	private final static int SEND_MESSAGE = 0x11;
 	private Handler handler;
 	private Button mBtnSend;
@@ -62,10 +47,6 @@ public class ChatActivity extends Activity implements OnClickListener {
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
 	private RelativeLayout rl_bottom;
 
-	private TextView tv_chatto;
-
-	private List<Friend> chat_friends;
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -97,22 +78,9 @@ public class ChatActivity extends Activity implements OnClickListener {
 	}
 
 	public void initView() {
-		messageManager = new MessageManagerImpl(this);
-		chat_friends = MCTools.getCHAT_FRIENDS();
-		if (chat_friends.size() == 0) {
-			finish();
-		}
 		mListView = (ListView) findViewById(R.id.listview);
 		mBtnSend = (Button) findViewById(R.id.btn_send);
 		mBtnSend.setOnClickListener(this);
-
-		tv_chatto = (TextView) findViewById(R.id.tv_chatto);
-
-		if (chat_friends.size() == 1) {
-			tv_chatto.setText(chat_friends.get(0).getNickName());
-		} else {
-			tv_chatto.setText("多人群发");
-		}
 
 		mEditTextContent = (EditText) findViewById(R.id.et_sendmessage);
 
@@ -169,7 +137,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 				mListView.requestFocus();
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(mEditTextContent.getWindowToken(),
-						0);
+						0);			
 				return false;
 			}
 		});
@@ -183,13 +151,13 @@ public class ChatActivity extends Activity implements OnClickListener {
 			"2012-09-01 18:10", "2012-09-01 18:11", "2012-09-01 18:20",
 			"2012-09-01 18:30", "2012-09-01 18:35", "2012-09-01 18:40",
 			"2012-09-01 18:50" };
-	private final static int COUNT = 0;
+	private final static int COUNT = 8;
 
 	public void initData() {
-		Bitmap headfrom = ImageTools.getCircleBitmap(BitmapFactory
-				.decodeResource(getResources(), R.drawable.renma));
-		Bitmap headto = ImageTools.getCircleBitmap(BitmapFactory
-				.decodeResource(getResources(), R.drawable.xiaohei));
+		Bitmap headfrom = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.renma));
+		Bitmap headto = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.xiaohei));
 		for (int i = 0; i < COUNT; i++) {
 			ChatMsgEntity entity = new ChatMsgEntity();
 
@@ -228,6 +196,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	private void send() {
 		String contString = mEditTextContent.getText().toString();
+
 		if (contString.length() > 0) {
 			ChatMsgEntity entity = new ChatMsgEntity();
 			entity.setDate(getDate());
@@ -241,33 +210,6 @@ public class ChatActivity extends Activity implements OnClickListener {
 			mEditTextContent.setText("");
 			handler.sendEmptyMessage(SEND_MESSAGE);
 		}
-		Map<String, String> param = new HashMap<String, String>();
-		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
-		JSONArray phoneto = new JSONArray();
-		for(Friend friend:chat_friends){
-			phoneto.put(friend.getPhone());
-		}
-		param.put("phoneto", phoneto.toString());
-		
-		JSONObject message = new JSONObject();
-		
-		try {
-			message.put("TYPE", "text");
-			message.put("CONTENT", contString);
-			message.put("time", new Date().getTime());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		param.put("message", message.toString());
-		
-		messageManager.send(param, new MCResponseAdapter(ChatActivity.this){
-			@Override
-			public void success(JSONObject data) {
-				System.out.println(data);
-			}
-		});
 	}
 
 	private String getDate() {
@@ -285,31 +227,19 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 		return sbBuffer.toString();
 	}
-
-	// 返回按钮
-	public void chat_back(View v) {
+	//返回按钮
+	public void chat_back(View v){
 		finish();
 	}
-
+	
 	public void head_xiaohei(View v) {
-		Intent intent = new Intent(ChatActivity.this, InfoXiaohei.class);
+		Intent intent = new Intent(ChatActivity_back.this, InfoXiaohei.class);
+		startActivity(intent);
+	}
+	
+	public void showCC(View v){ //点击头像/标题栏右侧按钮显示对方名片
+		Intent intent = new Intent(ChatActivity_back.this,CallingCardActivity.class);
 		startActivity(intent);
 	}
 
-	public void showCC(View v) { // 点击头像/标题栏右侧按钮显示对方名片
-		Intent intent = new Intent(ChatActivity.this, FriendCallingCardActivity.class);
-		if (MCTools.getCHAT_FRIENDS().size() == 1) {
-			Bundle bundle = new Bundle();
-			bundle.putString("nickName", MCTools.getCHAT_FRIENDS().get(0)
-					.getNickName());
-			bundle.putString("mainBusiness", MCTools.getCHAT_FRIENDS().get(0)
-					.getMainBusiness());
-			bundle.putString("friendStatus", MCTools.getCHAT_FRIENDS().get(0)
-					.getFriendStatus());
-			intent.putExtras(bundle);
-			startActivity(intent);
-		} else {
-
-		}
-	}
 }

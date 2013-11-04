@@ -30,10 +30,10 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/tv_chatto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="小黑"
             android:textColor="#ffffff"
             android:textSize="20sp" />
 
@@ -103,6 +103,6 @@
         android:divider="@null"
         android:dividerHeight="5dp"
         android:scrollbarStyle="outsideOverlay"
-        android:stackFromBottom="true" />
+        android:stackFromBottom="false" />
 
 </RelativeLayout>

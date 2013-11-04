@@ -4,30 +4,29 @@ import java.util.Map;
 
 import android.app.Activity;
 
-import cn.buaa.myweixin.api.Session;
+import cn.buaa.myweixin.api.MessageManager;
 import cn.buaa.myweixin.apiutils.MCTools;
 import cn.buaa.myweixin.listener.ResponseListener;
 import cn.buaa.myweixin.utils.HttpTools;
 
-public class SessionImpl implements Session {
+public class MessageManagerImpl implements MessageManager {
 
 	private Activity activity;
 
-	public SessionImpl(Activity activity) {
+	public MessageManagerImpl(Activity activity) {
 		this.activity = activity;
 	}
 
 	@Override
-	public void event(Map<String, String> param,
+	public void send(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/session/event", param, false,
+		MCTools.ajax(activity, "/api2/message/send", param, false,
 				HttpTools.SEND_POST, 30000, responseListener);
 	}
 
 	@Override
-	public void eventweb(Map<String, String> param,
-			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/session/eventweb", param, false,
+	public void get(Map<String, String> param, ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/message/get", param, false,
 				HttpTools.SEND_POST, 30000, responseListener);
 	}
 

@@ -147,10 +147,10 @@ public class PinchableImageView extends ImageView {
 	 * 设置ImageView大小等于显示的内容大小
 	 */
 	public void setRect() {
-		float scale = Math.min((float) getWidth() / (float) bmWidth,
-				(float) getHeight() / (float) bmHeight);
-		int w = (int) ((float) bmWidth * scale) + 1;
-		int h = (int) ((float) bmHeight * scale) + 1;
+		float scale = Math.min((float) getWidth() / bmWidth,
+				(float) getHeight() / bmHeight);
+		int w = (int) (bmWidth * scale) + 1;
+		int h = (int) (bmHeight * scale) + 1;
 		// int t=(screenH-h)/2;
 		// int l=(screenW-w)/2;
 		int t = getTop();
@@ -198,8 +198,8 @@ public class PinchableImageView extends ImageView {
 						- (int) ((scale - center[1]) * this.getHeight());
 				this.setFrame(l, t, r, b);
 			}
-			scaleX = (float) width / (float) getWidth();
-			scaleY = (float) height / (float) getHeight();
+			scaleX = width / (float) getWidth();
+			scaleY = height / (float) getHeight();
 		}
 		if (getWidth() < startWidth * minScale) {
 			while (getWidth() < startWidth * minScale) {
@@ -211,8 +211,8 @@ public class PinchableImageView extends ImageView {
 						+ (int) ((scale - center[1]) * this.getHeight());
 				this.setFrame(l, t, r, b);
 			}
-			scaleX = (float) width / (float) getWidth();
-			scaleY = (float) height / (float) getHeight();
+			scaleX = width / (float) getWidth();
+			scaleY = height / (float) getHeight();
 		}
 
 		if (scaleX == 1f && scaleY == 1f)

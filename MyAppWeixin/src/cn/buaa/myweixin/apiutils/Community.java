@@ -12,6 +12,7 @@ public class Community{
 	private int cid;
 	private String name;
 	private String description;
+	private Account agent;
 	public Community() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -42,6 +43,12 @@ public class Community{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		try {
+			this.agent = new Account(jcommunity.getJSONObject("agent"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	public int getCid() {
@@ -62,11 +69,18 @@ public class Community{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public Account getAgent() {
+		return agent;
+	}
+	public void setAgent(Account agent) {
+		this.agent = agent;
+	}
 	@Override
 	public String toString() {
 		return "Community [cid=" + cid + ", name=" + name + ", description="
-				+ description + "]";
+				+ description + ", agent=" + agent + "]";
 	}
+	
 	
 	
 	

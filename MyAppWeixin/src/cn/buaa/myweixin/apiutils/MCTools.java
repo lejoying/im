@@ -33,11 +33,17 @@ public class MCTools {
 
 	private static Account nowAccount;
 
+	public static boolean INNEWCOMMUNITY = false;
+
+	private static Community NOWCOMMUNITY;
+	
+	private static List<Friend> CHAT_FRIENDS;
+
 	private static List<Friend> newFriends;
 
 	private static Handler MCHandler = new Handler();
 
-	private static final String DOMAIN = "http://192.168.1.102:8071";
+	private static final String DOMAIN = "http://192.168.0.102:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;
@@ -136,6 +142,22 @@ public class MCTools {
 
 	public static List<Friend> getNewFriends() {
 		return newFriends;
+	}
+
+	public static Community getNOWCOMMUNITY() {
+		return NOWCOMMUNITY;
+	}
+
+	public static void setNOWCOMMUNITY(Community nOWCOMMUNITY) {
+		NOWCOMMUNITY = nOWCOMMUNITY;
+	}
+
+	public static List<Friend> getCHAT_FRIENDS() {
+		return CHAT_FRIENDS;
+	}
+
+	public static void setCHAT_FRIENDS(List<Friend> cHAT_FRIENDS) {
+		CHAT_FRIENDS = cHAT_FRIENDS;
 	}
 
 	public static void setNewFriends(JSONArray accounts) {
@@ -239,8 +261,8 @@ public class MCTools {
 		dbManager.closeDB();
 		return map;
 	}
-	
-	public static void saveCommunities(Activity activity, JSONArray communities){
+
+	public static void saveCommunities(Activity activity, JSONArray communities) {
 		DBManager dbManager = new DBManager(activity);
 		dbManager.addCommunities(communities);
 		dbManager.closeDB();
@@ -249,11 +271,12 @@ public class MCTools {
 	public static List<Community> getCommunities(Activity activity) {
 		List<Community> community = new ArrayList<Community>();
 		DBManager dbManager = new DBManager(activity);
-		community = dbManager.queryCommunities(MCTools.getLoginedAccount(null).getUid());
+		community = dbManager.queryCommunities(MCTools.getLoginedAccount(null)
+				.getUid());
 		dbManager.closeDB();
 		return community;
 	}
-	
+
 }
 
 class DBHelper extends SQLiteOpenHelper {
@@ -273,8 +296,10 @@ class DBHelper extends SQLiteOpenHelper {
 				+ "(rid INTEGER PRIMARY KEY, name VARCHAR, fuid INTEGER)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS friend"
 				+ "(uid INTEGER PRIMARY KEY, nickName VARCHAR, head VARCHAR, phone VARCHAR, mainBusiness TEXT,friendStatus VARCHAR)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS agent"
+				+ "(aid INTEGER PRIMARY KEY, nickName VARCHAR, head VARCHAR, phone VARCHAR, mainBusiness TEXT)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS community"
-				+ "(cid INTEGER PRIMARY KEY, name VARCHAR, description TEXT)");
+				+ "(cid INTEGER PRIMARY KEY, name VARCHAR, description TEXT , aid INTEGER)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS communityrelation"
 				+ "(cid INTEGER, fuid INTEGER)");
 	}
@@ -355,14 +380,21 @@ class DBManager {
 			for (int i = 0; i < communities.length(); i++) {
 				Community community = new Community(
 						communities.getJSONObject(i));
-				db.execSQL("INSERT OR REPLACE INTO community VALUES(?, ?, ? )",
-						new Object[] { community.getCid(), community.getName(),
-								community.getDescription() });
-
 				db.execSQL(
-						"INSERT INTO communityrelation VALUES(?, ?)",
+						"INSERT OR REPLACE INTO community VALUES(?, ?, ?, ?)",
+						new Object[] { community.getCid(), community.getName(),
+								community.getDescription(),
+								community.getAgent().getUid() });
+				db.execSQL(
+						"INSERT OR REPLACE INTO agent VALUES(?, ?, ?, ?, ?)",
+						new Object[] { community.getAgent().getUid(),
+								community.getAgent().getNickName(),
+								community.getAgent().getHead(),
+								community.getAgent().getPhone(),
+								community.getAgent().getMainBusiness() });
+				db.execSQL("INSERT INTO communityrelation VALUES(?, ?)",
 						new Object[] { community.getCid(),
-								MCTools.getLoginedAccount(null) });
+								MCTools.getLoginedAccount(null).getUid() });
 
 			}
 			db.setTransactionSuccessful(); // 设置事务成功完成
@@ -372,15 +404,28 @@ class DBManager {
 			db.endTransaction(); // 结束事务
 		}
 	}
-	
-	public List<Community> queryCommunities(int fuid){
+
+	public List<Community> queryCommunities(int fuid) {
 		List<Community> communities = new ArrayList<Community>();
 		Cursor c = queryCommunitiesCursor();
 		while (c.moveToNext()) {
 			Community community = new Community();
 			community.setCid(c.getInt(c.getColumnIndex("cid")));
 			community.setName(c.getString(c.getColumnIndex("name")));
-			community.setDescription(c.getString(c.getColumnIndex("description")));
+			community.setDescription(c.getString(c
+					.getColumnIndex("description")));
+			Cursor ac = queryCommunityAgentCursor(c.getInt(c
+					.getColumnIndex("aid")));
+			Account account = new Account();
+			if (ac.moveToNext()) {
+				account.setUid(ac.getInt(ac.getColumnIndex("aid")));
+				account.setNickName(ac.getString(ac.getColumnIndex("nickName")));
+				account.setHead(ac.getString(ac.getColumnIndex("head")));
+				account.setPhone(ac.getString(ac.getColumnIndex("phone")));
+				account.setMainBusiness(ac.getString(ac
+						.getColumnIndex("mainBusiness")));
+			}
+			community.setAgent(account);
 			communities.add(community);
 		}
 		;
@@ -388,13 +433,23 @@ class DBManager {
 
 	}
 
-	private Cursor queryCommunitiesCursor() {
-		Cursor c = db.rawQuery("SELECT cid,name,description FROM community WHERE cid IN(select cid from communityrelation where fuid=?)",
-				new String[] { String.valueOf(MCTools.getLoginedAccount(null)
-						.getUid()) });
+	private Cursor queryCommunityAgentCursor(int aid) {
+		Cursor c = db
+				.rawQuery(
+						"SELECT aid,nickName,head,phone,mainBusiness FROM agent WHERE aid=?",
+						new String[] { String.valueOf(aid) });
 		return c;
 	}
-	
+
+	private Cursor queryCommunitiesCursor() {
+		Cursor c = db
+				.rawQuery(
+						"SELECT cid,name,description,aid FROM community WHERE cid IN(select cid from communityrelation where fuid=?)",
+						new String[] { String.valueOf(MCTools
+								.getLoginedAccount(null).getUid()) });
+		return c;
+	}
+
 	public List<Circle> queryCircle() {
 		List<Circle> circles = new ArrayList<Circle>();
 		Cursor c = queryCircleCursor();

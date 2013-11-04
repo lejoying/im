@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -191,7 +193,6 @@ public class MainWeixin extends Activity {
 		longajax = true;
 		createtime = new Date().getTime();
 		count = 0;
-
 		initFriends();
 		createSession();
 		getFriends();
@@ -201,7 +202,7 @@ public class MainWeixin extends Activity {
 
 	public void getCommunities() {
 		Map<String, String> param = new HashMap<String, String>();
-		param.put("phone", MCTools.getLoginedAccount(null).getPhone());
+		param.put("phone", MCTools.getLoginedAccount(MainWeixin.this).getPhone());
 		communityManager.getcommunities(param, new MCResponseAdapter(this) {
 			@Override
 			public void success(JSONObject data) {
@@ -221,26 +222,31 @@ public class MainWeixin extends Activity {
 	}
 
 	public void findCommunity() {
-		Map<String, String> param = MCTools.getParamsWithLocation(this);
+		Map<String, String> param = MCTools.getParamsWithLocation(MainWeixin.this);
 		communityManager.find(param, new MCResponseAdapter(this) {
 			@Override
 			public void success(JSONObject data) {
 				System.out.println(data);
 				List<Community> communities = MCTools
 						.getCommunities(MainWeixin.this);
+				
 				try {
 					Community community = new Community(data
 							.getJSONObject("community"));
+					MCTools.setNOWCOMMUNITY(community);
 					boolean flag = false;
 					for (Community c : communities) {
 						if (community.getCid() == c.getCid()) {
 							flag = true;
+							break;
 						}
 					}
+					MCTools.INNEWCOMMUNITY = !flag;
 					if (flag) {
 						tv_community1.setText(community.getName());
 						tv_community2.setText(community.getName());
 						tv_community3.setText(community.getName());
+
 					} else {
 						String m = "\n";
 						tv_community1.setText(community.getName() + m);
@@ -307,9 +313,21 @@ public class MainWeixin extends Activity {
 				return allFriends.size();
 			}
 		};
-
+		
+		
+		lv_friends.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Friend friend = (Friend) lv_friends.getItemAtPosition(position);
+				List<Friend> friends = new ArrayList<Friend>();
+				friends.add(friend);
+				MCTools.setCHAT_FRIENDS(friends);
+				Intent intent = new Intent(MainWeixin.this, ChatActivity.class);
+				startActivity(intent);
+			}
+		});
 		lv_friends.setAdapter(baseAdapter);
-
 	};
 
 	private void createSession() {

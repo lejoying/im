@@ -50,7 +50,7 @@ public final class HttpTools {
 								+ params.get(key)
 								+ "&";
 					}
-					path = path.substring(0, path.length() - 2);
+					path = path.substring(0, path.length() - 1);
 				}
 			}
 			URL url = new URL(path);

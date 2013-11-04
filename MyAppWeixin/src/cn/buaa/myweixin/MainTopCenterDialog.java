@@ -1,5 +1,6 @@
 package cn.buaa.myweixin;
 
+import cn.buaa.myweixin.apiutils.MCTools;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +8,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainTopCenterDialog extends Activity {
 	private LinearLayout layout;
 
+	private TextView tv_communityinfo;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -28,6 +31,16 @@ public class MainTopCenterDialog extends Activity {
 						Toast.LENGTH_SHORT).show();
 			}
 		});*/
+		initView();
+	}
+	
+	public void initView(){
+		tv_communityinfo = (TextView) findViewById(R.id.tv_communityinfo);
+		if(MCTools.INNEWCOMMUNITY){
+			tv_communityinfo.setText("加入本区站");
+		}else{
+			tv_communityinfo.setText("本站信息");
+		}
 	}
 
 	// 点击其他位置收起菜单

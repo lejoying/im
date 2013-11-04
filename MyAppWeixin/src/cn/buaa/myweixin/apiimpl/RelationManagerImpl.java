@@ -19,13 +19,6 @@ public class RelationManagerImpl implements RelationManager {
 	}
 
 	@Override
-	public void join(Map<String, String> param,
-			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/relation/join", param, true,
-				HttpTools.SEND_POST, 5000,responseListener);
-	}
-
-	@Override
 	public void addfriend(Map<String, String> param,
 			ResponseListener responseListener) {
 		MCTools.ajax(activity, "/api2/relation/addfriend", param, true,

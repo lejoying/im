@@ -67,9 +67,8 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="68dp"
         android:layout_marginLeft="27dp"
-        android:text="天通苑站"
         android:textColor="#fff"
-        android:textSize="28dp" />
+        android:textSize="28sp" />
 
     <TextView
         android:id="@+id/tv_agent"
@@ -78,7 +77,6 @@
         android:layout_alignLeft="@+id/tv_community"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="34dp"
-        android:text="社区站长:  小黑"
         android:textColor="#fff" />
 
     <ImageView

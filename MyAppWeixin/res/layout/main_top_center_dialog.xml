@@ -24,11 +24,11 @@
                 android:onClick="showCCommunity" >
 
                 <TextView
+                    android:id="@+id/tv_communityinfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:padding="8dp"
-                    android:text="加入本区站"
                     android:textColor="#fff"
                     android:textSize="18sp" />
             </LinearLayout>

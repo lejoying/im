@@ -4,10 +4,10 @@ import java.util.Map;
 
 import cn.buaa.myweixin.listener.ResponseListener;
 
-public interface Session {
-	public void eventweb(Map<String, String> param,
+public interface MessageManager {
+	public void send(Map<String, String> param,
 			ResponseListener responseListener);
-	public void event(Map<String, String> param,
+
+	public void get(Map<String, String> param,
 			ResponseListener responseListener);
-	
 }

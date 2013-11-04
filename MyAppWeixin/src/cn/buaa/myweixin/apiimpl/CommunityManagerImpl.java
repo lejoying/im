@@ -39,4 +39,18 @@ public class CommunityManagerImpl implements CommunityManager {
 				true, HttpTools.SEND_GET, 5000, responseListener);
 	}
 
+	@Override
+	public void join(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/community/join", param,
+				true, HttpTools.SEND_GET, 5000, responseListener);
+	}
+
+	@Override
+	public void unjoin(Map<String, String> param,
+			ResponseListener responseListener) {
+		MCTools.ajax(activity, "/api2/community/unjoin", param,
+				true, HttpTools.SEND_GET, 5000, responseListener);
+	}
+
 }

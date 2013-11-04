@@ -107,4 +107,12 @@ public class Account implements Serializable {
 	public void setAccessKey(String accessKey) {
 		this.accessKey = accessKey;
 	}
+
+	@Override
+	public String toString() {
+		return "Account [uid=" + uid + ", phone=" + phone + ", head=" + head
+				+ ", nickName=" + nickName + ", mainBusiness=" + mainBusiness
+				+ ", accessKey=" + accessKey + "]";
+	}
+	
 }
