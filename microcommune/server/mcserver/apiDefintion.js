@@ -4,7 +4,7 @@
 
 api = {
     /***************************************
-     *     URL：/api2/session/event
+     *     URL：/api2/session/eventweb
      ***************************************/
     "session_eventweb": {
         request: {
@@ -28,7 +28,7 @@ api = {
         }
     },
     /***************************************
-     *     URL：/api2/session/nitify
+     *     URL：/api2/session/notify
      ***************************************/
     "session_notify": {
         request: {
@@ -399,7 +399,7 @@ api = {
      ***************************************/
     "message_send": {
         request: {
-            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
+            typical: {phone: "XXX",phoneto:[], message: {}}
         },
         response: {
             success: {"information": "send success"},
@@ -411,10 +411,10 @@ api = {
      ***************************************/
     "message_get": {
         request: {
-            typical: {phone: "XXX", sessionID: "XXX", event: "XXX"}
+            typical: {phone: "XXX", flag:"nn"}
         },
         response: {
-            success: {"information": "notify success"},
+            success: {"information": "get success", messages:[]},
             failed: {}
         }
     }

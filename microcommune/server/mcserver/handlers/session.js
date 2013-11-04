@@ -36,8 +36,10 @@ session.event = function (data, response) {
     var accessKey = data.accessKey;
     console.log(data);
     console.log(new Date().getTime()+"----");
-
-    if(accountSession[phone]!=undefined){
+    accountSession[phone] = accountSession[phone] || [];
+    console.log("常连接--event");
+    accountSession[phone][accessKey] = response;
+    /*if(accountSession[phone]!=undefined){
         if(accountSession[phone][accessKey] != undefined){
 //        accountSession[phone] = accountSession[phone] || [];
             console.log("常连接--event");
@@ -49,24 +51,28 @@ session.event = function (data, response) {
             "失败原因": "请重新登录"
         }));
         response.end();
-    }
+    }*/
 }
 
 session.notify = notify;
-function notify(phone, sessionID, eventID, event, response) {
-
+function notify(data, response) {
+    //phone, sessionID, eventID, event
+    var phone = data.phone;
+    var sessionID = data.sessionID;
+    var eventID = data.eventID;
+    var event = data.event;
     event = event || {eventID: eventID};
     if (sessionID == "*") {
         var sessions = accountSession[phone];
         for (var sessionID in sessions) {
             var sessionResponse = sessions[sessionID];
-            sessionResponse.write(JSON.stringify(event));
+            sessionResponse.write(event);
             sessionResponse.end();
         }
     }
     else {
         var sessionResponse = sessionPool[sessionID];
-        sessionResponse.write(JSON.stringify(event));
+        sessionResponse.write(event);
         sessionResponse.end();
     }
 

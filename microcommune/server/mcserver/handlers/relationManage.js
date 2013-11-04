@@ -234,7 +234,7 @@ relationManage.getcirclefriends = function (data, response) {
  ***************************************/
 relationManage.getcirclesandfriends = function (data, response) {
     response.asynchronous = 1;
-    console.log(data);
+//    console.log(data);
     var phone = data.phone;
     var accessKey = data.accessKey;
     getCirclesNode(phone);
@@ -321,86 +321,97 @@ relationManage.getcirclesandfriends = function (data, response) {
             phone: phone
         };
         db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "获取密友圈失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-                console.log(error);
-                return;
-            } else if (results.length > 0) {
-                var circles2 = [];
-                var arr = {};
-                for (var index in results) {
-                    var circleData = results[index].circle.data;
-                    var accountData = results[index].account2.data;
-                    if (arr[circleData.rid] == null) {
-                        var accounts2 = [];
-                        accounts2.push(accounts[accountData.phone]);
-                        delete accounts[accountData.phone];
+                if (error) {
+                    response.write(JSON.stringify({
+                        "提示信息": "获取密友圈失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                    console.log(error);
+                    return;
+                } else if (results.length > 0) {
+                    var circles2 = [];
+                    var arr = {};
+                    for (var index in results) {
+                        var circleData = results[index].circle.data;
+                        var accountData = results[index].account2.data;
+                        if (arr[circleData.rid] == null) {
+                            var accounts2 = [];
+                            accounts2.push(accounts[accountData.phone]);
+                            delete accounts[accountData.phone];
 //                        console.log(accounts[accountData.phone]+"--");
-                        circleData.accounts = accounts2;
-                        arr[circleData.rid] = circleData;
-                        circles2.push(circleData);
-                    } else {
-                        arr[circleData.rid].accounts.push(accounts[accountData.phone]);
-                        delete accounts[accountData.phone];
-                    }
-                }
-                var circle = {
-                    name: "默认分组"
-                };
-                var accounts2 = [];
-                var flag = false;
-                console.log(accounts);
-                if (accounts != null) {
-                    for (var index in accounts) {
-                        var it = accounts[index];
-                        flag = true;
-                        accounts2.push(it);
-                    }
-                }
-                if (flag) {
-                    circle.accounts = accounts2;
-                    circles2.push(circle);
-                }
-                response.write(JSON.stringify({
-                    "提示信息": "获取密友圈成功",
-                    circles: circles2
-                }));
-                response.end();
-            } else {
-                var circles2 = [];
-                if (circles != null) {
-                    for (var index in circles) {
-                        var it = circles[index];
-                        it.accounts = [];
-                        circles2.push(it);
-                    }
-                }
-                var accounts2 = [];
-                if (accounts != null) {
-                    console.log(accounts);
-                    for (var index in accounts) {
-                        var it = accounts[index];
-                        accounts2.push(it);
+                            circleData.accounts = accounts2;
+                            arr[circleData.rid] = circleData;
+                            circles2.push(circleData);
+                            delete circles[circleData.rid];
+                        } else {
+                            arr[circleData.rid].accounts.push(accounts[accountData.phone]);
+                            delete accounts[accountData.phone];
+                        }
                     }
                     var circle = {
-                        name: "默认分组",
-                        accounts: accounts2
+                        name: "默认分组"
                     };
-                    circles2.push(circle);
+                    var accounts2 = [];
+                    var flag = false;
+//                console.log(JSON.stringify(accounts) == "{}");
+                    if (JSON.stringify(accounts) != "{}") {
+                        for (var index in accounts) {
+                            var it = accounts[index];
+                            flag = true;
+                            accounts2.push(it);
+                        }
+                        if (flag) {
+                            circle.accounts = accounts2;
+                            circles2.push(circle);
+                        }
+                    }
+                    if (JSON.stringify(circles) != "{}") {
+                        for (var index in circles) {
+                            var it = circles[index];
+                            it.accounts == [];
+                            circles2.push(it);
+                        }
+                    }
+                    response.write(JSON.stringify({
+                        "提示信息": "获取密友圈成功",
+                        circles: circles2
+                    }));
+                    response.end();
+                } else {
+                    var circles2 = [];
+                    if (circles != null) {
+                        for (var index in circles) {
+                            var it = circles[index];
+                            it.accounts = [];
+                            circles2.push(it);
+                        }
+                    }
+                    var accounts2 = [];
+                    if (accounts != null) {
+                        console.log(accounts);
+                        for (var index in accounts) {
+                            var it = accounts[index];
+                            accounts2.push(it);
+                        }
+                        var circle = {
+                            name: "默认分组",
+                            accounts: accounts2
+                        };
+                        circles2.push(circle);
+                    }
+                    response.write(JSON.stringify({
+                        "提示信息": "获取密友圈成功",
+                        circles: circles2
+                    }));
+                    response.end();
                 }
-                response.write(JSON.stringify({
-                    "提示信息": "获取密友圈成功",
-                    circles: circles2
-                }));
-                response.end();
             }
-        });
+        )
+        ;
     }
 }
+
 /***************************************
  *     URL：/api2/relation/addfriendagree
  ***************************************/
@@ -414,10 +425,10 @@ relationManage.addfriendagree = function (data, response) {
     var accessKey = data.accessKey;
     agreeAddFriendNode(phone, phoneAsk, rid);
     /*if (status == "true") {
-        agreeAddFriendNode(phone, phoneAsk, rid);
-    } else {
-        refuseAddFriend(phone, phoneAsk, rid);
-    }*/
+     agreeAddFriendNode(phone, phoneAsk, rid);
+     } else {
+     refuseAddFriend(phone, phoneAsk, rid);
+     }*/
     function agreeAddFriendNode(phone, phoneAsk, rid) {
         modifyStatusNode(phone, phoneAsk, rid);
         function modifyStatusNode(phone, phoneAsk, rid) {
@@ -639,8 +650,8 @@ relationManage.getaskfriends = function (data, response) {
             response.end();
             console.log(error);
             return;
-        } else if (results.length > 0) {
-            console.log("获取好友请求成功---");
+        } else {
+            console.log("获取好友请求成功---" + results.length);
             var accounts = [];
             for (var index in results) {
                 var accountData = results[index].account1.data;
@@ -661,14 +672,6 @@ relationManage.getaskfriends = function (data, response) {
             response.write(JSON.stringify({
                 "提示信息": "获取好友请求成功",
                 accounts: accounts
-            }));
-            response.end();
-            console.log("+++++");
-        } else {
-            console.log("--------" + results.length);
-            response.write(JSON.stringify({
-                "提示信息": "获取好友请求成功",
-                accounts: []
             }));
             response.end();
         }

@@ -5921,6 +5921,6 @@ a.btnBlue:active .btnBluePanel {
 }
 
 .message table tr td {
-    text-align: center;
+    text-align: left;
     height: 33px;
 }

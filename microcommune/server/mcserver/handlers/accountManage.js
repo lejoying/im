@@ -206,6 +206,7 @@ accountManage.verifycode = function (data, response) {
  ***************************************/
 accountManage.verifyloginphone = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     checkPhone();
     function checkPhone() {
@@ -250,7 +251,7 @@ accountManage.verifyloginphone = function (data, response) {
                             if (smsObj.statusCode == "000000") {
                                 response.write(JSON.stringify({
                                     "提示信息": "验证码发送成功",
-                                    "phone": account.phone
+                                    "phone": accountNode.data.phone
                                 }));
                                 response.end();
                             } else {
@@ -264,7 +265,7 @@ accountManage.verifyloginphone = function (data, response) {
                     } else {
                         response.write(JSON.stringify({
                             "提示信息": "验证码发送成功",
-                            "phone": account.phone
+                            "phone": accountNode.data.phone
                         }));
                         response.end();
                     }
@@ -304,6 +305,7 @@ accountManage.verifylogincode = function (data, response) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 accountData.code = code;
+                var time = new Date().getTime();
                 var bad = time - parseInt(accountData.time);
                 if (bad > 600000) {
                     console.log("验证码超时---");
@@ -410,7 +412,6 @@ accountManage.verifypass = function (data, response) {
  ***************************************/
 accountManage.auth = function (data, response) {
     response.asynchronous = 1;
-    console.log(data);
     var phone = data.phone;
     var password = data.password;
     var accessKey = data.accessKey;
@@ -650,7 +651,7 @@ accountManage.getaccount = function (data, response) {
                 byPhone: accountData.byPhone,
                 nickName: accountData.nickName
             };
-            console.log(accountData.phone);
+//            console.log(accountData.phone);
             response.write(JSON.stringify({
                 "提示信息": "获取成功",
                 account: account

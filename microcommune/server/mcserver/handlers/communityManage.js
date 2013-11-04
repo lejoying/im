@@ -136,6 +136,13 @@ communityManage.find = function (data, response) {
                         }
                     }
                 }
+                var agent = {
+                    uid: 110,
+                    nickName: "站长",
+                    phone: "110",
+                    mainBusiness: "管理社区"
+                };
+                community.agent = agent;
                 delete community.location;
                 response.write(JSON.stringify({
                     "提示信息": "获取成功",
@@ -151,9 +158,9 @@ communityManage.find = function (data, response) {
  ***************************************/
 communityManage.join = function (data, response) {
     response.asynchronous = 1;
-    console.log(data);
     var cid = data.cid;
     var phone = data.phone;
+    console.log(phone);
     joinCommunityNode();
 
     function joinCommunityNode() {
@@ -178,10 +185,16 @@ communityManage.join = function (data, response) {
                 response.end();
                 console.error(error);
                 return;
-            } else {
-                console.log("加入成功---");
+            } else if (results.length > 0) {
+                console.log("加入成功---" + results.length);
                 response.write(JSON.stringify({
                     "提示信息": "加入成功"
+                }));
+                response.end();
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "加入失败",
+                    "失败原因": "数据异常"
                 }));
                 response.end();
             }
@@ -193,7 +206,6 @@ communityManage.join = function (data, response) {
  ***************************************/
 communityManage.unjoin = function (data, response) {
     response.asynchronous = 1;
-    console.log(data);
     var cid = data.cid;
     var phone = data.phone;
     unJoinCommunityNode();
@@ -233,7 +245,6 @@ communityManage.unjoin = function (data, response) {
  ***************************************/
 communityManage.getcommunities = function (data, response) {
     response.asynchronous = 1;
-
     var phone = data.phone;
     var query = [
         'MATCH (account:Account)-[r:JOIN]->(community:Community)',
@@ -253,12 +264,19 @@ communityManage.getcommunities = function (data, response) {
             console.log(error);
             return;
         } else {
-            console.log("获取社区成功---");
+            console.log("获取社区成功---" + results.length);
             var communities = [];
             var i = 0;
+            var agent = {
+                uid: 110,
+                nickName: "站长",
+                phone: "110",
+                mainBusiness: "管理社区"
+            };
             for (var index in results) {
                 i++;
                 var it = results[index].community.data;
+                it.agent = agent;
                 delete it.location;
                 communities.push(it);
             }

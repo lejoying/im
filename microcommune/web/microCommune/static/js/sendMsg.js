@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $.getScript("/static/js/nTenjin.js");
-    SetCookie("phone_cookie", "121");
+//    SetCookie("phone_cookie", "122");
 //    alert(GetCookie("wxgs"));
     $.ajax({
         type: "POST",
@@ -9,8 +9,8 @@ $(document).ready(function () {
             phone: GetCookie("phone_cookie")
         },
         success: function (data) {
-//            alert(data);
             $($(".nickName")[0]).html(data.account.nickName);
+            window.sessionStorage.setItem("nowAccount",data.account);
         }
     });
     $(".js_circlesFriends").hide();
@@ -27,23 +27,23 @@ $(document).ready(function () {
                 window.sessionStorage.setItem("circles",JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
-                $(".circles_friends").click(function () {
+                $(".circles_friends .friendDetail").click(function () {
                     var obj = JSON.parse(window.sessionStorage.getItem("circles"));
-                    alert(this.circleid+":"+this.phone);
+                    var phone = this.attributes['phone'].nodeValue;
+                    var rid = this.attributes['circleid'].nodeValue;
                     for(var index1 in obj){
                         var it1 = obj[index1];
-                        if(it1.rid == this.circleid){
+                        if(it1.rid == rid){
                             var accounts = it1.accounts;
                             for(var index2 in accounts){
                                 var it2 = accounts[index2];
-                                if(it2.phone == this.phone){
-                                    showBlackPage(it2);
+                                if(it2.phone == phone){
+                                    showBlackPage("aa","it2");
                                 }
                             }
                         }
                     }
                 });
-
             }
         }
     });
@@ -88,7 +88,7 @@ function showNotification(){
     if (window.webkitNotifications.checkPermission() > 0) {
         RequestPermission(showNotification);
     }else {
-        notification = window.webkitNotifications.createNotification("http://d.hiphotos.baidu.com/album/w%3D2048/sign=e5974229adaf2eddd4f14ee9b92800e9/bd315c6034a85edf1e2fc20c48540923dd547579.jpg", "乔晓松", "上班中...！");
+        notification = window.webkitNotifications.createNotification("http://avatar.csdn.net/F/8/1/1_qxs965266509.jpg", "乔晓松", "上班中...！");
         notification.onshow = function() { setTimeout('notification.cancel()', 5000); }
         notification.onclick = function(){}
         notification.show();
