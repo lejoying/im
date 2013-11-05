@@ -403,7 +403,7 @@ api = {
         },
         response: {
             success: {"提示信息": "发送成功"},
-            failed: {}
+            failed: {"提示信息": "发送失败", "失败原因": "数据异常"}
         }
     },
     /***************************************
@@ -417,7 +417,7 @@ api = {
             success: {"提示信息": "获取成功", messages: [
                 {type: "text" || "image" || "voice", phone: "NNN", phoento: "NNN", content: "XXX", time: new Date().getTime()}
             ]},
-            failed: {}
+            failed: {"提示信息": "获取失败", "失败原因": "数据异常"}
         }
     }
 }
