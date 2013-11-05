@@ -84,11 +84,21 @@ messageManage.get = function (data, response) {
         client.lrange(phone, from, -1, function (err, reply) {
             if (err != null) {
                 console.log(err);
+                response.write(JSON.stringify({
+                    "提示信息": "获取失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
                 return;
             }
             if (reply.length != 0) {
                 client.set(phone + "flag", parseInt(from) + reply.length, function (err, reply) {
                     if (err != null) {
+                        response.write(JSON.stringify({
+                            "提示信息": "获取失败",
+                            "失败原因": "数据异常"
+                        }));
+                        response.end();
                         console.log(err);
                         return;
                     }

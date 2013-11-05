@@ -5882,12 +5882,11 @@ a.btnBlue:active .btnBluePanel {
 }
 
 .prompteds {
-    background-color: #FBFBFF	;
+    background-color: #3B3E44	;
     width: 420px;
     height: 300px;
-    margin-top: -700px;
+    margin-top: -595px;
     margin-left: 900px;
-    filter:Alpha(opacity=30);
 }
 
 .topWord {
@@ -5906,7 +5905,7 @@ a.btnBlue:active .btnBluePanel {
 }
 
 .message {
-    color: blue;
+    color: #009900;
 }
 
 .message table {
