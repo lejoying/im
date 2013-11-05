@@ -50,10 +50,10 @@ function showBlackPage(clarity,tipword){
         "<div class='topWord'><span class='topleft'>详细信息</span><span class='topright'>信息</span></div>" +
         "<div class='message'>" +
         "<table border='1px;'>" +
-        "<tr><td rowspan='3'><img src="+src+"></td><td>bb1</td></tr>" +
+        "<tr><td rowspan='3' style='width: 100px;'><img src="+src+"></td><td>bb1</td></tr>" +
         "<tr><td>bb2</td></tr>" +
         "<tr><td>bb3</td></tr>" +
-        "<tr><td colspan='2'><hr style='color: red;'/>bb4<hr style='color: red;'/></td></tr>" +
+        "<tr><td colspan='2' style='text-align: center;'><hr style='color: red;'/>bb4<hr style='color: red;'/></td></tr>" +
         "</table>" +
         "</div>" +
         "<div><a class='buttonblue changeSaveButton' href='javascript:closeBlackBackground();'>发消息</a>" +

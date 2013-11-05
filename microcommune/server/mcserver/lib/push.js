@@ -9,7 +9,7 @@ push.inform = function(phone, sessionID, event){
             event: JSON.stringify(event)
         },
         type: 'POST',
-        url: "http://127.0.0.1:8065/api2/session/notify",
+        url: "http://127.0.0.1:8071/api2/session/notify",
         success: function (dataStr) {
             console.log("push---"+dataStr);
         }

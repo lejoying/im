@@ -15,15 +15,7 @@ requestHandlers.session = function (request, response, pathObject, data) {
         session.event(data, response);
     }
     else if (operation == "notify") {
-        var uid = getParam["uid"];
-        var sessionID = getParam["sessionID"];
-        var eventID = getParam["eventID"];
-        var eventStr = getParam["event"];
-        var event;
-        if (eventStr != null) {
-            event = JSON.parse(eventStr);
-        }
-        session.notify(uid, sessionID, eventID, event, response);
+        session.notify(data, response);
     }
 };
 
@@ -53,6 +45,12 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     }
     else if (operation == "verifywebcodelogin") {
         accountManage.verifywebcodelogin(data, response);
+    }
+    else if (operation == "verifyloginphone") {
+        accountManage.verifyloginphone(data, response);
+    }
+    else if (operation == "verifylogincode") {
+        accountManage.verifylogincode(data, response);
     }
     else if (operation == "getaccount") {
         accountManage.getaccount(data, response);

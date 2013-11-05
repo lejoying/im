@@ -1,0 +1,49 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        var flag = 0;
+        function commit() {
+            var name = document.getElementById("name").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/session/event?",
+                data: {
+                    phone: name,
+                    accessKey: "coolspan2"
+                },
+                success: function (data) {
+                    if (data.event == "message") {
+                        $.ajax({
+                            type: "POST",
+                            url: "/api2/message/get?",
+                            data: {
+                                phone: name,
+                                flag: flag
+                            },
+                            success: function (data) {
+                                flag = flag + data.length;
+                                var div = document.createElement("div");
+                                div.appendChild(document.createTextNode(data));
+                                $("#msg")[0].appendChild(div);
+                            }
+                        });
+                    }
+                    commit();
+                },
+                error: function (eror) {
+                    commit();
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+name:<input type="text" id="name"><br>
+<input type="submit" value="登录" onclick="commit()">
+
+<div id="msg"></div>
+</body>
+</html>

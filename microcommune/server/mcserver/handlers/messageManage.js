@@ -4,70 +4,91 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 
 var redis = require("redis");
-var saveClient;
-var getClient;
+var client = redis.createClient();
+var push = require('../lib/push.js');
 messageManage.send = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    var userlist = data.userlist;
-    var messages = data.messages;
-    function send(uid, userlist, messages, response) {
-        saveMessages(messages);
-        for (var index in userlist) {
-            var nowTime = new Date().getTime();
-            processResponse(userlist[index], function process(sessionResponse) {
-                while(new Date().getTime() - nowTime < 10000){
-
+    var phoneto = JSON.parse(data.phoneto);
+    var message = JSON.parse(data.message);
+    var messageOwn = JSON.stringify({
+        type: message.type,
+        phone: phone,
+        phoneto: data.phoneto,
+        content: message.content,
+        time: new Date().getTime()
+    });
+    client.rpush(phone, messageOwn, function (err, reply) {
+        if (err != null) {
+            console.log(err);
+            return;
+        }
+        for (var index in phoneto) {
+            var messageOther = JSON.stringify({
+                type: message.type,
+                phone: phone,
+                phoneto: JSON.stringify([phoneto[index]]),
+                content: message.content,
+                time: new Date().getTime()
+            });
+            client.rpush(phoneto[index], messageOther, function (err, reply) {
+                if (err != null) {
+                    console.log(err);
+                    return;
                 }
-                //getMessages();
-                sessionResponse.write(JSON.stringify(messages));
-                sessionResponse.end();
+                //通知
+                push.inform(phoneto[index], "*", {"提示信息": "成功", event: "message"});
+                //response
+                response.write(JSON.stringify({
+                    "information": "send success"
+                }));
+                response.end();
             });
         }
-
-        function processResponse(toPhone, process) {
-            var sessions = accountSession[toPhone];
-            if (sessions != undefined) {
-                for (var sessionID in sessions) {
-                    var sessionResponse = sessions[sessionID];
-                    process(sessionResponse);
-                }
-            } else {
-                console.log(touid + "为离线状态");
-            }
-        }
-
-        response.write(JSON.stringify({
-            "information": "send success"
-        }));
-        response.end();
-    }
-
-    function saveMessages(messages) {
-        saveClient = redis.createClient();
-        saveClient.hmset("aa", messages, function (err, reply) {
-            if (err != null) {
-                console.log(err);
-                saveClient.end();
-                return;
-            }
-            saveClient.end();
-        });
-    }
+    });
 }
 messageManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
-    function getMessages() {
-        getClient = redis.createClient();
-        getClient.hgetall("aa", function (err, reply) {
+    var flag = data.flag;
+    if (flag == "none") {
+        client.get(phone + "flag", function (err, reply) {
             if (err != null) {
                 console.log(err);
-                getClient.end();
+                client.set(phone + "flag", 0, function (err, reply) {
+                    if (err != null) {
+                        console.log(err);
+                        return;
+                    }
+                    get(0);
+                });
                 return;
             }
-            console.log(reply);
-            getClient.end();
+            get(reply);
+        });
+    } else {
+        get(flag);
+    }
+
+    function get(from) {
+        client.lrange(phone, from, -1, function (err, reply) {
+            if (err != null) {
+                console.log(err);
+                return;
+            }
+            if (reply.length != 0) {
+                client.set(phone + "flag", parseInt(from) + reply.length, function (err, reply) {
+                    if (err != null) {
+                        console.log(err);
+                        return;
+                    }
+                });
+            }
+            response.write(JSON.stringify({
+                "提示信息": "获取成功",
+                messages: reply
+            }));
+            response.end();
         });
     }
 }
