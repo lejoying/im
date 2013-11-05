@@ -4,7 +4,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 
 var redis = require("redis");
-var client = redis.createClient();
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var push = require('../lib/push.js');
 messageManage.send = function (data, response) {
     response.asynchronous = 1;
@@ -20,6 +20,11 @@ messageManage.send = function (data, response) {
     });
     client.rpush(phone, messageOwn, function (err, reply) {
         if (err != null) {
+            response.write(JSON.stringify({
+                "提示信息": "发送失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
             console.log(err);
             return;
         }
@@ -33,6 +38,11 @@ messageManage.send = function (data, response) {
             });
             client.rpush(phoneto[index], messageOther, function (err, reply) {
                 if (err != null) {
+                    response.write(JSON.stringify({
+                        "提示信息": "发送失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
                     console.log(err);
                     return;
                 }
@@ -40,7 +50,7 @@ messageManage.send = function (data, response) {
                 push.inform(phoneto[index], "*", {"提示信息": "成功", event: "message"});
                 //response
                 response.write(JSON.stringify({
-                    "information": "send success"
+                    "提示信息": "发送成功"
                 }));
                 response.end();
             });
