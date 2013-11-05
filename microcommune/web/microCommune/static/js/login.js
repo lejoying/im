@@ -1,7 +1,8 @@
 $(document).ready(function () {
 //    var base64EncodeChars = "";
 //    alert(base64decode(base64EncodeChars));
-    delCookie("phone_cookie");
+//    delCookie("phone_cookie");
+    window.sessionStorage.clear();
     $(".js_phoneimg").hide();
     var index = 20;
     var timer;
@@ -54,8 +55,8 @@ $(document).ready(function () {
         } else if (isNaN(phone) == true) {
             $(".js_errorp").html("手机号不正确,不能为字母或特殊字符!");
         }/* else if (phone.length != 11) {
-            $(".js_errorp").html("手机号格式不正确，请重新输入!");
-        }*/ else {
+         $(".js_errorp").html("手机号格式不正确，请重新输入!");
+         }*/ else {
             $.ajax({
                 type: "POST",
                 url: "/api2/account/auth?",
@@ -65,8 +66,9 @@ $(document).ready(function () {
                 },
                 success: function (data) {
                     if (data["提示信息"] == "账号登录成功") {
-                        SetCookie("phone_cookie", data.account.phone);
-                        $(".js_errorp").html(data["提示信息"] + "," + data.account.phone);
+//                        SetCookie("phone_cookie", data.account.phone);
+                        window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(data.account));
+                        $(".js_errorp").html(data["提示信息"] + ",用户:" + data.account.phone);
                         location.href = "default.html";
                     } else {
                         $(".js_errorp").html(data["提示信息"] + "," + data["失败原因"]);
@@ -75,7 +77,7 @@ $(document).ready(function () {
             });
         }
     });
-    $(".js_logincode").click(function(){
+    $(".js_logincode").click(function () {
         var phone = $(".js_phones").val();
         $(".js_errors").html("");
         if (phone.trim() == "") {
@@ -83,19 +85,19 @@ $(document).ready(function () {
         } else if (isNaN(phone) == true) {
             $(".js_errors").html("手机号格式不正确,不能为字母或特殊字符!");
         }/*else if(phone.length != 11){
-            $(".js_errors").html("手机号格式不正确,必须是11位数字!");
-        }*/else{
+         $(".js_errors").html("手机号格式不正确,必须是11位数字!");
+         }*/ else {
             $.ajax({
                 type: "POST",
                 url: "/api2/account/verifyloginphone?",
                 data: {
                     phone: phone
                 },
-                success: function(data){
-                    if(data["提示信息"]=="验证码发送成功"){
-                        $(".js_errors").html(data.phone+"获取验证码成功!");
-                    }else{
-                        $(".js_errors").html(data["提示信息"]+","+data["失败原因"]);
+                success: function (data) {
+                    if (data["提示信息"] == "验证码发送成功") {
+                        $(".js_errors").html(data.phone + "获取验证码成功!");
+                    } else {
+                        $(".js_errors").html(data["提示信息"] + "," + data["失败原因"]);
                     }
                 }
             });
@@ -107,7 +109,7 @@ $(document).ready(function () {
         var code = $(".js_codes").val();
         if (phone.trim() == "" || code.trim() == "") {
             $(".js_errors").html("手机号或验证码为空，请重新输入!");
-        } else if (isNaN(phone) == true || isNaN(code)==true) {
+        } else if (isNaN(phone) == true || isNaN(code) == true) {
             $(".js_errors").html("手机号或验证码格式不正确,不能为字母或特殊字符!");
         }/* else if (phone.length != 11 || code.length!=6) {
          $(".js_errorp").html("手机号或验证码格式不正确，请重新输入!");
@@ -173,17 +175,15 @@ function SetCookie(name, value)
         + ((path == null) ? "" : ("; path=" + path)) + ((domain == null) ? "" : ("; domain=" + domain))
         + ((secure == true) ? "; secure" : "");
 }
-function delCookie(name)
-{
+function delCookie(name) {
     var exp = new Date();
     exp.setTime(exp.getTime() - 1);
-    var cval=getCookie(name);
-    if(cval!=null) document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    var cval = getCookie(name);
+    if (cval != null) document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
 }
-function getCookie(name)
-{
-    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-    if(arr=document.cookie.match(reg)) return unescape(arr[2]);
+function getCookie(name) {
+    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg)) return unescape(arr[2]);
     else return null;
 }
 function request(str) {

@@ -10,20 +10,34 @@ messageManage.send = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var phoneto = JSON.parse(data.phoneto);
-    var messages = data.message;
-    client.rpush(phone, messages, function (err, reply) {
+    var message = JSON.parse(data.message);
+    var messageOwn = JSON.stringify({
+        type: message.type,
+        phone: phone,
+        phoneto: data.phoneto,
+        content: message.content,
+        time: new Date().getTime()
+    });
+    client.rpush(phone, messageOwn, function (err, reply) {
         if (err != null) {
             console.log(err);
             return;
         }
         for (var index in phoneto) {
-            client.rpush(phoneto[index], messages, function (err, reply) {
+            var messageOther = JSON.stringify({
+                type: message.type,
+                phone: phone,
+                phoneto: JSON.stringify([phoneto[index]]),
+                content: message.content,
+                time: new Date().getTime()
+            });
+            client.rpush(phoneto[index], messageOther, function (err, reply) {
                 if (err != null) {
                     console.log(err);
                     return;
                 }
                 //通知
-                push.inform(phoneto[index], "*", {event: "message"});
+                push.inform(phoneto[index], "*", {"提示信息": "成功", event: "message"});
                 //response
                 response.write(JSON.stringify({
                     "information": "send success"
@@ -63,14 +77,17 @@ messageManage.get = function (data, response) {
                 return;
             }
             if (reply.length != 0) {
-                client.set(phone + "flag", parseInt(from)+ reply.length, function (err, reply) {
+                client.set(phone + "flag", parseInt(from) + reply.length, function (err, reply) {
                     if (err != null) {
                         console.log(err);
                         return;
                     }
                 });
             }
-            response.write(JSON.stringify(reply));
+            response.write(JSON.stringify({
+                "提示信息": "获取成功",
+                messages: reply
+            }));
             response.end();
         });
     }

@@ -2,34 +2,41 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
-<script type="text/javascript" src="/static/js/jquery.js"></script>
-<script type="text/javascript">
-function commit(){
-	var phone = document.getElementById("phone").value;
-	var phoneto = document.getElementById("phoneto").value;
-	var message = document.getElementById("message").value;
-    var listPhone = [];
-    listPhone.push(phoneto);
-	$.ajax({
-		type:"POST",
-		url:"/api2/message/send?",
-		data:{
-			phone:phone,
-			phoneto:JSON.stringify(listPhone),
-			message:message
-		},
-        success: function(data){
-            $("#msg").html(data["information"]);
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var phone = document.getElementById("phone").value;
+            var phoneto = document.getElementById("phoneto").value;
+            var message = document.getElementById("message").value;
+            var listPhone = [];
+            listPhone.push(phoneto);
+            var messages = {
+                type: "text",
+                content: {
+                    text: message
+                }
+            };
+            $.ajax({
+                type: "POST",
+                url: "/api2/message/send?",
+                data: {
+                    phone: phone,
+                    phoneto: JSON.stringify(listPhone),
+                    message: JSON.stringify(messages)
+                },
+                success: function (data) {
+                    $("#msg").html(data["information"]);
+                }
+            });
         }
-	});
-}
-</script>
+    </script>
 </head>
 <body>
 phone:<input type="text" id="phone"><br>
 phoneto:<input type="text" id="phoneto"><br>
 message:<input type="text" id="message"><br>
 <input type="submit" value="发送" onclick="commit()">
+
 <div id="msg"></div>
 </body>
 </html>

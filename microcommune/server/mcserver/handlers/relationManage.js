@@ -105,7 +105,7 @@ relationManage.addfriend = function (data, response) {
                     "提示信息": "添加成功"
                 }));
                 response.end();
-//                push.inform(phoneTo, "*", {event: 1});
+                push.inform(phoneTo, "*", {"提示信息": "成功",event: "newfriends"});
             }
         });
     }

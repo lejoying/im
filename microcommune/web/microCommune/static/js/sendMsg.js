@@ -1,8 +1,6 @@
 $(document).ready(function () {
     $.getScript("/static/js/nTenjin.js");
-//    SetCookie("phone_cookie", "122");
-//    alert(GetCookie("wxgs"));
-    $.ajax({
+   /* $.ajax({
         type: "POST",
         url: "/api2/account/getaccount?",
         data: {
@@ -12,18 +10,20 @@ $(document).ready(function () {
             $($(".nickName")[0]).html(data.account.nickName);
             window.sessionStorage.setItem("nowAccount",data.account);
         }
-    });
+    });*/
+    var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+    $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
     $(".js_circlesFriends").hide();
 //    $(".prompteds").hide();
     $.ajax({
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",
         data: {
-            phone: GetCookie("phone_cookie")
+            phone: JSON.parse(nowAccount).phone
         },
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
-                setTimeout(showNotification(), 10000);
+                setTimeout(showNotification(), 3000);
                 window.sessionStorage.setItem("circles",JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
@@ -48,14 +48,21 @@ $(document).ready(function () {
         }
     });
 
-    var i = 0;
+    $(".addFriends").click(function(){
+        alert("addFriends");
+    });
+    $(".voiceCancel").click(function(){
+        alert("voiceCancel");
+    });
+    $(".feedback").click(function(){
+        alert("feedback");
+    });
+    $(".iconLogout").click(function(){
+        alert("iconLogout");
+    });
     $("#txl").click(function () {
         $("#conversationContainer").hide();
         $(".js_circlesFriends").show();
-        if (i == 0) {
-            i = 1;
-
-        }
     });
     $("#chooseConversationBtn").click(function () {
         $("#conversationContainer").show();

@@ -23,7 +23,7 @@ api = {
             typical: {"phone": "XXX", "accessKey": "XXX"}
         },
         response: {
-            success: {"提示信息": "成功"},
+            success: {"提示信息": "成功", event: "message" || "newfriends"},
             failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
         }
     },
@@ -399,10 +399,10 @@ api = {
      ***************************************/
     "message_send": {
         request: {
-            typical: {phone: "XXX",phoneto:[], message: {}}
+            typical: {phone: "XXX", phoneto: [], message: {type: "text" || "image" || "voice", content: "XXX"}}
         },
         response: {
-            success: {"information": "send success"},
+            success: {"提示信息": "发送成功"},
             failed: {}
         }
     },
@@ -411,10 +411,12 @@ api = {
      ***************************************/
     "message_get": {
         request: {
-            typical: {phone: "XXX", flag:"nn"}
+            typical: {phone: "XXX", flag: "NNN"}
         },
         response: {
-            success: {"information": "get success", messages:[]},
+            success: {"提示信息": "获取成功", messages: [
+                {type: "text" || "image" || "voice", phone: "NNN", phoento: "NNN", content: "XXX", time: new Date().getTime()}
+            ]},
             failed: {}
         }
     }
