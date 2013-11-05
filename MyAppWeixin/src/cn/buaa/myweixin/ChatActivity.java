@@ -250,11 +250,12 @@ public class ChatActivity extends Activity implements OnClickListener {
 		param.put("phoneto", phoneto.toString());
 		
 		JSONObject message = new JSONObject();
-		
+		JSONObject content = new JSONObject();
 		try {
-			message.put("TYPE", "text");
-			message.put("CONTENT", contString);
-			message.put("time", new Date().getTime());
+			content.put("text", contString);
+			
+			message.put("type", "text");
+			message.put("content", content);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

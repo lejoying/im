@@ -37,9 +37,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cn.buaa.myweixin.adapter.MCResponseAdapter;
 import cn.buaa.myweixin.api.CommunityManager;
+import cn.buaa.myweixin.api.MessageManager;
 import cn.buaa.myweixin.api.RelationManager;
 import cn.buaa.myweixin.api.Session;
 import cn.buaa.myweixin.apiimpl.CommunityManagerImpl;
+import cn.buaa.myweixin.apiimpl.MessageManagerImpl;
 import cn.buaa.myweixin.apiimpl.RelationManagerImpl;
 import cn.buaa.myweixin.apiimpl.SessionImpl;
 import cn.buaa.myweixin.apiutils.Community;
@@ -69,6 +71,10 @@ public class MainWeixin extends Activity {
 	private Session session;
 	private RelationManager relationManager;
 	private CommunityManager communityManager;
+	private MessageManager messageManager;
+	
+	private Map<String, List<Friend>> friends;
+	private List<Friend> allFriends;
 
 	private boolean longajax;
 
@@ -190,6 +196,7 @@ public class MainWeixin extends Activity {
 		session = new SessionImpl(this);
 		relationManager = new RelationManagerImpl(this);
 		communityManager = new CommunityManagerImpl(this);
+		messageManager = new MessageManagerImpl(this);
 		longajax = true;
 		createtime = new Date().getTime();
 		count = 0;
@@ -266,7 +273,7 @@ public class MainWeixin extends Activity {
 
 	public void initFriends() {
 		inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		final Map<String, List<Friend>> friends = MCTools
+		friends = MCTools
 				.getCirclesFriends(this);
 
 		if (friends.size() == 0) {
@@ -274,7 +281,7 @@ public class MainWeixin extends Activity {
 		}
 
 		Set<String> circles = friends.keySet();
-		final List<Friend> allFriends = new ArrayList<Friend>();
+		allFriends = new ArrayList<Friend>();
 		for (String circle : circles) {
 			allFriends.addAll(friends.get(circle));
 		}
@@ -341,10 +348,21 @@ public class MainWeixin extends Activity {
 
 			@Override
 			public void success(JSONObject data) {
-				System.out.println(data.toString());
 				// 重新建立长连接
 				if (longajax)
 					createSession();
+				System.out.println(data.toString());
+				try {
+					if(data.getString("event").equals("message")){
+						getMessages();
+					}
+					if(data.getString("event").equals("newfriends")){
+						getAskFriends();
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			@Override
@@ -375,6 +393,19 @@ public class MainWeixin extends Activity {
 		});
 	}
 
+	private void getMessages(){
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
+		param.put("flag", "none");
+		messageManager.get(param, new MCResponseAdapter(this){
+			@Override
+			public void success(JSONObject data) {
+				System.out.println(data);
+			}
+			
+		});
+	}
+	
 	private void getFriends() {
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("phone", MCTools.getLoginedAccount(this).getPhone());
@@ -388,6 +419,7 @@ public class MainWeixin extends Activity {
 							MCTools.saveFriends(MainWeixin.this,
 									data.getJSONArray("circles"));
 							initFriends();
+							getMessages();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
