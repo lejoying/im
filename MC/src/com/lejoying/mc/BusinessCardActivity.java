@@ -12,9 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -29,15 +27,17 @@ public class BusinessCardActivity extends Activity {
 	// DEFINITION view
 	private ScrollView sv_content;
 	private LinearLayout ll_content;
+	private RelativeLayout rl_control;
 
 	// DEFINITION object
 	private LayoutInflater inflater;
 	private Handler handler;
+	private CircleAdapter circleAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.businesscard);
+		setContentView(R.layout.businesscard_new);
 		initView();
 	}
 
@@ -46,6 +46,7 @@ public class BusinessCardActivity extends Activity {
 		// INIT view
 		sv_content = (ScrollView) findViewById(R.id.sv_content);
 		ll_content = (LinearLayout) findViewById(R.id.ll_content);
+		rl_control = (RelativeLayout) findViewById(R.id.rl_control);
 
 		// INIT object
 		inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -66,14 +67,15 @@ public class BusinessCardActivity extends Activity {
 		}
 		circlefriends.put("√‹”—»¶1", friends1);
 		circlefriends.put("√‹”—»¶2", friends2);
+		circlefriends.put("√‹”—»¶3", friends1);
+		circlefriends.put("√‹”—»¶4", friends2);
+		circlefriends.put("√‹”—»¶5", friends1);
 
-		CircleAdapter circleAdapter = new CircleAdapter(circlefriends,
-				ll_content, this);
+		circleAdapter = new CircleAdapter(circlefriends, ll_content,
+				rl_control, this);
 
 		circleAdapter.createView();
 
-		
-		
 		// final RelativeLayout rl_group = (RelativeLayout) inflater.inflate(
 		// R.layout.group_panel, null);
 		// TextView tv_groupname = (TextView) rl_group
@@ -258,7 +260,11 @@ public class BusinessCardActivity extends Activity {
 	}
 
 	public void back(View v) {
-		finish();
+		if (circleAdapter.getEditMode()) {
+			circleAdapter.exitEdit();
+		} else {
+			finish();
+		}
 	}
 
 	public void rightMenu(View v) {

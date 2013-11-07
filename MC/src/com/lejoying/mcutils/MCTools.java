@@ -255,14 +255,6 @@ public class MCTools {
 		return accounts;
 	}
 
-	public static Map<String, List<Friend>> getCirclesFriends(Activity activity) {
-		Map<String, List<Friend>> map = new HashMap<String, List<Friend>>();
-		DBManager dbManager = new DBManager(activity);
-		map = dbManager.queryCirclesFriends();
-		dbManager.closeDB();
-		return map;
-	}
-
 	public static void saveCommunities(Activity activity, JSONArray communities) {
 		DBManager dbManager = new DBManager(activity);
 		dbManager.addCommunities(communities);
@@ -346,7 +338,7 @@ class DBManager {
 				for (int j = 0; j < accounts.length(); j++) {
 					Friend friend = new Friend(accounts.getJSONObject(j));
 					db.execSQL(
-							"INSERT OR REPLACE INTO friend VALUES(?, ?, ?, ?, ?, ?)",
+							"INSERT INTO friend VALUES(?, ?, ?, ?, ?, ?)",
 							new Object[] { friend.getUid(),
 									friend.getNickName(), friend.getHead(),
 									friend.getPhone(),
@@ -496,27 +488,18 @@ class DBManager {
 		return c;
 	}
 
-	public Map<String, List<Friend>> queryCirclesFriends() {
-		Map<String, List<Friend>> map = new HashMap<String, List<Friend>>();
-		List<Circle> circles = queryCircle();
-		for (Circle circle : circles) {
-			map.put(circle.getName(), queryFriends(circle.getRid()));
-		}
-		return map;
-	}
-
 	private void deleteFriends() {
 		List<Circle> circles = queryCircle();
 		db.beginTransaction();
 		try {
 			for (Circle circle : circles) {
 				db.execSQL(
-						"DELETE FROM friend WHERE uid IN(select uid from circlerelation where rid=?)",
+						"DELETE FROM friend",
 						new Object[] { circle.getRid() });
-				db.execSQL("DELETE FROM circlerelation WHERE rid=?",
+				db.execSQL("DELETE FROM circlerelation",
 						new Object[] { circle.getRid() });
 			}
-			db.execSQL("DELETE FROM circle WHERE fuid=?",
+			db.execSQL("DELETE FROM circle",
 					new Object[] { MCTools.getLoginedAccount(null).getUid() });
 			db.setTransactionSuccessful();
 		} finally {
