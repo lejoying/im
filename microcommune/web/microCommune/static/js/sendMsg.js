@@ -1,11 +1,15 @@
 $(document).ready(function () {
-//    window.sessionStorage.clear();
     window.onbeforeunload = onbeforeunload_handler;
     function onbeforeunload_handler() {
         var warning = "关闭浏览器聊天记录将会丢失";
         return warning;
     }
 
+    $.getScript("/static/js/nTenjin.js");
+    var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+    $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
+    $(".js_circlesFriends").hide();
+    $(".loadMoreConv").hide();
     var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
     if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
         var tempChatArr = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatArr"));
@@ -13,11 +17,8 @@ $(document).ready(function () {
 //            var it = tempChatArr[index];
             addTempChatAccount(JSON.parse(tempChatArr[index]));
         }
+        $(".loadMoreConv").show();
     }
-    $.getScript("/static/js/nTenjin.js");
-    var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
-    $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
-    $(".js_circlesFriends").hide();
 //    $(".prompteds").hide();
     $.ajax({
         type: "POST",
@@ -28,7 +29,7 @@ $(document).ready(function () {
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
 //                window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify({}));
-                setTimeout(showNotification(), 3000);
+                setTimeout(showNotification(), 2000);
                 window.sessionStorage.setItem("circles", JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
@@ -78,22 +79,41 @@ $(document).ready(function () {
     $(".addFriends").click(function () {
         alert("addFriends");
     });
+    $(".DesktopRemind").click(function () {
+        if ($(".DesktopRemind .iconPic").attr("check") == undefined || $(".DesktopRemind .iconPic").attr("check") == "true") {
+            $(".DesktopRemind .iconPic").attr("check", false);
+            $(".DesktopRemind .iconPic").css("background-position", "-71px -599px");
+        } else {
+            $(".DesktopRemind .iconPic").attr("check", true);
+            $(".DesktopRemind .iconPic").css("background-position", "-95px -599px");
+        }
+    });
     $(".voiceCancel").click(function () {
-        alert("voiceCancel");
+        if ($(".voiceCancel .iconPic").attr("check") == undefined || $(".voiceCancel .iconPic").attr("check") == "false") {
+            $(".voiceCancel .iconPic").attr("check", true);
+            $(".voiceCancel .iconPic").css("background-position", "-50px -599px");
+        } else {
+            $(".voiceCancel .iconPic").attr("check", false);
+            $(".voiceCancel .iconPic").css("background-position", "-26px -599px");
+        }
     });
     $(".feedback").click(function () {
-        alert("feedback");
+        showProcFeedBack();
     });
     $(".iconLogout").click(function () {
-        alert("iconLogout");
+        window.localStorage.clear();
+        window.sessionStorage.clear();
+        location.href = "/login.html";
     });
     $("#txl").click(function () {
         $("#conversationContainer").hide();
         $(".js_circlesFriends").show();
+        $(".loadMoreConv").hide();
     });
     $("#chooseConversationBtn").click(function () {
         $("#conversationContainer").show();
         $(".js_circlesFriends").hide();
+        $(".loadMoreConv").show();
     });
     $(".chatSend").click(function () {
         var content = $("#textInput").val();
@@ -167,7 +187,7 @@ $(document).ready(function () {
                         addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
                     }
                 } else {
-                    alert(data["提示信息"] + "," + data["失败原因"]);
+                    dialogMessage("notice", data["提示信息"] + "," + data["失败原因"], 1000);
                 }
             }
         });
@@ -220,6 +240,7 @@ $(document).ready(function () {
             }
         }
     }
+
     clickDiv();
     $(".js_createRoomSendMessage").click(function () {
         closeProc();
@@ -228,8 +249,12 @@ $(document).ready(function () {
         $("#js_chat .chatName").attr("accountphone", this.getAttribute("accountphone"));
         $("#js_chat .chatName").attr("circleid", this.getAttribute("circleid"));
     });
+    $(".loadMoreConv").click(function () {
+        //alert("正在努力加载更多的数据...");
+        dialogMessage("loading", "正在获取更多的数据，请稍候...", 2000);
+    });
 });
-function clickDiv(){
+function clickDiv() {
     $("#conversationContainer>div").click(function () {
 //            clickDiv();
         $("#js_chat")[0].style.visibility = "visible";
@@ -240,7 +265,7 @@ function clickDiv(){
         setChatMessages(JSON.parse(tempChat[phone]));
     });
 }
-function setChatMessages(obj){
+function setChatMessages(obj) {
     $("#js_chat .chatName").html(obj.nickName);
     $("#js_chat .chatName").attr("accountphone", obj.phone);
     $("#js_chat .chatName").attr("circleid", obj.rid);
@@ -302,36 +327,83 @@ function showProc(it, rid) {
     $("#message_box .js_phone").html("手机号：" + it.phone);
     $("#message_box .js_mainBusiness").html("业务：" + it.mainBusiness);
 }
-//拖动
-function drag(obj) {
-    var s = obj.style;
-    var b = document.body;
-    var x = event.clientX + b.scrollLeft - s.pixelLeft;
-    var y = event.clientY + b.scrollTop - s.pixelTop;
-
-    var m = function () {
-        if (event.button == 1) {
-            s.pixelLeft = event.clientX + b.scrollLeft - x;
-            s.pixelTop = event.clientY + b.scrollTop - y;
-        } else {
-            document.onmousemove = null;
-//            document.detachEvent("onmousemove", m);
-        }
-    }
-    document.onmousemove = m;
-//    document.attachEvent("onmousemove", m)
-
-    if (!this.z)
-        this.z = 999;
-    s.zIndex = ++this.z;
-    event.cancelBubble = true;
+function showProcFeedBack() {
+    js_feedback.style.visibility = 'visible';
+    // 创建灰色背景层
+    procbg = document.createElement("div");
+    procbg.setAttribute("id", "mybg");
+    procbg.style.background = "#000";
+    procbg.style.width = "100%";
+    procbg.style.height = "100%";
+    procbg.style.position = "absolute";
+    procbg.style.top = "0";
+    procbg.style.left = "0";
+    procbg.style.zIndex = "500";
+    procbg.style.opacity = "0.3";
+    procbg.style.filter = "Alpha(opacity=30)";
+    //背景层加入页面
+    document.body.appendChild(procbg);
+    document.body.style.overflow = "hidden";
+    /*//    $("#message_box .js_head>img").attr("src", "/static/images/face.jpg");attributes['phone'].nodeValue;
+     //    $(".js_createRoomSendMessage")[0].attributes['alt'].nodeValue = it.phone;
+     $(".js_createRoomSendMessage").attr("accountphone", it.phone);
+     $(".js_createRoomSendMessage").attr("accountnickName", it.nickName);
+     $(".js_createRoomSendMessage").attr("circleid", rid);
+     $("#message_box .js_nickName").html("昵称：" + it.nickName);
+     $("#message_box .js_phone").html("手机号：" + it.phone);
+     $("#message_box .js_mainBusiness").html("业务：" + it.mainBusiness);*/
 }
 
 function closeProc() {
     message_box.style.visibility = 'hidden';
     procbg.style.visibility = "hidden";
 }
+function closeProCFeedBack() {
+    js_feedback.style.visibility = 'hidden';
+    operaterBox.style.display = "none";
+    procbg.style.visibility = "hidden";
+}
 
+function addTextAreaCss() {
+    $("#js_feedback textarea").css("border-color", "#EEC77C");
+}
+function deleteTextAreaCss() {
+    $("#js_feedback textarea").css("border-color", "");
+}
+function js_sendFeedBack(obj) {
+    var content = $(".js_feedbackcontent").val().trim();
+    if (content == "") {
+        eval("$.Prompt('请输入您要反馈的内容')");
+    } else {
+        dialogMessage("succ", "谢谢您的反馈!", 2000);
+        $(".js_feedbackcontent").val("");
+        closeProCFeedBack();
+    }
+}
+function dialogMessage(type, msg, time) {
+    var tipHtml = '';
+    if (type == 'loading') {
+        tipHtml = '<img alt="" src="/static/images/loading.gif">' + (msg ? msg : '正在加载数据...');
+    } else if (type == 'notice') {
+        tipHtml = '<span class="gtl_ico_hits"></span>' + msg
+    } else if (type == 'error') {
+        tipHtml = '<span class="gtl_ico_fail"></span>' + msg
+    } else if (type == 'succ') {
+        tipHtml = '<span class="gtl_ico_succ"></span>' + msg
+    }
+    if ($('.msgbox_layer_wrap')) {
+        $('.msgbox_layer_wrap').remove();
+    }
+    if (st) {
+        clearTimeout(st);
+    }
+    $("body").prepend("<div class='msgbox_layer_wrap'><span id='mode_tips_v2' style='z-index: 10000;' class='msgbox_layer'><span class='gtl_ico_clear'></span>" + tipHtml + "<span class='gtl_end'></span></span></div>");
+    $(".msgbox_layer_wrap").show();
+    var st = setTimeout(function () {
+        $(".msgbox_layer_wrap").hide();
+        clearTimeout(st);
+    }, time);
+}
 if (!window.webkitNotifications) {
     alert("您的浏览器不支持Notification桌面通知!");
 }
@@ -365,60 +437,218 @@ function getTemplate(id) {
     template.convert(string);
     return template;
 }
-function SetCookie(name, value)
-//设定Cookie值
-{
-    var expdate = new Date();
-    var argv = SetCookie.arguments;
-    var argc = SetCookie.arguments.length;
-    var expires = (argc > 2) ? argv[2] : null;
-    var path = (argc > 3) ? argv[3] : null;
-    var domain = (argc > 4) ? argv[4] : null;
-    var secure = (argc > 5) ? argv[5] : false;
-    if (expires != null) expdate.setTime(expdate.getTime() + ( expires * 1000 ));
-    document.cookie = name + "=" + escape(value) + ((expires == null) ? "" : ("; expires=" + expdate.toGMTString()))
-        + ((path == null) ? "" : ("; path=" + path)) + ((domain == null) ? "" : ("; domain=" + domain))
-        + ((secure == true) ? "; secure" : "");
-}
-function setCookieTime(name, value, time) {
-    var strsec = getsec(time);
-    var exp = new Date();
-    exp.setTime(exp.getTime() + strsec * 1);
-    document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
-}
-function getsec(str) {
-    alert(str);
-    var str1 = str.substring(1, str.length) * 1;
-    var str2 = str.substring(0, 1);
-    if (str2 == "s") {
-        return str1 * 1000;
-    } else if (str2 == "h") {
-        return str1 * 60 * 60 * 1000;
-    } else if (str2 == "d") {
-        return str1 * 24 * 60 * 60 * 1000;
+function DragDivDrag(titleBarID, message_boxID) {
+
+    var Common = {
+        getEvent: function () {//ie/ff
+            if (document.all) {
+                return window.event;
+            }
+            func = getEvent.caller;
+            while (func != null) {
+                var arg0 = func.arguments[0];
+                if (arg0) {
+                    if ((arg0.constructor == Event || arg0.constructor == MouseEvent) || (typeof (arg0) == "object" && arg0.preventDefault && arg0.stopPropagation)) {
+                        return arg0;
+                    }
+                }
+                func = func.caller;
+            }
+            return null;
+        },
+        getMousePos: function (ev) {
+            if (!ev) {
+                ev = this.getEvent();
+            }
+            if (ev.pageX || ev.pageY) {
+                return {
+                    x: ev.pageX,
+                    y: ev.pageY
+                };
+            }
+
+            if (document.documentElement && document.documentElement.scrollTop) {
+                return {
+                    x: ev.clientX + document.documentElement.scrollLeft - document.documentElement.clientLeft,
+                    y: ev.clientY + document.documentElement.scrollTop - document.documentElement.clientTop
+                };
+            }
+            else if (document.body) {
+                return {
+                    x: ev.clientX + document.body.scrollLeft - document.body.clientLeft,
+                    y: ev.clientY + document.body.scrollTop - document.body.clientTop
+                };
+            }
+        },
+        getItself: function (id) {
+            return "string" == typeof id ? document.getElementById(id) : id;
+        },
+        getViewportSize: { w: (window.innerWidth) ? window.innerWidth : (document.documentElement && document.documentElement.clientWidth) ? document.documentElement.clientWidth : document.body.offsetWidth, h: (window.innerHeight) ? window.innerHeight : (document.documentElement && document.documentElement.clientHeight) ? document.documentElement.clientHeight : document.body.offsetHeight },
+        isIE: document.all ? true : false,
+        setOuterHtml: function (obj, html) {
+            var Objrange = document.createRange();
+            obj.innerHTML = html;
+            Objrange.selectNodeContents(obj);
+            var frag = Objrange.extractContents();
+            if (obj.parentNode != null) {
+                obj.parentNode.insertBefore(frag, obj);
+                obj.parentNode.removeChild(obj);
+            }
+        }
     }
-}
-function GetCookie(name)
-//获得Cookie的原始值
-{
-    var arg = name + "=";
-    var alen = arg.length;
-    var clen = document.cookie.length;
-    var i = 0;
-    while (i < clen) {
-        var j = i + alen;
-        if (document.cookie.substring(i, j) == arg)
-            return GetCookieVal(j);
-        i = document.cookie.indexOf(" ", i) + 1;
-        if (i == 0) break;
+
+///------------------------------------------------------------------------------------------------------
+    var Class = {
+        create: function () {
+            return function () {
+                this.init.apply(this, arguments);
+            }
+        }
     }
-    return null;
+    var Drag = Class.create();
+    Drag.prototype = {
+        init: function (titleBar, message_box, Options) {
+            //设置点击是否透明，默认不透明
+            titleBar = Common.getItself(titleBar);
+            message_box = Common.getItself(message_box);
+            this.dragArea = { maxLeft: 0, maxRight: Common.getViewportSize.w - message_box.offsetWidth - 2, maxTop: 0, maxBottom: Common.getViewportSize.h - message_box.offsetHeight - 2 };
+            if (Options) {
+                this.opacity = Options.opacity ? (isNaN(parseInt(Options.opacity)) ? 100 : parseInt(Options.opacity)) : 100;
+                this.keepOrigin = Options.keepOrigin ? ((Options.keepOrigin == true || Options.keepOrigin == false) ? Options.keepOrigin : false) : false;
+                if (this.keepOrigin) {
+                    this.opacity = 50;
+                }
+                if (Options.area) {
+                    if (Options.area.left && !isNaN(parseInt(Options.area.left))) {
+                        this.dragArea.maxLeft = Options.area.left
+                    }
+                    ;
+                    if (Options.area.right && !isNaN(parseInt(Options.area.right))) {
+                        this.dragArea.maxRight = Options.area.right
+                    }
+                    ;
+                    if (Options.area.top && !isNaN(parseInt(Options.area.top))) {
+                        this.dragArea.maxTop = Options.area.top
+                    }
+                    ;
+                    if (Options.area.bottom && !isNaN(parseInt(Options.area.bottom))) {
+                        this.dragArea.maxBottom = Options.area.bottom
+                    }
+                    ;
+                }
+            }
+            else {
+                this.opacity = 100, this.keepOrigin = false;
+            }
+            this.originDragDiv = null;
+            this.tmpX = 0;
+            this.tmpY = 0;
+            this.moveable = false;
+
+            var dragObj = this;
+
+            titleBar.onmousedown = function (e) {
+                var ev = e || window.event || Common.getEvent();
+                //只允许通过鼠标左键进行拖拽,IE鼠标左键为1 FireFox为0
+                if (Common.isIE && ev.button == 1 || !Common.isIE && ev.button == 0) {
+                }
+                else {
+                    return false;
+                }
+
+                if (dragObj.keepOrigin) {
+                    dragObj.originDragDiv = document.createElement("div");
+                    dragObj.originDragDiv.style.cssText = message_box.style.cssText;
+                    dragObj.originDragDiv.style.width = message_box.offsetWidth;
+                    dragObj.originDragDiv.style.height = message_box.offsetHeight;
+                    dragObj.originDragDiv.innerHTML = message_box.innerHTML;
+                    message_box.parentNode.appendChild(dragObj.originDragDiv);
+                }
+
+                dragObj.moveable = true;
+                message_box.style.zIndex = dragObj.GetZindex() + 1;
+                var downPos = Common.getMousePos(ev);
+                dragObj.tmpX = downPos.x - message_box.offsetLeft;
+                dragObj.tmpY = downPos.y - message_box.offsetTop;
+
+                titleBar.style.cursor = "move";
+                if (Common.isIE) {
+                    message_box.setCapture();
+                } else {
+                    window.captureEvents(Event.MOUSEMOVE);
+                }
+
+                dragObj.SetOpacity(message_box, dragObj.opacity);
+
+                //FireFox 去除容器内拖拽图片问题
+                if (ev.preventDefault) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                }
+
+                document.onmousemove = function (e) {
+                    if (dragObj.moveable) {
+                        var ev = e || window.event || Common.getEvent();
+                        //IE 去除容器内拖拽图片问题
+                        if (document.all) //IE
+                        {
+                            ev.returnValue = false;
+                        }
+
+                        var movePos = Common.getMousePos(ev);
+                        message_box.style.left = Math.max(Math.min(movePos.x - dragObj.tmpX, dragObj.dragArea.maxRight), dragObj.dragArea.maxLeft) + "px";
+                        message_box.style.top = Math.max(Math.min(movePos.y - dragObj.tmpY, dragObj.dragArea.maxBottom), dragObj.dragArea.maxTop) + "px";
+
+                    }
+                };
+
+                document.onmouseup = function () {
+                    if (dragObj.keepOrigin) {
+                        if (Common.isIE) {
+                            dragObj.originDragDiv.outerHTML = "";
+                        }
+                        else {
+                            Common.setOuterHtml(dragObj.originDragDiv, "");
+                        }
+                    }
+                    if (dragObj.moveable) {
+                        if (Common.isIE) {
+                            message_box.releaseCapture();
+                        }
+                        else {
+                            window.releaseEvents(Event.MOUSEMOVE);
+                        }
+                        dragObj.SetOpacity(message_box, 100);
+                        titleBar.style.cursor = "default";
+                        dragObj.moveable = false;
+                        dragObj.tmpX = 0;
+                        dragObj.tmpY = 0;
+                    }
+                };
+            }
+        },
+        SetOpacity: function (message_box, n) {
+            if (Common.isIE) {
+                message_box.filters.alpha.opacity = n;
+            }
+            else {
+                message_box.style.opacity = n / 100;
+            }
+
+        },
+        GetZindex: function () {
+            var maxZindex = 0;
+            var divs = document.getElementsByTagName("div");
+            for (z = 0; z < divs.length; z++) {
+                maxZindex = Math.max(maxZindex, divs[z].style.zIndex);
+            }
+            return maxZindex;
+        }
+    }
+    new Drag(titleBarID, message_boxID, { opacity: 100, keepOrigin: true }); //, area: { left: 50, right: 500, top: 100, bottom: 400}
 }
-function GetCookieVal(offset)
-//获得Cookie解码后的值
-{
-    var endstr = document.cookie.indexOf(";", offset);
-    if (endstr == -1)
-        endstr = document.cookie.length;
-    return unescape(document.cookie.substring(offset, endstr));
+
+window.onload = function () {
+    DragDivDrag("titleBar", "message_box");
+    DragDivDrag("js_titleBarfeedback", "js_feedback");
 }

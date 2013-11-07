@@ -5,13 +5,16 @@ RETURN n
 /***************************************
  *     schema
  ***************************************/
-
+CREATE INDEX ON :Account(uid);
 CREATE INDEX ON :Account(phone)
-CREATE INDEX ON :Account(email)
+CREATE INDEX ON :Account(nickName);
+CREATE INDEX ON :Account(status);
 
-CREATE INDEX ON :Circle(rid)
+CREATE INDEX ON :Circle(rid);
+CREATE INDEX ON :Circle(rid);
 
 CREATE INDEX ON :Community(cid)
+CREATE INDEX ON :Community(name)
 
 
 /***************************************
