@@ -12,7 +12,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -69,6 +71,9 @@ public class BusinessCardActivity extends Activity {
 				ll_content, this);
 
 		circleAdapter.createView();
+
+		
+		
 		// final RelativeLayout rl_group = (RelativeLayout) inflater.inflate(
 		// R.layout.group_panel, null);
 		// TextView tv_groupname = (TextView) rl_group
