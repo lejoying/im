@@ -19,7 +19,7 @@ public class BusinessCardActivity_test extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.businesscard);
+		setContentView(R.layout.businesscard_test);
 		setData(); // 初始化联系人和首字母的数据
 		adapter = new DragListAdapter(this, list, listtag); // [重要],将每一个item重写排版和编辑得到信息view之后放到adapter里面
 		// 将我们自定义的adapter放到listview里面

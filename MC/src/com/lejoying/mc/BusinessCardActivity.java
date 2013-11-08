@@ -8,6 +8,7 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -27,7 +28,7 @@ public class BusinessCardActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.businesscard_new);
+		setContentView(R.layout.businesscard);
 		initView();
 	}
 
@@ -64,16 +65,19 @@ public class BusinessCardActivity extends Activity {
 		circleAdapter.createView();
 	}
 
-	public void back(View v) {
-		if (circleAdapter.getEditMode()) {
-			circleAdapter.exitEdit();
-		} else {
-			finish();
+	
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			if (circleAdapter.getEditMode()) {
+				circleAdapter.exitEdit();
+				return false;
+			}
+		default:
+			break;
 		}
+		return super.onKeyDown(keyCode, event);
 	}
-
-	public void rightMenu(View v) {
-
-	}
-
 }
