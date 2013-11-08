@@ -4,17 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="25dp" />
-
     <RelativeLayout
         android:id="@+id/rl_panel"
         android:layout_width="fill_parent"
         android:layout_height="280dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
+        android:layout_alignParentTop="true"
         android:background="@drawable/frame_background"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
@@ -60,5 +55,12 @@
             android:paddingBottom="10dp" >
         </LinearLayout>
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="25dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/rl_panel" />
 
 </RelativeLayout>

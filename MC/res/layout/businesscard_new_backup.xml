@@ -39,6 +39,7 @@
                 android:onClick="back"
                 android:src="@drawable/btn_return"
                 tools:ignore="ContentDescription" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -57,13 +58,14 @@
                 android:onClick="rightMenu"
                 android:src="@drawable/btn_setting"
                 tools:ignore="ContentDescription" />
+
         </RelativeLayout>
     </RelativeLayout>
 
     <ScrollView
         android:id="@+id/sv_content"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
@@ -77,9 +79,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             tools:ignore="UselessLeaf" >
+
         </LinearLayout>
     </ScrollView>
-
+    
     <RelativeLayout
         android:id="@+id/rl_control"
         android:layout_width="fill_parent"
@@ -232,6 +235,7 @@
                 android:layout_alignTop="@+id/imageView3"
                 android:src="@drawable/right_nav"
                 tools:ignore="ContentDescription" />
+
         </RelativeLayout>
     </RelativeLayout>
 

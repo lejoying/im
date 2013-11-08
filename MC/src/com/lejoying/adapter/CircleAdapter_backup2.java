@@ -3,13 +3,13 @@ package com.lejoying.adapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -36,10 +37,9 @@ import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mcutils.Friend;
-import com.lejoying.mcutils.ImageTools;
 
 @SuppressLint("NewApi")
-public class CircleAdapter {
+public class CircleAdapter_backup2 {
 	private Map<String, List<Friend>> circlefriends;
 	private ViewGroup contentParent;
 	private Activity activity;
@@ -51,14 +51,16 @@ public class CircleAdapter {
 	private int beforeScrollY;
 	private float beforeGetY;
 	private int beforePosition;
+	private int beforeHeight;
 
+	private int current;
 	private boolean editMode;
 
 	private WindowManager windowManager = null; // 窗口管理类
 	// 窗口参数类
 	private WindowManager.LayoutParams layoutParams = null;
 
-	public CircleAdapter(Map<String, List<Friend>> circlefriends,
+	public CircleAdapter_backup2(Map<String, List<Friend>> circlefriends,
 			ViewGroup cParent, ViewGroup controlPanel, Activity activity) {
 		this.circlefriends = circlefriends;
 		this.contentParent = cParent;
@@ -72,9 +74,6 @@ public class CircleAdapter {
 
 	public void createView() {
 		viewList = new ArrayList<View>();
-		final Bitmap head = ImageTools.getCircleBitmap(BitmapFactory
-				.decodeResource(activity.getResources(), R.drawable.xiaohei),
-				true, 5, Color.rgb(255, 255, 255));
 		if (circlefriends != null) {
 			Object[] circles = circlefriends.keySet().toArray();
 			for (int ccount = circles.length - 1; ccount >= 0; ccount--) {
@@ -93,19 +92,6 @@ public class CircleAdapter {
 				final int pagecount = friends.size() % 6 == 0 ? friends.size() / 6
 						: friends.size() / 6 + 1;
 				final List<View> pageviews = new ArrayList<View>();
-				ScrollView sv = ((ScrollView) (contentParent.getParent()));
-				sv.setOnTouchListener(new OnTouchListener() {
-					@Override
-					public boolean onTouch(View view, MotionEvent event) {
-						int action = event.getAction();
-						// switch (action) {
-						// case MotionEvent.ACTION_MOVE:
-						//
-						// break;
-						// }
-						return editMode;
-					}
-				});
 				for (int i = 0; i < pagecount; i++) {
 					final int a = i;
 					BaseAdapter gridpageAdapter = new BaseAdapter() {
@@ -121,7 +107,8 @@ public class CircleAdapter {
 							TextView tv_nickName = (TextView) rl_gridpage_item
 									.findViewById(R.id.tv_nickName);
 
-							iv_head.setImageBitmap(head);
+							iv_head.setImageDrawable(activity.getResources()
+									.getDrawable(R.drawable.xiaohei));
 							tv_nickName.setText(friends.get(a * 6 + position)
 									.getNickName());
 
@@ -130,14 +117,13 @@ public class CircleAdapter {
 									.setOnLongClickListener(new OnLongClickListener() {
 										@Override
 										public boolean onLongClick(View v) {
+											beforeHeight = contentParent
+													.getHeight();
+											beforePosition = viewList
+													.indexOf(parent.getParent()
+															.getParent()
+															.getParent());
 											if (!editMode) {
-												// 进入编辑模式
-												editMode = true;
-												beforePosition = viewList
-														.indexOf(parent
-																.getParent()
-																.getParent()
-																.getParent());
 												for (int i = 0; i < viewList
 														.size(); i++) {
 													Animation animation = null;
@@ -156,25 +142,6 @@ public class CircleAdapter {
 																		R.anim.tran_out_bottom);
 													}
 													if (i != beforePosition) {
-														animation
-																.setAnimationListener(new AnimationListener() {
-
-																	@Override
-																	public void onAnimationEnd(
-																			Animation animation) {
-																	}
-
-																	@Override
-																	public void onAnimationRepeat(
-																			Animation animation) {
-																	}
-
-																	@Override
-																	public void onAnimationStart(
-																			Animation animation) {
-																		animView.setVisibility(View.INVISIBLE);
-																	}
-																});
 														animView.startAnimation(animation);
 													}
 												}
@@ -183,11 +150,11 @@ public class CircleAdapter {
 														.getScrollY();
 												beforeGetY = viewList.get(
 														beforePosition).getY();
-												float scrollToY = -(beforeGetY - beforeScrollY);
-												System.out
-														.println(scrollToY);
 												TranslateAnimation taAnimation = new TranslateAnimation(
-														0f, 0f, 0f, scrollToY);
+														0,
+														0,
+														0,
+														-(beforeGetY - beforeScrollY));
 												taAnimation.setDuration(300);
 												taAnimation
 														.setAnimationListener(new AnimationListener() {
@@ -209,9 +176,12 @@ public class CircleAdapter {
 																		beforePosition)
 																		.clearAnimation();
 																contentParent
-																		.scrollTo(
-																				0,
-																				Math.round(beforeGetY - beforeScrollY));
+																		.removeAllViewsInLayout();
+																contentParent
+																		.addView(viewList
+																				.get(beforePosition));
+																// 进入编辑模式
+																editMode = true;
 															}
 														});
 
@@ -356,7 +326,6 @@ public class CircleAdapter {
 	}
 
 	public void exitEdit() {
-		contentParent.scrollTo(0, 0);
 		// 隐藏选项卡
 		TranslateAnimation ta_exit = new TranslateAnimation(0, 0, 0,
 				controlPanel.getHeight());
@@ -380,13 +349,15 @@ public class CircleAdapter {
 		});
 		controlPanel.startAnimation(ta_exit);
 		// 好友圈位置还原
-
 		Animation animation = new TranslateAnimation(0, 0,
 				-(beforeGetY - beforeScrollY), 0);
 		animation.setDuration(300);
-		viewList.get(beforePosition).startAnimation(animation);
 
+		// viewList.get(beforePosition).startAnimation(animation);
+
+		// contentParent.removeAllViewsInLayout();
 		for (int i = 0; i < viewList.size(); i++) {
+
 			Animation inanimation = null;
 			if (i > beforePosition) {
 				inanimation = AnimationUtils.loadAnimation(activity,
@@ -397,10 +368,50 @@ public class CircleAdapter {
 						R.anim.tran_in_top);
 			}
 			if (i != beforePosition) {
-				viewList.get(i).setVisibility(View.VISIBLE);
-				viewList.get(i).startAnimation(inanimation);
+				//viewList.get(i).setVisibility(View.INVISIBLE);
+				contentParent.addView(viewList.get(i), i);
+				// viewList.get(i).startAnimation(inanimation);
+			} else {
+
+				// inanimation = new TranslateAnimation(0, 0,
+				// -(beforeGetY - beforeScrollY), 0);
+				// inanimation.setDuration(300);
+				// viewList.get(beforePosition).startAnimation(inanimation);
+
 			}
 		}
+		//
+		// contentParent.scrollTo(0, (int) (beforeGetY - beforeScrollY));
+		//
+		// current = (int) (beforeGetY - beforeScrollY);
+
+		// final Timer mTimer = new Timer();
+		// mTimer.schedule(new TimerTask() {
+		// @Override
+		// public void run() {
+		// // contentParent.scrollTo(0,current-=10);
+		// System.out.println(current -= 10);
+		// if (current < 0) {
+		// mTimer.cancel();
+		// }
+		// }
+		// }, 0, 10);
+
+		// 回滚到编辑前状态
+		final ScrollView sv = ((ScrollView) (contentParent.getParent()));
+		sv.post(new Runnable() {
+			@Override
+			public void run() {
+				sv.scrollBy(0, beforeScrollY);
+			}
+		});
+		sv.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+				return editMode;
+			}
+		});
 		editMode = false;
 	}
 
