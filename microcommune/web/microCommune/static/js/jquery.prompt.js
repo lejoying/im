@@ -1,18 +1,18 @@
 /***
- * PromptÌáÊ¾Óï²å¼þ
- * ±àÐ´Ê±¼ä£º2013Äê4ÔÂ8ºÅ
+ * Promptï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½Ð´Ê±ï¿½ä£º2013ï¿½ï¿½4ï¿½ï¿½8ï¿½ï¿½
  * version:Prompt.1.0.js
- * author:Ð¡Óî<i@windyland.com>
+ * author:Ð¡ï¿½ï¿½<i@windyland.com>
 ***/
 (function($){
 		$.extend({
 			PromptBox:{
 				defaults : {
 					name  :	"T"+ new Date().getTime(),
-					content :"This is tips!",							//µ¯³ö²ãµÄÄÚÈÝ(textÎÄ±¾¡¢ÈÝÆ÷IDÃû³Æ¡¢URLµØÖ·¡¢IframeµÄµØÖ·)
-					width : 200,									//µ¯³ö²ãµÄ¿í¶È
+					content :"This is tips!",							//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(textï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IDï¿½ï¿½Æ¡ï¿½URLï¿½ï¿½Ö·ï¿½ï¿½Iframeï¿½Äµï¿½Ö·)
+					width : 200,									//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
 					height : 70,							
-					time:2000,//ÉèÖÃ×Ô¶¯¹Ø±ÕÊ±¼ä£¬ÉèÖÃÎª0±íÊ¾²»×Ô¶¯¹Ø±Õ
+					time:1000,//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½Ø±ï¿½Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½Ø±ï¿½
 					bg:true
 				},
 				timer:{
@@ -31,10 +31,10 @@
 					var ops = $.extend({},this.defaults,op);
 					this.element = $("<div class='Prompt_floatBoxBg' id='fb"+ops.name+"'></div><div class='Prompt_floatBox' id='"+ops.name+"'><div class='content'></div></div>");
 					$("body").prepend(this.element);
-					this.blank = $("#fb"+ops.name);						//ÕÚÕÖ²ã¶ÔÏó
-					this.content = $("#"+ops.name+" .content");				//µ¯³ö²ãÄÚÈÝ¶ÔÏó
-					this.dialog = $("#"+ops.name+"");						//µ¯³ö²ã¶ÔÏó
-					if ($.browser.msie && ($.browser.version == "6.0") && !$.support.style) {//ÅÐ¶ÏIE6
+					this.blank = $("#fb"+ops.name);						//ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ï¿½ï¿½
+					this.content = $("#"+ops.name+" .content");				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½ï¿½ï¿½
+					this.dialog = $("#"+ops.name+"");						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+					if ($.browser.msie && ($.browser.version == "6.0") && !$.support.style) {//ï¿½Ð¶ï¿½IE6
 						this.blank.css({height:$(document).height(),width:$(document).width()});
 					}
 				},
@@ -60,7 +60,7 @@
 									left:(($(document).width())/2-(parseInt(Ds.width)/2)-5)+"px",
 									top:(($(window).height()-parseInt(Ds.height))/2+$(document).scrollTop())+"px"
 									});
-					if ($.isNumeric(ops.time)&&ops.time>0){//×Ô¶¯¹Ø±Õ
+					if ($.isNumeric(ops.time)&&ops.time>0){//ï¿½Ô¶ï¿½ï¿½Ø±ï¿½
 						this.timer.clear();
 						this.timer.stc = setTimeout(function (){			
 							var DB = $.PromptBox;

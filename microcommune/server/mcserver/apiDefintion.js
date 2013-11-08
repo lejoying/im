@@ -198,6 +198,18 @@ api = {
         }
     },
     /***************************************
+     *     URL：/api2/relation/deletefriend
+     ***************************************/
+    "relation_deletefriend": {
+        request: {
+            typical: {"phone": "XXX", "phoneto": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "删除成功"},
+            failed: {"提示信息": "删除失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
      *     URL：/api2/relation/getfriends
      ***************************************/
     "relation_getfriends": {
