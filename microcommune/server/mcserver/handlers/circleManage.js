@@ -33,7 +33,7 @@ circleManage.modify = function (data, response) {
             console.log(error);
             return;
         } else if (results.length > 0) {
-            console.log("添加密友圈成功---");
+            console.log("修改密友圈成功---");
             response.write(JSON.stringify({
                 "提示信息": "修改成功"
             }));

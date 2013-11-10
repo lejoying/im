@@ -43,6 +43,7 @@ $(document).ready(function () {
             }
         });
     })(jQuery);
+    var circleGroupCount = 0;
     $.ajax({
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",
@@ -53,6 +54,7 @@ $(document).ready(function () {
             if (data["提示信息"] == "获取密友圈成功") {
 //                window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify({}));
                 setTimeout(showNotification(), 2000);
+                circleGroupCount = data.circles.length;
                 window.sessionStorage.setItem("circles", JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
@@ -62,8 +64,11 @@ $(document).ready(function () {
                 $(".js_circlesFriends .friendDetail").longPress(200, function (x, y) {
 //                        DragDivDrag("titleBar", "message_box",{ opacity: 100, keepOrigin: true });
                     $(".js_circlesFriends .friendDetail").slideUp(1000);
-
-
+                    $("#mainBox")[0].style.top = "0px";
+                    $("#conversationListContent")[0].style.top = "0px";
+//                    mainBox', 'conversationListContent'
+//                    element.style.top = flag + "px";
+//                    contentBox.style.top = -flag * (contentBox.offsetHeight / mainBox.offsetHeight) + "px";
 //                    var div1 = document.createElement("div");
 //                    div1.id = "divtemp1";
 //                    var div2 = document.createElement("div");
@@ -72,15 +77,32 @@ $(document).ready(function () {
 //                    div1.innerHTML = $(".js_circlesFriends .friendDetail")[0].innerHTML;
 //                    document.body.appendChild(div1);
 //                    js_friendManage    js_titleBarfriendManage
+//                    alert(circleGroupCount * 33);
                     js_friendManage.style.visibility = "visible";
-                    DragDivDrag("js_friendManage", "js_titleBarfriendManage", { opacity: 100, keepOrigin: true});
+                    $(".js_addcircle").slideUp(10);
+                    $(".js_accountmanage").css("visibility", "visible");
+                    /*var span = document.createElement('span');
+                     span.id = "js_accountmanage";
+                     span.innerHTML = '<span style="float: left;width: 136px;text-align: center;margin-top: 4px;">ss</span>' +
+                     '<span style="float: left;width: 1px;text-align: center;margin-top: 4px;">|</span>' +
+                     '<span style="float: right;width: 136px;text-align: center;margin-top: 4px;">ss</span>';
+                     */
+                    DragDivDrag("js_friendManage", "js_friendManage", { opacity: 100, keepOrigin: true, area: { left: 0, right: 0.00001, top: 0, bottom: 33 * circleGroupCount}}); //250
 
 //, area: { left: 50, right: 500, top: 100, bottom: 400}
 //                    alert("x:" + x + ',y:' + y + "x1:" + x1 + ',y1:' + y1);
 //                    alert($(".js_circlesFriends .friendDetail")[1].offsetLeft + "___+_++_+_+" + $(".js_circlesFriends .friendDetail")[1].offsetTop);
                 });
+                var groupFlag = false;
                 $(".js_circlesFriends .groupTitle").click(function () {
-                    $(".js_circlesFriends .friendDetail").slideDown(1000);
+//                    alert($(".js_circlesFriends").height());
+                    if (!groupFlag) {
+                        groupFlag = true;
+                        $(".js_circlesFriends .friendDetail").slideDown(1000);
+                    } else {
+                        groupFlag = false;
+                        $(".js_circlesFriends .friendDetail").slideUp(1000);
+                    }
                 });
                 $(".circles_friends .friendDetail span img").click(function () {
                     var obj = JSON.parse(window.sessionStorage.getItem("circles"));
@@ -238,17 +260,25 @@ $(document).ready(function () {
         $("#conversationContainer").hide();
         $(".js_circlesFriends").show();
         $(".loadMoreConv").hide();
+        $(".js_menumanage").css("visibility", "visible");
+        $(".popmenuFrame").css("visibility", "hidden");
         $(".addr").attr("class", "addr notChooseOpera right active");
         $(".conmu").attr("class", "conmu left");
     });
     $(".js_appButton").click(function () {
         $(".addr").attr("class", "addr notChooseOpera right");
         $(".conmu").attr("class", "conmu left");
-        eval('$.Prompt("应用列表")');
+        $("#conversationContainer").hide();
+        $(".js_circlesFriends").hide();
+        $(".popmenuFrame").css("visibility", "visible");
+        $(".js_menumanage").css("visibility", "hidden");
+//        eval('$.Prompt("应用列表")');
     });
     $("#chooseConversationBtn").click(function () {
         $("#conversationContainer").show();
         $(".js_circlesFriends").hide();
+        $(".js_menumanage").css("visibility", "hidden");
+        $(".popmenuFrame").css("visibility", "hidden");
         var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
         if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
             $(".loadMoreConv").show();
@@ -256,6 +286,35 @@ $(document).ready(function () {
         $(".addr").attr("class", "addr notChooseOpera right");
         $(".conmu").attr("class", "conmu left active");
     });
+    $(".js_addcircle").click(function () {
+        eval('$.Prompt("创建密友圈")');
+        /*<div class="groupTitle" style="background-color: #A7B0BC">
+         <span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">#{post.name}</span>
+         </div>*/
+        circleGroupCount++;
+        var div = document.createElement('div');
+        $(div).attr("class", "groupTitle");
+        div.style.backgroundColor = "#A7B0BC";
+        div.innerHTML = '<span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">测试' + new Date().getTime() + '</span>';
+        $(".circles_friends")[0].appendChild(div);
+    });
+    $(".js_delete").click(function () {
+        eval('$.Prompt("删除好友")');
+        js_friendManage.style.visibility = "hidden";
+        $(".js_addcircle").slideDown(10);
+        $(".js_accountmanage").css("visibility", "hidden");
+    });
+    $(".js_blacklist").click(function () {
+        eval('$.Prompt("黑名单")');
+        js_friendManage.style.visibility = "hidden";
+        $(".js_addcircle").slideDown(10);
+        $(".js_accountmanage").css("visibility", "hidden");
+    });
+    /*$(".js_accountmanage").click(function () {
+     $(".js_addcircle").slideDown(10);
+     $(".js_accountmanage").css("visibility", "hidden");
+     });*/
+
     $(".chatSend").click(function () {
         var content = $("#textInput").val();
         $("#textInput").val("");
@@ -646,6 +705,7 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
             }
         }
     }
+    var selectGroup = 0;
     var Drag = Class.create();
     Drag.prototype = {
         init: function (titleBar, message_box, Options) {
@@ -687,7 +747,14 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
             this.moveable = false;
 
             var dragObj = this;
-
+            titleBar.onmouseup = function () {
+                if (message_box.id == "js_friendManage") {
+                    js_friendManage.style.visibility = "hidden";
+                    $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
+                    $(".js_addcircle").slideDown(10);
+                    $(".js_accountmanage").css("visibility", "hidden");
+                }
+            }
             titleBar.onmousedown = function (e) {
                 var ev = e || window.event || Common.getEvent();
                 //只允许通过鼠标左键进行拖拽,IE鼠标左键为1 FireFox为0
@@ -716,7 +783,8 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
                 if (Common.isIE) {
                     message_box.setCapture();
                 } else {
-                    window.captureEvents(Event.MOUSEMOVE);
+//                    window.captureEvents(Event.MOUSEMOVE);
+                    //丢弃
                 }
 
                 dragObj.SetOpacity(message_box, dragObj.opacity);
@@ -739,7 +807,13 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
                         var movePos = Common.getMousePos(ev);
                         message_box.style.left = Math.max(Math.min(movePos.x - dragObj.tmpX, dragObj.dragArea.maxRight), dragObj.dragArea.maxLeft) + "px";
                         message_box.style.top = Math.max(Math.min(movePos.y - dragObj.tmpY, dragObj.dragArea.maxBottom), dragObj.dragArea.maxTop) + "px";
-
+                        var str = Math.max(Math.min(movePos.y - dragObj.tmpY, dragObj.dragArea.maxBottom), dragObj.dragArea.maxTop);
+                        if (message_box.id == "js_friendManage") {
+                            dialogMessage("succ", str / 33, 500);//显示的数据
+                            $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
+                            $($(".circles_friends .groupTitle")[Math.ceil(str / 33)]).css("background-color", "red");
+                            selectGroup = Math.ceil(str / 33);
+                        }
                     }
                 };
 
@@ -757,9 +831,11 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
                             message_box.releaseCapture();
                         }
                         else {
-                            window.releaseEvents(Event.MOUSEMOVE);
+//                            window.releaseEvents(Event.MOUSEMOVE);
+                            //丢弃
                         }
                         dragObj.SetOpacity(message_box, 100);
+
                         titleBar.style.cursor = "default";
                         dragObj.moveable = false;
                         dragObj.tmpX = 0;

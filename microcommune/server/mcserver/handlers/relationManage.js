@@ -54,7 +54,7 @@ relationManage.addfriend = function (data, response) {
                 if (accountData.byPhone == "allowed") {
                     var rNode = results.pop().r;
                     var rData = rNode.data;
-                    rData.friendStatus = 1;
+                    rData.friendStatus = "success";
 //                    rData.message = message;
 //                    rData.rid = rid;
                     rNode.save();
@@ -63,7 +63,7 @@ relationManage.addfriend = function (data, response) {
                     //checked
                     var rNode = pop.r;
                     var rData = rNode.data;
-                    rData.friendStatus = 0;
+                    rData.friendStatus = "init";
                     rData.message = message;
                     rData.rid = rid;
                     rNode.save();
@@ -111,6 +111,67 @@ relationManage.addfriend = function (data, response) {
     }
 }
 /***************************************
+ *     URL：/api2/relation/moveout
+ ***************************************/
+relationManage.moveout = function (data, response) {
+    response.asynchronous = 1;
+    var phoneTo = data.phoneto;
+    var rid = data.rid;
+    var filter = (data.filter).toUpperCase();
+    var query;
+    var successMSG = "";
+    var errorMSG = "";
+    if (filter == "REMOVE") {
+        query = [
+            'MATCH (circle:Circle)-[r:HAS_FRIEND]->(account:Account)',
+            'WHERE circle.rid={rid} AND account.phone={phoneTo}',
+            'DELETE r',
+            'RETURN circle'
+        ].join('\n');
+        successMSG = JSON.stringify({
+            "提示消息": "移出成功"
+        });
+        errorMSG = JSON.stringify({
+            "提示消息": "移出失败",
+            "失败原因": "数据异常"
+        });
+    } else if (filter == "SHIFTIN") {
+        query = [
+            'START circle=node({rid})',
+            'MATCH (account:Account)',
+            'WHERE account.phone={phoneTo}',
+            'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
+            'RETURN  r'
+        ].join('\n');
+        success = JSON.stringify({
+            "提示消息": "移入成功"
+        });
+        error = JSON.stringify({
+            "提示消息": "移入失败",
+            "失败原因": "数据异常"
+        });
+    }
+    params = {
+        rid: parseInt(rid),
+        phoneTo: phoneTo
+    };
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(errorMSG);
+            response.end();
+            console.log(error);
+            return;
+        } else if (results.length > 0) {
+            response.write(successMSG);
+            response.end();
+
+        } else {
+            response.write(errorMSG);
+            response.end();
+        }
+    });
+}
+/***************************************
  *     URL：/api2/relation/deletefriend
  ***************************************/
 relationManage.deletefriend = function (data, response) {
@@ -128,10 +189,104 @@ relationManage.deletefriend = function (data, response) {
     };
     db.query(query, params, function (error, results) {
         if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "删除失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
             console.log(error);
             return;
+        } else if (results.length > 0) {
+            var rNode = results.pop().r;
+            var rData = rNode.data;
+            rData.friendStatus = "delete";
+            rData.phone = phone;
+            rNode.save();
+            deleteCircleAccountRelaNode(phone, phoneTo);
         } else {
-
+            response.write(JSON.stringify({
+                "提示信息": "删除失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+        }
+    });
+    function deleteCircleAccountRelaNode(phone, phoneTo) {
+        var query = [
+            'MATCH (account:Account)-[r:HAS_CIRCLE]->(circle:Circle)-[r1:HAS_FRIEND]->(account1:Account)',
+            'WHERE account.phone={phone} AND account1.phone={phoneTo}',
+            'DELETE r1',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "删除失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else if (results.length > 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "删除成功"
+                }));
+                response.end();
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "删除失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+            }
+        });
+    }
+}
+/***************************************
+ *     URL：/api2/relation/blacklist
+ ***************************************/
+relationManage.blacklist = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var phoneTo = data.phoneto;
+    var query = [
+        'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
+        'WHERE account1.phone={phone} AND account2.phone={phoneTo}',
+        'RETURN r'
+    ].join('\n');
+    var params = {
+        phone: phone,
+        phoneTo: phoneTo
+    };
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "添加黑名单失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        } else if (results.length > 0) {
+            var rNode = results.pop().r;
+            var rData = rNode.data;
+            rData.friendStatus = "blacklist";
+            rData.phone = phone;
+            rNode.save();
+            response.write(JSON.stringify({
+                "提示信息": "添加黑名单失败"
+            }));
+            response.end();
+        } else {
+            response.write(JSON.stringify({
+                "提示信息": "添加黑名单失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
         }
     });
 }
@@ -265,7 +420,7 @@ relationManage.getcirclefriends = function (data, response) {
  ***************************************/
 relationManage.getcirclesandfriends = function (data, response) {
     response.asynchronous = 1;
-//    console.log(data);
+    console.log(data);
     var phone = data.phone;
     var accessKey = data.accessKey;
     getCirclesNode(phone);
@@ -286,7 +441,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.log(error + "-");
                 return;
             } else if (results.length > 0) {
                 var circles = {};
@@ -304,7 +459,7 @@ relationManage.getcirclesandfriends = function (data, response) {
     function getAccountsNode(circles, phone) {
         var query = [
             'MATCH (account:Account)-[r:FRIEND]-(account1:Account)',
-            'WHERE account.phone={phone} AND r.friendStatus IN [1,2,3]',
+            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete","blacklist"]',//1,2,3
             'RETURN r, account1'
         ].join('\n');
         var params = {
@@ -317,7 +472,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.log(error + "--");
                 return;
             } else if (results.length > 0) {
                 var accounts = {};
@@ -358,7 +513,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                         "失败原因": "数据异常"
                     }));
                     response.end();
-                    console.log(error);
+                    console.log(error + "--");
                     return;
                 } else if (results.length > 0) {
                     var circles2 = [];
@@ -491,7 +646,7 @@ relationManage.addfriendagree = function (data, response) {
                     var rNode = results.pop().r;
                     var rData = rNode.data;
                     var ridAsk = rData.rid;
-                    rData.friendStatus = 1;
+                    rData.friendStatus = "success";
                     rNode.save();
                     if (rid != null && rid != undefined && rid != "") {
                         addCircleAccountRelation(rid, phoneAsk, ridAsk);
@@ -670,7 +825,7 @@ relationManage.getaskfriends = function (data, response) {
     ].join('\n');
     var params = {
         phone: phone,
-        status: 0
+        status: "init"
     };
     db.query(query, params, function (error, results) {
         if (error) {

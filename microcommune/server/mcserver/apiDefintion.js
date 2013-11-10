@@ -198,6 +198,18 @@ api = {
         }
     },
     /***************************************
+     *     URL：/api2/relation/moveout
+     ***************************************/
+    "relation_moveout": {
+        request: {
+            typical: {"phoneto": "XXX", rid: "XXX", filter: ["REMOVE","SHIFTIN"]}
+        },
+        response: {
+            success: {"提示信息": "移出成功" || "移入成功"},
+            failed: {"提示信息": "移出失败" || "移入失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
      *     URL：/api2/relation/deletefriend
      ***************************************/
     "relation_deletefriend": {
@@ -207,6 +219,18 @@ api = {
         response: {
             success: {"提示信息": "删除成功"},
             failed: {"提示信息": "删除失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/relation/blacklist
+     ***************************************/
+    "relation_blacklist": {
+        request: {
+            typical: {"phone": "XXX", "phoneto": "XXX"}
+        },
+        response: {
+            success: {"提示信息": "添加黑名单成功"},
+            failed: {"提示信息": "添加黑名单失败", "失败原因": "数据异常"}
         }
     },
     /***************************************

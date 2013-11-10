@@ -116,6 +116,43 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
               <!--<div style="margin-top: 200px;;height: 40px;background-color: red;">fffffffffffffffffffffffffffffffffffffffffffffffdddddddddddddddddddd</div>-->
 
                 </div>
+                <div id="js_friendManage" style="position:absolute; border:solid 1px #000;width:274px;height:50px;left:0%;top:24%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1000;">
+                    <table>
+                        <tr>
+                            <td><img src="/static/images/face.jpg" style="width: 50px;height: 50px;"/></span></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="popmenuFrame" style="left:12px;top:0px;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:2000;">
+                    <div class="sildLeftSharp"></div>
+                    <div class="sildPopContent">
+                        <div>数据中心</div>
+                        <a class="popappIcon" href="index.html">
+                            <img src="/static/images/sildLeft/iconInfomation.png" />
+                            <div>基本信息</div>
+                        </a>
+                        <a class="popappIcon" href="metadata.html">
+                            <img src="/static/images/sildLeft/iconOriginaldata.png" />
+                            <div>元数据</div>
+                        </a>
+                        <a class="popappIcon" href="MultidimensionalTag.html">
+                            <img src="/static/images/sildLeft/iconMultitag.png" />
+                            <div>多维标签</div>
+                        </a>
+                        <div class="popappIcon">
+                            <img src="/static/images/sildLeft/trigger.png" />
+                            <div>触发器</div>
+                        </div>
+                        <div class="popappIcon">
+                            <img src="/static/images/sildLeft/iconGuide.png" />
+                            <div>使用向导</div>
+                        </div>
+                        <div class="clearevery"></div>
+                    </div>
+                </div>
                 <div class="templates hide">
                     <div class="circles_friends" id="circles_friends">
                         <?js for (var index in it) { ?>
@@ -146,6 +183,14 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                     </div>
                 </div>
             </div>
+              <div class="js_menumanage" style="background-color:#FFFFFF;color: red;position:absolute; border:solid 1px #000;width:274px;height:50px;left:0%;top:90%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1100;">
+                  <span class="js_addcircle" style="float: left;width: 100%;text-align: center;margin-top: 5px;"> + 新建密友圈</span>
+                  <span class="js_accountmanage" style="visibility: hidden;">
+                      <span class="js_delete" style="float: left;width: 136px;text-align: center;margin-top: 4px;">删除</span>
+                      <span style="float: left;width: 1px;text-align: center;margin-top: 4px;">|</span>
+                      <span class="js_blacklist" style="float: right;width: 136px;text-align: center;margin-top: 4px;">黑名单</span>
+                  </span>
+              </div>
           </div>
         </div>
         <div class="chatLeftPanelShadow"></div>
@@ -248,23 +293,6 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
       </div>
     </div>
   </div>
-</div>
-
-<div id="js_friendManage" style="position:absolute; background-color:#FFFFFF;border:solid 1px #000;width:420px;height:200px;left:40%;top:20%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1000;">
-    <table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;">
-        <tr id="js_titleBarfriendManage" style="height:40px; text-align:left; background-color:#DDE1E6; padding:3px;font-size: 15px;">
-            <th align="left" unselectable="on" ><span>&nbsp;&nbsp;&nbsp;&nbsp;意见反馈</span><span onClick="closeProCFeedBack();" style="float: right;cursor: hand;">|&nbsp;×&nbsp;</span></th>
-        </tr>
-        <tr style="height:90px;padding:3px;" align="left" valign="top" unselectable="on">
-            <td>
-                <div style="height: 90px;width: 380px;margin-left: 20px;margin-top: 20px;background-color: #F8F8F8;">
-                    <textarea class="js_feedbackcontent" rows="15" cols="50" style="height: 90px;width: 380px;resize: none;" onmousedown="addTextAreaCss();" onblur="deleteTextAreaCss();"></textarea>
-                    <!--<input type="button" value="发送" onClick="js_sendFeedBack();" style="width: 70px;height: 35px;float: right;margin-top: 10px;">-->
-                    <input type="button"  value="发送" onClick="js_sendFeedBack(this);" style="width: 70px;height: 35px;float: right;margin-top: 10px;background-color: #88BE18;"/>
-                </div>
-            </td> <!---->
-        </tr>
-    </table>
 </div>
 
 <div id="js_feedback" style="position:absolute; background-color:#FFFFFF;border:solid 1px #000;width:420px;height:200px;left:40%;top:20%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1000;">
