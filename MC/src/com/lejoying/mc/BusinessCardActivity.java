@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.lejoying.adapter.CircleAdapter;
+import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.Friend;
 
 public class BusinessCardActivity extends Activity {
@@ -63,6 +64,9 @@ public class BusinessCardActivity extends Activity {
 				rl_control, this);
 
 		circleAdapter.createView();
+		
+		CircleMenu cm = new CircleMenu(this);
+		cm.showMenu(CircleMenu.SHOW_BOTTOM);
 	}
 
 	
