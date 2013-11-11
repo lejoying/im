@@ -1,0 +1,45 @@
+.popmenuFrame{
+    width:250px;
+    position:absolute;
+
+}
+.sildLeftSharp{
+    background:url("/static/images/sildLeft/sildLeftSharp.png") no-repeat;
+    height:11px;
+    position:relative;
+    margin-left:195px;
+    top:1px;
+}
+.sildPopContent{
+    border-top:1px solid #0099cd;
+    border-bottom:1px solid #0099cd;
+    background:#ceeaf3;
+}
+.popappIcon{
+    float:left;
+    margin:6px 0 6px 12px;
+}
+.popappIcon img{
+    border:2px solid #0099cd;
+    border-radius:15px;
+    background:#fff;
+    width:44px;
+    height:44px;
+    padding:2px;
+    cursor:pointer;
+}
+.popappIcon div{
+    font-size:12px;
+    text-align:center;
+    width:52px;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow: hidden;
+    margin:5px 0 0;
+}
+.sildPopContent > *:first-child{
+    margin:10px 0 6px 12px;
+    font-size:16px;
+    font-weight:bold;
+    color:#333;
+}

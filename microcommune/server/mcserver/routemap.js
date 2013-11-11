@@ -12,14 +12,16 @@ var routemap = {
         "/api2/message/:operation": requestHandlers.messageManage,
         "/api2/account/:operation": requestHandlers.accountManage,
         "/api2/community/:operation": requestHandlers.communityManage,
-        "/api2/relation/:operation": requestHandlers.relationManage
+        "/api2/relation/:operation": requestHandlers.relationManage,
+        "/api2/circle/:operation": requestHandlers.circleManage
     },
     "post": {
         "/api2/session/:operation": requestHandlers.session,
         "/api2/message/:operation": requestHandlers.messageManage,
         "/api2/account/:operation": requestHandlers.accountManage,
         "/api2/community/:operation": requestHandlers.communityManage,
-        "/api2/relation/:operation": requestHandlers.relationManage
+        "/api2/relation/:operation": requestHandlers.relationManage,
+        "/api2/circle/:operation": requestHandlers.circleManage
     }
 };
 

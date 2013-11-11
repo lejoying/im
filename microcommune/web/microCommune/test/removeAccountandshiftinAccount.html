@@ -1,0 +1,53 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            $("#msg1").html("");
+            var removephoneto = document.getElementById("removephoneto").value;
+            var removerid = document.getElementById("removerid").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/relation/remove?",
+                data: {
+                    phoneto: removephoneto,
+                    rid: removerid
+                }, success: function (data) {
+                    $("#msg1").html(data["提示信息"]);
+                }
+            });
+        }
+        function commit1() {
+            $("#msg2").html("");
+            var shiftinphoneto = document.getElementById("shiftinphoneto").value;
+            var shiftinrid = document.getElementById("shiftinrid").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/relation/shiftin?",
+                data: {
+                    phoneto: shiftinphoneto,
+                    rid: shiftinrid
+                }, success: function (data) {
+                    $("#msg2").html(data["提示信息"]);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<span>
+    <h2>移出好友</h2>
+phoneTo:<input type="text" id="removephoneto"><br>
+rid:<input type="text" id="removerid"><br>
+<input type="submit" value="移出" onclick="commit()">
+<div id="msg1"></div></span>
+<span>
+    <h2>移入好友</h2>
+phoneTo:<input type="text" id="shiftinphoneto"><br>
+rid:<input type="text" id="shiftinrid"><br>
+<input type="submit" value="移入" onclick="commit1()">
+<div id="msg2"></div></span>
+</body>
+</html>

@@ -20,6 +20,30 @@ $(document).ready(function () {
         $(".loadMoreConv").show();
     }
 //    $(".prompteds").hide();
+    (function ($) {
+        $.extend($.fn, {
+            longPress: function (time, callBack) {
+                time = time || 1000;
+                var timer = null;
+                $(this).mousedown(function (e) {
+                    var i = 0;
+                    var _this = $(this);
+                    timer = setInterval(function () {
+                        i += 10;
+                        if (i >= time) {
+                            clearTimeout(timer);
+                            var positionX = e.pageX - _this.offset().left || 0;
+                            var positionY = e.pageY - _this.offset().top || 0;
+                            typeof callBack == 'function' && callBack.call(this, positionX, positionY);
+                        }
+                    }, 10)
+                }).mouseup(function () {
+                        clearTimeout(timer);
+                    })
+            }
+        });
+    })(jQuery);
+    var circleGroupCount = 0;
     $.ajax({
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",
@@ -30,9 +54,56 @@ $(document).ready(function () {
             if (data["提示信息"] == "获取密友圈成功") {
 //                window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify({}));
                 setTimeout(showNotification(), 2000);
+                circleGroupCount = data.circles.length;
                 window.sessionStorage.setItem("circles", JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
+//                var div = document.createElement("div");
+//                div.appendChild(document.createTextNode("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+//                $(".js_circlesFriends")[0].appendChild(div);
+                $(".js_circlesFriends .friendDetail").longPress(200, function (x, y) {
+//                        DragDivDrag("titleBar", "message_box",{ opacity: 100, keepOrigin: true });
+                    $(".js_circlesFriends .friendDetail").slideUp(1000);
+                    $("#mainBox")[0].style.top = "0px";
+                    $("#conversationListContent")[0].style.top = "0px";
+//                    mainBox', 'conversationListContent'
+//                    element.style.top = flag + "px";
+//                    contentBox.style.top = -flag * (contentBox.offsetHeight / mainBox.offsetHeight) + "px";
+//                    var div1 = document.createElement("div");
+//                    div1.id = "divtemp1";
+//                    var div2 = document.createElement("div");
+//                    div2.id = "divtemp2";
+//                    div1.appendChild(div2);
+//                    div1.innerHTML = $(".js_circlesFriends .friendDetail")[0].innerHTML;
+//                    document.body.appendChild(div1);
+//                    js_friendManage    js_titleBarfriendManage
+//                    alert(circleGroupCount * 33);
+                    js_friendManage.style.visibility = "visible";
+                    $(".js_addcircle").slideUp(10);
+                    $(".js_accountmanage").css("visibility", "visible");
+                    /*var span = document.createElement('span');
+                     span.id = "js_accountmanage";
+                     span.innerHTML = '<span style="float: left;width: 136px;text-align: center;margin-top: 4px;">ss</span>' +
+                     '<span style="float: left;width: 1px;text-align: center;margin-top: 4px;">|</span>' +
+                     '<span style="float: right;width: 136px;text-align: center;margin-top: 4px;">ss</span>';
+                     */
+                    DragDivDrag("js_friendManage", "js_friendManage", { opacity: 100, keepOrigin: true, area: { left: 0, right: 0.00001, top: 0, bottom: 33 * circleGroupCount}}); //250
+
+//, area: { left: 50, right: 500, top: 100, bottom: 400}
+//                    alert("x:" + x + ',y:' + y + "x1:" + x1 + ',y1:' + y1);
+//                    alert($(".js_circlesFriends .friendDetail")[1].offsetLeft + "___+_++_+_+" + $(".js_circlesFriends .friendDetail")[1].offsetTop);
+                });
+                var groupFlag = false;
+                $(".js_circlesFriends .groupTitle").click(function () {
+//                    alert($(".js_circlesFriends").height());
+                    if (!groupFlag) {
+                        groupFlag = true;
+                        $(".js_circlesFriends .friendDetail").slideDown(1000);
+                    } else {
+                        groupFlag = false;
+                        $(".js_circlesFriends .friendDetail").slideUp(1000);
+                    }
+                });
                 $(".circles_friends .friendDetail span img").click(function () {
                     var obj = JSON.parse(window.sessionStorage.getItem("circles"));
                     var phone = this.parentNode.parentNode.getAttribute("phone");
@@ -64,6 +135,86 @@ $(document).ready(function () {
                             }
                         }
                     }
+                });
+                $(".circles_friends .groupTitle>span").each(function (i) {
+                    $($(".circles_friends .groupTitle>span")[i]).dblclick(function () {
+                        if ($("#js_modifydiv").length > 0) {
+                            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
+                            $(".circles_friends .groupTitle>span").css("visibility", "visible");
+                            var circleNameTemp = "";
+                        }
+                        var div = document.createElement("span");
+                        div.id = "js_modifydiv";
+                        div.innerHTML = "<input type='text' class='js_newcirclename' style='width: 100px;' value='" + this.innerHTML + "'>&nbsp;&nbsp;<input type='button' class='js_modifycirclename' value='提交' style='width: 30px;'>&nbsp;|&nbsp;<input type='button' class='js_modifycirclenamecancle' value='取消' style='width: 30px;'>";
+                        this.parentNode.insertBefore(div, this.parentNode.firstChild);
+//                    $(".js_newcirclename").focus();
+                        var rid = this.getAttribute("circleid");
+                        var oldCircleName = $(this).html().trim();
+//                        $(this).html("");
+                        this.style.visibility = "hidden";
+                        $(".js_modifycirclename").click(function () {
+                            var newCircleName = $(".js_newcirclename").val().trim();
+//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
+                            if (oldCircleName == newCircleName) {
+                                setCircleName(oldCircleName);
+                            } else {
+                                setCircleName(newCircleName);
+//                            modifyCircleName(rid, newCircleName, oldCircleName);
+                            }
+                        });
+                        $(".js_modifycirclenamecancle").click(function () {
+//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
+                            setCircleName(oldCircleName);
+                        });
+                        var circleNameTemp = "";
+                        $(".js_newcirclename").focus(function () {
+                            document.onkeydown = function (event) {
+                                var e = event ? event : (window.event ? window.event : null);
+                                if (e.keyCode == 13) {
+                                    var newCircleName = $(".js_newcirclename").val().trim();
+                                    if (oldCircleName == newCircleName) {
+                                        setCircleName(oldCircleName);
+                                    } else {
+                                        setCircleName(newCircleName);
+                                    }
+//                                    $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
+//                                modifyCircleName(rid, newCircleName, oldCircleName);
+                                }
+                            }
+                        });
+                        /*$(".js_newcirclename").blur(function () {
+                         if(circleNameTemp==""){
+                         setCircleName(oldCircleName);
+                         }else{
+                         setCircleName(circleNameTemp);
+                         }
+                         });*/
+                        function setCircleName(circleName) {
+                            $($("#js_modifydiv")[0].parentNode).find($(".groupTitleLetter")).html(circleName);
+                            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
+                            $(".circles_friends .groupTitle>span").css("visibility", "visible");
+                        }
+
+                        function modifyCircleName(rid, newCircleName, oldCircleName) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/aip2/circle/modify?",
+                                data: {
+                                    rid: rid,
+                                    name: newCircleName
+                                },
+                                success: function (data) {
+                                    if (data["提示信息"] == "修改成功") {
+                                        setCircleName(newCircleName);
+                                        dialogMessage("succ", data["提示信息"], 1000);
+                                    } else {
+                                        setCircleName(oldCircleName);
+                                        dialogMessage("error", data["提示信息"] + "," + data["失败原因"], 1000);
+                                    }
+                                }
+                            });
+                        }
+                    });
                 });
                 $(".circles_friends .friendDetail>div").mouseover(function () {
 //                    var evt = evt || window.event;
@@ -109,12 +260,61 @@ $(document).ready(function () {
         $("#conversationContainer").hide();
         $(".js_circlesFriends").show();
         $(".loadMoreConv").hide();
+        $(".js_menumanage").css("visibility", "visible");
+        $(".popmenuFrame").css("visibility", "hidden");
+        $(".addr").attr("class", "addr notChooseOpera right active");
+        $(".conmu").attr("class", "conmu left");
+    });
+    $(".js_appButton").click(function () {
+        $(".addr").attr("class", "addr notChooseOpera right");
+        $(".conmu").attr("class", "conmu left");
+        $("#conversationContainer").hide();
+        $(".js_circlesFriends").hide();
+        $(".popmenuFrame").css("visibility", "visible");
+        $(".js_menumanage").css("visibility", "hidden");
+//        eval('$.Prompt("应用列表")');
     });
     $("#chooseConversationBtn").click(function () {
         $("#conversationContainer").show();
         $(".js_circlesFriends").hide();
-        $(".loadMoreConv").show();
+        $(".js_menumanage").css("visibility", "hidden");
+        $(".popmenuFrame").css("visibility", "hidden");
+        var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
+        if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
+            $(".loadMoreConv").show();
+        }
+        $(".addr").attr("class", "addr notChooseOpera right");
+        $(".conmu").attr("class", "conmu left active");
     });
+    $(".js_addcircle").click(function () {
+        eval('$.Prompt("创建密友圈")');
+        /*<div class="groupTitle" style="background-color: #A7B0BC">
+         <span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">#{post.name}</span>
+         </div>*/
+        circleGroupCount++;
+        var div = document.createElement('div');
+        $(div).attr("class", "groupTitle");
+        div.style.backgroundColor = "#A7B0BC";
+        div.innerHTML = '<span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">测试' + new Date().getTime() + '</span>';
+        $(".circles_friends")[0].appendChild(div);
+    });
+    $(".js_delete").click(function () {
+        eval('$.Prompt("删除好友")');
+        js_friendManage.style.visibility = "hidden";
+        $(".js_addcircle").slideDown(10);
+        $(".js_accountmanage").css("visibility", "hidden");
+    });
+    $(".js_blacklist").click(function () {
+        eval('$.Prompt("黑名单")');
+        js_friendManage.style.visibility = "hidden";
+        $(".js_addcircle").slideDown(10);
+        $(".js_accountmanage").css("visibility", "hidden");
+    });
+    /*$(".js_accountmanage").click(function () {
+     $(".js_addcircle").slideDown(10);
+     $(".js_accountmanage").css("visibility", "hidden");
+     });*/
+
     $(".chatSend").click(function () {
         var content = $("#textInput").val();
         $("#textInput").val("");
@@ -437,7 +637,7 @@ function getTemplate(id) {
     template.convert(string);
     return template;
 }
-function DragDivDrag(titleBarID, message_boxID) {
+function DragDivDrag(titleBarID, message_boxID, obj) {
 
     var Common = {
         getEvent: function () {//ie/ff
@@ -505,6 +705,7 @@ function DragDivDrag(titleBarID, message_boxID) {
             }
         }
     }
+    var selectGroup = 0;
     var Drag = Class.create();
     Drag.prototype = {
         init: function (titleBar, message_box, Options) {
@@ -546,7 +747,14 @@ function DragDivDrag(titleBarID, message_boxID) {
             this.moveable = false;
 
             var dragObj = this;
-
+            titleBar.onmouseup = function () {
+                if (message_box.id == "js_friendManage") {
+                    js_friendManage.style.visibility = "hidden";
+                    $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
+                    $(".js_addcircle").slideDown(10);
+                    $(".js_accountmanage").css("visibility", "hidden");
+                }
+            }
             titleBar.onmousedown = function (e) {
                 var ev = e || window.event || Common.getEvent();
                 //只允许通过鼠标左键进行拖拽,IE鼠标左键为1 FireFox为0
@@ -575,7 +783,8 @@ function DragDivDrag(titleBarID, message_boxID) {
                 if (Common.isIE) {
                     message_box.setCapture();
                 } else {
-                    window.captureEvents(Event.MOUSEMOVE);
+//                    window.captureEvents(Event.MOUSEMOVE);
+                    //丢弃
                 }
 
                 dragObj.SetOpacity(message_box, dragObj.opacity);
@@ -598,7 +807,13 @@ function DragDivDrag(titleBarID, message_boxID) {
                         var movePos = Common.getMousePos(ev);
                         message_box.style.left = Math.max(Math.min(movePos.x - dragObj.tmpX, dragObj.dragArea.maxRight), dragObj.dragArea.maxLeft) + "px";
                         message_box.style.top = Math.max(Math.min(movePos.y - dragObj.tmpY, dragObj.dragArea.maxBottom), dragObj.dragArea.maxTop) + "px";
-
+                        var str = Math.max(Math.min(movePos.y - dragObj.tmpY, dragObj.dragArea.maxBottom), dragObj.dragArea.maxTop);
+                        if (message_box.id == "js_friendManage") {
+                            dialogMessage("succ", str / 33, 500);//显示的数据
+                            $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
+                            $($(".circles_friends .groupTitle")[Math.ceil(str / 33)]).css("background-color", "red");
+                            selectGroup = Math.ceil(str / 33);
+                        }
                     }
                 };
 
@@ -616,9 +831,11 @@ function DragDivDrag(titleBarID, message_boxID) {
                             message_box.releaseCapture();
                         }
                         else {
-                            window.releaseEvents(Event.MOUSEMOVE);
+//                            window.releaseEvents(Event.MOUSEMOVE);
+                            //丢弃
                         }
                         dragObj.SetOpacity(message_box, 100);
+
                         titleBar.style.cursor = "default";
                         dragObj.moveable = false;
                         dragObj.tmpX = 0;
@@ -645,10 +862,10 @@ function DragDivDrag(titleBarID, message_boxID) {
             return maxZindex;
         }
     }
-    new Drag(titleBarID, message_boxID, { opacity: 100, keepOrigin: true }); //, area: { left: 50, right: 500, top: 100, bottom: 400}
+    new Drag(titleBarID, message_boxID, obj); //, area: { left: 50, right: 500, top: 100, bottom: 400}
 }
 
 window.onload = function () {
-    DragDivDrag("titleBar", "message_box");
-    DragDivDrag("js_titleBarfeedback", "js_feedback");
+    DragDivDrag("titleBar", "message_box", { opacity: 100, keepOrigin: true });
+    DragDivDrag("js_titleBarfeedback", "js_feedback", { opacity: 100, keepOrigin: true });
 }

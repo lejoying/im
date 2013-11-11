@@ -1,0 +1,53 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            $("#msg2").html("");
+            var addphone = document.getElementById("addphone").value;
+            var addcirclename = document.getElementById("addcirclename").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/relation/addcircle?",
+                data: {
+                    phone: addphone,
+                    name: addcirclename
+                }, success: function (data) {
+                    $("#msg2").html(data["提示信息"]);
+                }
+            });
+        }
+        function commit1() {
+            $("#msg2").html("");
+            var modifyrid = document.getElementById("modifyrid").value;
+            var modifyname = document.getElementById("modifyname").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/circle/modify?",
+                data: {
+                    rid: modifyrid,
+                    name: modifyname
+                }, success: function (data) {
+                    $("#msg2").html(data["提示信息"]);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<span>
+    <h2>新建密友圈</h2>
+phone:<input type="text" id="addphone"><br>
+circleName:<input type="text" id="addcirclename"><br>
+<input type="submit" value="添加" onclick="commit()">
+<div id="msg1"></div></span>
+<span>
+    <h2>修改密友圈</h2>
+rid:<input type="text" id="modifyrid"><br>
+name:<input type="text" id="modifyname"><br>
+<input type="submit" value="修改" onclick="commit1()">
+<div id="msg2"></div></span>
+</body>
+</html>

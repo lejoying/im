@@ -6,7 +6,7 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 /***************************************
  *     URL：/api2/circle/modify
  ***************************************/
-circleManage.modify = function(data, response){
+circleManage.modify = function (data, response) {
     response.asynchronous = 1;
     var rid = data.rid;
     var name = data.name;
@@ -23,17 +23,22 @@ circleManage.modify = function(data, response){
         rid: parseInt(rid),
         name: name
     };
-    db.query(query, params, function(error, results){
-        if(error){
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "修改失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
             console.log(error);
             return;
-        }else if(results.length>0){
-            console.log("添加密友圈成功---");
+        } else if (results.length > 0) {
+            console.log("修改密友圈成功---");
             response.write(JSON.stringify({
                 "提示信息": "修改成功"
             }));
             response.end();
-        }else{
+        } else {
             response.write(JSON.stringify({
                 "提示信息": "修改失败",
                 "失败原因": "数据异常"
@@ -45,7 +50,7 @@ circleManage.modify = function(data, response){
 /***************************************
  *     URL：/api2/circle/delete
  ***************************************/
-circleManage.delete = function(data, response){
+circleManage.delete = function (data, response) {
     response.asynchronous = 1;
     var rid = data.rid;
     var query = [
@@ -57,17 +62,17 @@ circleManage.delete = function(data, response){
     var params = {
         rid: parseInt(rid)
     };
-    db.query(query, params, function(error, results){
-        if(error){
+    db.query(query, params, function (error, results) {
+        if (error) {
             console.log(error);
             return;
-        }else if(results.length>0){
+        } else if (results.length > 0) {
             console.log("删除密友圈成功---");
             response.write(JSON.stringify({
                 "提示信息": "删除成功"
             }));
             response.end();
-        }else{
+        } else {
             response.write(JSON.stringify({
                 "提示信息": "删除失败",
                 "失败原因": "数据异常"
