@@ -1,3 +1,4 @@
+var selectGroup = 0;
 $(document).ready(function () {
     window.onbeforeunload = onbeforeunload_handler;
     function onbeforeunload_handler() {
@@ -25,7 +26,8 @@ $(document).ready(function () {
             longPress: function (time, callBack) {
                 time = time || 1000;
                 var timer = null;
-                $(this).mousedown(function (e) {
+                var documentThis = this;
+                $(documentThis).mousedown(function (e) {
                     var i = 0;
                     var _this = $(this);
                     timer = setInterval(function () {
@@ -34,7 +36,7 @@ $(document).ready(function () {
                             clearTimeout(timer);
                             var positionX = e.pageX - _this.offset().left || 0;
                             var positionY = e.pageY - _this.offset().top || 0;
-                            typeof callBack == 'function' && callBack.call(this, positionX, positionY);
+                            typeof callBack == 'function' && callBack(documentThis, positionX, positionY);
                         }
                     }, 10)
                 }).mouseup(function () {
@@ -52,16 +54,18 @@ $(document).ready(function () {
         },
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
-//                window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify({}));
-                setTimeout(showNotification(), 2000);
+//                setTimeout(showNotification(), 2000);
                 circleGroupCount = data.circles.length;
                 window.sessionStorage.setItem("circles", JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
-//                var div = document.createElement("div");
-//                div.appendChild(document.createTextNode("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-//                $(".js_circlesFriends")[0].appendChild(div);
-                $(".js_circlesFriends .friendDetail").longPress(200, function (x, y) {
+//                var obj;
+//                $(".js_circlesFriends .friendDetail").click(function(){
+//                    alert("--");
+//                    obj = this;
+//                });
+                $(".js_circlesFriends .friendDetail").longPress(200, function (obj, x, y) {
+                    alert($(obj).attr("id"));
 //                        DragDivDrag("titleBar", "message_box",{ opacity: 100, keepOrigin: true });
                     $(".js_circlesFriends .friendDetail").slideUp(1000);
                     $("#mainBox")[0].style.top = "0px";
@@ -88,21 +92,31 @@ $(document).ready(function () {
                      '<span style="float: right;width: 136px;text-align: center;margin-top: 4px;">ss</span>';
                      */
                     DragDivDrag("js_friendManage", "js_friendManage", { opacity: 100, keepOrigin: true, area: { left: 0, right: 0.00001, top: 0, bottom: 33 * circleGroupCount}}); //250
+                    /*$("#js_friendManage").mouseup(function () {
+                        alert(selectGroup);
+                        js_friendManage.style.visibility = "hidden";
+                        $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
+                        $(".js_addcircle").slideDown(10);
+                        $(".js_accountmanage").css("visibility", "hidden");
+                    });*/
 
 //, area: { left: 50, right: 500, top: 100, bottom: 400}
 //                    alert("x:" + x + ',y:' + y + "x1:" + x1 + ',y1:' + y1);
 //                    alert($(".js_circlesFriends .friendDetail")[1].offsetLeft + "___+_++_+_+" + $(".js_circlesFriends .friendDetail")[1].offsetTop);
                 });
-                var groupFlag = false;
+                /*var groupFlag = false;
+                 $(".js_circlesFriends .groupTitle").click(function () {
+                 //                    alert($(".js_circlesFriends").height());
+                 if (!groupFlag) {
+                 groupFlag = true;
+                 $(".js_circlesFriends .friendDetail").slideDown(1000);
+                 } else {
+                 groupFlag = false;
+                 $(".js_circlesFriends .friendDetail").slideUp(1000);
+                 }
+                 });*/
                 $(".js_circlesFriends .groupTitle").click(function () {
-//                    alert($(".js_circlesFriends").height());
-                    if (!groupFlag) {
-                        groupFlag = true;
-                        $(".js_circlesFriends .friendDetail").slideDown(1000);
-                    } else {
-                        groupFlag = false;
-                        $(".js_circlesFriends .friendDetail").slideUp(1000);
-                    }
+                    $(".js_circlesFriends .friendDetail").slideDown(1000);
                 });
                 $(".circles_friends .friendDetail span img").click(function () {
                     var obj = JSON.parse(window.sessionStorage.getItem("circles"));
@@ -136,13 +150,18 @@ $(document).ready(function () {
                         }
                     }
                 });
+                /*$(".circles_friends .groupTitle .groupTitleLetter").click(function () {
+                 alert("--=-");
+                 });*/
                 $(".circles_friends .groupTitle>span").each(function (i) {
-                    $($(".circles_friends .groupTitle>span")[i]).dblclick(function () {
+                    $(document).on('dblclick', ".groupTitleLetter", (function () {
                         if ($("#js_modifydiv").length > 0) {
                             $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
                             $(".circles_friends .groupTitle>span").css("visibility", "visible");
                             var circleNameTemp = "";
                         }
+                        if ($(this).html().trim() == "默认分组")
+                            return;
                         var div = document.createElement("span");
                         div.id = "js_modifydiv";
                         div.innerHTML = "<input type='text' class='js_newcirclename' style='width: 100px;' value='" + this.innerHTML + "'>&nbsp;&nbsp;<input type='button' class='js_modifycirclename' value='提交' style='width: 30px;'>&nbsp;|&nbsp;<input type='button' class='js_modifycirclenamecancle' value='取消' style='width: 30px;'>";
@@ -154,12 +173,16 @@ $(document).ready(function () {
                         this.style.visibility = "hidden";
                         $(".js_modifycirclename").click(function () {
                             var newCircleName = $(".js_newcirclename").val().trim();
+                            if (newCircleName.trim() == "") {
+                                eval("$.Prompt('组名不能为空!')");
+                                return;
+                            }
 //                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
                             if (oldCircleName == newCircleName) {
                                 setCircleName(oldCircleName);
                             } else {
-                                setCircleName(newCircleName);
-//                            modifyCircleName(rid, newCircleName, oldCircleName);
+//                                setCircleName(newCircleName);
+                                modifyCircleName(rid, newCircleName, oldCircleName);
                             }
                         });
                         $(".js_modifycirclenamecancle").click(function () {
@@ -175,10 +198,10 @@ $(document).ready(function () {
                                     if (oldCircleName == newCircleName) {
                                         setCircleName(oldCircleName);
                                     } else {
-                                        setCircleName(newCircleName);
+//                                        setCircleName(newCircleName);
+                                        modifyCircleName(rid, newCircleName, oldCircleName);
                                     }
 //                                    $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
-//                                modifyCircleName(rid, newCircleName, oldCircleName);
                                 }
                             }
                         });
@@ -198,7 +221,7 @@ $(document).ready(function () {
                         function modifyCircleName(rid, newCircleName, oldCircleName) {
                             $.ajax({
                                 type: "POST",
-                                url: "/aip2/circle/modify?",
+                                url: "/api2/circle/modify?",
                                 data: {
                                     rid: rid,
                                     name: newCircleName
@@ -214,7 +237,7 @@ $(document).ready(function () {
                                 }
                             });
                         }
-                    });
+                    }));
                 });
                 $(".circles_friends .friendDetail>div").mouseover(function () {
 //                    var evt = evt || window.event;
@@ -288,15 +311,28 @@ $(document).ready(function () {
     });
     $(".js_addcircle").click(function () {
         eval('$.Prompt("创建密友圈")');
-        /*<div class="groupTitle" style="background-color: #A7B0BC">
-         <span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">#{post.name}</span>
-         </div>*/
-        circleGroupCount++;
-        var div = document.createElement('div');
-        $(div).attr("class", "groupTitle");
-        div.style.backgroundColor = "#A7B0BC";
-        div.innerHTML = '<span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">测试' + new Date().getTime() + '</span>';
-        $(".circles_friends")[0].appendChild(div);
+        var newCircleName = '测试' + new Date().getTime();
+        var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+        $.ajax({
+            type: "POST",
+            url: "/api2/relation/addcircle?",
+            data: {
+                phone: JSON.parse(nowAccount).phone,
+                name: newCircleName
+            },
+            success: function (data) {
+                if (data["提示信息"] == "添加成功") {
+                    circleGroupCount++;
+                    var div = document.createElement('div');
+                    $(div).attr("class", "groupTitle");
+                    div.style.backgroundColor = "#A7B0BC";
+                    div.innerHTML = '<span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">测试' + new Date().getTime() + '</span>';
+                    $(".circles_friends")[0].appendChild(div);
+                } else {
+                    eval('$.Prompt("创建密友圈失败")');
+                }
+            }
+        });
     });
     $(".js_delete").click(function () {
         eval('$.Prompt("删除好友")');
@@ -362,6 +398,9 @@ $(document).ready(function () {
             },
             success: function (data) {
                 if (data["提示信息"] == "发送成功") {
+//                    var e=document.getElementById("chatFrame");
+//                    var e1=document.getElementById("chat_chatmsglist");
+
                     var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
                     var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
                     if (tempChat != null) {
@@ -705,7 +744,6 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
             }
         }
     }
-    var selectGroup = 0;
     var Drag = Class.create();
     Drag.prototype = {
         init: function (titleBar, message_box, Options) {
@@ -749,10 +787,12 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
             var dragObj = this;
             titleBar.onmouseup = function () {
                 if (message_box.id == "js_friendManage") {
+//                    alert(selectGroup+"--");
                     js_friendManage.style.visibility = "hidden";
                     $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
                     $(".js_addcircle").slideDown(10);
                     $(".js_accountmanage").css("visibility", "hidden");
+                    //--------------------------------------------------------------------------------------------------
                 }
             }
             titleBar.onmousedown = function (e) {
