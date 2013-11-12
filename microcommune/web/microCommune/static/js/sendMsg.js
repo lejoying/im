@@ -1,4 +1,7 @@
 var selectGroup = 0;
+var selectCircleId = "";
+var selectPhone = "";
+var selectId = "";
 $(document).ready(function () {
     window.onbeforeunload = onbeforeunload_handler;
     function onbeforeunload_handler() {
@@ -59,50 +62,23 @@ $(document).ready(function () {
                 window.sessionStorage.setItem("circles", JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
-//                var obj;
-//                $(".js_circlesFriends .friendDetail").click(function(){
-//                    alert("--");
-//                    obj = this;
-//                });
-                $(".js_circlesFriends .friendDetail").longPress(200, function (obj, x, y) {
-                    alert($(obj).attr("id"));
-//                        DragDivDrag("titleBar", "message_box",{ opacity: 100, keepOrigin: true });
-                    $(".js_circlesFriends .friendDetail").slideUp(1000);
-                    $("#mainBox")[0].style.top = "0px";
-                    $("#conversationListContent")[0].style.top = "0px";
-//                    mainBox', 'conversationListContent'
-//                    element.style.top = flag + "px";
-//                    contentBox.style.top = -flag * (contentBox.offsetHeight / mainBox.offsetHeight) + "px";
-//                    var div1 = document.createElement("div");
-//                    div1.id = "divtemp1";
-//                    var div2 = document.createElement("div");
-//                    div2.id = "divtemp2";
-//                    div1.appendChild(div2);
-//                    div1.innerHTML = $(".js_circlesFriends .friendDetail")[0].innerHTML;
-//                    document.body.appendChild(div1);
-//                    js_friendManage    js_titleBarfriendManage
-//                    alert(circleGroupCount * 33);
-                    js_friendManage.style.visibility = "visible";
-                    $(".js_addcircle").slideUp(10);
-                    $(".js_accountmanage").css("visibility", "visible");
-                    /*var span = document.createElement('span');
-                     span.id = "js_accountmanage";
-                     span.innerHTML = '<span style="float: left;width: 136px;text-align: center;margin-top: 4px;">ss</span>' +
-                     '<span style="float: left;width: 1px;text-align: center;margin-top: 4px;">|</span>' +
-                     '<span style="float: right;width: 136px;text-align: center;margin-top: 4px;">ss</span>';
-                     */
-                    DragDivDrag("js_friendManage", "js_friendManage", { opacity: 100, keepOrigin: true, area: { left: 0, right: 0.00001, top: 0, bottom: 33 * circleGroupCount}}); //250
-                    /*$("#js_friendManage").mouseup(function () {
-                        alert(selectGroup);
-                        js_friendManage.style.visibility = "hidden";
-                        $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
-                        $(".js_addcircle").slideDown(10);
-                        $(".js_accountmanage").css("visibility", "hidden");
-                    });*/
-
-//, area: { left: 50, right: 500, top: 100, bottom: 400}
-//                    alert("x:" + x + ',y:' + y + "x1:" + x1 + ',y1:' + y1);
-//                    alert($(".js_circlesFriends .friendDetail")[1].offsetLeft + "___+_++_+_+" + $(".js_circlesFriends .friendDetail")[1].offsetTop);
+                $(".js_circlesFriends .friendDetail").each(function (i) {
+                    $($(".js_circlesFriends .friendDetail")[i]).longPress(200, function (obj, x, y) {
+                        selectCircleId = $(obj).attr("circleid");
+                        selectId = $(obj).attr("id");
+                        selectPhone = $(obj).attr("phone");
+                        var src = $(obj).find("img").attr("src");
+                        var nickName = $(obj).find($(".left")).html();
+                        $(".js_manageHead img").attr("src", src);
+                        $(".js_manageNickName").html(nickName);
+                        $(".js_circlesFriends .friendDetail").slideUp(1000);
+                        $("#mainBox")[0].style.top = "0px";
+                        $("#conversationListContent")[0].style.top = "0px";
+                        js_friendManage.style.visibility = "visible";
+                        $(".js_addcircle").slideUp(10);
+                        $(".js_accountmanage").css("visibility", "visible");
+                        DragDivDrag("js_friendManage", "js_friendManage", { opacity: 100, keepOrigin: true, area: { left: 0, right: 0.00001, top: 0, bottom: 33 * circleGroupCount}}); //250
+                    });
                 });
                 /*var groupFlag = false;
                  $(".js_circlesFriends .groupTitle").click(function () {
@@ -118,127 +94,168 @@ $(document).ready(function () {
                 $(".js_circlesFriends .groupTitle").click(function () {
                     $(".js_circlesFriends .friendDetail").slideDown(1000);
                 });
-                $(".circles_friends .friendDetail span img").click(function () {
-                    var obj = JSON.parse(window.sessionStorage.getItem("circles"));
-                    var phone = this.parentNode.parentNode.getAttribute("phone");
-                    var rid = this.parentNode.parentNode.getAttribute("circleid");
-                    if (rid != "undefined") {
-                        for (var index1 in obj) {
-                            var it1 = obj[index1];
-                            if (it1.rid == rid) {
-                                var accounts = it1.accounts;
-                                for (var index2 in accounts) {
-                                    var it2 = accounts[index2];
-                                    if (it2.phone == phone) {
-                                        showProc(it2, rid);
+                $(".js_headimg").on({
+                    click: function () {
+                        var obj = JSON.parse(window.sessionStorage.getItem("circles"));
+                        var phone = this.parentNode.parentNode.getAttribute("phone");
+                        var rid = this.parentNode.parentNode.getAttribute("circleid");
+                        alert(rid);
+                        if (rid != "undefined") {
+                            for (var index1 in obj) {
+                                var it1 = obj[index1];
+//                                alert(rid+"--"+it1.rid == parseInt(rid));
+                                if (it1.rid == rid) {
+                                    var accounts = it1.accounts;
+                                    for (var index2 in accounts) {
+                                        var it2 = accounts[index2];
+                                        if (it2.phone == phone) {
+                                            alert(rid + "-++_+_+_+_+_-");
+                                            showProc(it2, rid);
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                        }
-                    } else {
-                        for (var index1 in obj) {
-                            var it1 = obj[index1];
-                            if (it1.rid == undefined) {
-                                var accounts = it1.accounts;
-                                for (var index2 in accounts) {
-                                    var it2 = accounts[index2];
-                                    if (it2.phone == phone) {
-                                        showProc(it2, rid);
+                        } else {
+                            alert(rid + "--+++");
+                            for (var index1 in obj) {
+                                var it1 = obj[index1];
+                                if (it1.rid == undefined) {
+                                    var accounts = it1.accounts;
+                                    for (var index2 in accounts) {
+                                        var it2 = accounts[index2];
+                                        if (it2.phone == phone) {
+                                            showProc(it2, rid);
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 });
+                /*                $(document).on('click', ".js_headimg", (function () {
+                 var obj = JSON.parse(window.sessionStorage.getItem("circles"));
+                 var phone = this.parentNode.parentNode.getAttribute("phone");
+                 var rid = this.parentNode.parentNode.getAttribute("circleid");
+                 if (rid != "undefined") {
+                 for (var index1 in obj) {
+                 var it1 = obj[index1];
+                 if (it1.rid == rid) {
+                 var accounts = it1.accounts;
+                 for (var index2 in accounts) {
+                 var it2 = accounts[index2];
+                 if (it2.phone == phone) {
+                 showProc(it2, rid);
+                 }
+                 }
+                 }
+                 }
+                 } else {
+                 for (var index1 in obj) {
+                 var it1 = obj[index1];
+                 if (it1.rid == undefined) {
+                 var accounts = it1.accounts;
+                 for (var index2 in accounts) {
+                 var it2 = accounts[index2];
+                 if (it2.phone == phone) {
+                 showProc(it2, rid);
+                 }
+                 }
+                 }
+                 }
+                 }
+                 }));*/
+
                 /*$(".circles_friends .groupTitle .groupTitleLetter").click(function () {
                  alert("--=-");
                  });*/
-                $(".circles_friends .groupTitle>span").each(function (i) {
-                    $(document).on('dblclick', ".groupTitleLetter", (function () {
-                        if ($("#js_modifydiv").length > 0) {
-                            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
-                            $(".circles_friends .groupTitle>span").css("visibility", "visible");
-                            var circleNameTemp = "";
-                        }
-                        if ($(this).html().trim() == "默认分组")
-                            return;
-                        var div = document.createElement("span");
-                        div.id = "js_modifydiv";
-                        div.innerHTML = "<input type='text' class='js_newcirclename' style='width: 100px;' value='" + this.innerHTML + "'>&nbsp;&nbsp;<input type='button' class='js_modifycirclename' value='提交' style='width: 30px;'>&nbsp;|&nbsp;<input type='button' class='js_modifycirclenamecancle' value='取消' style='width: 30px;'>";
-                        this.parentNode.insertBefore(div, this.parentNode.firstChild);
-//                    $(".js_newcirclename").focus();
-                        var rid = this.getAttribute("circleid");
-                        var oldCircleName = $(this).html().trim();
-//                        $(this).html("");
-                        this.style.visibility = "hidden";
-                        $(".js_modifycirclename").click(function () {
-                            var newCircleName = $(".js_newcirclename").val().trim();
-                            if (newCircleName.trim() == "") {
-                                eval("$.Prompt('组名不能为空!')");
-                                return;
-                            }
-//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
-                            if (oldCircleName == newCircleName) {
-                                setCircleName(oldCircleName);
-                            } else {
-//                                setCircleName(newCircleName);
-                                modifyCircleName(rid, newCircleName, oldCircleName);
-                            }
-                        });
-                        $(".js_modifycirclenamecancle").click(function () {
-//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
-                            setCircleName(oldCircleName);
-                        });
+//                $(".circles_friends .groupTitle>span").each(function (i) {
+                $(document).on('dblclick', ".groupTitleLetter", (function () {
+                    if ($("#js_modifydiv").length > 0) {
+                        $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
+                        $(".circles_friends .groupTitle>span").css("visibility", "visible");
                         var circleNameTemp = "";
-                        $(".js_newcirclename").focus(function () {
-                            document.onkeydown = function (event) {
-                                var e = event ? event : (window.event ? window.event : null);
-                                if (e.keyCode == 13) {
-                                    var newCircleName = $(".js_newcirclename").val().trim();
-                                    if (oldCircleName == newCircleName) {
-                                        setCircleName(oldCircleName);
-                                    } else {
+                    }
+                    if ($(this).html().trim() == "默认分组")
+                        return;
+                    var div = document.createElement("span");
+                    div.id = "js_modifydiv";
+                    div.innerHTML = "<input type='text' class='js_newcirclename' style='width: 100px;' value='" + this.innerHTML + "'>&nbsp;&nbsp;<input type='button' class='js_modifycirclename' value='提交' style='width: 30px;'>&nbsp;|&nbsp;<input type='button' class='js_modifycirclenamecancle' value='取消' style='width: 30px;'>";
+                    this.parentNode.insertBefore(div, this.parentNode.firstChild);
+//                    $(".js_newcirclename").focus();
+                    var rid = this.getAttribute("circleid");
+                    var oldCircleName = $(this).html().trim();
+//                        $(this).html("");
+                    this.style.visibility = "hidden";
+                    $(".js_modifycirclename").click(function () {
+                        var newCircleName = $(".js_newcirclename").val().trim();
+                        if (newCircleName.trim() == "") {
+                            eval("$.Prompt('组名不能为空!')");
+                            return;
+                        }
+//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
+                        if (oldCircleName == newCircleName) {
+                            setCircleName(oldCircleName);
+                        } else {
+//                                setCircleName(newCircleName);
+                            modifyCircleName(rid, newCircleName, oldCircleName);
+                        }
+                    });
+                    $(".js_modifycirclenamecancle").click(function () {
+//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
+                        setCircleName(oldCircleName);
+                    });
+                    var circleNameTemp = "";
+                    $(".js_newcirclename").focus(function () {
+                        document.onkeydown = function (event) {
+                            var e = event ? event : (window.event ? window.event : null);
+                            if (e.keyCode == 13) {
+                                var newCircleName = $(".js_newcirclename").val().trim();
+                                if (oldCircleName == newCircleName) {
+                                    setCircleName(oldCircleName);
+                                } else {
 //                                        setCircleName(newCircleName);
-                                        modifyCircleName(rid, newCircleName, oldCircleName);
-                                    }
+                                    modifyCircleName(rid, newCircleName, oldCircleName);
+                                }
 //                                    $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
+                            }
+                        }
+                    });
+                    /*$(".js_newcirclename").blur(function () {
+                     if(circleNameTemp==""){
+                     setCircleName(oldCircleName);
+                     }else{
+                     setCircleName(circleNameTemp);
+                     }
+                     });*/
+                    function setCircleName(circleName) {
+                        $($("#js_modifydiv")[0].parentNode).find($(".groupTitleLetter")).html(circleName);
+                        $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
+                        $(".circles_friends .groupTitle>span").css("visibility", "visible");
+                    }
+
+                    function modifyCircleName(rid, newCircleName, oldCircleName) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/api2/circle/modify?",
+                            data: {
+                                rid: rid,
+                                name: newCircleName
+                            },
+                            success: function (data) {
+                                if (data["提示信息"] == "修改成功") {
+                                    setCircleName(newCircleName);
+                                    dialogMessage("succ", data["提示信息"], 1000);
+                                } else {
+                                    setCircleName(oldCircleName);
+                                    dialogMessage("error", data["提示信息"] + "," + data["失败原因"], 1000);
                                 }
                             }
                         });
-                        /*$(".js_newcirclename").blur(function () {
-                         if(circleNameTemp==""){
-                         setCircleName(oldCircleName);
-                         }else{
-                         setCircleName(circleNameTemp);
-                         }
-                         });*/
-                        function setCircleName(circleName) {
-                            $($("#js_modifydiv")[0].parentNode).find($(".groupTitleLetter")).html(circleName);
-                            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
-                            $(".circles_friends .groupTitle>span").css("visibility", "visible");
-                        }
-
-                        function modifyCircleName(rid, newCircleName, oldCircleName) {
-                            $.ajax({
-                                type: "POST",
-                                url: "/api2/circle/modify?",
-                                data: {
-                                    rid: rid,
-                                    name: newCircleName
-                                },
-                                success: function (data) {
-                                    if (data["提示信息"] == "修改成功") {
-                                        setCircleName(newCircleName);
-                                        dialogMessage("succ", data["提示信息"], 1000);
-                                    } else {
-                                        setCircleName(oldCircleName);
-                                        dialogMessage("error", data["提示信息"] + "," + data["失败原因"], 1000);
-                                    }
-                                }
-                            });
-                        }
-                    }));
-                });
+                    }
+                }));
+//                });
                 $(".circles_friends .friendDetail>div").mouseover(function () {
 //                    var evt = evt || window.event;
 //                    alert(evt.clientX+"--"+evt.clientY);
@@ -788,11 +805,83 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
             titleBar.onmouseup = function () {
                 if (message_box.id == "js_friendManage") {
 //                    alert(selectGroup+"--");
+                    var circles = window.sessionStorage.getItem("circles");
+                    var groupRid = JSON.parse(circles)[selectGroup].rid;
+                    var selectObj = $($(".groupTitle .groupTitleLetter")[selectGroup]);
+                    var circleId = selectObj.attr("circleid");
+                    if (groupRid == undefined) {
+                        groupRid = "undefined";
+                    }
+                    if (selectCircleId == groupRid.toString()) {
+                        alert("请选择别的分组");
+                    } else {
+                        var obj = $("#" + selectId);
+                        obj.attr("circleid", groupRid);
+                        obj.insertAfter($("#js_group" + groupRid));
+                        //this.parentNode.insertBefore(div, this.parentNode.firstChild);
+//                        obj[0].parentNode.removeChild(obj[0]);
+//                        $("#js_group" + selectCircleId)[0].insertAfter($("#" + selectId)[0], $("#js_group" + selectCircleId)[0]);
+                        //--------------------------------------
+                        var circles = JSON.parse(window.sessionStorage.getItem("circles"));
+                        var selectAccounts = circles[selectGroup].accounts;
+                        if (selectCircleId == "undefined") {
+                            selectCircleId = undefined;
+                        }
+                        for (var index1 in circles) {
+                            var it1 = circles[index1];
+                            if (it1.rid == selectCircleId) {
+                                var accounts = it1.accounts;
+                                for (var index2 in accounts) {
+                                    var it2 = accounts[index2];
+                                    if (it2.phone == selectPhone) {
+                                        selectAccounts.push(it2);
+//                                        delete accounts[index2];
+                                        accounts.splice(index2, 1);
+                                        window.sessionStorage.setItem("circles", JSON.stringify(circles));
+                                    }
+
+                                }
+                            }
+                        }
+//                        alert(accounts);
+                        /*if (selectCircleId != "undefined") {
+                         for (var index1 in obj) {
+                         var it1 = obj[index1];
+                         //                                alert(rid+"--"+it1.rid == parseInt(rid));
+                         if (it1.rid == selectCircleId) {
+                         var accounts = it1.accounts;
+                         for (var index2 in accounts) {
+                         var it2 = accounts[index2];
+                         if (it2.phone == selectPhone) {
+                         showProc(it2, rid);
+                         break;
+                         }
+                         }
+                         }
+                         }
+                         } else {
+                         alert(rid + "--+++");
+                         for (var index1 in obj) {
+                         var it1 = obj[index1];
+                         if (it1.rid == undefined) {
+                         var accounts = it1.accounts;
+                         for (var index2 in accounts) {
+                         var it2 = accounts[index2];
+                         if (it2.phone == phone) {
+                         showProc(it2, rid);
+                         break;
+                         }
+                         }
+                         }
+                         }
+                         }*/
+                    }
+
+                    //--------------------样式控制-----------------------//
                     js_friendManage.style.visibility = "hidden";
                     $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
                     $(".js_addcircle").slideDown(10);
                     $(".js_accountmanage").css("visibility", "hidden");
-                    //--------------------------------------------------------------------------------------------------
                 }
             }
             titleBar.onmousedown = function (e) {

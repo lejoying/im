@@ -198,18 +198,6 @@ api = {
         }
     },
     /***************************************
-     *     URL：/api2/relation/moveout
-     ***************************************/
-    "relation_moveout": {
-        request: {
-            typical: {"phoneto": "XXX", rid: "XXX", filter: ["REMOVE","SHIFTIN"]}
-        },
-        response: {
-            success: {"提示信息": "移出成功" || "移入成功"},
-            failed: {"提示信息": "移出失败" || "移入失败", "失败原因": "数据异常"}
-        }
-    },
-    /***************************************
      *     URL：/api2/relation/deletefriend
      ***************************************/
     "relation_deletefriend": {
@@ -247,18 +235,6 @@ api = {
                 {}
             ]},
             failed: {"提示信息": "获取好友失败", "失败原因": ["数据异常"]}
-        }
-    },
-    /***************************************
-     *     URL：/api2/relation/addcircle
-     ***************************************/
-    "relation_addcircle": {
-        request: {
-            typical: {"phone": "XXX", circleName: "XXX"}
-        },
-        response: {
-            success: {"提示信息": "添加成功"},
-            failed: {"提示信息": "添加失败", "失败原因": "数据异常"}
         }
     },
     /***************************************
@@ -423,6 +399,42 @@ api = {
         response: {
             success: {"提示信息": "删除成功"},
             failed: {"提示信息": "删除失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/circle/moveorout
+     ***************************************/
+    "circle_moveorout": {
+        request: {
+            typical: {"phoneto": "XXX", rid: "XXX", filter: ["REMOVE","SHIFTIN"]}
+        },
+        response: {
+            success: {"提示信息": "移出成功" || "移入成功"},
+            failed: {"提示信息": "移出失败" || "移入失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/circle/moveout
+     ***************************************/
+    "circle_moveout": {
+        request: {
+            typical: {"phoneto": "XXX", oldrid: "XXX", newrid: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "移动成功"},
+            failed: {"提示信息": "移动失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/circle/addcircle
+     ***************************************/
+    "circle_addcircle": {
+        request: {
+            typical: {"phone": "XXX", circleName: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "添加成功"},
+            failed: {"提示信息": "添加失败", "失败原因": "数据异常"}
         }
     }
 }

@@ -96,7 +96,7 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
         relationManage.addfriend(data, response);
     }
     else if (operation == "moveout") {
-        relationManage.moveout(data, response);
+        relationManage.moveorout(data, response);
     }
     else if (operation == "deletefriend") {
         relationManage.deletefriend(data, response);

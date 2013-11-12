@@ -115,9 +115,9 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                  <div class="js_circlesFriends">
                 </div>
                 <div id="js_friendManage" style="position:absolute; border:solid 1px #000;width:274px;height:50px;left:0%;top:24%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1000;">
-                    <table style="width: 100%;height: 100%;">
+                    <table style="width: 100%;height: 100%;text-align: left;">
                         <tr>
-                            <td rowspan="2" class="js_manageHead"><img src="/static/images/face.jpg" style="height: 50px;"/></td>
+                            <td rowspan="2" class="js_manageHead"><img src="/static/images/face.jpg" style="height: 50px;width: 50px;"/></td>
                             <td class="js_manageNickName"></td>
                         </tr>
                         <tr>
@@ -132,23 +132,23 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                         <div>数据中心</div>
                         <a class="popappIcon" href="index.html">
                             <img src="/static/images/sildLeft/iconInfomation.png" />
-                            <div>基本信息</div>
+                            <div>资金帐户</div>
                         </a>
                         <a class="popappIcon" href="metadata.html">
                             <img src="/static/images/sildLeft/iconOriginaldata.png" />
-                            <div>元数据</div>
+                            <div>服务管理</div>
                         </a>
                         <a class="popappIcon" href="MultidimensionalTag.html">
                             <img src="/static/images/sildLeft/iconMultitag.png" />
-                            <div>多维标签</div>
+                            <div>会员管理</div>
                         </a>
                         <div class="popappIcon">
                             <img src="/static/images/sildLeft/trigger.png" />
-                            <div>触发器</div>
+                            <div>社区管理</div>
                         </div>
                         <div class="popappIcon">
                             <img src="/static/images/sildLeft/iconGuide.png" />
-                            <div>使用向导</div>
+                            <div>呼叫中心</div>
                         </div>
                         <div class="clearevery"></div>
                     </div>
@@ -160,7 +160,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                         <?js if(post==null) { ?>
                         <?js continue; ?>
                         <?js } ?>
-                        <div class="groupTitle" style="background-color: #A7B0BC">
+                        <div class="groupTitle" id="js_group#{post.rid}" style="background-color: #A7B0BC">
                         <span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">#{post.name}</span>
                         </div>
                         <?js var it1 = post.accounts; ?>
@@ -171,7 +171,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                         <?js } ?>
                         <a class="friendDetail" click="showProfile" id="con_item_#{post1.uid}" circleid="#{post.rid}" phone="#{post1.phone}">
                             <span class="avatar" mouseover1="showProfile@.friendDetail">
-                                <img src="/static/images/face.jpg"/></span>
+                                <img class="js_headimg" src="/static/images/face.jpg"/></span>
                             <div class="nickName">
                                 <div class="left name" style="">#{post1.nickName}</div>
                                 <div class="clr"></div>
