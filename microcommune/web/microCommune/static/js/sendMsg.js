@@ -332,7 +332,7 @@ $(document).ready(function () {
         var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
         $.ajax({
             type: "POST",
-            url: "/api2/relation/addcircle?",
+            url: "/api2/circle/addcircle?",
             data: {
                 phone: JSON.parse(nowAccount).phone,
                 name: newCircleName
@@ -693,6 +693,20 @@ function getTemplate(id) {
     template.convert(string);
     return template;
 }
+function moveoutAccountNode(phoneTo, newRid, oldRid) {
+    $.ajax({
+        type: "POST",
+        url: "/api2/circle/moveout?",
+        data: {
+            phoneto: phoneTo,
+            newrid: newRid,
+            oldrid: oldRid
+        },
+        success: function (data) {
+            alert(data["提示信息"]);
+        }
+    });
+}
 function DragDivDrag(titleBarID, message_boxID, obj) {
 
     var Common = {
@@ -838,43 +852,12 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
 //                                        delete accounts[index2];
                                         accounts.splice(index2, 1);
                                         window.sessionStorage.setItem("circles", JSON.stringify(circles));
+                                        moveoutAccountNode(selectPhone, groupRid, selectCircleId);
+                                        break;
                                     }
-
                                 }
                             }
                         }
-//                        alert(accounts);
-                        /*if (selectCircleId != "undefined") {
-                         for (var index1 in obj) {
-                         var it1 = obj[index1];
-                         //                                alert(rid+"--"+it1.rid == parseInt(rid));
-                         if (it1.rid == selectCircleId) {
-                         var accounts = it1.accounts;
-                         for (var index2 in accounts) {
-                         var it2 = accounts[index2];
-                         if (it2.phone == selectPhone) {
-                         showProc(it2, rid);
-                         break;
-                         }
-                         }
-                         }
-                         }
-                         } else {
-                         alert(rid + "--+++");
-                         for (var index1 in obj) {
-                         var it1 = obj[index1];
-                         if (it1.rid == undefined) {
-                         var accounts = it1.accounts;
-                         for (var index2 in accounts) {
-                         var it2 = accounts[index2];
-                         if (it2.phone == phone) {
-                         showProc(it2, rid);
-                         break;
-                         }
-                         }
-                         }
-                         }
-                         }*/
                     }
 
                     //--------------------样式控制-----------------------//
