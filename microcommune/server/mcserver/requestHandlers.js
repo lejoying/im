@@ -95,9 +95,6 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     if (operation == "addfriend") {
         relationManage.addfriend(data, response);
     }
-    else if (operation == "moveout") {
-        relationManage.moveout(data, response);
-    }
     else if (operation == "deletefriend") {
         relationManage.deletefriend(data, response);
     }
@@ -106,9 +103,6 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     }
     else if (operation == "getfriends") {
         relationManage.getfriends(data, response);
-    }
-    else if (operation == "addcircle") {
-        relationManage.addcircle(data, response);
     }
     else if (operation == "getcirclesandfriends") {
         relationManage.getcirclesandfriends(data, response);
@@ -132,6 +126,15 @@ requestHandlers.circleManage = function (request, response, pathObject, data) {
     }
     else if (operation == "delete") {
         circleManage.delete(data, response);
+    }
+    else if (operation == "moveout") {
+        circleManage.moveout(data, response);
+    }
+    else if (operation == "moveorout") {
+        circleManage.moveorout(data, response);
+    }
+    else if (operation == "addcircle") {
+        circleManage.addcircle(data, response);
     }
 }
 var messageManage = require("./handlers/messageManage.js");

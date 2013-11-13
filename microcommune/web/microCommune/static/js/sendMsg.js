@@ -1,26 +1,8 @@
 var selectGroup = 0;
+var selectCircleId = "";
+var selectPhone = "";
+var selectId = "";
 $(document).ready(function () {
-    window.onbeforeunload = onbeforeunload_handler;
-    function onbeforeunload_handler() {
-        var warning = "关闭浏览器聊天记录将会丢失";
-        return warning;
-    }
-
-    $.getScript("/static/js/nTenjin.js");
-    var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
-    $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
-    $(".js_circlesFriends").hide();
-    $(".loadMoreConv").hide();
-    var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
-    if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
-        var tempChatArr = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatArr"));
-        for (var index in tempChatArr) {
-//            var it = tempChatArr[index];
-            addTempChatAccount(JSON.parse(tempChatArr[index]));
-        }
-        $(".loadMoreConv").show();
-    }
-//    $(".prompteds").hide();
     (function ($) {
         $.extend($.fn, {
             longPress: function (time, callBack) {
@@ -45,6 +27,29 @@ $(document).ready(function () {
             }
         });
     })(jQuery);
+
+    DragDivDrag("titleBar", "message_box", { opacity: 100, keepOrigin: true });
+    DragDivDrag("js_titleBarfeedback", "js_feedback", { opacity: 100, keepOrigin: true });
+
+    window.onbeforeunload = onbeforeunload_handler;
+    function onbeforeunload_handler() {
+        var warning = "关闭浏览器聊天记录将会丢失";
+        return warning;
+    }
+
+    $.getScript("/static/js/nTenjin.js");
+    var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+    $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
+    $(".js_circlesFriends").hide();
+    $(".loadMoreConv").hide();
+    var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
+    if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
+        var tempChatArr = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatArr"));
+        for (var index in tempChatArr) {
+            addTempChatAccount(JSON.parse(tempChatArr[index]));
+        }
+        $(".loadMoreConv").show();
+    }
     var circleGroupCount = 0;
     $.ajax({
         type: "POST",
@@ -59,199 +64,123 @@ $(document).ready(function () {
                 window.sessionStorage.setItem("circles", JSON.stringify(data.circles));
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
-//                var obj;
-//                $(".js_circlesFriends .friendDetail").click(function(){
-//                    alert("--");
-//                    obj = this;
-//                });
-                $(".js_circlesFriends .friendDetail").longPress(200, function (obj, x, y) {
-                    alert($(obj).attr("id"));
-//                        DragDivDrag("titleBar", "message_box",{ opacity: 100, keepOrigin: true });
-                    $(".js_circlesFriends .friendDetail").slideUp(1000);
-                    $("#mainBox")[0].style.top = "0px";
-                    $("#conversationListContent")[0].style.top = "0px";
-//                    mainBox', 'conversationListContent'
-//                    element.style.top = flag + "px";
-//                    contentBox.style.top = -flag * (contentBox.offsetHeight / mainBox.offsetHeight) + "px";
-//                    var div1 = document.createElement("div");
-//                    div1.id = "divtemp1";
-//                    var div2 = document.createElement("div");
-//                    div2.id = "divtemp2";
-//                    div1.appendChild(div2);
-//                    div1.innerHTML = $(".js_circlesFriends .friendDetail")[0].innerHTML;
-//                    document.body.appendChild(div1);
-//                    js_friendManage    js_titleBarfriendManage
-//                    alert(circleGroupCount * 33);
-                    js_friendManage.style.visibility = "visible";
-                    $(".js_addcircle").slideUp(10);
-                    $(".js_accountmanage").css("visibility", "visible");
-                    /*var span = document.createElement('span');
-                     span.id = "js_accountmanage";
-                     span.innerHTML = '<span style="float: left;width: 136px;text-align: center;margin-top: 4px;">ss</span>' +
-                     '<span style="float: left;width: 1px;text-align: center;margin-top: 4px;">|</span>' +
-                     '<span style="float: right;width: 136px;text-align: center;margin-top: 4px;">ss</span>';
-                     */
-                    DragDivDrag("js_friendManage", "js_friendManage", { opacity: 100, keepOrigin: true, area: { left: 0, right: 0.00001, top: 0, bottom: 33 * circleGroupCount}}); //250
-                    /*$("#js_friendManage").mouseup(function () {
-                        alert(selectGroup);
-                        js_friendManage.style.visibility = "hidden";
-                        $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
-                        $(".js_addcircle").slideDown(10);
-                        $(".js_accountmanage").css("visibility", "hidden");
-                    });*/
-
-//, area: { left: 50, right: 500, top: 100, bottom: 400}
-//                    alert("x:" + x + ',y:' + y + "x1:" + x1 + ',y1:' + y1);
-//                    alert($(".js_circlesFriends .friendDetail")[1].offsetLeft + "___+_++_+_+" + $(".js_circlesFriends .friendDetail")[1].offsetTop);
-                });
-                /*var groupFlag = false;
-                 $(".js_circlesFriends .groupTitle").click(function () {
-                 //                    alert($(".js_circlesFriends").height());
-                 if (!groupFlag) {
-                 groupFlag = true;
-                 $(".js_circlesFriends .friendDetail").slideDown(1000);
-                 } else {
-                 groupFlag = false;
-                 $(".js_circlesFriends .friendDetail").slideUp(1000);
-                 }
-                 });*/
-                $(".js_circlesFriends .groupTitle").click(function () {
-                    $(".js_circlesFriends .friendDetail").slideDown(1000);
-                });
-                $(".circles_friends .friendDetail span img").click(function () {
-                    var obj = JSON.parse(window.sessionStorage.getItem("circles"));
-                    var phone = this.parentNode.parentNode.getAttribute("phone");
-                    var rid = this.parentNode.parentNode.getAttribute("circleid");
-                    if (rid != "undefined") {
-                        for (var index1 in obj) {
-                            var it1 = obj[index1];
-                            if (it1.rid == rid) {
-                                var accounts = it1.accounts;
-                                for (var index2 in accounts) {
-                                    var it2 = accounts[index2];
-                                    if (it2.phone == phone) {
-                                        showProc(it2, rid);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        for (var index1 in obj) {
-                            var it1 = obj[index1];
-                            if (it1.rid == undefined) {
-                                var accounts = it1.accounts;
-                                for (var index2 in accounts) {
-                                    var it2 = accounts[index2];
-                                    if (it2.phone == phone) {
-                                        showProc(it2, rid);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-                /*$(".circles_friends .groupTitle .groupTitleLetter").click(function () {
-                 alert("--=-");
-                 });*/
-                $(".circles_friends .groupTitle>span").each(function (i) {
-                    $(document).on('dblclick', ".groupTitleLetter", (function () {
-                        if ($("#js_modifydiv").length > 0) {
-                            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
-                            $(".circles_friends .groupTitle>span").css("visibility", "visible");
-                            var circleNameTemp = "";
-                        }
-                        if ($(this).html().trim() == "默认分组")
-                            return;
-                        var div = document.createElement("span");
-                        div.id = "js_modifydiv";
-                        div.innerHTML = "<input type='text' class='js_newcirclename' style='width: 100px;' value='" + this.innerHTML + "'>&nbsp;&nbsp;<input type='button' class='js_modifycirclename' value='提交' style='width: 30px;'>&nbsp;|&nbsp;<input type='button' class='js_modifycirclenamecancle' value='取消' style='width: 30px;'>";
-                        this.parentNode.insertBefore(div, this.parentNode.firstChild);
-//                    $(".js_newcirclename").focus();
-                        var rid = this.getAttribute("circleid");
-                        var oldCircleName = $(this).html().trim();
-//                        $(this).html("");
-                        this.style.visibility = "hidden";
-                        $(".js_modifycirclename").click(function () {
-                            var newCircleName = $(".js_newcirclename").val().trim();
-                            if (newCircleName.trim() == "") {
-                                eval("$.Prompt('组名不能为空!')");
-                                return;
-                            }
-//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
-                            if (oldCircleName == newCircleName) {
-                                setCircleName(oldCircleName);
-                            } else {
-//                                setCircleName(newCircleName);
-                                modifyCircleName(rid, newCircleName, oldCircleName);
-                            }
-                        });
-                        $(".js_modifycirclenamecancle").click(function () {
-//                            $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
-                            setCircleName(oldCircleName);
-                        });
-                        var circleNameTemp = "";
-                        $(".js_newcirclename").focus(function () {
-                            document.onkeydown = function (event) {
-                                var e = event ? event : (window.event ? window.event : null);
-                                if (e.keyCode == 13) {
-                                    var newCircleName = $(".js_newcirclename").val().trim();
-                                    if (oldCircleName == newCircleName) {
-                                        setCircleName(oldCircleName);
-                                    } else {
-//                                        setCircleName(newCircleName);
-                                        modifyCircleName(rid, newCircleName, oldCircleName);
-                                    }
-//                                    $(".groupTitle")[0].removeChild($(".groupTitle")[0].firstChild);
-                                }
-                            }
-                        });
-                        /*$(".js_newcirclename").blur(function () {
-                         if(circleNameTemp==""){
-                         setCircleName(oldCircleName);
-                         }else{
-                         setCircleName(circleNameTemp);
-                         }
-                         });*/
-                        function setCircleName(circleName) {
-                            $($("#js_modifydiv")[0].parentNode).find($(".groupTitleLetter")).html(circleName);
-                            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
-                            $(".circles_friends .groupTitle>span").css("visibility", "visible");
-                        }
-
-                        function modifyCircleName(rid, newCircleName, oldCircleName) {
-                            $.ajax({
-                                type: "POST",
-                                url: "/api2/circle/modify?",
-                                data: {
-                                    rid: rid,
-                                    name: newCircleName
-                                },
-                                success: function (data) {
-                                    if (data["提示信息"] == "修改成功") {
-                                        setCircleName(newCircleName);
-                                        dialogMessage("succ", data["提示信息"], 1000);
-                                    } else {
-                                        setCircleName(oldCircleName);
-                                        dialogMessage("error", data["提示信息"] + "," + data["失败原因"], 1000);
-                                    }
-                                }
-                            });
-                        }
-                    }));
-                });
-                $(".circles_friends .friendDetail>div").mouseover(function () {
-//                    var evt = evt || window.event;
-//                    alert(evt.clientX+"--"+evt.clientY);
-//                    var j = new Endrag(this, this.parentNode.id, 0, 0);
-                }).mousedown(function () {
-//                        alert("===");
+                $(".js_circlesFriends .friendDetail").each(function (i) {
+                    $($(".js_circlesFriends .friendDetail")[i]).longPress(200, function (obj, x, y) {
+                        selectCircleId = $(obj).attr("circleid");
+                        selectId = $(obj).attr("id");
+                        selectPhone = $(obj).attr("phone");
+                        var src = $(obj).find("img").attr("src");
+                        var nickName = $(obj).find($(".left")).html();
+                        $(".js_manageHead img").attr("src", src);
+                        $(".js_manageNickName").html(nickName);
+                        $(".js_circlesFriends .friendDetail").slideUp(1000);
+                        $("#mainBox")[0].style.top = "0px";
+                        $("#conversationListContent")[0].style.top = "0px";
+                        js_friendManage.style.visibility = "visible";
+                        $(".js_addcircle").slideUp(10);
+                        $(".js_accountmanage").css("visibility", "visible");
+                        DragDivDrag("js_friendManage", "js_friendManage", { opacity: 100, keepOrigin: true, area: { left: 0, right: 0.00001, top: 0, bottom: 33 * circleGroupCount}}); //250
                     });
+                });
             }
         }
     });
+    $(document).on('click', ".groupTitle", function () {
+        $(".js_circlesFriends .friendDetail").slideDown(1000);
+    });
+    $(document).on('click', ".js_headimg",function () {
+        var obj = JSON.parse(window.sessionStorage.getItem("circles"));
+        var phone = this.parentNode.parentNode.getAttribute("phone");
+        var rid = this.parentNode.parentNode.getAttribute("circleid");
+        if (rid == "undefined") {
+            rid = undefined;
+        }
+        for (var index1 in obj) {
+            var it1 = obj[index1];
+            if (it1.rid == rid) {
+                var accounts = it1.accounts;
+                for (var index2 in accounts) {
+                    var it2 = accounts[index2];
+                    if (it2.phone == phone) {
+                        showProc(it2, rid);
+                        break;
+                    }
+                }
+            }
+        }
+    });
+    $(document).on('dblclick', ".groupTitleLetter", (function () {
+        if ($("#js_modifydiv").length > 0) {
+            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
+            $(".circles_friends .groupTitle>span").css("visibility", "visible");
+            var circleNameTemp = "";
+        }
+        if ($(this).html().trim() == "默认分组")
+            return;
+        var div = document.createElement("span");
+        div.id = "js_modifydiv";
+        div.innerHTML = "<input type='text' class='js_newcirclename' style='width: 100px;' value='" + this.innerHTML + "'>&nbsp;&nbsp;<input type='button' class='js_modifycirclename' value='提交' style='width: 30px;'>&nbsp;|&nbsp;<input type='button' class='js_modifycirclenamecancle' value='取消' style='width: 30px;'>";
+        this.parentNode.insertBefore(div, this.parentNode.firstChild);
+        var rid = this.getAttribute("circleid");
+        var oldCircleName = $(this).html().trim();
+        this.style.visibility = "hidden";
+        $(".js_modifycirclename").click(function () {
+            var newCircleName = $(".js_newcirclename").val().trim();
+            if (newCircleName.trim() == "") {
+                eval("$.Prompt('组名不能为空!')");
+                return;
+            }
+            if (oldCircleName == newCircleName) {
+                setCircleName(oldCircleName);
+            } else {
+                modifyCircleName(rid, newCircleName, oldCircleName);
+            }
+        });
+        $(".js_modifycirclenamecancle").click(function () {
+            setCircleName(oldCircleName);
+        });
+        var circleNameTemp = "";
+        $(".js_newcirclename").focus(function () {
+            document.onkeydown = function (event) {
+                var e = event ? event : (window.event ? window.event : null);
+                if (e.keyCode == 13) {
+                    var newCircleName = $(".js_newcirclename").val().trim();
+                    if (oldCircleName == newCircleName) {
+                        setCircleName(oldCircleName);
+                    } else {
+                        modifyCircleName(rid, newCircleName, oldCircleName);
+                    }
+                }
+            }
+        });
+        function setCircleName(circleName) {
+            $($("#js_modifydiv")[0].parentNode).find($(".groupTitleLetter")).html(circleName);
+            $("#js_modifydiv")[0].parentNode.removeChild($("#js_modifydiv")[0]);
+            $(".circles_friends .groupTitle>span").css("visibility", "visible");
+        }
 
+        function modifyCircleName(rid, newCircleName, oldCircleName) {
+            $.ajax({
+                type: "POST",
+                url: "/api2/circle/modify?",
+                data: {
+                    rid: rid,
+                    name: newCircleName
+                },
+                success: function (data) {
+                    if (data["提示信息"] == "修改成功") {
+                        setCircleName(newCircleName);
+                        dialogMessage("succ", data["提示信息"], 1000);
+                    } else {
+                        setCircleName(oldCircleName);
+                        dialogMessage("error", data["提示信息"] + "," + data["失败原因"], 1000);
+                    }
+                }
+            });
+        }
+    }));
     $(".addFriends").click(function () {
-        alert("addFriends");
+        eval('$.Prompt("addFriends")');
     });
     $(".DesktopRemind").click(function () {
         if ($(".DesktopRemind .iconPic").attr("check") == undefined || $(".DesktopRemind .iconPic").attr("check") == "true") {
@@ -315,19 +244,24 @@ $(document).ready(function () {
         var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
         $.ajax({
             type: "POST",
-            url: "/api2/relation/addcircle?",
+            url: "/api2/circle/addcircle?",
             data: {
                 phone: JSON.parse(nowAccount).phone,
                 name: newCircleName
             },
             success: function (data) {
                 if (data["提示信息"] == "添加成功") {
+                    var circle = data.circle;
                     circleGroupCount++;
                     var div = document.createElement('div');
                     $(div).attr("class", "groupTitle");
                     div.style.backgroundColor = "#A7B0BC";
-                    div.innerHTML = '<span class="groupTitleLetter" style="height: 50px;" circleid="#{post.rid}">测试' + new Date().getTime() + '</span>';
+                    div.innerHTML = '<span class="groupTitleLetter" style="height: 50px;" circleid="' + circle.rid + '">测试' + new Date().getTime() + '</span>';
                     $(".circles_friends")[0].appendChild(div);
+                    var circles = JSON.parse(window.sessionStorage.getItem("circles"));
+                    circles.push(circle);
+                    window.sessionStorage.setItem("circles", JSON.stringify(circles));
+
                 } else {
                     eval('$.Prompt("创建密友圈失败")');
                 }
@@ -346,10 +280,6 @@ $(document).ready(function () {
         $(".js_addcircle").slideDown(10);
         $(".js_accountmanage").css("visibility", "hidden");
     });
-    /*$(".js_accountmanage").click(function () {
-     $(".js_addcircle").slideDown(10);
-     $(".js_accountmanage").css("visibility", "hidden");
-     });*/
 
     $(".chatSend").click(function () {
         var content = $("#textInput").val();
@@ -375,9 +305,7 @@ $(document).ready(function () {
             '</div>    ' +
             '</div>');
         var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
-//        var phoneto = $("#js_chat .chatName")[0].attributes['accountphone'].nodeValue;
         var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
-//        var circleid = $("#js_chat .chatName")[0].attributes['circleid'].nodeValue;
         var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
         var message = $("#textInput").val();
         var listPhone = [];
@@ -398,9 +326,6 @@ $(document).ready(function () {
             },
             success: function (data) {
                 if (data["提示信息"] == "发送成功") {
-//                    var e=document.getElementById("chatFrame");
-//                    var e1=document.getElementById("chat_chatmsglist");
-
                     var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
                     var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
                     if (tempChat != null) {
@@ -431,56 +356,14 @@ $(document).ready(function () {
             }
         });
     });
-    function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
-        if (tempChat == null) {
-            tempChat = {};
-            tempChatArr = [];
-        }
-        var circles = JSON.parse(window.sessionStorage.getItem("circles"));
-        if (circleid == "undefined") {
-            for (var index1 in circles) {
-                var it1 = circles[index1];
-                if (it1.rid == undefined) {
-                    var accounts = it1.accounts;
-                    for (var index2 in accounts) {
-                        var it2 = accounts[index2];
-                        if (it2.phone == phoneto) {
-                            var tempChatobj = tempChat;
-                            it2.rid = "undefined";
-                            tempChatobj[phoneto] = JSON.stringify(it2);
-                            window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChatobj));
-                            var tempChatArrObj = tempChatArr;
-                            tempChatArrObj.push(JSON.stringify(it2));
-                            window.sessionStorage.setItem("wxgs_tempChatArr", JSON.stringify(tempChatArrObj));
-                            addTempChatAccount(it2);
-                        }
-                    }
-                }
-            }
-        } else {
-            for (var index1 in circles) {
-                var it1 = circles[index1];
-                if (it1.rid == parseInt(circleid)) {
-                    var accounts = it1.accounts;
-                    for (var index2 in accounts) {
-                        var it2 = accounts[index2];
-                        if (it2.phone == phoneto) {
-                            var tempChatobj = tempChat;
-                            it2.rid = it1.rid;
-                            tempChatobj[phoneto] = JSON.stringify(it2);
-                            window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChatobj));
-                            var tempChatArrObj = tempChatArr;
-                            tempChatArrObj.push(JSON.stringify(it2));
-                            window.sessionStorage.setItem("wxgs_tempChatArr", JSON.stringify(tempChatArrObj));
-                            addTempChatAccount(it2);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    clickDiv();
+    $("#conversationContainer>div").click(function () {
+        $("#js_chat")[0].style.visibility = "visible";
+        $(".chatListColumn").attr("class", "chatListColumn");
+        $(this).attr("class", "chatListColumn activeColumn");
+        var phone = this.getAttribute("phone");
+        var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
+        setChatMessages(JSON.parse(tempChat[phone]));
+    });
     $(".js_createRoomSendMessage").click(function () {
         closeProc();
         $("#js_chat")[0].style.visibility = "visible";
@@ -493,22 +376,43 @@ $(document).ready(function () {
         dialogMessage("loading", "正在获取更多的数据，请稍候...", 2000);
     });
 });
-function clickDiv() {
-    $("#conversationContainer>div").click(function () {
-//            clickDiv();
-        $("#js_chat")[0].style.visibility = "visible";
-        $(".chatListColumn").attr("class", "chatListColumn");
-        $(this).attr("class", "chatListColumn activeColumn");
-        var phone = this.getAttribute("phone");
-        var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
-        setChatMessages(JSON.parse(tempChat[phone]));
-    });
-}
 function setChatMessages(obj) {
     $("#js_chat .chatName").html(obj.nickName);
     $("#js_chat .chatName").attr("accountphone", obj.phone);
     $("#js_chat .chatName").attr("circleid", obj.rid);
-    clickDiv();
+}
+function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
+    if (tempChat == null) {
+        tempChat = {};
+        tempChatArr = [];
+    }
+    var circles = JSON.parse(window.sessionStorage.getItem("circles"));
+/*    var tmepCirclrId;
+    if (circleid == undefined) {
+        tmepCirclrId = undefined;
+    }else{
+        tmepCirclrId = parseInt(circleid);
+    }*/
+    for (var index1 in circles) {
+        var it1 = circles[index1];
+        if (it1.rid == circleid) {
+            var accounts = it1.accounts;
+            for (var index2 in accounts) {
+                var it2 = accounts[index2];
+                if (it2.phone == phoneto) {
+                    var tempChatobj = tempChat;
+                    it2.rid = circleid+"";
+                    tempChatobj[phoneto] = JSON.stringify(it2);
+                    window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChatobj));
+                    var tempChatArrObj = tempChatArr;
+                    tempChatArrObj.push(JSON.stringify(it2));
+                    window.sessionStorage.setItem("wxgs_tempChatArr", JSON.stringify(tempChatArrObj));
+                    addTempChatAccount(it2);
+                    break;
+                }
+            }
+        }
+    }
 }
 function addTempChatAccount(obj) {
     $(".chatListColumn").attr("class", "chatListColumn");
@@ -542,7 +446,6 @@ function addTempChatAccount(obj) {
 }
 function showProc(it, rid) {
     message_box.style.visibility = 'visible';
-    // 创建灰色背景层
     procbg = document.createElement("div");
     procbg.setAttribute("id", "mybg");
     procbg.style.background = "#000";
@@ -554,11 +457,8 @@ function showProc(it, rid) {
     procbg.style.zIndex = "500";
     procbg.style.opacity = "0.3";
     procbg.style.filter = "Alpha(opacity=30)";
-    //背景层加入页面
     document.body.appendChild(procbg);
     document.body.style.overflow = "hidden";
-//    $("#message_box .js_head>img").attr("src", "/static/images/face.jpg");attributes['phone'].nodeValue;
-//    $(".js_createRoomSendMessage")[0].attributes['alt'].nodeValue = it.phone;
     $(".js_createRoomSendMessage").attr("accountphone", it.phone);
     $(".js_createRoomSendMessage").attr("accountnickName", it.nickName);
     $(".js_createRoomSendMessage").attr("circleid", rid);
@@ -568,7 +468,6 @@ function showProc(it, rid) {
 }
 function showProcFeedBack() {
     js_feedback.style.visibility = 'visible';
-    // 创建灰色背景层
     procbg = document.createElement("div");
     procbg.setAttribute("id", "mybg");
     procbg.style.background = "#000";
@@ -580,17 +479,8 @@ function showProcFeedBack() {
     procbg.style.zIndex = "500";
     procbg.style.opacity = "0.3";
     procbg.style.filter = "Alpha(opacity=30)";
-    //背景层加入页面
     document.body.appendChild(procbg);
     document.body.style.overflow = "hidden";
-    /*//    $("#message_box .js_head>img").attr("src", "/static/images/face.jpg");attributes['phone'].nodeValue;
-     //    $(".js_createRoomSendMessage")[0].attributes['alt'].nodeValue = it.phone;
-     $(".js_createRoomSendMessage").attr("accountphone", it.phone);
-     $(".js_createRoomSendMessage").attr("accountnickName", it.nickName);
-     $(".js_createRoomSendMessage").attr("circleid", rid);
-     $("#message_box .js_nickName").html("昵称：" + it.nickName);
-     $("#message_box .js_phone").html("手机号：" + it.phone);
-     $("#message_box .js_mainBusiness").html("业务：" + it.mainBusiness);*/
 }
 
 function closeProc() {
@@ -663,7 +553,6 @@ function showNotification() {
         notification.show();
     }
 }
-//根据id获取模版
 function getTemplate(id) {
     var tenjin = nTenjin;
     var templateDiv = $('.templates #' + id).parent();
@@ -675,6 +564,23 @@ function getTemplate(id) {
     var template = new tenjin.Template();
     template.convert(string);
     return template;
+}
+function moveoutAccountNode(phoneTo, newRid, oldRid) {
+    if (oldRid == undefined) {
+        oldRid = "undefined";
+    }
+    $.ajax({
+        type: "POST",
+        url: "/api2/circle/moveout?",
+        data: {
+            phoneto: phoneTo,
+            newrid: newRid,
+            oldrid: oldRid
+        },
+        success: function (data) {
+            eval('$.Prompt("'+data["提示信息"]+'")');
+        }
+    });
 }
 function DragDivDrag(titleBarID, message_boxID, obj) {
 
@@ -788,11 +694,45 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
             titleBar.onmouseup = function () {
                 if (message_box.id == "js_friendManage") {
 //                    alert(selectGroup+"--");
+                    var circles = window.sessionStorage.getItem("circles");
+                    var groupRid = JSON.parse(circles)[selectGroup].rid;
+                    var selectObj = $($(".groupTitle .groupTitleLetter")[selectGroup]);
+                    var circleId = selectObj.attr("circleid");
+                    if (groupRid == undefined) {
+                        groupRid = "undefined";
+                    }
+                    if (selectCircleId == groupRid.toString()) {
+                    } else {
+                        var obj = $("#" + selectId);
+                        obj.attr("circleid", groupRid);
+                        obj.insertAfter($("#js_group" + groupRid));
+                        var circles = JSON.parse(window.sessionStorage.getItem("circles"));
+                        var selectAccounts = circles[selectGroup].accounts;
+                        if (selectCircleId == "undefined") {
+                            selectCircleId = undefined;
+                        }
+                        for (var index1 in circles) {
+                            var it1 = circles[index1];
+                            if (it1.rid == selectCircleId) {
+                                var accounts = it1.accounts;
+                                for (var index2 in accounts) {
+                                    var it2 = accounts[index2];
+                                    if (it2.phone == selectPhone) {
+                                        selectAccounts.push(it2);
+//                                        delete accounts[index2];
+                                        accounts.splice(index2, 1);
+                                        window.sessionStorage.setItem("circles", JSON.stringify(circles));
+                                        moveoutAccountNode(selectPhone, groupRid, selectCircleId);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                     js_friendManage.style.visibility = "hidden";
                     $(".circles_friends .groupTitle").css("background-color", "#A7B0BC");
                     $(".js_addcircle").slideDown(10);
                     $(".js_accountmanage").css("visibility", "hidden");
-                    //--------------------------------------------------------------------------------------------------
                 }
             }
             titleBar.onmousedown = function (e) {
@@ -902,10 +842,5 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
             return maxZindex;
         }
     }
-    new Drag(titleBarID, message_boxID, obj); //, area: { left: 50, right: 500, top: 100, bottom: 400}
-}
-
-window.onload = function () {
-    DragDivDrag("titleBar", "message_box", { opacity: 100, keepOrigin: true });
-    DragDivDrag("js_titleBarfeedback", "js_feedback", { opacity: 100, keepOrigin: true });
+    new Drag(titleBarID, message_boxID, obj);
 }
