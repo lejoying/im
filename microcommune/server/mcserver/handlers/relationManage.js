@@ -383,23 +383,6 @@ relationManage.getcirclesandfriends = function (data, response) {
                             delete accounts[accountData.phone];
                         }
                     }
-                    var circle = {
-                        name: "默认分组"
-                    };
-                    var accounts2 = [];
-                    var flag = false;
-//                console.log(JSON.stringify(accounts) == "{}");
-                    if (JSON.stringify(accounts) != "{}") {
-                        for (var index in accounts) {
-                            var it = accounts[index];
-                            flag = true;
-                            accounts2.push(it);
-                        }
-                        if (flag) {
-                            circle.accounts = accounts2;
-                            circles2.push(circle);
-                        }
-                    }
                     if (JSON.stringify(circles) != "{}") {
                         for (var index in circles) {
                             var it = circles[index];
@@ -407,6 +390,18 @@ relationManage.getcirclesandfriends = function (data, response) {
                             circles2.push(it);
                         }
                     }
+                    var circle = {
+                        name: "默认分组"
+                    };
+                    var accounts2 = [];
+                    if (JSON.stringify(accounts) != "{}") {
+                        for (var index in accounts) {
+                            var it = accounts[index];
+                            accounts2.push(it);
+                        }
+                    }
+                    circle.accounts = accounts2;
+                    circles2.push(circle);
                     response.write(JSON.stringify({
                         "提示信息": "获取密友圈成功",
                         circles: circles2
@@ -423,17 +418,16 @@ relationManage.getcirclesandfriends = function (data, response) {
                     }
                     var accounts2 = [];
                     if (accounts != null) {
-                        console.log(accounts);
                         for (var index in accounts) {
                             var it = accounts[index];
                             accounts2.push(it);
                         }
-                        var circle = {
-                            name: "默认分组",
-                            accounts: accounts2
-                        };
-                        circles2.push(circle);
                     }
+                    var circle = {
+                        name: "默认分组",
+                        accounts: accounts2
+                    };
+                    circles2.push(circle);
                     response.write(JSON.stringify({
                         "提示信息": "获取密友圈成功",
                         circles: circles2

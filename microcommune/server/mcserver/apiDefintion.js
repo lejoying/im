@@ -406,7 +406,7 @@ api = {
      ***************************************/
     "circle_moveorout": {
         request: {
-            typical: {"phoneto": "XXX", rid: "XXX", filter: ["REMOVE","SHIFTIN"]}
+            typical: {"phoneto": "XXX", rid: "XXX", filter: ["REMOVE", "SHIFTIN"]}
         },
         response: {
             success: {"提示信息": "移出成功" || "移入成功"},
@@ -433,7 +433,7 @@ api = {
             typical: {"phone": "XXX", circleName: "XXX"}
         },
         response: {
-            success: {"提示信息": "添加成功"},
+            success: {"提示信息": "添加成功", circle: {rid: "NNN", name: "XXX"}},
             failed: {"提示信息": "添加失败", "失败原因": "数据异常"}
         }
     }

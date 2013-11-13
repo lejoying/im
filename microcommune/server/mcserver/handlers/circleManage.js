@@ -147,10 +147,11 @@ circleManage.moveorout = function (data, response) {
  ***************************************/
 circleManage.moveout = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phoneTo = data.phoneto;
     var oldRid = data.oldrid;
     var newRid = data.newrid;
-    if (oldRid != "undefined" || oldRid != undefined) {
+    if (oldRid != "undefined" && oldRid != undefined) {
         deleteRelationNode(phoneTo, newRid, oldRid);
     } else {
         createRelationNode(phoneTo, newRid);
@@ -174,10 +175,10 @@ circleManage.moveout = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.log(error + "deleteRelationNode");
                 return;
             } else if (results.length > 0) {
-                if (newRid != "undefined" || newRid != undefined) {
+                if (newRid != "undefined" && newRid != undefined) {
                     createRelationNode(phoneTo, newRid);
                 } else {
                     response.write(JSON.stringify({
@@ -200,8 +201,8 @@ circleManage.moveout = function (data, response) {
             'START circle=node({newRid})',
             'MATCH (account:Account)',
             'WHERE account.phone={phoneTo}',
-            'CREATE circle-[r:HAS_CIRCLE]->account',
-            'r'
+            'CREATE circle-[r:HAS_FRIEND]->account',
+            'RETURN r'
         ].join('\n');
         var params = {
             newRid: parseInt(newRid),
@@ -263,8 +264,12 @@ circleManage.addcircle = function (data, response) {
             return;
         } else if (results.length > 0) {
             console.log("创建密友圈成功---");
+            var circleData = results.pop().circle.data;
+            var accounts = [];
+            circleData.accounts = accounts;
             response.write(JSON.stringify({
-                "提示信息": "添加成功"
+                "提示信息": "添加成功",
+                "circle": circleData
             }));
             response.end();
         } else {
