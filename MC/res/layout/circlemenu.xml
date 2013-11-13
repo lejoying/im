@@ -3,10 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollY="320dp" >
+    tools:context="com.lejoying.mcutils.CircleMenu" >
+
+    <RelativeLayout
+        android:id="@+id/rl_controldiskout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible" >
+
+        <ImageView
+            android:id="@+id/iv_controldiskout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/control_disk_outer"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
 
     <ImageView
-        android:id="@+id/iv_controldesk"
+        android:id="@+id/iv_controldisk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/card_background"
-    tools:context=".CallingCardActivity" >
+    tools:context=".MessagesActivity" >
 
-    <com.lejoying.view.MCListView
-        android:id="@+id/lv_test"
+    <ListView
+        android:id="@+id/lv_messages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </com.lejoying.view.MCListView>
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" 
+        android:divider="#0000"
+        android:dividerHeight="15dp">
+    </ListView>
 
 </RelativeLayout>

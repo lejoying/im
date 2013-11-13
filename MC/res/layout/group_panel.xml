@@ -11,8 +11,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/frame_background"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
         android:paddingTop="7dp" >
 
         <TextView

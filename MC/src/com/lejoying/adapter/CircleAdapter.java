@@ -118,11 +118,11 @@ public class CircleAdapter {
 											null);
 							ImageView iv_head = (ImageView) rl_gridpage_item
 									.findViewById(R.id.iv_head);
-							TextView tv_nickName = (TextView) rl_gridpage_item
-									.findViewById(R.id.tv_nickName);
+							TextView tv_nickname = (TextView) rl_gridpage_item
+									.findViewById(R.id.tv_nickname);
 
 							iv_head.setImageBitmap(head);
-							tv_nickName.setText(friends.get(a * 6 + position)
+							tv_nickname.setText(friends.get(a * 6 + position)
 									.getNickName());
 
 							// 设置长按用户头像进入编辑模式

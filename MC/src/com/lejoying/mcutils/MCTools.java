@@ -37,7 +37,7 @@ public class MCTools {
 	public static boolean INNEWCOMMUNITY = false;
 
 	private static Community NOWCOMMUNITY;
-	
+
 	private static List<Friend> CHAT_FRIENDS;
 
 	private static List<Friend> newFriends;
@@ -493,14 +493,13 @@ class DBManager {
 		db.beginTransaction();
 		try {
 			for (Circle circle : circles) {
-				db.execSQL(
-						"DELETE FROM friend",
+				db.execSQL("DELETE FROM friend",
 						new Object[] { circle.getRid() });
 				db.execSQL("DELETE FROM circlerelation",
 						new Object[] { circle.getRid() });
 			}
-			db.execSQL("DELETE FROM circle",
-					new Object[] { MCTools.getLoginedAccount(null).getUid() });
+			db.execSQL("DELETE FROM circle", new Object[] { MCTools
+					.getLoginedAccount(null).getUid() });
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();

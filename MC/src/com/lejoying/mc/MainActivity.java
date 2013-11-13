@@ -1,8 +1,11 @@
 package com.lejoying.mc;
 
+import com.lejoying.mcutils.MCTools;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
@@ -15,9 +18,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(500);
 					Intent intent = new Intent(MainActivity.this,
-							BusinessCardActivity.class);
+							LoginActivity.class);
 					MainActivity.this.startActivity(intent);
 					MainActivity.this.finish();
 				} catch (InterruptedException e) {

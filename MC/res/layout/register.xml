@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/card_background"
+    tools:context=".BusinessCardActivity" >
+
+    <RelativeLayout
+        android:id="@+id/rl_regpanel_phone"
+        android:layout_width="fill_parent"
+        android:layout_height="180dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/frame_background"
+        android:paddingTop="7dp" >
+
+        <TextView
+            android:id="@+id/tv_groupname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="输入手机号"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/tv_groupname"
+            android:layout_below="@+id/tv_groupname"
+            android:layout_marginTop="8dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <EditText
+            android:id="@+id/et_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/iv_line"
+            android:layout_alignRight="@+id/iv_line"
+            android:layout_below="@+id/iv_line"
+            android:layout_marginTop="20dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="请输入手机号"
+            android:inputType="phone"
+            android:textColor="#fff" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/et_phone"
+            android:layout_alignRight="@+id/et_phone"
+            android:layout_below="@+id/et_phone"
+            android:layout_marginTop="20dp"
+            android:background="#2fff"
+            android:gravity="center"
+            android:onClick="next"
+            android:text="下 一 步"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_regpanel_code"
+        android:layout_width="fill_parent"
+        android:layout_height="180dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/frame_background"
+        android:paddingTop="7dp"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/tv_groupname1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="输入验证码"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_line1"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/tv_groupname1"
+            android:layout_below="@+id/tv_groupname1"
+            android:layout_marginTop="8dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <EditText
+            android:id="@+id/et_code"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/iv_line1"
+            android:layout_alignRight="@+id/iv_line1"
+            android:layout_below="@+id/iv_line1"
+            android:layout_marginTop="20dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="请输入验证码"
+            android:inputType="number"
+            android:textColor="#fff" >
+        </EditText>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/et_code"
+            android:layout_alignRight="@+id/et_code"
+            android:layout_below="@+id/et_code"
+            android:layout_marginTop="20dp"
+            android:background="#2fff"
+            android:onClick="next"
+            android:text="下 一 步"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_regpanel_pass"
+        android:layout_width="fill_parent"
+        android:layout_height="180dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/frame_background"
+        android:paddingTop="7dp"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/tv_groupname2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="设置密码"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_line2"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/tv_groupname2"
+            android:layout_below="@+id/tv_groupname2"
+            android:layout_marginTop="8dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <EditText
+            android:id="@+id/et_pass"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/iv_line2"
+            android:layout_alignRight="@+id/iv_line2"
+            android:layout_below="@+id/iv_line2"
+            android:layout_marginTop="20dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="请输入密码"
+            android:inputType="textPassword"
+            android:textColor="#fff" >
+        </EditText>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/et_pass"
+            android:layout_alignRight="@+id/et_pass"
+            android:layout_below="@+id/et_pass"
+            android:layout_marginTop="20dp"
+            android:background="#2fff"
+            android:onClick="next"
+            android:text="下 一 步"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+</RelativeLayout>
