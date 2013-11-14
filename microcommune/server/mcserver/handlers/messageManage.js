@@ -6,6 +6,9 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var push = require('../lib/push.js');
+/***************************************
+ *     URL：/api2/message/send
+ ***************************************/
 messageManage.send = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
@@ -47,7 +50,7 @@ messageManage.send = function (data, response) {
                     return;
                 }
                 //通知
-                push.inform(phoneto[index], "*", {"提示信息": "成功", event: "message"});
+//                push.inform(phoneto[index], "*", {"提示信息": "成功", event: "message"});
                 //response
                 response.write(JSON.stringify({
                     "提示信息": "发送成功"
@@ -57,6 +60,9 @@ messageManage.send = function (data, response) {
         }
     });
 }
+/***************************************
+ *     URL：/api2/message/get
+ ***************************************/
 messageManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;

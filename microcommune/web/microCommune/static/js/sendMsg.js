@@ -18,7 +18,7 @@ $(document).ready(function () {
                             clearTimeout(timer);
                             var positionX = e.pageX - _this.offset().left || 0;
                             var positionY = e.pageY - _this.offset().top || 0;
-                            typeof callBack == 'function' && callBack(documentThis, positionX, positionY);
+                            typeof callBack == 'function' && callBack(e, documentThis, positionX, positionY);
                         }
                     }, 10)
                 }).mouseup(function () {
@@ -36,7 +36,7 @@ $(document).ready(function () {
         var warning = "关闭浏览器聊天记录将会丢失";
         return warning;
     }
-
+    
     $.getScript("/static/js/nTenjin.js");
     var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
     $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
@@ -65,7 +65,8 @@ $(document).ready(function () {
                 var circles_friends = getTemplate("circles_friends");
                 $(".js_circlesFriends").html(circles_friends.render(data["circles"]));
                 $(".js_circlesFriends .friendDetail").each(function (i) {
-                    $($(".js_circlesFriends .friendDetail")[i]).longPress(200, function (obj, x, y) {
+                    $($(".js_circlesFriends .friendDetail")[i]).longPress(200, function (e, obj, x, y) {
+                        alert(e.which);
                         selectCircleId = $(obj).attr("circleid");
                         selectId = $(obj).attr("id");
                         selectPhone = $(obj).attr("phone");
@@ -88,16 +89,19 @@ $(document).ready(function () {
     $(document).on('click', ".groupTitle", function () {
         $(".js_circlesFriends .friendDetail").slideDown(1000);
     });
-    $(document).on('click', ".js_headimg",function () {
+    $(document).on('click', ".js_headimg", function () {
         var obj = JSON.parse(window.sessionStorage.getItem("circles"));
         var phone = this.parentNode.parentNode.getAttribute("phone");
         var rid = this.parentNode.parentNode.getAttribute("circleid");
+        var trmpRid;
         if (rid == "undefined") {
-            rid = undefined;
+            trmpRid = undefined;
+        } else {
+            trmpRid = rid;
         }
         for (var index1 in obj) {
             var it1 = obj[index1];
-            if (it1.rid == rid) {
+            if (it1.rid == trmpRid) {
                 var accounts = it1.accounts;
                 for (var index2 in accounts) {
                     var it2 = accounts[index2];
@@ -386,22 +390,22 @@ function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
         tempChat = {};
         tempChatArr = [];
     }
+    var tempCircleRid;
+    if (circleid == "undefined") {
+        tempCircleRid = undefined;
+    } else {
+        tempCircleRid = circleid;
+    }
     var circles = JSON.parse(window.sessionStorage.getItem("circles"));
-/*    var tmepCirclrId;
-    if (circleid == undefined) {
-        tmepCirclrId = undefined;
-    }else{
-        tmepCirclrId = parseInt(circleid);
-    }*/
     for (var index1 in circles) {
         var it1 = circles[index1];
-        if (it1.rid == circleid) {
+        if (it1.rid == tempCircleRid) {
             var accounts = it1.accounts;
             for (var index2 in accounts) {
                 var it2 = accounts[index2];
                 if (it2.phone == phoneto) {
                     var tempChatobj = tempChat;
-                    it2.rid = circleid+"";
+                    it2.rid = circleid + "";
                     tempChatobj[phoneto] = JSON.stringify(it2);
                     window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChatobj));
                     var tempChatArrObj = tempChatArr;
@@ -578,7 +582,7 @@ function moveoutAccountNode(phoneTo, newRid, oldRid) {
             oldrid: oldRid
         },
         success: function (data) {
-            eval('$.Prompt("'+data["提示信息"]+'")');
+            eval('$.Prompt("' + data["提示信息"] + '")');
         }
     });
 }
