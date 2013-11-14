@@ -66,24 +66,16 @@ api = {
      *     URL：/api2/account/verifycode
      ***************************************/
     "account_verifycode": {
+        description: {
+            id: 1000101,
+            url: "/api2/account/verifycode"
+        },
         request: {
             typical: {"phone": "XXX", "code": "XXX"}
         },
         response: {
-            success: {"提示信息": "验证成功", "phone": "XXX"},
-            failed: {"提示信息": "验证失败", "失败原因": ["验证码不正确" || "验证码超时"]}
-        }
-    },
-    /***************************************
-     *     URL：/api2/account/verifylogincode
-     ***************************************/
-    "account_verifylogincode": {
-        request: {
-            typical: {"phone": "XXX", "code": "XXX"}
-        },
-        response: {
-            success: {"提示信息": "登录成功", account: {}},
-            failed: {"提示信息": "登录失败", "失败原因": ["验证码不正确" || "验证码超时"]}
+            success: {"提示信息": "验证成功", "phone": "XXX", accessKey: sha1("phone" + "code")},
+            failed: {"提示信息": "验证失败", "失败原因": ["验证码不正确" || "验证码超时" || "手机号不存在" || "数据异常"]}
         }
     },
     /***************************************

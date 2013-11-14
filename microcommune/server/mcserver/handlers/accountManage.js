@@ -69,7 +69,7 @@ accountManage.verifyphone = function (data, response) {
 
                     var bad = time - parseInt(accountData.time);
                     var code = "";
-                    if (bad > 600000) {
+                    if (bad > 600000 || accountData.code == "none") {
                         console.log("++++--" + accountData.code);
                         accountData.code = time.substr(time.length - 6);
                         accountData.time = new Date().getTime();
@@ -137,7 +137,7 @@ accountManage.verifyphone = function (data, response) {
                     var time = new Date().getTime().toString();
                     var bad = time - parseInt(accountNode.data.time);
                     var code = "";
-                    if (bad > 600000) {
+                    if (bad > 600000 || accountNode.data.code == "none") {
                         accountNode.data.code = time.substr(time.length - 6);
                         accountNode.data.time = new Date().getTime();
                         accountNode.save();
@@ -247,21 +247,26 @@ accountManage.verifycode = function (data, response) {
     function checkPhoneCode() {
         var query = [
             'MATCH (account:Account)',
-            'WHERE account.phone={phone} AND account.status={status}',
+            'WHERE account.phone={phone}',
             'RETURN account'
         ].join('\n');
         var params = {
-            phone: phone,
-            status: "init"
+            phone: phone
         };
         db.query(query, params, function (error, results) {
             if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "验证失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
                 console.error(error);
                 return;
-            } else {
+            } else if (results.length > 0) {
                 console.log(results.length);
-                var accountData = results.pop().account.data;
-                if (accountData.code == code) {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                if (accountData.code == code && code != "none") {
                     var time = new Date().getTime();
                     var bad = time - parseInt(accountData.time);
                     if (bad > 600000) {
@@ -272,9 +277,12 @@ accountManage.verifycode = function (data, response) {
                         response.end();
                     } else {
                         console.log("验证成功---");
+                        accountData.code = "none";
+                        accountNode.save();
                         response.write(JSON.stringify({
                             "提示信息": "验证成功",
-                            "phone": phone
+                            "phone": phone,
+                            accessKey: sha1.hex_sha1(phone + code)
                         }));
                         response.end();
                     }
@@ -285,62 +293,12 @@ accountManage.verifycode = function (data, response) {
                     }));
                     response.end();
                 }
-            }
-        });
-    }
-}
-
-/***************************************
- *     URL：/api2/account/verifyloginpass
- ***************************************/
-accountManage.verifylogincode = function (data, response) {
-    response.asynchronous = 1;
-    var phone = data.phone;
-    var code = data.code;
-    checkPhone();
-    function checkPhone() {
-        var query = [
-            'MATCH (account:Account)',
-            'WHERE account.phone={phone}',
-            'RETURN account'
-        ].join('\n');
-        var params = {
-            phone: phone
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                console.log(error);
-                return;
             } else {
-                var accountNode = results.pop().account;
-                var accountData = accountNode.data;
-                accountData.code = code;
-                var time = new Date().getTime();
-                var bad = time - parseInt(accountData.time);
-                if (bad > 600000) {
-                    console.log("验证码超时---");
-                    response.write(JSON.stringify({
-                        "提示信息": "登录失败",
-                        "失败原因": "验证码超时"
-                    }));
-                    response.end();
-                } else {
-                    if (accountData.code == code) {
-                        console.log("登录成功---");
-                        response.write(JSON.stringify({
-                            "提示信息": "登录成功",
-                            "account": accountData
-                        }));
-                        response.end();
-                    } else {
-                        console.log("验证码不正确---");
-                        response.write(JSON.stringify({
-                            "提示信息": "登录失败",
-                            "失败原因": "验证码不正确"
-                        }));
-                        response.end();
-                    }
-                }
+                response.write(JSON.stringify({
+                    "提示信息": "验证失败",
+                    "失败原因": "手机号不存在"
+                }));
+                response.end();
             }
         });
     }
