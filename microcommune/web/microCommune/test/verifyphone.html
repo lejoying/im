@@ -19,12 +19,38 @@
                 }
             });
         }
+        function commit1() {
+            var phone = document.getElementById("phone").value;
+            var code = document.getElementById("code").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/account/verifycode?",
+                data: {
+                    phone: phone,
+                    code: code
+                },
+                success: function (data) {
+//                    alert(JSON.stringify(data));
+                }
+            });
+        }
     </script>
 </head>
 <body>
-phone:<input type="text" id="phone"><br>
-<input type="radio" name="verify" value="login">login
-<input type="radio" name="verify" value="register">resgiter<br>
-<input type="submit" value="verifyphone" onclick="commit()">
+<div style="border: 1px solid #009900 ; width:300px; height:auto;text-align:center; ">
+    输入手机号：<input type="text" id="phone"><br>
+    <!--输入密码：<input type="text" id="password"><br>-->
+
+    <input type="radio" name="verify" value="login">登录
+    <input type="radio" name="verify" value="register">注册<br>
+    <input type="submit" value="下一步" onclick="commit()">
+</div>
+<br>
+<div style="border: 1px solid #0000ee; width:300px; height:auto; text-align:center;">
+    输入验证码：
+    <input type="text" id="code"><br>
+    <input type="submit" value="下一步" onclick="commit1()">
+</div>
+
 </body>
 </html>
