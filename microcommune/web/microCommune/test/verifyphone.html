@@ -2,28 +2,29 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
-<script type="text/javascript" src="../microCommune/static/js/jquery.js"></script>
-<script type="text/javascript">
-function commit(){
-	var name = document.getElementById("name").value;
-	var desc = document.getElementById("desc").value;
-	var loca_long = document.getElementById("long").value;
-	var loca_lati = document.getElementById("lati").value;
-	$.ajax({
-		type:"POST",
-		url:"/api2/community/add",
-		data:{
-			name:name,
-			description:desc,
-			longitude:loca_long,
-			latitude:loca_lati
-		}
-	});
-}
-</script>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var phone = document.getElementById("phone").value;
+            var usage = $('input[name="verify"]:checked').attr("value");
+            $.ajax({
+                type: "POST",
+                url: "/api2/account/verifyphone?",
+                data: {
+                    phone: phone,
+                    usage: usage
+                },
+                success: function (data) {
+//                    alert(JSON.stringify(data));
+                }
+            });
+        }
+    </script>
 </head>
 <body>
 phone:<input type="text" id="phone"><br>
+<input type="radio" name="verify" value="login">login
+<input type="radio" name="verify" value="register">resgiter<br>
 <input type="submit" value="verifyphone" onclick="commit()">
 </body>
 </html>

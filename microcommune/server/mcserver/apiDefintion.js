@@ -50,11 +50,15 @@ api = {
      *     URL：/api2/account/verifyphone
      ***************************************/
     "account_verifyphone": {
+        description: {
+            id: 1000100,
+            url: "/api2/account/verifyphone"
+        },
         request: {
             typical: {"phone": "XXX", usage: "register" || "login"}
         },
         response: {
-            success: {"提示信息": "手机号验证成功" || "验证码发送成功", "phone": "XXX"},
+            success: {"提示信息": "手机号验证成功" || "验证码发送成功", "phone": "XXX", code: sha1("NNN")},
             failed: {"提示信息": "手机号验证失败" || "验证码发送失败", "失败原因": ["手机号不正确", "手机号已被注册", "服务器异常", "手机号未注册"]}
         }
     },

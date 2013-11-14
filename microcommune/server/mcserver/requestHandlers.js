@@ -46,9 +46,6 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     else if (operation == "verifywebcodelogin") {
         accountManage.verifywebcodelogin(data, response);
     }
-    else if (operation == "verifyloginphone") {
-        accountManage.verifyloginphone(data, response);
-    }
     else if (operation == "verifylogincode") {
         accountManage.verifylogincode(data, response);
     }
