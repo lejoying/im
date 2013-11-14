@@ -33,13 +33,6 @@ public class AccountManagerImpl implements AccountManager {
 	}
 
 	@Override
-	public void verifypass(Map<String, String> param,
-			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/verifypass", param, true,
-				HttpTools.SEND_POST, 5000, responseListener);
-	}
-
-	@Override
 	public void auth(Map<String, String> param,
 			ResponseListener responseListener) {
 		MCTools.ajax(activity, "/api2/account/auth", param, true,
@@ -50,20 +43,6 @@ public class AccountManagerImpl implements AccountManager {
 	public void exit(Map<String, String> param,
 			ResponseListener responseListener) {
 		MCTools.ajax(activity, "/api2/account/exit", param, true,
-				HttpTools.SEND_POST, 5000, responseListener);
-	}
-
-	@Override
-	public void verifyloginphone(Map<String, String> param,
-			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/verifyloginphone", param, true,
-				HttpTools.SEND_POST, 5000, responseListener);
-	}
-
-	@Override
-	public void verifylogincode(Map<String, String> param,
-			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/verifylogincode", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
@@ -94,5 +73,5 @@ public class AccountManagerImpl implements AccountManager {
 		MCTools.ajax(activity, "/api2/account/getaccount", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
-	
+
 }
