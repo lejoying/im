@@ -90,26 +90,66 @@ api = {
             typical: {"phone": "XXX", "password": "XXX"}
         },
         response: {
-            success: {"提示信息": "普通鉴权成功",accessKey: sha1("phone" + "time")},
+            success: {"提示信息": "普通鉴权成功", accessKey: sha1("phone" + "time")},
             failed: {"提示信息": "普通鉴权失败", "失败原因": ["手机号不存在" || "密码不正确" || "数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/get
+     ***************************************/
+    "account_get": {
+        description: {
+            id: 1000103,
+            url: "/api2/account/get"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", target: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取用户信息成功", account: {}},
+            failed: {"提示信息": "获取用户信息失败", "失败原因": "用户不存在" || "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/account/modify
+     ***************************************/
+    "account_modify": {
+        description: {
+            id: 1000104,
+            url: "/api2/account/modify"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", mainBusiness: "XXX", password: "XXX"})}
+        },
+        response: {
+            success: {"提示信息": "修改用户信息成功"},
+            failed: {"提示信息": "修改用户信息失败", "失败原因": "数据异常"}
         }
     },
     /***************************************
      *     URL：/api2/account/exit
      ***************************************/
     "account_exit": {
+        description: {
+            id: 1000105,
+            url: "/api2/account/exit"
+        },
         request: {
             typical: {}
         },
         response: {
-            success: {"提示信息": "消息发送成功"},
-            failed: {"提示信息": "消息发送失败", "失败原因": []}
+            success: {"提示信息": "退出成功"},
+            failed: {"提示信息": "退出失败", "失败原因": []}
         }
     },
     /***************************************
      *     URL：/api2/account/verifywebcode
      ***************************************/
     "account_verifywebcode": {
+        description: {
+            id: 1000106,
+            url: "/api2/account/verifywebcode"
+        },
         request: {
             typical: {accessKey: "XXX"}
         },
@@ -122,36 +162,16 @@ api = {
      *     URL：/api2/account/verifywebcodelogin
      ***************************************/
     "account_verifywebcodelogin": {
+        description: {
+            id: 1000107,
+            url: "/api2/account/verifywebcodelogin"
+        },
         request: {
             typical: {phone: "XXX", accessKey: "", status: true || false}
         },
         response: {
             success: {"提示信息": "登录成功"},
             failed: {"提示信息": "登录失败", "失败原因": ["二维码超时" || "取消登录"]}
-        }
-    },
-    /***************************************
-     *     URL：/api2/account/getaccount
-     ***************************************/
-    "account_getaccount": {
-        request: {
-            typical: {phone: "XXX", accessKey: "XXX"}
-        },
-        response: {
-            success: {"提示信息": "获取成功", account: {}},
-            failed: {"提示信息": "获取失败", "失败原因": "用户不存在"}
-        }
-    },
-    /***************************************
-     *     URL：/api2/account/modify
-     ***************************************/
-    "account_modify": {
-        request: {
-            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", mainBusiness: "XXX"}
-        },
-        response: {
-            success: {"提示信息": "修改成功"},
-            failed: {"提示信息": "修改失败", "失败原因": "数据异常"}
         }
     }
 }

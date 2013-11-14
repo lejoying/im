@@ -58,7 +58,7 @@ accountManage.verifyphone = function (data, response) {
             } else {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
-                if (accountData.status == "success") {
+                if (accountData.status == "active") {
                     response.write(JSON.stringify({
                         "提示信息": "手机号验证失败",
                         "失败原因": "手机号已被注册"
@@ -119,7 +119,7 @@ accountManage.verifyphone = function (data, response) {
         ].join('\n');
         var params = {
             phone: phone,
-            status: "success"
+            status: "active"
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -133,7 +133,7 @@ accountManage.verifyphone = function (data, response) {
                 response.end();
             } else {
                 var accountNode = results.pop().account;
-                if (accountNode.data.status == "success") {
+                if (accountNode.data.status == "active") {
                     var time = new Date().getTime().toString();
                     var bad = time - parseInt(accountNode.data.time);
                     var code = "";
@@ -263,7 +263,6 @@ accountManage.verifycode = function (data, response) {
                 console.error(error);
                 return;
             } else if (results.length > 0) {
-                console.log(results.length);
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 if (accountData.code == code && code != "none") {
@@ -371,33 +370,6 @@ accountManage.auth = function (data, response) {
 
 accountManage.exit = function (data, response) {
 
-}
-accountManage.qrcode = function (data, response) {
-    response.asynchronous = 1;
-    var code = data.code;
-    ajax.ajax({
-            type: "GET",
-            url: "http://qr.liantu.com/api.php",
-            data: {
-                text: code
-            },
-            success: function (data) {
-                /*var reader = new FileReader();
-                 reader.readAsDataURL(data);
-                 reader.onload = function (e) {
-
-                 }*/
-                /*var headers = {
-                 "Content-Type":"image/png"
-                 }
-                 response.setHeaders(headers);*/
-//            response.setHeader("Content-Type","image/png");
-                response.write(Base64.decode(data.toString()));
-                response.end();
-            }
-        }
-    )
-    ;
 }
 /***************************************
  *     URL：/api2/account/verifywebcode
@@ -519,26 +491,33 @@ accountManage.verifywebcodelogin = function (data, response) {
     }
 }
 /***************************************
- *     URL：/api2/account/getaccount
+ *     URL：/api2/account/get
  ***************************************/
-accountManage.getaccount = function (data, response) {
+accountManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
+    var target = data.target;
     var query = [
         'MATCH (account:Account)',
         'WHERE account.phone={phone}',
         'RETURN account'
     ].join('\n');
     var params = {
-        phone: phone
+        phone: target
     };
     db.query(query, params, function (error, results) {
         if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "获取用户信息失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
             console.log(error);
             return;
         } else if (results.length == 0) {
             response.write(JSON.stringify({
-                "提示信息": "获取失败",
+                "提示信息": "获取用户信息失败",
                 "失败原因": "用户不存在"
             }));
             response.end();
@@ -546,14 +525,13 @@ accountManage.getaccount = function (data, response) {
             var accountData = results.pop().account.data;
             var account = {
                 phone: accountData.phone,
+                nickName: accountData.nickName,
                 mainBusiness: accountData.mainBusiness,
                 head: accountData.head,
-                byPhone: accountData.byPhone,
-                nickName: accountData.nickName
+                byPhone: accountData.byPhone
             };
-//            console.log(accountData.phone);
             response.write(JSON.stringify({
-                "提示信息": "获取成功",
+                "提示信息": "获取用户信息成功",
                 account: account
             }));
             response.end();
@@ -565,10 +543,10 @@ accountManage.getaccount = function (data, response) {
  ***************************************/
 accountManage.modify = function (data, response) {
     response.asynchronous = 1;
-    console.log(data);
     var phone = data.phone;
-    var nickName = data.nickName;
-    var mainBusiness = data.mainBusiness;
+    var accessKey = data.accessKey;
+    var accountStr = data.account;
+    var account = JSON.parse(accountStr);
 
     var query = [
         'MATCH (account:Account)',
@@ -580,26 +558,37 @@ accountManage.modify = function (data, response) {
     };
     db.query(query, params, function (error, results) {
         if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "修改用户信息失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
             console.log(error);
             return;
         } else if (results.length == 0) {
             response.write(JSON.stringify({
-                "提示信息": "修改失败",
+                "提示信息": "修改用户信息失败",
                 "失败原因": "数据异常"
             }));
             response.end();
         } else {
             var accountNode = results.pop().account;
             var accountData = accountNode.data;
-            if (nickName != undefined && nickName != null) {
-                accountData.nickName = nickName;
+            if (account.nickName != undefined && account.nickName != null && account.nickName != "") {
+                accountData.nickName = account.nickName;
             }
-            if (mainBusiness != undefined && mainBusiness != null) {
-                accountData.mainBusiness = mainBusiness;
+            if (account.mainBusiness != undefined && account.mainBusiness != null && account.mainBusiness != "") {
+                accountData.mainBusiness = account.mainBusiness;
+            }
+            if (account.password != undefined && account.password != null && account.password != "") {
+                accountData.password = account.password;
+                if (accountData.status == "init") {
+                    accountData.status = "active";
+                }
             }
             accountNode.save();
             response.write(JSON.stringify({
-                "提示信息": "修改成功"
+                "提示信息": "修改用户信息成功"
             }));
             response.end();
         }

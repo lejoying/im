@@ -141,19 +141,12 @@ $(document).ready(function () {
         "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
         "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2",
         "3", "4", "5", "6", "7", "8", "9"];
-    var count1 = 9;
-    var count2 = 10;
+    var count = 20;
     var str = "";
-    var str1 = "";
-    var str2 = "";
-    for (var i = 0; i < count1; i++) {
-        str1 += chars[parseInt(Math.random() * chars.length)];
+    for (var i = 0; i < count; i++) {
+        str += chars[parseInt(Math.random() * chars.length)];
     }
-    for (var i = 0; i < count2; i++) {
-        str2 += chars[parseInt(Math.random() * chars.length)];
-    }
-    str = str1 + "w" + str2;
-    $(".js_tdcode").attr("src", "http://qr.liantu.com/api.php?text=" + str);
+    $(".js_tdcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str));
     request(str);
 //    $("#tdcode").attr("src", "data:image/jpeg;base64,http://qr.liantu.com/api.php?text="+str);
 //    request(str);

@@ -31,12 +31,16 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     else if (operation == "verifycode") {
         accountManage.verifycode(data, response);
     }
-    else if (operation == "verifypass") {
-        accountManage.verifypass(data, response);
-    }
     else if (operation == "auth") {
         accountManage.auth(data, response);
     }
+    else if (operation == "get") {
+        accountManage.get(data, response);
+    }
+    else if (operation == "modify") {
+        accountManage.modify(data, response);
+    }
+
     else if (operation == "exit") {
         accountManage.exit(data, response);
     }
@@ -45,18 +49,6 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     }
     else if (operation == "verifywebcodelogin") {
         accountManage.verifywebcodelogin(data, response);
-    }
-    else if (operation == "verifylogincode") {
-        accountManage.verifylogincode(data, response);
-    }
-    else if (operation == "getaccount") {
-        accountManage.getaccount(data, response);
-    }
-    else if (operation == "modify") {
-        accountManage.modify(data, response);
-    }
-    else if (operation == "qrcode") {
-        accountManage.qrcode(data, response);
     }
 }
 var communityManage = require("./handlers/communityManage.js");
