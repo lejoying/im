@@ -105,9 +105,10 @@ public class CircleMenu {
 			tv_text.setText(entity.getText());
 
 			menuItemList.add(rl_menuitem);
+
+			rl_menuitem.setVisibility(View.INVISIBLE);
+			rl_controldiskout.addView(rl_menuitem);
 		}
-		menuItemList.get(0).setVisibility(View.INVISIBLE);
-		rl_controldiskout.addView(menuItemList.get(0));
 
 		ViewGroup contentView = getContentView(activity);
 		if (contentView != null) {
@@ -166,11 +167,6 @@ public class CircleMenu {
 
 		setLocation(showWhere);
 
-		int itemWidth = menuItemList.get(0).getWidth();
-		int itemHeight = menuItemList.get(0).getHeight();
-		rl_controldiskout.removeView(menuItemList.get(0));
-		menuItemList.get(0).setVisibility(View.VISIBLE);
-
 		if (menuList.size() == 6) {
 
 			int sideWidth = ((outRadius - diskRadius) / 2 + diskRadius) / 2;
@@ -183,28 +179,58 @@ public class CircleMenu {
 				int marginLeft = 0;
 				int marginTop = 0;
 				if (i == 0) {
+					int itemWidth = menuItemList.get(i).getWidth();
+					int itemHeight = menuItemList.get(i).getHeight();
+					rl_controldiskout.removeView(menuItemList.get(i));
+					menuItemList.get(i).setVisibility(View.VISIBLE);
+
 					marginLeft = outRadius - sideWidth - itemWidth / 2;
 					marginTop = outRadius - sideHeight - itemHeight / 2;
 
 				}
 				if (i == 1) {
+					int itemWidth = menuItemList.get(i).getWidth();
+					int itemHeight = menuItemList.get(i).getHeight();
+					rl_controldiskout.removeView(menuItemList.get(i));
+					menuItemList.get(i).setVisibility(View.VISIBLE);
+
 					marginLeft = (outRadius - diskRadius) / 2 - itemWidth / 2;
 					marginTop = outHeight / 2 - itemHeight / 2;
 				}
 				if (i == 2) {
+					int itemWidth = menuItemList.get(i).getWidth();
+					int itemHeight = menuItemList.get(i).getHeight();
+					rl_controldiskout.removeView(menuItemList.get(i));
+					menuItemList.get(i).setVisibility(View.VISIBLE);
+
 					marginLeft = outRadius - sideWidth - itemWidth / 2;
 					marginTop = outRadius + sideHeight - itemHeight / 2;
 				}
 				if (i == 3) {
+					int itemWidth = menuItemList.get(i).getWidth();
+					int itemHeight = menuItemList.get(i).getHeight();
+					rl_controldiskout.removeView(menuItemList.get(i));
+					menuItemList.get(i).setVisibility(View.VISIBLE);
+
 					marginLeft = outRadius + sideWidth - itemWidth / 2;
 					marginTop = outRadius + sideHeight - itemHeight / 2;
 				}
 				if (i == 4) {
+					int itemWidth = menuItemList.get(i).getWidth();
+					int itemHeight = menuItemList.get(i).getHeight();
+					rl_controldiskout.removeView(menuItemList.get(i));
+					menuItemList.get(i).setVisibility(View.VISIBLE);
+
 					marginLeft = (outRadius - diskRadius) / 2 - itemWidth / 2
 							+ outRadius + diskRadius;
 					marginTop = outHeight / 2 - itemHeight / 2;
 				}
 				if (i == 5) {
+					int itemWidth = menuItemList.get(i).getWidth();
+					int itemHeight = menuItemList.get(i).getHeight();
+					rl_controldiskout.removeView(menuItemList.get(i));
+					menuItemList.get(i).setVisibility(View.VISIBLE);
+
 					marginLeft = outRadius + sideWidth - itemWidth / 2;
 					marginTop = outRadius - sideHeight - itemHeight / 2;
 				}

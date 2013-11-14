@@ -12,7 +12,7 @@
         android:layout_height="172dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
         android:paddingTop="7dp" >
 
@@ -71,10 +71,10 @@
     <RelativeLayout
         android:id="@+id/rl_regpanel_code"
         android:layout_width="fill_parent"
-        android:layout_height="193dp"
+        android:layout_height="195dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
         android:paddingTop="7dp"
         android:visibility="gone" >
@@ -135,8 +135,10 @@
             android:layout_alignRight="@+id/button1"
             android:layout_below="@+id/button1"
             android:layout_marginTop="8dp"
+            android:clickable="true"
             android:text="重新发送(60)"
-            android:textColor="#ccc"
+            android:textColor="@color/click_textcolor"
+            android:onClick="resend"
             android:textSize="15sp" />
     </RelativeLayout>
 
@@ -146,7 +148,7 @@
         android:layout_height="172dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
         android:paddingTop="7dp"
         android:visibility="gone" >

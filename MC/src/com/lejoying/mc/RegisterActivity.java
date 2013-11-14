@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import com.lejoying.adapter.MCResponseAdapter;
 import com.lejoying.api.AccountManager;
 import com.lejoying.apiimpl.AccountManagerImpl;
+import com.lejoying.mcutils.Account;
 import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.MCTools;
 import com.lejoying.mcutils.MenuEntity;
@@ -48,6 +51,14 @@ public class RegisterActivity extends Activity {
 	private Handler handler;
 
 	private int resendTime;
+	private boolean canSend;
+
+	private String phone;
+	private String code;
+	private String pass;
+	private String accessKey;
+
+	private Timer timer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +84,7 @@ public class RegisterActivity extends Activity {
 
 		accountManager = new AccountManagerImpl(this);
 		handler = MCTools.handler;
+		canSend = true;
 
 		CircleMenu circleMenu = new CircleMenu(this);
 		List<MenuEntity> menuList = new ArrayList<MenuEntity>();
@@ -87,13 +99,100 @@ public class RegisterActivity extends Activity {
 
 	public void next(View v) {
 		if (state == STATE_VERIFYPHONE) {
+			String bphone = phone;
+			phone = et_phone.getText().toString();
+			if (bphone != null && !bphone.equals(phone)) {
+				tv_resend.setText("重新发送(60)");
+				if (timer != null) {
+					timer.cancel();
+				}
+				canSend = true;
+			}
+			if (canSend) {
+				canSend = false;
+				Map<String, String> param = new HashMap<String, String>();
+				param.put("phone", phone);
+				param.put("usage", "register");
+				accountManager.verifyphone(param, new MCResponseAdapter(this) {
+					@Override
+					public void success(JSONObject data) {
+						Animation animation = AnimationUtils.loadAnimation(
+								RegisterActivity.this, R.anim.tran_out_top);
+						animation.setAnimationListener(new AnimationListener() {
+
+							@Override
+							public void onAnimationStart(Animation animation) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onAnimationRepeat(Animation animation) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onAnimationEnd(Animation animation) {
+								rl_regpanel_phone.setVisibility(View.GONE);
+							}
+						});
+						rl_regpanel_phone.startAnimation(animation);
+
+						rl_regpanel_code.setVisibility(View.VISIBLE);
+
+						Animation animation2 = AnimationUtils.loadAnimation(
+								RegisterActivity.this, R.anim.tran_in_bottom);
+						rl_regpanel_code.startAnimation(animation2);
+						resend();
+						state = STATE_VERIFYCODE;
+					}
+				});
+			} else {
+				Animation animation = AnimationUtils.loadAnimation(
+						RegisterActivity.this, R.anim.tran_out_top);
+				animation.setAnimationListener(new AnimationListener() {
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						rl_regpanel_phone.setVisibility(View.GONE);
+					}
+				});
+				rl_regpanel_phone.startAnimation(animation);
+
+				rl_regpanel_code.setVisibility(View.VISIBLE);
+
+				Animation animation2 = AnimationUtils.loadAnimation(
+						RegisterActivity.this, R.anim.tran_in_bottom);
+				rl_regpanel_code.startAnimation(animation2);
+				state = STATE_VERIFYCODE;
+			}
+		} else if (state == STATE_VERIFYCODE) {
+			code = et_code.getText().toString();
 			Map<String, String> param = new HashMap<String, String>();
-			param.put("phone", et_phone.getText().toString());
-			param.put("usage", "register");
-			accountManager.verifyphone(param, new MCResponseAdapter(this) {
+			param.put("phone", phone);
+			param.put("code", code);
+			accountManager.verifycode(param, new MCResponseAdapter(this) {
 				@Override
 				public void success(JSONObject data) {
-					System.out.println(data);
+					try {
+						accessKey = data.getString("accessKey");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					Animation animation = AnimationUtils.loadAnimation(
 							RegisterActivity.this, R.anim.tran_out_top);
 					animation.setAnimationListener(new AnimationListener() {
@@ -112,38 +211,124 @@ public class RegisterActivity extends Activity {
 
 						@Override
 						public void onAnimationEnd(Animation animation) {
-							rl_regpanel_phone.setVisibility(View.GONE);
+							rl_regpanel_code.setVisibility(View.GONE);
 						}
 					});
-					rl_regpanel_phone.startAnimation(animation);
+					rl_regpanel_code.startAnimation(animation);
 
-					rl_regpanel_code.setVisibility(View.VISIBLE);
+					rl_regpanel_pass.setVisibility(View.VISIBLE);
 
 					Animation animation2 = AnimationUtils.loadAnimation(
 							RegisterActivity.this, R.anim.tran_in_bottom);
-					rl_regpanel_code.startAnimation(animation2);
-					resendTime = 60;
-					Timer timer = new Timer();
-					timer.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									tv_resend.setText("重新发送(" + resendTime
-											+ ")");
-									resendTime--;
-								}
-							});
-						}
-					}, 1000, 1000);
+					rl_regpanel_pass.startAnimation(animation2);
 
-					state = STATE_VERIFYCODE;
+					tv_resend.setText("重新发送");
+					timer.cancel();
+					canSend = true;
+					state = STATE_SETPASS;
 				}
 			});
+		} else if (state == STATE_SETPASS) {
+			pass = et_pass.getText().toString();
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("phone", phone);
+			param.put("accessKey", accessKey);
+			JSONObject jo = new JSONObject();
+			try {
+				jo.put("password", pass);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			param.put("account", jo.toString());
+			accountManager.modify(param, new MCResponseAdapter(this) {
+				@Override
+				public void success(JSONObject data) {
+					Intent intent = new Intent(RegisterActivity.this,
+							MessagesActivity.class);
+					startActivity(intent);
+					state = STATE_VERIFYPHONE;
+					finish();
+					LoginActivity.instance.finish();
+				}
+			});
+		}
+	}
+
+	public void resend(View v) {
+		if (canSend) {
+			canSend = false;
+			Map<String, String> param = new HashMap<String, String>();
+			param.put("phone", phone);
+			param.put("usage", "register");
+			accountManager.verifyphone(param, new MCResponseAdapter(this) {
+				@Override
+				public void success(JSONObject data) {
+					resend();
+				}
+			});
+		}
+	}
+
+	public void resend() {
+		resendTime = 60;
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (resendTime == 0) {
+							tv_resend.setText("重新发送");
+							timer.cancel();
+							canSend = true;
+						} else {
+							tv_resend.setText("重新发送(" + resendTime + ")");
+						}
+						resendTime--;
+					}
+				});
+			}
+		}, 200, 1000);
+	}
+
+	@Override
+	public void finish() {
+		if (state == STATE_SETPASS) {
+			Animation animation = AnimationUtils.loadAnimation(
+					RegisterActivity.this, R.anim.tran_out_bottom);
+			animation.setAnimationListener(new AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					rl_regpanel_pass.setVisibility(View.GONE);
+				}
+			});
+			rl_regpanel_pass.startAnimation(animation);
+
+			rl_regpanel_code.setVisibility(View.VISIBLE);
+
+			Animation animation2 = AnimationUtils.loadAnimation(
+					RegisterActivity.this, R.anim.tran_in_top);
+			rl_regpanel_code.startAnimation(animation2);
+
+			state = STATE_VERIFYCODE;
 		} else if (state == STATE_VERIFYCODE) {
-			Animation animation = AnimationUtils.loadAnimation(this,
-					R.anim.tran_out_top);
+			Animation animation = AnimationUtils.loadAnimation(
+					RegisterActivity.this, R.anim.tran_out_bottom);
 			animation.setAnimationListener(new AnimationListener() {
 
 				@Override
@@ -165,15 +350,14 @@ public class RegisterActivity extends Activity {
 			});
 			rl_regpanel_code.startAnimation(animation);
 
-			rl_regpanel_pass.setVisibility(View.VISIBLE);
+			rl_regpanel_phone.setVisibility(View.VISIBLE);
 
-			Animation animation2 = AnimationUtils.loadAnimation(this,
-					R.anim.tran_in_bottom);
-			rl_regpanel_pass.startAnimation(animation2);
-
-			state = STATE_SETPASS;
-		} else if (state == STATE_SETPASS) {
-
+			Animation animation2 = AnimationUtils.loadAnimation(
+					RegisterActivity.this, R.anim.tran_in_top);
+			rl_regpanel_phone.startAnimation(animation2);
+			state = STATE_VERIFYPHONE;
+		} else if (state == STATE_VERIFYPHONE) {
+			super.finish();
 		}
 	}
 
