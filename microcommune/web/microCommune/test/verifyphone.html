@@ -34,23 +34,59 @@
                 }
             });
         }
+        function commit3() {
+            var phone1 = document.getElementById("phone1").value;
+            var password = document.getElementById("password").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/account/auth?",
+                data: {
+                    phone: phone1,
+                    password: password
+                },
+                success: function (data) {
+//                    alert(JSON.stringify(data));
+                }
+            });
+        }
+        function commit4() {
+            var phone1 = document.getElementById("phone1").value;
+            var password = document.getElementById("password").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/account/auth?",
+                data: {
+                    phone: phone1,
+                    password: password
+                },
+                success: function (data) {
+//                    alert(JSON.stringify(data));
+                }
+            });
+        }
     </script>
 </head>
 <body>
 <div style="border: 1px solid #009900 ; width:300px; height:auto;text-align:center; ">
-    输入手机号：<input type="text" id="phone"><br>
-    <!--输入密码：<input type="text" id="password"><br>-->
-
-    <input type="radio" name="verify" value="login">登录
-    <input type="radio" name="verify" value="register">注册<br>
-    <input type="submit" value="下一步" onclick="commit()">
+    输入手机号：<input type="text" id="phone"/><br>
+        <input type="radio" name="verify" value="login"/>登录
+    <input type="radio" name="verify" value="register"/>注册<br>
+    <input type="submit" value="下一步" onclick="commit()"/>
 </div>
 <br>
 <div style="border: 1px solid #0000ee; width:300px; height:auto; text-align:center;">
     输入验证码：
-    <input type="text" id="code"><br>
-    <input type="submit" value="下一步" onclick="commit1()">
+    <input type="text" id="code"/><br>
+    <input type="submit" value="下一步" onclick="commit1()"/>
 </div>
+<br/>
+<div style="border: 1px solid #ffff00 ; width:300px; height:auto;text-align:center; ">
+    <input type="text" id="phone1"value="输入手机号"> <br>
+    <input type="text" id="password"value="输入密码"><br>
+    <input type="submit" value="登录" onclick="commit3()">
+    <input type="submit" value="没有账号/注册" onclick="commit4()">
+
+    </div>
 
 </body>
 </html>
