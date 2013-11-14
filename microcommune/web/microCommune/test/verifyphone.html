@@ -35,13 +35,13 @@
             });
         }
         function commit3() {
-            var phone1 = document.getElementById("phone1").value;
+            var phone = document.getElementById("phone1").value;
             var password = document.getElementById("password").value;
             $.ajax({
                 type: "POST",
                 url: "/api2/account/auth?",
                 data: {
-                    phone: phone1,
+                    phone: phone,
                     password: password
                 },
                 success: function (data) {
@@ -50,14 +50,48 @@
             });
         }
         function commit4() {
-            var phone1 = document.getElementById("phone1").value;
+            var phone = document.getElementById("phone1").value;
             var password = document.getElementById("password").value;
             $.ajax({
                 type: "POST",
                 url: "/api2/account/auth?",
                 data: {
-                    phone: phone1,
+                    phone: phone,
                     password: password
+                },
+                success: function (data) {
+//                    alert(JSON.stringify(data));
+                }
+            });
+        }
+      function commit5() {
+            var phone = document.getElementById("phone2").value;
+            var nickname=document.getElementById("nickname").value;
+            var mainbusiness=document.getElementById("mainbusiness").value;
+            var password = document.getElementById("password1").value;
+            var temp={phone: phone, nickName: nickname, mainBusiness: mainbusiness, password: password};
+            $.ajax({
+                type: "POST",
+                url: "/api2/account/modify?",
+                data: {
+                    phone: phone,
+                    account:JSON.stringify(temp)
+                },
+                success: function (data) {
+//                    alert(JSON.stringify(data));
+                }
+            });
+        }
+        function commit6() {
+            var phone = document.getElementById("phone3").value;
+            var accesskey = document.getElementById("code2").value;
+            var target=document.getElementById("target").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/account/?get",
+                data: {
+                    phone: phone,
+                    target:target
                 },
                 success: function (data) {
 //                    alert(JSON.stringify(data));
@@ -85,8 +119,20 @@
     <input type="text" id="password"value="输入密码"><br>
     <input type="submit" value="登录" onclick="commit3()">
     <input type="submit" value="没有账号/注册" onclick="commit4()">
+</div><br>
 
+<div style="border: 1px solid #009900 ; width:300px; height:auto;text-align:center; ">
+    手机号： <input type="text" id="phone2"> <br>
+    昵称：<input type="text" id="nickname"><br/>
+    主要业务：<input type="text" id="mainbusiness"><br/>
+    密码：<input type="text" id="password1"><br/>
+    <input type="submit" value="更改" onclick="commit5()">
+</div><br>
+
+<div style="border: 1px solid #551a8b ; width:300px; height:auto;text-align:center; ">
+    手机号： <input type="text" id="phone3"> <br>
+    目标：<input type="text" id="target"><br/>
+    <input type="submit" value="查找" onclick="commit6()">
     </div>
-
 </body>
 </html>
