@@ -1,5 +1,6 @@
 package com.lejoying.mcutils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -19,6 +20,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lejoying.mc.R;
 
@@ -54,11 +56,20 @@ public class CircleMenu {
 	private float clickX;
 	private float clickY;
 
+	private int diskWidth;
+	private int diskHeight;
+	private int diskRadius;
+	private int outWidth;
+	private int outHeight;
+	private int outRadius;
+
 	private int where;
 	private int oldWhere;
 
 	private boolean init;
 	private boolean initClick;
+
+	private List<View> menuItemList;
 
 	public CircleMenu(Activity activity) {
 		this.activity = activity;
@@ -74,6 +85,29 @@ public class CircleMenu {
 		rl_control = (RelativeLayout) inflater.inflate(R.layout.circlemenu,
 				null);
 		rl_control.setVisibility(View.INVISIBLE);
+
+		iv_controldisk = (ImageView) rl_control
+				.findViewById(R.id.iv_controldisk);
+		rl_controldiskout = (RelativeLayout) rl_control
+				.findViewById(R.id.rl_controldiskout);
+
+		menuItemList = new ArrayList<View>();
+		for (MenuEntity entity : menuList) {
+			RelativeLayout rl_menuitem = (RelativeLayout) inflater.inflate(
+					R.layout.circlemenu_item, null);
+			ImageView iv_image = (ImageView) rl_menuitem
+					.findViewById(R.id.iv_image);
+			TextView tv_text = (TextView) rl_menuitem
+					.findViewById(R.id.tv_text);
+
+			// iv_image.setImageDrawable(activity.getResources().getDrawable(
+			// entity.getImageID()));
+			tv_text.setText(entity.getText());
+
+			menuItemList.add(rl_menuitem);
+		}
+		menuItemList.get(0).setVisibility(View.INVISIBLE);
+		rl_controldiskout.addView(menuItemList.get(0));
 
 		ViewGroup contentView = getContentView(activity);
 		if (contentView != null) {
@@ -113,46 +147,84 @@ public class CircleMenu {
 
 	private void initData(int showWhere, final List<MenuEntity> menuList) {
 		where = showWhere;
-		iv_controldisk = (ImageView) rl_control
-				.findViewById(R.id.iv_controldisk);
-		rl_controldiskout = (RelativeLayout) rl_control
-				.findViewById(R.id.rl_controldiskout);
 		initWidth = rl_control.getWidth();
 		initHeight = rl_control.getHeight();
 		int[] location = new int[2];
 		iv_controldisk.getLocationInWindow(location);
 		initIvDiskX = location[0];
 		initIvDiskY = location[1];
+		diskWidth = iv_controldisk.getWidth();
+		diskHeight = iv_controldisk.getHeight();
+		diskRadius = diskWidth / 2;
+
 		rl_controldiskout.getLocationInWindow(location);
 		initRlOutX = location[0];
 		initRlOutY = location[1];
-
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.WRAP_CONTENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		RelativeLayout rl_menuitem = (RelativeLayout) inflater.inflate(
-				R.layout.circlemenu_item, null);
-		params.setMargins(rl_controldiskout.getWidth() / 6,
-				rl_controldiskout.getHeight() / 8, 0, 0);
-		rl_controldiskout.addView(rl_menuitem, params);
+		outWidth = rl_controldiskout.getWidth();
+		outHeight = rl_controldiskout.getHeight();
+		outRadius = outWidth / 2;
 
 		setLocation(showWhere);
+
+		int itemWidth = menuItemList.get(0).getWidth();
+		int itemHeight = menuItemList.get(0).getHeight();
+		rl_controldiskout.removeView(menuItemList.get(0));
+		menuItemList.get(0).setVisibility(View.VISIBLE);
+
+		if (menuList.size() == 6) {
+
+			int sideWidth = ((outRadius - diskRadius) / 2 + diskRadius) / 2;
+			int sideHeight = (int) (((outRadius - diskRadius) / 2 + diskRadius) * 0.866);
+
+			for (int i = 0; i < menuItemList.size(); i++) {
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				int marginLeft = 0;
+				int marginTop = 0;
+				if (i == 0) {
+					marginLeft = outRadius - sideWidth - itemWidth / 2;
+					marginTop = outRadius - sideHeight - itemHeight / 2;
+
+				}
+				if (i == 1) {
+					marginLeft = (outRadius - diskRadius) / 2 - itemWidth / 2;
+					marginTop = outHeight / 2 - itemHeight / 2;
+				}
+				if (i == 2) {
+					marginLeft = outRadius - sideWidth - itemWidth / 2;
+					marginTop = outRadius + sideHeight - itemHeight / 2;
+				}
+				if (i == 3) {
+					marginLeft = outRadius + sideWidth - itemWidth / 2;
+					marginTop = outRadius + sideHeight - itemHeight / 2;
+				}
+				if (i == 4) {
+					marginLeft = (outRadius - diskRadius) / 2 - itemWidth / 2
+							+ outRadius + diskRadius;
+					marginTop = outHeight / 2 - itemHeight / 2;
+				}
+				if (i == 5) {
+					marginLeft = outRadius + sideWidth - itemWidth / 2;
+					marginTop = outRadius - sideHeight - itemHeight / 2;
+				}
+				params.setMargins(marginLeft, marginTop, 0, 0);
+				rl_controldiskout.addView(menuItemList.get(i), params);
+			}
+		}
 
 		gd = new GestureDetector(activity, new OnGestureListener() {
 
 			@Override
 			public boolean onSingleTapUp(MotionEvent e) {
-				int height = iv_controldisk.getHeight();
-				int width = iv_controldisk.getWidth();
-				int radius = width / 2;
-				int circleX = ivX + width / 2;
-				int circleY = ivY + height / 2;
+				int circleX = ivX + diskRadius;
+				int circleY = ivY + diskRadius;
 				if (status == SHOW_CENTER) {
 					initClick = false;
 					int radiusOut = rl_controldiskout.getWidth() / 2;
 					if ((clickX - circleX) * (clickX - circleX)
-							+ (clickY - circleY) * (clickY - circleY) < radius
-							* radius) {
+							+ (clickY - circleY) * (clickY - circleY) < diskRadius
+							* diskRadius) {
 						back(oldWhere);
 					} else if ((clickX - circleX) * (clickX - circleX)
 							+ (clickY - circleY) * (clickY - circleY) < radiusOut
@@ -271,8 +343,6 @@ public class CircleMenu {
 						|| status == SHOW_BOTTOM) {
 					clickX = e.getX();
 					clickY = e.getY();
-					int height = iv_controldisk.getHeight();
-					int width = iv_controldisk.getWidth();
 
 					if (status == SHOW_TOP) {
 						ivX = (int) initIvDiskX;
@@ -285,12 +355,11 @@ public class CircleMenu {
 						ivY = (int) initIvDiskY + initHeight / 2;
 					}
 
-					int circleX = ivX + width / 2;
-					int circleY = ivY + height / 2;
-					int radius = width / 2;
+					int circleX = ivX + diskRadius;
+					int circleY = ivY + diskRadius;
 					if ((clickX - circleX) * (clickX - circleX)
-							+ (clickY - circleY) * (clickY - circleY) < radius
-							* radius) {
+							+ (clickY - circleY) * (clickY - circleY) < diskRadius
+							* diskRadius) {
 						flag = true;
 					}
 				}
@@ -333,12 +402,12 @@ public class CircleMenu {
 
 	private void setLocation(int showWhere) {
 		if (showWhere == SHOW_TOP) {
-			scrollY = initHeight / 2;
+			scrollY = initHeight / 2 + diskHeight / 8;
 			rl_control.scrollTo(0, scrollY);
 			status = SHOW_TOP;
 		}
 		if (showWhere == SHOW_BOTTOM) {
-			scrollY = -initHeight / 2;
+			scrollY = -initHeight / 2 - diskHeight / 8;
 			rl_control.scrollTo(0, scrollY);
 			status = SHOW_BOTTOM;
 		}

@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/rl_panel"
         android:layout_width="fill_parent"
-        android:layout_height="280dp"
+        android:layout_height="290dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="20dp"
@@ -88,12 +88,23 @@
             android:layout_alignLeft="@+id/button1"
             android:layout_alignRight="@+id/button1"
             android:layout_below="@+id/button1"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="8dp"
             android:background="#2fff"
             android:onClick="register"
             android:text="没有账号/注册"
             android:textColor="#fff"
             android:textSize="19sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/button2"
+            android:layout_below="@+id/button2"
+            android:layout_marginTop="8dp"
+            android:textColor="#ccc"
+            android:textSize="15sp"
+            android:text="验证码登录" />
+
     </RelativeLayout>
 
 </RelativeLayout>

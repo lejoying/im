@@ -50,13 +50,15 @@ public class MessagesActivity extends Activity {
 
 		CircleMenu circleMenu = new CircleMenu(this);
 		List<MenuEntity> list = new ArrayList<MenuEntity>();
-		
-		list.add(new MenuEntity());
-		list.add(new MenuEntity());
-		list.add(new MenuEntity());
-		list.add(new MenuEntity());
-		
-		circleMenu.showMenu(CircleMenu.SHOW_TOP,list);
+
+		list.add(new MenuEntity(0, "我的名片"));
+		list.add(new MenuEntity(0, "密友圈"));
+		list.add(new MenuEntity(0, "社区服务"));
+		list.add(new MenuEntity(0, "更多"));
+		list.add(new MenuEntity(0, "订单"));
+		list.add(new MenuEntity(0, "资金账户"));
+
+		circleMenu.showMenu(CircleMenu.SHOW_TOP, list);
 	}
 
 	class MessagesListAdapter extends BaseAdapter {

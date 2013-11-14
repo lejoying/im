@@ -44,7 +44,7 @@ public class MCTools {
 
 	public static Handler handler = new Handler();
 
-	private static final String DOMAIN = "http://192.168.0.102:8071";
+	private static final String DOMAIN = "http://192.168.0.104:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;
@@ -65,6 +65,7 @@ public class MCTools {
 		lastparam = param;
 		lasttime = new Date().getTime();
 
+		
 		if (!hasNetwork) {
 			responseListener.noInternet();
 		} else {

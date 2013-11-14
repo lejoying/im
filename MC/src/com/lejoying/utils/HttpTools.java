@@ -115,6 +115,7 @@ public final class HttpTools {
 			os.flush();
 			os.close();
 
+			
 			// ÅÐ¶Ï·µ»Ø×´Ì¬
 			if (httpURLConnection.getResponseCode() == 200) {
 				is = httpURLConnection.getInputStream();
