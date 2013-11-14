@@ -1,7 +1,7 @@
 package com.lejoying.mc;
 
-import com.lejoying.mcutils.CircleMenu;
-import com.lejoying.mcutils.ImageTools;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +17,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.lejoying.mcutils.CircleMenu;
+import com.lejoying.mcutils.ImageTools;
+import com.lejoying.mcutils.MenuEntity;
 
 public class MessagesActivity extends Activity {
 
@@ -45,7 +49,14 @@ public class MessagesActivity extends Activity {
 		lv_messages.setAdapter(new MessagesListAdapter());
 
 		CircleMenu circleMenu = new CircleMenu(this);
-		circleMenu.showMenu(CircleMenu.SHOW_TOP);
+		List<MenuEntity> list = new ArrayList<MenuEntity>();
+		
+		list.add(new MenuEntity());
+		list.add(new MenuEntity());
+		list.add(new MenuEntity());
+		list.add(new MenuEntity());
+		
+		circleMenu.showMenu(CircleMenu.SHOW_TOP,list);
 	}
 
 	class MessagesListAdapter extends BaseAdapter {

@@ -66,7 +66,7 @@ public class BusinessCardActivity extends Activity {
 		circleAdapter.createView();
 		
 		CircleMenu cm = new CircleMenu(this);
-		cm.showMenu(CircleMenu.SHOW_BOTTOM);
+		cm.showMenu(CircleMenu.SHOW_BOTTOM,null);
 	}
 
 	
