@@ -79,27 +79,19 @@ api = {
         }
     },
     /***************************************
-     *     URL：/api2/account/verifypass
-     ***************************************/
-    "account_verifypass": {
-        request: {
-            typical: {"phone": "XXX", "password": "XXX", accessKey: "XXX"}
-        },
-        response: {
-            success: {"提示信息": "注册成功", account: {}},
-            failed: {"提示信息": "注册失败", "失败原因": ["保存数据遇到错误"]}
-        }
-    },
-    /***************************************
      *     URL：/api2/account/auth
      ***************************************/
     "account_auth": {
+        description: {
+            id: 1000102,
+            url: "/api2/account/auth"
+        },
         request: {
-            typical: {"phone": "XXX", "password": "XXX", accessKey: "XXX"}
+            typical: {"phone": "XXX", "password": "XXX"}
         },
         response: {
-            success: {"提示信息": "账号登录成功", account: {}},
-            failed: {"提示信息": "账号登录失败", "失败原因": ["手机号不存在" || "密码不正确"]}
+            success: {"提示信息": "普通鉴权成功",accessKey: sha1("phone" + "time")},
+            failed: {"提示信息": "普通鉴权失败", "失败原因": ["手机号不存在" || "密码不正确" || "数据异常"]}
         }
     },
     /***************************************

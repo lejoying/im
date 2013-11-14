@@ -304,85 +304,12 @@ accountManage.verifycode = function (data, response) {
     }
 }
 /***************************************
- *     URL：/api2/account/verifypass
- ***************************************/
-accountManage.verifypass = function (data, response) {
-    response.asynchronous = 1;
-    var phone = data.phone;
-    var password = data.password;
-    var accessKey = data.accessKey;
-    checkPhone();
-    function checkPhone() {
-        var query = [
-            'MATCH (account:Account)',
-            'WHERE account.phone={phone}',
-            'RETURN account'
-        ].join('\n');
-        var params = {
-            phone: phone
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "注册失败",
-                    "失败原因": "保存数据遇到错误"
-                }));
-                response.end();
-            } else {
-                var accountNode = results.pop().account;
-                var accountData = accountNode.data;
-                accountData.password = password;
-                accountData.status = "success";
-                accountNode.save();
-                console.log("注册成功---");
-                delete accountData.password;
-                createCircleNode(accountData.uid);
-                accountSession[phone] = accountSession[phone] || [];
-                accountSession[phone][accessKey] = null;
-                response.write(JSON.stringify({
-                    "提示信息": "注册成功",
-                    "account": accountData
-                }));
-                response.end();
-            }
-        });
-    }
-
-    function createCircleNode(uid) {
-        var circle = {
-            name: "密友圈1"
-        };
-        var query = [
-            'START account=node({uid})',
-            'CREATE UNIQUE account-[r:HAS_CIRCLE]->(circle:Circle{circle})',
-            'SET circle.rid=ID(circle)',
-            'RETURN circle'
-        ].join('\n');
-        var params = {
-            uid: parseInt(uid),
-            circle: circle
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                console.log(error);
-                return;
-            } else if (results.length == 0) {
-                console.log("创建默认密友圈失败");
-            } else {
-                console.log("创建默认密友圈成功");
-            }
-        });
-    }
-}
-
-/***************************************
  *     URL：/api2/account/auth
  ***************************************/
 accountManage.auth = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var password = data.password;
-    var accessKey = data.accessKey;
     checkAccountNode();
 
     function checkAccountNode() {
@@ -397,11 +324,16 @@ accountManage.auth = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "普通鉴权失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
                 console.error(error);
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
-                    "提示信息": "账号登录失败",
+                    "提示信息": "普通鉴权失败",
                     "失败原因": "手机号不存在"
                 }));
                 response.end();
@@ -409,24 +341,24 @@ accountManage.auth = function (data, response) {
                 var accountData = results.pop().account.data;
                 if (accountData.status == "init") {
                     response.write(JSON.stringify({
-                        "提示信息": "账号登录失败",
+                        "提示信息": "普通鉴权失败",
                         "失败原因": "手机号不存在"
                     }));
                     response.end();
                 } else {
                     if (accountData.password == password) {
-                        delete accountData.password;
-                        console.log("账号登录成功---");
+                        console.log("普通鉴权成功---");
+                        var time = phone + new Date().getTime();
                         response.write(JSON.stringify({
-                            "提示信息": "账号登录成功",
-                            "account": accountData
+                            "提示信息": "普通鉴权成功",
+                            "accessKey": sha1.hex_sha1(time)
                         }));
                         response.end();
-                        accountSession[phone] = accountSession[phone] || [];
-                        accountSession[phone][accessKey] = null;
+//                        accountSession[phone] = accountSession[phone] || [];
+//                        accountSession[phone][accessKey] = null;
                     } else {
                         response.write(JSON.stringify({
-                            "提示信息": "账号登录失败",
+                            "提示信息": "普通鉴权失败",
                             "失败原因": "密码不正确"
                         }));
                         response.end();
