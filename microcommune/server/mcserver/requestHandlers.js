@@ -8,8 +8,8 @@ requestHandlers.session = function (request, response, pathObject, data) {
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "eventweb") {
-        session.eventweb(data, response);
+    if (operation == "eventwebcodelogin") {
+        session.eventwebcodelogin(data, response);
     }
     else if (operation == "event") {
         session.event(data, response);
@@ -137,6 +137,16 @@ requestHandlers.messageManage = function (request, response, pathObject, data) {
     }
     else if (operation == "get") {
         messageManage.get(data, response);
+    }
+}
+var webcodeManage = require("./handlers/webcodeManage.js");
+requestHandlers.webcodeManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "webcodelogin") {
+        messageManage.webcodelogin(data, response);
     }
 }
 
