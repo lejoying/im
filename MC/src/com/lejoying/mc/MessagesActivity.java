@@ -1,5 +1,6 @@
 package com.lejoying.mc;
 
+import java.security.spec.EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.zxing.WriterException;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.qrcode.encoder.Encoder;
+import com.google.zxing.qrcode.encoder.QRCode;
 import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.ImageTools;
 import com.lejoying.mcutils.MenuEntity;
@@ -59,6 +64,15 @@ public class MessagesActivity extends Activity {
 		list.add(new MenuEntity(0, "×Ê½ðÕË»§"));
 
 		circleMenu.showMenu(CircleMenu.SHOW_TOP, list);
+
+		try {
+			QRCode qrCode = Encoder.encode("aaaaaa", ErrorCorrectionLevel.L);
+			
+			
+		} catch (WriterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	class MessagesListAdapter extends BaseAdapter {

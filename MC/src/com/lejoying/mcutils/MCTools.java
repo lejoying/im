@@ -22,8 +22,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.os.Handler;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.lejoying.listener.ResponseListener;
 import com.lejoying.utils.HttpTools;
 import com.lejoying.utils.HttpTools.HttpListener;
@@ -65,7 +70,6 @@ public class MCTools {
 		lastparam = param;
 		lasttime = new Date().getTime();
 
-		
 		if (!hasNetwork) {
 			responseListener.noInternet();
 		} else {
@@ -212,6 +216,32 @@ public class MCTools {
 			}
 		}
 		return account;
+	}
+
+	public static Bitmap createBitmap(String str) {
+		try {
+			BitMatrix matrix = new MultiFormatWriter().encode(str,
+					BarcodeFormat.QR_CODE, 300, 300);
+			int width = matrix.getWidth();
+			int height = matrix.getHeight();
+			int[] pixels = new int[width * height];
+			for (int y = 0; y < width; ++y) {
+				for (int x = 0; x < height; ++x) {
+					if (matrix.get(x, y)) {
+						pixels[y * width + x] = 0xff000000; // black pixel
+					} else {
+						pixels[y * width + x] = 0xffffffff; // white pixel
+					}
+				}
+			}
+			Bitmap bmp = Bitmap.createBitmap(width, height,
+					Bitmap.Config.ARGB_8888);
+			bmp.setPixels(pixels, 0, width, 0, 0, width, height);
+			return bmp;
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static String createAccessKey() {
