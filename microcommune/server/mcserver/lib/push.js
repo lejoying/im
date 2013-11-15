@@ -15,5 +15,18 @@ push.inform = function(phone, sessionID, event){
         }
     });
 }
+push.notifywebcodelogin = function(phone, sessionID){
+    ajax.ajax({
+        data: {
+            phone: phone,
+            sessionID: sessionID
+        },
+        type: 'POST',
+        url: "http://127.0.0.1:8071/api2/session/notifywebcodelogin",
+        success: function (dataStr) {
+            console.log("push---"+dataStr);
+        }
+    });
+}
 
 module.exports = push;

@@ -4,21 +4,45 @@
 
 api = {
     /***************************************
-     *     URL：/api2/session/eventweb
+     *     URL：/api2/session/eventwebcodelogin
      ***************************************/
-    "session_eventweb": {
+    "session_eventwebcodelogin": {
+        description: {
+            id: 1000000,
+            url: "/api2/session/eventwebcodelogin"
+        },
         request: {
-            typical: {"accessKey": "XXX"}
+            typical: {"sessionID": "XXX"}
         },
         response: {
-            success: {"提示信息": "成功"},
-            failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
+            success: {"提示信息": "web端二维码登录成功",phone: "XXX", accessKey: sha1("phone"+"time")},
+            failed: {"提示信息": "web端二维码登录失败", "失败原因": ["数据异常"]}
+        }
+    },
+    /***************************************
+     *     URL：/api2/session/notifywebcodelogin
+     ***************************************/
+    "session_notifywebcodelogin": {
+        description: {
+            id: 1000001,
+            url: "/api2/session/notifywebcodelogin"
+        },
+        request: {
+            typical: {phone: "XX", sessionID: "XXX"}
+        },
+        response: {
+            success: {"information": "notifywebcodelogin success"},
+            failed: {}
         }
     },
     /***************************************
      *     URL：/api2/session/event
      ***************************************/
     "session_event": {
+        description: {
+            id: 1000002,
+            url: "/api2/session/event"
+        },
         request: {
             typical: {"phone": "XXX", "accessKey": "XXX"}
         },
@@ -31,6 +55,10 @@ api = {
      *     URL：/api2/session/notify
      ***************************************/
     "session_notify": {
+        description: {
+            id: 1000003,
+            url: "/api2/session/notify"
+        },
         request: {
             typical: {phone: "XX", sessionID: "XXX", event: "XXX"}
         },
@@ -141,41 +169,30 @@ api = {
             success: {"提示信息": "退出成功"},
             failed: {"提示信息": "退出失败", "失败原因": []}
         }
-    },
-    /***************************************
-     *     URL：/api2/account/verifywebcode
-     ***************************************/
-    "account_verifywebcode": {
-        description: {
-            id: 1000106,
-            url: "/api2/account/verifywebcode"
-        },
-        request: {
-            typical: {accessKey: "XXX"}
-        },
-        response: {
-            success: {"提示信息": "二维码验证成功"},
-            failed: {"提示信息": "二维码验证失败", "失败原因": ["二维码超时"]}
-        }
-    },
-    /***************************************
-     *     URL：/api2/account/verifywebcodelogin
-     ***************************************/
-    "account_verifywebcodelogin": {
-        description: {
-            id: 1000107,
-            url: "/api2/account/verifywebcodelogin"
-        },
-        request: {
-            typical: {phone: "XXX", accessKey: "", status: true || false}
-        },
-        response: {
-            success: {"提示信息": "登录成功"},
-            failed: {"提示信息": "登录失败", "失败原因": ["二维码超时" || "取消登录"]}
-        }
     }
 }
 
+/*************************************** ***************************************
+ * *    Class：webcode
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/api2/webcode/webcodelogin
+     ***************************************/
+    "webcode_webcodelogin": {
+        description: {
+            id: 1000200,
+            url: "/api2/webcode/webcodelogin"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", sessionID: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "二维码登录成功", phone: "XXX"},
+            failed: {"提示信息": "二维码登录失败", "失败原因": "客户端连接不存在" || "数据异常"}
+        }
+    }
+}
 /*************************************** ***************************************
  * *    Class：relation
  *************************************** ***************************************/
