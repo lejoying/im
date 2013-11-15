@@ -225,12 +225,12 @@ public class MCTools {
 			int width = matrix.getWidth();
 			int height = matrix.getHeight();
 			int[] pixels = new int[width * height];
-			for (int y = 0; y < width; ++y) {
-				for (int x = 0; x < height; ++x) {
+			for (int y = 15; y < width - 15; ++y) {
+				for (int x = 15; x < height - 15; ++x) {
 					if (matrix.get(x, y)) {
-						pixels[y * width + x] = 0xff000000; // black pixel
+						pixels[y * width + x] = 0xff333333; // black pixel
 					} else {
-						pixels[y * width + x] = 0xffffffff; // white pixel
+						pixels[y * width + x] = 0xffcccccc; // white pixel
 					}
 				}
 			}

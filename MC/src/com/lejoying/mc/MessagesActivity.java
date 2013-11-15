@@ -25,6 +25,7 @@ import com.google.zxing.qrcode.encoder.Encoder;
 import com.google.zxing.qrcode.encoder.QRCode;
 import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.ImageTools;
+import com.lejoying.mcutils.MCTools;
 import com.lejoying.mcutils.MenuEntity;
 
 public class MessagesActivity extends Activity {
@@ -65,13 +66,11 @@ public class MessagesActivity extends Activity {
 
 		circleMenu.showMenu(CircleMenu.SHOW_TOP, list);
 
-		try {
-			QRCode qrCode = Encoder.encode("aaaaaa", ErrorCorrectionLevel.L);
-			
-			
-		} catch (WriterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Bitmap bm = MCTools.createBitmap("nihaoahesadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaallo");
+		
+		if(bm!=null){
+			ImageView imageView1 = (ImageView) findViewById(R.id.imageView1);
+			imageView1.setImageBitmap(bm);
 		}
 	}
 
