@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -422,8 +423,8 @@ public class CircleAdapter {
 		/****
 		 * 宽度和高度都为wrapContent
 		 */
-		layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-		layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+		layoutParams.width = LayoutParams.WRAP_CONTENT;
+		layoutParams.height = LayoutParams.WRAP_CONTENT;
 
 		/****
 		 * 设置该layout参数的一些flags参数

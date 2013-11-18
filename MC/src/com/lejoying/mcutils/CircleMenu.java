@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.ScaleAnimation;
@@ -113,12 +114,12 @@ public class CircleMenu {
 		ViewGroup contentView = getContentView(activity);
 		if (contentView != null) {
 			contentView.addView(rl_control,
-					FrameLayout.LayoutParams.MATCH_PARENT,
-					FrameLayout.LayoutParams.MATCH_PARENT);
+					LayoutParams.MATCH_PARENT,
+					LayoutParams.MATCH_PARENT);
 		} else {
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-					FrameLayout.LayoutParams.MATCH_PARENT,
-					FrameLayout.LayoutParams.MATCH_PARENT);
+					LayoutParams.MATCH_PARENT,
+					LayoutParams.MATCH_PARENT);
 			activity.addContentView(rl_control, params);
 		}
 		new Thread() {
@@ -174,8 +175,8 @@ public class CircleMenu {
 
 			for (int i = 0; i < menuItemList.size(); i++) {
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
+						LayoutParams.WRAP_CONTENT,
+						LayoutParams.WRAP_CONTENT);
 				int marginLeft = 0;
 				int marginTop = 0;
 				if (i == 0) {
@@ -326,7 +327,7 @@ public class CircleMenu {
 				if (status == STATUS_DRAG) {
 					int moveX = (int) (clickX - e2.getX());
 					int moveY = (int) (clickY - e2.getY());
-					rl_control.scrollTo((int) moveX, (int) (scrollY + moveY));
+					rl_control.scrollTo(moveX, scrollY + moveY);
 				}
 				return true;
 			}

@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.lejoying.adapter.MCResponseAdapter;
 import com.lejoying.api.AccountManager;
 import com.lejoying.apiimpl.AccountManagerImpl;
-import com.lejoying.mcutils.Account;
 import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.MCTools;
 import com.lejoying.mcutils.MenuEntity;
