@@ -10,6 +10,7 @@ import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -23,12 +24,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.os.Handler;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.lejoying.listener.ResponseListener;
 import com.lejoying.utils.HttpTools;
 import com.lejoying.utils.HttpTools.HttpListener;
@@ -54,6 +59,8 @@ public class MCTools {
 	private static String lasturl;
 	private static Map<String, String> lastparam;
 	private static long lasttime;
+	
+	private final static int QRCODE_SIZE = 300;
 
 	public static void ajax(Activity activity, final String url,
 			final Map<String, String> param, boolean lock, final int method,
@@ -218,31 +225,64 @@ public class MCTools {
 		return account;
 	}
 
-	public static Bitmap createBitmap(String str) {
+	public static Bitmap createBitmap(String content) {
+		// 用于设置QR二维码参数
+		Hashtable<EncodeHintType, Object> qrParam = new Hashtable<EncodeHintType, Object>();
+		// 设置QR二维码的纠错级别——这里选择最高H级别
+		qrParam.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+		// 设置编码方式
+		qrParam.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+
+		// 生成QR二维码数据——这里只是得到一个由true和false组成的数组
+		// 参数顺序分别为：编码内容，编码类型，生成图片宽度，生成图片高度，设置参数
 		try {
-			BitMatrix matrix = new MultiFormatWriter().encode(str,
-					BarcodeFormat.QR_CODE, 300, 300);
-			int width = matrix.getWidth();
-			int height = matrix.getHeight();
-			int[] pixels = new int[width * height];
-			for (int y = 15; y < width - 15; ++y) {
-				for (int x = 15; x < height - 15; ++x) {
-					if (matrix.get(x, y)) {
-						pixels[y * width + x] = 0xff333333; // black pixel
-					} else {
-						pixels[y * width + x] = 0xffcccccc; // white pixel
-					}
+			BitMatrix bitMatrix = new MultiFormatWriter().encode(content,
+					BarcodeFormat.QR_CODE, QRCODE_SIZE, QRCODE_SIZE, qrParam);
+
+			// 开始利用二维码数据创建Bitmap图片，分别设为黑白两色
+			int w = bitMatrix.getWidth();
+			int h = bitMatrix.getHeight();
+			int[] data = new int[w * h];
+
+			for (int y = 0; y < h; y++) {
+				for (int x = 0; x < w; x++) {
+					if (bitMatrix.get(x, y))
+						data[y * w + x] = 0xff000000;// 黑色
+					else
+						data[y * w + x] = -1;// -1 相当于0xffffffff 白色
 				}
 			}
-			Bitmap bmp = Bitmap.createBitmap(width, height,
-					Bitmap.Config.ARGB_8888);
-			bmp.setPixels(pixels, 0, width, 0, 0, width, height);
-			return bmp;
+			// 创建一张bitmap图片，采用最高的效果显示
+			Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+			// 将上面的二维码颜色数组传入，生成图片颜色
+			bitmap.setPixels(data, 0, w, 0, 0, w, h);
+			return bitmap;
 		} catch (WriterException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
+	private void createQRCodeBitmapWithPortrait(Bitmap qr, Bitmap portrait) {  
+	    // 头像图片的大小  
+	    int portrait_W = portrait.getWidth();  
+	    int portrait_H = portrait.getHeight();  
+	  
+	    // 设置头像要显示的位置，即居中显示  
+	    int left = (QRCODE_SIZE - portrait_W) / 2;  
+	    int top = (QRCODE_SIZE - portrait_H) / 2;  
+	    int right = left + portrait_W;  
+	    int bottom = top + portrait_H;  
+	    Rect rect1 = new Rect(left, top, right, bottom);  
+	  
+	    // 取得qr二维码图片上的画笔，即要在二维码图片上绘制我们的头像  
+	    Canvas canvas = new Canvas(qr);  
+	  
+	    // 设置我们要绘制的范围大小，也就是头像的大小范围  
+	    Rect rect2 = new Rect(0, 0, portrait_W, portrait_H);  
+	    // 开始绘制  
+	    canvas.drawBitmap(portrait, rect2, rect1, null);
+	}  
 
 	public static String createAccessKey() {
 
