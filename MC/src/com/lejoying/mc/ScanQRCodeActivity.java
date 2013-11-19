@@ -1,16 +1,18 @@
 package com.lejoying.mc;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,14 +28,16 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+import com.lejoying.view.ScanView;
 
 public class ScanQRCodeActivity extends Activity implements
-		SurfaceHolder.Callback, PreviewCallback {
+		SurfaceHolder.Callback, PreviewCallback, AutoFocusCallback {
 
 	private Camera camera;
 
-	private final int OPERATE_DECODE_SUCCESS = 0x00001;
+	private final int OPERATE_DECODE_SUCCESS_WEBLOGIN = 0x00001;
 	private final int OPERATE_DECODE_FAILED = 0x00002;
+	private final int OPERATE_AUTOFOCUS = 0x00003;
 
 	private SurfaceView sfv_scanqrcode;
 
@@ -51,6 +55,13 @@ public class ScanQRCodeActivity extends Activity implements
 
 	private MultiFormatReader multiFormatReader;
 
+	private ScanView scanview;
+
+	private Rect framingRect;
+
+	private int count = 0;
+
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,6 +94,7 @@ public class ScanQRCodeActivity extends Activity implements
 		surfaceHolder = sfv_scanqrcode.getHolder();
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		scanview = (ScanView) findViewById(R.id.scanview);
 	}
 
 	public void initCamera() {
@@ -94,29 +106,29 @@ public class ScanQRCodeActivity extends Activity implements
 			Camera.Parameters parameters = camera.getParameters();
 			cameraResolution = findBestPreviewSizeValue(parameters,
 					screenResolution);
+			framingRect = getFramingRect(cameraResolution);
+			scanview.setFramingRect(framingRect);
 			parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
 			camera.setParameters(parameters);
 			camera.startPreview();
+			autoFocus();
 			reDecode();
-			final Timer t2 = new Timer();
-			t2.schedule(new TimerTask() {
-				@Override
-				public void run() {
-					if (isTake) {
-						camera.autoFocus(null);
-					} else {
-						t2.cancel();
-					}
-				}
-			}, 0, 2000);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			count++;
+			if (count < 2) {
+				destoryCamera();
+				initCamera();
+			} else {
+				// 相机故障或被占用
+				finish();
+			}
 		}
 	}
 
 	public void destoryCamera() {
+		isTake = false;
 		if (camera != null) {
-			isTake = false;
 			camera.release();
 		}
 	}
@@ -125,14 +137,6 @@ public class ScanQRCodeActivity extends Activity implements
 	public void finish() {
 		destoryCamera();
 		super.finish();
-	}
-
-	@Override
-	protected void onResume() {
-		if (!isTake) {
-			initCamera();
-		}
-		super.onResume();
 	}
 
 	@Override
@@ -161,7 +165,9 @@ public class ScanQRCodeActivity extends Activity implements
 	public void onPreviewFrame(byte[] data, Camera camera) {
 		Result rawResult = null;
 		PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data,
-				cameraResolution.x, cameraResolution.y, 0, 0, 1280, 720, false);
+				cameraResolution.x, cameraResolution.y, framingRect.top,
+				framingRect.left, framingRect.bottom - framingRect.top,
+				framingRect.right - framingRect.left, false);
 		if (source != null) {
 			BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 			try {
@@ -173,14 +179,14 @@ public class ScanQRCodeActivity extends Activity implements
 			}
 		}
 
+		int what = OPERATE_DECODE_FAILED;
 		if (rawResult != null) {
-			Message message = handler.obtainMessage(OPERATE_DECODE_SUCCESS,
-					rawResult);
-			message.sendToTarget();
-		} else {
-			Message message = handler.obtainMessage(OPERATE_DECODE_FAILED);
-			message.sendToTarget();
+			if (processQRCode(rawResult)) {
+				what = OPERATE_DECODE_SUCCESS_WEBLOGIN;
+			}
 		}
+		Message message = handler.obtainMessage(what, rawResult);
+		message.sendToTarget();
 	}
 
 	private Point findBestPreviewSizeValue(Camera.Parameters parameters,
@@ -255,23 +261,83 @@ public class ScanQRCodeActivity extends Activity implements
 		camera.setOneShotPreviewCallback(ScanQRCodeActivity.this);
 	}
 
+	public Rect getFramingRect(Point cameraResolution) {
+		int minSide = cameraResolution.y;
+		int maxSide = cameraResolution.x;
+		float framingSide = minSide * 0.6f;
+		float leftOffset = (minSide - framingSide) / 2;
+		float topOffset = (maxSide - framingSide) / 2;
+		return new Rect((int) leftOffset, (int) topOffset,
+				(int) (leftOffset + framingSide),
+				(int) (topOffset + framingSide));
+	}
+
+	public void autoFocus() {
+		handler.sendEmptyMessageDelayed(OPERATE_AUTOFOCUS, 2000);
+	}
+
+	@Override
+	public void onAutoFocus(boolean success, Camera camera) {
+		autoFocus();
+	}
+
 	private class ScanHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
 			int what = msg.what;
 			switch (what) {
-			case OPERATE_DECODE_SUCCESS:
-				System.out.println(msg.obj.toString());
-
+			case OPERATE_DECODE_SUCCESS_WEBLOGIN:
+				destoryCamera();
+				new AlertDialog.Builder(ScanQRCodeActivity.this)
+						.setTitle("网页登陆成功")
+						.setOnCancelListener(new OnCancelListener() {
+							@Override
+							public void onCancel(DialogInterface dialog) {
+								initCamera();
+							}
+						}).setMessage(msg.obj.toString()).create().show();
 				break;
 			case OPERATE_DECODE_FAILED:
-				if (isTake)
-					reDecode();
+				if (isTake) {
+					if (msg.obj != null) {
+						destoryCamera();
+						new AlertDialog.Builder(ScanQRCodeActivity.this)
+								.setTitle("无效请求")
+								.setOnCancelListener(new OnCancelListener() {
+									@Override
+									public void onCancel(DialogInterface dialog) {
+										initCamera();
+									}
+								}).setMessage(msg.obj.toString()).create()
+								.show();
+					} else {
+						reDecode();
+					}
+				}
+				break;
+			case OPERATE_AUTOFOCUS:
+				if (camera != null) {
+					if (isTake) {
+						camera.autoFocus(ScanQRCodeActivity.this);
+					}
+				}
 				break;
 			default:
 				break;
 			}
 		}
+	}
+
+	private boolean processQRCode(Result rawResult) {
+		boolean flag = false;
+		String str = rawResult.toString();
+		if (str.substring(0, 2).equals("mc")) {
+			int index = str.indexOf(":", 3);
+			if (str.substring(3, index).equals("weblogin")) {
+				flag = true;
+			}
+		}
+		return flag;
 	}
 
 }
