@@ -5,30 +5,29 @@ var sha1 = require("./../tools/sha1.js");
 var sessionPool = {};
 var accessKeyPool = {};
 accountSession = {};
-var count = 0;
+//var count = 0;
+session.sessionPool = sessionPool;
 session.eventwebcodelogin = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var sessionID = data.sessionID;
-    /*var sessionResponse = sessionPool[sessionID];
+    var sessionResponse = sessionPool[sessionID];
     if (sessionResponse != null && sessionResponse != undefined) {
-        sessionResponse.write(JSON.stringify({
-            "提示信息": "超时"
-        }));
         sessionResponse.end();
-    }*/
-    sessionPool[sessionID] = response;
-    count++;
-    console.log(count);
-    if (count > 100000) {
-        var index = 0;
-        for (var key in sessionPool) {
-            delete sessionPool.key;
-            index++;
-            if (index == 20000)
-                break;
-        }
-        count = count - index;
     }
+    sessionPool[sessionID] = response;
+    /*count++;
+     console.log(count);
+     if (count > 100000) {
+     var index = 0;
+     for (var key in sessionPool) {
+     delete sessionPool.key;
+     index++;
+     if (index == 20000)
+     break;
+     }
+     count = count - index;
+     }*/
 }
 session.notifywebcodelogin = notifywebcodelogin;
 function notifywebcodelogin(data, response) {
