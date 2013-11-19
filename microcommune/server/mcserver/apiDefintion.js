@@ -202,6 +202,10 @@ api = {
      *     URL：/api2/relation/addfriend
      ***************************************/
     "relation_addfriend": {
+        description: {
+            id: 1000300,
+            url: "/api2/relation/addfriend"
+        },
         request: {
             typical: {"phone": "XXX", "phoneto": "XXX", rid: "XXX", accessKey: "XXX", message: "XXX"}
         },
@@ -214,6 +218,10 @@ api = {
      *     URL：/api2/relation/deletefriend
      ***************************************/
     "relation_deletefriend": {
+        description: {
+            id: 1000301,
+            url: "/api2/relation/deletefriend"
+        },
         request: {
             typical: {"phone": "XXX", "phoneto": "XXX"}
         },
@@ -226,6 +234,10 @@ api = {
      *     URL：/api2/relation/blacklist
      ***************************************/
     "relation_blacklist": {
+        description: {
+            id: 1000302,
+            url: "/api2/relation/blacklist"
+        },
         request: {
             typical: {"phone": "XXX", "phoneto": "XXX"}
         },
@@ -238,6 +250,10 @@ api = {
      *     URL：/api2/relation/getfriends
      ***************************************/
     "relation_getfriends": {
+        description: {
+            id: 1000303,
+            url: "/api2/relation/getfriends"
+        },
         request: {
             typical: {"phone": "XXX"}
         },
@@ -254,6 +270,10 @@ api = {
      *     URL：/api2/relation/getcirclesandfriends
      ***************************************/
     "relation_getcirclesandfriends": {
+        description: {
+            id: 1000304,
+            url: "/api2/relation/getcirclesandfriends"
+        },
         request: {
             typical: {"phone": "XXX", accessKey: "XXX"}
         },
@@ -274,6 +294,10 @@ api = {
      *     URL：/api2/relation/getaskfriends
      ***************************************/
     "relation_getaskfriends": {
+        description: {
+            id: 1000305,
+            url: "/api2/relation/getaskfriends"
+        },
         request: {
             typical: {"phone": "XXX", accessKey: "XXX"}
         },
@@ -290,6 +314,10 @@ api = {
      *     URL：/api2/relation/addfriendagree
      ***************************************/
     "relation_addfriendagree": {
+        description: {
+            id: 1000306,
+            url: "/api2/relation/addfriendagree"
+        },
         request: {
             typical: {"phone": "XXX", accessKey: "XXX", phoneask: "XXX", rid: "XXX", status: true || false}
         },
@@ -308,6 +336,10 @@ api = {
      *     URL：/api2/community/add
      ***************************************/
     "community_add": {
+        description: {
+            id: 1000400,
+            url: "/api2/community/add"
+        },
         request: {
             typical: {name: "XXX", description: "XXX", longitude: "XXX", latitude: "XXX"}
         },
@@ -320,6 +352,10 @@ api = {
      *     URL：/api2/community/find
      ***************************************/
     "community_find": {
+        description: {
+            id: 1000401,
+            url: "/api2/community/find"
+        },
         request: {
             typical: {longitude: "XXX", latitude: "XXX"}
         },
@@ -332,6 +368,10 @@ api = {
      *     URL：/api2/community/join
      ***************************************/
     "community_join": {
+        description: {
+            id: 1000402,
+            url: "/api2/community/join"
+        },
         request: {
             typical: {"cid": "XXX", "phone": "XXX"}
         },
@@ -344,6 +384,10 @@ api = {
      *     URL：/api2/community/unjoin
      ***************************************/
     "community_unjoin": {
+        description: {
+            id: 1000403,
+            url: "/api2/community/unjoin"
+        },
         request: {
             typical: {"cid": "XXX", "phone": "XXX"}
         },
@@ -356,6 +400,10 @@ api = {
      *     URL：/api2/community/getcommunities
      ***************************************/
     "community_getcommunities": {
+        description: {
+            id: 1000404,
+            url: "/api2/community/getcommunities"
+        },
         request: {
             typical: {"phone": "XXX"}
         },
@@ -372,6 +420,10 @@ api = {
      *     URL：/api2/community/getcommunityfriends
      ***************************************/
     "community_getcommunityfriends": {
+        description: {
+            id: 1000405,
+            url: "/api2/community/getcommunityfriends"
+        },
         request: {
             typical: {name: "XXX"}
         },
@@ -394,6 +446,10 @@ api = {
      *     URL：/api2/circle/modify
      ***************************************/
     "circle_modify": {
+        description: {
+            id: 1000500,
+            url: "/api2/circle/modify"
+        },
         request: {
             typical: {rid: "XXX", circleName: "XXX"}
         },
@@ -406,6 +462,10 @@ api = {
      *     URL：/api2/circle/delete
      ***************************************/
     "circle_delete": {
+        description: {
+            id: 1000501,
+            url: "/api2/circle/delete"
+        },
         request: {
             typical: {rid: "XXX"}
         },
@@ -418,6 +478,10 @@ api = {
      *     URL：/api2/circle/moveorout
      ***************************************/
     "circle_moveorout": {
+        description: {
+            id: 1000502,
+            url: "/api2/circle/delete"
+        },
         request: {
             typical: {"phoneto": "XXX", rid: "XXX", filter: ["REMOVE", "SHIFTIN"]}
         },
@@ -430,6 +494,10 @@ api = {
      *     URL：/api2/circle/moveout
      ***************************************/
     "circle_moveout": {
+        description: {
+            id: 1000503,
+            url: "/api2/circle/moveout"
+        },
         request: {
             typical: {"phoneto": "XXX", oldrid: "XXX", newrid: "XXX"}
         },
@@ -442,6 +510,10 @@ api = {
      *     URL：/api2/circle/addcircle
      ***************************************/
     "circle_addcircle": {
+        description: {
+            id: 1000504,
+            url: "/api2/circle/addcircle"
+        },
         request: {
             typical: {"phone": "XXX", circleName: "XXX"}
         },
@@ -459,6 +531,10 @@ api = {
      *     URL：/api2/message/send
      ***************************************/
     "message_send": {
+        description: {
+            id: 1000600,
+            url: "/api2/message/send"
+        },
         request: {
             typical: {phone: "XXX", phoneto: [], message: {type: "text" || "image" || "voice", content: "XXX"}}
         },
@@ -471,6 +547,10 @@ api = {
      *     URL：/api2/message/get
      ***************************************/
     "message_get": {
+        description: {
+            id: 1000601,
+            url: "/api2/message/get"
+        },
         request: {
             typical: {phone: "XXX", flag: "NNN"}
         },
