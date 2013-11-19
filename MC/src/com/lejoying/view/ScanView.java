@@ -35,8 +35,14 @@ public class ScanView extends View {
 		if (framingRect == null) {
 			return;
 		}
-		int width = canvas.getWidth();
-		int height = canvas.getHeight();
+		int width = canvas.getWidth() > canvas.getHeight() ? canvas.getHeight()
+				: canvas.getWidth();
+		int height = canvas.getWidth() < canvas.getHeight() ? canvas
+				.getHeight() : canvas.getWidth();
+
+		System.out.println(width + ":" + height);
+		System.out.println(framingRect.top + ":" + framingRect.left
+				+ "..........");
 
 		int framingRectSide = framingRect.bottom - framingRect.top;
 

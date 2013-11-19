@@ -106,8 +106,8 @@ public class ScanQRCodeActivity extends Activity implements
 			Camera.Parameters parameters = camera.getParameters();
 			cameraResolution = findBestPreviewSizeValue(parameters,
 					screenResolution);
-			framingRect = getFramingRect(cameraResolution);
-			scanview.setFramingRect(framingRect);
+			framingRect = getPreviewFramingRect(cameraResolution);
+			scanview.setFramingRect(getFramingRect(screenResolution));
 			parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
 			camera.setParameters(parameters);
 			camera.startPreview();
@@ -147,13 +147,13 @@ public class ScanQRCodeActivity extends Activity implements
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		initCamera();
+
 	}
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-
+		initCamera();
 	}
 
 	@Override
@@ -261,7 +261,18 @@ public class ScanQRCodeActivity extends Activity implements
 		camera.setOneShotPreviewCallback(ScanQRCodeActivity.this);
 	}
 
-	public Rect getFramingRect(Point cameraResolution) {
+	public Rect getFramingRect(Point screenResolution) {
+		int minSide = screenResolution.y;
+		int maxSide = screenResolution.x;
+		float framingSide = minSide * 0.6f;
+		float leftOffset = (minSide - framingSide) / 2;
+		float topOffset = (maxSide - framingSide) / 2;
+		return new Rect((int) leftOffset, (int) topOffset,
+				(int) (leftOffset + framingSide),
+				(int) (topOffset + framingSide));
+	}
+
+	public Rect getPreviewFramingRect(Point cameraResolution) {
 		int minSide = cameraResolution.y;
 		int maxSide = cameraResolution.x;
 		float framingSide = minSide * 0.6f;
