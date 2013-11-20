@@ -1,3 +1,4 @@
+/*
 var config = {
     partner:'2088002080191054' //合作身份者id，以2088开头的16位纯数字
     ,key:'jh9ovfio2nu4j71l73kne03rz6s2iaev'//安全检验码，以数字和字母组成的32位字符
@@ -11,3 +12,4 @@ var config = {
 var Alipay = require('./lib/alipay.js').Alipay;
 
 exports.alipay = new Alipay(config);
+*/
