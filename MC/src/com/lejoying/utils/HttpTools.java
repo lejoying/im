@@ -60,6 +60,7 @@ public final class HttpTools {
 			httpURLConnection.setRequestMethod("GET");
 			// 设置超时
 			httpURLConnection.setReadTimeout(timeout);
+			httpURLConnection.setConnectTimeout(timeout);
 			// 判断服务器响应
 
 			if (httpURLConnection.getResponseCode() == 200) {
@@ -102,6 +103,8 @@ public final class HttpTools {
 			httpURLConnection.setRequestMethod("POST");
 			// 设置请求超时
 			httpURLConnection.setReadTimeout(timeout);
+			httpURLConnection.setConnectTimeout(timeout);
+			
 			httpURLConnection.setDoOutput(true);
 			// 设置Content-Type
 			httpURLConnection.setRequestProperty("Content-Type",

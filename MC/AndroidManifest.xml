@@ -69,11 +69,17 @@
         </activity>
         <activity
             android:name="MessagesActivity"
+            android:launchMode="singleTask"
             android:theme="@style/MyActivityStyle" >
         </activity>
         <activity
             android:name="ScanQRCodeActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/MyActivityStyle" >
+        </activity>
+        <activity
+            android:name="FriendsActivity"
+            android:launchMode="singleTask"
             android:theme="@style/MyActivityStyle" >
         </activity>
     </application>

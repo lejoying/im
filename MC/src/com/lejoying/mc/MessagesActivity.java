@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.listener.CircleMenuItemClickListener;
 import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.ImageTools;
 import com.lejoying.mcutils.MenuEntity;
@@ -51,14 +53,31 @@ public class MessagesActivity extends Activity {
 		CircleMenu circleMenu = new CircleMenu(this);
 		List<MenuEntity> list = new ArrayList<MenuEntity>();
 
-		list.add(new MenuEntity(0, "我的名片"));
+		list.add(new MenuEntity(0, "扫一扫"));
 		list.add(new MenuEntity(0, "密友圈"));
-		list.add(new MenuEntity(0, "社区服务"));
+		list.add(new MenuEntity(0, "分享"));
 		list.add(new MenuEntity(0, "更多"));
-		list.add(new MenuEntity(0, "订单"));
-		list.add(new MenuEntity(0, "资金账户"));
 
-		circleMenu.showMenu(CircleMenu.SHOW_TOP, list);
+		circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
+
+		circleMenu
+				.setCircleMenuItemClickListener(new CircleMenuItemClickListener() {
+
+					@Override
+					public void onItemClick(int item, ImageView icon,
+							TextView text) {
+						if (item == 1) {
+							Intent intent = new Intent(MessagesActivity.this,
+									ScanQRCodeActivity.class);
+							startActivity(intent);
+						}
+						if (item == 2) {
+							Intent intent = new Intent(MessagesActivity.this,
+									FriendsActivity.class);
+							startActivity(intent);
+						}
+					}
+				});
 
 	}
 

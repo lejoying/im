@@ -32,4 +32,16 @@
         android:src="@drawable/control_disk"
         tools:ignore="ContentDescription" />
 
+    <TextView
+        android:id="@+id/tv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_controldisk"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="返回"
+        android:textSize="18sp"
+        android:textColor="#fff"
+        android:visibility="invisible" />
+
 </RelativeLayout>

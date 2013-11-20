@@ -47,7 +47,7 @@
             android:background="#0999"
             android:ems="10"
             android:hint="请输入手机号"
-            android:inputType="phone"
+            android:inputType="number"
             android:textColor="#fff" >
 
             <requestFocus />
@@ -131,14 +131,15 @@
         <TextView
             android:id="@+id/tv_resend"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_alignRight="@+id/button1"
             android:layout_below="@+id/button1"
-            android:layout_marginTop="8dp"
             android:clickable="true"
+            android:gravity="center"
+            android:onClick="resend"
+            android:paddingLeft="5dp"
             android:text="重新发送(60)"
             android:textColor="@color/click_textcolor"
-            android:onClick="resend"
             android:textSize="15sp" />
     </RelativeLayout>
 

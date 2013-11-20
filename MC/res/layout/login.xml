@@ -47,7 +47,7 @@
             android:background="#0999"
             android:ems="10"
             android:hint="请输入手机号"
-            android:inputType="phone"
+            android:inputType="number"
             android:textColor="#fff" >
 
             <requestFocus />
@@ -97,12 +97,13 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_alignRight="@+id/button2"
             android:layout_below="@+id/button2"
-            android:layout_marginTop="8dp"
             android:clickable="true"
+            android:gravity="center"
             android:onClick="cLogin"
+            android:paddingLeft="5dp"
             android:text="验证码登录"
             android:textColor="@color/click_textcolor"
             android:textSize="15sp" />
@@ -114,7 +115,7 @@
         android:layout_height="240dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
         android:paddingTop="7dp"
         android:visibility="gone" >
@@ -150,7 +151,7 @@
             android:background="#0999"
             android:ems="10"
             android:hint="请输入手机号"
-            android:inputType="phone"
+            android:inputType="number"
             android:textColor="#fff" >
         </EditText>
 
@@ -185,12 +186,13 @@
         <TextView
             android:id="@+id/tv_sendcode"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_alignRight="@+id/button3"
             android:layout_below="@+id/button3"
-            android:layout_marginTop="8dp"
             android:clickable="true"
+            android:gravity="center"
             android:onClick="sendCode"
+            android:paddingLeft="5dp"
             android:text="发送验证码"
             android:textColor="@color/click_textcolor"
             android:textSize="15sp" />
