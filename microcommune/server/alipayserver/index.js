@@ -102,94 +102,103 @@ var requestUrl = function (host, path, callback) {
         console.error(e);
     });
 };
-
+var alipay = require('./alipay.js');
 /**
  * 在应用中发送付款请求，替换掉构造form的应用
  * @param req
  * @param res
  */
 exports.alipayto = function (req, res) {
-    var out_trade_no = '20120708132324';
-    //subject 汉字不能签名的问题
-    var subject = "Pay Money";
-    var sParaTemp = [];
-    sParaTemp.push(["payment_type", "1"]);
-    sParaTemp.push(["out_trade_no", out_trade_no]);
-    sParaTemp.push(["subject", subject]);
-    //    sParaTemp.push(["show_url", show_url]);
-    sParaTemp.push(["logistics_type", "POST"]);
-    sParaTemp.push(["logistics_fee", "0"]);
-    sParaTemp.push(["logistics_payment", "BUYER_PAY"]);
-    sParaTemp.push(["price", "0.01"]);
-    sParaTemp.push(["quantity", "1"]);
-
-    var trade_create_by_buyer = function (sParaTemp) {
-        //增加基本配置
-        sParaTemp.push(["service", "trade_create_by_buyer"]);
-        sParaTemp.push(["partner", AlipayConfig.partner]);
-        sParaTemp.push(["seller_email", AlipayConfig.seller_email]);
-        sParaTemp.push(["_input_charset", AlipayConfig.input_charset]);
-        var buildURL = function (sParaTemp) {
-            var buildRequestPara = function (sParaTemp) {
-                var sPara = [];
-                //除去数组中的空值和签名参数
-                for (var i1 = 0; i1 < sParaTemp.length; i1++) {
-                    var value = sParaTemp[i1];
-                    if (value[1] == null || value[1] == "" || value[0] == "sign"
-                        || value[0] == "sign_type") {
-                        continue;
-                    }
-                    sPara.push(value);
-                }
-                sPara.sort();
-                //生成签名结果
-                var prestr = "";
-                //把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-                for (var i2 = 0; i2 < sPara.length; i2++) {
-                    var obj = sPara[i2];
-                    if (i2 == sPara.length - 1) {
-                        prestr = prestr + obj[0] + "=" + obj[1];
-                    } else {
-                        prestr = prestr + obj[0] + "=" + obj[1] + "&";
-                    }
-
-                }
-                prestr = prestr + AlipayConfig.key; //把拼接后的字符串再与安全校验码直接连接起来
-                var crypto = require('crypto');
-                var mysign = crypto.createHash('md5').update(prestr).digest("hex");
-                //签名结果与签名方式加入请求提交参数组中
-                sPara.push(["sign", mysign]);
-                sPara.push(["sign_type", AlipayConfig.sign_type]);
-
-                return sPara;
-            };
-            //待请求参数数组
-            var sPara = buildRequestPara(sParaTemp);
-            var path = AlipayConfig.ALIPAY_PATH;
-
-
-            for (var i3 = 0; i3 < sPara.length; i3++) {
-                var obj = sPara[i3];
-                var name = obj[0];
-                var value = obj[1];
-                if (i3 < (sPara.length - 1)) {
-                    path = path + name + "=" + value + "&";
-                } else {
-                    path = path + name + "=" + value;
-                }
-            }
-            return path.toString();
-        };
-
-        return buildURL(sParaTemp);
+   /* var data = {
+        out_trade_no:req.body.WIDout_trade_no
+        ,subject:req.body.WIDsubject
+        ,total_fee:req.body.WIDtotal_fee
+        ,body: req.body.WIDbody
+        ,show_url:req.body.WIDshow_url
     };
-    //构造函数，生成请求URL
-    var sURL = trade_create_by_buyer(sParaTemp);
-    console.log(sURL);
-    //向支付宝网关发出请求
-//    requestUrl(AlipayConfig.ALIPAY_HOST,show_url,function(data){
-//        console.log(data);
-//    });
+    alipay.tr*/
+    //    res.send("ccccc");
+        var out_trade_no = '20120708132324';
+        //subject 汉字不能签名的问题
+        var subject = "Pay Money";
+        var sParaTemp = [];
+        sParaTemp.push(["payment_type", "1"]);
+        sParaTemp.push(["out_trade_no", out_trade_no]);
+        sParaTemp.push(["subject", subject]);
+        //    sParaTemp.push(["show_url", show_url]);
+        sParaTemp.push(["logistics_type", "POST"]);
+        sParaTemp.push(["logistics_fee", "0"]);
+        sParaTemp.push(["logistics_payment", "BUYER_PAY"]);
+        sParaTemp.push(["price", "0.01"]);
+        sParaTemp.push(["quantity", "1"]);
+
+        var trade_create_by_buyer = function (sParaTemp) {
+            //增加基本配置
+            sParaTemp.push(["service", "trade_create_by_buyer"]);
+            sParaTemp.push(["partner", AlipayConfig.partner]);
+            sParaTemp.push(["seller_email", AlipayConfig.seller_email]);
+            sParaTemp.push(["_input_charset", AlipayConfig.input_charset]);
+            var buildURL = function (sParaTemp) {
+                var buildRequestPara = function (sParaTemp) {
+                    var sPara = [];
+                    //除去数组中的空值和签名参数
+                    for (var i1 = 0; i1 < sParaTemp.length; i1++) {
+                        var value = sParaTemp[i1];
+                        if (value[1] == null || value[1] == "" || value[0] == "sign"
+                            || value[0] == "sign_type") {
+                            continue;
+                        }
+                        sPara.push(value);
+                    }
+                    sPara.sort();
+                    //生成签名结果
+                    var prestr = "";
+                    //把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
+                    for (var i2 = 0; i2 < sPara.length; i2++) {
+                        var obj = sPara[i2];
+                        if (i2 == sPara.length - 1) {
+                            prestr = prestr + obj[0] + "=" + obj[1];
+                        } else {
+                            prestr = prestr + obj[0] + "=" + obj[1] + "&";
+                        }
+
+                    }
+                    prestr = prestr + AlipayConfig.key; //把拼接后的字符串再与安全校验码直接连接起来
+                    var crypto = require('crypto');
+                    var mysign = crypto.createHash('md5').update(prestr).digest("hex");
+                    //签名结果与签名方式加入请求提交参数组中
+                    sPara.push(["sign", mysign]);
+                    sPara.push(["sign_type", AlipayConfig.sign_type]);
+
+                    return sPara;
+                };
+                //待请求参数数组
+                var sPara = buildRequestPara(sParaTemp);
+                var path = AlipayConfig.ALIPAY_PATH;
+
+
+                for (var i3 = 0; i3 < sPara.length; i3++) {
+                    var obj = sPara[i3];
+                    var name = obj[0];
+                    var value = obj[1];
+                    if (i3 < (sPara.length - 1)) {
+                        path = path + name + "=" + value + "&";
+                    } else {
+                        path = path + name + "=" + value;
+                    }
+                }
+                return path.toString();
+            };
+
+            return buildURL(sParaTemp);
+        };
+        //构造函数，生成请求URL
+        var sURL = trade_create_by_buyer(sParaTemp);
+        console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+    //    向支付宝网关发出请求
+        requestUrl(AlipayConfig.ALIPAY_HOST, "http://www.lejoying.com", function (data) {
+        console.log(data);
+    });
     res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
 };
 exports.paynotify = function (req, res) {
