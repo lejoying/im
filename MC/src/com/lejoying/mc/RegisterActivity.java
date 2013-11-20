@@ -1,8 +1,6 @@
 package com.lejoying.mc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,7 +26,6 @@ import com.lejoying.api.AccountManager;
 import com.lejoying.apiimpl.AccountManagerImpl;
 import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.MCTools;
-import com.lejoying.mcutils.MenuEntity;
 
 public class RegisterActivity extends Activity {
 
@@ -59,6 +56,12 @@ public class RegisterActivity extends Activity {
 
 	private Timer timer;
 
+	private CircleMenu circleMenu;
+
+	private boolean finishAll;
+
+	private boolean verifyPhoneSuccess;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,15 +88,8 @@ public class RegisterActivity extends Activity {
 		handler = MCTools.handler;
 		canSend = true;
 
-		CircleMenu circleMenu = new CircleMenu(this);
-		List<MenuEntity> menuList = new ArrayList<MenuEntity>();
-		menuList.add(new MenuEntity());
-		menuList.add(new MenuEntity());
-		menuList.add(new MenuEntity());
-		menuList.add(new MenuEntity());
-		menuList.add(new MenuEntity());
-		menuList.add(new MenuEntity());
-		circleMenu.showMenu(CircleMenu.SHOW_TOP, menuList);
+		circleMenu = new CircleMenu(this);
+		circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
 	}
 
 	public void next(View v) {
@@ -145,9 +141,28 @@ public class RegisterActivity extends Activity {
 						rl_regpanel_code.startAnimation(animation2);
 						resend();
 						state = STATE_VERIFYCODE;
+						verifyPhoneSuccess = true;
+					}
+
+					@Override
+					public void noInternet() {
+						canSend = true;
+						super.noInternet();
+					}
+
+					@Override
+					public void unsuccess(JSONObject data) {
+						canSend = true;
+						super.unsuccess(data);
+					}
+
+					@Override
+					public void failed() {
+						canSend = true;
+						super.failed();
 					}
 				});
-			} else {
+			} else if (verifyPhoneSuccess) {
 				Animation animation = AnimationUtils.loadAnimation(
 						RegisterActivity.this, R.anim.tran_out_top);
 				animation.setAnimationListener(new AnimationListener() {
@@ -246,9 +261,8 @@ public class RegisterActivity extends Activity {
 					Intent intent = new Intent(RegisterActivity.this,
 							MessagesActivity.class);
 					startActivity(intent);
-					state = STATE_VERIFYPHONE;
-					finish();
-					LoginActivity.instance.finish();
+					finishAll();
+					LoginActivity.instance.finishAll();
 				}
 			});
 		}
@@ -292,70 +306,79 @@ public class RegisterActivity extends Activity {
 		}, 200, 1000);
 	}
 
+	public void finishAll() {
+		finishAll = true;
+		finish();
+	}
+
 	@Override
 	public void finish() {
-		if (state == STATE_SETPASS) {
-			Animation animation = AnimationUtils.loadAnimation(
-					RegisterActivity.this, R.anim.tran_out_bottom);
-			animation.setAnimationListener(new AnimationListener() {
+		if (!finishAll) {
+			if (state == STATE_SETPASS) {
+				Animation animation = AnimationUtils.loadAnimation(
+						RegisterActivity.this, R.anim.tran_out_bottom);
+				animation.setAnimationListener(new AnimationListener() {
 
-				@Override
-				public void onAnimationStart(Animation animation) {
-					// TODO Auto-generated method stub
+					@Override
+					public void onAnimationStart(Animation animation) {
+						// TODO Auto-generated method stub
 
-				}
+					}
 
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-					// TODO Auto-generated method stub
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+						// TODO Auto-generated method stub
 
-				}
+					}
 
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					rl_regpanel_pass.setVisibility(View.GONE);
-				}
-			});
-			rl_regpanel_pass.startAnimation(animation);
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						rl_regpanel_pass.setVisibility(View.GONE);
+					}
+				});
+				rl_regpanel_pass.startAnimation(animation);
 
-			rl_regpanel_code.setVisibility(View.VISIBLE);
+				rl_regpanel_code.setVisibility(View.VISIBLE);
 
-			Animation animation2 = AnimationUtils.loadAnimation(
-					RegisterActivity.this, R.anim.tran_in_top);
-			rl_regpanel_code.startAnimation(animation2);
+				Animation animation2 = AnimationUtils.loadAnimation(
+						RegisterActivity.this, R.anim.tran_in_top);
+				rl_regpanel_code.startAnimation(animation2);
 
-			state = STATE_VERIFYCODE;
-		} else if (state == STATE_VERIFYCODE) {
-			Animation animation = AnimationUtils.loadAnimation(
-					RegisterActivity.this, R.anim.tran_out_bottom);
-			animation.setAnimationListener(new AnimationListener() {
+				state = STATE_VERIFYCODE;
+			} else if (state == STATE_VERIFYCODE) {
+				Animation animation = AnimationUtils.loadAnimation(
+						RegisterActivity.this, R.anim.tran_out_bottom);
+				animation.setAnimationListener(new AnimationListener() {
 
-				@Override
-				public void onAnimationStart(Animation animation) {
-					// TODO Auto-generated method stub
+					@Override
+					public void onAnimationStart(Animation animation) {
+						// TODO Auto-generated method stub
 
-				}
+					}
 
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-					// TODO Auto-generated method stub
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+						// TODO Auto-generated method stub
 
-				}
+					}
 
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					rl_regpanel_code.setVisibility(View.GONE);
-				}
-			});
-			rl_regpanel_code.startAnimation(animation);
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						rl_regpanel_code.setVisibility(View.GONE);
+					}
+				});
+				rl_regpanel_code.startAnimation(animation);
 
-			rl_regpanel_phone.setVisibility(View.VISIBLE);
+				rl_regpanel_phone.setVisibility(View.VISIBLE);
 
-			Animation animation2 = AnimationUtils.loadAnimation(
-					RegisterActivity.this, R.anim.tran_in_top);
-			rl_regpanel_phone.startAnimation(animation2);
-			state = STATE_VERIFYPHONE;
-		} else if (state == STATE_VERIFYPHONE) {
+				Animation animation2 = AnimationUtils.loadAnimation(
+						RegisterActivity.this, R.anim.tran_in_top);
+				rl_regpanel_phone.startAnimation(animation2);
+				state = STATE_VERIFYPHONE;
+			} else if (state == STATE_VERIFYPHONE) {
+				super.finish();
+			}
+		} else {
 			super.finish();
 		}
 	}

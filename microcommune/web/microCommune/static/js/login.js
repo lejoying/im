@@ -65,11 +65,27 @@ $(document).ready(function () {
                     password: password
                 },
                 success: function (data) {
-                    if (data["提示信息"] == "账号登录成功") {
+                    if (data["提示信息"] == "普通鉴权成功") {
 //                        SetCookie("phone_cookie", data.account.phone);
-                        window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(data.account));
-                        $(".js_errorp").html(data["提示信息"] + ",用户:" + data.account.phone);
-                        location.href = "default.html";
+                        $.ajax({
+                            type: "POST",
+                            url: "/api2/account/get?",
+                            data: {
+                                phone: phone,
+                                accessKey: data.accessKey,
+                                target: phone
+                            },
+                            success: function (dataAccount) {
+                                if (dataAccount["提示信息"] == "获取用户信息成功") {
+                                    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(dataAccount.account));
+                                    window.localStorage.setItem("wxgs_accessKey", data.accessKey);
+                                    $(".js_errorp").html(data["提示信息"] + ",用户:" + phone);
+                                    location.href = "default.html";
+                                } else {
+                                    $(".js_errorp").html(data["提示信息"] + "," + data["失败原因"]);
+                                }
+                            }
+                        });
                     } else {
                         $(".js_errorp").html(data["提示信息"] + "," + data["失败原因"]);
                     }

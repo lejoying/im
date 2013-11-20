@@ -63,13 +63,11 @@ public class BusinessCardActivity extends Activity {
 				rl_control, this);
 
 		circleAdapter.createView();
-		
+
 		CircleMenu cm = new CircleMenu(this);
-		cm.showMenu(CircleMenu.SHOW_BOTTOM,null);
+		cm.showMenu(CircleMenu.SHOW_BOTTOM, null, false);
 	}
 
-	
-	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {

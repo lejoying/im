@@ -14,6 +14,7 @@ var sms_power = false;
  ***************************************/
 accountManage.verifyphone = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var usage = data.usage;
     var time = new Date().getTime().toString();
@@ -73,7 +74,8 @@ accountManage.verifyphone = function (data, response) {
                         console.log("++++--" + accountData.code);
                         accountData.code = time.substr(time.length - 6);
                         accountData.time = new Date().getTime();
-                        accountNode.save();
+                        accountNode.save(function (error) {
+                        });
                         code = time.substr(time.length - 6);
                     } else {
                         code = accountData.code;
@@ -133,17 +135,19 @@ accountManage.verifyphone = function (data, response) {
                 response.end();
             } else {
                 var accountNode = results.pop().account;
-                if (accountNode.data.status == "active") {
+                var accountData = accountNode.data;
+                if (accountData.status == "active") {
                     var time = new Date().getTime().toString();
-                    var bad = time - parseInt(accountNode.data.time);
+                    var bad = time - parseInt(accountData.time);
                     var code = "";
-                    if (bad > 600000 || accountNode.data.code == "none") {
-                        accountNode.data.code = time.substr(time.length - 6);
-                        accountNode.data.time = new Date().getTime();
-                        accountNode.save();
+                    if (bad > 600000 || accountData.code == "none") {
+                        accountData.code = time.substr(time.length - 6);
+                        accountData.time = new Date().getTime();
+                        accountNode.save(function (error) {
+                        });
                         code = time.substr(time.length - 6);
                     } else {
-                        code = accountNode.data.code;
+                        code = accountData.code;
                     }
                     console.log("登录验证码--" + phone + "--" + code);
                     var message = "微型公社手机验证码：" + code + "，欢迎您使用";
@@ -153,7 +157,7 @@ accountManage.verifyphone = function (data, response) {
                             if (smsObj.statusCode == "000000") {
                                 response.write(JSON.stringify({
                                     "提示信息": "验证码发送成功",
-                                    "phone": accountNode.data.phone,
+                                    "phone": accountData.phone,
                                     "code": sha1.hex_sha1(code)
                                 }));
                                 response.end();
@@ -168,7 +172,7 @@ accountManage.verifyphone = function (data, response) {
                     } else {
                         response.write(JSON.stringify({
                             "提示信息": "验证码发送成功",
-                            "phone": accountNode.data.phone,
+                            "phone": accountData.phone,
                             "code": sha1.hex_sha1(code)
                         }));
                         response.end();
@@ -277,7 +281,8 @@ accountManage.verifycode = function (data, response) {
                     } else {
                         console.log("验证成功---");
                         accountData.code = "none";
-                        accountNode.save();
+                        accountNode.save(function (error) {
+                        });
                         response.write(JSON.stringify({
                             "提示信息": "验证成功",
                             "phone": phone,
@@ -467,7 +472,8 @@ accountManage.modify = function (data, response) {
                     accountData.status = "active";
                 }
             }
-            accountNode.save();
+            accountNode.save(function (error) {
+            });
             response.write(JSON.stringify({
                 "提示信息": "修改用户信息成功"
             }));

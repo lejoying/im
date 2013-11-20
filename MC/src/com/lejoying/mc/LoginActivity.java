@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.lejoying.adapter.MCResponseAdapter;
 import com.lejoying.api.AccountManager;
 import com.lejoying.apiimpl.AccountManagerImpl;
+import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.MCTools;
 
 import android.app.Activity;
@@ -55,6 +56,10 @@ public class LoginActivity extends Activity {
 
 	private Timer timer;
 
+	private boolean finishAll;
+
+	private CircleMenu circleMenu;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,11 +86,25 @@ public class LoginActivity extends Activity {
 
 		canSend = true;
 		handler = MCTools.handler;
+
+		circleMenu = new CircleMenu(this);
 	}
 
 	public void login(View v) {
 		Map<String, String> param = new HashMap<String, String>();
 		if (state == STATE_PLOGIN) {
+			if (et_plogin_phone.getText().toString() == null
+					|| et_plogin_phone.getText().toString().equals("")) {
+				MCTools.showMsg(this, "手机不能为空");
+				et_plogin_phone.requestFocus();
+				return;
+			}
+			if (et_plogin_pass.getText().toString() == null
+					|| et_plogin_pass.getText().toString().equals("")) {
+				MCTools.showMsg(this, "密码不能为空");
+				et_plogin_pass.requestFocus();
+				return;
+			}
 			phone = et_plogin_phone.getText().toString();
 			pass = et_plogin_pass.getText().toString();
 			param.put("phone", phone);
@@ -105,8 +124,32 @@ public class LoginActivity extends Activity {
 					finish();
 				}
 
+				@Override
+				public void unsuccess(JSONObject data) {
+					String err = "未知原因";
+					try {
+						err = data.getString("失败原因");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					MCTools.showMsg(LoginActivity.this, err);
+				}
+
 			});
 		} else if (state == STATE_CLOGIN) {
+			if (et_clogin_phone.getText().toString() == null
+					|| et_clogin_phone.getText().toString().equals("")) {
+				MCTools.showMsg(this, "手机不能为空");
+				et_clogin_phone.requestFocus();
+				return;
+			}
+			if (et_clogin_code.getText().toString() == null
+					|| et_clogin_code.getText().toString().equals("")) {
+				MCTools.showMsg(this, "请输入验证码");
+				et_clogin_code.requestFocus();
+				return;
+			}
 			phone = et_clogin_phone.getText().toString();
 			code = et_clogin_code.getText().toString();
 			param.put("phone", phone);
@@ -138,16 +181,43 @@ public class LoginActivity extends Activity {
 
 	public void sendCode(View v) {
 		if (canSend) {
+			if (et_clogin_phone.getText().toString() == null
+					|| et_clogin_phone.getText().toString().equals("")) {
+				MCTools.showMsg(this, "手机号不能为空");
+				return;
+			}
+			et_clogin_code.requestFocus();
+			resend();
 			phone = et_clogin_phone.getText().toString();
-			canSend = false;
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("phone", phone);
 			param.put("usage", "login");
 			accountManager.verifyphone(param, new MCResponseAdapter(this) {
 				@Override
 				public void success(JSONObject data) {
-					System.out.println(data);
-					resend();
+
+				}
+
+				@Override
+				public void noInternet() {
+					super.noInternet();
+				}
+
+				@Override
+				public void unsuccess(JSONObject data) {
+					String err = "未知原因";
+					try {
+						err = data.getString("失败原因");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					MCTools.showMsg(LoginActivity.this, err);
+				}
+
+				@Override
+				public void failed() {
+					super.failed();
 				}
 
 			});
@@ -155,6 +225,7 @@ public class LoginActivity extends Activity {
 	}
 
 	public void resend() {
+		canSend = false;
 		resendTime = 60;
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -198,6 +269,7 @@ public class LoginActivity extends Activity {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				rl_panel_plogin.setVisibility(View.GONE);
+				circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
 			}
 		});
 		rl_panel_plogin.startAnimation(animation);
@@ -207,42 +279,54 @@ public class LoginActivity extends Activity {
 				R.anim.tran_in_bottom);
 		rl_panel_clogin.startAnimation(animation2);
 		state = STATE_CLOGIN;
+
+	}
+
+	public void finishAll() {
+		finishAll = true;
+		finish();
 	}
 
 	@Override
 	public void finish() {
-		if (state == STATE_CLOGIN) {
-			et_plogin_phone.setText(et_clogin_phone.getText().toString());
-			Animation animation = AnimationUtils.loadAnimation(this,
-					R.anim.tran_out_bottom);
-			animation.setAnimationListener(new AnimationListener() {
+		if (!finishAll) {
+			if (state == STATE_CLOGIN) {
+				et_plogin_phone.setText(et_clogin_phone.getText().toString());
+				Animation animation = AnimationUtils.loadAnimation(this,
+						R.anim.tran_out_bottom);
+				circleMenu.hideMenu();
+				animation.setAnimationListener(new AnimationListener() {
 
-				@Override
-				public void onAnimationStart(Animation animation) {
-					// TODO Auto-generated method stub
+					@Override
+					public void onAnimationStart(Animation animation) {
+						// TODO Auto-generated method stub
 
-				}
+					}
 
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-					// TODO Auto-generated method stub
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+						// TODO Auto-generated method stub
 
-				}
+					}
 
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					rl_panel_clogin.setVisibility(View.GONE);
-				}
-			});
-			rl_panel_clogin.startAnimation(animation);
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						rl_panel_clogin.setVisibility(View.GONE);
+					}
+				});
+				rl_panel_clogin.startAnimation(animation);
 
-			rl_panel_plogin.setVisibility(View.VISIBLE);
-			Animation animation2 = AnimationUtils.loadAnimation(this,
-					R.anim.tran_in_top);
-			rl_panel_plogin.startAnimation(animation2);
-			state = STATE_PLOGIN;
-
-		} else if (state == STATE_PLOGIN) {
+				rl_panel_plogin.setVisibility(View.VISIBLE);
+				Animation animation2 = AnimationUtils.loadAnimation(this,
+						R.anim.tran_in_top);
+				rl_panel_plogin.startAnimation(animation2);
+				state = STATE_PLOGIN;
+				et_plogin_phone.requestFocus();
+				et_plogin_pass.setText("");
+			} else if (state == STATE_PLOGIN) {
+				super.finish();
+			}
+		} else {
 			super.finish();
 		}
 	}

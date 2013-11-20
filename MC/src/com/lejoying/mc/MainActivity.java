@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
 				try {
 					Thread.sleep(500);
 					Intent intent = new Intent(MainActivity.this,
-							ScanQRCodeActivity.class);
+							LoginActivity.class);
 					MainActivity.this.startActivity(intent);
 					MainActivity.this.finish();
 				} catch (InterruptedException e) {

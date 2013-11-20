@@ -27,6 +27,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -54,13 +56,15 @@ public class MCTools {
 
 	public static Handler handler = new Handler();
 
-	private static final String DOMAIN = "http://192.168.0.104:8071";
+	private static final String DOMAIN = "http://115.28.51.197:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;
 	private static long lasttime;
-	
+
 	private final static int QRCODE_SIZE = 300;
+
+	private static Toast toast;
 
 	public static void ajax(Activity activity, final String url,
 			final Map<String, String> param, boolean lock, final int method,
@@ -262,27 +266,36 @@ public class MCTools {
 		}
 		return null;
 	}
-	
-	private void createQRCodeBitmapWithPortrait(Bitmap qr, Bitmap portrait) {  
-	    // 头像图片的大小  
-	    int portrait_W = portrait.getWidth();  
-	    int portrait_H = portrait.getHeight();  
-	  
-	    // 设置头像要显示的位置，即居中显示  
-	    int left = (QRCODE_SIZE - portrait_W) / 2;  
-	    int top = (QRCODE_SIZE - portrait_H) / 2;  
-	    int right = left + portrait_W;  
-	    int bottom = top + portrait_H;  
-	    Rect rect1 = new Rect(left, top, right, bottom);  
-	  
-	    // 取得qr二维码图片上的画笔，即要在二维码图片上绘制我们的头像  
-	    Canvas canvas = new Canvas(qr);  
-	  
-	    // 设置我们要绘制的范围大小，也就是头像的大小范围  
-	    Rect rect2 = new Rect(0, 0, portrait_W, portrait_H);  
-	    // 开始绘制  
-	    canvas.drawBitmap(portrait, rect2, rect1, null);
-	}  
+
+	private void createQRCodeBitmapWithPortrait(Bitmap qr, Bitmap portrait) {
+		// 头像图片的大小
+		int portrait_W = portrait.getWidth();
+		int portrait_H = portrait.getHeight();
+
+		// 设置头像要显示的位置，即居中显示
+		int left = (QRCODE_SIZE - portrait_W) / 2;
+		int top = (QRCODE_SIZE - portrait_H) / 2;
+		int right = left + portrait_W;
+		int bottom = top + portrait_H;
+		Rect rect1 = new Rect(left, top, right, bottom);
+
+		// 取得qr二维码图片上的画笔，即要在二维码图片上绘制我们的头像
+		Canvas canvas = new Canvas(qr);
+
+		// 设置我们要绘制的范围大小，也就是头像的大小范围
+		Rect rect2 = new Rect(0, 0, portrait_W, portrait_H);
+		// 开始绘制
+		canvas.drawBitmap(portrait, rect2, rect1, null);
+	}
+
+	public static void showMsg(Context context, String text) {
+		if (toast != null) {
+			toast.cancel();
+		}
+		toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.CENTER, 0, 0);
+		toast.show();
+	}
 
 	public static String createAccessKey() {
 
