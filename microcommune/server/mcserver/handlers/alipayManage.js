@@ -6,7 +6,7 @@ var session = require('./session.js');
 var sha1 = require('../tools/sha1.js');
 var alipay = require('../alipay_config.js').alipay;
 /***************************************
- *     URL：/api2/alipay/alipayto
+ *     URL：/api2/alipayserver/alipayto
  ***************************************/
 alipayManage.alipayto = function (data, response) {
     var datas = {
