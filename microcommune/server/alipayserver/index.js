@@ -2,7 +2,7 @@ var AlipayConfig = {
     partner: "2088002080191054",
     key: "jh9ovfio2nu4j71l73kne03rz6s2iaev",
     seller_email: "wsds888@163.com",
-    notify_url: "http://115.28.51.197:8075/alipay/paynotify?",
+    notify_url: "http://im.lejoying.com/alipay/paynotify?",
     return_url: "http://weihu.lejoying.com",
     ALIPAY_HOST: "mapi.alipay.com",
     HTTPS_VERIFY_PATH: "/gateway.do?service=notify_verify&",

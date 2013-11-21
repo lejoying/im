@@ -33,7 +33,7 @@ app.configure('production', function(){
 
 //app.get('/', routes.index);
 app.get('/alipay/alipayto',routes.alipayto);
-app.get('/alipay/paynotify',routes.paynotify);
+app.post('/alipay/paynotify',routes.paynotify);
 app.get('/alipay/payreturn',routes.payreturn);
 
 app.listen(8075, function(){
