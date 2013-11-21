@@ -212,7 +212,7 @@ exports.paynotify = function (req, res) {
     var order_no = req.query.out_trade_no;	        //获取订单号
     var total_fee = req.query.total_fee;	        //获取总金额
     var subject = req.query.subject;//商品名称、订单名称
-    console.log(trade_no + "支付宝交易号"+count+++""+req.getParameter("trade_no"));
+    console.log(trade_no + "支付宝交易号"+count+++""+req.trade_no);
     var body = "";
     if (req.query.body != null) {
         body = req.query.body;//商品描述、订单备注、描述
