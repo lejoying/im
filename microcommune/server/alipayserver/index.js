@@ -15,6 +15,7 @@ var str = "";
 var AlipayNotify = {
     verity: function (params, callback) {
         var mysign = getMySign(params);
+        console.log(str);
         var sign = params["sign"] ? params["sign"] : "";
         console.log(mysign+"------"+sign);
         if (mysign == sign) {
@@ -53,11 +54,10 @@ var getMySign = function (params) {
     var sPara = [];//转换为数组利于排序 除去空值和签名参数
     if (!params) return null;
     for (var key in params) {
-        if (params[key] == null || params[key] == "" || params[key] == "sign" || params[key] == "sign_type") {
+        if (params[key] == null || params[key] == "" || key == "sign" || key == "sign_type") {
             console.log('null:' + key);
             continue;
         }
-        ;
         sPara.push([key, params[key]]);
     }
     sPara.sort();
