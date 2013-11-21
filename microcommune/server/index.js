@@ -1,4 +1,4 @@
 var serverSetting = require('./settings.js');
 var pushserver = require("./mcserver/main.js");
 var imageserver = require("./imageserver/index.js");
-var imageserver = require("./alipayserver/main.js");
+var alipayserver = require("./alipayserver/main.js");
