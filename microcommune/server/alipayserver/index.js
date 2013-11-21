@@ -235,59 +235,46 @@ function getPostData(request, response, next) {
 exports.paynotify = function (req, res) {
     //http://127.0.0.1:3000/paynotify?trade_no=2008102203208746&out_trade_no=3618810634349901&discount=-5&payment_type=1&subject=iphone%E6%89%8B%E6%9C%BA&body=Hello&price=10.00&quantity=1&total_fee=10.00&trade_status=TRADE_FINISHED&refund_status=REFUND_SUCCESS&seller_email=chao.chenc1%40alipay.com&seller_id=2088002007018916&buyer_id=2088002007013600&buyer_email=13758698870&gmt_create=2008-10-22+20%3A49%3A31&is_total_fee_adjust=N&gmt_payment=2008-10-22+20%3A49%3A50&gmt_close=2008-10-22+20%3A49%3A46&gmt_refund=2008-10-29+19%3A38%3A25&use_coupon=N&notify_time=2009-08-12+11%3A08%3A32&notify_type=%E4%BA%A4%E6%98%93%E7%8A%B6%E6%80%81%E5%90%8C%E6%AD%A5%E9%80%9A%E7%9F%A5%28trade_status_sync%29&notify_id=70fec0c2730b27528665af4517c27b95&sign_type=DSA&sign=_p_w_l_h_j0b_gd_aejia7n_ko4_m%252Fu_w_jd3_nx_s_k_mxus9_hoxg_y_r_lunli_pmma29_t_q%253D%253D&extra_common_param=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E8%BF%99%E6%98%AF%E6%B5%8B%E8%AF%95%E5%95%86%E6%88%B7%E7%9A%84%E5%B9%BF%E5%91%8A%E3%80%82
     //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以下仅供参考)//
-    var params = req.query;
     getPostData(req,res,function(data){
-        console.log(data.length);
-    })
-    console.log(params['notify_id']+"++++");
-    var trade_no = req.query.trade_no;				//支付宝交易号
-    var order_no = req.query.out_trade_no;	        //获取订单号
-    var total_fee = req.query.total_fee;	        //获取总金额
-    var subject = req.query.subject;//商品名称、订单名称
-    console.log(trade_no + "支付宝交易号"+count+++""+params.trade_no+"+_+_+"+req.url);
-    var body = "";
-    if (req.query.body != null) {
-        body = req.query.body;//商品描述、订单备注、描述
-    }
-    var buyer_email = req.query.buyer_email;		//买家支付宝账号
-    var trade_status = req.query.trade_status;		//交易状态
-    //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)//
-    AlipayNotify.verity(params, function (result) {
-        console.log(str+"_-----");
-        if (result) {
-            //////////////////////////////////////////////////////////////////////////////////////////
-            //请在这里加上商户的业务逻辑程序代码
+        console.log(data['buyer_email']);
+        console.log(data['trade_no']+ "支付宝交易号"+count++);
+        var trade_status = data['trade_status'];		//交易状态
+        //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)//
+        AlipayNotify.verity(data, function (result) {
+            if (result) {
+                //////////////////////////////////////////////////////////////////////////////////////////
+                //请在这里加上商户的业务逻辑程序代码
 
-            //——请根据您的业务逻辑来编写程序（以下代码仅作参考）——
+                //——请根据您的业务逻辑来编写程序（以下代码仅作参考）——
 
-            if (trade_status == "TRADE_FINISHED") {
-                //判断该笔订单是否在商户网站中已经做过处理
-                //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
-                //如果有做过处理，不执行商户的业务程序
+                if (trade_status == "TRADE_FINISHED") {
+                    //判断该笔订单是否在商户网站中已经做过处理
+                    //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
+                    //如果有做过处理，不执行商户的业务程序
 
-                //注意：
-                //该种交易状态只在两种情况下出现
-                //1、开通了普通即时到账，买家付款成功后。
-                //2、开通了高级即时到账，从该笔交易成功时间算起，过了签约时的可退款时限（如：三个月以内可退款、一年以内可退款等）后。
-            } else if (trade_status == "TRADE_SUCCESS") {
-                //判断该笔订单是否在商户网站中已经做过处理
-                //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
-                //如果有做过处理，不执行商户的业务程序
+                    //注意：
+                    //该种交易状态只在两种情况下出现
+                    //1、开通了普通即时到账，买家付款成功后。
+                    //2、开通了高级即时到账，从该笔交易成功时间算起，过了签约时的可退款时限（如：三个月以内可退款、一年以内可退款等）后。
+                } else if (trade_status == "TRADE_SUCCESS") {
+                    //判断该笔订单是否在商户网站中已经做过处理
+                    //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
+                    //如果有做过处理，不执行商户的业务程序
 
-                //注意：
-                //该种交易状态只在一种情况下出现——开通了高级即时到账，买家付款成功后。
+                    //注意：
+                    //该种交易状态只在一种情况下出现——开通了高级即时到账，买家付款成功后。
+                }
+
+                //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——
+                console.log("success");
+                res.end("success");	//请不要修改或删除——
+
+                //////////////////////////////////////////////////////////////////////////////////////////
+            } else {
+                console.log("fail");
+                res.end("fail");
             }
-
-            //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——
-            console.log("success");
-            res.end("success");	//请不要修改或删除——
-
-            //////////////////////////////////////////////////////////////////////////////////////////
-        } else {
-            console.log("fail");
-            res.end("fail");
-        }
-
+        });
     });
 };
 //http://127.0.0.1:3000/payreturn?is_success=T&sign=b1af584504b8e845ebe40b8e0e733729&sign_type=MD5&body=Hello&buyer_email=xinjie_xj%40163.com&buyer_id=2088101000082594&exterface=create_direct_pay_by_user&out_trade_no=6402757654153618&payment_type=1&seller_email=chao.chenc1%40alipay.com&seller_id=2088002007018916&subject=%E5%A4%96%E9%83%A8FP&total_fee=10.00&trade_no=2008102303210710&trade_status=TRADE_FINISHED&notify_id=RqPnCoPT3K9%252Fvwbh3I%252BODmZS9o4qChHwPWbaS7UMBJpUnBJlzg42y9A8gQlzU6m3fOhG&notify_time=2008-10-23+13%3A17%3A39&notify_type=trade_status_sync&extra_common_param=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E8%BF%99%E6%98%AF%E6%B5%8B%E8%AF%95%E5%95%86%E6%88%B7%E7%9A%84%E5%B9%BF%E5%91%8A%E3%80%82
