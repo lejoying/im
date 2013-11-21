@@ -15,6 +15,7 @@ var AlipayNotify = {
     verity: function (params, callback) {
         var mysign = getMySign(params);
         var sign = params["sign"] ? params["sign"] : "";
+        console.log(mysign+"------"+sign);
         if (mysign == sign) {
             var responseTxt = "true";
             if (params["notify_id"]) {
@@ -211,7 +212,7 @@ exports.paynotify = function (req, res) {
     var order_no = req.query.out_trade_no;	        //获取订单号
     var total_fee = req.query.total_fee;	        //获取总金额
     var subject = req.query.subject;//商品名称、订单名称
-    console.log(trade_no + "支付宝交易号"+count++);
+    console.log(trade_no + "支付宝交易号"+count+++""+req.getParameter("trade_no"));
     var body = "";
     if (req.query.body != null) {
         body = req.query.body;//商品描述、订单备注、描述
@@ -245,11 +246,12 @@ exports.paynotify = function (req, res) {
             }
 
             //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——
-
+            console.log("success");
             res.end("success");	//请不要修改或删除——
 
             //////////////////////////////////////////////////////////////////////////////////////////
         } else {
+            console.log("fail");
             res.end("fail");
         }
 
