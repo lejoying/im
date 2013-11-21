@@ -11,6 +11,7 @@ var AlipayConfig = {
     input_charset: "UTF-8",
     sign_type: "MD5"
 };
+var str = "";
 var AlipayNotify = {
     verity: function (params, callback) {
         var mysign = getMySign(params);
@@ -58,7 +59,6 @@ var getMySign = function (params) {
         }
         ;
         sPara.push([key, params[key]]);
-        console.log(key+"-=-=-=-="+params[key]);
     }
     sPara.sort();
     //生成签名结果
@@ -75,8 +75,8 @@ var getMySign = function (params) {
     }
     prestr = prestr + AlipayConfig.key; //把拼接后的字符串再与安全校验码直接连接起来
     //body=Hello&buyer_email=13758698870&buyer_id=2088002007013600&discount=-5&extra_common_param=你好，这是测试商户的广告。&gmt_close=2008-10-22 20:49:46&gmt_create=2008-10-22 20:49:31&gmt_payment=2008-10-22 20:49:50&gmt_refund=2008-10-29 19:38:25&is_total_fee_adjust=N&notify_id=70fec0c2730b27528665af4517c27b95&notify_time=2009-08-12 11:08:32&notify_type=交易状态同步通知(trade_status_sync)&out_trade_no=3618810634349901&payment_type=1&price=10.00&quantity=1&refund_status=REFUND_SUCCESS&seller_email=chao.chenc1@alipayserver.com&seller_id=2088002007018916&sign=_p_w_l_h_j0b_gd_aejia7n_ko4_m%2Fu_w_jd3_nx_s_k_mxus9_hoxg_y_r_lunli_pmma29_t_q%3D%3D&sign_type=DSA&subject=iphone手机&total_fee=10.00&trade_no=2008102203208746&trade_status=TRADE_FINISHED&use_coupon=N
-
     var crypto = require('crypto');
+    str = prestr;
     return crypto.createHash('md5').update(prestr).digest("hex");
 };
 
@@ -221,6 +221,7 @@ exports.paynotify = function (req, res) {
     var trade_status = req.query.trade_status;		//交易状态
     //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)//
     AlipayNotify.verity(params, function (result) {
+        console.log(str+"_-----");
         if (result) {
             //////////////////////////////////////////////////////////////////////////////////////////
             //请在这里加上商户的业务逻辑程序代码
