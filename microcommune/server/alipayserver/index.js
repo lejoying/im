@@ -203,6 +203,8 @@ exports.alipayto = function (req, res) {
         res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
 };
 var count = 0;
+var maxData = 2 * 1024 * 1024; //prevent mass post data
+var querystring = require('querystring');
 function getPostData(request, response, next) {
     if (request.method == "POST") {
         response.asynchronous = 1;
