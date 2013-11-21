@@ -53,7 +53,7 @@ var getMySign = function (params) {
     var sPara = [];//转换为数组利于排序 除去空值和签名参数
     if (!params) return null;
     for (var key in params) {
-        if ((!params[key]) || params[key] == "sign" || params[key] == "sign_type") {
+        if (params[key] == null || params[key] == "" || params[key] == "sign" || params[key] == "sign_type") {
             console.log('null:' + key);
             continue;
         }
@@ -92,7 +92,7 @@ var requestUrl = function (host, path, callback) {
 
     var req = https.request(options, function (res) {
         console.log("statusCode: ", res.statusCode);
-        console.log("headers: ", res.headers);
+//        console.log("headers: ", res.headers);
 
         res.on('data', function (d) {
             callback(d);
