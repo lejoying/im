@@ -58,6 +58,7 @@ var getMySign = function (params) {
         }
         ;
         sPara.push([key, params[key]]);
+        console.log(key+"-=-=-=-="+params[key]);
     }
     sPara.sort();
     //生成签名结果
