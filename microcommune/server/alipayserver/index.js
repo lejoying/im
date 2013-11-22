@@ -134,6 +134,7 @@ exports.alipayto = function (req, res) {
     /*requestUrl(AlipayConfig.ALIPAY_HOST, "http://www.lejoying.com", function (data) {
      });*/
     res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+    return;
 };
 var count = 0;
 var maxData = 2 * 1024 * 1024; //prevent mass post data
