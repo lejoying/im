@@ -17,7 +17,7 @@ var AlipayNotify = {
         var mysign = getMySign(params);
         console.log(str);
         var sign = params["sign"] ? params["sign"] : "";
-        console.log(mysign+"------"+sign);
+        console.log(mysign + "------" + sign);
         if (mysign == sign) {
             var responseTxt = "true";
             if (params["notify_id"]) {
@@ -76,8 +76,11 @@ var getMySign = function (params) {
     prestr = prestr + AlipayConfig.key; //把拼接后的字符串再与安全校验码直接连接起来
     //body=Hello&buyer_email=13758698870&buyer_id=2088002007013600&discount=-5&extra_common_param=你好，这是测试商户的广告。&gmt_close=2008-10-22 20:49:46&gmt_create=2008-10-22 20:49:31&gmt_payment=2008-10-22 20:49:50&gmt_refund=2008-10-29 19:38:25&is_total_fee_adjust=N&notify_id=70fec0c2730b27528665af4517c27b95&notify_time=2009-08-12 11:08:32&notify_type=交易状态同步通知(trade_status_sync)&out_trade_no=3618810634349901&payment_type=1&price=10.00&quantity=1&refund_status=REFUND_SUCCESS&seller_email=chao.chenc1@alipayserver.com&seller_id=2088002007018916&sign=_p_w_l_h_j0b_gd_aejia7n_ko4_m%2Fu_w_jd3_nx_s_k_mxus9_hoxg_y_r_lunli_pmma29_t_q%3D%3D&sign_type=DSA&subject=iphone手机&total_fee=10.00&trade_no=2008102203208746&trade_status=TRADE_FINISHED&use_coupon=N
     var crypto = require('crypto');
+    var Buffer = require('buffer').Buffer;
+    var buf = new Buffer(prestr.length);
+    buf = buf.write(prestr);
     str = prestr;
-    return crypto.createHash('md5').update(prestr).digest("hex");
+    return crypto.createHash('md5').update(buf.toString()).digest("hex");
 };
 
 var requestUrl = function (host, path, callback) {
@@ -111,96 +114,97 @@ var alipay = require('./alipay.js');
  * @param res
  */
 exports.alipayto = function (req, res) {
-   /* var data = {
-        out_trade_no:req.body.WIDout_trade_no
-        ,subject:req.body.WIDsubject
-        ,total_fee:req.body.WIDtotal_fee
-        ,body: req.body.WIDbody
-        ,show_url:req.body.WIDshow_url
-    };
-    alipay.tr*/
+    /* var data = {
+     out_trade_no:req.body.WIDout_trade_no
+     ,subject:req.body.WIDsubject
+     ,total_fee:req.body.WIDtotal_fee
+     ,body: req.body.WIDbody
+     ,show_url:req.body.WIDshow_url
+     };
+     alipay.tr*/
     //    res.send("ccccc");
-        var out_trade_no = new Date().getTime()+'';//'20120708132324';
-        //subject 汉字不能签名的问题
-        var subject = "Pay Money";
-        var sParaTemp = [];
-        sParaTemp.push(["payment_type", "1"]);
-        sParaTemp.push(["out_trade_no", out_trade_no]);
-        sParaTemp.push(["subject", subject]);
-        //    sParaTemp.push(["show_url", show_url]);
-        sParaTemp.push(["logistics_type", "POST"]);
-        sParaTemp.push(["logistics_fee", "0"]);
-        sParaTemp.push(["logistics_payment", "BUYER_PAY"]);
-        sParaTemp.push(["price", "0.01"]);
-        sParaTemp.push(["quantity", "1"]);
-        sParaTemp.push(["return_url", AlipayConfig.return_url]);
-        sParaTemp.push(["notify_url", AlipayConfig.notify_url]);
+    var out_trade_no = new Date().getTime() + '';//'20120708132324';
+    //subject 汉字不能签名的问题
+    var subject = "嗷嗷嗷";
+    var sParaTemp = [];
+    sParaTemp.push(["payment_type", "1"]);
+    sParaTemp.push(["out_trade_no", out_trade_no]);
+    sParaTemp.push(["subject", subject]);
+    //    sParaTemp.push(["show_url", show_url]);
+    sParaTemp.push(["logistics_type", "POST"]);
+    sParaTemp.push(["logistics_fee", "0"]);
+    sParaTemp.push(["logistics_payment", "BUYER_PAY"]);
+    sParaTemp.push(["price", "0.01"]);
+    sParaTemp.push(["quantity", "1"]);
+    sParaTemp.push(["return_url", AlipayConfig.return_url]);
+    sParaTemp.push(["notify_url", AlipayConfig.notify_url]);
 
-        var trade_create_by_buyer = function (sParaTemp) {
-            //增加基本配置
-            sParaTemp.push(["service", "trade_create_by_buyer"]);
-            sParaTemp.push(["partner", AlipayConfig.partner]);
-            sParaTemp.push(["seller_email", AlipayConfig.seller_email]);
-            sParaTemp.push(["_input_charset", AlipayConfig.input_charset]);
-            var buildURL = function (sParaTemp) {
-                var buildRequestPara = function (sParaTemp) {
-                    var sPara = [];
-                    //除去数组中的空值和签名参数
-                    for (var i1 = 0; i1 < sParaTemp.length; i1++) {
-                        var value = sParaTemp[i1];
-                        if (value[1] == null || value[1] == "" || value[0] == "sign"
-                            || value[0] == "sign_type") {
-                            continue;
-                        }
-                        sPara.push(value);
+    var trade_create_by_buyer = function (sParaTemp) {
+        //增加基本配置
+        sParaTemp.push(["service", "trade_create_by_buyer"]);
+        sParaTemp.push(["partner", AlipayConfig.partner]);
+        sParaTemp.push(["seller_email", AlipayConfig.seller_email]);
+        sParaTemp.push(["_input_charset", AlipayConfig.input_charset]);
+        var buildURL = function (sParaTemp) {
+            var buildRequestPara = function (sParaTemp) {
+                var sPara = [];
+                //除去数组中的空值和签名参数
+                for (var i1 = 0; i1 < sParaTemp.length; i1++) {
+                    var value = sParaTemp[i1];
+                    if (value[1] == null || value[1] == "" || value[0] == "sign"
+                        || value[0] == "sign_type") {
+                        continue;
                     }
-                    sPara.sort();
-                    //生成签名结果
-                    var prestr = "";
-                    //把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-                    for (var i2 = 0; i2 < sPara.length; i2++) {
-                        var obj = sPara[i2];
-                        if (i2 == sPara.length - 1) {
-                            prestr = prestr + obj[0] + "=" + obj[1];
-                        } else {
-                            prestr = prestr + obj[0] + "=" + obj[1] + "&";
-                        }
-
-                    }
-                    prestr = prestr + AlipayConfig.key; //把拼接后的字符串再与安全校验码直接连接起来
-                    var crypto = require('crypto');
-                    var mysign = crypto.createHash('md5').update(prestr).digest("hex");
-                    //签名结果与签名方式加入请求提交参数组中
-                    sPara.push(["sign", mysign]);
-                    sPara.push(["sign_type", AlipayConfig.sign_type]);
-
-                    return sPara;
-                };
-                //待请求参数数组
-                var sPara = buildRequestPara(sParaTemp);
-                var path = AlipayConfig.ALIPAY_PATH;
-
-
-                for (var i3 = 0; i3 < sPara.length; i3++) {
-                    var obj = sPara[i3];
-                    var name = obj[0];
-                    var value = obj[1];
-                    if (i3 < (sPara.length - 1)) {
-                        path = path + name + "=" + value + "&";
-                    } else {
-                        path = path + name + "=" + value;
-                    }
+                    sPara.push(value);
                 }
-                return path.toString();
-            };
+                sPara.sort();
+                //生成签名结果
+                var prestr = "";
+                //把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
+                for (var i2 = 0; i2 < sPara.length; i2++) {
+                    var obj = sPara[i2];
+                    if (i2 == sPara.length - 1) {
+                        prestr = prestr + obj[0] + "=" + obj[1];
+                    } else {
+                        prestr = prestr + obj[0] + "=" + obj[1] + "&";
+                    }
 
-            return buildURL(sParaTemp);
+                }
+                prestr = prestr + AlipayConfig.key; //把拼接后的字符串再与安全校验码直接连接起来
+                var crypto = require('crypto');
+                var mysign = crypto.createHash('md5').update(prestr).digest("hex");
+                //签名结果与签名方式加入请求提交参数组中
+                sPara.push(["sign", mysign]);
+                sPara.push(["sign_type", AlipayConfig.sign_type]);
+
+                return sPara;
+            };
+            //待请求参数数组
+            var sPara = buildRequestPara(sParaTemp);
+            var path = AlipayConfig.ALIPAY_PATH;
+
+
+            for (var i3 = 0; i3 < sPara.length; i3++) {
+                var obj = sPara[i3];
+                var name = obj[0];
+                var value = obj[1];
+                if (i3 < (sPara.length - 1)) {
+                    path = path + name + "=" + value + "&";
+                } else {
+                    path = path + name + "=" + value;
+                }
+            }
+            return path.toString();
         };
-        var sURL = trade_create_by_buyer(sParaTemp);
-        console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
-        requestUrl(AlipayConfig.ALIPAY_HOST, "http://www.lejoying.com", function (data) {
-        });
-        res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+
+        return buildURL(sParaTemp);
+    };
+    var sURL = trade_create_by_buyer(sParaTemp);
+    console.log(encodeURI("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL));
+    console.log(encodeURI("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL));
+    /*requestUrl(AlipayConfig.ALIPAY_HOST, "http://www.lejoying.com", function (data) {
+    });*/
+    res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
 };
 var count = 0;
 var maxData = 2 * 1024 * 1024; //prevent mass post data
@@ -235,10 +239,11 @@ function getPostData(request, response, next) {
 exports.paynotify = function (req, res) {
     //http://127.0.0.1:3000/paynotify?trade_no=2008102203208746&out_trade_no=3618810634349901&discount=-5&payment_type=1&subject=iphone%E6%89%8B%E6%9C%BA&body=Hello&price=10.00&quantity=1&total_fee=10.00&trade_status=TRADE_FINISHED&refund_status=REFUND_SUCCESS&seller_email=chao.chenc1%40alipay.com&seller_id=2088002007018916&buyer_id=2088002007013600&buyer_email=13758698870&gmt_create=2008-10-22+20%3A49%3A31&is_total_fee_adjust=N&gmt_payment=2008-10-22+20%3A49%3A50&gmt_close=2008-10-22+20%3A49%3A46&gmt_refund=2008-10-29+19%3A38%3A25&use_coupon=N&notify_time=2009-08-12+11%3A08%3A32&notify_type=%E4%BA%A4%E6%98%93%E7%8A%B6%E6%80%81%E5%90%8C%E6%AD%A5%E9%80%9A%E7%9F%A5%28trade_status_sync%29&notify_id=70fec0c2730b27528665af4517c27b95&sign_type=DSA&sign=_p_w_l_h_j0b_gd_aejia7n_ko4_m%252Fu_w_jd3_nx_s_k_mxus9_hoxg_y_r_lunli_pmma29_t_q%253D%253D&extra_common_param=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E8%BF%99%E6%98%AF%E6%B5%8B%E8%AF%95%E5%95%86%E6%88%B7%E7%9A%84%E5%B9%BF%E5%91%8A%E3%80%82
     //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以下仅供参考)//
-    getPostData(req,res,function(data){
+    getPostData(req, res, function (data) {
         console.log(data['buyer_email']);
-        console.log(data['trade_no']+ "支付宝交易号"+count++);
+        console.log(data['trade_no'] + "支付宝交易号" + count++);
         var trade_status = data['trade_status'];		//交易状态
+        //WAIT_BUYER_PAY 等待买家付款    WAIT_SELLER_SEND_GOODS 等待卖家发货  WAIT_BUYER_CONFIRM_GOODS 卖家已发货 TRADE_FINISHED 交易成功结束   TRADE_CLOSED 交易中途关闭
         //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)//
         AlipayNotify.verity(data, function (result) {
             if (result) {
@@ -268,8 +273,6 @@ exports.paynotify = function (req, res) {
                 //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——
                 console.log("success");
                 res.end("success");	//请不要修改或删除——
-
-                //////////////////////////////////////////////////////////////////////////////////////////
             } else {
                 console.log("fail");
                 res.end("fail");
