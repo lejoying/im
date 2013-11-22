@@ -14,8 +14,7 @@ var routemap = {
         "/api2/community/:operation": requestHandlers.communityManage,
         "/api2/relation/:operation": requestHandlers.relationManage,
         "/api2/circle/:operation": requestHandlers.circleManage,
-        "/api2/webcode/:operation": requestHandlers.webcodeManage,
-        "/api2/alipay/:operation": requestHandlers.alipayManage
+        "/api2/webcode/:operation": requestHandlers.webcodeManage
     },
     "post": {
         "/api2/session/:operation": requestHandlers.session,
@@ -24,8 +23,7 @@ var routemap = {
         "/api2/community/:operation": requestHandlers.communityManage,
         "/api2/relation/:operation": requestHandlers.relationManage,
         "/api2/circle/:operation": requestHandlers.circleManage,
-        "/api2/webcode/:operation": requestHandlers.webcodeManage,
-        "/api2/alipay/:operation": requestHandlers.alipayManage
+        "/api2/webcode/:operation": requestHandlers.webcodeManage
     }
 };
 

@@ -149,15 +149,5 @@ requestHandlers.webcodeManage = function (request, response, pathObject, data) {
         webcodeManage.webcodelogin(data, response);
     }
 }
-var alipayManage = require("./handlers/alipayManage.js");
-requestHandlers.alipayManage = function (request, response, pathObject, data) {
-    if (data == null) {
-        return;
-    }
-    var operation = pathObject["operation"];
-    if (operation == "alipayto") {
-        alipayManage.alipayto(data, response);
-    }
-}
 
 module.exports = requestHandlers;
