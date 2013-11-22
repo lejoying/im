@@ -47,7 +47,7 @@ var AlipayNotify = {
 var logResult = function (word) {
     word = word || '';
     var str = "执行日期：" + Date().toString() + "\n" + word + "\n";
-    fs.appendFile(AlipayConfig.log_path, str);
+    fs.appendFile('../notify_url_access.log', str);
 };
 var createLinkstring = function (para) {
     var ls = '';
@@ -62,7 +62,6 @@ var getMySign = function (params) {
     if (!params) return null;
     for (var key in params) {
         if (params[key] == null || params[key] == "" || key == "sign" || key == "sign_type") {
-            console.log('null:' + key);
             continue;
         }
         sPara.push([key, params[key]]);
@@ -100,7 +99,7 @@ var requestUrl = function (host, path, callback) {
         method: 'GET'
     };
     var req = https.request(options, function (res) {
-        console.log("statusCode: ", res.statusCode);
+//        console.log("statusCode: ", res.statusCode);
         res.on('data', function (d) {
             callback(d);
         });
@@ -131,7 +130,7 @@ exports.alipayto = function (req, res) {
     sParaTemp["sign"] = mysign;
     sParaTemp["sign_type"] = AlipayConfig.sign_type;
     var sURL = getAlipayUrl(sParaTemp);
-    console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+//    console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
     /*requestUrl(AlipayConfig.ALIPAY_HOST, "http://www.lejoying.com", function (data) {
      });*/
     res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
@@ -168,8 +167,7 @@ function getPostData(request, response, next) {
 
 exports.paynotify = function (req, res) {
     getPostData(req, res, function (data) {
-        console.log(data['buyer_email'] + "买家email");
-        console.log(data['trade_no'] + "支付宝交易号" + count++);
+        console.log("支付宝交易号:" + data['trade_no'] + "买家email:" + data['buyer_email'] + "---" + count++);
         var trade_status = data['trade_status'];
         AlipayNotify.verity(data, function (result) {
             if (result) {
