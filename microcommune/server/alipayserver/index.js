@@ -79,7 +79,7 @@ var getMySign = function (params) {
     var Buffer = require('buffer').Buffer;
     var buf = new Buffer(prestr.length);
     buf = buf.write(prestr);
-    str = prestr;
+    str = buf.toString();
     return crypto.createHash('md5').update(buf.toString()).digest("hex");
 };
 
