@@ -28,6 +28,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.view.ScanView;
 
 public class ScanQRCodeActivity extends Activity implements
@@ -95,6 +96,9 @@ public class ScanQRCodeActivity extends Activity implements
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		scanview = (ScanView) findViewById(R.id.scanview);
+
+		CircleMenu circleMenu = new CircleMenu(this);
+		circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
 	}
 
 	public void initCamera() {
@@ -261,7 +265,7 @@ public class ScanQRCodeActivity extends Activity implements
 		camera.setOneShotPreviewCallback(ScanQRCodeActivity.this);
 	}
 
-	public Rect getFramingRect(Point screenResolution) {
+	public Rect getFramingRect(Point cameraResolution) {
 		int minSide = screenResolution.y;
 		int maxSide = screenResolution.x;
 		float framingSide = minSide * 0.6f;
@@ -272,15 +276,8 @@ public class ScanQRCodeActivity extends Activity implements
 				(int) (topOffset + framingSide));
 	}
 
-	public Rect getPreviewFramingRect(Point cameraResolution) {
-		int minSide = cameraResolution.y;
-		int maxSide = cameraResolution.x;
-		float framingSide = minSide * 0.6f;
-		float leftOffset = (minSide - framingSide) / 2;
-		float topOffset = (maxSide - framingSide) / 2;
-		return new Rect((int) leftOffset, (int) topOffset,
-				(int) (leftOffset + framingSide),
-				(int) (topOffset + framingSide));
+	public Rect getPreviewFramingRect(Point screenResolution) {
+		return getFramingRect(screenResolution);
 	}
 
 	public void autoFocus() {

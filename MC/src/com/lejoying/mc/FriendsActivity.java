@@ -70,18 +70,20 @@ public class FriendsActivity extends Activity {
 
 		cm = new CircleMenu(this);
 		List<MenuEntity> list = new ArrayList<MenuEntity>();
-		list.add(new MenuEntity(0, "扫一扫"));
-		list.add(new MenuEntity(0, "消息"));
-		list.add(new MenuEntity(0, "分享"));
-		list.add(new MenuEntity(0, "更多"));
+		list.add(new MenuEntity(R.drawable.test_menu_item1, "扫一扫"));
+		list.add(new MenuEntity(R.drawable.test_menu_item2, "消息"));
+		list.add(new MenuEntity(R.drawable.test_menu_item3, "分享"));
+		list.add(new MenuEntity(R.drawable.test_menu_item4,
+				CircleMenu.CIRCLE_MORE));
 		cm.showMenu(CircleMenu.SHOW_TOP, list, false);
 		List<MenuEntity> list2 = new ArrayList<MenuEntity>();
-		list2.add(new MenuEntity(0, "扫一扫"));
-		list2.add(new MenuEntity(0, "消息"));
-		list2.add(new MenuEntity(0, "分享"));
-		list2.add(new MenuEntity(0, "分享"));
-		list2.add(new MenuEntity(0, "分享"));
-		list2.add(new MenuEntity(0, "更多"));
+		list2.add(new MenuEntity(R.drawable.test_menu_item5, "扫一扫"));
+		list2.add(new MenuEntity(R.drawable.test_menu_item6, "消息"));
+		list2.add(new MenuEntity(R.drawable.test_menu_item1, "我的名片"));
+		list2.add(new MenuEntity(R.drawable.test_menu_item2,
+				CircleMenu.CIRCLE_BACK));
+		list2.add(new MenuEntity(R.drawable.test_menu_item3, "订单"));
+		list2.add(new MenuEntity(R.drawable.test_menu_item4, "资金账户"));
 		cm.addMore(list2);
 
 		cm.setCircleMenuItemClickListener(new CircleMenuItemClickListener() {
@@ -97,8 +99,6 @@ public class FriendsActivity extends Activity {
 					startActivity(intent);
 				} else if (item == 3) {
 
-				} else if (item == 4) {
-					cm.showNext();
 				}
 			}
 		});
@@ -106,6 +106,10 @@ public class FriendsActivity extends Activity {
 
 	@Override
 	public void finish() {
+		if (cm.isShow()) {
+			cm.cancelMenu();
+			return;
+		}
 		if (circleAdapter.getEditMode()) {
 			circleAdapter.exitEdit();
 		} else {

@@ -185,8 +185,6 @@ public class CircleAdapter {
 												beforeGetY = viewList.get(
 														beforePosition).getY();
 												float scrollToY = -(beforeGetY - beforeScrollY);
-												System.out
-														.println(scrollToY);
 												TranslateAnimation taAnimation = new TranslateAnimation(
 														0f, 0f, 0f, scrollToY);
 												taAnimation.setDuration(300);

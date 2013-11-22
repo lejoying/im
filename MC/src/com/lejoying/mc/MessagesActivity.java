@@ -53,10 +53,10 @@ public class MessagesActivity extends Activity {
 		CircleMenu circleMenu = new CircleMenu(this);
 		List<MenuEntity> list = new ArrayList<MenuEntity>();
 
-		list.add(new MenuEntity(0, "É¨Ò»É¨"));
-		list.add(new MenuEntity(0, "ÃÜÓÑÈ¦"));
-		list.add(new MenuEntity(0, "·ÖÏí"));
-		list.add(new MenuEntity(0, "¸ü¶à"));
+		list.add(new MenuEntity(R.drawable.test_menu_item1, "É¨Ò»É¨"));
+		list.add(new MenuEntity(R.drawable.test_menu_item2, "ÃÜÓÑÈ¦"));
+		list.add(new MenuEntity(R.drawable.test_menu_item3, "·ÖÏí"));
+		list.add(new MenuEntity(R.drawable.test_menu_item4, CircleMenu.CIRCLE_MORE));
 
 		circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
 
@@ -78,7 +78,6 @@ public class MessagesActivity extends Activity {
 						}
 					}
 				});
-
 	}
 
 	class MessagesListAdapter extends BaseAdapter {
