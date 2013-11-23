@@ -271,19 +271,18 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
         <div class="js_checkcard">
             充值/提现
         </div>
-        <div style="width: 650px;height: 615px;background-color: white;">
+        <div style="width: 650px;height: 515px;background-color: white;">
             <table>
                 <tr>
                     <td>余额：</td>
                     <td><label class="js_balance"></label></td>
-                    <td><input type="button" value="充值" style="width: 70px;height: 50px;"></td>
+                    <td><input type="button" value="提现" style="width: 70px;height: 50px;"></td>
                 </tr>
                 <tr>
                     <td>提現金額：</td>
-                    <td><input type="text" class="js_kiting" style="border-color: red;border: 1px solid;height: 30px;"></td>
-                    <td><input type="button" value="提現" style="width: 70px;height: 50px;" class="js_ketingcom"></td>
+                    <td><input onchange="js_clickredirct.href = 'redirct_url.html?money='+this.value" type="text" class="js_kiting" style="border-color: red;border: 1px solid;height: 30px;" id="js_kitingval"></td>
+                    <td><a id="js_clickredirct" style="visibility: hidden;" target="_blank" href="redirct_url.html"></a><input type="button" value="充值" style="width: 70px;height: 50px;" class="js_ketingcom"></td>
                 </tr>
-
             </table>
             <div></div>
             <div></div>

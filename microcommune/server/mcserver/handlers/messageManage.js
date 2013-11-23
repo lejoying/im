@@ -118,4 +118,32 @@ messageManage.get = function (data, response) {
         });
     }
 }
+messageManage.deletes = function (data, response) {
+    response.asynchronous = 1;
+    client.keys("*", function (err, reply) {
+        if (err != null) {
+            response.write(JSON.stringify({
+                "提示信息": "删除失败"
+            }));
+            response.end();
+            console.log(err);
+            return;
+        }
+        client.del(reply, function (err, reply) {
+            if (err != null) {
+                response.write(JSON.stringify({
+                    "提示信息": "删除失败"
+                }));
+                response.end();
+                console.log(err);
+                return;
+            }
+            console.log(reply);
+        });
+        response.write(JSON.stringify({
+            "提示信息": "删除成功"
+        }));
+        response.end();
+    });
+}
 module.exports = messageManage;

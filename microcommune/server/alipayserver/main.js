@@ -27,8 +27,11 @@ var app = express();
 // Routes
 
 //app.get('/', routes.index);
-app.get('/alipay/alipayto', routes.alipayto);
+app.post('/alipay/alipayto', routes.alipayto);
 app.post('/alipay/paynotify', routes.paynotify);
+app.get('/alipay/batch_trans_notify', routes.batch_trans_notify);
+app.post('/alipay/batch_trans_notify_by_notify_url', routes.batch_trans_notify_by_notify_url);
+app.get('/alipay/send_goods_confirm', routes.send_goods_confirm);
 
 app.listen(8075, function () {
     console.log("The Alipay server is running.8075");

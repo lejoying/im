@@ -1,0 +1,38 @@
+<html>
+<head>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script>
+        $(function () {
+            $("#js_divTest").click(function () {
+                location.reload();
+            });
+            $.ajax({
+                type: "POST",
+                url: "/alipay/alipayto?",
+                data: {
+                    money: Request("money")
+                },
+                success: function (data) {
+                    var url = JSON.parse(data).url;
+                    $(".js_divTest").attr("href", url);
+                    location.href = url;
+                }
+            });
+        });
+        function Request(strName) {
+            var strHref = window.document.location.href;
+            var intPos = strHref.indexOf("?");
+            var strRight = strHref.substr(intPos + 1);
+            var arrTmp = strRight.split("&");
+            for (var i = 0; i < arrTmp.length; i++) {
+                var arrTemp = arrTmp[i].split("=");
+                if (arrTemp[0].toUpperCase() == strName.toUpperCase()) return arrTemp[1];
+            }
+            return "";
+        }
+    </script>
+</head>
+<body>
+<a href="javascript:void(0)" id="js_divTest">正在帮你跳转到支付宝...如无跳转，请点击我...</a>
+</body>
+</html>

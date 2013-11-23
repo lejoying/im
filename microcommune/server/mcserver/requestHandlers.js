@@ -138,6 +138,9 @@ requestHandlers.messageManage = function (request, response, pathObject, data) {
     else if (operation == "get") {
         messageManage.get(data, response);
     }
+    else if (operation == "deletes") {
+        messageManage.deletes(data, response);
+    }
 }
 var webcodeManage = require("./handlers/webcodeManage.js");
 requestHandlers.webcodeManage = function (request, response, pathObject, data) {

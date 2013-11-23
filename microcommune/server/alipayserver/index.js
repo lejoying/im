@@ -109,33 +109,6 @@ var requestUrl = function (host, path, callback) {
         console.error(e);
     });
 };
-exports.alipayto = function (req, res) {
-    var sParaTemp = {
-        service: "trade_create_by_buyer",
-        partner: AlipayConfig.partner,
-        seller_email: AlipayConfig.seller_email,
-        _input_charset: AlipayConfig.input_charset,
-        payment_type: "1",
-        out_trade_no: new Date().getTime() + "",
-        subject: "充值服务",
-        logistics_type: "POST",
-        logistics_fee: "0",
-        logistics_payment: "BUYER_PAY",
-        price: "0.01",
-        quantity: "1",
-        return_url: AlipayConfig.return_url,
-        notify_url: AlipayConfig.notify_url
-    };
-    var mysign = getMySign(sParaTemp);
-    sParaTemp["sign"] = mysign;
-    sParaTemp["sign_type"] = AlipayConfig.sign_type;
-    var sURL = getAlipayUrl(sParaTemp);
-//    console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
-    /*requestUrl(AlipayConfig.ALIPAY_HOST, "http://www.lejoying.com", function (data) {
-     });*/
-    res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
-    return;
-};
 var count = 0;
 var maxData = 2 * 1024 * 1024; //prevent mass post data
 var querystring = require('querystring');
@@ -165,7 +138,39 @@ function getPostData(request, response, next) {
         next(null);
     }
 }
-
+exports.alipayto = function (req, res) {
+    getPostData(req, res, function (data) {
+        var sParaTemp = {
+            service: "trade_create_by_buyer",
+            partner: AlipayConfig.partner,
+            seller_email: AlipayConfig.seller_email,
+            _input_charset: AlipayConfig.input_charset,
+            payment_type: "1",
+            out_trade_no: new Date().getTime() + "",
+            subject: "充值服务",
+            logistics_type: "POST",
+            logistics_fee: "0",
+            logistics_payment: "BUYER_PAY",
+            price: data.money,
+            quantity: "1",
+            return_url: AlipayConfig.return_url,
+            notify_url: AlipayConfig.notify_url
+        };
+        var mysign = getMySign(sParaTemp);
+        sParaTemp["sign"] = mysign;
+        sParaTemp["sign_type"] = AlipayConfig.sign_type;
+        var sURL = getAlipayUrl(sParaTemp);
+//    console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+        /*requestUrl(AlipayConfig.ALIPAY_HOST, "http://www.lejoying.com", function (data) {
+         });*/
+        /*res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+         return;*/
+        res.write(JSON.stringify({
+            "url": "https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL
+        }));
+        res.end();
+    });
+};
 exports.paynotify = function (req, res) {
     getPostData(req, res, function (data) {
         console.log("支付宝交易号:" + data['trade_no'] + "买家email:" + data['buyer_email'] + "---" + count++);
@@ -191,4 +196,65 @@ exports.paynotify = function (req, res) {
             }
         });
     });
+};
+exports.batch_trans_notify = function (req, res) {
+//    getPostData(req, res, function (data) {
+    var time = new Date().getTime();
+    var sParaTemp = {
+        service: "batch_trans_notify",
+        partner: AlipayConfig.partner,
+        _input_charset: AlipayConfig.input_charset,
+        account_name: "冯志成",
+        detail_data: time + "^coolspan@sina.cn^乔晓松^0.02^coolspan",
+        batch_no: time + "",
+        batch_num: "1",
+        batch_fee: "0.02",
+        pay_data: "20131124",
+        email: "wsds888@163.com",
+        notify_url: "http://im.lejoying.com/alipay/batch_trans_notify_by_notify_url?"
+    };
+    var mySign = getMySign(sParaTemp);
+    console.log(str);
+    sParaTemp["sign"] = mySign;
+    sParaTemp["sign_type"] = AlipayConfig.sign_type;
+    var sURL = getAlipayUrl(sParaTemp);
+//    console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+    /*requestUrl(AlipayConfig.ALIPAY_HOST, sURL, function (data) {
+     console.log(data + "-=-=-=-=-=");
+     });*/
+    console.log(sURL);
+    res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+//    });
+};
+exports.batch_trans_notify_by_notify_url = function (req, res) {
+    getPostData(req, res, function (data) {
+        var counts = 0;
+        for (var index in data) {
+            console.log(data[idnex] + "-" + count);
+            counts++;
+        }
+        res.end("success");
+    });
+};
+exports.send_goods_confirm = function (req, res) {
+//    getPostData(req, res, function (data) {
+    var sParaTemp = {
+        service: "send_goods_confirm_by_platform",
+        partner: AlipayConfig.partner,
+        _input_charset: AlipayConfig.input_charset,
+        trade_no: "2013112450693459",
+        logistics_name: "邮政快递"
+    };
+    var mySign = getMySign(sParaTemp);
+    console.log(str);
+    sParaTemp["sign"] = mySign;
+    sParaTemp["sign_type"] = AlipayConfig.sign_type;
+    var sURL = getAlipayUrl(sParaTemp);
+//    console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+    /*requestUrl(AlipayConfig.ALIPAY_HOST, sURL, function (data) {
+     console.log(data + "-=-=-=-=-=");
+     });*/
+    console.log(sURL);
+    res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
+//    });
 };
