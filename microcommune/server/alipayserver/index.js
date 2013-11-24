@@ -1,3 +1,10 @@
+var fs = require('fs');
+var ajax = require('./lib/ajax');
+var sax2json = require('./tools/sax2json');
+var str = "";
+var count = 0;
+var maxData = 2 * 1024 * 1024;
+var querystring = require('querystring');
 var AlipayConfig = {
     partner: "2088002080191054",
     key: "jh9ovfio2nu4j71l73kne03rz6s2iaev",
@@ -11,8 +18,6 @@ var AlipayConfig = {
     input_charset: "UTF-8",
     sign_type: "MD5"
 };
-var fs = require('fs');
-var str = "";
 var AlipayNotify = {
     verity: function (params, callback) {
         var mysign = getMySign(params);
@@ -109,9 +114,6 @@ var requestUrl = function (host, path, callback) {
         console.error(e);
     });
 };
-var count = 0;
-var maxData = 2 * 1024 * 1024; //prevent mass post data
-var querystring = require('querystring');
 function getPostData(request, response, next) {
     if (request.method == "POST") {
         response.asynchronous = 1;
@@ -153,6 +155,7 @@ exports.alipayto = function (req, res) {
             logistics_payment: "BUYER_PAY",
             price: data.money,
             quantity: "1",
+            it_b_pay: "2h",
             return_url: AlipayConfig.return_url,
             notify_url: AlipayConfig.notify_url
         };
@@ -181,6 +184,7 @@ exports.paynotify = function (req, res) {
                     //等待买家付款
                 } else if (trade_status == "WAIT_SELLER_SEND_GOODS") {
                     //等待卖家发货
+                    send_goods_confirm_by_platform(data['trade_no']);
                 } else if (trade_status == "WAIT_BUYER_CONFIRM_GOODS") {
                     //卖家已发货
                 } else if (trade_status == "TRADE_FINISHED") {
@@ -195,6 +199,38 @@ exports.paynotify = function (req, res) {
                 res.end("fail");
             }
         });
+    });
+};
+var send_goods_confirm_by_platform = function (trade_no) {
+    var sParaTemp = {
+        service: "send_goods_confirm_by_platform",
+        partner: AlipayConfig.partner,
+        _input_charset: AlipayConfig.input_charset,
+        trade_no: trade_no,
+        logistics_name: "顺风-SF",
+        invoice_no: new Date().getTime(),
+        create_transport_type: "POST"
+
+    };
+    var mySign = getMySign(sParaTemp);
+    sParaTemp["sign"] = mySign;
+    sParaTemp["sign_type"] = AlipayConfig.sign_type;
+    ajax.ajax({
+        type: "GET",
+        url: "https://" + AlipayConfig.ALIPAY_HOST + "/" + AlipayConfig.ALIPAY_PATH,
+        data: sParaTemp,
+        success: function (data) {
+            var obj = sax2json.toJson(data, function (error, json) {
+                var is_success = json['ALIPAY']['IS_SUCCESS'];
+                if (is_success == "T") {
+                    console.log("IS_SUCCESS=T");
+                } else if (is_success == "F") {
+                    console.log("IS_SUCCESS=F");
+                } else {
+                    console.log(is_success);
+                }
+            });
+        }
     });
 };
 exports.batch_trans_notify = function (req, res) {
@@ -235,26 +271,4 @@ exports.batch_trans_notify_by_notify_url = function (req, res) {
         }
         res.end("success");
     });
-};
-exports.send_goods_confirm = function (req, res) {
-//    getPostData(req, res, function (data) {
-    var sParaTemp = {
-        service: "send_goods_confirm_by_platform",
-        partner: AlipayConfig.partner,
-        _input_charset: AlipayConfig.input_charset,
-        trade_no: "2013112450693459",
-        logistics_name: "邮政快递"
-    };
-    var mySign = getMySign(sParaTemp);
-    console.log(str);
-    sParaTemp["sign"] = mySign;
-    sParaTemp["sign_type"] = AlipayConfig.sign_type;
-    var sURL = getAlipayUrl(sParaTemp);
-//    console.log("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
-    /*requestUrl(AlipayConfig.ALIPAY_HOST, sURL, function (data) {
-     console.log(data + "-=-=-=-=-=");
-     });*/
-    console.log(sURL);
-    res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
-//    });
 };
