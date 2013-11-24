@@ -21,3 +21,5 @@ local.properties
 
 /microcommune/server/imageserver
 /microcommune/.idea
+
+/microcommune/node_modules/
