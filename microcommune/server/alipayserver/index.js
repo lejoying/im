@@ -155,7 +155,7 @@ exports.alipayto = function (req, res) {
             logistics_payment: "BUYER_PAY",
             price: data.money,
             quantity: "1",
-            it_b_pay: "2h",
+//            it_b_pay: "2h", //支付超时时间
             return_url: AlipayConfig.return_url,
             notify_url: AlipayConfig.notify_url
         };
