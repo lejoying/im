@@ -39,6 +39,5 @@ webcodeManage.webcodelogin = function (data, response) {
         }));
         response.end();
     }
-    response.end();
 }
 module.exports = webcodeManage;

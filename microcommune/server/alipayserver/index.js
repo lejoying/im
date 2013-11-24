@@ -5,6 +5,14 @@ var str = "";
 var count = 0;
 var maxData = 2 * 1024 * 1024;
 var querystring = require('querystring');
+var RSA = require('./tools/RSA');
+RSA.setMaxDigits(38);
+var pbkeyStr0 = RSA.RSAKeyStr("5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841", "5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841", "3e4ee7b8455ad00c3014e82057cbbe0bd7365f1fa858750830f01ca7e456b659");
+var pbkey0 = RSA.RSAKey(pbkeyStr0);
+
+var pvkeyStr0 = RSA.RSAKeyStr("10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d4f67fffeac404c1", "10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d4f67fffeac404c1", "3e4ee7b8455ad00c3014e82057cbbe0bd7365f1fa858750830f01ca7e456b659");
+var pvkey0 = RSA.RSAKey(pvkeyStr0);
+
 var AlipayConfig = {
     partner: "2088002080191054",
     key: "jh9ovfio2nu4j71l73kne03rz6s2iaev",
@@ -21,7 +29,6 @@ var AlipayConfig = {
 var AlipayNotify = {
     verity: function (params, callback) {
         var mysign = getMySign(params);
-        console.log(str);
         var sign = params["sign"] ? params["sign"] : "";
         console.log(mysign + "------" + sign);
         if (mysign == sign) {
@@ -168,6 +175,7 @@ exports.alipayto = function (req, res) {
          });*/
         /*res.redirect("https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL);
          return;*/
+        console.log("--alipayto--");
         res.write(JSON.stringify({
             "url": "https://" + AlipayConfig.ALIPAY_HOST + "/" + sURL
         }));
@@ -178,6 +186,9 @@ exports.paynotify = function (req, res) {
     getPostData(req, res, function (data) {
         console.log("支付宝交易号:" + data['trade_no'] + "买家email:" + data['buyer_email'] + "---" + count++);
         var trade_status = data['trade_status'];
+        //退款状态：WAIT_SELLER_AGREE 等待卖家 SELLER_REFUSE_BUYER 卖家不同意协议，买家修改
+//        WAIT_BUYER_RETURN_GOODS 退款协议达成,等待买家退货 WAIT_SELLER_COMFIRM_GOODS等 待卖家收货
+        //REFUSE_SUCCESS  退款成功 refuse_closed 退款关闭
         AlipayNotify.verity(data, function (result) {
             if (result) {
                 if (trade_status == "WAIT_BUYER_PAY") {

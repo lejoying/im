@@ -4,6 +4,7 @@
     <title></title>
     <script type="text/javascript" src="/static/js/jquery.js"></script>
     <script type="text/javascript" src="/static/js/sha1.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.qrcode.min.js"></script>
     <script type="text/javascript">
         var time = new Date().getTime();
         $(document).ready(function () {
@@ -20,6 +21,7 @@
                 str += chars[parseInt(Math.random() * chars.length)];
             }
             $(".js_tdcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str));
+            jQuery('#qrcode').qrcode("http://im.lejoying.com/api2/webcode/webcodelogin?sessionID=" + hex_sha1(str));
             request(hex_sha1(str));
         });
         function request(str) {
@@ -39,7 +41,7 @@
 //                        alert("验证成功"+data);
                         $(".js_msg").html(data);
                     } else {
-                        request(str);
+                        location.reload();
                     }
                 },
                 error: function () {
@@ -50,11 +52,17 @@
     </script>
 </head>
 <body>
-<div style="margin-left: 800px;margin-top: 200px;">
-    <img class="js_tdcode" src=""/>
-    <strong class="js_msg"></strong>
-</div>
+<div style="margin-left: 200px;">
+    <div style="float: left;">
+        <h3>API生成的二维码</h3>
+        <img class="js_tdcode" src=""/>
+        <label class="js_msg"></label>
+    </div>
+    <div style="float: left;margin-left: 300px;">
+        <h3>jQuery生成的二维码</h3>
 
-<div id="msg"></div>
+        <div id="qrcode" style="margin-top: 38px;"></div>
+    </div>
+</div>
 </body>
 </html>
