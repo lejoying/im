@@ -1,5 +1,5 @@
 var express = require('express')
-    , routes = require('./index.js');
+    , routes = require('./alipayManage');
 var express = require("express");
 var app = express();
 //var app = module.exports;
