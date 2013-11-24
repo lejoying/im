@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var filepath = $(".js_file").val().trim();
+            if (filepath == "") {
+                showBlackPage("请您选择要上传的txt文件", "请您选择要上传的txt文件");
+                return;
+            }
+            var last = filepath.substr(filepath.lastIndexOf(".") + 1);
+            if (last == "js") {
+                var file = $(".js_file")[0].files[0];
+                var reader = new FileReader();
+                reader.readAsText(file, "UTF-8");
+                var urlData;
+                reader.onload = function (e) {
+                    urlData = this.result;
+                    var fileStr = "";
+                    var arr = [];
+                    var dataarray = urlData.split("\n");
+                    for (var index in dataarray) {
+                        var it = dataarray[index];
+                        if ((it.indexOf("***********") != -1) || (it.indexOf("*") != -1 && it.indexOf("URL") != -1) ||
+                                (it.indexOf("*") != -1 && it.indexOf("Class") != -1)) {
+                            if (it.indexOf("*") != -1 && it.indexOf("Class") != -1) {
+                                arr.push(fileStr);
+                                fileStr = "";
+                            }
+                            continue;
+                        } else {
+                            fileStr += it;
+                        }
+                    }
+                    fileStr = ("{" + fileStr + "}").replace("=", ":");
+                    fileStr = fileStr.replace(/description/gi, '"description"');
+                    fileStr = fileStr.replace("api", '"api"');
+                    fileStr = fileStr.replace(/id/gi, '"id"');
+                    fileStr = fileStr.replace(/sessionID/gi, '"sessionID"');
+                    fileStr = fileStr.replace(/accessKey/gi, '"accessKey"');
+                    fileStr = fileStr.replace(/url/gi, '"url"');
+                    fileStr = fileStr.replace(/request/gi, '"request"');
+                    fileStr = fileStr.replace(/response/gi, '"response"');
+                    fileStr = fileStr.replace(/phone/gi, '"phone"');
+                    fileStr = fileStr.replace(/phoneto/gi, '"phoneto"');
+                    fileStr = fileStr.replace(/message/gi, '"message"');
+                    fileStr = fileStr.replace(/type/gi, '"type"');
+                    fileStr = fileStr.replace(/content/gi, '"content"');
+                    fileStr = fileStr.replace(/time/gi, '"time"');
+                    fileStr = fileStr.replace(/failed/gi, '"failed"');
+                    fileStr = fileStr.replace(/success/gi, '"success"');
+                    fileStr = fileStr.replace(/flag/gi, '"flag"');
+                    fileStr = fileStr.replace(/typical/gi, '"typical"');
+                    fileStr = fileStr.replace(/"phone"to/gi, '"phoneto"');
+                    fileStr = fileStr.replace(/" \|\| "/gi, ',');
+                    fileStr = fileStr.replace(/new Date().getTime()/gi, '"new Date().getTime()"');
+                    fileStr = fileStr.replace(/"message"_/gi, 'message_');
+                    fileStr = fileStr.replace(/\/"message"\//gi, '/message/');
+                    fileStr = fileStr.replace(/"message"s/gi, '"messages"');
+                    $(".js_msg").html(fileStr);
+                }
+            } else {
+                alert("只能分析js");
+            }
+        }
+    </script>
+</head>
+<body>
+<input type="file" class="js_file"><input type="button" value="开始分析" onclick="commit()">
+
+<div class="js_msg"></div>
+</body>
+</html>
