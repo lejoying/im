@@ -2,7 +2,7 @@
 , "description": "shameless copy of xml2json using sax instead of expat"
 , "version": "0.0.2"
 , "author": "ryan emery <seebees@gmail.com>"
-, "main": "./lib/alipayManage.js"
+, "main": "./lib/index.js"
 , "scripts" : { "test" : "node ./tests/test.js" }
 , "dependencies": {
     "sax": "0.3.x"
