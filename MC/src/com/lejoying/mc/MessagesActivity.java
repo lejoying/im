@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -32,6 +34,8 @@ public class MessagesActivity extends Activity {
 
 	private Bitmap bm;
 
+	private CircleMenu circleMenu;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,13 +54,14 @@ public class MessagesActivity extends Activity {
 
 		lv_messages.setAdapter(new MessagesListAdapter());
 
-		CircleMenu circleMenu = new CircleMenu(this);
+		circleMenu = new CircleMenu(this);
 		List<MenuEntity> list = new ArrayList<MenuEntity>();
 
 		list.add(new MenuEntity(R.drawable.test_menu_item1, "…®“ª…®"));
 		list.add(new MenuEntity(R.drawable.test_menu_item2, "√‹”—»¶"));
 		list.add(new MenuEntity(R.drawable.test_menu_item3, "∑÷œÌ"));
-		list.add(new MenuEntity(R.drawable.test_menu_item4, CircleMenu.CIRCLE_MORE));
+		list.add(new MenuEntity(R.drawable.test_menu_item4,
+				CircleMenu.CIRCLE_MORE));
 
 		circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
 
@@ -70,14 +75,23 @@ public class MessagesActivity extends Activity {
 							Intent intent = new Intent(MessagesActivity.this,
 									ScanQRCodeActivity.class);
 							startActivity(intent);
-						}
-						if (item == 2) {
+						} else if (item == 2) {
 							Intent intent = new Intent(MessagesActivity.this,
 									FriendsActivity.class);
 							startActivity(intent);
 						}
 					}
 				});
+		lv_messages.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				Intent intent = new Intent(MessagesActivity.this,
+						ChatActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	class MessagesListAdapter extends BaseAdapter {

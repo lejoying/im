@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.ImageTools;
 
 public class ChatActivity extends Activity {
@@ -20,12 +21,14 @@ public class ChatActivity extends Activity {
 		Bitmap bm = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.xiaohei), true, 2, Color.rgb(255,
 				255, 255));
-		
+
 		ImageView iv1 = (ImageView) findViewById(R.id.iv_headleft);
 		ImageView iv2 = (ImageView) findViewById(R.id.iv_headright);
 		iv1.setImageBitmap(bm);
 		iv2.setImageBitmap(bm);
-		
+
+		CircleMenu circleMenu = new CircleMenu(this);
+		circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
 	}
 
 }

@@ -14,7 +14,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:overScrollMode="never"
-        android:scrollbars="none" >
+        android:scrollbars="none"
+        tools:ignore="UselessParent" >
 
         <LinearLayout
             android:id="@+id/ll_content"
@@ -22,162 +23,99 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             tools:ignore="UselessLeaf" >
+
+            <TextView
+                android:id="@+id/tv_spacing"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/rl_show"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp" >
+
+                <TextView
+                    android:id="@+id/tv_nickName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="李伟"
+                    android:textColor="#fff"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tv_agent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_nickName"
+                    android:layout_marginTop="10dp"
+                    android:text="主要业务:  "
+                    android:textColor="#fff" />
+
+                <TextView
+                    android:id="@+id/tv_mainbusiness"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_nickName"
+                    android:layout_marginTop="10dp"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:paddingLeft="75dp"
+                    android:text="送水服务，多买多送！！"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_spacing2"
+                android:layout_width="fill_parent"
+                android:layout_height="25dp" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="280dp"
+                android:background="@drawable/frame_background"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="7dp" >
+
+                <TextView
+                    android:id="@+id/group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:text="二维码"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignLeft="@+id/group_name"
+                    android:layout_below="@+id/group_name"
+                    android:layout_marginTop="8dp"
+                    android:background="#9fff"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:id="@+id/iv_tdcode"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_below="@id/imageView4"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/qrcode"
+                    tools:ignore="ContentDescription" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_spacing3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
-
-    <RelativeLayout
-        android:id="@+id/rl_control"
-        android:layout_width="fill_parent"
-        android:layout_height="152dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/frame_bottombackground"
-        android:visibility="invisible" >
-
-        <LinearLayout
-            android:id="@+id/ll_item"
-            android:layout_width="fill_parent"
-            android:layout_height="75dp"
-            android:layout_alignParentBottom="true"
-            android:baselineAligned="false"
-            android:paddingBottom="2dp" >
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="8dp" >
-
-                <ImageView
-                    android:id="@+id/img_weixin"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item1"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="移出改组"
-                    android:textColor="#fff"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="8dp" >
-
-                <ImageView
-                    android:id="@+id/img_address"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item2"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="修改组名"
-                    android:textColor="#fff"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="8dp" >
-
-                <ImageView
-                    android:id="@+id/img_friends"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item3"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="删除该组"
-                    android:textColor="#fff"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="8dp" >
-
-                <ImageView
-                    android:id="@+id/img_settings"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item4"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="更多"
-                    android:textColor="#fff"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_above="@+id/ll_item"
-            android:layout_marginTop="8dp"
-            android:background="#9fff"
-            tools:ignore="ContentDescription" />
-
-        <RelativeLayout
-            android:id="@+id/relativeLayout1"
-            android:layout_width="fill_parent"
-            android:layout_height="75dp"
-            android:layout_above="@+id/imageView5"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true" >
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/left_nav"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/imageView3"
-                android:src="@drawable/right_nav"
-                tools:ignore="ContentDescription" />
-        </RelativeLayout>
-    </RelativeLayout>
 
 </RelativeLayout>

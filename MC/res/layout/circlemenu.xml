@@ -40,7 +40,18 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
         android:text="返回"
+        android:textColor="#fff"
         android:textSize="18sp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tv_pagename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/iv_controldisk"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="34dp"
+        android:text="我的名片"
         android:textColor="#fff"
         android:visibility="invisible" />
 

@@ -97,8 +97,10 @@ public class FriendsActivity extends Activity {
 					Intent intent = new Intent(FriendsActivity.this,
 							MessagesActivity.class);
 					startActivity(intent);
-				} else if (item == 3) {
-
+				} else if (item == 13) {
+					Intent intent = new Intent(FriendsActivity.this,
+							BusinessCardActivity.class);
+					startActivity(intent);
 				}
 			}
 		});

@@ -8,6 +8,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -265,7 +266,7 @@ public class ScanQRCodeActivity extends Activity implements
 		camera.setOneShotPreviewCallback(ScanQRCodeActivity.this);
 	}
 
-	public Rect getFramingRect(Point cameraResolution) {
+	public Rect getFramingRect(Point screenResolution) {
 		int minSide = screenResolution.y;
 		int maxSide = screenResolution.x;
 		float framingSide = minSide * 0.6f;
@@ -276,8 +277,8 @@ public class ScanQRCodeActivity extends Activity implements
 				(int) (topOffset + framingSide));
 	}
 
-	public Rect getPreviewFramingRect(Point screenResolution) {
-		return getFramingRect(screenResolution);
+	public Rect getPreviewFramingRect(Point cameraResolution) {
+		return getFramingRect(cameraResolution);
 	}
 
 	public void autoFocus() {

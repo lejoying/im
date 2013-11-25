@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.lejoying.adapter.AnimationAdapter;
 import com.lejoying.adapter.ToTryAdapter;
 import com.lejoying.listener.CircleMenuItemClickListener;
-import com.lejoying.listener.ToTryListener;
 import com.lejoying.mc.R;
 
 public class CircleMenu {
@@ -50,6 +49,7 @@ public class CircleMenu {
 	private ImageView iv_controldisk;
 	private RelativeLayout rl_controldiskout;
 	private TextView tv_back;
+	private TextView tv_pagename;
 
 	private GestureDetector gd;
 
@@ -139,6 +139,7 @@ public class CircleMenu {
 				.findViewById(R.id.rl_controldiskout);
 
 		tv_back = (TextView) rl_control.findViewById(R.id.tv_back);
+		tv_pagename = (TextView) rl_control.findViewById(R.id.tv_pagename);
 
 		contentView = getContentView(activity);
 		if (contentView != null) {
@@ -195,7 +196,7 @@ public class CircleMenu {
 		ScaleAnimation scaleanimation = new ScaleAnimation(1, 0.3f, 1, 0.3f,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
-		scaleanimation.setDuration(100);
+		scaleanimation.setDuration(40);
 		scaleanimation.setAnimationListener(new AnimationAdapter() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
@@ -245,11 +246,8 @@ public class CircleMenu {
 			tv_text.setText(entity.getText());
 
 			menuItemList.add(rl_menuitem);
-			if (first) {
-				rl_menuitem.setVisibility(View.INVISIBLE);
-			} else {
-				rl_menuitem.setVisibility(View.GONE);
-			}
+			rl_menuitem.setVisibility(View.INVISIBLE);
+
 			rl_controldiskout.addView(rl_menuitem);
 		}
 		allMenuItemList.add(menuItemList);
@@ -390,6 +388,7 @@ public class CircleMenu {
 						activity.finish();
 					} else if (status == SHOW_BOTTOM) {
 						showCircle();
+						tv_pagename.setVisibility(View.INVISIBLE);
 					}
 				} else if (status == SHOW_CENTER && !noItem) {
 					initClick = false;
@@ -481,6 +480,9 @@ public class CircleMenu {
 				if (status != SHOW_TOP && initClick) {
 					tv_back.setVisibility(View.INVISIBLE);
 				}
+				if (status != SHOW_BOTTOM && initClick) {
+					tv_pagename.setVisibility(View.INVISIBLE);
+				}
 				if ((status == SHOW_BOTTOM || status == SHOW_TOP) && initClick
 						&& !lock) {
 					status = STATUS_DRAG;
@@ -505,22 +507,25 @@ public class CircleMenu {
 				if (status != SHOW_TOP && initClick) {
 					tv_back.setVisibility(View.INVISIBLE);
 				}
+				if (status != SHOW_BOTTOM && initClick) {
+					tv_pagename.setVisibility(View.INVISIBLE);
+				}
 				if (where == SHOW_TOP && initClick && !lock) {
-					if (velocityY > 3000) {
+					if (velocityY > 2000) {
 						showCircle();
 					}
 				}
 				if (where == SHOW_BOTTOM && initClick && !lock) {
-					if (velocityY < -3000) {
+					if (velocityY < -2000) {
 						showCircle();
 					}
 				}
 
 				if (status == SHOW_CENTER && initClick && !lock) {
-					if (velocityY > 3000) {
+					if (velocityY > 2000) {
 						back(SHOW_BOTTOM, null);
 					}
-					if (velocityY < -3000) {
+					if (velocityY < -2000) {
 						back(SHOW_TOP, null);
 					}
 				}
@@ -640,6 +645,7 @@ public class CircleMenu {
 			scrollY = -initHeight / 2 - diskHeight / 8;
 			rl_control.scrollTo(0, scrollY);
 			status = SHOW_BOTTOM;
+			tv_pagename.setVisibility(View.VISIBLE);
 		}
 		if (showWhere == SHOW_CENTER) {
 			scrollY = 0;
@@ -796,6 +802,10 @@ public class CircleMenu {
 		public void diskAnimationEnd();
 
 		public void outAnimationEnd();
+	}
+
+	public int getMarginTop() {
+		return diskHeight / 8 * 3;
 	}
 
 }

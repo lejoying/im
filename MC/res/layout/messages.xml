@@ -11,17 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" 
+        android:layout_alignParentTop="true"
         android:divider="#0000"
-        android:dividerHeight="10dp">
+        android:dividerHeight="10dp" >
     </ListView>
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="112dp" />
 
 </RelativeLayout>

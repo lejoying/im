@@ -8,12 +8,6 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.lejoying.adapter.MCResponseAdapter;
-import com.lejoying.api.AccountManager;
-import com.lejoying.apiimpl.AccountManagerImpl;
-import com.lejoying.mcutils.CircleMenu;
-import com.lejoying.mcutils.MCTools;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +20,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.lejoying.adapter.MCResponseAdapter;
+import com.lejoying.api.AccountManager;
+import com.lejoying.apiimpl.AccountManagerImpl;
+import com.lejoying.mcutils.CircleMenu;
+import com.lejoying.mcutils.MCTools;
 
 public class LoginActivity extends Activity {
 
@@ -91,87 +91,73 @@ public class LoginActivity extends Activity {
 	}
 
 	public void login(View v) {
+		if (et_plogin_phone.getText().toString() == null
+				|| et_plogin_phone.getText().toString().equals("")) {
+			MCTools.showMsg(this, "手机不能为空");
+			et_plogin_phone.requestFocus();
+			return;
+		}
 		Map<String, String> param = new HashMap<String, String>();
 		if (state == STATE_PLOGIN) {
-			if (et_plogin_phone.getText().toString() == null
-					|| et_plogin_phone.getText().toString().equals("")) {
-				MCTools.showMsg(this, "手机不能为空");
-				et_plogin_phone.requestFocus();
-				return;
-			}
 			if (et_plogin_pass.getText().toString() == null
 					|| et_plogin_pass.getText().toString().equals("")) {
 				MCTools.showMsg(this, "密码不能为空");
 				et_plogin_pass.requestFocus();
 				return;
 			}
+			Intent intent = new Intent(this, LoadingActivity.class);
+			startActivity(intent);
 			phone = et_plogin_phone.getText().toString();
 			pass = et_plogin_pass.getText().toString();
 			param.put("phone", phone);
 			param.put("password", pass);
-			accountManager.auth(param, new MCResponseAdapter(this) {
-				@Override
-				public void success(JSONObject data) {
-					try {
-						accessKey = data.getString("accessKey");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Intent intent = new Intent(LoginActivity.this,
-							MessagesActivity.class);
-					startActivity(intent);
-					finish();
-				}
 
-				@Override
-				public void unsuccess(JSONObject data) {
-					String err = "未知原因";
-					try {
-						err = data.getString("失败原因");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					MCTools.showMsg(LoginActivity.this, err);
-				}
-
-			});
 		} else if (state == STATE_CLOGIN) {
-			if (et_clogin_phone.getText().toString() == null
-					|| et_clogin_phone.getText().toString().equals("")) {
-				MCTools.showMsg(this, "手机不能为空");
-				et_clogin_phone.requestFocus();
-				return;
-			}
 			if (et_clogin_code.getText().toString() == null
 					|| et_clogin_code.getText().toString().equals("")) {
 				MCTools.showMsg(this, "请输入验证码");
 				et_clogin_code.requestFocus();
 				return;
 			}
+			Intent intent = new Intent(this, LoadingActivity.class);
+			startActivity(intent);
 			phone = et_clogin_phone.getText().toString();
 			code = et_clogin_code.getText().toString();
 			param.put("phone", phone);
 			param.put("code", code);
-			accountManager.verifycode(param, new MCResponseAdapter(this) {
-				@Override
-				public void success(JSONObject data) {
-					try {
-						accessKey = data.getString("accessKey");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Intent intent = new Intent(LoginActivity.this,
-							MessagesActivity.class);
-					startActivity(intent);
-					state = STATE_PLOGIN;
-					finish();
-				}
-
-			});
 		}
+		accountManager.auth(param, new MCResponseAdapter(this) {
+			@Override
+			public void success(final JSONObject data) {
+				//super.success(data);
+
+				try {
+					accessKey = data.getString("accessKey");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Intent intent = new Intent(LoginActivity.this,
+						MessagesActivity.class);
+				startActivity(intent);
+				finishAll();
+
+			}
+
+			@Override
+			public void unsuccess(JSONObject data) {
+				super.unsuccess(data);
+				String err = "未知原因";
+				try {
+					err = data.getString("失败原因");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				MCTools.showMsg(LoginActivity.this, err);
+			}
+
+		});
 	}
 
 	public void register(View v) {
@@ -187,7 +173,6 @@ public class LoginActivity extends Activity {
 				return;
 			}
 			et_clogin_code.requestFocus();
-			resend();
 			phone = et_clogin_phone.getText().toString();
 			Map<String, String> param = new HashMap<String, String>();
 			param.put("phone", phone);
@@ -195,7 +180,7 @@ public class LoginActivity extends Activity {
 			accountManager.verifyphone(param, new MCResponseAdapter(this) {
 				@Override
 				public void success(JSONObject data) {
-
+					resend(60);
 				}
 
 				@Override
@@ -224,9 +209,9 @@ public class LoginActivity extends Activity {
 		}
 	}
 
-	public void resend() {
+	public void resend(int time) {
 		canSend = false;
-		resendTime = 60;
+		resendTime = time;
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override

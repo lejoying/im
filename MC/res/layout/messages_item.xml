@@ -12,7 +12,7 @@
         android:id="@+id/rl_content"
         android:layout_width="fill_parent"
         android:layout_height="37dp"
-        android:layout_below="@+id/iv_line" >
+        android:layout_below="@+id/rl_top" >
 
         <TextView
             android:id="@+id/tv_lastchat"
@@ -27,16 +27,6 @@
             android:textColor="#fff"
             android:textSize="14sp" />
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/iv_line"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_alignLeft="@+id/rl_top"
-        android:layout_below="@+id/rl_top"
-        android:layout_marginTop="4dp"
-        android:background="#2fff"
-        tools:ignore="ContentDescription" />
 
     <RelativeLayout
         android:id="@+id/rl_top"

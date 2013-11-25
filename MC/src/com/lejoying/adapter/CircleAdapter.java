@@ -7,10 +7,12 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -18,6 +20,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -35,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.lejoying.mc.ChatActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mcutils.Friend;
 import com.lejoying.mcutils.ImageTools;
@@ -49,9 +53,9 @@ public class CircleAdapter {
 
 	private List<View> viewList;
 
-	private int beforeScrollY;
-	private float beforeGetY;
 	private int beforePosition;
+	private float scrollToY;
+	private int statusBarHeight;
 
 	private boolean editMode;
 
@@ -76,6 +80,7 @@ public class CircleAdapter {
 		final Bitmap head = ImageTools.getCircleBitmap(BitmapFactory
 				.decodeResource(activity.getResources(), R.drawable.xiaohei),
 				true, 5, Color.rgb(255, 255, 255));
+
 		if (circlefriends != null) {
 			Object[] circles = circlefriends.keySet().toArray();
 			for (int ccount = circles.length - 1; ccount >= 0; ccount--) {
@@ -98,7 +103,7 @@ public class CircleAdapter {
 				sv.setOnTouchListener(new OnTouchListener() {
 					@Override
 					public boolean onTouch(View view, MotionEvent event) {
-						int action = event.getAction();
+						// int action = event.getAction();
 						// switch (action) {
 						// case MotionEvent.ACTION_MOVE:
 						//
@@ -125,7 +130,20 @@ public class CircleAdapter {
 							iv_head.setImageBitmap(head);
 							tv_nickname.setText(friends.get(a * 6 + position)
 									.getNickName());
+							// 点击用户头像进行聊天
+							rl_gridpage_item
+									.setOnClickListener(new OnClickListener() {
 
+										@Override
+										public void onClick(View arg0) {
+											if (!editMode) {
+												Intent intent = new Intent(
+														activity,
+														ChatActivity.class);
+												activity.startActivity(intent);
+											}
+										}
+									});
 							// 设置长按用户头像进入编辑模式
 							rl_gridpage_item
 									.setOnLongClickListener(new OnLongClickListener() {
@@ -158,20 +176,9 @@ public class CircleAdapter {
 													}
 													if (i != beforePosition) {
 														animation
-																.setAnimationListener(new AnimationListener() {
-
+																.setAnimationListener(new AnimationAdapter() {
 																	@Override
 																	public void onAnimationEnd(
-																			Animation animation) {
-																	}
-
-																	@Override
-																	public void onAnimationRepeat(
-																			Animation animation) {
-																	}
-
-																	@Override
-																	public void onAnimationStart(
 																			Animation animation) {
 																		animView.setVisibility(View.INVISIBLE);
 																	}
@@ -179,12 +186,21 @@ public class CircleAdapter {
 														animView.startAnimation(animation);
 													}
 												}
-												beforeScrollY = ((ScrollView) (contentParent
-														.getParent()))
-														.getScrollY();
-												beforeGetY = viewList.get(
-														beforePosition).getY();
-												float scrollToY = -(beforeGetY - beforeScrollY);
+												final int location[] = new int[2];
+												viewList.get(beforePosition)
+														.getLocationInWindow(
+																location);
+												if (statusBarHeight == 0) {
+													Rect frame = new Rect();
+													activity.getWindow()
+															.getDecorView()
+															.getWindowVisibleDisplayFrame(
+																	frame);
+													statusBarHeight = frame.top;
+												}
+												scrollToY = statusBarHeight
+														- location[1];
+
 												TranslateAnimation taAnimation = new TranslateAnimation(
 														0f, 0f, 0f, scrollToY);
 												taAnimation.setDuration(300);
@@ -210,7 +226,7 @@ public class CircleAdapter {
 																contentParent
 																		.scrollTo(
 																				0,
-																				Math.round(beforeGetY - beforeScrollY));
+																				Math.round(-scrollToY));
 															}
 														});
 
@@ -380,8 +396,7 @@ public class CircleAdapter {
 		controlPanel.startAnimation(ta_exit);
 		// 好友圈位置还原
 
-		Animation animation = new TranslateAnimation(0, 0,
-				-(beforeGetY - beforeScrollY), 0);
+		Animation animation = new TranslateAnimation(0, 0, scrollToY, 0);
 		animation.setDuration(300);
 		viewList.get(beforePosition).startAnimation(animation);
 
