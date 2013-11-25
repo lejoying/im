@@ -8,3 +8,26 @@
      height: 150px;
      background-color: #354B66;
 }
+.uploadWallpaperButton
+{
+    height: 31px;
+    width: 101px;
+    cursor: pointer;
+    -moz-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin-top: -35px;
+    margin-left: 300px;
+    position: relative; background: url('/static/images/upload_btn.png') no-repeat;
+}
+.f
+{
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    overflow: hidden;
+    font-size: 90px;
+    width: 101px;
+    height: 31px;
+}

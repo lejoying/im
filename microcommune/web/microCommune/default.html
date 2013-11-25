@@ -26,14 +26,51 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
 <!--[if lt IE 9]>
 <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
-<script src="../static/js/respond.min.js"></script>
 <script src="static/js/jquery.js"></script>
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/jquery.Jcrop.js"></script>
+<!--<script src="static/js/jquery.imgareaselect.js"></script>-->
+<!--<script src="static/js/jquery.imgareaselect.pack.js"></script>-->
+<!--<script src="static/js/jquery.imgareaselect.min.js"></script>-->
+<script src="static/js/index.js"></script>
+<script src="../static/js/respond.min.js"></script>
 <script src="static/js/jquery.prompt.min.js"></script>
 <script src="static/js/jquery.prompt.js"></script>
 <script src="static/js/jscroll.js"></script>
 <script src="static/js/sendMsg.js"></script>
-<script src="static/js/index.js"></script>
 <script src="static/js/moneymanage.js"></script>
+<!--<script src="static/js/prototype1.js"></script>-->
+<!--<script src="static/js/scriptaculous.js?load=builder,dragdrop"></script>-->
+<!--<script src="static/js/cropper.js"></script>-->
+<!--    <script type="text/javascript">
+        function onEndCrop( coords, dimensions ) {
+//            alert(coords.x1+"--"+coords.y1+"--"+dimensions.width+"--"+dimensions.height);
+//            $( 'x1' ).value = coords.x1;
+//            $( 'y1' ).value = coords.y1;
+//            $( 'x2' ).value = coords.x2;
+//            $( 'y2' ).value = coords.y2;
+//            $( 'width' ).value = dimensions.width;
+//
+// $( 'height' ).value = dimensions.height;
+        }
+        Event.observe(
+                window,
+                'load',
+                function() {
+                    new Cropper.ImgWithPreview(
+                            'testImage',
+                            {
+                                minWidth: 100,
+                                minHeight: 100,
+                                ratioDim: { x: 250, y: 250 },
+                                displayOnInit: true,
+                                onEndCrop: onEndCrop,
+                                previewWrap: 'previewArea'
+                            }
+                    )
+                }
+        );
+    </script>-->
 </head>
 <body>
 <div style="" id="container">
@@ -291,7 +328,34 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
     </div>
   </div>
 </div>
+<div id="js_headimg" style="position:absolute; background-color:#FFFFFF;border:solid 1px #000;width:420px;height:400px;left:40%;top:20%;filter:alpha(opacity=100);opacity:1;visibility:visible;z-index:1000;">
+    <table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;">
+        <tr id="js_titleBarheadimg" style="height:40px;width: 100%;text-align:left; background-color:#547BC9;color:White; padding:3px;">
+            <th colspan="2"><span>&nbsp;&nbsp;修改头像</span><span onClick="closeProc1();" style="float: right;cursor: hand;">&nbsp;×&nbsp;</span></th>
+        </tr>
+        <tr>
+            <td rowspan="2"><div style="margin-top: 20px;margin-left: 20px;">
+                <!--<img id="testImage" style="height: 250px;width: 250px;" src="https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgeticon?seq=1385203698&username=qxs965266509&type=big">-->
+            </div></td>
+            <td>
+                <div style="margin-top: 20px;">
+                    <img id="xuwanting" src="/static/images/webwxgeticon1A.jpg" style="width: 250px;height: 250px;margin-top: 30px;" />
+                    <span id="preview_box" class="crop_preview" style="width: 100px;height: 100px;overflow: hidden;float: right;margin-right: 20px;margin-top: -250px;"><img id="crop_preview" src="/static/images/webwxgeticon1A.jpg" /></span>
+                </div>
+            </td>
+        </tr>
+        <tr class="js_headimghidden">
+            <td><div title="上传壁纸..." class="uploadWallpaperButton upload" id="uploadWallpaperButton">
+                <input type="file" name="pic"  class="f" id="imgfile" style="display: block;"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;"><input type="button" value="编 辑" style="margin-top: 20px;width: 70px;height: 30px;"></td>
+        </tr>
 
+    </table>
+</div>
 <div id="js_feedback" style="position:absolute; background-color:#FFFFFF;border:solid 1px #000;width:420px;height:200px;left:40%;top:20%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1000;">
     <table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;">
         <tr id="js_titleBarfeedback" style="height:40px; text-align:left; background-color:#DDE1E6; padding:3px;font-size: 15px;">

@@ -1,6 +1,6 @@
 $(document).ready(function () {
-    var leftHeight = $(".mainContern").height();
-    $(".sildLeft").css("height", leftHeight);
+//    var leftHeight = $(".mainContern").height();
+//    $(".sildLeft").css("height", leftHeight);
 });
 function closeDialog() {
     alert("closeDialog");

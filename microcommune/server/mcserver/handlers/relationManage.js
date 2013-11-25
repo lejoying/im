@@ -211,9 +211,9 @@ relationManage.blacklist = function (data, response) {
             var rData = rNode.data;
             rData.friendStatus = "blacklist";
             rData.phone = phone;
-            rNode.save();
+            rNode.save(function(){});
             response.write(JSON.stringify({
-                "提示信息": "添加黑名单失败"
+                "提示信息": "添加黑名单成功"
             }));
             response.end();
         } else {
@@ -307,7 +307,7 @@ relationManage.getcirclesandfriends = function (data, response) {
     function getAccountsNode(circles, phone) {
         var query = [
             'MATCH (account:Account)-[r:FRIEND]-(account1:Account)',
-            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete","blacklist"]',//1,2,3
+            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete","blacklist"]',//1,2,3  r不 等于phone
             'RETURN r, account1'
         ].join('\n');
         var params = {
