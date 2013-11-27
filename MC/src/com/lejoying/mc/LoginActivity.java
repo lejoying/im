@@ -129,7 +129,7 @@ public class LoginActivity extends Activity {
 		accountManager.auth(param, new MCResponseAdapter(this) {
 			@Override
 			public void success(final JSONObject data) {
-				//super.success(data);
+				super.success(data);
 
 				try {
 					accessKey = data.getString("accessKey");

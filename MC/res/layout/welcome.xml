@@ -4,16 +4,10 @@
     android:layout_height="match_parent"
     tools:context=".WelcomeActivity" >
 
-    <!--
-         <ImageView
+    <ImageView
         android:id="@+id/imageView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/app_start"/>
-    -->
-
-    <com.lejoying.view.CircleMenuView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:background="@drawable/app_start" />
 
 </RelativeLayout>

@@ -56,7 +56,7 @@ public class MCTools {
 
 	public static Handler handler = new Handler();
 
-	private static final String DOMAIN = "http://192.168.0.103:8071";
+	private static final String DOMAIN = "http://115.28.51.197:8071";
 
 	private static String lasturl;
 	private static Map<String, String> lastparam;
