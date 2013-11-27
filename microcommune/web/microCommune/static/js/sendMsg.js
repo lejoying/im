@@ -2,6 +2,10 @@ var selectGroup = 0;
 var selectCircleId = "";
 var selectPhone = "";
 var selectId = "";
+var accesskey=window.localStorage.getItem("accesskey");
+
+alert(accesskey+"   sendmsg.js")
+
 $(document).ready(function () {
     (function ($) {
         $.extend($.fn, {
@@ -86,6 +90,9 @@ $(document).ready(function () {
             }
         }
     });
+
+    request(accesskey);
+
     $(document).on('click', ".groupTitle", function () {
         $(".js_circlesFriends .friendDetail").slideDown(1000);
     });
@@ -276,13 +283,47 @@ $(document).ready(function () {
         eval('$.Prompt("删除好友")');
         js_friendManage.style.visibility = "hidden";
         $(".js_addcircle").slideDown(10);
-        $(".js_accountmanage").css("visibility", "hidden");
+       $(".js_accountmanage").css("visibility", "hidden");
+
+        var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+        alert(phone);
+        var phoneto=selectPhone;
+        alert(phoneto);
+        $.ajax({
+            type: "POST",
+            url: "/api2/relation/deletefriend?",
+            data: {
+                phone: phone,
+                phoneto:phoneto
+            },
+            success: function (data) {
+                eval('$.Prompt("' + data["提示信息"] + '")');
+            }
+        });
     });
     $(".js_blacklist").click(function () {
         eval('$.Prompt("黑名单")');
         js_friendManage.style.visibility = "hidden";
         $(".js_addcircle").slideDown(10);
         $(".js_accountmanage").css("visibility", "hidden");
+
+        var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+        alert(phone+"---");
+        var phoneto=selectPhone;
+        alert(phoneto+"+++");
+
+
+        $.ajax({
+            type: "POST",
+            url: "/api2/relation/blacklist?",
+            data: {
+                phone: phone,
+                phoneto:phoneto
+            },
+            success: function (data) {
+                eval('$.Prompt("' + data["提示信息"] + '")');
+            }
+        });
     });
 
     $(".chatSend").click(function () {
@@ -847,4 +888,36 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
         }
     }
     new Drag(titleBarID, message_boxID, obj);
+}
+function request(accesskey) {
+    var timeold = new Date().getTime();
+    var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+    $.ajax({
+        type: "POST",
+        url: "/api2/session/event?",
+        timeout: 30000,
+        data: {
+            accessKey: accesskey
+        },
+        success: function (data) {
+            if (data["提示信息"] == "获取成功") {
+                alert("有消息");
+                $.ajax({
+                    type: "POST",
+                    url: "/api2/message/get?",
+                    data:{
+                        phone:phone
+                    }
+                })
+            }  else {
+                alert(data);
+                setTimeout(request(accesskey), 30000);
+            }
+        },
+        error: function () {
+            setTimeout(request(accesskey), 30000);
+            var timenew = new Date().getTime();
+
+        }
+    });
 }
