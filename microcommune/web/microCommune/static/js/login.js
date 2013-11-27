@@ -161,6 +161,7 @@ $(document).ready(function () {
     var str = "";
     for (var i = 0; i < count; i++) {
         str += chars[parseInt(Math.random() * chars.length)];
+       window.localStorage.setItem("accesskey", str);
     }
     $(".js_tdcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str));
     request(str);
@@ -199,7 +200,7 @@ function request(str) {
     var timeold = new Date().getTime();
     $.ajax({
         type: "POST",
-        url: "/api2/session/eventweb?",
+        url: "/api2/session/eventwebcodelogin?",
         timeout: 30000,
         data: {
             accessKey: str
