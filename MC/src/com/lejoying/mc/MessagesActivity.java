@@ -63,7 +63,7 @@ public class MessagesActivity extends Activity {
 		list.add(new MenuEntity(R.drawable.test_menu_item4,
 				CircleMenu.CIRCLE_MORE));
 
-		circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
+		// circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
 
 		circleMenu
 				.setCircleMenuItemClickListener(new CircleMenuItemClickListener() {
@@ -87,6 +87,7 @@ public class MessagesActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				System.out.println("xxxxxxx");
 				Intent intent = new Intent(MessagesActivity.this,
 						ChatActivity.class);
 				startActivity(intent);
