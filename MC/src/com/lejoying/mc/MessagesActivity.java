@@ -25,6 +25,7 @@ import com.lejoying.listener.CircleMenuItemClickListener;
 import com.lejoying.mcutils.CircleMenu;
 import com.lejoying.mcutils.ImageTools;
 import com.lejoying.mcutils.MenuEntity;
+import com.lejoying.view.CircleMenuView;
 
 public class MessagesActivity extends Activity {
 
@@ -63,7 +64,7 @@ public class MessagesActivity extends Activity {
 		list.add(new MenuEntity(R.drawable.test_menu_item4,
 				CircleMenu.CIRCLE_MORE));
 
-		// circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
+		circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
 
 		circleMenu
 				.setCircleMenuItemClickListener(new CircleMenuItemClickListener() {
