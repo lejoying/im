@@ -46,7 +46,7 @@ function route(routemap, url, request, response) {
         }
         else {
             response.write("404 Not found, API地址木有找到。。。");
-            console.log("No request handler found for " + url);
+            console.log("No request handlers found for " + url);
         }
         response.end();
     }

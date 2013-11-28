@@ -15,7 +15,7 @@ api = {
             typical: {"sessionID": "XXX"}
         },
         response: {
-            success: {"提示信息": "web端二维码登录成功",phone: "XXX", accessKey: sha1("phone"+"time")},
+            success: {"提示信息": "web端二维码登录成功", phone: "XXX", accessKey: sha1("phone" + "time")},
             failed: {"提示信息": "web端二维码登录失败", "失败原因": ["数据异常"]}
         }
     },
@@ -147,7 +147,7 @@ api = {
             url: "/api2/account/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", mainBusiness: "XXX", password: "XXX"})}
+            typical: {phone: "XXX", accessKey: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", mainBusiness: "XXX", password: "XXX", head: "XXX"})}
         },
         response: {
             success: {"提示信息": "修改用户信息成功"},

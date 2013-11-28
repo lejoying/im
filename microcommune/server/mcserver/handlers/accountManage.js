@@ -85,7 +85,7 @@ accountManage.verifyphone = function (data, response) {
                         console.log("++++--" + accountData.code);
                         accountData.code = time.substr(time.length - 6);
                         accountData.time = new Date().getTime();
-                        accountNode.save(function (error) {
+                        accountNode.save(function (error, node) {
                         });
                         code = time.substr(time.length - 6);
                     } else {
@@ -154,7 +154,7 @@ accountManage.verifyphone = function (data, response) {
                     if (bad > 600000 || accountData.code == "none") {
                         accountData.code = time.substr(time.length - 6);
                         accountData.time = new Date().getTime();
-                        accountNode.save(function (error) {
+                        accountNode.save(function (error, node) {
                         });
                         code = time.substr(time.length - 6);
                     } else {
@@ -292,7 +292,7 @@ accountManage.verifycode = function (data, response) {
                     } else {
                         console.log("验证成功---");
                         accountData.code = "none";
-                        accountNode.save(function (error) {
+                        accountNode.save(function (error, node) {
                         });
                         response.write(JSON.stringify({
                             "提示信息": "验证成功",
@@ -483,12 +483,15 @@ accountManage.modify = function (data, response) {
                     accountData.status = "active";
                 }
             }
-            accountNode.save(function (error) {
+            if (account.head != undefined && account.head != null && account.head != "") {
+                accountData.head = account.head;
+            }
+            accountNode.save(function (error, node) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户信息成功"
+                }));
+                response.end();
             });
-            response.write(JSON.stringify({
-                "提示信息": "修改用户信息成功"
-            }));
-            response.end();
         }
     });
 }

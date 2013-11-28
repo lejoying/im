@@ -6,7 +6,7 @@ serverSetting.environment = "local";//local or server
 //serverSetting.debug = true;
 
 if (serverSetting.environment == "local") {
-//    serverSetting.imageFolder = "D://Users//ChrisGai//Downloads//nginx-1.3.16//upload//";
+    serverSetting.imageFolder = "D://nginx//upload//";
     serverSetting.neo4jUrl = "http://115.28.51.197:7474/";
 //    serverSetting.redisIP = "115.28.51.197";
     serverSetting.redisIP = "127.0.0.1";

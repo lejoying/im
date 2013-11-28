@@ -53,7 +53,8 @@ relationManage.addfriend = function (data, response) {
                     rData.friendStatus = "success";
 //                    rData.message = message;
 //                    rData.rid = rid;
-                    rNode.save();
+                    rNode.save(function (error, node) {
+                    });
                     addAccountCircleNode(rid, phoneTo);
                 } else {
                     //checked
@@ -62,7 +63,8 @@ relationManage.addfriend = function (data, response) {
                     rData.friendStatus = "init";
                     rData.message = message;
                     rData.rid = rid;
-                    rNode.save();
+                    rNode.save(function (error, node) {
+                    });
                     response.write(JSON.stringify({
                         "提示信息": "发送请求成功"
                     }));
@@ -136,7 +138,8 @@ relationManage.deletefriend = function (data, response) {
             var rData = rNode.data;
             rData.friendStatus = "delete";
             rData.phone = phone;
-            rNode.save();
+            rNode.save(function (error, node) {
+            });
             deleteCircleAccountRelaNode(phone, phoneTo);
         } else {
             response.write(JSON.stringify({
@@ -211,7 +214,8 @@ relationManage.blacklist = function (data, response) {
             var rData = rNode.data;
             rData.friendStatus = "blacklist";
             rData.phone = phone;
-            rNode.save(function(){});
+            rNode.save(function (error, node) {
+            });
             response.write(JSON.stringify({
                 "提示信息": "添加黑名单成功"
             }));
@@ -489,7 +493,8 @@ relationManage.addfriendagree = function (data, response) {
                     var rData = rNode.data;
                     var ridAsk = rData.rid;
                     rData.friendStatus = "success";
-                    rNode.save();
+                    rNode.save(function (error, node) {
+                    });
                     if (rid != null && rid != undefined && rid != "") {
                         addCircleAccountRelation(rid, phoneAsk, ridAsk);
                     } else {

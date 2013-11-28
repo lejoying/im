@@ -18,11 +18,11 @@ http.createServer(
         route(routemap, request.url, request, response);
 
         i++;
-        console.log("The mcserver has been accessed " + i);
+        console.log("The mcServer has been accessed " + i);
         if (response.asynchronous == null) {
             response.end();
         }
 
     }).listen(8071);
 
-console.log("The mcserver is running.");
+console.log("The mcServer is running.");
