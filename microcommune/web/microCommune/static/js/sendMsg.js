@@ -2,9 +2,7 @@ var selectGroup = 0;
 var selectCircleId = "";
 var selectPhone = "";
 var selectId = "";
-var accesskey=window.localStorage.getItem("accesskey");
 
-alert(accesskey+"   sendmsg.js")
 
 $(document).ready(function () {
     (function ($) {
@@ -91,7 +89,7 @@ $(document).ready(function () {
         }
     });
 
-    request(accesskey);
+    request();
 
     $(document).on('click', ".groupTitle", function () {
         $(".js_circlesFriends .friendDetail").slideDown(1000);
@@ -328,7 +326,6 @@ $(document).ready(function () {
 
     $(".chatSend").click(function () {
         var content = $("#textInput").val();
-        $("#textInput").val("");
         var date = new Date();
         var hours = date.getHours();
         var minutes = date.getMinutes();
@@ -353,6 +350,7 @@ $(document).ready(function () {
         var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
         var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
         var message = $("#textInput").val();
+        alert(message+"  输入的消息");
         var listPhone = [];
         listPhone.push(phoneto);
         var messages = {
@@ -361,6 +359,7 @@ $(document).ready(function () {
                 text: message
             }
         };
+
         $.ajax({
             type: "POST",
             url: "/api2/message/send?",
@@ -400,7 +399,9 @@ $(document).ready(function () {
                 }
             }
         });
-    });
+     $("#textInput").val("");
+        }
+    );
     $("#conversationContainer>div").click(function () {
         $("#js_chat")[0].style.visibility = "visible";
         $(".chatListColumn").attr("class", "chatListColumn");
@@ -889,35 +890,45 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
     }
     new Drag(titleBarID, message_boxID, obj);
 }
-function request(accesskey) {
-    var timeold = new Date().getTime();
+function request() {
+    var accesskey=window.localStorage.getItem("accesskey");
     var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
     $.ajax({
         type: "POST",
         url: "/api2/session/event?",
         timeout: 30000,
         data: {
+            phone:phone,
             accessKey: accesskey
         },
         success: function (data) {
-            if (data["提示信息"] == "获取成功") {
-                alert("有消息");
+            if (data["提示信息"] == "成功") {
+             if(data["event"]=="message"){
                 $.ajax({
                     type: "POST",
                     url: "/api2/message/get?",
                     data:{
-                        phone:phone
+                        phone:phone,
+                        flag:"none"
+                    },
+                    success:function(data){
+                        if(data["提示信息"]=="获取成功"){
+
+
+                        }
                     }
                 })
-            }  else {
+             }else{
+            alert("newfriend");
+            }
+                request();
+            }else {
                 alert(data);
-                setTimeout(request(accesskey), 30000);
+                request();
             }
         },
         error: function () {
-            setTimeout(request(accesskey), 30000);
-            var timenew = new Date().getTime();
-
+               request();
         }
     });
 }

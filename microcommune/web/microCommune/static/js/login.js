@@ -217,12 +217,14 @@ function request(str) {
                 location.href = "default.html";
             } else {
 //                request(str);
-                alert(data);
-                setTimeout(request(str), 30000);
+//                alert(data);
+                request(str);
+//                setTimeout(request(str), 30000);
             }
         },
         error: function () {
-            setTimeout(request(str), 30000);
+            request(str);
+//            setTimeout(request(str), 30000);
 //            var timenew = new Date().getTime();
 //            alert(timeold+"-dddededdd-"+timenew);
 //            alert("error");
