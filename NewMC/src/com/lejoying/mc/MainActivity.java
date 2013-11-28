@@ -1,19 +1,21 @@
 package com.lejoying.mc;
 
-import com.lejoying.mc.fragment.BackgroundFragment;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class MainActivity extends BaseActivity {
+import com.lejoying.mc.fragment.CircleMenuFragment;
+
+public class MainActivity extends BaseFragmentActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		getSupportFragmentManager().beginTransaction()
-				.add(new BackgroundFragment(), null).commit();
+		setContentView(R.layout._main);
+		CircleMenuFragment circle = new CircleMenuFragment();
+		mFragmentManager.beginTransaction().add(R.id.fl_content, circle)
+				.commit();
 
 	}
 
@@ -25,7 +27,9 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
+		if (event.getAction() == MotionEvent.ACTION_UP) {
+
+		}
 		return false;
 	}
 

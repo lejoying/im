@@ -3,7 +3,7 @@ package com.lejoying.mc;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class WelcomeActivity extends BaseActivity {
+public class WelcomeActivity extends BaseFragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
