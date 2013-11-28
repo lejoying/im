@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lejoying.mc.utils.CircleMenu" >
+
+    <RelativeLayout
+        android:id="@+id/rl_controldiskout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible" >
+
+        <ImageView
+            android:id="@+id/iv_controldiskout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/control_disk_outer"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_controldisk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/control_disk"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_controldisk"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="返回"
+        android:textColor="#fff"
+        android:textSize="18sp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tv_pagename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/iv_controldisk"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="34dp"
+        android:text="我的名片"
+        android:textColor="#fff"
+        android:visibility="invisible" />
+
+</RelativeLayout>
