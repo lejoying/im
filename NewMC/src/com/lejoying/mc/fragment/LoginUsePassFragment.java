@@ -1,6 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +14,6 @@ import com.lejoying.mc.R;
 public class LoginUsePassFragment extends BaseFragment implements
 		OnClickListener {
 
-	LoginUsrPassListener listener;
-
 	private View mContent;
 
 	private EditText mView_phone;
@@ -26,16 +23,10 @@ public class LoginUsePassFragment extends BaseFragment implements
 	private TextView mView_clogin;
 
 	@Override
-	public void onAttach(Activity activity) {
-		// TODO Auto-generated method stub
-		super.onAttach(activity);
-		try {
-			listener = (LoginUsrPassListener) activity;
-		} catch (ClassCastException e) {
-			
-		}
+	public String setTag() {
+		return "cLogin";
 	}
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -45,6 +36,8 @@ public class LoginUsePassFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		mMCFragmentManager.hideCircleMenu();
+
 		mContent = inflater.inflate(R.layout.f_plogin, null);
 
 		mView_phone = (EditText) mContent.findViewById(R.id.et_plogin_phone);
@@ -53,28 +46,38 @@ public class LoginUsePassFragment extends BaseFragment implements
 		mView_register = (Button) mContent.findViewById(R.id.btn_register);
 		mView_clogin = (TextView) mContent.findViewById(R.id.tv_clogin);
 
-		initView();
-		return mContent;
-	}
-
-	private void initView() {
 		mView_login.setOnClickListener(this);
 		mView_register.setOnClickListener(this);
 		mView_clogin.setOnClickListener(this);
+
+		return mContent;
 	}
 
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 	}
 
 	@Override
 	public void onClick(View v) {
-		listener.onClick(v);
+		switch (v.getId()) {
+		case R.id.tv_clogin:
+			mMCFragmentManager.beginTransaction()
+					.replace(R.id.fl_content, new LoginUseCodeFragment())
+					.addToBackStack(null).commit();
+			break;
+		case R.id.btn_login:
+			mMCFragmentManager.beginTransaction()
+					.replace(R.id.fl_content, new MessageFragment()).commit();
+			break;
+		case R.id.btn_register:
+			mMCFragmentManager.beginTransaction()
+					.replace(R.id.fl_content, new RegisterPhoneFragment())
+					.addToBackStack(null).commit();
+			break;
+		default:
+			break;
+		}
 	}
 
-	public interface LoginUsrPassListener {
-		public void onClick(View v);
-	}
 }

@@ -16,5 +16,10 @@
     <string name="tv_clogin">验证码登录</string>
     <string name="et_code">请输入验证码</string>
     <string name="btn_sendcode">发送验证码</string>
+    <string name="btn_next">下 一 步</string>
+    <string name="tv_enterphone">输入手机号</string>
+    <string name="tv_entercode">输入验证码</string>
+    <string name="tv_resend">重新发送(60)</string>
+    <string name="tv_setpass">设置密码</string>
 
 </resources>
