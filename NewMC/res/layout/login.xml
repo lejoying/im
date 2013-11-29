@@ -54,7 +54,7 @@
         </EditText>
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_login"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_alignLeft="@+id/et_plogin_pass"
@@ -82,12 +82,12 @@
             android:textColor="#fff" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_register"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_alignLeft="@+id/button1"
-            android:layout_alignRight="@+id/button1"
-            android:layout_below="@+id/button1"
+            android:layout_alignLeft="@+id/btn_login"
+            android:layout_alignRight="@+id/btn_login"
+            android:layout_below="@+id/btn_login"
             android:layout_marginTop="8dp"
             android:background="#2fff"
             android:onClick="register"
@@ -98,8 +98,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="37dp"
-            android:layout_alignRight="@+id/button2"
-            android:layout_below="@+id/button2"
+            android:layout_alignRight="@+id/btn_register"
+            android:layout_below="@+id/btn_register"
             android:clickable="true"
             android:gravity="center"
             android:onClick="cLogin"

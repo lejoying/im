@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.mc.adapter.CircleAdapter;
-import com.lejoying.mc.listener.CircleMenuItemClickListener;
+import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
 import com.lejoying.mc.utils.CircleMenu;
 import com.lejoying.mc.utils.Friend;
 import com.lejoying.mc.utils.MenuEntity;
@@ -86,7 +86,7 @@ public class FriendsActivity extends Activity {
 		list2.add(new MenuEntity(R.drawable.test_menu_item4, "×Ê½ðÕË»§"));
 		cm.addMore(list2);
 
-		cm.setCircleMenuItemClickListener(new CircleMenuItemClickListener() {
+		cm.setCircleMenuItemClickListener(new OldCircleMenuItemClickListener() {
 			@Override
 			public void onItemClick(int item, ImageView icon, TextView text) {
 				if (item == 1) {

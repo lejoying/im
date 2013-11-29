@@ -115,7 +115,7 @@
         </EditText>
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_login"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_alignLeft="@+id/et_code"
@@ -132,8 +132,8 @@
             android:id="@+id/tv_resend"
             android:layout_width="wrap_content"
             android:layout_height="37dp"
-            android:layout_alignRight="@+id/button1"
-            android:layout_below="@+id/button1"
+            android:layout_alignRight="@+id/btn_login"
+            android:layout_below="@+id/btn_login"
             android:clickable="true"
             android:gravity="center"
             android:onClick="resend"

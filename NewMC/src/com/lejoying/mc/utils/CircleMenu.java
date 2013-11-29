@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.listener.CircleMenuItemClickListener;
+import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
 
 public class CircleMenu {
 
@@ -91,7 +91,7 @@ public class CircleMenu {
 
 	private ViewGroup contentView;
 
-	private CircleMenuItemClickListener circleMenuItemClickListener;
+	private OldCircleMenuItemClickListener circleMenuItemClickListener;
 
 	public CircleMenu(Activity activity) {
 		this.activity = activity;
@@ -99,7 +99,7 @@ public class CircleMenu {
 	}
 
 	public void setCircleMenuItemClickListener(
-			CircleMenuItemClickListener circleMenuItemClickListener) {
+			OldCircleMenuItemClickListener circleMenuItemClickListener) {
 		this.circleMenuItemClickListener = circleMenuItemClickListener;
 	}
 

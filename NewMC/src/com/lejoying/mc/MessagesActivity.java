@@ -21,7 +21,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lejoying.mc.listener.CircleMenuItemClickListener;
+import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
 import com.lejoying.mc.utils.CircleMenu;
 import com.lejoying.mc.utils.ImageTools;
 import com.lejoying.mc.utils.MenuEntity;
@@ -67,7 +67,7 @@ public class MessagesActivity extends Activity {
 		circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
 
 		circleMenu
-				.setCircleMenuItemClickListener(new CircleMenuItemClickListener() {
+				.setCircleMenuItemClickListener(new OldCircleMenuItemClickListener() {
 
 					@Override
 					public void onItemClick(int item, ImageView icon,

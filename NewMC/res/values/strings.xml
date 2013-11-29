@@ -7,5 +7,14 @@
     <string name="mc_businesscard">名片</string>
     <string name="circleMenu_back">返回</string>
     <string name="circleMenu_pageName"></string>
+    <string name="btn_login">登    录</string>
+    <string name="btn_register">没有账号/注册</string>
+    <string name="btn_clogin">验证码登录</string>
+    <string name="tv_login">登录</string>
+    <string name="et_phone">请输入手机号</string>
+    <string name="et_pass">请输入密码</string>
+    <string name="tv_clogin">验证码登录</string>
+    <string name="et_code">请输入验证码</string>
+    <string name="btn_sendcode">发送验证码</string>
 
 </resources>
