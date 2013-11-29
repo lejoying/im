@@ -67,6 +67,14 @@ messageManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var flag = data.flag;
+    if (phone == undefined || flag == undefined) {
+        response.write(JSON.stringify({
+            "提示信息": "获取失败",
+            "失败原因": "参数不完整"
+        }));
+        response.end();
+        return;
+    }
     if (flag == "none") {
         client.get(phone + "flag", function (err, reply) {
             if (err != null) {
@@ -80,7 +88,7 @@ messageManage.get = function (data, response) {
                 });
                 return;
             }
-            get(reply);
+            get(0);
         });
     } else {
         get(flag);
@@ -97,8 +105,9 @@ messageManage.get = function (data, response) {
                 response.end();
                 return;
             }
+            var flag = parseInt(from) + reply.length;
             if (reply.length != 0) {
-                client.set(phone + "flag", parseInt(from) + reply.length, function (err, reply) {
+                client.set(phone + "flag", flag, function (err, reply) {
                     if (err != null) {
                         response.write(JSON.stringify({
                             "提示信息": "获取失败",
@@ -112,7 +121,8 @@ messageManage.get = function (data, response) {
             }
             response.write(JSON.stringify({
                 "提示信息": "获取成功",
-                messages: reply
+                messages: reply,
+                flag: flag
             }));
             response.end();
         });

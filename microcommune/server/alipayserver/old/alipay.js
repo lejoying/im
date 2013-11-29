@@ -1,5 +1,5 @@
-var AlipayNotify = require('./alipay_notify.class').AlipayNotify;    
-var AlipaySubmit = require('./alipay_submit.class').AlipaySubmit;
+var AlipayNotify = require('./alipay_notify.class.js').AlipayNotify;
+var AlipaySubmit = require('./alipay_submit.class.js').AlipaySubmit;
 var  assert = require('assert');
 var url = require('url');
 var inherits = require('util').inherits,

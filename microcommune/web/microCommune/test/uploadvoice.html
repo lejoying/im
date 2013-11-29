@@ -1,0 +1,47 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/sha1.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var file = $(".js_file")[0].files[0];
+            var reader = new FileReader();
+            reader.readAsBinaryString(file);
+            reader.onload = function (e) {
+                var tempData = e.target.result;
+                var filename = hex_sha1(tempData);
+                $.ajax({
+                    type: "POST",
+                    url: "/api2/voice/check?",
+                    data: {
+                        filename: filename
+                    },
+                    success: function (data) {
+                        if (data["exists"]) {
+                            alert("此文件已经存在");
+                        } else {
+                            $.ajax({
+                                type: "POST",
+                                url: "/api2/voice/upload?",
+                                data: {
+                                    filename: filename,
+                                    voicedata: tempData
+                                },
+                                success: function (data) {
+                                    alert(data["提示信息"]);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+<input type="file" class="js_file">
+<input type="submit" value="上传" onclick="commit()">
+</body>
+</html>

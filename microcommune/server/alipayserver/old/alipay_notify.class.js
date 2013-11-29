@@ -20,8 +20,8 @@
  * 调试通知返回时，可查看或改写log日志的写入TXT里的数据，来检查通知返回是否正常
  */
 
-var core_funcs = require('./alipay_core.function');
-var md5_f = require('./alipay_md5.function');
+var core_funcs = require('./alipay_core.function.js');
+var md5_f = require('./alipay_md5.function.js');
 
 function AlipayNotify(alipay_config){
     /**

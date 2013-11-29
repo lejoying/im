@@ -1,26 +1,25 @@
 var image = new Image();
 var vData;
+var tempData;
 $(document).ready(function () {
     $.getScript("/static/js/sha1.js");
-    var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
-    var src;
-    $.ajax({
-        type: "POST",
-        url: "/api2/image/get?",
-        data: {
-            filename: JSON.parse(nowAccount).head
-        },
-        success: function (data) {
-//            alert(data["提示信息"]);
-            image.src = data["image"];
-            $(".js_headjrop1 img").attr("src", data["image"]);
-            $("#xuwanting").attr("src", data["image"]);
-            $(".jcrop-holder img").attr("src", data["image"]);
-            $("#crop_preview").attr("src", data["image"]);
-            $("#preview_box").attr("src", data["image"]);
-        }
+    $.getScript("/setting.js",function(){
+//        alert(window.globaldata.serverSetting.maxUploadImg);
     });
-//    image.src = "/static/images/webwxgeticon1A.jpg";
+    (function firstGetAccountHeadImg() {
+        var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+        $.ajax({
+            type: "POST",
+            url: "/image/get?",
+            data: {
+                filename: JSON.parse(nowAccount).head
+            },
+            success: function (data) {
+                setAccountHeadImg(data["image"]);
+//                setAccountHeadImg("http://images.weixing.com/images/3280eef48e4bbdf9e69322051711ba19546210ac.png");
+            }
+        });
+    })();
     $(".js_editheadimg").click(function () {
         $(".js_headjrop1").slideUp(100, function () {
             $(".js_headjrop2").css("visibility", "visible");
@@ -50,11 +49,12 @@ $(document).ready(function () {
     });
     $(".js_saveHeadImg").click(function () {
         var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+        vData = tempData;
         var fileName = hex_sha1(vData);
         var accountObj = JSON.parse(nowAccount);
         $.ajax({
             type: "POST",
-            url: "/api2/image/check?",
+            url: "/image/check?",
             data: {
                 filename: fileName
             },
@@ -65,7 +65,7 @@ $(document).ready(function () {
                     } else {
                         $.ajax({
                             type: "POST",
-                            url: "/api2/image/upload?",
+                            url: "/image/upload?",
                             data: {
                                 filename: fileName,
                                 imagedata: vData
@@ -90,6 +90,15 @@ $(document).ready(function () {
         cancleHeadImg();
     });
 });
+function setAccountHeadImg(data) {
+    image.src = data;
+    $(".js_headjrop1 img").attr("src", data);
+    $("#xuwanting").attr("src", data);
+    $(".jcrop-holder img").attr("src", data);
+    $("#crop_preview").attr("src", data);
+    $("#preview_box").attr("src", data);
+    $(".myProfile img").attr("src", data);
+}
 function modifyAccountHeadImg(phone, accessKey, head) {
     $.ajax({
         type: "POST",
@@ -109,6 +118,7 @@ function modifyAccountHeadImg(phone, accessKey, head) {
                 window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(nowAccount));
                 cancleHeadImg();
                 eval("$.Prompt('图片上传成功')");
+                setAccountHeadImg(vData);
             } else {
                 eval("$.Prompt('图片上传失败')");
             }
@@ -121,6 +131,7 @@ function cancleHeadImg() {
         $(".js_headjrop1").slideDown(100, function () {
         });
     });
+//    setAccountHeadImg(vData);
 }
 //简单的事件处理程序，响应自onChange,onSelect事件，按照上面的Jcrop调用
 function showPreview(coords) {
@@ -138,6 +149,7 @@ function showPreview(coords) {
         temp_canvas.height = 100;
         temp_ctx.drawImage(image, ax, ay, cwidth, cheight, 0, 0, 100, 100);
         vData = temp_canvas.toDataURL();
+        tempData = temp_canvas.toDataURL();
         $("#crop_preview").attr('src', vData);
 
         /*//计算预览区域图片缩放的比例，通过计算显示区域的宽度(与高度)与剪裁的宽度(与高度)之比得到
@@ -175,7 +187,7 @@ function scanheadimg() {
         eval("$.Prompt('此文件不是图片格式')");
         return;
     }
-    if (file.size > 1048576) {
+    if (file.size > window.globaldata.serverSetting.maxUploadImg) {
         eval("$.Prompt('文件大小不能超过1M')");
         return;
     } else {
@@ -185,6 +197,8 @@ function scanheadimg() {
             $(".jcrop-holder img").attr("src", e.target.result);
             $("#crop_preview").attr("src", e.target.result);
             image.src = e.target.result;
+            tempData = e.target.result;
+            setAccountHeadImg(tempData);
         }
     }
 }

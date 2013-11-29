@@ -207,7 +207,7 @@ api = {
             url: "/api2/relation/addfriend"
         },
         request: {
-            typical: {"phone": "XXX", "phoneto": "XXX", rid: "XXX", accessKey: "XXX", message: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: "XXX", rid: "XXX", message: "XXX"}
         },
         response: {
             success: {"提示信息": "添加成功" || "发送请求成功"},
@@ -223,7 +223,7 @@ api = {
             url: "/api2/relation/deletefriend"
         },
         request: {
-            typical: {"phone": "XXX", "phoneto": "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: "XXX"}
         },
         response: {
             success: {"提示信息": "删除成功"},
@@ -239,7 +239,7 @@ api = {
             url: "/api2/relation/blacklist"
         },
         request: {
-            typical: {"phone": "XXX", "phoneto": "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: "XXX"}
         },
         response: {
             success: {"提示信息": "添加黑名单成功"},
@@ -255,7 +255,7 @@ api = {
             url: "/api2/relation/getfriends"
         },
         request: {
-            typical: {"phone": "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "获取好友成功", friends: [
@@ -275,7 +275,7 @@ api = {
             url: "/api2/relation/getcirclesandfriends"
         },
         request: {
-            typical: {"phone": "XXX", accessKey: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "获取密友圈成功", circles: [
@@ -299,7 +299,7 @@ api = {
             url: "/api2/relation/getaskfriends"
         },
         request: {
-            typical: {"phone": "XXX", accessKey: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "获取好友请求成功", accounts: [
@@ -341,7 +341,7 @@ api = {
             url: "/api2/community/add"
         },
         request: {
-            typical: {name: "XXX", description: "XXX", longitude: "XXX", latitude: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", name: "XXX", description: "XXX", longitude: "XXX", latitude: "XXX"}
         },
         response: {
             success: {"提示信息": "创建服务站成功", community: {}},
@@ -357,7 +357,7 @@ api = {
             url: "/api2/community/find"
         },
         request: {
-            typical: {longitude: "XXX", latitude: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", longitude: "XXX", latitude: "XXX"}
         },
         response: {
             success: {"提示信息": "获取成功", community: {}},
@@ -373,7 +373,7 @@ api = {
             url: "/api2/community/join"
         },
         request: {
-            typical: {"cid": "XXX", "phone": "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", cid: "XXX"}
         },
         response: {
             success: {"提示信息": "加入成功"},
@@ -389,7 +389,7 @@ api = {
             url: "/api2/community/unjoin"
         },
         request: {
-            typical: {"cid": "XXX", "phone": "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", cid: "XXX"}
         },
         response: {
             success: {"提示信息": "退出成功"},
@@ -405,7 +405,7 @@ api = {
             url: "/api2/community/getcommunities"
         },
         request: {
-            typical: {"phone": "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "获取社区成功", communities: [
@@ -425,7 +425,7 @@ api = {
             url: "/api2/community/getcommunityfriends"
         },
         request: {
-            typical: {name: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", name: "XXX"}
         },
         response: {
             success: {"提示信息": "获取社区好友成功", accounts: [
@@ -451,7 +451,7 @@ api = {
             url: "/api2/circle/modify"
         },
         request: {
-            typical: {rid: "XXX", circleName: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", rid: "XXX", circleName: "XXX"}
         },
         response: {
             success: {"提示信息": "修改成功"},
@@ -467,7 +467,7 @@ api = {
             url: "/api2/circle/delete"
         },
         request: {
-            typical: {rid: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", rid: "XXX"}
         },
         response: {
             success: {"提示信息": "删除成功"},
@@ -483,7 +483,7 @@ api = {
             url: "/api2/circle/delete"
         },
         request: {
-            typical: {"phoneto": "XXX", rid: "XXX", filter: ["REMOVE", "SHIFTIN"]}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: "XXX", rid: "XXX", filter: ["REMOVE", "SHIFTIN"]}
         },
         response: {
             success: {"提示信息": "移出成功" || "移入成功"},
@@ -499,7 +499,7 @@ api = {
             url: "/api2/circle/moveout"
         },
         request: {
-            typical: {"phoneto": "XXX", oldrid: "XXX", newrid: "XXX"}
+            typical: {phoneto: "XXX", accessKey: "XXX", oldrid: "XXX", newrid: "XXX"}
         },
         response: {
             success: {"提示信息": "移动成功"},
@@ -515,7 +515,7 @@ api = {
             url: "/api2/circle/addcircle"
         },
         request: {
-            typical: {"phone": "XXX", circleName: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", circleName: "XXX"}
         },
         response: {
             success: {"提示信息": "添加成功", circle: {rid: "NNN", name: "XXX"}},
@@ -536,7 +536,7 @@ api = {
             url: "/api2/message/send"
         },
         request: {
-            typical: {phone: "XXX", phoneto: [], message: {type: "text" || "image" || "voice", content: "XXX"}}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: [], message: {type: "text" || "image" || "voice", content: "XXX"}}
         },
         response: {
             success: {"提示信息": "发送成功"},
@@ -552,13 +552,66 @@ api = {
             url: "/api2/message/get"
         },
         request: {
-            typical: {phone: "XXX", flag: "NNN"}
+            typical: {phone: "XXX", accessKey: "XXX", flag: "NNN"}
         },
         response: {
             success: {"提示信息": "获取成功", messages: [
-                {type: "text" || "image" || "voice", phone: "NNN", phoneto: "NNN", content: "XXX", time: new Date().getTime()}
+                {type: "text" || "image" || "voice", phone: "NNN", phoneto: "NNN", content: "XXX", time: new Date().getTime(), flag: "NNN"}
             ]},
             failed: {"提示信息": "获取失败", "失败原因": "数据异常"}
+        }
+    }
+}
+/*************************************** ***************************************
+ * *    Class：image
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/image/upload
+     ***************************************/
+    "image_upload": {
+        description: {
+            id: 1000700,
+            url: "/image/upload"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", filename: "XXX", imagedata: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "图片上传成功", "filename": "XXX"},
+            failed: {"提示信息": "图片上传失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/image/check
+     ***************************************/
+    "image_check": {
+        description: {
+            id: 1000701,
+            url: "/image/check"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", filename: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "查找成功", "filename": "XXX", "exists": true || false},
+            failed: {"提示信息": "查找失败", "失败原因": "数据不完整"}
+        }
+    },
+    /***************************************
+     *     URL：/image/get
+     ***************************************/
+    "image_get": {
+        description: {
+            id: 1000702,
+            url: "/image/get"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", filename: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取图片成功", "image": "XXX"},
+            failed: {"提示信息": "获取图片失败", "失败原因": "数据异常"}
         }
     }
 }

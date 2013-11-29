@@ -17,8 +17,8 @@
  * 该代码仅供学习和研究支付宝接口使用，只是提供一个参考。
  */
 
-var core_funcs = require('./alipay_core.function');
-var md5_f = require('./alipay_md5.function');
+var core_funcs = require('./alipay_core.function.js');
+var md5_f = require('./alipay_md5.function.js');
 //var DOMParser = require('xmldom').DOMParser;
 
 function AlipaySubmit(alipay_config){

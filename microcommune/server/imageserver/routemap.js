@@ -8,10 +8,10 @@ var requestHandlers = require("./requestHandlers");
 
 var routemap = {
     "get": {
-        "/api2/image/:operation": requestHandlers.imagesManage
+        "/image/:operation": requestHandlers.imagesManage
     },
     "post": {
-        "/api2/image/:operation": requestHandlers.imagesManage
+        "/image/:operation": requestHandlers.imagesManage
     }
 };
 
