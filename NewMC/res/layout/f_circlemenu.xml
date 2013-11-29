@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.lejoying.mc.view.CircleMenuView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.lejoying.mc.utils.CircleMenu" >
+    android:layout_height="match_parent" >
 
     <RelativeLayout
         android:id="@+id/rl_controldiskout"
@@ -23,36 +22,56 @@
             tools:ignore="ContentDescription" />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/iv_controldisk"
+    <RelativeLayout
+        android:id="@+id/rl_controldisk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/control_disk"
-        tools:ignore="ContentDescription" />
+        android:layout_centerVertical="true" >
 
-    <TextView
-        android:id="@+id/tv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/iv_controldisk"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:text="@string/circleMenu_back"
-        android:textColor="#fff"
-        android:textSize="18sp"
-        android:visibility="invisible" />
+        <ImageView
+            android:id="@+id/iv_controldisk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/control_disk"
+            tools:ignore="ContentDescription" />
 
-    <TextView
-        android:id="@+id/tv_pagename"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/iv_controldisk"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="34dp"
-        android:text="@string/circleMenu_pageName"
-        android:textColor="#fff"
-        android:visibility="invisible" />
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_controldisk"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="@string/circleMenu_back"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:visibility="invisible" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tv_pagename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_controldisk"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="34dp"
+            android:text="@string/circleMenu_pageName"
+            android:textColor="#fff"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/tv_app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_back"
+            android:layout_centerHorizontal="true"
+            android:text="@string/app_name"
+            android:textColor="#fff"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <SurfaceView
+        android:layout_width="0dip"
+        android:layout_height="0dip" />
+
+</com.lejoying.mc.view.CircleMenuView>

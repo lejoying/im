@@ -4,13 +4,11 @@ import com.lejoying.mc.utils.MCTools;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 
-public abstract class BaseFragment extends Fragment {
+public class BaseListFragment extends ListFragment {
 
 	protected BaseInterface mMCFragmentManager;
-
-	public abstract String setTag();
 
 	protected Handler handler;
 
@@ -20,5 +18,4 @@ public abstract class BaseFragment extends Fragment {
 		mMCFragmentManager = (BaseInterface) activity;
 		handler = MCTools.handler;
 	}
-
 }

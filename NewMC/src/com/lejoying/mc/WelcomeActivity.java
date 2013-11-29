@@ -2,6 +2,7 @@ package com.lejoying.mc;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 public class WelcomeActivity extends BaseFragmentActivity {
 
@@ -25,6 +26,16 @@ public class WelcomeActivity extends BaseFragmentActivity {
 				}
 			}
 		}.start();
+	}
+
+	@Override
+	public boolean createCircleMenu() {
+		return false;
+	}
+
+	@Override
+	public Fragment setFirstPreview() {
+		return null;
 	}
 
 }

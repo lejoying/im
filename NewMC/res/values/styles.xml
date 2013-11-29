@@ -18,6 +18,13 @@
         <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
     </style>
     
+    <style name="ActivityNoneAnimation" parent="@android:style/Animation">
+        <item name="android:activityOpenEnterAnimation">@anim/activity_none</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_none</item>
+        <item name="android:activityCloseEnterAnimation">@anim/activity_none</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_none</item>
+    </style>
+    
       <style name="LoadingStyle" parent="android:Theme.Dialog" >
         <item name="android:windowAnimationStyle">@style/ActivityFadeAnimation</item>
         <item name="android:windowFrame">@null</item><!--边框-->
@@ -30,6 +37,9 @@
 
     <style name="MyActivityStyle" parent="@android:style/Theme.NoTitleBar">
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
+    </style>
+    <style name="MyActivityStyleNoneAnimation" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/ActivityNoneAnimation</item>
     </style>
 
 

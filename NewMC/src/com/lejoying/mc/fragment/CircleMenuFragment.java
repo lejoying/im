@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -26,6 +27,8 @@ import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.listener.CircleMenuItemClickListener;
 import com.lejoying.mc.utils.MenuEntity;
 import com.lejoying.mc.utils.ToTry;
+import com.lejoying.mc.view.CircleMenuView;
+import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
 
 public class CircleMenuFragment extends BaseFragment implements
 		CircleMenuItemClickListener {
@@ -42,11 +45,12 @@ public class CircleMenuFragment extends BaseFragment implements
 	private final int STATUS_DRAG = 0x06;
 	private final int STATUS_ANIMATION = 0x07;
 
-	private View mCircleMenu;
+	private CircleMenuView mCircleMenu;
 	private View mDisk;
 	private View mDiskOut;
 	private TextView mView_back;
 	private TextView mView_pageName;
+	private TextView mView_appName;
 
 	private int mMenuHeight;
 	private int mDiskHeight;
@@ -61,11 +65,15 @@ public class CircleMenuFragment extends BaseFragment implements
 	private int mScrollY;
 
 	private boolean mInitClick;
+	private boolean mLock;
+	private boolean mShowBack;
 
 	private List<List<View>> mMenuItemList;
 	private int mMenuIndex;
 
 	private GestureDetector mGestureDetector;
+
+	private int mStatusHeight;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,43 +84,59 @@ public class CircleMenuFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mCircleMenu = inflater.inflate(R.layout.f_circlemenu, null);
-		mDisk = mCircleMenu.findViewById(R.id.iv_controldisk);
+
+		mCircleMenu = (CircleMenuView) inflater.inflate(R.layout.f_circlemenu,
+				null);
+		mDisk = mCircleMenu.findViewById(R.id.rl_controldisk);
 		mDiskOut = mCircleMenu.findViewById(R.id.rl_controldiskout);
 		mView_back = (TextView) mCircleMenu.findViewById(R.id.tv_back);
 		mView_pageName = (TextView) mCircleMenu.findViewById(R.id.tv_pagename);
+		mView_appName = (TextView) mCircleMenu.findViewById(R.id.tv_app);
 		mCircleMenu.setVisibility(View.INVISIBLE);
 		initMenu(inflater);
 		return mCircleMenu;
 	}
 
-	public void showToTop() {
+	public void showToTop(final boolean lock, final boolean showBack) {
+		if (mCircleMenu == null) {
+			return;
+		}
+		this.mLock = lock;
+		this.mShowBack = showBack;
+		if (showBack) {
+			mView_back.setVisibility(View.VISIBLE);
+			mView_appName.setVisibility(View.INVISIBLE);
+		} else {
+			mView_back.setVisibility(View.INVISIBLE);
+			mView_appName.setVisibility(View.VISIBLE);
+		}
 		if (mStatus == STATUS_HIDE) {
 			mStatus = STATUS_SHOW;
 			setLocation(WHERE_TOP);
 			TranslateAnimation animation = new TranslateAnimation(0, 0,
 					-mDiskRadius, 0);
 			animation.setDuration(120);
-			mDisk.setVisibility(View.VISIBLE);
+			mCircleMenu.setVisibility(View.VISIBLE);
 			mDisk.startAnimation(animation);
 		} else if (mWhere == WHERE_BOTTOM) {
 			hideCircleMenu(new AnimationAdapter() {
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					showToTop();
+					showToTop(lock, showBack);
 				}
 			});
 		}
 	}
 
 	public void showToBottom() {
+		this.mLock = false;
 		if (mStatus == STATUS_HIDE) {
 			mStatus = STATUS_SHOW;
 			setLocation(WHERE_BOTTOM);
 			TranslateAnimation animation = new TranslateAnimation(0, 0,
 					mDiskRadius, 0);
 			animation.setDuration(150);
-			mDisk.setVisibility(View.VISIBLE);
+			mCircleMenu.setVisibility(View.VISIBLE);
 			mDisk.startAnimation(animation);
 		} else if (mWhere == WHERE_TOP) {
 			hideCircleMenu(new AnimationAdapter() {
@@ -125,6 +149,9 @@ public class CircleMenuFragment extends BaseFragment implements
 	}
 
 	public void hideCircleMenu(final AnimationAdapter adapter) {
+		if (mCircleMenu == null) {
+			return;
+		}
 		if (mStatus != STATUS_HIDE) {
 			mStatus = STATUS_HIDE;
 			float toXDelta = 0;
@@ -145,7 +172,7 @@ public class CircleMenuFragment extends BaseFragment implements
 			animation.setAnimationListener(new AnimationAdapter() {
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					mDisk.setVisibility(View.INVISIBLE);
+					mCircleMenu.setVisibility(View.INVISIBLE);
 					if (adapter != null) {
 						adapter.onAnimationEnd(animation);
 					}
@@ -156,6 +183,19 @@ public class CircleMenuFragment extends BaseFragment implements
 	}
 
 	private void initMenu(final LayoutInflater inflater) {
+		mDiskLocation = new int[2];
+		mCircleMenu.setSizeChangedListener(new SizeChangedListener() {
+			@Override
+			public void sizeChanged(int w, int h, int oldw, int oldh) {
+				if (oldw != 0 && oldh != 0) {
+					mMenuHeight = h;
+					mDistance = mMenuHeight / 2 + mDiskHeight / 8;
+					mDiskLocation[0] = w / 2 - mDiskRadius;
+					mDiskLocation[1] = h / 2 - mDiskRadius;
+					setLocation(mWhere);
+				}
+			}
+		});
 		ToTry.tryDoing(10, 500, new ToTryAdapter() {
 			@Override
 			public boolean isSuccess() {
@@ -165,14 +205,18 @@ public class CircleMenuFragment extends BaseFragment implements
 
 			@Override
 			public void successed(long time) {
+				Rect localRect = new Rect();
+				getActivity().getWindow().getDecorView()
+						.getWindowVisibleDisplayFrame(localRect);
+				mStatusHeight = localRect.top;
 				mMenuHeight = mCircleMenu.getHeight();
 				mDiskHeight = mDisk.getHeight();
 				mDiskOutHeight = mDiskOut.getHeight();
 				mDiskRadius = mDiskHeight / 2;
 				mDiskOutRadius = mDiskOutHeight / 2;
 				mDistance = mMenuHeight / 2 + mDiskHeight / 8;
-				mDiskLocation = new int[2];
-				mDisk.getLocationInWindow(mDiskLocation);
+				mDiskLocation[0] = mCircleMenu.getWidth() / 2 - mDiskRadius;
+				mDiskLocation[1] = mMenuHeight / 2 - mDiskRadius;
 				mDiskCenter = new Point();
 				initMenu(WHERE_TOP);
 				initMenuItem(inflater);
@@ -182,11 +226,11 @@ public class CircleMenuFragment extends BaseFragment implements
 	}
 
 	private void initMenu(int where) {
-		mStatus = STATUS_SHOW;
+		mStatus = STATUS_HIDE;
 
 		setLocation(where);
 
-		mCircleMenu.setVisibility(View.VISIBLE);
+		// mCircleMenu.setVisibility(View.VISIBLE);
 
 		mCircleMenu.setOnTouchListener(new OnTouchListener() {
 
@@ -213,16 +257,25 @@ public class CircleMenuFragment extends BaseFragment implements
 
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
+						if (mStatus != STATUS_SHOW || !mInitClick) {
+							return false;
+						}
 						float clickX = e.getX();
 						float clickY = e.getY();
 						if (isInCircle(e.getX(), e.getY(), mDiskRadius)) {
 							if (mWhere == WHERE_CENTER) {
 								cancelMenu();
 							} else if (mWhere == WHERE_TOP) {
-
+								if (mShowBack) {
+									mMCFragmentManager.popBackStack();
+								} else if (!mLock) {
+									mView_appName.setVisibility(View.INVISIBLE);
+									showCircle();
+								}
 							} else if (mWhere == WHERE_BOTTOM) {
 								showCircle();
 								mView_pageName.setVisibility(View.INVISIBLE);
+								mView_appName.setVisibility(View.INVISIBLE);
 							}
 						} else if (mWhere == WHERE_CENTER) {
 							if (isInCircle(e.getX(), e.getY(), mDiskOutRadius)) {
@@ -306,7 +359,14 @@ public class CircleMenuFragment extends BaseFragment implements
 					@Override
 					public boolean onScroll(MotionEvent e1, MotionEvent e2,
 							float distanceX, float distanceY) {
-
+						if (mLock) {
+							return false;
+						}
+						if (mInitClick) {
+							mView_appName.setVisibility(View.INVISIBLE);
+							mView_pageName.setVisibility(View.INVISIBLE);
+							mView_back.setVisibility(View.INVISIBLE);
+						}
 						if ((mWhere == WHERE_BOTTOM || mWhere == WHERE_TOP)
 								&& mInitClick) {
 							mStatus = STATUS_DRAG;
@@ -331,6 +391,9 @@ public class CircleMenuFragment extends BaseFragment implements
 					@Override
 					public boolean onFling(MotionEvent e1, MotionEvent e2,
 							float velocityX, float velocityY) {
+						if (mLock) {
+							return false;
+						}
 						float leaveY = e2.getY();
 						if (leaveY < mMenuHeight * 5 / 6
 								&& leaveY > mMenuHeight / 6) {
@@ -395,53 +458,12 @@ public class CircleMenuFragment extends BaseFragment implements
 							mInitClick = false;
 							flag = false;
 						}
-
 						if (mWhere == WHERE_CENTER) {
 							flag = true;
 						}
-
 						return flag;
 					}
 				});
-	}
-
-	@Override
-	public void onItemClick(int item) {
-		switch (item) {
-		case 1:
-
-			break;
-		case 2:
-
-			break;
-		case 3:
-
-			break;
-		case 4:
-			showNext();
-			break;
-		case 11:
-
-			break;
-		case 12:
-
-			break;
-		case 13:
-
-			break;
-		case 14:
-			showBack();
-			break;
-		case 15:
-
-			break;
-		case 16:
-
-			break;
-
-		default:
-			break;
-		}
 	}
 
 	private void initMenuItem(LayoutInflater inflater) {
@@ -483,7 +505,6 @@ public class CircleMenuFragment extends BaseFragment implements
 					initMenuItem(views, itemGroup, first);
 					first = false;
 				}
-				hideCircleMenu(null);
 			}
 		});
 	}
@@ -587,6 +608,7 @@ public class CircleMenuFragment extends BaseFragment implements
 	}
 
 	private void showMenu(final int now, final int next) {
+		mStatus = STATUS_ANIMATION;
 		ScaleAnimation scaleanimation = new ScaleAnimation(1, 0.3f, 1, 0.3f,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
@@ -604,6 +626,12 @@ public class CircleMenuFragment extends BaseFragment implements
 						0.5f, 1, Animation.RELATIVE_TO_SELF, 0.5f,
 						Animation.RELATIVE_TO_SELF, 0.5f);
 				scaleanimation.setDuration(80);
+				scaleanimation.setAnimationListener(new AnimationAdapter() {
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						mStatus = STATUS_SHOW;
+					}
+				});
 				mDiskOut.startAnimation(scaleanimation);
 			}
 		});
@@ -611,16 +639,27 @@ public class CircleMenuFragment extends BaseFragment implements
 	}
 
 	private void setLocation(int where) {
+		if (where == 0) {
+			return;
+		}
 		mWhere = where;
 		switch (where) {
 		case WHERE_TOP:
 			mScrollY = mDistance;
+			mView_back.setVisibility(View.INVISIBLE);
+			mView_appName.setVisibility(View.INVISIBLE);
+			if (mShowBack) {
+				mView_back.setVisibility(View.VISIBLE);
+			} else {
+				mView_appName.setVisibility(View.VISIBLE);
+			}
 			break;
 		case WHERE_CENTER:
 			mScrollY = 0;
 			break;
 		case WHERE_BOTTOM:
 			mScrollY = -mDistance;
+			mView_pageName.setVisibility(View.VISIBLE);
 			break;
 		default:
 			break;
@@ -713,7 +752,7 @@ public class CircleMenuFragment extends BaseFragment implements
 			}
 		}
 		TranslateAnimation ta = new TranslateAnimation(0, toX - nowLocation[0],
-				0, toY - nowLocation[1]);
+				0, toY - nowLocation[1] + mStatusHeight);
 
 		ta.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -726,7 +765,7 @@ public class CircleMenuFragment extends BaseFragment implements
 				mStatus = STATUS_SHOW;
 			}
 		});
-		ta.setDuration(200);
+		ta.setDuration(150);
 		mDisk.startAnimation(ta);
 	}
 
@@ -748,4 +787,85 @@ public class CircleMenuFragment extends BaseFragment implements
 		super.onPause();
 	}
 
+	@Override
+	public void onItemClick(int item) {
+		switch (item) {
+		case 1:
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.beginTransaction()
+							.replace(R.id.fl_content, new FriendsFragment())
+							.commit();
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
+			break;
+		case 2:
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.beginTransaction()
+							.replace(R.id.fl_content, new MessageFragment())
+							.commit();
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
+			break;
+		case 3:
+
+			break;
+		case 4:
+			showNext();
+			break;
+		case 11:
+
+			back(WHERE_TOP, new CircleDiskAnimationEnd() {
+
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.beginTransaction()
+							.replace(R.id.fl_content, new ScanQRCodeFragment())
+							.addToBackStack(null).commit();
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
+			break;
+		case 12:
+
+			break;
+		case 13:
+
+			break;
+		case 14:
+			showBack();
+			break;
+		case 15:
+
+			break;
+		case 16:
+
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public String setTag() {
+		return "circleMenu";
+	}
 }
