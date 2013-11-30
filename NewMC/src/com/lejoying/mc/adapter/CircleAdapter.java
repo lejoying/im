@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,8 +23,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -43,7 +42,6 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.utils.Friend;
 import com.lejoying.mc.utils.ImageTools;
 
-@SuppressLint("NewApi")
 public class CircleAdapter {
 	private Map<String, List<Friend>> circlefriends;
 	private ViewGroup contentParent;

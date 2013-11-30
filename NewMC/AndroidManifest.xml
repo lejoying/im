@@ -35,7 +35,8 @@
         <activity
             android:name="MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MyActivityStyle" >
+            android:theme="@style/MyActivityStyle"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="LoadingActivity"

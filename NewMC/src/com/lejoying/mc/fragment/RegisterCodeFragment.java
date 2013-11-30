@@ -1,7 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import com.lejoying.mc.R;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.lejoying.mc.R;
+
 public class RegisterCodeFragment extends BaseFragment implements
 		OnClickListener {
 	private View mContent;
@@ -17,11 +17,6 @@ public class RegisterCodeFragment extends BaseFragment implements
 	private Button mView_next;
 	private View mView_sendcode;
 
-	@Override
-	public String setTag() {
-		return "registerPhone";
-	}
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -52,9 +47,8 @@ public class RegisterCodeFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_next:
-			mMCFragmentManager.beginTransaction()
-					.replace(R.id.fl_content, new RegisterPassFragment())
-					.addToBackStack(null).commit();
+			mMCFragmentManager.relpaceToContent(new RegisterPassFragment(),
+					true);
 			break;
 		case R.id.tv_sendcode:
 

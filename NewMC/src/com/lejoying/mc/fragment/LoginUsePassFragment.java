@@ -23,11 +23,6 @@ public class LoginUsePassFragment extends BaseFragment implements
 	private TextView mView_clogin;
 
 	@Override
-	public String setTag() {
-		return "cLogin";
-	}
-	
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
@@ -62,18 +57,15 @@ public class LoginUsePassFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.tv_clogin:
-			mMCFragmentManager.beginTransaction()
-					.replace(R.id.fl_content, new LoginUseCodeFragment())
-					.addToBackStack(null).commit();
+			mMCFragmentManager.relpaceToContent(new LoginUseCodeFragment(),
+					true);
 			break;
 		case R.id.btn_login:
-			mMCFragmentManager.beginTransaction()
-					.replace(R.id.fl_content, new MessageFragment()).commit();
+			mMCFragmentManager.relpaceToContent(new MessageFragment(), false);
 			break;
 		case R.id.btn_register:
-			mMCFragmentManager.beginTransaction()
-					.replace(R.id.fl_content, new RegisterPhoneFragment())
-					.addToBackStack(null).commit();
+			mMCFragmentManager.relpaceToContent(new RegisterPhoneFragment(),
+					true);
 			break;
 		default:
 			break;

@@ -1,20 +1,16 @@
 package com.lejoying.mc.fragment;
 
-import com.lejoying.mc.R;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.lejoying.mc.R;
+
 public class FriendsFragment extends BaseFragment {
 
-	@Override
-	public String setTag() {
-		// TODO Auto-generated method stub
-		return "friends";
-	}
-
+	private View mContent;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -24,8 +20,12 @@ public class FriendsFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		mContent = inflater.inflate(R.layout.f_friends, null);
 		mMCFragmentManager.showCircleMenuToTop(false, false);
-		return inflater.inflate(R.layout.f_friends, null);
+		mMCFragmentManager.setCircleMenuPageName("√‹”—»¶");
+		
+		
+		return mContent;
 	}
 
 	@Override

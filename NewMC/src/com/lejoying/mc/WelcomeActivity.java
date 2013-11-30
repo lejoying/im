@@ -38,4 +38,10 @@ public class WelcomeActivity extends BaseFragmentActivity {
 		return null;
 	}
 
+	@Override
+	public int setContentFragmentId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

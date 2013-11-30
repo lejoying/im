@@ -17,11 +17,6 @@ public class RegisterPhoneFragment extends BaseFragment implements
 	private Button mView_next;
 
 	@Override
-	public String setTag() {
-		return "registerPhone";
-	}
-
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
@@ -47,9 +42,8 @@ public class RegisterPhoneFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_next:
-			mMCFragmentManager.beginTransaction()
-					.replace(R.id.fl_content, new RegisterCodeFragment())
-					.addToBackStack(null).commit();
+			mMCFragmentManager.relpaceToContent(new RegisterCodeFragment(),
+					true);
 			break;
 		default:
 			break;

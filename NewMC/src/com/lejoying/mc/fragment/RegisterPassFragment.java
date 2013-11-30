@@ -1,25 +1,20 @@
 package com.lejoying.mc.fragment;
 
-import com.lejoying.mc.R;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.lejoying.mc.R;
 
 public class RegisterPassFragment extends BaseFragment implements
 		OnClickListener {
 	private View mContent;
 	private EditText mView_pass;
 	private Button mView_next;
-
-	@Override
-	public String setTag() {
-		return "registerPass";
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

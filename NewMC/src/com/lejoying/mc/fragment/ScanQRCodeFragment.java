@@ -22,7 +22,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -68,11 +67,6 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	private int count = 0;
 
 	@Override
-	public String setTag() {
-		return "scanQRCode";
-	}
-
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		DisplayMetrics dm = new DisplayMetrics();
@@ -92,6 +86,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		multiFormatReader = new MultiFormatReader();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -134,7 +129,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 				initCamera();
 			} else {
 				// 相机故障或被占用
-				mMCFragmentManager.popBackStack();
+				getActivity().getSupportFragmentManager().popBackStack();
 			}
 		}
 	}

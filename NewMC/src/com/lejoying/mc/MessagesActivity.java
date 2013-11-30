@@ -25,7 +25,6 @@ import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
 import com.lejoying.mc.utils.CircleMenu;
 import com.lejoying.mc.utils.ImageTools;
 import com.lejoying.mc.utils.MenuEntity;
-import com.lejoying.mc.view.CircleMenuView;
 
 public class MessagesActivity extends Activity {
 

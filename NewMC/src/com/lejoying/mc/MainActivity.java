@@ -22,5 +22,11 @@ public class MainActivity extends BaseFragmentActivity {
 	public Fragment setFirstPreview() {
 		return new LoginUsePassFragment();
 	}
+
+	@Override
+	public int setContentFragmentId() {
+		// TODO Auto-generated method stub
+		return R.id.fl_content;
+	}
 	
 }

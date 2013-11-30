@@ -1,10 +1,10 @@
 package com.lejoying.mc.fragment;
 
-import com.lejoying.mc.utils.MCTools;
-
 import android.app.Activity;
 import android.os.Handler;
 import android.support.v4.app.ListFragment;
+
+import com.lejoying.mc.utils.MCTools;
 
 public class BaseListFragment extends ListFragment {
 

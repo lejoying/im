@@ -31,7 +31,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			Bundle savedInstanceState) {
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_clogin, null);
-		
+
 		mView_phone = (EditText) mContent.findViewById(R.id.et_clogin_phone);
 		mView_code = (EditText) mContent.findViewById(R.id.et_clogin_code);
 		mView_login = (Button) mContent.findViewById(R.id.btn_login);
@@ -63,8 +63,4 @@ public class LoginUseCodeFragment extends BaseFragment implements
 		}
 	}
 
-	@Override
-	public String setTag() {
-		return "pLogin";
-	}
 }
