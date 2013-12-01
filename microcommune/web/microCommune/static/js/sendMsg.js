@@ -38,7 +38,7 @@ $(document).ready(function () {
         var warning = "关闭浏览器聊天记录将会丢失";
         return warning;
     }
-    
+
     $.getScript("/static/js/nTenjin.js");
     var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
     $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
@@ -217,7 +217,14 @@ $(document).ready(function () {
         window.sessionStorage.clear();
         location.href = "/login.html";
     });
+    var tempChatTop = 0;
+    var tempChatTop1 = 0;
     $("#txl").click(function () {
+        tempChatTop = window.globaldata.tempData;
+        setPosition(tempChatTop1);
+//        alert(tempChatTop);
+//        tempChatTop = window.sessionStorage.getItem("_wheelData");
+
         $("#conversationContainer").hide();
         $(".js_circlesFriends").show();
         $(".loadMoreConv").hide();
@@ -236,6 +243,11 @@ $(document).ready(function () {
 //        eval('$.Prompt("应用列表")');
     });
     $("#chooseConversationBtn").click(function () {
+        tempChatTop1 = window.globaldata.tempData;
+        window.globaldata.tempData = 0;
+        setPosition(0);
+//        $('#conversationListContent')[0].style.top = 0 * ($('#conversationListContent')[0].offsetHeight / $('#mainBox')[0].offsetHeight) + "px";
+//        window.sessionStorage.setItem("_wheelData",tempChatTop);
         $("#conversationContainer").show();
         $(".js_circlesFriends").hide();
         $(".js_menumanage").css("visibility", "hidden");
@@ -281,18 +293,18 @@ $(document).ready(function () {
         eval('$.Prompt("删除好友")');
         js_friendManage.style.visibility = "hidden";
         $(".js_addcircle").slideDown(10);
-       $(".js_accountmanage").css("visibility", "hidden");
+        $(".js_accountmanage").css("visibility", "hidden");
 
         var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
         alert(phone);
-        var phoneto=selectPhone;
+        var phoneto = selectPhone;
         alert(phoneto);
         $.ajax({
             type: "POST",
             url: "/api2/relation/deletefriend?",
             data: {
                 phone: phone,
-                phoneto:phoneto
+                phoneto: phoneto
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -306,9 +318,9 @@ $(document).ready(function () {
         $(".js_accountmanage").css("visibility", "hidden");
 
         var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
-        alert(phone+"---");
-        var phoneto=selectPhone;
-        alert(phoneto+"+++");
+        alert(phone + "---");
+        var phoneto = selectPhone;
+        alert(phoneto + "+++");
 
 
         $.ajax({
@@ -316,7 +328,7 @@ $(document).ready(function () {
             url: "/api2/relation/blacklist?",
             data: {
                 phone: phone,
-                phoneto:phoneto
+                phoneto: phoneto
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -325,81 +337,81 @@ $(document).ready(function () {
     });
 
     $(".chatSend").click(function () {
-        var content = $("#textInput").val();
-        var date = new Date();
-        var hours = date.getHours();
-        var minutes = date.getMinutes();
-        hours = hours < 10 ? "0" + hours : hours;
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem me">     ' +
-            '<div class="time"> <span class="timeBg left"></span> ' + hours + ':' + minutes + ' <span class="timeBg right"></span> </div>       ' +
-            ' <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">     ' +
-            ' <div style="" class="cloudPannel">                                                                                                                                                                                                                                                                                          ' +
-            '   <div class="sendStatus">   </div>                                                                                                                                                                                                                                                                                          ' +
-            '   <div class="cloudBody">                                                                                                                                                                                                                                                                                                       ' +
-            '      <div class="cloudContent">                                                                                                                                                                                                                                                                                                  ' +
-            '           <pre style="white-space:pre-wrap">' + content + '</pre>                                                                                                                                         ' +
-            '           </div>                                                                                                                                                                                                                                                                                                                         ' +
-            '        </div>     ' +
-            '         <div class="cloudArrow "></div>    ' +
-            '      </div>     ' +
-            '   </div>   ' +
-            '</div>    ' +
-            '</div>');
-        var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
-        var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
-        var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
-        var message = $("#textInput").val();
-        alert(message+"  输入的消息");
-        var listPhone = [];
-        listPhone.push(phoneto);
-        var messages = {
-            type: "text",
-            content: {
-                text: message
-            }
-        };
+            var content = $("#textInput").val();
+            var date = new Date();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem me">     ' +
+                '<div class="time"> <span class="timeBg left"></span> ' + hours + ':' + minutes + ' <span class="timeBg right"></span> </div>       ' +
+                ' <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">     ' +
+                ' <div style="" class="cloudPannel">                                                                                                                                                                                                                                                                                          ' +
+                '   <div class="sendStatus">   </div>                                                                                                                                                                                                                                                                                          ' +
+                '   <div class="cloudBody">                                                                                                                                                                                                                                                                                                       ' +
+                '      <div class="cloudContent">                                                                                                                                                                                                                                                                                                  ' +
+                '           <pre style="white-space:pre-wrap">' + content + '</pre>                                                                                                                                         ' +
+                '           </div>                                                                                                                                                                                                                                                                                                                         ' +
+                '        </div>     ' +
+                '         <div class="cloudArrow "></div>    ' +
+                '      </div>     ' +
+                '   </div>   ' +
+                '</div>    ' +
+                '</div>');
+            var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+            var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
+            var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
+            var message = $("#textInput").val();
+            alert(message + "  输入的消息");
+            var listPhone = [];
+            listPhone.push(phoneto);
+            var messages = {
+                type: "text",
+                content: {
+                    text: message
+                }
+            };
 
-        $.ajax({
-            type: "POST",
-            url: "/api2/message/send?",
-            data: {
-                phone: phone,
-                phoneto: JSON.stringify(listPhone),
-                message: JSON.stringify(messages)
-            },
-            success: function (data) {
-                if (data["提示信息"] == "发送成功") {
-                    var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
-                    var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
-                    if (tempChat != null) {
-                        if (tempChat[phoneto] != "" && tempChat[phoneto] != undefined) {
-                            var account = tempChat[phoneto];
-                            var accountObj = JSON.parse(account);
-                            $("#conv_wxid_" + accountObj.uid)[0].parentNode.removeChild($("#conv_wxid_" + accountObj.uid)[0]);
-                            var tempChatArrObj = JSON.parse(tempChatArr);
-                            for (var index in tempChatArrObj) {
-                                if (tempChatArrObj[index] == account) {
-                                    tempChatArrObj.splice(index, 1);
-                                    tempChatArrObj.push(account);
-                                    window.sessionStorage.setItem("wxgs_tempChatArr", JSON.stringify(tempChatArrObj));
-                                    break;
+            $.ajax({
+                type: "POST",
+                url: "/api2/message/send?",
+                data: {
+                    phone: phone,
+                    phoneto: JSON.stringify(listPhone),
+                    message: JSON.stringify(messages)
+                },
+                success: function (data) {
+                    if (data["提示信息"] == "发送成功") {
+                        var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
+                        var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
+                        if (tempChat != null) {
+                            if (tempChat[phoneto] != "" && tempChat[phoneto] != undefined) {
+                                var account = tempChat[phoneto];
+                                var accountObj = JSON.parse(account);
+                                $("#conv_wxid_" + accountObj.uid)[0].parentNode.removeChild($("#conv_wxid_" + accountObj.uid)[0]);
+                                var tempChatArrObj = JSON.parse(tempChatArr);
+                                for (var index in tempChatArrObj) {
+                                    if (tempChatArrObj[index] == account) {
+                                        tempChatArrObj.splice(index, 1);
+                                        tempChatArrObj.push(account);
+                                        window.sessionStorage.setItem("wxgs_tempChatArr", JSON.stringify(tempChatArrObj));
+                                        break;
+                                    }
                                 }
+                                window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChat));
+                                addTempChatAccount(accountObj);
+                            } else {
+                                addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
                             }
-                            window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChat));
-                            addTempChatAccount(accountObj);
                         } else {
                             addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
                         }
                     } else {
-                        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
+                        dialogMessage("notice", data["提示信息"] + "," + data["失败原因"], 1000);
                     }
-                } else {
-                    dialogMessage("notice", data["提示信息"] + "," + data["失败原因"], 1000);
                 }
-            }
-        });
-     $("#textInput").val("");
+            });
+            $("#textInput").val("");
         }
     );
     $("#conversationContainer>div").click(function () {
@@ -891,44 +903,44 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
     new Drag(titleBarID, message_boxID, obj);
 }
 function request() {
-    var accesskey=window.localStorage.getItem("accesskey");
+    var accesskey = window.localStorage.getItem("accesskey");
     var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
     $.ajax({
         type: "POST",
         url: "/api2/session/event?",
         timeout: 30000,
         data: {
-            phone:phone,
+            phone: phone,
             accessKey: accesskey
         },
         success: function (data) {
             if (data["提示信息"] == "成功") {
-             if(data["event"]=="message"){
-                $.ajax({
-                    type: "POST",
-                    url: "/api2/message/get?",
-                    data:{
-                        phone:phone,
-                        flag:"none"
-                    },
-                    success:function(data){
-                        if(data["提示信息"]=="获取成功"){
+                if (data["event"] == "message") {
+                    $.ajax({
+                        type: "POST",
+                        url: "/api2/message/get?",
+                        data: {
+                            phone: phone,
+                            flag: "none"
+                        },
+                        success: function (data) {
+                            if (data["提示信息"] == "获取成功") {
 
 
+                            }
                         }
-                    }
-                })
-             }else{
-            alert("newfriend");
-            }
+                    })
+                } else {
+                    alert("newfriend");
+                }
                 request();
-            }else {
+            } else {
                 alert(data);
                 request();
             }
         },
         error: function () {
-               request();
+            request();
         }
     });
 }
