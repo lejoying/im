@@ -6,9 +6,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
+import android.view.View;
 
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
+import com.lejoying.mc.view.BackgroundView;
 
 public abstract class BaseFragmentActivity extends FragmentActivity implements
 		BaseInterface {
@@ -19,13 +21,9 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	private int mContentId;
 
-	// private FragmentTransaction mFragmentTransaction;
-
-	public abstract boolean createCircleMenu();
-
 	public abstract Fragment setFirstPreview();
 
-	public abstract int setContentFragmentId();
+	protected abstract int setBackground();
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -33,21 +31,38 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		super.onCreate(arg0);
 		mFragmentManager = getSupportFragmentManager();
 
-		mContentId = setContentFragmentId();
-
-		if (createCircleMenu()) {
-			mCircle = new CircleMenuFragment();
-			mFragmentManager.beginTransaction()
-					.add(R.id.fl_circleMenu, mCircle).commit();
-		}
+		mContentId = R.id.fl_content;
 
 		if (setFirstPreview() != null) {
 			if (mFragmentManager.getFragments() == null
 					|| mFragmentManager.getFragments().size() == 0) {
 				mFragmentManager.beginTransaction()
-						.add(R.id.fl_content, setFirstPreview()).commit();
+						.replace(mContentId, setFirstPreview()).commit();
 			}
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		View backgroundView = findViewById(R.id.fl_background);
+
+		if (backgroundView != null) {
+			BackgroundView background = (BackgroundView) backgroundView
+					.findViewById(R.id.background);
+			background.setBackground(setBackground());
+		}
+
+		View circleMenuView = findViewById(R.id.fl_circleMenu);
+
+		if (circleMenuView != null) {
+			circleMenuView.getParent().bringChildToFront(circleMenuView);
+			mCircle = new CircleMenuFragment();
+			mFragmentManager.beginTransaction()
+					.replace(R.id.fl_circleMenu, mCircle).commit();
+		}
+
 	}
 
 	@Override
@@ -62,7 +77,9 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	@Override
 	public void hideCircleMenu() {
-		mCircle.hideCircleMenu(null);
+		if (mCircle != null) {
+			mCircle.hideCircleMenu(null);
+		}
 	}
 
 	@Override
@@ -91,68 +108,5 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		}
 		return transaction.commit();
 	}
-
-	// @Override
-	// public void popBackStack() {
-	// mFragmentManager.popBackStack();
-	// }
-	//
-	//
-	// @Override
-	// public FragmentTransaction beginTransaction() {
-	// mFragmentTransaction = mFragmentManager.beginTransaction();
-	// mFragmentTransaction.setCustomAnimations(R.anim.activity_in,
-	// R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
-	// return mFragmentTransaction;
-	// }
-	//
-	// @Override
-	// public FragmentTransaction add(Fragment fragment, String tag) {
-	// return mFragmentTransaction.add(fragment, tag);
-	// }
-	//
-	// @Override
-	// public FragmentTransaction add(int contentView, Fragment fragment) {
-	// return mFragmentTransaction.add(contentView, fragment);
-	// }
-	//
-	// @Override
-	// public FragmentTransaction add(int contentView, Fragment fragment,
-	// String tag) {
-	// return mFragmentTransaction.add(contentView, fragment, tag);
-	// }
-	//
-	// @Override
-	// public FragmentTransaction addToBackStack(String tag) {
-	// return mFragmentTransaction.addToBackStack(tag);
-	// }
-	//
-	// @Override
-	// public FragmentTransaction setCustomAnimations(int enter, int exit,
-	// int popEnter, int popExit) {
-	// return mFragmentTransaction.setCustomAnimations(enter, exit, popEnter,
-	// popExit);
-	// }
-	//
-	// @Override
-	// public FragmentTransaction setCustomAnimations(int enter, int exit) {
-	// return mFragmentTransaction.setCustomAnimations(enter, exit);
-	// }
-	//
-	// @Override
-	// public FragmentTransaction replace(int contentView, Fragment fragment) {
-	// return mFragmentTransaction.replace(contentView, fragment);
-	// }
-	//
-	// @Override
-	// public FragmentTransaction replace(int contentView, Fragment fragment,
-	// String tag) {
-	// return mFragmentTransaction.replace(contentView, fragment, tag);
-	// }
-	//
-	// @Override
-	// public int commit() {
-	// return mFragmentTransaction.commit();
-	// }
 
 }

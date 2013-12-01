@@ -1,6 +1,5 @@
 package com.lejoying.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -9,8 +8,8 @@ import android.widget.Toast;
 
 public class LocationTools {
 
-	public static double[] getLocation(Activity activity) {
-		LocationManager lm = (LocationManager) activity
+	public static double[] getLocation(Context context) {
+		LocationManager lm = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
 		// 返回所有已知的位置提供者的名称列表，包括未获准访问或调用活动目前已停用的。
 		//List<String> lp = lm.getAllProviders();
@@ -33,7 +32,7 @@ public class LocationTools {
 			double longitude = location.getLongitude();
 			return new double[] { longitude, latitude };
 		} else {
-			Toast.makeText(activity, "1.请检查网络连接 \n2.请打开我的位置",
+			Toast.makeText(context, "1.请检查网络连接 \n2.请打开我的位置",
 					Toast.LENGTH_SHORT).show();
 		}
 

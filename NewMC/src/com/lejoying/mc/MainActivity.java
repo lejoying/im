@@ -14,19 +14,13 @@ public class MainActivity extends BaseFragmentActivity {
 	}
 
 	@Override
-	public boolean createCircleMenu() {
-		return true;
-	}
-
-	@Override
 	public Fragment setFirstPreview() {
 		return new LoginUsePassFragment();
 	}
 
 	@Override
-	public int setContentFragmentId() {
-		// TODO Auto-generated method stub
-		return R.id.fl_content;
+	protected int setBackground() {
+		return R.drawable.card_background;
 	}
-	
+
 }

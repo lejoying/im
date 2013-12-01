@@ -18,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -66,10 +65,10 @@ public class MCTools {
 
 	private static Toast toast;
 
-	public static void ajax(Activity activity, final String url,
+	public static void ajax(Context context, final String url,
 			final Map<String, String> param, boolean lock, final int method,
 			final int timeout, final ResponseListener responseListener) {
-		boolean hasNetwork = HttpTools.hasNetwork(activity);
+		boolean hasNetwork = HttpTools.hasNetwork(context);
 
 		if (lock) {
 			if ((url.equals(lasturl) && param.equals(lastparam))
@@ -149,8 +148,8 @@ public class MCTools {
 		}
 	}
 
-	public static Map<String, String> getParamsWithLocation(Activity activity) {
-		double[] location = LocationTools.getLocation(activity);
+	public static Map<String, String> getParamsWithLocation(Context context) {
+		double[] location = LocationTools.getLocation(context);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("latitude", String.valueOf(location[1]));
 		map.put("longitude", String.valueOf(location[0]));
@@ -190,12 +189,12 @@ public class MCTools {
 		MCTools.newFriends = newFriends;
 	}
 
-	public static void saveAccount(Activity activity, Account account) {
+	public static void saveAccount(Context context, Account account) {
 
 		MCTools.nowAccount = account;
 
 		try {
-			OutputStream os = activity.openFileOutput("account",
+			OutputStream os = context.openFileOutput("account",
 					Context.MODE_PRIVATE);
 			ObjectOutputStream oos = new ObjectOutputStream(os);
 			oos.writeObject(account);
@@ -206,14 +205,14 @@ public class MCTools {
 		}
 	}
 
-	public static Account getLoginedAccount(Activity activity) {
+	public static Account getLoginedAccount(Context context) {
 		Account account = MCTools.nowAccount;
 		if (account != null) {
 			return account;
 		}
-		if (activity != null) {
+		if (context != null) {
 			try {
-				InputStream is = activity.openFileInput("account");
+				InputStream is = context.openFileInput("account");
 				ObjectInputStream ois = new ObjectInputStream(is);
 				account = (Account) ois.readObject();
 			} catch (FileNotFoundException e) {
@@ -297,6 +296,12 @@ public class MCTools {
 		toast.show();
 	}
 
+	public static void cleanMsg() {
+		if (toast != null) {
+			toast.cancel();
+		}
+	}
+
 	public static String createAccessKey() {
 
 		String[] strs = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
@@ -317,37 +322,37 @@ public class MCTools {
 		return str;
 	}
 
-	public static void saveFriends(Activity activity, JSONArray friends) {
-		DBManager dbManager = new DBManager(activity);
+	public static void saveFriends(Context context, JSONArray friends) {
+		DBManager dbManager = new DBManager(context);
 		dbManager.addFriends(friends);
 		dbManager.closeDB();
 	}
 
-	public static List<Circle> getCircles(Activity activity) {
+	public static List<Circle> getCircles(Context context) {
 		List<Circle> circles = new ArrayList<Circle>();
-		DBManager dbManager = new DBManager(activity);
+		DBManager dbManager = new DBManager(context);
 		circles = dbManager.queryCircle();
 		dbManager.closeDB();
 		return circles;
 	}
 
-	public static List<Friend> getFriends(Activity activity, int rid) {
+	public static List<Friend> getFriends(Context context, int rid) {
 		List<Friend> accounts = new ArrayList<Friend>();
-		DBManager dbManager = new DBManager(activity);
+		DBManager dbManager = new DBManager(context);
 		accounts = dbManager.queryFriends(rid);
 		dbManager.closeDB();
 		return accounts;
 	}
 
-	public static void saveCommunities(Activity activity, JSONArray communities) {
-		DBManager dbManager = new DBManager(activity);
+	public static void saveCommunities(Context context, JSONArray communities) {
+		DBManager dbManager = new DBManager(context);
 		dbManager.addCommunities(communities);
 		dbManager.closeDB();
 	}
 
-	public static List<Community> getCommunities(Activity activity) {
+	public static List<Community> getCommunities(Context context) {
 		List<Community> community = new ArrayList<Community>();
-		DBManager dbManager = new DBManager(activity);
+		DBManager dbManager = new DBManager(context);
 		community = dbManager.queryCommunities(MCTools.getLoginedAccount(null)
 				.getUid());
 		dbManager.closeDB();

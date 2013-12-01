@@ -21,13 +21,13 @@ public class ToTry {
 			return;
 		}
 		final Handler handler = MCTools.handler;
+		toTryListener.beforeDoing();
 		final Thread thread = new Thread() {
 			int tryCount = 0;
 			boolean tryFlag = false;
 
 			@Override
 			public void run() {
-				toTryListener.beforeDoing();
 				boolean success = false;
 				while (!tryFlag) {
 					tryCount++;

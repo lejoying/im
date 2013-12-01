@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.lejoying.mc.R;
@@ -43,6 +44,7 @@ public class MessageFragment extends BaseListFragment {
 		mInflater = inflater;
 		mAdapter = new MessageAdapter();
 		mHandler = new MessagesHandler();
+
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -79,7 +81,7 @@ public class MessageFragment extends BaseListFragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-
+				mMCFragmentManager.relpaceToContent(new ChatFragment(), true);
 			}
 		});
 	}
@@ -126,5 +128,11 @@ public class MessageFragment extends BaseListFragment {
 			}
 
 		}
+	}
+
+	@Override
+	public EditText showSoftInputOnShow() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

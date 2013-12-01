@@ -3,7 +3,6 @@ package com.lejoying.mc.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -17,7 +16,7 @@ import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -105,6 +104,8 @@ public class CircleMenuFragment extends BaseFragment implements
 		}
 		this.mLock = lock;
 		this.mShowBack = showBack;
+
+		mView_pageName.setVisibility(View.INVISIBLE);
 
 		if (mStatus == STATUS_HIDE) {
 			mStatus = STATUS_SHOW;
@@ -834,9 +835,6 @@ public class CircleMenuFragment extends BaseFragment implements
 			showNext();
 			break;
 		case 11:
-			InputMethodManager imm = (InputMethodManager) getActivity()
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(mCircleMenu.getWindowToken(), 0);
 			back(WHERE_TOP, new CircleDiskAnimationEnd() {
 
 				@Override
@@ -870,6 +868,12 @@ public class CircleMenuFragment extends BaseFragment implements
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public EditText showSoftInputOnShow() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
