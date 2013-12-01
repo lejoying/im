@@ -22,6 +22,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -350,6 +351,12 @@ public class ScanQRCodeFragment extends BaseFragment implements
 			}
 		}
 		return flag;
+	}
+
+	@Override
+	public EditText showSoftInputOnShow() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

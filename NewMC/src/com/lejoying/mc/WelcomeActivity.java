@@ -1,5 +1,7 @@
 package com.lejoying.mc;
 
+import com.lejoying.mc.service.NetworkService;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +11,9 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.welcome);
+		setContentView(R.layout._welcome);
+
+		startService(new Intent(this, NetworkService.class));
 
 		new Thread() {
 			@Override
@@ -29,19 +33,13 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	}
 
 	@Override
-	public boolean createCircleMenu() {
-		return false;
-	}
-
-	@Override
 	public Fragment setFirstPreview() {
 		return null;
 	}
 
 	@Override
-	public int setContentFragmentId() {
-		// TODO Auto-generated method stub
-		return 0;
+	protected int setBackground() {
+		return R.drawable.app_start;
 	}
 
 }

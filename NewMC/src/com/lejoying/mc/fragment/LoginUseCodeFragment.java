@@ -63,4 +63,10 @@ public class LoginUseCodeFragment extends BaseFragment implements
 		}
 	}
 
+	@Override
+	public EditText showSoftInputOnShow() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

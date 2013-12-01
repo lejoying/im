@@ -2,7 +2,7 @@ package com.lejoying.mc.apiimpl;
 
 import java.util.Map;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.lejoying.mc.api.CircleManager;
 import com.lejoying.mc.listener.ResponseListener;
@@ -11,25 +11,25 @@ import com.lejoying.utils.HttpTools;
 
 public class CircleManagerImpl implements CircleManager {
 
-	private Activity activity;
+	private Context context;
 
-	public CircleManagerImpl(Activity activity) {
+	public CircleManagerImpl(Context context) {
 		super();
-		this.activity = activity;
+		this.context = context;
 	}
-	
+
 	@Override
 	public void modify(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/circle/modify", param, true,
+		MCTools.ajax(context, "/api2/circle/modify", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void delete(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/circle/delete", param, true,
-				HttpTools.SEND_POST, 5000, responseListener);		
+		MCTools.ajax(context, "/api2/circle/delete", param, true,
+				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 }

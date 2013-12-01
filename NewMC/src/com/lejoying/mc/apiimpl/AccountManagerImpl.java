@@ -2,7 +2,7 @@ package com.lejoying.mc.apiimpl;
 
 import java.util.Map;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.lejoying.mc.api.AccountManager;
 import com.lejoying.mc.listener.ResponseListener;
@@ -11,66 +11,66 @@ import com.lejoying.utils.HttpTools;
 
 public class AccountManagerImpl implements AccountManager {
 
-	private Activity activity;
+	private Context context;
 
-	public AccountManagerImpl(Activity activity) {
+	public AccountManagerImpl(Context context) {
 		super();
-		this.activity = activity;
+		this.context = context;
 	}
 
 	@Override
 	public void verifyphone(Map<String, String> param,
 			final ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/verifyphone", param, true,
+		MCTools.ajax(context, "/api2/account/verifyphone", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void verifycode(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/verifycode", param, true,
+		MCTools.ajax(context, "/api2/account/verifycode", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void auth(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/auth", param, true,
+		MCTools.ajax(context, "/api2/account/auth", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void exit(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/exit", param, true,
+		MCTools.ajax(context, "/api2/account/exit", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void verifywebcode(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/verifywebcode", param, true,
+		MCTools.ajax(context, "/api2/account/verifywebcode", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void verifywebcodelogin(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/verifywebcodelogin", param, true,
+		MCTools.ajax(context, "/api2/account/verifywebcodelogin", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void modify(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/modify", param, true,
+		MCTools.ajax(context, "/api2/account/modify", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void getaccount(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(activity, "/api2/account/getaccount", param, true,
+		MCTools.ajax(context, "/api2/account/getaccount", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 

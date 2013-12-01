@@ -31,7 +31,7 @@ public class RegisterPassFragment extends BaseFragment implements
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
 
 		mView_next.setOnClickListener(this);
-
+		
 		return mContent;
 	}
 
@@ -50,5 +50,10 @@ public class RegisterPassFragment extends BaseFragment implements
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public EditText showSoftInputOnShow() {
+		return mView_pass;
 	}
 }

@@ -34,7 +34,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 		mView_next.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
-
+		
 		return mContent;
 	}
 
@@ -56,5 +56,10 @@ public class RegisterCodeFragment extends BaseFragment implements
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public EditText showSoftInputOnShow() {
+		return mView_code;
 	}
 }
