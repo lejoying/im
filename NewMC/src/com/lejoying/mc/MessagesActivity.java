@@ -21,10 +21,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.mc.adapter.CircleMenu;
+import com.lejoying.mc.entity.MenuEntity;
 import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
-import com.lejoying.mc.utils.CircleMenu;
-import com.lejoying.mc.utils.ImageTools;
-import com.lejoying.mc.utils.MenuEntity;
+import com.lejoying.mc.utils.MCImageTools;
 
 public class MessagesActivity extends Activity {
 
@@ -48,7 +48,7 @@ public class MessagesActivity extends Activity {
 
 		inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		bm = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+		bm = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.xiaohei), true, 4, Color.rgb(255,
 				255, 255));
 

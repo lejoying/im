@@ -28,7 +28,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
-import com.lejoying.mc.utils.CircleMenu;
+import com.lejoying.mc.adapter.CircleMenu;
 import com.lejoying.mc.view.ScanView;
 
 public class ScanQRCodeActivity extends Activity implements

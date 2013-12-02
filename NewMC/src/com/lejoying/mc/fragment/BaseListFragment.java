@@ -8,7 +8,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.utils.MCTools;
+import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 
 public abstract class BaseListFragment extends ListFragment {
@@ -77,10 +77,10 @@ public abstract class BaseListFragment extends ListFragment {
 	}
 
 	protected void showMsg(String message) {
-		MCTools.showMsg(getActivity(), message);
+		MCNetTools.showMsg(getActivity(), message);
 	}
 
 	protected void cleanMsg() {
-		MCTools.cleanMsg();
+		MCNetTools.cleanMsg();
 	}
 }

@@ -15,10 +15,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.mc.adapter.CircleAdapter;
+import com.lejoying.mc.adapter.CircleMenu;
+import com.lejoying.mc.entity.Friend;
+import com.lejoying.mc.entity.MenuEntity;
 import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
-import com.lejoying.mc.utils.CircleMenu;
-import com.lejoying.mc.utils.Friend;
-import com.lejoying.mc.utils.MenuEntity;
 
 public class FriendsActivity extends Activity {
 	// DEFINITION view

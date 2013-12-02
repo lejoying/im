@@ -6,7 +6,7 @@ import android.content.Context;
 
 import com.lejoying.mc.api.CircleManager;
 import com.lejoying.mc.listener.ResponseListener;
-import com.lejoying.mc.utils.MCTools;
+import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.utils.HttpTools;
 
 public class CircleManagerImpl implements CircleManager {
@@ -21,14 +21,14 @@ public class CircleManagerImpl implements CircleManager {
 	@Override
 	public void modify(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(context, "/api2/circle/modify", param, true,
+		MCNetTools.ajax(context, "/api2/circle/modify", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
 	public void delete(Map<String, String> param,
 			ResponseListener responseListener) {
-		MCTools.ajax(context, "/api2/circle/delete", param, true,
+		MCNetTools.ajax(context, "/api2/circle/delete", param, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 

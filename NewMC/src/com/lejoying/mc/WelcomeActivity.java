@@ -1,10 +1,10 @@
 package com.lejoying.mc;
 
-import com.lejoying.mc.service.NetworkService;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
+import com.lejoying.mc.service.SMSService;
 
 public class WelcomeActivity extends BaseFragmentActivity {
 
@@ -13,7 +13,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
 
-		startService(new Intent(this, NetworkService.class));
+		startService(new Intent(this, SMSService.class));
 
 		new Thread() {
 			@Override

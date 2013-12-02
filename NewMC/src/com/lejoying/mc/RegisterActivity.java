@@ -21,11 +21,11 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.mc.adapter.CircleMenu;
 import com.lejoying.mc.adapter.MCResponseAdapter;
 import com.lejoying.mc.api.AccountManager;
 import com.lejoying.mc.apiimpl.AccountManagerImpl;
-import com.lejoying.mc.utils.CircleMenu;
-import com.lejoying.mc.utils.MCTools;
+import com.lejoying.mc.utils.MCNetTools;
 
 public class RegisterActivity extends Activity {
 
@@ -85,7 +85,7 @@ public class RegisterActivity extends Activity {
 		tv_resend = (TextView) findViewById(R.id.tv_resend);
 
 		accountManager = new AccountManagerImpl(this);
-		handler = MCTools.handler;
+		handler = MCNetTools.handler;
 		canSend = true;
 
 		circleMenu = new CircleMenu(this);

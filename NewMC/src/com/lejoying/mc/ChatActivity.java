@@ -7,8 +7,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.lejoying.mc.utils.CircleMenu;
-import com.lejoying.mc.utils.ImageTools;
+import com.lejoying.mc.adapter.CircleMenu;
+import com.lejoying.mc.utils.MCImageTools;
 
 public class ChatActivity extends Activity {
 
@@ -18,7 +18,7 @@ public class ChatActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.chat);
 
-		Bitmap bm = ImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+		Bitmap bm = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.xiaohei), true, 2, Color.rgb(255,
 				255, 255));
 

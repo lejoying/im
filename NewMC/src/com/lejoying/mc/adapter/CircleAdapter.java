@@ -39,8 +39,8 @@ import android.widget.TextView;
 
 import com.lejoying.mc.ChatActivity;
 import com.lejoying.mc.R;
-import com.lejoying.mc.utils.Friend;
-import com.lejoying.mc.utils.ImageTools;
+import com.lejoying.mc.entity.Friend;
+import com.lejoying.mc.utils.MCImageTools;
 
 public class CircleAdapter {
 	private Map<String, List<Friend>> circlefriends;
@@ -75,7 +75,7 @@ public class CircleAdapter {
 
 	public void createView() {
 		viewList = new ArrayList<View>();
-		final Bitmap head = ImageTools.getCircleBitmap(BitmapFactory
+		final Bitmap head = MCImageTools.getCircleBitmap(BitmapFactory
 				.decodeResource(activity.getResources(), R.drawable.xiaohei),
 				true, 5, Color.rgb(255, 255, 255));
 

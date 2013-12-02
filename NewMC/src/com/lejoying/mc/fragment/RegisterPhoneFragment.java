@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.MCResponseAdapter;
 import com.lejoying.mc.api.AccountManager;
 import com.lejoying.mc.apiimpl.AccountManagerImpl;
+import com.lejoying.mc.service.SMSService;
 
 public class RegisterPhoneFragment extends BaseFragment implements
 		OnClickListener {
@@ -69,6 +71,9 @@ public class RegisterPhoneFragment extends BaseFragment implements
 				public void success(JSONObject data) {
 					mMCFragmentManager.relpaceToContent(
 							new RegisterCodeFragment(), true);
+					Intent intent = new Intent(getActivity(), SMSService.class);
+					intent.putExtra("action", SMSService.ACTION_REGISTER);
+					getActivity().startService(intent);
 				}
 			});
 			break;

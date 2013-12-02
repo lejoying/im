@@ -25,7 +25,7 @@ public class RegisterPassFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
+		mMCFragmentManager.hideCircleMenu();
 		mContent = inflater.inflate(R.layout.f_registerpass, null);
 		mView_pass = (EditText) mContent.findViewById(R.id.et_pass);
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);

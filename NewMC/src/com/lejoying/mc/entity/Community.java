@@ -1,4 +1,4 @@
-package com.lejoying.mc.utils;
+package com.lejoying.mc.entity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

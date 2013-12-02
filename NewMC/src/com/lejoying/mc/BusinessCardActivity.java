@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.lejoying.mc.utils.CircleMenu;
+import com.lejoying.mc.adapter.CircleMenu;
 
 public class BusinessCardActivity extends Activity {
 

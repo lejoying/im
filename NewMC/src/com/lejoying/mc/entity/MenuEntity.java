@@ -1,4 +1,4 @@
-package com.lejoying.mc.utils;
+package com.lejoying.mc.entity;
 
 public class MenuEntity {
 	private int imageID;

@@ -8,190 +8,25 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+
+import com.lejoying.mc.entity.Account;
+import com.lejoying.mc.entity.Circle;
+import com.lejoying.mc.entity.Community;
+import com.lejoying.mc.entity.Friend;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.view.Gravity;
-import android.widget.Toast;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.lejoying.mc.listener.ResponseListener;
-import com.lejoying.utils.HttpTools;
-import com.lejoying.utils.HttpTools.HttpListener;
-import com.lejoying.utils.LocationTools;
-import com.lejoying.utils.StreamTools;
-
-public class MCTools {
-
-	private static Account nowAccount;
-
-	public static boolean INNEWCOMMUNITY = false;
-
-	private static Community NOWCOMMUNITY;
-
-	private static List<Friend> CHAT_FRIENDS;
-
-	private static List<Friend> newFriends;
-
-	public static Handler handler = new Handler();
-
-	private static final String DOMAIN = "http://115.28.51.197:8071";
-
-	private static String lasturl;
-	private static Map<String, String> lastparam;
-	private static long lasttime;
-
-	private final static int QRCODE_SIZE = 300;
-
-	private static Toast toast;
-
-	public static void ajax(Context context, final String url,
-			final Map<String, String> param, boolean lock, final int method,
-			final int timeout, final ResponseListener responseListener) {
-		boolean hasNetwork = HttpTools.hasNetwork(context);
-
-		if (lock) {
-			if ((url.equals(lasturl) && param.equals(lastparam))
-					&& new Date().getTime() - lasttime < 5000) {
-				return;
-			}
-		}
-		lasturl = url;
-		lastparam = param;
-		lasttime = new Date().getTime();
-
-		if (!hasNetwork) {
-			responseListener.noInternet();
-		} else {
-			new Thread() {
-				@Override
-				public void run() {
-					super.run();
-					HttpListener httpListener = new HttpListener() {
-
-						@Override
-						public void handleInputStream(InputStream is) {
-							try {
-								if (is != null) {
-									byte[] b = StreamTools.isToData(is);
-									final JSONObject data = new JSONObject(
-											new String(b));
-									if (data != null) {
-										String info = data.getString("提示信息");
-										info = info.substring(
-												info.length() - 2,
-												info.length());
-
-										if (info.equals("成功")) {
-											handler.post(new Runnable() {
-												@Override
-												public void run() {
-													responseListener
-															.success(data);
-												}
-											});
-										}
-										if (info.equals("失败")) {
-											handler.post(new Runnable() {
-												@Override
-												public void run() {
-													responseListener
-															.unsuccess(data);
-												}
-											});
-										}
-									}
-								}
-								if (is == null) {
-									handler.post(new Runnable() {
-										@Override
-										public void run() {
-											responseListener.failed();
-										}
-									});
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
-					};
-					if (method == HttpTools.SEND_GET) {
-						HttpTools.sendGet(DOMAIN + url, timeout, param,
-								httpListener);
-					}
-					if (method == HttpTools.SEND_POST) {
-						HttpTools.sendPost(DOMAIN + url, timeout, param,
-								httpListener);
-					}
-				}
-			}.start();
-		}
-	}
-
-	public static Map<String, String> getParamsWithLocation(Context context) {
-		double[] location = LocationTools.getLocation(context);
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("latitude", String.valueOf(location[1]));
-		map.put("longitude", String.valueOf(location[0]));
-		return map;
-	}
-
-	public static List<Friend> getNewFriends() {
-		return newFriends;
-	}
-
-	public static Community getNOWCOMMUNITY() {
-		return NOWCOMMUNITY;
-	}
-
-	public static void setNOWCOMMUNITY(Community nOWCOMMUNITY) {
-		NOWCOMMUNITY = nOWCOMMUNITY;
-	}
-
-	public static List<Friend> getCHAT_FRIENDS() {
-		return CHAT_FRIENDS;
-	}
-
-	public static void setCHAT_FRIENDS(List<Friend> cHAT_FRIENDS) {
-		CHAT_FRIENDS = cHAT_FRIENDS;
-	}
-
-	public static void setNewFriends(JSONArray accounts) {
-		List<Friend> newFriends = new ArrayList<Friend>();
-		for (int i = 0; i < accounts.length(); i++) {
-			try {
-				Friend friend = new Friend(accounts.getJSONObject(i));
-				newFriends.add(friend);
-			} catch (JSONException e) {
-				// e.printStackTrace();
-			}
-		}
-		MCTools.newFriends = newFriends;
-	}
-
+public class MCDataTools {
 	public static void saveAccount(Context context, Account account) {
 
-		MCTools.nowAccount = account;
+		MCStaticData.nowAccount = account;
 
 		try {
 			OutputStream os = context.openFileOutput("account",
@@ -206,7 +41,7 @@ public class MCTools {
 	}
 
 	public static Account getLoginedAccount(Context context) {
-		Account account = MCTools.nowAccount;
+		Account account = MCStaticData.nowAccount;
 		if (account != null) {
 			return account;
 		}
@@ -226,100 +61,6 @@ public class MCTools {
 			}
 		}
 		return account;
-	}
-
-	public static Bitmap createBitmap(String content) {
-		// 用于设置QR二维码参数
-		Hashtable<EncodeHintType, Object> qrParam = new Hashtable<EncodeHintType, Object>();
-		// 设置QR二维码的纠错级别——这里选择最高H级别
-		qrParam.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-		// 设置编码方式
-		qrParam.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-
-		// 生成QR二维码数据——这里只是得到一个由true和false组成的数组
-		// 参数顺序分别为：编码内容，编码类型，生成图片宽度，生成图片高度，设置参数
-		try {
-			BitMatrix bitMatrix = new MultiFormatWriter().encode(content,
-					BarcodeFormat.QR_CODE, QRCODE_SIZE, QRCODE_SIZE, qrParam);
-
-			// 开始利用二维码数据创建Bitmap图片，分别设为黑白两色
-			int w = bitMatrix.getWidth();
-			int h = bitMatrix.getHeight();
-			int[] data = new int[w * h];
-
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++) {
-					if (bitMatrix.get(x, y))
-						data[y * w + x] = 0xff000000;// 黑色
-					else
-						data[y * w + x] = -1;// -1 相当于0xffffffff 白色
-				}
-			}
-			// 创建一张bitmap图片，采用最高的效果显示
-			Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-			// 将上面的二维码颜色数组传入，生成图片颜色
-			bitmap.setPixels(data, 0, w, 0, 0, w, h);
-			return bitmap;
-		} catch (WriterException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private void createQRCodeBitmapWithPortrait(Bitmap qr, Bitmap portrait) {
-		// 头像图片的大小
-		int portrait_W = portrait.getWidth();
-		int portrait_H = portrait.getHeight();
-
-		// 设置头像要显示的位置，即居中显示
-		int left = (QRCODE_SIZE - portrait_W) / 2;
-		int top = (QRCODE_SIZE - portrait_H) / 2;
-		int right = left + portrait_W;
-		int bottom = top + portrait_H;
-		Rect rect1 = new Rect(left, top, right, bottom);
-
-		// 取得qr二维码图片上的画笔，即要在二维码图片上绘制我们的头像
-		Canvas canvas = new Canvas(qr);
-
-		// 设置我们要绘制的范围大小，也就是头像的大小范围
-		Rect rect2 = new Rect(0, 0, portrait_W, portrait_H);
-		// 开始绘制
-		canvas.drawBitmap(portrait, rect2, rect1, null);
-	}
-
-	public static void showMsg(Context context, String text) {
-		if (toast != null) {
-			toast.cancel();
-		}
-		toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.CENTER, 0, 0);
-		toast.show();
-	}
-
-	public static void cleanMsg() {
-		if (toast != null) {
-			toast.cancel();
-		}
-	}
-
-	public static String createAccessKey() {
-
-		String[] strs = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
-				"k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-				"w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H",
-				"I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-				"U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5",
-				"6", "7", "8", "9" };
-		int count = 20;
-		String str = "";
-		for (int i = 0; i < 9; i++) {
-			str += strs[(int) Math.floor(Math.random() * strs.length)];
-		}
-		str += "a";
-		for (int i = 0; i < count - 10; i++) {
-			str += strs[(int) Math.floor(Math.random() * strs.length)];
-		}
-		return str;
 	}
 
 	public static void saveFriends(Context context, JSONArray friends) {
@@ -353,8 +94,8 @@ public class MCTools {
 	public static List<Community> getCommunities(Context context) {
 		List<Community> community = new ArrayList<Community>();
 		DBManager dbManager = new DBManager(context);
-		community = dbManager.queryCommunities(MCTools.getLoginedAccount(null)
-				.getUid());
+		community = dbManager.queryCommunities(MCDataTools.getLoginedAccount(
+				null).getUid());
 		dbManager.closeDB();
 		return community;
 	}
@@ -413,14 +154,19 @@ class DBManager {
 				Circle circle = new Circle(friends.getJSONObject(i));
 				if (circle.getRid() != 0) {
 					db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
-							new Object[] { circle.getRid(), circle.getName(),
-									MCTools.getLoginedAccount(null).getUid() });
+							new Object[] {
+									circle.getRid(),
+									circle.getName(),
+									MCDataTools.getLoginedAccount(null)
+											.getUid() });
 				} else {
 					db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
 							new Object[] {
-									-MCTools.getLoginedAccount(null).getUid(),
+									-MCDataTools.getLoginedAccount(null)
+											.getUid(),
 									"没有分组",
-									MCTools.getLoginedAccount(null).getUid() });
+									MCDataTools.getLoginedAccount(null)
+											.getUid() });
 				}
 				JSONArray accounts = friends.getJSONObject(i).getJSONArray(
 						"accounts");
@@ -438,9 +184,10 @@ class DBManager {
 								"INSERT INTO circlerelation VALUES(?,?)",
 								new Object[] { circle.getRid(), friend.getUid() });
 					} else {
-						db.execSQL("INSERT INTO circlerelation VALUES(?,?)",
+						db.execSQL(
+								"INSERT INTO circlerelation VALUES(?,?)",
 								new Object[] {
-										-MCTools.getLoginedAccount(null)
+										-MCDataTools.getLoginedAccount(null)
 												.getUid(), friend.getUid() });
 					}
 				}
@@ -458,7 +205,7 @@ class DBManager {
 		db.beginTransaction(); // 开始事务
 		try {
 			db.execSQL("DELETE FROM communityrelation WHERE fuid=?",
-					new Object[] { MCTools.getLoginedAccount(null) });
+					new Object[] { MCDataTools.getLoginedAccount(null) });
 			for (int i = 0; i < communities.length(); i++) {
 				Community community = new Community(
 						communities.getJSONObject(i));
@@ -476,7 +223,7 @@ class DBManager {
 								community.getAgent().getMainBusiness() });
 				db.execSQL("INSERT INTO communityrelation VALUES(?, ?)",
 						new Object[] { community.getCid(),
-								MCTools.getLoginedAccount(null).getUid() });
+								MCDataTools.getLoginedAccount(null).getUid() });
 
 			}
 			db.setTransactionSuccessful(); // 设置事务成功完成
@@ -527,7 +274,7 @@ class DBManager {
 		Cursor c = db
 				.rawQuery(
 						"SELECT cid,name,description,aid FROM community WHERE cid IN(select cid from communityrelation where fuid=?)",
-						new String[] { String.valueOf(MCTools
+						new String[] { String.valueOf(MCDataTools
 								.getLoginedAccount(null).getUid()) });
 		return c;
 	}
@@ -547,9 +294,10 @@ class DBManager {
 	}
 
 	private Cursor queryCircleCursor() {
-		Cursor c = db.rawQuery("SELECT rid,name FROM circle WHERE fuid = ?",
-				new String[] { String.valueOf(MCTools.getLoginedAccount(null)
-						.getUid()) });
+		Cursor c = db.rawQuery(
+				"SELECT rid,name FROM circle WHERE fuid = ?",
+				new String[] { String.valueOf(MCDataTools.getLoginedAccount(
+						null).getUid()) });
 		return c;
 	}
 
@@ -587,7 +335,7 @@ class DBManager {
 				db.execSQL("DELETE FROM circlerelation",
 						new Object[] { circle.getRid() });
 			}
-			db.execSQL("DELETE FROM circle", new Object[] { MCTools
+			db.execSQL("DELETE FROM circle", new Object[] { MCDataTools
 					.getLoginedAccount(null).getUid() });
 			db.setTransactionSuccessful();
 		} finally {

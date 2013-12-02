@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 
 import com.lejoying.mc.listener.ResponseListener;
-import com.lejoying.mc.utils.MCTools;
+import com.lejoying.mc.utils.MCNetTools;
 
 public class MCResponseAdapter implements ResponseListener {
 
@@ -18,7 +18,7 @@ public class MCResponseAdapter implements ResponseListener {
 
 	@Override
 	public void noInternet() {
-		MCTools.showMsg(activity, "没有网络，请检查网络后重试");
+		MCNetTools.showMsg(activity, "没有网络，请检查网络后重试");
 	}
 
 	@Override
@@ -28,12 +28,12 @@ public class MCResponseAdapter implements ResponseListener {
 
 	@Override
 	public void unsuccess(JSONObject data) {
-		MCTools.showMsg(activity, "数据异常,操作失败");
+		MCNetTools.showMsg(activity, "数据异常,操作失败");
 	}
 
 	@Override
 	public void failed() {
-		MCTools.showMsg(activity, "连接服务器异常");
+		MCNetTools.showMsg(activity, "连接服务器异常");
 	}
 
 }

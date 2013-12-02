@@ -21,11 +21,11 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.mc.adapter.CircleMenu;
 import com.lejoying.mc.adapter.MCResponseAdapter;
 import com.lejoying.mc.api.AccountManager;
 import com.lejoying.mc.apiimpl.AccountManagerImpl;
-import com.lejoying.mc.utils.CircleMenu;
-import com.lejoying.mc.utils.MCTools;
+import com.lejoying.mc.utils.MCNetTools;
 
 public class LoginActivity extends Activity {
 
@@ -85,7 +85,7 @@ public class LoginActivity extends Activity {
 		accountManager = new AccountManagerImpl(this);
 
 		canSend = true;
-		handler = MCTools.handler;
+		handler = MCNetTools.handler;
 
 		circleMenu = new CircleMenu(this);
 	}
@@ -93,7 +93,7 @@ public class LoginActivity extends Activity {
 	public void login(View v) {
 		if (et_plogin_phone.getText().toString() == null
 				|| et_plogin_phone.getText().toString().equals("")) {
-			MCTools.showMsg(this, "手机不能为空");
+			MCNetTools.showMsg(this, "手机不能为空");
 			et_plogin_phone.requestFocus();
 			return;
 		}
@@ -101,7 +101,7 @@ public class LoginActivity extends Activity {
 		if (state == STATE_PLOGIN) {
 			if (et_plogin_pass.getText().toString() == null
 					|| et_plogin_pass.getText().toString().equals("")) {
-				MCTools.showMsg(this, "密码不能为空");
+				MCNetTools.showMsg(this, "密码不能为空");
 				et_plogin_pass.requestFocus();
 				return;
 			}
@@ -115,7 +115,7 @@ public class LoginActivity extends Activity {
 		} else if (state == STATE_CLOGIN) {
 			if (et_clogin_code.getText().toString() == null
 					|| et_clogin_code.getText().toString().equals("")) {
-				MCTools.showMsg(this, "请输入验证码");
+				MCNetTools.showMsg(this, "请输入验证码");
 				et_clogin_code.requestFocus();
 				return;
 			}
@@ -154,7 +154,7 @@ public class LoginActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				MCTools.showMsg(LoginActivity.this, err);
+				MCNetTools.showMsg(LoginActivity.this, err);
 			}
 
 		});
@@ -169,7 +169,7 @@ public class LoginActivity extends Activity {
 		if (canSend) {
 			if (et_clogin_phone.getText().toString() == null
 					|| et_clogin_phone.getText().toString().equals("")) {
-				MCTools.showMsg(this, "手机号不能为空");
+				MCNetTools.showMsg(this, "手机号不能为空");
 				return;
 			}
 			et_clogin_code.requestFocus();
@@ -197,7 +197,7 @@ public class LoginActivity extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					MCTools.showMsg(LoginActivity.this, err);
+					MCNetTools.showMsg(LoginActivity.this, err);
 				}
 
 				@Override

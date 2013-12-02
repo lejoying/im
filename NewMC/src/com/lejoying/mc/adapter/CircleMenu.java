@@ -1,4 +1,4 @@
-package com.lejoying.mc.utils;
+package com.lejoying.mc.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.adapter.AnimationAdapter;
-import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.entity.MenuEntity;
 import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
+import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.ToTry;
 
 public class CircleMenu {
 
@@ -95,7 +96,7 @@ public class CircleMenu {
 
 	public CircleMenu(Activity activity) {
 		this.activity = activity;
-		this.handler = MCTools.handler;
+		this.handler = MCNetTools.handler;
 	}
 
 	public void setCircleMenuItemClickListener(

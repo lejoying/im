@@ -9,7 +9,7 @@ import android.graphics.Color;
 
 import com.lejoying.utils.StreamTools;
 
-public final class ImageTools {
+public final class MCImageTools {
 
 	/**
 	 * 返回圆形图片,source必须为正方形图片

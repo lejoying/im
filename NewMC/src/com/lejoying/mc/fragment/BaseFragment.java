@@ -2,15 +2,18 @@ package com.lejoying.mc.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.lejoying.mc.BaseFragmentActivity;
+import com.lejoying.mc.BaseFragmentActivity.ReceiveListener;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.utils.MCTools;
+import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements ReceiveListener {
 
 	public BaseInterface mMCFragmentManager;
 
@@ -21,7 +24,9 @@ public abstract class BaseFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mMCFragmentManager = (BaseInterface) activity;
+		BaseFragmentActivity baseFragmentActivity = (BaseFragmentActivity) activity;
+		mMCFragmentManager = baseFragmentActivity;
+		baseFragmentActivity.setReceiveListener(this);
 	}
 
 	@Override
@@ -37,6 +42,11 @@ public abstract class BaseFragment extends Fragment {
 		super.onPause();
 		cleanMsg();
 		hideSoftInput();
+	}
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+
 	}
 
 	private InputMethodManager getInputMethodManager() {
@@ -75,10 +85,10 @@ public abstract class BaseFragment extends Fragment {
 	}
 
 	protected void showMsg(String message) {
-		MCTools.showMsg(getActivity(), message);
+		MCNetTools.showMsg(getActivity(), message);
 	}
 
 	protected void cleanMsg() {
-		MCTools.cleanMsg();
+		MCNetTools.cleanMsg();
 	}
 }

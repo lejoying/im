@@ -19,7 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.utils.ImageTools;
+import com.lejoying.mc.utils.MCImageTools;
 
 public class MessageFragment extends BaseListFragment {
 
@@ -65,7 +65,7 @@ public class MessageFragment extends BaseListFragment {
 					View v = mInflater.inflate(R.layout.f_messages_item, null);
 					ImageView iv_head = (ImageView) v
 							.findViewById(R.id.iv_head);
-					Bitmap bm = ImageTools.getCircleBitmap(BitmapFactory
+					Bitmap bm = MCImageTools.getCircleBitmap(BitmapFactory
 							.decodeResource(getActivity().getResources(),
 									R.drawable.xiaohei), true, 5, Color.WHITE);
 					iv_head.setImageBitmap(bm);

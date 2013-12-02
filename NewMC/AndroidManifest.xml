@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.lejoying.mc"
     android:versionCode="1"
     android:versionName="1.0" >
@@ -37,43 +38,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/MyActivityStyle" >
         </activity>
-        <activity
-            android:name="LoadingActivity"
-            android:theme="@style/LoadingStyle" >
-        </activity>
-        <activity
-            android:name="BusinessCardActivity"
-            android:theme="@style/MyActivityStyle" >
-        </activity>
-        <activity
-            android:name="LoginActivity"
-            android:theme="@style/MyActivityStyle" >
-        </activity>
-        <activity
-            android:name="RegisterActivity"
-            android:theme="@style/MyActivityStyle" >
-        </activity>
-        <activity
-            android:name="MessagesActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/MyActivityStyle" >
-        </activity>
-        <activity
-            android:name="ScanQRCodeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyActivityStyle" >
-        </activity>
-        <activity
-            android:name="FriendsActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/MyActivityStyle" >
-        </activity>
-        <activity
-            android:name="ChatActivity"
-            android:theme="@style/MyActivityStyle" >
-        </activity>
 
-        <service android:name="CircleMenuService" >
+        <service android:name=".service.SMSService" >
         </service>
     </application>
 
