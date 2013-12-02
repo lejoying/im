@@ -1,13 +1,13 @@
 package com.lejoying.mc.api;
 
-import java.util.Map;
+import android.os.Bundle;
 
 import com.lejoying.mc.listener.ResponseListener;
 
 public interface Session {
-	public void eventweb(Map<String, String> param,
+	public void eventweb(Bundle params,
 			ResponseListener responseListener);
-	public void event(Map<String, String> param,
+	public void event(Bundle params,
 			ResponseListener responseListener);
 	
 }

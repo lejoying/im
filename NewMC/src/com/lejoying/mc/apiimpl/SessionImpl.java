@@ -1,8 +1,7 @@
 package com.lejoying.mc.apiimpl;
 
-import java.util.Map;
-
 import android.content.Context;
+import android.os.Bundle;
 
 import com.lejoying.mc.api.Session;
 import com.lejoying.mc.listener.ResponseListener;
@@ -18,16 +17,16 @@ public class SessionImpl implements Session {
 	}
 
 	@Override
-	public void event(Map<String, String> param,
+	public void event(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/session/event", param, false,
+		MCNetTools.ajax(context, "/api2/session/event", params, false,
 				HttpTools.SEND_POST, 30000, responseListener);
 	}
 
 	@Override
-	public void eventweb(Map<String, String> param,
+	public void eventweb(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/session/eventweb", param, false,
+		MCNetTools.ajax(context, "/api2/session/eventweb", params, false,
 				HttpTools.SEND_POST, 30000, responseListener);
 	}
 

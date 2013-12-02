@@ -1,8 +1,7 @@
 package com.lejoying.mc.apiimpl;
 
-import java.util.Map;
-
 import android.content.Context;
+import android.os.Bundle;
 
 import com.lejoying.mc.api.AccountManager;
 import com.lejoying.mc.listener.ResponseListener;
@@ -19,58 +18,58 @@ public class AccountManagerImpl implements AccountManager {
 	}
 
 	@Override
-	public void verifyphone(Map<String, String> param,
+	public void verifyphone(Bundle params,
 			final ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/verifyphone", param, true,
+		MCNetTools.ajax(context, "/api2/account/verifyphone", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void verifycode(Map<String, String> param,
+	public void verifycode(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/verifycode", param, true,
+		MCNetTools.ajax(context, "/api2/account/verifycode", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void auth(Map<String, String> param,
+	public void auth(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/auth", param, true,
+		MCNetTools.ajax(context, "/api2/account/auth", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void exit(Map<String, String> param,
+	public void exit(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/exit", param, true,
+		MCNetTools.ajax(context, "/api2/account/exit", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void verifywebcode(Map<String, String> param,
+	public void verifywebcode(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/verifywebcode", param, true,
+		MCNetTools.ajax(context, "/api2/account/verifywebcode", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void verifywebcodelogin(Map<String, String> param,
+	public void verifywebcodelogin(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/verifywebcodelogin", param, true,
+		MCNetTools.ajax(context, "/api2/account/verifywebcodelogin", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void modify(Map<String, String> param,
+	public void modify(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/modify", param, true,
+		MCNetTools.ajax(context, "/api2/account/modify", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void getaccount(Map<String, String> param,
+	public void getaccount(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/account/getaccount", param, true,
+		MCNetTools.ajax(context, "/api2/account/getaccount", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 

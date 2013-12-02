@@ -1,12 +1,7 @@
 package com.lejoying.mc.fragment;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
+import android.telephony.NeighboringCellInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,8 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.lejoying.mc.BaseFragmentActivity.NetworkRemainReceiver;
 import com.lejoying.mc.R;
-import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.api.API;
+import com.lejoying.mc.fragment.BaseInterface.RemainListener;
+import com.lejoying.mc.service.NetworkService;
 
 public class RegisterCodeFragment extends BaseFragment implements
 		OnClickListener {
@@ -43,56 +41,19 @@ public class RegisterCodeFragment extends BaseFragment implements
 		mView_next.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
 
-		canSend = true;
-		reSend();
-
-		mView_sendcode.setOnClickListener(new OnClickListener() {
+		mMCFragmentManager.setNetworkRemainListener(new RemainListener() {
+			@Override
+			public String setRemainType() {
+				return NetworkService.REMAIN_REGISTER;
+			}
 
 			@Override
-			public void onClick(View v) {
-				if (canSend) {
-					reSend();
-				}
+			public void remain(int remain) {
+				System.out.println(remain);
 			}
 		});
 
 		return mContent;
-	}
-
-	private int resendTime;
-
-	private Timer timer;
-
-	private Handler handler = MCNetTools.handler;
-
-	private boolean canSend;
-
-	private void reSend() {
-		resendTime = 60;
-		timer = new Timer();
-
-		if (canSend) {
-			canSend = false;
-			timer.schedule(new TimerTask() {
-				@Override
-				public void run() {
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							if (resendTime == 0) {
-								mView_sendcode.setText("重新发送");
-								timer.cancel();
-								canSend = true;
-							} else {
-								mView_sendcode.setText("重新发送(" + resendTime
-										+ ")");
-							}
-							resendTime--;
-						}
-					});
-				}
-			}, 200, 1000);
-		}
 	}
 
 	@Override
@@ -104,7 +65,6 @@ public class RegisterCodeFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_next:
-			timer.cancel();
 			getActivity().getSupportFragmentManager().popBackStack();
 			getActivity().getSupportFragmentManager().popBackStack();
 			mMCFragmentManager.relpaceToContent(new RegisterPassFragment(),
@@ -123,8 +83,4 @@ public class RegisterCodeFragment extends BaseFragment implements
 		return mView_code;
 	}
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		System.out.println(intent.getIntExtra("remain", 0));
-	}
 }

@@ -1,8 +1,5 @@
 package com.lejoying.mc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -21,9 +18,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lejoying.mc.adapter.CircleMenu;
-import com.lejoying.mc.entity.MenuEntity;
-import com.lejoying.mc.listener.OldCircleMenuItemClickListener;
 import com.lejoying.mc.utils.MCImageTools;
 
 public class MessagesActivity extends Activity {
@@ -34,7 +28,7 @@ public class MessagesActivity extends Activity {
 
 	private Bitmap bm;
 
-	private CircleMenu circleMenu;
+//	private CircleMenu circleMenu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,34 +48,35 @@ public class MessagesActivity extends Activity {
 
 		lv_messages.setAdapter(new MessagesListAdapter());
 
-		circleMenu = new CircleMenu(this);
-		List<MenuEntity> list = new ArrayList<MenuEntity>();
-
-		list.add(new MenuEntity(R.drawable.test_menu_item1, "…®“ª…®"));
-		list.add(new MenuEntity(R.drawable.test_menu_item2, "√‹”—»¶"));
-		list.add(new MenuEntity(R.drawable.test_menu_item3, "∑÷œÌ"));
-		list.add(new MenuEntity(R.drawable.test_menu_item4,
-				CircleMenu.CIRCLE_MORE));
-
-		circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
-
-		circleMenu
-				.setCircleMenuItemClickListener(new OldCircleMenuItemClickListener() {
-
-					@Override
-					public void onItemClick(int item, ImageView icon,
-							TextView text) {
-						if (item == 1) {
-							Intent intent = new Intent(MessagesActivity.this,
-									ScanQRCodeActivity.class);
-							startActivity(intent);
-						} else if (item == 2) {
-							Intent intent = new Intent(MessagesActivity.this,
-									FriendsActivity.class);
-							startActivity(intent);
-						}
-					}
-				});
+		// circleMenu = new CircleMenu(this);
+		// List<MenuEntity> list = new ArrayList<MenuEntity>();
+		//
+		// list.add(new MenuEntity(R.drawable.test_menu_item1, "…®“ª…®"));
+		// list.add(new MenuEntity(R.drawable.test_menu_item2, "√‹”—»¶"));
+		// list.add(new MenuEntity(R.drawable.test_menu_item3, "∑÷œÌ"));
+		// list.add(new MenuEntity(R.drawable.test_menu_item4,
+		// CircleMenu.CIRCLE_MORE));
+		//
+		// circleMenu.showMenu(CircleMenu.SHOW_TOP, list, false);
+		//
+		// circleMenu
+		// .setCircleMenuItemClickListener(new OldCircleMenuItemClickListener()
+		// {
+		//
+		// @Override
+		// public void onItemClick(int item, ImageView icon,
+		// TextView text) {
+		// if (item == 1) {
+		// Intent intent = new Intent(MessagesActivity.this,
+		// ScanQRCodeActivity.class);
+		// startActivity(intent);
+		// } else if (item == 2) {
+		// Intent intent = new Intent(MessagesActivity.this,
+		// FriendsActivity.class);
+		// startActivity(intent);
+		// }
+		// }
+		// });
 		lv_messages.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

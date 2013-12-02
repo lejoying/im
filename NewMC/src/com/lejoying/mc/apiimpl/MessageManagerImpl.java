@@ -1,8 +1,7 @@
 package com.lejoying.mc.apiimpl;
 
-import java.util.Map;
-
 import android.content.Context;
+import android.os.Bundle;
 
 import com.lejoying.mc.api.MessageManager;
 import com.lejoying.mc.listener.ResponseListener;
@@ -18,15 +17,15 @@ public class MessageManagerImpl implements MessageManager {
 	}
 
 	@Override
-	public void send(Map<String, String> param,
+	public void send(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/message/send", param, false,
+		MCNetTools.ajax(context, "/api2/message/send", params, false,
 				HttpTools.SEND_POST, 30000, responseListener);
 	}
 
 	@Override
-	public void get(Map<String, String> param, ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/message/get", param, false,
+	public void get(Bundle params, ResponseListener responseListener) {
+		MCNetTools.ajax(context, "/api2/message/get", params, false,
 				HttpTools.SEND_POST, 30000, responseListener);
 	}
 

@@ -1,29 +1,29 @@
 package com.lejoying.mc.api;
 
-import java.util.Map;
+import android.os.Bundle;
 
 import com.lejoying.mc.listener.ResponseListener;
 
 public interface RelationManager {
 	
-	public void addfriend(Map<String, String> param,
+	public void addfriend(Bundle params,
 			ResponseListener responseListener);
 
-	public void getfriends(Map<String, String> param,
+	public void getfriends(Bundle params,
 			ResponseListener responseListener);
 
-	public void addcircle(Map<String, String> param,
+	public void addcircle(Bundle params,
 			ResponseListener responseListener);
 
-	public void getcommunities(Map<String, String> param,
+	public void getcommunities(Bundle params,
 			ResponseListener responseListener);
 
-	public void getcirclesandfriends(Map<String, String> param,
+	public void getcirclesandfriends(Bundle params,
 			ResponseListener responseListener);
 
-	public void getaskfriends(Map<String, String> param,
+	public void getaskfriends(Bundle params,
 			ResponseListener responseListener);
 
-	public void addfriendagree(Map<String, String> param,
+	public void addfriendagree(Bundle params,
 			ResponseListener responseListener);
 }

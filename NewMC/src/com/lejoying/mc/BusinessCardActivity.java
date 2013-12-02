@@ -14,8 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.lejoying.mc.adapter.CircleMenu;
-
 public class BusinessCardActivity extends Activity {
 
 	private static final int SCROLL = 0x51;
@@ -60,8 +58,8 @@ public class BusinessCardActivity extends Activity {
 	}
 
 	public void initMenu() {
-		CircleMenu circleMenu = new CircleMenu(this);
-		circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
+		// CircleMenu circleMenu = new CircleMenu(this);
+		// circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
 	}
 
 	public void initView() {

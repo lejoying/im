@@ -1,5 +1,9 @@
 package com.lejoying.mc;
 
+import java.util.Hashtable;
+import java.util.Map;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,7 +17,7 @@ import android.view.View;
 
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
-import com.lejoying.mc.receiver.InformReceiver;
+import com.lejoying.mc.service.NetworkService;
 import com.lejoying.mc.view.BackgroundView;
 
 public abstract class BaseFragmentActivity extends FragmentActivity implements
@@ -25,26 +29,34 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	private int mContentId;
 
-	private InformReceiver mInformReceiver;
-
 	private boolean isCircleMenuCreated;
 	private boolean isBackgroundCreated;
 
-	private ReceiveListener mReceiveListener;
+	private Map<Integer, ReceiverListener> mReceiverListreners;
+	private RemainListener mRemainListener;
+
+	private NetworkRemainReceiver mNetworkRemainReceiver;
+	private NetworkReceiver mNetworkReceiver;
 
 	public abstract Fragment setFirstPreview();
 
 	protected abstract int setBackground();
-
-	protected String setReciverAction() {
-		return "com.action.MAIN";
-	}
 
 	@Override
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
 		super.onCreate(arg0);
 		mFragmentManager = getSupportFragmentManager();
+
+		mNetworkReceiver = new NetworkReceiver();
+		IntentFilter networkFilter = new IntentFilter();
+		networkFilter.addAction(NetworkService.ACTION);
+		registerReceiver(mNetworkReceiver, networkFilter);
+
+		mNetworkRemainReceiver = new NetworkRemainReceiver();
+		IntentFilter networkRemainfilter = new IntentFilter();
+		networkRemainfilter.addAction(NetworkService.ACTION_REMAIN);
+		registerReceiver(mNetworkRemainReceiver, networkRemainfilter);
 
 		mContentId = R.id.fl_content;
 
@@ -56,11 +68,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 						.commit();
 			}
 		}
-
-		mInformReceiver = new InformReceiver();
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(setReciverAction());
-		registerReceiver(mInformReceiver, filter);
 	}
 
 	@Override
@@ -91,7 +98,8 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(mInformReceiver);
+		unregisterReceiver(mNetworkReceiver);
+		unregisterReceiver(mNetworkRemainReceiver);
 	}
 
 	@Override
@@ -138,13 +146,49 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		return transaction.commit();
 	}
 
-	public void setReceiveListener(ReceiveListener receiveListener) {
-		this.mReceiveListener = receiveListener;
+	@Override
+	public void startNetworkForResult(int API, Bundle bundle,
+			ReceiverListener listener) {
+		if (mReceiverListreners == null) {
+			mReceiverListreners = new Hashtable<Integer, BaseInterface.ReceiverListener>();
+		}
+		mReceiverListreners.put(API, listener);
+		Intent service = new Intent(this, NetworkService.class);
+		service.putExtra("API", API);
+		if (bundle != null) {
+			service.putExtras(bundle);
+		}
+		startService(service);
 	}
 
-	
-
-	public interface ReceiveListener {
-		public void onReceive(Context context, Intent intent);
+	@Override
+	public void setNetworkRemainListener(RemainListener listener) {
+		mRemainListener = listener;
 	}
+
+	public class NetworkReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			ReceiverListener listener = mReceiverListreners.get(intent
+					.getIntExtra("API", -1));
+			if (listener != null) {
+				listener.onReceive(intent.getIntExtra("STATUS", -1),
+						intent.getStringExtra("LOG"));
+			}
+		}
+	}
+
+	public class NetworkRemainReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (mRemainListener != null) {
+				int remain = intent.getIntExtra(
+						mRemainListener.setRemainType(), -1);
+				if (remain != -1) {
+					mRemainListener.remain(remain);
+				}
+			}
+		}
+	}
+
 }

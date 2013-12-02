@@ -1,23 +1,23 @@
 package com.lejoying.mc.api;
 
-import java.util.Map;
+import android.os.Bundle;
 
 import com.lejoying.mc.listener.ResponseListener;
 
 public interface CommunityManager {
-	public void find(Map<String, String> param,
+	public void find(Bundle params,
 			ResponseListener responseListener);
 
-	public void join(Map<String, String> param,
+	public void join(Bundle params,
 			ResponseListener responseListener);
 
-	public void unjoin(Map<String, String> param,
+	public void unjoin(Bundle params,
 			ResponseListener responseListener);
 
-	public void getcommunities(Map<String, String> param,
+	public void getcommunities(Bundle params,
 			ResponseListener responseListener);
 
-	public void getcommunityfriends(Map<String, String> param,
+	public void getcommunityfriends(Bundle params,
 			ResponseListener responseListener);
 
 }

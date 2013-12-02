@@ -1,10 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.adapter.MCResponseAdapter;
-import com.lejoying.mc.api.AccountManager;
-import com.lejoying.mc.apiimpl.AccountManagerImpl;
+import com.lejoying.mc.api.API;
 
 public class LoginUsePassFragment extends BaseFragment implements
 		OnClickListener {
@@ -29,8 +22,6 @@ public class LoginUsePassFragment extends BaseFragment implements
 	private Button mView_login;
 	private Button mView_register;
 	private TextView mView_clogin;
-
-	private AccountManager mAccountManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -55,8 +46,6 @@ public class LoginUsePassFragment extends BaseFragment implements
 		mView_register.setOnClickListener(this);
 		mView_clogin.setOnClickListener(this);
 
-		mAccountManager = new AccountManagerImpl(getActivity());
-
 		return mContent;
 	}
 
@@ -74,25 +63,28 @@ public class LoginUsePassFragment extends BaseFragment implements
 			break;
 		case R.id.btn_login:
 			if (mView_phone.getText().toString().equals("")) {
-				showMsg("手机号不能为空");
+				showMsg(getString(R.string.app_phonenotnull));
 				showSoftInput(mView_phone);
 				return;
 			}
 			if (mView_pass.getText().toString().equals("")) {
-				showMsg("密码不能为空");
+				showMsg(getString(R.string.app_passnotnull));
 				showSoftInput(mView_pass);
 				return;
 			}
-			Map<String, String> param = new HashMap<String, String>();
-			param.put("phone", mView_phone.getText().toString());
-			param.put("password", mView_pass.getText().toString());
-			mAccountManager.auth(param, new MCResponseAdapter(getActivity()) {
-				@Override
-				public void success(JSONObject data) {
-					mMCFragmentManager.relpaceToContent(new MessageFragment(),
-							false);
-				}
-			});
+			Bundle params = new Bundle();
+			params.putString("phone", mView_phone.getText().toString());
+			params.putString("password", mView_pass.getText().toString());
+
+			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_AUTH, params,
+					new ReceiverAdapter() {
+						@Override
+						public void success() {
+							mMCFragmentManager.relpaceToContent(
+									new MessageFragment(), false);
+						}
+					});
+
 			break;
 		case R.id.btn_register:
 			mMCFragmentManager.relpaceToContent(new RegisterPhoneFragment(),

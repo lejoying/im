@@ -39,7 +39,7 @@
             android:theme="@style/MyActivityStyle" >
         </activity>
 
-        <service android:name=".service.SMSService" >
+        <service android:name=".service.NetworkService" >
         </service>
     </application>
 

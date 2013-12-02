@@ -1,8 +1,8 @@
 package com.lejoying.mc.adapter;
 
-import com.lejoying.mc.listener.ToTryListener;
+import com.lejoying.mc.utils.ToTry.ToTryListener;
 
-public class ToTryAdapter implements ToTryListener {
+public abstract class ToTryAdapter implements ToTryListener {
 
 	@Override
 	public void beforeDoing() {
@@ -11,16 +11,10 @@ public class ToTryAdapter implements ToTryListener {
 	}
 
 	@Override
-	public boolean isSuccess() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public abstract boolean isSuccess();
 
 	@Override
-	public void successed(long time) {
-		// TODO Auto-generated method stub
-
-	}
+	public abstract void successed(long time);
 
 	@Override
 	public void failed() {

@@ -58,7 +58,7 @@ public class MCQRCodeTools {
 		return null;
 	}
 
-	private void createQRCodeBitmapWithPortrait(Bitmap qr, Bitmap portrait) {
+	public void createQRCodeBitmapWithPortrait(Bitmap qr, Bitmap portrait) {
 		// 头像图片的大小
 		int portrait_W = portrait.getWidth();
 		int portrait_H = portrait.getHeight();

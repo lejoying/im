@@ -1,12 +1,12 @@
 package com.lejoying.mc.api;
 
-import java.util.Map;
+import android.os.Bundle;
 
 import com.lejoying.mc.listener.ResponseListener;
 
 public interface CircleManager {
-	public void modify(Map<String, String> param,
+	public void modify(Bundle params,
 			ResponseListener responseListener);
-	public void delete(Map<String, String> param,
+	public void delete(Bundle params,
 			ResponseListener responseListener);
 }

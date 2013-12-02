@@ -2,8 +2,6 @@ package com.lejoying.mc.utils;
 
 import android.os.Handler;
 
-import com.lejoying.mc.listener.ToTryListener;
-
 public class ToTry {
 	/**
 	 * 在子线程中每delay毫秒执行一次，执行times次。结果由ToTryListener监听 如果在30秒内没有成功则会退出
@@ -57,5 +55,15 @@ public class ToTry {
 			};
 		};
 		thread.start();
+	}
+
+	public interface ToTryListener {
+		public void beforeDoing();
+
+		public boolean isSuccess();
+
+		public void successed(long time);
+
+		public void failed();
 	}
 }

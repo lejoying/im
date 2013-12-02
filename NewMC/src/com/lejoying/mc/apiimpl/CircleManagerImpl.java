@@ -1,8 +1,7 @@
 package com.lejoying.mc.apiimpl;
 
-import java.util.Map;
-
 import android.content.Context;
+import android.os.Bundle;
 
 import com.lejoying.mc.api.CircleManager;
 import com.lejoying.mc.listener.ResponseListener;
@@ -19,16 +18,16 @@ public class CircleManagerImpl implements CircleManager {
 	}
 
 	@Override
-	public void modify(Map<String, String> param,
+	public void modify(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/circle/modify", param, true,
+		MCNetTools.ajax(context, "/api2/circle/modify", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 
 	@Override
-	public void delete(Map<String, String> param,
+	public void delete(Bundle params,
 			ResponseListener responseListener) {
-		MCNetTools.ajax(context, "/api2/circle/delete", param, true,
+		MCNetTools.ajax(context, "/api2/circle/delete", params, true,
 				HttpTools.SEND_POST, 5000, responseListener);
 	}
 

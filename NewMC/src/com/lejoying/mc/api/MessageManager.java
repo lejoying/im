@@ -1,13 +1,13 @@
 package com.lejoying.mc.api;
 
-import java.util.Map;
+import android.os.Bundle;
 
 import com.lejoying.mc.listener.ResponseListener;
 
 public interface MessageManager {
-	public void send(Map<String, String> param,
+	public void send(Bundle params,
 			ResponseListener responseListener);
 
-	public void get(Map<String, String> param,
+	public void get(Bundle params,
 			ResponseListener responseListener);
 }

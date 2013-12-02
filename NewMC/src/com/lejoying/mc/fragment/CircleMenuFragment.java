@@ -25,13 +25,11 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.entity.MenuEntity;
-import com.lejoying.mc.listener.CircleMenuItemClickListener;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
 
-public class CircleMenuFragment extends BaseFragment implements
-		CircleMenuItemClickListener {
+public class CircleMenuFragment extends BaseFragment {
 
 	private int mWhere;
 	private int mOldWhere;
@@ -797,7 +795,6 @@ public class CircleMenuFragment extends BaseFragment implements
 		super.onPause();
 	}
 
-	@Override
 	public void onItemClick(int item) {
 		switch (item) {
 		case 1:

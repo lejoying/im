@@ -2,18 +2,18 @@ package com.lejoying.mc.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.lejoying.mc.BaseFragmentActivity;
-import com.lejoying.mc.BaseFragmentActivity.ReceiveListener;
+import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.fragment.BaseInterface.ReceiverListener;
+import com.lejoying.mc.service.NetworkService;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 
-public abstract class BaseFragment extends Fragment implements ReceiveListener {
+public abstract class BaseFragment extends Fragment {
 
 	public BaseInterface mMCFragmentManager;
 
@@ -24,9 +24,7 @@ public abstract class BaseFragment extends Fragment implements ReceiveListener {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		BaseFragmentActivity baseFragmentActivity = (BaseFragmentActivity) activity;
-		mMCFragmentManager = baseFragmentActivity;
-		baseFragmentActivity.setReceiveListener(this);
+		mMCFragmentManager = (BaseInterface) activity;
 	}
 
 	@Override
@@ -42,11 +40,6 @@ public abstract class BaseFragment extends Fragment implements ReceiveListener {
 		super.onPause();
 		cleanMsg();
 		hideSoftInput();
-	}
-
-	@Override
-	public void onReceive(Context context, Intent intent) {
-
 	}
 
 	private InputMethodManager getInputMethodManager() {
@@ -90,5 +83,43 @@ public abstract class BaseFragment extends Fragment implements ReceiveListener {
 
 	protected void cleanMsg() {
 		MCNetTools.cleanMsg();
+	}
+
+	protected abstract class ReceiverAdapter implements ReceiverListener {
+		@Override
+		public void onReceive(int STATUS, String log) {
+			switch (STATUS) {
+			case NetworkService.STATUS_SUCCESS:
+				success();
+				break;
+			case NetworkService.STATUS_UNSUCCESS:
+				unSuccess(log);
+				break;
+			case NetworkService.STATUS_NOINTERNET:
+				noInternet();
+				break;
+			case NetworkService.STATUS_FAILED:
+				failed();
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		public abstract void success();
+
+		public void unSuccess(String log) {
+			showMsg(log);
+		}
+
+		public void noInternet() {
+			showMsg(getString(R.string.app_nointernet));
+
+		}
+
+		public void failed() {
+			showMsg(getString(R.string.app_timeout));
+		}
 	}
 }

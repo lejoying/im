@@ -1,32 +1,32 @@
 package com.lejoying.mc.api;
 
-import java.util.Map;
+import android.os.Bundle;
 
 import com.lejoying.mc.listener.ResponseListener;
 
 public interface AccountManager {
-	public void verifyphone(Map<String, String> param,
+	public void verifyphone(Bundle params,
 			ResponseListener responseListener);
 
-	public void verifycode(Map<String, String> param,
+	public void verifycode(Bundle params,
 			ResponseListener responseListener);
 
-	public void auth(Map<String, String> param,
+	public void auth(Bundle params,
 			ResponseListener responseListener);
 
-	public void exit(Map<String, String> param,
+	public void exit(Bundle params,
 			ResponseListener responseListener);
 	
-	public void verifywebcode(Map<String, String> param,
+	public void verifywebcode(Bundle params,
 			ResponseListener responseListener);
 	
-	public void verifywebcodelogin(Map<String, String> param,
+	public void verifywebcodelogin(Bundle params,
 			ResponseListener responseListener);
 	
-	public void getaccount(Map<String, String> param,
+	public void getaccount(Bundle params,
 			ResponseListener responseListener);
 
-	public void modify(Map<String, String> param,
+	public void modify(Bundle params,
 			ResponseListener responseListener);
 	
 }

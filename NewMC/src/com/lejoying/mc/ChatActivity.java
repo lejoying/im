@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.lejoying.mc.adapter.CircleMenu;
 import com.lejoying.mc.utils.MCImageTools;
 
 public class ChatActivity extends Activity {
@@ -27,8 +26,8 @@ public class ChatActivity extends Activity {
 		iv1.setImageBitmap(bm);
 		iv2.setImageBitmap(bm);
 
-		CircleMenu circleMenu = new CircleMenu(this);
-		circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
+		// CircleMenu circleMenu = new CircleMenu(this);
+		// circleMenu.showMenu(CircleMenu.SHOW_TOP, null, true);
 	}
 
 }
