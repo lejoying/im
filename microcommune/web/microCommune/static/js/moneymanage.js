@@ -3,8 +3,7 @@ var vData;
 var tempData;
 $(document).ready(function () {
     $.getScript("/static/js/sha1.js");
-    $.getScript("/setting.js",function(){
-//        alert(window.globaldata.serverSetting.maxUploadImg);
+    $.getScript("/setting.js", function () {
     });
     (function firstGetAccountHeadImg() {
         var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
@@ -15,12 +14,54 @@ $(document).ready(function () {
                 filename: JSON.parse(nowAccount).head
             },
             success: function (data) {
-                setAccountHeadImg(data["image"]);
+                if (data["提示信息"] == "获取图片成功") {
+                    setAccountHeadImg(data["image"]);
+                }
+                //设置网络图片，裁剪图片会出现问题
 //                setAccountHeadImg("http://images.weixing.com/images/3280eef48e4bbdf9e69322051711ba19546210ac.png");
             }
         });
     })();
-    $(".js_editheadimg").click(function () {
+    $("#accountAvatarWrapper").click(function (e) {
+//        alert(e.pageX + "--" + e.pageY);
+        $("#js_headimgmodify").css("visibility", "visible");
+        $(".js_headjrop1 img").hide();
+        $(".js_editheadimg").hide();
+        var left = 27;
+        var top = 3;
+        var width = 0;
+        var height = 0;
+        var topInterval = setInterval(function () {
+            top++;
+            $("#js_headimgmodify")[0].style.top = top + "%";
+            if (top == 20)
+                window.clearInterval(topInterval);
+        }, 25);
+        var widthInterval = setInterval(function () {
+            width += 10;
+            $("#js_headimgmodify")[0].style.width = width + "px";
+            if (width == 420) {
+                $(".js_editheadimg").show();
+                $(".js_headjrop1 img").show();
+                window.clearInterval(widthInterval);
+            }
+        }, 10);
+        var leftInterval = setInterval(function () {
+            left++;
+            $("#js_headimgmodify")[0].style.left = left + "%";
+            if (left == 40)
+                window.clearInterval(leftInterval);
+        }, 25);
+        var heightInterval = setInterval(function () {
+            height += 10;
+            $("#js_headimgmodify")[0].style.width = height + "px";
+            if (height == 400)
+                window.clearInterval(heightInterval);
+        }, 10);
+        showHeadImgModify();
+    });
+    $(".js_editheadimg").click(function (e) {
+        $('body').html2canvas();
         $(".js_headjrop1").slideUp(100, function () {
             $(".js_headjrop2").css("visibility", "visible");
             $(".js_headjrop2").slideDown(100, function () {
@@ -201,10 +242,6 @@ function scanheadimg() {
             setAccountHeadImg(tempData);
         }
     }
-}
-function popupModifyAvatarWin() {
-    $("#js_headimgmodify").css("visibility", "visible");
-    showHeadImgModify();
 }
 function showHeadImgModify() {
     js_headimgmodify.style.visibility = 'visible';

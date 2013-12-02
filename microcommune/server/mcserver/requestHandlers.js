@@ -11,6 +11,9 @@ requestHandlers.session = function (request, response, pathObject, data) {
     if (operation == "eventwebcodelogin") {
         session.eventwebcodelogin(data, response);
     }
+    else if (operation == "notifywebcodelogin") {
+        session.notifywebcodelogin(data, response);
+    }
     else if (operation == "event") {
         session.event(data, response);
     }

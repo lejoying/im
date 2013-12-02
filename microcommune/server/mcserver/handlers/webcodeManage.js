@@ -2,9 +2,8 @@ var serverSetting = root.globaldata.serverSetting;
 var webcodeManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
-var session = require('./session.js');
 var sha1 = require('../tools/sha1.js');
-
+var push = require('../lib/push.js');
 /***************************************
  *     URL：/api2/webcode/webcodelogin
  ***************************************/
@@ -13,31 +12,27 @@ webcodeManage.webcodelogin = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var sessionID = data.sessionID;
-    var sessionResponse = session.sessionPool[sessionID];
-    if (sessionResponse != null && sessionResponse != undefined) {
-        var accessKey = phone + new Date();
-        sessionResponse.write(JSON.stringify({
-            "提示信息": "web端二维码登录成功",
-            "phone": phone,
-            "accessKey": sha1.hex_sha1(accessKey)
-        }));
-        sessionResponse.end();
-        response.write(JSON.stringify({
-            "提示信息": "二维码登录成功",
-            "phone": phone
-        }));
-        response.end();
-    } else {
-        sessionResponse.write(JSON.stringify({
-            "提示信息": "web端二维码登录失败",
-            "失败原因": "数据异常"
-        }));
-        sessionResponse.end();
-        response.write(JSON.stringify({
-            "提示信息": "二维码登录失败",
-            "失败原因": "客户端连接不存在"
-        }));
-        response.end();
-    }
+
+    push.notifywebcodelogin(phone, sessionID, function (data) {
+        if (JSON.parse(data).information == "notifywebcodelogin success") {
+            response.write(JSON.stringify({
+                "提示信息": "二维码登陆成功",
+                "phone": phone
+            }));
+            response.end();
+        } else if (JSON.parse(data).information == "notifywebcodelogin faild") {
+            response.write(JSON.stringify({
+                "提示信息": "二维码登陆失败",
+                "失败原因": "客户端连接不存在"
+            }));
+            response.end();
+        } else {
+            response.write(JSON.stringify({
+                "提示信息": "二维码登陆失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+        }
+    });
 }
 module.exports = webcodeManage;

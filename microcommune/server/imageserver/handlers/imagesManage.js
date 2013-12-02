@@ -100,11 +100,16 @@ imagesManage.get = function (data, response) {
                     }));
                     response.end();
                 } else {
+                    /*response.writeHead(200, {
+                        "Content-Type": "image/jpeg"
+                    });
+                    response.write("<img src='data:image/png;base64," + data + "'/>");
+                    response.end();*/
                     response.write(JSON.stringify({
-                        "提示信息": "获取图片成功",
-                        image: "data:image/png;base64," + data
-                    }));
-                    response.end();
+                     "提示信息": "获取图片成功",
+                     image: "data:image/png;base64," + data
+                     }));
+                     response.end();
                 }
             });
         }

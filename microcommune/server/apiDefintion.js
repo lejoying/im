@@ -32,7 +32,7 @@ api = {
         },
         response: {
             success: {"information": "notifywebcodelogin success"},
-            failed: {}
+            failed: {"information": "notifywebcodelogin failed"}
         }
     },
     /***************************************

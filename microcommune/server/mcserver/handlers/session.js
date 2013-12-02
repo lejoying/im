@@ -13,9 +13,15 @@ session.eventwebcodelogin = function (data, response) {
     var sessionID = data.sessionID;
     var sessionResponse = sessionPool[sessionID];
     if (sessionResponse != null && sessionResponse != undefined) {
-        sessionResponse.end();
+        sessionResponse.writeHead(200, {
+            "Content-Type": "text/javascript"
+        });
+        sessionResponse.end("window.code=408", function () {
+            sessionPool[sessionID] = response;
+        });
+    } else {
+        sessionPool[sessionID] = response;
     }
-    sessionPool[sessionID] = response;
     /*count++;
      console.log(count);
      if (count > 100000) {
@@ -31,38 +37,43 @@ session.eventwebcodelogin = function (data, response) {
 }
 session.notifywebcodelogin = notifywebcodelogin;
 function notifywebcodelogin(data, response) {
+    response.asynchronous = 1;
     var phone = data.phone;
     var sessionID = data.sessionID;
     var sessionResponse = sessionPool[sessionID];
     if (sessionResponse != null && sessionResponse != undefined) {
-        var accessKey = sha1.hex_sha1(phone + new Date.getTime());
+        var accessKey = sha1.hex_sha1(phone + new Date().getTime());
         sessionResponse.write(JSON.stringify({
             "提示信息": "web端二维码登录成功",
             phone: phone,
             accessKey: accessKey
         }));
         sessionResponse.end();
-    } else {
-        sessionResponse.write(JSON.stringify({
-            "提示信息": "web端二维码登录失败",
-            "失败原因": "数据异常"
+        response.write(JSON.stringify({
+            "information": "notifywebcodelogin success"
         }));
-        sessionResponse.end();
+        response.end();
+    } else {
+        if (sessionResponse != undefined) {
+            sessionResponse.write(JSON.stringify({
+                "提示信息": "web端二维码登录失败",
+                "失败原因": "数据异常"
+            }));
+            sessionResponse.end();
+        }
+        response.write(JSON.stringify({
+            "information": "notifywebcodelogin failed"
+        }));
+        response.end();
     }
-
-    response.write(JSON.stringify({
-        "information": "notifywebcodelogin success"
-    }));
-    response.end();
 }
 session.event = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
     console.log(data);
-    console.log(new Date().getTime() + "----");
     accountSession[phone] = accountSession[phone] || [];
-    console.log("常连接--event");
+    console.log("长连接--event");
     accountSession[phone][accessKey] = response;
     /*if(accountSession[phone]!=undefined){
      if(accountSession[phone][accessKey] != undefined){
