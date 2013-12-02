@@ -2,7 +2,7 @@ var selectGroup = 0;
 var selectCircleId = "";
 var selectPhone = "";
 var selectId = "";
-var flag="none";
+var flag = "none";
 
 
 $(document).ready(function () {
@@ -221,7 +221,8 @@ $(document).ready(function () {
     var tempChatTop1 = 0;
     $("#txl").click(function () {
         tempChatTop = window.globaldata.tempData;
-        setPosition(tempChatTop1);
+        if (typeof setPosition == "function")
+            setPosition(tempChatTop1);
 //        alert(tempChatTop);
 //        tempChatTop = window.sessionStorage.getItem("_wheelData");
 
@@ -245,7 +246,8 @@ $(document).ready(function () {
     $("#chooseConversationBtn").click(function () {
         tempChatTop1 = window.globaldata.tempData;
         window.globaldata.tempData = 0;
-        setPosition(0);
+        if (typeof setPosition == "function")
+            setPosition(0);
 //        $('#conversationListContent')[0].style.top = 0 * ($('#conversationListContent')[0].offsetHeight / $('#mainBox')[0].offsetHeight) + "px";
 //        window.sessionStorage.setItem("_wheelData",tempChatTop);
         $("#conversationContainer").show();
@@ -905,12 +907,12 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
 
 function request(flag) {
     var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
-    var accesskey=JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
+    var accesskey = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
     //var accesskey=window.localStorage.getItem("accesskey");
     $.ajax({
         type: "POST",
         url: "/api2/session/event?",
-        timeout:30000,
+        timeout: 30000,
         data: {
             phone: phone,
             accessKey: accesskey
@@ -923,33 +925,33 @@ function request(flag) {
                         url: "/api2/message/get?",
                         data: {
                             phone: phone,
-                            accessKey:accesskey,
+                            accessKey: accesskey,
                             flag: flag
                         },
                         success: function (data) {
                             if (data["提示信息"] == "获取成功") {
                                 alert(count(data.message));
-                                if(phone!=data.message[phone].value){
+                                if (phone != data.message[phone].value) {
                                     alert("消息显示在左侧");
                                     //var content=data.message.content;
 
-                                    var flag=data.message[flag].value;
-                                    $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">'+
-                                        ' <div class="time"> <span class="timeBg left"></span> 13:39 <span class="timeBg right"></span> </div> '+
-                                        '<div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText"> '+
-                                        '<div style="" class="cloudPannel"> '+
-                                        '<div class="sendStatus">   </div> '+
-                                        ' <div class="cloudBody"> '+
-                                        '<div class="cloudContent"> '+
-                                        '<pre style="white-space:pre-wrap"><img src="/static/images/65.png">'+ data.message[content].value.text() + '</pre> '+
-                                        '</div> '+
-                                        '</div> '+
-                                        ' <div class="cloudArrow "></div> '+
-                                        '</div> '+
-                                        '</div> '+
-                                        '</div> '+
+                                    var flag = data.message[flag].value;
+                                    $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">' +
+                                        ' <div class="time"> <span class="timeBg left"></span> 13:39 <span class="timeBg right"></span> </div> ' +
+                                        '<div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText"> ' +
+                                        '<div style="" class="cloudPannel"> ' +
+                                        '<div class="sendStatus">   </div> ' +
+                                        ' <div class="cloudBody"> ' +
+                                        '<div class="cloudContent"> ' +
+                                        '<pre style="white-space:pre-wrap"><img src="/static/images/65.png">' + data.message[content].value.text() + '</pre> ' +
+                                        '</div> ' +
+                                        '</div> ' +
+                                        ' <div class="cloudArrow "></div> ' +
+                                        '</div> ' +
+                                        '</div> ' +
+                                        '</div> ' +
                                         '</div> ');
-                                }else{
+                                } else {
                                     alert("消息显示在右侧");
                                 }
                             }

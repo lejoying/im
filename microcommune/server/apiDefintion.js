@@ -615,4 +615,57 @@ api = {
         }
     }
 }
+/*************************************** ***************************************
+ * *    Class：alipay
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/alipay/alipayto
+     ***************************************/
+    "alipay_alipayto": {
+        description: {
+            id: 1000800,
+            url: "/alipay/alipayto"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", money: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取成功", "url": "XXX"},
+            failed: {}
+        }
+    },
+    /***************************************
+     *     URL：/alipay/paynotify
+     ***************************************/
+    "alipay_paynotify": {
+        description: {
+            id: 1000801,
+            url: "/alipay/paynotify"
+        },
+        request: {
+            typical: {}
+        },
+        response: {
+            success: "success",
+            failed: "fail"
+        }
+    },
+    /***************************************
+     *     URL：/alipay/send_goods_confirm_by_platform
+     ***************************************/
+    "alipay_send_goods_confirm_by_platform": {
+        description: {
+            id: 1000802,
+            url: "/alipay/send_goods_confirm_by_platform"
+        },
+        request: {
+            typical: {trade_no: "NNN"}
+        },
+        response: {
+            success: "success",
+            failed: "fail"
+        }
+    }
+}
 
