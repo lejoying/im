@@ -40,6 +40,7 @@ public abstract class BaseFragment extends Fragment {
 		super.onPause();
 		cleanMsg();
 		hideSoftInput();
+		mMCFragmentManager.setNetworkRemainListener(null);
 	}
 
 	private InputMethodManager getInputMethodManager() {

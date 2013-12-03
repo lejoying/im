@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <include layout="@layout/fparent_loading" />
+
     <include layout="@layout/fparent_background" />
 
     <include layout="@layout/fparent_content" />

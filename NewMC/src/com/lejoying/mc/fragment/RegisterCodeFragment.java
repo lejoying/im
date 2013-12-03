@@ -1,7 +1,6 @@
 package com.lejoying.mc.fragment;
 
 import android.os.Bundle;
-import android.telephony.NeighboringCellInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,11 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.lejoying.mc.BaseFragmentActivity.NetworkRemainReceiver;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.fragment.BaseInterface.RemainListener;
 import com.lejoying.mc.service.NetworkService;
+import com.lejoying.mc.utils.MCStaticData;
 
 public class RegisterCodeFragment extends BaseFragment implements
 		OnClickListener {
@@ -22,6 +21,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 	private EditText mView_code;
 	private Button mView_next;
 	private TextView mView_sendcode;
+	private TextView mView_phone;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,8 +36,9 @@ public class RegisterCodeFragment extends BaseFragment implements
 		mContent = inflater.inflate(R.layout.f_registercode, null);
 		mView_code = (EditText) mContent.findViewById(R.id.et_code);
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
+		mView_phone = (TextView) mContent.findViewById(R.id.tv_phone);
 		mView_sendcode = (TextView) mContent.findViewById(R.id.tv_sendcode);
-
+		mView_phone.setText(MCStaticData.registerBundle.getString("phone"));
 		mView_next.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
 
@@ -49,7 +50,12 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 			@Override
 			public void remain(int remain) {
-				System.out.println(remain);
+				if (remain != 0) {
+					mView_sendcode.setText(getString(R.string.tv_resend) + "("
+							+ remain + ")");
+				} else {
+					mView_sendcode.setText(getString(R.string.tv_resend));
+				}
 			}
 		});
 
@@ -65,13 +71,33 @@ public class RegisterCodeFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_next:
-			getActivity().getSupportFragmentManager().popBackStack();
-			getActivity().getSupportFragmentManager().popBackStack();
-			mMCFragmentManager.relpaceToContent(new RegisterPassFragment(),
-					true);
+			Bundle params = new Bundle();
+			params.putString("phone",
+					MCStaticData.registerBundle.getString("phone"));
+			params.putString("code", mView_code.getText().toString());
+			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
+					params, new ReceiverAdapter() {
+						@Override
+						public void success() {
+							getActivity().getSupportFragmentManager()
+									.popBackStack();
+							getActivity().getSupportFragmentManager()
+									.popBackStack();
+							mMCFragmentManager.relpaceToContent(
+									new RegisterPassFragment(), true);
+						}
+					});
 			break;
 		case R.id.tv_sendcode:
+			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
+					MCStaticData.registerBundle, new ReceiverAdapter() {
 
+						@Override
+						public void success() {
+							// TODO Auto-generated method stub
+
+						}
+					});
 			break;
 		default:
 			break;

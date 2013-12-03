@@ -24,6 +24,7 @@ import com.lejoying.mc.apiimpl.MessageManagerImpl;
 import com.lejoying.mc.apiimpl.RelationManagerImpl;
 import com.lejoying.mc.apiimpl.SessionImpl;
 import com.lejoying.mc.listener.ResponseListener;
+import com.lejoying.mc.utils.MCStaticData;
 
 public class NetworkService extends BaseService {
 
@@ -65,45 +66,45 @@ public class NetworkService extends BaseService {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		System.out.println(intent.getExtras()+":::::::::::");
 		handlerNetworkAsk(intent);
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	private void handlerNetworkAsk(Intent intent) {
-		final Intent broadcast = new Intent();
-		broadcast.putExtra("API", intent.getIntExtra("API", -1));
-		broadcast.setAction(ACTION);
 		Bundle params = intent.getExtras();
 		params.remove("API");
 		switch (intent.getIntExtra("API", -1)) {
 		case API.ACCOUNT_AUTH:
-			mAccountManager.auth(params, new NetworkResponseAdapter(broadcast));
+			mAccountManager.auth(params, new NetworkResponseAdapter(intent));
 			break;
 		case API.ACCOUNT_EXIT:
-			mAccountManager.exit(params, new NetworkResponseAdapter(broadcast));
+			mAccountManager.exit(params, new NetworkResponseAdapter(intent));
 			break;
 		case API.ACCOUNT_GETACCOUNT:
 			mAccountManager.getaccount(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.ACCOUNT_VERIFYCODE:
 			mAccountManager.verifycode(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.ACCOUNT_VERIFYPHONE:
-			if (intent.getStringExtra("usage") != null
-					&& intent.getStringExtra("phone") != null) {
-				if (intent.getStringExtra("usage").equals("register")) {
-					if (intent.getStringExtra("phone")
-							.equals(lastRegisterPhone) && mRegCodeRemain != 0) {
-						lastRegisterPhone = intent.getStringExtra("phone");
+			if (params.getString("usage") != null
+					&& params.getString("phone") != null) {
+				if (params.getString("usage").equals("register")) {
+					if (params.getString("phone").equals(lastRegisterPhone)
+							&& mRegCodeRemain != 0) {
+						lastRegisterPhone = params.getString("phone");
+						Intent broadcast = new Intent();
+						broadcast.putExtra("API", API.ACCOUNT_VERIFYPHONE);
 						broadcast.putExtra("STATUS", STATUS_SUCCESS);
+						broadcast.setAction(ACTION);
 						sendBroadcast(broadcast);
 						break;
 					}
-					if (!intent.getStringExtra("phone").equals(
-							lastRegisterPhone)) {
-						lastRegisterPhone = intent.getStringExtra("phone");
+					if (!params.getString("phone").equals(lastRegisterPhone)) {
+						lastRegisterPhone = params.getString("phone");
 						mRegCodeRemain = 0;
 						if (mRegTimer != null) {
 							mRegTimer.cancel();
@@ -112,7 +113,7 @@ public class NetworkService extends BaseService {
 					if (mRegCodeRemain == 0) {
 						mRegCodeRemain = 60;
 						mAccountManager.verifyphone(params,
-								new NetworkResponseAdapter(broadcast) {
+								new NetworkResponseAdapter(intent) {
 									@Override
 									public void success(JSONObject data) {
 										super.success(data);
@@ -127,7 +128,9 @@ public class NetworkService extends BaseService {
 														mRegCodeRemain);
 												broadcast
 														.setAction(ACTION_REMAIN);
-												sendBroadcast(broadcast);
+												sendBroadcast(
+
+												broadcast);
 												if (mRegCodeRemain == 0) {
 													mRegTimer.cancel();
 												}
@@ -140,91 +143,87 @@ public class NetworkService extends BaseService {
 					if (mLoginCodeRemain == 0) {
 						mLoginCodeRemain = 60;
 						mAccountManager.verifyphone(params,
-								new NetworkResponseAdapter(broadcast));
+								new NetworkResponseAdapter(intent));
 					}
 				}
 			}
 			break;
 		case API.ACCOUNT_VERIFYWEBCODE:
 			mAccountManager.verifywebcode(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.ACCOUNT_VERIFYWEBCODELOGIN:
 			mAccountManager.verifywebcodelogin(params,
-					new NetworkResponseAdapter(broadcast));
+					new NetworkResponseAdapter(intent));
 			break;
 
 		case API.CIRCLE_DELETE:
-			mCircleManager
-					.delete(params, new NetworkResponseAdapter(broadcast));
+			mCircleManager.delete(params, new NetworkResponseAdapter(intent));
 			break;
 		case API.CIRCLE_MODIFY:
-			mCircleManager
-					.modify(params, new NetworkResponseAdapter(broadcast));
+			mCircleManager.modify(params, new NetworkResponseAdapter(intent));
 			break;
 
 		case API.COMMUNITY_FIND:
-			mCommunityManager.find(params,
-					new NetworkResponseAdapter(broadcast));
+			mCommunityManager.find(params, new NetworkResponseAdapter(intent));
 			break;
 		case API.COMMUNITY_GETCOMMUNITIES:
 			mCommunityManager.getcommunities(params,
-					new NetworkResponseAdapter(broadcast));
+					new NetworkResponseAdapter(intent));
 			break;
 		case API.COMMUNITY_GETCOMMUNITYFRIENDS:
 			mCommunityManager.getcommunityfriends(params,
-					new NetworkResponseAdapter(broadcast));
+					new NetworkResponseAdapter(intent));
 			break;
 		case API.COMMUNITY_JOIN:
-			mCommunityManager.join(params,
-					new NetworkResponseAdapter(broadcast));
+			mCommunityManager.join(params, new NetworkResponseAdapter(intent));
 			break;
 		case API.COMMUNITY_UNJOIN:
-			mCommunityManager.unjoin(params, new NetworkResponseAdapter(
-					broadcast));
+			mCommunityManager
+					.unjoin(params, new NetworkResponseAdapter(intent));
 			break;
 
 		case API.MESSAGE_GET:
-			mMessageManager.get(params, new NetworkResponseAdapter(broadcast));
+			mMessageManager.get(params, new NetworkResponseAdapter(intent));
 			break;
 		case API.MESSAGE_SEND:
-			mMessageManager.send(params, new NetworkResponseAdapter(broadcast));
+			mMessageManager.send(params, new NetworkResponseAdapter(intent));
 			break;
 
 		case API.RELATION_ADDCIRCLE:
 			mRelationManager.addcircle(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.RELATION_ADDFRIEND:
 			mRelationManager.addfriend(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.RELATION_ADDFRIENDAGREE:
 			mRelationManager.addfriendagree(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.RELATION_GETASKFRIENDS:
 			mRelationManager.getaskfriends(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.RELATION_GETCIRCLESANDFRIENDS:
 			mRelationManager.getcirclesandfriends(params,
-					new NetworkResponseAdapter(broadcast));
+					new NetworkResponseAdapter(intent));
 			break;
 		case API.RELATION_GETCOMMUNITIES:
 			mRelationManager.getcommunities(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 		case API.RELATION_GETFRIENDS:
 			mRelationManager.getfriends(params, new NetworkResponseAdapter(
-					broadcast));
+					intent));
 			break;
 
 		case API.SESSION_EVENT:
-			mSession.event(params, new NetworkResponseAdapter(broadcast));
+			mSession.event(params, new NetworkResponseAdapter(intent));
 			break;
 		case API.SESSION_EVENTWEB:
-			mSession.eventweb(params, new NetworkResponseAdapter(broadcast));
+			mSession.eventweb(params, new NetworkResponseAdapter(intent));
 			break;
 
 		default:
@@ -234,39 +233,111 @@ public class NetworkService extends BaseService {
 
 	private class NetworkResponseAdapter implements ResponseListener {
 		Intent intent;
+		Intent broadcast;
+		Bundle params;
 
 		public NetworkResponseAdapter(Intent intent) {
 			this.intent = intent;
+			broadcast = new Intent();
+			broadcast.putExtra("API", intent.getIntExtra("API", -1));
+			broadcast.setAction(ACTION);
+			params = intent.getExtras();
+			params.remove("API");
 		}
 
 		@Override
 		public void noInternet() {
-			intent.putExtra("STATUS", STATUS_NOINTERNET);
-			sendBroadcast(intent);
+			broadcast.putExtra("STATUS", STATUS_NOINTERNET);
+			sendBroadcast(broadcast);
 		}
 
 		@Override
 		public void success(JSONObject data) {
-			intent.putExtra("STATUS", STATUS_SUCCESS);
-			sendBroadcast(intent);
+			switch (intent.getIntExtra("API", -1)) {
+			case API.ACCOUNT_AUTH:
+				break;
+			case API.ACCOUNT_EXIT:
+				break;
+			case API.ACCOUNT_GETACCOUNT:
+				break;
+			case API.ACCOUNT_VERIFYCODE:
+
+				break;
+			case API.ACCOUNT_VERIFYPHONE:
+				if (params.getString("usage").equals("register")) {
+					MCStaticData.registerBundle = params;
+					MCStaticData.registerBundle.remove("usage");
+					try {
+						MCStaticData.registerBundle.putString("code",
+								data.getString("code"));
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+			case API.ACCOUNT_VERIFYWEBCODE:
+				break;
+			case API.ACCOUNT_VERIFYWEBCODELOGIN:
+				break;
+			case API.CIRCLE_DELETE:
+				break;
+			case API.CIRCLE_MODIFY:
+				break;
+			case API.COMMUNITY_FIND:
+				break;
+			case API.COMMUNITY_GETCOMMUNITIES:
+				break;
+			case API.COMMUNITY_GETCOMMUNITYFRIENDS:
+				break;
+			case API.COMMUNITY_JOIN:
+				break;
+			case API.COMMUNITY_UNJOIN:
+				break;
+			case API.MESSAGE_GET:
+				break;
+			case API.MESSAGE_SEND:
+				break;
+			case API.RELATION_ADDCIRCLE:
+				break;
+			case API.RELATION_ADDFRIEND:
+				break;
+			case API.RELATION_ADDFRIENDAGREE:
+				break;
+			case API.RELATION_GETASKFRIENDS:
+				break;
+			case API.RELATION_GETCIRCLESANDFRIENDS:
+				break;
+			case API.RELATION_GETCOMMUNITIES:
+				break;
+			case API.RELATION_GETFRIENDS:
+				break;
+			case API.SESSION_EVENT:
+				break;
+			case API.SESSION_EVENTWEB:
+				break;
+			default:
+				break;
+			}
+			broadcast.putExtra("STATUS", STATUS_SUCCESS);
+			sendBroadcast(broadcast);
 		}
 
 		@Override
 		public void unsuccess(JSONObject data) {
-			intent.putExtra("STATUS", STATUS_UNSUCCESS);
+			broadcast.putExtra("STATUS", STATUS_UNSUCCESS);
 			try {
-				intent.putExtra("LOG",
+				broadcast.putExtra("LOG",
 						data.getString(getString(R.string.app_reason)));
 			} catch (JSONException e) {
-				intent.putExtra("LOG", getString(R.string.app_timeout));
+				broadcast.putExtra("LOG", getString(R.string.app_timeout));
 			}
-			sendBroadcast(intent);
+			sendBroadcast(broadcast);
 		}
 
 		@Override
 		public void failed() {
-			intent.putExtra("STATUS", STATUS_FAILED);
-			sendBroadcast(intent);
+			broadcast.putExtra("STATUS", STATUS_FAILED);
+			sendBroadcast(broadcast);
 		}
 	}
 

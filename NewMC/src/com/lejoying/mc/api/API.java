@@ -4,10 +4,9 @@ public interface API {
 	public static final int ACCOUNT_VERIFYPHONE = 0x001;
 	public static final int ACCOUNT_VERIFYCODE = 0x002;
 	public static final int ACCOUNT_AUTH = 0x003;
-	public static final int ACCOUNT_EXIT = 0x004;
-	public static final int ACCOUNT_VERIFYWEBCODE = 0x005;
-	public static final int ACCOUNT_VERIFYWEBCODELOGIN = 0x006;
-	public static final int ACCOUNT_GETACCOUNT = 0x007;
+	public static final int ACCOUNT_GET = 0x004;
+	public static final int ACCOUNT_MODIFY = 0x005;
+	public static final int ACCOUNT_EXIT = 0x006;
 
 	public static final int CIRCLE_MODIFY = 0x101;
 	public static final int CIRCLE_DELETE = 0x102;
@@ -31,4 +30,6 @@ public interface API {
 
 	public static final int SESSION_EVENTWEB = 0x501;
 	public static final int SESSION_EVENT = 0x502;
+	
+	public static final int WEBCODE_WEBCODELOGIN = 0x6
 }

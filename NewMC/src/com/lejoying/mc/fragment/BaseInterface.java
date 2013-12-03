@@ -14,7 +14,7 @@ public interface BaseInterface {
 
 	public int relpaceToContent(Fragment fragment, boolean toBackStack);
 
-	public void startNetworkForResult(int API, Bundle params,
+	public void startNetworkForResult(int api, Bundle params,
 			ReceiverListener listener);
 
 	public void setNetworkRemainListener(RemainListener listener);

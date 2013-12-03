@@ -13,7 +13,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
@@ -29,14 +32,20 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	private int mContentId;
 
+	private View mLoadingView;
+
 	private boolean isCircleMenuCreated;
 	private boolean isBackgroundCreated;
+	private boolean isLoadingCreated;
+	private boolean isLoading;
 
 	private Map<Integer, ReceiverListener> mReceiverListreners;
 	private RemainListener mRemainListener;
 
 	private NetworkRemainReceiver mNetworkRemainReceiver;
 	private NetworkReceiver mNetworkReceiver;
+
+	private InputMethodManager mInputMethodManager;
 
 	public abstract Fragment setFirstPreview();
 
@@ -87,10 +96,28 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 		if (circleMenuView != null && !isCircleMenuCreated) {
 			isCircleMenuCreated = true;
-			circleMenuView.getParent().bringChildToFront(circleMenuView);
+			circleMenuView.bringToFront();
 			mCircle = new CircleMenuFragment();
 			mFragmentManager.beginTransaction()
 					.replace(R.id.fl_circleMenu, mCircle).commit();
+		}
+
+		mLoadingView = findViewById(R.id.loading);
+
+		if (mLoadingView != null && !isLoadingCreated) {
+			isLoadingCreated = true;
+			mLoadingView.bringToFront();
+			mLoadingView.setVisibility(View.GONE);
+			mLoadingView.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					return true;
+				}
+			});
+			mLoadingView.setFocusable(true);
+			mLoadingView.setClickable(true);
+
+			mLoadingView.setVisibility(View.GONE);
 		}
 
 	}
@@ -105,6 +132,10 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mCircle != null) {
+			if (keyCode == KeyEvent.KEYCODE_BACK && isLoading) {
+				cancelLoading();
+				return true;
+			}
 			if (keyCode == KeyEvent.KEYCODE_BACK && mCircle.cancelMenu()) {
 				return true;
 			}
@@ -147,18 +178,19 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void startNetworkForResult(int API, Bundle bundle,
+	public void startNetworkForResult(int api, Bundle bundle,
 			ReceiverListener listener) {
 		if (mReceiverListreners == null) {
 			mReceiverListreners = new Hashtable<Integer, BaseInterface.ReceiverListener>();
 		}
-		mReceiverListreners.put(API, listener);
+		mReceiverListreners.put(api, listener);
 		Intent service = new Intent(this, NetworkService.class);
-		service.putExtra("API", API);
+		service.putExtra("API", api);
 		if (bundle != null) {
 			service.putExtras(bundle);
 		}
 		startService(service);
+		startLoading();
 	}
 
 	@Override
@@ -169,11 +201,14 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	public class NetworkReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			ReceiverListener listener = mReceiverListreners.get(intent
-					.getIntExtra("API", -1));
-			if (listener != null) {
-				listener.onReceive(intent.getIntExtra("STATUS", -1),
-						intent.getStringExtra("LOG"));
+			if (isLoading) {
+				cancelLoading();
+				ReceiverListener listener = mReceiverListreners.get(intent
+						.getIntExtra("API", -1));
+				if (listener != null) {
+					listener.onReceive(intent.getIntExtra("STATUS", -1),
+							intent.getStringExtra("LOG"));
+				}
 			}
 		}
 	}
@@ -191,4 +226,30 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		}
 	}
 
+	private void startLoading() {
+		mLoadingView.setVisibility(View.VISIBLE);
+		isLoading = true;
+		hideSoftInput();
+	}
+
+	private void cancelLoading() {
+		mLoadingView.setVisibility(View.GONE);
+		isLoading = false;
+	}
+
+	private InputMethodManager getInputMethodManager() {
+		if (mInputMethodManager == null) {
+			mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		}
+		return mInputMethodManager;
+	}
+
+	protected boolean hideSoftInput() {
+		boolean flag = false;
+		if (getCurrentFocus() != null) {
+			flag = getInputMethodManager().hideSoftInputFromWindow(
+					getCurrentFocus().getWindowToken(), 0);
+		}
+		return flag;
+	}
 }

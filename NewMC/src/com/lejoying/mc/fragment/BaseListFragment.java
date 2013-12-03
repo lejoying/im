@@ -7,7 +7,10 @@ import android.support.v4.app.ListFragment;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.fragment.BaseInterface.ReceiverListener;
+import com.lejoying.mc.service.NetworkService;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 
@@ -39,6 +42,7 @@ public abstract class BaseListFragment extends ListFragment {
 		super.onPause();
 		cleanMsg();
 		hideSoftInput();
+		mMCFragmentManager.setNetworkRemainListener(null);
 	}
 
 	private InputMethodManager getInputMethodManager() {
@@ -82,5 +86,43 @@ public abstract class BaseListFragment extends ListFragment {
 
 	protected void cleanMsg() {
 		MCNetTools.cleanMsg();
+	}
+
+	protected abstract class ReceiverAdapter implements ReceiverListener {
+		@Override
+		public void onReceive(int STATUS, String log) {
+			switch (STATUS) {
+			case NetworkService.STATUS_SUCCESS:
+				success();
+				break;
+			case NetworkService.STATUS_UNSUCCESS:
+				unSuccess(log);
+				break;
+			case NetworkService.STATUS_NOINTERNET:
+				noInternet();
+				break;
+			case NetworkService.STATUS_FAILED:
+				failed();
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		public abstract void success();
+
+		public void unSuccess(String log) {
+			showMsg(log);
+		}
+
+		public void noInternet() {
+			showMsg(getString(R.string.app_nointernet));
+
+		}
+
+		public void failed() {
+			showMsg(getString(R.string.app_timeout));
+		}
 	}
 }
