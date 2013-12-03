@@ -45,7 +45,7 @@ $(document).ready(function () {
     $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
     $(".js_circlesFriends").hide();
     $(".loadMoreConv").hide();
-    var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
+   var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
     if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
         var tempChatArr = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatArr"));
         for (var index in tempChatArr) {
@@ -89,7 +89,7 @@ $(document).ready(function () {
             }
         }
     });
-    request(flag);
+    request();
 
     $(document).on('click', ".groupTitle", function () {
         $(".js_circlesFriends .friendDetail").slideDown(1000);
@@ -364,7 +364,7 @@ $(document).ready(function () {
             var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
             var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
             var message = $("#textInput").val();
-            alert(message + "  输入的消息");
+            //alert(message + "  输入的消息");
             var listPhone = [];
             listPhone.push(phoneto);
             var messages = {
@@ -905,10 +905,9 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
     new Drag(titleBarID, message_boxID, obj);
 }
 
-function request(flag) {
+function request() {
     var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
     var accesskey = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
-    //var accesskey=window.localStorage.getItem("accesskey");
     $.ajax({
         type: "POST",
         url: "/api2/session/event?",
@@ -920,54 +919,90 @@ function request(flag) {
         success: function (data) {
             if (data["提示信息"] == "成功") {
                 if (data["event"] == "message") {
-                    $.ajax({
-                        type: "POST",
-                        url: "/api2/message/get?",
-                        data: {
-                            phone: phone,
-                            accessKey: accesskey,
-                            flag: flag
-                        },
-                        success: function (data) {
-                            if (data["提示信息"] == "获取成功") {
-                                alert(count(data.message));
-                                if (phone != data.message[phone].value) {
-                                    alert("消息显示在左侧");
-                                    //var content=data.message.content;
-
-                                    var flag = data.message[flag].value;
-                                    $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">' +
-                                        ' <div class="time"> <span class="timeBg left"></span> 13:39 <span class="timeBg right"></span> </div> ' +
-                                        '<div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText"> ' +
-                                        '<div style="" class="cloudPannel"> ' +
-                                        '<div class="sendStatus">   </div> ' +
-                                        ' <div class="cloudBody"> ' +
-                                        '<div class="cloudContent"> ' +
-                                        '<pre style="white-space:pre-wrap"><img src="/static/images/65.png">' + data.message[content].value.text() + '</pre> ' +
-                                        '</div> ' +
-                                        '</div> ' +
-                                        ' <div class="cloudArrow "></div> ' +
-                                        '</div> ' +
-                                        '</div> ' +
-                                        '</div> ' +
-                                        '</div> ');
-                                } else {
-                                    alert("消息显示在右侧");
-                                }
-                            }
-                        }
-                    })
+                    getMessage();
                 } else {
                     alert("newfriend");
                 }
-                request(flag);
             } else {
-                alert(data);
-                request(flag);
+                request();
             }
         },
         error: function () {
-            request(flag);
+            request();
         }
+    });
+}
+function getMessage(){
+    var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+    var accesskey = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
+    alert(phone+" "+accesskey+" "+flag);
+    $.ajax({
+        type: "POST",
+        url: "/api2/message/get?",
+        data: {
+            phone: phone,
+            accessKey: accesskey,
+            flag: flag
+        },
+        success: function (data) {
+            if (data["提示信息"] == "获取成功") {
+                var messages=data["messages"];
+                var length=messages.length;
+                //alert(messages+" "+length);
+                alert(messages);
+                for(var i=0;i<length;i++){
+                    //消息内容
+                    // alert(JSON.parse(messages[i]).content.text);
+                    alert(JSON.parse(messages[i]).phone);
+                }
+                //查看是否存在于临时会话
+                var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
+                var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
+                if (tempChat != null) {
+                    if (tempChat[phoneto] != "" && tempChat[phoneto] != undefined) {
+                        var account = tempChat[phoneto];
+                        var accountObj = JSON.parse(account);
+                        $("#conv_wxid_" + accountObj.uid)[0].parentNode.removeChild($("#conv_wxid_" + accountObj.uid)[0]);
+                        var tempChatArrObj = JSON.parse(tempChatArr);
+                        for (var index in tempChatArrObj) {
+                            if (tempChatArrObj[index] == account) {
+                                tempChatArrObj.splice(index, 1);
+                                tempChatArrObj.push(account);
+                                window.sessionStorage.setItem("wxgs_tempChatArr", JSON.stringify(tempChatArrObj));
+                                break;
+                            }
+                        }
+                        window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChat));
+                        addTempChatAccount(accountObj);
+                    } else {
+                        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
+                    }
+                } else {
+                    addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
+                }
+            }
+        }
+               /* if (phone != ) {
+                    alert("消息显示在左侧");
+                        $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">' +
+                            ' <div class="time"> <span class="timeBg left"></span> 13:39 <span class="timeBg right"></span> </div> ' +
+                            '<div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText"> ' +
+                            '<div style="" class="cloudPannel"> ' +
+                            '<div class="sendStatus">   </div> ' +
+                            ' <div class="cloudBody"> ' +
+                            '<div class="cloudContent"> ' +
+                            '<pre style="white-space:pre-wrap"><img src="/static/images/65.png">' + data.message[content].value.text() + '</pre> ' +
+                            '</div> ' +
+                            '</div> ' +
+                            ' <div class="cloudArrow "></div> ' +
+                            '</div> ' +
+                            '</div> ' +
+                            '</div> ' +
+                            '</div> ');
+                    }
+                } else {
+                    alert("消息显示在右侧");
+                }
+            }*/
     });
 }
