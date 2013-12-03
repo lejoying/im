@@ -9,7 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
+import com.lejoying.mc.api.API;
+import com.lejoying.mc.fragment.BaseInterface.RemainListener;
+import com.lejoying.mc.service.NetworkService;
 
 public class LoginUseCodeFragment extends BaseFragment implements
 		OnClickListener {
@@ -40,6 +44,24 @@ public class LoginUseCodeFragment extends BaseFragment implements
 		mView_login.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
 
+		mMCFragmentManager.setNetworkRemainListener(new RemainListener() {
+
+			@Override
+			public String setRemainType() {
+				return NetworkService.REMAIN_LOGIN;
+			}
+
+			@Override
+			public void remain(int remain) {
+				if (remain > 0) {
+					mView_sendcode.setText(getString(R.string.tv_resend) + "("
+							+ remain + ")");
+				} else {
+					mView_sendcode.setText(getString(R.string.tv_resend));
+				}
+			}
+		});
+
 		return mContent;
 	}
 
@@ -50,14 +72,46 @@ public class LoginUseCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onClick(View v) {
+		String phone = mView_phone.getText().toString();
+		String code = mView_code.getText().toString();
+		if (phone == null || phone.equals("")) {
+			showMsg(getString(R.string.app_phonenotnull));
+			return;
+		}
 		switch (v.getId()) {
 		case R.id.btn_login:
-
+			if (code == null || code.equals("")) {
+				showMsg(getString(R.string.app_codenotnull));
+				return;
+			}
+			Bundle params = new Bundle();
+			params.putString("phone", phone);
+			params.putString("code", code);
+			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
+					params, true, new ReceiverAdapter() {
+						@Override
+						public void success() {
+							mMCFragmentManager.startToActivity(MainActivity.class, true);
+						}
+					});
 			break;
 		case R.id.tv_sendcode:
+			if (phone == null || phone.equals("")) {
+				showMsg(getString(R.string.app_phonenotnull));
+				return;
+			}
+			Bundle verifyParams = new Bundle();
+			verifyParams.putString("phone", phone);
+			verifyParams.putString("usage", "login");
+			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
+					verifyParams, new ReceiverAdapter() {
+						@Override
+						public void success() {
+
+						}
+					});
 
 			break;
-
 		default:
 			break;
 		}
@@ -65,8 +119,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 
 	@Override
 	public EditText showSoftInputOnShow() {
-		// TODO Auto-generated method stub
-		return null;
+		return mView_phone;
 	}
 
 }

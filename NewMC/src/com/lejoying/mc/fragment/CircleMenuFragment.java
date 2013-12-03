@@ -65,11 +65,14 @@ public class CircleMenuFragment extends BaseFragment {
 	private boolean mInitClick;
 	private boolean mLock;
 	private boolean mShowBack;
+	private boolean mIsCreated;
 
 	private List<List<View>> mMenuItemList;
 	private int mMenuIndex;
 
 	private GestureDetector mGestureDetector;
+
+	private CircleMenuListener mCircleMenuListener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -508,6 +511,10 @@ public class CircleMenuFragment extends BaseFragment {
 					initMenuItem(views, itemGroup, first);
 					first = false;
 				}
+				mIsCreated = true;
+				if (mCircleMenuListener != null) {
+					mCircleMenuListener.onCreated();
+				}
 			}
 		});
 	}
@@ -867,10 +874,21 @@ public class CircleMenuFragment extends BaseFragment {
 		}
 	}
 
+	public boolean isCreated() {
+		return mIsCreated;
+	}
+
 	@Override
 	public EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	public void setCircleMenuListener(CircleMenuListener circleMenuListener) {
+		this.mCircleMenuListener = circleMenuListener;
+	}
+
+	public interface CircleMenuListener {
+		public void onCreated();
+	}
 }

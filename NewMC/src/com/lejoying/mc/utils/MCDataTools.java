@@ -7,32 +7,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import com.lejoying.mc.entity.Account;
-import com.lejoying.mc.entity.Circle;
-import com.lejoying.mc.entity.Community;
-import com.lejoying.mc.entity.Friend;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class MCDataTools {
-	public static void saveAccount(Context context, Account account) {
+import com.lejoying.mc.entity.User;
 
-		MCStaticData.nowAccount = account;
+public class MCDataTools {
+	public static void saveUser(Context context, User user) {
+
+		MCStaticData.mUser = user;
 
 		try {
-			OutputStream os = context.openFileOutput("account",
+			OutputStream os = context.openFileOutput("user",
 					Context.MODE_PRIVATE);
 			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.writeObject(account);
+			oos.writeObject(user);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -40,16 +31,16 @@ public class MCDataTools {
 		}
 	}
 
-	public static Account getLoginedAccount(Context context) {
-		Account account = MCStaticData.nowAccount;
-		if (account != null) {
-			return account;
+	public static User getLoginedUser(Context context) {
+		User user = MCStaticData.mUser;
+		if (user != null) {
+			return user;
 		}
 		if (context != null) {
 			try {
-				InputStream is = context.openFileInput("account");
+				InputStream is = context.openFileInput("user");
 				ObjectInputStream ois = new ObjectInputStream(is);
-				account = (Account) ois.readObject();
+				user = (User) ois.readObject();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (StreamCorruptedException e) {
@@ -60,44 +51,7 @@ public class MCDataTools {
 				e.printStackTrace();
 			}
 		}
-		return account;
-	}
-
-	public static void saveFriends(Context context, JSONArray friends) {
-		DBManager dbManager = new DBManager(context);
-		dbManager.addFriends(friends);
-		dbManager.closeDB();
-	}
-
-	public static List<Circle> getCircles(Context context) {
-		List<Circle> circles = new ArrayList<Circle>();
-		DBManager dbManager = new DBManager(context);
-		circles = dbManager.queryCircle();
-		dbManager.closeDB();
-		return circles;
-	}
-
-	public static List<Friend> getFriends(Context context, int rid) {
-		List<Friend> accounts = new ArrayList<Friend>();
-		DBManager dbManager = new DBManager(context);
-		accounts = dbManager.queryFriends(rid);
-		dbManager.closeDB();
-		return accounts;
-	}
-
-	public static void saveCommunities(Context context, JSONArray communities) {
-		DBManager dbManager = new DBManager(context);
-		dbManager.addCommunities(communities);
-		dbManager.closeDB();
-	}
-
-	public static List<Community> getCommunities(Context context) {
-		List<Community> community = new ArrayList<Community>();
-		DBManager dbManager = new DBManager(context);
-		community = dbManager.queryCommunities(MCDataTools.getLoginedAccount(
-				null).getUid());
-		dbManager.closeDB();
-		return community;
+		return user;
 	}
 
 }
@@ -137,213 +91,213 @@ class DBHelper extends SQLiteOpenHelper {
 	}
 }
 
-class DBManager {
-	private DBHelper helper;
-	private SQLiteDatabase db;
-
-	public DBManager(Context context) {
-		helper = new DBHelper(context);
-		db = helper.getWritableDatabase();
-	}
-
-	public void addFriends(JSONArray friends) {
-		deleteFriends();
-		db.beginTransaction(); // 开始事务
-		try {
-			for (int i = 0; i < friends.length(); i++) {
-				Circle circle = new Circle(friends.getJSONObject(i));
-				if (circle.getRid() != 0) {
-					db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
-							new Object[] {
-									circle.getRid(),
-									circle.getName(),
-									MCDataTools.getLoginedAccount(null)
-											.getUid() });
-				} else {
-					db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
-							new Object[] {
-									-MCDataTools.getLoginedAccount(null)
-											.getUid(),
-									"没有分组",
-									MCDataTools.getLoginedAccount(null)
-											.getUid() });
-				}
-				JSONArray accounts = friends.getJSONObject(i).getJSONArray(
-						"accounts");
-				for (int j = 0; j < accounts.length(); j++) {
-					Friend friend = new Friend(accounts.getJSONObject(j));
-					db.execSQL(
-							"INSERT INTO friend VALUES(?, ?, ?, ?, ?, ?)",
-							new Object[] { friend.getUid(),
-									friend.getNickName(), friend.getHead(),
-									friend.getPhone(),
-									friend.getMainBusiness(),
-									friend.getFriendStatus() });
-					if (circle.getRid() != 0) {
-						db.execSQL(
-								"INSERT INTO circlerelation VALUES(?,?)",
-								new Object[] { circle.getRid(), friend.getUid() });
-					} else {
-						db.execSQL(
-								"INSERT INTO circlerelation VALUES(?,?)",
-								new Object[] {
-										-MCDataTools.getLoginedAccount(null)
-												.getUid(), friend.getUid() });
-					}
-				}
-
-			}
-			db.setTransactionSuccessful(); // 设置事务成功完成
-		} catch (JSONException e) {
-			// e.printStackTrace();
-		} finally {
-			db.endTransaction(); // 结束事务
-		}
-	}
-
-	public void addCommunities(JSONArray communities) {
-		db.beginTransaction(); // 开始事务
-		try {
-			db.execSQL("DELETE FROM communityrelation WHERE fuid=?",
-					new Object[] { MCDataTools.getLoginedAccount(null) });
-			for (int i = 0; i < communities.length(); i++) {
-				Community community = new Community(
-						communities.getJSONObject(i));
-				db.execSQL(
-						"INSERT OR REPLACE INTO community VALUES(?, ?, ?, ?)",
-						new Object[] { community.getCid(), community.getName(),
-								community.getDescription(),
-								community.getAgent().getUid() });
-				db.execSQL(
-						"INSERT OR REPLACE INTO agent VALUES(?, ?, ?, ?, ?)",
-						new Object[] { community.getAgent().getUid(),
-								community.getAgent().getNickName(),
-								community.getAgent().getHead(),
-								community.getAgent().getPhone(),
-								community.getAgent().getMainBusiness() });
-				db.execSQL("INSERT INTO communityrelation VALUES(?, ?)",
-						new Object[] { community.getCid(),
-								MCDataTools.getLoginedAccount(null).getUid() });
-
-			}
-			db.setTransactionSuccessful(); // 设置事务成功完成
-		} catch (JSONException e) {
-			// e.printStackTrace();
-		} finally {
-			db.endTransaction(); // 结束事务
-		}
-	}
-
-	public List<Community> queryCommunities(int fuid) {
-		List<Community> communities = new ArrayList<Community>();
-		Cursor c = queryCommunitiesCursor();
-		while (c.moveToNext()) {
-			Community community = new Community();
-			community.setCid(c.getInt(c.getColumnIndex("cid")));
-			community.setName(c.getString(c.getColumnIndex("name")));
-			community.setDescription(c.getString(c
-					.getColumnIndex("description")));
-			Cursor ac = queryCommunityAgentCursor(c.getInt(c
-					.getColumnIndex("aid")));
-			Account account = new Account();
-			if (ac.moveToNext()) {
-				account.setUid(ac.getInt(ac.getColumnIndex("aid")));
-				account.setNickName(ac.getString(ac.getColumnIndex("nickName")));
-				account.setHead(ac.getString(ac.getColumnIndex("head")));
-				account.setPhone(ac.getString(ac.getColumnIndex("phone")));
-				account.setMainBusiness(ac.getString(ac
-						.getColumnIndex("mainBusiness")));
-			}
-			community.setAgent(account);
-			communities.add(community);
-		}
-		;
-		return communities;
-
-	}
-
-	private Cursor queryCommunityAgentCursor(int aid) {
-		Cursor c = db
-				.rawQuery(
-						"SELECT aid,nickName,head,phone,mainBusiness FROM agent WHERE aid=?",
-						new String[] { String.valueOf(aid) });
-		return c;
-	}
-
-	private Cursor queryCommunitiesCursor() {
-		Cursor c = db
-				.rawQuery(
-						"SELECT cid,name,description,aid FROM community WHERE cid IN(select cid from communityrelation where fuid=?)",
-						new String[] { String.valueOf(MCDataTools
-								.getLoginedAccount(null).getUid()) });
-		return c;
-	}
-
-	public List<Circle> queryCircle() {
-		List<Circle> circles = new ArrayList<Circle>();
-		Cursor c = queryCircleCursor();
-		while (c.moveToNext()) {
-			Circle circle = new Circle();
-			circle.setRid(c.getInt(c.getColumnIndex("rid")));
-			circle.setName(c.getString(c.getColumnIndex("name")));
-			circles.add(circle);
-		}
-		;
-		return circles;
-
-	}
-
-	private Cursor queryCircleCursor() {
-		Cursor c = db.rawQuery(
-				"SELECT rid,name FROM circle WHERE fuid = ?",
-				new String[] { String.valueOf(MCDataTools.getLoginedAccount(
-						null).getUid()) });
-		return c;
-	}
-
-	public List<Friend> queryFriends(int rid) {
-		List<Friend> friends = new ArrayList<Friend>();
-		Cursor c = queryFriendsCursor(rid);
-		while (c.moveToNext()) {
-			Friend friend = new Friend();
-			friend.setNickName(c.getString(c.getColumnIndex("nickName")));
-			friend.setHead(c.getString(c.getColumnIndex("head")));
-			friend.setPhone(c.getString(c.getColumnIndex("phone")));
-			friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
-			friend.setFriendStatus(c.getString(c.getColumnIndex("friendStatus")));
-			friends.add(friend);
-		}
-		;
-		return friends;
-	}
-
-	private Cursor queryFriendsCursor(int rid) {
-		Cursor c = db
-				.rawQuery(
-						"SELECT nickName,head,phone,mainBusiness,friendStatus FROM friend WHERE uid IN (select uid from circlerelation where rid=?)",
-						new String[] { String.valueOf(rid) });
-		return c;
-	}
-
-	private void deleteFriends() {
-		List<Circle> circles = queryCircle();
-		db.beginTransaction();
-		try {
-			for (Circle circle : circles) {
-				db.execSQL("DELETE FROM friend",
-						new Object[] { circle.getRid() });
-				db.execSQL("DELETE FROM circlerelation",
-						new Object[] { circle.getRid() });
-			}
-			db.execSQL("DELETE FROM circle", new Object[] { MCDataTools
-					.getLoginedAccount(null).getUid() });
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-	public void closeDB() {
-		db.close();
-	}
-}
+// class DBManager {
+// private DBHelper helper;
+// private SQLiteDatabase db;
+//
+// public DBManager(Context context) {
+// helper = new DBHelper(context);
+// db = helper.getWritableDatabase();
+// }
+//
+// public void addFriends(JSONArray friends) {
+// deleteFriends();
+// db.beginTransaction(); // 开始事务
+// try {
+// for (int i = 0; i < friends.length(); i++) {
+// Circle circle = new Circle(friends.getJSONObject(i));
+// if (circle.getRid() != 0) {
+// db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
+// new Object[] {
+// circle.getRid(),
+// circle.getName(),
+// MCDataTools.getLoginedAccount(null)
+// .getUid() });
+// } else {
+// db.execSQL("INSERT INTO circle VALUES(?, ?, ?)",
+// new Object[] {
+// -MCDataTools.getLoginedAccount(null)
+// .getUid(),
+// "没有分组",
+// MCDataTools.getLoginedAccount(null)
+// .getUid() });
+// }
+// JSONArray accounts = friends.getJSONObject(i).getJSONArray(
+// "accounts");
+// for (int j = 0; j < accounts.length(); j++) {
+// Friend friend = new Friend(accounts.getJSONObject(j));
+// db.execSQL(
+// "INSERT INTO friend VALUES(?, ?, ?, ?, ?, ?)",
+// new Object[] { friend.getUid(),
+// friend.getNickName(), friend.getHead(),
+// friend.getPhone(),
+// friend.getMainBusiness(),
+// friend.getFriendStatus() });
+// if (circle.getRid() != 0) {
+// db.execSQL(
+// "INSERT INTO circlerelation VALUES(?,?)",
+// new Object[] { circle.getRid(), friend.getUid() });
+// } else {
+// db.execSQL(
+// "INSERT INTO circlerelation VALUES(?,?)",
+// new Object[] {
+// -MCDataTools.getLoginedAccount(null)
+// .getUid(), friend.getUid() });
+// }
+// }
+//
+// }
+// db.setTransactionSuccessful(); // 设置事务成功完成
+// } catch (JSONException e) {
+// // e.printStackTrace();
+// } finally {
+// db.endTransaction(); // 结束事务
+// }
+// }
+//
+// public void addCommunities(JSONArray communities) {
+// db.beginTransaction(); // 开始事务
+// try {
+// db.execSQL("DELETE FROM communityrelation WHERE fuid=?",
+// new Object[] { MCDataTools.getLoginedAccount(null) });
+// for (int i = 0; i < communities.length(); i++) {
+// Community community = new Community(
+// communities.getJSONObject(i));
+// db.execSQL(
+// "INSERT OR REPLACE INTO community VALUES(?, ?, ?, ?)",
+// new Object[] { community.getCid(), community.getName(),
+// community.getDescription(),
+// community.getAgent().getUid() });
+// db.execSQL(
+// "INSERT OR REPLACE INTO agent VALUES(?, ?, ?, ?, ?)",
+// new Object[] { community.getAgent().getUid(),
+// community.getAgent().getNickName(),
+// community.getAgent().getHead(),
+// community.getAgent().getPhone(),
+// community.getAgent().getMainBusiness() });
+// db.execSQL("INSERT INTO communityrelation VALUES(?, ?)",
+// new Object[] { community.getCid(),
+// MCDataTools.getLoginedAccount(null).getUid() });
+//
+// }
+// db.setTransactionSuccessful(); // 设置事务成功完成
+// } catch (JSONException e) {
+// // e.printStackTrace();
+// } finally {
+// db.endTransaction(); // 结束事务
+// }
+// }
+//
+// public List<Community> queryCommunities(int fuid) {
+// List<Community> communities = new ArrayList<Community>();
+// Cursor c = queryCommunitiesCursor();
+// while (c.moveToNext()) {
+// Community community = new Community();
+// community.setCid(c.getInt(c.getColumnIndex("cid")));
+// community.setName(c.getString(c.getColumnIndex("name")));
+// community.setDescription(c.getString(c
+// .getColumnIndex("description")));
+// Cursor ac = queryCommunityAgentCursor(c.getInt(c
+// .getColumnIndex("aid")));
+// Account account = new Account();
+// if (ac.moveToNext()) {
+// account.setUid(ac.getInt(ac.getColumnIndex("aid")));
+// account.setNickName(ac.getString(ac.getColumnIndex("nickName")));
+// account.setHead(ac.getString(ac.getColumnIndex("head")));
+// account.setPhone(ac.getString(ac.getColumnIndex("phone")));
+// account.setMainBusiness(ac.getString(ac
+// .getColumnIndex("mainBusiness")));
+// }
+// community.setAgent(account);
+// communities.add(community);
+// }
+// ;
+// return communities;
+//
+// }
+//
+// private Cursor queryCommunityAgentCursor(int aid) {
+// Cursor c = db
+// .rawQuery(
+// "SELECT aid,nickName,head,phone,mainBusiness FROM agent WHERE aid=?",
+// new String[] { String.valueOf(aid) });
+// return c;
+// }
+//
+// private Cursor queryCommunitiesCursor() {
+// Cursor c = db
+// .rawQuery(
+// "SELECT cid,name,description,aid FROM community WHERE cid IN(select cid from communityrelation where fuid=?)",
+// new String[] { String.valueOf(MCDataTools
+// .getLoginedAccount(null).getUid()) });
+// return c;
+// }
+//
+// public List<Circle> queryCircle() {
+// List<Circle> circles = new ArrayList<Circle>();
+// Cursor c = queryCircleCursor();
+// while (c.moveToNext()) {
+// Circle circle = new Circle();
+// circle.setRid(c.getInt(c.getColumnIndex("rid")));
+// circle.setName(c.getString(c.getColumnIndex("name")));
+// circles.add(circle);
+// }
+// ;
+// return circles;
+//
+// }
+//
+// private Cursor queryCircleCursor() {
+// Cursor c = db.rawQuery(
+// "SELECT rid,name FROM circle WHERE fuid = ?",
+// new String[] { String.valueOf(MCDataTools.getLoginedAccount(
+// null).getUid()) });
+// return c;
+// }
+//
+// public List<Friend> queryFriends(int rid) {
+// List<Friend> friends = new ArrayList<Friend>();
+// Cursor c = queryFriendsCursor(rid);
+// while (c.moveToNext()) {
+// Friend friend = new Friend();
+// friend.setNickName(c.getString(c.getColumnIndex("nickName")));
+// friend.setHead(c.getString(c.getColumnIndex("head")));
+// friend.setPhone(c.getString(c.getColumnIndex("phone")));
+// friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
+// friend.setFriendStatus(c.getString(c.getColumnIndex("friendStatus")));
+// friends.add(friend);
+// }
+// ;
+// return friends;
+// }
+//
+// private Cursor queryFriendsCursor(int rid) {
+// Cursor c = db
+// .rawQuery(
+// "SELECT nickName,head,phone,mainBusiness,friendStatus FROM friend WHERE uid IN (select uid from circlerelation where rid=?)",
+// new String[] { String.valueOf(rid) });
+// return c;
+// }
+//
+// private void deleteFriends() {
+// List<Circle> circles = queryCircle();
+// db.beginTransaction();
+// try {
+// for (Circle circle : circles) {
+// db.execSQL("DELETE FROM friend",
+// new Object[] { circle.getRid() });
+// db.execSQL("DELETE FROM circlerelation",
+// new Object[] { circle.getRid() });
+// }
+// db.execSQL("DELETE FROM circle", new Object[] { MCDataTools
+// .getLoginedAccount(null).getUid() });
+// db.setTransactionSuccessful();
+// } finally {
+// db.endTransaction();
+// }
+// }
+//
+// public void closeDB() {
+// db.close();
+// }
+// }

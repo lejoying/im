@@ -1,11 +1,11 @@
 package com.lejoying.mc;
 
-import com.lejoying.mc.fragment.MessageFragment;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public class MainActivity extends BaseFragmentActivity {
+import com.lejoying.mc.fragment.LoginUsePassFragment;
+
+public class LoginActivity extends BaseFragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -15,12 +15,11 @@ public class MainActivity extends BaseFragmentActivity {
 
 	@Override
 	public Fragment setFirstPreview() {
-		return new MessageFragment();
+		return new LoginUsePassFragment();
 	}
 
 	@Override
 	protected int setBackground() {
-		// TODO Auto-generated method stub
 		return R.drawable.card_background;
 	}
 

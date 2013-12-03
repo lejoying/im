@@ -1,35 +1,71 @@
 package com.lejoying.mc.api;
 
-public interface API {
-	public static final int ACCOUNT_VERIFYPHONE = 0x001;
-	public static final int ACCOUNT_VERIFYCODE = 0x002;
-	public static final int ACCOUNT_AUTH = 0x003;
-	public static final int ACCOUNT_GET = 0x004;
-	public static final int ACCOUNT_MODIFY = 0x005;
-	public static final int ACCOUNT_EXIT = 0x006;
+public abstract class API {
+	protected static final String SLASH = "/";
 
-	public static final int CIRCLE_MODIFY = 0x101;
-	public static final int CIRCLE_DELETE = 0x102;
+	public static final String ACCOUNT = "account";
+	public static final String ACCOUNT_VERIFYPHONE = generate(ACCOUNT,
+			"verifyphone");
+	public static final String ACCOUNT_VERIFYCODE = generate(ACCOUNT,
+			"verifycode");;
+	public static final String ACCOUNT_AUTH = generate(ACCOUNT, "auth");;
+	public static final String ACCOUNT_GET = generate(ACCOUNT, "get");;
+	public static final String ACCOUNT_MODIFY = generate(ACCOUNT, "modify");;
+	public static final String ACCOUNT_EXIT = generate(ACCOUNT, "exit");;
 
-	public static final int COMMUNITY_FIND = 0x201;
-	public static final int COMMUNITY_JOIN = 0x202;
-	public static final int COMMUNITY_UNJOIN = 0x203;
-	public static final int COMMUNITY_GETCOMMUNITIES = 0x204;
-	public static final int COMMUNITY_GETCOMMUNITYFRIENDS = 0x205;
+	public static final String CIRCLE = "circle";
+	public static final String CIRCLE_MODIFY = generate(CIRCLE, "modify");
+	public static final String CIRCLE_DELETE = generate(CIRCLE, "delete");
+	public static final String CIRCLE_MOVEOROUT = generate(CIRCLE, "moveorout");
+	public static final String CIRCLE_MOVEOUT = generate(CIRCLE, "moveout");
+	public static final String CIRCLE_ADDCIRCLE = generate(CIRCLE, "addcircle");
 
-	public static final int MESSAGE_SEND = 0x301;
-	public static final int MESSAGE_GET = 0x302;
+	public static final String COMMUNITY = "community";
+	public static final String COMMUNITY_ADD = generate(COMMUNITY, "add");
+	public static final String COMMUNITY_FIND = generate(COMMUNITY, "find");
+	public static final String COMMUNITY_JOIN = generate(COMMUNITY, "join");
+	public static final String COMMUNITY_UNJOIN = generate(COMMUNITY, "unjoin");
+	public static final String COMMUNITY_GETCOMMUNITIES = generate(COMMUNITY,
+			"getcommunities");
+	public static final String COMMUNITY_GETCOMMUNITYFRIENDS = generate(
+			COMMUNITY, "getcommunityfriends");
 
-	public static final int RELATION_ADDFRIEND = 0x401;
-	public static final int RELATION_GETFRIENDS = 0x402;
-	public static final int RELATION_ADDCIRCLE = 0x403;
-	public static final int RELATION_GETCOMMUNITIES = 0x404;
-	public static final int RELATION_GETCIRCLESANDFRIENDS = 0x405;
-	public static final int RELATION_GETASKFRIENDS = 0x406;
-	public static final int RELATION_ADDFRIENDAGREE = 0x407;
+	public static final String MESSAGE = "message";
+	public static final String MESSAGE_SEND = generate(MESSAGE, "send");
+	public static final String MESSAGE_GET = generate(MESSAGE, "get");
 
-	public static final int SESSION_EVENTWEB = 0x501;
-	public static final int SESSION_EVENT = 0x502;
-	
-	public static final int WEBCODE_WEBCODELOGIN = 0x6
+	public static final String RELATION = "relation";
+	public static final String RELATION_ADDFRIEND = generate(RELATION,
+			"addfriend");
+	public static final String RELATION_DELETEFRIEND = generate(RELATION,
+			"deletefriend");
+	public static final String RELATION_BLACKLIST = generate(RELATION,
+			"blacklist");
+	public static final String RELATION_GETFRIENDS = generate(RELATION,
+			"getfriends");
+	public static final String RELATION_GETCIRCLESANDFRIENDS = generate(
+			RELATION, "getcirclesandfriends");
+	public static final String RELATION_GETASKFRIENDS = generate(RELATION,
+			"getaskfriends");
+	public static final String RELATION_ADDFRIENDAGREE = generate(RELATION,
+			"addfriendagree");
+
+	public static final String SESSION = "session";
+	public static final String SESSION_EVENT = generate(SESSION, "event");
+
+	public static final String WEBCODE = "webcode";
+	public static final String WEBCODE_WEBCODELOGIN = generate(WEBCODE,
+			"webcodelogin");
+
+	public static final String IMAGE = "image";
+	public static final String IMAGE_UPLOAD = generate(IMAGE, "upload");
+	public static final String IMAGE_CHECK = generate(IMAGE, "check");
+
+	public static String generate(String clazz, String method) {
+		return clazz + SLASH + method;
+	}
+
+	public static String getClazz(String api) {
+		return api.substring(0, api.indexOf(SLASH));
+	}
 }

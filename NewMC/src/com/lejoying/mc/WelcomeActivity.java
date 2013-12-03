@@ -17,7 +17,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 				try {
 					Thread.sleep(1500);
 					Intent intent = new Intent(WelcomeActivity.this,
-							MainActivity.class);
+							LoginActivity.class);
 					WelcomeActivity.this.startActivity(intent);
 					WelcomeActivity.this.finish();
 				} catch (InterruptedException e) {

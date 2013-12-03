@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.utils.MCImageTools;
+import com.lejoying.mc.utils.MCStaticData;
 
 public class MessageFragment extends BaseListFragment {
 
@@ -73,6 +74,7 @@ public class MessageFragment extends BaseListFragment {
 				}
 				mMessageViewsList.add(mInflater
 						.inflate(R.layout.f_margin, null));
+				MCStaticData.messages = mMessageViewsList;
 				mHandler.sendEmptyMessage(1);
 			};
 		}.start();
@@ -90,12 +92,12 @@ public class MessageFragment extends BaseListFragment {
 
 		@Override
 		public int getCount() {
-			return mMessageViewsList.size();
+			return MCStaticData.messages.size();
 		}
 
 		@Override
 		public Object getItem(int arg0) {
-			return mMessageViewsList.get(arg0);
+			return MCStaticData.messages.get(arg0);
 		}
 
 		@Override
@@ -105,7 +107,7 @@ public class MessageFragment extends BaseListFragment {
 
 		@Override
 		public View getView(int arg0, View arg1, ViewGroup arg2) {
-			return mMessageViewsList.get(arg0);
+			return MCStaticData.messages.get(arg0);
 		}
 	}
 

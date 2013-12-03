@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 
@@ -77,11 +78,11 @@ public class LoginUsePassFragment extends BaseFragment implements
 			params.putString("password", mView_pass.getText().toString());
 
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_AUTH, params,
-					new ReceiverAdapter() {
+					true, new ReceiverAdapter() {
 						@Override
 						public void success() {
-							mMCFragmentManager.relpaceToContent(
-									new MessageFragment(), false);
+							mMCFragmentManager.startToActivity(
+									MainActivity.class, true);
 						}
 					});
 

@@ -40,7 +40,13 @@ public abstract class BaseFragment extends Fragment {
 		super.onPause();
 		cleanMsg();
 		hideSoftInput();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
 		mMCFragmentManager.setNetworkRemainListener(null);
+		mMCFragmentManager.setFragmentKeyDownListener(null);
 	}
 
 	private InputMethodManager getInputMethodManager() {

@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
+import com.lejoying.mc.fragment.CircleMenuFragment.CircleMenuListener;
 import com.lejoying.mc.service.NetworkService;
 import com.lejoying.mc.view.BackgroundView;
 
@@ -37,10 +38,13 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	private boolean isCircleMenuCreated;
 	private boolean isBackgroundCreated;
 	private boolean isLoadingCreated;
+	private boolean isFirstViewCreated;
 	private boolean isLoading;
+	private String loadingAPI;
 
-	private Map<Integer, ReceiverListener> mReceiverListreners;
+	private Map<String, ReceiverListener> mReceiverListreners;
 	private RemainListener mRemainListener;
+	private OnKeyDownListener mKeyDownListener;
 
 	private NetworkRemainReceiver mNetworkRemainReceiver;
 	private NetworkReceiver mNetworkReceiver;
@@ -69,19 +73,11 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 		mContentId = R.id.fl_content;
 
-		if (setFirstPreview() != null) {
-			if (mFragmentManager.getFragments() == null
-					|| mFragmentManager.getFragments().size() == 0) {
-				mFragmentManager.beginTransaction()
-						.replace(mContentId, setFirstPreview(), "first")
-						.commit();
-			}
-		}
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 
 		View backgroundView = findViewById(R.id.fl_background);
 
@@ -100,6 +96,15 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 			mCircle = new CircleMenuFragment();
 			mFragmentManager.beginTransaction()
 					.replace(R.id.fl_circleMenu, mCircle).commit();
+			mCircle.setCircleMenuListener(new CircleMenuListener() {
+				@Override
+				public void onCreated() {
+					System.out.println("¥¥Ω®¡À");
+					createFirstView();
+				}
+			});
+		} else if (!isFirstViewCreated) {
+			createFirstView();
 		}
 
 		mLoadingView = findViewById(R.id.loading);
@@ -114,12 +119,17 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 					return true;
 				}
 			});
-			mLoadingView.setFocusable(true);
-			mLoadingView.setClickable(true);
 
 			mLoadingView.setVisibility(View.GONE);
 		}
+	}
 
+	private void createFirstView() {
+		if (setFirstPreview() != null) {
+			mFragmentManager.beginTransaction()
+					.replace(mContentId, setFirstPreview()).commit();
+		}
+		isFirstViewCreated = true;
 	}
 
 	@Override
@@ -130,15 +140,25 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	}
 
 	@Override
+	public void setFragmentKeyDownListener(OnKeyDownListener listener) {
+		this.mKeyDownListener = listener;
+	}
+
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && isLoading) {
+			mReceiverListreners.remove(loadingAPI);
+			cancelLoading();
+			return true;
+		}
 		if (mCircle != null) {
-			if (keyCode == KeyEvent.KEYCODE_BACK && isLoading) {
-				cancelLoading();
-				return true;
-			}
 			if (keyCode == KeyEvent.KEYCODE_BACK && mCircle.cancelMenu()) {
 				return true;
 			}
+		}
+		if (mKeyDownListener != null
+				&& mKeyDownListener.onKeyDown(keyCode, event)) {
+			return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -152,17 +172,23 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	@Override
 	public void showCircleMenuToTop(boolean lock, boolean showBack) {
-		mCircle.showToTop(lock, showBack);
+		if (mCircle != null) {
+			mCircle.showToTop(lock, showBack);
+		}
 	}
 
 	@Override
 	public void showCircleMenuToBottom() {
-		mCircle.showToBottom();
+		if (mCircle != null) {
+			mCircle.showToBottom();
+		}
 	}
 
 	@Override
 	public void setCircleMenuPageName(String pageName) {
-		mCircle.setPageName(pageName);
+		if (mCircle != null) {
+			mCircle.setPageName(pageName);
+		}
 	}
 
 	@Override
@@ -178,19 +204,36 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void startNetworkForResult(int api, Bundle bundle,
+	public void startToActivity(Class<?> clazz, boolean finishSelf) {
+		Intent intent = new Intent(this, clazz);
+		startActivity(intent);
+		if (finishSelf) {
+			finish();
+		}
+	}
+
+	@Override
+	public void startNetworkForResult(String api, Bundle params,
 			ReceiverListener listener) {
+		startNetworkForResult(api, params, false, listener);
+	}
+
+	@Override
+	public void startNetworkForResult(String api, Bundle params,
+			boolean showLoading, ReceiverListener listener) {
 		if (mReceiverListreners == null) {
-			mReceiverListreners = new Hashtable<Integer, BaseInterface.ReceiverListener>();
+			mReceiverListreners = new Hashtable<String, BaseInterface.ReceiverListener>();
 		}
 		mReceiverListreners.put(api, listener);
 		Intent service = new Intent(this, NetworkService.class);
 		service.putExtra("API", api);
-		if (bundle != null) {
-			service.putExtras(bundle);
+		if (params != null) {
+			service.putExtras(params);
 		}
 		startService(service);
-		startLoading();
+		if (showLoading) {
+			startLoading(api);
+		}
 	}
 
 	@Override
@@ -201,13 +244,17 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	public class NetworkReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (isLoading) {
-				cancelLoading();
-				ReceiverListener listener = mReceiverListreners.get(intent
-						.getIntExtra("API", -1));
+			String api = intent.getStringExtra("API");
+			if (api != null) {
+				ReceiverListener listener = mReceiverListreners.get(api);
 				if (listener != null) {
+					if (isLoading && api.equals(loadingAPI)) {
+						cancelLoading();
+					}
+					mReceiverListreners.remove(api);
 					listener.onReceive(intent.getIntExtra("STATUS", -1),
 							intent.getStringExtra("LOG"));
+
 				}
 			}
 		}
@@ -226,15 +273,18 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		}
 	}
 
-	private void startLoading() {
+	private void startLoading(String api) {
 		mLoadingView.setVisibility(View.VISIBLE);
 		isLoading = true;
+		loadingAPI = api;
 		hideSoftInput();
 	}
 
 	private void cancelLoading() {
 		mLoadingView.setVisibility(View.GONE);
 		isLoading = false;
+		loadingAPI = "";
+		// toggleSoftInput();
 	}
 
 	private InputMethodManager getInputMethodManager() {
@@ -251,5 +301,12 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 					getCurrentFocus().getWindowToken(), 0);
 		}
 		return flag;
+	}
+
+	protected void toggleSoftInput() {
+		if (getInputMethodManager().isActive()) {
+			getInputMethodManager().toggleSoftInput(0,
+					InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 	}
 }

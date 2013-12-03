@@ -50,7 +50,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 			@Override
 			public void remain(int remain) {
-				if (remain != 0) {
+				if (remain > 0) {
 					mView_sendcode.setText(getString(R.string.tv_resend) + "("
 							+ remain + ")");
 				} else {
@@ -71,27 +71,24 @@ public class RegisterCodeFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_next:
-			Bundle params = new Bundle();
-			params.putString("phone",
+			Bundle nextParams = new Bundle();
+			nextParams.putString("phone",
 					MCStaticData.registerBundle.getString("phone"));
-			params.putString("code", mView_code.getText().toString());
+			nextParams.putString("code", mView_code.getText().toString());
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
-					params, new ReceiverAdapter() {
+					nextParams, true, new ReceiverAdapter() {
 						@Override
 						public void success() {
-							getActivity().getSupportFragmentManager()
-									.popBackStack();
-							getActivity().getSupportFragmentManager()
-									.popBackStack();
 							mMCFragmentManager.relpaceToContent(
 									new RegisterPassFragment(), true);
 						}
 					});
 			break;
 		case R.id.tv_sendcode:
+			Bundle resendParams = MCStaticData.registerBundle;
+			resendParams.remove("code");
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
-					MCStaticData.registerBundle, new ReceiverAdapter() {
-
+					resendParams, new ReceiverAdapter() {
 						@Override
 						public void success() {
 							// TODO Auto-generated method stub

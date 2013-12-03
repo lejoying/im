@@ -2,6 +2,17 @@
 <resources>
 
     <string name="app_name">微型公社</string>
+    <string name="app_nointernet">没有网络连接,请检查网络后重试</string>
+    <string name="app_timeout">操作超时</string>
+    <string name="app_reason">失败原因</string>
+    <string name="app_phonenotnull">手机号不能为空</string>
+    <string name="app_passnotnull">密码不能为空</string>
+    <string name="app_codenotnull">验证码不能为空</string>
+    <string name="app_passlength">密码长度需大于6位</string>
+    <string name="app_notice">提示信息</string>
+    <string name="app_success">成功</string>
+    <string name="app_unsuccess">失败</string>
+    <string name="app_cancelregister">再次按返回键将取消本次注册</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="mc_businesscard">名片</string>
@@ -21,14 +32,6 @@
     <string name="tv_entercode">输入验证码</string>
     <string name="tv_resend">重新发送</string>
     <string name="tv_setpass">设置密码</string>
-    <string name="app_nointernet">没有网络连接,请检查网络后重试</string>
-    <string name="app_timeout">操作超时</string>
-    <string name="app_reason">失败原因</string>
-    <string name="app_phonenotnull">手机号不能为空</string>
-    <string name="app_passnotnull">密码不能为空</string>
-    <string name="app_notice">提示信息</string>
-    <string name="app_success">成功</string>
-    <string name="app_unsuccess">失败</string>
     <string name="tv_sendto">我们已将短信发送到</string>
     <string name="tv_sendcode">发送验证码</string>
 
