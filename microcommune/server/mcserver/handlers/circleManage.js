@@ -201,7 +201,7 @@ circleManage.moveout = function (data, response) {
             'START circle=node({newRid})',
             'MATCH (account:Account)',
             'WHERE account.phone={phoneTo}',
-            'CREATE circle-[r:HAS_FRIEND]->account',
+            'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
             'RETURN r'
         ].join('\n');
         var params = {

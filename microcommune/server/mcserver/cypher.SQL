@@ -11,93 +11,159 @@ CREATE INDEX ON :Account(nickName);
 CREATE INDEX ON :Account(status);
 
 CREATE INDEX ON :Circle(rid);
-CREATE INDEX ON :Circle(rid);
 
 CREATE INDEX ON :Community(cid)
 CREATE INDEX ON :Community(name)
 
 
 /***************************************
- *     account
+ *     Account
  ***************************************/
 
+MATCH (account:Account)
+WHERE account.phone="121"
+RETURN account
 
-CREATE account:Account{accountName:'abc2', phone:'15133339999', email:'aa@1.com'}
-RETURN  account
+MATCH (account:Account)
+WHERE account.phone="121" AND account.status="success"
+RETURN account
 
-
-CREATE UNIQUE account:Account{}
-SET account.id=ID(account)
-RETURN  account
-
-MATCH account:Account
-WHERE account.accountName! ='abc' OR account.phone! ='15133339999'
+CREATE (account:Account{phone:"121",status:"init",head:"abc",nickName:"小黑",
+                        mainBusiness:"送水",byPhone:"checked",byScan:"checked",byScanNearBy:"allowed",code:"1234",time:"new Date().getTime()"})
+set account.uid=ID({phone:"121",status:"init",head:"abc",nickName:"小黑",
+                        mainBusiness:"送水",byPhone:"checked",byScan:"checked",byScanNearBy:"allowed",code:"1234",time:"new Date().getTime()"})
 RETURN account
 
 /***************************************
- *     weixin
+ *     Circle
  ***************************************/
- 
-MATCH account:Account-[:HAS_WEIXIN]->weixin:Weixin
-WHERE weixin.status! ='binding'
-RETURN weixin, account
 
-START account=node(16)
-MATCH account-[:HAS_WEIXIN]->weixin:Weixin<-[:BIND]->app:App
-WHERE weixin.status! ='bind_server' OR weixin.status! ='bind_message' 
-RETURN weixin, app
+ MATCH (circle:Circle)
+ WHERE circle.rid=10
+ SET circle.name="朋友"
+ RETURN circle
 
-MATCH weixin:Weixin, app:App
-WHERE weixin.weixinOpenID! ='gh_c6cd8a443586' AND app.appid! =55
-CREATE UNIQUE app-[r:BIND]->weixin 
-RETURN weixin, app, r
+ MATCH other-[r]-(circle:Circle)
+ WHERE circle.rid=10
+ DELETE circle,r
+ RETURN circle,r
 
+ MATCH (circle:Circle)-[r:HAS_FRIEND]->(account:Account)
+ WHERE circle.rid=10 AND account.phone="121"
+ DELETE r
+ RETURN circle
 
-MATCH weixin:Weixin-[r]-other
-RETURN weixin, r
+ START circle=node(10)
+ MATCH (account:Account)
+ WHERE account.phone="121"
+ CREATE UNIQUE circle-[r:HAS_FRIEND]->account
+ RETURN r
 
+MATCH (account:Account)
+WHERE account.phone="121"
+CREATE UNIQUE account-[r:HAS_CIRCLE]->(circle:Circle{name:"同学"})
+SET circle.rid=ID({name:"同学"})
+RETURN circle
 
 /***************************************
- *     user
+ *     Community
  ***************************************/
-MATCH weixin:Weixin
-WHERE weixin.weixinOpenID! ='gh_c6cd8a443586'
-CREATE UNIQUE user:User{id:'123dasdfaf'}-[r:FOCUS]->weixin
-RETURN  user, weixin, r
 
-CREATE (user:User{id:'123dasdfaf'})
-RETURN  user
+ CREATE (community:Community{name:"天通苑站",description:"很大",location:""})
+ SET community.cid=ID({name:"天通苑站",description:"很大",location:""})
+ RETURN community
 
-MATCH user:User
-WHERE user.id='123dasdfaf'
-RETURN  user
+ MATCH (community:Community)
+ RETURN community
 
+ START community=node(15)
+ MATCH (account:Account)
+ WHERE account.phone="121"
+ CREATE account-[r:JOIN]->community
+ RETURN r
 
-MATCH weixin:Weixin, user:User
-WHERE weixin.weixinOpenID! ='gh_c6cd8a443586' AND user.id='123dasdfaf'
-CREATE UNIQUE user-[r:FOCUS]->weixin
-RETURN  user, weixin, 
+ MATCH (account:Account)-[r:JOIN]->(community:Community)
+ WHERE account.phone="121" AND community.cid=15
+ DELETE r
 
-MATCH user:User-[:FOCUS]->weixin:Weixin
-WHERE weixin.weixinOpenID! ='gh_c6cd8a443586'
-RETURN  user
+ MATCH (account:Account)-[r:JOIN]->(community:Community)
+ WHERE account.phone="121"
+ RETURN community
 
+  MATCH (account:Account)-[r:JOIN]->(community:Community)
+  WHERE community.name="天通苑站"
+  RETURN account
 
 /***************************************
- *     AppStore
+ *     Relation
  ***************************************/
- 
-CREATE appStore:AppStore
-RETURN  appStore
 
-/***************************************
- *     app
- ***************************************/
-MATCH account:Account-[r1:OWN_APP]->app:App-[r2:BIND]->weixin:Weixin
-RETURN  app, r1, r2
+MATCH (account1:Account),(account2:Account)
+WHERE account1.phone="121" AND account2.phone="122" AND account2.byPhone IN ["allowed","checked"]
+CREATE UNIQUE account1-[r:FRIEND]->account2
+RETURN  account2, r
+
+START circle=node(10)
+MATCH (account:Account)
+WHERE account.phone="121"
+CREATE UNIQUE circle-[r:HAS_FRIEND]->account
+RETURN  r
+
+MATCH (account1:Account)-[r:FRIEND]-(account2:Account)
+WHERE account1.phone="121" AND account2.phone="122"
+RETURN r
+
+MATCH (account:Account)-[r:HAS_CIRCLE]->(circle:Circle)-[r1:HAS_FRIEND]->(account1:Account)
+WHERE account.phone="121" AND account1.phone="122"
+DELETE r1
+RETURN account
+
+MATCH (account1:Account)-[r:FRIEND]-(account2:Account)
+WHERE account1.phone="121"
+RETURN account2
+
+MATCH (account:Account)-[HAS_CIRCLE]->(circle:Circle)
+WHERE account.phone="121"
+RETURN circle
+
+MATCH (account:Account)-[r:FRIEND]-(account1:Account)
+WHERE account.phone="121" AND r.friendStatus IN ["success","delete","blacklist"]
+RETURN r, account1
+
+MATCH (account1:Account)-[r1:HAS_CIRCLE]->(circle:Circle)-[r2:HAS_FRIEND]->(account2:Account)
+WHERE account1.phone="121"
+RETURN circle, account2
+
+MATCH (account1:Account)-[r:FRIEND]->(account2:Account)
+WHERE account2.phone="121" AND account1.phone="122"
+RETURN r
+
+START circle=node(10})
+MATCH (account:Account)
+WHERE account.phone="121"
+CREATE UNIQUE circle-[r:HAS_FRIEND]->account
+RETURN r
+
+MATCH (account1:Account)-[r:FRIEND]->(account2:Account)
+WHERE account2.phone="121" AND account1.phone="122"
+DELETE r
+RETURN r
+
+MATCH (circle:Circle)-[r:HAS_FRIEND]->（account:Account)
+WHERE circle.rid=10 AND account.phone="121"
+DELETE r
+RETURN r
+
+MATCH (account1:Account)-[r:FRIEND]->(account2:Account)
+WHERE account2.phone="121" AND r.friendStatus="init"
+RETURN account1, r
 
 
-MATCH other-[r]-app:App
-WHERE app.appid=39
-RETURN  app, r
+
+
+
+
+
+
+
 

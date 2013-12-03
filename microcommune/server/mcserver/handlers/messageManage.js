@@ -88,7 +88,7 @@ messageManage.get = function (data, response) {
                 });
                 return;
             }
-            get(0);
+            get(reply);
         });
     } else {
         get(flag);

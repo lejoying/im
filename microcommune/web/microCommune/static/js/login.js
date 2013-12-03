@@ -78,16 +78,6 @@ $(document).ready(function () {
     var clickPhoneOld = "";
     var interval;
     $(".js_logincode").click(function () {
-        if (new Date().getTime() - clickTime < 60000) {
-            if (clickPhoneOld == $(".js_phones").val())
-                return;
-            else {
-                window.clearInterval(interval);
-                setCodeRequestTime();
-            }
-        } else {
-            setCodeRequestTime();
-        }
         function setCodeRequestTime() {
             clickTime = new Date().getTime();
             var codeTime = 60;
@@ -111,6 +101,16 @@ $(document).ready(function () {
         }/*else if(phone.length != 11){
          $(".js_errors").html("手机号格式不正确,必须是11位数字!");
          }*/ else {
+            if (new Date().getTime() - clickTime < 60000) {
+                if (clickPhoneOld == $(".js_phones").val())
+                    return;
+                else {
+                    window.clearInterval(interval);
+                    setCodeRequestTime();
+                }
+            } else {
+                setCodeRequestTime();
+            }
             $.ajax({
                 type: "POST",
                 url: "/api2/account/verifyphone?",

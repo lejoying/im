@@ -54,7 +54,7 @@ $(document).ready(function () {
         }, 25);
         var heightInterval = setInterval(function () {
             height += 10;
-            $("#js_headimgmodify")[0].style.width = height + "px";
+            $("#js_headimgmodify")[0].style.height = height + "px";
             if (height == 400)
                 window.clearInterval(heightInterval);
         }, 10);
