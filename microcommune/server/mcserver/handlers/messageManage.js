@@ -13,8 +13,20 @@ messageManage.send = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
-    var phoneto = JSON.parse(data.phoneto);
-    var message = JSON.parse(data.message);
+    var phoneto = {};
+    var message = {};
+    try {
+        phoneto = JSON.parse(data.phoneto);
+        message = JSON.parse(data.message);
+    } catch (e) {
+        response.write(JSON.stringify({
+            "提示信息": "发送失败",
+            "失败原因": "数据格式不正确"
+        }));
+        response.end();
+        console.log(e);
+        return;
+    }
     var messageOwn = JSON.stringify({
         type: message.type,
         phone: phone,
@@ -83,21 +95,21 @@ messageManage.get = function (data, response) {
                 responseErrorMessage(err, response);
                 return;
             } else {
-                if(reply == null){
-                    setPhoneFlag(phone,response);
-                }else{
-                    if(isNaN(reply)){
-                        setPhoneFlag(phone,response)
-                    }else{
+                if (reply == null) {
+                    setPhoneFlag(phone, response);
+                } else {
+                    if (isNaN(reply)) {
+                        setPhoneFlag(phone, response)
+                    } else {
                         get(reply);
                     }
                 }
             }
         });
     } else {
-        if(isNaN(flag)){
-            setPhoneFlag(phone,response)
-        }else{
+        if (isNaN(flag)) {
+            setPhoneFlag(phone, response)
+        } else {
             get(flag);
         }
     }
@@ -125,7 +137,8 @@ messageManage.get = function (data, response) {
             response.end();
         });
     }
-    function setPhoneFlag(phone,response){
+
+    function setPhoneFlag(phone, response) {
         client.set(phone + "flag", 0, function (err, reply) {
             if (err != null) {
                 responseErrorMessage(err, response);
@@ -134,7 +147,8 @@ messageManage.get = function (data, response) {
             get(0);
         });
     }
-    function responseErrorMessage(error, response){
+
+    function responseErrorMessage(error, response) {
         response.write(JSON.stringify({
             "提示信息": "获取失败",
             "失败原因": "数据异常"

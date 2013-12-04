@@ -70,14 +70,52 @@ imagesManage.check = function (data, response) {
         });
         return;
     }
-    fs.exists(serverSetting.imageFolder + fileName + ".png", function (exists) {
-        response.write(JSON.stringify({
-            "提示信息": "查找成功",
-            "filename": fileName,
-            "exists": exists
-        }));
-        response.end();
+    //fs.exists 判断指定的目录下是否存在你想索引的文件，查询结果返回的exists是Boolean类型true or false
+    /*    fs.exists(serverSetting.imageFolder + fileName + ".png", function (exists) {
+     response.write(JSON.stringify({
+     "提示信息": "查找成功",
+     "filename": fileName,
+     "exists": exists
+     }));
+     response.end();
+     });*/
+
+    var query = [
+        'MATCH (account:Account)',
+        'WHERE account.head={fileName}',
+        'RETURN account'
+    ].join('\n');
+
+    var params = {
+        fileName: fileName
+    };
+
+    db.query(query, params, function (error, resulse) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "查找失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        } else if (resulse.length == 0) {
+            response.write(JSON.stringify({
+                "提示信息": "查找成功",
+                filename: fileName,
+                exists: false
+            }));
+            response.end();
+        } else {
+            response.write(JSON.stringify({
+                "提示信息": "查找成功",
+                filename: fileName,
+                exists: true
+            }));
+            response.end();
+        }
     });
+
 }
 /***************************************
  *     URL：/api2/image/get
@@ -101,15 +139,15 @@ imagesManage.get = function (data, response) {
                     response.end();
                 } else {
                     /*response.writeHead(200, {
-                        "Content-Type": "image/jpeg"
-                    });
-                    response.write("<img src='data:image/png;base64," + data + "'/>");
-                    response.end();*/
+                     "Content-Type": "image/jpeg"
+                     });
+                     response.write("<img src='data:image/png;base64," + data + "'/>");
+                     response.end();*/
                     response.write(JSON.stringify({
-                     "提示信息": "获取图片成功",
-                     image: "data:image/png;base64," + data
-                     }));
-                     response.end();
+                        "提示信息": "获取图片成功",
+                        image: "data:image/png;base64," + data
+                    }));
+                    response.end();
                 }
             });
         }
