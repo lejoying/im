@@ -18,10 +18,11 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 
+import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
-import com.lejoying.mc.fragment.CircleMenuFragment.CircleMenuListener;
 import com.lejoying.mc.service.NetworkService;
+import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.BackgroundView;
 
 public abstract class BaseFragmentActivity extends FragmentActivity implements
@@ -61,6 +62,8 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		super.onCreate(arg0);
 		mFragmentManager = getSupportFragmentManager();
 
+		mReceiverListreners = new Hashtable<String, BaseInterface.ReceiverListener>();
+
 		mNetworkReceiver = new NetworkReceiver();
 		IntentFilter networkFilter = new IntentFilter();
 		networkFilter.addAction(NetworkService.ACTION);
@@ -96,15 +99,13 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 			mCircle = new CircleMenuFragment();
 			mFragmentManager.beginTransaction()
 					.replace(R.id.fl_circleMenu, mCircle).commit();
-			mCircle.setCircleMenuListener(new CircleMenuListener() {
-				@Override
-				public void onCreated() {
-					System.out.println("¥¥Ω®¡À");
-					createFirstView();
-				}
-			});
-		} else if (!isFirstViewCreated) {
-			createFirstView();
+
+		}
+
+		if (setFirstPreview() != null && !isFirstViewCreated) {
+			isFirstViewCreated = true;
+			mFragmentManager.beginTransaction()
+					.replace(mContentId, setFirstPreview()).commit();
 		}
 
 		mLoadingView = findViewById(R.id.loading);
@@ -124,19 +125,12 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		}
 	}
 
-	private void createFirstView() {
-		if (setFirstPreview() != null) {
-			mFragmentManager.beginTransaction()
-					.replace(mContentId, setFirstPreview()).commit();
-		}
-		isFirstViewCreated = true;
-	}
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(mNetworkReceiver);
 		unregisterReceiver(mNetworkRemainReceiver);
+		mReceiverListreners = null;
 	}
 
 	@Override
@@ -147,7 +141,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && isLoading) {
-			mReceiverListreners.remove(loadingAPI);
 			cancelLoading();
 			return true;
 		}
@@ -165,29 +158,81 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	@Override
 	public void hideCircleMenu() {
-		if (mCircle != null) {
+		if (isCircleMenuCreated && mCircle.isCreated()) {
 			mCircle.hideCircleMenu(null);
+		} else if (isCircleMenuCreated && !mCircle.isCreated()) {
+			ToTry.tryDoing(100, 50, new ToTryAdapter() {
+
+				@Override
+				public void successed(long time) {
+					mCircle.hideCircleMenu(null);
+				}
+
+				@Override
+				public boolean isSuccess() {
+					return mCircle.isCreated();
+				}
+			});
 		}
 	}
 
 	@Override
-	public void showCircleMenuToTop(boolean lock, boolean showBack) {
-		if (mCircle != null) {
+	public void showCircleMenuToTop(final boolean lock, final boolean showBack) {
+		if (isCircleMenuCreated && mCircle.isCreated()) {
 			mCircle.showToTop(lock, showBack);
+		} else if (isCircleMenuCreated && !mCircle.isCreated()) {
+			ToTry.tryDoing(100, 50, new ToTryAdapter() {
+
+				@Override
+				public void successed(long time) {
+					mCircle.showToTop(lock, showBack);
+				}
+
+				@Override
+				public boolean isSuccess() {
+					return mCircle.isCreated();
+				}
+			});
 		}
 	}
 
 	@Override
 	public void showCircleMenuToBottom() {
-		if (mCircle != null) {
+		if (isCircleMenuCreated && mCircle.isCreated()) {
 			mCircle.showToBottom();
+		} else if (isCircleMenuCreated && !mCircle.isCreated()) {
+			ToTry.tryDoing(100, 50, new ToTryAdapter() {
+
+				@Override
+				public void successed(long time) {
+					mCircle.showToBottom();
+				}
+
+				@Override
+				public boolean isSuccess() {
+					return mCircle.isCreated();
+				}
+			});
 		}
 	}
 
 	@Override
-	public void setCircleMenuPageName(String pageName) {
-		if (mCircle != null) {
+	public void setCircleMenuPageName(final String pageName) {
+		if (isCircleMenuCreated && mCircle.isCreated()) {
 			mCircle.setPageName(pageName);
+		} else if (isCircleMenuCreated && !mCircle.isCreated()) {
+			ToTry.tryDoing(100, 50, new ToTryAdapter() {
+
+				@Override
+				public void successed(long time) {
+					mCircle.setPageName(pageName);
+				}
+
+				@Override
+				public boolean isSuccess() {
+					return mCircle.isCreated();
+				}
+			});
 		}
 	}
 
@@ -221,9 +266,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	@Override
 	public void startNetworkForResult(String api, Bundle params,
 			boolean showLoading, ReceiverListener listener) {
-		if (mReceiverListreners == null) {
-			mReceiverListreners = new Hashtable<String, BaseInterface.ReceiverListener>();
-		}
 		mReceiverListreners.put(api, listener);
 		Intent service = new Intent(this, NetworkService.class);
 		service.putExtra("API", api);
@@ -245,7 +287,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String api = intent.getStringExtra("API");
-			if (api != null) {
+			if (api != null && mReceiverListreners != null) {
 				ReceiverListener listener = mReceiverListreners.get(api);
 				if (listener != null) {
 					if (isLoading && api.equals(loadingAPI)) {
@@ -283,6 +325,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	private void cancelLoading() {
 		mLoadingView.setVisibility(View.GONE);
 		isLoading = false;
+		mReceiverListreners.remove(loadingAPI);
 		loadingAPI = "";
 		// toggleSoftInput();
 	}

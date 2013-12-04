@@ -72,8 +72,6 @@ public class CircleMenuFragment extends BaseFragment {
 
 	private GestureDetector mGestureDetector;
 
-	private CircleMenuListener mCircleMenuListener;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -512,9 +510,6 @@ public class CircleMenuFragment extends BaseFragment {
 					first = false;
 				}
 				mIsCreated = true;
-				if (mCircleMenuListener != null) {
-					mCircleMenuListener.onCreated();
-				}
 			}
 		});
 	}
@@ -882,13 +877,5 @@ public class CircleMenuFragment extends BaseFragment {
 	public EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public void setCircleMenuListener(CircleMenuListener circleMenuListener) {
-		this.mCircleMenuListener = circleMenuListener;
-	}
-
-	public interface CircleMenuListener {
-		public void onCreated();
 	}
 }

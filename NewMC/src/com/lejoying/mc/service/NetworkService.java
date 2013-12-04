@@ -93,8 +93,7 @@ public class NetworkService extends BaseService {
 
 		@Override
 		public void noInternet() {
-			broadcast.putExtra("STATUS", STATUS_NOINTERNET);
-			sendBroadcast(broadcast);
+			sendBroadcast(broadcast, STATUS_NOINTERNET);
 		}
 
 		@Override
@@ -145,6 +144,19 @@ public class NetworkService extends BaseService {
 								MCStaticData.registerBundle
 										.getString("accessKey"));
 					}
+				} else if (api.equals(API.ACCOUNT_GET)) {
+					if (params.getString("phone").equals(
+							params.getString("target"))) {
+						User user = null;
+						try {
+							user = new User(data.getJSONObject("account"));
+							user.setAccessKey(MCDataTools.getLoginedUser(
+									NetworkService.this).getAccessKey());
+						} catch (JSONException e) {
+
+						}
+						MCDataTools.saveUser(NetworkService.this, user);
+					}
 				}
 			} else if (apiClazz.equals(API.CIRCLE)) {
 
@@ -160,28 +172,30 @@ public class NetworkService extends BaseService {
 
 			}
 
-			broadcast.putExtra("STATUS", STATUS_SUCCESS);
-			sendBroadcast(broadcast);
+			sendBroadcast(broadcast, STATUS_SUCCESS);
 		}
 
 		@Override
 		public void unsuccess(JSONObject data) {
-			broadcast.putExtra("STATUS", STATUS_UNSUCCESS);
 			try {
 				broadcast.putExtra("LOG",
 						data.getString(getString(R.string.app_reason)));
 			} catch (JSONException e) {
 				broadcast.putExtra("LOG", getString(R.string.app_timeout));
 			}
-			sendBroadcast(broadcast);
+			sendBroadcast(broadcast, STATUS_UNSUCCESS);
 		}
 
 		@Override
 		public void failed() {
-			broadcast.putExtra("STATUS", STATUS_FAILED);
-			sendBroadcast(broadcast);
+			sendBroadcast(broadcast, STATUS_FAILED);
 		}
 
+	}
+
+	public void sendBroadcast(Intent broadcast, int status) {
+		broadcast.putExtra("STATUS", status);
+		sendBroadcast(broadcast);
 	}
 
 	public void sendCode(Intent intent) {
