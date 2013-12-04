@@ -462,7 +462,8 @@ public class CircleMenuFragment extends BaseFragment {
 							mInitClick = false;
 							flag = false;
 						}
-						if (mWhere == WHERE_CENTER) {
+						if (mWhere == WHERE_CENTER
+								|| mStatus == STATUS_ANIMATION) {
 							flag = true;
 						}
 						return flag;

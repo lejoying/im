@@ -46,7 +46,8 @@ public final class MCHttpTools {
 				if (keys != null) {
 					path += "?";
 					for (String key : keys) {
-						path += key + "=" + params.get(key) + "&";
+						path += key + "=" + String.valueOf(params.get(key))
+								+ "&";
 					}
 					path = path.substring(0, path.length() - 1);
 				}
@@ -85,7 +86,8 @@ public final class MCHttpTools {
 					for (String key : keys) {
 						paramData += key
 								+ "="
-								+ URLEncoder.encode((String) params.get(key),
+								+ URLEncoder.encode(
+										String.valueOf(params.get(key)),
 										"UTF-8") + "&";
 					}
 					paramData = paramData.substring(0, paramData.length() - 1);

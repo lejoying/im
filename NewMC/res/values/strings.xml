@@ -13,6 +13,7 @@
     <string name="app_success">成功</string>
     <string name="app_unsuccess">失败</string>
     <string name="app_cancelregister">再次按返回键将取消本次注册</string>
+    <string name="app_messages">消息列表</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="mc_businesscard">名片</string>

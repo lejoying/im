@@ -38,7 +38,7 @@ class Account implements Serializable {
 	}
 
 	public Account(String phone, String head, String nickName,
-			String mainBusiness, String status) {
+			String mainBusiness) {
 		super();
 		this.phone = phone;
 		this.head = head;

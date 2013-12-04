@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.fragment.BaseInterface.ReceiverListener;
+import com.lejoying.mc.listener.NetworkStatusListener;
 import com.lejoying.mc.service.NetworkService;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
@@ -49,6 +49,7 @@ public abstract class BaseListFragment extends ListFragment {
 		super.onDestroyView();
 		mMCFragmentManager.setNetworkRemainListener(null);
 		mMCFragmentManager.setFragmentKeyDownListener(null);
+		mMCFragmentManager.setNotifyListener(null);
 	}
 
 	private InputMethodManager getInputMethodManager() {
@@ -94,7 +95,8 @@ public abstract class BaseListFragment extends ListFragment {
 		MCNetTools.cleanMsg();
 	}
 
-	protected abstract class ReceiverAdapter implements ReceiverListener {
+	protected abstract class NetworkStatusAdapter implements
+			NetworkStatusListener {
 		@Override
 		public void onReceive(int STATUS, String log) {
 			switch (STATUS) {

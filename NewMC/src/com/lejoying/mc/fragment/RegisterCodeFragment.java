@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.fragment.BaseInterface.RemainListener;
+import com.lejoying.mc.listener.RemainListener;
 import com.lejoying.mc.service.NetworkService;
 import com.lejoying.mc.utils.MCStaticData;
 
@@ -76,7 +76,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 					MCStaticData.registerBundle.getString("phone"));
 			nextParams.putString("code", mView_code.getText().toString());
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
-					nextParams, true, new ReceiverAdapter() {
+					nextParams, true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
 							mMCFragmentManager.relpaceToContent(
@@ -88,7 +88,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 			Bundle resendParams = MCStaticData.registerBundle;
 			resendParams.remove("code");
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
-					resendParams, new ReceiverAdapter() {
+					resendParams, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
 							// TODO Auto-generated method stub

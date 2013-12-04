@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.fragment.BaseInterface.RemainListener;
+import com.lejoying.mc.listener.RemainListener;
 import com.lejoying.mc.service.NetworkService;
 
 public class LoginUseCodeFragment extends BaseFragment implements
@@ -88,10 +88,11 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			params.putString("phone", phone);
 			params.putString("code", code);
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
-					params, true, new ReceiverAdapter() {
+					params, true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
-							mMCFragmentManager.startToActivity(MainActivity.class, true);
+							mMCFragmentManager.startToActivity(
+									MainActivity.class, true);
 						}
 					});
 			break;
@@ -104,7 +105,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			verifyParams.putString("phone", phone);
 			verifyParams.putString("usage", "login");
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
-					verifyParams, new ReceiverAdapter() {
+					verifyParams, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
 

@@ -11,6 +11,8 @@ import android.widget.EditText;
 
 public class ChatFragment extends BaseListFragment {
 
+	private View mContent;
+
 	@Override
 	public EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
@@ -21,7 +23,8 @@ public class ChatFragment extends BaseListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mMCFragmentManager.showCircleMenuToTop(true, true);
-		return super.onCreateView(inflater, container, savedInstanceState);
+		mContent = inflater.inflate(R.layout.f_chat, null);
+		return mContent;
 	}
 
 	@Override
@@ -52,9 +55,11 @@ public class ChatFragment extends BaseListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			return getActivity().getLayoutInflater().inflate(R.layout.f_chat,
-					null);
+			int layout = R.layout.f_chat_item_left;
+			if (position % 2 == 1) {
+				layout = R.layout.f_chat_item_right;
+			}
+			return getActivity().getLayoutInflater().inflate(layout, null);
 		}
 
 	}

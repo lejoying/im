@@ -4,75 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
-        android:id="@+id/rl_chatleft"
-        android:layout_width="fill_parent"
+    <ListView
+        android:id="@id/android:list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/rl_chatbottom"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/frame_background"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp" >
-
-        <ImageView
-            android:id="@+id/iv_headleft"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/xiaohei" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="21dp"
-            android:layout_marginRight="21dp"
-            android:layout_toRightOf="@+id/iv_headleft"
-            android:text="你好！！！啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊啊  啊啊啊"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rl_chatright"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/rl_chatleft"
-        android:layout_marginTop="22dp"
-        android:background="@drawable/frame_background"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="21dp"
-            android:layout_marginRight="21dp"
-            android:layout_toLeftOf="@+id/iv_headright"
-            android:text="你好！！！啊啊啊啊啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-
-        <ImageView
-            android:id="@+id/iv_headright"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/xiaohei" />
-    </RelativeLayout>
+        android:layout_centerHorizontal="true"
+        android:divider="#0000"
+        android:dividerHeight="20dp"
+        android:listSelector="#0000" >
+    </ListView>
 
     <RelativeLayout
         android:id="@+id/rl_chatbottom"
         android:layout_width="fill_parent"
-        android:layout_height="72dp"
+        android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:background="@drawable/frame_bottombackground" >
@@ -86,29 +33,33 @@
             android:background="@drawable/test_edit_normal_background"
             android:ems="10"
             android:textColor="#fff"
-            android:textSize="16sp" >
+            android:textSize="16sp"
+            tools:ignore="TextFields" >
 
             <requestFocus />
         </EditText>
 
         <ImageView
             android:id="@+id/imageView1"
-            android:layout_width="50dp"
+            android:layout_width="45dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/editText1"
-            android:padding="10dp"
-            android:src="@drawable/test_add" />
+            android:padding="14dp"
+            android:src="@drawable/test_add"
+            tools:ignore="ContentDescription" />
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="50dp"
+            android:layout_width="45dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/editText1"
-            android:padding="10dp"
-            android:src="@drawable/test_send" />
+            android:padding="14dp"
+            android:src="@drawable/test_send"
+            tools:ignore="ContentDescription" />
     </RelativeLayout>
-</RelativeLayout>
+
+</RelativeLayout>

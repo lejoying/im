@@ -138,7 +138,7 @@ public class LoginActivity extends Activity {
 					e.printStackTrace();
 				}
 				Intent intent = new Intent(LoginActivity.this,
-						MessagesActivity.class);
+						FriendsActivity.class);
 				startActivity(intent);
 				finishAll();
 

@@ -1,14 +1,6 @@
 package com.lejoying.mc.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,20 +8,16 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.utils.MCImageTools;
+import com.lejoying.mc.listener.NotifyListener;
 import com.lejoying.mc.utils.MCStaticData;
 
 public class MessageFragment extends BaseListFragment {
 
-	private List<View> mMessageViewsList;
-	private LayoutInflater mInflater;
-	private MessageAdapter mAdapter;
-	private Handler mHandler;
+	private View mContent;
 
-	private View mView_margin;
+	private MessageAdapter mAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,50 +28,30 @@ public class MessageFragment extends BaseListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		mContent = inflater.inflate(R.layout.f_messages, null);
 		mMCFragmentManager.showCircleMenuToTop(false, false);
-		mMCFragmentManager.setCircleMenuPageName("消息列表");
-		mInflater = inflater;
+		mMCFragmentManager
+				.setCircleMenuPageName(getString(R.string.app_messages));
 		mAdapter = new MessageAdapter();
-		mHandler = new MessagesHandler();
-
-		return super.onCreateView(inflater, container, savedInstanceState);
+		return mContent;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mView_margin = mInflater.inflate(R.layout.f_margin, null);
-		mView_margin.setVisibility(View.GONE);
-		getListView().setDivider(null);
-		getListView().setDividerHeight(25);
-		mMessageViewsList = new ArrayList<View>();
 		setListAdapter(mAdapter);
-		new Thread() {
-			public void run() {
-				mMessageViewsList.add(mInflater
-						.inflate(R.layout.f_margin, null));
-				for (int i = 0; i < 10; i++) {
-					View v = mInflater.inflate(R.layout.f_messages_item, null);
-					ImageView iv_head = (ImageView) v
-							.findViewById(R.id.iv_head);
-					Bitmap bm = MCImageTools.getCircleBitmap(BitmapFactory
-							.decodeResource(getActivity().getResources(),
-									R.drawable.xiaohei), true, 5, Color.WHITE);
-					iv_head.setImageBitmap(bm);
-					mMessageViewsList.add(v);
-				}
-				mMessageViewsList.add(mInflater
-						.inflate(R.layout.f_margin, null));
-				MCStaticData.messages = mMessageViewsList;
-				mHandler.sendEmptyMessage(1);
-			};
-		}.start();
 		getListView().setOnItemClickListener(new OnItemClickListener() {
-
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mMCFragmentManager.relpaceToContent(new ChatFragment(), true);
+			}
+		});
+
+		mMCFragmentManager.setNotifyListener(new NotifyListener() {
+			@Override
+			public void notifyChanged() {
+				mAdapter.notifyDataSetChanged();
 			}
 		});
 	}
@@ -114,22 +82,6 @@ public class MessageFragment extends BaseListFragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-	}
-
-	private class MessagesHandler extends Handler {
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			switch (msg.what) {
-			case 1:
-				setListAdapter(mAdapter);
-				break;
-
-			default:
-				break;
-			}
-
-		}
 	}
 
 	@Override

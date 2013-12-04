@@ -78,11 +78,11 @@ public class LoginUsePassFragment extends BaseFragment implements
 			params.putString("password", mView_pass.getText().toString());
 
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_AUTH, params,
-					true, new ReceiverAdapter() {
+					true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
 							mMCFragmentManager.startToActivity(
-									MainActivity.class, true);
+									MainActivity.class, false);
 						}
 					});
 

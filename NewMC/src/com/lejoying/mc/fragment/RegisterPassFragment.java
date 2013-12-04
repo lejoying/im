@@ -95,10 +95,11 @@ public class RegisterPassFragment extends BaseFragment implements
 			}
 			params.putString("account", account.toString());
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_MODIFY,
-					params, true, new ReceiverAdapter() {
+					params, true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
-							mMCFragmentManager.startToActivity(MainActivity.class, true);
+							mMCFragmentManager.startToActivity(
+									MainActivity.class, true);
 						}
 					});
 			break;

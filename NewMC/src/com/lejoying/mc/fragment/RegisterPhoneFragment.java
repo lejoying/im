@@ -52,7 +52,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 			params.putString("phone", mView_phone.getText().toString());
 			params.putString("usage", "register");
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
-					params, true, new ReceiverAdapter() {
+					params, true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
 							mMCFragmentManager.relpaceToContent(

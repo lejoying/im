@@ -14,4 +14,5 @@ public class MCStaticData {
 	public static Bundle registerBundle;
 	public static Bundle loginCodeBundle = new Bundle();
 	public static List<View> messages = new ArrayList<View>();
+	public static List<View> circles = new ArrayList<View>();
 }
