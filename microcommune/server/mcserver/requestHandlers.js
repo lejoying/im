@@ -152,8 +152,12 @@ requestHandlers.webcodeManage = function (request, response, pathObject, data) {
     }
     var operation = pathObject["operation"];
     if (operation == "webcodelogin") {
+        oauth6(data.phone, data.accessKey, response);
         webcodeManage.webcodelogin(data, response);
     }
+}
+function oauth6(phone, accessKey, response) {
+    console.log(phone + "---" + accessKey);
 }
 
 module.exports = requestHandlers;
