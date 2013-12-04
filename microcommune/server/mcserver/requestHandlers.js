@@ -1,6 +1,16 @@
 var requestHandlers = {};
 
 var globaldata = root.globaldata;
+var accessKeyPool = {};
+var serverSetting = root.globaldata.serverSetting;
+var redis = require("redis");
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
+var RSA = require('../alipayserver/tools/RSA');
+RSA.setMaxDigits(38);
+var pvkeyStr0 = RSA.RSAKeyStr("10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d4f67fffeac404c1",
+    "10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d4f67fffeac404c1",
+    "3e4ee7b8455ad00c3014e82057cbbe0bd7365f1fa858750830f01ca7e456b659");
+var pvkey0 = RSA.RSAKey(pvkeyStr0);
 
 var session = require('./handlers/session.js');
 requestHandlers.session = function (request, response, pathObject, data) {
@@ -152,12 +162,50 @@ requestHandlers.webcodeManage = function (request, response, pathObject, data) {
     }
     var operation = pathObject["operation"];
     if (operation == "webcodelogin") {
-        oauth6(data.phone, data.accessKey, response);
-        webcodeManage.webcodelogin(data, response);
+        if (oauth6(data.phone, data.accessKey, response)) {
+            webcodeManage.webcodelogin(data, response);
+        }
     }
 }
 function oauth6(phone, accessKey, response) {
-    console.log(phone + "---" + accessKey);
+    if (phone == undefined || phone == "" || phone == null || accessKey == undefined || accessKey == "" || accessKey == null) {
+        response.write(JSON.stringify({
+            "提示信息": "请求失败",
+            "失败原因": "数据不完整"
+        }));
+        response.end();
+        return false;
+    }
+    var phone0 = RSA.decryptedString(pvkey0, phone);
+    var accessKey0 = RSA.decryptedString(pvkey0, accessKey);
+    if (accessKeyPool[phone0 + "_mobile"] != undefined) {
+        return true;
+    } else {
+        client.get(phone0 + "_mobile", function (err, reply) {
+            if (err) {
+                response.write(JSON.stringify({
+                    "提示信息": "请求失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(err);
+                return false;
+            } else {
+                if (reply == null) {
+                    response.write(JSON.stringify({
+                        "提示信息": "请求失败",
+                        "失败原因": "令牌无效"
+                    }));
+                    response.end();
+                    return false;
+                } else {
+                    accessKeyPool[phone0 + "_mobile"] = reply;
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
 }
 
 module.exports = requestHandlers;

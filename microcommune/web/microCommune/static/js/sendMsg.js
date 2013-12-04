@@ -3,7 +3,7 @@ var selectCircleId = "";
 var selectPhone = "";
 var selectId = "";
 var flag = "none";
-
+RSA.setMaxDigits(38);
 
 $(document).ready(function () {
     (function ($) {

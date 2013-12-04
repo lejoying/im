@@ -118,7 +118,7 @@ api = {
             typical: {"phone": "XXX", "password": "XXX"}
         },
         response: {
-            success: {"提示信息": "普通鉴权成功", accessKey: sha1("phone" + "time")},
+            success: {"提示信息": "普通鉴权成功", "uid": "XXX", accessKey: sha1("phone" + "time"), "PbKey": "XXX"},
             failed: {"提示信息": "普通鉴权失败", "失败原因": ["手机号不存在" || "密码不正确" || "数据异常"]}
         }
     },

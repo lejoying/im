@@ -62,11 +62,14 @@ $(document).ready(function () {
                 url: "/api2/account/auth?",
                 data: {
                     phone: phone,
-                    password: password
+                    password: hex_sha1(password)
                 },
                 success: function (data) {
                     if (data["提示信息"] == "普通鉴权成功") {
-                        getAccountSelfMessage(phone, data.accessKey);
+                        RSA.setMaxDigits(38);
+                        var pbkey0 = RSA.RSAKey(data.PbKey);
+                        window.sessionStorage.setItem("wxgs_PbKey",data.PbKey);
+                        getAccountSelfMessage(RSA.encryptedString(pbkey0, phone), RSA.encryptedString(pbkey0, RSA.decryptedString(pbkey0, data.accessKey)));
                     } else {
                         $(".js_errorp").html(data["提示信息"] + "," + data["失败原因"]);
                     }
@@ -200,7 +203,7 @@ function getAccountSelfMessage(phone, accessKey) {
                 $(".js_errorp").html(dataAccount["提示信息"] + ",用户:" + accountData.phone);
                 location.href = "default.html";
             } else {
-                $(".js_errorp").html(data["提示信息"] + "," + data["失败原因"]);
+                $(".js_errorp").html(dataAccount["提示信息"] + "," + dataAccount["失败原因"]);
             }
         }
     });

@@ -6,6 +6,8 @@ var ajax = require("./../lib/ajax.js");
 var sms = require("./../lib/SMS.js");
 var sha1 = require("./../tools/sha1.js");
 var verifyEmpty = require("./../lib/verifyempty.js");
+var redis = require("redis");
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var RSA = require('../../alipayserver/tools/RSA');
 RSA.setMaxDigits(38);
 var pbkeyStr0 = RSA.RSAKeyStr("5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841",
@@ -370,14 +372,30 @@ accountManage.auth = function (data, response) {
                     }));
                     response.end();
                 } else {
-                    if (accountData.password == password) {
+                    if (sha1.hex_sha1(accountData.password) == password) {
                         console.log("普通鉴权成功---");
-                        var time = phone + new Date().getTime();
+                        var accessKey = sha1.hex_sha1(phone + new Date().getTime());
+                        console.log("accessKey:---" + sha1.hex_sha1(accessKey));
                         response.write(JSON.stringify({
                             "提示信息": "普通鉴权成功",
-                            "accessKey": sha1.hex_sha1(time)
+                            "uid": RSA.encryptedString(pvkey0, accountData.phone),
+                            "accessKey": RSA.encryptedString(pvkey0, accessKey),
+                            "PbKey": pbkeyStr0
                         }));
                         response.end();
+                        client.setex(phone + "_mobile", 43200000, accessKey, function (err, reply) {
+                            if (err) {
+                                response.write(JSON.stringify({
+                                    "提示信息": "普通鉴权失败",
+                                    "失败原因": "数据异常"
+                                }));
+                                response.end();
+                                console.log(err);
+                                return;
+                            } else {
+                                console.log(reply);
+                            }
+                        });
 //                        accountSession[phone] = accountSession[phone] || [];
 //                        accountSession[phone][accessKey] = null;
                     } else {
@@ -401,9 +419,9 @@ accountManage.exit = function (data, response) {
  ***************************************/
 accountManage.get = function (data, response) {
     response.asynchronous = 1;
-    var phone = data.phone;
-    var accessKey = data.accessKey;
-    var target = data.target;
+    var phone = RSA.decryptedString(pvkey0, data.phone);
+    var accessKey = RSA.decryptedString(pvkey0, data.accessKey);
+    var target = RSA.decryptedString(pvkey0, data.target);
     var arr = [phone, accessKey, target];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         getAccountNode(target);
