@@ -12,6 +12,7 @@ var push = require('../lib/push.js');
 messageManage.send = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var phoneto = JSON.parse(data.phoneto);
     var message = JSON.parse(data.message);
     var messageOwn = JSON.stringify({
@@ -66,6 +67,7 @@ messageManage.send = function (data, response) {
 messageManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var flag = data.flag;
     if (phone == undefined || flag == undefined) {
         response.write(JSON.stringify({
@@ -78,43 +80,39 @@ messageManage.get = function (data, response) {
     if (flag == "none") {
         client.get(phone + "flag", function (err, reply) {
             if (err != null) {
-                console.log(err);
-                client.set(phone + "flag", 0, function (err, reply) {
-                    if (err != null) {
-                        console.log(err);
-                        return;
-                    }
-                    get(0);
-                });
+                responseErrorMessage(err, response);
                 return;
+            } else {
+                if(reply == null){
+                    setPhoneFlag(phone,response);
+                }else{
+                    if(isNaN(reply)){
+                        setPhoneFlag(phone,response)
+                    }else{
+                        get(reply);
+                    }
+                }
             }
-            get(reply);
         });
     } else {
-        get(flag);
+        if(isNaN(flag)){
+            setPhoneFlag(phone,response)
+        }else{
+            get(flag);
+        }
     }
 
     function get(from) {
         client.lrange(phone, from, -1, function (err, reply) {
             if (err != null) {
-                console.log(err);
-                response.write(JSON.stringify({
-                    "提示信息": "获取失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
+                responseErrorMessage(err, response);
                 return;
             }
             var flag = parseInt(from) + reply.length;
             if (reply.length != 0) {
                 client.set(phone + "flag", flag, function (err, reply) {
                     if (err != null) {
-                        response.write(JSON.stringify({
-                            "提示信息": "获取失败",
-                            "失败原因": "数据异常"
-                        }));
-                        response.end();
-                        console.log(err);
+                        responseErrorMessage(err, response);
                         return;
                     }
                 });
@@ -126,6 +124,23 @@ messageManage.get = function (data, response) {
             }));
             response.end();
         });
+    }
+    function setPhoneFlag(phone,response){
+        client.set(phone + "flag", 0, function (err, reply) {
+            if (err != null) {
+                responseErrorMessage(err, response);
+                return;
+            }
+            get(0);
+        });
+    }
+    function responseErrorMessage(error, response){
+        response.write(JSON.stringify({
+            "提示信息": "获取失败",
+            "失败原因": "数据异常"
+        }));
+        response.end();
+        console.log(error);
     }
 }
 messageManage.deletes = function (data, response) {

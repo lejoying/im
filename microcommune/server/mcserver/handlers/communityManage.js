@@ -10,6 +10,8 @@ var ajax = require("./../lib/ajax.js");
 
 communityManage.add = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var name = data.name;
     var description = data.description;
     var longitude = data.longitude;
@@ -97,6 +99,8 @@ communityManage.add = function (data, response) {
  ***************************************/
 communityManage.find = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var longitude = parseFloat(data.longitude);
     var latitude = parseFloat(data.latitude);
     console.log(longitude + "---" + latitude);
@@ -158,8 +162,9 @@ communityManage.find = function (data, response) {
  ***************************************/
 communityManage.join = function (data, response) {
     response.asynchronous = 1;
-    var cid = data.cid;
     var phone = data.phone;
+    var accessKey = data.accessKey;
+    var cid = data.cid;
     console.log(phone);
     joinCommunityNode();
 
@@ -208,6 +213,7 @@ communityManage.unjoin = function (data, response) {
     response.asynchronous = 1;
     var cid = data.cid;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     unJoinCommunityNode();
 
     function unJoinCommunityNode() {
@@ -246,6 +252,7 @@ communityManage.unjoin = function (data, response) {
 communityManage.getcommunities = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var query = [
         'MATCH (account:Account)-[r:JOIN]->(community:Community)',
         'WHERE account.phone={phone}',
@@ -295,6 +302,8 @@ communityManage.getcommunities = function (data, response) {
 communityManage.getcommunityfriends = function (data, response) {
     response.asynchronous = 1;
     var communityName = data.name;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var query = [
         'MATCH (account:Account)-->(community:Community)',
         'WHERE community.name={communityName}',

@@ -8,6 +8,8 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
  ***************************************/
 circleManage.modify = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var rid = data.rid;
     var name = data.name;
     var circle = {
@@ -52,6 +54,8 @@ circleManage.modify = function (data, response) {
  ***************************************/
 circleManage.delete = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var rid = data.rid;
     var query = [
         'MATCH other-[r]-(circle:Circle)',
@@ -86,6 +90,8 @@ circleManage.delete = function (data, response) {
  ***************************************/
 circleManage.moveorout = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var phoneTo = data.phoneto;
     var rid = data.rid;
     var filter = (data.filter).toUpperCase();
@@ -148,6 +154,8 @@ circleManage.moveorout = function (data, response) {
 circleManage.moveout = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
+    var phone = data.phone;
+    var accessKey = data.accessKey;
     var phoneTo = data.phoneto;
     var oldRid = data.oldrid;
     var newRid = data.newrid;
@@ -238,6 +246,7 @@ circleManage.moveout = function (data, response) {
 circleManage.addcircle = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var name = data.name;
     var circle = {
         name: name

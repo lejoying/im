@@ -114,6 +114,7 @@ relationManage.addfriend = function (data, response) {
 relationManage.deletefriend = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var phoneTo = data.phoneto;
     var query = [
         'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
@@ -190,6 +191,7 @@ relationManage.deletefriend = function (data, response) {
 relationManage.blacklist = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var phoneTo = data.phoneto;
     var query = [
         'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
@@ -234,8 +236,8 @@ relationManage.blacklist = function (data, response) {
  ***************************************/
 relationManage.getfriends = function (data, response) {
     response.asynchronous = 1;
-
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var query = [
         'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
         'WHERE account1.phone={phone}',
