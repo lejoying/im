@@ -68,7 +68,7 @@ public final class MCHttpTools {
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
-			httpListener.handleInputStream(is);
+			httpListener.handleInputStream(is, httpURLConnection);
 			httpURLConnection.disconnect();
 		}
 	}
@@ -127,12 +127,13 @@ public final class MCHttpTools {
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
-			httpListener.handleInputStream(is);
+			httpListener.handleInputStream(is, httpURLConnection);
 			httpURLConnection.disconnect();
 		}
 	}
 
 	public interface HttpListener {
-		public void handleInputStream(InputStream is);
+		public void handleInputStream(InputStream is,
+				HttpURLConnection httpURLConnection);
 	}
 }

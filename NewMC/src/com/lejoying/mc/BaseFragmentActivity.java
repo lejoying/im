@@ -24,7 +24,7 @@ import com.lejoying.mc.fragment.CircleMenuFragment;
 import com.lejoying.mc.listener.NetworkStatusListener;
 import com.lejoying.mc.listener.NotifyListener;
 import com.lejoying.mc.listener.RemainListener;
-import com.lejoying.mc.service.NetworkService;
+import com.lejoying.mc.service.MainService;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.BackgroundView;
 
@@ -74,17 +74,17 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 		mNetworkReceiver = new NetworkReceiver();
 		IntentFilter networkFilter = new IntentFilter();
-		networkFilter.addAction(NetworkService.ACTION_STATUS);
+		networkFilter.addAction(MainService.ACTION_STATUS);
 		registerReceiver(mNetworkReceiver, networkFilter);
 
 		mNetworkRemainReceiver = new NetworkRemainReceiver();
 		IntentFilter networkRemainFilter = new IntentFilter();
-		networkRemainFilter.addAction(NetworkService.ACTION_REMAIN);
+		networkRemainFilter.addAction(MainService.ACTION_REMAIN);
 		registerReceiver(mNetworkRemainReceiver, networkRemainFilter);
 
 		mNotifyReceiver = new NotifyReceiver();
 		IntentFilter notifyFilter = new IntentFilter();
-		notifyFilter.addAction(NetworkService.ACTION_NOTIFY);
+		notifyFilter.addAction(MainService.ACTION_NOTIFY);
 		registerReceiver(mNotifyReceiver, notifyFilter);
 
 		mContentId = R.id.fl_content;
@@ -294,8 +294,8 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		int permissionCode = createPermissionCode();
 		mReceiverListreners.put(api, listener);
 		mNetworkPermission.put(api, permissionCode);
-		Intent service = new Intent(this, NetworkService.class);
-		service.putExtra("SERVICE", NetworkService.SERVICE_NETWORK);
+		Intent service = new Intent(this, MainService.class);
+		service.putExtra("SERVICE", MainService.SERVICE_NETWORK);
 		service.putExtra("API", api);
 		service.putExtra("PERMISSION", permissionCode);
 		if (params != null) {
@@ -307,15 +307,15 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		}
 	}
 
-	protected void startDataProcessing(int what, boolean showLoading) {
-		startDataProcessing(what, null, showLoading);
+	protected void startViewProcessing(int notify, boolean showLoading) {
+		startViewProcessing(notify, null, showLoading);
 	}
 
-	protected void startDataProcessing(int what, Bundle params,
+	protected void startViewProcessing(int notify, Bundle params,
 			boolean showLoading) {
-		Intent service = new Intent(this, NetworkService.class);
-		service.putExtra("SERVICE", NetworkService.SERVICE_DATA);
-		service.putExtra("WHAT", what);
+		Intent service = new Intent(this, MainService.class);
+		service.putExtra("SERVICE", MainService.SERVICE_NOTIFYVIEW);
+		service.putExtra("NOTIFY", notify);
 		if (params != null) {
 			service.putExtras(params);
 		}
@@ -385,12 +385,15 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	private void cancelLoading() {
 		mLoadingView.setVisibility(View.GONE);
 		isLoading = false;
+		Intent service = new Intent(this, MainService.class);
+		service.putExtra("SERVICE", MainService.SERVICE_CANCELNETWORK);
+		service.putExtra("API", loadingAPI);
+		startService(service);
 		if (loadingAPI != null) {
 			mNetworkPermission.remove(loadingAPI);
 			mReceiverListreners.remove(loadingAPI);
 		}
 		loadingAPI = "";
-		// toggleSoftInput();
 	}
 
 	private InputMethodManager getInputMethodManager() {

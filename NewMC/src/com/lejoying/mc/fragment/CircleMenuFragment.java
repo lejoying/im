@@ -53,9 +53,9 @@ public class CircleMenuFragment extends BaseFragment {
 	private int mMenuHeight;
 	private int mDiskHeight;
 	private int mDiskOutHeight;
-	private Point mDiskCenter;
 	private int mDiskRadius;
 	private int mDiskOutRadius;
+	private Point mDiskCenter;
 
 	private int mDiskLocation[];
 
@@ -63,9 +63,10 @@ public class CircleMenuFragment extends BaseFragment {
 	private int mScrollY;
 
 	private boolean mInitClick;
-	private boolean mLock;
 	private boolean mShowBack;
 	private boolean mIsCreated;
+	private boolean mLock;
+	private boolean mLockStatus;
 
 	private List<List<View>> mMenuItemList;
 	private int mMenuIndex;
@@ -102,6 +103,7 @@ public class CircleMenuFragment extends BaseFragment {
 			return;
 		}
 		this.mLock = lock;
+		this.mLockStatus = lock;
 		this.mShowBack = showBack;
 
 		mView_pageName.setVisibility(View.INVISIBLE);
@@ -197,9 +199,13 @@ public class CircleMenuFragment extends BaseFragment {
 					mDistance = mMenuHeight / 2 + mDiskHeight / 8;
 					mDiskLocation[1] = mDiskLocation[1] - (oldh - h) / 2;
 					if (h <= mDiskOutHeight) {
-						mLock = true;
+						if (!mLockStatus) {
+							mLock = true;
+						}
 					} else {
-						mLock = false;
+						if (!mLockStatus) {
+							mLock = false;
+						}
 					}
 					setLocation(mWhere);
 				}

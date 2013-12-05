@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.fragment.MessageFragment;
 import com.lejoying.mc.listener.NetworkStatusListener;
-import com.lejoying.mc.service.NetworkService;
+import com.lejoying.mc.service.MainService;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCNetTools;
 
@@ -42,21 +42,21 @@ public class MainActivity extends BaseFragmentActivity {
 					@Override
 					public void onReceive(int STATUS, String log) {
 						switch (STATUS) {
-						case NetworkService.STATUS_SUCCESS:
+						case MainService.STATUS_NETWORK_SUCCESS:
 							getCirclesAndFriends();
 							getMessages();
 							break;
-						case NetworkService.STATUS_UNSUCCESS:
+						case MainService.STATUS_NETWORK_UNSUCCESS:
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
 							MainActivity.this.finish();
 							break;
-						case NetworkService.STATUS_NOINTERNET:
+						case MainService.STATUS_NETWORK_NOINTERNET:
 							MCNetTools.showMsg(MainActivity.this,
 									getString(R.string.app_nointernet));
 							break;
-						case NetworkService.STATUS_FAILED:
+						case MainService.STATUS_NETWORK_FAILED:
 							getUser();
 							break;
 
@@ -77,20 +77,20 @@ public class MainActivity extends BaseFragmentActivity {
 					@Override
 					public void onReceive(int STATUS, String log) {
 						switch (STATUS) {
-						case NetworkService.STATUS_SUCCESS:
+						case MainService.STATUS_NETWORK_SUCCESS:
 
 							break;
-						case NetworkService.STATUS_UNSUCCESS:
+						case MainService.STATUS_NETWORK_UNSUCCESS:
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
 							MainActivity.this.finish();
 							break;
-						case NetworkService.STATUS_NOINTERNET:
+						case MainService.STATUS_NETWORK_NOINTERNET:
 							MCNetTools.showMsg(MainActivity.this,
 									getString(R.string.app_nointernet));
 							break;
-						case NetworkService.STATUS_FAILED:
+						case MainService.STATUS_NETWORK_FAILED:
 							getCirclesAndFriends();
 							break;
 
@@ -113,21 +113,21 @@ public class MainActivity extends BaseFragmentActivity {
 					@Override
 					public void onReceive(int STATUS, String log) {
 						switch (STATUS) {
-						case NetworkService.STATUS_SUCCESS:
-							startDataProcessing(
-									NetworkService.WHAT_MESSAGELIST, false);
+						case MainService.STATUS_NETWORK_SUCCESS:
+							startViewProcessing(MainService.WHAT_MESSAGELIST,
+									false);
 							break;
-						case NetworkService.STATUS_UNSUCCESS:
+						case MainService.STATUS_NETWORK_UNSUCCESS:
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
 							MainActivity.this.finish();
 							break;
-						case NetworkService.STATUS_NOINTERNET:
+						case MainService.STATUS_NETWORK_NOINTERNET:
 							MCNetTools.showMsg(MainActivity.this,
 									getString(R.string.app_nointernet));
 							break;
-						case NetworkService.STATUS_FAILED:
+						case MainService.STATUS_NETWORK_FAILED:
 							getMessages();
 							break;
 

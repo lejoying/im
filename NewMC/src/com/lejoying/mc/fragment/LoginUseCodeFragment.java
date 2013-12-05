@@ -13,7 +13,7 @@ import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.listener.RemainListener;
-import com.lejoying.mc.service.NetworkService;
+import com.lejoying.mc.service.MainService;
 
 public class LoginUseCodeFragment extends BaseFragment implements
 		OnClickListener {
@@ -48,7 +48,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 
 			@Override
 			public String setRemainType() {
-				return NetworkService.REMAIN_LOGIN;
+				return MainService.REMAIN_LOGIN;
 			}
 
 			@Override

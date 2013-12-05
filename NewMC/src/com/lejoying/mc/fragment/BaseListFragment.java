@@ -10,7 +10,7 @@ import android.widget.EditText;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.listener.NetworkStatusListener;
-import com.lejoying.mc.service.NetworkService;
+import com.lejoying.mc.service.MainService;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 
@@ -100,16 +100,16 @@ public abstract class BaseListFragment extends ListFragment {
 		@Override
 		public void onReceive(int STATUS, String log) {
 			switch (STATUS) {
-			case NetworkService.STATUS_SUCCESS:
+			case MainService.STATUS_NETWORK_SUCCESS:
 				success();
 				break;
-			case NetworkService.STATUS_UNSUCCESS:
+			case MainService.STATUS_NETWORK_UNSUCCESS:
 				unSuccess(log);
 				break;
-			case NetworkService.STATUS_NOINTERNET:
+			case MainService.STATUS_NETWORK_NOINTERNET:
 				noInternet();
 				break;
-			case NetworkService.STATUS_FAILED:
+			case MainService.STATUS_NETWORK_FAILED:
 				failed();
 				break;
 

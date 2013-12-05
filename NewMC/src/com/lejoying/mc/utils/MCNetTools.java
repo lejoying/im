@@ -1,6 +1,7 @@
 package com.lejoying.mc.utils;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,59 +33,18 @@ public class MCNetTools {
 			responseListener.noInternet();
 		} else {
 			new Thread() {
+				private byte[] b = null;
+
 				@Override
 				public void run() {
 					super.run();
 					HttpListener httpListener = new HttpListener() {
-
 						@Override
-						public void handleInputStream(InputStream is) {
-							try {
-								if (is != null) {
-									byte[] b = StreamTools.isToData(is);
-									final JSONObject data = new JSONObject(
-											new String(b));
-									if (data != null) {
-										String info = data
-												.getString(context
-														.getString(R.string.app_notice));
-										info = info.substring(
-												info.length() - 2,
-												info.length());
-
-										if (info.equals(context
-												.getString(R.string.app_success))) {
-											handler.post(new Runnable() {
-												@Override
-												public void run() {
-													responseListener
-															.success(data);
-												}
-											});
-										}
-										if (info.equals(context
-												.getString(R.string.app_unsuccess))) {
-											handler.post(new Runnable() {
-												@Override
-												public void run() {
-													responseListener
-															.unsuccess(data);
-												}
-											});
-										}
-									}
-								}
-								if (is == null) {
-									handler.post(new Runnable() {
-										@Override
-										public void run() {
-											responseListener.failed();
-										}
-									});
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
+						public void handleInputStream(InputStream is,
+								HttpURLConnection httpURLConnection) {
+							responseListener
+									.connectionCreated(httpURLConnection);
+							b = StreamTools.isToData(is);
 						}
 					};
 					if (method == HttpTools.SEND_GET) {
@@ -94,6 +54,46 @@ public class MCNetTools {
 					if (method == HttpTools.SEND_POST) {
 						MCHttpTools.sendPost(MCStaticData.DOMAIN + url,
 								timeout, param, httpListener);
+					}
+					try {
+						if (b == null) {
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									responseListener.failed();
+								}
+							});
+						} else {
+							final JSONObject data = new JSONObject(
+									new String(b));
+							if (data != null) {
+								String info = data.getString(context
+										.getString(R.string.app_notice));
+								info = info.substring(info.length() - 2,
+										info.length());
+
+								if (info.equals(context
+										.getString(R.string.app_success))) {
+									handler.post(new Runnable() {
+										@Override
+										public void run() {
+											responseListener.success(data);
+										}
+									});
+								}
+								if (info.equals(context
+										.getString(R.string.app_unsuccess))) {
+									handler.post(new Runnable() {
+										@Override
+										public void run() {
+											responseListener.unsuccess(data);
+										}
+									});
+								}
+							}
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
 				}
 			}.start();
@@ -117,4 +117,5 @@ public class MCNetTools {
 			toast.cancel();
 		}
 	}
+
 }

@@ -44,7 +44,7 @@
             android:theme="@style/MyActivityStyle" >
         </activity>
 
-        <service android:name=".service.NetworkService" >
+        <service android:name=".service.MainService" >
         </service>
     </application>
 

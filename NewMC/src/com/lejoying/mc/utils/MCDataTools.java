@@ -27,9 +27,7 @@ import com.lejoying.mc.entity.User;
 public class MCDataTools {
 
 	public static void saveUser(Context context, User user) {
-
 		MCStaticData.mUser = user;
-
 		try {
 			OutputStream os = context.openFileOutput("user",
 					Context.MODE_PRIVATE);
@@ -85,11 +83,10 @@ public class MCDataTools {
 		manager.closeDB();
 	}
 
-	public static List<Message> getMessages(Context context, int from,
-			String phone) {
+	public static List<Message> getMessages(Context context, int from) {
 		List<Message> messages = new ArrayList<Message>();
 		DBManager manager = new DBManager(context);
-		messages = manager.queryMessages(from, phone);
+		messages = manager.queryMessages(from);
 		manager.closeDB();
 		return messages;
 	}
@@ -97,11 +94,12 @@ public class MCDataTools {
 
 class DBHelper extends SQLiteOpenHelper {
 
-	private static final String DATABASE_NAME = "mc.db";
-	private static final int DATABASE_VERSION = 1;
+	private static String DATABASE_NAME;
+	private final static int DATABASE_VERSION = 1;
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		DATABASE_NAME = MCDataTools.getLoginedUser(null).getPhone() + ".db";
 	}
 
 	@Override
@@ -109,11 +107,11 @@ class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE IF NOT EXISTS circlerelation"
 				+ "(rid INTEGER, fphone VARCHAR)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS circle"
-				+ "(rid INTEGER PRIMARY KEY, name VARCHAR, phone VARCHAR)");
+				+ "(rid INTEGER PRIMARY KEY, name VARCHAR)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS friend"
 				+ "(fphone VARCHAR PRIMARY KEY, nickName VARCHAR, head VARCHAR, mainBusiness TEXT,friendStatus VARCHAR)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS message"
-				+ "(mid INTEGER PRIMARY KEY AUTOINCREMENT,phone VARCHAR, fphone VARCHAR, messageType VARCHAR,type VARCHAR,content TEXT,time VARCHAR,isRead INTEGER)");
+				+ "(mid INTEGER PRIMARY KEY AUTOINCREMENT, fphone VARCHAR, messageType VARCHAR,type VARCHAR,content TEXT,time VARCHAR,isRead INTEGER)");
 	}
 
 	@Override
@@ -135,22 +133,20 @@ class DBManager {
 	public void addCircles(JSONArray circles) {
 		db.beginTransaction();
 		try {
+			db.execSQL("DELETE FROM circlerelation");
 			for (int i = 0; i < circles.length(); i++) {
 				Circle circle = new Circle(circles.getJSONObject(i));
 				if (circle.getRid() != 0) {
-					db.execSQL(
-							"INSERT OR REPLACE INTO circle VALUES(?, ?, ?)",
-							new Object[] { circle.getRid(), circle.getName(),
-									MCDataTools.getLoginedUser(null).getPhone() });
+					db.execSQL("INSERT OR REPLACE INTO circle VALUES(?, ?)",
+							new Object[] { circle.getRid(), circle.getName() });
 				} else {
 					db.execSQL(
-							"INSERT OR REPLACE INTO circle VALUES(?, ?, ?)",
+							"INSERT OR REPLACE INTO circle VALUES(?, ?)",
 							new Object[] {
 									-Integer.valueOf(
 											MCDataTools.getLoginedUser(null)
 													.getPhone()).intValue(),
-									"没有分组",
-									MCDataTools.getLoginedUser(null).getPhone() });
+									"没有分组" });
 				}
 				List<Friend> friends = circle.getFriends();
 				for (Friend friend : friends) {
@@ -160,18 +156,13 @@ class DBManager {
 									friend.getNickName(), friend.getHead(),
 									friend.getMainBusiness(),
 									friend.getFriendStatus() });
+					int rid = circle.getRid();
 					if (circle.getRid() != 0) {
-						db.execSQL(
-								"INSERT OR REPLACE INTO circlerelation VALUES(?,?)",
-								new Object[] { circle.getRid(),
-										friend.getPhone() });
-					} else {
-						db.execSQL(
-								"INSERT OR REPLACE INTO circlerelation VALUES(?,?)",
-								new Object[] {
-										-Integer.valueOf(friend.getPhone())
-												.intValue(), friend.getPhone() });
+						rid = -Integer.valueOf(friend.getPhone());
 					}
+					db.execSQL("INSERT INTO circlerelation VALUES(?,?)",
+							new Object[] { rid, friend.getPhone() });
+
 				}
 
 			}
@@ -198,8 +189,7 @@ class DBManager {
 	}
 
 	private Cursor queryCircleCursor() {
-		Cursor c = db.rawQuery("SELECT rid,name FROM circle WHERE phone = ?",
-				new String[] { MCDataTools.getLoginedUser(null).getPhone() });
+		Cursor c = db.rawQuery("SELECT rid,name FROM circle", null);
 		return c;
 	}
 
@@ -212,7 +202,6 @@ class DBManager {
 			friend.setNickName(c.getString(c.getColumnIndex("nickName")));
 			friend.setHead(c.getString(c.getColumnIndex("head")));
 			friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
-			friend.setFriendStatus(c.getString(c.getColumnIndex("friendStatus")));
 			friends.add(friend);
 		}
 		return friends;
@@ -221,7 +210,7 @@ class DBManager {
 	private Cursor queryFriendsCursor(int rid) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT fphone,nickName,head,mainBusiness,friendStatus FROM friend WHERE fphone IN (select fphone from circlerelation where rid=?)",
+						"SELECT fphone,nickName,head,mainBusiness FROM friend WHERE fphone IN (select fphone from circlerelation where rid=?) and friendStatus='success'",
 						new String[] { String.valueOf(rid) });
 		return c;
 	}
@@ -233,12 +222,11 @@ class DBManager {
 				Message message = new Message(new JSONObject(
 						messages.getString(i)));
 				db.execSQL(
-						"INSERT OR REPLACE INTO message VALUES(null,?, ?, ?, ?, ?, ?, ?)",
-						new Object[] {
-								MCDataTools.getLoginedUser(null).getPhone(),
-								message.getPhone(), message.getMessageType(),
-								message.getType(), message.getContent(),
-								message.getTime(), message.getIsRead() });
+						"INSERT OR REPLACE INTO message VALUES(null, ?, ?, ?, ?, ?, ?)",
+						new Object[] { message.getPhone(),
+								message.getMessageType(), message.getType(),
+								message.getContent(), message.getTime(),
+								message.getIsRead() });
 			}
 			db.setTransactionSuccessful();
 		} catch (JSONException e) {
@@ -248,9 +236,9 @@ class DBManager {
 		}
 	}
 
-	public List<Message> queryMessages(int from, String phone) {
+	public List<Message> queryMessages(int from) {
 		List<Message> messages = new ArrayList<Message>();
-		Cursor c = queryMessagesCursor(from, phone);
+		Cursor c = queryMessagesCursor(from);
 		while (c.moveToNext()) {
 			Message message = new Message();
 			message.setId(c.getInt(c.getColumnIndex("mid")));
@@ -265,11 +253,11 @@ class DBManager {
 		return messages;
 	}
 
-	private Cursor queryMessagesCursor(int from, String phone) {
+	private Cursor queryMessagesCursor(int from) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT mid,fphone,messageType,type,content,time,isRead FROM message WHERE fphone=? order by time desc LIMIT "
-								+ from + ",10", new String[] { phone });
+						"SELECT mid,fphone,messageType,type,content,time,isRead FROM message",
+						null);
 		return c;
 	}
 
