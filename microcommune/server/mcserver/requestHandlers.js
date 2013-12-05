@@ -14,54 +14,76 @@ var pvkey0 = RSA.RSAKey(pvkeyStr0);
 
 var session = require('./handlers/session.js');
 requestHandlers.session = function (request, response, pathObject, data) {
+    var phone0 = RSA.decryptedString(pvkey0, data.phone);
+    var accessKey0 = RSA.decryptedString(pvkey0, data.accessKey);
+    data.phone = phone0;
+    data.accessKey = accessKey0;
+
     if (data == null) {
         return;
     }
     var operation = pathObject["operation"];
     if (operation == "eventwebcodelogin") {
-        session.eventwebcodelogin(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            session.eventwebcodelogin(data, response);
     }
     else if (operation == "notifywebcodelogin") {
-        session.notifywebcodelogin(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            session.notifywebcodelogin(data, response);
     }
     else if (operation == "event") {
-        session.event(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            session.event(data, response);
     }
     else if (operation == "notify") {
-        session.notify(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            session.notify(data, response);
     }
 };
 
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
+    var phone0 = RSA.decryptedString(pvkey0, data.phone);
+    var accessKey0 = RSA.decryptedString(pvkey0, data.accessKey);
+    data.phone = phone0;
+    data.accessKey = accessKey0;
+
     if (data == null) {
         return;
     }
     var operation = pathObject["operation"];
     if (operation == "verifyphone") {
-        accountManage.verifyphone(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.verifyphone(data, response);
     }
     else if (operation == "verifycode") {
-        accountManage.verifycode(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.verifycode(data, response);
     }
     else if (operation == "auth") {
-        accountManage.auth(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.auth(data, response);
     }
     else if (operation == "get") {
-        accountManage.get(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.get(data, response);
     }
     else if (operation == "modify") {
-        accountManage.modify(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.modify(data, response);
     }
 
     else if (operation == "exit") {
-        accountManage.exit(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.exit(data, response);
     }
     else if (operation == "verifywebcode") {
-        accountManage.verifywebcode(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.verifywebcode(data, response);
     }
     else if (operation == "verifywebcodelogin") {
-        accountManage.verifywebcodelogin(data, response);
+        if (oauth6(data.phone, data.accessKey, response))
+            accountManage.verifywebcodelogin(data, response);
     }
 }
 var communityManage = require("./handlers/communityManage.js");
@@ -157,6 +179,11 @@ requestHandlers.messageManage = function (request, response, pathObject, data) {
 }
 var webcodeManage = require("./handlers/webcodeManage.js");
 requestHandlers.webcodeManage = function (request, response, pathObject, data) {
+    var phone0 = RSA.decryptedString(pvkey0, data.phone);
+    var accessKey0 = RSA.decryptedString(pvkey0, data.accessKey);
+    data.phone = phone0;
+    data.accessKey = accessKey0;
+
     if (data == null) {
         return;
     }
@@ -176,12 +203,10 @@ function oauth6(phone, accessKey, response) {
         response.end();
         return false;
     }
-    var phone0 = RSA.decryptedString(pvkey0, phone);
-    var accessKey0 = RSA.decryptedString(pvkey0, accessKey);
-    if (accessKeyPool[phone0 + "_mobile"] != undefined) {
+    if (accessKeyPool[phone + "_mobile"] != undefined) {
         return true;
     } else {
-        client.get(phone0 + "_mobile", function (err, reply) {
+        client.get(phone + "_mobile", function (err, reply) {
             if (err) {
                 response.write(JSON.stringify({
                     "提示信息": "请求失败",
@@ -197,10 +222,22 @@ function oauth6(phone, accessKey, response) {
                         "失败原因": "令牌无效"
                     }));
                     response.end();
+                    console.log("令牌无效...");
                     return false;
                 } else {
-                    accessKeyPool[phone0 + "_mobile"] = reply;
-                    return true;
+                    if (reply != accessKey) {
+                        response.write(JSON.stringify({
+                            "提示信息": "请求失败",
+                            "失败原因": "令牌无效"
+                        }));
+                        response.end();
+                        console.log("令牌超时...");
+                        return false;
+                    } else {
+                        accessKeyPool[phone + "_mobile"] = reply;
+                        console.log("验证通过...");
+                        return true;
+                    }
                 }
             }
             return false;
