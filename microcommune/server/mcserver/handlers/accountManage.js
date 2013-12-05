@@ -6,8 +6,6 @@ var ajax = require("./../lib/ajax.js");
 var sms = require("./../lib/SMS.js");
 var sha1 = require("./../tools/sha1.js");
 var verifyEmpty = require("./../lib/verifyempty.js");
-var redis = require("redis");
-var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var RSA = require('../../alipayserver/tools/RSA');
 RSA.setMaxDigits(38);
 var pbkeyStr0 = RSA.RSAKeyStr("5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841",
@@ -329,7 +327,7 @@ accountManage.verifycode = function (data, response) {
 /***************************************
  *     URL：/api2/account/auth
  ***************************************/
-accountManage.auth = function (data, response) {
+accountManage.auth = function (data, response, next) {
     response.asynchronous = 1;
     var phone = data.phone;
     var password = data.password;
@@ -376,24 +374,21 @@ accountManage.auth = function (data, response) {
                         console.log("普通鉴权成功---");
                         var accessKey = sha1.hex_sha1(phone + new Date().getTime());
                         console.log("accessKey:---" + sha1.hex_sha1(accessKey));
-                        response.write(JSON.stringify({
-                            "提示信息": "普通鉴权成功",
-                            "uid": RSA.encryptedString(pvkey0, accountData.phone),
-                            "accessKey": RSA.encryptedString(pvkey0, accessKey),
-                            "PbKey": pbkeyStr0
-                        }));
-                        response.end();
-                        client.setex(phone + "_mobile", 43200000, accessKey, function (err, reply) {
-                            if (err) {
+                        next(phone, accessKey, function(flag){
+                            if(flag){
+                                response.write(JSON.stringify({
+                                    "提示信息": "普通鉴权成功",
+                                    "uid": RSA.encryptedString(pvkey0, accountData.phone),
+                                    "accessKey": RSA.encryptedString(pvkey0, accessKey),
+                                    "PbKey": pbkeyStr0
+                                }));
+                                response.end();
+                            }else{
                                 response.write(JSON.stringify({
                                     "提示信息": "普通鉴权失败",
                                     "失败原因": "数据异常"
                                 }));
                                 response.end();
-                                console.log(err);
-                                return;
-                            } else {
-                                console.log(reply);
                             }
                         });
 //                        accountSession[phone] = accountSession[phone] || [];
@@ -419,9 +414,10 @@ accountManage.exit = function (data, response) {
  ***************************************/
 accountManage.get = function (data, response) {
     response.asynchronous = 1;
-    var phone = RSA.decryptedString(pvkey0, data.phone);
-    var accessKey = RSA.decryptedString(pvkey0, data.accessKey);
-    var target = RSA.decryptedString(pvkey0, data.target);
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    console.log(phone);
+    var target = data.target;
     var arr = [phone, accessKey, target];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         getAccountNode(target);

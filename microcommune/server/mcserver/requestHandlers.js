@@ -14,76 +14,59 @@ var pvkey0 = RSA.RSAKey(pvkeyStr0);
 
 var session = require('./handlers/session.js');
 requestHandlers.session = function (request, response, pathObject, data) {
-    var phone0 = RSA.decryptedString(pvkey0, data.phone);
-    var accessKey0 = RSA.decryptedString(pvkey0, data.accessKey);
-    data.phone = phone0;
-    data.accessKey = accessKey0;
-
+    var operation = pathObject["operation"];
     if (data == null) {
         return;
     }
-    var operation = pathObject["operation"];
     if (operation == "eventwebcodelogin") {
-        if (oauth6(data.phone, data.accessKey, response))
-            session.eventwebcodelogin(data, response);
+        session.eventwebcodelogin(data, response);
     }
     else if (operation == "notifywebcodelogin") {
-        if (oauth6(data.phone, data.accessKey, response))
+        oauth6(data.phone, data.accessKey, response, function () {
             session.notifywebcodelogin(data, response);
+        });
     }
     else if (operation == "event") {
-        if (oauth6(data.phone, data.accessKey, response))
+        oauth6(data.phone, data.accessKey, response, function () {
             session.event(data, response);
+        });
     }
     else if (operation == "notify") {
-        if (oauth6(data.phone, data.accessKey, response))
+        oauth6(data.phone, data.accessKey, response, function () {
             session.notify(data, response);
+        });
     }
 };
 
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
-    var phone0 = RSA.decryptedString(pvkey0, data.phone);
-    var accessKey0 = RSA.decryptedString(pvkey0, data.accessKey);
-    data.phone = phone0;
-    data.accessKey = accessKey0;
-
     if (data == null) {
         return;
     }
     var operation = pathObject["operation"];
     if (operation == "verifyphone") {
-        if (oauth6(data.phone, data.accessKey, response))
-            accountManage.verifyphone(data, response);
+        accountManage.verifyphone(data, response);
     }
     else if (operation == "verifycode") {
-        if (oauth6(data.phone, data.accessKey, response))
-            accountManage.verifycode(data, response);
+        accountManage.verifycode(data, response);
     }
     else if (operation == "auth") {
-        if (oauth6(data.phone, data.accessKey, response))
-            accountManage.auth(data, response);
+        accountManage.auth(data, response, setOauthAccessKey);
     }
     else if (operation == "get") {
-        if (oauth6(data.phone, data.accessKey, response))
+        oauth6(data.phone, data.accessKey, response, function () {
             accountManage.get(data, response);
+        });
     }
     else if (operation == "modify") {
-        if (oauth6(data.phone, data.accessKey, response))
+        oauth6(data.phone, data.accessKey, response, function () {
             accountManage.modify(data, response);
+        });
     }
-
     else if (operation == "exit") {
-        if (oauth6(data.phone, data.accessKey, response))
+        oauth6(data.phone, data.accessKey, response, function () {
             accountManage.exit(data, response);
-    }
-    else if (operation == "verifywebcode") {
-        if (oauth6(data.phone, data.accessKey, response))
-            accountManage.verifywebcode(data, response);
-    }
-    else if (operation == "verifywebcodelogin") {
-        if (oauth6(data.phone, data.accessKey, response))
-            accountManage.verifywebcodelogin(data, response);
+        });
     }
 }
 var communityManage = require("./handlers/communityManage.js");
@@ -179,69 +162,108 @@ requestHandlers.messageManage = function (request, response, pathObject, data) {
 }
 var webcodeManage = require("./handlers/webcodeManage.js");
 requestHandlers.webcodeManage = function (request, response, pathObject, data) {
-    var phone0 = RSA.decryptedString(pvkey0, data.phone);
-    var accessKey0 = RSA.decryptedString(pvkey0, data.accessKey);
-    data.phone = phone0;
-    data.accessKey = accessKey0;
-
     if (data == null) {
         return;
     }
     var operation = pathObject["operation"];
     if (operation == "webcodelogin") {
-        if (oauth6(data.phone, data.accessKey, response)) {
-            webcodeManage.webcodelogin(data, response);
-        }
+//        if (oauth6(data.phone, data.accessKey, response)) {
+        webcodeManage.webcodelogin(data, response);
+//        }
     }
 }
-function oauth6(phone, accessKey, response) {
+function setOauthAccessKey(phone, accessKey, next) {
+    client.rpush(phone + "_accessKey", accessKey, function (err, reply) {
+        if (err != null) {
+            next(false);
+            console.log(err);
+            return;
+        } else {
+            next(true);
+            return;
+        }
+    });
+}
+function oauth6(phone, accessKey, response, next) {
     if (phone == undefined || phone == "" || phone == null || accessKey == undefined || accessKey == "" || accessKey == null) {
         response.write(JSON.stringify({
             "提示信息": "请求失败",
             "失败原因": "数据不完整"
-        }));
+        }), function () {
+            console.log("数据不完整");
+        });
         response.end();
-        return false;
+        return;
     }
-    if (accessKeyPool[phone + "_mobile"] != undefined) {
-        return true;
+    if (accessKeyPool[phone + "_accessKey"] != undefined) {
+        var accessKeys = accessKeyPool[phone + "_accessKey"];
+        var flag0 = false;
+        for (var index in accessKeys) {
+            if (index == accessKey) {
+                flag0 = true;
+                break;
+            }
+        }
+        if (flag0) {
+            next();
+            return;
+        } else {
+            getAccess(response);
+        }
     } else {
-        client.get(phone + "_mobile", function (err, reply) {
-            if (err) {
+        getAccess(response);
+    }
+    function getAccess(response) {
+        console.log("正在查看" + phone + "accessKey");
+        client.lrange(phone + "_accessKey", 0, -1, function (err, reply) {
+            if (err != null) {
                 response.write(JSON.stringify({
                     "提示信息": "请求失败",
                     "失败原因": "数据异常"
                 }));
                 response.end();
                 console.log(err);
-                return false;
+                return;
             } else {
-                if (reply == null) {
-                    response.write(JSON.stringify({
-                        "提示信息": "请求失败",
-                        "失败原因": "令牌无效"
-                    }));
-                    response.end();
-                    console.log("令牌无效...");
-                    return false;
-                } else {
-                    if (reply != accessKey) {
-                        response.write(JSON.stringify({
-                            "提示信息": "请求失败",
-                            "失败原因": "令牌无效"
-                        }));
-                        response.end();
-                        console.log("令牌超时...");
-                        return false;
-                    } else {
-                        accessKeyPool[phone + "_mobile"] = reply;
-                        console.log("验证通过...");
-                        return true;
-                    }
+                accessDealWith(reply);
+            }
+        });
+    }
+
+    function accessDealWith(reply) {
+        if (reply.length == 0) {
+            response.write(JSON.stringify({
+                "提示信息": "请求失败",
+                "失败原因": "令牌无效"
+            }), function () {
+                console.log("---------");
+            });
+            response.end("AAA");
+            console.log(phone + "令牌无效..." + reply);
+            return;
+        } else {
+            var flag = false;
+            for (var i = 0; i < reply.length; i++) {
+                if (reply[i] == accessKey) {
+                    flag = true;
+                    break;
                 }
             }
-            return false;
-        });
+            if (flag) {
+                accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
+                accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+                console.log("验证通过...");
+                next();
+                return;
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "请求失败",
+                    "失败原因": "令牌无效"
+                }));
+                response.end();
+                return;
+            }
+        }
     }
 }
 
