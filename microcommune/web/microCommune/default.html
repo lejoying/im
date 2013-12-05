@@ -82,7 +82,6 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
     <div class="content">
       <div class="list" id="chat_leftpanel" ctrl="1">
         <div class="top">
-
           <div class="title" id="profile">
             <div class="myProfile"> <img un="avatar_wxid_7832428324312" src="static/images/webwxgeticonhead.jpg">
               <div style="cursor:pointer;"  id="accountAvatarWrapper" class="avatar"></div>
@@ -127,17 +126,18 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                 <div click="loadMoreConv" id="conv_load_more"><a href="javascript:;" class="chatListColumn1 loadMoreConv" > <span class="tipPic"></span> <span class="desc">点击显示更多</span> </a> </div>
                  <div class="js_circlesFriends">
                 </div>
-                <div id="js_friendManage" style="position:absolute; border:solid 1px #000;width:274px;height:50px;left:0%;top:24%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1000;">
-                    <table style="width: 100%;height: 100%;text-align: left;">
-                        <tr>
-                            <td rowspan="2" class="js_manageHead"><img src="/static/images/face.jpg" style="height: 50px;width: 50px;"/></td>
-                            <td class="js_manageNickName"></td>
-                        </tr>
-                        <tr>
-                            <td class="js_manageMainBusiness"></td>
-                        </tr>
-
-                    </table>
+                <div class="templates hide">
+                    <div id="js_friendManage" class="js_friendManage" style="position:absolute; border:solid 1px #000;width:274px;height:50px;left:0%;top:24%;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:1000;">
+                        <table style="width: 100%;height: 100%;text-align: left;">
+                            <tr>
+                                <td rowspan="2" class="js_manageHead"><img src="/static/images/face.jpg" style="height: 50px;width: 50px;"/></td>
+                                <td class="js_manageNickName">#{it.nickName}</td>
+                            </tr>
+                            <tr>
+                                <td class="js_manageMainBusiness">#{it.mainBusiness}</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="popmenuFrame" style="left:12px;top:0px;filter:alpha(opacity=100);opacity:1;visibility:hidden;z-index:2000;">
                     <div class="sildLeftSharp"></div>
@@ -277,8 +277,46 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                           </div>
                       </div>
                   </div>
+                  <div class="templates hide">
+                      <div class="chatMessageSend" id="chatMessageSend">
+                          <div un="item_1377586579199" class="chatItem me">
+                              <div class="time"> <span class="timeBg left"></span> #{it.hours}:#{it.minutes} <span class="timeBg right"></span> </div>
+                              <div class="chatItemContent"> <img username="wxid_7832428324312" click="showProfile" title="123" un="avatar_wxid_7832428324312" onerror="reLoadImg(this)" src="static/images/face.jpg" class="avatar">
+                                  <div msgid="2070333140" un="cloud_2070333140" class="cloud cloudText">
+                                      <div style="" class="cloudPannel">
+                                          <div class="sendStatus">   </div>
+                                          <div class="cloudBody">
+                                              <div class="cloudContent">
+                                                  <pre style="white-space:pre-wrap">#{it.content}</pre>
+                                              </div>
+                                          </div>
+                                          <div class="cloudArrow "></div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="templates hide">
+                      <div class="chatMessageGet" id="chatMessageGet">
+                          <div un="item_2070333132" class="chatItem you">
+                              <div class="time"> <span class="timeBg left"></span> #{it.hours}:#{it.minutes} <span class="timeBg right"></span> </div>
+                              <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
+                                  <div style="" class="cloudPannel">
+                                      <div class="sendStatus">   </div>
+                                      <div class="cloudBody">
+                                          <div class="cloudContent">
+                                              <pre style="white-space:pre-wrap"><img src="/static/images/65.png">#{it.content}</pre>
+                                          </div>
+                                      </div>
+                                      <div class="cloudArrow "></div>
+                                  </div>
+                              </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
               </div>
-
             </div>
             <div class="chatOperator lightBorder" id="chat_editor" ctrl="1">
               <div class="inputArea">

@@ -338,7 +338,13 @@ $(document).ready(function () {
             var minutes = date.getMinutes();
             hours = hours < 10 ? "0" + hours : hours;
             minutes = minutes < 10 ? "0" + minutes : minutes;
-            $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem me">     ' +
+            var Message=[];
+            Message.content=content;
+            Message.hours=hours;
+            Message.minutes=minutes;
+            var chatMessageSend=getTemplate("chatMessageSend");
+            $("#chat_chatmsglist").append(chatMessageSend.render(Message));
+           /* $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem me">     ' +
                 '<div class="time"> <span class="timeBg left"></span> ' + hours + ':' + minutes + ' <span class="timeBg right"></span> </div>       ' +
                 ' <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">     ' +
                 ' <div style="" class="cloudPannel">                                                                                                                                                                                                                                                                                          ' +
@@ -352,7 +358,7 @@ $(document).ready(function () {
                 '      </div>     ' +
                 '   </div>   ' +
                 '</div>    ' +
-                '</div>');
+                '</div>');*/
             var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
             var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
             var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
@@ -469,7 +475,10 @@ function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
 }
 function addTempChatAccount(obj) {
     $(".chatListColumn").attr("class", "chatListColumn");
-    var str = '<div style="display:none;" class="clicked"></div>' +
+    var js_friendManage=getTemplate("js_friendManage");
+    var str =$("#js_friendManage").append(js_friendManage.render(obj));
+
+    /*'<div style="display:none;" class="clicked"></div>' +
         '<span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>' +
         '<div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>' +
         '<div class="extend">' +
@@ -487,7 +496,7 @@ function addTempChatAccount(obj) {
         '</div>' +
         '</div>' +
         '<div class="clr">' +
-        '</div>';
+        '</div>';*/
     var div = document.createElement('div');
     $(div).attr("class", "chatListColumn activeColumn");
     $(div).attr("id", "conv_wxid_" + obj.uid);
@@ -929,7 +938,7 @@ function request() {
 function getMessage(){
     var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
     var accesskey = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
-    alert(phone+" "+accesskey+" "+flag);
+    //alert(phone+" "+accesskey+" "+flag);
     $.ajax({
         type: "POST",
         url: "/api2/message/get?",
@@ -940,40 +949,73 @@ function getMessage(){
         },
         success: function (data) {
             if (data["提示信息"] == "获取成功") {
-
-                alert(data["messages"]+"  messages");
+                //alert(data["messages"]+"  messages");
                 var messages=data["messages"];
                 var length=messages.length;
-                alert(length+" length");
-                alert(data["flag"]+"  flag");
+               // alert(length+" length");
+                //alert(data["flag"]+"  flag");
                 for(var i=0;i<length;i++){
-                    alert(JSON.parse(messages[i]).phone);
-                    alert("调用for循环");
-
+                    //alert(JSON.parse(messages[i]).phone);
+                    //alert("调用for循环");
                     //消息内容
                     // alert(JSON.parse(messages[i]).content.text);
-
                     //判断phone是否相同
                     if(phone==JSON.parse(messages[i]).phone){
-                        alert("phone相同");
-
+                        //alert("phone相同");
                         //判断是否存在于临时会话
-                         //Tempcheck(JSON.parse(messages[i]).phoneto);
+                         Tempcheck(JSON.parse(messages[i]).phoneto);
                         //塞入信息(右塞)
-                    }else{
-                        alert("phone不同");
-
-                        //判断是否存在于临时会话
-                       Tempcheck(JSON.parse(messages[i]).phone);
-                        //塞入信息(左塞)
-                       alert(JSON.parse(messages[i]).time);
-                        var date=new Date(JSON.parse(messages[i]).time);
-                       // alert(date+  "  正常");
+                        var date = new Date();
                         var hours = date.getHours();
                         var minutes = date.getMinutes();
                         hours = hours < 10 ? "0" + hours : hours;
                         minutes = minutes < 10 ? "0" + minutes : minutes;
-                        $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">' +
+                        var content=JSON.parse(messages[i]).content.text;
+
+                        var Message=[];
+                        Message.content=content;
+                        Message.hours=hours;
+                        Message.minutes=minutes;
+
+                        var chatMessageSend=getTemplate("chatMessageSend");
+                        $("#chat_chatmsglist").append(chatMessageSend.render(Message));
+                       /* $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem me">     ' +
+                            '<div class="time"> <span class="timeBg left"></span> ' + hours + ':' + minutes + ' <span class="timeBg right"></span> </div>       ' +
+                            ' <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">     ' +
+                            ' <div style="" class="cloudPannel">                                                                                                                                                                                                                                                                                          ' +
+                            '   <div class="sendStatus">   </div>                                                                                                                                                                                                                                                                                          ' +
+                            '   <div class="cloudBody">                                                                                                                                                                                                                                                                                                       ' +
+                            '      <div class="cloudContent">                                                                                                                                                                                                                                                                                                  ' +
+                            '           <pre style="white-space:pre-wrap">' + JSON.parse(messages[i]).content.text + '</pre>                                                                                                                                         ' +
+                            '           </div>                                                                                                                                                                                                                                                                                                                         ' +
+                            '        </div>     ' +
+                            '         <div class="cloudArrow "></div>    ' +
+                            '      </div>     ' +
+                            '   </div>   ' +
+                            '</div>    ' +
+                            '</div>');*/
+
+                    }else{
+                        //alert("phone不同");
+                        //判断是否存在于临时会话
+                       Tempcheck(JSON.parse(messages[i]).phone);
+                        //塞入信息(左塞)
+                       // if(){}
+                      // alert(JSON.parse(messages[i]).time);
+                        var content=JSON.parse(messages[i]).content.text;
+                        var date=new Date(JSON.parse(messages[i]).time);
+                        var hours = date.getHours();
+                        var minutes = date.getMinutes();
+                        hours = hours < 10 ? "0" + hours : hours;
+                        minutes = minutes < 10 ? "0" + minutes : minutes;
+                        var Message=[];
+                        Message.content=content;
+                        Message.hours=hours;
+                        Message.minutes=minutes;
+
+                        var chatMessageGet=getTemplate("chatMessageGet");
+                        $("#chat_chatmsglist").append(chatMessageGet.render(Message));
+                        /*$("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">' +
                          ' <div class="time"> <span class="timeBg left"></span>' +hours + ':' + minutes + ' <span class="timeBg right"></span> </div> ' +
                          '<div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText"> ' +
                          '<div style="" class="cloudPannel"> ' +
@@ -987,7 +1029,7 @@ function getMessage(){
                          '</div> ' +
                          '</div> ' +
                          '</div> ' +
-                         '</div> ');
+                         '</div> ');*/
                     }
                 }
             }
@@ -995,7 +1037,7 @@ function getMessage(){
     });
 }
 function Tempcheck (phoneto){
-  alert("调用查看临时会话的方法");
+  //alert("调用查看临时会话的方法");
     //查看是否存在于临时会话
     var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
     var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
@@ -1016,9 +1058,9 @@ function Tempcheck (phoneto){
             window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChat));
             addTempChatAccount(accountObj);
         } else {
-            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, selectCircleId)
+            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, selectCircleId);
         }
     } else {
-        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, selectCircleId)
+        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, selectCircleId);
     }
 }
