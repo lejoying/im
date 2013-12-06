@@ -302,8 +302,9 @@ accountManage.verifycode = function (data, response) {
                         });
                         response.write(JSON.stringify({
                             "提示信息": "验证成功",
-                            "phone": phone,
-                            accessKey: sha1.hex_sha1(phone + code)
+                            uid: RSA.encryptedString(pvkey0, phone),
+                            accessKey: RSA.encryptedString(pvkey0, sha1.hex_sha1(phone + code)),
+                            PbKey: pbkey0
                         }));
                         response.end();
                     }

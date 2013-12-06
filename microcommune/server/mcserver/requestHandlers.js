@@ -278,7 +278,7 @@ function oauth6(phone, accessKey, response, next) {
                         "提示信息": "请求失败",
                         "失败原因": "AccessKey Invalid"
                     }), function () {
-                        console.log(phone + "令牌无效...");
+                        console.log(phone + "AccessKey Invalid...");
                     });
                     response.end();
                     return;
@@ -301,7 +301,7 @@ function oauth6(phone, accessKey, response, next) {
                             "提示信息": "请求失败",
                             "失败原因": "AccessKey Invalid"
                         }), function () {
-                            console.log(phone + "令牌无效...");
+                            console.log(phone + ".AccessKey Invalid...");
                         });
                         response.end();
                         return;

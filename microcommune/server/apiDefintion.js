@@ -102,7 +102,7 @@ api = {
             typical: {"phone": "XXX", "code": "XXX"}
         },
         response: {
-            success: {"提示信息": "验证成功", "phone": "XXX", accessKey: sha1("phone" + "code")},
+            success: {"提示信息": "验证成功", "uid": "XXX", accessKey: sha1("phone" + "code"), "PbKey": "XXX"},
             failed: {"提示信息": "验证失败", "失败原因": ["验证码不正确" || "验证码超时" || "手机号不存在" || "数据异常"]}
         }
     },
@@ -163,7 +163,7 @@ api = {
             url: "/api2/account/exit"
         },
         request: {
-            typical: {}
+            typical: {phone: "XXX", accessKey: "XXX"}
         },
         response: {
             success: {"提示信息": "退出成功"},
