@@ -46,6 +46,22 @@ class Account implements Serializable {
 		this.mainBusiness = mainBusiness;
 	}
 
+	public void append(Account account) {
+		if (account.getHead() != null && !account.getHead().equals("")) {
+			this.head = account.getHead();
+		}
+		if (account.getMainBusiness() != null
+				&& !account.getMainBusiness().equals("")) {
+			this.mainBusiness = account.getMainBusiness();
+		}
+		if (account.getNickName() != null && !account.getNickName().equals("")) {
+			this.nickName = account.getNickName();
+		}
+		if (account.getPhone() != null && !account.getPhone().equals("")) {
+			this.phone = account.getPhone();
+		}
+	}
+
 	public String getPhone() {
 		return phone;
 	}

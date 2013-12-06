@@ -12,13 +12,8 @@ public class MainService extends BaseService implements ServiceEvent {
 	public static final String ACTION_STATUS = "ACTION_STATUS";
 	public static final String ACTION_REMAIN = "ACTION_REMAIN";
 
-	public static final int SERVICE_NOTIFYDATA = 0x013;
-	public static final int SERVICE_NOTIFYVIEW = 0x014;
+	public static final int SERVICE_NOTIFYVIEW = 0x013;
 	public static final String ACTION_NOTIFY = "ACTION_NOTIFY";
-
-	public static final int WHAT_CHATMESSAGE = 0x021;
-	public static final int WHAT_MESSAGELIST = 0x022;
-	public static final int WHAT_FRIEND = 0x023;
 
 	public static final String REMAIN_REGISTER = "REGISTERCODEREMAIN";
 	public static final String REMAIN_LOGIN = "LOGINCODEREMAIN";

@@ -1,5 +1,6 @@
 package com.lejoying.mc.utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,41 +27,111 @@ import com.lejoying.mc.entity.User;
 
 public class MCDataTools {
 
+	static String DATABASE_NAME;
+
 	public static void saveUser(Context context, User user) {
 		MCStaticData.mUser = user;
+		DATABASE_NAME = MCDataTools.generateDBName(user);
+		OutputStream os = null;
+		ObjectOutputStream oos = null;
 		try {
-			OutputStream os = context.openFileOutput("user",
+			os = context.openFileOutput(generateUserFileName(user),
 					Context.MODE_PRIVATE);
-			ObjectOutputStream oos = new ObjectOutputStream(os);
+			oos = new ObjectOutputStream(os);
 			oos.writeObject(user);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (oos != null) {
+					oos.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if (os != null) {
+					os.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public static User getLoginedUser(Context context) {
 		User user = MCStaticData.mUser;
 		if (user != null) {
+			DATABASE_NAME = MCDataTools.generateDBName(user);
 			return user;
 		}
 		if (context != null) {
-			try {
-				InputStream is = context.openFileInput("user");
-				ObjectInputStream ois = new ObjectInputStream(is);
-				user = (User) ois.readObject();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (StreamCorruptedException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+			InputStream is = null;
+			ObjectInputStream ois = null;
+			File files = context.getFilesDir();
+			for (File file : files.listFiles()) {
+				try {
+					is = context.openFileInput(file.getName());
+					ois = new ObjectInputStream(is);
+					user = (User) ois.readObject();
+					if (user.isNow()) {
+						break;
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (StreamCorruptedException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if (ois != null) {
+							ois.close();
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					try {
+						if (is != null) {
+							is.close();
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
 			}
 		}
 		return user;
+	}
+
+	public static void cleanAllData(Context context) {
+		User user = MCDataTools.getLoginedUser(null);
+		user.setAccessKey("");
+		user.setNow(false);
+		MCDataTools.saveUser(context, user);
+		MCStaticData.loginCodeBundle = null;
+		MCStaticData.registerBundle = null;
+		MCStaticData.circles = null;
+		MCStaticData.messages = null;
+		MCStaticData.mUser = null;
+	}
+
+	static String generateDBName(User user) {
+		return user.getPhone() + ".db";
+	}
+
+	static String generateUserFileName(User user) {
+		return user.getPhone();
 	}
 
 	public static void saveCircles(Context context, JSONArray circles) {
@@ -94,12 +165,10 @@ public class MCDataTools {
 
 class DBHelper extends SQLiteOpenHelper {
 
-	private static String DATABASE_NAME;
 	private final static int DATABASE_VERSION = 1;
 
 	public DBHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		DATABASE_NAME = MCDataTools.getLoginedUser(null).getPhone() + ".db";
+		super(context, MCDataTools.DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 	@Override
@@ -146,7 +215,7 @@ class DBManager {
 									-Integer.valueOf(
 											MCDataTools.getLoginedUser(null)
 													.getPhone()).intValue(),
-									"没有分组" });
+									"脙禄脫脨路脰脳茅" });
 				}
 				List<Friend> friends = circle.getFriends();
 				for (Friend friend : friends) {

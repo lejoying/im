@@ -8,6 +8,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -130,6 +131,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 				initCamera();
 			} else {
 				// 相机故障或被占用
+				showMsg("相机故障,重新打开试试~~");
 				getActivity().getSupportFragmentManager().popBackStack();
 			}
 		}
@@ -188,9 +190,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 
 		int what = OPERATE_DECODE_FAILED;
 		if (rawResult != null) {
-			if (processQRCode(rawResult)) {
-				what = OPERATE_DECODE_SUCCESS_WEBLOGIN;
-			}
+			what = processQRCode(rawResult);
 		}
 		Message message = handler.obtainMessage(what, rawResult);
 		message.sendToTarget();
@@ -299,13 +299,28 @@ public class ScanQRCodeFragment extends BaseFragment implements
 			switch (what) {
 			case OPERATE_DECODE_SUCCESS_WEBLOGIN:
 				destoryCamera();
-				new AlertDialog.Builder(getActivity()).setTitle("网页登陆成功")
-						.setOnCancelListener(new OnCancelListener() {
+				new AlertDialog.Builder(getActivity()).setTitle("确认网页登陆?")
+						.setPositiveButton("确定", new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								getActivity().getSupportFragmentManager()
+										.popBackStack();
+							}
+						}).setNegativeButton("取消", new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								initCamera();
+							}
+						}).setOnCancelListener(new OnCancelListener() {
 							@Override
 							public void onCancel(DialogInterface dialog) {
 								initCamera();
 							}
-						}).setMessage(msg.obj.toString()).create().show();
+						}).setCancelable(false).create().show();
 				break;
 			case OPERATE_DECODE_FAILED:
 				if (isTake) {
@@ -341,16 +356,16 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		}
 	}
 
-	private boolean processQRCode(Result rawResult) {
-		boolean flag = false;
+	private int processQRCode(Result rawResult) {
+		int what = OPERATE_DECODE_FAILED;
 		String str = rawResult.toString();
 		if (str.substring(0, 2).equals("mc")) {
 			int index = str.indexOf(":", 3);
 			if (str.substring(3, index).equals("weblogin")) {
-				flag = true;
+				what = OPERATE_DECODE_SUCCESS_WEBLOGIN;
 			}
 		}
-		return flag;
+		return what;
 	}
 
 	@Override

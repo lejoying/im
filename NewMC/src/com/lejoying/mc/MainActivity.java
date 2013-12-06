@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.fragment.MessageFragment;
+import com.lejoying.mc.fragment.FriendsFragment;
 import com.lejoying.mc.listener.NetworkStatusListener;
 import com.lejoying.mc.service.MainService;
 import com.lejoying.mc.utils.MCDataTools;
@@ -22,7 +22,7 @@ public class MainActivity extends BaseFragmentActivity {
 
 	@Override
 	public Fragment setFirstPreview() {
-		return new MessageFragment();
+		return new FriendsFragment();
 	}
 
 	@Override
@@ -47,6 +47,7 @@ public class MainActivity extends BaseFragmentActivity {
 							getMessages();
 							break;
 						case MainService.STATUS_NETWORK_UNSUCCESS:
+							System.out.println("获取用户失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -78,9 +79,11 @@ public class MainActivity extends BaseFragmentActivity {
 					public void onReceive(int STATUS, String log) {
 						switch (STATUS) {
 						case MainService.STATUS_NETWORK_SUCCESS:
-
+							startViewProcessing(MainService.NOTIFY_FRIEND,
+									null, false);
 							break;
 						case MainService.STATUS_NETWORK_UNSUCCESS:
+							System.out.println("获取好友圈失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -107,17 +110,20 @@ public class MainActivity extends BaseFragmentActivity {
 		params.putString("phone", MCDataTools.getLoginedUser(this).getPhone());
 		params.putString("accessKey", MCDataTools.getLoginedUser(this)
 				.getAccessKey());
-		params.putInt("flag", 0);
+		String flag = MCDataTools.getLoginedUser(this).getFlag();
+		System.out.println(flag);
+		params.putString("flag", flag);
 		startNetwork(API.MESSAGE_GET, params, false,
 				new NetworkStatusListener() {
 					@Override
 					public void onReceive(int STATUS, String log) {
 						switch (STATUS) {
 						case MainService.STATUS_NETWORK_SUCCESS:
-							startViewProcessing(MainService.WHAT_MESSAGELIST,
+							startViewProcessing(MainService.NOTIFY_MESSAGELIST,
 									false);
 							break;
 						case MainService.STATUS_NETWORK_UNSUCCESS:
+							System.out.println("获取消息失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);

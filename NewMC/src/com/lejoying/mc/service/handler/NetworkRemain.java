@@ -101,24 +101,17 @@ public class NetworkRemain {
 		}
 	}
 
-	protected void cancelRemain(Intent intent) {
-		Bundle params = intent.getExtras();
-		String usage = params.getString("usage");
-		String phone = params.getString("phone");
-		if (usage != null && phone != null) {
-			if (usage.equals("register")) {
-				lastRegisterPhone = "";
-				mRegCodeRemain = 0;
-				if (mRegTimer != null) {
-					mRegTimer.cancel();
-				}
-			} else if (usage.equals("login")) {
-				mLoginCodeRemain = 0;
-				if (mLoginTimer != null) {
-					mLoginTimer.cancel();
-				}
-			}
+	protected void cancelRemain() {
+		if (mRegTimer != null) {
+			mRegTimer.cancel();
 		}
+		if (mLoginTimer != null) {
+			mLoginTimer.cancel();
+		}
+		lastRegisterPhone = "";
+		mLoginCodeRemain = 0;
+		mRegCodeRemain = 0;
+
 	}
 
 }

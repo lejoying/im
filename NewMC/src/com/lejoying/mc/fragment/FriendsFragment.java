@@ -21,7 +21,6 @@ public class FriendsFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_friends, null);
 		mMCFragmentManager.showCircleMenuToTop(false, false);
 		mMCFragmentManager.setCircleMenuPageName("√‹”—»¶");
