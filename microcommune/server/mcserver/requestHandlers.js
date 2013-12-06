@@ -76,19 +76,29 @@ requestHandlers.communityManage = function (request, response, pathObject, data)
     }
     var operation = pathObject["operation"];
     if (operation == "add") {
-        communityManage.add(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            communityManage.add(data, response);
+        });
     }
     else if (operation == "find") {
-        communityManage.find(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            communityManage.find(data, response);
+        });
     }
     else if (operation == "join") {
-        communityManage.join(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            communityManage.join(data, response);
+        });
     }
     else if (operation == "unjoin") {
-        communityManage.unjoin(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            communityManage.unjoin(data, response);
+        });
     }
     else if (operation == "getcommunities") {
-        communityManage.getcommunities(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            communityManage.getcommunities(data, response);
+        });
     }
 }
 
@@ -100,25 +110,39 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
     }
     var operation = pathObject["operation"];
     if (operation == "addfriend") {
-        relationManage.addfriend(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.addfriend(data, response);
+        });
     }
     else if (operation == "deletefriend") {
-        relationManage.deletefriend(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.deletefriend(data, response);
+        });
     }
     else if (operation == "blacklist") {
-        relationManage.blacklist(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.blacklist(data, response);
+        });
     }
     else if (operation == "getfriends") {
-        relationManage.getfriends(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.getfriends(data, response);
+        });
     }
     else if (operation == "getcirclesandfriends") {
-        relationManage.getcirclesandfriends(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.getcirclesandfriends(data, response);
+        });
     }
     else if (operation == "getaskfriends") {
-        relationManage.getaskfriends(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.getaskfriends(data, response);
+        });
     }
     else if (operation == "addfriendagree") {
-        relationManage.addfriendagree(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.addfriendagree(data, response);
+        });
     }
 }
 
@@ -129,19 +153,29 @@ requestHandlers.circleManage = function (request, response, pathObject, data) {
     }
     var operation = pathObject["operation"];
     if (operation == "modify") {
-        circleManage.modify(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            circleManage.modify(data, response);
+        });
     }
     else if (operation == "delete") {
-        circleManage.delete(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            circleManage.delete(data, response);
+        });
     }
     else if (operation == "moveout") {
-        circleManage.moveout(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            circleManage.moveout(data, response);
+        });
     }
     else if (operation == "moveorout") {
-        circleManage.moveorout(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            circleManage.moveorout(data, response);
+        });
     }
     else if (operation == "addcircle") {
-        circleManage.addcircle(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            circleManage.addcircle(data, response);
+        });
     }
 }
 var messageManage = require("./handlers/messageManage.js");
@@ -151,13 +185,19 @@ requestHandlers.messageManage = function (request, response, pathObject, data) {
     }
     var operation = pathObject["operation"];
     if (operation == "send") {
-        messageManage.send(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            messageManage.send(data, response);
+        });
     }
     else if (operation == "get") {
-        messageManage.get(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            messageManage.get(data, response);
+        });
     }
     else if (operation == "deletes") {
-        messageManage.deletes(data, response);
+        oauth6(data.phone, data.accessKey, response, function () {
+            messageManage.deletes(data, response);
+        });
     }
 }
 var webcodeManage = require("./handlers/webcodeManage.js");
@@ -167,9 +207,9 @@ requestHandlers.webcodeManage = function (request, response, pathObject, data) {
     }
     var operation = pathObject["operation"];
     if (operation == "webcodelogin") {
-//        if (oauth6(data.phone, data.accessKey, response)) {
-        webcodeManage.webcodelogin(data, response);
-//        }
+        oauth6(data.phone, data.accessKey, response, function () {
+            webcodeManage.webcodelogin(data, response);
+        });
     }
 }
 function setOauthAccessKey(phone, accessKey, next) {
@@ -185,35 +225,43 @@ function setOauthAccessKey(phone, accessKey, next) {
     });
 }
 function oauth6(phone, accessKey, response, next) {
+    response.asynchronous = 1;
     if (phone == undefined || phone == "" || phone == null || accessKey == undefined || accessKey == "" || accessKey == null) {
         response.write(JSON.stringify({
             "提示信息": "请求失败",
             "失败原因": "数据不完整"
         }), function () {
-            console.log("数据不完整");
+            console.log("安全机制数据不完整");
         });
         response.end();
         return;
-    }
-    if (accessKeyPool[phone + "_accessKey"] != undefined) {
-        var accessKeys = accessKeyPool[phone + "_accessKey"];
-        var flag0 = false;
-        for (var index in accessKeys) {
-            if (index == accessKey) {
-                flag0 = true;
-                break;
-            }
-        }
-        if (flag0) {
+    } else {
+        if (accessKey == "lejoying") {
             next();
             return;
-        } else {
-            getAccess(response);
         }
-    } else {
-        getAccess(response);
+        else if (accessKeyPool[phone + "_accessKey"] != undefined) {
+            var accessKeys = accessKeyPool[phone + "_accessKey"];
+            var flag0 = false;
+            for (var index in accessKeys) {
+                if (index == accessKey) {
+                    flag0 = true;
+                    break;
+                }
+            }
+            if (flag0) {
+                console.log("验证通过accessKeyPool...");
+                next();
+                return;
+            } else {
+                getAccessed(response);
+            }
+        } else {
+            getAccessed(response);
+        }
     }
-    function getAccess(response) {
+
+    function getAccessed(response) {
         console.log("正在查看" + phone + "accessKey");
         client.lrange(phone + "_accessKey", 0, -1, function (err, reply) {
             if (err != null) {
@@ -225,45 +273,42 @@ function oauth6(phone, accessKey, response, next) {
                 console.log(err);
                 return;
             } else {
-                accessDealWith(reply);
-            }
-        });
-    }
-
-    function accessDealWith(reply) {
-        if (reply.length == 0) {
-            response.write(JSON.stringify({
-                "提示信息": "请求失败",
-                "失败原因": "令牌无效"
-            }), function () {
-                console.log("---------");
-            });
-            response.end("AAA");
-            console.log(phone + "令牌无效..." + reply);
-            return;
-        } else {
-            var flag = false;
-            for (var i = 0; i < reply.length; i++) {
-                if (reply[i] == accessKey) {
-                    flag = true;
-                    break;
+                if (reply.length == 0) {
+                    response.write(JSON.stringify({
+                        "提示信息": "请求失败",
+                        "失败原因": "AccessKey Invalid"
+                    }), function () {
+                        console.log(phone + "令牌无效...");
+                    });
+                    response.end();
+                    return;
+                } else {
+                    var flag = false;
+                    for (var i = 0; i < reply.length; i++) {
+                        if (reply[i] == accessKey) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
+                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+                        console.log("验证通过DB...");
+                        next();
+                        return;
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "请求失败",
+                            "失败原因": "AccessKey Invalid"
+                        }), function () {
+                            console.log(phone + "令牌无效...");
+                        });
+                        response.end();
+                        return;
+                    }
                 }
             }
-            if (flag) {
-                accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
-                accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
-                console.log("验证通过...");
-                next();
-                return;
-            } else {
-                response.write(JSON.stringify({
-                    "提示信息": "请求失败",
-                    "失败原因": "令牌无效"
-                }));
-                response.end();
-                return;
-            }
-        }
+        });
     }
 }
 

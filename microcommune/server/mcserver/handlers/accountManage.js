@@ -5,7 +5,7 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var ajax = require("./../lib/ajax.js");
 var sms = require("./../lib/SMS.js");
 var sha1 = require("./../tools/sha1.js");
-var verifyEmpty = require("./../lib/verifyempty.js");
+var verifyEmpty = require("./../lib/verifyParams.js");
 var RSA = require('../../alipayserver/tools/RSA');
 RSA.setMaxDigits(38);
 var pbkeyStr0 = RSA.RSAKeyStr("5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841",
@@ -374,8 +374,8 @@ accountManage.auth = function (data, response, next) {
                         console.log("普通鉴权成功---");
                         var accessKey = sha1.hex_sha1(phone + new Date().getTime());
                         console.log("accessKey:---" + sha1.hex_sha1(accessKey));
-                        next(phone, accessKey, function(flag){
-                            if(flag){
+                        next(phone, accessKey, function (flag) {
+                            if (flag) {
                                 response.write(JSON.stringify({
                                     "提示信息": "普通鉴权成功",
                                     "uid": RSA.encryptedString(pvkey0, accountData.phone),
@@ -383,7 +383,7 @@ accountManage.auth = function (data, response, next) {
                                     "PbKey": pbkeyStr0
                                 }));
                                 response.end();
-                            }else{
+                            } else {
                                 response.write(JSON.stringify({
                                     "提示信息": "普通鉴权失败",
                                     "失败原因": "数据异常"
@@ -405,8 +405,37 @@ accountManage.auth = function (data, response, next) {
         });
     }
 }
-
+var redis = require("redis");
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 accountManage.exit = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    client.lrem(phone + "_accessKey", 0, accessKey, function (err, reply) {
+        if (err != null) {
+            response.write(JSON.stringify({
+                "提示信息": "退出失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(err);
+            return;
+        } else {
+            if (reply == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "退出失败",
+                    "失败原因": "AccessKey Invalid"
+                }));
+                response.end();
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "退出成功"
+                }));
+                response.end();
+            }
+        }
+    });
+
 
 }
 /***************************************
