@@ -1,10 +1,12 @@
 package com.lejoying.mc;
 
-import com.lejoying.mc.service.MainService;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
+import com.lejoying.mc.entity.User;
+import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.utils.MCDataTools;
 
 public class WelcomeActivity extends BaseFragmentActivity {
 
@@ -14,6 +16,11 @@ public class WelcomeActivity extends BaseFragmentActivity {
 		setContentView(R.layout._welcome);
 		Intent service = new Intent(this, MainService.class);
 		startService(service);
+
+		User user = MCDataTools.getLoginedUser(this);
+
+		System.out.println(user == null);
+
 		// User user = MCDataTools.getLoginedUser(this);
 		// if (user != null && user.getPhone() != null
 		// && user.getAccessKey() != null) {

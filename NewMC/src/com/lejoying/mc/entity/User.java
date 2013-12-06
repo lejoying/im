@@ -11,6 +11,10 @@ public class User extends Account {
 
 	private String accessKey;
 
+	private String pbKey;
+
+	private boolean now;
+
 	private String flag = "none";
 
 	public User() {
@@ -39,6 +43,22 @@ public class User extends Account {
 
 	public void setFlag(String flag) {
 		this.flag = flag;
+	}
+
+	public boolean isNow() {
+		return now;
+	}
+
+	public void setNow(boolean now) {
+		this.now = now;
+	}
+
+	public String getPbKey() {
+		return pbKey;
+	}
+
+	public void setPbKey(String pbKey) {
+		this.pbKey = pbKey;
 	}
 
 }

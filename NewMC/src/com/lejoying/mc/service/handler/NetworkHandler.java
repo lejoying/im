@@ -120,46 +120,54 @@ public class NetworkHandler {
 					try {
 						MCStaticData.registerBundle.putString("accessKey",
 								data.getString("accessKey"));
+						MCStaticData.registerBundle.putString("PbKey",
+								data.getString("PbKey"));
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				} else {
 					String accessKey = "";
+					String pbKey = "";
 					try {
 						accessKey = data.getString("accessKey");
+						pbKey = data.getString("PbKey");
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					saveLoginUser(params.getString("phone"), accessKey);
+					saveLoginUser(params.getString("phone"), accessKey, pbKey);
 				}
-				mNetworkRemain.cancelRemain(intent);
+				mNetworkRemain.cancelRemain();
 			} else if (api.equals(API.ACCOUNT_AUTH)) {
 				String accessKey = "";
+				String pbKey = "";
 				try {
 					accessKey = data.getString("accessKey");
+					pbKey = data.getString("PbKey");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				saveLoginUser(params.getString("phone"), accessKey);
+				saveLoginUser(params.getString("phone"), accessKey, pbKey);
 			} else if (api.equals(API.ACCOUNT_MODIFY)) {
 				if (MCStaticData.registerBundle != null) {
 					saveLoginUser(
 							MCStaticData.registerBundle.getString("phone"),
-							MCStaticData.registerBundle.getString("accessKey"));
+							MCStaticData.registerBundle.getString("accessKey"),
+							MCStaticData.registerBundle.getString("PbKey"));
 				}
 			} else if (api.equals(API.ACCOUNT_GET)) {
 				if (params.getString("phone")
 						.equals(params.getString("target"))) {
 					User user = null;
 					try {
-						user = new User(data.getJSONObject("account"));
-						user.setAccessKey(MCDataTools.getLoginedUser(mContext)
-								.getAccessKey());
+						user = MCDataTools.getLoginedUser(mContext);
+						user.append(new User(data.getJSONObject("account")));
+						MCDataTools.saveUser(mContext, user);
 					} catch (JSONException e) {
 
 					}
-					MCDataTools.saveUser(mContext, user);
 				}
+			} else if (api.equals(API.ACCOUNT_EXIT)) {
+				MCDataTools.cleanAllData(mContext);
 			}
 		} else if (apiClazz.equals(API.CIRCLE)) {
 
@@ -173,9 +181,8 @@ public class NetworkHandler {
 					MCDataTools.saveMessages(mContext,
 							data.getJSONArray("messages"));
 					User user = MCDataTools.getLoginedUser(mContext);
-					user.setFlag(data.getString("flag"));
+					user.setFlag(String.valueOf(data.getInt("flag")));
 					MCDataTools.saveUser(mContext, user);
-					System.out.println(MCDataTools.getMessages(mContext, 0));
 				} catch (JSONException e) {
 				}
 			}
@@ -219,10 +226,24 @@ public class NetworkHandler {
 				responseListener);
 	}
 
-	private void saveLoginUser(String phone, String accessKey) {
+	private void saveLoginUser(String phone, String accessKey, String pbKey) {
 		User user = new User();
 		user.setPhone(phone);
 		user.setAccessKey(accessKey);
+
+		System.out.println(accessKey);
+
+		System.out.println(pbKey + "::::::::::");
+		try {
+			// System.out.println(RSAUtils.decryptByPublicKey(accessKey,
+			// RSAUtils.getPubKey(pbKey)));
+		} catch (Exception e) {
+			System.out.println("Ω‚√‹≥ˆ¥Ì¡À");
+			e.printStackTrace();
+		}
+
+		user.setPbKey(pbKey);
+		user.setNow(true);
 		MCDataTools.saveUser(mContext, user);
 	}
 

@@ -21,10 +21,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.api.API;
 import com.lejoying.mc.entity.MenuEntity;
+import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
@@ -481,23 +484,41 @@ public class CircleMenuFragment extends BaseFragment {
 		mMenuIndex = 0;
 		mMenuItemList = new ArrayList<List<View>>();
 		List<MenuEntity> menuEntitys1 = new ArrayList<MenuEntity>();
-		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item1, "密友圈"));
-		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item2, "消息"));
-		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item3, "分享"));
-		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item4, "更多"));
+		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item1,
+				getString(R.string.circleitem1_1)));
+		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item2,
+				getString(R.string.circleitem1_2)));
+		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item3,
+				getString(R.string.circleitem1_3)));
+		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item4,
+				getString(R.string.circleitem1_4)));
 		List<MenuEntity> menuEntitys2 = new ArrayList<MenuEntity>();
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item1, "扫一扫"));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2, "我的名片"));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item3, "社区服务"));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item4, "返回"));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item5, "订单"));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item6, "资金账户"));
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item1,
+				getString(R.string.circleitem2_1)));
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2,
+				getString(R.string.circleitem2_2)));
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item3,
+				getString(R.string.circleitem2_3)));
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item4,
+				getString(R.string.circleitem1_4)));
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item5,
+				getString(R.string.circleitem2_5)));
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item6,
+				getString(R.string.circleitem2_6)));
+		List<MenuEntity> menuEntitys3 = new ArrayList<MenuEntity>();
+		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item1, "设置"));
+		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item2, "隐私设置"));
+		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item3, "退出登录"));
+		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item4,
+				getString(R.string.circleitem2_4)));
 
 		final ViewGroup itemGroup = (ViewGroup) mDiskOut;
 
 		mMenuItemList.add(inflaterMenuItemView(inflater, menuEntitys1,
 				itemGroup));
 		mMenuItemList.add(inflaterMenuItemView(inflater, menuEntitys2,
+				itemGroup));
+		mMenuItemList.add(inflaterMenuItemView(inflater, menuEntitys3,
 				itemGroup));
 
 		ToTry.tryDoing(10, 500, new ToTryAdapter() {
@@ -821,11 +842,12 @@ public class CircleMenuFragment extends BaseFragment {
 			});
 			break;
 		case 2:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
+			back(WHERE_TOP, new CircleDiskAnimationEnd() {
+
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.relpaceToContent(new MessageFragment(),
-							false);
+					mMCFragmentManager.relpaceToContent(
+							new ScanQRCodeFragment(), true);
 				}
 
 				@Override
@@ -841,12 +863,11 @@ public class CircleMenuFragment extends BaseFragment {
 			showNext();
 			break;
 		case 11:
-			back(WHERE_TOP, new CircleDiskAnimationEnd() {
-
+			back(mOldWhere, new CircleDiskAnimationEnd() {
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.relpaceToContent(
-							new ScanQRCodeFragment(), true);
+					mMCFragmentManager.relpaceToContent(new MessageFragment(),
+							false);
 				}
 
 				@Override
@@ -862,13 +883,38 @@ public class CircleMenuFragment extends BaseFragment {
 
 			break;
 		case 14:
-			showBack();
+			// showBack();
+			showNext();
 			break;
 		case 15:
 
 			break;
 		case 16:
 
+			break;
+		case 21:
+			System.out.println("软件设置");
+			break;
+		case 22:
+			System.out.println("隐私设置");
+			break;
+		case 23:
+			Bundle params = new Bundle();
+			params.putString("phone", MCDataTools.getLoginedUser(null)
+					.getPhone());
+			params.putString("accessKey", MCDataTools.getLoginedUser(null)
+					.getAccessKey());
+			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_EXIT, params,
+					true, new NetworkStatusAdapter() {
+						@Override
+						public void success() {
+							mMCFragmentManager.startToActivity(
+									LoginActivity.class, true);
+						}
+					});
+			break;
+		case 24:
+			showBack();
 			break;
 
 		default:

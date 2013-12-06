@@ -100,16 +100,21 @@ public class MCNetTools {
 		}
 	}
 
-	public static void showMsg(Context context, String text) {
-		if (text == null || text.equals("")) {
-			return;
-		}
-		if (toast != null) {
-			toast.cancel();
-		}
-		toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.CENTER, 0, 0);
-		toast.show();
+	public static void showMsg(final Context context, final String text) {
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (text == null || text.equals("")) {
+					return;
+				}
+				if (toast != null) {
+					toast.cancel();
+				}
+				toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+		});
 	}
 
 	public static void cleanMsg() {

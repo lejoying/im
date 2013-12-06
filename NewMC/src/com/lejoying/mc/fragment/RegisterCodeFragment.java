@@ -71,10 +71,15 @@ public class RegisterCodeFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_next:
+			String code = mView_code.getText().toString();
+			if (code.equals("")) {
+				showMsg(getString(R.string.app_codenotnull));
+				return;
+			}
 			Bundle nextParams = new Bundle();
 			nextParams.putString("phone",
 					MCStaticData.registerBundle.getString("phone"));
-			nextParams.putString("code", mView_code.getText().toString());
+			nextParams.putString("code", code);
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
 					nextParams, true, new NetworkStatusAdapter() {
 						@Override
@@ -91,8 +96,6 @@ public class RegisterCodeFragment extends BaseFragment implements
 					resendParams, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
-							// TODO Auto-generated method stub
-
 						}
 					});
 			break;

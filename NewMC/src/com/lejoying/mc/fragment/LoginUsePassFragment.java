@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
+import com.lejoying.utils.SHA1;
 
 public class LoginUsePassFragment extends BaseFragment implements
 		OnClickListener {
@@ -23,6 +24,7 @@ public class LoginUsePassFragment extends BaseFragment implements
 	private Button mView_login;
 	private Button mView_register;
 	private TextView mView_clogin;
+	private SHA1 mSha1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class LoginUsePassFragment extends BaseFragment implements
 		mView_login.setOnClickListener(this);
 		mView_register.setOnClickListener(this);
 		mView_clogin.setOnClickListener(this);
+
+		mSha1 = new SHA1();
 
 		return mContent;
 	}
@@ -75,14 +79,16 @@ public class LoginUsePassFragment extends BaseFragment implements
 			}
 			Bundle params = new Bundle();
 			params.putString("phone", mView_phone.getText().toString());
-			params.putString("password", mView_pass.getText().toString());
+			String pass = mSha1.getDigestOfString(mView_pass.getText()
+					.toString().getBytes());
+			params.putString("password", pass);
 
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_AUTH, params,
 					true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
 							mMCFragmentManager.startToActivity(
-									MainActivity.class, false);
+									MainActivity.class, true);
 						}
 					});
 
