@@ -118,7 +118,7 @@ api = {
             typical: {"phone": "XXX", "password": "XXX"}
         },
         response: {
-            success: {"提示信息": "普通鉴权成功", accessKey: sha1("phone" + "time")},
+            success: {"提示信息": "普通鉴权成功", "uid": "XXX", accessKey: sha1("phone" + "time"), "PbKey": "XXX"},
             failed: {"提示信息": "普通鉴权失败", "失败原因": ["手机号不存在" || "密码不正确" || "数据异常"]}
         }
     },
@@ -167,7 +167,7 @@ api = {
         },
         response: {
             success: {"提示信息": "退出成功"},
-            failed: {"提示信息": "退出失败", "失败原因": []}
+            failed: {"提示信息": "退出失败", "失败原因": "AccessKey Invalid" || "数据异常"}
         }
     }
 }
@@ -595,7 +595,7 @@ api = {
         },
         response: {
             success: {"提示信息": "查找成功", "filename": "XXX", "exists": true || false},
-            failed: {"提示信息": "查找失败", "失败原因": "数据异常"}
+            failed: {"提示信息": "查找失败", "失败原因": "数据不完整"}
         }
     },
     /***************************************

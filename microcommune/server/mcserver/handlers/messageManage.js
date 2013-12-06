@@ -110,7 +110,7 @@ messageManage.get = function (data, response) {
         if (isNaN(flag)) {
             setPhoneFlag(phone, response)
         } else {
-            get(flag);
+            get(parseInt(flag));
         }
     }
 
@@ -120,9 +120,11 @@ messageManage.get = function (data, response) {
                 responseErrorMessage(err, response);
                 return;
             }
-            var flag = parseInt(from) + reply.length;
-            if (reply.length != 0) {
-                client.set(phone + "flag", flag, function (err, reply) {
+//            console.log(reply);
+            var flag0 = 0;
+            if (reply.length != 0) {apiDefintion
+                flag0 = parseInt(from) + reply.length;
+                client.set(phone + "flag", flag0, function (err, reply) {
                     if (err != null) {
                         responseErrorMessage(err, response);
                         return;
@@ -132,7 +134,7 @@ messageManage.get = function (data, response) {
             response.write(JSON.stringify({
                 "提示信息": "获取成功",
                 messages: reply,
-                flag: flag
+                flag: flag0
             }));
             response.end();
         });
