@@ -8,7 +8,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>无标题文档</title>
+<title>u2</title>
 <link href="static/css/boilerplate.css" rel="stylesheet" type="text/css">
 <link href="static/css/index.css" rel="stylesheet" type="text/css">
 <link href="static/css/web_style.css" rel="stylesheet" type="text/css">
@@ -29,13 +29,16 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
 <script src="static/js/jquery.js"></script>
 <script src="static/js/jscroll.js"></script>
 <script src="static/js/message.js"></script>
+<style type="text/css">
+#username{ font-family:微软雅黑;font-size:16px}
+</style>
 </head>
 <body>
 <div style="" id="container">
   <div class="chatPanel normalPanel" id="chat" ctrl="1">
     <div class="panelBackground"> <img src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif">
       <p>欢迎来到</p>
-      <p>微信网页版</p>
+      <p>微型公社网页版</p>
     </div>
     <div class="content">
       <div class="list" id="chat_leftpanel" ctrl="1">
@@ -44,7 +47,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
             <div class="myProfile"> <img un="avatar_wxid_7832428324312" src="static/images/webwxgeticon4.jpg">
               <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar"></div>
               <a style="display:none;" href="javascript:;" id="unreadTotalCount" class="unreadTotalCount">0</a>
-              <div class="info"> <span class="nickName">user2</span> </div>
+              <div class="info"> <span class="nickName" id="username" >麦穗儿香</span> </div>
               <div id="operaterBox" style="display:none;" class="operaterBox js_operaterBox">
                 <div class="operaterBoxPanel"> <a click="createChatroom" class="addFriends" href="javascript:;"> <span class="iconPic left"></span> <span class="operaterBoxTitle left">发起聊天</span>
                   <div class="clr"></div>
@@ -64,15 +67,15 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
         <div class="chatListSearch">
           <div class="chatListSearchPanel">
             <div class="listOperatorContent">
-              <div id="chooseConversationBtn" un="conversation" click="switchPanel" class="conmu left active"><a title="聊天" href="javascript:;" class="conmuButton"><span class="bag"></span><span style="display:none;" class="unreadDot" id="totalUnreadDot">0</span></a></div>
+             <div id="chooseConversationBtn" un="conversation" click="switchPanel" class="conmu left active" style="width: 82px;"><a title="聊天" href="javascript:;" class="conmuButton"><span class="bag"></span><span style="display:none;" class="unreadDot" id="totalUnreadDot">0</span></a></div>
               <div class="cutOffRule"></div>
-              <div un="contact" click="switchPanel" class="addr notChooseOpera right"><a title="通讯录" href="javascript:;" class="addrButton "><span class="bag"></span></a></div>
+              <div un="contact" id="txl" click="switchPanel" class="addr notChooseOpera right"style="width: 82px;float: left;"><a title="好友" href="javascript:;" class="addrButton "><span class="bag"></span></a></div>
+                <div class="cutOffRule"></div>
+                <a title="应用" href="javascript:;" class="js_appButton"><div un="publicapp" id="js_publicapp" class="publicapp notChooseOpera right" style="width: 82px;float: left;"><span class="js_appbag"><img src="/static/images/appico.png" style="width: 25px;height: 25px;margin-top: 7px;"/></span></div></a>
             </div>
-            <div class="chatListSearchInput left"> <span class="chatListSearchIcon left"></span>
-              <input type="text" id="conv_search" placeholder="搜索" keyup="search@.chatListSearchInput" keydown="preSearch" value="" name="search" class="left">
-              <span id="conv_search_clean" style="display:none;" click="cleanSearchWord@.chatListSearchInput" class="searchClean left"></span> </div>
-            <div class="clr"></div>
-          </div>
+         
+
+          </div> 
         </div>
         <!--search end-->
         <div style="position: relative; overflow-y: hidden; height: 322px;" class="listContentWrap">
@@ -80,7 +83,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
             <div style="width: 100%; top: 0px; position: absolute;" id="conversationListContent" class="listContent" ctrl="1">
               <div id="conversationContainer">
 
-              <div id="conv_wxid_user1" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21" onclick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
+              <div id="conv_wxid_user1" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21" onClick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
                   <div style="display:none;" class="clicked"></div>
                   <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                   <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/face.jpg" class="avatar"></div>
@@ -102,7 +105,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
               </div>
 
 
-                <div id="conv_as117064513" username="as117064513" un="as117064513" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_as117064513" username="as117064513" un="as117064513" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                   <div style="display:none;" class="clicked"></div>
                   <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                   <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon.jpg" class="avatar"></div>
@@ -122,7 +125,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                   </div>
                   <div class="clr"></div>
                 </div>
-                <div id="conv_wxid_edcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_wxid_edcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                   <div style="display:none;" class="clicked"></div>
                   <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                   <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon2.jpg" class="avatar"></div>
@@ -142,7 +145,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                   </div>
                   <div class="clr"></div>
                 </div>
-                <div id="conv_wxid_h6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_wxid_h6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                   <div style="display:none;" class="clicked"></div>
                   <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                   <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon1.jpg" class="avatar"></div>
@@ -162,7 +165,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                   </div>
                   <div class="clr"></div>
                 </div>
-                <div id="conv_kevinTong" username="kevin-Tong" un="kevin-Tong" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_kevinTong" username="kevin-Tong" un="kevin-Tong" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                   <div style="display:none;" class="clicked"></div>
                   <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                   <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg" class="avatar"></div>
@@ -182,7 +185,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                   </div>
                   <div class="clr"></div>
                 </div>
-                <div id="conv_as117064d513" username="as117064513" un="as117064513" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_as117064d513" username="as117064513" un="as117064513" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                       <div style="display:none;" class="clicked"></div>
                       <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                       <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon.jpg" class="avatar"></div>
@@ -202,7 +205,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                       </div>
                       <div class="clr"></div>
                   </div>
-                <div id="conv_wxid_eddcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_wxid_eddcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                       <div style="display:none;" class="clicked"></div>
                       <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                       <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon2.jpg" class="avatar"></div>
@@ -222,7 +225,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                       </div>
                       <div class="clr"></div>
                   </div>
-                <div id="conv_wxid_hd6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_wxid_hd6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                       <div style="display:none;" class="clicked"></div>
                       <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                       <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon1.jpg" class="avatar"></div>
@@ -242,7 +245,7 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                       </div>
                       <div class="clr"></div>
                   </div>
-                <div id="conv_kevidnTong" username="kevin-Tong" un="kevin-Tong" onclick="WebMM.chooseConversation(this)" class="chatListColumn">
+                <div id="conv_kevidnTong" username="kevin-Tong" un="kevin-Tong" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
                       <div style="display:none;" class="clicked"></div>
                       <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                       <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg" class="avatar"></div>
@@ -274,15 +277,39 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
         </div>
       </div>
       <div style="width: 32px; position: relative; float: left; overflow: hidden; margin-top: 135px; visibility: visible; height: 322px;" id="vernierContainer">
-        <div class="activeChatVernier" style="top: 20px;"><img src="static/images/spacer17ced3.gif"></div>
+        <div class="activeChatVernier" ><img src="static/images/spacer17ced3.gif"></div>
       </div>
       <div style="visibility: hidden;" class="chat lightBorder">
-        <div class="chatContainer" style="height: 442px;">
+        <div class="chatContainer" style="height:520px;">
           <div id="chatMainPanel" class="chatMainPanel">
             <div class="chatTitle">
-              <div class="chatNameWrap">
-                <p id="messagePanelTitle" class="chatName">马倩，云上</p>
-              </div>
+                <div class="organization">
+                    <p>联谊会</p>
+                    <p id="peonumber" style="font-family:微软雅黑;font-size:12px	">(15人)</p>
+                </div>
+                <div class="iconleft" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/left.png"></a>
+                </div>
+ 				<div class="member" >
+                	 <a id="iconOperater" class="username" href="javascript:;"><img src="static/images/safen.png" class="iconname"> </a>
+                    <div class="name" > 萨芬</div>
+                </div>
+				
+                <div class="member" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/sundasheng.png" class="iconname"> </a>
+                    <div class="name" >孙大圣</div>   
+                </div>
+                
+                <div class="member" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/yaoqing.png" > </a>
+                    <div class="name">邀请</div>
+                </div>
+                <div class="iconright" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/right.png" > </a>
+                </div>
+                <div class="more" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/more.png" class="iconmore"> </a>
+                </div>
             </div>
             <div id="chatFrame" class="chatScorll" style="height: 343px; overflow-y: hidden; position: relative;">
               <div class="chatContent" id="chat_chatmsglist" ctrl="1" style="top: 0px; position: absolute;">

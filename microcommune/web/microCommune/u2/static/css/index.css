@@ -276,7 +276,7 @@ a:hover, a:active {
     background-image: -moz-linear-gradient(center top , #EEF2F5 10%, #EEF1F4 30%, #E7EBEE 50%, #E1E4E8 70%, #D4D8DC 90%, #D2D5D9 100%);
     border-bottom: 1px solid #ABB0B4;
     border-top: 1px solid #FFFFFF;
-    height: 71px;
+    height: 40px;
     margin: 0;
 }
 .chatPanel .chatListSearch span.chatListSearchIcon {
@@ -725,7 +725,7 @@ a.btnSecondary:active {
 }
 .chatPanel .list .top .title {
     border-radius: 5px 5px 0 0;
-    height: 39px;
+    height: 75px;
 }
 .chatPanel .search {
     background-color: #F0F0F0;
@@ -739,26 +739,31 @@ a.btnSecondary:active {
     display: block;
     width: 100%;
 }
+/* ==========================白色圆圈===================*/
 .chatPanel .myProfile .avatar {
     background: url("../images/border_myprofile_avatar17ced3.png") no-repeat scroll 0 0 transparent;
-    height: 68px;
-    left: 5px;
+    height: 47px;
+    left: 12px;
     position: absolute;
-    top: -26px;
-    width: 68px;
+    top: 12px;
+    width: 45px;
     z-index: 101;
 }
+
+/* ==========================头像===================*/
 .chatPanel .myProfile img {
     background: url("../images/avatar_default17ced3.png") no-repeat scroll center center transparent;
-    height: 60px;
-    left: 9px;
+    height: 46px;
+    left: 13px;  
     position: absolute;
-    top: -22px;
-    width: 60px;
+    top: 13px;
+    width: 44px;
     z-index: 100;
+	border-radius:50% 50% 50% 50%;
 }
-.chatPanel .myProfile a {
-    text-decoration: none;
+
+.chatPanel .myProfile a {   
+    text-decoration: none; 
 }
 .chatPanel .myProfile .nickName {
     color: #FFFFFF;
@@ -775,14 +780,16 @@ a.btnSecondary:active {
     white-space: nowrap;
     word-wrap: normal;
 }
-.chatPanel .myProfile .info {
+/* ==========================用户名 start===================*/
+.chatPanel .myProfile .info { 
     float: left;
-    margin: 10px 0 0 74px;
+    margin: 24px 0 0 67px;
     width: 150px;
 }
 .chatPanel .info a {
     float: left;
 }
+/* ==========================用户名 end===================*/
 .myProfile .unreadTotalCount {
     background: url("../images/button_chat17ced3.png") no-repeat scroll -5px -670px transparent;
     color: #5D4914;
@@ -1081,7 +1088,7 @@ a.btnSecondary:active {
 .chatPanel .chatContainer {
     border: 1px solid #424448;
     border-radius: 2px 2px 6px 6px;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 }
 .chatPanel .chatTitle {
@@ -1090,12 +1097,61 @@ a.btnSecondary:active {
     border-bottom: 1px solid #333333;
     border-radius: 4px 4px 0 0;
     border-top: 1px solid #9BA3AE;
-    height: 40px;
+    height: 75px;
     position: relative;
 }
-.chatPanel .chatNameWrap {
+/* =============================================================================
+   群聊成员	start
+   ========================================================================== */
+.chatTitle .organization {
+	width:130px; 
+	height:56px; 
+	margin-top:20px; 
+	color:white; 
+	font-size:15px; 
+	font-family:微软雅黑; 
+	float:left;
+}
+.chatTitle .iconleft{
+	float:left; 
+	margin-top:25px;
+	margin-left:-5px;
+}
+.chatTitle .iconright img{
+	margin-top:30px;
+	margin-left:91px;
+	float:left;
+	
+}
+.chatTitle .member{
+	float:left; 
+	margin-top:12px; 
+	width:50px; 
+	margin-left:5px; 
+	color:white; 
+	line-height:16px; 
+	font-size:10px;
+}
+.chatTitle .member .name{
+	text-align:center;
+	width:50px; 
+	float:left;
+}
+.chatTitle .member .iconname{
+	text-align:center;
+}
+.chatTitle .more{
+	float:left; 
+	margin-top:26px; 
+	width:0px; 
+	margin-left:206px;
+}
+/* =============================================================================
+   群聊成员	end
+   ========================================================================== */
+.chatPanel .chatNameWrap {    
     border-radius: 6px 6px 0 0;
-    font-size: 16px;
+    font-size: 16px;  
     text-align: center;
 }
 .chatPanel .chatNameWrap .chatName {
@@ -2283,6 +2339,7 @@ ul.faceTab a.chooseFaceTab {
     width: 108px;
 }
 .chatPanel .inputArea {
+	background-color:#FFF;
     height: 43px;
     padding: 14px 10px 0 5px;
 }
@@ -2374,7 +2431,7 @@ ul.faceTab a.chooseFaceTab {
     border-radius: 0 0 4px 4px;
     border-top: 1px solid #808384;
     color: #383E45;
-    height: 55px;
+    height: 5px;
     position: relative;
     text-align: left;
 }
@@ -2702,10 +2759,10 @@ a.icon_faq:active img {
     position: absolute;
     right: 10px;
     text-indent: -9999px;
-    top: 14px;
+    top: 29px;
     width: 12px;
 }
-a.iconOperater:active {
+a.iconOperater:active {   
     background-position: -17px -96px;
 }
 .operaterBox {
@@ -3234,7 +3291,7 @@ a.iconOperater:active {
     float: left;
     font-size: 12px;
     margin-left: 10px;
-    margin-top: 5px;
+    margin-top: 2px;
     overflow: hidden;
     padding-top: 4px;
     text-align: left;
@@ -3647,7 +3704,7 @@ a.iconOperater:active {
     width: 60px;
 }
 .profileMesg .nickname {
-    font-size: 14px;
+    font-size: 38px;
     max-width: 109px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -4968,3 +5025,36 @@ a.btnBlue:active .btnBluePanel {
     background:#6B747A;
     border-radius:10px;
 }
+/* =============================================================================
+   schoolemate	start
+   ========================================================================== */
+.appGroup{
+	position:absolute;
+	border:2px solid rgb(0,153,205);
+	border-radius:15px;
+	height:44px;
+	width:44px;
+	padding:6px;
+}
+.popmenuFrame{
+	position: absolute;
+	width:275px;
+	height:100%;
+	background: none repeat scroll 0% 0% transparent;
+}
+
+.sildLeftSharp {
+	//background: url("/static/images/sildLeft/sildLeftSharp.png") no-repeat scroll 0% 0% transparent;
+	height: 8px;
+	position: relative;
+	left: 45px;
+	top: -5px;
+	float:left;
+}  
+ .sildPopContent {
+    border-top: 1px solid rgb(0, 153, 205);
+    border-bottom: 1px solid rgb(0, 153, 205);
+    background: none repeat scroll 0% 0% rgb(206, 234, 243);
+	margin-top:10px;
+	height:100px;
+}  
