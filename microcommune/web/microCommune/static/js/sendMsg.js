@@ -58,7 +58,8 @@ $(document).ready(function () {
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",
         data: {
-            phone: JSON.parse(nowAccount).phone
+            phone: JSON.parse(nowAccount).phone,
+            accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
         },
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
@@ -174,7 +175,10 @@ $(document).ready(function () {
                 url: "/api2/circle/modify?",
                 data: {
                     rid: rid,
-                    name: newCircleName
+                    name: newCircleName,
+                    phone:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone,
+                    accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
+
                 },
                 success: function (data) {
                     if (data["提示信息"] == "修改成功") {
@@ -270,7 +274,8 @@ $(document).ready(function () {
             url: "/api2/circle/addcircle?",
             data: {
                 phone: JSON.parse(nowAccount).phone,
-                name: newCircleName
+                name: newCircleName,
+                accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
             },
             success: function (data) {
                 if (data["提示信息"] == "添加成功") {
@@ -284,7 +289,6 @@ $(document).ready(function () {
                     var circles = JSON.parse(window.sessionStorage.getItem("circles"));
                     circles.push(circle);
                     window.sessionStorage.setItem("circles", JSON.stringify(circles));
-
                 } else {
                     eval('$.Prompt("创建密友圈失败")');
                 }
@@ -304,7 +308,8 @@ $(document).ready(function () {
             url: "/api2/relation/deletefriend?",
             data: {
                 phone: phone,
-                phoneto: phoneto
+                phoneto: phoneto,
+                accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -323,7 +328,8 @@ $(document).ready(function () {
             url: "/api2/relation/blacklist?",
             data: {
                 phone: phone,
-                phoneto: phoneto
+                phoneto: phoneto,
+                accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -379,7 +385,8 @@ $(document).ready(function () {
                 data: {
                     phone: phone,
                     phoneto: JSON.stringify(listPhone),
-                    message: JSON.stringify(messages)
+                    message: JSON.stringify(messages),
+                    accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
                 },
                 success: function (data) {
                     if (data["提示信息"] == "发送成功") {
@@ -475,10 +482,14 @@ function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
 }
 function addTempChatAccount(obj) {
     $(".chatListColumn").attr("class", "chatListColumn");
-    var js_friendManage=getTemplate("js_friendManage");
-    var str =$("#js_friendManage").append(js_friendManage.render(obj));
+    /*var Message=[];
+    Message.nickName=obj.nickName;
+    Message.mainBusiness=obj.mainBusiness;*/
+    var chatListColumn=getTemplate("chatListColumn");
+    var str =$("#conversationContainer").html(chatListColumn.render(obj));
+   // $("#conversationContainer")[0].insertBefore(chatListColumn.render(Message), $("#conversationContainer")[0].firstChild);
 
-    /*'<div style="display:none;" class="clicked"></div>' +
+    /* var str='<div style="display:none;" class="clicked"></div>' +
         '<span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>' +
         '<div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>' +
         '<div class="extend">' +
@@ -504,7 +515,7 @@ function addTempChatAccount(obj) {
     $(div).attr("phone", obj.phone);
     $(div).attr("un", "wxid_t2fqz99bmakt21");
     div.innerHTML = str;
-    $("#conversationContainer")[0].insertBefore(div, $("#conversationContainer")[0].firstChild);
+   // $("#conversationContainer")[0].insertBefore(div, $("#conversationContainer")[0].firstChild);
 }
 function showProc(it, rid) {
     message_box.style.visibility = 'visible';
@@ -637,7 +648,9 @@ function moveoutAccountNode(phoneTo, newRid, oldRid) {
         data: {
             phoneto: phoneTo,
             newrid: newRid,
-            oldrid: oldRid
+            oldrid: oldRid,
+            phone:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone,
+            accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
         },
         success: function (data) {
             eval('$.Prompt("' + data["提示信息"] + '")');
@@ -921,7 +934,7 @@ function request() {
         success: function (data) {
             if (data["提示信息"] == "成功") {
                 if (data["event"] == "message") {
-                    getMessage();
+                    get();
                 } else {
                     alert("newfriend");
                 }
@@ -935,13 +948,14 @@ function request() {
         }
     });
 }
-function getMessage(){
+function get(){
     var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
     var accesskey = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
-    //alert(phone+" "+accesskey+" "+flag);
+    var  circles=window.sessionStorage.getItem("circles");
+    alert(circles+"  测试的circles");
     $.ajax({
         type: "POST",
-        url: "/api2/message/get?",
+        url: "/api2//get?",
         data: {
             phone: phone,
             accessKey: accesskey,
@@ -949,59 +963,14 @@ function getMessage(){
         },
         success: function (data) {
             if (data["提示信息"] == "获取成功") {
-                //alert(data["messages"]+"  messages");
-                var messages=data["messages"];
-                var length=messages.length;
-               // alert(length+" length");
-                //alert(data["flag"]+"  flag");
+                var s=data["s"];
+                var length=s.length;
                 for(var i=0;i<length;i++){
-                    //alert(JSON.parse(messages[i]).phone);
-                    //alert("调用for循环");
-                    //消息内容
-                    // alert(JSON.parse(messages[i]).content.text);
+                    alert("调用for循环");
                     //判断phone是否相同
-                    if(phone==JSON.parse(messages[i]).phone){
-                        //alert("phone相同");
-                        //判断是否存在于临时会话
-                         Tempcheck(JSON.parse(messages[i]).phoneto);
-                        //塞入信息(右塞)
-                        var date = new Date();
-                        var hours = date.getHours();
-                        var minutes = date.getMinutes();
-                        hours = hours < 10 ? "0" + hours : hours;
-                        minutes = minutes < 10 ? "0" + minutes : minutes;
-                        var content=JSON.parse(messages[i]).content.text;
-
-                        var Message=[];
-                        Message.content=content;
-                        Message.hours=hours;
-                        Message.minutes=minutes;
-
-                        var chatMessageSend=getTemplate("chatMessageSend");
-                        $("#chat_chatmsglist").append(chatMessageSend.render(Message));
-                       /* $("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem me">     ' +
-                            '<div class="time"> <span class="timeBg left"></span> ' + hours + ':' + minutes + ' <span class="timeBg right"></span> </div>       ' +
-                            ' <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">     ' +
-                            ' <div style="" class="cloudPannel">                                                                                                                                                                                                                                                                                          ' +
-                            '   <div class="sendStatus">   </div>                                                                                                                                                                                                                                                                                          ' +
-                            '   <div class="cloudBody">                                                                                                                                                                                                                                                                                                       ' +
-                            '      <div class="cloudContent">                                                                                                                                                                                                                                                                                                  ' +
-                            '           <pre style="white-space:pre-wrap">' + JSON.parse(messages[i]).content.text + '</pre>                                                                                                                                         ' +
-                            '           </div>                                                                                                                                                                                                                                                                                                                         ' +
-                            '        </div>     ' +
-                            '         <div class="cloudArrow "></div>    ' +
-                            '      </div>     ' +
-                            '   </div>   ' +
-                            '</div>    ' +
-                            '</div>');*/
-
+                    if(phone==JSON.parse(s[i]).phone){
                     }else{
-                        //alert("phone不同");
-                        //判断是否存在于临时会话
                        Tempcheck(JSON.parse(messages[i]).phone);
-                        //塞入信息(左塞)
-                       // if(){}
-                      // alert(JSON.parse(messages[i]).time);
                         var content=JSON.parse(messages[i]).content.text;
                         var date=new Date(JSON.parse(messages[i]).time);
                         var hours = date.getHours();
@@ -1012,7 +981,6 @@ function getMessage(){
                         Message.content=content;
                         Message.hours=hours;
                         Message.minutes=minutes;
-
                         var chatMessageGet=getTemplate("chatMessageGet");
                         $("#chat_chatmsglist").append(chatMessageGet.render(Message));
                         /*$("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">' +
@@ -1039,6 +1007,7 @@ function getMessage(){
 function Tempcheck (phoneto){
   //alert("调用查看临时会话的方法");
     //查看是否存在于临时会话
+
     var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
     var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
     if (tempChat != null) {
