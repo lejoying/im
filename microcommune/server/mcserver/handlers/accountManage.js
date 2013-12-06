@@ -333,7 +333,7 @@ accountManage.auth = function (data, response, next) {
     var password = data.password;
     var arr = [phone, password];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
-        checkAccountNode(phone, password);
+        checkAccountNode(phone, password.toLowerCase());
     }
 
     function checkAccountNode(phone, password) {
