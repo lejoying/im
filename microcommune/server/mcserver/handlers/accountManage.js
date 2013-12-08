@@ -570,5 +570,15 @@ accountManage.modify = function (data, response) {
         });
     }
 }
-
+accountManage.oauth6 = function (data, response) {
+    response.asynchronous = 1;
+    var developID = data.developID;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    response.write(JSON.stringify({
+        "提示信息": "授权成功",
+        accessKey3: sha1.hex_sha1(developID + new Date().getTime())
+    }));
+    response.end();
+}
 module.exports = accountManage;

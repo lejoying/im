@@ -68,6 +68,11 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
             accountManage.exit(data, response);
         });
     }
+    else if (operation == "oauth6") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            accountManage.oauth6(data, response);
+        });
+    }
 }
 var communityManage = require("./handlers/communityManage.js");
 requestHandlers.communityManage = function (request, response, pathObject, data) {
