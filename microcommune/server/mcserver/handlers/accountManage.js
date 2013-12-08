@@ -374,7 +374,7 @@ accountManage.auth = function (data, response, next) {
                     if (sha1.hex_sha1(accountData.password) == password) {
                         console.log("普通鉴权成功---");
                         var accessKey = sha1.hex_sha1(phone + new Date().getTime());
-                        console.log("accessKey:---" + sha1.hex_sha1(accessKey));
+                        console.log("accessKey:---" + accessKey);
                         next(phone, accessKey, function (flag) {
                             if (flag) {
                                 response.write(JSON.stringify({
