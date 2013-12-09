@@ -21,6 +21,7 @@ import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCStaticData;
+import com.lejoying.utils.RSAUtils;
 
 public class NetworkHandler {
 
@@ -230,10 +231,13 @@ public class NetworkHandler {
 		User user = new User();
 		user.setPhone(phone);
 		user.setPbKey(pbKey);
-
-		System.out.println(accessKey + "::::::");
-		System.out.println(pbKey + ">>>>>>");
-
+		System.out.println("pbKey:" + pbKey);
+		System.out.println("accessKey:" + accessKey);
+		try {
+		} catch (Exception e) {
+			System.out.println("Ω‚√‹ ß∞‹¡À");
+			e.printStackTrace();
+		}
 		user.setNow(true);
 		MCDataTools.saveUser(mContext, user);
 	}

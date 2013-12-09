@@ -85,19 +85,20 @@ public class RSA {
 
 	public void setMaxDigits(int value) {
 		maxDigits = value;
-		ZERO_ARRAY = new ArrayList<Long>(maxDigits);
+		ZERO_ARRAY = new ArrayList<Long>();
 		for (int iza = 0; iza < maxDigits; iza++)
 			ZERO_ARRAY.add(iza, 0l);
 		bigZero = new BigInt();
 		bigOne = new BigInt();
-		bigOne.digits.add(0, 1l);
+		bigOne.digits.set(0, 1l);
+		lr10 = biFromNumber(Long.valueOf("1000000000000000"));
 	}
 
 	// The maximum number of digits in base 10 you can convert to an
 	// integer without JavaScript throwing up on you.
 	int dpl10 = 15;
 	// lr10 = 10 ^ dpl10
-	BigInt lr10 = biFromNumber(Long.valueOf("1000000000000000"));
+	BigInt lr10;
 
 	class BigInt {
 		public boolean isNeg = false;
@@ -105,14 +106,19 @@ public class RSA {
 
 		public BigInt() {
 			digits = new ArrayList<Long>();
+			digits.addAll(ZERO_ARRAY);
 		}
 
 		public BigInt(boolean flag) {
+			this();
 			if (flag == true) {
 				digits = null;
-			} else {
-				digits = ZERO_ARRAY;
 			}
+		}
+
+		@Override
+		public String toString() {
+			return "BigInt [isNeg=" + isNeg + ", digits=" + digits + "]";
 		}
 
 	}
@@ -145,7 +151,8 @@ public class RSA {
 
 	public BigInt biCopy(BigInt bi) {
 		BigInt result = new BigInt(true);
-		result.digits = bi.digits;
+		result.digits = new ArrayList<Long>();
+		result.digits.addAll(bi.digits);
 		result.isNeg = bi.isNeg;
 		return result;
 	}
@@ -156,9 +163,8 @@ public class RSA {
 		i = Math.abs(i);
 		int j = 0;
 		while (i > 0) {
-			result.digits.add(j, i & maxDigitVal);
+			result.digits.set(j++, i & maxDigitVal);
 			i >>= biRadixBits;
-			j++;
 		}
 		return result;
 	}
@@ -221,7 +227,7 @@ public class RSA {
 		String result = "";
 		int n = biHighIndex(x);
 		for (int i = n; i > -1; --i) {
-			result += digitToHex(x.digits.get(0));
+			result += digitToHex(x.digits.get(i));
 		}
 		return result;
 	}
@@ -261,7 +267,7 @@ public class RSA {
 		BigInt result = new BigInt();
 		int sl = s.length();
 		for (int i = sl, j = 0; i > 0; i -= 4, ++j) {
-			result.digits.add(
+			result.digits.set(
 					j,
 					(long) hexToDigit(s.substring(Math.max(i - 4, 0),
 							Math.max(i - 4, 0) + Math.min(i, 4))));
@@ -419,11 +425,11 @@ public class RSA {
 		return result;
 	}
 
-	public void arrayCopy(List<Long> digits, double srcStart,
-			List<Long> digits2, double destStart, double n) {
-		double m = Math.min(srcStart + n, digits.size());
+	public void arrayCopy(List<Long> src, double srcStart, List<Long> dest,
+			double destStart, double n) {
+		double m = Math.min(srcStart + n, src.size());
 		for (int i = (int) srcStart, j = (int) destStart; i < m; ++i, ++j) {
-			digits2.add(j, digits.get(i));
+			dest.set(j, src.get(i));
 		}
 	}
 
@@ -442,7 +448,7 @@ public class RSA {
 		int i1;
 		for (i = result.digits.size() - 1, i1 = i - 1; i > 0; --i, --i1) {
 			result.digits
-					.add(i,
+					.set(i,
 							((result.digits.get(i) << bits) & maxDigitVal)
 									| ((result.digits.get(i1) & highBitMasks[(int) bits]) >>> (rightBits)));
 		}
@@ -551,11 +557,8 @@ public class RSA {
 
 		BigInt b = biMultiplyByRadixPower(y, (long) (n - t));
 		while (biCompare(r, b) != -1) {
-			while (q.digits.size() <= (int) (n - t)) {
-				q.digits.add(0l);
-			}
 			long temp = q.digits.get((int) (n - t));
-			q.digits.add((int) (n - t), ++temp);
+			q.digits.set((int) (n - t), ++temp);
 			r = biSubtract(r, b);
 		}
 		for (int i = (int) n; i > t; --i) {
@@ -685,20 +688,10 @@ public class RSA {
 			modulus = biCopy(m);
 			k = biHighIndex(this.modulus) + 1;
 			b2k = new BigInt();
-			System.out.println("执行到这里了1");
-			while (b2k.digits.size() < 2 * k) {
-				b2k.digits.add(0l);
-			}
-			b2k.digits.add(2 * k, 1l); // b2k = b^(2k)
+			b2k.digits.set(2 * k, 1l); // b2k = b^(2k)
 			bkplus1 = new BigInt();
-			System.out.println("执行到这里了2");
-			while (bkplus1.digits.size() < k + 1) {
-				bkplus1.digits.add(0l);
-			}
-			System.out.println("执行到这里了3");
-			bkplus1.digits.add(k + 1, 1l); // bkplus1 = b^(k+1)
+			bkplus1.digits.set(k + 1, 1l); // bkplus1 = b^(k+1)
 			mu = biDivide(b2k, this.modulus);
-			System.out.println("执行到这里了4");
 		}
 
 		public BigInt BarrettMu_modulo(BigInt x) {
@@ -733,6 +726,7 @@ public class RSA {
 			result.digits.set(0, 1l);
 			BigInt a = x;
 			BigInt k = y;
+			int i = 0;
 			while (true) {
 				if ((k.digits.get(0) & 1) != 0)
 					result = BarrettMu_multiplyMod(result, a);
@@ -740,6 +734,8 @@ public class RSA {
 				if (k.digits.get(0) == 0 && biHighIndex(k) == 0)
 					break;
 				a = BarrettMu_multiplyMod(a, a);
+				i++;
+				System.out.println(i);
 			}
 			return result;
 		}
@@ -785,7 +781,7 @@ public class RSA {
 		// already been subtracted.
 		public int chunkSize;
 		public int radix;
-		BarrettMu barrett;
+		public BarrettMu barrett;
 
 		public RSAKeyPair(String encryptionExponent, String decryptionExponent,
 				String modulus) {
@@ -817,7 +813,6 @@ public class RSA {
 		while (a.size() % key.chunkSize != 0) {
 			a.add(i++, 0);
 		}
-
 		int al = a.size();
 		String result = "";
 		int j, k;
@@ -831,36 +826,39 @@ public class RSA {
 				block.digits.set(j, temp += a.get(k++) << 8);
 			}
 			BigInt crypt = key.barrett.BarrettMu_powMod(block, key.e);
+			System.out.println(i+":::::");
 			String text = key.radix == 16 ? biToHex(crypt) : biToString(crypt,
 					key.radix);
 			result += text + " ";
+			System.out.println(i);
 		}
 		return result.substring(0, result.length() - 1); // Remove last space.
 	}
 
-	// public String decryptedString(RSAKeyPair key, String s) {
-	// var blocks = s.split(" ");
-	// var result = "";
-	// var i, j, block;
-	// for (i = 0; i < blocks.length; ++i) {
-	// var bi;
-	// if (key.radix == 16) {
-	// bi = biFromHex(blocks[i]);
-	// } else {
-	// bi = biFromString(blocks[i], key.radix);
-	// }
-	// block = key.barrett.powMod(bi, key.d);
-	// for (j = 0; j <= biHighIndex(block); ++j) {
-	// result += String.fromCharCode(block.digits[j] & 255,
-	// block.digits[j] >> 8);
-	// }
-	// }
-	// // Remove trailing null, if any.
-	// if (result.charCodeAt(result.length - 1) == 0) {
-	// result = result.substring(0, result.length - 1);
-	// }
-	// return result;
-	// }
+	public String decryptedString(RSAKeyPair key, String s) {
+		String[] blocks = s.split(" ");
+		String result = "";
+		BigInt block;
+		int i, j;
+		for (i = 0; i < blocks.length; ++i) {
+			BigInt bi;
+			if (key.radix == 16) {
+				bi = biFromHex(blocks[i]);
+			} else {
+				bi = biFromString(blocks[i], key.radix);
+			}
+			block = key.barrett.BarrettMu_powMod(bi, key.d);
+			for (j = 0; j <= biHighIndex(block); ++j) {
+				result += ((char) (block.digits.get(j) & 255))
+						+ ((char) (block.digits.get(j) >> 8));
+			}
+		}
+		// Remove trailing null, if any.
+		if ((int) result.charAt(result.length() - 1) == 0) {
+			result = result.substring(0, result.length() - 1);
+		}
+		return result;
+	}
 
 	public int Number(boolean flag) {
 		if (flag) {
