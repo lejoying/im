@@ -41,7 +41,7 @@ $(document).ready(function () {
     }
 
     $.getScript("/static/js/nTenjin.js");
-    var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+    var nowAccount = window.sessionStorage.getItem("wxgs_nowAccount");
     $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
     $(".js_circlesFriends").hide();
     $(".loadMoreConv").hide();
@@ -59,7 +59,7 @@ $(document).ready(function () {
         url: "/api2/relation/getcirclesandfriends?",
         data: {
             phone: JSON.parse(nowAccount).phone,
-            accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
+            accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey
         },
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
@@ -174,11 +174,10 @@ $(document).ready(function () {
                 type: "POST",
                 url: "/api2/circle/modify?",
                 data: {
+                    phone:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone,
+                    accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
                     rid: rid,
-                    name: newCircleName,
-                    phone:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone,
-                    accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
-
+                    name: newCircleName
                 },
                 success: function (data) {
                     if (data["提示信息"] == "修改成功") {
@@ -217,7 +216,7 @@ $(document).ready(function () {
         showProcFeedBack();
     });
     $(".iconLogout").click(function () {
-        window.localStorage.clear();
+        window.sessionStorage.clear();
         window.sessionStorage.clear();
         location.href = "/login.html";
     });
@@ -268,14 +267,15 @@ $(document).ready(function () {
     $(".js_addcircle").click(function () {
         eval('$.Prompt("创建密友圈")');
         var newCircleName = '测试' + new Date().getTime();
-        var nowAccount = window.localStorage.getItem("wxgs_nowAccount");
+        var nowAccount = window.sessionStorage.getItem("wxgs_nowAccount");
         $.ajax({
             type: "POST",
             url: "/api2/circle/addcircle?",
             data: {
                 phone: JSON.parse(nowAccount).phone,
-                name: newCircleName,
-                accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
+                accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
+                name: newCircleName
+
             },
             success: function (data) {
                 if (data["提示信息"] == "添加成功") {
@@ -301,15 +301,15 @@ $(document).ready(function () {
         $(".js_addcircle").slideDown(10);
         $(".js_accountmanage").css("visibility", "hidden");
 
-        var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+        var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
         var phoneto = selectPhone;
         $.ajax({
             type: "POST",
             url: "/api2/relation/deletefriend?",
             data: {
                 phone: phone,
-                phoneto: phoneto,
-                accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
+                accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
+                phoneto: phoneto
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -321,15 +321,16 @@ $(document).ready(function () {
         js_friendManage.style.visibility = "hidden";
         $(".js_addcircle").slideDown(10);
         $(".js_accountmanage").css("visibility", "hidden");
-        var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+        var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
         var phoneto = selectPhone;
         $.ajax({
             type: "POST",
             url: "/api2/relation/blacklist?",
             data: {
                 phone: phone,
-                phoneto: phoneto,
-                accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
+                accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
+                phoneto: phoneto
+
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -365,7 +366,7 @@ $(document).ready(function () {
                 '   </div>   ' +
                 '</div>    ' +
                 '</div>');*/
-            var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
+            var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
             var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
             var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
             var message = $("#textInput").val();
@@ -384,9 +385,9 @@ $(document).ready(function () {
                 url: "/api2/message/send?",
                 data: {
                     phone: phone,
+                    accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
                     phoneto: JSON.stringify(listPhone),
-                    message: JSON.stringify(messages),
-                    accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
+                    message: JSON.stringify(messages)
                 },
                 success: function (data) {
                     if (data["提示信息"] == "发送成功") {
@@ -482,13 +483,15 @@ function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
 }
 function addTempChatAccount(obj) {
     $(".chatListColumn").attr("class", "chatListColumn");
-    /*var Message=[];
-    Message.nickName=obj.nickName;
-    Message.mainBusiness=obj.mainBusiness;*/
     var chatListColumn=getTemplate("chatListColumn");
-    var str =$("#conversationContainer").html(chatListColumn.render(obj));
-   // $("#conversationContainer")[0].insertBefore(chatListColumn.render(Message), $("#conversationContainer")[0].firstChild);
-
+    var div = document.createElement('div');
+    $(div).attr("class", "chatListColumn activeColumn");
+    $(div).attr("id", "conv_wxid_" + obj.uid);
+    $(div).attr("username", "wxid_t2fqz99bmakt21");
+    $(div).attr("phone", obj.phone);
+    $(div).attr("un", "wxid_t2fqz99bmakt21");
+    div.innerHTML=chatListColumn.render(obj);
+    $("#conversationContainer")[0].insertBefore(div, $("#conversationContainer")[0].firstChild);
     /* var str='<div style="display:none;" class="clicked"></div>' +
         '<span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>' +
         '<div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>' +
@@ -508,14 +511,14 @@ function addTempChatAccount(obj) {
         '</div>' +
         '<div class="clr">' +
         '</div>';*/
-    var div = document.createElement('div');
+   /* var div = document.createElement('div');
     $(div).attr("class", "chatListColumn activeColumn");
     $(div).attr("id", "conv_wxid_" + obj.uid);
     $(div).attr("username", "wxid_t2fqz99bmakt21");
     $(div).attr("phone", obj.phone);
     $(div).attr("un", "wxid_t2fqz99bmakt21");
-    div.innerHTML = str;
-   // $("#conversationContainer")[0].insertBefore(div, $("#conversationContainer")[0].firstChild);
+    *//*div.innerHTML = str;
+    $("#conversationContainer")[0].insertBefore(div, $("#conversationContainer")[0].firstChild);*/
 }
 function showProc(it, rid) {
     message_box.style.visibility = 'visible';
@@ -646,11 +649,12 @@ function moveoutAccountNode(phoneTo, newRid, oldRid) {
         type: "POST",
         url: "/api2/circle/moveout?",
         data: {
+            phone:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone,
+            accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
             phoneto: phoneTo,
             newrid: newRid,
-            oldrid: oldRid,
-            phone:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone,
-            accessKey:JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey
+            oldrid: oldRid
+
         },
         success: function (data) {
             eval('$.Prompt("' + data["提示信息"] + '")');
@@ -921,8 +925,8 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
 }
 
 function request() {
-    var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
-    var accesskey = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
+    var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
+    var accesskey = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey;
     $.ajax({
         type: "POST",
         url: "/api2/session/event?",
@@ -934,6 +938,7 @@ function request() {
         success: function (data) {
             if (data["提示信息"] == "成功") {
                 if (data["event"] == "message") {
+                    alert(data["提示信息"]+"  "+data["event"]);
                     get();
                 } else {
                     alert("newfriend");
@@ -949,13 +954,14 @@ function request() {
     });
 }
 function get(){
-    var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;
-    var accesskey = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).accessKey;
+    alert("调用get方法");
+    var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
+    var accesskey = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey;
     var  circles=window.sessionStorage.getItem("circles");
     alert(circles+"  测试的circles");
     $.ajax({
         type: "POST",
-        url: "/api2//get?",
+        url: "/api2/message/get?",
         data: {
             phone: phone,
             accessKey: accesskey,
@@ -963,12 +969,12 @@ function get(){
         },
         success: function (data) {
             if (data["提示信息"] == "获取成功") {
-                var s=data["s"];
-                var length=s.length;
+                var messages=data["messages"];
+                var length=messages.length;
                 for(var i=0;i<length;i++){
                     alert("调用for循环");
                     //判断phone是否相同
-                    if(phone==JSON.parse(s[i]).phone){
+                    if(phone==JSON.parse(messages[i]).phone){
                     }else{
                        Tempcheck(JSON.parse(messages[i]).phone);
                         var content=JSON.parse(messages[i]).content.text;
@@ -1007,7 +1013,6 @@ function get(){
 function Tempcheck (phoneto){
   //alert("调用查看临时会话的方法");
     //查看是否存在于临时会话
-
     var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
     var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
     if (tempChat != null) {
@@ -1027,9 +1032,9 @@ function Tempcheck (phoneto){
             window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChat));
             addTempChatAccount(accountObj);
         } else {
-            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, selectCircleId);
+            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, undefined);
         }
     } else {
-        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, selectCircleId);
+        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, undefined);
     }
 }
