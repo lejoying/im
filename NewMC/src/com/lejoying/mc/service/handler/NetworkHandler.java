@@ -229,20 +229,11 @@ public class NetworkHandler {
 	private void saveLoginUser(String phone, String accessKey, String pbKey) {
 		User user = new User();
 		user.setPhone(phone);
-		user.setAccessKey(accessKey);
-
-		System.out.println(accessKey);
-
-		System.out.println(pbKey + "::::::::::");
-		try {
-			// System.out.println(RSAUtils.decryptByPublicKey(accessKey,
-			// RSAUtils.getPubKey(pbKey)));
-		} catch (Exception e) {
-			System.out.println("½âÃÜ³ö´íÁË");
-			e.printStackTrace();
-		}
-
 		user.setPbKey(pbKey);
+
+		System.out.println(accessKey + "::::::");
+		System.out.println(pbKey + ">>>>>>");
+
 		user.setNow(true);
 		MCDataTools.saveUser(mContext, user);
 	}
