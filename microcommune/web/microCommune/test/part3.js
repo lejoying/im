@@ -3,6 +3,8 @@ $(document).ready(function () {
     var phone = Request("phone");
     var accessKey = Request("accessKey");
     var notify_url = Request("notify_url");
+    var url = notify_url.substr(0,notify_url.indexOf("."));
+    window.top.alert(url);
 //    alert(developID);
     $.ajax({
         type: "POST",

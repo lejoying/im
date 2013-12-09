@@ -11,7 +11,7 @@
 window.onload = function () {
     var developID = 1234567;
     var phone = "121";
-    var accessKey = "3534de4826313ffb010e6fc081f93b467bfdb8e3";
+    var accessKey = "39d76c38548f60fc0a80fb4b10883ac0efff1114";
     /*//    var body = document.getElementsByTagName("body");
      var a = document.createElement("a");
      a.href = "http://weixing.com/login.html"
@@ -28,9 +28,9 @@ window.onload = function () {
     document.body.appendChild(iframe);
 //    }
 };
-var authCallBack = function(phone, accessKey){
+var authCallBack = function (phone, accessKey) {
 //    alert(accessKey);
     var msg = document.createElement("lable");
-    msg.appendChild(document.createTextNode(accessKey));
+    msg.appendChild(document.createTextNode("phont:" + phone + "\naccessKey3:" + accessKey));
     document.body.appendChild(msg);
 }
