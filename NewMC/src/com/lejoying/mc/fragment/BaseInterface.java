@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 
-import com.lejoying.mc.listener.NetworkStatusListener;
-import com.lejoying.mc.listener.NotifyListener;
-import com.lejoying.mc.listener.RemainListener;
+import com.lejoying.mc.service.handler.DataHandler.NotifyListener;
+import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
+import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 
 public interface BaseInterface {
 	public void hideCircleMenu();

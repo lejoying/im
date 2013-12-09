@@ -14,12 +14,12 @@ import android.os.Bundle;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.entity.User;
-import com.lejoying.mc.listener.ResponseListener;
 import com.lejoying.mc.service.MainService;
 import com.lejoying.mc.service.handler.MainServiceHandler.ServiceEvent;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 import com.lejoying.mc.utils.MCStaticData;
 import com.lejoying.utils.RSAUtils;
 
@@ -231,9 +231,8 @@ public class NetworkHandler {
 		User user = new User();
 		user.setPhone(phone);
 		user.setPbKey(pbKey);
-		System.out.println("pbKey:" + pbKey);
-		System.out.println("accessKey:" + accessKey);
 		try {
+			user.setAccessKey(RSAUtils.decrypt(pbKey, accessKey));
 		} catch (Exception e) {
 			System.out.println("Ω‚√‹ ß∞‹¡À");
 			e.printStackTrace();
@@ -297,4 +296,9 @@ public class NetworkHandler {
 
 	}
 
+	public interface NetworkStatusListener {
+		public void onReceive(int STATUS, String log);
+	}
+
+	
 }

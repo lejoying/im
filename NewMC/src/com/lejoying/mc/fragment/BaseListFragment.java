@@ -9,8 +9,8 @@ import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.listener.NetworkStatusListener;
 import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 

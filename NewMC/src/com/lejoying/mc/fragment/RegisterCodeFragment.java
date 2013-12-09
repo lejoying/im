@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.listener.RemainListener;
 import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 import com.lejoying.mc.utils.MCStaticData;
 
 public class RegisterCodeFragment extends BaseFragment implements

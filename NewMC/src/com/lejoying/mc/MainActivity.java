@@ -6,8 +6,8 @@ import android.support.v4.app.Fragment;
 
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.fragment.FriendsFragment;
-import com.lejoying.mc.listener.NetworkStatusListener;
 import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCNetTools;
 

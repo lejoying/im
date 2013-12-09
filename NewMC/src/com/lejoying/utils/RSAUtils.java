@@ -3,16 +3,11 @@ package com.lejoying.utils;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.util.Locale;
 
 import javax.crypto.Cipher;
-
-import com.lejoying.mc.WelcomeActivity;
 
 public class RSAUtils {
 
@@ -25,6 +20,13 @@ public class RSAUtils {
 			ming += reversal(new String(ci.doFinal(hexStringToBytes(d))));
 		}
 		return ming;
+
+	}
+
+	public static String decrypt(String key, String data) throws Exception {
+		KeyEntity keyEntity = new KeyEntity(key);
+		return decrypt(
+				getRSAKey(keyEntity.getModule(), keyEntity.getExponent()), data);
 
 	}
 
@@ -48,40 +50,22 @@ public class RSAUtils {
 			}
 		}
 		return mi;
-
 	}
 
-	public static PublicKey getPublicKey(String hexModulus,
-			String hexPublicExponent) throws Exception {
-
-		BigInteger m = new BigInteger(hexModulus, 16);
-
-		BigInteger e = new BigInteger(hexPublicExponent, 16);
-
-		RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
-
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		PublicKey publicKey = keyFactory.generatePublic(keySpec);
-
-		return publicKey;
-
+	public static String encrypt(String key, String data) throws Exception {
+		KeyEntity keyEntity = new KeyEntity(key);
+		return encrypt(
+				getRSAKey(keyEntity.getModule(), keyEntity.getExponent()), data);
 	}
 
-	public static PrivateKey getPrivateKey(String hexModulus,
-			String hexPrivateExponent) throws Exception {
-
+	public static Key getRSAKey(String hexModulus, String hexPrivateExponent)
+			throws Exception {
 		BigInteger m = new BigInteger(hexModulus, 16);
-
 		BigInteger e = new BigInteger(hexPrivateExponent, 16);
-
 		RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
-
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
-		PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-
-		return privateKey;
-
+		Key rsaKey = keyFactory.generatePrivate(keySpec);
+		return rsaKey;
 	}
 
 	public static String bytesToHexString(byte[] src) {

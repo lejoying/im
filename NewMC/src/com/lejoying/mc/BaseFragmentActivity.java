@@ -21,10 +21,10 @@ import android.view.inputmethod.InputMethodManager;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
-import com.lejoying.mc.listener.NetworkStatusListener;
-import com.lejoying.mc.listener.NotifyListener;
-import com.lejoying.mc.listener.RemainListener;
 import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.DataHandler.NotifyListener;
+import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
+import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.BackgroundView;
 

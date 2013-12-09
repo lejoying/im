@@ -1,4 +1,4 @@
-package com.lejoying.mc.utils;
+package com.lejoying.utils;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -9,18 +9,13 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
-import android.widget.Toast;
 
-import com.lejoying.mc.R;
-import com.lejoying.mc.utils.MCHttpTools.HttpListener;
-import com.lejoying.utils.StreamTools;
+import com.lejoying.autosendsms.R;
+import com.lejoying.utils.MCHttpTools.HttpListener;
 
-public class MCNetTools {
+public class Ajax {
 
 	public static Handler handler = new Handler();
-
-	private static Toast toast;
 
 	public static void ajax(final Context context, final String url,
 			final Bundle param, final int method, final int timeout,
@@ -44,13 +39,14 @@ public class MCNetTools {
 									.connectionCreated(httpURLConnection);
 							b = StreamTools.isToData(is);
 						}
+
 					};
 					if (method == MCHttpTools.SEND_GET) {
-						MCHttpTools.sendGet(MCStaticData.DOMAIN + url, timeout,
+						MCHttpTools.sendGet(url, timeout,
 								param, httpListener);
 					}
 					if (method == MCHttpTools.SEND_POST) {
-						MCHttpTools.sendPost(MCStaticData.DOMAIN + url,
+						MCHttpTools.sendPost(url,
 								timeout, param, httpListener);
 					}
 					try {
@@ -95,29 +91,6 @@ public class MCNetTools {
 					}
 				}
 			}.start();
-		}
-	}
-
-	public static void showMsg(final Context context, final String text) {
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (text == null || text.equals("")) {
-					return;
-				}
-				if (toast != null) {
-					toast.cancel();
-				}
-				toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
-			}
-		});
-	}
-
-	public static void cleanMsg() {
-		if (toast != null) {
-			toast.cancel();
 		}
 	}
 

@@ -6,14 +6,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Map;
 import java.util.Set;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 
-public final class HttpTools {
+public final class MCHttpTools {
 
 	public static final int SEND_GET = 0xff01;
 	public static final int SEND_POST = 0xff02;
@@ -34,8 +34,8 @@ public final class HttpTools {
 		return false;
 	}
 
-	public static void sendGet(String path, int timeout,
-			Map<String, String> params, HttpListener httpListener) {
+	public static void sendGet(String path, int timeout, Bundle params,
+			HttpListener httpListener) {
 		InputStream is = null;
 		// …Ë÷√«Î«Û¬∑æ∂
 		HttpURLConnection httpURLConnection = null;
@@ -46,7 +46,8 @@ public final class HttpTools {
 				if (keys != null) {
 					path += "?";
 					for (String key : keys) {
-						path += key + "=" + params.get(key) + "&";
+						path += key + "=" + String.valueOf(params.get(key))
+								+ "&";
 					}
 					path = path.substring(0, path.length() - 1);
 				}
@@ -72,8 +73,8 @@ public final class HttpTools {
 		}
 	}
 
-	public static void sendPost(String path, int timeout,
-			Map<String, String> params, HttpListener httpListener) {
+	public static void sendPost(String path, int timeout, Bundle params,
+			HttpListener httpListener) {
 		InputStream is = null;
 		HttpURLConnection httpURLConnection = null;
 		try {
@@ -83,9 +84,11 @@ public final class HttpTools {
 				Set<String> keys = params.keySet();
 				if (keys != null) {
 					for (String key : keys) {
-						paramData += key + "="
-								+ URLEncoder.encode(params.get(key), "UTF-8")
-								+ "&";
+						paramData += key
+								+ "="
+								+ URLEncoder.encode(
+										String.valueOf(params.get(key)),
+										"UTF-8") + "&";
 					}
 					paramData = paramData.substring(0, paramData.length() - 1);
 				}

@@ -12,8 +12,8 @@ import android.widget.TextView;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.listener.RemainListener;
 import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 
 public class LoginUseCodeFragment extends BaseFragment implements
 		OnClickListener {

@@ -343,4 +343,9 @@ public class DataHandler {
 			break;
 		}
 	}
+
+	public interface NotifyListener {
+		public void notifyChanged();
+	}
+
 }

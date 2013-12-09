@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.listener.NotifyListener;
+import com.lejoying.mc.service.handler.DataHandler.NotifyListener;
 import com.lejoying.mc.utils.MCStaticData;
 
 public class MessageFragment extends BaseListFragment {
