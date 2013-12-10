@@ -122,7 +122,7 @@ messageManage.get = function (data, response) {
             }
 //            console.log(reply);
             var flag0 = 0;
-            if (reply.length != 0) {apiDefintion
+            if (reply.length != 0) {
                 flag0 = parseInt(from) + reply.length;
                 client.set(phone + "flag", flag0, function (err, reply) {
                     if (err != null) {
