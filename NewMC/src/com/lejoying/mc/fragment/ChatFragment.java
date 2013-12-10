@@ -1,13 +1,13 @@
 package com.lejoying.mc.fragment;
 
-import com.lejoying.mc.R;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+
+import com.lejoying.mc.R;
 
 public class ChatFragment extends BaseListFragment {
 

@@ -10,7 +10,7 @@
         android:layout_height="172dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
         android:paddingTop="7dp"
         tools:ignore="UselessParent" >
@@ -21,12 +21,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="@string/tv_setpass"
+            android:text="@string/tv_search"
             android:textColor="#fff"
             android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/iv_line"
+            android:id="@+id/iv_line2"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:layout_alignLeft="@+id/tv_groupname"
@@ -36,30 +36,31 @@
             tools:ignore="ContentDescription" />
 
         <EditText
-            android:id="@+id/et_pass"
+            android:id="@+id/et_phone"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_alignLeft="@+id/iv_line"
-            android:layout_alignRight="@+id/iv_line"
-            android:layout_below="@+id/iv_line"
+            android:layout_alignLeft="@+id/iv_line2"
+            android:layout_alignRight="@+id/iv_line2"
+            android:layout_below="@+id/iv_line2"
             android:layout_marginTop="20dp"
             android:background="#0999"
             android:ems="10"
-            android:hint="@string/et_pass"
-            android:inputType="textPassword"
-            android:textColor="#fff" >
+            android:hint="@string/et_phone"
+            android:inputType="number"
+            android:textColor="#fff"
+            tools:ignore="TextFields" >
         </EditText>
 
         <Button
-            android:id="@+id/btn_next"
+            android:id="@+id/btn_search"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_alignLeft="@+id/et_pass"
-            android:layout_alignRight="@+id/et_pass"
-            android:layout_below="@+id/et_pass"
+            android:layout_alignLeft="@+id/et_phone"
+            android:layout_alignRight="@+id/et_phone"
+            android:layout_below="@+id/et_phone"
             android:layout_marginTop="20dp"
             android:background="#2fff"
-            android:text="@string/btn_next"
+            android:text="@string/btn_search"
             android:textColor="#fff"
             android:textSize="19sp" />
     </RelativeLayout>

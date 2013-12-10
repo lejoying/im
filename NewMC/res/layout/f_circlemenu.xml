@@ -29,6 +29,12 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" >
 
+        <com.lejoying.mc.view.CircleBackgroundView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
         <ImageView
             android:id="@+id/iv_controldisk"
             android:layout_width="wrap_content"
@@ -43,7 +49,6 @@
             android:layout_alignBottom="@+id/iv_controldisk"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="30dp"
-            android:background="#6000"
             android:text="@string/circleMenu_back"
             android:textColor="#fff"
             android:textSize="18sp"
@@ -56,7 +61,6 @@
             android:layout_alignTop="@+id/iv_controldisk"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="34dp"
-            android:background="#6000"
             android:text="@string/circleMenu_pageName"
             android:textColor="#fff"
             android:visibility="invisible" />
@@ -67,7 +71,6 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/tv_back"
             android:layout_centerHorizontal="true"
-            android:background="#6000"
             android:text="@string/app_name"
             android:textColor="#fff"
             android:visibility="invisible" />

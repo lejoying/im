@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.lejoying.mc.R;
 import com.lejoying.mc.entity.Circle;
 import com.lejoying.mc.entity.Friend;
 import com.lejoying.mc.entity.Message;
@@ -114,16 +115,20 @@ public class MCDataTools {
 		return user;
 	}
 
-	public static void cleanAllData(Context context) {
-		User user = MCDataTools.getLoginedUser(null);
-		user.setAccessKey("");
-		user.setNow(false);
-		MCDataTools.saveUser(context, user);
+	public static void cleanAllData(Context context, boolean quit) {
+		if (quit) {
+			User user = MCDataTools.getLoginedUser(null);
+			if (user != null) {
+				user.setAccessKey("");
+				user.setNow(false);
+				MCDataTools.saveUser(context, user);
+			}
+			MCStaticData.mUser = null;
+		}
 		MCStaticData.loginCodeBundle = null;
 		MCStaticData.registerBundle = null;
-		MCStaticData.circles = null;
-		MCStaticData.messages = null;
-		MCStaticData.mUser = null;
+		MCStaticData.messagesViewList.clear();
+		MCStaticData.circlesViewList.clear();
 	}
 
 	static String generateDBName(User user) {
@@ -194,9 +199,11 @@ class DBHelper extends SQLiteOpenHelper {
 
 class DBManager {
 	private SQLiteDatabase db;
+	private Context mContext;
 
 	public DBManager(Context context) {
 		db = new DBHelper(context).getWritableDatabase();
+		this.mContext = context;
 	}
 
 	public void addCircles(JSONArray circles) {
@@ -215,7 +222,7 @@ class DBManager {
 									-Integer.valueOf(
 											MCDataTools.getLoginedUser(null)
 													.getPhone()).intValue(),
-									"Ã»ÓÐ·Ö×é" });
+									mContext.getString(R.string.app_nogroup) });
 				}
 				List<Friend> friends = circle.getFriends();
 				for (Friend friend : friends) {
@@ -226,7 +233,7 @@ class DBManager {
 									friend.getMainBusiness(),
 									friend.getFriendStatus() });
 					int rid = circle.getRid();
-					if (circle.getRid() != 0) {
+					if (circle.getRid() == 0) {
 						rid = -Integer.valueOf(friend.getPhone());
 					}
 					db.execSQL("INSERT INTO circlerelation VALUES(?,?)",
@@ -279,7 +286,7 @@ class DBManager {
 	private Cursor queryFriendsCursor(int rid) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT fphone,nickName,head,mainBusiness FROM friend WHERE fphone IN (select fphone from circlerelation where rid=?) and friendStatus='success'",
+						"SELECT fphone,nickName,head,mainBusiness FROM friend WHERE fphone IN (select fphone from circlerelation where rid=?)",
 						new String[] { String.valueOf(rid) });
 		return c;
 	}

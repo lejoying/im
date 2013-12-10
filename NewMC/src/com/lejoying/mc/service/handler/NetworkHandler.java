@@ -168,7 +168,7 @@ public class NetworkHandler {
 					}
 				}
 			} else if (api.equals(API.ACCOUNT_EXIT)) {
-				MCDataTools.cleanAllData(mContext);
+				MCDataTools.cleanAllData(mContext,true);
 			}
 		} else if (apiClazz.equals(API.CIRCLE)) {
 

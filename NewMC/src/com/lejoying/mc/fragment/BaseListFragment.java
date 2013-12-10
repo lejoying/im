@@ -66,8 +66,10 @@ public abstract class BaseListFragment extends ListFragment {
 			@Override
 			public boolean isSuccess() {
 				boolean flag = false;
-				flag = getInputMethodManager().showSoftInput(editText,
-						InputMethodManager.SHOW_FORCED);
+				if (mMCFragmentManager.circleMenuIsShow()) {
+					flag = getInputMethodManager().showSoftInput(editText,
+							InputMethodManager.SHOW_FORCED);
+				}
 				return flag;
 			}
 

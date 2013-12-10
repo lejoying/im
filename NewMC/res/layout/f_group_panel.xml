@@ -54,11 +54,4 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="25dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/rl_panel" />
-
 </RelativeLayout>

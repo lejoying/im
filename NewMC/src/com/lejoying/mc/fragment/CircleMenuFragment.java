@@ -21,13 +21,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.entity.MenuEntity;
-import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
@@ -135,6 +132,26 @@ public class CircleMenuFragment extends BaseFragment {
 					showToTop(lock, showBack);
 				}
 			});
+		} else {
+			ToTry.tryDoing(10, 200, new ToTryAdapter() {
+
+				@Override
+				public void successed(long time) {
+					if (mWhere != WHERE_TOP) {
+						hideCircleMenu(new AnimationAdapter() {
+							@Override
+							public void onAnimationEnd(Animation animation) {
+								showToTop(lock, showBack);
+							}
+						});
+					}
+				}
+
+				@Override
+				public boolean isSuccess() {
+					return mStatus == STATUS_SHOW;
+				}
+			});
 		}
 	}
 
@@ -162,7 +179,7 @@ public class CircleMenuFragment extends BaseFragment {
 		if (mCircleMenu == null) {
 			return;
 		}
-		if (mStatus != STATUS_HIDE) {
+		if (mStatus == STATUS_SHOW && mWhere != WHERE_CENTER) {
 			mStatus = STATUS_HIDE;
 			float toXDelta = 0;
 			float toYDelta = 0;
@@ -189,6 +206,34 @@ public class CircleMenuFragment extends BaseFragment {
 				}
 			});
 			mDisk.startAnimation(animation);
+		} else if (mStatus == STATUS_SHOW && mWhere == WHERE_CENTER) {
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+
+				@Override
+				public void outAnimationEnd() {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+					hideCircleMenu(adapter);
+				}
+			});
+		} else if (mStatus != STATUS_SHOW && mStatus != STATUS_HIDE) {
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+
+				@Override
+				public void outAnimationEnd() {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+					hideCircleMenu(adapter);
+				}
+			});
 		}
 	}
 
@@ -500,25 +545,17 @@ public class CircleMenuFragment extends BaseFragment {
 		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item3,
 				getString(R.string.circleitem2_3)));
 		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item4,
-				getString(R.string.circleitem1_4)));
+				getString(R.string.circleitem2_4)));
 		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item5,
 				getString(R.string.circleitem2_5)));
 		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item6,
 				getString(R.string.circleitem2_6)));
-		List<MenuEntity> menuEntitys3 = new ArrayList<MenuEntity>();
-		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item1, "…Ë÷√"));
-		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item2, "“˛ÀΩ…Ë÷√"));
-		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item3, "ÕÀ≥ˆµ«¬º"));
-		menuEntitys3.add(new MenuEntity(R.drawable.test_menu_item4,
-				getString(R.string.circleitem2_4)));
 
 		final ViewGroup itemGroup = (ViewGroup) mDiskOut;
 
 		mMenuItemList.add(inflaterMenuItemView(inflater, menuEntitys1,
 				itemGroup));
 		mMenuItemList.add(inflaterMenuItemView(inflater, menuEntitys2,
-				itemGroup));
-		mMenuItemList.add(inflaterMenuItemView(inflater, menuEntitys3,
 				itemGroup));
 
 		ToTry.tryDoing(10, 500, new ToTryAdapter() {
@@ -842,7 +879,7 @@ public class CircleMenuFragment extends BaseFragment {
 			});
 			break;
 		case 2:
-			back(WHERE_TOP, new CircleDiskAnimationEnd() {
+			back(mOldWhere, new CircleDiskAnimationEnd() {
 
 				@Override
 				public void outAnimationEnd() {
@@ -863,18 +900,7 @@ public class CircleMenuFragment extends BaseFragment {
 			showNext();
 			break;
 		case 11:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-				@Override
-				public void outAnimationEnd() {
-					mMCFragmentManager.relpaceToContent(new MessageFragment(),
-							false);
-				}
 
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
 			break;
 		case 12:
 
@@ -883,38 +909,37 @@ public class CircleMenuFragment extends BaseFragment {
 
 			break;
 		case 14:
-			// showBack();
-			showNext();
+			showBack();
 			break;
 		case 15:
+			back(mOldWhere, new CircleDiskAnimationEnd() {
 
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.relpaceToContent(
+							new SearchFriendFragment(), true);
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
 			break;
 		case 16:
+			back(mOldWhere, new CircleDiskAnimationEnd() {
 
-			break;
-		case 21:
-			System.out.println("»Ìº˛…Ë÷√");
-			break;
-		case 22:
-			System.out.println("“˛ÀΩ…Ë÷√");
-			break;
-		case 23:
-			Bundle params = new Bundle();
-			params.putString("phone", MCDataTools.getLoginedUser(null)
-					.getPhone());
-			params.putString("accessKey", MCDataTools.getLoginedUser(null)
-					.getAccessKey());
-			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_EXIT, params,
-					true, new NetworkStatusAdapter() {
-						@Override
-						public void success() {
-							mMCFragmentManager.startToActivity(
-									LoginActivity.class, true);
-						}
-					});
-			break;
-		case 24:
-			showBack();
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.relpaceToContent(
+							new FriendNotFoundFragment(), true);
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
 			break;
 
 		default:
@@ -924,6 +949,11 @@ public class CircleMenuFragment extends BaseFragment {
 
 	public boolean isCreated() {
 		return mIsCreated;
+	}
+
+	public boolean isShow() {
+		return (mStatus == STATUS_SHOW && (mWhere == WHERE_TOP || mWhere == WHERE_BOTTOM))
+				|| mStatus == STATUS_HIDE;
 	}
 
 	@Override

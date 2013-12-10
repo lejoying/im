@@ -131,7 +131,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 				initCamera();
 			} else {
 				// 相机故障或被占用
-				showMsg("相机故障,重新打开试试~~");
+				showMsg(getString(R.string.app_cameranotready));
 				getActivity().getSupportFragmentManager().popBackStack();
 			}
 		}
@@ -161,6 +161,9 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		new Thread() {
 			public void run() {
 				initCamera();
+				if(!isTake){
+					destoryCamera();
+				}
 			}
 		}.start();
 	}
@@ -265,7 +268,9 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	}
 
 	public void reDecode() {
-		camera.setOneShotPreviewCallback(this);
+		if (isTake) {
+			camera.setOneShotPreviewCallback(this);
+		}
 	}
 
 	public Rect getFramingRect(Point screenResolution) {
@@ -284,7 +289,9 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	}
 
 	public void autoFocus() {
-		handler.sendEmptyMessageDelayed(OPERATE_AUTOFOCUS, 2000);
+		if (isTake) {
+			handler.sendEmptyMessageDelayed(OPERATE_AUTOFOCUS, 2000);
+		}
 	}
 
 	@Override
@@ -299,23 +306,28 @@ public class ScanQRCodeFragment extends BaseFragment implements
 			switch (what) {
 			case OPERATE_DECODE_SUCCESS_WEBLOGIN:
 				destoryCamera();
-				new AlertDialog.Builder(getActivity()).setTitle("确认网页登陆?")
-						.setPositiveButton("确定", new OnClickListener() {
+				new AlertDialog.Builder(getActivity())
+						.setTitle(getString(R.string.scan_weblogin))
+						.setPositiveButton(getString(R.string.btn_confirm),
+								new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								getActivity().getSupportFragmentManager()
-										.popBackStack();
-							}
-						}).setNegativeButton("取消", new OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										getActivity()
+												.getSupportFragmentManager()
+												.popBackStack();
+									}
+								})
+						.setNegativeButton(getString(R.string.btn_cancel),
+								new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								initCamera();
-							}
-						}).setOnCancelListener(new OnCancelListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										initCamera();
+									}
+								}).setOnCancelListener(new OnCancelListener() {
 							@Override
 							public void onCancel(DialogInterface dialog) {
 								initCamera();
@@ -327,7 +339,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 					if (msg.obj != null) {
 						destoryCamera();
 						new AlertDialog.Builder(getActivity())
-								.setTitle("无效请求")
+								.setTitle(getString(R.string.scan_invalid))
 								.setOnCancelListener(new OnCancelListener() {
 									@Override
 									public void onCancel(DialogInterface dialog) {

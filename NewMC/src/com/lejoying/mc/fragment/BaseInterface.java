@@ -16,6 +16,8 @@ public interface BaseInterface {
 	public void showCircleMenuToBottom();
 
 	public void setCircleMenuPageName(String pageName);
+	
+	public boolean circleMenuIsShow();
 
 	public int relpaceToContent(Fragment fragment, boolean toBackStack);
 

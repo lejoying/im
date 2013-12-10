@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/iv_head"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_head"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="3dp"
+                android:textColor="#ddd"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" >
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" >
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" >
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" >
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" >
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

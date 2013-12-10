@@ -37,7 +37,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.lejoying.mc.ChatActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.entity.Friend;
 import com.lejoying.mc.utils.MCImageTools;
@@ -135,10 +134,10 @@ public class CircleAdapter {
 										@Override
 										public void onClick(View arg0) {
 											if (!editMode) {
-												Intent intent = new Intent(
-														activity,
-														ChatActivity.class);
-												activity.startActivity(intent);
+												// Intent intent = new Intent(
+												// activity,
+												// ChatActivity.class);
+												// activity.startActivity(intent);
 											}
 										}
 									});

@@ -16,7 +16,7 @@
         tools:ignore="UselessParent" >
 
         <TextView
-            android:id="@+id/tv_groupname1"
+            android:id="@+id/tv_groupname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -26,11 +26,11 @@
             android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/iv_line1"
+            android:id="@+id/iv_line"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:layout_alignLeft="@+id/tv_groupname1"
-            android:layout_below="@+id/tv_groupname1"
+            android:layout_alignLeft="@+id/tv_groupname"
+            android:layout_below="@+id/tv_groupname"
             android:layout_marginTop="8dp"
             android:background="#9fff"
             tools:ignore="ContentDescription" />
@@ -39,8 +39,8 @@
             android:id="@+id/tv_sendto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/iv_line1"
-            android:layout_below="@+id/iv_line1"
+            android:layout_alignLeft="@+id/iv_line"
+            android:layout_below="@+id/iv_line"
             android:layout_marginTop="10dp"
             android:text="@string/tv_sendto"
             android:textColor="#ddd" />
@@ -50,16 +50,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/tv_sendto"
-            android:layout_toRightOf="@+id/tv_sendto"
             android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/tv_sendto"
             android:textColor="#eee" />
 
         <EditText
             android:id="@+id/et_code"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_alignLeft="@+id/iv_line1"
-            android:layout_alignRight="@+id/iv_line1"
+            android:layout_alignLeft="@+id/iv_line"
+            android:layout_alignRight="@+id/iv_line"
             android:layout_below="@+id/tv_sendto"
             android:layout_marginTop="10dp"
             android:background="#0999"
