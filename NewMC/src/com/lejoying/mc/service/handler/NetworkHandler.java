@@ -234,7 +234,6 @@ public class NetworkHandler {
 		try {
 			user.setAccessKey(RSAUtils.decrypt(pbKey, accessKey));
 		} catch (Exception e) {
-			System.out.println("Ω‚√‹ ß∞‹¡À");
 			e.printStackTrace();
 		}
 		user.setNow(true);
@@ -300,5 +299,4 @@ public class NetworkHandler {
 		public void onReceive(int STATUS, String log);
 	}
 
-	
 }

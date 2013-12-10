@@ -14,6 +14,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 		Intent intent = new Intent(this, LoginActivity.class);
 		startActivity(intent);
 
+		this.finish();
 	}
 
 	@Override

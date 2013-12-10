@@ -17,7 +17,7 @@ public class MainActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout._main);
-		getUser();
+		//getUser();
 	}
 
 	@Override
@@ -37,14 +37,16 @@ public class MainActivity extends BaseFragmentActivity {
 		params.putString("accessKey", MCDataTools.getLoginedUser(this)
 				.getAccessKey());
 		params.putString("target", MCDataTools.getLoginedUser(this).getPhone());
+		System.out.println(params);
 		startNetwork(API.ACCOUNT_GET, params, false,
 				new NetworkStatusListener() {
 					@Override
 					public void onReceive(int STATUS, String log) {
 						switch (STATUS) {
 						case MainService.STATUS_NETWORK_SUCCESS:
-							getCirclesAndFriends();
-							getMessages();
+							System.out.println("success");
+							//getCirclesAndFriends();
+							//getMessages();
 							break;
 						case MainService.STATUS_NETWORK_UNSUCCESS:
 							System.out.println("获取用户失败");
@@ -111,7 +113,6 @@ public class MainActivity extends BaseFragmentActivity {
 		params.putString("accessKey", MCDataTools.getLoginedUser(this)
 				.getAccessKey());
 		String flag = MCDataTools.getLoginedUser(this).getFlag();
-		System.out.println(flag);
 		params.putString("flag", flag);
 		startNetwork(API.MESSAGE_GET, params, false,
 				new NetworkStatusListener() {
