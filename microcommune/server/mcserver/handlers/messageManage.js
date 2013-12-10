@@ -63,7 +63,7 @@ messageManage.send = function (data, response) {
                     return;
                 }
                 //通知
-                push.inform(phoneto[index], "*", {"提示信息": "成功", event: "message"});
+                push.inform(phoneto[index], accessKey, "*", {"提示信息": "成功", event: "message"});
                 //response
                 response.write(JSON.stringify({
                     "提示信息": "发送成功"
