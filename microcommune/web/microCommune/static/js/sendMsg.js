@@ -41,8 +41,8 @@ $(document).ready(function () {
     }
 
     $.getScript("/static/js/nTenjin.js");
-    var nowAccount = window.sessionStorage.getItem("wxgs_nowAccount");
-    $($(".nickName")[0]).html(JSON.parse(nowAccount).nickName);
+    var nowAccount = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $($(".nickName")[0]).html(nowAccount.nickName);
     $(".js_circlesFriends").hide();
     $(".loadMoreConv").hide();
    var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
@@ -58,8 +58,8 @@ $(document).ready(function () {
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",
         data: {
-            phone: JSON.parse(nowAccount).phone,
-            accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey
+            phone: nowAccount.phone,
+            accessKey:nowAccount.accessKey
         },
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
@@ -170,12 +170,13 @@ $(document).ready(function () {
         }
 
         function modifyCircleName(rid, newCircleName, oldCircleName) {
+            var nowAccount=JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
             $.ajax({
                 type: "POST",
                 url: "/api2/circle/modify?",
                 data: {
-                    phone:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone,
-                    accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
+                    phone:nowAccount.phone,
+                    accessKey:nowAccount.accessKey,
                     rid: rid,
                     name: newCircleName
                 },
@@ -216,7 +217,6 @@ $(document).ready(function () {
         showProcFeedBack();
     });
     $(".iconLogout").click(function () {
-        window.sessionStorage.clear();
         window.sessionStorage.clear();
         location.href = "/login.html";
     });
@@ -267,13 +267,13 @@ $(document).ready(function () {
     $(".js_addcircle").click(function () {
         eval('$.Prompt("创建密友圈")');
         var newCircleName = '测试' + new Date().getTime();
-        var nowAccount = window.sessionStorage.getItem("wxgs_nowAccount");
+        var nowAccount = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         $.ajax({
             type: "POST",
             url: "/api2/circle/addcircle?",
             data: {
-                phone: JSON.parse(nowAccount).phone,
-                accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
+                phone:nowAccount.phone,
+                accessKey:nowAccount.accessKey,
                 name: newCircleName
 
             },
@@ -301,15 +301,14 @@ $(document).ready(function () {
         $(".js_addcircle").slideDown(10);
         $(".js_accountmanage").css("visibility", "hidden");
 
-        var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
-        var phoneto = selectPhone;
+        var nowAccount = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         $.ajax({
             type: "POST",
             url: "/api2/relation/deletefriend?",
             data: {
-                phone: phone,
-                accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
-                phoneto: phoneto
+                phone: nowAccount.phone,
+                accessKey:nowAccount.accessKey,
+                phoneto: selectPhone
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -321,16 +320,14 @@ $(document).ready(function () {
         js_friendManage.style.visibility = "hidden";
         $(".js_addcircle").slideDown(10);
         $(".js_accountmanage").css("visibility", "hidden");
-        var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
-        var phoneto = selectPhone;
+        var nowAccount = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         $.ajax({
             type: "POST",
             url: "/api2/relation/blacklist?",
             data: {
-                phone: phone,
-                accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
-                phoneto: phoneto
-
+                phone: nowAccount.phone,
+                accessKey:nowAccount.accessKey,
+                phoneto: selectPhone
             },
             success: function (data) {
                 eval('$.Prompt("' + data["提示信息"] + '")');
@@ -366,7 +363,7 @@ $(document).ready(function () {
                 '   </div>   ' +
                 '</div>    ' +
                 '</div>');*/
-            var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
+            var nowAccount = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
             var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
             var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
             var message = $("#textInput").val();
@@ -384,8 +381,8 @@ $(document).ready(function () {
                 type: "POST",
                 url: "/api2/message/send?",
                 data: {
-                    phone: phone,
-                    accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
+                    phone: nowAccount.phone,
+                    accessKey:nowAccount.accessKey,
                     phoneto: JSON.stringify(listPhone),
                     message: JSON.stringify(messages)
                 },
@@ -645,12 +642,13 @@ function moveoutAccountNode(phoneTo, newRid, oldRid) {
     if (oldRid == undefined) {
         oldRid = "undefined";
     }
+    var nowAccount= JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "POST",
         url: "/api2/circle/moveout?",
         data: {
-            phone:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone,
-            accessKey:JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey,
+            phone:nowAccount.phone,
+            accessKey:nowAccount.accessKey,
             phoneto: phoneTo,
             newrid: newRid,
             oldrid: oldRid
@@ -860,7 +858,7 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
                         //IE 去除容器内拖拽图片问题
                         if (document.all) //IE
                         {
-                            ev.returnValue = false;
+                            ev.preventDefault = false;
                         }
 
                         var movePos = Common.getMousePos(ev);
@@ -925,15 +923,14 @@ function DragDivDrag(titleBarID, message_boxID, obj) {
 }
 
 function request() {
-    var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
-    var accesskey = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey;
+    var nowAccount = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "POST",
         url: "/api2/session/event?",
         timeout: 30000,
         data: {
-            phone: phone,
-            accessKey: accesskey
+            phone: nowAccount.phone,
+            accessKey: nowAccount.accessKey
         },
         success: function (data) {
             if (data["提示信息"] == "成功") {
@@ -954,17 +951,19 @@ function request() {
     });
 }
 function get(){
-    alert("调用get方法");
-    var phone = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).phone;
-    var accesskey = JSON.parse(window.sessionStorage.getItem("wxgs_nowAccount")).accessKey;
+    //alert("调用get方法");
+    var nowAccount=JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    var phone=nowAccount.phone;
     var  circles=window.sessionStorage.getItem("circles");
-    alert(circles+"  测试的circles");
+
+    //alert(circles+"  测试的circles");
+
     $.ajax({
         type: "POST",
         url: "/api2/message/get?",
         data: {
             phone: phone,
-            accessKey: accesskey,
+            accessKey: nowAccount.accessKey,
             flag: flag
         },
         success: function (data) {
