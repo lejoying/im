@@ -1,11 +1,12 @@
 var ajax = require('./ajax.js');
 
 var push = {};
-push.inform = function (phone, accessKey, sessionID, event) {
+push.inform = function (phone, phoneTo, accessKey, sessionID, event) {
     ajax.ajax({
         data: {
             phone: phone,
             accessKey: accessKey,
+            phoneTo: phoneTo,
             sessionID: sessionID,
             event: JSON.stringify(event)
         },
@@ -16,10 +17,11 @@ push.inform = function (phone, accessKey, sessionID, event) {
         }
     });
 }
-push.notifywebcodelogin = function (phone, accessKey, sessionID, next) {
+push.notifywebcodelogin = function (phone, phoneTo, accessKey, sessionID, next) {
     ajax.ajax({
         data: {
             phone: phone,
+            phoneTo: phoneTo,
             accessKey: accessKey,
             sessionID: sessionID
         },
