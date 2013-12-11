@@ -3,7 +3,7 @@ var selectCircleId = "";
 var selectPhone = "";
 var selectId = "";
 var flag = "none";
-
+var flagphone=0;
 
 $(document).ready(function () {
     (function ($) {
@@ -367,7 +367,6 @@ $(document).ready(function () {
             var phoneto = $("#js_chat .chatName")[0].getAttribute("accountphone");
             var circleid = $("#js_chat .chatName")[0].getAttribute("circleid");
             var message = $("#textInput").val();
-            //alert(message + "  输入的消息");
             var listPhone = [];
             listPhone.push(phoneto);
             var messages = {
@@ -376,7 +375,6 @@ $(document).ready(function () {
                     text: message
                 }
             };
-
             $.ajax({
                 type: "POST",
                 url: "/api2/message/send?",
@@ -951,13 +949,10 @@ function request() {
     });
 }
 function get(){
-    //alert("调用get方法");
+    alert("调用get方法");
     var nowAccount=JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     var phone=nowAccount.phone;
     var  circles=window.sessionStorage.getItem("circles");
-
-    //alert(circles+"  测试的circles");
-
     $.ajax({
         type: "POST",
         url: "/api2/message/get?",
@@ -970,12 +965,22 @@ function get(){
             if (data["提示信息"] == "获取成功") {
                 var messages=data["messages"];
                 var length=messages.length;
+                alert("调用for循环");
                 for(var i=0;i<length;i++){
-                    alert("调用for循环");
-                    //判断phone是否相同
+                    var phoneto=JSON.parse(messages[i]).phoneto;
+                    //判断phone是否和messages里的相同
                     if(phone==JSON.parse(messages[i]).phone){
+                        alert("phone是自己时调用");
+                       TempChatMessage(phoneto,messages);
                     }else{
-                       Tempcheck(JSON.parse(messages[i]).phone);
+                        var phone=JSON.parse(messages[i]).phone;
+                        alert("phone不是自己时调用");
+                       TempChatMessage(phone,messages);
+                       Tempcheck(phone);
+                        //判读会话窗口是否打开
+                        alert(flagphone+" flagphone收到消息是判读");
+                        if(phone==flagphone){
+                            alert("判读是否打开会话窗口");
                         var content=JSON.parse(messages[i]).content.text;
                         var date=new Date(JSON.parse(messages[i]).time);
                         var hours = date.getHours();
@@ -988,6 +993,7 @@ function get(){
                         Message.minutes=minutes;
                         var chatMessageGet=getTemplate("chatMessageGet");
                         $("#chat_chatmsglist").append(chatMessageGet.render(Message));
+                        }
                         /*$("#chat_chatmsglist").append('<div un="item_2070333132" class="chatItem you">' +
                          ' <div class="time"> <span class="timeBg left"></span>' +hours + ':' + minutes + ' <span class="timeBg right"></span> </div> ' +
                          '<div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText"> ' +
@@ -1009,9 +1015,24 @@ function get(){
         }
     });
 }
+var tempchatMessage=[];
+function TempChatMessage(phoneto,messages){
+    alert("调用TempChatMessage方法");
+    alert(tempchatMessage["phoneto"]);
+    if(tempchatMessage["phoneto"]==undefined){
+        alert("phoneto不存在");
+       var arr=[];
+        arr.push(messages);
+        tempchatMessage["phoneto"]=arr;
+        alert(tempchatMessage["phoneto"]);
+    }else{
+        alert("phoneto存在");
+        tempchatMessage["phoneto"].push(messages);
+        alert(tempchatMessage["phoneto"]);
+    }
+}
 function Tempcheck (phoneto){
-  //alert("调用查看临时会话的方法");
-    //查看是否存在于临时会话
+    alert("调用查看临时会话的方法");
     var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
     var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
     if (tempChat != null) {
@@ -1036,4 +1057,8 @@ function Tempcheck (phoneto){
     } else {
         addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, undefined);
     }
+}
+function clickTempChat(){
+    var tempChatMessage=getTemplate("tempChatMessage");
+    $("#chat_chatmsglist").html(tempChatMessage.render(tempchatMessage["phoneto"]));
 }
