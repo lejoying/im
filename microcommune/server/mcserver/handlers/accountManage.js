@@ -26,13 +26,13 @@ var sms_power = false;
  ***************************************/
 accountManage.verifyphone = function (data, response) {
     response.asynchronous = 1;
-//    console.log(JSON.stringify(data) == "{}");
     var phone = data.phone;
     var usage = data.usage;
     var arr = [phone, usage];
+    var account;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         var time = new Date().getTime().toString();
-        var account = {
+        account = {
             phone: phone,
             code: time.substr(time.length - 6),
             status: "init",
@@ -49,11 +49,7 @@ accountManage.verifyphone = function (data, response) {
         } else if (usage == "login") {
             getLoginCode(phone);
         } else {
-            response.write(JSON.stringify({
-                "提示信息": "手机号验证失败",
-                "失败原因": "数据不完整"
-            }));
-            response.end();
+            responseFailMessage(response, "手机号验证失败", "数据不完整");
         }
     }
     function checkPhone(phone) {
@@ -67,6 +63,7 @@ accountManage.verifyphone = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
+                responseFailMessage(response, "手机号验证失败", "数据异常");
                 console.error(error);
                 return;
             } else if (results.length == 0) {
@@ -75,59 +72,13 @@ accountManage.verifyphone = function (data, response) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 if (accountData.status == "active") {
-                    response.write(JSON.stringify({
-                        "提示信息": "手机号验证失败",
-                        "失败原因": "手机号已被注册"
-                    }));
-                    response.end();
+                    responseFailMessage(response, "手机号验证失败", "手机号已被注册");
                 } else {
-                    var time = new Date().getTime().toString();
-
-                    var bad = time - parseInt(accountData.time);
-                    var code = "";
-                    if (bad > 600000 || accountData.code == "none") {
-                        console.log("++++--" + accountData.code);
-                        accountData.code = time.substr(time.length - 6);
-                        accountData.time = new Date().getTime();
-                        accountNode.save(function (error, node) {
-                        });
-                        code = time.substr(time.length - 6);
-                    } else {
-                        code = accountData.code;
-                    }
-                    var message = "微型公社手机验证码：" + code + "，欢迎您使用";
-                    console.log(message);
-                    if (sms_power == true) {
-                        sms.sendMsg(phone, message, function (data) {
-                            var smsObj = JSON.parse(data);
-                            if (smsObj.statusCode == "000000") {
-                                response.write(JSON.stringify({
-                                    "提示信息": "手机号验证成功",
-                                    "phone": account.phone,
-                                    "code": sha1.hex_sha1(code)
-                                }));
-                                response.end();
-                            } else {
-                                response.write(JSON.stringify({
-                                    "提示信息": "手机号验证失败",
-                                    "失败原因": "手机号不正确"
-                                }));
-                                response.end();
-                            }
-                        });
-                    } else {
-                        response.write(JSON.stringify({
-                            "提示信息": "手机号验证成功",
-                            "phone": account.phone,
-                            "code": sha1.hex_sha1(code)
-                        }));
-                        response.end();
-                    }
+                    sendSMSMessage(accountData, checkCodeTime(accountNode, accountData), "手机号验证", response);
                 }
             }
         });
     }
-
     function getLoginCode(phone) {
         var query = [
             'MATCH (account:Account)',
@@ -140,118 +91,85 @@ accountManage.verifyphone = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
+                responseFailMessage(response, "验证码发送失败", "数据异常");
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "验证码发送失败",
-                    "失败原因": "手机号未注册"
-                }));
-                response.end();
+                responseFailMessage(response, "验证码发送失败", "手机号未注册");
             } else {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 if (accountData.status == "active") {
-                    var time = new Date().getTime().toString();
-                    var bad = time - parseInt(accountData.time);
-                    var code = "";
-                    if (bad > 600000 || accountData.code == "none") {
-                        accountData.code = time.substr(time.length - 6);
-                        accountData.time = new Date().getTime();
-                        accountNode.save(function (error, node) {
-                        });
-                        code = time.substr(time.length - 6);
-                    } else {
-                        code = accountData.code;
-                    }
-                    console.log("登录验证码--" + phone + "--" + code);
-                    var message = "微型公社手机验证码：" + code + "，欢迎您使用";
-                    if (sms_power == true) {
-                        sms.sendMsg(phone, message, function (data) {
-                            var smsObj = JSON.parse(data);
-                            if (smsObj.statusCode == "000000") {
-                                response.write(JSON.stringify({
-                                    "提示信息": "验证码发送成功",
-                                    "phone": accountData.phone,
-                                    "code": sha1.hex_sha1(code)
-                                }));
-                                response.end();
-                            } else {
-                                response.write(JSON.stringify({
-                                    "提示信息": "验证码发送失败",
-                                    "失败原因": "服务器异常"
-                                }));
-                                response.end();
-                            }
-                        });
-                    } else {
-                        response.write(JSON.stringify({
-                            "提示信息": "验证码发送成功",
-                            "phone": accountData.phone,
-                            "code": sha1.hex_sha1(code)
-                        }));
-                        response.end();
-                    }
+                    var code = checkCodeTime(accountNode, accountData);
+                    sendSMSMessage(accountData, code, "验证码发送", response);
                 } else {
-                    response.write(JSON.stringify({
-                        "提示信息": "验证码发送失败",
-                        "失败原因": "手机号未注册"
-                    }));
-                    response.end();
+                    responseFailMessage(response, "验证码发送失败", "手机号未注册");
                 }
             }
         });
     }
-
     function createAccountNode(account) {
         var query = [
             'CREATE (account:Account{account})',
             'SET account.uid=ID(account)',
             'RETURN account'
         ].join('\n');
-
         var params = {
             account: account
         };
-
         db.query(query, params, function (error, results) {
             if (error) {
+                responseFailMessage(response, "验证码发送失败", "数据异常");
                 console.error(error);
                 return;
             } else {
                 var accountNode = results.pop().account;
-                console.log("获取验证码成功---");
-                var message = "微型公社手机验证码：" + account.code + "，欢迎您使用";
-                console.log(message);
-                if (sms_power == true) {
-                    sms.sendMsg(phone, message, function (data) {
-                        var smsObj = JSON.parse(data);
-                        if (smsObj.statusCode == "000000") {
-                            response.write(JSON.stringify({
-                                "提示信息": "手机号验证成功",
-                                "phone": accountNode.data.phone,
-                                "code": sha1.hex_sha1(account.code)
-                            }));
-                            response.end();
-                        } else {
-                            response.write(JSON.stringify({
-                                "提示信息": "手机号验证失败",
-                                "失败原因": "手机号不正确"
-                            }));
-                            response.end();
-                        }
-                    });
-                } else {
-                    response.write(JSON.stringify({
-                        "提示信息": "手机号验证成功",
-                        "phone": accountNode.data.phone,
-                        "code": sha1.hex_sha1(account.code)
-                    }));
-                    response.end();
-                }
+                sendSMSMessage(accountNode.data, accountNode.data.code, "手机号验证", response);
             }
-
         });
+    }
+    function responseFailMessage(response, prompt, reason) {
+        response.write(JSON.stringify({
+            "提示信息": prompt,
+            "失败原因": reason
+        }),function(){ response.end();});
+    }
+    function checkCodeTime(accountNode, accountData) {
+        var time = new Date().getTime();
+        var bad = time - parseInt(accountData.time);
+        if (bad > 600000 || accountData.code == "none") {
+            accountData.code = (time+"").substr((time+"").length - 6);
+            accountData.time = new Date().getTime();
+            accountNode.save(function (error, node) {
+            });
+            return time.substr(time.length - 6);
+        } else {
+            return accountData.code;
+        }
+    }
+    function sendSMSMessage(account, code, promptMessage, response) {
+        var message = "微型公社手机验证码：" + code + "，欢迎您使用";
+        console.log(message);
+        if (sms_power == true) {
+            sms.sendMsg(account.phone, message, function (data) {
+                var smsObj = JSON.parse(data);
+                if (smsObj.statusCode == "000000") {
+                    next();
+                } else {
+                    responseFailMessage(response, promptMessage + "失败", "手机号不正确");
+                }
+            });
+        } else {
+            next();
+        }
+        function next(){
+            response.write(JSON.stringify({
+                "提示信息": promptMessage + "成功",
+                "phone": account.phone,
+                "code": sha1.hex_sha1(code)
+            }));
+            response.end();
+        }
     }
 }
 /***************************************
@@ -406,34 +324,28 @@ accountManage.auth = function (data, response, next) {
         });
     }
 }
-var redis = require("redis");
-var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
-accountManage.exit = function (data, response) {
+accountManage.exit = function (data, response, next) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
-    client.lrem(phone + "_accessKey", 0, accessKey, function (err, reply) {
-        if (err != null) {
+    next(phone, accessKey, function(flag){
+        if(flag == true){
+            response.write(JSON.stringify({
+                "提示信息": "退出成功"
+            }));
+            response.end();
+        }else if(flag == false){
+            response.write(JSON.stringify({
+                "提示信息": "退出失败",
+                "失败原因": "AccessKey Invalid"
+            }));
+            response.end();
+        }else{
             response.write(JSON.stringify({
                 "提示信息": "退出失败",
                 "失败原因": "数据异常"
             }));
             response.end();
-            console.log(err);
-            return;
-        } else {
-            if (reply == 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "退出失败",
-                    "失败原因": "AccessKey Invalid"
-                }));
-                response.end();
-            } else {
-                response.write(JSON.stringify({
-                    "提示信息": "退出成功"
-                }));
-                response.end();
-            }
         }
     });
 
