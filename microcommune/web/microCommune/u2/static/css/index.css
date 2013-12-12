@@ -279,16 +279,18 @@ a:hover, a:active {
     height: 40px;
     margin: 0;
 }
-.chatPanel .chatListSearch span.chatListSearchIcon {
+/*.chatPanel .chatListSearch span.chatListSearchIcon {
     background: url("../images/icon_chat17ced3.png") no-repeat scroll -36px -166px transparent;
     display: block;
     height: 93%;
     width: 28px;
 }
+*/
 .chatPanel .chatListSearchPanel {
     margin: 0;
     padding: 0 10px;
 }
+/*
 .chatPanel .chatListSearchInput {
     background-color: #FFFFFF;
     border: 1px solid #989CA1;
@@ -313,13 +315,14 @@ a:hover, a:active {
     height: 92%;
     width: 78%;
 }
+*/
 .chatPanel .chatListSearchPanel .listOperatorContent .conmu, .chatPanel .chatListSearchPanel .listOperatorContent .addr {
     height: 100%;
     width: 49%;
 }
 .chatPanel .chatListSearchPanel .listOperatorContent .bag {
     background: url("../images/icon_chat17ced3.png") repeat scroll 0 0 transparent;
-    height: 30px;
+    height: 25px;
     margin: 0 auto;
     width: 40px;
 }
@@ -344,7 +347,7 @@ a:hover, a:active {
 .chatPanel .chatListSearchPanel .listOperatorContent .conmu .bag, .chatPanel .chatListSearchPanel .listOperatorContent .addr .bag {
     background: url("../images/button0217ced3.png") no-repeat scroll 0 0 transparent;
     display: block;
-    height: 22px;
+    height: 25px;
     margin: 8px auto 0;
     width: 25px;
 }
@@ -374,6 +377,7 @@ a:hover, a:active {
     position: absolute;
     text-align: left;
     width: 240px;
+
 }
 .chatPanel .listGroupTitle .iconFavoriteFriend {
     background: url("../images/icon_chat17ced3.png") no-repeat scroll -38px -39px transparent;
@@ -714,7 +718,7 @@ a.btnSecondary:active {
     float: left;
     position: relative;
     width: 276px;
-    z-index: 99;
+    z-index:-99;
 }
 .chatPanel .list .top {
     background-color: #0099cd;
@@ -745,7 +749,7 @@ a.btnSecondary:active {
     height: 47px;
     left: 12px;
     position: absolute;
-    top: 12px;
+    top: 11px;
     width: 45px;
     z-index: 101;
 }
@@ -756,7 +760,7 @@ a.btnSecondary:active {
     height: 46px;
     left: 13px;  
     position: absolute;
-    top: 13px;
+    top: 12px;
     width: 44px;
     z-index: 100;
 	border-radius:50% 50% 50% 50%;
@@ -813,7 +817,6 @@ a.btnSecondary:active {
 }
 .chatPanel .listContentWrap {
     background-color: #F5F5F5;
-    height: 452px;
     overflow-x: hidden;
     overflow-y: auto;
     width: 100%;
@@ -828,7 +831,8 @@ a.btnSecondary:active {
     width: 100%;
 }
 .chatPanel .listContent .viewport {
-    height: 498px;
+	background-color: #F00;
+    height: 418px;
     overflow: hidden;
     position: relative;
     width: 320px;
@@ -1027,11 +1031,12 @@ a.btnSecondary:active {
 .chatPanel .list .listBarContent {
     border-radius: 0 0 5px 5px;
     height: 5px;
-}
+} 
+
 .list .chatLeftPanelShadow {
-    border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 10px;
     border-bottom-right-radius: 5px;
-    bottom: -51px;
+    bottom: 0px;
     height: 46px;
     left: 50%;
     margin-left: -138px;
@@ -2431,12 +2436,13 @@ ul.faceTab a.chooseFaceTab {
     border-radius: 0 0 4px 4px;
     border-top: 1px solid #808384;
     color: #383E45;
-    height: 5px;
+    height: 0px;
     position: relative;
     text-align: left;
 }
 a.chatSend {
     background: -moz-linear-gradient(center top , #5E76A7 10%, #546B9C 50%, #495F8F 90%, #465C8C 100%) repeat scroll 0 0 #486CB4;
+	background:-webkit-linear-gradient(center top , #5E76A7 10%, white, blue, red) repeat scroll 0 0 ;
     border: 1px solid #29447E;
     border-radius: 2px 2px 2px 2px;
     box-shadow: 0 1px 3px #D9D9D9;
@@ -5028,13 +5034,14 @@ a.btnBlue:active .btnBluePanel {
 /* =============================================================================
    schoolemate	start
    ========================================================================== */
-.appGroup{
+.appGroup{	/*矩形圆角框*/
 	position:absolute;
 	border:2px solid rgb(0,153,205);
 	border-radius:15px;
 	height:44px;
 	width:44px;
-	padding:6px;
+	padding:4px;
+	line-height:13px;	
 }
 .popmenuFrame{
 	position: absolute;
@@ -5042,19 +5049,227 @@ a.btnBlue:active .btnBluePanel {
 	height:100%;
 	background: none repeat scroll 0% 0% transparent;
 }
-
+.popmenuFrame .div11{	/*北京同事*/
+	float:left; 
+	position: absolute; 
+	margin-left:110px; 
+	width:60px;
+	margin-top:-12px; 
+	opacity:0.2;
+}
+.popmenuFrame .div12{	/*海南老乡*/
+	float:left; 
+	position: absolute; 
+	margin-left:190px; 
+	width:60px; 
+	margin-top:-12px; 
+	opacity:0.2;
+}
 .sildLeftSharp {
-	//background: url("/static/images/sildLeft/sildLeftSharp.png") no-repeat scroll 0% 0% transparent;
+
 	height: 8px;
 	position: relative;
 	left: 45px;
-	top: -5px;
+	top: -6px;
 	float:left;
-}  
+}
+.popmenuFrame .sildPopContent .schoolmate_txt{
+	margin-left:34px; 
+	margin-top:3px; 
+	float:left; 
+	font-size:24px; 
+	font-family:微软雅黑; 
+	color:#008EBD;
+}
+.popmenuFrame .sildPopContent .schoolmate_icon1{
+	font-family:微软雅黑; 
+	color: #000;
+	top:107px; 
+	position:absolute; 
+	left:20px; 
+	font-size:12px;
+	letter-spacing:3px;
+}
+.popmenuFrame .sildPopContent .schoolmate_icon2{
+	font-family:微软雅黑; 
+	color: #000;
+	top:107px; 
+	position: absolute;
+	left:90px;
+	font-size:12px;
+	letter-spacing:3px;
+	opacity:0.2;
+}
+.popmenuFrame .sildPopContent .schoolmate_icon3{
+	font-family:微软雅黑; 
+	color: #000;
+	top:107px; 
+	position: absolute; 
+	left:145px; 
+	font-size:12px;
+	letter-spacing:3px;
+}
+.popmenuFrame .sildPopContent .schoolmate_icon4{
+	font-family:微软雅黑; 
+	color: #000;
+	top:107px; 
+	position: absolute; 
+	left:215px; 
+	font-size:12px;
+	letter-spacing:3px;
+}
+.popmenuFrame .sildPopContent .schoolmate_icon5{
+	font-family:微软雅黑; 
+	color: #000;
+	top:202px; 
+	position: absolute; 
+	left:18px; 
+	font-size:12px;
+	letter-spacing:3px;
+}
+.popmenuFrame .sildPopContent .schoolmate_icon6{
+	font-family:微软雅黑; 
+	color: #3EB0D3;
+	top:202px; 
+	position: absolute; 
+	left:79px; 
+	font-size:12px;
+	letter-spacing:2px;
+}
+.left_content  .schoolmate_icon7{	/*海南老乡*/
+	font-family:微软雅黑; 
+	color: # 000;
+	top:415px; 
+	position: absolute; 
+	left:35px; 
+	font-size:14px;
+	letter-spacing:1px;
+	opacity:0.2;
+}
+.left_content  .schoolmate_new{	/*新建*/
+	font-family:微软雅黑; 
+	color: #3EB0D3;
+	top:415px; 
+	position: 
+	absolute; 
+	left:125px; 
+	font-size:14px;
+	letter-spacing:2px;
+	opacity:0.2;
+}
+  
  .sildPopContent {
     border-top: 1px solid rgb(0, 153, 205);
     border-bottom: 1px solid rgb(0, 153, 205);
     background: none repeat scroll 0% 0% rgb(206, 234, 243);
-	margin-top:10px;
-	height:100px;
+	margin-top:8px;
+	height:245px;
 }  
+.sildPopContent .popappIcon img{/*圆角图像*/
+	height: 43px;
+	left: 18px;
+	position: absolute;
+	top:58px;
+	width: 43px;
+	border-radius: 50%;
+	float:left;
+	
+}
+.sildPopContent .popappIcon1{	/*白色圆圈*/
+	background-image:url(../images/border_myprofile_avatar17ced3.png) ;
+	height: 47px;
+	left: 17px;
+	position: absolute;
+	top: 55px;
+	width: 45px;
+	float:left;
+	cursor:pointer;
+}
+.sildPopContent .popappIcon2_2{	/*白色圆圈*/
+	background-image:url(../images/border_myprofile_avatar17ced3.png) ;
+	height: 47px;
+	left: 81px;
+	position: absolute;
+	top: 56px;
+	width: 45px;
+	float:left;
+	cursor:pointer;
+}
+.sildPopContent .popappIcon3_3{	/*白色圆圈*/
+	background-image:url(../images/border_myprofile_avatar17ced3.png) ;
+	height: 47px;
+	left: 145px;
+	position: absolute;
+	top: 57px;
+	width: 45px;
+	float:left;
+	cursor:pointer;
+}
+.sildPopContent .popappIcon4_4{	/*白色圆圈*/
+	background-image:url(../images/border_myprofile_avatar17ced3.png) ;
+	height: 47px;
+	left: 209px;
+	position: absolute;
+	top: 55px;
+	width: 45px;
+	float:left;
+	cursor:pointer;
+}
+.sildPopContent .popappIcon5_5{	/*白色圆圈*/
+	background-image:url(../images/border_myprofile_avatar17ced3.png) ;
+	height: 47px;
+	left: 18px;
+	position: absolute;
+	top: 150px;
+	width: 45px;
+	float:left;
+	cursor:pointer;
+}
+.chatScorll .chatContent #draggable{	/*可拖动的层*/
+	font-size:12px;
+	color:white;
+	width:100px;
+	height:100px;
+	position: absolute;
+	border-radius:10px 10px 10px 10px;
+	cursor:pointer;
+}
+.chatScorll .chatContent #draggable .number_person{	/*红心里的数字*/
+	color:#FFF; 
+	left:105px; 
+	top:24px; 
+	position:absolute; 
+	z-index:2; 
+	font-size:14px;	
+}
+.chatScorll .chatContent #draggable .blue_div1{	/*蓝色div*/
+	height:65px; 
+	width:70px; 
+	top:25px; 
+	left:28px; 
+	background-color:#008AB9; 
+	padding:5px; 
+	position: absolute;
+	border-radius:2px 2px 2px 2px; 
+	z-index:0;
+}
+.chatScorll .chatContent #draggable .blue_div2{	/*白色div*/
+	background-color:#FFF; 
+	position: relative; 
+	width:50px; 
+	height:44px; 
+	margin-left:10px; 
+	margin-top:11px;
+	border-radius:2px 2px 2px 2px;
+}
+.chatScorll .chatContent #draggable .img_phone{ /*手机图片*/
+	position: absolute; 
+	left:2px;
+	top:2px;
+}
+.chatScorll .chatContent #draggable .img_number{ /*红心图片*/
+	position: absolute; 
+	left:92px;
+	top:16px; 
+	z-index:1;
+}

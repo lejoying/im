@@ -40,39 +40,7 @@ window.onload = function(){
     $(".listContentWrap").height(document.body.clientHeight-245);
     $(".chatContainer").height(document.body.clientHeight-245+120);
     $(".chatScorll").height(document.body.clientHeight-245-40-60+120);
-}
-window.onresize = function(){
-    $(".listContentWrap").height(document.body.clientHeight-245);
-    $(".chatContainer").height(document.body.clientHeight-245+120);
-    $(".chatScorll").height(document.body.clientHeight-245-40-60+120);
-    $("#vernierContainer").height(document.body.clientHeight-245-40-60+120);
-}
-//��ӵ���հ״��رյ������¼�
-function addEvent(obj,eventType,func){
-    if(obj.attachEvent){obj.attachEvent("on" + eventType,func);}
-    else{obj.addEventListener(eventType,func,false)}
-}
-function clickother(el){
-    thisObj = el.target?el.target:event.srcElement;
-    if(thisObj.tagName == "BODY"){
-        document.getElementById("operaterBox").style.display = "none";
-        return;
-    }
-    if(thisObj.id == "operaterBox "||thisObj.id == "iconOperater"||(thisObj.parentNode).parentNode.parentNode.id=="operaterBox "){
-        return;
-    }
-    do{
-        if(thisObj.tagName == "BODY"){
-            if(document.getElementById("operaterBox")){
-                document.getElementById("operaterBox").style.display = "none";
-                return;
-            }
-        };
-        thisObj = thisObj.parentNode;
-    }while(thisObj.parentNode);
-}
-$(document).ready(function(){
-    var doc=document;
+	    var doc=document;
     var _wheelData=-1;
     var mainBox=doc.getElementById('mainBox');
     function bind(obj,type,handler){
@@ -152,9 +120,15 @@ $(document).ready(function(){
             //contentBox.style.width=(mainBox.offsetWidth-_scrollWidth)+"px";
             var _scrollHeight=parseInt(_height*(_height/conHeight));
             if(_scrollHeight>=mainBox.clientHeight){
-                element.parentNode.style.display="none";
+                //element.parentNode.style.display="none";
             }
-            element.style.height=_scrollHeight+"px";
+			var countNum = 0;
+			if (mainBox.clientHeight / contentBox.clientHeight >1){
+				countNum =0.9;
+			} else {
+				countNum = mainBox.clientHeight / contentBox.clientHeight;
+			}
+            element.style.height= (mainBox.clientHeight) *countNum + "px";
         },
         //拖动滚动条
         _tragScroll:function(element,mainBox,contentBox){
@@ -247,4 +221,37 @@ $(document).ready(function(){
     }
     new addScroll('mainBox','conversationListContent','scrollDiv');
     new addScroll('chatFrame','chat_chatmsglist','scrollDiv');
+}
+window.onresize = function(){
+    $(".listContentWrap").height(document.body.clientHeight-245);
+    $(".chatContainer").height(document.body.clientHeight-245+120);
+    $(".chatScorll").height(document.body.clientHeight-245-40-60+120);
+    $("#vernierContainer").height(document.body.clientHeight-245-40-60+120);
+}
+//��ӵ���հ״��رյ������¼�
+function addEvent(obj,eventType,func){
+    if(obj.attachEvent){obj.attachEvent("on" + eventType,func);}
+    else{obj.addEventListener(eventType,func,false)}
+}
+function clickother(el){
+    thisObj = el.target?el.target:event.srcElement;
+    if(thisObj.tagName == "BODY"){
+        document.getElementById("operaterBox").style.display = "none";
+        return;
+    }
+    if(thisObj.id == "operaterBox "||thisObj.id == "iconOperater"||(thisObj.parentNode).parentNode.parentNode.id=="operaterBox "){
+        return;
+    }
+    do{
+        if(thisObj.tagName == "BODY"){
+            if(document.getElementById("operaterBox")){
+                document.getElementById("operaterBox").style.display = "none";
+                return;
+            }
+        };
+        thisObj = thisObj.parentNode;
+    }while(thisObj.parentNode);
+}
+$(document).ready(function(){
+
 });
