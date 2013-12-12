@@ -22,11 +22,9 @@ import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
 import com.lejoying.mc.service.MainService;
-import com.lejoying.mc.service.handler.DataHandler.NotifyListener;
 import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 import com.lejoying.mc.utils.MCDataTools;
-import com.lejoying.mc.utils.MCStaticData;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.BackgroundView;
 
@@ -38,6 +36,8 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	private CircleMenuFragment mCircle;
 
 	private int mContentId;
+	private int mTopId;
+	private int mBottomId;
 
 	private View mLoadingView;
 	private View mCircleMenuView;
@@ -52,12 +52,10 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	private Map<String, NetworkStatusListener> mReceiverListreners;
 	private Map<String, Integer> mNetworkPermission;
 	private RemainListener mRemainListener;
-	private NotifyListener mNotifyListener;
 	private OnKeyDownListener mKeyDownListener;
 
 	private NetworkRemainReceiver mNetworkRemainReceiver;
 	private NetworkReceiver mNetworkReceiver;
-	private NotifyReceiver mNotifyReceiver;
 
 	private InputMethodManager mInputMethodManager;
 
@@ -84,12 +82,9 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		networkRemainFilter.addAction(MainService.ACTION_REMAIN);
 		registerReceiver(mNetworkRemainReceiver, networkRemainFilter);
 
-		mNotifyReceiver = new NotifyReceiver();
-		IntentFilter notifyFilter = new IntentFilter();
-		notifyFilter.addAction(MainService.ACTION_NOTIFY);
-		registerReceiver(mNotifyReceiver, notifyFilter);
-
 		mContentId = R.id.fl_content;
+		mTopId = R.id.fl_top;
+		mBottomId = R.id.fl_bottom;
 
 	}
 
@@ -145,7 +140,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		super.onDestroy();
 		unregisterReceiver(mNetworkReceiver);
 		unregisterReceiver(mNetworkRemainReceiver);
-		unregisterReceiver(mNotifyReceiver);
 		mReceiverListreners = null;
 		mNetworkPermission = null;
 		MCDataTools.cleanAllData(this, false);
@@ -256,10 +250,36 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	@Override
 	public int relpaceToContent(Fragment fragment, boolean toBackStack) {
+		return relpaceContentFragment(fragment, toBackStack);
+	}
+
+	public int relpaceContentFragment(Fragment fragment, boolean toBackStack) {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		transaction.setCustomAnimations(R.anim.activity_in,
 				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
 		transaction.replace(mContentId, fragment);
+		if (toBackStack) {
+			transaction.addToBackStack(null);
+		}
+		return transaction.commit();
+	}
+
+	public int relpaceTopFragment(Fragment fragment, boolean toBackStack) {
+		FragmentTransaction transaction = mFragmentManager.beginTransaction();
+		transaction.setCustomAnimations(R.anim.activity_in,
+				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
+		transaction.replace(mTopId, fragment);
+		if (toBackStack) {
+			transaction.addToBackStack(null);
+		}
+		return transaction.commit();
+	}
+
+	public int relpaceBottomFragment(Fragment fragment, boolean toBackStack) {
+		FragmentTransaction transaction = mFragmentManager.beginTransaction();
+		transaction.setCustomAnimations(R.anim.activity_in,
+				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
+		transaction.replace(mBottomId, fragment);
 		if (toBackStack) {
 			transaction.addToBackStack(null);
 		}
@@ -290,11 +310,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	@Override
 	public void setNetworkRemainListener(RemainListener listener) {
 		mRemainListener = listener;
-	}
-
-	@Override
-	public void setNotifyListener(NotifyListener listener) {
-		mNotifyListener = listener;
 	}
 
 	protected void startNetwork(String api, Bundle params, boolean showLoading,
@@ -370,17 +385,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 				}
 			}
 		}
-	}
-
-	public class NotifyReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (mNotifyListener != null) {
-				mNotifyListener.notifyChanged();
-			}
-		}
-
 	}
 
 	private void startLoading(String api) {
