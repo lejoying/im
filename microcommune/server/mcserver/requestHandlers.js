@@ -6,11 +6,6 @@ var serverSetting = root.globaldata.serverSetting;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var RSA = require('../alipayserver/tools/RSA');
-RSA.setMaxDigits(38);
-var pvkeyStr0 = RSA.RSAKeyStr("10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d4f67fffeac404c1",
-    "10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d4f67fffeac404c1",
-    "3e4ee7b8455ad00c3014e82057cbbe0bd7365f1fa858750830f01ca7e456b659");
-var pvkey0 = RSA.RSAKey(pvkeyStr0);
 
 var session = require('./handlers/session.js');
 requestHandlers.session = function (request, response, pathObject, data) {
@@ -65,7 +60,7 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     }
     else if (operation == "exit") {
         oauth6(data.phone, data.accessKey, response, function () {
-            accountManage.exit(data, response);
+            accountManage.exit(data, response,delOauthAccessKey);
         });
     }
     else if (operation == "oauth6") {
@@ -226,6 +221,21 @@ function setOauthAccessKey(phone, accessKey, next) {
         } else {
             next(true);
             return;
+        }
+    });
+}
+function delOauthAccessKey(phone, accessKey, next){
+    client.lrem(phone + "_accessKey", 0, accessKey, function (err, reply) {
+        if (err != null) {
+            next();
+            console.log(err);
+            return;
+        } else {
+            if (reply == 0) {
+                next(false);
+            } else {
+                next(true);
+            }
         }
     });
 }

@@ -6,16 +6,12 @@ import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.entity.Circle;
-import com.lejoying.mc.service.handler.DataHandler.NotifyListener;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCStaticData;
 
@@ -47,25 +43,8 @@ public class FriendsFragment extends BaseListFragment {
 		super.onActivityCreated(savedInstanceState);
 		setListAdapter(mFriendsAdapter);
 
-		//loadView();
+		// loadView();
 
-		mMCFragmentManager.setNotifyListener(new NotifyListener() {
-			@Override
-			public void notifyChanged() {
-				mFriendsAdapter.notifyDataSetChanged();
-				MCStaticData.circlesViewList.get(0).setOnClickListener(
-						new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								Animation animation = new TranslateAnimation(0,
-										0, 0, 1500);
-								animation.setDuration(3000);
-								v.startAnimation(animation);
-							}
-						});
-			}
-		});
 	}
 
 	class FriendsAdapter extends BaseAdapter {

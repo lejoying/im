@@ -17,6 +17,9 @@ requestHandlers.imagesManage = function (request, response, pathObject, data) {
     else if (operation == "get") {
         imagesManage.get(data, response);
     }
+    else if (operation == "show") {
+        imagesManage.show(data, response);
+    }
 };
 
 module.exports = requestHandlers;

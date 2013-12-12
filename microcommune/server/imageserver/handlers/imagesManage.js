@@ -153,4 +153,22 @@ imagesManage.get = function (data, response) {
         }
     });
 }
+imagesManage.show = function (data, response) {
+    response.asynchronous = 1;
+    console.log("request handler 'show' was called");
+    fs.readFile(serverSetting.imageFolder + data.filename + ".png", "binary", function (error, file) {
+        if (error) {
+            console.log(error + "\n");
+            response.write(JSON.stringify({
+                "提示信息": "获取图片失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+        } else {
+            response.writeHead(200, {"Content-Type": "image/png"});
+            response.write(file, "binary");
+            response.end();
+        }
+    });
+}
 module.exports = imagesManage;
