@@ -91,7 +91,6 @@ $(document).ready(function () {
         }
     });
     request();
-
     $(document).on('click', ".groupTitle", function () {
         $(".js_circlesFriends .friendDetail").slideDown(1000);
     });
@@ -405,10 +404,10 @@ $(document).ready(function () {
                                 window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChat));
                                 addTempChatAccount(accountObj);
                             } else {
-                                addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
+                                addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid);
                             }
                         } else {
-                            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid)
+                            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid);
                         }
                     } else {
                         dialogMessage("notice", data["提示信息"] + "," + data["失败原因"], 1000);
@@ -432,6 +431,7 @@ $(document).ready(function () {
         $("#js_chat .chatName").html(this.getAttribute("accountnickName"));
         $("#js_chat .chatName").attr("accountphone", this.getAttribute("accountphone"));
         $("#js_chat .chatName").attr("circleid", this.getAttribute("circleid"));
+        window.sessionStorage.setItem("flagphone",this.getAttribute("accountphone"));
     });
     $(".loadMoreConv").click(function () {
         //alert("正在努力加载更多的数据...");
@@ -484,6 +484,7 @@ function addTempChatAccount(obj) {
     $(div).attr("id", "conv_wxid_" + obj.uid);
     $(div).attr("username", "wxid_t2fqz99bmakt21");
     $(div).attr("phone", obj.phone);
+    window.sessionStorage.setItem("addphone",obj.phone);
     $(div).attr("un", "wxid_t2fqz99bmakt21");
     div.innerHTML=chatListColumn.render(obj);
     $("#conversationContainer")[0].insertBefore(div, $("#conversationContainer")[0].firstChild);
@@ -978,6 +979,7 @@ function get(){
                        TempChatMessage(phone,messages);
                        Tempcheck(phone);
                         //判读会话窗口是否打开
+                        var flagphone= window.sessionStorage.getItem("flagphone");
                         alert(flagphone+" flagphone收到消息是判读");
                         if(phone==flagphone){
                             alert("判读是否打开会话窗口");
@@ -1018,17 +1020,17 @@ function get(){
 var tempchatMessage=[];
 function TempChatMessage(phoneto,messages){
     alert("调用TempChatMessage方法");
-    alert(tempchatMessage["phoneto"]);
-    if(tempchatMessage["phoneto"]==undefined){
+    alert(tempchatMessage[phoneto]+"  调用刚进来的传过来的phoneto是否存在");
+    if(tempchatMessage[phoneto]==undefined){
         alert("phoneto不存在");
        var arr=[];
         arr.push(messages);
-        tempchatMessage["phoneto"]=arr;
-        alert(tempchatMessage["phoneto"]);
+        tempchatMessage[phoneto]=arr;
+        alert(tempchatMessage[phoneto]+"  phoneto不存在");
     }else{
         alert("phoneto存在");
-        tempchatMessage["phoneto"].push(messages);
-        alert(tempchatMessage["phoneto"]);
+        tempchatMessage[phoneto].push(messages);
+        alert(tempchatMessage[phoneto]+"   phoneto存在");
     }
 }
 function Tempcheck (phoneto){
@@ -1058,7 +1060,10 @@ function Tempcheck (phoneto){
         addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, undefined);
     }
 }
-function clickTempChat(){
+$(document).on('click', ".chatListColumn", function () {
+   var phone=window.sessionStorage.getItem("addphone");
+    alert(phone+"  click标题");
+    alert(JSON.parse(tempchatMessage[phone]).phone+"  测试点击click弹出的tempchatMessage存储的phoneto");
     var tempChatMessage=getTemplate("tempChatMessage");
-    $("#chat_chatmsglist").html(tempChatMessage.render(tempchatMessage["phoneto"]));
-}
+    $("#chat_chatmsglist").html(tempChatMessage.render(JSON.parse(tempchatMessage[phone])));
+});
