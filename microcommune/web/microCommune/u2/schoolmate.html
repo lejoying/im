@@ -1,0 +1,539 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="ie6 oldie"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html>
+<!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>u2</title>
+<link href="static/css/boilerplate.css" rel="stylesheet" type="text/css">
+<link href="static/css/index.css" rel="stylesheet" type="text/css">
+<link href="static/css/web_style.css" rel="stylesheet" type="text/css">
+<!-- 
+要详细了解文件顶部 html 标签周围的条件注释:
+paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
+
+如果您使用的是 modernizr (http://www.modernizr.com/) 的自定义内部版本，请执行以下操作:
+* 在此处将链接插入 js 
+* 将下方链接移至 html5shiv
+* 将"no-js"类添加到顶部的 html 标签
+* 如果 modernizr 内部版本中包含 MQ Polyfill，您也可以将链接移至 respond.min.js 
+-->
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="../static/js/respond.min.js"></script>
+<script src="static/js/jquery.js"></script>
+<script src="static/js/jscroll.js"></script>
+<script src="static/js/message.js"></script>
+<style type="text/css">
+#username{ font-family:微软雅黑;font-size:16px}
+</style>
+<script type="text/javascript">
+var rDrag = {
+	
+	o:null,
+	
+	init:function(o){
+		o.onmousedown = this.start;
+	},
+	start:function(e){
+		var o;
+		e = rDrag.fixEvent(e);
+               e.preventDefault && e.preventDefault();
+               rDrag.o = o = this;
+		o.x = e.clientX - rDrag.o.offsetLeft;
+                o.y = e.clientY - rDrag.o.offsetTop;
+		document.onmousemove = rDrag.move;
+		document.onmouseup = rDrag.end;
+	},
+	move:function(e){
+		e = rDrag.fixEvent(e);
+		var oLeft,oTop;
+		oLeft = e.clientX - rDrag.o.x;
+		oTop = e.clientY - rDrag.o.y;
+		rDrag.o.style.left = oLeft + 'px';
+		rDrag.o.style.top = oTop + 'px';
+	},
+	end:function(e){
+		e = rDrag.fixEvent(e);
+		rDrag.o = document.onmousemove = document.onmouseup = null;
+	},
+    fixEvent: function(e){
+        if (!e) {
+            e = window.event;
+            e.target = e.srcElement;
+            e.layerX = e.offsetX;
+            e.layerY = e.offsetY;
+        }
+        return e;
+    }
+}
+window.onload = function(){
+        var obj = document.getElementById('draggable');
+	rDrag.init(obj);
+}
+</script>
+</head>
+<body>
+<div style="" id="container">
+  <div class="chatPanel normalPanel" id="chat" ctrl="1">
+    <div class="panelBackground"> <img src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif">
+      <p>欢迎来到</p>
+      <p>微型公社网页版</p>
+    </div>
+    <div class="content">
+      <div class="list" id="chat_leftpanel" ctrl="1">
+        <div class="top">
+          <div class="title" id="profile">
+            <div class="myProfile"> <img un="avatar_wxid_7832428324312" src="static/images/webwxgeticon4.jpg">
+              <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar"></div>
+              <a style="display:none;" href="javascript:;" id="unreadTotalCount" class="unreadTotalCount">0</a>
+              <div class="info"> <span class="nickName" id="username" >麦穗儿香</span> </div>
+              <div id="operaterBox" style="display:none;" class="operaterBox js_operaterBox">
+                <div class="operaterBoxPanel"> <a click="createChatroom" class="addFriends" href="javascript:;"> <span class="iconPic left"></span> <span class="operaterBoxTitle left">发起聊天</span>
+                  <div class="clr"></div>
+                  </a> <a click="toggleMute" class="voiceCancel" href="javascript:;"> <span class="iconPic  left"></span> <span class="operaterBoxTitle left">关闭声音</span>
+                  <div class="clr"></div>
+                  </a> <a click="feedback" class="feedback" href="javascript:;"> <span class="iconPic iconFeedback left"></span> <span class="operaterBoxTitle left">意见反馈</span>
+                  <div class="clr"></div>
+                  </a> <a click="logout" url="/cgi-bin/mmwebwx-bin/webwxlogout" class="iconLogout" href="javascript:;"> <span class="iconPic iconPicLogout left"></span> <span class="operaterBoxTitle left">退出</span>
+                  <div class="clr"></div>
+                  </a> </div>
+              </div>
+              <a id="iconOperater" class="iconOperater js_iconOperater" href="javascript:;"></a> </div>
+            <div class="clr"></div>
+          </div>
+        </div>
+        <!--search-->
+        <div class="chatListSearch">
+          <div class="chatListSearchPanel">
+            <div class="listOperatorContent">
+             <div id="chooseConversationBtn" un="conversation" click="switchPanel" class="conmu left active" style="width: 62px;"><a title="聊天" href="javascript:;" class="conmuButton"><img src="static/images/friend.png" style=" margin-top:7px; height:25px;"/><span style="display:none;" class="unreadDot" id="totalUnreadDot">0</span></a></div>
+              <div class="cutOffRule"></div>
+              <div id="chooseConversationBtn" un="conversation" click="switchPanel" class="conmu left active" style="width: 62px;"><a title="好友" href="javascript:;" class="conmuButton"><img src="static/images/friend.png" style=" margin-top:7px;height:25px;"/><span style="display:none;" class="unreadDot" id="totalUnreadDot">0</span></a></div>
+              <div class="cutOffRule"></div>
+              <div un="contact" id="txl" click="switchPanel" class="addr notChooseOpera right"style="width: 62px;float: left;"><a title="密友圈" href="javascript:;" class="addrButton "><img src="static/images/friend3.png" style=" margin-top:7px;"/></a></div>
+                <div class="cutOffRule"></div>
+                <a title="应用" href="javascript:;" class="js_appButton"><div un="publicapp" id="js_publicapp" class="publicapp notChooseOpera right" style="width: 62px;float: left;"><span class="js_appbag"><img src="/static/images/appico.png" style="width: 25px;height: 25px;margin-top: 7px;"/></span></div></a>
+            </div>
+         
+
+          </div> 
+        </div>
+        <!--search end-->
+        <div style="position: relative; overflow-y: hidden; height: 470px;" class="listContentWrap">       
+           <div id="mainBox" style="height: 100%; width: 100%; overflow-y: hidden; position: relative;">           
+            <div style="width: 100%; top: 0px; position: absolute;" id="conversationListContent" class="listContent" ctrl="1">
+              <div id="conversationContainer" style="display: block;">
+
+              <div id="conv_wxid_user1" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21" onClick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
+                  <div style="display:none;" class="clicked"></div>
+                  <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                  <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/face.jpg" class="avatar"></div>
+                  <div class="extend">
+                      <p class="time"></p>
+                      <div class="edited"><i class="editedIcon"></i></div>
+                      <div style="display:none;" class="mute"></div>
+                  </div>
+                  <div class="info">
+                      <div class="nickName">
+                          <div style="" class="left name">user1</div>
+                          <div class="clr"></div>
+                      </div>
+                      <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                          <p class="desc"></p>
+                      </div>
+                  </div>
+                  <div class="clr"></div>
+              </div>
+
+
+                <div id="conv_as117064513" username="as117064513" un="as117064513" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                  <div style="display:none;" class="clicked"></div>
+                  <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                  <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon.jpg" class="avatar"></div>
+                  <div class="extend">
+                    <p class="time"></p>
+                    <div class="edited"><i class="editedIcon"></i></div>
+                    <div style="display:none;" class="mute"></div>
+                  </div>
+                  <div class="info">
+                    <div class="nickName">
+                      <div style="" class="left name"> ิ̶昧   بسيط°</div>
+                      <div class="clr"></div>
+                    </div>
+                    <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="static/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="static/images/spacer17ced3.gif" style="display: none;">
+                      <p class="desc"></p>
+                    </div>
+                  </div>
+                  <div class="clr"></div>
+                </div>
+                <div id="conv_wxid_edcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                  <div style="display:none;" class="clicked"></div>
+                  <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                  <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon2.jpg" class="avatar"></div>
+                  <div class="extend">
+                    <p class="time"></p>
+                    <div class="edited"><i class="editedIcon"></i></div>
+                    <div style="display:none;" class="mute"></div>
+                  </div>
+                  <div class="info">
+                    <div class="nickName">
+                      <div style="" class="left name">璇子</div>
+                      <div class="clr"></div>
+                    </div>
+                    <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                      <p class="desc"></p>
+                    </div>
+                  </div>
+                  <div class="clr"></div>
+                </div>
+                <div id="conv_wxid_h6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                  <div style="display:none;" class="clicked"></div>
+                  <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                  <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon1.jpg" class="avatar"></div>
+                  <div class="extend">
+                    <p class="time"></p>
+                    <div class="edited"><i class="editedIcon"></i></div>
+                    <div style="display:none;" class="mute"></div>
+                  </div>
+                  <div class="info">
+                    <div class="nickName">
+                      <div style="" class="left name">阳光静好</div>
+                      <div class="clr"></div>
+                    </div>
+                    <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                      <p class="desc"></p>
+                    </div>
+                  </div>
+                  <div class="clr"></div>
+                </div>
+                <div id="conv_kevinTong" username="kevin-Tong" un="kevin-Tong" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                  <div style="display:none;" class="clicked"></div>
+                  <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                  <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg" class="avatar"></div>
+                  <div class="extend">
+                    <p class="time"></p>
+                    <div class="edited"><i class="editedIcon"></i></div>
+                    <div style="display:none;" class="mute"></div>
+                  </div>
+                  <div class="info">
+                    <div class="nickName">
+                      <div style="" class="left name">老头</div>
+                      <div class="clr"></div>
+                    </div>
+                    <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                      <p class="desc"></p>
+                    </div>
+                  </div>
+                  <div class="clr"></div>
+                </div>
+                <div id="conv_as117064d513" username="as117064513" un="as117064513" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                      <div style="display:none;" class="clicked"></div>
+                      <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                      <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon.jpg" class="avatar"></div>
+                      <div class="extend">
+                          <p class="time"></p>
+                          <div class="edited"><i class="editedIcon"></i></div>
+                          <div style="display:none;" class="mute"></div>
+                      </div>
+                      <div class="info">
+                          <div class="nickName">
+                              <div style="" class="left name"> ิ̶昧   بسيط°</div>
+                              <div class="clr"></div>
+                          </div>
+                          <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="static/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="static/images/spacer17ced3.gif" style="display: none;">
+                              <p class="desc"></p>
+                          </div>
+                      </div>
+                      <div class="clr"></div>
+                  </div>
+                <div id="conv_wxid_eddcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                      <div style="display:none;" class="clicked"></div>
+                      <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                      <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon2.jpg" class="avatar"></div>
+                      <div class="extend">
+                          <p class="time"></p>
+                          <div class="edited"><i class="editedIcon"></i></div>
+                          <div style="display:none;" class="mute"></div>
+                      </div>
+                      <div class="info">
+                          <div class="nickName">
+                              <div style="" class="left name">璇子</div>
+                              <div class="clr"></div>
+                          </div>
+                          <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                              <p class="desc"></p>
+                          </div>
+                      </div>
+                      <div class="clr"></div>
+                  </div>
+                <div id="conv_wxid_hd6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                      <div style="display:none;" class="clicked"></div>
+                      <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                      <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon1.jpg" class="avatar"></div>
+                      <div class="extend">
+                          <p class="time"></p>
+                          <div class="edited"><i class="editedIcon"></i></div>
+                          <div style="display:none;" class="mute"></div>
+                      </div>
+                      <div class="info">
+                          <div class="nickName">
+                              <div style="" class="left name">阳光静好</div>
+                              <div class="clr"></div>
+                          </div>
+                          <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                              <p class="desc"></p>
+                          </div>
+                      </div>
+                      <div class="clr"></div>
+                  </div>
+                <div id="conv_kevidnTong" username="kevin-Tong" un="kevin-Tong" onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+                      <div style="display:none;" class="clicked"></div>
+                      <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                      <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg" class="avatar"></div>
+                      <div class="extend">
+                          <p class="time"></p>
+                          <div class="edited"><i class="editedIcon"></i></div>
+                          <div style="display:none;" class="mute"></div>
+                      </div>
+                      <div class="info">
+                          <div class="nickName">
+                              <div style="" class="left name">老头</div>
+                              <div class="clr"></div>
+                          </div>
+                          <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                              <p class="desc"></p>
+                          </div>
+                      </div>
+                      <div class="clr"></div>
+                  </div>
+                <div click="loadMoreConv" id="conv_load_more"> <a href="javascript:;" class="chatListColumn loadMoreConv"> <span class="tipPic"></span> <span class="desc">点击显示更多</span> </a> </div>
+                
+       
+              </div>
+              
+            
+				<!-------------密友圈------------------------------------->
+                <div class="js_circlesFriends" style=" display: none;" >
+					 <div class="left_content" style="position:relative; background-color:#FFF;  height:100%; ">
+             	<div class="appGroup" style="left: 34px; top: 20px; cursor:pointer; ">        
+                    <span>
+                        <img src="static/images/sundasheng.png" style="width:16px; height:16px; margin-top:5px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/>
+                    </span>
+                                       
+                    <span>
+                        <img src="static/images/sundasheng.png" style="width:16px; height:16px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/>
+                    </span>              
+                </div>
+				
+                <div class="appGroup" style="left: 113px; top: 20px;opacity:0.2; cursor:pointer;">                
+                    <span>
+                        <img src="static/images/sundasheng.png" style="width:16px; height:16px; margin-top:5px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/>
+                    </span> 
+                                     
+                    <span>
+                        <img src="static/images/sundasheng.png" style="width:16px; height:16px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/>
+                    </span>
+                </div>
+                
+                <div class="appGroup" style="left: 191px; top: 20px;opacity:0.2; cursor:pointer;">
+                
+                    <span>
+                    <img src="static/images/sundasheng.png" style="width:16px; height:16px; margin-top:5px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/>
+                    </span>  
+                                     
+                    <span>
+                    <img src="static/images/sundasheng.png" style="width:16px; height:16px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/>
+                    </span>
+                </div>
+                
+                <div class="popmenuFrame" style="left: 0px; top: 90px;">                
+                    <div class="sildLeftSharp">
+                    	<img src="static/images/sildLeftSharp.png"/>
+                    </div>
+                    <div class="div11">
+                    北京同事
+                    </div>
+                    <div class="div12">
+                    海南老乡
+                    </div>
+                    <div class="sildPopContent">
+                        <div class="schoolmate_txt">同学</div>
+                        
+                        <div class="popappIcon">
+                        	<img src="static/images/webwxgeticon2.jpg"/>
+                            <div class="popappIcon1"></div>
+                        </div>
+                        <div class="schoolmate_icon1">孙大圣</div>
+						
+                        <div class="popappIcon2">
+                        	<img src="static/images/webwxgeticon3.jpg" style="left:81px; margin-top:50px;border-radius: 50%;height: 44px;width: 43px;float:left;"/>
+                            <div class="popappIcon2_2"></div>
+                        </div>
+                        <div class="schoolmate_icon2">白蛇</div>
+                        
+                        <div class="popappIcon3">
+                        	<img  src="static/images/face.jpg" style=" margin-left:21px; margin-top:50px;border-radius: 50%;height:44px;width: 43px;float:left;"/>
+                            <div class="popappIcon3_3"></div>
+                        </div>
+                        <div class="schoolmate_icon3">机器猫</div>
+                        
+                        <div class="popappIcon4">
+                        	<img  src="static/images/webwxgeticon1.jpg" style=" margin-left:20px; margin-top:49px;border-radius: 50%;height:44px;width: 43px;float:left;"/>
+                            <div class="popappIcon4_4"></div>
+                        </div>
+                        <div class="schoolmate_icon4">萨芬</div>
+                        
+               			<div class="popappIcon5">
+                        	<img  src="static/images/face.jpg" style=" position:absolute;left:18px; margin-top:143px;border-radius: 50%;height:44px;width: 43px;float:left;"/>
+                            <div class="popappIcon5_5"></div>
+                        </div> 
+                        <div class="schoolmate_icon5">机器猫</div>
+                        
+                        <div class="popappIcon6">
+                        	<img  src="static/images/addfrieng.png" style=" position: relative;left:-109px; margin-top:50px;border-radius: 50%;height: 44px;width: 43px;float:left;cursor:pointer;"/>                            
+                        </div>
+                        <div class="schoolmate_icon6">添加好友</div>
+                                
+                    </div>
+                                                            
+              </div>
+              
+             
+              <div class="appGroup" style="left: 34px; top: 360px;opacity:1; cursor:pointer;">
+                  <span><img src="static/images/sundasheng.png" style="width:16px; height:16px; margin-top:5px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/></span>                  
+                  <span><img src="static/images/sundasheng.png" style="width:16px; height:16px;"/><img src="static/images/safen.png" style="width:16px; height:16px;"/></span>               
+              </div>
+              	
+            
+                     
+              <div class="popappIcon7">
+                        	<img  src="static/images/new_create_icon.png" style=" position: absolute;left:119px; top:360px;height: 44px;width: 43px;float:left;opacity:0.2; cursor:pointer;"/>                            
+              </div>
+              
+              <div class="schoolmate_icon7">海南老乡</div>
+              
+              <div class="schoolmate_new">新建</div>
+              
+         
+              
+ </div>                
+                
+                </div>
+				<!-------------密友圈------------------------------------->
+                 
+                
+           </div>
+           
+         <div style="position: relative;  z-index:4444; bottom:-92%; ">
+                 <img src="static/images/del_icon.png" style="position:absolute;cursor:pointer;left:0px; height:50px; width:140px;top:0px;"/><img src="static/images/black_icon.png" style=" left:143px;position:absolute; width:133px; height:50px;top:0px;cursor:pointer;"/>
+           </div>
+         
+           
+         </div>
+        
+        </div>
+       		<!--	<div class="chatLeftPanelShadow"></div>
+       			<div class="listOperator">
+					<div class="listBarContent"></div>
+				</div>
+       
+    			-->
+      	  
+
+      </div>
+      
+      <!--conmunication and chat-->
+      <div style="width: 32px; position: relative; float: left; overflow: hidden; margin-top: 135px; visibility: visible;" id="vernierContainer">
+        <div class="activeChatVernier" ><img src="static/images/spacer17ced3.gif"></div>
+      </div>
+      <div style="visibility: ;" class="chat lightBorder">
+        <div class="chatContainer" style="height:480px;">
+          <div id="chatMainPanel" class="chatMainPanel">
+            <div class="chatTitle">
+                <div class="organization">
+                    <p>联谊会</p>
+                    <p id="peonumber" style="font-family:微软雅黑;font-size:12px	">(15人)</p>
+                </div>
+                <div class="iconleft" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/left.png"></a>
+                </div>
+ 				<div class="member" >
+                	 <a id="iconOperater" class="username" href="javascript:;"><img src="static/images/safen.png" class="iconname"> </a>
+                    <div class="name" > 萨芬</div>
+                </div>
+				
+                <div class="member" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/sundasheng.png" class="iconname"> </a>
+                    <div class="name" >孙大圣</div>   
+                </div>
+                
+                <div class="member" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/yaoqing.png" > </a>
+                    <div class="name">邀请</div>
+                </div>
+                <div class="iconright" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/right.png" > </a>
+                </div>
+                <div class="more" >
+                	<a id="iconOperater" class="username" href="javascript:;"><img src="static/images/more.png" class="iconmore"> </a>
+                </div>
+            </div>
+            
+            
+            <div id="chatFrame" class="chatScorll" style=" overflow-y: hidden; position: relative;">		                    
+              <div class="chatContent" id="chat_chatmsglist" ctrl="1" style="top: 0px; position: absolute;">
+                <!--<div class="noMsgIip" id="noMsgTip">-->
+                  <!--<div class="noMsgTipPic"></div>-->
+                  <!--<p>暂时没有新消息</p>-->
+                <!--</div>-->
+               
+						 <div id="draggable">
+                                 <img  class="img_phone" src="static/images/phone.png"/>  
+                                 <img   class="img_number" src="static/images/number_icon.png"/>
+                                 <span class="number_person">6</span>
+                            <div class="blue_div1"> 
+                                <div class="blue_div2">
+                                    <span style=" position:relative; color:#008AB9; top:5px;">联谊会</span>
+                                    <span style=" position:relative;color:#008AB9; top:3px;">(15)人</span>
+                                </div>
+                            </div>
+                         </div>
+              </div>
+
+            </div>
+            <div class="chatOperator lightBorder" id="chat_editor" ctrl="1">
+              <div class="inputArea">
+                <div class="attach"> <a title="选择表情" click="showEmojiPanel" class="func expression" id="sendEmojiIcon" href="javascript:;"></a> <a style="" title="发送截屏" click="screenSnap" class="func screensnap" id="screenSnapIcon" href="javascript:;"></a>
+                  <form style="" target="actionFrame" method="post" enctype="multipart/form-data" url="http://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?cgi=sendfile&amp;t=chat&amp;callbackfun=sendFile" id="sendFileIcon" class="left">
+                    <input type="hidden" value="{BaseRequest:{}}" name="uploadmediarequest">
+                    <a id="uploadFileContainer" title="文件图片" style="position:relative;display:block;margin:0;" class="func file" href="javascript:;">
+                    <div style="position: absolute;top:0;left:0; width: 100%; height: 100%;overflow:hidden;filter:alpha(opacity=0);opacity:0;cursor:pointer;">
+                      <div>
+                        <input type="file" style="width:100%;height:100%;margin:0;cursor:pointer;font-size:100px;" name="filename" change="sendAppMsg@form">
+                      </div>
+                    </div>
+                    </a>
+                  </form>
+                </div>
+                <textarea class="chatInput lightBorder" id="textInput" type="text" style=""></textarea>
+                <a click="sendMsg@.inputArea" class="chatSend" href="javascript:;"><b>发送</b></a>
+                <div style="display:none;" class="recordInput chatInput" id="recordInput"></div>
+                <div class="clr"></div>
+                <textarea class="chatInput lightBorder" id="textInput" type="text" style="visibility: hidden; position: absolute; left: -1000px; padding: 0px 10px; width: 403px; overflow: hidden;"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
