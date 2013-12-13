@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <style type="text/css">
+            /*׷԰*/
+        #Scroll {
+            width: 400px;
+            height: 400px;
+            background: #f8f8f8
+        }
+
+        #ScroLeft {
+            float: left;
+            height: 100%;
+            width: 190px;
+            overflow: hidden
+        }
+
+            /*ڶ֯͵ѳް*/
+        #ScroRight {
+            position: relative;
+            float: right;
+            height: 100%;
+            width: 6px;
+            background: #F1F1F1;
+            overflow: hidden;
+        }
+
+            /*ڶ֯͵*/
+        #ScroLine {
+            position: absolute;
+            z-index: 1;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            overflow: hidden;
+            background: #666666
+        }
+    </style>
+</head>
+<script type="text/javascript">
+    $(function () {
+        $("#ScroLine").css("height", ($("#ScroLeft").height() / $("#ScroLeft")[0].scrollHeight) * $("#ScroLeft").height());
+    });
+    var Scrolling = false;
+    function $1(o) {
+        return document.getElementById(o)
+    }
+    function ScroMove() {
+        Scrolling = true
+    }
+    document.onmousemove = function (e) {
+        if (Scrolling == false)return;
+        ScroNow(e)
+    }
+    document.onmouseup = function (e) {
+        Scrolling = false
+    }
+    function ScroNow(event) {
+        var event = event ? event : (window.event ? window.event : null);
+        var Y = event.clientY - $1("Scroll").getBoundingClientRect().top - $1("ScroLine").clientHeight / 2;
+        var H = $1("ScroRight").clientHeight - $1("ScroLine").clientHeight;
+        var SH = Y / H * ($1("ScroLeft").scrollHeight - $1("ScroLeft").clientHeight);
+        if (Y < 0)Y = 0;
+        if (Y > H)Y = H;
+        $1("ScroLine").style.top = Y + "px";
+        $1("ScroLeft").scrollTop = SH;
+    }
+    function ScrollWheel() {
+        var Y = $1("ScroLeft").scrollTop;
+        var H = $1("ScroLeft").scrollHeight - $1("ScroLeft").clientHeight;
+        if (event.wheelDelta >= 120) {
+            Y = Y - 80
+        } else {
+            Y = Y + 80
+        }
+        if (Y < 0)Y = 0;
+        if (Y > H)Y = H;
+        $1("ScroLeft").scrollTop = Y;
+        var SH = Y / H * $1("ScroRight").clientHeight - $1("ScroLine").clientHeight;
+        if (SH < 0)SH = 0;
+        $1("ScroLine").style.top = SH + "px";
+    }
+</script>
+<body>
+<div id="Scroll" onselectstart="return false" onmousewheel="ScrollWheel()">
+    <div id="ScroLeft">
+        AAAAAAAA1<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA2<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA3<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA4<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA5<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA6<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA7<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA8<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA9<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA10<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA11<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA12<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA13<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA14<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA15<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA16<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA17<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA18<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA19<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA20<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA21<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA22<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA23<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA24<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA25<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA26<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA27<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA28<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA29<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA30<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA31<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA32<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA33<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA34<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA35<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA36<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA37<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA38<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA39<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA40<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA41<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA42<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA43<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA44<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA45<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA46<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA47<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA48<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA49<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA50<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA51<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA52<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA53<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA54<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA55<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA56<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA57<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA58<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA59<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA60<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA61<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA62<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA63<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA64<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA65<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA66<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA67<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA68<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA69<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA70<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA71<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA72<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA73<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA74<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA75<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA76<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA77<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA78<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA79<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+        AAAAAAAA80<br>BBBBBBBB<br>CCCCCCCC<br>DDDDDDDD<br>EEEEEEEE<br>FFFFFFFF<br>GGGGGGGG<br>HHHHHHHH<br>IIIIIIII<br>
+    </div>
+    <div id="ScroRight" onclick="ScroNow(event)">
+        <div id="ScroLine" OnMouseDown="ScroMove()" style="border-radius: 20%"></div>
+    </div>
+</div>
+</body>
+</html>
