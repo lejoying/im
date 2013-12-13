@@ -303,9 +303,8 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                   </div>-->
                   <div class="templates hide">
                       <div class="tempChatMessage" id="tempChatMessage">
-                          <?js phone=it.phone?>
-                          <?js for (var index in it) { ?>
-                          <?js var phone1=#{it.phone}?>
+                          <?js for (var i=0;i<it.length;i++) { ?>
+                          <?js var phone=JSON.parse(it[i]).phone?>
                           <?js if(phone==phone1){ ?>
                           <?js continue; ?>
                           <?js }?>
