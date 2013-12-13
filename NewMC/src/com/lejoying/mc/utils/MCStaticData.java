@@ -6,8 +6,6 @@ import java.util.List;
 import android.os.Bundle;
 import android.view.View;
 
-import com.lejoying.mc.entity.Circle;
-import com.lejoying.mc.entity.Message;
 import com.lejoying.mc.entity.User;
 
 public class MCStaticData {
@@ -16,8 +14,7 @@ public class MCStaticData {
 	public static Bundle registerBundle;
 	public static Bundle loginCodeBundle = new Bundle();
 
-	public static List<Message> messages = new ArrayList<Message>();
 	public static List<View> messagesViewList = new ArrayList<View>();
-	public static List<Circle> circles = new ArrayList<Circle>();
 	public static List<View> circlesViewList = new ArrayList<View>();
+	public static List<View> chatMessagesViewList = new ArrayList<View>();
 }

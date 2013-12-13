@@ -47,6 +47,7 @@ public abstract class BaseFragment extends Fragment {
 		super.onDestroyView();
 		mMCFragmentManager.setNetworkRemainListener(null);
 		mMCFragmentManager.setFragmentKeyDownListener(null);
+		mMCFragmentManager.setNotifyListener(null);
 	}
 
 	private InputMethodManager getInputMethodManager() {

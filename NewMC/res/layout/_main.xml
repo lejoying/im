@@ -9,10 +9,10 @@
 
     <include layout="@layout/fmain_content" />
 
-    <include layout="@layout/fmain_circlemenu" />
-
     <include layout="@layout/fmain_top" />
 
     <include layout="@layout/fmain_bottom" />
+
+    <include layout="@layout/fmain_circlemenu" />
 
 </RelativeLayout>

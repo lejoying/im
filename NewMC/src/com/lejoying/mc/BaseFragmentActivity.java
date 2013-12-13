@@ -59,7 +59,10 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 
 	private InputMethodManager mInputMethodManager;
 
-	public abstract Fragment setFirstPreview();
+	private NotifyListener mNotifyListener;
+	private NotifyListener mDefaultNotifyListener;
+
+	protected abstract Fragment setFirstPreview();
 
 	protected abstract int setBackground();
 
@@ -85,6 +88,15 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		mContentId = R.id.fl_content;
 		mTopId = R.id.fl_top;
 		mBottomId = R.id.fl_bottom;
+
+		mDefaultNotifyListener = new NotifyListener() {
+
+			@Override
+			public void notifyDataChanged(int notify) {
+				// TODO Auto-generated method stub
+
+			}
+		};
 
 	}
 
@@ -249,11 +261,11 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public int relpaceToContent(Fragment fragment, boolean toBackStack) {
-		return relpaceContentFragment(fragment, toBackStack);
+	public int replaceToContent(Fragment fragment, boolean toBackStack) {
+		return replaceToContentFragment(fragment, toBackStack);
 	}
 
-	public int relpaceContentFragment(Fragment fragment, boolean toBackStack) {
+	public int replaceToContentFragment(Fragment fragment, boolean toBackStack) {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		transaction.setCustomAnimations(R.anim.activity_in,
 				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
@@ -264,7 +276,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		return transaction.commit();
 	}
 
-	public int relpaceTopFragment(Fragment fragment, boolean toBackStack) {
+	public int replaceTopFragment(Fragment fragment, boolean toBackStack) {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		transaction.setCustomAnimations(R.anim.activity_in,
 				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
@@ -275,7 +287,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		return transaction.commit();
 	}
 
-	public int relpaceBottomFragment(Fragment fragment, boolean toBackStack) {
+	public int replaceBottomFragment(Fragment fragment, boolean toBackStack) {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		transaction.setCustomAnimations(R.anim.activity_in,
 				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
@@ -310,6 +322,18 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	@Override
 	public void setNetworkRemainListener(RemainListener listener) {
 		mRemainListener = listener;
+	}
+
+	@Override
+	public void setNotifyListener(NotifyListener notifyListener) {
+		this.mNotifyListener = notifyListener;
+	}
+
+	public NotifyListener getNotifyListener() {
+		if (this.mNotifyListener == null) {
+			return this.mDefaultNotifyListener;
+		}
+		return this.mNotifyListener;
 	}
 
 	protected void startNetwork(String api, Bundle params, boolean showLoading,
@@ -387,25 +411,27 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		}
 	}
 
-	private void startLoading(String api) {
+	protected void startLoading(String api) {
 		mLoadingView.setVisibility(View.VISIBLE);
 		isLoading = true;
 		loadingAPI = api;
 		hideSoftInput();
 	}
 
-	private void cancelLoading() {
+	protected void cancelLoading() {
 		mLoadingView.setVisibility(View.GONE);
 		isLoading = false;
-		Intent service = new Intent(this, MainService.class);
-		service.putExtra("SERVICE", MainService.SERVICE_CANCELNETWORK);
-		service.putExtra("API", loadingAPI);
-		startService(service);
 		if (loadingAPI != null) {
-			mNetworkPermission.remove(loadingAPI);
-			mReceiverListreners.remove(loadingAPI);
+			if (!loadingAPI.equals("")) {
+				Intent service = new Intent(this, MainService.class);
+				service.putExtra("SERVICE", MainService.SERVICE_CANCELNETWORK);
+				service.putExtra("API", loadingAPI);
+				startService(service);
+				mNetworkPermission.remove(loadingAPI);
+				mReceiverListreners.remove(loadingAPI);
+				loadingAPI = "";
+			}
 		}
-		loadingAPI = "";
 	}
 
 	private InputMethodManager getInputMethodManager() {

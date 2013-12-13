@@ -55,7 +55,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 					params, true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
-							mMCFragmentManager.relpaceToContent(
+							mMCFragmentManager.replaceToContent(
 									new RegisterCodeFragment(), true);
 						}
 					});

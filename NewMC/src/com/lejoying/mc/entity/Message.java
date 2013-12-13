@@ -8,7 +8,7 @@ import com.lejoying.mc.utils.MCDataTools;
 
 public class Message {
 	private int id;
-	private String phone;
+	private Friend friend;
 	private String type;
 	private String content;
 	private String time;
@@ -25,12 +25,13 @@ public class Message {
 			String phoneSend = message.getString("phone");
 			String phoneReceive = new JSONArray(message.getString("phoneto"))
 					.getString(0);
+			friend = new Friend();
 			if (phoneSend.equals(MCDataTools.getLoginedUser(null).getPhone())) {
-				this.phone = phoneReceive;
+				friend.setPhone(phoneReceive);
 				this.type = "send";
 			} else if (phoneReceive.equals(MCDataTools.getLoginedUser(null)
 					.getPhone())) {
-				this.phone = phoneSend;
+				friend.setPhone(phoneSend);
 				this.type = "receive";
 			}
 		} catch (JSONException e) {
@@ -53,23 +54,23 @@ public class Message {
 		}
 	}
 
-	public Message(int mid, String phone, String type, String content,
+	public Message(int mid, Friend friend, String type, String content,
 			long time, String messageType) {
 		super();
 		this.id = mid;
-		this.phone = phone;
+		this.friend = friend;
 		this.type = type;
 		this.content = content;
 		this.time = String.valueOf(time);
 		this.messageType = messageType;
 	}
 
-	public String getPhone() {
-		return phone;
+	public Friend getFriend() {
+		return friend;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setFriend(Friend friend) {
+		this.friend = friend;
 	}
 
 	public String getType() {

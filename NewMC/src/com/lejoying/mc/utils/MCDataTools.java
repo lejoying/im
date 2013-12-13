@@ -9,7 +9,9 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -159,12 +161,29 @@ public class MCDataTools {
 		manager.closeDB();
 	}
 
-	public static List<Message> getMessages(Context context, int from) {
+	public static List<Message> getMessages(Context context, int count) {
 		List<Message> messages = new ArrayList<Message>();
 		DBManager manager = new DBManager(context);
-		messages = manager.queryMessages(from);
+		messages = manager.queryMessages(count);
 		manager.closeDB();
 		return messages;
+	}
+
+	public static List<Message> getMessages(Context context, String fphone,
+			int count) {
+		List<Message> messages = new ArrayList<Message>();
+		DBManager manager = new DBManager(context);
+		messages = manager.queryMessages(fphone, count);
+		manager.closeDB();
+		return messages;
+	}
+
+	public static Map<String, Integer> getNotReadMessages(Context context) {
+		Map<String, Integer> notReadMessages = new Hashtable<String, Integer>();
+		DBManager manager = new DBManager(context);
+		notReadMessages = manager.queryNotReadMessages();
+		manager.closeDB();
+		return notReadMessages;
 	}
 }
 
@@ -269,6 +288,26 @@ class DBManager {
 		return c;
 	}
 
+	public Friend queryFriend(String phone) {
+		Friend friend = new Friend();
+		Cursor c = queryFriendCursor(phone);
+		while (c.moveToNext()) {
+			friend.setPhone(c.getString(c.getColumnIndex("fphone")));
+			friend.setNickName(c.getString(c.getColumnIndex("nickName")));
+			friend.setHead(c.getString(c.getColumnIndex("head")));
+			friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
+		}
+		return friend;
+	}
+
+	private Cursor queryFriendCursor(String phone) {
+		Cursor c = db
+				.rawQuery(
+						"SELECT fphone,nickName,head,mainBusiness FROM friend WHERE fphone=?",
+						new String[] { phone });
+		return c;
+	}
+
 	private List<Friend> queryFriends(int rid) {
 		List<Friend> friends = new ArrayList<Friend>();
 		Cursor c = queryFriendsCursor(rid);
@@ -286,20 +325,23 @@ class DBManager {
 	private Cursor queryFriendsCursor(int rid) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT fphone,nickName,head,mainBusiness FROM friend WHERE fphone IN (select fphone from circlerelation where rid=?)",
+						"SELECT fphone,nickName,head,mainBusiness FROM friend WHERE"
+								+ " fphone IN (select fphone from circlerelation where rid=?)"
+								+ " and friendStatus='success'",
 						new String[] { String.valueOf(rid) });
 		return c;
 	}
 
 	public void addMessages(JSONArray messages) {
 		db.beginTransaction();
+		db.execSQL("DELETE FROM message");
 		try {
 			for (int i = 0; i < messages.length(); i++) {
 				Message message = new Message(new JSONObject(
 						messages.getString(i)));
 				db.execSQL(
 						"INSERT OR REPLACE INTO message VALUES(null, ?, ?, ?, ?, ?, ?)",
-						new Object[] { message.getPhone(),
+						new Object[] { message.getFriend().getPhone(),
 								message.getMessageType(), message.getType(),
 								message.getContent(), message.getTime(),
 								message.getIsRead() });
@@ -312,13 +354,42 @@ class DBManager {
 		}
 	}
 
-	public List<Message> queryMessages(int from) {
+	public List<Message> queryMessages(int count) {
 		List<Message> messages = new ArrayList<Message>();
-		Cursor c = queryMessagesCursor(from);
+		Cursor c = queryMessagesCursor(count);
 		while (c.moveToNext()) {
 			Message message = new Message();
 			message.setId(c.getInt(c.getColumnIndex("mid")));
-			message.setPhone(c.getString(c.getColumnIndex("fphone")));
+			message.setFriend(queryFriend(c.getString(c
+					.getColumnIndex("fphone"))));
+			message.setMessageType(c.getString(c.getColumnIndex("messageType")));
+			message.setType(c.getString(c.getColumnIndex("type")));
+			message.setContent(c.getString(c.getColumnIndex("content")));
+			message.setTime(c.getString(c.getColumnIndex("time")));
+			message.setIsRead(c.getInt(c.getColumnIndex("isRead")));
+			messages.add(message);
+		}
+		return messages;
+
+	}
+
+	private Cursor queryMessagesCursor(int count) {
+		Cursor c = db
+				.rawQuery(
+						"SELECT mid,fphone,messageType,type,content,time,isRead"
+								+ " FROM message GROUP BY fphone ORDER BY time DESC LIMIT ?",
+						new String[] { String.valueOf(count) });
+		return c;
+	}
+
+	public List<Message> queryMessages(String fphone, int count) {
+		List<Message> messages = new ArrayList<Message>();
+		Cursor c = queryMessagesCursor(fphone, count);
+		while (c.moveToNext()) {
+			Message message = new Message();
+			message.setId(c.getInt(c.getColumnIndex("mid")));
+			message.setFriend(queryFriend(c.getString(c
+					.getColumnIndex("fphone"))));
 			message.setMessageType(c.getString(c.getColumnIndex("messageType")));
 			message.setType(c.getString(c.getColumnIndex("type")));
 			message.setContent(c.getString(c.getColumnIndex("content")));
@@ -329,11 +400,32 @@ class DBManager {
 		return messages;
 	}
 
-	private Cursor queryMessagesCursor(int from) {
+	private Cursor queryMessagesCursor(String fphone, int count) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT mid,fphone,messageType,type,content,time,isRead FROM message",
-						null);
+						"SELECT mid,fphone,messageType,type,content,time,isRead FROM message WHERE fphone=? LIMIT ?",
+						new String[] { fphone, String.valueOf(count) });
+		return c;
+	}
+
+	public Map<String, Integer> queryNotReadMessages() {
+		Map<String, Integer> map = new Hashtable<String, Integer>();
+		Cursor c = queryNotReadMessagesCursor();
+		while (c.moveToNext()) {
+			String fphone = c.getString(c.getColumnIndex("fphone"));
+			Integer i = map.get(fphone);
+			if (map.get(fphone) == null) {
+				map.put(fphone, 1);
+			} else {
+				map.put(fphone, i += 1);
+			}
+		}
+		return map;
+	}
+
+	private Cursor queryNotReadMessagesCursor() {
+		Cursor c = db.rawQuery("SELECT fphone FROM message where isRead=0",
+				null);
 		return c;
 	}
 

@@ -37,6 +37,9 @@
     <string name="mc_businesscard">名片</string>
     <string name="circleMenu_back">返回</string>
     <string name="circleMenu_pageName"></string>
+    <string name="btn_moremessages">点击查看更多</string>
+    <string name="btn_newgroup">新建分组</string>
+    <string name="btn_findmorefriend">找到更多密友</string>
     <string name="btn_login">登    录</string>
     <string name="btn_register">没有账号/注册</string>
     <string name="btn_clogin">验证码登录</string>

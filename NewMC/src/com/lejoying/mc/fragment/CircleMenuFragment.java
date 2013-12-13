@@ -124,8 +124,7 @@ public class CircleMenuFragment extends BaseFragment {
 				mView_back.setVisibility(View.INVISIBLE);
 				mView_appName.setVisibility(View.VISIBLE);
 			}
-		} else if (mWhere == WHERE_BOTTOM) {
-
+		} else if (mStatus == STATUS_SHOW && mWhere == WHERE_BOTTOM) {
 			hideCircleMenu(new AnimationAdapter() {
 				@Override
 				public void onAnimationEnd(Animation animation) {
@@ -133,23 +132,15 @@ public class CircleMenuFragment extends BaseFragment {
 				}
 			});
 		} else {
-			ToTry.tryDoing(10, 200, new ToTryAdapter() {
+			back(mOldWhere, new CircleDiskAnimationEnd() {
 
 				@Override
-				public void successed(long time) {
-					if (mWhere != WHERE_TOP) {
-						hideCircleMenu(new AnimationAdapter() {
-							@Override
-							public void onAnimationEnd(Animation animation) {
-								showToTop(lock, showBack);
-							}
-						});
-					}
+				public void outAnimationEnd() {
 				}
 
 				@Override
-				public boolean isSuccess() {
-					return mStatus == STATUS_SHOW;
+				public void diskAnimationEnd() {
+					showToTop(lock, showBack);
 				}
 			});
 		}
@@ -426,6 +417,7 @@ public class CircleMenuFragment extends BaseFragment {
 						}
 						if ((mWhere == WHERE_BOTTOM || mWhere == WHERE_TOP)
 								&& mInitClick) {
+							mOldWhere = mWhere;
 							mStatus = STATUS_DRAG;
 						}
 						if (mStatus == STATUS_DRAG && mInitClick) {
@@ -834,10 +826,10 @@ public class CircleMenuFragment extends BaseFragment {
 			public void onAnimationEnd(Animation animation) {
 				mDisk.clearAnimation();
 				setLocation(toWhere);
+				mStatus = STATUS_SHOW;
 				if (animationEnd != null) {
 					animationEnd.diskAnimationEnd();
 				}
-				mStatus = STATUS_SHOW;
 			}
 		});
 		ta.setDuration(150);
@@ -868,7 +860,7 @@ public class CircleMenuFragment extends BaseFragment {
 			back(mOldWhere, new CircleDiskAnimationEnd() {
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.relpaceToContent(new FriendsFragment(),
+					mMCFragmentManager.replaceToContent(new FriendsFragment(),
 							false);
 				}
 
@@ -883,7 +875,7 @@ public class CircleMenuFragment extends BaseFragment {
 
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.relpaceToContent(
+					mMCFragmentManager.replaceToContent(
 							new ScanQRCodeFragment(), true);
 				}
 
@@ -916,7 +908,7 @@ public class CircleMenuFragment extends BaseFragment {
 
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.relpaceToContent(
+					mMCFragmentManager.replaceToContent(
 							new SearchFriendFragment(), true);
 				}
 
@@ -931,7 +923,7 @@ public class CircleMenuFragment extends BaseFragment {
 
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.relpaceToContent(
+					mMCFragmentManager.replaceToContent(
 							new FriendNotFoundFragment(), true);
 				}
 

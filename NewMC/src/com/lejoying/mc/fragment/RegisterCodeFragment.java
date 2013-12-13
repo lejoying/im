@@ -84,7 +84,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 					nextParams, true, new NetworkStatusAdapter() {
 						@Override
 						public void success() {
-							mMCFragmentManager.relpaceToContent(
+							mMCFragmentManager.replaceToContent(
 									new RegisterPassFragment(), true);
 						}
 					});

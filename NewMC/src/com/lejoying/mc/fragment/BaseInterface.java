@@ -18,7 +18,7 @@ public interface BaseInterface {
 
 	public boolean circleMenuIsShow();
 
-	public int relpaceToContent(Fragment fragment, boolean toBackStack);
+	public int replaceToContent(Fragment fragment, boolean toBackStack);
 
 	public void startToActivity(Class<?> clazz, boolean finishSelf);
 
@@ -29,6 +29,14 @@ public interface BaseInterface {
 			boolean showLoading, NetworkStatusListener listener);
 
 	public void setNetworkRemainListener(RemainListener listener);
+
+	public void setNotifyListener(NotifyListener notifyListener);
+
+	public interface NotifyListener {
+		public static final int NOTIFY_MESSAGEANDFRIEND = 0x01;
+
+		public void notifyDataChanged(int notify);
+	}
 
 	public void setFragmentKeyDownListener(OnKeyDownListener listener);
 

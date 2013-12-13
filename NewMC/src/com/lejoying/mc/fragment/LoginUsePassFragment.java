@@ -63,7 +63,7 @@ public class LoginUsePassFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.tv_clogin:
-			mMCFragmentManager.relpaceToContent(new LoginUseCodeFragment(),
+			mMCFragmentManager.replaceToContent(new LoginUseCodeFragment(),
 					true);
 			break;
 		case R.id.btn_login:
@@ -94,7 +94,7 @@ public class LoginUsePassFragment extends BaseFragment implements
 
 			break;
 		case R.id.btn_register:
-			mMCFragmentManager.relpaceToContent(new RegisterPhoneFragment(),
+			mMCFragmentManager.replaceToContent(new RegisterPhoneFragment(),
 					true);
 			break;
 		default:

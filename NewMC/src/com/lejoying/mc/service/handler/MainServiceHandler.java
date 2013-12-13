@@ -25,6 +25,9 @@ public class MainServiceHandler {
 	}
 
 	public void process(final Intent intent) {
+		if (intent == null) {
+			return;
+		}
 		new Thread() {
 			@Override
 			public void run() {
