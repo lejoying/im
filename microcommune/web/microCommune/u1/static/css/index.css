@@ -1102,7 +1102,7 @@ a.btnSecondary:active {
 /* =============================================================================
    群聊成员	start
    ========================================================================== */
-   .chatTitle .organization {
+.chatTitle .organization {
 	width:127px; 
 	height:52px; 
 	margin-top:20px; 
@@ -1110,17 +1110,6 @@ a.btnSecondary:active {
 	font-size:15px; 
 	font-family:微软雅黑; 
 	float:left;
-}
-.chatTitle .iconleft{
-	float:left; 
-	margin-top:25px;
-	margin-left:-5px;
-}
-.chatTitle .iconright img{
-	margin-top:30px;
-	margin-left:91px;
-	float:left;
-	
 }
 .chatTitle .member{
 	float:left; 
@@ -1139,11 +1128,67 @@ a.btnSecondary:active {
 .chatTitle .member .iconname{
 	text-align:center;
 }
-.chatTitle .more{
+a.
+a.closefriend_icon:link{	/*密友圈图标*/
+	background: url(../images/weixinggongshe_button.png) no-repeat scroll -85px -65px ;
+	text-indent: -9999px;
+	float:left;
+	width:26px;
+	height:19px;
+	margin-top:10px;
+	margin-left:20px;
+}
+a.closefriend_icon:visited{
+	background-position: -20px -22px;
+}
+a.js_appButton:link{	/*应用 */
+	background: url(../images/weixinggongshe_button.png) no-repeat scroll -114px -20px ;
+	float:left;
+	width:21px;
+	height:22px;
+	text-indent: -9999px;
+	margin-top:10px;
+	margin-left:23px;
+}
+a.left_icon:link{		/*向左 */
+	background: url(../images/weixinggongshe_button.png) no-repeat scroll -20px -48px ;
+	display: block;
+	float:left;
+	margin-top:30px;
+	margin-left:-5px; 
+	width:12px;
+	height:12px;
+	text-indent: -9999px;
+}
+a.left_icon:active{
+	background-position: -77px -47px;
+}
+a.right_icon:link{		/*向右 */
+	background: url(../images/weixinggongshe_button.png) no-repeat scroll -40px -48px ;
+	display: block;
+	float:left;
+	margin-top:30px;
+	margin-left:91px;
+	width:10px;
+	height:10px;
+	text-indent: -9999px;
+}
+a.right_icon:active{
+	background-position: -58px -48px;
+}
+a.more_icon:link{		/*更多:未被访问的链接 */
+	background: url(../images/weixinggongshe_button.png) no-repeat scroll -110px -52px ;
+	display: block;
 	float:left; 
-	margin-top:26px; 
+	margin-top:32px; 
 	width:0px; 
 	margin-left:206px;
+	width:26px;
+	height:8px;
+	text-indent: -9999px;	
+}
+a.more_icon:active{		/* 正在被点击的链接 */
+	background-position: -141px -52px;
 }
 /* =============================================================================
    群聊成员	end
@@ -2452,14 +2497,18 @@ a.chatSend {
     width: 80px;
 	background-color:#5555aaa;
 }
-a.chatSend:active {
-    background: none repeat scroll 0 0 #5F78AB;
+a.chatSend:link{	/* 未被访问的链接 */
+	background: none repeat scroll 0 0 #5F78AB;
+}
+a.chatSend:active {		/* 正在被点击的链接 */
+    background: none repeat scroll 0 0 #7285AD;
     border: 1px solid #1B4AB2;
     box-shadow: 0 1px 3px #D3D3D3;
     color: #FFFFFF;
     //text-shadow: 0 1px 1px #444444;
 }
-a.chatSend b {
+a.chatSend b {	/* 发送 */
+
 	color: #000;
     border-radius: 3px 3px 3px 3px;
     //border-top: 1px solid #7B8FB8;
