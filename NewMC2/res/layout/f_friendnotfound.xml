@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rl_regpanel_pass"
+        android:layout_width="fill_parent"
+        android:layout_height="172dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="63dp"
+        android:background="@drawable/frame_background"
+        android:paddingTop="7dp"
+        tools:ignore="UselessParent" >
+
+        <TextView
+            android:id="@+id/tv_groupname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/tv_friendnotfound"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_line2"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/tv_groupname"
+            android:layout_below="@+id/tv_groupname"
+            android:layout_marginTop="8dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/et_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/iv_line2"
+            android:layout_alignRight="@+id/iv_line2"
+            android:layout_below="@+id/iv_line2"
+            android:layout_marginTop="25dp"
+            android:background="#0999"
+            android:text="@string/tv_friendnotfounddesc"
+            android:textColor="#ddd"
+            android:textSize="16sp"
+            tools:ignore="TextFields" />
+
+        <Button
+            android:id="@+id/btn_callfor"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/et_phone"
+            android:layout_alignRight="@+id/et_phone"
+            android:layout_below="@+id/et_phone"
+            android:layout_marginTop="25dp"
+            android:background="#2fff"
+            android:text="@string/btn_callfor"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+</RelativeLayout>
