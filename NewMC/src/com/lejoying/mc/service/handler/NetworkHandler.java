@@ -10,12 +10,12 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.entity.User;
-import com.lejoying.mc.service.MainService;
-import com.lejoying.mc.service.handler.MainServiceHandler.ServiceEvent;
+import com.lejoying.mc.service.BaseService.ServiceEvent;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
@@ -29,6 +29,7 @@ public class NetworkHandler {
 	private NetworkRemain mNetworkRemain;
 	private ServiceEvent mServiceEvent;
 	private Map<String, HttpURLConnection> mConnections;
+	private static Map<String, Handler> mReceiverHandlers;
 
 	NetworkHandler(Context context, ServiceEvent serviceEvent) {
 		this.mContext = context;
@@ -48,15 +49,15 @@ public class NetworkHandler {
 		int SERVICE = intent.getIntExtra("SERVICE", -1);
 
 		switch (SERVICE) {
-		case MainService.SERVICE_CANCELNETWORK:
+		case MainServiceHandler.SERVICE_CANCELNETWORK:
 
 			break;
-		case MainService.SERVICE_NETWORK:
+		case MainServiceHandler.SERVICE_NETWORK:
 			final Intent broadcast = new Intent();
 			broadcast.putExtra("API", api);
 			int permission = intent.getIntExtra("PERMISSION", -1);
 			broadcast.putExtra("PERMISSION", permission);
-			broadcast.setAction(MainService.ACTION_STATUS);
+			broadcast.setAction(MainServiceHandler.ACTION_STATUS);
 
 			Bundle params = intent.getExtras();
 			params.remove("API");
@@ -66,7 +67,7 @@ public class NetworkHandler {
 				if (api.equals(API.ACCOUNT_VERIFYPHONE)) {
 					if (mNetworkRemain.isRemain(intent)) {
 						sendNetworkBroadcast(broadcast,
-								MainService.STATUS_NETWORK_SUCCESS);
+								MainServiceHandler.STATUS_NETWORK_SUCCESS);
 						return;
 					}
 				}
@@ -253,7 +254,7 @@ public class NetworkHandler {
 			broadcast.putExtra("API", api);
 			int permission = intent.getIntExtra("PERMISSION", -1);
 			broadcast.putExtra("PERMISSION", permission);
-			broadcast.setAction(MainService.ACTION_STATUS);
+			broadcast.setAction(MainServiceHandler.ACTION_STATUS);
 
 		}
 
@@ -272,12 +273,12 @@ public class NetworkHandler {
 				} catch (JSONException e) {
 					e.printStackTrace();
 					sendNetworkBroadcast(broadcast,
-							MainService.STATUS_NETWORK_FAILED);
+							MainServiceHandler.STATUS_NETWORK_FAILED);
 					return;
 				}
 				if (info == null) {
 					sendNetworkBroadcast(broadcast,
-							MainService.STATUS_NETWORK_FAILED);
+							MainServiceHandler.STATUS_NETWORK_FAILED);
 					return;
 				}
 				info = info.substring(info.length() - 2, info.length());
@@ -285,7 +286,7 @@ public class NetworkHandler {
 				if (info.equals(mContext.getString(R.string.app_success))) {
 					process(intent, data);
 					sendNetworkBroadcast(broadcast,
-							MainService.STATUS_NETWORK_SUCCESS);
+							MainServiceHandler.STATUS_NETWORK_SUCCESS);
 				}
 				if (info.equals(mContext.getString(R.string.app_unsuccess))) {
 					try {
@@ -296,7 +297,7 @@ public class NetworkHandler {
 								mContext.getString(R.string.app_timeout));
 					}
 					sendNetworkBroadcast(broadcast,
-							MainService.STATUS_NETWORK_UNSUCCESS);
+							MainServiceHandler.STATUS_NETWORK_UNSUCCESS);
 				}
 			}
 		}
@@ -304,12 +305,13 @@ public class NetworkHandler {
 		@Override
 		public void noInternet() {
 			sendNetworkBroadcast(broadcast,
-					MainService.STATUS_NETWORK_NOINTERNET);
+					MainServiceHandler.STATUS_NETWORK_NOINTERNET);
 		}
 
 		@Override
 		public void failed() {
-			sendNetworkBroadcast(broadcast, MainService.STATUS_NETWORK_FAILED);
+			sendNetworkBroadcast(broadcast,
+					MainServiceHandler.STATUS_NETWORK_FAILED);
 		}
 	}
 
@@ -317,4 +319,15 @@ public class NetworkHandler {
 		public void onReceive(int STATUS, String log);
 	}
 
+	public static final void startNetwork(Context context, String api,
+			Bundle params, Handler handler) {
+		mReceiverHandlers.put(api, handler);
+		Intent service = new Intent(context, MainServiceHandler.class);
+		service.putExtra("SERVICE", MainServiceHandler.SERVICE_NETWORK);
+		service.putExtra("API", api);
+		if (params != null) {
+			service.putExtras(params);
+		}
+		context.startService(service);
+	}
 }

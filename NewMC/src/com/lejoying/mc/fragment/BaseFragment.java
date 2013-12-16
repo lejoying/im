@@ -8,7 +8,7 @@ import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
@@ -100,16 +100,16 @@ public abstract class BaseFragment extends Fragment {
 		@Override
 		public void onReceive(int STATUS, String log) {
 			switch (STATUS) {
-			case MainService.STATUS_NETWORK_SUCCESS:
+			case MainServiceHandler.STATUS_NETWORK_SUCCESS:
 				success();
 				break;
-			case MainService.STATUS_NETWORK_UNSUCCESS:
+			case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
 				unSuccess(log);
 				break;
-			case MainService.STATUS_NETWORK_NOINTERNET:
+			case MainServiceHandler.STATUS_NETWORK_NOINTERNET:
 				noInternet();
 				break;
-			case MainService.STATUS_NETWORK_FAILED:
+			case MainServiceHandler.STATUS_NETWORK_FAILED:
 				failed();
 				break;
 			default:

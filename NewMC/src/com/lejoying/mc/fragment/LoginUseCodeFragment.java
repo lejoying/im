@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 
 public class LoginUseCodeFragment extends BaseFragment implements
@@ -48,7 +48,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 
 			@Override
 			public String setRemainType() {
-				return MainService.REMAIN_LOGIN;
+				return MainServiceHandler.REMAIN_LOGIN;
 			}
 
 			@Override

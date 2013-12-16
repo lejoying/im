@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.service.MainService;
+import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 import com.lejoying.mc.utils.MCStaticData;
 
@@ -45,7 +45,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 		mMCFragmentManager.setNetworkRemainListener(new RemainListener() {
 			@Override
 			public String setRemainType() {
-				return MainService.REMAIN_REGISTER;
+				return MainServiceHandler.REMAIN_REGISTER;
 			}
 
 			@Override

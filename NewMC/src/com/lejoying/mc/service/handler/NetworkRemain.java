@@ -6,8 +6,7 @@ import java.util.TimerTask;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.lejoying.mc.service.MainService;
-import com.lejoying.mc.service.handler.MainServiceHandler.ServiceEvent;
+import com.lejoying.mc.service.BaseService.ServiceEvent;
 
 public class NetworkRemain {
 
@@ -63,9 +62,9 @@ public class NetworkRemain {
 							mRegCodeRemain--;
 							if (mRegCodeRemain >= 0) {
 								Intent broadcast = new Intent();
-								broadcast.putExtra(MainService.REMAIN_REGISTER,
+								broadcast.putExtra(MainServiceHandler.REMAIN_REGISTER,
 										mRegCodeRemain);
-								broadcast.setAction(MainService.ACTION_REMAIN);
+								broadcast.setAction(MainServiceHandler.ACTION_REMAIN);
 								mServiceEvent.sendBroadcast(broadcast);
 							}
 							if (mRegCodeRemain <= 0) {
@@ -85,9 +84,9 @@ public class NetworkRemain {
 							mLoginCodeRemain--;
 							if (mLoginCodeRemain >= 0) {
 								Intent broadcast = new Intent();
-								broadcast.putExtra(MainService.REMAIN_LOGIN,
+								broadcast.putExtra(MainServiceHandler.REMAIN_LOGIN,
 										mLoginCodeRemain);
-								broadcast.setAction(MainService.ACTION_REMAIN);
+								broadcast.setAction(MainServiceHandler.ACTION_REMAIN);
 								mServiceEvent.sendBroadcast(broadcast);
 							}
 							if (mLoginCodeRemain <= 0) {
@@ -113,7 +112,7 @@ public class NetworkRemain {
 		mRegCodeRemain = 0;
 
 	}
-	
+
 	public interface RemainListener {
 		public String setRemainType();
 

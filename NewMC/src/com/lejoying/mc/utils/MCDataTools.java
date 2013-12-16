@@ -279,6 +279,7 @@ class DBManager {
 			circle.setFriends(queryFriends(circle.getRid()));
 			circles.add(circle);
 		}
+		c.close();
 		return circles;
 
 	}
@@ -297,6 +298,7 @@ class DBManager {
 			friend.setHead(c.getString(c.getColumnIndex("head")));
 			friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
 		}
+		c.close();
 		return friend;
 	}
 
@@ -319,6 +321,7 @@ class DBManager {
 			friend.setMainBusiness(c.getString(c.getColumnIndex("mainBusiness")));
 			friends.add(friend);
 		}
+		c.close();
 		return friends;
 	}
 
@@ -369,6 +372,7 @@ class DBManager {
 			message.setIsRead(c.getInt(c.getColumnIndex("isRead")));
 			messages.add(message);
 		}
+		c.close();
 		return messages;
 
 	}
@@ -397,15 +401,30 @@ class DBManager {
 			message.setIsRead(c.getInt(c.getColumnIndex("isRead")));
 			messages.add(message);
 		}
+		c.close();
+		markToRead(fphone);
 		return messages;
 	}
 
 	private Cursor queryMessagesCursor(String fphone, int count) {
 		Cursor c = db
 				.rawQuery(
-						"SELECT mid,fphone,messageType,type,content,time,isRead FROM message WHERE fphone=? LIMIT ?",
+						"SELECT mid,fphone,messageType,type,content,time,isRead"
+								+ " FROM message WHERE fphone=? ORDER BY time DESC LIMIT ?",
 						new String[] { fphone, String.valueOf(count) });
+
 		return c;
+	}
+
+	private void markToRead(String fphone) {
+		db.beginTransaction();
+		try {
+			db.execSQL("UPDATE message SET isRead=1 WHERE fphone=?",
+					new String[] { fphone });
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
 	public Map<String, Integer> queryNotReadMessages() {
@@ -420,6 +439,7 @@ class DBManager {
 				map.put(fphone, i += 1);
 			}
 		}
+		c.close();
 		return map;
 	}
 

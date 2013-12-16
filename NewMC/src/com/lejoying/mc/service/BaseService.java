@@ -9,4 +9,8 @@ public class BaseService extends Service {
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
+
+	public interface ServiceEvent {
+		public void sendBroadcast(Intent broadcast);
+	}
 }

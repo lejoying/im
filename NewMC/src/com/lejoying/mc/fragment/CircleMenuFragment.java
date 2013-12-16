@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
@@ -854,21 +856,33 @@ public class CircleMenuFragment extends BaseFragment {
 		super.onPause();
 	}
 
+	FragmentManager fm;
+
 	public void onItemClick(int item) {
+		if (fm == null)
+			fm = getActivity().getSupportFragmentManager();
 		switch (item) {
 		case 1:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-				@Override
-				public void outAnimationEnd() {
-					mMCFragmentManager.replaceToContent(new FriendsFragment(),
-							false);
+			for (Fragment fragment : fm.getFragments()) {
+				if (fragment instanceof FriendsFragment) {
+					fm.beginTransaction()
+							.setCustomAnimations(R.anim.activity_in,
+									R.anim.activity_out).show(fragment)
+							.commit();
 				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
+			}
+			// back(mOldWhere, new CircleDiskAnimationEnd() {
+			// @Override
+			// public void outAnimationEnd() {
+			// mMCFragmentManager.replaceToContent(new FriendsFragment(),
+			// false);
+			// }
+			//
+			// @Override
+			// public void diskAnimationEnd() {
+			//
+			// }
+			// });
 			break;
 		case 2:
 			back(mOldWhere, new CircleDiskAnimationEnd() {
@@ -886,7 +900,14 @@ public class CircleMenuFragment extends BaseFragment {
 			});
 			break;
 		case 3:
-
+			for (Fragment fragment : fm.getFragments()) {
+				if (fragment instanceof FriendsFragment) {
+					fm.beginTransaction()
+							.setCustomAnimations(R.anim.activity_in,
+									R.anim.activity_out).hide(fragment)
+							.commit();
+				}
+			}
 			break;
 		case 4:
 			showNext();
