@@ -126,28 +126,32 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                 <div id="conversationContainer">
                 <div class="templates hide">
                     <div class="chatListColumn" id="chatListColumn">
-                        <div style="display:none;" class="clicked"></div>
-                        <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
-                        <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>
-                        <div class="extend">
-                            <p class="time"></p>
-                            <div class="edited"><i class="editedIcon"></i></div>
-                            <div style="display:none;" class="mute"></div>
-                        </div>
-                        <div class="info">
-                            <div class="nickName">
-                                <div style="" class="left name"> #{it.nickName} </div>
-                                <div class="clr"></div>
+                        <?js for(var i=it.length;i>0;i--) {?>
+                        <?js it1=JSON.parse(it[i]);?>
+                        <div id="conv_wxid_#{it1.phone}" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21" onClick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
+                            <div style="display:none;" class="clicked"></div>
+                            <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+                            <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>
+                            <div class="extend">
+                                <p class="time"></p>
+                                <div class="edited"><i class="editedIcon"></i></div>
+                                <div style="display:none;" class="mute"></div>
                             </div>
-                            <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="/static/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="/static/images/spacer17ced3.gif" style="display: none;">
-                                <p class="desc"> #{it.mainBusiness}</p>
+                            <div class="info">
+                                <div class="nickName">
+                                    <div style="" class="left name">#{it1.nickName}</div>
+                                    <div class="clr"></div>
+                                </div>
+                                <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+                                    <p class="desc">#{it1.mainBusiness}</p>
+                                </div>
                             </div>
+                            <div class="clr"></div>
                         </div>
-                        <div class="clr">
-                        </div>
+                        <?js }?>
                     </div>
                 </div>
-                     </div>
+                </div>
                 <div click="loadMoreConv" id="conv_load_more"><a href="javascript:;" class="chatListColumn1 loadMoreConv" > <span class="tipPic"></span> <span class="desc">点击显示更多</span> </a> </div>
                  <div class="js_circlesFriends">
                 </div>
@@ -303,47 +307,46 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                   </div>-->
                   <div class="templates hide">
                       <div class="tempChatMessage" id="tempChatMessage">
-                          <?js for (var i=0;i<it.length;i++) { ?>
-                          <?js var phone=JSON.parse(it[i]).phone?>
-                          <?js if(phone==phone1){ ?>
-                          <?js continue; ?>
-                          <?js }?>
-                          <div un="item_1377586579199" class="chatItem me">
-                              <div class="time"> <span class="timeBg left"></span> #{it.hours}:#{it.minutes} <span class="timeBg right"></span> </div>
-                              <div class="chatItemContent"> <img username="wxid_7832428324312" click="showProfile" title="123" un="avatar_wxid_7832428324312" onerror="reLoadImg(this)" src="static/images/face.jpg" class="avatar">
-                                  <div msgid="2070333140" un="cloud_2070333140" class="cloud cloudText">
-                                      <div style="" class="cloudPannel">
-                                          <div class="sendStatus">   </div>
-                                          <div class="cloudBody">
-                                              <div class="cloudContent">
-                                                  <pre style="white-space:pre-wrap">#{it.content}</pre>
-                                              </div>
-                                          </div>
-                                          <div class="cloudArrow "></div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <?js else{ ?>
-                          <?js continue; ?>
-                          <?js } ?>
-                          <div un="item_2070333132" class="chatItem you">
-                              <div class="time"> <span class="timeBg left"></span> #{it.hours}:#{it.minutes} <span class="timeBg right"></span> </div>
-                              <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
+                      <?js var phone=JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone;?>
+                      <?js alert(it.length+" 传入的length长度");?>
+                      <?js for (var i=0;i<it.length;i++) { ?>
+                      <?js var phone1=JSON.parse(it[i]).phone;?>
+                      <?js if(phone!=phone1){ ?>
+                      <div un="item_1377586579199" class="chatItem me">
+                          <div class="time"> <span class="timeBg left"></span> #{it.hours}:#{it.minutes} <span class="timeBg right"></span> </div>
+                          <div class="chatItemContent"> <img username="wxid_7832428324312" click="showProfile" title="123" un="avatar_wxid_7832428324312" onerror="reLoadImg(this)" src="static/images/face.jpg" class="avatar">
+                              <div msgid="2070333140" un="cloud_2070333140" class="cloud cloudText">
                                   <div style="" class="cloudPannel">
                                       <div class="sendStatus">   </div>
                                       <div class="cloudBody">
                                           <div class="cloudContent">
-                                              <pre style="white-space:pre-wrap"><img src="/static/images/65.png">#{it.content}</pre>
+                                              <pre style="white-space:pre-wrap">#{it.content}</pre>
                                           </div>
                                       </div>
                                       <div class="cloudArrow "></div>
                                   </div>
                               </div>
+                          </div>
+                      </div>
+                      <?js } else{ ?>
+                      <div un="item_2070333132" class="chatItem you">
+                          <div class="time"> <span class="timeBg left"></span> #{it.hours}:#{it.minutes} <span class="timeBg right"></span> </div>
+                          <div class="chatItemContent"> <img username="gh_c639eef72f78" click="showProfile" title="云上" un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)" src="static/images/webwxgeticon4.jpg" class="avatar"> <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
+                              <div style="" class="cloudPannel">
+                                  <div class="sendStatus">   </div>
+                                  <div class="cloudBody">
+                                      <div class="cloudContent">
+                                          <pre style="white-space:pre-wrap"><img src="/static/images/65.png">#{it.content}</pre>
+                                      </div>
+                                  </div>
+                                  <div class="cloudArrow "></div>
                               </div>
                           </div>
-                          <?js } ?>
+                          </div>
                       </div>
+                      <?js } ?>
+                      <?js } ?>
+                    </div>
                   </div>
                   <div class="templates hide">
                       <div class="chatMessageSend" id="chatMessageSend">

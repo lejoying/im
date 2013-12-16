@@ -49,14 +49,12 @@ $(document).ready(function () {
    var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
     if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
         var tempChatArr = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatArr"));
-
         for (var index in tempChatArr) {
             alert(JSON.parse(tempChatArr[index]));
             addTempChatAccount(JSON.parse(tempChatArr[index]));
         }
         $(".loadMoreConv").show();
     }
-    get();
     var circleGroupCount = 0;
     $.ajax({
         type: "POST",
@@ -94,6 +92,7 @@ $(document).ready(function () {
             }
         }
     });
+    get();
     request();
     $(document).on('click', ".groupTitle", function () {
         $(".js_circlesFriends .friendDetail").slideDown(1000);
@@ -481,18 +480,19 @@ function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
     }
 }
 function addTempChatAccount(obj) {
+    var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
+    for(var i=0;i<tempChatArr.length;i++){
+        if(tempChatArr[i]==obj){
+            index=i;
+            tempChatArr.splice(index,1);
+            tempChatArr.push(obj);
+        }
+    }
+    addPhone=obj.phone;
     //清空所有样式
     $(".chatListColumn").attr("class", "chatListColumn");
     var chatListColumn=getTemplate("chatListColumn");
-    var div = document.createElement('div');
-    $(div).attr("class", "chatListColumn activeColumn");
-    $(div).attr("id", "conv_wxid_" + obj.uid);
-    $(div).attr("username", "wxid_t2fqz99bmakt21");
-    $(div).attr("phone", obj.phone);
-    addPhone=obj.phone;
-    $(div).attr("un", "wxid_t2fqz99bmakt21");
-    div.innerHTML=chatListColumn.render(obj);
-    $("#conversationContainer")[0].insertBefore(div, $("#conversationContainer")[0].firstChild);
+    $("#conversationContainer").html(chatListColumn.render(tempChatArr));
     /* var str='<div style="display:none;" class="clicked"></div>' +
         '<span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>' +
         '<div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>' +
@@ -1069,7 +1069,7 @@ function Tempcheck (phoneto){
 $(document).on('click', ".chatListColumn", function () {
    var phone=addPhone;
     alert(phone+"  click标题");
-    alert(tempchatMessage[phone]+"  弹出click事件中tempchat");
+    alert(tempchatMessage[phone]+"  弹出click事件中tempchatMessage");
     if(tempchatMessage[phone]==undefined){
         alert("没有收到新消息");
     }else{
