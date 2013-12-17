@@ -219,7 +219,7 @@ window.onload = function(){
             }
         }
     }
-    new addScroll('mainBox','conversationListContent','scrollDiv');
+//    new addScroll('mainBox','conversationListContent','scrollDiv');
     new addScroll('chatFrame','chat_chatmsglist','scrollDiv');
 }
 window.onresize = function(){

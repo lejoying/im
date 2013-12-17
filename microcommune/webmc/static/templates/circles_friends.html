@@ -1,0 +1,28 @@
+
+<div class="js_circles_friends" id="js_circles_friends">
+    <?js for (var index in it) { ?>
+    <?js post=it[index]; ?>
+    <?js if(post==null) { ?>
+    <?js continue; ?>
+    <?js } ?>
+    <div class="js_app_#{index}" style=" float:left; margin-left:28px; margin-top:20px;cursor:pointer;width: 56px;height:72px;overflow-y: hidden;" circle_rid="#{post.rid}">
+        <div class="appGroup">
+            <?js var it1 = post.accounts; ?>
+            <?js for (var index1 in it1) { ?>
+            <?js post1=it1[index1]; ?>
+            <?js if(post1==null) { ?>
+            <?js continue; ?>
+            <?js } ?>
+            <?js if(post1.head != "" && post1.head != null){ ?>
+            <img src="/static/images/sundasheng.png"
+                 style="width:16px; height:16px; margin-top:5px;border-radius: 50%;"/>
+            <?js }else{ ?>
+            <img src="/static/images/webwxgeticonhead.jpg"
+                 style="width:16px; height:16px; margin-top:5px;border-radius: 50%;"/>
+            <?js } ?>
+            <?js } ?>
+        </div>
+        <span style="font-size:12px;width: 56px;" title="#{post.name}">#{post.name}</span>
+    </div>
+    <?js } ?>
+</div>
