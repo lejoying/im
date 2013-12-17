@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.transition.ChangeBounds;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +34,7 @@ import com.lejoying.mc.entity.Friend;
 import com.lejoying.mc.entity.Message;
 import com.lejoying.mc.fragment.ChatFragment;
 import com.lejoying.mc.fragment.FriendsFragment;
+import com.lejoying.mc.fragment.ShareFragment;
 import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.utils.MCDataTools;
@@ -69,10 +71,6 @@ public class MainActivity extends BaseFragmentActivity {
 		mHandler = new MainHandler();
 		mChatFragment = new ChatFragment();
 
-		System.out.println(1 | 2);
-
-		System.out.println(1 & 2);
-
 	}
 
 	@Override
@@ -102,7 +100,6 @@ public class MainActivity extends BaseFragmentActivity {
 							getMessages();
 							break;
 						case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
-							System.out.println("获取用户失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -137,7 +134,6 @@ public class MainActivity extends BaseFragmentActivity {
 							createFriendView();
 							break;
 						case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
-							System.out.println("获取好友圈失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -175,7 +171,6 @@ public class MainActivity extends BaseFragmentActivity {
 							createMessageView();
 							break;
 						case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
-							System.out.println("获取消息失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -434,7 +429,7 @@ public class MainActivity extends BaseFragmentActivity {
 		replaceToContent(mChatFragment, true);
 		for (int i = 0; i < 100; i++) {
 			TextView tv = new TextView(mContext);
-			tv.setText("测试条目" + i);
+			tv.setText(i);
 			MCStaticData.chatMessagesViewList.add(tv);
 		}
 		getNotifyListener().notifyDataChanged(

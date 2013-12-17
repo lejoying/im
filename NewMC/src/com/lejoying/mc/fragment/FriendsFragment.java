@@ -66,6 +66,8 @@ public class FriendsFragment extends BaseListFragment {
 		mInflater = getActivity().getLayoutInflater();
 		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.xiaohei), true, 5, Color.WHITE);
+
+		changeContentFragment(new CircleMenuFragment());
 	}
 
 	@Override
@@ -207,7 +209,7 @@ public class FriendsFragment extends BaseListFragment {
 				friendHolder.setCircle(circle);
 				break;
 			case TYPE_BUTTON:
-				bHolder.button.setText("添加好友");
+				bHolder.button.setText("娣诲姞濂藉弸");
 				break;
 			default:
 				break;
@@ -234,7 +236,9 @@ public class FriendsFragment extends BaseListFragment {
 		TextView tv_groupname;
 		ViewPager vp_content;
 
-		final List<View> pageviews = new ArrayList<View>();
+		PagerAdapter vp_contentAdapter;
+
+		List<View> pageviews = new ArrayList<View>();
 
 		class ItemHolder {
 			ImageView iv_head;
@@ -242,15 +246,57 @@ public class FriendsFragment extends BaseListFragment {
 		}
 
 		public void setCircle(Circle circle) {
-			if (pageviews.size() != 0) {
-				System.out.println("不等于0");
-			}
+
 			final List<Friend> friends = circle.getFriends();
 			final int pagecount = friends.size() % 6 == 0 ? friends.size() / 6
 					: friends.size() / 6 + 1;
-			if (pageviews.size() != 0 || friends.size() == 0 || pagecount == 0) {
+
+			if (friends.size() == 0 || pagecount == 0) {
+				vp_content.setAdapter(null);
 				return;
 			}
+
+			if (vp_contentAdapter == null) {
+				vp_contentAdapter = new PagerAdapter() {
+					@Override
+					public boolean isViewFromObject(View arg0, Object arg1) {
+						return arg0 == arg1;
+					}
+
+					@Override
+					public int getCount() {
+						return pageviews.size();
+					}
+
+					@Override
+					public void destroyItem(View container, int position,
+							Object object) {
+						((ViewPager) container).removeView(pageviews
+								.get(position));
+					}
+
+					@Override
+					public Object instantiateItem(View container, int position) {
+						((ViewPager) container)
+								.addView(pageviews.get(position));
+						return pageviews.get(position);
+					}
+
+					@Override
+					public void unregisterDataSetObserver(
+							DataSetObserver observer) {
+						if (observer != null) {
+							super.unregisterDataSetObserver(observer);
+						}
+					}
+				};
+			}
+
+			if (pageviews.size() != 0) {
+				vp_content.setAdapter(vp_contentAdapter);
+				return;
+			}
+
 			for (int i = 0; i < pagecount; i++) {
 				final int a = i;
 				BaseAdapter gridpageAdapter = new BaseAdapter() {
@@ -280,7 +326,6 @@ public class FriendsFragment extends BaseListFragment {
 
 							@Override
 							public void onClick(View v) {
-								System.out.println("点击了");
 							}
 						});
 						return convertView;
@@ -320,39 +365,12 @@ public class FriendsFragment extends BaseListFragment {
 						R.layout.f_group_panelitem_gridpage, null);
 				gridpage.setAdapter(gridpageAdapter);
 				pageviews.add(gridpage);
+				vp_contentAdapter.notifyDataSetChanged();
+
 			}
-			vp_content.setAdapter(vp_contentAdapter);
+
 		}
 
-		PagerAdapter vp_contentAdapter = new PagerAdapter() {
-			@Override
-			public boolean isViewFromObject(View arg0, Object arg1) {
-				return arg0 == arg1;
-			}
-
-			@Override
-			public int getCount() {
-				return pageviews.size();
-			}
-
-			@Override
-			public void destroyItem(View container, int position, Object object) {
-				((ViewPager) container).removeView(pageviews.get(position));
-			}
-
-			@Override
-			public Object instantiateItem(View container, int position) {
-				((ViewPager) container).addView(pageviews.get(position));
-				return pageviews.get(position);
-			}
-
-			@Override
-			public void unregisterDataSetObserver(DataSetObserver observer) {
-				if (observer != null) {
-					super.unregisterDataSetObserver(observer);
-				}
-			}
-		};
 	}
 
 	class ButtonHolder {
