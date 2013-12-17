@@ -3,11 +3,13 @@ package com.lejoying.mc.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.entity.Circle;
 import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.utils.MCNetTools;
@@ -16,6 +18,8 @@ import com.lejoying.mc.utils.ToTry;
 public abstract class BaseFragment extends Fragment {
 
 	public BaseInterface mMCFragmentManager;
+
+	public FragmentManager mFragmentManager;
 
 	public InputMethodManager mInputMethodManager;
 
@@ -131,4 +135,16 @@ public abstract class BaseFragment extends Fragment {
 			showMsg(getString(R.string.app_timeout));
 		}
 	}
+
+	public FragmentManager getmFragmentManager() {
+		if (mFragmentManager == null) {
+			mFragmentManager = getActivity().getSupportFragmentManager();
+		}
+		return mFragmentManager;
+	}
+
+	protected void changeContentFragment(Fragment fragment) {
+		System.out.println(fragment instanceof CircleMenuFragment);
+	}
+
 }

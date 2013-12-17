@@ -3,6 +3,8 @@ package com.lejoying.mc.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -16,9 +18,11 @@ import com.lejoying.mc.utils.ToTry;
 
 public abstract class BaseListFragment extends ListFragment {
 
-	public BaseInterface mMCFragmentManager;
+	protected BaseInterface mMCFragmentManager;
 
-	public InputMethodManager mInputMethodManager;
+	protected FragmentManager mFragmentManager;
+
+	protected InputMethodManager mInputMethodManager;
 
 	protected abstract EditText showSoftInputOnShow();
 
@@ -134,5 +138,16 @@ public abstract class BaseListFragment extends ListFragment {
 		public void failed() {
 			showMsg(getString(R.string.app_timeout));
 		}
+	}
+
+	public FragmentManager getmFragmentManager() {
+		if (mFragmentManager == null) {
+			mFragmentManager = getActivity().getSupportFragmentManager();
+		}
+		return mFragmentManager;
+	}
+
+	protected void changeContentFragment(Fragment fragment) {
+		System.out.println(fragment instanceof CircleMenuFragment);
 	}
 }

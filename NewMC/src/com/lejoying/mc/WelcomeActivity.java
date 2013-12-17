@@ -11,7 +11,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
 
-		Intent intent = new Intent(this, MainActivity.class);
+		Intent intent = new Intent(this, LoginActivity.class);
 		startActivity(intent);
 
 		this.finish();
