@@ -49,7 +49,7 @@ public class ScanView extends View {
 		float textSize = (framingRectSide + 2 * cornerHeight) / 15f;
 		paint.setTextSize(textSize);
 		paint.setColor(Color.rgb(210, 210, 210));
-		canvas.drawText("请将二维码放入框内,即可自动扫描", framingRect.left - cornerHeight,
+		canvas.drawText("", framingRect.left - cornerHeight,
 				framingRect.top - (int) (1.5 * textSize), paint);
 
 		paint.setColor(Color.rgb(255, 255, 255));

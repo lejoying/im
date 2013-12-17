@@ -100,7 +100,6 @@ public class MainActivity extends BaseFragmentActivity {
 							getMessages();
 							break;
 						case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
-							System.out.println("获取用户失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -135,7 +134,6 @@ public class MainActivity extends BaseFragmentActivity {
 							createFriendView();
 							break;
 						case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
-							System.out.println("获取好友圈失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -173,7 +171,6 @@ public class MainActivity extends BaseFragmentActivity {
 							createMessageView();
 							break;
 						case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
-							System.out.println("获取消息失败");
 							Intent intent = new Intent(MainActivity.this,
 									LoginActivity.class);
 							startActivity(intent);
@@ -432,7 +429,7 @@ public class MainActivity extends BaseFragmentActivity {
 		replaceToContent(mChatFragment, true);
 		for (int i = 0; i < 100; i++) {
 			TextView tv = new TextView(mContext);
-			tv.setText("测试条目" + i);
+			tv.setText(i);
 			MCStaticData.chatMessagesViewList.add(tv);
 		}
 		getNotifyListener().notifyDataChanged(

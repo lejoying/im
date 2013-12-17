@@ -35,7 +35,7 @@ public class ShareFragment extends BaseListFragment {
 		mContent = inflater.inflate(R.layout.f_share, null);
 		mInflater = inflater;
 		mMCFragmentManager.showCircleMenuToTop(false, false);
-		mMCFragmentManager.setCircleMenuPageName("·ÖÏí");
+		mMCFragmentManager.setCircleMenuPageName("åˆ†äº«");
 		headman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
 

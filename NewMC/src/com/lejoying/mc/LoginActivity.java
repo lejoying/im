@@ -23,4 +23,16 @@ public class LoginActivity extends BaseFragmentActivity {
 		return R.drawable.card_background;
 	}
 
+	@Override
+	protected void onPause() {
+		System.out.println("pause");
+		super.onPause();
+	}
+
+	@Override
+	protected void onDestroy() {
+		System.out.println("destory");
+		super.onDestroy();
+	}
+
 }

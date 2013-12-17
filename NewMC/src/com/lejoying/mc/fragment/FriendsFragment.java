@@ -209,7 +209,7 @@ public class FriendsFragment extends BaseListFragment {
 				friendHolder.setCircle(circle);
 				break;
 			case TYPE_BUTTON:
-				bHolder.button.setText("添加好友");
+				bHolder.button.setText("娣诲姞濂藉弸");
 				break;
 			default:
 				break;
@@ -326,7 +326,6 @@ public class FriendsFragment extends BaseListFragment {
 
 							@Override
 							public void onClick(View v) {
-								System.out.println("点击了");
 							}
 						});
 						return convertView;
