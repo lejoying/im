@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>创建表</title>
+    <script type="text/javascript" src="./../static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var name = document.getElementById("js_name").value;
+            var geotype = document.getElementById("js_geotype").value;
+            var is_published = document.getElementById("js_is_published").value;
+            var ak = document.getElementById("js_ak").value;
+            $.ajax({
+                type: "POST",
+                url: "/lbs/create?",
+                data: {
+                    name: name,
+                    geotype: geotype,
+                    is_published: is_published,
+                    ak: ak
+                },
+                success: function(data){
+                    alert(unescape(data.replace(/\\u/gi, '%u')));
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div style="margin-left: 800px;margin-top: 200px;">
+    name: <input type="text" id="js_name" value="lejoying"><br/>
+    geotype: <input type="text" id="js_geotype" value="1"><br/>
+    is_published: <input type="text" id="js_is_published" value="1"><br/>
+    ak: <input type="text" id="js_ak" value="qD4I881MqTR7NZQ2TYTa2ZGh"><br/>
+    <input type="button" value="提交" onclick="commit()">
+</div>
+</body>
+</html>

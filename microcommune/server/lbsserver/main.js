@@ -18,11 +18,11 @@ http.createServer(
         route(routemap, request.url, request, response);
 
         i++;
-        console.log("The mcServer has been accessed " + i);
+        console.log("The LBS server has been accessed " + i);
         if (response.asynchronous == null) {
             response.end();
         }
 
-    }).listen(8071);
+    }).listen(8076);
 
-console.log("The mc server is running.8071");
+console.log("The LBS server is running.8076");
