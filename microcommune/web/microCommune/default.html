@@ -8,6 +8,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="baidu-tc-cerfication" content="e6cf77374e9204db0abe3b799cb0154b" />
 <link href="/static/images/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 <title>微型公社</title>
 <link href="static/css/boilerplate.css" rel="stylesheet" type="text/css">
@@ -126,9 +127,12 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                 <div id="conversationContainer">
                 <div class="templates hide">
                     <div class="chatListColumn" id="chatListColumn">
-                        <?js for(var i=it.length;i>0;i--) {?>
-                        <?js it1=JSON.parse(it[i]);?>
-                        <div id="conv_wxid_#{it1.phone}" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21" onClick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
+                        <?js alert(it+"   "+it.length+"  default.html");?>
+                        <?js for(var i=it.length;i比较符号大于0;i--){ ?>
+                        <?alert(it[i])+" default.html it[i]"?>
+                        <?js var its=JSON.parse(it[i]);?>
+                        <?alert(its+"  default.html");?>
+                        <div id="conv_wxid_#{its.phone}" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21" onClick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
                             <div style="display:none;" class="clicked"></div>
                             <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
                             <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>
@@ -139,11 +143,11 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                             </div>
                             <div class="info">
                                 <div class="nickName">
-                                    <div style="" class="left name">#{it1.nickName}</div>
+                                    <div style="" class="left name">#{its.nickName}</div>
                                     <div class="clr"></div>
                                 </div>
                                 <div class="descWrapper"> <img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img class="tipIcon iconSending sendingStatus hide" src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
-                                    <p class="desc">#{it1.mainBusiness}</p>
+                                    <p class="desc">#{its.mainBusiness}</p>
                                 </div>
                             </div>
                             <div class="clr"></div>

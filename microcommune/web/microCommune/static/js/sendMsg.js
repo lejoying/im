@@ -48,11 +48,11 @@ $(document).ready(function () {
     $(".loadMoreConv").hide();
    var wxgs_tempChat = window.sessionStorage.getItem("wxgs_tempChat");
     if (wxgs_tempChat != null && wxgs_tempChat != undefined) {
-        var tempChatArr = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatArr"));
-        for (var index in tempChatArr) {
-            alert(JSON.parse(tempChatArr[index]));
-            addTempChatAccount(JSON.parse(tempChatArr[index]));
-        }
+        var tempChatArr =JSON.parse(window.sessionStorage.getItem("wxgs_tempChatArr"));
+            //addTempChatAccount(tempChatArr);
+        alert("刷新调用模板");
+        var chatListColumn=getTemplate("chatListColumn");
+        $("#conversationContainer").html(chatListColumn.render(tempChatArr));
         $(".loadMoreConv").show();
     }
     var circleGroupCount = 0;
@@ -430,6 +430,10 @@ $(document).ready(function () {
     });
     $(".js_createRoomSendMessage").click(function () {
         closeProc();
+        document.getElementById("tempChatMessage").innerHTML="";
+        document.getElementById("chatMessageSend").innerHTML="";
+        document.getElementById("chatMessageGet").innerHTML="";
+
         $("#js_chat")[0].style.visibility = "visible";
         $("#js_chat .chatName").html(this.getAttribute("accountnickName"));
         $("#js_chat .chatName").attr("accountphone", this.getAttribute("accountphone"));
@@ -480,19 +484,11 @@ function addTempChatCheck(tempChat, tempChatArr, phoneto, circleid) {
     }
 }
 function addTempChatAccount(obj) {
-    var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
-    for(var i=0;i<tempChatArr.length;i++){
-        if(tempChatArr[i]==obj){
-            index=i;
-            tempChatArr.splice(index,1);
-            tempChatArr.push(obj);
-        }
-    }
-    addPhone=obj.phone;
     //清空所有样式
+    addPhone=obj.phone;
     $(".chatListColumn").attr("class", "chatListColumn");
     var chatListColumn=getTemplate("chatListColumn");
-    $("#conversationContainer").html(chatListColumn.render(tempChatArr));
+    $("#conversationContainer")[0].insertBefore(chatListColumn.render([obj]),$("#conversationContainer")[0].firstChild);
     /* var str='<div style="display:none;" class="clicked"></div>' +
         '<span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>' +
         '<div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>' +
@@ -1067,6 +1063,7 @@ function Tempcheck (phoneto){
     }
 }
 $(document).on('click', ".chatListColumn", function () {
+    document.getElementById("chat_chatmsglist").innerHTML="";
    var phone=addPhone;
     alert(phone+"  click标题");
     alert(tempchatMessage[phone]+"  弹出click事件中tempchatMessage");
