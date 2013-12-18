@@ -23,10 +23,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lejoying.data.Circle;
+import com.lejoying.data.Friend;
+import com.lejoying.data.Message;
 import com.lejoying.mc.R;
-import com.lejoying.mc.entity.Circle;
-import com.lejoying.mc.entity.Friend;
-import com.lejoying.mc.entity.Message;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCImageTools;

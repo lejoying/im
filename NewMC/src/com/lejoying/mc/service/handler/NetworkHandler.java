@@ -12,15 +12,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.lejoying.data.App;
+import com.lejoying.data.User;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.entity.User;
 import com.lejoying.mc.service.BaseService.ServiceEvent;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.mc.utils.MCStaticData;
 import com.lejoying.utils.RSAUtils;
 
 public class NetworkHandler {
@@ -108,9 +108,9 @@ public class NetworkHandler {
 			if (api.equals(API.ACCOUNT_VERIFYPHONE)) {
 				String usage = params.getString("usage");
 				if (usage.equals("register")) {
-					MCStaticData.registerBundle = params;
+					App.getInstance().registerBundle = params;
 					try {
-						MCStaticData.registerBundle.putString("code",
+						App.getInstance().registerBundle.putString("code",
 								data.getString("code"));
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -118,11 +118,11 @@ public class NetworkHandler {
 				}
 				mNetworkRemain.startReamin(intent);
 			} else if (api.equals(API.ACCOUNT_VERIFYCODE)) {
-				if (MCStaticData.registerBundle != null) {
+				if (App.getInstance().registerBundle != null) {
 					try {
-						MCStaticData.registerBundle.putString("accessKey",
+						App.getInstance().registerBundle.putString("accessKey",
 								data.getString("accessKey"));
-						MCStaticData.registerBundle.putString("PbKey",
+						App.getInstance().registerBundle.putString("PbKey",
 								data.getString("PbKey"));
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -150,16 +150,16 @@ public class NetworkHandler {
 				}
 				saveLoginUser(params.getString("phone"), accessKey, pbKey);
 			} else if (api.equals(API.ACCOUNT_MODIFY)) {
-				if (MCStaticData.registerBundle != null) {
-					saveLoginUser(
-							MCStaticData.registerBundle.getString("phone"),
-							MCStaticData.registerBundle.getString("accessKey"),
-							MCStaticData.registerBundle.getString("PbKey"));
+				if (App.getInstance().registerBundle != null) {
+					saveLoginUser(App.getInstance().registerBundle
+							.getString("phone"),
+							App.getInstance().registerBundle
+									.getString("accessKey"),
+							App.getInstance().registerBundle.getString("PbKey"));
 				}
 			} else if (api.equals(API.ACCOUNT_GET)) {
 				if (params.getString("phone")
 						.equals(params.getString("target"))) {
-					User user = null;
 					try {
 						user = MCDataTools.getLoginedUser(mContext);
 						user.append(new User(data.getJSONObject("account")));

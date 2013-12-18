@@ -5,13 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class StreamTools {
-	/**
-	 * 将InputStream读取到byte[]中
-	 * 
-	 * @param is
-	 * @return
-	 * @throws IOException
-	 */
+
 	public static byte[] isToData(InputStream is) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		byte buffer[] = new byte[1024];

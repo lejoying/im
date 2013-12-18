@@ -9,7 +9,6 @@ import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.entity.Circle;
 import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.utils.MCNetTools;

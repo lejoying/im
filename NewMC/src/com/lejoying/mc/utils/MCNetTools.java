@@ -45,12 +45,12 @@ public class MCNetTools {
 						}
 					};
 					if (method == MCHttpTools.SEND_GET) {
-						MCHttpTools.sendGet(MCStaticData.DOMAIN + url, timeout,
-								param, httpListener);
+						MCHttpTools.sendGet(MCDataTools.getConfig().DOMAIN
+								+ url, timeout, param, httpListener);
 					}
 					if (method == MCHttpTools.SEND_POST) {
-						MCHttpTools.sendPost(MCStaticData.DOMAIN + url,
-								timeout, param, httpListener);
+						MCHttpTools.sendPost(MCDataTools.getConfig().DOMAIN
+								+ url, timeout, param, httpListener);
 					}
 					try {
 						if (b == null) {

@@ -28,10 +28,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.data.Circle;
+import com.lejoying.data.Friend;
+import com.lejoying.data.Message;
 import com.lejoying.mc.api.API;
-import com.lejoying.mc.entity.Circle;
-import com.lejoying.mc.entity.Friend;
-import com.lejoying.mc.entity.Message;
 import com.lejoying.mc.fragment.ChatFragment;
 import com.lejoying.mc.fragment.FriendsFragment;
 import com.lejoying.mc.fragment.ShareFragment;
