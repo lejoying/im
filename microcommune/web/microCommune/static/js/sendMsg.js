@@ -388,7 +388,8 @@ $(document).ready(function () {
                 },
                 success: function (data) {
                     if (data["提示信息"] == "发送成功") {
-                        var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
+                        Tempcheck(phoneto,circleid);
+                        /*var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
                         var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
                         if (tempChat != null) {
                             if (tempChat[phoneto] != "" && tempChat[phoneto] != undefined) {
@@ -411,7 +412,7 @@ $(document).ready(function () {
                             }
                         } else {
                             addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid);
-                        }
+                        }*/
                     } else {
                         dialogMessage("notice", data["提示信息"] + "," + data["失败原因"], 1000);
                     }
@@ -430,10 +431,7 @@ $(document).ready(function () {
     });
     $(".js_createRoomSendMessage").click(function () {
         closeProc();
-        document.getElementById("tempChatMessage").innerHTML="";
-        document.getElementById("chatMessageSend").innerHTML="";
-        document.getElementById("chatMessageGet").innerHTML="";
-
+        document.getElementById("chat_chatmsglist").innerHTML="";
         $("#js_chat")[0].style.visibility = "visible";
         $("#js_chat .chatName").html(this.getAttribute("accountnickName"));
         $("#js_chat .chatName").attr("accountphone", this.getAttribute("accountphone"));
@@ -979,9 +977,8 @@ function get(){
                         var phone=JSON.parse(messages[i]).phone;
                        // alert("phone不是自己时调用");
                        TempChatMessage(phone,messages);
-                       Tempcheck(phone);
+                       Tempcheck(phone,undefined);
                         //判读会话窗口是否打开
-
                        alert(flagPhone+" flagphone收到消息是判读");
                         if(phone==flagPhone){
                           //  alert("判读是否打开会话窗口");
@@ -1035,7 +1032,7 @@ function TempChatMessage(phoneto,messages){
         //alert(tempchatMessage[phoneto]+"   phoneto存在");
     }
 }
-function Tempcheck (phoneto){
+function Tempcheck (phoneto,circleid){
    // alert("调用查看临时会话的方法");
     var tempChat = JSON.parse(window.sessionStorage.getItem("wxgs_tempChat"));
     var tempChatArr = window.sessionStorage.getItem("wxgs_tempChatArr");
@@ -1056,10 +1053,10 @@ function Tempcheck (phoneto){
             window.sessionStorage.setItem("wxgs_tempChat", JSON.stringify(tempChat));
             addTempChatAccount(accountObj);
         } else {
-            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, undefined);
+            addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid);
         }
     } else {
-        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, undefined);
+        addTempChatCheck(tempChat, JSON.parse(tempChatArr), phoneto, circleid);
     }
 }
 $(document).on('click', ".chatListColumn", function () {
