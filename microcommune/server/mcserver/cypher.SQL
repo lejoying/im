@@ -25,12 +25,12 @@ WHERE account.phone="121"
 RETURN account
 
 MATCH (account:Account)
-WHERE account.phone="121" AND account.status="success"
+WHERE account.phone="121" AND account.status="active"
 RETURN account
 
 CREATE (account:Account{phone:"121",status:"init",head:"abc",nickName:"小黑",
                         mainBusiness:"送水",byPhone:"checked",byScan:"checked",byScanNearBy:"allowed",code:"1234",time:"new Date().getTime()"})
-set account.uid=ID({phone:"121",status:"init",head:"abc",nickName:"小黑",
+SET account.uid=ID({phone:"121",status:"init",head:"abc",nickName:"小黑",
                         mainBusiness:"送水",byPhone:"checked",byScan:"checked",byScanNearBy:"allowed",code:"1234",time:"new Date().getTime()"})
 RETURN account
 
@@ -122,7 +122,7 @@ MATCH (account1:Account)-[r:FRIEND]-(account2:Account)
 WHERE account1.phone="121"
 RETURN account2
 
-MATCH (account:Account)-[HAS_CIRCLE]->(circle:Circle)
+MATCH (account:Account)-[:HAS_CIRCLE]->(circle:Circle)
 WHERE account.phone="121"
 RETURN circle
 
