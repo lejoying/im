@@ -18,6 +18,9 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 
+import com.lejoying.data.App;
+import com.lejoying.data.StaticConfig;
+import com.lejoying.data.StaticData;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
@@ -30,7 +33,7 @@ import com.lejoying.mc.view.BackgroundView;
 
 public abstract class BaseFragmentActivity extends FragmentActivity implements
 		BaseInterface {
-
+	
 	private FragmentManager mFragmentManager;
 
 	private CircleMenuFragment mCircle;

@@ -12,17 +12,20 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.lejoying.data.App;
 import com.lejoying.mc.utils.MCHttpTools.HttpListener;
 import com.lejoying.utils.StreamTools;
 
 public class MCNetTools {
+
+	static App app = App.getInstance();
 
 	public static Handler handler = new Handler();
 
 	private static Toast toast;
 
 	public static void ajax(final Context context, final String url,
-			final Bundle param, final int method, final int timeout,
+			final Bundle params, final int method, final int timeout,
 			final ResponseListener responseListener) {
 		boolean hasNetwork = MCHttpTools.hasNetwork(context);
 
@@ -45,12 +48,12 @@ public class MCNetTools {
 						}
 					};
 					if (method == MCHttpTools.SEND_GET) {
-						MCHttpTools.sendGet(MCDataTools.getConfig().DOMAIN
-								+ url, timeout, param, httpListener);
+						MCHttpTools.sendGet(app.config.DOMAIN + url, timeout,
+								params, httpListener);
 					}
 					if (method == MCHttpTools.SEND_POST) {
-						MCHttpTools.sendPost(MCDataTools.getConfig().DOMAIN
-								+ url, timeout, param, httpListener);
+						MCHttpTools.sendPost(app.config.DOMAIN + url, timeout,
+								params, httpListener);
 					}
 					try {
 						if (b == null) {

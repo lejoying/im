@@ -28,16 +28,18 @@ import com.lejoying.data.User;
 
 public class MCDataTools {
 
+	public static App app = App.getInstance();
+
 	public static void saveData(Context context) {
 		OutputStream outputStream = null;
 		ObjectOutputStream objectOutputStream = null;
 		// save data
 		try {
-			outputStream = context.openFileOutput(getLoginUser().phone,
+			outputStream = context.openFileOutput(app.data.user.phone,
 					Context.MODE_PRIVATE);
-			getConfig().lastLoginPhone = getLoginUser().phone;
+			app.config.lastLoginPhone = app.data.user.phone;
 			objectOutputStream = new ObjectOutputStream(outputStream);
-			objectOutputStream.writeObject(App.getInstance().data);
+			objectOutputStream.writeObject(app.data);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -66,7 +68,7 @@ public class MCDataTools {
 			outputStream = context.openFileOutput("config",
 					Context.MODE_PRIVATE);
 			objectOutputStream = new ObjectOutputStream(outputStream);
-			objectOutputStream.writeObject(getConfig());
+			objectOutputStream.writeObject(app.config);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -101,8 +103,7 @@ public class MCDataTools {
 		try {
 			inputStream = context.openFileInput("config");
 			objectInputStream = new ObjectInputStream(inputStream);
-			App.getInstance().config = (StaticConfig) objectInputStream
-					.readObject();
+			app.config = (StaticConfig) objectInputStream.readObject();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (StreamCorruptedException e) {
@@ -134,10 +135,9 @@ public class MCDataTools {
 		// read data
 
 		try {
-			inputStream = context.openFileInput(getConfig().lastLoginPhone);
+			inputStream = context.openFileInput(app.config.lastLoginPhone);
 			objectInputStream = new ObjectInputStream(inputStream);
-			App.getInstance().data = (StaticData) objectInputStream
-					.readObject();
+			app.data = (StaticData) objectInputStream.readObject();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (StreamCorruptedException e) {
@@ -168,42 +168,26 @@ public class MCDataTools {
 		}
 	}
 
-	public static User getLoginUser() {
-		return App.getInstance().data.user;
-	}
-
-	public static int appendToUser(JSONObject jUser) {
+	public static int updateUser(JSONObject jUser) {
 		int count = 0;
 		User user = generateUserFromJSON(jUser);
 		if (user.head != null && !user.head.equals("")) {
-			getLoginUser().head = user.head;
+			app.data.user.head = user.head;
 			count++;
 		}
 		if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
-			getLoginUser().mainBusiness = user.mainBusiness;
+			app.data.user.mainBusiness = user.mainBusiness;
 			count++;
 		}
 		if (user.nickName != null && !user.nickName.equals("")) {
-			getLoginUser().nickName = user.nickName;
+			app.data.user.nickName = user.nickName;
 			count++;
 		}
 		if (user.phone != null && !user.phone.equals("")) {
-			getLoginUser().phone = user.phone;
+			app.data.user.phone = user.phone;
 			count++;
 		}
 		return count;
-	}
-
-	public static List<Circle> getCircles() {
-		return App.getInstance().data.circles;
-	}
-
-	public static Map<String, Friend> getFriends() {
-		return App.getInstance().data.friends;
-	}
-
-	public static StaticConfig getConfig() {
-		return App.getInstance().config;
 	}
 
 	public static void saveCircles(JSONArray jCircles) {
@@ -238,8 +222,8 @@ public class MCDataTools {
 				e.printStackTrace();
 			}
 		}
-		App.getInstance().data.circles = circles;
-		App.getInstance().data.friends = friends;
+		app.data.circles = circles;
+		app.data.friends = friends;
 	}
 
 	public static void saveMessages(JSONArray jMessages) {
@@ -254,10 +238,10 @@ public class MCDataTools {
 
 				String friendPhone = phoneSend;
 
-				if (phoneSend.equals(getLoginUser().phone)) {
+				if (phoneSend.equals(app.data.user.phone)) {
 					message.type = "send";
 					friendPhone = phoneReceive;
-				} else if (phoneReceive.equals(getLoginUser().phone)) {
+				} else if (phoneReceive.equals(app.data.user.phone)) {
 					message.type = "receive";
 					friendPhone = phoneSend;
 				}
@@ -269,19 +253,19 @@ public class MCDataTools {
 				message.content = new JSONObject(jMessage.getString("content"))
 						.getString(message.messageType);
 
-				getFriends().get(friendPhone).messages.add(message);
+				app.data.friends.get(friendPhone).messages.add(message);
 
-				Integer notReadCount = App.getInstance().data.notReadCountMap
+				Integer notReadCount = app.data.notReadCountMap
 						.get(friendPhone);
 
 				if (notReadCount == null) {
-					App.getInstance().data.lastChatFriends.add(0, friendPhone);
-					App.getInstance().data.notReadCountMap.put(friendPhone, 1);
+					app.data.lastChatFriends.add(0, friendPhone);
+					app.data.notReadCountMap.put(friendPhone, 1);
 				} else {
-					App.getInstance().data.lastChatFriends.remove(friendPhone);
-					App.getInstance().data.lastChatFriends.add(0, friendPhone);
-					App.getInstance().data.notReadCountMap.put(friendPhone,
-							notReadCount += 1);
+					app.data.lastChatFriends.remove(friendPhone);
+					app.data.lastChatFriends.add(0, friendPhone);
+					app.data.notReadCountMap
+							.put(friendPhone, notReadCount += 1);
 				}
 
 			} catch (JSONException e) {

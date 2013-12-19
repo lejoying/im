@@ -24,6 +24,8 @@ import com.lejoying.utils.RSAUtils;
 
 public class NetworkHandler {
 
+	App app = App.getInstance();
+
 	private Context mContext;
 	private NetworkRemain mNetworkRemain;
 	private ServiceEvent mServiceEvent;
@@ -106,9 +108,9 @@ public class NetworkHandler {
 			if (api.equals(API.ACCOUNT_VERIFYPHONE)) {
 				String usage = params.getString("usage");
 				if (usage.equals("register")) {
-					App.getInstance().registerBundle = params;
+					MCDataTools.app.registerBundle = params;
 					try {
-						App.getInstance().registerBundle.putString("code",
+						MCDataTools.app.registerBundle.putString("code",
 								data.getString("code"));
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -116,11 +118,11 @@ public class NetworkHandler {
 				}
 				mNetworkRemain.startReamin(intent);
 			} else if (api.equals(API.ACCOUNT_VERIFYCODE)) {
-				if (App.getInstance().registerBundle != null) {
+				if (MCDataTools.app.registerBundle != null) {
 					try {
-						App.getInstance().registerBundle.putString("accessKey",
+						MCDataTools.app.registerBundle.putString("accessKey",
 								data.getString("accessKey"));
-						App.getInstance().registerBundle.putString("PbKey",
+						MCDataTools.app.registerBundle.putString("PbKey",
 								data.getString("PbKey"));
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -148,18 +150,18 @@ public class NetworkHandler {
 				}
 				saveLoginUser(params.getString("phone"), accessKey, pbKey);
 			} else if (api.equals(API.ACCOUNT_MODIFY)) {
-				if (App.getInstance().registerBundle != null) {
-					saveLoginUser(App.getInstance().registerBundle
-							.getString("phone"),
-							App.getInstance().registerBundle
+				if (MCDataTools.app.registerBundle != null) {
+					saveLoginUser(
+							MCDataTools.app.registerBundle.getString("phone"),
+							MCDataTools.app.registerBundle
 									.getString("accessKey"),
-							App.getInstance().registerBundle.getString("PbKey"));
+							MCDataTools.app.registerBundle.getString("PbKey"));
 				}
 			} else if (api.equals(API.ACCOUNT_GET)) {
 				if (params.getString("phone")
 						.equals(params.getString("target"))) {
 					try {
-						MCDataTools.appendToUser(data.getJSONObject("account"));
+						MCDataTools.updateUser(data.getJSONObject("account"));
 					} catch (JSONException e) {
 
 					}
@@ -177,8 +179,7 @@ public class NetworkHandler {
 			if (api.equals(API.MESSAGE_GET)) {
 				try {
 					MCDataTools.saveMessages(data.getJSONArray("messages"));
-					MCDataTools.getLoginUser().flag = String.valueOf(data
-							.getInt("flag"));
+					app.data.user.flag = String.valueOf(data.getInt("flag"));
 				} catch (JSONException e) {
 				}
 			}
@@ -222,7 +223,7 @@ public class NetworkHandler {
 	}
 
 	private void saveLoginUser(String phone, String accessKey, String pbKey) {
-		User user = App.getInstance().data.user;
+		User user = app.data.user;
 		user.phone = phone;
 		try {
 			user.accessKey = RSAUtils.decrypt(pbKey, accessKey);
