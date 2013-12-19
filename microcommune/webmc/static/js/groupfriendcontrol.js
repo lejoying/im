@@ -29,12 +29,14 @@ $(document).ready(function () {
     $.getScript("/static/js/animation.js");
     $.getScript("/static/js/setting.js");
     var phone = "121";
+    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying"}));
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",
         data: {
-            phone: "121",
-            accessKey: "lejoying"
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey
         },
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
@@ -229,14 +231,89 @@ $(document).ready(function () {
         $(".js_modifycirclename").slideUp(10);
         oldCircleName = "";
     });
+    $(document).on("click", ".js_findFriendBtn", function () {
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+        $(".js_findFriendErrorMessage").html("");
+        var phone = $(".js_findFriendPhone").val().trim();
+        if (phone == "") {
+            $(".js_findFriendErrorMessage").html("手机号不能为空。");
+        } else if (isNaN(phone)) {
+            $(".js_findFriendErrorMessage").html("手机号格式不正确。");
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "/api2/account/get?",
+                data: {
+                    phone: accountObj.phone,
+                    accessKey: accountObj.accessKey,
+                    target: phone
+                },
+                success: function (data) {
+                    if (data["提示信息"] == "获取用户信息成功") {
+                        var mainBusiness = data.account.mainBusiness;
+                        $(".js_findFriend").css({display: "none"});
+                        $(".js_friendMessage").css({display: "block"});
+                        $(".js_friendMessage_nickName").html("昵&nbsp;&nbsp;&nbsp;称：" + data.account.nickName);
+                        $(".js_friendMessage_phone").html("手机号：" + data.account.phone);
+                        $(".js_friendMessage_mainBusiness").html(mainBusiness.substr(0, 72) + "...");
+                        $(".js_friendMessage_mainBusiness").attr("title", mainBusiness);
+                        $(".js_addFriendTitle").html("添加好友 (" + data.account.phone + ")");
+                        $(".js_addFriendNickName").html("昵&nbsp;&nbsp;&nbsp;称：" + data.account.nickName);
+                    } else {
+                        $(".js_findFriendErrorMessage").html(data["失败原因"]);
+                    }
+                }
+            });
+//            $(".js_findFriendErrorMessage").html("正在查找好友。");
+        }
+        /*var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+         $(".js_findFriendErrorMessage").html("");
+         var phone = $(".js_findFriendPhone").val().trim();
+         var flag = false;
+         if (phone != "" && phone != accountObj.phone) {
+         var circlesObj = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+         A:for (var index in circlesObj) {
+         var accounts = circlesObj[index].accounts;
+         if (accounts.length < 0)
+         continue;
+         B:for (var index1 in accounts) {
+         var account = accounts[index1];
+         if (account.phone == phone) {
+         flag = true;
+         break A;
+         }
+         }
+         }
+         if (flag) {
+         $(".js_findFriendErrorMessage").html(phone + "已经是您的好友,不能重复添加。");
+         } else {
+         $(".js_findFriendErrorMessage").html(phone + "不是您的好友。");
+         }
+         } else {
+         if (phone == accountObj.phone) {
+         $(".js_findFriendErrorMessage").html("不能添加自己为好友。")
+         } else {
+         $(".js_findFriendErrorMessage").html("手机号不能为空。")
+         }
+         }*/
+    });
+    $(document).on("click", ".js_friendMessage_addFriend", function () {
+        $(".js_friendMessage").css({display: "none"});
+        $(".js_addFriendVerifyMessage").css({display: "block"});
+//        alert("js_friendMessage_addFriend");
+    });
+    $(document).on("click", ".js_addFriendSubmit", function () {
+        alert($(".js_addFriendVerifyMessage").val());
+    });
 });
 function modifyCircleName(rid, newCircleName) {
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "POST",
         url: "/api2/circle/modify?",
         data: {
-            phone: "121",
-            accessKey: "lejoying",
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
             rid: rid,
             name: newCircleName
         },
