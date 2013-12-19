@@ -1,4 +1,4 @@
-package com.lejoying.data;
+package com.lejoying.mc.data;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -17,7 +17,6 @@ public class App {
 		data.circles = new ArrayList<Circle>();
 		data.friends = new Hashtable<String, Friend>();
 		data.lastChatFriends = new ArrayList<String>();
-		data.notReadCountMap = new Hashtable<String, Integer>();
 	}
 
 	public static App getInstance() {

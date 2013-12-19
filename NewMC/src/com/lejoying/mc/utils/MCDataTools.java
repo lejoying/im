@@ -18,13 +18,13 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
-import com.lejoying.data.App;
-import com.lejoying.data.Circle;
-import com.lejoying.data.Friend;
-import com.lejoying.data.Message;
-import com.lejoying.data.StaticConfig;
-import com.lejoying.data.StaticData;
-import com.lejoying.data.User;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Circle;
+import com.lejoying.mc.data.Friend;
+import com.lejoying.mc.data.Message;
+import com.lejoying.mc.data.StaticConfig;
+import com.lejoying.mc.data.StaticData;
+import com.lejoying.mc.data.User;
 
 public class MCDataTools {
 
@@ -197,7 +197,11 @@ public class MCDataTools {
 			try {
 				JSONObject jCircle = jCircles.getJSONObject(i);
 				Circle circle = new Circle();
-				circle.rid = jCircle.getInt("rid");
+				try {
+					circle.rid = jCircle.getInt("rid");
+				} catch (JSONException e) {
+
+				}
 				circle.name = jCircle.getString("name");
 				JSONArray jFriends = jCircle.getJSONArray("accounts");
 				List<String> phones = new ArrayList<String>();
@@ -229,7 +233,7 @@ public class MCDataTools {
 	public static void saveMessages(JSONArray jMessages) {
 		for (int i = 0; i < jMessages.length(); i++) {
 			try {
-				JSONObject jMessage = jMessages.getJSONObject(i);
+				JSONObject jMessage = new JSONObject(jMessages.getString(i));
 				Message message = new Message();
 
 				String phoneSend = jMessage.getString("phone");
@@ -254,22 +258,13 @@ public class MCDataTools {
 						.getString(message.messageType);
 
 				app.data.friends.get(friendPhone).messages.add(message);
+				app.data.friends.get(friendPhone).notReadMessagesCount++;
 
-				Integer notReadCount = app.data.notReadCountMap
-						.get(friendPhone);
-
-				if (notReadCount == null) {
-					app.data.lastChatFriends.add(0, friendPhone);
-					app.data.notReadCountMap.put(friendPhone, 1);
-				} else {
-					app.data.lastChatFriends.remove(friendPhone);
-					app.data.lastChatFriends.add(0, friendPhone);
-					app.data.notReadCountMap
-							.put(friendPhone, notReadCount += 1);
-				}
+				app.data.lastChatFriends.remove(friendPhone);
+				app.data.lastChatFriends.add(0, friendPhone);
 
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
+				System.out.println("jsonYichang ");
 				e.printStackTrace();
 			}
 		}

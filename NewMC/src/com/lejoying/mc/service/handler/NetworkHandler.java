@@ -11,10 +11,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.lejoying.data.App;
-import com.lejoying.data.User;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.User;
 import com.lejoying.mc.service.BaseService.ServiceEvent;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;

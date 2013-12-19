@@ -12,7 +12,7 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.lejoying.data.App;
+import com.lejoying.mc.data.App;
 import com.lejoying.mc.utils.MCHttpTools.HttpListener;
 import com.lejoying.utils.StreamTools;
 

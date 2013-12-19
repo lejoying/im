@@ -10,8 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.lejoying.data.App;
 import com.lejoying.mc.api.API;
+import com.lejoying.mc.data.App;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;

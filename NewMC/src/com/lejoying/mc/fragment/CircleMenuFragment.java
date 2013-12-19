@@ -23,12 +23,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lejoying.data.App;
-import com.lejoying.data.StaticConfig;
-import com.lejoying.data.StaticData;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.StaticConfig;
+import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.entity.MenuEntity;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
