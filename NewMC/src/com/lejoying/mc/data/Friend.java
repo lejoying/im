@@ -1,6 +1,7 @@
-package com.lejoying.data;
+package com.lejoying.mc.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Friend implements Serializable {
@@ -13,5 +14,6 @@ public class Friend implements Serializable {
 	public String mainBusiness;
 	public String head;
 	public String friendStatus;
-	public List<Message> messages;
+	public int notReadMessagesCount;
+	public List<Message> messages = new ArrayList<Message>();
 }

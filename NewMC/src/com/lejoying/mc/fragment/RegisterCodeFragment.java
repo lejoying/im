@@ -9,9 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.lejoying.data.App;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
+import com.lejoying.mc.data.App;
 import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 

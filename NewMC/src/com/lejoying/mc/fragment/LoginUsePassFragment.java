@@ -1,5 +1,9 @@
 package com.lejoying.mc.fragment;
 
+import java.net.HttpURLConnection;
+
+import org.json.JSONObject;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +16,17 @@ import android.widget.TextView;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.RSAUtils;
 import com.lejoying.utils.SHA1;
 
 public class LoginUsePassFragment extends BaseFragment implements
 		OnClickListener {
+
+	App app = App.getInstance();
 
 	private View mContent;
 
@@ -44,6 +55,10 @@ public class LoginUsePassFragment extends BaseFragment implements
 		mView_login = (Button) mContent.findViewById(R.id.btn_login);
 		mView_register = (Button) mContent.findViewById(R.id.btn_register);
 		mView_clogin = (TextView) mContent.findViewById(R.id.tv_clogin);
+
+		if (!app.config.lastLoginPhone.equals("none")) {
+			mView_phone.setText(app.config.lastLoginPhone);
+		}
 
 		mView_login.setOnClickListener(this);
 		mView_register.setOnClickListener(this);
@@ -83,12 +98,47 @@ public class LoginUsePassFragment extends BaseFragment implements
 					.toString().getBytes());
 			params.putString("password", pass);
 
-			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_AUTH, params,
-					true, new NetworkStatusAdapter() {
+			MCNetTools.ajax(getActivity(), API.ACCOUNT_AUTH, params,
+					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+
 						@Override
-						public void success() {
-							mMCFragmentManager.startToActivity(
-									MainActivity.class, true);
+						public void success(JSONObject data) {
+							try {
+								String accessKey = data.getString("accessKey");
+								System.out.println("到这里了");
+								accessKey = RSAUtils.decrypt(app.config.pbKey0,
+										accessKey);
+								app.data.user.phone = mView_phone.getText()
+										.toString();
+								app.data.user.accessKey = accessKey;
+								System.out.println(app.data.user.phone);
+								System.out.println(app.data.user.accessKey);
+								mMCFragmentManager.startToActivity(
+										MainActivity.class, true);
+							} catch (Exception e) {
+								System.out.println("解密失败");
+								e.printStackTrace();
+							}
+
+						}
+
+						@Override
+						public void noInternet() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void failed() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void connectionCreated(
+								HttpURLConnection httpURLConnection) {
+							// TODO Auto-generated method stub
+
 						}
 					});
 

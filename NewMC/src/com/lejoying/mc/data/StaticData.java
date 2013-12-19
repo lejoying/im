@@ -1,4 +1,4 @@
-package com.lejoying.data;
+package com.lejoying.mc.data;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,6 +17,5 @@ public class StaticData implements Serializable {
 
 	// Last messages list
 	public List<String> lastChatFriends;
-	public Map<String, Integer> notReadCountMap;
 
 }

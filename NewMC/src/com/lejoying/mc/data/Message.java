@@ -1,4 +1,4 @@
-package com.lejoying.data;
+package com.lejoying.mc.data;
 
 import java.io.Serializable;
 

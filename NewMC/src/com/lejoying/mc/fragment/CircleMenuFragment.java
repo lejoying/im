@@ -26,12 +26,19 @@ import android.widget.TextView;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.StaticConfig;
+import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.entity.MenuEntity;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
 
 public class CircleMenuFragment extends BaseFragment {
+
+	App app = App.getInstance();
+	StaticData data = app.data;
+	StaticConfig config = app.config;
 
 	private int mWhere;
 	private int mOldWhere;
@@ -916,7 +923,8 @@ public class CircleMenuFragment extends BaseFragment {
 
 			break;
 		case 12:
-
+			data.user.accessKey = null;
+			getActivity().finish();
 			break;
 		case 13:
 
