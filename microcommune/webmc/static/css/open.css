@@ -1,0 +1,119 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 0;
+}
+a {
+    text-decoration: none;
+}
+.clr{
+    clear: both;
+}
+.open_content{
+    position: absolute;
+    width: 100%;
+    margin: 0 auto;
+    height: 1100px;
+    top: 65px;
+}
+/*---------------------------------  第一个面板----------------------------------*/
+.open_one{
+    margin: 0 auto;
+    width: 980px;
+    height: 400px;
+    background-color: white;
+    padding-top: 150px;
+    border-bottom: 1px solid #CFCFCF;
+}
+.open_left{
+    line-height: 30px;
+    width: 560px;
+    height: 300px;
+    float: left;
+    color: #5E5E5E;
+    margin-left: 45px;
+}
+.open_right{
+   background: url("/static/images/open/open_baidu_lbs.png")no-repeat ;
+   width: 350px;
+   height: 300px;
+   float: right;
+}
+.open_lbs{
+    background: url("/static/images/open/open_lbs.png")no-repeat;
+    width: 310px;
+    height: 50px;
+    margin-left: 250px;
+    margin-top: -40px;
+}
+/*---------------------------------  第二个面板----------------------------------*/
+.open_two{
+    margin: 0 auto;
+    width: 980px;
+    height: 220px;
+    border-bottom: 1px solid #CFCFCF;
+    background-color: white;
+}
+.open_two_ima{
+    float: left;
+    background:url("/static/images/open/open_friend.png")no-repeat;
+    width: 190px;
+    height: 50px;
+    margin-top: 30px;
+}
+.open_two_doc{
+    float: left;
+    width: 165px;
+    height: 80px;
+    margin-top:85px;
+    margin-left: -190px;
+}
+.open_two_right{
+    position: relative;
+    float: right;
+    background:url("/static/images/open/open_docment.png")no-repeat;
+    width: 207px;
+    height: 202px;
+    margin-top: 5px;
+    margin-right: 30px;
+}
+/*---------------------------------  第三个面板----------------------------------*/
+.open_three{
+    margin: 0 auto;
+    width: 980px;
+    height: 400px;
+    background-color: white;
+}
+.open_three_ima{
+    margin: 0 auto;
+    float: left;
+    background:url("/static/images/open/open_healthPic.png")no-repeat;
+    width: 980px;
+    height: 50px;
+    margin-top: 50px;
+}
+.open_three_ima3{
+    margin-left: 10px;
+    width: 960px;
+    float: left;
+    height: 280px;
+}
+.open_three_ht{
+    float: left;
+    width:320px;
+    height: 280px;
+    background:url("/static/images/open/open_heml5sdk.png")no-repeat center;
+}
+.open_three_and{
+    float: left;
+    width:320px;
+    height: 280px;
+    background:url("/static/images/open/open_androidsdk.png")no-repeat center;
+}
+.open_three_ios{
+    float: left;
+    width:320px;
+    height: 280px;
+    background:url("/static/images/open/open_iossdk.png")no-repeat center;
+}

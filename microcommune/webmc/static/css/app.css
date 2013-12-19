@@ -1,0 +1,141 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 0;
+}
+a {
+    text-decoration: none;
+}
+.clr{
+    clear: both;
+}
+/*---------------------     第一个面板内容       --------------------*/
+.content_one{
+    margin: 0 auto;
+    width: 980px;
+    height: 100%;
+}
+.app_main_left{
+    margin: 0 auto;
+    width: 490px;
+    height: 500px;
+    background-color: white;
+    float: left;
+}
+.app_main_left_d{
+    position: relative;
+    font-family: "微软雅黑";
+    font-size: 22px;
+    float: right;
+    color: #7F7F7F;
+    left: 5px;
+    margin-top: 150px;
+    letter-spacing: 2px;
+    margin-right: 10px;
+}
+.app_main_left_z{
+    font-family: "微软雅黑";
+    font-size: 18px;
+    float: right;
+    color: #7F7F7F;
+    margin-top: 20px;
+    letter-spacing: 1px;
+}
+.app_main_left_ima{
+    position: relative;
+    display: block;
+    float: right;
+    width: 500px;
+    margin-top: 130px;
+}
+.app_main_right{
+    margin: 0 auto;
+    width: 490px;
+    height: 500px;
+    float: left;
+    text-align: center;
+}
+.app_phone{
+    display: block;
+    position: absolute;
+    width: 490px;
+    height: 500px;
+    background: url("/static/images/app_phone.png") 0 0 no-repeat ;
+    margin-left: 100px;
+    margin-top: 40px;
+}
+/*---------------------  2.   水平线      --------------------*/
+.content_two{
+    margin:0 auto;
+    width: 980px;
+    height: 1px;
+}
+.spx{
+    margin: 40px auto;
+    float: left;
+    width: 980px;
+    border-bottom: 1px solid #D7D7D7;
+}
+/*---------------------  3.   第三个面板内容      --------------------*/
+.content_three{
+    margin: 0 auto;
+    width: 980px;
+    height: 100%;
+}
+.content_three .ima_1{
+    float: left;
+    width: 453px;
+    height: 200px;
+    background: url("/static/images/ap_friend.png") 0 0 no-repeat ;
+}
+.content_three .ima_2{
+    float: right;
+    width: 371px;
+    height: 77px;
+    background: url("/static/images/ap_bottom.png") 0 0 no-repeat ;
+    margin-top: 30px;
+}
+/*---------------------  4.   水平线      --------------------*/
+.content_two{
+    margin:0 auto;
+    width: 980px;
+    height: 1px;
+}
+.spx{
+    margin: 40px auto;
+    float: left;
+    width: 980px;
+    border-bottom: 1px solid #D7D7D7;
+}
+
+/*---------------------  5.   第四个面板内容      --------------------*/
+.content_four{
+    margin: 0 auto;
+    width: 980px;
+    height: 500px;
+}
+.content_four .ima_3{
+    float: left;
+    width: 453px;
+    height: 200px;
+    background: url("/static/images/ap_healthPic.png") 0 0 no-repeat ;
+}
+.content_four .ima_4{
+    float: left;
+    width: 170px;
+    height: 200px;
+    background: url("/static/images/ap_circulation.png") 0 0 no-repeat ;
+    margin-left: 260px;
+}
+.leaf{
+    background-image: url("/static/images/leaf.png");
+}
+.leaf{
+    position:relative;
+    background-position: -98px -500px;
+    width: 162px;
+    height: 500px;
+    float: right;
+    top: -500px;
+}
