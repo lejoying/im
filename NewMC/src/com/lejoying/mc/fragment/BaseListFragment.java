@@ -148,6 +148,6 @@ public abstract class BaseListFragment extends ListFragment {
 	}
 
 	protected void changeContentFragment(Fragment fragment) {
-		System.out.println(fragment instanceof CircleMenuFragment);
+		
 	}
 }

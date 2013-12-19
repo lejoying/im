@@ -25,7 +25,6 @@ import com.lejoying.mc.service.MainService;
 import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
-import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.BackgroundView;
 
@@ -155,7 +154,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		unregisterReceiver(mNetworkRemainReceiver);
 		mReceiverListreners = null;
 		mNetworkPermission = null;
-		MCDataTools.cleanAllData(this, false);
 	}
 
 	@Override

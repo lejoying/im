@@ -12,6 +12,5 @@ public class User implements Serializable {
 	public String mainBusiness;
 	public String head;
 	public String accessKey;
-	public boolean now;
 	public String flag = "none";
 }

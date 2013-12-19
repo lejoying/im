@@ -11,8 +11,12 @@ public class StaticData implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public User mUser;
-	public List<Circle> mCircles;
-	public Map<String, Friend> mFriends;
+	public User user;
+	public List<Circle> circles;
+	public Map<String, Friend> friends;
+
+	// Last messages list
+	public List<String> lastChatFriends;
+	public Map<String, Integer> notReadCountMap;
 
 }

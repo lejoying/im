@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 
 import com.lejoying.data.App;
 import com.lejoying.data.User;
@@ -29,7 +28,6 @@ public class NetworkHandler {
 	private NetworkRemain mNetworkRemain;
 	private ServiceEvent mServiceEvent;
 	private Map<String, HttpURLConnection> mConnections;
-	private static Map<String, Handler> mReceiverHandlers;
 
 	NetworkHandler(Context context, ServiceEvent serviceEvent) {
 		this.mContext = context;
@@ -161,15 +159,13 @@ public class NetworkHandler {
 				if (params.getString("phone")
 						.equals(params.getString("target"))) {
 					try {
-						user = MCDataTools.getLoginedUser(mContext);
-						user.append(new User(data.getJSONObject("account")));
-						MCDataTools.saveUser(mContext, user);
+						MCDataTools.appendToUser(data.getJSONObject("account"));
 					} catch (JSONException e) {
 
 					}
 				}
 			} else if (api.equals(API.ACCOUNT_EXIT)) {
-				MCDataTools.cleanAllData(mContext, true);
+
 			}
 		} else if (apiClazz.equals(API.CIRCLE)) {
 
@@ -180,11 +176,9 @@ public class NetworkHandler {
 		} else if (apiClazz.equals(API.MESSAGE)) {
 			if (api.equals(API.MESSAGE_GET)) {
 				try {
-					MCDataTools.saveMessages(mContext,
-							data.getJSONArray("messages"));
-					User user = MCDataTools.getLoginedUser(mContext);
-					user.setFlag(String.valueOf(data.getInt("flag")));
-					MCDataTools.saveUser(mContext, user);
+					MCDataTools.saveMessages(data.getJSONArray("messages"));
+					MCDataTools.getLoginUser().flag = String.valueOf(data
+							.getInt("flag"));
 				} catch (JSONException e) {
 				}
 			}
@@ -195,8 +189,7 @@ public class NetworkHandler {
 		} else if (apiClazz.equals(API.RELATION)) {
 			if (api.equals(API.RELATION_GETCIRCLESANDFRIENDS)) {
 				try {
-					MCDataTools.saveCircles(mContext,
-							data.getJSONArray("circles"));
+					MCDataTools.saveCircles(data.getJSONArray("circles"));
 				} catch (JSONException e) {
 				}
 
@@ -229,16 +222,13 @@ public class NetworkHandler {
 	}
 
 	private void saveLoginUser(String phone, String accessKey, String pbKey) {
-		User user = new User();
-		user.setPhone(phone);
-		user.setPbKey(pbKey);
+		User user = App.getInstance().data.user;
+		user.phone = phone;
 		try {
-			user.setAccessKey(RSAUtils.decrypt(pbKey, accessKey));
+			user.accessKey = RSAUtils.decrypt(pbKey, accessKey);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		user.setNow(true);
-		MCDataTools.saveUser(mContext, user);
 	}
 
 	class ResponseAdapter implements ResponseListener {
@@ -317,17 +307,5 @@ public class NetworkHandler {
 
 	public interface NetworkStatusListener {
 		public void onReceive(int STATUS, String log);
-	}
-
-	public static final void startNetwork(Context context, String api,
-			Bundle params, Handler handler) {
-		mReceiverHandlers.put(api, handler);
-		Intent service = new Intent(context, MainServiceHandler.class);
-		service.putExtra("SERVICE", MainServiceHandler.SERVICE_NETWORK);
-		service.putExtra("API", api);
-		if (params != null) {
-			service.putExtras(params);
-		}
-		context.startService(service);
 	}
 }

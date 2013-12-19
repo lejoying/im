@@ -9,11 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.lejoying.data.App;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.service.handler.MainServiceHandler;
 import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
-import com.lejoying.mc.utils.MCStaticData;
 
 public class RegisterCodeFragment extends BaseFragment implements
 		OnClickListener {
@@ -38,7 +38,8 @@ public class RegisterCodeFragment extends BaseFragment implements
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
 		mView_phone = (TextView) mContent.findViewById(R.id.tv_phone);
 		mView_sendcode = (TextView) mContent.findViewById(R.id.tv_sendcode);
-		mView_phone.setText(MCStaticData.registerBundle.getString("phone"));
+		mView_phone
+				.setText(App.getInstance().registerBundle.getString("phone"));
 		mView_next.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
 
@@ -78,7 +79,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 			}
 			Bundle nextParams = new Bundle();
 			nextParams.putString("phone",
-					MCStaticData.registerBundle.getString("phone"));
+					App.getInstance().registerBundle.getString("phone"));
 			nextParams.putString("code", code);
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
 					nextParams, true, new NetworkStatusAdapter() {
@@ -90,7 +91,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 					});
 			break;
 		case R.id.tv_sendcode:
-			Bundle resendParams = MCStaticData.registerBundle;
+			Bundle resendParams = App.getInstance().registerBundle;
 			resendParams.remove("code");
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
 					resendParams, new NetworkStatusAdapter() {

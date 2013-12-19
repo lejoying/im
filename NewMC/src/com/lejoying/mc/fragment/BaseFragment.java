@@ -143,7 +143,7 @@ public abstract class BaseFragment extends Fragment {
 	}
 
 	protected void changeContentFragment(Fragment fragment) {
-		System.out.println(fragment instanceof CircleMenuFragment);
+		
 	}
 
 }

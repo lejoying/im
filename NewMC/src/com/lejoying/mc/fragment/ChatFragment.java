@@ -10,7 +10,6 @@ import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
-import com.lejoying.mc.utils.MCStaticData;
 
 public class ChatFragment extends BaseListFragment {
 
@@ -50,14 +49,14 @@ public class ChatFragment extends BaseListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setListAdapter(mAdapter);
+		// setListAdapter(mAdapter);
 	}
 
 	private class ChatAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
-			return MCStaticData.chatMessagesViewList.size();
+			return 0;
 		}
 
 		@Override
@@ -72,7 +71,7 @@ public class ChatFragment extends BaseListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			return MCStaticData.chatMessagesViewList.get(position);
+			return null;
 		}
 
 	}

@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.lejoying.data.App;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
-import com.lejoying.mc.utils.MCStaticData;
 
 public class RegisterPassFragment extends BaseFragment implements
 		OnClickListener {
@@ -83,7 +83,7 @@ public class RegisterPassFragment extends BaseFragment implements
 				showMsg(getString(R.string.app_passlength));
 				return;
 			}
-			Bundle params = MCStaticData.registerBundle;
+			Bundle params = App.getInstance().registerBundle;
 			params.remove("code");
 			params.remove("usage");
 			JSONObject account = new JSONObject();

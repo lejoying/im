@@ -648,10 +648,10 @@ public class CircleMenuFragment extends BaseFragment {
 		for (MenuEntity entity : entities) {
 			ViewGroup menuItemView = (ViewGroup) inflater.inflate(
 					R.layout.f_circlemenu_item, null);
-			((TextView) menuItemView.findViewById(R.id.tv_text)).setText(entity
-					.getText());
+			((TextView) menuItemView.findViewById(R.id.tv_text))
+					.setText(entity.text);
 			((ImageView) menuItemView.findViewById(R.id.iv_image))
-					.setImageResource(entity.getImageID());
+					.setImageResource(entity.imageID);
 			menuItemView.setVisibility(View.INVISIBLE);
 			views.add(menuItemView);
 			itemGroup.addView(menuItemView);
