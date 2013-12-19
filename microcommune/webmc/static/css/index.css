@@ -693,6 +693,200 @@ a.btnSecondary:active {
     position: relative;
     z-index: 2;
 }
+/*------------------    查找好友      --------------------------*/
+.se_fd{
+    position: absolute;
+    top: 200px;
+    left: 315px;
+    width: 350px;
+    height: 250px;
+    border-radius: 5px 5px 5px 5px;
+    z-index: 11111;
+    border: 1px solid #0099cd;
+}
+.se_fd .se_1{
+    position: relative;
+    width: 350px;
+    height: 40px;
+    background-color: #0099cd;
+    border-radius: 5px 5px 0px 0px;
+    color: #ffffff;
+}
+.se_f{
+    float: left;
+    margin-top: 10px;
+    text-indent: 1em
+}
+.se_close{
+    float: right;
+    margin-top: 8px;
+    margin-right:10px;
+    cursor: pointer
+}
+.se_fd .sj_in{
+    float: left;
+    width: 400px;
+    height: 40px;
+    margin-top: 50px;
+    margin-bottom: 45px;
+    align-content: center;
+}
+.se_fd .se_bu{
+    float: left;
+    width: 350px;
+    height: 30px;
+    margin: 0 auto;
+    color: #000000;
+}
+.se_bu1{
+    width: 80px;
+    height: 30px;
+    margin: 0 auto;
+    background-color: #5F78AB;
+    font-size: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.sdw:focus{
+    transition:border linear .2s,box-shadow linear .5s;
+    -moz-transition:border linear .2s,-moz-box-shadow linear .5s;
+    -webkit-transition:border linear .2s,-webkit-box-shadow linear .5s;
+    outline:none;border-color:rgba(0,153,205,.75);
+    box-shadow:0 0 5px rgba(0,153,190,.5);
+    -moz-box-shadow:0 0 5px rgba(0,153,190,.5);
+    -webkit-box-shadow:0 0 5px rgba(0,153,190,3);
+}
+/*------------------    加为好友      --------------------------*/
+.add{
+    width: 350px;
+    height: 100px;
+}
+.add_ima{
+    float: left;
+    width: 80px;
+    height: 80px;
+    margin-top: 15px;
+    margin-left: 17px;
+}
+.add_name{
+    float: left;
+    width: 200px;
+    height: 110px;
+    font-size: 14px;
+}
+.spx{
+    position: relative;
+    left:17px;
+    float: left;
+    width: 310px;
+    height: 60px;
+    font-size: 14px;
+    text-align: left;
+ //   background-color: #B0CD77;
+}
+.add_fd{
+    position: absolute;
+    top: 200px;
+    left: 315px;
+    width: 350px;
+    height: 280px;
+    border-radius: 5px 5px 5px 5px;
+    z-index: 11111;
+    border: 1px solid #0099cd;
+}
+.add_fd .add_1{
+    position: relative;
+    width: 350px;
+    height: 40px;
+    background-color: #0099cd;
+    border-radius: 5px 5px 0px 0px;
+    color: #ffffff;
+}
+.add_f{
+    float: left;
+    margin-top: 10px;
+    text-indent: 1em
+}
+.add_close{
+    float: right;
+    margin-top: 8px;
+    margin-right:10px;
+    cursor: pointer
+}
+.add_fre{   /*加为好友按钮*/
+    position: relative;
+    float: left;
+    margin-top:20px;
+    margin-left: 135px;
+    font-size: 14px;
+    width: 80px;
+    height: 30px;
+    background-color: #5F78AB;
+    color: #000000;
+    border-radius: 3px;
+}
+/*------------------    完成      --------------------------*/
+.complete_ima{
+    float: left;
+    width: 100px;
+    height: 150px;
+    font-size: 12px;
+    color: #000000;
+   // background-color: hotpink;
+}
+.complete_name{
+    float: left;
+    margin-left: 10px;
+    margin-top: 5px
+}
+.complete_yz{
+    float: left;
+    width: 200px;
+    height: 150px;
+    font-size: 14px;
+}
+.complete_tt{   /*文本域*/
+    margin-top: 10px;
+    border: 1px solid #A0BACA;
+    overflow-x:hidden;
+    overflow-y:hidden;
+    resize:none;    /*不允许拉伸*/
+    width: 240px;
+    height: 50px;
+    font-size: 14px;
+    text-indent: 1em;
+}
+.complete_tt:focus{     /*文本域获得焦点时发光*/
+    transition:border linear .2s,box-shadow linear .5s;
+    -moz-transition:border linear .2s,-moz-box-shadow linear .5s;
+    -webkit-transition:border linear .2s,-webkit-box-shadow linear .5s;
+    outline:none;border-color:rgba(0,153,205,.75);
+    box-shadow:0 0 5px rgba(0,153,190,.5);
+    -moz-box-shadow:0 0 5px rgba(0,153,190,.5);
+    -webkit-box-shadow:0 0 5px rgba(0,153,190,3);
+}
+.complete_bu{
+    float: left;
+    margin-top: 25px;
+    margin-left: 15px;
+    width: 325px;
+    height: 70px;
+  // background-color: #7F7F7F;
+    border-top: 1px solid #D7D7D7;
+}
+.complete_wc{   /*完成按钮*/
+    position: relative;
+    float: left;
+    margin-top:20px;
+    margin-left: 120px;
+    font-size: 14px;
+    width: 80px;
+    height: 30px;
+    background-color: #5F78AB;
+    color: #000000;
+    border-radius: 3px;
+}
+/*------------------    完成  end    --------------------------*/
 .chatPanel .panelBackground {
     color: #35393C;
     font-size: 24px;
