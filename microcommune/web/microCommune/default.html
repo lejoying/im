@@ -127,11 +127,12 @@ paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
                 <div id="conversationContainer">
                 <div class="templates hide">
                     <div class="chatListColumn" id="chatListColumn">
-                        <?js alert(it+"   "+it.length+"  default.html");?>
+                        <?js alert(it+"   "+it.length+"  default.html"); ?>
                         <?js for(var i=it.length;i比较符号大于0;i--){ ?>
-                        <?alert(it[i])+" default.html it[i]"?>
-                        <?js var its=JSON.parse(it[i]);?>
-                        <?alert(its+"  default.html");?>
+                        <?js alert(i+" shuchui");?>
+                        <?js alert(it[i]+" shuchui duiyingdezhi");?>
+                        <?js var its=JSON.parse(it[i]); ?>
+                        <?js alert(its+"  its default.html"); ?>
                         <div id="conv_wxid_#{its.phone}" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21" onClick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
                             <div style="display:none;" class="clicked"></div>
                             <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>

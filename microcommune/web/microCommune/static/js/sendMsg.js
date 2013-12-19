@@ -431,7 +431,7 @@ $(document).ready(function () {
     });
     $(".js_createRoomSendMessage").click(function () {
         closeProc();
-        document.getElementById("chat_chatmsglist").innerHTML="";
+        //document.getElementById("chat_chatmsglist").innerHTML="";
         $("#js_chat")[0].style.visibility = "visible";
         $("#js_chat .chatName").html(this.getAttribute("accountnickName"));
         $("#js_chat .chatName").attr("accountphone", this.getAttribute("accountphone"));
@@ -486,7 +486,12 @@ function addTempChatAccount(obj) {
     addPhone=obj.phone;
     $(".chatListColumn").attr("class", "chatListColumn");
     var chatListColumn=getTemplate("chatListColumn");
-    $("#conversationContainer")[0].insertBefore(chatListColumn.render([obj]),$("#conversationContainer")[0].firstChild);
+    var obj=[obj];
+    chatListColumn.render(obj);
+    //var div=document.createElement("div");
+   // alert(chatListColumn.render([obj])+"  diyi");
+    //chatListColumn.render([obj]);
+    //$("#conversationContainer")[0].insertBefore(div,$("#conversationContainer")[0].firstChild);
     /* var str='<div style="display:none;" class="clicked"></div>' +
         '<span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>' +
         '<div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg" class="avatar"></div>' +
@@ -952,7 +957,6 @@ function get(){
     //alert("调用get方法");
     var nowAccount=JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     var phone=nowAccount.phone;
-    var  circles=window.sessionStorage.getItem("circles");
     $.ajax({
         type: "POST",
         url: "/api2/message/get?",
@@ -977,7 +981,17 @@ function get(){
                         var phone=JSON.parse(messages[i]).phone;
                        // alert("phone不是自己时调用");
                        TempChatMessage(phone,messages);
-                       Tempcheck(phone,undefined);
+                        var  circles=window.sessionStorage.getItem("circles");
+                        for(var i=0; i<circles.length;i++){
+                            var account=JSON.parse(circles[i]).account;
+                            for(var i=0;i<account.length;i++){
+                                var phone1=JSON.parse(account[i]).phone;
+                                if(phone1==phone){
+                                    var circleid=JSON.parse(circles[i]).rid;
+                                }
+                            }
+                        }
+                       Tempcheck(phone,circleid);
                         //判读会话窗口是否打开
                        alert(flagPhone+" flagphone收到消息是判读");
                         if(phone==flagPhone){
@@ -1060,7 +1074,7 @@ function Tempcheck (phoneto,circleid){
     }
 }
 $(document).on('click', ".chatListColumn", function () {
-    document.getElementById("chat_chatmsglist").innerHTML="";
+    //document.getElementById("chat_chatmsglist").innerHTML="";
    var phone=addPhone;
     alert(phone+"  click标题");
     alert(tempchatMessage[phone]+"  弹出click事件中tempchatMessage");
