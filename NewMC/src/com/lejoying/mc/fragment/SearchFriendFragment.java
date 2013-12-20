@@ -1,52 +1,92 @@
 package com.lejoying.mc.fragment;
 
-import com.lejoying.mc.R;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-public class SearchFriendFragment extends BaseFragment implements
-		OnClickListener {
+import com.lejoying.mc.R;
 
-	private View mContent;
-	private EditText mView_phone;
-	private View mView_search;
+public class SearchFriendFragment extends BaseListFragment {
+
+	LayoutInflater mInflater;
+
+	public static SearchFriendFragment instance;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
+		return null;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		instance = this;
+		mInflater = inflater;
 		mMCFragmentManager.showCircleMenuToTop(true, true);
-		mContent = inflater.inflate(R.layout.f_searchfriend, null);
-		mView_phone = (EditText) mContent.findViewById(R.id.et_phone);
-		mView_search = mContent.findViewById(R.id.btn_search);
-		mView_search.setOnClickListener(this);
-		return mContent;
+
+		return inflater.inflate(R.layout.android_list, null);
 	}
 
 	@Override
-	protected EditText showSoftInputOnShow() {
-		return mView_phone;
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setListAdapter(new SearchFriendAdapter());
 	}
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.btn_search:
+	class SearchFriendAdapter extends BaseAdapter {
 
-			break;
+		@Override
+		public int getCount() {
+			return 3;
+		}
 
-		default:
-			break;
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			switch (position) {
+			case 0:
+				convertView = mInflater.inflate(R.layout.f_group_panel, null);
+				TextView tv_groupname = (TextView) convertView
+						.findViewById(R.id.tv_groupname);
+				tv_groupname.setText("附近好友");
+				break;
+			case 1:
+				convertView = mInflater.inflate(R.layout.f_button, null);
+				((Button) convertView).setText("精确查找");
+				convertView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						mMCFragmentManager.replaceToContent(
+								new ExactSearchFriendFragment(), true);
+					}
+				});
+				break;
+			case 2:
+				convertView = mInflater.inflate(R.layout.f_button, null);
+				((Button) convertView).setText("扫描名片");
+				break;
+
+			default:
+				break;
+			}
+			return convertView;
 		}
 	}
 

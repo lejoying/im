@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -30,6 +29,7 @@ import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.StaticConfig;
 import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.entity.MenuEntity;
+import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
@@ -870,26 +870,18 @@ public class CircleMenuFragment extends BaseFragment {
 			fm = getActivity().getSupportFragmentManager();
 		switch (item) {
 		case 1:
-			for (Fragment fragment : fm.getFragments()) {
-				if (fragment instanceof FriendsFragment) {
-					fm.beginTransaction()
-							.setCustomAnimations(R.anim.activity_in,
-									R.anim.activity_out).show(fragment)
-							.commit();
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.replaceToContent(new FriendsFragment(),
+							false);
 				}
-			}
-			// back(mOldWhere, new CircleDiskAnimationEnd() {
-			// @Override
-			// public void outAnimationEnd() {
-			// mMCFragmentManager.replaceToContent(new FriendsFragment(),
-			// false);
-			// }
-			//
-			// @Override
-			// public void diskAnimationEnd() {
-			//
-			// }
-			// });
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
 			break;
 		case 2:
 			back(mOldWhere, new CircleDiskAnimationEnd() {
@@ -907,23 +899,43 @@ public class CircleMenuFragment extends BaseFragment {
 			});
 			break;
 		case 3:
-			for (Fragment fragment : fm.getFragments()) {
-				if (fragment instanceof FriendsFragment) {
-					fm.beginTransaction()
-							.setCustomAnimations(R.anim.activity_in,
-									R.anim.activity_out).hide(fragment)
-							.commit();
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.replaceToContent(new ShareFragment(),
+							false);
 				}
-			}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
 			break;
 		case 4:
 			showNext();
 			break;
 		case 11:
+			back(mOldWhere, new CircleDiskAnimationEnd() {
 
+				@Override
+				public void outAnimationEnd() {
+					app.businessCardStatus = app.SHOW_SELF;
+					mMCFragmentManager.replaceToContent(
+							new BusinessCardFragment(), true);
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
 			break;
 		case 12:
 			data.user.accessKey = null;
+			MCDataTools.saveData(getActivity());
+			app.cleanData();
+			app.cleanConfig();
 			getActivity().finish();
 			break;
 		case 13:
@@ -938,7 +950,7 @@ public class CircleMenuFragment extends BaseFragment {
 				@Override
 				public void outAnimationEnd() {
 					mMCFragmentManager.replaceToContent(
-							new SearchFriendFragment(), true);
+							new ExactSearchFriendFragment(), true);
 				}
 
 				@Override

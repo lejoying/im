@@ -19,21 +19,66 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     margin:0;
     font-family:'微软雅黑', Helvetica, Arial, sans-serif;
 }
+/*****************************************index页 start*******************************************************/
+#in_body{min-width:980px;max-width:2094px;margin:0 auto;}
+.in_content{height:400px;width:100%;position:relative;z-index:1;overflow:hidden;top:65px}
+.in_move{height:400px;width:100%;overflow:hidden;margin:0 auto;}
+.in_big{position:relative;width:100%;height:560px;overflow:hidden;}
+.in_scroll{position:relative;top:0;left:-1px;width:100%;height:560px;overflow:hidden;}
+.in_big .in_bigone{width:100%;height:560px;position:absolute;top:0;left:1px;background:url('static/images/in_picone.jpg') center 0 no-repeat;z-index:100;}
+.in_china .in_big .in_bigone{background:url('static/images/in_picone-2.jpg') center 0 no-repeat;}
+.in_big .in_bigtwo{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('static/images/in_pictwo.jpg') center 0 no-repeat;z-index:90;}
+.in_big .in_bigfour{width:100%;height:560px;position:absolute;top:0;left:3000px;z-index:95;background-position:50% 0;}
+.in_china .in_big .in_bigtwo{background:url('static/images/in_pictwo-2.jpg') center 0 no-repeat;}
+.in_big .in_bigthree{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('static/images/in_picthree.jpg') center 0 no-repeat;z-index:80;}
+.in_china .in_big .in_bigthree{background:url('static/images/in_picthree-2.jpg') center 0 no-repeat;}
+.in_pos{position:absolute;top:362px;left:50%;height:20px;width:150px;margin-left:-75px;z-index:999;}
+.in_pos span{float:left;margin-left:10px;cursor:pointer;display:inline;}
+.in_pos img{float:left;}
+.in_pos .in_hello{margin-top:0px;border:0px solid white;float:left;}
+.in_pos .one{float:left;margin-left:50px;}
+.in_big .in_arrow{position:relative;top:-350px;margin-top:-35px;width:100%;height:52px;overflow:hidden;}
+.in_big .in_right{position:absolute;right:10%;height:52px;width:52px;cursor:pointer;z-index:150;margin-right: -50px}
+.in_big .in_left{position:absolute;/*top:256px;*/left:10%;height:52px;width:53px;cursor:pointer;/*margin-top:-25px;*/z-index:150;margin-left: -50px}
+
+/*****************************************index页 end*******************************************************/
+
+/*****************************************导航 start*******************************************************/
+.header_content{    /*头部内容面板*/
+    width: 100%;
+    margin: 0 auto;
+    //height: 100%;
+    position: relative;
+    //float: left;
+    overflow:hidden;
+    top: 0;
+}
 .header{    /*头部*/
-    min-width: 1024px;
+    margin: 0 auto;
+    //min-width: 1024px;
     width: 100%;
     height: 65px;
     background-color:#0099CD;
     position: fixed;
-    z-index: 1111;
+    z-index: 4;
     _position:absolute;
+}
+.header_bottom_bg{
+    overflow: hidden;
+    width: 100%;
+    height: 8px;
+    position: absolute;
+    left: 0;
+    top: 65px;
+    z-index: 888;
+    background: url("/static/images/headbg_.png") 0 0 repeat-x;
 }
 .nav{   /*菜单*/
     width: 980px;
     height: 58px;
     padding-top: 15px;
     margin: 0 auto;
-    position: relative;
+    //position: relative;
     top: 0;
     left: 0;
     z-index: 1111;
@@ -56,57 +101,12 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     z-index: 1;
     letter-spacing: 2px;
 }
-/*--------------------------------焦点图--------------------------------*/
-.focus_body {
-    font-family:"microsoft yahei";
-    position: relative;
-    width: 100%;
-    height: 400px;
-    background: #FFF;
-    margin: 0px auto;
-    top: 65px;
-    z-index: 333;
-    min-width: 1024px;
-}
-.scroll {
-    width: 100%;
-    margin: 0 auto;
-    position: relative;
-    height: 400px;
-    overflow: hidden;
-}
-.arr_left {     /*左按钮*/
-    display:none;
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    cursor: pointer;
-    overflow: hidden;
-    left: 0px;
-    top: 165px;
-    z-index: 3333;
-    line-height: 400px;
-    background: url(/static/images/arrow-left.png) no-repeat;
-
-}
-.arr_right {    /*右按钮*/
-    display:none;
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    cursor: pointer;
-    overflow: hidden;
-    right: 1px;
-    top: 165px;
-    z-index: 3333;
-    line-height: 400px;
-    background: url("/static/images/arrow-right.png") no-repeat;
-}
+/*****************************************导航 start*******************************************************/
 .leaf_left{  /*左树叶*/
     display: block;
     position: absolute;
     left: 0px;
-    top: 10px;
+    top: -400px;
     background-image: url("/static/images/leaf.png");
     z-index: 2;
 }
@@ -120,9 +120,9 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     display: block;
     position: absolute;
     right: 0px;
-    top:0px;
+    top:150px;
     background-image: url("/static/images/leaf.png");
-    z-index: 2;
+    z-index:2;
 }
 .leaf_right{    /*右树叶*/
     position: absolute;
@@ -130,36 +130,12 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     width:162px;
     height: 500px;
 }
-.scroll .box {
-    left:0px;
-    float: left;
-    width: 100%;
-    height: 400px;
-    position: relative;
-
-}
-.scroll .box img {
-    width: 100%;
-    height: 100%;
-}
-.scroll .box a:hover {
-    text-decoration: none;
-}
-.scroll .box .scroll_detail {
-    display:none;
-}
-.scroll_cont {
-    width:100%;
-    height: 400px;
-    overflow: hidden;
-    position: relative;
-}
 .content{   /*内容面板*/
     width: 100%;
     margin: 0 auto;
     height: 100%;
     float: left;
-    top: 67px;
+    top: 80px;
     position: relative;
   //background-color: aquamarine;
 }
@@ -175,9 +151,9 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     width: 1200px;
     margin: 0 auto;
     height:100px;
-    top: -60px;
+    top: -80px;
     align: center;
-    z-index: 333;
+    z-index: 3;
 }
 .icon_1{    /*密码登陆*/
     background: url("/static/images/icon_1.png") no-repeat center ;
@@ -185,7 +161,6 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     float: left;
     width:400px;
     height: 300px;
-
 }
 .icon_2{    /*扫一扫登陆*/
     background: url("/static/images/icon_2.png") no-repeat center ;
@@ -329,17 +304,36 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     background: url("/static/images/footsignb.png") 0 0 no-repeat;
     cursor: pointer;
 }
+.chattalk{  /*微信*/
+    width: 65px;
+    height: 60px;
+    float: right;
+    background: url("/static/images/foot_chattalk.jpg") 0 0 no-repeat;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-right: 10px;
+}
+.foot_qq{  /*QQ*/
+    width: 65px;
+    height: 60px;
+    float: right;
+    background: url("/static/images/foot_qq.jpg") 0 0 no-repeat;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-right: 10px;
+}
 /*----------------  底部  end -------------------*/
 
 
 /*-------------------------------密码登录  start ------------------------*/
 .icon_1_1{  /*框框*/
     margin: 0 auto;
-    position:relative;
-    width: 400px;
+    position:absolute;
+    width: 500px;
     height: 140px;
     z-index: 333;
     top: -100px;
+    left: -50px;
     background: rgba(57,60,61,0.8);
     border: 1px solid rgba(0,0,0,0.8);
     border-radius: 3px;
@@ -347,10 +341,10 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 .password_w{    /*为了保护...*/
-    width: 330px;
+    width: 380px;
     height: 30px;
     margin: 0 auto;
-    font-size: 12px;
+    font-size: 14px;
     color: white;
     letter-spacing: 2px;
     margin-top:15px;
@@ -360,7 +354,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     text-align: center;
     color: white;
     font-size: 14px;
-    width: 200px;
+    width: 250px;
     height: 25px;
     margin-top:15px;
     border-radius: 3px;
@@ -381,11 +375,12 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
 .icon_2_2{  /*框框*/
     display: block;
     margin: 0 auto;
-    position:relative;
-    width: 400px;
-    height: 350px;
+    position:absolute;
+    width: 450px;
+    height: 400px;
     z-index: 333;
     top: -330px;
+    left: -20px;
     background: rgba(57,60,61,0.8);
     border: 1px solid rgba(0,0,0,0.8);
     border-radius: 3px;
@@ -394,7 +389,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
 }
 .ewm{   /*二维码*/
     position: relative;
-    top: 75px;
+    top: 95px;
     margin: 0 auto;
     width: 200px;
     height: 200px;
@@ -408,7 +403,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     font-size: 12px;
     color: white;
     letter-spacing: 2px;
-    margin-top:125px;
+    margin-top:175px;
 }
 /*-------------------------------手机验证码登录  start ------------------------*/
 form{   /*表单*/

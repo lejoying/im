@@ -24,7 +24,7 @@ public class MainActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout._main);
-		getUser();
+		//getUser();
 	}
 
 	@Override
