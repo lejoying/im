@@ -21,7 +21,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/xiaohei" />
+            android:src="@drawable/face_man" />
 
         <TextView
             android:layout_width="wrap_content"

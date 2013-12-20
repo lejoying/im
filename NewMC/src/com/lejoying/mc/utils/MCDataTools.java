@@ -33,62 +33,64 @@ public class MCDataTools {
 	public static void saveData(Context context) {
 		OutputStream outputStream = null;
 		ObjectOutputStream objectOutputStream = null;
-		// save data
-		try {
-			outputStream = context.openFileOutput(app.data.user.phone,
-					Context.MODE_PRIVATE);
-			app.config.lastLoginPhone = app.data.user.phone;
-			objectOutputStream = new ObjectOutputStream(outputStream);
-			objectOutputStream.writeObject(app.data);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+		if (app.isDataChanged) {
+			app.isDataChanged = false;
+			// save data
 			try {
-				if (objectOutputStream != null) {
-					objectOutputStream.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				outputStream = context.openFileOutput(app.data.user.phone,
+						Context.MODE_PRIVATE);
+				app.config.lastLoginPhone = app.data.user.phone;
+				objectOutputStream = new ObjectOutputStream(outputStream);
+				objectOutputStream.writeObject(app.data);
+			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (objectOutputStream != null) {
+						objectOutputStream.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					if (outputStream != null) {
+						outputStream.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			// save config
 			try {
-				if (outputStream != null) {
-					outputStream.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				outputStream = context.openFileOutput("config",
+						Context.MODE_PRIVATE);
+				objectOutputStream = new ObjectOutputStream(outputStream);
+				objectOutputStream.writeObject(app.config);
+			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			}
-		}
-
-		// save config
-		try {
-			outputStream = context.openFileOutput("config",
-					Context.MODE_PRIVATE);
-			objectOutputStream = new ObjectOutputStream(outputStream);
-			objectOutputStream.writeObject(app.config);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (objectOutputStream != null) {
-					objectOutputStream.close();
-				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			try {
-				if (outputStream != null) {
-					outputStream.close();
+			} finally {
+				try {
+					if (objectOutputStream != null) {
+						objectOutputStream.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					if (outputStream != null) {
+						outputStream.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -169,6 +171,7 @@ public class MCDataTools {
 	}
 
 	public static int updateUser(JSONObject jUser) {
+		app.isDataChanged = true;
 		int count = 0;
 		User user = generateUserFromJSON(jUser);
 		if (user.head != null && !user.head.equals("")) {
@@ -191,6 +194,7 @@ public class MCDataTools {
 	}
 
 	public static void saveCircles(JSONArray jCircles) {
+		app.isDataChanged = true;
 		Map<String, Friend> friends = new Hashtable<String, Friend>();
 		List<Circle> circles = new ArrayList<Circle>();
 		for (int i = 0; i < jCircles.length(); i++) {
@@ -210,12 +214,7 @@ public class MCDataTools {
 					String phone = jFriend.getString("phone");
 					phones.add(phone);
 					if (friends.get(phone) == null) {
-						Friend friend = new Friend();
-						friend.phone = jFriend.getString("phone");
-						friend.head = jFriend.getString("head");
-						friend.nickName = jFriend.getString("nickName");
-						friend.mainBusiness = jFriend.getString("mainBusiness");
-						friend.friendStatus = jFriend.getString("friendStatus");
+						Friend friend = generateFriendFromJSON(jFriend);
 						friends.put(phone, friend);
 					}
 				}
@@ -231,6 +230,7 @@ public class MCDataTools {
 	}
 
 	public static void saveMessages(JSONArray jMessages) {
+		app.isDataChanged = true;
 		for (int i = 0; i < jMessages.length(); i++) {
 			try {
 				JSONObject jMessage = new JSONObject(jMessages.getString(i));
@@ -264,7 +264,6 @@ public class MCDataTools {
 				app.data.lastChatFriends.add(0, friendPhone);
 
 			} catch (JSONException e) {
-				System.out.println("jsonYichang ");
 				e.printStackTrace();
 			}
 		}
@@ -289,6 +288,31 @@ public class MCDataTools {
 		} catch (JSONException e) {
 		}
 		return user;
+	}
+
+	public static Friend generateFriendFromJSON(JSONObject jFriend) {
+		Friend friend = new Friend();
+		try {
+			friend.phone = jFriend.getString("phone");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.head = jFriend.getString("head");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.nickName = jFriend.getString("nickName");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.mainBusiness = jFriend.getString("mainBusiness");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.friendStatus = jFriend.getString("friendStatus");
+		} catch (JSONException e) {
+		}
+		return friend;
 	}
 
 }

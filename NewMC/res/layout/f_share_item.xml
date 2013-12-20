@@ -31,7 +31,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="5dp"
-            android:src="@drawable/xiaohei"
+            android:src="@drawable/face_man"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -94,7 +94,7 @@
         android:layout_marginRight="-21dp"
         android:layout_marginTop="5dp"
         android:layout_toLeftOf="@+id/tv_text"
-        android:src="@drawable/xiaohei"
+        android:src="@drawable/face_man"
         tools:ignore="ContentDescription" />
 
 </RelativeLayout>

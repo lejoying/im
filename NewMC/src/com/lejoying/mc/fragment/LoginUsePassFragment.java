@@ -105,18 +105,14 @@ public class LoginUsePassFragment extends BaseFragment implements
 						public void success(JSONObject data) {
 							try {
 								String accessKey = data.getString("accessKey");
-								System.out.println("到这里了");
 								accessKey = RSAUtils.decrypt(app.config.pbKey0,
 										accessKey);
 								app.data.user.phone = mView_phone.getText()
 										.toString();
 								app.data.user.accessKey = accessKey;
-								System.out.println(app.data.user.phone);
-								System.out.println(app.data.user.accessKey);
 								mMCFragmentManager.startToActivity(
 										MainActivity.class, true);
 							} catch (Exception e) {
-								System.out.println("解密失败");
 								e.printStackTrace();
 							}
 
