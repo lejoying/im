@@ -1,14 +1,17 @@
 .js_selected {
     border: 2px solid #0099cd
 }
+
 .js_none {
     /*border: 2px solid #ffffff*/
 }
+
 .js_moving {
     position: fixed;
     -webkit-animation: shake_icon 0.3s linear 0s forwards infinite;
     z-index: 50;
 }
+
 @-webkit-keyframes shake_icon {
     0% {
         -webkit-transform: rotateY(-25deg);
@@ -19,4 +22,38 @@
     100% {
         -webkit-transform: rotateY(-25deg);
     }
+}
+
+#Scroll {
+    width: 400px;
+    height: 400px;
+    background: #f8f8f8
+}
+
+#ScroLeft {
+    float: left;
+    height: 100%;
+    width: 190px;
+    overflow: hidden
+}
+
+#ScroRight {
+    position: relative;
+    float: right;
+    z-index: 2000;
+    margin-left: 268px;
+    height: 100%;
+    width: 6px;
+    background: #F1F1F1;
+    overflow: hidden;
+}
+
+#ScroLine {
+    position: relative;
+    z-index: 2000;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+    background: #666666;
 }

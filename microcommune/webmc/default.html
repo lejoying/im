@@ -52,14 +52,15 @@
     <p>微型公社网页版</p>
 </div>
 <!--     查找好友    -->
-<div class="se_fd js_findFriend" style="display: block">
+<div class="se_fd js_findFriend" style="display: none">
     <div class="se_1">
         <span class="se_f">查找好友</span>
         <span class="se_close">X</span>
     </div>
     <div class="sj_in">
-    <span style="float: left;margin-top: 8px;margin-left: 60px">手机号：</span>
-    <input class="sdw js_findFriendPhone" type="text" style="margin-left: -130px;width:150px; height: 30px;border-radius: 3px;letter-spacing: 2px;text-indent: 20px;border: 1px solid #A0BACA;">
+        <span style="float: left;margin-top: 8px;margin-left: 60px">手机号：</span>
+        <input class="sdw js_findFriendPhone" type="text"
+               style="margin-left: -130px;width:150px; height: 30px;border-radius: 3px;letter-spacing: 2px;text-indent: 20px;border: 1px solid #A0BACA;">
         <br/>
         <label class="js_findFriendErrorMessage"></label>
     </div>
@@ -74,43 +75,53 @@
         <span class="add_close">X</span>
     </div>
     <div class="add">
-        <div class="add_ima"><img src=" /static/images/webwxgeticon1.jpg" style="width: 80px;height: 80px" class="js_friendMessage_img"></div>
+        <div class="add_ima"><img src=" /static/images/webwxgeticon1.jpg" style="width: 80px;height: 80px"
+                                  class="js_friendMessage_img"></div>
         <div class="add_name">
             <span style="float: left;margin-top: 15px; margin-left:20px " class="js_friendMessage_nickName">昵&nbsp;&nbsp;&nbsp;称：张三</span>
+
             <div class="clr"></div>
-            <span style="float: left;margin-top: 10px; margin-left:20px " class="js_friendMessage_phone">手机号：18888888888</span>
+            <span style="float: left;margin-top: 10px; margin-left:20px "
+                  class="js_friendMessage_phone">手机号：18888888888</span>
         </div>
         <div class="spx">
             <div class="add_qm" style="float: left; width:315px;height:60px;line-height: 20px ">
                 <div style="width: 70px;height: 60px;float: left">主要业务：</div>
-                <div style="width: 245px;height: 60px;position: relative;float: left" class="js_friendMessage_mainBusiness">完成日常办公任务。任务任务任务任务任务任务任务</div>
+                <div style="width: 245px;height: 60px;position: relative;float: left"
+                     class="js_friendMessage_mainBusiness">完成日常办公任务。任务任务任务任务任务任务任务
+                </div>
             </div>
+
         </div>
-        <a href="#"> <div class="add_fre js_friendMessage_addFriend"><span style="position: relative;top: 6px">加为好友</span></div></a>
+        <a href="javascript:void(0)">
+            <div class="add_fre js_friendMessage_addFriend"><span style="position: relative;top: 6px">加为好友</span></div>
+        </a>
+        <label class="js_addFriendErrorMessage" style="font-size: 10px;color: red;"></label>
     </div>
 </div>
 <!--     完成    -->
-<div class="add_fd js_addFriendVerifyMessage" style="display: none">
+<div class="add_fd js_addFriend" style="display: none">
     <div class="add_1">
         <span class="add_f js_addFriendTitle" style="font-size: 14px">添加好友 (18888888888)</span>
         <span class="add_close">X</span>
     </div>
     <div class="complete_ima">
-        <img src=" /static/images/webwxgeticon1.jpg" style="width: 80px;height: 80px;margin-top: 20px;margin-right: 5px">
-        <span class="complete_name js_addFriendNickName" >昵&nbsp;&nbsp;&nbsp;称：张三</span>
+        <img src=" /static/images/webwxgeticon1.jpg"
+             style="width: 80px;height: 80px;margin-top: 20px;margin-right: 5px">
+        <span class="complete_name js_addFriendNickName">昵&nbsp;&nbsp;&nbsp;称：张三</span>
     </div>
     <div class="complete_yz">
-        <form>
         <span style="float:left;margin-top: 18px; margin-left: 0px;">请输入验证信息：</span>
-            <textarea class="complete_tt js_addFriendVerifyMessage" clos="4" rows="4">AAAAAAAAAAAAAAAA</textarea>
-        </form>
+        <textarea class="complete_tt js_addFriendVerifyMessage" clos="4" rows="4">AAAAAAAAAAAAAAAA</textarea>
+        <!--<textarea cols="4" rows="4" class="js_addFriendVerifyMessage"></textarea>-->
     </div>
     <div class="complete_bu">
-        <a href="#"> <div class="complete_wc js_addFriendSubmit"><span style="position: relative;top: 6px">完成</span></div></a>
+        <a href="#">
+            <div class="complete_wc js_addFriendSubmit"><span style="position: relative;top: 6px">完成</span></div>
+        </a>
     </div>
 
 </div>
-
 
 
 <div class="content">
@@ -731,35 +742,46 @@
     <div class="js_group_user" id="js_group_user">
         <div class="schoolmate_txt" title="#{it.name}" circle_rid="#{it.rid}">#{it.name}</div>
         <div class="js_modifycirclename" circle_rid="#{it.rid}" style="margin-top: 10px;"><input
-                type="text" value="#{it.name}" style="width: 100px;height: 30px;border-radius: 5px;"><input type="button"
-                                                                                         class="js_modifycirclesubmit"
-                                                                                         value="提交"
-                                                                                         style="width: 50px;height: 30px;margin-left: 10px;border-radius: 3px;"><input
+                type="text" value="#{it.name}" style="width: 100px;height: 30px;border-radius: 5px;"><input
+                type="button"
+                class="js_modifycirclesubmit"
+                value="提交"
+                style="width: 50px;height: 30px;margin-left: 10px;border-radius: 3px;"><input
                 type="button" class="js_modifycirclecancle" value="取消"
                 style="width: 50px;height: 30px;margin-left: 10px;border-radius: 3px;"></div>
         <div class="clr"></div>
-        <div class="group_user">
-            <?js var imageServer=window.globaldata.serverSetting.imageServer; ?>
-            <?js var it1 = it.accounts; ?>
-            <?js for(var index in it1){ ?>
-            <?js post=it1[index]; ?>
-            <?js if(post==null) { ?>
-            <?js continue; ?>
-            <?js } ?>
-            <div class="user_icon">
-                <img class="user_icon_img1" src="#{imageServer}/#{post.head}.png"/>
+        <div class="js_group_users"
+             style="overflow: hidden;height: 214px;float: left;width: 268px;background-color: red;">
+            <div class="group_user" onmousewheel="ScrollWheel()">
+                <?js var imageServer=window.globaldata.serverSetting.imageServer; ?>
+                <?js var it1 = it.accounts; ?>
+                <?js for(var index in it1){ ?>
+                <?js post=it1[index]; ?>
+                <?js if(post==null) { ?>
+                <?js continue; ?>
+                <?js } ?>
+                <div class="user_icon">
+                    <img class="user_icon_img1" src="#{imageServer}/#{post.head}.png"/>
 
-                <div class="popappIcon1"></div>
-                <div class="clr"></div>
-                <span phone="#{post.phone}">#{post.nickName}</span>
+                    <div class="popappIcon1"></div>
+                    <div class="clr"></div>
+                    <span phone="#{post.phone}" title="#{post.nickName}">#{(post.nickName).substr(0,5)}</span>
+                </div>
+                <?js } ?>
+                <div class="user_icon_add js_circleAddFriend"
+                     style="float:left; margin-left:21px; margin-top:10px; cursor:pointer;"
+                     circle_rid="#{it.rid}">
+                    <img src="static/images/addfrieng.png" style="width:42px; height:42px; margin-left:-10px;"/>
+
+                    <div class="clr"></div>
+                    <span style="font-size:12px;">添加好友</span>
+                </div>
             </div>
-            <?js } ?>
-            <div class="user_icon_add" style="float:left; margin-left:21px; margin-top:10px; cursor:pointer;"
-                 circle_rid="#{it.rid}">
-                <img src="static/images/addfrieng.png" style="width:42px; height:42px; margin-left:-10px;"/>
-
-                <div class="clr"></div>
-                <span style="font-size:12px;">添加好友</span>
+        </div>
+        <!--滚动条的设置-->
+        <div style="float: right;width: 6px;height: 214px;">
+            <div id="ScroRight" onclick="ScroNow(event)">
+                <div id="ScroLine" OnMouseDown="ScroMove()" style="border-radius: 20%;" draggable="false"></div>
             </div>
         </div>
     </div>

@@ -81,6 +81,19 @@ $(document).ready(function () {
                             });
                             var group_user = getTemplate("js_group_user");
                             $(".sildPopContent").html(group_user.render((data.circles)[i]));
+                            getScroll();
+//                            $("#ScroLine").css("height", "100px");
+//                            alert(Math.ceil(((data.circles)[i].accounts.length + 1) / 4));
+//                            alert((180 / Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64) * 180);
+                            if (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) > 2) {
+//                                alert(180 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64));
+//                                $("#ScroLine").css("height", (180 / $(".group_user").height) * 180);
+                                $("#ScroLine").css("height", (195 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64)) * 195);
+                            } else {
+                                $("#ScroLine").css("height", "214");
+                            }
+
+
                             $(".user_icon").longPress(200, function (e, x, y) {
                                 if (dropStatus == "down") {
                                     dropStatus = "dropping";
@@ -154,9 +167,12 @@ $(document).ready(function () {
 //        $(".sildPopContent .popappIcon").removeClass("js_moving1");
 //        $(".sildPopContent .popappIcon").removeClass("js_moving2");
     });
-    $(document).on("click", ".user_icon_add", function () {
+    $(document).on("click", ".js_circleAddFriend", function () {
         //默认分组的circle_rid == "undefined" 　其他的默认都是数值类型的
-        alert("添加好友" + this.getAttribute("circle_rid"));
+        $(".js_findFriendBtn").attr("circle_rid", this.getAttribute("circle_rid"));
+        $(".js_findFriend").css({
+            display: "block"
+        });
     });
     $(document).on("click", ".js_addcircle", function () {
         alert("新建密友圈");
@@ -250,62 +266,67 @@ $(document).ready(function () {
                 },
                 success: function (data) {
                     if (data["提示信息"] == "获取用户信息成功") {
-                        var mainBusiness = data.account.mainBusiness;
+                        var accountData = data.account;
+                        $(".js_friendMessage_addFriend").attr("circle_rid", $(".js_findFriendBtn").attr("circle_rid"));
+                        $(".js_friendMessage_addFriend").attr("phone", accountData.phone);
+                        var mainBusiness = accountData.mainBusiness;
                         $(".js_findFriend").css({display: "none"});
                         $(".js_friendMessage").css({display: "block"});
-                        $(".js_friendMessage_nickName").html("昵&nbsp;&nbsp;&nbsp;称：" + data.account.nickName);
-                        $(".js_friendMessage_phone").html("手机号：" + data.account.phone);
+                        $(".js_friendMessage_nickName").html("昵&nbsp;&nbsp;&nbsp;称：" + accountData.nickName);
+                        $(".js_friendMessage_phone").html("手机号：" + accountData.phone);
                         $(".js_friendMessage_mainBusiness").html(mainBusiness.substr(0, 72) + "...");
                         $(".js_friendMessage_mainBusiness").attr("title", mainBusiness);
-                        $(".js_addFriendTitle").html("添加好友 (" + data.account.phone + ")");
-                        $(".js_addFriendNickName").html("昵&nbsp;&nbsp;&nbsp;称：" + data.account.nickName);
+                        $(".js_addFriendTitle").html("添加好友 (" + accountData.phone + ")");
+                        $(".js_addFriendNickName").html("昵&nbsp;&nbsp;&nbsp;称：" + accountData.nickName);
                     } else {
                         $(".js_findFriendErrorMessage").html(data["失败原因"]);
                     }
                 }
             });
-//            $(".js_findFriendErrorMessage").html("正在查找好友。");
         }
-        /*var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
-         $(".js_findFriendErrorMessage").html("");
-         var phone = $(".js_findFriendPhone").val().trim();
-         var flag = false;
-         if (phone != "" && phone != accountObj.phone) {
-         var circlesObj = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
-         A:for (var index in circlesObj) {
-         var accounts = circlesObj[index].accounts;
-         if (accounts.length < 0)
-         continue;
-         B:for (var index1 in accounts) {
-         var account = accounts[index1];
-         if (account.phone == phone) {
-         flag = true;
-         break A;
-         }
-         }
-         }
-         if (flag) {
-         $(".js_findFriendErrorMessage").html(phone + "已经是您的好友,不能重复添加。");
-         } else {
-         $(".js_findFriendErrorMessage").html(phone + "不是您的好友。");
-         }
-         } else {
-         if (phone == accountObj.phone) {
-         $(".js_findFriendErrorMessage").html("不能添加自己为好友。")
-         } else {
-         $(".js_findFriendErrorMessage").html("手机号不能为空。")
-         }
-         }*/
     });
     $(document).on("click", ".js_friendMessage_addFriend", function () {
-        $(".js_friendMessage").css({display: "none"});
-        $(".js_addFriendVerifyMessage").css({display: "block"});
-//        alert("js_friendMessage_addFriend");
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+        var phone = $(this).attr("phone");
+        $(".js_addFriendErrorMessage").html("");
+        var flag = false;
+        if (phone != accountObj.phone) {
+            var circlesObj = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+            A:for (var index in circlesObj) {
+                var accounts = circlesObj[index].accounts;
+                if (accounts.length == 0)
+                    continue;
+                B:for (var index1 in accounts) {
+                    var account = accounts[index1];
+                    if (account.phone == phone) {
+                        flag = true;
+                        break A;
+                    }
+                }
+            }
+            if (flag) {
+                $(".js_addFriendErrorMessage").html(phone + "已经是您的好友,不能重复添加。");
+            } else {
+                $(".js_addFriendSubmit").attr("circle_rid", $(this).attr("circle_rid"));
+                $(".js_addFriendSubmit").attr("phone", $(this).attr("phone"));
+                $(".js_friendMessage").css({display: "none"});
+                $(".js_addFriend").css({display: "block"});
+//                $(".js_addFriendErrorMessage").html(phone + "不是您的好友。");
+            }
+        } else {
+            if (phone == accountObj.phone) {
+                $(".js_addFriendErrorMessage").html("不能添加自己为好友。")
+            }
+        }
     });
     $(document).on("click", ".js_addFriendSubmit", function () {
-        alert($(".js_addFriendVerifyMessage").val());
+        alert($(this).attr("circle_rid") == "undefined");
+        alert($(".js_addFriendVerifyMessage").val().trim() + "---" + $(this).attr("circle_rid") + "---" + $(this).attr("phone"));
     });
 });
+function getScroll() {
+
+}
 function modifyCircleName(rid, newCircleName) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
@@ -337,4 +358,76 @@ function getTemplate(id) {
     var template = new tenjin.Template();
     template.convert(string);
     return template;
+}
+//------------------------------------------------------------------------
+/*$(function () {
+ $("#ScroLine").css("height", ($(".group_user").height() / $(".group_user")[0].scrollHeight) * $(".group_user").height());
+ });*/
+var Scrolling = false;
+
+function $1(o) {
+    return document.getElementById(o)
+}
+
+function ScroMove() {
+    Scrolling = true
+}
+
+document.onmousemove = function (e) {
+    if (Scrolling == false)return;
+    ScroNow(e)
+}
+document.onmouseup = function (e) {
+    Scrolling = false
+}
+function ScroNow(event) {
+    var event = event ? event : (window.event ? window.event : null);
+    var Y = event.clientY - $(".js_group_users")[0].getBoundingClientRect().top - $("#ScroLine")[0].clientHeight / 2;
+    var H = $("#ScroRight")[0].clientHeight - $("#ScroLine")[0].clientHeight;
+    var SH = Y / H * ($(".group_user")[0].scrollHeight - $(".group_user")[0].clientHeight);
+    if (Y < 0)Y = 0;
+    if (Y > H)Y = H;
+//    $("#ScroLine")[0].style.top = Y + "px";
+    $("#ScroLine")[0].style.top = Y + "px";
+    $(".group_user").css({
+        marginTop: -Y * 3 + "px"
+    });
+//    $("#ScroRight").css({
+//        marginTop: "0px"
+//    });
+//    alert(Y);
+    /*var box = $(".group_user");
+     var toState = new State();
+     var fromState = new State();
+     animateTransform(box[0], fromState, toState, 1,
+     {
+     onStart: function () {
+     },
+     onEnd: function () {
+     var fromState1 = new State(toState);
+     var toState1 = new State(toState);
+     toState1.translate.y = - Y;
+     animateTransform(box[0], fromState1, toState1, 1);
+     }
+     }
+     );*/
+//    $(".group_user")[0].scrollTop = SH;
+//    $(".group_user")[0].style.top = -500 + "px";
+}
+
+function ScrollWheel() {
+    alert(event.wheelDelta);
+    /*var Y = $(".group_user")[0].scrollTop;
+    var H = $(".group_user")[0].scrollHeight - $(".group_user")[0].clientHeight;
+    if (event.wheelDelta >= 120) {
+        Y = Y - 80
+    } else {
+        Y = Y + 80
+    }
+    if (Y < 0)Y = 0;
+    if (Y > H)Y = H;
+    $(".group_user")[0].scrollTop = Y;
+    var SH = Y / H * $("#ScroRight")[0].clientHeight - $("#ScroLine")[0].clientHeight;
+    if (SH < 0)SH = 0;
+    $("#ScroLine")[0].style.top = SH + "px";*/
 }

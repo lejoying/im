@@ -121,9 +121,8 @@ messageManage.get = function (data, response) {
                 return;
             }
 //            console.log(reply);
-            var flag0 = 0;
+            var flag0 = parseInt(from) + reply.length;
             if (reply.length != 0) {
-                flag0 = parseInt(from) + reply.length;
                 client.set(phone + "flag", flag0, function (err, reply) {
                     if (err != null) {
                         responseErrorMessage(err, response);

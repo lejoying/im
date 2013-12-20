@@ -47,7 +47,7 @@ api = {
             typical: {"phone": "XXX", "accessKey": "XXX"}
         },
         response: {
-            success: {"提示信息": "成功", event: "message" || "newfriends"},
+            success: {"提示信息": "成功", event: "message" || "newfriend" || "friendaccept", event_content: {phone: "XXX"}},
             failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
         }
     },

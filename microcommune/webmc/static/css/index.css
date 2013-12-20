@@ -926,13 +926,7 @@ a.btnSecondary:active {
     height: 60px;
     font-size: 14px;
     text-align: left;
-
-/
-/
-background-color: #B0CD77
-
-;
-    }
+}
 
 .add_fd {
     background-color: #ffffff;
@@ -6401,7 +6395,7 @@ a.btnBlue:active .btnBluePanel {
 
 .group_user .user_icon {
     float: left;
-    margin-left: 21px;
+    margin-left: 20px;
     margin-top: 10px;
     cursor: pointer;
 }

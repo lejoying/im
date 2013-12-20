@@ -55,7 +55,15 @@ relationManage.addfriend = function (data, response) {
 //                    rData.rid = rid;
                     rNode.save(function (error, node) {
                     });
-                    addAccountCircleNode(rid, phoneTo);
+                    if (rid != "none") {
+                        addAccountCircleNode(rid, phoneTo);
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "添加成功"
+                        }));
+                        response.end();
+                        push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
+                    }
                 } else {
                     //checked
                     var rNode = pop.r;
@@ -70,6 +78,7 @@ relationManage.addfriend = function (data, response) {
                     }));
                     response.end();
                     console.log("发送请求FRIEND成功---");
+                    push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "newfriend", event_content: {phone: phone}});
                 }
             }
         });
@@ -103,7 +112,7 @@ relationManage.addfriend = function (data, response) {
                     "提示信息": "添加成功"
                 }));
                 response.end();
-                push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "newfriends"});
+                push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
             }
         });
     }
@@ -457,12 +466,12 @@ relationManage.addfriendagree = function (data, response) {
     var rid = data.rid;
     var status = data.status;
     var accessKey = data.accessKey;
-    agreeAddFriendNode(phone, phoneAsk, rid);
-    /*if (status == "true") {
-     agreeAddFriendNode(phone, phoneAsk, rid);
-     } else {
-     refuseAddFriend(phone, phoneAsk, rid);
-     }*/
+//    agreeAddFriendNode(phone, phoneAsk, rid);
+    if (status == "true") {
+        agreeAddFriendNode(phone, phoneAsk, rid);
+    } else {
+        refuseAddFriend(phone, phoneAsk, rid);
+    }
     function agreeAddFriendNode(phone, phoneAsk, rid) {
         modifyStatusNode(phone, phoneAsk, rid);
         function modifyStatusNode(phone, phoneAsk, rid) {
@@ -500,7 +509,7 @@ relationManage.addfriendagree = function (data, response) {
                     if (rid != null && rid != undefined && rid != "") {
                         addCircleAccountRelation(rid, phoneAsk, ridAsk);
                     } else {
-                        if (ridAsk != null && ridAsk != undefined && rid != "") {
+                        if (ridAsk != null && ridAsk != undefined && ridAsk != "") {
                             addAskCircleAccountRelation(phone, ridAsk);
                         } else {
                             console.log("添加好友成功");
@@ -508,6 +517,7 @@ relationManage.addfriendagree = function (data, response) {
                                 "提示信息": "添加成功"
                             }));
                             response.end();
+                            push.inform(phone, phoneAsk, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
                         }
                     }
                 }
@@ -550,6 +560,7 @@ relationManage.addfriendagree = function (data, response) {
                             "提示信息": "添加成功"
                         }));
                         response.end();
+                        push.inform(phone, phoneAsk, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
                     }
                     /*console.log("添加好友成功");
                      response.write(JSON.stringify({
@@ -593,6 +604,7 @@ relationManage.addfriendagree = function (data, response) {
                         "提示信息": "添加成功"
                     }));
                     response.end();
+                    push.inform(phone, phoneAsk, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
                 }
             });
         }
@@ -617,7 +629,7 @@ relationManage.addfriendagree = function (data, response) {
                     return;
                 } else if (results.length == 0) {
                     response.write(JSON.stringify({
-                        "提示信息": "删除失败",
+                        "提示信息": "拒绝失败",
                         "失败原因": "数据异常"
                     }));
                     response.end();
@@ -644,13 +656,13 @@ relationManage.addfriendagree = function (data, response) {
                     return;
                 } else if (results.length == 0) {
                     response.write(JSON.stringify({
-                        "提示信息": "删除失败",
+                        "提示信息": "拒绝失败",
                         "失败原因": "数据异常"
                     }));
                     response.end();
                 } else {
                     response.write(JSON.stringify({
-                        "提示信息": "删除成功"
+                        "提示信息": "拒绝成功"
                     }));
                     response.end();
                 }
