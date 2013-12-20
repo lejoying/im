@@ -55,19 +55,47 @@ public class ExactSearchFriendFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_search:
-			if (mView_phone.getText().toString().equals("")) {
+			final String phone = mView_phone.getText().toString();
+			if (phone.equals("")) {
 				showMsg("请输入好友手机号");
 				return;
 			}
 			Bundle params = new Bundle();
 			params.putString("phone", app.data.user.phone);
 			params.putString("accessKey", app.data.user.accessKey);
-			params.putSerializable("target", mView_phone.getText().toString());
+			params.putSerializable("target", phone);
 			MCNetTools.ajax(getActivity(), API.ACCOUNT_GET, params,
 					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
 
 						@Override
 						public void success(JSONObject data) {
+							if (phone.equals(app.data.user.phone)) {
+								try {
+									MCDataTools.updateUser(data
+											.getJSONObject("account"));
+									app.businessCardStatus = app.SHOW_SELF;
+									mMCFragmentManager.replaceToContent(
+											new BusinessCardFragment(), true);
+								} catch (JSONException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								return;
+							}
+							if (app.data.friends.get(phone) != null) {
+								try {
+									app.tempFriend = MCDataTools
+											.generateFriendFromJSON(data
+													.getJSONObject("account"));
+									app.businessCardStatus = app.SHOW_FRIEND;
+									mMCFragmentManager.replaceToContent(
+											new BusinessCardFragment(), true);
+								} catch (JSONException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								return;
+							}
 							try {
 								showMsg(data.getString("失败原因"));
 								return;

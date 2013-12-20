@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -195,7 +194,7 @@ public class MCDataTools {
 
 	public static void saveCircles(JSONArray jCircles) {
 		app.isDataChanged = true;
-		Map<String, Friend> friends = new Hashtable<String, Friend>();
+		Map<String, Friend> friends = app.data.friends;
 		List<Circle> circles = new ArrayList<Circle>();
 		for (int i = 0; i < jCircles.length(); i++) {
 			try {
@@ -230,41 +229,44 @@ public class MCDataTools {
 	}
 
 	public static void saveMessages(JSONArray jMessages) {
-		app.isDataChanged = true;
-		for (int i = 0; i < jMessages.length(); i++) {
-			try {
-				JSONObject jMessage = new JSONObject(jMessages.getString(i));
-				Message message = new Message();
+		if (jMessages.length() != 0) {
+			app.isDataChanged = true;
+			for (int i = 0; i < jMessages.length(); i++) {
+				try {
+					JSONObject jMessage = new JSONObject(jMessages.getString(i));
+					Message message = new Message();
 
-				String phoneSend = jMessage.getString("phone");
-				String phoneReceive = new JSONArray(
-						jMessage.getString("phoneto")).getString(0);
+					String phoneSend = jMessage.getString("phone");
+					String phoneReceive = new JSONArray(
+							jMessage.getString("phoneto")).getString(0);
 
-				String friendPhone = phoneSend;
+					String friendPhone = phoneSend;
 
-				if (phoneSend.equals(app.data.user.phone)) {
-					message.type = "send";
-					friendPhone = phoneReceive;
-				} else if (phoneReceive.equals(app.data.user.phone)) {
-					message.type = "receive";
-					friendPhone = phoneSend;
+					if (phoneSend.equals(app.data.user.phone)) {
+						message.type = "send";
+						friendPhone = phoneReceive;
+					} else if (phoneReceive.equals(app.data.user.phone)) {
+						message.type = "receive";
+						friendPhone = phoneSend;
+					}
+
+					message.time = jMessage.getString("time");
+
+					message.messageType = jMessage.getString("type");
+
+					message.content = new JSONObject(
+							jMessage.getString("content"))
+							.getString(message.messageType);
+
+					app.data.friends.get(friendPhone).messages.add(message);
+					app.data.friends.get(friendPhone).notReadMessagesCount++;
+
+					app.data.lastChatFriends.remove(friendPhone);
+					app.data.lastChatFriends.add(0, friendPhone);
+
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-
-				message.time = jMessage.getString("time");
-
-				message.messageType = jMessage.getString("type");
-
-				message.content = new JSONObject(jMessage.getString("content"))
-						.getString(message.messageType);
-
-				app.data.friends.get(friendPhone).messages.add(message);
-				app.data.friends.get(friendPhone).notReadMessagesCount++;
-
-				app.data.lastChatFriends.remove(friendPhone);
-				app.data.lastChatFriends.add(0, friendPhone);
-
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 		}
 	}

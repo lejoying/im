@@ -39,7 +39,7 @@
                     android:id="@+id/iv_head"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:background="@drawable/face_man" />
+                    android:src="@drawable/face_man" />
 
                 <TextView
                     android:id="@+id/tv_nickname"
@@ -127,6 +127,7 @@
             </RelativeLayout>
 
             <Button
+                android:id="@+id/button1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
@@ -139,6 +140,7 @@
             </Button>
 
             <Button
+                android:id="@+id/button2"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"

@@ -506,6 +506,52 @@ public class FriendsFragment extends BaseListFragment {
 		Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
+		String flag = app.data.user.flag;
+		params.putString("flag", flag);
+		MCNetTools.ajax(getActivity(), API.MESSAGE_GET, params,
+				MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+
+					@Override
+					public void success(JSONObject data) {
+						try {
+							System.out.println(data);
+							MCDataTools.saveMessages(data
+									.getJSONArray("messages"));
+							app.data.user.flag = String.valueOf(data
+									.getInt("flag"));
+							mFriendsHandler
+									.sendEmptyMessage(NOTIFYDATASETCHANGED);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void noInternet() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void failed() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void connectionCreated(
+							HttpURLConnection httpURLConnection) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+	}
+
+	private void getAskFriends() {
+		Bundle params = new Bundle();
+		params.putString("phone", app.data.user.phone);
+		params.putString("accessKey", app.data.user.accessKey);
 		// String flag = app.data.user.flag;
 		params.putString("flag", "0");
 		MCNetTools.ajax(getActivity(), API.MESSAGE_GET, params,

@@ -28,6 +28,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
 		MCDataTools.getData(this);
+
 		start = new Date().getTime();
 
 		if (app.config.lastLoginPhone.equals("none")
@@ -96,6 +97,8 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	}
 
 	void startToMain() {
+
+
 		new Thread() {
 			public void run() {
 				long end = new Date().getTime();

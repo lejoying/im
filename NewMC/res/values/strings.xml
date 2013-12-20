@@ -61,5 +61,8 @@
     <string name="tv_friendnotfound">没有找到</string>
     <string name="tv_friendnotfounddesc">对方尚未加入微型公社</string>
     <string name="btn_callfor">发送邀请</string>
+    <string name="text_verify">对方启用了朋友验证</string>
+    <string name="et_verify">请输入验证消息</string>
+    <string name="btn_send">发送</string>
 
 </resources>

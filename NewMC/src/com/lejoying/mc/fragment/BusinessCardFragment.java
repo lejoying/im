@@ -11,8 +11,10 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -153,24 +155,42 @@ public class BusinessCardFragment extends BaseFragment {
 	}
 
 	public void initData() {
+		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
 		ImageView iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
 		TextView tv_nickname = (TextView) mContent
 				.findViewById(R.id.tv_nickname);
 		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
 		TextView tv_mainbusiness = (TextView) mContent
 				.findViewById(R.id.tv_mainbusiness);
+		Button button1 = (Button) mContent.findViewById(R.id.button1);
+		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		if (app.businessCardStatus == app.SHOW_TEMPFRIEND) {
 			iv_head.setImageBitmap(head);
 			tv_nickname.setText(app.tempFriend.nickName);
 			tv_phone.setText(app.tempFriend.phone);
 			tv_mainbusiness.setText(app.tempFriend.mainBusiness);
+			button1.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					mMCFragmentManager.replaceToContent(
+							new AddFriendFragment(), true);
+				}
+			});
 		} else if (app.businessCardStatus == app.SHOW_SELF) {
+			button1.setText("修改个人信息");
 			iv_head.setImageBitmap(head);
 			tv_nickname.setText(app.data.user.nickName);
 			tv_phone.setText(app.data.user.phone);
 			tv_mainbusiness.setText(app.data.user.mainBusiness);
-		} else if (app.businessCardStatus == app.SHOW_FRIEND) {
+			group.removeView(button2);
 
+		} else if (app.businessCardStatus == app.SHOW_FRIEND) {
+			button1.setText("发起聊天");
+			button2.setText("修改备注");
+			iv_head.setImageBitmap(head);
+			tv_nickname.setText(app.data.user.nickName);
+			tv_phone.setText(app.data.user.phone);
+			tv_mainbusiness.setText(app.data.user.mainBusiness);
 		}
 	}
 }
