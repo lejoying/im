@@ -17,6 +17,32 @@ a {
     height: 1100px;
     top: 65px;
 }
+.open_leaf_left{ /*左树叶*/
+    position: absolute;
+    left: 0px;
+    top: 20px;
+    background-image: url("/static/images/leaf.png");
+    z-index: 1;
+}
+.open_leaf_left{
+    position: absolute;
+    background-position: -0px -550px;
+    width:100px;
+    height: 550px;
+}
+.open_leaf_right{ /*右树叶*/
+    position: absolute;
+    right: 0px;
+    top: 700px;
+    background-image: url("/static/images/leaf.png");
+    z-index: 1;
+}
+.open_leaf_right{
+    position: absolute;
+    background-position: -98px -500px;
+    width:162px;
+    height: 500px;
+}
 /*---------------------------------  第一个面板----------------------------------*/
 .open_one{
     margin: 0 auto;
@@ -31,7 +57,7 @@ a {
     width: 560px;
     height: 300px;
     float: left;
-    color: #5E5E5E;
+    color: #585858;
     margin-left: 45px;
 }
 .open_right{

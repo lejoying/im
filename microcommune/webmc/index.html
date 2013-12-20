@@ -6,94 +6,89 @@
     <title></title>
     <link rel="stylesheet" type="text/css" href="/static/css/index_web.css" />
     <script type="text/javascript" src="/static/js/jquery.js"></script>
-    <script type="text/javascript" src="/static/js/jquery.SuperSlide.2.1.1.js"></script>
-    <script type="text/javascript">
-        $(function(){
-            $(".focus_body").hover(function(){$("#slideLeftBtn,#slideRightBtn").show();},function(){$("#slideLeftBtn,#slideRightBtn").hide();});
-            $(".focus_body .box .btn").click(function(){$(this).toggleClass("fold").prev().find(".scroll_detail").toggle() });
-            $(".focus_body").slide({
-                mainCell:"#slideContent",
-                targetCell:"#slideContent .title",
-                titCell:"#slideNum",
-                prevCell:"#slideLeftBtn",
-                nextCell:"#slideRightBtn",
-                effect:"left",
-                titOnClassName:"selected",
-                autoPlay:true,
-                delayTime:600,
-                easing:"easeInOutCirc",
-                autoPage:"<span></span>"
-            })
-        })
-    </script>
+    <script type="text/javascript" src="/static/js/whole.js"></script>
+
 </head>
-<body>
-         <!--整体外框-->
-         <div class="wrapper">
-                 <!--头部导航-->
-                 <div class='header'>
+
+<body id="in_body" class="in_china imgslider">
+
+                 <div class='header'>       <!--头部导航-->
                      <!--菜单-->
                      <div class="nav">
-                        <a class="logo" href="#" ></a>
-                        <div class="navs">
-                            <div class="1" style="float: left; width: 50%;">
-                                 <a class="web_version" href="index.html" style=" float: left;margin-left:300px;color: #000000;font-size: 18px; margin-top: 10px;">网页版</a>
-                                 <a class="app_1" href="app.html" target="_blank" style="float: right; margin-right: 30px;color: white;font-size:18px;margin-top: 10px;">APP</a>
-                            </div>
-                            <div class="2" style="float: right;width: 50%;">
-                                 <a class="open_platform" href="open.html"  target="_blank" style=" float: left;margin-left:30px;color: white;font-size:18px;margin-top: 10px;">开放平台</a>
-                                 <a class="about_1" href="#" target="_blank"  style=" float:right;margin-right:270px;color: white;font-size:18px;margin-top: 10px;">关于</a>
-                            </div>
-                        </div>
+                         <a class="logo" href="#" ></a>
+                         <div class="navs">
+                             <div class="1" style="float: left; width: 50%;">
+                                 <a class="web_version" href="index.html" style=" float: left;margin-left:300px;color: #000000;font-size: 18px; margin-top: 13px;">网页版</a>
+                                 <a class="app_1" href="app.html"  style="float: right; margin-right: 30px;color: white;font-size:18px;margin-top: 13px;">APP</a>
+                             </div>
+                             <div class="2" style="float: right;width: 50%;">
+                                 <a class="open_platform" href="open.html" style=" float: left;margin-left:30px;color: white;font-size:18px;margin-top: 13px;">开放平台</a>
+                                 <a class="about_1" href="#" style=" float:right;margin-right:270px;color: white;font-size:18px;margin-top: 13px;">关于</a>
+                             </div>
+                         </div>
+                         <div class="header_bottom_bg"></div>
                      </div>
-                 </div>
-             <!--内容部分-->
+
+                 </div>     <!--头部导航-->
+
                  <!--  大图滚动 start -->
-                 <div class="focus_body" style="width: 1349px;" >
-                     <div class="leaf_left" ></div>
-                     <div class="scroll">
-                         <a id="slideLeftBtn" class="arr_left" title="点击查看上一张图">左移动</a>
-                         <a id="slideRightBtn" class="arr_right" title="点击查看下一张图">右移动</a>
-                         <div class="scroll_cont" id="slideContent">
-                             <div class="box">
-                                     <img src="/static/images/1.jpg" alt="">
-                                     <div class="scroll_detail"></div>
-                             </div>
-                             <div class="box">
-                                     <img src="/static/images/2.jpg" alt="">
-                                     <div class="scroll_detail"></div>
-                             </div>
-                             <div class="box">
-                                     <img src="/static/images/3.jpg" alt="">
-                                     <div class="scroll_detail"></div>
-                             </div>
-                             <div class="box">
-                                     <img src="/static/images/4.jpg" alt="">
-                                     <div class="scroll_detail"></div>
+             <div class='wrapper chi' id="wrapper">
+                 <div class="in_contents" id="in_contents">
+                     <div class='in_content' id="in_content">
+
+                         <div class="in_move" id="in_move">
+                             <div class="in_big">
+                                 <div class="in_scroll">
+                                     <div class="in_bigone in_item" data-img="static/images/in_picfour.jpg"></div>
+                                     <div class="in_bigtwo in_item" data-img="static/images/in_picone.jpg"></div>
+                                     <div class="in_bigthree in_item" data-img="static/images/in_pictwo.jpg"></div>
+                                     <div class="in_bigfour in_item" data-img="static/images/in_picthree.jpg"></div>
+                                 </div>
+                                 <div class="in_pos">
+                                    <span class="one">
+                                        <img class="lucency" src="static/images/in_blue.png"/>
+                                    </span>
+                                    <span class="two">
+                                        <img class="lucency" src="static/images/in_gray.png"/>
+                                    </span>
+                                    <span class="three">
+                                        <img class="lucency" src="static/images/in_gray.png"/>
+                                    </span>
+                                    <span >
+                                        <img class="lucency" src="static/images/in_gray.png"/>
+                                    </span>
+                                 </div>
+                                 <div class="in_arrow">
+                                     <span class="in_left"><img class="lucency" src="static/images/in_left.png"/></span>
+                                     <span class="in_right"><img class="lucency" src="static/images/in_right.png"/></span>
+                                 </div>
                              </div>
                          </div>
                      </div>
                  </div>
+             </div>
                  <!--  大图滚动 end -->
 
                 <!--  内容 start -->
                 <div class="content">
                     <div class="area">
+
+
                         <div class="area_3">
                             <div class="icon_1"><!--    密码登录    -->
-                                <div class="icon_1_1">
+                                <div class="icon_1_1" style="display: none">
                                     <div class="password_w">为了保护用户的隐私安全，暂不支持直接登录网页版</div>
                                     <div class="password_m">下载APP</div>
                                     <div class="password_s">请使用其它方式登录</div>
                                 </div>
                             </div>
-                            <div class="icon_2"><!--  扫一扫登录     -->
-                                <div class="icon_2_2">
+                            <div class="icon_2" ><!--  扫一扫登录     -->
+                                <div class="icon_2_2" style="display: none">
                                     <div class="ewm"></div>
                                     <div class="sao_wz">请使用APP扫描二维码以登录</div>
                                 </div>
                             </div>
-                            <div class="icon_3"><!--  手机验证码登录 -->
+                            <div class="icon_3" style="display: block" ><!--  手机验证码登录 -->
                                 <div class="icon_3_3" style="position:relative;width: 400px;z-index: 10000;top: -200px;float: left">
                                     <form>
                                         <input type="text" class="sdw" placeholder="请输入手机号" />
@@ -112,7 +107,7 @@
                             <div class="character"></div>
                             <div class="share"></div>
                         </div>
-
+                        <div class="leaf_left" ></div>
                         <div class="leaf_right"></div>
 
                         <!--  页脚 start -->
@@ -150,11 +145,13 @@
                             <div class="foot_two"><!--   底部下半部分  start   -->
                                 <div class="copyright">京ICP备13024585号 版权所有 © 2013 Lejoying</div>
                                 <div class="blog"></div>
+                                <div class="chattalk"></div>
+                                <div class="foot_qq"></div>
                             </div>
                         </div>
                         <!--  页脚 end   -->
                     </div>  <!--  area      -->
                 </div>  <!--  内容 end  -->
-         </div><!--整体外框-->
+         <!--</div>&lt;!&ndash;整体外框&ndash;&gt;-->
 </body>
 </html>
