@@ -9,7 +9,7 @@
 .js_moving {
     position: fixed;
     -webkit-animation: shake_icon 0.3s linear 0s forwards infinite;
-    z-index: 50;
+    z-index: 2000000;
 }
 
 @-webkit-keyframes shake_icon {

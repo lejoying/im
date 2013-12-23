@@ -46,7 +46,7 @@ function animateTransform(element, fromState, toState, time, callback) {
         if (progress >= time) {
             element.style.webkitTransform = parseState(toState);
             callback.onEnd();
-            console.log(parseState(toState));
+//            console.log(parseState(toState));
             return;
         }
         var progressRate = progress / time;

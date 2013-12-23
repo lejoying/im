@@ -462,7 +462,7 @@ relationManage.addfriendagree = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.phone;
-    var phoneAsk = data.phoneto;
+    var phoneAsk = data.phoneask;
     var rid = data.rid;
     var status = data.status;
     var accessKey = data.accessKey;
@@ -506,10 +506,10 @@ relationManage.addfriendagree = function (data, response) {
                     rData.friendStatus = "success";
                     rNode.save(function (error, node) {
                     });
-                    if (rid != null && rid != undefined && rid != "") {
+                    if (rid != null && rid != undefined && rid != "" && rid != "undefined") {
                         addCircleAccountRelation(rid, phoneAsk, ridAsk);
                     } else {
-                        if (ridAsk != null && ridAsk != undefined && ridAsk != "") {
+                        if (ridAsk != null && ridAsk != undefined && ridAsk != "" && ridAsk != "undefined") {
                             addAskCircleAccountRelation(phone, ridAsk);
                         } else {
                             console.log("添加好友成功");
@@ -552,7 +552,7 @@ relationManage.addfriendagree = function (data, response) {
                     }));
                     response.end();
                 } else {
-                    if (ridAsk != null && ridAsk != undefined && rid != "") {
+                    if (ridAsk != null && ridAsk != undefined && ridAsk != "" && ridAsk != "undefined") {
                         addAskCircleAccountRelation(phone, ridAsk);
                     } else {
                         console.log("添加好友成功");

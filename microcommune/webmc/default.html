@@ -32,6 +32,9 @@
     <script src="/static/js/jquery.js"></script>
     <!--<script src="/static/js/index.js"></script>-->
     <script src="/static/js/jscroll.js"></script>
+    <script src="/static/js/setting.js"></script>
+    <script src="/static/js/nTenjin.js"></script>
+    <script src="/static/js/animation.js"></script>
     <script src="/static/js/groupfriendcontrol.js"></script>
     <!--<script src="/static/js/message.js"></script>-->
     <style type="text/css">
@@ -55,7 +58,7 @@
 <div class="se_fd js_findFriend" style="display: none">
     <div class="se_1">
         <span class="se_f">查找好友</span>
-        <span class="se_close">X</span>
+        <span class="se_close js_findFriend_close">X</span>
     </div>
     <div class="sj_in">
         <span style="float: left;margin-top: 8px;margin-left: 60px">手机号：</span>
@@ -72,7 +75,7 @@
 <div class="add_fd js_friendMessage" style="display: none">
     <div class="add_1">
         <span class="add_f">详细信息</span>
-        <span class="add_close">X</span>
+        <span class="add_close js_findFriend_close">X</span>
     </div>
     <div class="add">
         <div class="add_ima"><img src=" /static/images/webwxgeticon1.jpg" style="width: 80px;height: 80px"
@@ -103,7 +106,7 @@
 <div class="add_fd js_addFriend" style="display: none">
     <div class="add_1">
         <span class="add_f js_addFriendTitle" style="font-size: 14px">添加好友 (18888888888)</span>
-        <span class="add_close">X</span>
+        <span class="add_close js_findFriend_close">X</span>
     </div>
     <div class="complete_ima">
         <img src=" /static/images/webwxgeticon1.jpg"
@@ -112,7 +115,7 @@
     </div>
     <div class="complete_yz">
         <span style="float:left;margin-top: 18px; margin-left: 0px;">请输入验证信息：</span>
-        <textarea class="complete_tt js_addFriendVerifyMessage" clos="4" rows="4">AAAAAAAAAAAAAAAA</textarea>
+        <textarea class="complete_tt js_addFriendVerifyMessage" clos="4" rows="4" maxlength="40"></textarea>
         <!--<textarea cols="4" rows="4" class="js_addFriendVerifyMessage"></textarea>-->
     </div>
     <div class="complete_bu">
@@ -128,12 +131,12 @@
 <div class="list" id="chat_leftpanel" ctrl="1">
 <div class="top">
     <div class="title" id="profile">
-        <div class="myProfile"><img un="avatar_wxid_7832428324312" src="static/images/face.jpg">
+        <div class="myProfile"><img class="js_accountHead" un="avatar_wxid_7832428324312" src="static/images/face.jpg">
 
             <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar"></div>
             <a style="display:none;" href="javascript:;" id="unreadTotalCount" class="unreadTotalCount">0</a>
 
-            <div class="info"><span class="nickName" id="username">麦穗儿香</span></div>
+            <div class="info"><span class="nickName js_accountNickName" id="username">麦穗儿香</span></div>
             <div id="operaterBox" style="display:none;" class="operaterBox js_operaterBox">
                 <div class="operaterBoxPanel"><a click="createChatroom" class="addFriends" href="javascript:;"> <span
                         class="iconPic left"></span> <span class="operaterBoxTitle left">发起聊天</span>
@@ -187,7 +190,8 @@
 </div>
 <!--search end-->
 <div style="position: relative; overflow-y: hidden; height:470px;" class="listContentWrap"> <!--height470px-->
-<div id="mainBox" style="height: 100%; width: 100%; overflow-y: hidden; position: relative; background-color:#FFF;">
+<!--mainBox 的hidden改为visible，背景把白色去掉了，coolspan-->
+<div id="mainBox" style="height: 100%; width: 100%; overflow-y: visible; position: relative;">
 <div style="width: 100%; top: 0px; position: absolute;" id="conversationListContent" class="listContent" ctrl="1">
 <div id="conversationContainer" style="display:none;">
 
@@ -587,11 +591,12 @@
 </div>
 </div>
 </div>
-<div class="chatLeftPanelShadow">
+<div class="chatLeftPanelShadow js_menuPanel">
     <!---------------------------------删除和黑名单--------------------------->
     <div style="position:absolute;  z-index:0; top:-115%;">
-        <img src="static/images/del_icon.png"
+        <img class="js_deleteFriend" src="static/images/del_icon.png"
              style="position:absolute;cursor:pointer;left:0px; height:50px; width:140px;top:0px;"/><img
+            class="js_blackListFriend"
             src="static/images/black_icon.png"
             style=" left:143px;position:absolute; width:133px; height:50px;top:0px;cursor:pointer;"/>
     </div>
@@ -696,8 +701,8 @@
 </div>
 </div>
 </div>
-<div class="templates hide">
-    <!--好友分组的模版-->
+<!--<div class="templates hide">
+    &lt;!&ndash;好友分组的模版&ndash;&gt;
     <div class="js_circles_friends" id="js_circles_friends">
         <?js var imageServer=window.globaldata.serverSetting.imageServer; ?>
         <?js for (var index in it) { ?>
@@ -725,7 +730,8 @@
                 <?js } ?>
                 <?js } ?>
             </div>
-            <span style="font-size:12px;width: 56px;" title="#{post.name}" class="js_circlename">#{post.name}</span>
+            <span style="font-size:12px;width: 56px;" title="#{post.name}"
+                  class="js_circlename#{post.rid}">#{post.name}</span>
         </div>
         <?js } ?>
         <div class="js_addcircle" style="float:left;margin-left:25px; margin-top:25px;cursor:pointer;">
@@ -736,11 +742,11 @@
             <span style="display:block; font-size:12px; margin-top:8px;" title="新建">新建</span>
         </div>
     </div>
-</div>
+</div>-->
 <div class="templates hide">
     <!--分组好友的模版-->
     <div class="js_group_user" id="js_group_user">
-        <div class="schoolmate_txt" title="#{it.name}" circle_rid="#{it.rid}">#{it.name}</div>
+        <div class="schoolmate_txt js_circleName_#{it.rid}" title="#{it.name}" circle_rid="#{it.rid}">#{it.name}</div>
         <div class="js_modifycirclename" circle_rid="#{it.rid}" style="margin-top: 10px;"><input
                 type="text" value="#{it.name}" style="width: 100px;height: 30px;border-radius: 5px;"><input
                 type="button"
@@ -751,8 +757,8 @@
                 style="width: 50px;height: 30px;margin-left: 10px;border-radius: 3px;"></div>
         <div class="clr"></div>
         <div class="js_group_users"
-             style="overflow: hidden;height: 214px;float: left;width: 268px;background-color: red;">
-            <div class="group_user" onmousewheel="ScrollWheel()">
+             style="overflow: hidden;height: 214px;float: left;width: 268px;" onmousewheel="ScrollWheel()">
+            <div class="group_user">
                 <?js var imageServer=window.globaldata.serverSetting.imageServer; ?>
                 <?js var it1 = it.accounts; ?>
                 <?js for(var index in it1){ ?>
@@ -761,7 +767,7 @@
                 <?js continue; ?>
                 <?js } ?>
                 <div class="user_icon">
-                    <img class="user_icon_img1" src="#{imageServer}/#{post.head}.png"/>
+                    <img class="user_icon_img1 js_user_headicon" src="#{imageServer}/#{post.head}.png"/>
 
                     <div class="popappIcon1"></div>
                     <div class="clr"></div>

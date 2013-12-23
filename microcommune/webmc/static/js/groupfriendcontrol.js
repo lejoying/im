@@ -2,6 +2,8 @@ var dropStatus = "none";
 var mouseX = 0;
 var mouseY = 0;
 $(document).ready(function () {
+//    $.getScript("/static/js/nTenjin.js");
+//    $.getScript("/static/js/animation.js");
     (function ($) {
         $.extend($.fn, {
             longPress: function (time, callBack) {
@@ -25,12 +27,13 @@ $(document).ready(function () {
             }
         });
     })(jQuery);
-    $.getScript("/static/js/nTenjin.js");
-    $.getScript("/static/js/animation.js");
-    $.getScript("/static/js/setting.js");
     var phone = "121";
-    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying"}));
+    var imageServer = window.globaldata.serverSetting.imageServer;
+    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying", nickName: "麦穗儿香", head: "d9fb7db5dc6e4b06046f0114b12d581ee84cec73"}));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $(".js_accountNickName").html(accountObj.nickName + "-Active");
+    $(".js_accountNickName").attr("title", accountObj.nickName + "-Active");
+    $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head + ".png");
     $.ajax({
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",
@@ -40,102 +43,105 @@ $(document).ready(function () {
         },
         success: function (data) {
             if (data["提示信息"] == "获取密友圈成功") {
-                var circles_friends = getTemplate("js_circles_friends");
-                $(".js_groups").html(circles_friends.render(data.circles));
-                window.sessionStorage.setItem("wxgs_circles", JSON.stringify(data.circles));
-                var clickGroupIndex = -1;
-                $(".appGroup").each(function (i) {
-                    $($(".appGroup")[i]).click(function () {
-                        var parentClass = this.parentNode.className;
-                        var i = parentClass.substr(parentClass.lastIndexOf("_") + 1);
-                        if (i == clickGroupIndex) {
-                            clickGroupIndex = -1;
-                            $(".popmenuFrame").slideUp(200);
-                            if (i > 5) {
-                                var box = $("#mainBox");
-                                var toState = new State();
-                                var fromState = new State();
-                                animateTransform(box[0], fromState, toState, 200,
-                                    {
-                                        onStart: function () {
-                                        },
-                                        onEnd: function () {
-                                            var fromState1 = new State(toState);
-                                            var toState1 = new State(toState);
-                                            toState1.translate.y = 0;
-                                            animateTransform(box[0], fromState1, toState1, 600);
+                getTemplateHtml("circles_friends", function (template) {
+                    $(".js_groups").html(template.render(data.circles));
+
+
+                    window.sessionStorage.setItem("wxgs_circles", JSON.stringify(data.circles));
+                    var clickGroupIndex = -1;
+                    $(".appGroup").each(function (i) {
+                        $($(".appGroup")[i]).click(function () {
+                            var parentClass = this.parentNode.className;
+                            var i = parentClass.substr(parentClass.lastIndexOf("_") + 1);
+                            if (i == clickGroupIndex) {
+                                clickGroupIndex = -1;
+                                $(".popmenuFrame").slideUp(200);
+                                if (i > 5) {
+                                    var box = $("#mainBox");
+                                    var toState = new State();
+                                    var fromState = new State();
+                                    animateTransform(box[0], fromState, toState, 200,
+                                        {
+                                            onStart: function () {
+                                            },
+                                            onEnd: function () {
+                                                var fromState1 = new State(toState);
+                                                var toState1 = new State(toState);
+                                                toState1.translate.y = 0;
+                                                animateTransform(box[0], fromState1, toState1, 600);
+                                            }
                                         }
-                                    }
-                                );
-                            }
+                                    );
+                                }
 //                            $(".popmenuFrame")[0].style.visibility = "hidden";
-                        } else {
-                            $(".popmenuFrame").slideUp(1);
-                            clickGroupIndex = i;
-                            $(".popmenuFrame").css({
-                                visibility: "visible",
-                                top: 95 + (Math.floor(i / 3)) * 90 + "px"
-                            });
-                            $(".sildLeftSharp").css({
-                                left: 45 + (i % 3) * 82 + "px"
-                            });
-                            var group_user = getTemplate("js_group_user");
-                            $(".sildPopContent").html(group_user.render((data.circles)[i]));
-                            getScroll();
+                            } else {
+                                $(".popmenuFrame").slideUp(1);
+                                clickGroupIndex = i;
+                                $(".popmenuFrame").css({
+                                    visibility: "visible",
+                                    top: 95 + (Math.floor(i / 3)) * 90 + "px"
+                                });
+                                $(".sildLeftSharp").css({
+                                    left: 45 + (i % 3) * 82 + "px"
+                                });
+                                var group_user = getTemplate("js_group_user");
+                                $(".sildPopContent").html(group_user.render((data.circles)[i]));
+                                getScroll();
 //                            $("#ScroLine").css("height", "100px");
 //                            alert(Math.ceil(((data.circles)[i].accounts.length + 1) / 4));
 //                            alert((180 / Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64) * 180);
-                            if (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) > 2) {
+                                if (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) > 2) {
 //                                alert(180 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64));
 //                                $("#ScroLine").css("height", (180 / $(".group_user").height) * 180);
-                                $("#ScroLine").css("height", (195 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64)) * 195);
-                            } else {
-                                $("#ScroLine").css("height", "214");
-                            }
+                                    $("#ScroLine").css("height", (195 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64)) * 195);
+                                } else {
+                                    $("#ScroLine").css("height", "214");
+                                }
 
 
-                            $(".user_icon").longPress(200, function (e, x, y) {
-                                if (dropStatus == "down") {
-                                    dropStatus = "dropping";
+                                $(".user_icon").longPress(200, function (e, x, y) {
+                                    if (dropStatus == "down") {
+                                        dropStatus = "dropping";
 //                                alert("longPress");
-                                }
-                                var icon1 = $(this);
-                                if (icon1.hasClass("js_selected")) {
-                                    icon1.removeClass("js_selected");
-                                    icon1.addClass("js_moving");
-                                    next();
-                                }
-                                function next() {
-                                    icon1.css("top", mouseY - y);
-                                    icon1.css("left", mouseX - x);
-                                }
-                            });
-                            $(".user_icon").addClass("js_none");
-                            $(".popmenuFrame").slideDown(1000);
-                            if (i > 5) {
-                                var box = $("#mainBox");
-                                var toState = new State();
-                                toState.scale.x = 0.5;
-                                toState.scale.y = 0.5;
-                                var fromState = new State();
-                                animateTransform(box[0], fromState, toState, 200,
-                                    {
-                                        onStart: function () {
-                                        },
-                                        onEnd: function () {
-                                            var fromState1 = new State(toState);
-                                            var toState1 = new State(toState);
-                                            toState1.translate.y = -((Math.floor(i / 3)) * 90 + 5);
-                                            toState1.scale.x = 1;
-                                            toState1.scale.y = 1;
-                                            animateTransform(box[0], fromState1, toState1, 400);
-                                        }
                                     }
-                                );
+                                    var icon1 = $(this);
+                                    if (icon1.hasClass("js_selected")) {
+                                        icon1.removeClass("js_selected");
+                                        icon1.addClass("js_moving");
+                                        next();
+                                    }
+                                    function next() {
+                                        icon1.css("top", mouseY - y);
+                                        icon1.css("left", mouseX - x);
+                                    }
+                                });
+                                $(".user_icon").addClass("js_none");
+                                $(".popmenuFrame").slideDown(1000);
+                                if (i > 5) {
+                                    var box = $("#mainBox");
+                                    var toState = new State();
+                                    toState.scale.x = 0.5;
+                                    toState.scale.y = 0.5;
+                                    var fromState = new State();
+                                    animateTransform(box[0], fromState, toState, 200,
+                                        {
+                                            onStart: function () {
+                                            },
+                                            onEnd: function () {
+                                                var fromState1 = new State(toState);
+                                                var toState1 = new State(toState);
+                                                toState1.translate.y = -((Math.floor(i / 3)) * 90 + 5);
+                                                toState1.scale.x = 1;
+                                                toState1.scale.y = 1;
+                                                animateTransform(box[0], fromState1, toState1, 400);
+                                            }
+                                        }
+                                    );
+                                }
                             }
-                        }
-                        $(".schoolmate_txt").slideDown(10);
-                        $(".js_modifycirclename").slideUp(10);
+                            $(".schoolmate_txt").slideDown(10);
+                            $(".js_modifycirclename").slideUp(10);
+                        });
                     });
                 });
             } else {
@@ -173,6 +179,7 @@ $(document).ready(function () {
         $(".js_findFriend").css({
             display: "block"
         });
+        $(".js_findFriendPhone").focus();
     });
     $(document).on("click", ".js_addcircle", function () {
         alert("新建密友圈");
@@ -233,9 +240,7 @@ $(document).ready(function () {
                 if (newCircleName.length > 20) {
                     alert("长度不能超过20位");
                 } else {
-                    modifyCircleName(circle_rid, newCircleName);
-                    this.parentNode.innerHTML = "aaa";
-                    alert($(this).parent().parent().childNodes);
+                    modifyCircleName(circle_rid, newCircleName, $(".js_circleName_" + circle_rid).html());
                     $(".schoolmate_txt").slideDown(10);
                     $(".js_modifycirclename").slideUp(10);
                 }
@@ -266,6 +271,9 @@ $(document).ready(function () {
                 },
                 success: function (data) {
                     if (data["提示信息"] == "获取用户信息成功") {
+                        $(".js_findFriendPhone").val("");
+                        $(".js_findFriendErrorMessage").html("");
+                        $(".js_addFriendErrorMessage").html("");
                         var accountData = data.account;
                         $(".js_friendMessage_addFriend").attr("circle_rid", $(".js_findFriendBtn").attr("circle_rid"));
                         $(".js_friendMessage_addFriend").attr("phone", accountData.phone);
@@ -307,6 +315,7 @@ $(document).ready(function () {
             if (flag) {
                 $(".js_addFriendErrorMessage").html(phone + "已经是您的好友,不能重复添加。");
             } else {
+                $(".js_addFriendErrorMessage").html("");
                 $(".js_addFriendSubmit").attr("circle_rid", $(this).attr("circle_rid"));
                 $(".js_addFriendSubmit").attr("phone", $(this).attr("phone"));
                 $(".js_friendMessage").css({display: "none"});
@@ -320,14 +329,54 @@ $(document).ready(function () {
         }
     });
     $(document).on("click", ".js_addFriendSubmit", function () {
-        alert($(this).attr("circle_rid") == "undefined");
-        alert($(".js_addFriendVerifyMessage").val().trim() + "---" + $(this).attr("circle_rid") + "---" + $(this).attr("phone"));
+//        alert($(this).attr("circle_rid") == "undefined");
+//        alert($(".js_addFriendVerifyMessage").val().trim() + "---" + $(this).attr("circle_rid") + "---" + $(this).attr("phone"));
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+        var verifyMessage = $(".js_addFriendVerifyMessage").val();
+        if (verifyMessage.length > 40) {
+            alert("验证信息太长");
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/api2/relation/addfriend?",
+                data: {
+                    phone: accountObj.phone,
+                    accessKey: accountObj.accessKey,
+                    phoneto: $(this).attr("phone"),
+                    rid: $(this).attr("circle_rid"),
+                    message: verifyMessage
+                },
+                success: function (data) {
+                    alert(data["提示信息"]);
+                }
+            });
+            $(".js_addFriendVerifyMessage").val("");
+            $(".js_addFriend").css({
+                display: "none"
+            });
+        }
+
+    });
+    $(document).on("click", ".js_findFriend_close", function () {
+        $(this.parentNode.parentNode).css({
+            display: "none"
+        });
+        $(".js_findFriendPhone").val("");
+        $(".js_findFriendErrorMessage").html("");
+        $(".js_addFriendErrorMessage").html("");
+    });
+    $(".js_menuPanel").hide();
+    $(document).on("mouseover", ".js_deleteFriend", function () {
+        alert("删除-js_deleteFriend");
+    });
+    $(document).on("mouseover", ".js_blackListFriend", function () {
+        alert("黑名单-js_blackListFriend");
     });
 });
 function getScroll() {
 
 }
-function modifyCircleName(rid, newCircleName) {
+function modifyCircleName(rid, newCircleName, oldCircleName) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "POST",
@@ -339,18 +388,53 @@ function modifyCircleName(rid, newCircleName) {
             name: newCircleName
         },
         success: function (data) {
-            alert(data["提示信息"]);
+            if (data["提示信息"] == "修改成功") {
+                $(".js_circleName_" + rid).html(newCircleName);
+                $(".js_circlename" + rid).html(newCircleName);
+                $(".js_circleName_" + rid).attr("title", newCircleName);
+            }
         }
     });
+}
+function getTemplateHtml(templateHtml, next) {
+    /*    var tenjin = nTenjin;
+     var templateDiv = $('.templates #' + id).parent();
+     var string = templateDiv.html().toString();
+     $.get("/static/templates/circles_friends.html", function (templates) {
+     //        alert(string);
+     alert(string.length == templates.length);
+     alert(string == templates);
+     alert(string);
+     alert(templates.replace(/\r/g, ""));
+     }, "html");
+     var template = new tenjin.Template();
+     string = string.replace(/\<\!\-\-\?/g, "<?");
+     string = string.replace(/\?\-\-\>/g, "?>");
+     string = string.replace(/比较符号大于/g, ">");
+     string = string.replace(/比较符号兄小于/g, "<");
+     template.convert(string);
+     return template;*/
+    var tenjin = nTenjin;
+    $.get("/static/templates/" + templateHtml + ".html", function (result) {
+        //        alert(string);
+//                    alert(string.length == templates.length);
+//                    alert(string == templates);
+//                    alert(string);
+//                    alert(templates.replace(/\r/g,""));
+        var template = new tenjin.Template();
+        var string = result.replace(/\r/g, "");
+        string = string.replace(/\<\!\-\-\?/g, "<?");
+        string = string.replace(/\?\-\-\>/g, "?>");
+        string = string.replace(/比较符号大于/g, ">");
+        string = string.replace(/比较符号兄小于/g, "<");
+        template.convert(string);
+        next(template);
+    }, "html");
 }
 function getTemplate(id) {
     var tenjin = nTenjin;
     var templateDiv = $('.templates #' + id).parent();
-    var string = templateDiv.html().toString();
-    /*    $.get("/static/templates/circles_friends.html", function (templates) {
-     //        alert(string);
-     alert(string == templates.replace(/\n/g, "").toString());
-     });*/
+    var string = templateDiv.html();
     string = string.replace(/\<\!\-\-\?/g, "<?");
     string = string.replace(/\?\-\-\>/g, "?>");
     string = string.replace(/比较符号大于/g, ">");
@@ -390,7 +474,7 @@ function ScroNow(event) {
 //    $("#ScroLine")[0].style.top = Y + "px";
     $("#ScroLine")[0].style.top = Y + "px";
     $(".group_user").css({
-        marginTop: -Y * 3 + "px"
+        marginTop: -Y * 0.5 + "px"
     });
 //    $("#ScroRight").css({
 //        marginTop: "0px"
@@ -416,9 +500,9 @@ function ScroNow(event) {
 }
 
 function ScrollWheel() {
-    alert(event.wheelDelta);
-    /*var Y = $(".group_user")[0].scrollTop;
-    var H = $(".group_user")[0].scrollHeight - $(".group_user")[0].clientHeight;
+    var flag = event.wheelDelta == 120;
+    var Y = $(".js_group_users")[0].scrollTop;
+    var H = $(".js_group_users")[0].scrollHeight - $(".js_group_users")[0].clientHeight;
     if (event.wheelDelta >= 120) {
         Y = Y - 80
     } else {
@@ -426,8 +510,8 @@ function ScrollWheel() {
     }
     if (Y < 0)Y = 0;
     if (Y > H)Y = H;
-    $(".group_user")[0].scrollTop = Y;
+    $(".js_group_users")[0].scrollTop = Y;
     var SH = Y / H * $("#ScroRight")[0].clientHeight - $("#ScroLine")[0].clientHeight;
     if (SH < 0)SH = 0;
-    $("#ScroLine")[0].style.top = SH + "px";*/
+    $("#ScroLine")[0].style.top = SH + "px";
 }

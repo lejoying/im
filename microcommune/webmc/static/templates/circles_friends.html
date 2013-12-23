@@ -1,28 +1,40 @@
-
+<!--好友分组的模版-->
 <div class="js_circles_friends" id="js_circles_friends">
+    <?js var imageServer=window.globaldata.serverSetting.imageServer; ?>
     <?js for (var index in it) { ?>
     <?js post=it[index]; ?>
     <?js if(post==null) { ?>
     <?js continue; ?>
     <?js } ?>
-    <div class="js_app_#{index}" style=" float:left; margin-left:28px; margin-top:20px;cursor:pointer;width: 56px;height:72px;overflow-y: hidden;" circle_rid="#{post.rid}">
+    <div class="js_app_#{index}"
+         style=" float:left; margin-left:28px; margin-top:20px;cursor:pointer;width: 56px;height:72px;overflow-y: hidden;"
+         circle_rid="#{post.rid}">
         <div class="appGroup">
-            <?js var it1 = post.accounts; ?>
+            <?js var it1 = post.accounts;var count=0; ?>
             <?js for (var index1 in it1) { ?>
-            <?js post1=it1[index1]; ?>
+            <?js if(count比较符号大于=4){break;} ?>
+            <?js post1=it1[index1];count++; ?>
             <?js if(post1==null) { ?>
             <?js continue; ?>
             <?js } ?>
             <?js if(post1.head != "" && post1.head != null){ ?>
-            <img src="/static/images/sundasheng.png"
-                 style="width:16px; height:16px; margin-top:5px;border-radius: 50%;"/>
+            <img src="#{imageServer}/#{post1.head}.png"
+                 style="width:18px; height:18px; margin-top:5px;border-radius: 50%;"/>
             <?js }else{ ?>
             <img src="/static/images/webwxgeticonhead.jpg"
-                 style="width:16px; height:16px; margin-top:5px;border-radius: 50%;"/>
+                 style="width:18px; height:18px; margin-top:5px;border-radius: 50%;"/>
             <?js } ?>
             <?js } ?>
         </div>
-        <span style="font-size:12px;width: 56px;" title="#{post.name}">#{post.name}</span>
+            <span style="font-size:12px;width: 56px;" title="#{post.name}"
+                  class="js_circlename#{post.rid}">#{post.name}</span>
     </div>
     <?js } ?>
+    <div class="js_addcircle" style="float:left;margin-left:25px; margin-top:25px;cursor:pointer;">
+        <img src="static/images/new_create_icon.png"
+             style="height: 44px;width: 43px;float:left;opacity:0.2; cursor:pointer;"/>
+
+        <div class="clr"></div>
+        <span style="display:block; font-size:12px; margin-top:8px;" title="新建">新建</span>
+    </div>
 </div>

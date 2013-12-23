@@ -6405,14 +6405,15 @@ a.btnBlue:active .btnBluePanel {
 }
 
 .group_user .user_icon .user_icon_img1 {
-    /* 圆角图片*/
+    /*圆角图片*/
     width: 42px;
     height: 42px;
+    border: 2px solid #FFFFFF;
     border-radius: 50%;
 }
 
 .group_user .user_icon .user_icon_img2 {
-    /* 透明圆圈图片*/
+    /*透明圆圈图片*/
     position: absolute;
     float: left;
     margin-left: -44px;
