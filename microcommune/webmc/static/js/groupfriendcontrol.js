@@ -101,6 +101,7 @@ $(document).ready(function () {
 
                                 $(".user_icon").longPress(200, function (e, x, y) {
                                     if (dropStatus == "down") {
+//                                        $(".popmenuFrame").slideUp(1000);
                                         dropStatus = "dropping";
 //                                alert("longPress");
                                     }
@@ -117,27 +118,27 @@ $(document).ready(function () {
                                 });
                                 $(".user_icon").addClass("js_none");
                                 $(".popmenuFrame").slideDown(1000);
-                                if (i > 5) {
-                                    var box = $("#mainBox");
-                                    var toState = new State();
-                                    toState.scale.x = 0.5;
-                                    toState.scale.y = 0.5;
-                                    var fromState = new State();
-                                    animateTransform(box[0], fromState, toState, 200,
-                                        {
-                                            onStart: function () {
-                                            },
-                                            onEnd: function () {
-                                                var fromState1 = new State(toState);
-                                                var toState1 = new State(toState);
-                                                toState1.translate.y = -((Math.floor(i / 3)) * 90 + 5);
-                                                toState1.scale.x = 1;
-                                                toState1.scale.y = 1;
-                                                animateTransform(box[0], fromState1, toState1, 400);
-                                            }
-                                        }
-                                    );
-                                }
+                                /*if (i > 5) {
+                                 var box = $("#mainBox");
+                                 var toState = new State();
+                                 toState.scale.x = 0.5;
+                                 toState.scale.y = 0.5;
+                                 var fromState = new State();
+                                 animateTransform(box[0], fromState, toState, 200,
+                                 {
+                                 onStart: function () {
+                                 },
+                                 onEnd: function () {
+                                 var fromState1 = new State(toState);
+                                 var toState1 = new State(toState);
+                                 toState1.translate.y = -((Math.floor(i / 3)) * 90 + 5);
+                                 toState1.scale.x = 1;
+                                 toState1.scale.y = 1;
+                                 animateTransform(box[0], fromState1, toState1, 400);
+                                 }
+                                 }
+                                 );
+                                 }*/
                             }
                             $(".schoolmate_txt").slideDown(10);
                             $(".js_modifycirclename").slideUp(10);
@@ -155,24 +156,71 @@ $(document).ready(function () {
             if (icon.hasClass("js_moving")) {
                 icon.css("top", e.clientY - 42);
                 icon.css("left", e.clientX - 32);
+//                icon.css("top", e.clientY - 42 + 30);
+//                icon.css("left", e.clientX - 32 - 490);
             }
         }
         if (dropStatus == "down") {
             mouseX = e.clientX;
             mouseY = e.clientY;
+//            mouseX = e.clientX + 30;
+//            mouseY = e.clientY - 490;
         }
     });
     $("body").mouseup(function (e) {
         if (dropStatus == "dropping") {
-//            var iconGroups = $(".js_icon_group_dropping");
-//            iconGroups.removeClass("js_icon_group_dropping");
+            //            var iconGroups = $(".js_icon_group_dropping");
+            //            iconGroups.removeClass("js_icon_group_dropping");
         }
         dropStatus = "none";
-        $(".user_icon").removeClass("js_moving");
-        $(".user_icon").addClass("js_none");
-//        $(".sildPopContent .popappIcon").removeClass("js_moving1");
-//        $(".sildPopContent .popappIcon").removeClass("js_moving2");
+        $(".appGroup").css({
+            border: "2px solid rgb(0, 153, 205)"
+        });
+//        $(".user_icon").removeClass("js_moving");
+//        $(".user_icon").addClass("js_none");
+        //        $(".sildPopContent .popappIcon").removeClass("js_moving1");
+        //        $(".sildPopContent .popappIcon").removeClass("js_moving2");
     });
+    $(document).on("mousedown", ".user_icon", function (event) {
+        if (dropStatus == "none") {
+            dropStatus = "down";
+            mouseX = event.clientX;
+//            mouseX = event.clientX - 500;
+            mouseY = event.clientY;
+        }
+    });
+    $(document).on("mouseup", ".user_icon", function (event) {
+        var icon = $(this);
+        if (icon.hasClass("js_none")) {
+            icon.removeClass("js_none");
+            if (event.ctrlKey && event.button == 0) {
+                icon.addClass("js_selected");
+            } else {
+                icon.addClass("js_none");
+            }
+        } else {
+            icon.removeClass("js_selected");
+            icon.removeClass("js_moving");
+            icon.addClass("js_none");
+        }
+    });
+    $(document).on("mouseover", "#js_groupusers", function () {
+        if (dropStatus == "dropping") {
+            $(this).find(".appGroup").css({
+                border: "2px solid red"
+            });
+            $(this).find(".appGroup").addClass("js_icon_group_dropping");
+        }
+    });
+    $(document).on("mouseleave", "#js_groupusers", function () {
+        if (dropStatus == "dropping") {
+            $(this).find(".appGroup").css({
+                border: "2px solid rgb(0, 153, 205)"
+            });
+            $(this).find(".appGroup").removeClass("js_icon_group_dropping");
+        }
+    });
+
     $(document).on("click", ".js_circleAddFriend", function () {
         //默认分组的circle_rid == "undefined" 　其他的默认都是数值类型的
         $(".js_findFriendBtn").attr("circle_rid", this.getAttribute("circle_rid"));
@@ -198,31 +246,7 @@ $(document).ready(function () {
         }
 //            alert("双击分组名称-->" + this.getAttribute("title"));
     });
-    $(document).on("mousedown", ".user_icon", function (event) {
-        if (dropStatus == "none") {
-            dropStatus = "down";
-            mouseX = event.clientX;
-            mouseY = event.clientY;
-        }
-    });
-    $(document).on("mouseup", ".user_icon", function (event) {
-        var icon = $(this);
-        if (icon.hasClass("js_none")) {
-            icon.removeClass("js_none");
-            if (event.ctrlKey && event.button == 0) {
-                icon.addClass("js_selected");
-            } else {
-                icon.addClass("js_none");
-            }
-        } else {
-            icon.removeClass("js_selected");
-            icon.removeClass("js_moving");
-            icon.addClass("js_none");
-        }
-    });
-    /*$(document).on("longPress", ".user_icon_img1", function (e, x, y) {
-     alert("longPress");
-     });*/
+
     $(document).on("click", ".js_modifycirclesubmit", function () {
         var circle_rid = this.parentNode.getAttribute("circle_rid");
         var newCircleName = $(".js_modifycirclename input[type=text]").val();

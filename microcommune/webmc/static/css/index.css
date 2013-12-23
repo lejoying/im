@@ -6408,7 +6408,6 @@ a.btnBlue:active .btnBluePanel {
     /*圆角图片*/
     width: 42px;
     height: 42px;
-    border: 2px solid #FFFFFF;
     border-radius: 50%;
 }
 

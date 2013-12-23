@@ -1,15 +1,30 @@
-.js_selected {
+.js_selected img {
     border: 2px solid #0099cd
 }
 
-.js_none {
-    /*border: 2px solid #ffffff*/
+.js_none img {
+    border: 2px solid #ffffff
 }
 
 .js_moving {
     position: fixed;
     -webkit-animation: shake_icon 0.3s linear 0s forwards infinite;
-    z-index: 2000000;
+    z-index: 20000;
+}
+
+.js_icon_group_dropping {
+    -webkit-animation: scale_icon_group 0.05s linear 0s forwards;
+    border: 2px solid #779527;
+    opacity: 1;
+}
+
+@-webkit-keyframes scale_icon_group {
+    0% {
+        -webkit-transform: scale(1, 1);
+    }
+    100% {
+        -webkit-transform: scale(1.2, 1.2);
+    }
 }
 
 @-webkit-keyframes shake_icon {
