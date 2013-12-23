@@ -18,4 +18,6 @@ public class StaticData implements Serializable {
 	// Last messages list
 	public List<String> lastChatFriends;
 
+	// new friends
+	public List<Friend> newFriends;
 }

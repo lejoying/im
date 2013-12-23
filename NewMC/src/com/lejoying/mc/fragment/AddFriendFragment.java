@@ -72,17 +72,6 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							// try {
-							// app.tempFriend = MCDataTools
-							// .generateFriendFromJSON(data
-							// .getJSONObject("account"));
-							// app.businessCardStatus = app.SHOW_TEMPFRIEND;
-							// mMCFragmentManager.replaceToContent(
-							// new BusinessCardFragment(), true);
-							// } catch (JSONException e) {
-							// // TODO Auto-generated catch block
-							// e.printStackTrace();
-							// }
 						}
 
 						@Override

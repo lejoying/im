@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<lint>
-    <issue id="ContentDescription">
-        <ignore path="res/layout/activity_main.xml" />
-    </issue>
-    <issue id="DrawAllocation" severity="ignore" />
-    <issue id="HandlerLeak" severity="ignore" />
-</lint>

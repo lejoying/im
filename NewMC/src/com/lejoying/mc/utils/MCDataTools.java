@@ -271,6 +271,21 @@ public class MCDataTools {
 		}
 	}
 
+	public static void saveNewFriends(JSONArray jFriends) {
+		for (int i = 0; i < jFriends.length(); i++) {
+			try {
+				JSONObject jFriend = jFriends.getJSONObject(i);
+				Friend friend = generateFriendFromJSON(jFriend);
+				if (!app.data.newFriends.contains(friend)) {
+					app.data.newFriends.add(friend);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public static User generateUserFromJSON(JSONObject jUser) {
 		User user = new User();
 		try {

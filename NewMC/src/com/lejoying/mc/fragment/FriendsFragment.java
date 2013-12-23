@@ -514,6 +514,7 @@ public class FriendsFragment extends BaseListFragment {
 					@Override
 					public void success(JSONObject data) {
 						try {
+							getAskFriends();
 							System.out.println(data);
 							MCDataTools.saveMessages(data
 									.getJSONArray("messages"));
@@ -552,20 +553,22 @@ public class FriendsFragment extends BaseListFragment {
 		Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
-		// String flag = app.data.user.flag;
-		params.putString("flag", "0");
-		MCNetTools.ajax(getActivity(), API.MESSAGE_GET, params,
+		MCNetTools.ajax(getActivity(), API.RELATION_GETASKFRIENDS, params,
 				MCHttpTools.SEND_POST, 5000, new ResponseListener() {
 
 					@Override
 					public void success(JSONObject data) {
+						System.out.println(data);
 						try {
-							MCDataTools.saveMessages(data
-									.getJSONArray("messages"));
-							app.data.user.flag = String.valueOf(data
-									.getInt("flag"));
-							mFriendsHandler
-									.sendEmptyMessage(NOTIFYDATASETCHANGED);
+							showMsg(data.getString("失败原因"));
+							return;
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						try {
+							MCDataTools.saveNewFriends(data
+									.getJSONArray("accounts"));
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
