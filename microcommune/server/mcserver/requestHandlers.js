@@ -5,33 +5,6 @@ var accessKeyPool = {};
 var serverSetting = root.globaldata.serverSetting;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
-var RSA = require('../alipayserver/tools/RSA');
-
-var session = require('./handlers/session.js');
-requestHandlers.session = function (request, response, pathObject, data) {
-    var operation = pathObject["operation"];
-    if (data == null) {
-        return;
-    }
-    if (operation == "eventwebcodelogin") {
-        session.eventwebcodelogin(data, response);
-    }
-    else if (operation == "notifywebcodelogin") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            session.notifywebcodelogin(data, response);
-        });
-    }
-    else if (operation == "event") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            session.event(data, response);
-        });
-    }
-    else if (operation == "notify") {
-        oauth6(data.phone, data.accessKey, response, function () {
-            session.notify(data, response);
-        });
-    }
-};
 
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
@@ -60,7 +33,7 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     }
     else if (operation == "exit") {
         oauth6(data.phone, data.accessKey, response, function () {
-            accountManage.exit(data, response,delOauthAccessKey);
+            accountManage.exit(data, response, delOauthAccessKey);
         });
     }
     else if (operation == "oauth6") {
@@ -224,7 +197,7 @@ function setOauthAccessKey(phone, accessKey, next) {
         }
     });
 }
-function delOauthAccessKey(phone, accessKey, next){
+function delOauthAccessKey(phone, accessKey, next) {
     client.lrem(phone + "_accessKey", 0, accessKey, function (err, reply) {
         if (err != null) {
             next();

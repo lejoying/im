@@ -1,6 +1,9 @@
 var dropStatus = "none";
 var mouseX = 0;
 var mouseY = 0;
+var checkGroup = false;
+var checkGroupId = -1;
+var selectedDropUsers = {};
 $(document).ready(function () {
 //    $.getScript("/static/js/nTenjin.js");
 //    $.getScript("/static/js/animation.js");
@@ -51,28 +54,36 @@ $(document).ready(function () {
                     var clickGroupIndex = -1;
                     $(".appGroup").each(function (i) {
                         $($(".appGroup")[i]).click(function () {
+                            checkGroup = false;
+                            checkGroupId = -1;
+                            selectedDropUsers = {};
                             var parentClass = this.parentNode.className;
                             var i = parentClass.substr(parentClass.lastIndexOf("_") + 1);
                             if (i == clickGroupIndex) {
                                 clickGroupIndex = -1;
                                 $(".popmenuFrame").slideUp(200);
                                 if (i > 5) {
-                                    var box = $("#mainBox");
-                                    var toState = new State();
-                                    var fromState = new State();
-                                    animateTransform(box[0], fromState, toState, 200,
-                                        {
-                                            onStart: function () {
-                                            },
-                                            onEnd: function () {
-                                                var fromState1 = new State(toState);
-                                                var toState1 = new State(toState);
-                                                toState1.translate.y = 0;
-                                                animateTransform(box[0], fromState1, toState1, 600);
-                                            }
-                                        }
-                                    );
+                                    $("#mainBox").css({
+                                        marginTop: 0
+                                    });
                                 }
+                                /*if (i > 5) {
+                                 var box = $("#mainBox");
+                                 var toState = new State();
+                                 var fromState = new State();
+                                 animateTransform(box[0], fromState, toState, 200,
+                                 {
+                                 onStart: function () {
+                                 },
+                                 onEnd: function () {
+                                 var fromState1 = new State(toState);
+                                 var toState1 = new State(toState);
+                                 toState1.translate.y = 0;
+                                 animateTransform(box[0], fromState1, toState1, 600);
+                                 }
+                                 }
+                                 );
+                                 }*/
 //                            $(".popmenuFrame")[0].style.visibility = "hidden";
                             } else {
                                 $(".popmenuFrame").slideUp(1);
@@ -100,6 +111,13 @@ $(document).ready(function () {
 
 
                                 $(".user_icon").longPress(200, function (e, x, y) {
+                                    $(".popmenuFrame").css({
+                                        marginTop: "500px"
+                                    });
+                                    $("#mainBox").css({
+                                        marginTop: 0
+//                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
+                                    });
                                     if (dropStatus == "down") {
 //                                        $(".popmenuFrame").slideUp(1000);
                                         dropStatus = "dropping";
@@ -118,6 +136,12 @@ $(document).ready(function () {
                                 });
                                 $(".user_icon").addClass("js_none");
                                 $(".popmenuFrame").slideDown(1000);
+                                if (i > 5) {
+                                    $("#mainBox").css({
+                                        marginTop: -((Math.floor(i / 3) - 1) * 90 + 5)
+//                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
+                                    });
+                                }
                                 /*if (i > 5) {
                                  var box = $("#mainBox");
                                  var toState = new State();
@@ -176,8 +200,31 @@ $(document).ready(function () {
         $(".appGroup").css({
             border: "2px solid rgb(0, 153, 205)"
         });
-//        $(".user_icon").removeClass("js_moving");
-//        $(".user_icon").addClass("js_none");
+        $(".appGroup").removeClass("js_icon_group_dropping");
+        $(".user_icon").removeClass("js_moving");
+        if (dropStatus == "down") {
+            $(".user_icon").addClass("js_none");//可以实现仅选择一个好友进行操作
+        }
+        if (checkGroup) {
+            checkGroup = false;
+//                selectedDropUsers = {};
+            if (checkGroupId != -1) {
+//                    checkGroupId = -1;
+                var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+                for (var index in selectedDropUsers) {
+                    if (selectedDropUsers[index] != checkGroupId) {
+                        moveOutFriendGroup(accountObj, index, checkGroupId, selectedDropUsers[index]);
+                    }
+                }
+                selectedDropUsers = {};
+            } else {
+                checkGroupId = -1;
+                selectedDropUsers = {};
+            }
+            $(".popmenuFrame").css({
+                marginTop: "0px"
+            });
+        }
         //        $(".sildPopContent .popappIcon").removeClass("js_moving1");
         //        $(".sildPopContent .popappIcon").removeClass("js_moving2");
     });
@@ -191,17 +238,22 @@ $(document).ready(function () {
     });
     $(document).on("mouseup", ".user_icon", function (event) {
         var icon = $(this);
+        var phone = icon.find("span").attr("phone");
+        var circle_rid = $(this.parentNode.parentNode.parentNode).find(".schoolmate_txt").attr("circle_rid");
         if (icon.hasClass("js_none")) {
             icon.removeClass("js_none");
             if (event.ctrlKey && event.button == 0) {
                 icon.addClass("js_selected");
+                selectedDropUsers[phone] = circle_rid;
             } else {
                 icon.addClass("js_none");
+                delete selectedDropUsers[phone];
             }
         } else {
             icon.removeClass("js_selected");
             icon.removeClass("js_moving");
             icon.addClass("js_none");
+            delete selectedDropUsers[phone];
         }
     });
     $(document).on("mouseover", "#js_groupusers", function () {
@@ -210,6 +262,8 @@ $(document).ready(function () {
                 border: "2px solid red"
             });
             $(this).find(".appGroup").addClass("js_icon_group_dropping");
+            checkGroup = true;
+            checkGroupId = $(this).attr("circle_rid");
         }
     });
     $(document).on("mouseleave", "#js_groupusers", function () {
@@ -218,6 +272,8 @@ $(document).ready(function () {
                 border: "2px solid rgb(0, 153, 205)"
             });
             $(this).find(".appGroup").removeClass("js_icon_group_dropping");
+            checkGroup = false;
+            checkGroupId = -1;
         }
     });
 
@@ -400,6 +456,24 @@ $(document).ready(function () {
 function getScroll() {
 
 }
+
+function moveOutFriendGroup(accountObj, phoneTo, newCircleId, oldCircleId) {
+    delete selectedDropUsers[phoneTo];
+    $.ajax({
+        type: "POST",
+        url: "/api2/circle/moveout?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            phoneto: phoneTo,
+            oldrid: oldCircleId,
+            newrid: newCircleId
+        },
+        success: function (data) {
+            alert(data["提示信息"]);
+        }
+    });
+}
 function modifyCircleName(rid, newCircleName, oldCircleName) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
@@ -420,6 +494,7 @@ function modifyCircleName(rid, newCircleName, oldCircleName) {
         }
     });
 }
+
 function getTemplateHtml(templateHtml, next) {
     /*    var tenjin = nTenjin;
      var templateDiv = $('.templates #' + id).parent();
@@ -455,6 +530,7 @@ function getTemplateHtml(templateHtml, next) {
         next(template);
     }, "html");
 }
+
 function getTemplate(id) {
     var tenjin = nTenjin;
     var templateDiv = $('.templates #' + id).parent();
@@ -467,6 +543,7 @@ function getTemplate(id) {
     template.convert(string);
     return template;
 }
+
 //------------------------------------------------------------------------
 /*$(function () {
  $("#ScroLine").css("height", ($(".group_user").height() / $(".group_user")[0].scrollHeight) * $(".group_user").height());

@@ -11,7 +11,7 @@ push.inform = function (phone, phoneTo, accessKey, sessionID, event) {
             event: JSON.stringify(event)
         },
         type: 'POST',
-        url: "http://127.0.0.1:8071/api2/session/notify",
+        url: "http://127.0.0.1:8077/api2/session/notify",
         success: function (dataStr) {
             console.log("push---" + dataStr);
         }
@@ -26,7 +26,7 @@ push.notifywebcodelogin = function (phone, phoneTo, accessKey, sessionID, next) 
             sessionID: sessionID
         },
         type: 'POST',
-        url: "http://127.0.0.1:8071/api2/session/notifywebcodelogin",
+        url: "http://127.0.0.1:8077/api2/session/notifywebcodelogin",
         success: function (dataStr) {
             console.log("push---" + dataStr);
             next(dataStr);

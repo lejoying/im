@@ -13,16 +13,16 @@ http.createServer(
     function (request, response) {
 
         response.writeHead(200, {
-            "Content-Type":"application/json; charset=UTF-8"
+            "Content-Type": "application/json; charset=UTF-8"
         });
         route(routemap, request.url, request, response);
 
         i++;
-        console.log("The mc server has been accessed " + i);
+        console.log("The push server has been accessed " + i);
         if (response.asynchronous == null) {
             response.end();
         }
 
-    }).listen(8071);
+    }).listen(8077);
 
-console.log("The mc server is running.8071");
+console.log("The push server is running.8077");

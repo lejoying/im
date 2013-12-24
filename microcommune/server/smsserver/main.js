@@ -18,11 +18,11 @@ http.createServer(
         route(routemap, request.url, request, response);
 
         i++;
-        console.log("The smsserver has been accessed " + i);
+        console.log("The sms server has been accessed " + i);
         if (response.asynchronous == null) {
             response.end();
         }
 
     }).listen(8074);
 
-console.log("The smsserver is running.8074");
+console.log("The sms server is running.8074");

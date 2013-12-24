@@ -18,11 +18,11 @@ http.createServer(
         route(routemap, request.url, request, response);
 
         i++;
-        console.log("The imageserver has been accessed " + i);
+        console.log("The image server has been accessed " + i);
         if (response.asynchronous == null) {
             response.end();
         }
 
     }).listen(8072);
 
-console.log("The mcserver is running.8072");
+console.log("The image server is running.8072");

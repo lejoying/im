@@ -1,7 +1,7 @@
 var session = {};
 
 var access = 0;
-var sha1 = require("./../tools/sha1.js");
+var sha1 = require("./../../mcserver/tools/sha1.js");
 var sessionPool = {};
 var accessKeyPool = {};
 accountSession = {};

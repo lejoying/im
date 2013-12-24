@@ -155,7 +155,7 @@ imagesManage.get = function (data, response) {
 }
 imagesManage.show = function (data, response) {
     response.asynchronous = 1;
-    console.log("request handler 'show' was called");
+    console.log("request handlers 'show' was called");
     fs.readFile(serverSetting.imageFolder + data.filename + ".png", "binary", function (error, file) {
         if (error) {
             console.log(error + "\n");
