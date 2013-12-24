@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
@@ -933,10 +934,7 @@ public class CircleMenuFragment extends BaseFragment {
 			break;
 		case 12:
 			data.user.accessKey = null;
-			MCDataTools.saveData(getActivity());
-			app.cleanData();
-			app.cleanConfig();
-			getActivity().finish();
+			mMCFragmentManager.startToActivity(LoginActivity.class, true);
 			break;
 		case 13:
 

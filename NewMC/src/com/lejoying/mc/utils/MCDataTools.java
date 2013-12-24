@@ -169,6 +169,48 @@ public class MCDataTools {
 		}
 	}
 
+	public static void getUserData(Context context, User user) {
+		InputStream inputStream = null;
+		ObjectInputStream objectInputStream = null;
+		// read data
+		try {
+			inputStream = context.openFileInput(user.phone);
+			objectInputStream = new ObjectInputStream(inputStream);
+			StaticData data = (StaticData) objectInputStream.readObject();
+			app.data.circles = data.circles;
+			app.data.friends = data.friends;
+			app.data.lastChatFriends = data.lastChatFriends;
+			app.data.newFriends = data.newFriends;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (StreamCorruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (objectInputStream != null) {
+					objectInputStream.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			try {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+
 	public static int updateUser(JSONObject jUser) {
 		app.isDataChanged = true;
 		int count = 0;
@@ -276,6 +318,9 @@ public class MCDataTools {
 			try {
 				JSONObject jFriend = jFriends.getJSONObject(i);
 				Friend friend = generateFriendFromJSON(jFriend);
+				if (app.data.newFriends == null) {
+					app.data.newFriends = new ArrayList<Friend>();
+				}
 				if (!app.data.newFriends.contains(friend)) {
 					app.data.newFriends.add(friend);
 				}

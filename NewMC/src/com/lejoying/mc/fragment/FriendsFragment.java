@@ -62,8 +62,21 @@ public class FriendsFragment extends BaseListFragment {
 	private LayoutInflater mInflater;
 
 	int showMessageCount;
+	int buttonCount;
+	boolean showNewFriends;
+	int messageFirstPosition;
+	int circleFirstPosition;
+
 	Bitmap head;
 	Map<Integer, List<View>> circlePageViews;
+
+	void initPosition() {
+		buttonCount = showNewFriends ? 4 : 3;
+		messageFirstPosition = showNewFriends ? 2 : 1;
+		circleFirstPosition = messageFirstPosition + showMessageCount + 1;
+		showMessageCount = app.data.lastChatFriends.size() > 5 ? 5
+				: app.data.lastChatFriends.size();
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,10 +87,10 @@ public class FriendsFragment extends BaseListFragment {
 		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
 
-		instance = this;
+		MCDataTools.getUserData(getActivity(), app.data.user);
 
-		showMessageCount = app.data.lastChatFriends.size() > 5 ? 5
-				: app.data.lastChatFriends.size();
+		instance = this;
+		initPosition();
 		getUser();
 		mFriendsAdapter = new FriendsAdapter();
 		mFriendsHandler = new FriendsHandler();
@@ -106,7 +119,7 @@ public class FriendsFragment extends BaseListFragment {
 
 		@Override
 		public int getCount() {
-			return showMessageCount + app.data.circles.size() + 5;
+			return showMessageCount + app.data.circles.size() + buttonCount + 2;
 		}
 
 		@Override
@@ -117,15 +130,16 @@ public class FriendsFragment extends BaseListFragment {
 		@Override
 		public int getItemViewType(int position) {
 			int type = 0;
-			if (position > 0 && position < showMessageCount + 1) {
+			if (position == 0 || position == getCount() - 1) {
+				type = TYPE_MARGIN;
+			} else if (position >= messageFirstPosition
+					&& position < messageFirstPosition + showMessageCount) {
 				type = TYPE_MESSAGE;
-			} else if (position == showMessageCount + 1
-					|| (position > (showMessageCount + app.data.circles.size() + 1) && position < getCount() - 1)) {
-				type = TYPE_BUTTON;
-			} else if (position != 0 && position < getCount() - 1) {
+			} else if (position >= circleFirstPosition
+					&& position < circleFirstPosition + app.data.circles.size()) {
 				type = TYPE_CIRCLE;
 			} else {
-				type = TYPE_MARGIN;
+				type = TYPE_BUTTON;
 			}
 			return type;
 		}
@@ -202,33 +216,55 @@ public class FriendsFragment extends BaseListFragment {
 			switch (type) {
 			case TYPE_MESSAGE:
 				messageHolder.tv_nickname.setText(app.data.friends
-						.get(app.data.lastChatFriends.get(arg0 - 1)).nickName);
-				messageHolder.tv_lastchat.setText(app.data.friends
-						.get(app.data.lastChatFriends.get(arg0 - 1)).messages
-						.get(0).content);
+						.get(app.data.lastChatFriends.get(arg0
+								- messageFirstPosition)).nickName);
+				messageHolder.tv_lastchat
+						.setText(app.data.friends.get(app.data.lastChatFriends
+								.get(arg0 - messageFirstPosition)).messages
+								.get(0).content);
 				messageHolder.iv_head.setImageBitmap(head);
 				Integer notread = app.data.friends.get(app.data.lastChatFriends
-						.get(arg0 - 1)).notReadMessagesCount;
+						.get(arg0 - messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {
 					messageHolder.tv_notread.setText(notread.toString());
 				}
 				break;
 			case TYPE_CIRCLE:
-				Circle circle = app.data.circles.get(arg0 - showMessageCount
-						- 2);
+				Circle circle = app.data.circles
+						.get(arg0 - circleFirstPosition);
 				friendHolder.tv_groupname.setText(circle.name);
 				friendHolder.setCircle(circle);
 				break;
 			case TYPE_BUTTON:
-				if (arg0 == showMessageCount + 1) {
+				if (showNewFriends && arg0 == 1) {
+					bHolder.button.setText(getActivity().getString(
+							R.string.btn_newfriends));
+					bHolder.button.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							mMCFragmentManager.replaceToContent(
+									new NewFriendsFragment(), true);
+						}
+					});
+				} else if (arg0 == showMessageCount + messageFirstPosition) {
 					bHolder.button.setText(getActivity().getString(
 							R.string.btn_moremessages));
-				} else if (arg0 == showMessageCount + app.data.circles.size()
-						+ 2) {
+					bHolder.button.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							System.out.println("bbb");
+						}
+					});
+				} else if (arg0 == getCount() - 3) {
 					bHolder.button.setText(getActivity().getString(
 							R.string.btn_newgroup));
-				} else if (arg0 == showMessageCount + app.data.circles.size()
-						+ 3) {
+					bHolder.button.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							System.out.println("cccc");
+						}
+					});
+				} else if (arg0 == getCount() - 2) {
 					bHolder.button.setText(getActivity().getString(
 							R.string.btn_findmorefriend));
 					bHolder.button.setOnClickListener(new OnClickListener() {
@@ -380,6 +416,11 @@ public class FriendsFragment extends BaseListFragment {
 
 					@Override
 					public Object instantiateItem(View container, int position) {
+						if (circlePageViews.get(circle.rid).get(position)
+								.getParent() != null) {
+							((ViewGroup) (circlePageViews.get(circle.rid).get(
+									position).getParent())).removeAllViews();
+						}
 						((ViewPager) container).addView(circlePageViews.get(
 								circle.rid).get(position));
 						return circlePageViews.get(circle.rid).get(position);
@@ -569,6 +610,11 @@ public class FriendsFragment extends BaseListFragment {
 						try {
 							MCDataTools.saveNewFriends(data
 									.getJSONArray("accounts"));
+							if (app.data.newFriends.size() != 0) {
+								showNewFriends = true;
+								mFriendsHandler
+										.sendEmptyMessage(NOTIFYDATASETCHANGED);
+							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -602,8 +648,7 @@ public class FriendsFragment extends BaseListFragment {
 			int what = msg.what;
 			switch (what) {
 			case NOTIFYDATASETCHANGED:
-				showMessageCount = app.data.lastChatFriends.size() > 5 ? 5
-						: app.data.lastChatFriends.size();
+				initPosition();
 				mFriendsAdapter.notifyDataSetChanged();
 				break;
 

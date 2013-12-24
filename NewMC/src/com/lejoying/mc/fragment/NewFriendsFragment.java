@@ -1,12 +1,33 @@
 package com.lejoying.mc.fragment;
 
+import java.net.HttpURLConnection;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.lejoying.mc.R;
+import com.lejoying.mc.api.API;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 
 public class NewFriendsFragment extends BaseListFragment {
+
+	App app = App.getInstance();
+	View mContent;
+
+	LayoutInflater mInflater;
 
 	@Override
 	protected EditText showSoftInputOnShow() {
@@ -15,9 +36,19 @@ public class NewFriendsFragment extends BaseListFragment {
 	}
 
 	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mMCFragmentManager.showCircleMenuToTop(true, true);
+		mContent = inflater.inflate(R.layout.android_list, null);
+		mInflater = inflater;
+		return mContent;
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
+		setListAdapter(new NewFriendsAdapter());
 	}
 
 	class NewFriendsAdapter extends BaseAdapter {
@@ -25,7 +56,7 @@ public class NewFriendsFragment extends BaseListFragment {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return 0;
+			return app.data.newFriends.size() + 2;
 		}
 
 		@Override
@@ -41,11 +72,94 @@ public class NewFriendsFragment extends BaseListFragment {
 		}
 
 		@Override
-		public View getView(int position, View arg1, ViewGroup arg2) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		public View getView(final int position, View arg1, ViewGroup arg2) {
+			if (position == 0 || position == getCount() - 1) {
+				return mInflater.inflate(R.layout.f_margin, null);
+			}
+			NewFriendsHolder newFriendsHolder = null;
+			if (arg1 == null) {
+				newFriendsHolder = new NewFriendsHolder();
+				arg1 = mInflater.inflate(R.layout.f_newfriends_item, null);
+				newFriendsHolder.btn_agree = arg1.findViewById(R.id.btn_agree);
+				newFriendsHolder.iv_head = (ImageView) arg1
+						.findViewById(R.id.iv_head);
+				newFriendsHolder.tv_nickname = (TextView) arg1
+						.findViewById(R.id.tv_nickname);
+				newFriendsHolder.tv_message = (TextView) arg1
+						.findViewById(R.id.tv_message);
+				arg1.setTag(newFriendsHolder);
+			} else {
+				newFriendsHolder = (NewFriendsHolder) arg1.getTag();
+			}
+			newFriendsHolder.tv_nickname.setText(app.data.newFriends
+					.get(position - 1).nickName);
+			if (app.data.friends
+					.get(app.data.newFriends.get(position - 1).phone) != null) {
+				newFriendsHolder.btn_agree.setVisibility(View.GONE);
+			} else {
+				newFriendsHolder.btn_agree
+						.setOnClickListener(new OnClickListener() {
 
+							@Override
+							public void onClick(View v) {
+								System.out.println("加好友");
+								Bundle params = new Bundle();
+								params.putString("phone", app.data.user.phone);
+								params.putString("accessKey",
+										app.data.user.accessKey);
+								params.putString(
+										"phoneask",
+										app.data.newFriends.get(position - 1).phone);
+								params.putString("status", "true");
+								MCNetTools.ajax(getActivity(),
+										API.RELATION_ADDFRIENDAGREE, params,
+										MCHttpTools.SEND_POST, 5000,
+										new ResponseListener() {
+
+											@Override
+											public void success(JSONObject data) {
+												System.out.println(data);
+												try {
+													showMsg(data
+															.getString("失败原因"));
+													return;
+												} catch (JSONException e) {
+												}
+												notifyDataSetChanged();
+											}
+
+											@Override
+											public void noInternet() {
+												// TODO Auto-generated method
+												// stub
+
+											}
+
+											@Override
+											public void failed() {
+												showMsg("失败");
+											}
+
+											@Override
+											public void connectionCreated(
+													HttpURLConnection httpURLConnection) {
+												// TODO Auto-generated method
+												// stub
+
+											}
+										});
+							}
+						});
+			}
+			return arg1;
+		}
+	}
+
+	class NewFriendsHolder {
+		ImageView iv_head;
+		TextView tv_nickname;
+		TextView tv_message;
+		View btn_agree;
 	}
 
 }

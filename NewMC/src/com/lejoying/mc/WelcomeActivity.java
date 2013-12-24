@@ -98,7 +98,6 @@ public class WelcomeActivity extends BaseFragmentActivity {
 
 	void startToMain() {
 
-
 		new Thread() {
 			public void run() {
 				long end = new Date().getTime();

@@ -10,7 +10,6 @@
         android:layout_height="172dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
         android:paddingTop="7dp"
         tools:ignore="UselessParent" >
@@ -49,6 +48,8 @@
             android:inputType="number"
             android:textColor="#fff"
             tools:ignore="TextFields" >
+
+            <requestFocus />
         </EditText>
 
         <Button
