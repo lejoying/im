@@ -44,15 +44,15 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
 /*****************************************index页 end*******************************************************/
 
 /*****************************************导航 start*******************************************************/
-/*.header_content{    *//*头部内容面板*/
-    /*width: 100%;*/
-    /*margin: 0 auto;*/
-    /*//height: 100%;*/
-    /*position: relative;*/
-    /*//float: left;*/
-    /*overflow:hidden;*/
-    /*top: 0;*/
-/*}*/
+.header_content{
+    width: 100%;
+    margin: 0 auto;
+    //height: 100%;
+    position: relative;
+    //float: left;
+    overflow:hidden;
+    top: 0;
+}
 .header{    /*头部*/
     margin: 0 auto;
 
@@ -204,7 +204,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     height: 400px;
     background: url("/static/images/zhishu.png") no-repeat right top;
     top: 0px;
-    left: 600px;
+    left: 500px;
 }
 /*----------------  底部 start  -------------------*/
 .footer{
