@@ -87,7 +87,52 @@ $(document).ready(function () {
     $(".js_sendPhoneCode").click(function () {
         alert("正在发送验证码，请稍等片刻....开发中");
     });
+    var chars = [
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
+        "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
+        "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G",
+        "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
+        "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2",
+        "3", "4", "5", "6", "7", "8", "9"];
+    var count = 20;
+    var str = "";
+    for (var i = 0; i < count; i++) {
+        str += chars[parseInt(Math.random() * chars.length)];
+    }
+    $(".js_qrwebcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str));
+    $(".js_qrwebcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str) +
+        "&logo=http://im.lejoying.com/static/images/icon.png&fg=6E6E6E&w=200&m=12");
+    longRequest(hex_sha1(str));
 });
+function longRequest(sessionID) {
+    getAccount();
+    function getAccount() {
+        $.ajax({
+            type: "POST",
+            url: "/api2/session/eventwebcodelogin?",
+            data: {
+                sessionID: sessionID
+            },
+            success: function (data) {
+                if (window.code != undefined) {
+
+                } else if (data["提示信息"] == "web端二维码登录成功") {
+//                    getAccountSelfMessage(data.phone, data.accessKey);
+                    var phone0 = RSA.decryptedString(pbkey0, data.phone);
+                    var accessKey0 = RSA.decryptedString(pbkey0, data.accessKey)
+                    getAccountSelfMessage(phone0, accessKey0, data.phone);
+                } else {
+                    alert(data["提示信息"]);
+                }
+            },
+            error: function () {
+                request(sessionID);
+            }
+        });
+    }
+
+    setInterval(getAccount, 30000);
+}
 function initHtml() {
     var box = $(".js_webcodelogin");
     var toState = new State();

@@ -393,7 +393,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     margin: 0 auto;
     width: 200px;
     height: 200px;
-    background: url("/static/images/erweima.png") 0 0 no-repeat;
+    /*background: url("/static/images/erweima.png") 0 0 no-repeat;*/
 }
 .sao_wz{    /*文字提示信息*/
     position: relative;

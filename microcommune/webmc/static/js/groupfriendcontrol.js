@@ -37,7 +37,7 @@ $(document).ready(function () {
 //    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying", nickName: "麦穗儿香", head: "d9fb7db5dc6e4b06046f0114b12d581ee84cec73"}));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $(".js_accountNickName").html(accountObj.nickName + "-Active");
-    $(".js_accountNickName").attr("title", accountObj.nickName + "-Active");
+    $(".js_accountNickName").attr("title", accountObj.nickName);
     $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head + ".png");
     $.ajax({
         type: "POST",
@@ -302,7 +302,20 @@ $(document).ready(function () {
         $(".js_findFriendPhone").focus();
     });
     $(document).on("click", ".js_addcircle", function () {
-        alert("新建密友圈");
+//        alert("新建密友圈");
+        var i = JSON.parse(window.sessionStorage.getItem("wxgs_circles")).length + 1;
+        $(".popmenuFrame").css({
+            visibility: "visible",
+            top: 95 + (Math.floor(i / 3)) * 90 + "px"
+        });
+        var group_user = getTemplate("js_group_user");
+        $(".sildPopContent").html(group_user.render([]));
+        $(".js_modifycirclename input[type=text]").val("")
+        $(".popmenuFrame").slideDown(1000);
+//        $(".schoolmate_txt").html("aa");
+        $(".schoolmate_txt").slideUp(10);
+        $(".js_modifycirclename").slideDown(10);
+//        $(".js_modifycirclename").slideUp(10);
     });
     $(document).on("click", ".user_icon", function () {
         var span = $(this).find("span");
