@@ -8,16 +8,42 @@
     android:background="@drawable/frame_background"
     android:paddingTop="7dp" >
 
-    <Button
-        android:id="@+id/btn_agree"
-        android:layout_width="55dp"
-        android:layout_height="30dp"
+    <RelativeLayout
+        android:id="@+id/rl_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:background="#2fff"
-        android:text="同意"
-        android:textColor="#fff"
-        android:textSize="15sp" />
+        android:layout_centerVertical="true" >
+
+        <Button
+            android:id="@+id/btn_agreeadd"
+            android:layout_width="55dp"
+            android:layout_height="30dp"
+            android:background="#2fff"
+            android:text="同意"
+            android:textColor="#fff"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_added"
+            android:layout_width="55dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="已填加"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_waitagree"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="等待对方确认"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_content"
@@ -25,7 +51,7 @@
         android:layout_height="37dp"
         android:layout_below="@+id/rl_top"
         android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@+id/btn_agree" >
+        android:layout_toLeftOf="@+id/rl_right" >
 
         <TextView
             android:id="@+id/tv_message"
@@ -45,7 +71,7 @@
         android:layout_width="fill_parent"
         android:layout_height="37dp"
         android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@+id/btn_agree" >
+        android:layout_toLeftOf="@+id/rl_right" >
 
         <TextView
             android:id="@+id/tv_nickname"

@@ -147,6 +147,7 @@ public class SearchFriendFragment extends BaseListFragment {
 											app.tempFriend = MCDataTools
 													.generateFriendFromJSON(data
 															.getJSONObject("account"));
+											app.tempFriend.temp = true;
 											app.businessCardStatus = app.SHOW_TEMPFRIEND;
 											mMCFragmentManager
 													.replaceToContent(

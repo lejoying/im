@@ -322,7 +322,7 @@ public class MCDataTools {
 					app.data.newFriends = new ArrayList<Friend>();
 				}
 				if (!app.data.newFriends.contains(friend)) {
-					app.data.newFriends.add(friend);
+					app.data.newFriends.add(0, friend);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

@@ -115,6 +115,11 @@ public class FriendsFragment extends BaseListFragment {
 		setListAdapter(mFriendsAdapter);
 	}
 
+	public void onResume() {
+		super.onResume();
+		mFriendsAdapter.notifyDataSetChanged();
+	};
+
 	class FriendsAdapter extends BaseAdapter {
 
 		@Override
@@ -642,7 +647,7 @@ public class FriendsFragment extends BaseListFragment {
 				});
 	}
 
-	class FriendsHandler extends Handler {
+	public class FriendsHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
 			int what = msg.what;

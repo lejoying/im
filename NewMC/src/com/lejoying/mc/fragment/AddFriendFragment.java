@@ -72,6 +72,15 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
+							getActivity().getSupportFragmentManager()
+									.popBackStack();
+							getActivity().getSupportFragmentManager()
+									.popBackStack();
+							getActivity().getSupportFragmentManager()
+									.popBackStack();
+							app.data.newFriends.add(0, app.tempFriend);
+							mMCFragmentManager.replaceToContent(
+									new NewFriendsFragment(), true);
 						}
 
 						@Override
