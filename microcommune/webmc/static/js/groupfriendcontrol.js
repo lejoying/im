@@ -4,6 +4,8 @@ var mouseY = 0;
 var checkGroup = false;
 var checkGroupId = -1;
 var selectedDropUsers = {};
+var oldSelectedGroupClass = "";
+var newSelectedGroupClass = "";
 $(document).ready(function () {
 //    $.getScript("/static/js/nTenjin.js");
 //    $.getScript("/static/js/animation.js");
@@ -30,9 +32,9 @@ $(document).ready(function () {
             }
         });
     })(jQuery);
-    var phone = "121";
+//    var phone = "121";
     var imageServer = window.globaldata.serverSetting.imageServer;
-    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying", nickName: "麦穗儿香", head: "d9fb7db5dc6e4b06046f0114b12d581ee84cec73"}));
+//    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying", nickName: "麦穗儿香", head: "d9fb7db5dc6e4b06046f0114b12d581ee84cec73"}));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $(".js_accountNickName").html(accountObj.nickName + "-Active");
     $(".js_accountNickName").attr("title", accountObj.nickName + "-Active");
@@ -57,11 +59,16 @@ $(document).ready(function () {
                             checkGroup = false;
                             checkGroupId = -1;
                             selectedDropUsers = {};
+                            $(".popmenuFrame").css({
+                                marginTop: "0px"
+                            });
                             var parentClass = this.parentNode.className;
                             var i = parentClass.substr(parentClass.lastIndexOf("_") + 1);
                             if (i == clickGroupIndex) {
                                 clickGroupIndex = -1;
                                 $(".popmenuFrame").slideUp(200);
+                                oldSelectedGroupClass = "";
+//                                alert(oldSelectedGroupClass);
                                 if (i > 5) {
                                     $("#mainBox").css({
                                         marginTop: 0
@@ -87,6 +94,7 @@ $(document).ready(function () {
 //                            $(".popmenuFrame")[0].style.visibility = "hidden";
                             } else {
                                 $(".popmenuFrame").slideUp(1);
+                                oldSelectedGroupClass = parentClass;
                                 clickGroupIndex = i;
                                 $(".popmenuFrame").css({
                                     visibility: "visible",
@@ -136,6 +144,8 @@ $(document).ready(function () {
                                 });
                                 $(".user_icon").addClass("js_none");
                                 $(".popmenuFrame").slideDown(1000);
+                                oldSelectedGroupClass = parentClass;
+//                                alert(oldSelectedGroupClass);
                                 if (i > 5) {
                                     $("#mainBox").css({
                                         marginTop: -((Math.floor(i / 3) - 1) * 90 + 5)
@@ -214,6 +224,9 @@ $(document).ready(function () {
                 for (var index in selectedDropUsers) {
                     if (selectedDropUsers[index] != checkGroupId) {
                         moveOutFriendGroup(accountObj, index, checkGroupId, selectedDropUsers[index]);
+                        if ($("." + newSelectedGroupClass).find("img").length < 4) {
+
+                        }
                     }
                 }
                 selectedDropUsers = {};
@@ -221,10 +234,10 @@ $(document).ready(function () {
                 checkGroupId = -1;
                 selectedDropUsers = {};
             }
-            $(".popmenuFrame").css({
-                marginTop: "0px"
-            });
         }
+        /*$(".popmenuFrame").css({
+         marginTop: "0px"
+         });*/
         //        $(".sildPopContent .popappIcon").removeClass("js_moving1");
         //        $(".sildPopContent .popappIcon").removeClass("js_moving2");
     });
@@ -264,6 +277,8 @@ $(document).ready(function () {
             $(this).find(".appGroup").addClass("js_icon_group_dropping");
             checkGroup = true;
             checkGroupId = $(this).attr("circle_rid");
+            newSelectedGroupClass = $(this).attr("class");
+//            alert($(this).attr("class"));
         }
     });
     $(document).on("mouseleave", "#js_groupusers", function () {
@@ -274,6 +289,7 @@ $(document).ready(function () {
             $(this).find(".appGroup").removeClass("js_icon_group_dropping");
             checkGroup = false;
             checkGroupId = -1;
+            newSelectedGroupClass = "";
         }
     });
 

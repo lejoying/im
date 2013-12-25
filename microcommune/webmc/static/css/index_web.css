@@ -25,13 +25,13 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
 .in_move{height:400px;width:100%;overflow:hidden;margin:0 auto;}
 .in_big{position:relative;width:100%;height:560px;overflow:hidden;}
 .in_scroll{position:relative;top:0;left:-1px;width:100%;height:560px;overflow:hidden;}
-.in_big .in_bigone{width:100%;height:560px;position:absolute;top:0;left:1px;background:url('static/images/in_picone.jpg') center 0 no-repeat;z-index:100;}
-.in_china .in_big .in_bigone{background:url('static/images/in_picone-2.jpg') center 0 no-repeat;}
-.in_big .in_bigtwo{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('static/images/in_pictwo.jpg') center 0 no-repeat;z-index:90;}
+.in_big .in_bigone{width:100%;height:560px;position:absolute;top:0;left:1px;background:url('/static/images/in_picone.jpg') center 0 no-repeat;z-index:100;}
+.in_china .in_big .in_bigone{background:url('/static/images/in_picone-2.jpg') center 0 no-repeat;}
+.in_big .in_bigtwo{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('/static/images/in_pictwo.jpg') center 0 no-repeat;z-index:90;}
 .in_big .in_bigfour{width:100%;height:560px;position:absolute;top:0;left:3000px;z-index:95;background-position:50% 0;}
-.in_china .in_big .in_bigtwo{background:url('static/images/in_pictwo-2.jpg') center 0 no-repeat;}
-.in_big .in_bigthree{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('static/images/in_picthree.jpg') center 0 no-repeat;z-index:80;}
-.in_china .in_big .in_bigthree{background:url('static/images/in_picthree-2.jpg') center 0 no-repeat;}
+.in_china .in_big .in_bigtwo{background:url('/static/images/in_pictwo-2.jpg') center 0 no-repeat;}
+.in_big .in_bigthree{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('/static/images/in_picthree.jpg') center 0 no-repeat;z-index:80;}
+.in_china .in_big .in_bigthree{background:url('/static/images/in_picthree-2.jpg') center 0 no-repeat;}
 .in_pos{position:absolute;top:362px;left:50%;height:20px;width:150px;margin-left:-75px;z-index:999;}
 .in_pos span{float:left;margin-left:10px;cursor:pointer;display:inline;}
 .in_pos img{float:left;}
@@ -332,7 +332,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     width: 500px;
     height: 140px;
     z-index: 333;
-    top: -100px;
+    /*top: -100px;*/
     left: -50px;
     background: rgba(57,60,61,0.8);
     border: 1px solid rgba(0,0,0,0.8);
@@ -379,7 +379,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     width: 450px;
     height: 400px;
     z-index: 333;
-    top: -330px;
+    /*top: -330px;*/
     left: -20px;
     background: rgba(57,60,61,0.8);
     border: 1px solid rgba(0,0,0,0.8);

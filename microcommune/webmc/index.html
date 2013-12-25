@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title></title>
-    <link rel="stylesheet" type="text/css" href="/static/css/index_web.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/static/images/icon.png" rel="shortcut icon" type="image/x-icon"/>
+    <title>微型公社网页登录</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/index_web.css"/>
     <script type="text/javascript" src="/static/js/jquery.js"></script>
     <script type="text/javascript" src="/static/js/whole.js"></script>
+    <script type="text/javascript" src="/static/js/animation.js"></script>
+    <script type="text/javascript" src="/static/js/login.js"></script>
 </head>
-<body   id="in_body" class="in_china imgslider">
+<body id="in_body" class="in_china imgslider">
 <!--整体外框-->
 <div class="wrapper">
 
@@ -15,20 +18,26 @@
     <div class='header'>    <!--        头部导航 start   -->
         <!--菜单-->
         <div class="nav">
-            <a class="logo" href="#" ></a>
+            <a class="logo js_logo" href="#"></a>
+
             <div class="navs">
                 <div class="1" style="float: left; width: 50%;">
-                    <a class="web_version" href="index.html"  style=" float: left;margin-left:300px;color:#000000;font-size: 18px; margin-top: 13px;">网页版</a>
-                    <a class="app_1" href="app.html" style="float: right; margin-right: 30px;color:white;font-size:18px;margin-top: 13px;">APP</a>
+                    <a class="web_version" href="index.html"
+                       style=" float: left;margin-left:300px;color:#000000;font-size: 18px; margin-top: 13px;">网页版</a>
+                    <a class="app_1" href="app.html"
+                       style="float: right; margin-right: 30px;color:white;font-size:18px;margin-top: 13px;">APP</a>
                 </div>
                 <div class="2" style="float: right;width: 50%;">
-                    <a class="open_platform" href="open.html" style=" float: left;margin-left:30px;color: white;font-size:18px;margin-top: 13px;">开放平台</a>
-                    <a class="about_1" href="#" style=" float:right;margin-right:270px;color: white;font-size:18px;margin-top: 13px;">关于</a>
+                    <a class="open_platform" href="open.html"
+                       style=" float: left;margin-left:30px;color: white;font-size:18px;margin-top: 13px;">开放平台</a>
+                    <a class="about_1" href="#"
+                       style=" float:right;margin-right:270px;color: white;font-size:18px;margin-top: 13px;">关于</a>
                 </div>
             </div>
             <div class="header_bottom_bg"></div>
         </div>
-    </div>      <!--        头部导航   end     -->
+    </div>
+    <!--        头部导航   end     -->
 
     <div class="content">    <!--  内容 start -->
 
@@ -54,7 +63,7 @@
                                     <span class="three">
                                         <img class="lucency" src="static/images/in_gray.png"/>
                                     </span>
-                                    <span >
+                                    <span>
                                         <img class="lucency" src="static/images/in_gray.png"/>
                                     </span>
                             </div>
@@ -72,26 +81,32 @@
 
 
             <div class="area_3">
-                <div class="icon_1"><!--    密码登录    -->
-                    <div class="icon_1_1" style="display: none">
+                <div class="icon_1 js_checklogin"><!--    密码登录    -->
+                    <div class="icon_1_1 js_applogin js_login">
                         <div class="password_w">为了保护用户的隐私安全，暂不支持直接登录网页版</div>
-                        <div class="password_m">下载APP</div>
+                        <div class="password_m js_downloadAppHtml">下载APP</div>
                         <div class="password_s">请使用其它方式登录</div>
                     </div>
                 </div>
-                <div class="icon_2" ><!--  扫一扫登录     -->
-                    <div class="icon_2_2" style="display: none">
-                        <div class="ewm"></div>
+                <div class="icon_2 js_checklogin"><!--  扫一扫登录     -->
+                    <div class="icon_2_2 js_webcodelogin js_login">
+                        <div class="ewm"><img style="width: 200px;height: 200px;"
+                                              src="http://qr.liantu.com/api.php?text=mc:weblogin:87b695a1a911e9fabb921fb62d92d3b07b97d486&logo=http://im.lejoying.com/static.images/icon.png&fg=6E6E6E&w=200&m=12">
+                        </div>
                         <div class="sao_wz">请使用APP扫描二维码以登录</div>
                     </div>
                 </div>
-                <div class="icon_3" ><!--  手机验证码登录 -->
-                    <div class="icon_3_3" style="position:relative;width: 400px;z-index: 10000;top: -200px;float: left;display: none">
-                        <form>
-                            <input type="text" class="sdw" placeholder="请输入手机号" />
-                            <div class="send_y">发送手机验证码</div>
-                            <input type="text" class="sdw" placeholder="请输入验证码" />
-                            <input type="submit" value="登  录" class="button" />
+                <div class="icon_3 js_checklogin"><!--  手机验证码登录 -->
+                    <div class="icon_3_3 js_phonecodelogin js_login"
+                         style="position:relative;width: 400px;z-index: 10000;float: left;">
+                        <form action="javascript:void(0);">
+                            <input type="text" class="sdw js_loginPhone" placeholder="请输入手机号"/>
+
+                            <div class="send_y js_sendPhoneCode">发送手机验证码</div>
+                            <input type="text" class="sdw js_loginCode" placeholder="请输入验证码"/>
+                            <label class="js_loginCodeError" style="color: red;font-size: 14px;"></label>
+                            <input type="submit" value="登  录" class="button js_phoneCodeSubmit"/>
+
                             <div class="send_j">接收手机验证码以登录</div>
                         </form>
                     </div>
@@ -104,54 +119,61 @@
                 <div class="character"></div>
                 <div class="share"></div>
             </div>
-            <div class="leaf_left" ></div>
+            <div class="leaf_left"></div>
             <div class="leaf_right"></div>
 
-        <!--  ================================  页脚  ======================================== -->
-        <div style="width: 100%;height: 100%;margin-top: 50px"><!--  页脚-->
-            <div class="footer">
-                <!--底部上半部分-->
-                <div class="foot_one">
-                    <div class="foot_left">
-                        <a class="foot_logo" href="#"></a>
-                    </div>
-                    <div class="foot_right">
-                        <div class="foot_lia"></div>
-                        <div class="foot_lib">
-                            <div class="foot_1">
-                                <span><a href="index.html" target="_blank">网页版</a> </span>
-                                <div class="clr"></div>
-                                <span><a href="app.html">APP</a></span>
-                                <div class="clr"></div>
-                                <span><a href="open.html" target="_blank">开放平台</a></span>
-                            </div>
-                            <div class="foot_2">
-                                <span><a href="#">支持</a></span>
-                                <div class="clr"></div>
-                                <span><a href="#">联系我们</a></span>
-                            </div>
-                            <div class="foot_3">
-                                <span><a href="#">关于</a></span>
-                                <div class="clr"></div>
-                                <span><a href="#">新闻</a></span>
+            <!--  ================================  页脚  ======================================== -->
+            <div style="width: 100%;height: 100%;margin-top: 50px"><!--  页脚-->
+                <div class="footer">
+                    <!--底部上半部分-->
+                    <div class="foot_one">
+                        <div class="foot_left">
+                            <a class="foot_logo" href="#"></a>
+                        </div>
+                        <div class="foot_right">
+                            <div class="foot_lia"></div>
+                            <div class="foot_lib">
+                                <div class="foot_1">
+                                    <span><a href="index.html" target="_blank">网页版</a> </span>
+
+                                    <div class="clr"></div>
+                                    <span><a href="app.html">APP</a></span>
+
+                                    <div class="clr"></div>
+                                    <span><a href="open.html" target="_blank">开放平台</a></span>
+                                </div>
+                                <div class="foot_2">
+                                    <span><a href="#">支持</a></span>
+
+                                    <div class="clr"></div>
+                                    <span><a href="#">联系我们</a></span>
+                                </div>
+                                <div class="foot_3">
+                                    <span><a href="#">关于</a></span>
+
+                                    <div class="clr"></div>
+                                    <span><a href="#">新闻</a></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div><!--底   部上半部分  end  -->
+                    <!--底   部上半部分  end  -->
 
-                <div class="foot_two"><!--   底部下半部分  start   -->
-                    <div class="copyright">京ICP备13024585号 版权所有 © 2013 Lejoying</div>
-                    <div class="blog"></div>
-                    <div class="chattalk"></div>
-                    <div class="foot_qq"></div>
+                    <div class="foot_two"><!--   底部下半部分  start   -->
+                        <div class="copyright">京ICP备13024585号 版权所有 © 2013 Lejoying</div>
+                        <div class="blog"></div>
+                        <div class="chattalk"></div>
+                        <div class="foot_qq"></div>
+                    </div>
                 </div>
             </div>
+            <!--  ================================  页脚  ======================================== -->
+
         </div>
-        <!--  ================================  页脚  ======================================== -->
+        <!--  内容 end  -->
 
-    </div>  <!--  内容 end  -->
-
-</div><!--整体外框-->
+    </div>
+    <!--整体外框-->
 
 </body>
 </html>
