@@ -14,6 +14,7 @@ public class Friend implements Serializable {
 	public String mainBusiness = "";
 	public String head = "";
 	public String friendStatus = "";
+	public String addMessage = "";
 	public boolean temp;
 	public int notReadMessagesCount;
 	public List<Message> messages = new ArrayList<Message>();
@@ -30,6 +31,7 @@ public class Friend implements Serializable {
 						&& friendStatus.equals(f.friendStatus)
 						&& temp == f.temp
 						&& notReadMessagesCount == f.notReadMessagesCount
+						&& addMessage.equals(f.addMessage)
 						&& messages.containsAll(f.messages)) {
 					flag = true;
 				}

@@ -119,10 +119,11 @@ public class NetworkHandler {
 				mNetworkRemain.startReamin(intent);
 			} else if (api.equals(API.ACCOUNT_VERIFYCODE)) {
 				if (MCDataTools.app.registerBundle != null) {
+					System.out.println(data);
 					try {
 						MCDataTools.app.registerBundle.putString(
 								"accessKey",
-								RSAUtils.decrypt(data.getString("PbKey"),
+								RSAUtils.decrypt(app.config.pbKey0,
 										data.getString("accessKey")));
 						MCDataTools.app.registerBundle.putString("PbKey",
 								data.getString("PbKey"));
@@ -136,7 +137,7 @@ public class NetworkHandler {
 					String accessKey = "";
 					String pbKey = "";
 					try {
-						accessKey = RSAUtils.decrypt(data.getString("PbKey"),
+						accessKey = RSAUtils.decrypt(app.config.pbKey0,
 								data.getString("accessKey"));
 						pbKey = data.getString("PbKey");
 					} catch (JSONException e) {

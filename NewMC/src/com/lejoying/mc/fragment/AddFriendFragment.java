@@ -57,8 +57,8 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 			params.putString("phone", app.data.user.phone);
 			params.putString("accessKey", app.data.user.accessKey);
 			params.putString("phoneto", app.tempFriend.phone);
-			params.putSerializable("message", mView_message.getText()
-					.toString());
+			params.putString("message", mView_message.getText().toString());
+			app.tempFriend.addMessage = mView_message.getText().toString();
 			MCNetTools.ajax(getActivity(), API.RELATION_ADDFRIEND, params,
 					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
 
@@ -78,6 +78,8 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 									.popBackStack();
 							getActivity().getSupportFragmentManager()
 									.popBackStack();
+							app.tempFriend.addMessage = mView_message.getText()
+									.toString();
 							while (app.data.newFriends.contains(app.tempFriend)) {
 								app.data.newFriends.remove(app.tempFriend);
 							}

@@ -23,6 +23,7 @@ import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
 
 public class RegisterPassFragment extends BaseFragment implements
 		OnClickListener {
+	App app = App.getInstance();
 	private View mContent;
 	private EditText mView_pass;
 	private Button mView_next;
@@ -43,6 +44,7 @@ public class RegisterPassFragment extends BaseFragment implements
 
 		mView_next.setOnClickListener(this);
 
+		System.out.println(app.registerBundle);
 		mMCFragmentManager.setFragmentKeyDownListener(new OnKeyDownListener() {
 
 			long cancelTime;
@@ -83,9 +85,10 @@ public class RegisterPassFragment extends BaseFragment implements
 				showMsg(getString(R.string.app_passlength));
 				return;
 			}
-			Bundle params = App.getInstance().registerBundle;
+			Bundle params = app.registerBundle;
 			params.remove("code");
 			params.remove("usage");
+			params.remove("PbKey");
 			JSONObject account = new JSONObject();
 			try {
 				account.put("password", pass);

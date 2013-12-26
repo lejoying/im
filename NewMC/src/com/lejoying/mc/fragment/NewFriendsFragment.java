@@ -100,6 +100,8 @@ public class NewFriendsFragment extends BaseListFragment {
 			}
 			newFriendsHolder.tv_nickname.setText(app.data.newFriends
 					.get(position - 1).nickName);
+			newFriendsHolder.tv_message.setText(app.data.newFriends
+					.get(position - 1).addMessage);
 			if (app.data.friends
 					.get(app.data.newFriends.get(position - 1).phone) != null) {
 				newFriendsHolder.btn_agree.setVisibility(View.GONE);

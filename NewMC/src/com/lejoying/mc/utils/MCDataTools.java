@@ -374,6 +374,10 @@ public class MCDataTools {
 			friend.friendStatus = jFriend.getString("friendStatus");
 		} catch (JSONException e) {
 		}
+		try {
+			friend.addMessage = jFriend.getString("message");
+		} catch (JSONException e) {
+		}
 		return friend;
 	}
 
