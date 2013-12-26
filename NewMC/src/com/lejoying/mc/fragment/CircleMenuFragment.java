@@ -30,7 +30,6 @@ import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.StaticConfig;
 import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.entity.MenuEntity;
-import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
@@ -540,17 +539,17 @@ public class CircleMenuFragment extends BaseFragment {
 		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item4,
 				getString(R.string.circleitem1_4)));
 		List<MenuEntity> menuEntitys2 = new ArrayList<MenuEntity>();
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item1,
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2_1,
 				getString(R.string.circleitem2_1)));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2,
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2_2,
 				getString(R.string.circleitem2_2)));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item3,
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2_3,
 				getString(R.string.circleitem2_3)));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item4,
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2_4,
 				getString(R.string.circleitem2_4)));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item5,
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2_5,
 				getString(R.string.circleitem2_5)));
-		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item6,
+		menuEntitys2.add(new MenuEntity(R.drawable.test_menu_item2_6,
 				getString(R.string.circleitem2_6)));
 
 		final ViewGroup itemGroup = (ViewGroup) mDiskOut;
@@ -943,34 +942,10 @@ public class CircleMenuFragment extends BaseFragment {
 			showBack();
 			break;
 		case 15:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
 
-				@Override
-				public void outAnimationEnd() {
-					mMCFragmentManager.replaceToContent(
-							new ExactSearchFriendFragment(), true);
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
 			break;
 		case 16:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
 
-				@Override
-				public void outAnimationEnd() {
-					mMCFragmentManager.replaceToContent(
-							new FriendNotFoundFragment(), true);
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
 			break;
 
 		default:

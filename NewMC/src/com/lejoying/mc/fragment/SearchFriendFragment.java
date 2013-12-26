@@ -137,7 +137,11 @@ public class SearchFriendFragment extends BaseListFragment {
 											return;
 										}
 										try {
-											showMsg(data.getString("失败原因"));
+											data.getString("失败原因");
+											mMCFragmentManager
+													.replaceToContent(
+															new FriendNotFoundFragment(),
+															true);
 											return;
 										} catch (JSONException e) {
 											// TODO Auto-generated catch block

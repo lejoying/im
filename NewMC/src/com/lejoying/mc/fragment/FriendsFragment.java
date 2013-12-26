@@ -71,6 +71,9 @@ public class FriendsFragment extends BaseListFragment {
 	Map<Integer, List<View>> circlePageViews;
 
 	void initPosition() {
+		if (app.data.newFriends.size() != 0) {
+			showNewFriends = true;
+		}
 		buttonCount = showNewFriends ? 4 : 3;
 		messageFirstPosition = showNewFriends ? 2 : 1;
 		circleFirstPosition = messageFirstPosition + showMessageCount + 1;
@@ -117,8 +120,8 @@ public class FriendsFragment extends BaseListFragment {
 
 	public void onResume() {
 		super.onResume();
-		mFriendsAdapter.notifyDataSetChanged();
-	};
+		mFriendsHandler.sendEmptyMessage(NOTIFYDATASETCHANGED);
+	}
 
 	class FriendsAdapter extends BaseAdapter {
 

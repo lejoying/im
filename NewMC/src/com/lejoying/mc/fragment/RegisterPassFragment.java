@@ -94,6 +94,7 @@ public class RegisterPassFragment extends BaseFragment implements
 				e.printStackTrace();
 			}
 			params.putString("account", account.toString());
+			System.out.println(params);
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_MODIFY,
 					params, true, new NetworkStatusAdapter() {
 						@Override

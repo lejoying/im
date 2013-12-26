@@ -78,6 +78,9 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 									.popBackStack();
 							getActivity().getSupportFragmentManager()
 									.popBackStack();
+							while (app.data.newFriends.contains(app.tempFriend)) {
+								app.data.newFriends.remove(app.tempFriend);
+							}
 							app.data.newFriends.add(0, app.tempFriend);
 							mMCFragmentManager.replaceToContent(
 									new NewFriendsFragment(), true);

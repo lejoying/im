@@ -38,13 +38,6 @@ public class App {
 
 	void initData() {
 		data = new StaticData();
-		if (data.user == null) {
-			data.user = new User();
-		}
-		data.circles = new ArrayList<Circle>();
-		data.friends = new Hashtable<String, Friend>();
-		data.lastChatFriends = new ArrayList<String>();
-		data.newFriends = new ArrayList<Friend>();
 	}
 
 	public boolean isDataChanged;

@@ -1,6 +1,7 @@
 package com.lejoying.mc.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Circle implements Serializable {
@@ -9,8 +10,8 @@ public class Circle implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public int rid;
-	public String name;
-	public List<String> phones;
+	public String name = "";
+	public List<String> phones = new ArrayList<String>();
 
 	@Override
 	public boolean equals(Object o) {

@@ -48,7 +48,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 				showSoftInput(mView_phone);
 				return;
 			}
-			Bundle params = new Bundle();
+			final Bundle params = new Bundle();
 			params.putString("phone", mView_phone.getText().toString());
 			params.putString("usage", "register");
 			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
@@ -59,7 +59,6 @@ public class RegisterPhoneFragment extends BaseFragment implements
 									new RegisterCodeFragment(), true);
 						}
 					});
-
 			break;
 		default:
 			break;

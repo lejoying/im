@@ -120,20 +120,29 @@ public class NetworkHandler {
 			} else if (api.equals(API.ACCOUNT_VERIFYCODE)) {
 				if (MCDataTools.app.registerBundle != null) {
 					try {
-						MCDataTools.app.registerBundle.putString("accessKey",
-								data.getString("accessKey"));
+						MCDataTools.app.registerBundle.putString(
+								"accessKey",
+								RSAUtils.decrypt(data.getString("PbKey"),
+										data.getString("accessKey")));
 						MCDataTools.app.registerBundle.putString("PbKey",
 								data.getString("PbKey"));
 					} catch (JSONException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
 					String accessKey = "";
 					String pbKey = "";
 					try {
-						accessKey = data.getString("accessKey");
+						accessKey = RSAUtils.decrypt(data.getString("PbKey"),
+								data.getString("accessKey"));
 						pbKey = data.getString("PbKey");
 					} catch (JSONException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					saveLoginUser(params.getString("phone"), accessKey, pbKey);
