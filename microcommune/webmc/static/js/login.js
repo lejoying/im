@@ -149,22 +149,24 @@ function initHtml() {
 
 function animationPlay(className, y) {
     var box = $("." + className);
-    box.show();
     var toState = new State();
-    toState.scale.x = 0.1;
-    toState.scale.y = 0.1;
+//    toState.scale.x = 0.0;
+//    toState.scale.y = 0.0;
     var fromState = new State();
     animateTransform(box[0], fromState, toState, 100,
         {
             onStart: function () {
             },
             onEnd: function () {
+                setTimeout(function () {
+                    box.show();
+                }, 5);
                 var fromState1 = new State(toState);
                 var toState1 = new State(toState);
                 toState1.translate.y = y;
                 toState1.scale.x = 1;
                 toState1.scale.y = 1;
-                animateTransform(box[0], fromState1, toState1, 400);
+                animateTransform(box[0], fromState1, toState1, 100);
             }
         }
     );

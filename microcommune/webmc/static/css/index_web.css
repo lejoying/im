@@ -4,66 +4,204 @@
     list-style: none;
     border: 0;
 }
+
 a {
     text-decoration: none;
 }
-.clr{
+
+.clr {
     clear: both;
 }
-html{
-    color:#000;
-    background:#FFF;
+
+html {
+    color: #000;
+    background: #FFF;
 }
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td,strong{
-    padding:0;
-    margin:0;
-    font-family:'微软雅黑', Helvetica, Arial, sans-serif;
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td, strong {
+    padding: 0;
+    margin: 0;
+    font-family: '微软雅黑', Helvetica, Arial, sans-serif;
 }
+
 /*****************************************index页 start*******************************************************/
-#in_body{min-width:980px;max-width:2094px;margin:0 auto;}
-.in_content{height:400px;width:100%;position:relative;z-index:1;overflow:hidden;top:-15px}
-.in_move{height:400px;width:100%;overflow:hidden;margin:0 auto;}
-.in_big{position:relative;width:100%;height:560px;overflow:hidden;}
-.in_scroll{position:relative;top:0;left:-1px;width:100%;height:560px;overflow:hidden;}
-.in_big .in_bigone{width:100%;height:560px;position:absolute;top:0;left:1px;background:url('/static/images/in_picone.jpg') center 0 no-repeat;z-index:100;}
-.in_china .in_big .in_bigone{background:url('/static/images/in_picone-2.jpg') center 0 no-repeat;}
-.in_big .in_bigtwo{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('/static/images/in_pictwo.jpg') center 0 no-repeat;z-index:90;}
-.in_big .in_bigfour{width:100%;height:560px;position:absolute;top:0;left:3000px;z-index:95;background-position:50% 0;}
-.in_china .in_big .in_bigtwo{background:url('/static/images/in_pictwo-2.jpg') center 0 no-repeat;}
-.in_big .in_bigthree{width:100%;height:560px;position:absolute;top:0;left:3000px;background:url('/static/images/in_picthree.jpg') center 0 no-repeat;z-index:80;}
-.in_china .in_big .in_bigthree{background:url('/static/images/in_picthree-2.jpg') center 0 no-repeat;}
-.in_pos{position:absolute;top:362px;left:50%;height:20px;width:150px;margin-left:-75px;z-index:999;}
-.in_pos span{float:left;margin-left:10px;cursor:pointer;display:inline;}
-.in_pos img{float:left;}
-.in_pos .in_hello{margin-top:0px;border:0px solid white;float:left;}
-.in_pos .one{float:left;margin-left:50px;}
-.in_big .in_arrow{position:relative;top:-350px;margin-top:-35px;width:100%;height:52px;overflow:hidden;}
-.in_big .in_right{position:absolute;right:10%;height:52px;width:52px;cursor:pointer;z-index:150;margin-right: -50px}
-.in_big .in_left{position:absolute;/*top:256px;*/left:10%;height:52px;width:53px;cursor:pointer;/*margin-top:-25px;*/z-index:150;margin-left: -50px}
+#in_body {
+    min-width: 980px;
+    max-width: 2094px;
+    margin: 0 auto;
+}
+
+.in_content {
+    height: 400px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    top: -15px
+}
+
+.in_move {
+    height: 400px;
+    width: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.in_big {
+    position: relative;
+    width: 100%;
+    height: 560px;
+    overflow: hidden;
+}
+
+.in_scroll {
+    position: relative;
+    top: 0;
+    left: -1px;
+    width: 100%;
+    height: 560px;
+    overflow: hidden;
+}
+
+.in_big .in_bigone {
+    width: 100%;
+    height: 560px;
+    position: absolute;
+    top: 0;
+    left: 1px;
+    background: url('/static/images/in_picone.jpg') center 0 no-repeat;
+    z-index: 100;
+}
+
+.in_china .in_big .in_bigone {
+    background: url('/static/images/in_picone-2.jpg') center 0 no-repeat;
+}
+
+.in_big .in_bigtwo {
+    width: 100%;
+    height: 560px;
+    position: absolute;
+    top: 0;
+    left: 3000px;
+    background: url('/static/images/in_pictwo.jpg') center 0 no-repeat;
+    z-index: 90;
+}
+
+.in_big .in_bigfour {
+    width: 100%;
+    height: 560px;
+    position: absolute;
+    top: 0;
+    left: 3000px;
+    z-index: 95;
+    background-position: 50% 0;
+}
+
+.in_china .in_big .in_bigtwo {
+    background: url('/static/images/in_pictwo-2.jpg') center 0 no-repeat;
+}
+
+.in_big .in_bigthree {
+    width: 100%;
+    height: 560px;
+    position: absolute;
+    top: 0;
+    left: 3000px;
+    background: url('/static/images/in_picthree.jpg') center 0 no-repeat;
+    z-index: 80;
+}
+
+.in_china .in_big .in_bigthree {
+    background: url('/static/images/in_picthree-2.jpg') center 0 no-repeat;
+}
+
+.in_pos {
+    position: absolute;
+    top: 362px;
+    left: 50%;
+    height: 20px;
+    width: 150px;
+    margin-left: -75px;
+    z-index: 999;
+}
+
+.in_pos span {
+    float: left;
+    margin-left: 10px;
+    cursor: pointer;
+    display: inline;
+}
+
+.in_pos img {
+    float: left;
+}
+
+.in_pos .in_hello {
+    margin-top: 0px;
+    border: 0px solid white;
+    float: left;
+}
+
+.in_pos .one {
+    float: left;
+    margin-left: 50px;
+}
+
+.in_big .in_arrow {
+    position: relative;
+    top: -350px;
+    margin-top: -35px;
+    width: 100%;
+    height: 52px;
+    overflow: hidden;
+}
+
+.in_big .in_right {
+    position: absolute;
+    right: 10%;
+    height: 52px;
+    width: 52px;
+    cursor: pointer;
+    z-index: 150;
+    margin-right: -50px
+}
+
+.in_big .in_left {
+    position: absolute; /*top:256px;*/
+    left: 10%;
+    height: 52px;
+    width: 53px;
+    cursor: pointer; /*margin-top:-25px;*/
+    z-index: 150;
+    margin-left: -50px
+}
 
 /*****************************************index页 end*******************************************************/
 
 /*****************************************导航 start*******************************************************/
-.header_content{
+.header_content {
     width: 100%;
     margin: 0 auto;
-    //height: 100%;
+/ / height : 100 %;
     position: relative;
-    //float: left;
-    overflow:hidden;
+/ / float : left;
+    overflow: hidden;
     top: 0;
 }
-.header{    /*头部*/
+
+.header {
+    /*头部*/
     margin: 0 auto;
 
     width: 100%;
     height: 65px;
-    background-color:#0099CD;
+    background-color: #0099CD;
     position: fixed;
     z-index: 4;
-    _position:absolute;
+    _position: absolute;
 }
-.header_bottom_bg{
+
+.header_bottom_bg {
     overflow: hidden;
     width: 100%;
     height: 8px;
@@ -73,17 +211,21 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     z-index: 888;
     background: url("/static/images/headbg_.png") 0 0 repeat-x;
 }
-.nav{   /*菜单*/
+
+.nav {
+    /*菜单*/
     width: 980px;
     height: 58px;
     padding-top: 15px;
     margin: 0 auto;
-    //position: relative;
+/ / position : relative;
     top: 0;
     left: 0;
     z-index: 1111;
 }
-.nav .logo{ /*logo*/
+
+.nav .logo {
+    /*logo*/
     display: block;
     height: 55px;
     background: url("/static/images/logo.png") 0 0 no-repeat;
@@ -91,6 +233,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     margin-left: 58px;
     margin-top: -10px;
 }
+
 .nav .navs {
     margin: 0 auto;
     width: 100%;
@@ -101,8 +244,10 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     z-index: 1;
     letter-spacing: 2px;
 }
+
 /*****************************************导航 end*******************************************************/
-.leaf_left{  /*左树叶*/
+.leaf_left {
+    /*左树叶*/
     display: block;
     position: absolute;
     left: 0px;
@@ -110,73 +255,91 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     background-image: url("/static/images/leaf.png");
     z-index: 2;
 }
-.leaf_left{  /*左树叶*/
+
+.leaf_left {
+    /*左树叶*/
     position: absolute;
     background-position: -0px -550px;
-    width:100px;
+    width: 100px;
     height: 550px;
 }
-.leaf_right{    /*右树叶*/
+
+.leaf_right {
+    /*右树叶*/
     display: block;
     position: absolute;
     right: 0px;
-    top:150px;
+    top: 150px;
     background-image: url("/static/images/leaf.png");
-    z-index:2;
+    z-index: 2;
 }
-.leaf_right{    /*右树叶*/
+
+.leaf_right {
+    /*右树叶*/
     position: absolute;
     background-position: -98px -500px;
-    width:162px;
+    width: 162px;
     height: 500px;
 }
-.content{   /*内容面板*/
+
+.content {
+    /*内容面板*/
     width: 100%;
     margin: 0 auto;
     height: 100%;
     float: left;
     top: 80px;
     position: relative;
-  //background-color: aquamarine;
+/ / background-color : aquamarine;
 }
-.area{
+
+.area {
     width: 100%;
     margin: 0 auto;
     height: 300px;
     position: relative;
     float: left;
 }
-.area_3{
+
+.area_3 {
     position: relative;
     width: 1200px;
     margin: 0 auto;
-    height:100px;
+    height: 100px;
     top: -80px;
     align: center;
     z-index: 3;
 }
-.icon_1{    /*密码登陆*/
-    background: url("/static/images/icon_1.png") no-repeat center ;
-    position: relative;
-    float: left;
-    width:400px;
-    height: 300px;
-}
-.icon_2{    /*扫一扫登陆*/
-    background: url("/static/images/icon_2.png") no-repeat center ;
+
+.icon_1 {
+    /*密码登陆*/
+    background: url("/static/images/icon_1.png") no-repeat center;
     position: relative;
     float: left;
     width: 400px;
     height: 300px;
 }
-.icon_3{    /*验证码登陆*/
-    background: url("/static/images/icon_3.png") no-repeat center ;
+
+.icon_2 {
+    /*扫一扫登陆*/
+    background: url("/static/images/icon_2.png") no-repeat center;
     position: relative;
     float: left;
     width: 400px;
     height: 300px;
 }
-.line{      /*水平线*/
+
+.icon_3 {
+    /*验证码登陆*/
+    background: url("/static/images/icon_3.png") no-repeat center;
+    position: relative;
+    float: left;
+    width: 400px;
+    height: 300px;
+}
+
+.line {
+    /*水平线*/
     position: relative;
     width: 97%;
     top: 150px;
@@ -184,21 +347,26 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     border-bottom: 1px solid #E3E3E3;
     margin: 0 auto;
 }
-.pic{
+
+.pic {
     position: relative;
     width: 1200px;
     margin: 0 auto;
     height: 400px;
     top: 250px;
-    //background-color: aquamarine;
+/ / background-color : aquamarine;
 }
-.pic .character{    /*文字诗句*/
+
+.pic .character {
+    /*文字诗句*/
     position: relative;
-    width:600px;
+    width: 600px;
     height: 400px;
-    background: url("/static/images/wenzi.png") no-repeat right top ;
+    background: url("/static/images/wenzi.png") no-repeat right top;
 }
-.pic .share{    /*分享*/
+
+.pic .share {
+    /*分享*/
     position: absolute;
     width: 380px;
     height: 400px;
@@ -206,105 +374,129 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     top: 0px;
     right: 100px;
 }
+
 /*----------------  底部 start  -------------------*/
-.footer{
+.footer {
     min-width: 1024px;
 }
-.footer{
+
+.footer {
     position: absolute;
     width: 100%;
     background-color: #424046;
     height: 280px;
     margin-top: 251px;
 }
-.foot_one{      /*底部上半部分*/
+
+.foot_one {
+    /*底部上半部分*/
     width: 1000px;
     height: 126px;
     margin: 0 auto;
-   // background-color: darkcyan;
+/ / background-color : darkcyan;
 }
-.foot_two {     /*底部下半部分*/
+
+.foot_two {
+    /*底部下半部分*/
     width: 1000px;
     height: 60px;
     margin: 0 auto;
     margin-top: 72px;
-  //  background-color: sienna;
+/ / background-color : sienna;
 }
-.foot_left{
+
+.foot_left {
     padding-top: 43px;
     left: 0px;
     float: left;
 }
-.foot_logo{
+
+.foot_logo {
     display: block;
     text-decoration: none;
     width: 301px;
     height: 103px;
     background: url("/static/images/foot_logo.png") 0 0 no-repeat;
 }
-.foot_right{
+
+.foot_right {
     width: 681px;
     height: 123px;
     float: right;
     padding-top: 43px;
 }
-.foot_lia{
+
+.foot_lia {
     float: right;
     width: 577px;
     height: 40px;
     background: url("/static/images/foot_lia.png") 0 0 no-repeat;
 }
-.foot_lib{
+
+.foot_lib {
     width: 700px;
     height: 82px;
     margin-left: 90px;
 }
-.foot_lib span{
+
+.foot_lib span {
     font-size: 14px;
 }
-.foot_lib .foot_1{
+
+.foot_lib .foot_1 {
     float: left;
     margin-left: 20px;
     width: 100px;
     height: 82px;
 }
-.foot_lib .foot_2{
-    padding-left:150px;
+
+.foot_lib .foot_2 {
+    padding-left: 150px;
     float: left;
     width: 100px;
     height: 82px;
 }
-.foot_lib .foot_3{
+
+.foot_lib .foot_3 {
     float: left;
     width: 100px;
     height: 82px;
-    padding-left:172px;
+    padding-left: 172px;
 }
-.foot_lib a:link{
+
+.foot_lib a:link {
     color: #969696;
 }
-.foot_lib a:visited{
+
+.foot_lib a:visited {
     color: #969696;
 }
-.foot_lib a:hover{
+
+.foot_lib a:hover {
     color: darkturquoise;
 }
-.copyright{ /*版权所有*/
-    color:#969696;
+
+.copyright {
+    /*版权所有*/
+    color: #969696;
     margin-left: 0px;
     font-size: 16px;
     width: 400px;
     height: 30px;
     float: left;
 }
-.blog{  /*微博*/
+
+.blog {
+    /*微博*/
     width: 65px;
     height: 60px;
     float: right;
     background: url("/static/images/footsignb.png") 0 0 no-repeat;
     cursor: pointer;
 }
-.chattalk{  /*微信*/
+
+.chattalk {
+    /*微信*/
     width: 65px;
     height: 60px;
     float: right;
@@ -313,7 +505,9 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     border-radius: 2px;
     margin-right: 10px;
 }
-.foot_qq{  /*QQ*/
+
+.foot_qq {
+    /*QQ*/
     width: 65px;
     height: 60px;
     float: right;
@@ -322,72 +516,83 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     border-radius: 2px;
     margin-right: 10px;
 }
+
 /*----------------  底部  end -------------------*/
 
-
 /*-------------------------------密码登录  start ------------------------*/
-.icon_1_1{  /*框框*/
+.icon_1_1 {
+    /*框框*/
     margin: 0 auto;
-    position:absolute;
+    position: absolute;
     width: 500px;
     height: 140px;
     z-index: 333;
     /*top: -100px;*/
     left: -50px;
-    background: rgba(57,60,61,0.8);
-    border: 1px solid rgba(0,0,0,0.8);
+    background: rgba(57, 60, 61, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
     border-radius: 3px;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
-.password_w{    /*为了保护...*/
+
+.password_w {
+    /*为了保护...*/
     width: 380px;
     height: 30px;
     margin: 0 auto;
     font-size: 14px;
     color: white;
     letter-spacing: 2px;
-    margin-top:15px;
+    margin-top: 15px;
 }
-.password_m{    /*下载APP >>>按钮*/
+
+.password_m {
+    /*下载APP >>>按钮*/
     margin: 0 auto;
     text-align: center;
     color: white;
     font-size: 14px;
     width: 250px;
     height: 25px;
-    margin-top:15px;
+    margin-top: 15px;
     border-radius: 3px;
     cursor: pointer;
-    padding:5px 0 0 5px;
+    padding: 5px 0 0 5px;
     background-color: #2AA7EE;
 }
-.password_s{    /* 文字提示信息*/
-    width:130px;
+
+.password_s {
+    /* 文字提示信息*/
+    width: 130px;
     height: 30px;
     margin: 0 auto;
     font-size: 12px;
     color: white;
     letter-spacing: 2px;
-    margin-top:25px;
+    margin-top: 25px;
 }
+
 /*-------------------------------扫一扫登录  start ------------------------*/
-.icon_2_2{  /*框框*/
+.icon_2_2 {
+    /*框框*/
     display: block;
     margin: 0 auto;
-    position:absolute;
+    position: absolute;
     width: 450px;
     height: 400px;
     z-index: 333;
     /*top: -330px;*/
     left: -20px;
-    background: rgba(57,60,61,0.8);
-    border: 1px solid rgba(0,0,0,0.8);
+    background: rgba(57, 60, 61, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
     border-radius: 3px;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
-.ewm{   /*二维码*/
+
+.ewm {
+    /*二维码*/
     position: relative;
     top: 95px;
     margin: 0 auto;
@@ -395,44 +600,54 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
     height: 200px;
     /*background: url("/static/images/erweima.png") 0 0 no-repeat;*/
 }
-.sao_wz{    /*文字提示信息*/
+
+.sao_wz {
+    /*文字提示信息*/
     position: relative;
-    width:185px;
+    width: 185px;
     height: 30px;
     margin: 0 auto;
     font-size: 12px;
     color: white;
     letter-spacing: 2px;
-    margin-top:175px;
+    margin-top: 175px;
 }
+
 /*-------------------------------手机验证码登录  start ------------------------*/
-form{   /*表单*/
-    background: rgba(57,60,61,0.8);
-    border: 1px solid rgba(0,0,0,0.8);
+form {
+    /*表单*/
+    background: rgba(57, 60, 61, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
     padding: 40px 75px;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     height: 160px;
     border-radius: 3px;
     z-index: 333;
 }
-.sdw:focus{
-    transition:border linear .2s,box-shadow linear .5s;
-    -moz-transition:border linear .2s,-moz-box-shadow linear .5s;
-    -webkit-transition:border linear .2s,-webkit-box-shadow linear .5s;
-    outline:none;border-color:rgba(0,153,205,.75);
-    box-shadow:0 0 10px rgba(0,153,190,.5);
-    -moz-box-shadow:0 0 10px rgba(0,153,190,.5);
-    -webkit-box-shadow:0 0 10px rgba(0,153,190,3);
+
+.sdw:focus {
+    transition: border linear .2s, box-shadow linear .5s;
+    -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
+    -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
+    outline: none;
+    border-color: rgba(0, 153, 205, .75);
+    box-shadow: 0 0 10px rgba(0, 153, 190, .5);
+    -moz-box-shadow: 0 0 10px rgba(0, 153, 190, .5);
+    -webkit-box-shadow: 0 0 10px rgba(0, 153, 190, 3);
 }
-.sdw{   /*手机号输入框*/
+
+.sdw {
+    /*手机号输入框*/
     width: 250px;
     height: 30px;
     border-radius: 3px;
-    letter-spacing: 2px;    /*文字间距*/
-    text-indent:10px;
+    letter-spacing: 2px; /*文字间距*/
+    text-indent: 10px;
 }
-.send_y{    /*发送手机验证码*/
+
+.send_y {
+    /*发送手机验证码*/
     color: white;
     height: 30px;
     padding-top: 10px;
@@ -440,25 +655,29 @@ form{   /*表单*/
     text-align: right;
     width: 100px;
     font-size: 12px;
-    letter-spacing:2px;
+    letter-spacing: 2px;
     cursor: pointer;
 }
-.button{    /*登录按钮*/
+
+.button {
+    /*登录按钮*/
     color: white;
     width: 250px;
     height: 30px;
     border-radius: 3px;
-    margin-top: 25px;
+    margin-top: 10px;
     cursor: pointer;
     background-color: #2AA7EE;
 }
-.send_j{    /*接收手机验证码以登录*/
+
+.send_j {
+    /*接收手机验证码以登录*/
     color: white;
     height: 30px;
     padding-top: 20px;
     text-align: center;
     width: 250px;
     font-size: 12px;
-    letter-spacing:2px;
+    letter-spacing: 2px;
     cursor: pointer;
 }
