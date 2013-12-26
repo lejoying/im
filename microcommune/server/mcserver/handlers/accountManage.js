@@ -227,12 +227,13 @@ accountManage.verifycode = function (data, response, next) {
                         accountData.code = "none";
                         accountNode.save(function (error, node) {
                         });
-                        next(phone, accessKey, function (flag) {
+                        var accessKey0 = sha1.hex_sha1(phone + code);
+                        next(phone, accessKey0, function (flag) {
                             if (flag) {
                                 response.write(JSON.stringify({
                                     "提示信息": "验证成功",
                                     uid: RSA.encryptedString(pvkey0, phone),
-                                    accessKey: RSA.encryptedString(pvkey0, sha1.hex_sha1(phone + code)),
+                                    accessKey: RSA.encryptedString(pvkey0, accessKey0),
                                     PbKey: pbkeyStr0
                                 }));
                                 response.end();
