@@ -226,8 +226,13 @@ $(document).ready(function () {
                 for (var index in selectedDropUsers) {
                     if (selectedDropUsers[index] != checkGroupId) {
                         moveOutFriendGroup(accountObj, index, checkGroupId, selectedDropUsers[index]);
-                        if ($("." + newSelectedGroupClass).find("img").length < 4) {
-
+                        var newSelectLength = $("." + newSelectedGroupClass).find("img").length;
+                        if (newSelectLength < 4) {
+                            var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
+                            $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+//                            $($img).appendTo(($("." + newSelectedGroupClass).find("img"))[newSelectLength - 1].parent);
+                        } else {
+                            alert("新的分组的好友大于4人");
                         }
                     }
                 }
@@ -332,7 +337,7 @@ $(document).ready(function () {
             $(".js_modifycirclename").slideDown(10);
             oldCircleName = $(".js_modifycirclename input[type=text]").val();
         }
-//            alert("双击分组名称-->" + this.getAttribute("title"));
+        //            alert("双击分组名称-->" + this.getAttribute("title"));
     });
 
     $(document).on("click", ".js_modifycirclesubmit", function () {
@@ -357,7 +362,7 @@ $(document).ready(function () {
                         $(".schoolmate_txt").slideDown(10);
                         $(".js_modifycirclename").slideUp(10);
                     } else {
-                        alert("创建密友圈分组");
+                        addCircleGroup(newCircleName);
                     }
                 }
             }
@@ -441,7 +446,7 @@ $(document).ready(function () {
                 $(".js_addFriendSubmit").attr("phone", $(this).attr("phone"));
                 $(".js_friendMessage").css({display: "none"});
                 $(".js_addFriend").css({display: "block"});
-//                $(".js_addFriendErrorMessage").html(phone + "不是您的好友。");
+                //                $(".js_addFriendErrorMessage").html(phone + "不是您的好友。");
             }
         } else {
             if (phone == accountObj.phone) {
@@ -498,6 +503,30 @@ function getScroll() {
 
 }
 
+function addCircleGroup(circleName) {
+    alert(circleName);
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $.ajax({
+        type: "POST",
+        url: "/api2/circle/addcircle?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            circleName: circleName
+        },
+        success: function (data) {
+            if (data["提示信息"] == "添加成功") {
+                alert(data["提示信息"]);
+            } else {
+                alert(data["提示信息"] + "---" + alert(data["失败原因"]));
+            }
+            $(".popmenuFrame").slideUp(10);
+            selectedAddCircleGroupFlag = false;
+        }
+    });
+    $(".popmenuFrame").slideUp(10);
+    selectedAddCircleGroupFlag = false;
+}
 function moveOutFriendGroup(accountObj, phoneTo, newCircleId, oldCircleId) {
     delete selectedDropUsers[phoneTo];
     $.ajax({
@@ -548,10 +577,13 @@ function getTemplateHtml(templateHtml, next) {
      alert(templates.replace(/\r/g, ""));
      }, "html");
      var template = new tenjin.Template();
-     string = string.replace(/\<\!\-\-\?/g, "<?");
+     string = string.replace(/\
+     <\!\-\-\?/g, "
+     <?");
      string = string.replace(/\?\-\-\>/g, "?>");
      string = string.replace(/比较符号大于/g, ">");
-     string = string.replace(/比较符号兄小于/g, "<");
+     string = string.replace(/比较符号兄小于/g, "
+     <");
      template.convert(string);
      return template;*/
     var tenjin = nTenjin;
@@ -618,7 +650,7 @@ function ScroNow(event) {
     $(".group_user").css({
         marginTop: -Y * 0.5 + "px"
     });
-//    $("#ScroRight").css({
+    //    $("#ScroRight").css({
 //        marginTop: "0px"
 //    });
 //    alert(Y);
