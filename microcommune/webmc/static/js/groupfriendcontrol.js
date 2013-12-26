@@ -6,6 +6,8 @@ var checkGroupId = -1;
 var selectedDropUsers = {};
 var oldSelectedGroupClass = "";
 var newSelectedGroupClass = "";
+
+var selectedAddCircleGroupFlag = false;
 $(document).ready(function () {
 //    $.getScript("/static/js/nTenjin.js");
 //    $.getScript("/static/js/animation.js");
@@ -315,6 +317,7 @@ $(document).ready(function () {
 //        $(".schoolmate_txt").html("aa");
         $(".schoolmate_txt").slideUp(10);
         $(".js_modifycirclename").slideDown(10);
+        selectedAddCircleGroupFlag = true;
 //        $(".js_modifycirclename").slideUp(10);
     });
     $(document).on("click", ".user_icon", function () {
@@ -349,17 +352,26 @@ $(document).ready(function () {
                 if (newCircleName.length > 20) {
                     alert("长度不能超过20位");
                 } else {
-                    modifyCircleName(circle_rid, newCircleName, $(".js_circleName_" + circle_rid).html());
-                    $(".schoolmate_txt").slideDown(10);
-                    $(".js_modifycirclename").slideUp(10);
+                    if (!selectedAddCircleGroupFlag) {
+                        modifyCircleName(circle_rid, newCircleName, $(".js_circleName_" + circle_rid).html());
+                        $(".schoolmate_txt").slideDown(10);
+                        $(".js_modifycirclename").slideUp(10);
+                    } else {
+                        alert("创建密友圈分组");
+                    }
                 }
             }
         }
     });
     $(document).on("click", ".js_modifycirclecancle", function () {
-        $(".schoolmate_txt").slideDown(10);
-        $(".js_modifycirclename").slideUp(10);
-        oldCircleName = "";
+        if (!selectedAddCircleGroupFlag) {
+            $(".schoolmate_txt").slideDown(10);
+            $(".js_modifycirclename").slideUp(10);
+            oldCircleName = "";
+        } else {
+            $(".popmenuFrame").slideUp(10);
+            selectedAddCircleGroupFlag = false;
+        }
     });
     $(document).on("click", ".js_findFriendBtn", function () {
         var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));

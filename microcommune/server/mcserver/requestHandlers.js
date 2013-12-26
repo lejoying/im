@@ -16,7 +16,7 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
         accountManage.verifyphone(data, response);
     }
     else if (operation == "verifycode") {
-        accountManage.verifycode(data, response);
+        accountManage.verifycode(data, response, setOauthAccessKey);
     }
     else if (operation == "auth") {
         accountManage.auth(data, response, setOauthAccessKey);

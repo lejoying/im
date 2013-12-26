@@ -79,6 +79,7 @@ accountManage.verifyphone = function (data, response) {
             }
         });
     }
+
     function getLoginCode(phone) {
         var query = [
             'MATCH (account:Account)',
@@ -108,6 +109,7 @@ accountManage.verifyphone = function (data, response) {
             }
         });
     }
+
     function createAccountNode(account) {
         var query = [
             'CREATE (account:Account{account})',
@@ -128,17 +130,22 @@ accountManage.verifyphone = function (data, response) {
             }
         });
     }
+
     function responseFailMessage(response, prompt, reason) {
         response.write(JSON.stringify({
             "提示信息": prompt,
             "失败原因": reason
-        }),function(){ response.end();});
+        }), function () {
+            response.end();
+        });
     }
+
     function checkCodeTime(accountNode, accountData) {
         var time = new Date().getTime();
         var bad = time - parseInt(accountData.time);
         if (bad > 600000 || accountData.code == "none") {
-            accountData.code = (time+"").substr((time+"").length - 6);
+            time = time + "";
+            accountData.code = time.substr(time.length - 6);
             accountData.time = new Date().getTime();
             accountNode.save(function (error, node) {
             });
@@ -147,6 +154,7 @@ accountManage.verifyphone = function (data, response) {
             return accountData.code;
         }
     }
+
     function sendSMSMessage(account, code, promptMessage, response) {
         var message = "微型公社手机验证码：" + code + "，欢迎您使用";
         console.log(message);
@@ -162,7 +170,7 @@ accountManage.verifyphone = function (data, response) {
         } else {
             next();
         }
-        function next(){
+        function next() {
             response.write(JSON.stringify({
                 "提示信息": promptMessage + "成功",
                 "phone": account.phone,
@@ -175,9 +183,10 @@ accountManage.verifyphone = function (data, response) {
 /***************************************
  *     URL：/api2/account/verifycode
  ***************************************/
-accountManage.verifycode = function (data, response) {
+accountManage.verifycode = function (data, response, next) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var code = data.code;
     var arr = [phone, code];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
@@ -218,13 +227,23 @@ accountManage.verifycode = function (data, response) {
                         accountData.code = "none";
                         accountNode.save(function (error, node) {
                         });
-                        response.write(JSON.stringify({
-                            "提示信息": "验证成功",
-                            uid: RSA.encryptedString(pvkey0, phone),
-                            accessKey: RSA.encryptedString(pvkey0, sha1.hex_sha1(phone + code)),
-                            PbKey: pbkey0
-                        }));
-                        response.end();
+                        next(phone, accessKey, function (flag) {
+                            if (flag) {
+                                response.write(JSON.stringify({
+                                    "提示信息": "验证成功",
+                                    uid: RSA.encryptedString(pvkey0, phone),
+                                    accessKey: RSA.encryptedString(pvkey0, sha1.hex_sha1(phone + code)),
+                                    PbKey: pbkeyStr0
+                                }));
+                                response.end();
+                            } else {
+                                response.write(JSON.stringify({
+                                    "提示信息": "验证成功",
+                                    "失败原因": "数据异常"
+                                }));
+                                response.end();
+                            }
+                        });
                     }
                 } else {
                     response.write(JSON.stringify({
@@ -328,19 +347,19 @@ accountManage.exit = function (data, response, next) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
-    next(phone, accessKey, function(flag){
-        if(flag == true){
+    next(phone, accessKey, function (flag) {
+        if (flag == true) {
             response.write(JSON.stringify({
                 "提示信息": "退出成功"
             }));
             response.end();
-        }else if(flag == false){
+        } else if (flag == false) {
             response.write(JSON.stringify({
                 "提示信息": "退出失败",
                 "失败原因": "AccessKey Invalid"
             }));
             response.end();
-        }else{
+        } else {
             response.write(JSON.stringify({
                 "提示信息": "退出失败",
                 "失败原因": "数据异常"
