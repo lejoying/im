@@ -25,3 +25,5 @@ local.properties
 /microcommune/node_modules/
 bin
 gen
+/NewMC/.classpath
+/NewMC/.project
