@@ -23,3 +23,5 @@ local.properties
 /microcommune/.idea
 
 /microcommune/node_modules/
+bin
+gen
