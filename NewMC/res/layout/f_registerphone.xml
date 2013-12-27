@@ -59,7 +59,7 @@
             android:layout_alignRight="@+id/et_phone"
             android:layout_below="@+id/et_phone"
             android:layout_marginTop="20dp"
-            android:background="#2fff"
+            android:background="@drawable/btn_background"
             android:gravity="center"
             android:onClick="next"
             android:text="@string/btn_next"

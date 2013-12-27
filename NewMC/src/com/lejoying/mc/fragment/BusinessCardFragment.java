@@ -176,6 +176,14 @@ public class BusinessCardFragment extends BaseFragment {
 							new AddFriendFragment(), true);
 				}
 			});
+			button2.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			});
 		} else if (app.businessCardStatus == app.SHOW_SELF) {
 			button1.setText("修改个人信息");
 			iv_head.setImageBitmap(head);
@@ -183,14 +191,37 @@ public class BusinessCardFragment extends BaseFragment {
 			tv_phone.setText(app.data.user.phone);
 			tv_mainbusiness.setText(app.data.user.mainBusiness);
 			group.removeView(button2);
+			button1.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					mMCFragmentManager.replaceToContent(new ModifyFragment(),
+							true);
+				}
+			});
 
 		} else if (app.businessCardStatus == app.SHOW_FRIEND) {
 			button1.setText("发起聊天");
 			button2.setText("修改备注");
 			iv_head.setImageBitmap(head);
-			tv_nickname.setText(app.data.user.nickName);
-			tv_phone.setText(app.data.user.phone);
-			tv_mainbusiness.setText(app.data.user.mainBusiness);
+			tv_nickname.setText(app.tempFriend.nickName);
+			tv_phone.setText(app.tempFriend.phone);
+			tv_mainbusiness.setText(app.tempFriend.mainBusiness);
+			button1.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			});
+			button2.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			});
 		}
 	}
 }
