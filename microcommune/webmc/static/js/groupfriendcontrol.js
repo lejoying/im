@@ -58,6 +58,7 @@ $(document).ready(function () {
                     var clickGroupIndex = -1;
                     $(".appGroup").each(function (i) {
                         $($(".appGroup")[i]).click(function () {
+                            var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
                             checkGroup = false;
                             checkGroupId = -1;
                             selectedDropUsers = {};
@@ -76,24 +77,6 @@ $(document).ready(function () {
                                         marginTop: 0
                                     });
                                 }
-                                /*if (i > 5) {
-                                 var box = $("#mainBox");
-                                 var toState = new State();
-                                 var fromState = new State();
-                                 animateTransform(box[0], fromState, toState, 200,
-                                 {
-                                 onStart: function () {
-                                 },
-                                 onEnd: function () {
-                                 var fromState1 = new State(toState);
-                                 var toState1 = new State(toState);
-                                 toState1.translate.y = 0;
-                                 animateTransform(box[0], fromState1, toState1, 600);
-                                 }
-                                 }
-                                 );
-                                 }*/
-//                            $(".popmenuFrame")[0].style.visibility = "hidden";
                             } else {
                                 $(".popmenuFrame").slideUp(1);
                                 oldSelectedGroupClass = parentClass;
@@ -106,7 +89,7 @@ $(document).ready(function () {
                                     left: 45 + (i % 3) * 82 + "px"
                                 });
                                 var group_user = getTemplate("js_group_user");
-                                $(".sildPopContent").html(group_user.render((data.circles)[i]));
+                                $(".sildPopContent").html(group_user.render(circles[i]));
                                 getScroll();
 //                            $("#ScroLine").css("height", "100px");
 //                            alert(Math.ceil(((data.circles)[i].accounts.length + 1) / 4));
@@ -118,8 +101,6 @@ $(document).ready(function () {
                                 } else {
                                     $("#ScroLine").css("height", "214");
                                 }
-
-
                                 $(".user_icon").longPress(200, function (e, x, y) {
                                     $(".popmenuFrame").css({
                                         marginTop: "500px"
@@ -223,20 +204,37 @@ $(document).ready(function () {
             if (checkGroupId != -1) {
 //                    checkGroupId = -1;
                 var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+                var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+                var selectedDropUser = {};
+//                alert(JSON.stringify(selectedDropUser) == "{}");
+                var array = [];
+                var index0 = "";
                 for (var index in selectedDropUsers) {
+                    index0 = index;
+                    array.push(index);
+                }
+                moveOutFriendGroup(accountObj, JSON.stringify(array), checkGroupId, selectedDropUsers[index0]);
+                /*for (var index in selectedDropUsers) {
+//                    alert(selectedDropUsers[index]);
                     if (selectedDropUsers[index] != checkGroupId) {
+                        var oldCircleRid = selectedDropUsers[index];
                         moveOutFriendGroup(accountObj, index, checkGroupId, selectedDropUsers[index]);
                         var newSelectLength = $("." + newSelectedGroupClass).find("img").length;
                         if (newSelectLength < 4) {
                             var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
                             $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
-//                            $($img).appendTo(($("." + newSelectedGroupClass).find("img"))[newSelectLength - 1].parent);
+                            moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
                         } else {
-                            alert("新的分组的好友大于4人");
+                            var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
+//                            $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+//                            ($("." + newSelectedGroupClass).find(".appGroup"))[0].removeChild($img);
+//                            alert("新的分组的好友大于4人");
+                            moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
                         }
+                    } else {
+                        continue;
                     }
-                }
-                selectedDropUsers = {};
+                }*/
             } else {
                 checkGroupId = -1;
                 selectedDropUsers = {};
@@ -502,7 +500,50 @@ $(document).ready(function () {
 function getScroll() {
 
 }
+function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, circles) {
+//    alert(oldCircleRid);
+    var circles = circles;
+    A:for (var i = 0; i < circles.length; i++) {
+        var accounts = circles[i].accounts;
+        if (JSON.stringify(circles[i].rid) == oldCircleRid) {
+            B:for (var j = 0; j < accounts.length; j++) {
+                var account = accounts[j];
+                if (account.phone == phoneTo) {
+//                    alert(account.phone == phoneTo);
+                    ModifyCirclesLocalData(circles, newCircleRid, accounts[j], next);
+                    function next() {
+                        accounts.splice(j, 1);//移除数据
+                    }
 
+                    break A;
+                } else {
+                    continue;
+                }
+            }
+        } else {
+            continue;
+        }
+    }
+}
+function ModifyCirclesLocalData(circles, newCircleRid, account, next) {
+//    alert(account+"--");
+    next();
+    var circles = circles;
+    A:for (var i = 0; i < circles.length; i++) {
+        var circle = circles[i];
+        if (JSON.stringify(circle.rid) == newCircleRid) {
+            var accounts = circle.accounts;
+            accounts.push(account);
+            window.sessionStorage.setItem("wxgs_circles", JSON.stringify(circles));
+            if (JSON.stringify(selectedDropUsers) == "{}") {
+                selectedDropUsers = {};
+            }
+            break A;
+        } else {
+            continue;
+        }
+    }
+}
 function addCircleGroup(circleName) {
     alert(circleName);
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
@@ -528,7 +569,7 @@ function addCircleGroup(circleName) {
     selectedAddCircleGroupFlag = false;
 }
 function moveOutFriendGroup(accountObj, phoneTo, newCircleId, oldCircleId) {
-    delete selectedDropUsers[phoneTo];
+//    delete selectedDropUsers[phoneTo];
     $.ajax({
         type: "POST",
         url: "/api2/circle/moveout?",

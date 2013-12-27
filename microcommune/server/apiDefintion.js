@@ -499,7 +499,7 @@ api = {
             url: "/api2/circle/moveout"
         },
         request: {
-            typical: {phone: "XXX", phoneto: "XXX", accessKey: "XXX", oldrid: "XXX", newrid: "XXX"}
+            typical: {phone: "XXX", phoneto: ["XXX", "XXX", "XXX"], accessKey: "XXX", oldrid: "XXX", newrid: "XXX"}
         },
         response: {
             success: {"提示信息": "移动成功"},

@@ -158,8 +158,9 @@ function animationPlay(className, y) {
             onStart: function () {
             },
             onEnd: function () {
-                setTimeout(function () {
+                var setTimeOut = setTimeout(function () {
                     box.show();
+                    window.clearTimeout(setTimeOut);
                 }, 5);
                 var fromState1 = new State(toState);
                 var toState1 = new State(toState);

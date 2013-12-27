@@ -13,6 +13,19 @@ lbsManage.create = function (data, response) {
     var geotype = data.geotype;
     var is_published = data.is_published;
     var ak = data.ak;
+    /*ajax.ajax({
+        type: "POST",
+        url: "http://api.map.baidu.com/geodata/databox?method=create",
+        data: {
+            name: name,
+            "ak": ak
+        },
+        success: function (data) {
+            console.log(unescape(data.replace(/\\u/gi, '%u')));
+            response.write(JSON.stringify(data));
+            response.end();
+        }
+    });*/
     ajax.ajax({
         type: "POST",
         url: "http://api.map.baidu.com/geodata/v2/geotable/create",

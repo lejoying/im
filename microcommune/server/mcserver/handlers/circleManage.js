@@ -156,7 +156,9 @@ circleManage.moveout = function (data, response) {
     console.log(data);
     var phone = data.phone;
     var accessKey = data.accessKey;
-    var phoneTo = data.phoneto;
+    var phoneToArrayStr = data.phoneto;
+    var phoneTo = JSON.parse(phoneToArrayStr);
+//    var phoneTo = data.phoneto;
     var oldRid = data.oldrid;
     var newRid = data.newrid;
     if (oldRid != "undefined" && oldRid != undefined) {
@@ -167,7 +169,7 @@ circleManage.moveout = function (data, response) {
     function deleteRelationNode(phoneTo, newRid, oldRid) {
         var query = [
             'MATCH (circle:Circle)-[r:HAS_FRIEND]->(account:Account)',
-            'WHERE circle.rid={rid} AND account.phone={phoneTo}',
+            'WHERE circle.rid={rid} AND account.phone IN {phoneTo}',
             'DELETE r',
             'RETURN circle'
         ].join('\n');
@@ -187,6 +189,7 @@ circleManage.moveout = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 if (newRid != "undefined" && newRid != undefined) {
+                    throw  "出现异常了，快点处理......哈哈";
                     createRelationNode(phoneTo, newRid);
                 } else {
                     response.write(JSON.stringify({
@@ -208,7 +211,7 @@ circleManage.moveout = function (data, response) {
         var query = [
             'START circle=node({newRid})',
             'MATCH (account:Account)',
-            'WHERE account.phone={phoneTo}',
+            'WHERE account.phone IN {phoneTo}',
             'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
             'RETURN r'
         ].join('\n');
