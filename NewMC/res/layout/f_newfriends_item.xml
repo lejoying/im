@@ -17,17 +17,17 @@
 
         <Button
             android:id="@+id/btn_agreeadd"
-            android:layout_width="55dp"
-            android:layout_height="30dp"
-            android:background="#2fff"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:background="@drawable/btn_background"
             android:text="同意"
             android:textColor="#fff"
             android:textSize="15sp" />
 
         <TextView
             android:id="@+id/tv_added"
-            android:layout_width="55dp"
-            android:layout_height="30dp"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
             android:gravity="center"
             android:text="已填加"
             android:textColor="#fff"
@@ -36,9 +36,10 @@
 
         <TextView
             android:id="@+id/tv_waitagree"
-            android:layout_width="55dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:singleLine="true"
             android:text="等待对方确认"
             android:textColor="#fff"
             android:textSize="15sp"

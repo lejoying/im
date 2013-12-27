@@ -3,11 +3,13 @@ package com.lejoying.mc.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Instrumentation;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -323,8 +325,15 @@ public class CircleMenuFragment extends BaseFragment {
 								cancelMenu();
 							} else if (mWhere == WHERE_TOP) {
 								if (mShowBack) {
-									getActivity().getSupportFragmentManager()
-											.popBackStack();
+									// getActivity().getSupportFragmentManager()
+									// .popBackStack();
+									hideSoftInput();
+									new Thread() {
+										public void run() {
+											Instrumentation inst = new Instrumentation();
+											inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+										}
+									}.start();
 								} else if (!mLock) {
 									mView_appName.setVisibility(View.INVISIBLE);
 									showCircle();

@@ -234,6 +234,29 @@ public class MCDataTools {
 		return count;
 	}
 
+	public static int updataFriend(JSONObject jFriend) {
+		app.isDataChanged = true;
+		int count = 0;
+		Friend friend = generateFriendFromJSON(jFriend);
+		Friend updateFriend = app.data.friends.get(friend.phone);
+		if (updateFriend != null) {
+			if (friend.head != null && !friend.head.equals("")) {
+				updateFriend.head = friend.head;
+				count++;
+			}
+			if (friend.nickName != null && !friend.nickName.equals("")) {
+				updateFriend.nickName = friend.nickName;
+				count++;
+			}
+			if (friend.mainBusiness != null && !friend.mainBusiness.equals("")) {
+				updateFriend.mainBusiness = friend.mainBusiness;
+				count++;
+			}
+
+		}
+		return count;
+	}
+
 	public static void saveCircles(JSONArray jCircles) {
 		app.isDataChanged = true;
 		Map<String, Friend> friends = app.data.friends;
@@ -254,8 +277,9 @@ public class MCDataTools {
 					JSONObject jFriend = jFriends.getJSONObject(j);
 					String phone = jFriend.getString("phone");
 					phones.add(phone);
-					if (friends.get(phone) == null) {
-						Friend friend = generateFriendFromJSON(jFriend);
+					Friend friend = generateFriendFromJSON(jFriend);
+					if (friends.get(phone) == null
+							|| !friends.get(phone).equals(friend)) {
 						friends.put(phone, friend);
 					}
 				}

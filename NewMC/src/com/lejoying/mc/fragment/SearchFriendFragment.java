@@ -120,20 +120,15 @@ public class SearchFriendFragment extends BaseListFragment {
 											return;
 										}
 										if (app.data.friends.get(phone) != null) {
-											try {
-												app.tempFriend = MCDataTools
-														.generateFriendFromJSON(data
-																.getJSONObject("account"));
-												app.businessCardStatus = app.SHOW_FRIEND;
-												mMCFragmentManager
-														.replaceToContent(
-																new BusinessCardFragment(),
-																true);
-											} catch (JSONException e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
-											}
+
+											app.tempFriend = app.data.friends
+													.get(phone);
+											app.businessCardStatus = app.SHOW_FRIEND;
+											mMCFragmentManager
+													.replaceToContent(
+															new BusinessCardFragment(),
+															true);
+
 											return;
 										}
 										try {

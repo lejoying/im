@@ -59,7 +59,7 @@
             android:layout_alignRight="@+id/et_plogin_pass"
             android:layout_below="@+id/et_plogin_pass"
             android:layout_marginTop="15dp"
-            android:background="#2fff"
+            android:background="@drawable/btn_background"
             android:text="@string/btn_login"
             android:textColor="#fff"
             android:textSize="19sp" />
@@ -86,7 +86,7 @@
             android:layout_alignRight="@+id/btn_login"
             android:layout_below="@+id/btn_login"
             android:layout_marginTop="8dp"
-            android:background="#2fff"
+            android:background="@drawable/btn_background"
             android:text="@string/btn_register"
             android:textColor="#fff"
             android:textSize="19sp" />

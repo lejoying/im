@@ -57,7 +57,7 @@
             android:layout_alignRight="@+id/et_phone"
             android:layout_below="@+id/et_phone"
             android:layout_marginTop="25dp"
-            android:background="#2fff"
+            android:background="@drawable/btn_background"
             android:text="@string/btn_callfor"
             android:textColor="#fff"
             android:textSize="19sp" />
