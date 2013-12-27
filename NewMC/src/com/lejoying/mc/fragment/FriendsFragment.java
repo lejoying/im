@@ -35,6 +35,7 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Circle;
+import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
@@ -355,6 +356,12 @@ public class FriendsFragment extends BaseListFragment {
 
 										@Override
 										public void onClick(View v) {
+											app.tempFriend = (Friend) getItem(position);
+											app.businessCardStatus = app.SHOW_FRIEND;
+											mMCFragmentManager
+													.replaceToContent(
+															new BusinessCardFragment(),
+															true);
 										}
 									});
 							return convertView;
@@ -402,47 +409,45 @@ public class FriendsFragment extends BaseListFragment {
 				vp_content.setAdapter(null);
 				return;
 			}
-			if (vp_contentAdapter == null) {
-				vp_contentAdapter = new PagerAdapter() {
-					@Override
-					public boolean isViewFromObject(View arg0, Object arg1) {
-						return arg0 == arg1;
-					}
+			vp_contentAdapter = new PagerAdapter() {
+				@Override
+				public boolean isViewFromObject(View arg0, Object arg1) {
+					return arg0 == arg1;
+				}
 
-					@Override
-					public int getCount() {
-						return circlePageViews.get(circle.rid).size();
-					}
+				@Override
+				public int getCount() {
+					return circlePageViews.get(circle.rid).size();
+				}
 
-					@Override
-					public void destroyItem(View container, int position,
-							Object object) {
-						if (circlePageViews.get(circle.rid).size() > position)
-							((ViewPager) container).removeView(circlePageViews
-									.get(circle.rid).get(position));
-					}
-
-					@Override
-					public Object instantiateItem(View container, int position) {
-						if (circlePageViews.get(circle.rid).get(position)
-								.getParent() != null) {
-							((ViewGroup) (circlePageViews.get(circle.rid).get(
-									position).getParent())).removeAllViews();
-						}
-						((ViewPager) container).addView(circlePageViews.get(
+				@Override
+				public void destroyItem(View container, int position,
+						Object object) {
+					if (circlePageViews.get(circle.rid).size() > position)
+						((ViewPager) container).removeView(circlePageViews.get(
 								circle.rid).get(position));
-						return circlePageViews.get(circle.rid).get(position);
-					}
+				}
 
-					@Override
-					public void unregisterDataSetObserver(
-							DataSetObserver observer) {
-						if (observer != null) {
-							super.unregisterDataSetObserver(observer);
-						}
+				@Override
+				public Object instantiateItem(View container, int position) {
+					if (circlePageViews.get(circle.rid).get(position)
+							.getParent() != null) {
+						((ViewGroup) (circlePageViews.get(circle.rid).get(
+								position).getParent())).removeAllViews();
 					}
-				};
-			}
+					((ViewPager) container).addView(circlePageViews.get(
+							circle.rid).get(position));
+					return circlePageViews.get(circle.rid).get(position);
+				}
+
+				@Override
+				public void unregisterDataSetObserver(DataSetObserver observer) {
+					if (observer != null) {
+						super.unregisterDataSetObserver(observer);
+					}
+				}
+			};
+
 			vp_content.setAdapter(vp_contentAdapter);
 			vp_content.setOnTouchListener(new OnTouchListener() {
 
