@@ -254,8 +254,9 @@ public class MCDataTools {
 					JSONObject jFriend = jFriends.getJSONObject(j);
 					String phone = jFriend.getString("phone");
 					phones.add(phone);
-					if (friends.get(phone) == null) {
-						Friend friend = generateFriendFromJSON(jFriend);
+					Friend friend = generateFriendFromJSON(jFriend);
+					if (friends.get(phone) == null
+							|| !friends.get(phone).equals(friend)) {
 						friends.put(phone, friend);
 					}
 				}
