@@ -67,7 +67,7 @@ function ajax(settings) {
     };
 
     if (settings.data != null) {
-        options.path += "?"
+        options.path += "?";
         for (var key in settings.data) {
             options.path = options.path + "&" + key + "=" + settings.data[key];
         }
@@ -81,6 +81,8 @@ function ajax(settings) {
     }
 
     var req = httpUnity.request(options,function (res) {
+        console.log('STATUS: ' + res.statusCode);
+//        console.log('HEADERS: ' + JSON.stringify(res.headers));
         var data = '';
         res.on('data',function (chunk) {
             data += chunk;
@@ -110,6 +112,7 @@ function ajax(settings) {
     if (settings.type === "POST") {
         var dataStr = querystring.stringify(settings.data);
         req.setHeader("Content-Length", dataStr.length);
+        console.log("---" + dataStr);
         req.write(dataStr);
     }
 

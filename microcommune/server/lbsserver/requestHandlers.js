@@ -11,6 +11,9 @@ requestHandlers.lbsManage = function (request, response, pathObject, data) {
     else if (operation == "list") {
         lbsManage.list(data, response);
     }
+    else if (operation == "poicreate") {
+        lbsManage.poicreate(data, response);
+    }
 };
 
 module.exports = requestHandlers;
