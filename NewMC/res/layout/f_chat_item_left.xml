@@ -5,34 +5,55 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/rl_chatleft"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/frame_background"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp" >
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/frame_background" >
 
-        <ImageView
-            android:id="@+id/iv_headleft"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <RelativeLayout
+            android:id="@+id/rl_chatleft"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/face_man" />
+            android:background="#2fff"
+            android:padding="10dp" >
+
+            <ImageView
+                android:id="@+id/iv_head"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/face_man" />
+
+            <TextView
+                android:id="@+id/tv_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="21dp"
+                android:layout_toRightOf="@+id/iv_head"
+                android:text="你好！！！啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊啊  啊啊啊"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+        </RelativeLayout>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="21dp"
-            android:layout_marginRight="21dp"
-            android:layout_toRightOf="@+id/iv_headleft"
-            android:text="你好！！！啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊 啊啊啊啊啊啊啊啊  啊啊啊"
+            android:id="@+id/tv_chattime"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_below="@+id/rl_chatleft"
+            android:gravity="right|center_vertical"
+            android:paddingRight="10dp"
+            android:text="1小时前"
             android:textColor="#fff"
             android:textSize="16sp" />
     </RelativeLayout>
-</RelativeLayout>
+
+</RelativeLayout>

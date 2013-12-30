@@ -1,8 +1,5 @@
 package com.lejoying.mc.data;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-
 import android.os.Bundle;
 
 public class App {
@@ -34,6 +31,7 @@ public class App {
 
 	void initConfig() {
 		config = new StaticConfig();
+
 	}
 
 	void initData() {
@@ -52,4 +50,5 @@ public class App {
 	public final int SHOW_FRIEND = 2;
 	public final int SHOW_TEMPFRIEND = 3;
 	public int businessCardStatus;
+	public Friend nowChatFriend;
 }

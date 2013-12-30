@@ -25,7 +25,7 @@ public class MainActivity extends BaseFragmentActivity {
 	@Override
 	protected int setBackground() {
 		// TODO Auto-generated method stub
-		return R.drawable.card_background;
+		return R.drawable.cloudy_d_blur;
 	}
 
 	@Override

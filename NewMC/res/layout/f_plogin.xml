@@ -9,9 +9,13 @@
         android:layout_height="290dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/frame_background"
-        android:paddingTop="7dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
         tools:ignore="UselessParent" >
 
         <TextView
@@ -47,8 +51,8 @@
             android:hint="@string/et_phone"
             android:inputType="number"
             android:textColor="#fff"
+            android:textColorHint="#ddd"
             tools:ignore="TextFields" >
-
         </EditText>
 
         <Button
@@ -76,7 +80,8 @@
             android:ems="10"
             android:hint="@string/et_pass"
             android:inputType="textPassword"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textColorHint="#ddd" />
 
         <Button
             android:id="@+id/btn_register"
@@ -104,4 +109,5 @@
             android:textColor="@color/click_textcolor"
             android:textSize="15sp" />
     </RelativeLayout>
-</RelativeLayout>
+
+</RelativeLayout>

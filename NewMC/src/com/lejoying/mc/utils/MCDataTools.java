@@ -27,6 +27,9 @@ import com.lejoying.mc.data.User;
 
 public class MCDataTools {
 
+	public static final int MESSAGE_TYPE_SEND = 0x01;
+	public static final int MESSAGE_TYPE_RECEIVE = 0x02;
+
 	public static App app = App.getInstance();
 
 	public static void saveData(Context context) {
@@ -227,10 +230,6 @@ public class MCDataTools {
 			app.data.user.nickName = user.nickName;
 			count++;
 		}
-		if (user.phone != null && !user.phone.equals("")) {
-			app.data.user.phone = user.phone;
-			count++;
-		}
 		return count;
 	}
 
@@ -252,12 +251,16 @@ public class MCDataTools {
 				updateFriend.mainBusiness = friend.mainBusiness;
 				count++;
 			}
-
+			if (friend.friendStatus != null && !friend.friendStatus.equals("")) {
+				updateFriend.friendStatus = friend.friendStatus;
+				count++;
+			}
 		}
 		return count;
 	}
 
 	public static void saveCircles(JSONArray jCircles) {
+
 		app.isDataChanged = true;
 		Map<String, Friend> friends = app.data.friends;
 		List<Circle> circles = new ArrayList<Circle>();
@@ -277,10 +280,11 @@ public class MCDataTools {
 					JSONObject jFriend = jFriends.getJSONObject(j);
 					String phone = jFriend.getString("phone");
 					phones.add(phone);
-					Friend friend = generateFriendFromJSON(jFriend);
-					if (friends.get(phone) == null
-							|| !friends.get(phone).equals(friend)) {
+					if (friends.get(phone) == null) {
+						Friend friend = generateFriendFromJSON(jFriend);
 						friends.put(phone, friend);
+					} else {
+						updataFriend(jFriend);
 					}
 				}
 				circle.phones = phones;
@@ -309,10 +313,10 @@ public class MCDataTools {
 					String friendPhone = phoneSend;
 
 					if (phoneSend.equals(app.data.user.phone)) {
-						message.type = "send";
+						message.type = MESSAGE_TYPE_SEND;
 						friendPhone = phoneReceive;
 					} else if (phoneReceive.equals(app.data.user.phone)) {
-						message.type = "receive";
+						message.type = MESSAGE_TYPE_RECEIVE;
 						friendPhone = phoneSend;
 					}
 
@@ -404,5 +408,5 @@ public class MCDataTools {
 		}
 		return friend;
 	}
-
+	
 }

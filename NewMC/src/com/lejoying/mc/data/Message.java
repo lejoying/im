@@ -8,7 +8,7 @@ public class Message implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	// type is receive or send
-	public String type = "";
+	public int type;
 	public String content = "";
 	public String time = "";
 	public String messageType = "";
@@ -19,7 +19,7 @@ public class Message implements Serializable {
 		if (o != null) {
 			try {
 				Message m = (Message) o;
-				if (type.equals(m.type) && content.equals(m.content)
+				if (type == m.type && content.equals(m.content)
 						&& time.equals(m.time)
 						&& messageType.equals(m.messageType)) {
 					flag = true;

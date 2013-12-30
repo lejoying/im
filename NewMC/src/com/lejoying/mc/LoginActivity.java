@@ -24,7 +24,7 @@ public class LoginActivity extends BaseFragmentActivity {
 
 	@Override
 	protected int setBackground() {
-		return R.drawable.card_background;
+		return R.drawable.snow_d_blur;
 	}
 
 	@Override

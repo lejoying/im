@@ -210,8 +210,9 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					// TODO Auto-generated method stub
-
+					app.nowChatFriend = app.tempFriend;
+					mMCFragmentManager.replaceToContent(new ChatFragment(),
+							true);
 				}
 			});
 			button2.setOnClickListener(new OnClickListener() {

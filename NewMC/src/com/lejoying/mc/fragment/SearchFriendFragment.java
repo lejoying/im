@@ -183,7 +183,8 @@ public class SearchFriendFragment extends BaseListFragment {
 				break;
 			case 3:
 				convertView = mInflater.inflate(R.layout.f_button, null);
-				((Button) convertView).setText("扫描名片");
+				((Button) convertView.findViewById(R.id.button))
+						.setText("扫描名片");
 				break;
 
 			default:

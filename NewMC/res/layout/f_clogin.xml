@@ -9,9 +9,13 @@
         android:layout_height="240dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
-        android:paddingTop="7dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
         tools:ignore="UselessParent" >
 
         <TextView
@@ -47,6 +51,7 @@
             android:hint="@string/et_phone"
             android:inputType="number"
             android:textColor="#fff"
+            android:textColorHint="#ddd"
             tools:ignore="TextFields" >
         </EditText>
 
@@ -75,7 +80,8 @@
             android:ems="10"
             android:hint="@string/et_code"
             android:inputType="number"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textColorHint="#ddd" />
 
         <TextView
             android:id="@+id/tv_sendcode"

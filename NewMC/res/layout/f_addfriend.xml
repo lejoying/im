@@ -10,9 +10,11 @@
         android:layout_height="172dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="63dp"
         android:background="@drawable/frame_background"
-        android:paddingTop="7dp"
+        android:padding="10dp"
         tools:ignore="UselessParent" >
 
         <TextView
