@@ -189,7 +189,7 @@ circleManage.moveout = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 if (newRid != "undefined" && newRid != undefined) {
-                    throw  "出现异常了，快点处理......哈哈";
+//                    throw  "出现异常了，快点处理......哈哈";
                     createRelationNode(phoneTo, newRid);
                 } else {
                     response.write(JSON.stringify({

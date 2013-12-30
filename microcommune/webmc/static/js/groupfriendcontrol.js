@@ -215,26 +215,26 @@ $(document).ready(function () {
                 }
                 moveOutFriendGroup(accountObj, JSON.stringify(array), checkGroupId, selectedDropUsers[index0]);
                 /*for (var index in selectedDropUsers) {
-//                    alert(selectedDropUsers[index]);
-                    if (selectedDropUsers[index] != checkGroupId) {
-                        var oldCircleRid = selectedDropUsers[index];
-                        moveOutFriendGroup(accountObj, index, checkGroupId, selectedDropUsers[index]);
-                        var newSelectLength = $("." + newSelectedGroupClass).find("img").length;
-                        if (newSelectLength < 4) {
-                            var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
-                            $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
-                            moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
-                        } else {
-                            var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
-//                            $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
-//                            ($("." + newSelectedGroupClass).find(".appGroup"))[0].removeChild($img);
-//                            alert("新的分组的好友大于4人");
-                            moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
-                        }
-                    } else {
-                        continue;
-                    }
-                }*/
+                 //                    alert(selectedDropUsers[index]);
+                 if (selectedDropUsers[index] != checkGroupId) {
+                 var oldCircleRid = selectedDropUsers[index];
+                 moveOutFriendGroup(accountObj, index, checkGroupId, selectedDropUsers[index]);
+                 var newSelectLength = $("." + newSelectedGroupClass).find("img").length;
+                 if (newSelectLength < 4) {
+                 var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
+                 $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+                 moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
+                 } else {
+                 var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
+                 //                            $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+                 //                            ($("." + newSelectedGroupClass).find(".appGroup"))[0].removeChild($img);
+                 //                            alert("新的分组的好友大于4人");
+                 moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
+                 }
+                 } else {
+                 continue;
+                 }
+                 }*/
             } else {
                 checkGroupId = -1;
                 selectedDropUsers = {};
@@ -503,19 +503,30 @@ function getScroll() {
 function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, circles) {
 //    alert(oldCircleRid);
     var circles = circles;
+    var tempPhoneIndex = [];
     A:for (var i = 0; i < circles.length; i++) {
         var accounts = circles[i].accounts;
         if (JSON.stringify(circles[i].rid) == oldCircleRid) {
             B:for (var j = 0; j < accounts.length; j++) {
+                /*if (phoneTo.length == 0) {
+                 break A;
+                 }*/
                 var account = accounts[j];
-                if (account.phone == phoneTo) {
-//                    alert(account.phone == phoneTo);
+                var index = $.inArray(account.phone, phoneTo);
+                if ($.inArray(account.phone, phoneTo) >= 0) {
+//                    alert($.inArray(account.phone, phoneTo) + "--" + phoneTo);
+//                    accounts.splice(j, 1);//移除数据
+                    tempPhoneIndex.push(j);
+                    phoneTo.splice(index, 1);
                     ModifyCirclesLocalData(circles, newCircleRid, accounts[j], next);
                     function next() {
                         accounts.splice(j, 1);//移除数据
+                        phoneTo.splice(index, 1);
                     }
 
-                    break A;
+                    if (phoneTo.length == 0) {
+
+                    }
                 } else {
                     continue;
                 }
@@ -526,19 +537,17 @@ function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, cir
     }
 }
 function ModifyCirclesLocalData(circles, newCircleRid, account, next) {
-//    alert(account+"--");
-    next();
+//    alert(account + "--");
+//    next();
     var circles = circles;
-    A:for (var i = 0; i < circles.length; i++) {
+    C:for (var i = 0; i < circles.length; i++) {
         var circle = circles[i];
         if (JSON.stringify(circle.rid) == newCircleRid) {
             var accounts = circle.accounts;
             accounts.push(account);
+            alert(account.phone);
             window.sessionStorage.setItem("wxgs_circles", JSON.stringify(circles));
-            if (JSON.stringify(selectedDropUsers) == "{}") {
-                selectedDropUsers = {};
-            }
-            break A;
+            break C;
         } else {
             continue;
         }
@@ -581,7 +590,13 @@ function moveOutFriendGroup(accountObj, phoneTo, newCircleId, oldCircleId) {
             newrid: newCircleId
         },
         success: function (data) {
-            alert(data["提示信息"]);
+            if (data["提示信息"] == "移动成功") {
+                selectedDropUsers = {};
+                var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+                moveOutFriendModifyCirclesData(JSON.parse(phoneTo), newCircleId, oldCircleId, circles);
+            } else {
+                alert(data["提示信息"] + "---" + data["失败原因"]);
+            }
         }
     });
 }
