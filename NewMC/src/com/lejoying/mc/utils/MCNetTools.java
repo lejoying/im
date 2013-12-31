@@ -27,6 +27,9 @@ public class MCNetTools {
 	public static void ajax(final Context context, final String url,
 			final Bundle params, final int method, final int timeout,
 			final ResponseListener responseListener) {
+		if (context == null) {
+			return;
+		}
 		boolean hasNetwork = MCHttpTools.hasNetwork(context);
 
 		if (!hasNetwork) {
@@ -40,11 +43,15 @@ public class MCNetTools {
 					super.run();
 					HttpListener httpListener = new HttpListener() {
 						@Override
-						public void handleInputStream(InputStream is,
+						public void handleInputStream(InputStream is) {
+							b = StreamTools.isToData(is);
+						}
+
+						@Override
+						public void connectionCreated(
 								HttpURLConnection httpURLConnection) {
 							responseListener
 									.connectionCreated(httpURLConnection);
-							b = StreamTools.isToData(is);
 						}
 					};
 					if (method == MCHttpTools.SEND_GET) {

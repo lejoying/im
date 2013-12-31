@@ -19,9 +19,6 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.data.App;
-import com.lejoying.mc.data.StaticConfig;
-import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
 import com.lejoying.mc.service.MainService;

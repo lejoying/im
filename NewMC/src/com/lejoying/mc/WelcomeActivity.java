@@ -12,7 +12,7 @@ import android.support.v4.app.Fragment;
 
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCDataTools;
+import com.lejoying.mc.data.DataHandler;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
@@ -27,7 +27,11 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
-		MCDataTools.getData(this);
+		if (app.dataHandler == null) {
+			app.dataHandler = new DataHandler();
+		}
+		app.dataHandler.sendMessage(app.dataHandler.HANDLER_GETCONFIGANDDATA,
+				this);
 
 		start = new Date().getTime();
 
@@ -46,8 +50,9 @@ public class WelcomeActivity extends BaseFragmentActivity {
 						@Override
 						public void success(JSONObject data) {
 							try {
-								MCDataTools.updateUser(data
-										.getJSONObject("account"));
+								app.dataHandler.sendMessage(
+										app.dataHandler.HANDLER_UPDATEUSER,
+										data.getJSONObject("account"));
 								startToMain();
 							} catch (JSONException e) {
 								startToLogin();
@@ -76,7 +81,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	}
 
 	void startToLogin() {
-		app.cleanData();
+		app.dataHandler.sendEmptyMessage(app.dataHandler.HANDLER_CLEANDATA);
 		new Thread() {
 			public void run() {
 				long end = new Date().getTime();

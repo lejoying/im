@@ -16,7 +16,6 @@ import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.User;
 import com.lejoying.mc.service.BaseService.ServiceEvent;
-import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
@@ -108,9 +107,9 @@ public class NetworkHandler {
 			if (api.equals(API.ACCOUNT_VERIFYPHONE)) {
 				String usage = params.getString("usage");
 				if (usage.equals("register")) {
-					MCDataTools.app.registerBundle = params;
+					app.registerBundle = params;
 					try {
-						MCDataTools.app.registerBundle.putString("code",
+						app.registerBundle.putString("code",
 								data.getString("code"));
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -118,14 +117,14 @@ public class NetworkHandler {
 				}
 				mNetworkRemain.startReamin(intent);
 			} else if (api.equals(API.ACCOUNT_VERIFYCODE)) {
-				if (MCDataTools.app.registerBundle != null) {
+				if (app.registerBundle != null) {
 					System.out.println(data);
 					try {
-						MCDataTools.app.registerBundle.putString(
+						app.registerBundle.putString(
 								"accessKey",
 								RSAUtils.decrypt(app.config.pbKey0,
 										data.getString("accessKey")));
-						MCDataTools.app.registerBundle.putString("PbKey",
+						app.registerBundle.putString("PbKey",
 								data.getString("PbKey"));
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -160,18 +159,18 @@ public class NetworkHandler {
 				}
 				saveLoginUser(params.getString("phone"), accessKey, pbKey);
 			} else if (api.equals(API.ACCOUNT_MODIFY)) {
-				if (MCDataTools.app.registerBundle != null) {
-					saveLoginUser(
-							MCDataTools.app.registerBundle.getString("phone"),
-							MCDataTools.app.registerBundle
-									.getString("accessKey"),
-							MCDataTools.app.registerBundle.getString("PbKey"));
+				if (app.registerBundle != null) {
+					saveLoginUser(app.registerBundle.getString("phone"),
+							app.registerBundle.getString("accessKey"),
+							app.registerBundle.getString("PbKey"));
 				}
 			} else if (api.equals(API.ACCOUNT_GET)) {
 				if (params.getString("phone")
 						.equals(params.getString("target"))) {
 					try {
-						MCDataTools.updateUser(data.getJSONObject("account"));
+						app.dataHandler.sendMessage(
+								app.dataHandler.HANDLER_UPDATEUSER,
+								data.getJSONObject("account"));
 					} catch (JSONException e) {
 
 					}
@@ -186,25 +185,13 @@ public class NetworkHandler {
 		} else if (apiClazz.equals(API.IMAGE)) {
 
 		} else if (apiClazz.equals(API.MESSAGE)) {
-			if (api.equals(API.MESSAGE_GET)) {
-				try {
-					MCDataTools.saveMessages(data.getJSONArray("messages"));
-					app.data.user.flag = String.valueOf(data.getInt("flag"));
-				} catch (JSONException e) {
-				}
-			}
+
 		} else if (apiClazz.equals(API.SESSION)) {
 
 		} else if (apiClazz.equals(API.WEBCODE)) {
 
 		} else if (apiClazz.equals(API.RELATION)) {
-			if (api.equals(API.RELATION_GETCIRCLESANDFRIENDS)) {
-				try {
-					MCDataTools.saveCircles(data.getJSONArray("circles"));
-				} catch (JSONException e) {
-				}
 
-			}
 		}
 
 	}

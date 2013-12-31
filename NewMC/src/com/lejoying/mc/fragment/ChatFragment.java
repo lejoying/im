@@ -1,6 +1,7 @@
 package com.lejoying.mc.fragment;
 
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +31,6 @@ import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Message;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
-import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
@@ -41,7 +41,7 @@ public class ChatFragment extends BaseListFragment {
 	App app = App.getInstance();
 
 	private View mContent;
-	private ChatAdapter mAdapter;
+	public ChatAdapter mAdapter;
 
 	LayoutInflater mInflater;
 
@@ -58,6 +58,8 @@ public class ChatFragment extends BaseListFragment {
 	Bitmap headman;
 	Bitmap headwoman;
 
+	public static ChatFragment instance;
+
 	public ChatFragment() {
 		mAdapter = new ChatAdapter();
 	}
@@ -66,6 +68,19 @@ public class ChatFragment extends BaseListFragment {
 	public EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void onResume() {
+		app.mark = app.chatFragment;
+		instance = this;
+		super.onResume();
+	}
+
+	@Override
+	public void onDestroyView() {
+		instance = null;
+		super.onDestroyView();
 	}
 
 	@Override
@@ -163,8 +178,16 @@ public class ChatFragment extends BaseListFragment {
 
 								@Override
 								public void success(JSONObject data) {
-									// TODO Auto-generated method stub
 									System.out.println("success");
+									app.isDataChanged = true;
+									if (app.data.user.flag.equals("none")) {
+										app.data.user.flag = String.valueOf(1);
+									} else {
+										app.data.user.flag = String
+												.valueOf(Integer.valueOf(
+														app.data.user.flag)
+														.intValue() + 1);
+									}
 								}
 
 								@Override
@@ -205,7 +228,7 @@ public class ChatFragment extends BaseListFragment {
 		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 	}
 
-	private class ChatAdapter extends BaseAdapter {
+	public class ChatAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
@@ -238,11 +261,11 @@ public class ChatFragment extends BaseListFragment {
 			int type = getItemViewType(position);
 			if (convertView == null) {
 				switch (type) {
-				case MCDataTools.MESSAGE_TYPE_SEND:
+				case Message.MESSAGE_TYPE_SEND:
 					convertView = mInflater.inflate(R.layout.f_chat_item_right,
 							null);
 					break;
-				case MCDataTools.MESSAGE_TYPE_RECEIVE:
+				case Message.MESSAGE_TYPE_RECEIVE:
 					convertView = mInflater.inflate(R.layout.f_chat_item_left,
 							null);
 					break;
@@ -264,10 +287,10 @@ public class ChatFragment extends BaseListFragment {
 			messageHolder.tv_chat
 					.setText(((Message) getItem(position)).content);
 			switch (type) {
-			case MCDataTools.MESSAGE_TYPE_SEND:
+			case Message.MESSAGE_TYPE_SEND:
 				messageHolder.iv_head.setImageBitmap(headman);
 				break;
-			case MCDataTools.MESSAGE_TYPE_RECEIVE:
+			case Message.MESSAGE_TYPE_RECEIVE:
 				messageHolder.iv_head.setImageBitmap(headwoman);
 				break;
 			default:
@@ -285,9 +308,10 @@ public class ChatFragment extends BaseListFragment {
 
 	public Bundle generateParams(String text) {
 		Message message = new Message();
-		message.type = MCDataTools.MESSAGE_TYPE_SEND;
+		message.type = Message.MESSAGE_TYPE_SEND;
 		message.content = text;
 		message.messageType = "text";
+		message.time = String.valueOf(new Date().getTime());
 		app.nowChatFriend.messages.add(message);
 		mAdapter.notifyDataSetChanged();
 		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -307,5 +331,4 @@ public class ChatFragment extends BaseListFragment {
 
 		return params;
 	}
-
 }

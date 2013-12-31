@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Instrumentation;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -24,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
@@ -32,6 +32,7 @@ import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.StaticConfig;
 import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.entity.MenuEntity;
+import com.lejoying.mc.service.PushService;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
@@ -537,6 +538,9 @@ public class CircleMenuFragment extends BaseFragment {
 
 	private void initMenuItem(LayoutInflater inflater) {
 		mMenuIndex = 0;
+		if (!isAdded()) {
+			return;
+		}
 		mMenuItemList = new ArrayList<List<View>>();
 		List<MenuEntity> menuEntitys1 = new ArrayList<MenuEntity>();
 		menuEntitys1.add(new MenuEntity(R.drawable.test_menu_item1,
@@ -942,7 +946,9 @@ public class CircleMenuFragment extends BaseFragment {
 			break;
 		case 12:
 			data.user.accessKey = null;
-			mMCFragmentManager.startToActivity(LoginActivity.class, true);
+			Intent service = new Intent(getActivity(), PushService.class);
+			service.putExtra("objective", "stop");
+			getActivity().startService(service);
 			break;
 		case 13:
 

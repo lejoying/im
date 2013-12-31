@@ -69,7 +69,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 	public void onPause() {
 		super.onPause();
 	}
-
+	
 	@Override
 	public void onClick(View v) {
 		String phone = mView_phone.getText().toString();

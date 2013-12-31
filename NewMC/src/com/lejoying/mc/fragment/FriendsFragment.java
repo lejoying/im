@@ -9,6 +9,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,7 +37,7 @@ import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Circle;
 import com.lejoying.mc.data.Friend;
-import com.lejoying.mc.utils.MCDataTools;
+import com.lejoying.mc.service.PushService;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
@@ -62,7 +63,7 @@ public class FriendsFragment extends BaseListFragment {
 	List<String> lastChatFriends;
 
 	FriendsAdapter mFriendsAdapter;
-	FriendsHandler mFriendsHandler;
+	public FriendsHandler mFriendsHandler;
 
 	private View mContent;
 	private LayoutInflater mInflater;
@@ -100,9 +101,13 @@ public class FriendsFragment extends BaseListFragment {
 		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
 
-		MCDataTools.getUserData(getActivity(), app.data.user);
+		app.dataHandler.sendMessage(app.dataHandler.HANDLER_GETUSERDATA,
+				getActivity());
 
-		instance = this;
+		Intent service = new Intent(getActivity(), PushService.class);
+		service.putExtra("objective", "start");
+		getActivity().startService(service);
+
 		initData();
 		getUser();
 		mFriendsAdapter = new FriendsAdapter();
@@ -130,7 +135,14 @@ public class FriendsFragment extends BaseListFragment {
 
 	public void onResume() {
 		super.onResume();
+		instance = this;
+		app.mark = app.friendsFragment;
 		mFriendsHandler.sendEmptyMessage(NOTIFYDATASETCHANGED);
+	}
+
+	public void onDestroyView() {
+		instance = null;
+		super.onDestroyView();
 	}
 
 	class FriendsAdapter extends BaseAdapter {
@@ -512,8 +524,9 @@ public class FriendsFragment extends BaseListFragment {
 					@Override
 					public void success(JSONObject data) {
 						try {
-							MCDataTools.updateUser(data
-									.getJSONObject("account"));
+							app.dataHandler.sendMessage(
+									app.dataHandler.HANDLER_UPDATEUSER,
+									data.getJSONObject("account"));
 							getCirclesAndFriends();
 						} catch (JSONException e) {
 						}
@@ -547,8 +560,9 @@ public class FriendsFragment extends BaseListFragment {
 					@Override
 					public void success(JSONObject data) {
 						try {
-							MCDataTools.saveCircles(data
-									.getJSONArray("circles"));
+							app.dataHandler.sendMessage(
+									app.dataHandler.HANDLER_CIRCLE,
+									data.getJSONArray("circles"));
 							getMessages();
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -591,8 +605,9 @@ public class FriendsFragment extends BaseListFragment {
 						try {
 							getAskFriends();
 							System.out.println(data);
-							MCDataTools.saveMessages(data
-									.getJSONArray("messages"));
+							app.dataHandler.sendMessage(
+									app.dataHandler.HANDLER_MESSAGE,
+									data.getJSONArray("messages"));
 							app.data.user.flag = String.valueOf(data
 									.getInt("flag"));
 							mFriendsHandler
@@ -640,8 +655,9 @@ public class FriendsFragment extends BaseListFragment {
 						} catch (JSONException e) {
 						}
 						try {
-							MCDataTools.saveNewFriends(data
-									.getJSONArray("accounts"));
+							app.dataHandler.sendMessage(
+									app.dataHandler.HANDLER_NEWFRIEND,
+									data.getJSONArray("accounts"));
 							if (app.data.newFriends.size() != 0) {
 								showNewFriends = true;
 								mFriendsHandler
