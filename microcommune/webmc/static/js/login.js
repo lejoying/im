@@ -2,18 +2,15 @@ $(document).ready(function () {
     window.localStorage.clear();
     window.sessionStorage.clear();
     $(".js_login").hide();
-//    $(".js_webcodelogin").show();
-//    animationPlay("js_webcodelogin", -330);
     var checkDefault = false;
     var selectLoginMode = "js_webcodelogin";
     initHtml();
     $(document).on("mouseenter", ".js_checklogin", function () {
         $(".js_login").hide();
-        var checkThis = $(this);
+        var checkThis = $(this.parentNode);
         if (checkThis.find(".js_applogin").length > 0) {
-            $(".js_loginCodeError").html("");
+            $(".js_loginCodeError").html("&nbsp;");
             checkDefault = true;
-//            checkThis.find(".js_applogin").show();
             if (selectLoginMode != "js_applogin") {
                 animationPlay("js_applogin", -100);
                 selectLoginMode = "js_applogin";
@@ -21,8 +18,7 @@ $(document).ready(function () {
                 checkThis.find(".js_applogin").show();
             }
         } else if (checkThis.find(".js_webcodelogin").length > 0) {
-            $(".js_loginCodeError").html("");
-//            checkThis.find(".js_webcodelogin").show();
+            $(".js_loginCodeError").html("&nbsp;");
             if (checkDefault) {
                 if (selectLoginMode != "js_webcodelogin") {
                     animationPlay("js_webcodelogin", -330);
@@ -34,7 +30,6 @@ $(document).ready(function () {
                 checkThis.find(".js_webcodelogin").show();
         } else if (checkThis.find(".js_phonecodelogin").length > 0) {
             checkDefault = true;
-//            checkThis.find(".js_phonecodelogin").show();
             if (selectLoginMode != "js_phonecodelogin") {
                 animationPlay("js_phonecodelogin", -200);
                 selectLoginMode = "js_phonecodelogin";
@@ -50,7 +45,7 @@ $(document).ready(function () {
         location.href = "./app.html";
     });
     $(".js_phoneCodeSubmit").click(function () {
-            $(".js_loginCodeError").html("");
+            $(".js_loginCodeError").html("&nbsp;");
             var phone = $(".js_loginPhone").val();
             var code = $(".js_loginCode").val();
             if (phone.trim() == "" || code.trim() == "") {
@@ -99,7 +94,7 @@ $(document).ready(function () {
     for (var i = 0; i < count; i++) {
         str += chars[parseInt(Math.random() * chars.length)];
     }
-    $(".js_qrwebcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str));
+//    $(".js_qrwebcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str));
     $(".js_qrwebcode").attr("src", "http://qr.liantu.com/api.php?text=mc:weblogin:" + hex_sha1(str) +
         "&logo=http://im.lejoying.com/static/images/icon.png&fg=6E6E6E&w=200&m=12");
     longRequest(hex_sha1(str));
@@ -159,6 +154,7 @@ function animationPlay(className, y) {
             },
             onEnd: function () {
                 var setTimeOut = setTimeout(function () {
+                    $(".js_login").hide();
                     box.show();
                     window.clearTimeout(setTimeOut);
                 }, 5);

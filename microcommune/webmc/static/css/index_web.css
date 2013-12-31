@@ -69,12 +69,12 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     position: absolute;
     top: 0;
     left: 1px;
-    background: url('/static/images/in_picone.jpg') center 0 no-repeat;
+    background: url('/static/images/in_picone.png') center 0 no-repeat;
     z-index: 100;
 }
 
 .in_china .in_big .in_bigone {
-    background: url('/static/images/in_picone-2.jpg') center 0 no-repeat;
+    background: url('/static/images/in_picone.png') center 0 no-repeat;
 }
 
 .in_big .in_bigtwo {
@@ -98,7 +98,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
 }
 
 .in_china .in_big .in_bigtwo {
-    background: url('/static/images/in_pictwo-2.jpg') center 0 no-repeat;
+    background: url('/static/images/in_pictwo.jpg') center 0 no-repeat;
 }
 
 .in_big .in_bigthree {
@@ -112,7 +112,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
 }
 
 .in_china .in_big .in_bigthree {
-    background: url('/static/images/in_picthree-2.jpg') center 0 no-repeat;
+    background: url('/static/images/in_picthree.jpg') center 0 no-repeat;
 }
 
 .in_pos {

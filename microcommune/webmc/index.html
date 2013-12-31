@@ -77,16 +77,20 @@
         <!--  大图滚动 end -->
         <div class="area">
             <div class="area_3">
-                <div class="icon_1 js_checklogin"><!--    密码登录    -->
-                    <img src="/static/images/icon_1.png" style="margin-left: 131px;margin-top: 67px">
+                <div class="icon_1"><!--    密码登录    -->
+                    <img class="js_checklogin" src="/static/images/icon_1.png"
+                         style="margin-left: 131px;margin-top: 67px">
+
                     <div class="icon_1_1 js_applogin js_login">
                         <div class="password_w">为了保护用户的隐私安全，暂不支持直接登录网页版</div>
                         <div class="password_m js_downloadAppHtml">下载APP</div>
                         <div class="password_s">请使用其它方式登录</div>
                     </div>
                 </div>
-                <div class="icon_2 js_checklogin"><!--  扫一扫登录     -->
-                    <img src="/static/images/icon_2.png" style="margin-left: 131px;margin-top: 67px">
+                <div class="icon_2"><!--  扫一扫登录     -->
+                    <img class="js_checklogin" src="/static/images/icon_2.png"
+                         style="margin-left: 131px;margin-top: 67px">
+
                     <div class="icon_2_2 js_webcodelogin js_login">
                         <div class="ewm"><img class="js_qrwebcode" style="width: 200px;height: 200px;"
                                               src="">
@@ -94,8 +98,10 @@
                         <div class="sao_wz">请使用APP扫描二维码以登录</div>
                     </div>
                 </div>
-                <div class="icon_3 js_checklogin"><!--  手机验证码登录 -->
-                    <img src="/static/images/icon_3.png" style="margin-left: 131px;margin-top: 65px">
+                <div class="icon_3"><!--  手机验证码登录 -->
+                    <img class="js_checklogin" src="/static/images/icon_3.png"
+                         style="margin-left: 131px;margin-top: 65px">
+
                     <div class="icon_3_3 js_phonecodelogin js_login"
                          style="position:relative;width: 400px;z-index: 10000;float: left;">
                         <form action="javascript:void(0);">
@@ -103,9 +109,10 @@
 
                             <div class="send_y js_sendPhoneCode">发送手机验证码</div>
                             <input type="text" class="sdw js_loginCode" placeholder="请输入验证码"/>
-                            <label class="js_loginCodeError" style="color: red;font-size: 14px;"></label>
+                            <label class="js_loginCodeError" style="color: red;font-size: 14px;">&nbsp;</label>
                             <input type="submit" value="登  录" class="button js_phoneCodeSubmit"/>
-                            <div class="send_j">接收手机验证码以登录</div>
+
+                            <div class="send_j" style="cursor: inherit;">接收手机验证码以登录</div>
                         </form>
                     </div>
                 </div>
@@ -124,7 +131,7 @@
                     <!--底部上半部分-->
                     <div class="foot_one">
                         <div class="foot_left">
-                            <a class="foot_logo" href="javascript:void(0);"></a>
+                            <a class="foot_logo" href="index.html"></a>
                         </div>
                         <div class="foot_right">
                             <div class="foot_lia"></div>

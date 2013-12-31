@@ -33,7 +33,7 @@ messageManage.send = function (data, response) {
         phone: phone,
         phoneto: data.phoneto,
         content: message.content,
-        time:time
+        time: time
     });
     client.rpush(phone, messageOwn, function (err, reply) {
         if (err != null) {
@@ -64,7 +64,7 @@ messageManage.send = function (data, response) {
                     return;
                 }
                 //通知
-                push.inform(phone, phoneto[index], accessKey, "*", {"提示信息": "成功", event: "message", event_content: {message: JSON.stringify([messageOther])}});
+                push.inform(phone, phoneto[index], accessKey, "*", {"提示信息": "成功", event: "message", event_content: {message: [messageOther]}});
                 //response
                 response.write(JSON.stringify({
                     "提示信息": "发送成功",
