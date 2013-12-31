@@ -9,6 +9,8 @@ public class MainService extends BaseService implements ServiceEvent {
 
 	private MainServiceHandler mMainServiceHandler;
 
+	
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -17,8 +19,9 @@ public class MainService extends BaseService implements ServiceEvent {
 
 	@Override
 	public int onStartCommand(final Intent intent, int flags, int startId) {
+		System.out.println("service");
 		mMainServiceHandler.process(intent);
 		return super.onStartCommand(intent, flags, startId);
 	}
-
+	
 }

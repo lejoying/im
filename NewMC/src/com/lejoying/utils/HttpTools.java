@@ -49,13 +49,14 @@ public final class HttpTools {
 			httpURLConnection.setReadTimeout(timeout);
 			httpURLConnection.setConnectTimeout(timeout);
 
+			httpListener.connectionCreated(httpURLConnection);
 			if (httpURLConnection.getResponseCode() == 200) {
 				is = httpURLConnection.getInputStream();
 			}
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
-			httpListener.handleInputStream(is, httpURLConnection);
+			httpListener.handleInputStream(is);
 			httpURLConnection.disconnect();
 		}
 	}
@@ -97,19 +98,21 @@ public final class HttpTools {
 			os.flush();
 			os.close();
 
+			httpListener.connectionCreated(httpURLConnection);
 			if (httpURLConnection.getResponseCode() == 200) {
 				is = httpURLConnection.getInputStream();
 			}
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
-			httpListener.handleInputStream(is, httpURLConnection);
+			httpListener.handleInputStream(is);
 			httpURLConnection.disconnect();
 		}
 	}
 
 	public interface HttpListener {
-		public void handleInputStream(InputStream is,
-				HttpURLConnection httpURLConnection);
+		public void handleInputStream(InputStream is);
+
+		public void connectionCreated(HttpURLConnection httpURLConnection);
 	}
 }

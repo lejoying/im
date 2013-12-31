@@ -50,6 +50,12 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 	}
 
 	@Override
+	public void onResume() {
+		app.mark = app.addFriendFragment;
+		super.onResume();
+	}
+
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_send:

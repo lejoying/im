@@ -5,9 +5,27 @@ import android.os.Bundle;
 public class App {
 	private static App app;
 
+	public String addFriendFragment = "addFriendFragment";
+	public String businessCardFragment = "businessCardFragment";
+	public String chatFragment = "chatFragment";
+	public String friendNotFoundFragment = "friendNotFoundFragment";
+	public String friendsFragment = "friendsFragment";
+	public String loginUserCodeFragment = "loginUserCodeFragment";
+	public String modifyFragment = "modifyFragment";
+	public String newFriendsFragment = "newFriendsFragment";
+	public String registerCodeFragment = "registerCodeFragment";
+	public String registerPassFragment = "registerPassFragment";
+	public String registerPhoneFragment = "registerPhoneFragment";
+	public String scanQRCodeFragment = "scanQRCodeFragment";
+	public String searchFriendFragment = "searchFriendFragment";
+	public String ShareFragment = "ShareFragment";
+
+	public String mark;
+
 	private App() {
 		initData();
 		initConfig();
+		// dataHandler = new DataHandler();
 	}
 
 	public static App getInstance() {
@@ -17,24 +35,11 @@ public class App {
 		return app;
 	}
 
-	public void cleanData() {
-		if (app != null) {
-			initData();
-		}
-	}
-
-	public void cleanConfig() {
-		if (app != null) {
-			initConfig();
-		}
-	}
-
-	void initConfig() {
+	public void initConfig() {
 		config = new StaticConfig();
-
 	}
 
-	void initData() {
+	public void initData() {
 		data = new StaticData();
 	}
 
@@ -43,6 +48,7 @@ public class App {
 	public StaticData data;
 	public StaticConfig config;
 
+	public DataHandler dataHandler;
 	// temp data
 	public Bundle registerBundle;
 	public Friend tempFriend;

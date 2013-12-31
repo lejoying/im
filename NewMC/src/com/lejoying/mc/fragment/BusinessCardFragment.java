@@ -81,6 +81,12 @@ public class BusinessCardFragment extends BaseFragment {
 	}
 
 	@Override
+	public void onResume() {
+		app.mark = app.businessCardFragment;
+		super.onResume();
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 
 		tv_spacing = (TextView) mContent.findViewById(R.id.tv_spacing);

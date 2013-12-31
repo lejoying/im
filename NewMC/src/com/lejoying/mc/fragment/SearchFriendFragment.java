@@ -105,8 +105,10 @@ public class SearchFriendFragment extends BaseListFragment {
 									public void success(JSONObject data) {
 										if (phone.equals(app.data.user.phone)) {
 											try {
-												MCDataTools.updateUser(data
-														.getJSONObject("account"));
+												app.dataHandler
+														.sendMessage(
+																app.dataHandler.HANDLER_UPDATEUSER,
+																data.getJSONObject("account"));
 												app.businessCardStatus = app.SHOW_SELF;
 												mMCFragmentManager
 														.replaceToContent(
@@ -146,6 +148,7 @@ public class SearchFriendFragment extends BaseListFragment {
 											app.tempFriend = MCDataTools
 													.generateFriendFromJSON(data
 															.getJSONObject("account"));
+
 											app.tempFriend.temp = true;
 											app.businessCardStatus = app.SHOW_TEMPFRIEND;
 											mMCFragmentManager

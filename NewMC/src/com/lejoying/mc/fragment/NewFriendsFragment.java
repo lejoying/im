@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
@@ -164,9 +163,10 @@ public class NewFriendsFragment extends BaseListFragment {
 																		public void success(
 																				JSONObject data) {
 																			try {
-																				MCDataTools
-																						.saveCircles(data
-																								.getJSONArray("circles"));
+																				app.dataHandler
+																						.sendMessage(
+																								app.dataHandler.HANDLER_CIRCLE,
+																								data.getJSONArray("circles"));
 																				notifyDataSetChanged();
 																			} catch (JSONException e) {
 																				// TODO
@@ -245,6 +245,12 @@ public class NewFriendsFragment extends BaseListFragment {
 		TextView tv_waitagree;
 		Button btn_agree;
 		TextView tv_added;
+	}
+
+	@Override
+	public void onResume() {
+		app.mark = app.newFriendsFragment;
+		super.onResume();
 	}
 
 }
