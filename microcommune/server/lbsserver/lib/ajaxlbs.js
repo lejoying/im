@@ -26,8 +26,7 @@ var defaultSetting = {
     },
     timeout: 10,
     type: 'GET', // GET, POST
-    url: "www.baidu.com",
-    ajaxType: ""// FORM
+    url: "www.baidu.com"
 };
 
 /**
@@ -68,7 +67,7 @@ function ajax(settings) {
     };
 
     if (settings.data != null && settings.type != "POST") {
-        options.path += "?"
+        options.path += "?";
         for (var key in settings.data) {
             options.path = options.path + "&" + key + "=" + settings.data[key];
         }
@@ -82,6 +81,8 @@ function ajax(settings) {
     }
 
     var req = httpUnity.request(options,function (res) {
+        console.log('STATUS: ' + res.statusCode);
+//        console.log('HEADERS: ' + JSON.stringify(res.headers));
         var data = '';
         res.on('data',function (chunk) {
             data += chunk;
@@ -109,23 +110,24 @@ function ajax(settings) {
 //    }
 
     if (settings.type === "POST") {
-        if (settings.ajaxType == "FORM") {
-            var postData = "";
-            for (var index in settings.data) {//------WebKitFormBoundaryHMWhxBFVhzOpC1Gm
-                postData += '------WebKitFormBoundaryaOsIU5gGin0NxAG5\r\n';
-                postData += 'Content-Disposition: form-data; name="' + index + '"\r\n';
-                postData += '\r\n';
-                postData += settings.data[index] + '\r\n';
-            }
-            postData += '------WebKitFormBoundaryaOsIU5gGin0NxAG5--\r\n';
-            req.setHeader("Content-Length", postData.length);
-            req.setHeader("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundaryaOsIU5gGin0NxAG5");
-            req.write(postData);
-        } else {
-            var dataStr = querystring.stringify(settings.data);
-            req.setHeader("Content-Length", dataStr.length);
-            req.write(dataStr);
+        var dataStr = querystring.stringify(settings.data);
+
+        var postData = "";
+        for (var index in settings.data) {//------WebKitFormBoundaryHMWhxBFVhzOpC1Gm
+            postData += '------WebKitFormBoundaryaOsIU5gGin0NxAG5\r\n';
+            postData += 'Content-Disposition: form-data; name="' + index + '"\r\n';
+            postData += '\r\n';
+            postData += settings.data[index] + '\r\n';
         }
+        postData += '------WebKitFormBoundaryaOsIU5gGin0NxAG5--\r\n';
+//        console.log(postData);
+        req.setHeader("Content-Length", postData.length);
+        req.setHeader("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundaryaOsIU5gGin0NxAG5");
+//        req.setHeader("Accept", "*/*");
+//        req.setHeader("Accept-Encoding", "gzip,deflate,sdch");
+//        req.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
+//        req.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
+        req.write(postData);
     }
 
     req.setTimeout(settings.timeout);

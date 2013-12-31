@@ -5,11 +5,17 @@ requestHandlers.lbsManage = function (request, response, pathObject, data) {
     if (data == null) {
         return;
     }
-    if (operation == "create") {
-        lbsManage.create(data, response);
+    if (operation == "geotable_create") {
+        lbsManage.geotable_create(data, response);
     }
-    else if (operation == "list") {
-        lbsManage.list(data, response);
+    else if (operation == "geotable_list") {
+        lbsManage.geotable_list(data, response);
+    }
+    else if (operation == "geotable_detail") {
+        lbsManage.geotable_detail(data, response);
+    }
+    else if (operation == "geotable_update") {
+        lbsManage.geotable_update(data, response);
     }
     else if (operation == "poicreate") {
         lbsManage.poicreate(data, response);

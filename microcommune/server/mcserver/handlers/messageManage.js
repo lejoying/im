@@ -27,12 +27,13 @@ messageManage.send = function (data, response) {
         console.log(e);
         return;
     }
+    var time = new Date().getTime();
     var messageOwn = JSON.stringify({
         type: message.type,
         phone: phone,
         phoneto: data.phoneto,
         content: message.content,
-        time: new Date().getTime()
+        time:time
     });
     client.rpush(phone, messageOwn, function (err, reply) {
         if (err != null) {
@@ -50,7 +51,7 @@ messageManage.send = function (data, response) {
                 phone: phone,
                 phoneto: JSON.stringify([phoneto[index]]),
                 content: message.content,
-                time: new Date().getTime()
+                time: time
             });
             client.rpush(phoneto[index], messageOther, function (err, reply) {
                 if (err != null) {
@@ -63,10 +64,11 @@ messageManage.send = function (data, response) {
                     return;
                 }
                 //通知
-                push.inform(phone, phoneto[index], accessKey, "*", {"提示信息": "成功", event: "message"});
+                push.inform(phone, phoneto[index], accessKey, "*", {"提示信息": "成功", event: "message", event_content: {message: JSON.stringify([messageOther])}});
                 //response
                 response.write(JSON.stringify({
-                    "提示信息": "发送成功"
+                    "提示信息": "发送成功",
+                    time: time
                 }));
                 response.end();
             });

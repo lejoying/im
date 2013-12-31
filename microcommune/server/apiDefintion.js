@@ -47,7 +47,7 @@ api = {
             typical: {"phone": "XXX", "accessKey": "XXX"}
         },
         response: {
-            success: {"提示信息": "成功", event: "message" || "newfriend" || "friendaccept", event_content: {phone: "XXX"}},
+            success: {"提示信息": "成功", event: "message" || "newfriend" || "friendaccept", event_content: {phone: "XXX",message:"XXX"}},
             failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
         }
     },
@@ -539,7 +539,7 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", phoneto: [], message: {type: "text" || "image" || "voice", content: "XXX"}}
         },
         response: {
-            success: {"提示信息": "发送成功"},
+            success: {"提示信息": "发送成功", time: "XXX"},
             failed: {"提示信息": "发送失败", "失败原因": "数据异常"}
         }
     },

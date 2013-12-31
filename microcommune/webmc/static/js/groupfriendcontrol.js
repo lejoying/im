@@ -504,28 +504,72 @@ function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, cir
 //    alert(oldCircleRid);
     var circles = circles;
     var tempPhoneIndex = [];
+    var y = 0;
+    var oldCircleId = oldCircleRid;
+    if (oldCircleId == "undefined") {
+        oldCircleId = undefined;
+    }
     A:for (var i = 0; i < circles.length; i++) {
         var accounts = circles[i].accounts;
-        if (JSON.stringify(circles[i].rid) == oldCircleRid) {
+        if (JSON.stringify(circles[i].rid) == oldCircleId) {
             B:for (var j = 0; j < accounts.length; j++) {
-                /*if (phoneTo.length == 0) {
-                 break A;
-                 }*/
                 var account = accounts[j];
                 var index = $.inArray(account.phone, phoneTo);
-                if ($.inArray(account.phone, phoneTo) >= 0) {
-//                    alert($.inArray(account.phone, phoneTo) + "--" + phoneTo);
-//                    accounts.splice(j, 1);//移除数据
+                if (index >= 0) {
+                    y++;
                     tempPhoneIndex.push(j);
-                    phoneTo.splice(index, 1);
-                    ModifyCirclesLocalData(circles, newCircleRid, accounts[j], next);
-                    function next() {
-                        accounts.splice(j, 1);//移除数据
-                        phoneTo.splice(index, 1);
-                    }
-
-                    if (phoneTo.length == 0) {
-
+                    ModifyCirclesLocalData(circles, newCircleRid, account, next);
+                    function next(index) {
+                        var accountsLength = accounts.length;
+                        if (accountsLength < 4 && circles[index].accounts.length < 4) {
+                            $(".js_appGroup_headimg" + account.phone).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+                        } else if (accountsLength < 4 && circles[index].accounts.length > 4) {
+                            $(".js_appGroup_headimg" + account.phone).remove();
+                        } else if (accountsLength > 4 && circles[index].accounts.length < 4) {
+                            if ($(".js_appGroup_headimg" + account.phone).attr("class") == undefined) {
+                                var imageServer = window.globaldata.serverSetting.imageServer;
+                                var img = document.createElement("img");
+                                $(img).css({
+                                    "width": "18px",
+                                    "height": "18px",
+                                    "margin-top": "5px",
+                                    "border-radius": "50%"
+                                });
+                                $(img).attr("class", "js_appGroup_headimg" + account.phone);
+                                $(img).attr("src", imageServer + "/" + account.head + ".png");
+                                $(".js_app_" + i).find(".appGroup").add();
+                                $(img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+//                                alert("头像不存在，创建头像");
+                            }else{
+                                $(".js_appGroup_headimg" + account.phone).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+                            }
+                        }else{
+                            if(circles[index].accounts.length.length < 4){
+                                if ($(".js_appGroup_headimg" + account.phone).attr("class") == undefined) {
+                                    var imageServer = window.globaldata.serverSetting.imageServer;
+                                    var img = document.createElement("img");
+                                    $(img).css({
+                                        "width": "18px",
+                                        "height": "18px",
+                                        "margin-top": "5px",
+                                        "border-radius": "50%"
+                                    });
+                                    $(img).attr("class", "js_appGroup_headimg" + account.phone);
+                                    $(img).attr("src", imageServer + "/" + account.head + ".png");
+                                    $(".js_app_" + i).find(".appGroup").add();
+                                    $(img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+//                                alert("头像不存在，创建头像");
+                                }else{
+                                    $(".js_appGroup_headimg" + account.phone).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+                                }
+                            }
+                        }
+                        if (phoneTo.length == y) {
+                            for (var x = tempPhoneIndex.length - 1; x >= 0; x--) {
+                                accounts.splice(tempPhoneIndex[x], 1);
+                            }
+                        }
+                        window.sessionStorage.setItem("wxgs_circles", JSON.stringify(circles));
                     }
                 } else {
                     continue;
@@ -537,16 +581,19 @@ function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, cir
     }
 }
 function ModifyCirclesLocalData(circles, newCircleRid, account, next) {
-//    alert(account + "--");
-//    next();
-    var circles = circles;
+//    var circles = circles;
+    var newCircleId = newCircleRid;
+    if (newCircleId == "undefined") {
+        newCircleId = undefined;
+    }
     C:for (var i = 0; i < circles.length; i++) {
         var circle = circles[i];
-        if (JSON.stringify(circle.rid) == newCircleRid) {
+//        alert(JSON.stringify(circle.rid) == undefined);
+        if (JSON.stringify(circle.rid) == newCircleId) {
             var accounts = circle.accounts;
             accounts.push(account);
-            alert(account.phone);
             window.sessionStorage.setItem("wxgs_circles", JSON.stringify(circles));
+            next(i);
             break C;
         } else {
             continue;
