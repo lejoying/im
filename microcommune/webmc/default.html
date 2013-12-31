@@ -165,22 +165,24 @@
 <div class="chatListSearch">
     <div class="chatListSearchPanel">
         <div class="listOperatorContent">
-            <div id="js_chooseConversationBtn" un="conversation" class="conmu left active" style="width: 62px;"><a
-                    title="聊天" href="javascript:;" class="conmuButton"><img src="static/images/chat.png"
-                                                                            style=" margin-top:7px; height:23px; width:23px;"/><span
-                    style="display:none;" class="unreadDot">0</span></a></div>
-            <div class="cutOffRule"></div>
-            <div id="js_txlBtn" un="conversation" class="conmu left active" style="width: 62px;"><a title="好友"
-                                                                                                    href="javascript:;"
-                                                                                                    class="conmuButton"><span
-                    style="display:none;" class="unreadDot" id="totalUnreadDot">0</span></a></div>
-            <div class="cutOffRule"></div>
-            <div un="contact" id="js_circleBtn" class="addr notChooseOpera right" style="width: 62px;float: left;"><a
-                    title="密友圈" href="javascript:;" class="closefriend_icon"></a></div>
-            <div class="cutOffRule"></div>
+            <a title="聊天" href="javascript:;" class="conmuButton_chat">
+                <div id="js_chooseConversationBtn" un="conversation" class="conmu left active" style="width: 70px;height:40px;margin-left: -28px;margin-top: -10px">
+                </div>
+            </a>
+            <div class="cutOffRule" style="margin-left: 15px"></div>
+            <a title="好友" href="javascript:;" class="conmuButton">
+                <div id="js_txlBtn" un="conversation" class="conmu left active" style="width: 65px;height:40px;margin-left: -20px;margin-top: -10px">
+                </div>
+            </a>
+            <div class="cutOffRule" style="margin-left: 20px"></div>
+            <a title="密友圈" href="javascript:;" class="closefriend_icon">
+                <div un="contact" id="js_circleBtn" class="addr notChooseOpera right" style="width: 65px;float: left;height:40px;margin-left: -20px;margin-top: -10px">
+                </div>
+            </a>
+            <div class="cutOffRule" ></div>
             <a title="应用" href="javascript:;" class="js_appButton">
-                <div un="publicapp" id="js_publicapp" class="publicapp notChooseOpera right"
-                     style="width: 62px;float: left;"><span class="js_appbag"></span></div>
+                <div un="publicapp" id="js_publicapp" class="publicapp notChooseOpera right" style="width: 65px;float: left;height: 40px;margin-top: -10px;margin-left: -20px">
+                </div>
             </a>
         </div>
         <!--<div class="chatListSearchInput left"> <span class="chatListSearchIcon left"></span>
@@ -511,8 +513,7 @@
 </div>
 
 <!--conmunication and chat-->
-<div style="width: 32px; position: relative; float: left; overflow: hidden; margin-top: 135px; visibility: visible; height: 322px;"
-     id="vernierContainer">
+<div style="width: 32px; position: relative; float: left; overflow: hidden; margin-top: 135px; visibility: visible; height: 322px;" id="vernierContainer">
     <div class="activeChatVernier" style="top: 20px;"><img src="static/images/spacer17ced3.gif"></div>
 </div>
 <div style="visibility:visible;" class="chat lightBorder">
@@ -521,7 +522,6 @@
             <div class="chatTitle">
                 <div class="organization">
                     <p>联谊会</p>
-
                     <p id="peonumber" style="font-family:'微软雅黑';font-size:12px;">(15人)</p>
                 </div>
                 <div class="iconleft">
@@ -532,17 +532,13 @@
 
                     <div class="name"> 萨芬</div>
                 </div>
-
                 <div class="member">
                     <a class="username" href="javascript:;"><img src="static/images/sundasheng.png" class="iconname">
                     </a>
-
                     <div class="name">孙大圣</div>
                 </div>
-
                 <div class="member">
                     <a class="username" href="javascript:;"><img src="static/images/yaoqing.png"> </a>
-
                     <div class="name">邀请</div>
                 </div>
                 <div class="iconright">
@@ -552,7 +548,6 @@
                     <a class="more_icon" href="javascript:;"></a>
                 </div>
             </div>
-
             <div id="chatFrame" class="chatScorll" style="height: 343px; overflow-y: hidden; position: relative;">
                 <div class="chatContent" id="chat_chatmsglist" ctrl="1" style="top: 0px; position: absolute;">
                     <!--<div class="noMsgIip" id="noMsgTip">-->
@@ -564,13 +559,9 @@
             </div>
             <div class="chatOperator lightBorder" id="chat_editor" ctrl="1">
                 <div class="inputArea">
-                    <div class="attach"><a title="选择表情" click="showEmojiPanel" class="func expression"
-                                           id="sendEmojiIcon" href="javascript:;"></a> <a style="" title="发送截屏"
-                                                                                          click="screenSnap"
-                                                                                          class="func screensnap"
-                                                                                          id="screenSnapIcon"
-                                                                                          href="javascript:;"></a>
-
+                    <div class="attach">
+                        <a title="选择表情" click="showEmojiPanel" class="func expression" id="sendEmojiIcon" href="javascript:;"></a>
+                        <a style="" title="发送截屏" click="screenSnap" class="func screensnap" id="screenSnapIcon" href="javascript:;"></a>
                         <form style="" target="actionFrame" method="post" enctype="multipart/form-data"
                               url="http://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?cgi=sendfile&amp;t=chat&amp;callbackfun=sendFile"
                               id="sendFileIcon" class="left">
@@ -579,9 +570,7 @@
                                class="func file" href="javascript:;">
                                 <div style="position: absolute;top:0;left:0; width: 100%; height: 100%;overflow:hidden;filter:alpha(opacity=0);opacity:0;cursor:pointer;">
                                     <div>
-                                        <input type="file"
-                                               style="width:100%;height:100%;margin:0;cursor:pointer;font-size:100px;"
-                                               name="filename" change="sendAppMsg@form">
+                                        <input type="file" style="width:100%;height:100%;margin:0;cursor:pointer;font-size:100px;" name="filename" change="sendAppMsg@form">
                                     </div>
                                 </div>
                             </a>
@@ -589,11 +578,10 @@
                     </div>
                     <textarea class="chatInput lightBorder" id="textInput" type="text" style=""></textarea>
                     <a click="sendMsg@.inputArea" class="chatSend" href="javascript:;"><b>发送</b></a>
-
                     <div style="display:none;" class="recordInput chatInput" id="recordInput"></div>
                     <div class="clr"></div>
-                    <textarea class="chatInput lightBorder" id="textInput1" type="text"
-                              style="visibility: hidden; position: absolute; left: -1000px; padding: 0px 10px; width: 403px; overflow: hidden;"></textarea>
+                    <textarea class="chatInput lightBorder" id="textInput1" type="text" style="visibility: hidden; position: absolute; left: -1000px; padding: 0px 10px; width: 403px; overflow: hidden;">
+                    </textarea>
                 </div>
             </div>
         </div>
