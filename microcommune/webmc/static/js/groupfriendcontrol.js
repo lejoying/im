@@ -521,11 +521,12 @@ function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, cir
                     ModifyCirclesLocalData(circles, newCircleRid, account, next);
                     function next(index) {
                         var accountsLength = accounts.length;
-                        if (accountsLength < 4 && circles[index].accounts.length < 4) {
+                        if (accountsLength <= 4 && circles[index].accounts.length <= 4) {
                             $(".js_appGroup_headimg" + account.phone).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
-                        } else if (accountsLength < 4 && circles[index].accounts.length > 4) {
+                        } else if (accountsLength <= 4 && circles[index].accounts.length >= 4) {
                             $(".js_appGroup_headimg" + account.phone).remove();
-                        } else if (accountsLength > 4 && circles[index].accounts.length < 4) {
+                            alert("remove");
+                        } else if (accountsLength >= 4 && circles[index].accounts.length <= 4) {
                             if ($(".js_appGroup_headimg" + account.phone).attr("class") == undefined) {
                                 var imageServer = window.globaldata.serverSetting.imageServer;
                                 var img = document.createElement("img");
@@ -540,11 +541,11 @@ function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, cir
                                 $(".js_app_" + i).find(".appGroup").add();
                                 $(img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
 //                                alert("头像不存在，创建头像");
-                            }else{
+                            } else {
                                 $(".js_appGroup_headimg" + account.phone).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
                             }
-                        }else{
-                            if(circles[index].accounts.length.length < 4){
+                        } else {
+                            if (circles[index].accounts.length.length <= 4) {
                                 if ($(".js_appGroup_headimg" + account.phone).attr("class") == undefined) {
                                     var imageServer = window.globaldata.serverSetting.imageServer;
                                     var img = document.createElement("img");
@@ -559,9 +560,32 @@ function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, cir
                                     $(".js_app_" + i).find(".appGroup").add();
                                     $(img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
 //                                alert("头像不存在，创建头像");
-                                }else{
+                                } else {
                                     $(".js_appGroup_headimg" + account.phone).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
                                 }
+                            } else {
+                                var length = ($("." + newSelectedGroupClass).find(".appGroup").find("img").length);
+                                if (length < 4) {
+                                    if ($(".js_appGroup_headimg" + account.phone).attr("class") == undefined) {
+                                        var imageServer = window.globaldata.serverSetting.imageServer;
+                                        var img = document.createElement("img");
+                                        $(img).css({
+                                            "width": "18px",
+                                            "height": "18px",
+                                            "margin-top": "5px",
+                                            "border-radius": "50%"
+                                        });
+                                        $(img).attr("class", "js_appGroup_headimg" + account.phone);
+                                        $(img).attr("src", imageServer + "/" + account.head + ".png");
+                                        $(".js_app_" + i).find(".appGroup").add();
+                                        $(img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+//                                alert("头像不存在，创建头像");
+                                    } else {
+                                        $(".js_appGroup_headimg" + account.phone).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
+                                    }
+                                }
+                                var length = ($("." + oldSelectedGroupClass).find(".appGroup").find("img").length);
+
                             }
                         }
                         if (phoneTo.length == y) {
