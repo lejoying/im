@@ -16,6 +16,7 @@ import com.lejoying.mc.data.DataHandler;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.SHA1;
 
 public class WelcomeActivity extends BaseFragmentActivity {
 
@@ -31,10 +32,8 @@ public class WelcomeActivity extends BaseFragmentActivity {
 			app.dataHandler = new DataHandler();
 		}
 		app.dataHandler.sendMessage(app.dataHandler.HANDLER_GETCONFIGANDDATA,
-				this);
-
+				app.dataHandler.DOSYNC, this);
 		start = new Date().getTime();
-
 		if (app.config.lastLoginPhone.equals("none")
 				|| app.data.user.accessKey == null) {
 			startToLogin();
@@ -61,12 +60,12 @@ public class WelcomeActivity extends BaseFragmentActivity {
 
 						@Override
 						public void noInternet() {
-							// TODO Auto-generated method stub
+							startToMain();
 						}
 
 						@Override
 						public void failed() {
-							startToLogin();
+							startToMain();
 						}
 
 						@Override

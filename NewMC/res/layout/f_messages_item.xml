@@ -29,7 +29,6 @@
                 android:layout_marginRight="15dp"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="在吗啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊 啊 啊？"
                 android:textColor="#fff"
                 android:textSize="14sp" />
         </RelativeLayout>

@@ -2,10 +2,12 @@ package com.lejoying.mc;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.view.KeyEvent;
 
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.fragment.FriendsFragment;
+import com.lejoying.utils.SHA1;
 
 public class MainActivity extends BaseFragmentActivity {
 
@@ -36,7 +38,7 @@ public class MainActivity extends BaseFragmentActivity {
 		super.onPause();
 		System.out.println("pause");
 		app.dataHandler.sendMessage(app.dataHandler.HANDLER_SAVECONFIGANDDATA,
-				this);
+				app.dataHandler.DOSYNC, this);
 	}
 
 	@Override

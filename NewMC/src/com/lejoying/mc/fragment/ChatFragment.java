@@ -1,5 +1,9 @@
 package com.lejoying.mc.fragment;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -7,18 +11,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
+import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Message;
@@ -35,6 +52,8 @@ import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.SHA1;
+import com.lejoying.utils.StreamTools;
 
 public class ChatFragment extends BaseListFragment {
 
@@ -43,12 +62,18 @@ public class ChatFragment extends BaseListFragment {
 	private View mContent;
 	public ChatAdapter mAdapter;
 
+	public final int RESULT_SELECTPICTURE = 0x4232;
+
 	LayoutInflater mInflater;
 
 	View iv_send;
 	View iv_more;
+	View iv_more_select;
 	EditText et_message;
 	RelativeLayout rl_chatbottom;
+	RelativeLayout rl_message;
+	RelativeLayout rl_select;
+	View rl_selectpicture;
 
 	int beforeHeight;
 	int beforeLineHeight;
@@ -84,6 +109,46 @@ public class ChatFragment extends BaseListFragment {
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
+
+			Uri selectedImage = data.getData();
+
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+			Cursor cursor = getActivity().getContentResolver().query(
+					selectedImage,
+
+					filePathColumn, null, null, null);
+
+			cursor.moveToFirst();
+
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+
+			String picturePath = cursor.getString(columnIndex);
+
+			cursor.close();
+
+			Bitmap image = BitmapFactory.decodeFile(picturePath);
+			try {
+				InputStream inputStream = new FileInputStream(new File(
+						picturePath));
+				byte[] b = StreamTools.isToData(inputStream);
+				if (b != null) {
+					System.out.println(new SHA1().getDigestOfString(Base64
+							.encode(b, Base64.DEFAULT)));
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mInflater = inflater;
@@ -101,12 +166,105 @@ public class ChatFragment extends BaseListFragment {
 				});
 			}
 		});
+
 		app.nowChatFriend.notReadMessagesCount = 0;
 		iv_send = mContent.findViewById(R.id.iv_send);
 		iv_more = mContent.findViewById(R.id.iv_more);
+		iv_more_select = mContent.findViewById(R.id.iv_more_select);
 		et_message = (EditText) mContent.findViewById(R.id.et_message);
 		rl_chatbottom = (RelativeLayout) mContent
 				.findViewById(R.id.rl_chatbottom);
+		rl_message = (RelativeLayout) mContent.findViewById(R.id.rl_message);
+		rl_select = (RelativeLayout) mContent.findViewById(R.id.rl_select);
+		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
+
+		rl_selectpicture.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(
+						Intent.ACTION_PICK,
+						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				startActivityForResult(i, RESULT_SELECTPICTURE);
+			}
+		});
+
+		iv_more.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				showSelectTab();
+			}
+		});
+
+		iv_more_select.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				hideSelectTab();
+			}
+		});
+
+		final GestureDetector gestureDetector = new GestureDetector(
+				getActivity(), new OnGestureListener() {
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public void onShowPress(MotionEvent e) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public void onLongPress(MotionEvent e) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onFling(MotionEvent e1, MotionEvent e2,
+							float velocityX, float velocityY) {
+						boolean flag = false;
+						if (e2.getX() - e1.getX() > 0 && velocityX > 2000) {
+							showSelectTab();
+							flag = true;
+						}
+						return flag;
+					}
+
+					@Override
+					public boolean onDown(MotionEvent e) {
+						return false;
+					}
+				});
+
+		et_message.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return gestureDetector.onTouchEvent(event);
+			}
+		});
+
+		iv_more.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return gestureDetector.onTouchEvent(event);
+			}
+		});
 
 		et_message.addTextChangedListener(new TextWatcher() {
 
@@ -228,6 +386,48 @@ public class ChatFragment extends BaseListFragment {
 		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 	}
 
+	public void showSelectTab() {
+		hideSoftInput();
+		Animation outAnimation = new TranslateAnimation(0,
+				rl_chatbottom.getWidth(), 0, 0);
+		outAnimation.setDuration(150);
+		outAnimation.setAnimationListener(new AnimationAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				rl_message.setVisibility(View.GONE);
+				rl_message.clearAnimation();
+			}
+		});
+		rl_message.startAnimation(outAnimation);
+
+		Animation inAnimation = new TranslateAnimation(
+				-rl_chatbottom.getWidth(), 0, 0, 0);
+		inAnimation.setDuration(150);
+		rl_select.setVisibility(View.VISIBLE);
+		rl_select.startAnimation(inAnimation);
+	}
+
+	public void hideSelectTab() {
+		Animation outAnimation = new TranslateAnimation(0,
+				-rl_chatbottom.getWidth(), 0, 0);
+		outAnimation.setDuration(150);
+		outAnimation.setAnimationListener(new AnimationAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				rl_select.setVisibility(View.GONE);
+				rl_message.clearAnimation();
+			}
+		});
+		rl_select.startAnimation(outAnimation);
+
+		Animation inAnimation = new TranslateAnimation(
+				rl_chatbottom.getWidth(), 0, 0, 0);
+		inAnimation.setDuration(150);
+		rl_message.setVisibility(View.VISIBLE);
+		et_message.requestFocus();
+		rl_message.startAnimation(inAnimation);
+	}
+
 	public class ChatAdapter extends BaseAdapter {
 
 		@Override
@@ -269,41 +469,65 @@ public class ChatFragment extends BaseListFragment {
 					convertView = mInflater.inflate(R.layout.f_chat_item_left,
 							null);
 					break;
-
 				default:
 					break;
 				}
 				messageHolder = new MessageHolder();
+				messageHolder.text = convertView.findViewById(R.id.rl_chatleft);
+				messageHolder.image = convertView
+						.findViewById(R.id.rl_chatleft_image);
+				messageHolder.iv_image = (ImageView) convertView
+						.findViewById(R.id.iv_image);
+				messageHolder.tv_nickname = (TextView) convertView
+						.findViewById(R.id.tv_nickname);
 				messageHolder.iv_head = (ImageView) convertView
 						.findViewById(R.id.iv_head);
 				messageHolder.tv_chat = (TextView) convertView
 						.findViewById(R.id.tv_chat);
-				messageHolder.tv_chattime = (TextView) convertView
-						.findViewById(R.id.tv_chattime);
 				convertView.setTag(messageHolder);
 			} else {
 				messageHolder = (MessageHolder) convertView.getTag();
 			}
-			messageHolder.tv_chat
-					.setText(((Message) getItem(position)).content);
-			switch (type) {
-			case Message.MESSAGE_TYPE_SEND:
-				messageHolder.iv_head.setImageBitmap(headman);
-				break;
-			case Message.MESSAGE_TYPE_RECEIVE:
-				messageHolder.iv_head.setImageBitmap(headwoman);
-				break;
-			default:
-				break;
+			Message message = (Message) getItem(position);
+			if (message.messageType.equals("text")) {
+				messageHolder.tv_chat.setText(message.content);
+				switch (type) {
+				case Message.MESSAGE_TYPE_SEND:
+					messageHolder.iv_head.setImageBitmap(headman);
+					break;
+				case Message.MESSAGE_TYPE_RECEIVE:
+					messageHolder.iv_head.setImageBitmap(headwoman);
+					break;
+				default:
+					break;
+				}
+			} else if (message.messageType.equals("image")) {
+				messageHolder.text.setVisibility(View.GONE);
+				switch (type) {
+				case Message.MESSAGE_TYPE_SEND:
+					break;
+				case Message.MESSAGE_TYPE_RECEIVE:
+					messageHolder.tv_nickname
+							.setText(app.nowChatFriend.nickName);
+					break;
+				default:
+					break;
+				}
+			} else if (message.messageType.equals("voice")) {
+
 			}
 			return convertView;
 		}
 	}
 
 	class MessageHolder {
+		View text;
 		ImageView iv_head;
 		TextView tv_chat;
-		TextView tv_chattime;
+
+		View image;
+		ImageView iv_image;
+		TextView tv_nickname;
 	}
 
 	public Bundle generateParams(String text) {
