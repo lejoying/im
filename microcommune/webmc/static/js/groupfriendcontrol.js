@@ -1,3 +1,4 @@
+var allCirclesFriends = {};
 var dropStatus = "none";
 var mouseX = 0;
 var mouseY = 0;
@@ -52,8 +53,15 @@ $(document).ready(function () {
             if (data["提示信息"] == "获取密友圈成功") {
                 getTemplateHtml("circles_friends", function (template) {
                     $(".js_groups").html(template.render(data.circles));
-
-
+                    for (var index in data.circles) {
+                        var circle = (data.circles)[index];
+                        var accounts = circle.accounts;
+                        for (var i = 0; i < accounts.length; i++) {
+                            var account = accounts[i];
+                            account.rid = circle.rid;
+                            allCirclesFriends[account.phone] = account;
+                        }
+                    }
                     window.sessionStorage.setItem("wxgs_circles", JSON.stringify(data.circles));
                     var clickGroupIndex = -1;
                     $(".appGroup").each(function (i) {
@@ -102,6 +110,7 @@ $(document).ready(function () {
                                     $("#ScroLine").css("height", "214");
                                 }
                                 $(".user_icon").longPress(200, function (e, x, y) {
+                                    $(".js_menuPanel").show();
                                     $(".popmenuFrame").css({
                                         marginTop: "500px"
                                     });
@@ -259,13 +268,15 @@ $(document).ready(function () {
         var phone = icon.find("span").attr("phone");
         var circle_rid = $(this.parentNode.parentNode.parentNode).find(".schoolmate_txt").attr("circle_rid");
         if (icon.hasClass("js_none")) {
-            icon.removeClass("js_none");
+
             if (event.ctrlKey && event.button == 0) {
+                icon.removeClass("js_none");
                 icon.addClass("js_selected");
                 selectedDropUsers[phone] = circle_rid;
             } else {
-                icon.addClass("js_none");
-                delete selectedDropUsers[phone];
+                alert(JSON.stringify(allCirclesFriends[phone]));//获取当前聊天用户的信息
+//                icon.addClass("js_none");
+//                delete selectedDropUsers[phone];
             }
         } else {
             icon.removeClass("js_selected");
@@ -496,6 +507,9 @@ $(document).ready(function () {
     $(document).on("mouseover", ".js_blackListFriend", function () {
         alert("黑名单-js_blackListFriend");
     });
+    /* $(document).on("click", ".js_user_icon", function () {
+     alert($(this).find("span").attr("phone"));
+     });*/
 });
 function getScroll() {
 
@@ -633,7 +647,7 @@ function addCircleGroup(circleName) {
         data: {
             phone: accountObj.phone,
             accessKey: accountObj.accessKey,
-            circleName: circleName
+            name: circleName
         },
         success: function (data) {
             if (data["提示信息"] == "添加成功") {

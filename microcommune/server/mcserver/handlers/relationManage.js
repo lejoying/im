@@ -3,6 +3,7 @@ var relationManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var push = require('../lib/push.js');
+var sha1 = require('../tools/sha1.js');
 
 /***************************************
  *     URL：/api2/relation/addfriend

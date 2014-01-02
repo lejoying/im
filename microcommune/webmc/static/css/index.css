@@ -1538,14 +1538,15 @@ a.btnSecondary:active {
 }
 .chatTitle .member .name {
     text-align: center;
-    width: 50px;
+    /*width: 50px;*/
     float: left;
+    /*font-size: 18px;*/
 }
 .chatTitle .member .iconname {
     text-align: center;
 }
 a.conmuButton_chat:link{    /*聊天图标*/
-    background: url(/static/images/weixinggongshe_button.png) no-repeat scroll -19px -63px ;
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -19px -63px ;
     float: left;
     width: 25px;
     height:18px;
@@ -1556,7 +1557,7 @@ a.conmuButton_chat:active{
     background-position: -19px -88px;
 }
 a.conmuButton:link{ /*好友图标*/
-    background: url(/static/images/weixinggongshe_button.png) no-repeat scroll -52px -83px ;
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -52px -83px ;
     float: left;
     width: 25px;
     height:18px;
@@ -1567,7 +1568,7 @@ a.conmuButton:active{
     background-position: -52px -60px;
 }
 a.closefriend_icon:link{    /*密友圈图标*/
-    background: url(/static/images/weixinggongshe_button.png) no-repeat scroll -85px -83px ;
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -85px -83px ;
     float: left;
     width: 44px;
     height: 20px;
@@ -1582,7 +1583,7 @@ a.closefriend_icon:active{
 }
 a.js_appButton {
     /*应用 */
-    background: url(/static/images/weixinggongshe_button.png) no-repeat scroll -114px -20px;
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -114px -20px;
     float: left;
     width: 21px;
     height: 22px;
@@ -1593,7 +1594,7 @@ a.js_appButton {
 
 a.left_icon:link {
     /*向左 */
-    background: url(/static/images/weixinggongshe_button.png) no-repeat scroll -20px -48px;
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -20px -48px;
     display: block;
     float: left;
     margin-top: 30px;
