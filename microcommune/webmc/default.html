@@ -135,7 +135,8 @@
 <div class="list" id="chat_leftpanel" ctrl="1">
 <div class="top">
     <div class="title" id="profile">
-        <div class="myProfile"><img class="js_accountHead" un="avatar_wxid_7832428324312" src="static/images/face.jpg">
+        <div class="myProfile"><img class="js_accountHead" un="avatar_wxid_7832428324312"
+                                    src="static/images/webwxgeticonhead.jpg">
 
             <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar"></div>
             <a style="display:none;" href="javascript:;" id="unreadTotalCount" class="unreadTotalCount">0</a>
@@ -168,7 +169,7 @@
 <div class="chatListSearch">
     <div class="chatListSearchPanel">
         <div class="listOperatorContent">
-            <a title="聊天" href="javascript:;" class="conmuButton_chat">
+            <a title="聊天" href="javascript:;" class="conmuButton_chat js_selectedPanel">
                 <div id="js_chooseConversationBtn" un="conversation" class="conmu left active"
                      style="width: 70px;height:40px;margin-left: -28px;margin-top: -10px">
                 </div>
@@ -584,10 +585,11 @@
                 </div>
             </div>
             <div id="chatFrame" class="chatScorll" style="height: 343px; overflow-y: hidden; position: relative;">
-                <div class="chatContent js_chatContents" id="chat_chatmsglist" ctrl="1" style="top: 0px; position: absolute;">
+                <div class="chatContent js_chatContents" id="chat_chatmsglist" ctrl="1"
+                     style="top: 0px; position: absolute;">
                     <div class="noMsgIip" id="noMsgTip">
-                    <div class="noMsgTipPic"></div>
-                    <p>暂时没有新消息</p>
+                        <div class="noMsgTipPic"></div>
+                        <p>暂时没有新消息</p>
                     </div>
 
                 </div>
@@ -632,68 +634,69 @@
 </div>
 </div>
 </div>
-</div><!--<?js var post = JSON.parse(post1); ?>-->
+</div>
+<!--<?js var post = JSON.parse(post1); ?>-->
 <!--<?js var content = JSON.parse(post.content); ?>-->
 <div class="templates hide">
     <div class="js_chatmessagetemplate" id="js_chatmessagetemplate">
         <!--左右消息模版-->
-        <?js var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")); ?>
-        <?js var beforeTime = "";var x=0; ?>
+        <?js var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone; ?>
+        <?js var beforeTime = ""; ?>
         <?js for(var index in it) { ?>
-            <?js var post1 = JSON.parse(it[index]); ?>
-            <?js if(post1 == null) { ?>
-            <?js continue; ?>
-            <?js } ?>
-            <?js if(x==0){beforeTime = formattertime(post1.time);}x++; ?>
-            <?js if(post1.phone!=phone) { ?>
-                <div un="item_2070333132" class="chatItem you">
-                    <div class="time"><span class="timeBg left"></span>
-                        <?js if(beforeTime==formattertime(post1.time) || beforeTime==""){ ?>
-                            #{beforeTime}
-                        <?js }else{ ?>
-                            #{formattertime(post1.time)}
-                        <?js } ?>
-                        <span class="timeBg right"></span></div>
-                    <div class="chatItemContent"><img username="gh_c639eef72f78" click="showProfile" title="云上"
-                                                      un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)"
-                                                      src="static/images/webwxgeticon4.jpg" class="avatar">
+        <?js var post1 = JSON.parse(it[index]); ?>
+        <?js if(post1 == null) { ?>
+        <?js continue; ?>
+        <?js } ?>
+        <?js if(post1.phone!=phone) { ?>
+        <div un="item_2070333132" class="chatItem you">
+            <div class="time"><span class="timeBg left"></span>
+                #{formattertime(post1.time)}
+                <span class="timeBg right"></span></div>
+            <div class="chatItemContent"><img username="gh_c639eef72f78" click="showProfile" title="云上"
+                                              un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)"
+                                              src="static/images/webwxgeticon4.jpg" class="avatar">
 
-                        <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
-                            <div style="" class="cloudPannel">
-                                <div class="sendStatus"></div>
-                                <div class="cloudBody">
-                                    <div class="cloudContent">
-                                        <?js var content = post1.content; ?>
-                                        <?js content = content.substr(content.indexOf('"')+1,content.indexOf('"}')-content.indexOf('"')-1); ?>
-                                        <pre style="white-space:pre-wrap">#{content}</pre>
-                                    </div>
-                                </div>
-                                <div class="cloudArrow "></div>
+                <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
+                    <div style="" class="cloudPannel">
+                        <div class="sendStatus"></div>
+                        <div class="cloudBody">
+                            <div class="cloudContent">
+                                <pre style="white-space:pre-wrap">#{post1.content}</pre>
                             </div>
                         </div>
+                        <div class="cloudArrow "></div>
                     </div>
                 </div>
-            <?js } else { ?>
-                <div un="item_1377586579199" class="chatItem me">
-                    <div class="time"><span class="timeBg left"></span> formattertime(post1.time)<span class="timeBg right"></span></div>
-                    <div class="chatItemContent"><img username="wxid_7832428324312" click="showProfile" title="123"
-                                                      un="avatar_wxid_7832428324312" onerror="reLoadImg(this)"
-                                                      src="static/images/face.jpg" class="avatar">
+            </div>
+        </div>
+        <?js } else { ?>
+        <div un="item_1377586579199" class="chatItem me">
+            <div class="time">
+                <?js if(beforeTime != formattertime(post1.time)) { ?>
+                <span class="timeBg left"></span>
+                #{formattertime(post1.time)}
+                <span class="timeBg right"></span>
+                <?js } ?>
+            </div>
+            <div class="chatItemContent"><img username="wxid_7832428324312" click="showProfile" title="123"
+                                              un="avatar_wxid_7832428324312" onerror="reLoadImg(this)"
+                                              src="static/images/face.jpg" class="avatar">
 
-                        <div msgid="2070333140" un="cloud_2070333140" class="cloud cloudText">
-                            <div style="" class="cloudPannel">
-                                <div class="sendStatus"></div>
-                                <div class="cloudBody">
-                                    <div class="cloudContent">
-                                        <pre style="white-space:pre-wrap">content</pre>
-                                    </div>
-                                </div>
-                                <div class="cloudArrow "></div>
+                <div msgid="2070333140" un="cloud_2070333140" class="cloud cloudText">
+                    <div style="" class="cloudPannel">
+                        <div class="sendStatus"></div>
+                        <div class="cloudBody">
+                            <div class="cloudContent">
+                                <pre style="white-space:pre-wrap">#{post1.content}</pre>
                             </div>
                         </div>
+                        <div class="cloudArrow "></div>
                     </div>
                 </div>
-            <?js } ?>
+            </div>
+        </div>
+        <?js } ?>
+        <?js beforeTime = formattertime(post1.time); ?>
         <?js } ?>
     </div>
 </div>

@@ -1553,7 +1553,7 @@ a.conmuButton_chat:link{    /*聊天图标*/
     margin-top: 9px;
     margin-left: 20px;
 }
-a.conmuButton_chat:active{
+a.conmuButton_chatStyle{
     background-position: -19px -88px;
 }
 a.conmuButton:link{ /*好友图标*/
@@ -1564,7 +1564,7 @@ a.conmuButton:link{ /*好友图标*/
     margin-top: 10px;
     margin-left: 20px;
 }
-a.conmuButton:active{
+.conmuButtonStyle{
     background-position: -52px -60px;
 }
 a.closefriend_icon:link{    /*密友圈图标*/
@@ -1575,7 +1575,7 @@ a.closefriend_icon:link{    /*密友圈图标*/
     margin-top: 11px;
     margin-left: 20px;
 }
-a.closefriend_icon:active{
+a.closefriend_iconStyle{
     background-position: -85px -61px;
     width: 25px;
     height: 19px;

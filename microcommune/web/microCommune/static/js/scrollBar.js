@@ -212,7 +212,7 @@ $(document).ready(function () {
             }
         }
     }
-    new addScroll($('#mainBox')[0], $('#conversationListContent')[0], 'scrollDiv');
+//    new addScroll($('#mainBox')[0], $('#conversationListContent')[0], 'scrollDiv');
     new addScroll($('#chatFrame')[0], $('#chat_chatmsglist')[0], 'scrollDiv');
 });
 $(document).ready(function () {

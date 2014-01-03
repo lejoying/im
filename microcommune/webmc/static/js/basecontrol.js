@@ -6,4 +6,12 @@ $(function () {
         $(".js_morefriend").slideDown(500, function () {
         });
     });
+    $(".listOperatorContent>a").click(function () {
+
+
+        alert(this.title == "好友");
+        /*$(this).css({
+            "background-position": "-52px -60px"
+        });*/
+    });
 });

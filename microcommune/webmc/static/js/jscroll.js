@@ -114,6 +114,7 @@ window.onload = function(){
             //p.style.height=_height+"px";
             p.style.height="100%";
             p.style.left=_left+"px";
+//            p.style.top="200px";
             p.style.position="absolute";
             p.style.opacity="0.8";
             //p.style.background="#ccc";
@@ -128,7 +129,7 @@ window.onload = function(){
 			} else {
 				countNum = mainBox.clientHeight / contentBox.clientHeight;
 			}
-            element.style.height= (mainBox.clientHeight) *countNum + "px";
+            element.style.height= (mainBox.clientHeight) *countNum-40 + "px";
         },
         //拖动滚动条
         _tragScroll:function(element,mainBox,contentBox){
@@ -192,7 +193,12 @@ window.onload = function(){
                         wheelFlag=(mainBox.clientHeight-element.offsetHeight)*12;
 
                     }
-                    element.style.top=flag+"px";
+                    if(flag-31>0){
+                        element.style.top=flag-31+"px";
+                    }else{
+                        element.style.top=flag+"px";
+                    }
+
                     contentBox.style.top=-flag*(contentBox.offsetHeight/mainBox.offsetHeight)+"px";
                 });
             }
@@ -212,7 +218,7 @@ window.onload = function(){
                     _top=mainBox.clientHeight-element.offsetHeight;
                 }
                 if(t!=element){
-                    element.style.top=_top+"px";
+                    element.style.top=_top-50+"px";
                     contentBox.style.top=-_top*(contentBox.offsetHeight/mainBox.offsetHeight)+"px";
                     _wheelData=_top;
                 }

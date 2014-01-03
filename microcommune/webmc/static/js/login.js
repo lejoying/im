@@ -121,7 +121,7 @@ function longRequest(sessionID) {
                 }
             },
             error: function () {
-                request(sessionID);
+                longRequest(sessionID);
             }
         });
     }

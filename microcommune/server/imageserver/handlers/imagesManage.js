@@ -10,6 +10,7 @@ var sha1 = require('../../mcserver/tools/sha1');
 imagesManage.upload = function (data, response) {
     response.asynchronous = 1;
     var fileName = data.filename;
+    fileName = fileName.toLowerCase();
     var imageStr = data.imagedata;
 //    console.log(imageStr);
     if (fileName == null || imageStr == null || fileName == "" || imageStr == "" || fileName == undefined || imageStr == undefined) {
@@ -24,7 +25,7 @@ imagesManage.upload = function (data, response) {
     }
     var base64Data = imageStr.replace(/^data:image\/\w+;base64,/, "");
     var dataBuffer = new Buffer(base64Data, 'base64');
-    fs.writeFile(serverSetting.imageFolder + fileName + ".png", dataBuffer, function (error) {
+    fs.writeFile(serverSetting.imageFolder + fileName, dataBuffer, function (error) {
         if (error) {
             response.write(JSON.stringify({
                 "提示信息": "图片上传失败",
@@ -60,6 +61,7 @@ imagesManage.upload = function (data, response) {
 imagesManage.check = function (data, response) {
     response.asynchronous = 1;
     var fileName = data.filename;
+    fileName = fileName.toLowerCase();
     console.log(fileName);
     if (fileName == null || fileName == undefined || fileName == "") {
         response.write(JSON.stringify({
@@ -123,6 +125,7 @@ imagesManage.check = function (data, response) {
 imagesManage.get = function (data, response) {
     response.asynchronous = 1;
     var fileName = data.filename;
+    fileName = fileName.toLowerCase();
 //    response.writeHead("Content-Type","image/png");
     fs.exists(serverSetting.imageFolder, function (exists) {
         if (!exists) {
@@ -130,7 +133,7 @@ imagesManage.get = function (data, response) {
                 console.log("初始化图片目录成功");
             });
         } else {
-            fs.readFile(serverSetting.imageFolder + fileName + ".png", "base64", function (err, data) {
+            fs.readFile(serverSetting.imageFolder + fileName, "base64", function (err, data) {
                 if (err) {
                     response.write(JSON.stringify({
                         "提示信息": "获取图片失败",
@@ -155,8 +158,10 @@ imagesManage.get = function (data, response) {
 }
 imagesManage.show = function (data, response) {
     response.asynchronous = 1;
+    var fileName = data.filename;
+    fileName = fileName.toLowerCase();
     console.log("request handlers 'show' was called");
-    fs.readFile(serverSetting.imageFolder + data.filename + ".png", "binary", function (error, file) {
+    fs.readFile(serverSetting.imageFolder + fileName, "binary", function (error, file) {
         if (error) {
             console.log(error + "\n");
             response.write(JSON.stringify({

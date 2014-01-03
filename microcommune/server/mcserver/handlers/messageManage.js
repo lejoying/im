@@ -13,10 +13,11 @@ messageManage.send = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
+    var phoneToStr = data.phoneto;
     var phoneto = {};
     var message = {};
     try {
-        phoneto = JSON.parse(data.phoneto);
+        phoneto = JSON.parse(phoneToStr);
         message = JSON.parse(data.message);
     } catch (e) {
         response.write(JSON.stringify({
@@ -31,7 +32,7 @@ messageManage.send = function (data, response) {
     var messageOwn = JSON.stringify({
         type: message.type,
         phone: phone,
-        phoneto: data.phoneto,
+        phoneto: phoneToStr,
         content: message.content,
         time: time
     });

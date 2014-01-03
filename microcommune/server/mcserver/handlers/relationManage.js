@@ -49,7 +49,7 @@ relationManage.addfriend = function (data, response) {
                 var pop = results.pop();
                 var accountData = pop.account2.data;
                 if (accountData.byPhone == "allowed") {
-                    var rNode = results.pop().r;
+                    var rNode = pop.r;
                     var rData = rNode.data;
                     rData.friendStatus = "success";
 //                    rData.message = message;

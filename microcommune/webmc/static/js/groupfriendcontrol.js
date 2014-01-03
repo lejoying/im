@@ -41,7 +41,11 @@ $(document).ready(function () {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $(".js_accountNickName").html(accountObj.nickName + "-Active");
     $(".js_accountNickName").attr("title", accountObj.nickName);
-    $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head + ".png");
+    if (accountObj.head != "") {
+        $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head + ".png");
+    } else {
+        $(".js_accountHead").attr("src", "/static/images/face_man.png");
+    }
     $.ajax({
         type: "POST",
         url: "/api2/relation/getcirclesandfriends?",

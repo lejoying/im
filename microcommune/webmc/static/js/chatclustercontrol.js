@@ -6,26 +6,100 @@ $(function () {
     });
 
     $(document).on("click", ".js_chatsendmessage", function () {
-        alert($(".js_chatmessagecontent").val());
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+        var message = $(".js_chatmessagecontent").val();
+        var listPhone = [];
+        listPhone.push("122");
+        var messageObj = {
+            type: "text",
+            content: message
+        };
+        var sendMessage = [
+            JSON.stringify({type: "text", time: new Date().getTime() + "", phone: accountObj.phone, phoneto: JSON.stringify(listPhone), content: message})
+        ];
+        var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+        $(".js_chatContents").append(js_chatmessagetemplate.render(sendMessage));
+        $.ajax({
+            type: "POST",
+            url: "/api2/message/send?",
+            data: {
+                phone: "121",
+                accessKey: "lejoying",
+                phoneto: JSON.stringify(listPhone),
+                message: JSON.stringify(messageObj)
+            },
+            success: function (data) {
+                if (data["提示信息"] == "发送成功") {
+                    /*var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
+                     $(".scrollDiv").css({
+                     height: height + "px",
+                     top: $(".chatScorll").height()-height
+                     });
+
+                     $(".js_chatContents").css({
+                     top: -300+"px"
+                     });*/
+
+//                    alert(height);
+//                    alert(data["提示信息"]);
+                } else {
+                    alert(data["提示信息"] + "---" + data["失败原因"]);
+                }
+            }
+        });
     });
 
 
 //    alert($(".chatItem[un=item_2070333132]").html());//根据属性值获取对象jQuery对象
 //    js_chatContents
-    getMessages("1", function (data) {
-        console.log(data);
-        console.log(data.messages[0]);
+    getMessages("0", function (data) {
+//        console.log(data);
+//        console.log(data.messages[0]);
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").html(js_chatmessagetemplate.render(data.messages));
+        /*var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
+         $(".scrollDiv").css({
+         height: height + "px"
+         });*/
     });
+    keepQuest();
 });
+function keepQuest() {
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $.ajax({
+        type: "GET",
+        url: "/api2/session/event?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey
+        },
+        success: function (data) {
+            if (data["提示信息"] == "成功") {
+                if (data.event == "message") {
+                    alert("message");
+                } else if (data.event == "newfriend") {
+                    alert("newFriend");
+                } else if (data.event == "friendaccept") {
+                    alert("friendAccept");
+                } else {
+                    alert("神器的效果");
+                }
+            } else {
+                keepQuest();
+            }
+        },
+        error: function () {
+            keepQuest();
+        }
+    });
+}
 function getMessages(flag, next) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "GET",
         url: "/api2/message/get?",
         data: {
-            phone: "15210721344",
+            phone: "121",
             accessKey: accountObj.accessKey,
             flag: flag
         },
