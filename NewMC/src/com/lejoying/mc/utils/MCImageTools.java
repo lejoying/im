@@ -97,7 +97,6 @@ public final class MCImageTools {
 			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,
 					boptions);
 		}
-
 		return bitmap;
 	}
 }

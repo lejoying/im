@@ -351,9 +351,7 @@ public class DataHandler {
 
 						message.messageType = jMessage.getString("type");
 
-						message.content = new JSONObject(
-								jMessage.getString("content"))
-								.getString(message.messageType);
+						message.content = jMessage.getString("content");
 
 						message.status = "sent";
 
