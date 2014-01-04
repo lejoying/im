@@ -14,4 +14,5 @@ $(function () {
             "background-position": "-52px -60px"
         });*/
     });
+    $(".js_morefriend").ond
 });

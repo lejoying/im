@@ -15,7 +15,7 @@ $(function () {
             content: message
         };
         var sendMessage = [
-            JSON.stringify({type: "text", time: new Date().getTime() + "", phone: accountObj.phone, phoneto: JSON.stringify(listPhone), content: message})
+            JSON.stringify({type: "text", time: new Date().getTime(), phone: accountObj.phone, phoneto: JSON.stringify(listPhone), content: message})
         ];
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").append(js_chatmessagetemplate.render(sendMessage));
@@ -30,18 +30,7 @@ $(function () {
             },
             success: function (data) {
                 if (data["提示信息"] == "发送成功") {
-                    /*var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
-                     $(".scrollDiv").css({
-                     height: height + "px",
-                     top: $(".chatScorll").height()-height
-                     });
-
-                     $(".js_chatContents").css({
-                     top: -300+"px"
-                     });*/
-
-//                    alert(height);
-//                    alert(data["提示信息"]);
+                    setScrollPosition();
                 } else {
                     alert(data["提示信息"] + "---" + data["失败原因"]);
                 }
@@ -57,13 +46,22 @@ $(function () {
 //        console.log(data.messages[0]);
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").html(js_chatmessagetemplate.render(data.messages));
-        /*var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
-         $(".scrollDiv").css({
-         height: height + "px"
-         });*/
+        setScrollPosition();
     });
     keepQuest();
 });
+function setScrollPosition() {
+    var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
+    $(".scrollDiv").css({
+        height: height + "px"
+    });
+    $(".scrollDiv").css({
+        "top": $(".chatScorll").height() - height - 30 + "px"
+    });
+    $(".js_chatContents").css({
+        "top": -($(".js_chatContents").height() - $(".chatScorll").height() + 55) + "px"
+    });
+}
 function keepQuest() {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
