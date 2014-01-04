@@ -66,6 +66,8 @@ public class ChatFragment extends BaseListFragment {
 
 	LayoutInflater mInflater;
 
+	SHA1 sha1;
+
 	View iv_send;
 	View iv_more;
 	View iv_more_select;
@@ -99,6 +101,10 @@ public class ChatFragment extends BaseListFragment {
 	public void onResume() {
 		app.mark = app.chatFragment;
 		instance = this;
+		if (sha1 == null) {
+			sha1 = new SHA1();
+		}
+		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		super.onResume();
 	}
 
@@ -113,37 +119,40 @@ public class ChatFragment extends BaseListFragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK && data != null) {
-
 			Uri selectedImage = data.getData();
-
 			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
 			Cursor cursor = getActivity().getContentResolver().query(
-					selectedImage,
-
-					filePathColumn, null, null, null);
-
+					selectedImage, filePathColumn, null, null, null);
 			cursor.moveToFirst();
-
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-
-			String picturePath = cursor.getString(columnIndex);
-
+			final String picturePath = cursor.getString(columnIndex);
+			final String format = picturePath.substring(picturePath
+					.lastIndexOf("."));
 			cursor.close();
 
-			Bitmap image = BitmapFactory.decodeFile(picturePath);
-			try {
-				InputStream inputStream = new FileInputStream(new File(
-						picturePath));
-				byte[] b = StreamTools.isToData(inputStream);
-				if (b != null) {
-					System.out.println(new SHA1().getDigestOfString(Base64
-							.encode(b, Base64.DEFAULT)));
+			new Thread() {
+				public void run() {
+					try {
+						InputStream inputStream = new FileInputStream(new File(
+								picturePath));
+						Bitmap tempImage = MCImageTools
+								.getZoomBitmapFromStream(inputStream, 400, 400);
+						// byte[] b = StreamTools.isToData(inputStream);
+						// if (b != null) {
+						// String base64 = Base64.encodeToString(b,
+						// Base64.DEFAULT);
+						// String uploadFileName = sha1
+						// .getDigestOfString(base64.trim().getBytes())
+						// + format;
+						// System.out.println(uploadFileName);
+						//
+						// }
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			}.start();
 
 		}
 	}
@@ -329,7 +338,7 @@ public class ChatFragment extends BaseListFragment {
 				String message = et_message.getText().toString();
 				et_message.setText("");
 				if (message != null && !message.equals("")) {
-					Bundle params = generateParams(message);
+					Bundle params = generateParams("text", message);
 					MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params,
 							MCHttpTools.SEND_POST, 5000,
 							new ResponseListener() {
@@ -530,11 +539,11 @@ public class ChatFragment extends BaseListFragment {
 		TextView tv_nickname;
 	}
 
-	public Bundle generateParams(String text) {
+	public Bundle generateParams(String type, String content) {
 		Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
-		message.content = text;
-		message.messageType = "text";
+		message.content = content;
+		message.messageType = type;
 		message.time = String.valueOf(new Date().getTime());
 		app.nowChatFriend.messages.add(message);
 		mAdapter.notifyDataSetChanged();
@@ -548,7 +557,7 @@ public class ChatFragment extends BaseListFragment {
 		JSONObject jMessage = new JSONObject();
 		try {
 			jMessage.put("type", "text");
-			jMessage.put("content", "{text:\"" + text + "\"}");
+			jMessage.put("content", content);
 			params.putString("message", jMessage.toString());
 		} catch (JSONException e) {
 		}

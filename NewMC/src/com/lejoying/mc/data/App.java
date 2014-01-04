@@ -1,5 +1,9 @@
 package com.lejoying.mc.data;
 
+import java.util.Hashtable;
+import java.util.Map;
+
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 public class App {
@@ -57,4 +61,5 @@ public class App {
 	public final int SHOW_TEMPFRIEND = 3;
 	public int businessCardStatus;
 	public Friend nowChatFriend;
+	public Map<String, Bitmap> heads = new Hashtable<String, Bitmap>();
 }
