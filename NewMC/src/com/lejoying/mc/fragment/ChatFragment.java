@@ -3,9 +3,14 @@ package com.lejoying.mc.fragment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +56,7 @@ import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.ImageResponseListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 import com.lejoying.utils.SHA1;
 import com.lejoying.utils.StreamTools;
@@ -65,6 +71,8 @@ public class ChatFragment extends BaseListFragment {
 	public final int RESULT_SELECTPICTURE = 0x4232;
 
 	LayoutInflater mInflater;
+
+	Map<String, Bitmap> tempImages = new Hashtable<String, Bitmap>();
 
 	SHA1 sha1;
 
@@ -131,26 +139,306 @@ public class ChatFragment extends BaseListFragment {
 			cursor.close();
 
 			new Thread() {
+				InputStream inputStream = null;
+				FileOutputStream fileOutputStream = null;
+				File tempImage = null;
+				String base64;
+				String uploadFileName;
+				File imageFile;
+				InputStream zoomImageStream;
+
 				public void run() {
 					try {
-						InputStream inputStream = new FileInputStream(new File(
-								picturePath));
-						Bitmap tempImage = MCImageTools
-								.getZoomBitmapFromStream(inputStream, 400, 400);
-						// byte[] b = StreamTools.isToData(inputStream);
-						// if (b != null) {
-						// String base64 = Base64.encodeToString(b,
-						// Base64.DEFAULT);
-						// String uploadFileName = sha1
-						// .getDigestOfString(base64.trim().getBytes())
-						// + format;
-						// System.out.println(uploadFileName);
-						//
-						// }
+						File sourceFile = new File(picturePath);
+						inputStream = new FileInputStream(sourceFile);
+						byte[] tempBytes = StreamTools.isToData(inputStream);
+						if (!MCImageTools.isNeedToZoom(tempBytes, 960, 540)) {
+							base64 = Base64.encodeToString(tempBytes,
+									Base64.DEFAULT);
+							String uploadFile = sha1.getDigestOfString(base64
+									.trim().getBytes()) + format;
+							uploadFileName = uploadFile.toLowerCase(Locale
+									.getDefault());
+							tempImages.put(uploadFileName, BitmapFactory
+									.decodeByteArray(tempBytes, 0,
+											tempBytes.length));
+							imageFile = new File(app.sdcardImageFolder,
+									uploadFileName);
+
+							if (!imageFile.exists()) {
+								StreamTools.copyFile(sourceFile, imageFile,
+										true);
+							}
+
+						} else {
+							Bitmap tempImageBitmap = MCImageTools
+									.getZoomBitmapFromStream(tempBytes, 960,
+											540);
+							tempImage = new File(app.sdcardImageFolder,
+									"tempimage.jpg");
+							int i = 1;
+							while (tempImage.exists()) {
+								tempImage = new File(app.sdcardImageFolder,
+										"tempimage" + (i++) + ".jpg");
+							}
+							fileOutputStream = new FileOutputStream(tempImage);
+							tempImageBitmap.compress(
+									Bitmap.CompressFormat.JPEG, 100,
+									fileOutputStream);
+							try {
+								fileOutputStream.flush();
+								fileOutputStream.close();
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+
+							zoomImageStream = new FileInputStream(tempImage);
+
+							byte[] b = StreamTools.isToData(zoomImageStream);
+
+							if (b != null) {
+								base64 = Base64.encodeToString(b,
+										Base64.DEFAULT);
+								String uploadFile = sha1
+										.getDigestOfString(base64.trim()
+												.getBytes())
+										+ ".jpg";
+
+								uploadFileName = uploadFile.toLowerCase(Locale
+										.getDefault());
+								tempImages.put(uploadFileName, BitmapFactory
+										.decodeByteArray(b, 0, b.length));
+								imageFile = new File(app.sdcardImageFolder,
+										uploadFileName);
+								if (imageFile.exists()) {
+									tempImage.delete();
+								} else {
+									tempImage.renameTo(imageFile);
+								}
+
+							}
+						}
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} finally {
+						if (zoomImageStream != null) {
+							try {
+								zoomImageStream.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						if (inputStream != null) {
+							try {
+								inputStream.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 					}
+
+					Bundle params = new Bundle();
+					params.putString("phone", app.data.user.phone);
+					params.putString("accessKey", app.data.user.accessKey);
+					params.putString("filename", uploadFileName);
+
+					MCNetTools.ajax(getActivity(), API.IMAGE_CHECK, params,
+							MCHttpTools.SEND_POST, 5000,
+							new ResponseListener() {
+
+								@Override
+								public void success(JSONObject data) {
+									try {
+										boolean isExists = data
+												.getBoolean("exists");
+
+										if (!isExists) {
+											Bundle params = new Bundle();
+											params.putString("phone",
+													app.data.user.phone);
+											params.putString("accessKey",
+													app.data.user.accessKey);
+											params.putString("filename",
+													uploadFileName);
+											params.putString("imagedata",
+													base64);
+											MCNetTools.ajax(getActivity(),
+													API.IMAGE_UPLOAD, params,
+													MCHttpTools.SEND_POST,
+													5000,
+													new ResponseListener() {
+
+														@Override
+														public void success(
+																JSONObject data) {
+															try {
+																data.get(getString(R.string.app_reason));
+																return;
+															} catch (JSONException e) {
+																// TODO
+																// Auto-generated
+																// catch block
+																e.printStackTrace();
+															}
+
+															Bundle params = generateParams(
+																	"image",
+																	uploadFileName);
+															MCNetTools
+																	.ajax(getActivity(),
+																			API.MESSAGE_SEND,
+																			params,
+																			MCHttpTools.SEND_POST,
+																			5000,
+																			new ResponseListener() {
+
+																				@Override
+																				public void success(
+																						JSONObject data) {
+																					System.out
+																							.println(data);
+																				}
+
+																				@Override
+																				public void noInternet() {
+																					// TODO
+																					// Auto-generated
+																					// method
+																					// stub
+
+																				}
+
+																				@Override
+																				public void failed() {
+																					// TODO
+																					// Auto-generated
+																					// method
+																					// stub
+
+																				}
+
+																				@Override
+																				public void connectionCreated(
+																						HttpURLConnection httpURLConnection) {
+																					// TODO
+																					// Auto-generated
+																					// method
+																					// stub
+
+																				}
+																			});
+														}
+
+														@Override
+														public void noInternet() {
+															// TODO
+															// Auto-generated
+															// method
+															// stub
+														}
+
+														@Override
+														public void failed() {
+															// TODO
+															// Auto-generated
+															// method
+															// stub
+														}
+
+														@Override
+														public void connectionCreated(
+																HttpURLConnection httpURLConnection) {
+															// TODO
+															// Auto-generated
+															// method
+															// stub
+														}
+													});
+										} else {
+											Bundle params = generateParams(
+													"image", uploadFileName);
+											MCNetTools.ajax(getActivity(),
+													API.MESSAGE_SEND, params,
+													MCHttpTools.SEND_POST,
+													5000,
+													new ResponseListener() {
+
+														@Override
+														public void success(
+																JSONObject data) {
+															app.isDataChanged = true;
+															if (app.data.user.flag
+																	.equals("none")) {
+																app.data.user.flag = String
+																		.valueOf(1);
+															} else {
+																app.data.user.flag = String
+																		.valueOf(Integer
+																				.valueOf(
+																						app.data.user.flag)
+																				.intValue() + 1);
+															}
+														}
+
+														@Override
+														public void noInternet() {
+															// TODO
+															// Auto-generated
+															// method
+															// stub
+
+														}
+
+														@Override
+														public void failed() {
+															// TODO
+															// Auto-generated
+															// method
+															// stub
+
+														}
+
+														@Override
+														public void connectionCreated(
+																HttpURLConnection httpURLConnection) {
+															// TODO
+															// Auto-generated
+															// method
+															// stub
+
+														}
+													});
+										}
+									} catch (JSONException e) {
+										// TODO Auto-generated catch
+										// block
+										e.printStackTrace();
+									}
+								}
+
+								@Override
+								public void noInternet() {
+									// TODO Auto-generated method
+									// stub
+								}
+
+								@Override
+								public void failed() {
+									// TODO Auto-generated method
+									// stub
+								}
+
+								@Override
+								public void connectionCreated(
+										HttpURLConnection httpURLConnection) {
+									// TODO Auto-generated method
+									// stub
+								}
+							});
+
 				}
 			}.start();
 
@@ -345,7 +633,6 @@ public class ChatFragment extends BaseListFragment {
 
 								@Override
 								public void success(JSONObject data) {
-									System.out.println("success");
 									app.isDataChanged = true;
 									if (app.data.user.flag.equals("none")) {
 										app.data.user.flag = String.valueOf(1);
@@ -469,20 +756,23 @@ public class ChatFragment extends BaseListFragment {
 			MessageHolder messageHolder;
 			int type = getItemViewType(position);
 			if (convertView == null) {
+				messageHolder = new MessageHolder();
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
 					convertView = mInflater.inflate(R.layout.f_chat_item_right,
 							null);
+					messageHolder.text = convertView
+							.findViewById(R.id.rl_chatright);
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
 					convertView = mInflater.inflate(R.layout.f_chat_item_left,
 							null);
+					messageHolder.text = convertView
+							.findViewById(R.id.rl_chatleft);
 					break;
 				default:
 					break;
 				}
-				messageHolder = new MessageHolder();
-				messageHolder.text = convertView.findViewById(R.id.rl_chatleft);
 				messageHolder.image = convertView
 						.findViewById(R.id.rl_chatleft_image);
 				messageHolder.iv_image = (ImageView) convertView
@@ -499,6 +789,8 @@ public class ChatFragment extends BaseListFragment {
 			}
 			Message message = (Message) getItem(position);
 			if (message.messageType.equals("text")) {
+				messageHolder.text.setVisibility(View.VISIBLE);
+				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.tv_chat.setText(message.content);
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
@@ -512,10 +804,56 @@ public class ChatFragment extends BaseListFragment {
 				}
 			} else if (message.messageType.equals("image")) {
 				messageHolder.text.setVisibility(View.GONE);
+				messageHolder.image.setVisibility(View.VISIBLE);
+				final String imageFileName = message.content;
+				if (tempImages.get(imageFileName) == null) {
+					final File imageFile = new File(app.sdcardImageFolder,
+							imageFileName);
+					if (imageFile.exists()) {
+						System.out.println(imageFile.getAbsolutePath());
+						Bitmap image = BitmapFactory.decodeFile(imageFile
+								.getAbsolutePath());
+						tempImages.put(imageFileName, image);
+						mAdapter.notifyDataSetChanged();
+					} else {
+						MCNetTools.getImage(getActivity(), imageFileName, 5000,
+								new ImageResponseListener() {
+
+									@Override
+									public void success(Bitmap bitmap) {
+										tempImages.put(imageFileName, bitmap);
+										mAdapter.notifyDataSetChanged();
+									}
+
+									@Override
+									public void noInternet() {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void failed() {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void connectionCreated(
+											HttpURLConnection httpURLConnection) {
+										// TODO Auto-generated method stub
+
+									}
+								});
+					}
+				}
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
+					messageHolder.iv_image.setImageBitmap(tempImages
+							.get(imageFileName));
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
+					messageHolder.iv_image.setImageBitmap(tempImages
+							.get(message.content));
 					messageHolder.tv_nickname
 							.setText(app.nowChatFriend.nickName);
 					break;
@@ -544,8 +882,10 @@ public class ChatFragment extends BaseListFragment {
 		message.type = Message.MESSAGE_TYPE_SEND;
 		message.content = content;
 		message.messageType = type;
+		message.status = "sending";
 		message.time = String.valueOf(new Date().getTime());
 		app.nowChatFriend.messages.add(message);
+		System.out.println(app.nowChatFriend.messages.size());
 		mAdapter.notifyDataSetChanged();
 		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		Bundle params = new Bundle();
@@ -556,7 +896,7 @@ public class ChatFragment extends BaseListFragment {
 		params.putString("phoneto", jFriends.toString());
 		JSONObject jMessage = new JSONObject();
 		try {
-			jMessage.put("type", "text");
+			jMessage.put("type", type);
 			jMessage.put("content", content);
 			params.putString("message", jMessage.toString());
 		} catch (JSONException e) {

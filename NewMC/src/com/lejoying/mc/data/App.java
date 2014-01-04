@@ -1,10 +1,12 @@
 package com.lejoying.mc.data;
 
+import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 
 public class App {
 	private static App app;
@@ -29,7 +31,18 @@ public class App {
 	private App() {
 		initData();
 		initConfig();
-		// dataHandler = new DataHandler();
+		dataHandler = new DataHandler(this);
+		if (Environment.getExternalStorageDirectory() != null) {
+			sdcardAppFolder = new File(
+					Environment.getExternalStorageDirectory(), "lejoying");
+			if (!sdcardAppFolder.exists()) {
+				sdcardAppFolder.mkdirs();
+			}
+			sdcardImageFolder = new File(sdcardAppFolder, "image");
+			if (!sdcardImageFolder.exists()) {
+				sdcardImageFolder.mkdirs();
+			}
+		}
 	}
 
 	public static App getInstance() {
@@ -62,4 +75,6 @@ public class App {
 	public int businessCardStatus;
 	public Friend nowChatFriend;
 	public Map<String, Bitmap> heads = new Hashtable<String, Bitmap>();
+	public File sdcardAppFolder;
+	public File sdcardImageFolder;
 }

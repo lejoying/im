@@ -65,37 +65,60 @@ public final class MCImageTools {
 		return bitmap;
 	}
 
-	public static Bitmap getZoomBitmapFromStream(InputStream is,
-			Integer maxWidth, Integer maxHeight) {
-		byte[] data = null;
-		data = StreamTools.isToData(is);
+	public static boolean isNeedToZoom(byte[] imageByte, Integer maxWidth,
+			Integer maxHeight) {
+		boolean flag = false;
 		BitmapFactory.Options boptions = new BitmapFactory.Options();
 		boptions.inJustDecodeBounds = true;
-		Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,
-				boptions);
+		BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length, boptions);
+		int width = boptions.outWidth;
+		int height = boptions.outHeight;
+		if (width > maxWidth || height > maxHeight) {
+			flag = true;
+		}
+		return flag;
+	}
+
+	public static Bitmap getZoomBitmapFromStream(InputStream is,
+			Integer maxWidth, Integer maxHeight) {
+		byte[] data = StreamTools.isToData(is);
+		return getZoomBitmapFromStream(data, maxWidth, maxHeight);
+	}
+
+	public static Bitmap getZoomBitmapFromStream(byte[] imageByte,
+			Integer maxWidth, Integer maxHeight) {
+		if (imageByte == null) {
+			return null;
+		}
+		BitmapFactory.Options boptions = new BitmapFactory.Options();
+		boptions.inJustDecodeBounds = true;
+		Bitmap bitmap = BitmapFactory.decodeByteArray(imageByte, 0,
+				imageByte.length, boptions);
 		int width = boptions.outWidth;
 		int height = boptions.outHeight;
 
-		if (maxWidth == null || maxWidth == 0) {
+		if (maxWidth == null || maxWidth <= 0) {
 			maxWidth = width;
 		}
-		if (maxHeight == null || maxWidth == 0) {
+		if (maxHeight == null || maxWidth <= 0) {
 			maxHeight = height;
 		}
-		int scale = 1;
 		if (maxWidth > width && maxHeight > height) {
-			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-		}
-		if (maxWidth <= width && maxHeight <= height) {
-			while (boptions.outHeight / scale / 2 > maxHeight
-					|| boptions.outWidth / scale / 2 > maxWidth) {
-				scale *= 2;
-			}
-
+			bitmap = BitmapFactory.decodeByteArray(imageByte, 0,
+					imageByte.length);
+		} else {
+			int scale = 1;
+			int scaleHeight = boptions.outHeight % maxHeight != 0 ? boptions.outHeight
+					/ maxHeight + 1
+					: boptions.outHeight / maxHeight;
+			int scaleWidth = boptions.outWidth % maxWidth != 0 ? boptions.outWidth
+					/ maxWidth + 1
+					: boptions.outWidth / maxWidth;
+			scale = scaleHeight > scaleWidth ? scaleHeight : scaleWidth;
 			boptions.inJustDecodeBounds = false;
 			boptions.inSampleSize = scale;
-			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,
-					boptions);
+			bitmap = BitmapFactory.decodeByteArray(imageByte, 0,
+					imageByte.length, boptions);
 		}
 		return bitmap;
 	}
