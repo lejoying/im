@@ -58,7 +58,9 @@ public final class MCHttpTools {
 			// e.printStackTrace();
 		} finally {
 			httpListener.handleInputStream(is);
-			httpURLConnection.disconnect();
+			if (httpURLConnection != null) {
+				httpURLConnection.disconnect();
+			}
 		}
 	}
 
@@ -109,7 +111,9 @@ public final class MCHttpTools {
 			// e.printStackTrace();
 		} finally {
 			httpListener.handleInputStream(is);
-			httpURLConnection.disconnect();
+			if (httpURLConnection != null) {
+				httpURLConnection.disconnect();
+			}
 		}
 	}
 

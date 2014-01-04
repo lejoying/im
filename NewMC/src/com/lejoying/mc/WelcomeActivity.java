@@ -28,9 +28,6 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
-		if (app.dataHandler == null) {
-			app.dataHandler = new DataHandler();
-		}
 		app.dataHandler.sendMessage(app.dataHandler.HANDLER_GETCONFIGANDDATA,
 				app.dataHandler.DOSYNC, this);
 		start = new Date().getTime();

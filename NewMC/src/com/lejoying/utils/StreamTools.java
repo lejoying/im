@@ -1,6 +1,9 @@
 package com.lejoying.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -32,5 +35,40 @@ public final class StreamTools {
 			}
 		}
 		return data;
+	}
+
+	public static void copyFile(File fromFile, File toFile, boolean rewrite) {
+		if (!fromFile.exists()) {
+			return;
+		}
+		if (!fromFile.isFile()) {
+			return;
+		}
+		if (!fromFile.canRead()) {
+			return;
+		}
+		if (!toFile.getParentFile().exists()) {
+			toFile.getParentFile().mkdirs();
+		}
+		if (toFile.exists() && rewrite) {
+			toFile.delete();
+		}
+		try {
+			FileInputStream fosfrom = new FileInputStream(fromFile);
+
+			FileOutputStream fosto = new FileOutputStream(toFile);
+
+			byte bt[] = new byte[1024];
+
+			int c;
+
+			while ((c = fosfrom.read(bt)) > 0) {
+				fosto.write(bt, 0, c);
+			}
+			fosfrom.close();
+			fosto.close();
+		} catch (Exception e) {
+
+		}
 	}
 }

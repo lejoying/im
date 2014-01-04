@@ -137,7 +137,7 @@ public class FriendsFragment extends BaseListFragment {
 		super.onResume();
 		instance = this;
 		app.mark = app.friendsFragment;
-		mFriendsHandler.sendEmptyMessage(NOTIFYDATASETCHANGED);
+		getUser();
 	}
 
 	public void onDestroyView() {

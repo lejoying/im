@@ -27,7 +27,7 @@ public class DataHandler {
 
 	public final int DOSYNC = 0x31;
 
-	App app = App.getInstance();
+	App app;
 	public final int HANDLER_USER = 0x01;
 	public final int HANDLER_CIRCLE = 0x02;
 	public final int HANDLER_MESSAGE = 0x03;
@@ -47,6 +47,10 @@ public class DataHandler {
 	boolean isHandle;
 
 	public Handler handler = new Handler();
+
+	public DataHandler(App app) {
+		this.app = app;
+	}
 
 	public void handleData(Message message) {
 		mQueue.add(message);
