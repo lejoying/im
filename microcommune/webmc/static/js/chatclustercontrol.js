@@ -1,4 +1,6 @@
 $(function () {
+//    $(".js_rightChatPanel").hide();
+
     $(".js_morefriend").hide();
     $(".js_morefriend").slideUp();
     $(".js_onlyfriend").slideUp(1);
@@ -47,10 +49,12 @@ $(function () {
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").html(js_chatmessagetemplate.render(data.messages));
         setScrollPosition();
+//        $(".js_rightChatPanel").show();
     });
     keepQuest();
 });
 function setScrollPosition() {
+//    alert($(".scrollDiv").);
     var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
     $(".scrollDiv").css({
         height: height + "px"
@@ -74,12 +78,16 @@ function keepQuest() {
         success: function (data) {
             if (data["提示信息"] == "成功") {
                 if (data.event == "message") {
+                    var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+                    $(".js_chatContents").append(js_chatmessagetemplate.render(data.event_content.message));
+                    setScrollPosition();
                     alert("message");
                 } else if (data.event == "newfriend") {
                     alert("newFriend");
                 } else if (data.event == "friendaccept") {
                     alert("friendAccept");
                 } else {
+                    keepQuest();
                     alert("神器的效果");
                 }
             } else {

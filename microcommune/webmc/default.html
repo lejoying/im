@@ -529,22 +529,26 @@
     <div class="activeChatVernier" style="top: 20px;"><img src="static/images/spacer17ced3.gif"></div>
 </div>
 <div style="visibility:visible;" class="chat lightBorder">
-    <div class="chatContainer" style="height: 442px;">
+    <div class="chatContainer js_rightChatPanel" style="height: 442px;">
         <div id="chatMainPanel" class="chatMainPanel">
             <div class="chatTitle">
                 <div class="js_onlyfriend">
                     <div class="member">
-                        <table style="width: 550px;">
+                        <table style="width: 550px;" border="1px">
                             <tr style="height: 23px;">
-                                <td rowspan="2"><a class="username" href="javascript:void(0);"><img
-                                        src="static/images/safen.png" class="iconname"
+                                <td rowspan="2" style="width: 60px;"><a class="username" href="javascript:void(0);"><img
+                                        src="static/images/safen.png" class="iconname js_js_onlyfriend_headimg"
                                         style="width: 50px;height: 50px;"> </a></td>
                                 <td>
-                                    <div class="name"> 萨芬(10086)</div>
+                                    <div class="name js_onlyfriend_nickName"> 萨芬(10086)</div>
                                 </td>
                             </tr>
                             <tr style="height: 20px;">
-                                <td style="overflow: hidden;">主要业务：社区化服务：送水，按摩，家政等等...以及帮小孩写作业哟...只有想不到的......</td>
+                                <td>
+                                    <div class="js_onlyfriend_mainBusiness" style="overflow: hidden;width: 500px;height: 33px;">
+                                        主要业务：社区化服务：送水，按摩，家政等等...以及帮小孩写作业哟...只有想不到的......
+                                    </div>
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -658,7 +662,7 @@
 
                 <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
                     <div style="" class="cloudPannel">
-                        <div class="sendStatus"></div>
+                        <div class="sendStatus"><label style="visibility: hidden;">&nbsp;ERROR</label></div>
                         <div class="cloudBody">
                             <div class="cloudContent">
                                 <pre style="white-space:pre-wrap">#{post1.content}</pre>
@@ -684,7 +688,7 @@
 
                 <div msgid="2070333140" un="cloud_2070333140" class="cloud cloudText">
                     <div style="" class="cloudPannel">
-                        <div class="sendStatus"></div>
+                        <div class="sendStatus"><label style="visibility: hidden;">&nbsp;OK</label></div>
                         <div class="cloudBody">
                             <div class="cloudContent">
                                 <pre style="white-space:pre-wrap">#{post1.content}</pre>

@@ -9,6 +9,9 @@ var oldSelectedGroupClass = "";
 var newSelectedGroupClass = "";
 
 var selectedAddCircleGroupFlag = false;
+
+
+var currentChatUser = {};
 $(document).ready(function () {
 //    $.getScript("/static/js/nTenjin.js");
 //    $.getScript("/static/js/animation.js");
@@ -278,7 +281,18 @@ $(document).ready(function () {
                 icon.addClass("js_selected");
                 selectedDropUsers[phone] = circle_rid;
             } else {
-                alert(JSON.stringify(allCirclesFriends[phone]));//获取当前聊天用户的信息
+                //------------------------------------------------------------------------------------------------------点击头像聊天的处理
+//                clickHeadImgToChatPanel();
+                currentChatUser = allCirclesFriends[phone];
+                if (currentChatUser.head != "") {
+                    $(".js_js_onlyfriend_headimg").attr("src", window.globaldata.serverSetting.imageServer + currentChatUser.head + ".png");
+                }else{
+                    $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
+                }
+                $(".js_onlyfriend_nickName").html(currentChatUser.nickName+" ("+currentChatUser.phone+") ");
+                $(".js_onlyfriend_mainBusiness").html("主要业务: "+currentChatUser.mainBusiness);
+                $(".js_rightChatPanel").show();
+//                alert(JSON.stringify(allCirclesFriends[phone]));//获取当前聊天用户的信息
 //                icon.addClass("js_none");
 //                delete selectedDropUsers[phone];
             }
