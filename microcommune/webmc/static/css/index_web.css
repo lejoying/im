@@ -1,198 +1,53 @@
-* {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border: 0;
+* {margin: 0;padding: 0;list-style: none;border: 0;}
+a {text-decoration: none;}
+.clr {clear: both;}
+html {color: #000;background: #FFF;
 }
-
-a {
-    text-decoration: none;
-}
-
-.clr {
-    clear: both;
-}
-
-html {
-    color: #000;
-    background: #FFF;
-}
-
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td, strong {
     padding: 0;
     margin: 0;
     font-family: '微软雅黑', Helvetica, Arial, sans-serif;
 }
+/*****************************************图片轮播 start*******************************************************/
+#in_body { min-width: 980px;max-width: 2094px;margin: 0 auto;}
+.in_content {height: 560px;width: 100%;position: relative;z-index: 1;overflow: hidden;top: -15px}
+.in_move {height: 560px;width: 100%;overflow: hidden;margin: 0 auto;}
+.in_big {position: relative;width: 100%;height: 560px;overflow: hidden;}
+.in_scroll {position: relative;top: 0;left: -1px;width: 100%;height: 560px;overflow: hidden;}
+.in_big .in_bigone {width: 100%;height: 560px;position: absolute;top: 0;left: 1px;background: url('/static/images/in_picone.jpg') center 0 no-repeat;z-index: 100;}
+.in_china .in_big .in_bigone {background: url('/static/images/in_picone.jpg') center 0 no-repeat;}
+.in_big .in_bigtwo {width: 100%;height: 560px;position: absolute;top: 0;left: 3000px;background: url('/static/images/in_pictwo.jpg') center 0 no-repeat; z-index: 90;}
+.in_big .in_bigfour {width: 100%;height: 560px;position: absolute;top: 0;left: 3000px;z-index: 95;background-position: 50% 0;}
+.in_china .in_big .in_bigtwo {background: url('/static/images/in_pictwo.jpg') center 0 no-repeat;}
+.in_big .in_bigthree {width: 100%;height: 560px;position: absolute;top: 0;left: 3000px;background: url('/static/images/in_picthree.jpg') center 0 no-repeat;z-index: 80;}
+.in_china .in_big .in_bigthree {background: url('/static/images/in_picthree.jpg') center 0 no-repeat;}
+.in_pos {position: absolute;top: 522px;left: 50%;height: 20px;width: 150px;margin-left: -75px;z-index: 999;}
+.in_pos span {float: left;margin-left: 10px;cursor: pointer;display: inline;}
 
-/*****************************************index页 start*******************************************************/
-#in_body {
-    min-width: 980px;
-    max-width: 2094px;
-    margin: 0 auto;
+.in_pos img {float: left;}
+
+.in_pos .in_hello {margin-top: 0px;border: 0px solid white;float: left;}
+
+.in_pos .one {float: left; margin-left: 50px;}
+
+.in_big .in_arrow {position: relative;top: -300px;margin-top: -25px;width: 100%;height: 52px;overflow: hidden;}
+
+.in_big .in_right {position: absolute;right: 10%;height: 52px;width: 52px;cursor: pointer;z-index: 150;margin-right: -50px}
+
+.in_big .in_left {position: absolute; left: 10%;height: 52px;width: 53px;cursor: pointer;z-index: 150;margin-left: -50px
 }
+/*****************************************  图片轮播 end*   ******************************************************/
 
-.in_content {
-    height: 560px;
-    width: 100%;
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-    top: -15px
-}
-
-.in_move {
-    height: 560px;
-    width: 100%;
-    overflow: hidden;
-    margin: 0 auto;
-}
-
-.in_big {
-    position: relative;
-    width: 100%;
-    height: 560px;
-    overflow: hidden;
-}
-
-.in_scroll {
-    position: relative;
-    top: 0;
-    left: -1px;
-    width: 100%;
-    height: 560px;
-    overflow: hidden;
-}
-
-.in_big .in_bigone {
-    width: 100%;
-    height: 560px;
-    position: absolute;
-    top: 0;
-    left: 1px;
-    background: url('/static/images/in_picone.jpg') center 0 no-repeat;
-    z-index: 100;
-}
-
-.in_china .in_big .in_bigone {
-    background: url('/static/images/in_picone.jpg') center 0 no-repeat;
-}
-
-.in_big .in_bigtwo {
-    width: 100%;
-    height: 560px;
-    position: absolute;
-    top: 0;
-    left: 3000px;
-    background: url('/static/images/in_pictwo.jpg') center 0 no-repeat;
-    z-index: 90;
-}
-
-.in_big .in_bigfour {
-    width: 100%;
-    height: 560px;
-    position: absolute;
-    top: 0;
-    left: 3000px;
-    z-index: 95;
-    background-position: 50% 0;
-}
-
-.in_china .in_big .in_bigtwo {
-    background: url('/static/images/in_pictwo.jpg') center 0 no-repeat;
-}
-
-.in_big .in_bigthree {
-    width: 100%;
-    height: 560px;
-    position: absolute;
-    top: 0;
-    left: 3000px;
-    background: url('/static/images/in_picthree.jpg') center 0 no-repeat;
-    z-index: 80;
-}
-
-.in_china .in_big .in_bigthree {
-    background: url('/static/images/in_picthree.jpg') center 0 no-repeat;
-}
-
-.in_pos {
-    position: absolute;
-    top: 522px;
-    left: 50%;
-    height: 20px;
-    width: 150px;
-    margin-left: -75px;
-    z-index: 999;
-}
-
-.in_pos span {
-    float: left;
-    margin-left: 10px;
-    cursor: pointer;
-    display: inline;
-}
-
-.in_pos img {
-    float: left;
-}
-
-.in_pos .in_hello {
-    margin-top: 0px;
-    border: 0px solid white;
-    float: left;
-}
-
-.in_pos .one {
-    float: left;
-    margin-left: 50px;
-}
-
-.in_big .in_arrow {
-    position: relative;
-    top: -300px;
-    margin-top: -25px;
-    width: 100%;
-    height: 52px;
-    overflow: hidden;
-}
-
-.in_big .in_right {
-    position: absolute;
-    right: 10%;
-    height: 52px;
-    width: 52px;
-    cursor: pointer;
-    z-index: 150;
-    margin-right: -50px
-}
-
-.in_big .in_left {
-    position: absolute; /*top:256px;*/
-    left: 10%;
-    height: 52px;
-    width: 53px;
-    cursor: pointer; /*margin-top:-25px;*/
-    z-index: 150;
-    margin-left: -50px
-}
-
-/*****************************************index页 end*******************************************************/
-
-/*****************************************导航 start*******************************************************/
+/*****************************************  导航 start    *******************************************************/
 .header_content {
     width: 100%;
     margin: 0 auto;
-/ / height : 100 %;
     position: relative;
-/ / float : left;
     overflow: hidden;
     top: 0;
 }
-
-.header {
-    /*头部*/
+.header {    /*头部*/
     margin: 0 auto;
-
     width: 100%;
     height: 65px;
     background-color: #0099CD;
@@ -200,7 +55,6 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     z-index: 4;
     _position: absolute;
 }
-
 .header_bottom_bg {
     overflow: hidden;
     width: 100%;
@@ -211,19 +65,15 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     z-index: 888;
     background: url("/static/images/headbg_.png") 0 0 repeat-x;
 }
-
-.nav {
-    /*菜单*/
+.nav {  /*菜单*/
     width: 980px;
     height: 58px;
     padding-top: 15px;
     margin: 0 auto;
-/ / position : relative;
     top: 0;
     left: 0;
     z-index: 1111;
 }
-
 .nav .logo {    /*logo*/
     display: block;
     height: 55px;
@@ -231,7 +81,6 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     margin-left: 58px;
     margin-top: -10px;
 }
-
 .nav .navs {
     margin: 0 auto;
     width: 100%;
@@ -242,10 +91,8 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     z-index: 1;
     letter-spacing: 2px;
 }
-
-/*****************************************导航 end*******************************************************/
-.leaf_left {
-    /*左树叶*/
+/*****************************************  导航 end  *******************************************************/
+.leaf_left {    /*左树叶*/
     display: block;
     position: absolute;
     left: 0px;
@@ -253,17 +100,13 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     background-image: url("/static/images/leaf.png");
     z-index: 2;
 }
-
-.leaf_left {
-    /*左树叶*/
+.leaf_left {    /*左树叶*/
     position: absolute;
     background-position: -0px -550px;
     width: 100px;
     height: 550px;
 }
-
-.leaf_right {
-    /*右树叶*/
+.leaf_right {   /*右树叶*/
     display: block;
     position: absolute;
     right: 0px;
@@ -271,26 +114,20 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     background-image: url("/static/images/leaf.png");
     z-index: 2;
 }
-
-.leaf_right {
-    /*右树叶*/
+.leaf_right {    /*右树叶*/
     position: absolute;
     background-position: -98px -500px;
     width: 162px;
     height: 500px;
 }
-
-.content {
-    /*内容面板*/
+.content {  /*内容面板*/
     width: 100%;
     margin: 0 auto;
     height: 100%;
     float: left;
     top: 80px;
     position: relative;
-/ / background-color : aquamarine;
 }
-
 .area {
     width: 100%;
     margin: 0 auto;
@@ -298,7 +135,6 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     position: relative;
     float: left;
 }
-
 .area_3 {
     position: relative;
     width: 1200px;
@@ -308,34 +144,25 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     align: center;
     z-index: 3;
 }
-
-.icon_1 {
-    /*密码登陆*/
+.icon_1 {   /*密码登陆*/
     float: left;
     width: 400px;
     height: 300px;
-
 }
-
-.icon_2 {
-    /*扫一扫登陆*/
+.icon_2 {   /*扫一扫登陆*/
     position: relative;
     float: left;
     width: 400px;
     height: 300px;
 }
-
-.icon_3 {
-    /*验证码登陆*/
+.icon_3 {   /*验证码登陆*/
     position: relative;
     float: left;
     width: 400px;
     height: 300px;
 }
-
-/*-------------------------------密码登录  start ------------------------*/
-.icon_1_1 {
-    /*框框*/
+/*-------------------------------   密码登录  start ------------------------*/
+.icon_1_1 {     /*框框*/
     margin: 0 auto;
     position: absolute;
     width: 500px;
@@ -349,9 +176,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
-
-.password_w {
-    /*为了保护...*/
+.password_w {    /*为了保护...*/
     width: 380px;
     height: 30px;
     margin: 0 auto;
@@ -360,9 +185,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     letter-spacing: 2px;
     margin-top: 15px;
 }
-
-.password_m {
-    /*下载APP >>>按钮*/
+.password_m {   /*下载APP >>>按钮*/
     margin: 0 auto;
     text-align: center;
     color: white;
@@ -375,9 +198,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     padding: 5px 0 0 5px;
     background-color: #2AA7EE;
 }
-
-.password_s {
-    /* 文字提示信息*/
+.password_s {    /* 文字提示信息*/
     width: 130px;
     height: 30px;
     margin: 0 auto;
@@ -386,10 +207,8 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     letter-spacing: 2px;
     margin-top: 25px;
 }
-
 /*-------------------------------扫一扫登录  start ------------------------*/
-.icon_2_2 {
-    /*框框*/
+.icon_2_2 {     /*框框*/
     display: block;
     margin: 0 auto;
     position: absolute;
@@ -404,19 +223,14 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
-
-.ewm {
-    /*二维码*/
+.ewm {      /*二维码*/
     position: relative;
     top: 95px;
     margin: 0 auto;
     width: 200px;
     height: 200px;
-    /*background: url("/static/images/erweima.png") 0 0 no-repeat;*/
 }
-
-.sao_wz {
-    /*文字提示信息*/
+.sao_wz {        /*文字提示信息*/
     position: relative;
     width: 185px;
     height: 30px;
@@ -426,10 +240,8 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fiel
     letter-spacing: 2px;
     margin-top: 175px;
 }
-
 /*-------------------------------手机验证码登录  start ------------------------*/
-form {
-    /*表单*/
+form {      /*表单*/
     background: rgba(57, 60, 61, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.8);
     padding: 40px 75px;
@@ -441,7 +253,6 @@ form {
     position: absolute;
     top: -340px;
 }
-
 .sdw:focus {
     transition: border linear .2s, box-shadow linear .5s;
     -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
@@ -452,18 +263,14 @@ form {
     -moz-box-shadow: 0 0 10px rgba(0, 153, 190, .5);
     -webkit-box-shadow: 0 0 10px rgba(0, 153, 190, 3);
 }
-
-.sdw {
-    /*手机号输入框*/
+.sdw {  /*手机号输入框*/
     width: 250px;
     height: 30px;
     border-radius: 3px;
     letter-spacing: 2px; /*文字间距*/
     text-indent: 10px;
 }
-
-.send_y {
-    /*发送手机验证码*/
+.send_y {   /*发送手机验证码*/
     color: white;
     height: 30px;
     padding-top: 10px;
@@ -474,9 +281,7 @@ form {
     letter-spacing: 2px;
     cursor: pointer;
 }
-
-.button {
-    /*登录按钮*/
+.button {   /*登录按钮*/
     color: white;
     width: 250px;
     height: 30px;
@@ -485,9 +290,7 @@ form {
     cursor: pointer;
     background-color: #2AA7EE;
 }
-
-.send_j {
-    /*接收手机验证码以登录*/
+.send_j {   /*接收手机验证码以登录*/
     color: white;
     height: 30px;
     padding-top: 20px;
@@ -497,9 +300,7 @@ form {
     letter-spacing: 2px;
     cursor: pointer;
 }
-
-.line {
-    /*水平线*/
+.line {     /*水平线*/
     position: relative;
     width: 97%;
     top: 150px;
@@ -507,26 +308,20 @@ form {
     border-bottom: 1px solid #E3E3E3;
     margin: 0 auto;
 }
-
 .pic {
     position: relative;
     width: 1200px;
     margin: 0 auto;
     height: 400px;
     top: 250px;
-/ / background-color : aquamarine;
 }
-
-.pic .character {
-    /*文字诗句*/
+.pic .character {        /*文字诗句*/
     position: relative;
     width: 600px;
     height: 400px;
     background: url("/static/images/wenzi.png") no-repeat right top;
 }
-
-.pic .share {
-    /*分享*/
+.pic .share {       /*分享*/
     position: absolute;
     width: 380px;
     height: 400px;
@@ -534,12 +329,10 @@ form {
     top: 0px;
     right: 100px;
 }
-
 /*----------------  底部 start  -------------------*/
 .footer {
     min-width: 1024px;
 }
-
 .footer {
     position: absolute;
     width: 100%;
@@ -547,30 +340,22 @@ form {
     height: 280px;
     margin-top: 251px;
 }
-
-.foot_one {
-    /*底部上半部分*/
+.foot_one {     /*底部上半部分*/
     width: 1000px;
     height: 126px;
     margin: 0 auto;
-/ / background-color : darkcyan;
 }
-
-.foot_two {
-    /*底部下半部分*/
+.foot_two { /*底部下半部分*/
     width: 1000px;
     height: 60px;
     margin: 0 auto;
     margin-top: 72px;
-/ / background-color : sienna;
 }
-
 .foot_left {
     padding-top: 43px;
     left: 0px;
     float: left;
 }
-
 .foot_logo {
     display: block;
     text-decoration: none;
@@ -578,66 +363,54 @@ form {
     height: 103px;
     background: url("/static/images/foot_logo.png") 0 0 no-repeat;
 }
-
 .foot_right {
     width: 681px;
     height: 123px;
     float: right;
     padding-top: 43px;
 }
-
 .foot_lia {
     float: right;
     width: 577px;
     height: 40px;
     background: url("/static/images/foot_lia.png") 0 0 no-repeat;
 }
-
 .foot_lib {
     width: 700px;
     height: 82px;
     margin-left: 90px;
 }
-
 .foot_lib span {
     font-size: 14px;
 }
-
 .foot_lib .foot_1 {
     float: left;
     margin-left: 20px;
     width: 100px;
     height: 82px;
 }
-
 .foot_lib .foot_2 {
     padding-left: 150px;
     float: left;
     width: 100px;
     height: 82px;
 }
-
 .foot_lib .foot_3 {
     float: left;
     width: 100px;
     height: 82px;
     padding-left: 172px;
 }
-
 .foot_lib a:link {
     color: #969696;
 }
-
 .foot_lib a:visited {
     color: #969696;
 }
-
 .foot_lib a:hover {
     color: darkturquoise;
 }
-
-.copyright {
-    /*版权所有*/
+.copyright {    /*版权所有*/
     color: #969696;
     margin-left: 0px;
     font-size: 16px;
@@ -645,18 +418,14 @@ form {
     height: 30px;
     float: left;
 }
-
-.blog {
-    /*微博*/
+.blog {      /*微博*/
     width: 65px;
     height: 60px;
     float: right;
     background: url("/static/images/footsignb.png") 0 0 no-repeat;
     cursor: pointer;
 }
-
-.chattalk {
-    /*微信*/
+.chattalk {     /*微信*/
     width: 65px;
     height: 60px;
     float: right;
@@ -665,9 +434,7 @@ form {
     border-radius: 2px;
     margin-right: 10px;
 }
-
-.foot_qq {
-    /*QQ*/
+.foot_qq {      /*QQ*/
     width: 65px;
     height: 60px;
     float: right;
@@ -676,6 +443,5 @@ form {
     border-radius: 2px;
     margin-right: 10px;
 }
-
 /*----------------  底部  end -------------------*/
 

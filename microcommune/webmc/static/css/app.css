@@ -48,7 +48,6 @@ a {
     float: right;
     width: 600px;
     margin-top: 130px;
-   // background-color: #000000;
 }
 .app_main_right{
     margin: 0 auto;
@@ -129,17 +128,6 @@ a {
     background: url("/static/images/ap_circulation.png") 0 0 no-repeat ;
     margin-left: 260px;
 }
-/*.leaf{*/
-    /*background-image: url("/static/images/leaf.png");*/
-/*}*/
-/*.leaf{*/
-    /*position:relative;*/
-    /*background-position: -0px -550px;*/
-    /*width: 162px;*/
-    /*height: 500px;*/
-    /*float: right;*/
-    /*top: -500px;*/
-/*}*/
 .app_leaf_left{ /*左树叶*/
     position: absolute;
     left: 0px;
