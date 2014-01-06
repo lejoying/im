@@ -32,7 +32,8 @@ public class App {
 		initData();
 		initConfig();
 		dataHandler = new DataHandler(this);
-		if (Environment.getExternalStorageDirectory() != null) {
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
 			sdcardAppFolder = new File(
 					Environment.getExternalStorageDirectory(), "lejoying");
 			if (!sdcardAppFolder.exists()) {
@@ -42,6 +43,12 @@ public class App {
 			if (!sdcardImageFolder.exists()) {
 				sdcardImageFolder.mkdirs();
 			}
+			sdcardHeadImageFolder = new File(sdcardImageFolder, "head");
+			if (!sdcardHeadImageFolder.exists()) {
+				sdcardHeadImageFolder.mkdir();
+			}
+		} else {
+			// sdcard is not found
 		}
 	}
 
@@ -77,4 +84,5 @@ public class App {
 	public Map<String, Bitmap> heads = new Hashtable<String, Bitmap>();
 	public File sdcardAppFolder;
 	public File sdcardImageFolder;
+	public File sdcardHeadImageFolder;
 }

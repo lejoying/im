@@ -1,5 +1,7 @@
 package com.lejoying.mc.fragment;
 
+import java.io.File;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -41,6 +43,7 @@ import com.lejoying.mc.service.PushService;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 
 public class FriendsFragment extends BaseListFragment {
@@ -248,12 +251,86 @@ public class FriendsFragment extends BaseListFragment {
 				messageHolder.tv_nickname.setText(friends.get(lastChatFriends
 						.get(arg0 - messageFirstPosition)).nickName);
 
-				Friend friend = friends.get(lastChatFriends.get(arg0
+				final Friend friend = friends.get(lastChatFriends.get(arg0
 						- messageFirstPosition));
 				messageHolder.tv_lastchat.setText(friend.messages
 						.get(friend.messages.size() - 1).content);
+				if (app.heads.get(friend.head) == null) {
+					app.heads.put(friend.head, head);
+					if (friend.head == null || friend.head.equals("")) {
 
-				messageHolder.iv_head.setImageBitmap(head);
+					} else {
+						new Thread() {
+							public void run() {
+								File headFile = new File(
+										app.sdcardHeadImageFolder, friend.head);
+								if (headFile.exists()) {
+									Bitmap head = BitmapFactory
+											.decodeFile(headFile
+													.getAbsolutePath());
+									app.heads.put(friend.head, head);
+									mFriendsHandler
+											.sendEmptyMessage(NOTIFYDATASETCHANGED);
+								} else {
+									MCNetTools.downloadFile(getActivity(),
+											app.config.DOMAIN_IMAGE,
+											friend.head,
+											app.sdcardHeadImageFolder, "",
+											5000, new DownloadListener() {
+
+												@Override
+												public void success(
+														File localFile,
+														InputStream inputStream) {
+													Bitmap head = MCImageTools.getCircleBitmap(
+															BitmapFactory
+																	.decodeFile(localFile
+																			.getAbsolutePath()),
+															true, 10,
+															Color.WHITE);
+													app.heads.put(friend.head,
+															head);
+													mFriendsHandler
+															.sendEmptyMessage(NOTIFYDATASETCHANGED);
+												}
+
+												@Override
+												public void noInternet() {
+													// TODO Auto-generated
+													// method stub
+
+												}
+
+												@Override
+												public void failed() {
+													// TODO Auto-generated
+													// method stub
+
+												}
+
+												@Override
+												public void downloading(
+														int progress) {
+													// TODO Auto-generated
+													// method stub
+
+												}
+
+												@Override
+												public void connectionCreated(
+														HttpURLConnection httpURLConnection) {
+													// TODO Auto-generated
+													// method stub
+
+												}
+											});
+								}
+							}
+						}.start();
+					}
+				}
+				messageHolder.iv_head
+						.setImageBitmap(app.heads.get(friend.head));
 				Integer notread = friends.get(lastChatFriends.get(arg0
 						- messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {

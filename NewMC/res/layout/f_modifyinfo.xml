@@ -55,6 +55,7 @@
                     android:background="#addd" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_head"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:clickable="true"
@@ -73,7 +74,7 @@
                         android:textSize="15sp" />
 
                     <ImageView
-                        android:id="@+id/imageView2"
+                        android:id="@+id/iv_head"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:layout_alignParentRight="true"
@@ -304,7 +305,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:text="保存" />
+                android:text="保存"
+                android:textColor="#fff" />
 
             <ImageView
                 android:id="@+id/imageView6"
@@ -332,6 +334,87 @@
 
             <ImageView
                 android:id="@+id/imageView7"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/test_menu_item2_4"
+                android:textColor="#fff" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_edithead"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/frame_bottombackground"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:id="@+id/rl_fromgallery"
+            android:layout_width="70dp"
+            android:layout_height="60dp" >
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="相册"
+                android:textColor="#fff" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/btn_setting_normal" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_takepicture"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true" >
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="拍照"
+                android:textColor="#fff" />
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/btn_setting_normal" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_cancelselect"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true" >
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="取消"
+                android:textColor="#fff" />
+
+            <ImageView
+                android:id="@+id/imageView9"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentTop="true"

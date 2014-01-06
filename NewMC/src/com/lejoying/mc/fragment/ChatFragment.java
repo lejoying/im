@@ -56,7 +56,7 @@ import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.ImageResponseListener;
+import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 import com.lejoying.utils.SHA1;
 import com.lejoying.utils.StreamTools;
@@ -73,6 +73,8 @@ public class ChatFragment extends BaseListFragment {
 	LayoutInflater mInflater;
 
 	Map<String, Bitmap> tempImages = new Hashtable<String, Bitmap>();
+
+	Bitmap defaultImage;
 
 	SHA1 sha1;
 
@@ -112,8 +114,12 @@ public class ChatFragment extends BaseListFragment {
 		if (sha1 == null) {
 			sha1 = new SHA1();
 		}
-		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		super.onResume();
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -183,7 +189,7 @@ public class ChatFragment extends BaseListFragment {
 							}
 							fileOutputStream = new FileOutputStream(tempImage);
 							tempImageBitmap.compress(
-									Bitmap.CompressFormat.JPEG, 100,
+									Bitmap.CompressFormat.JPEG, 70,
 									fileOutputStream);
 							try {
 								fileOutputStream.flush();
@@ -298,8 +304,18 @@ public class ChatFragment extends BaseListFragment {
 																				@Override
 																				public void success(
 																						JSONObject data) {
-																					System.out
-																							.println(data);
+																					app.isDataChanged = true;
+																					if (app.data.user.flag
+																							.equals("none")) {
+																						app.data.user.flag = String
+																								.valueOf(1);
+																					} else {
+																						app.data.user.flag = String
+																								.valueOf(Integer
+																										.valueOf(
+																												app.data.user.flag)
+																										.intValue() + 1);
+																					}
 																				}
 
 																				@Override
@@ -679,7 +695,6 @@ public class ChatFragment extends BaseListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setListAdapter(mAdapter);
-		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 	}
 
 	public void showSelectTab() {
@@ -810,17 +825,28 @@ public class ChatFragment extends BaseListFragment {
 					final File imageFile = new File(app.sdcardImageFolder,
 							imageFileName);
 					if (imageFile.exists()) {
-						System.out.println(imageFile.getAbsolutePath());
 						Bitmap image = BitmapFactory.decodeFile(imageFile
 								.getAbsolutePath());
-						tempImages.put(imageFileName, image);
+						if (image != null) {
+							tempImages.put(imageFileName, image);
+						}
 						mAdapter.notifyDataSetChanged();
 					} else {
-						MCNetTools.getImage(getActivity(), imageFileName, 5000,
-								new ImageResponseListener() {
-
+						if (defaultImage == null) {
+							defaultImage = BitmapFactory.decodeResource(
+									getResources(), R.drawable.defaultimage);
+						}
+						tempImages.put(imageFileName, defaultImage);
+						MCNetTools.downloadFile(getActivity(),
+								app.config.DOMAIN_IMAGE, imageFileName,
+								app.sdcardImageFolder, null, 5000,
+								new DownloadListener() {
 									@Override
-									public void success(Bitmap bitmap) {
+									public void success(File localFile,
+											InputStream inputStream) {
+										Bitmap bitmap = BitmapFactory
+												.decodeFile(localFile
+														.getAbsolutePath());
 										tempImages.put(imageFileName, bitmap);
 										mAdapter.notifyDataSetChanged();
 									}
@@ -843,17 +869,20 @@ public class ChatFragment extends BaseListFragment {
 										// TODO Auto-generated method stub
 
 									}
+
+									@Override
+									public void downloading(int progress) {
+										// TODO Auto-generated method stub
+									}
 								});
 					}
 				}
+				messageHolder.iv_image.setImageBitmap(tempImages
+						.get(imageFileName));
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
-					messageHolder.iv_image.setImageBitmap(tempImages
-							.get(imageFileName));
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					messageHolder.iv_image.setImageBitmap(tempImages
-							.get(message.content));
 					messageHolder.tv_nickname
 							.setText(app.nowChatFriend.nickName);
 					break;
@@ -885,7 +914,6 @@ public class ChatFragment extends BaseListFragment {
 		message.status = "sending";
 		message.time = String.valueOf(new Date().getTime());
 		app.nowChatFriend.messages.add(message);
-		System.out.println(app.nowChatFriend.messages.size());
 		mAdapter.notifyDataSetChanged();
 		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		Bundle params = new Bundle();

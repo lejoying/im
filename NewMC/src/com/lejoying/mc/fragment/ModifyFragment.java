@@ -1,17 +1,36 @@
 package com.lejoying.mc.fragment;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +38,29 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.User;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
+import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.SHA1;
+import com.lejoying.utils.StreamTools;
 
 public class ModifyFragment extends BaseFragment implements OnClickListener,
 		OnFocusChangeListener {
 
 	App app = App.getInstance();
+
+	int RESULT_SELECTHEAD = 0x123;
+	int RESULT_TAKEPICTURE = 0xa3;
 
 	List<String> yewu;
 
@@ -41,6 +69,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	EditText et_name;
 	TextView tv_yewu;
 	EditText et_yewu;
+	ImageView iv_head;
+	View rl_head;
 	View rl_yewu_edit;
 	View rl_name;
 	View rl_yewu;
@@ -52,11 +82,18 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	View rl_save;
 	View rl_cancel;
 
+	View rl_edithead;
+	View rl_fromgallery;
+	View rl_takepicture;
+	View rl_cancelselect;
+
 	View tv_random;
 
 	TextView tv_yewulength;
 
 	boolean isEdit;
+
+	SHA1 sha1;
 
 	@Override
 	protected EditText showSoftInputOnShow() {
@@ -67,6 +104,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		sha1 = new SHA1();
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_modifyinfo, null);
 		initData();
@@ -87,6 +125,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	}
 
 	public void initView() {
+		rl_head = mContent.findViewById(R.id.rl_head);
+		iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
 		tv_name = (TextView) mContent.findViewById(R.id.tv_name);
 		et_name = (EditText) mContent.findViewById(R.id.et_name);
 		tv_yewu = (TextView) mContent.findViewById(R.id.tv_yewu);
@@ -96,10 +136,30 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		rl_name = mContent.findViewById(R.id.rl_name);
 		rl_yewu = mContent.findViewById(R.id.rl_yewu);
 		tv_random = mContent.findViewById(R.id.tv_random);
+
+		if (app.heads.get(app.data.user.head) == null) {
+			app.heads.put(app.data.user.head, MCImageTools.getCircleBitmap(
+					BitmapFactory.decodeResource(getResources(),
+							R.drawable.face_man), true, 10, Color.WHITE));
+		}
+
+		iv_head.setImageBitmap(app.heads.get(app.data.user.head));
+
+		rl_edithead = mContent.findViewById(R.id.rl_edithead);
+		rl_fromgallery = mContent.findViewById(R.id.rl_fromgallery);
+		rl_takepicture = mContent.findViewById(R.id.rl_takepicture);
+		rl_cancelselect = mContent.findViewById(R.id.rl_cancelselect);
+
+		rl_fromgallery.setOnClickListener(this);
+		rl_takepicture.setOnClickListener(this);
+		rl_cancelselect.setOnClickListener(this);
+
 		rl_name.setOnClickListener(this);
 		rl_yewu.setOnClickListener(this);
 		et_name.setOnFocusChangeListener(this);
 		et_yewu.setOnFocusChangeListener(this);
+
+		rl_head.setOnClickListener(this);
 
 		tv_spacing = mContent.findViewById(R.id.tv_spacing);
 		rl_editbar = mContent.findViewById(R.id.rl_editbar);
@@ -141,6 +201,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	}
 
 	void modifyMode(View v) {
+		changeSelectBackGround(v);
 		if (!isEdit) {
 			isEdit = true;
 			tv_name.setVisibility(View.GONE);
@@ -153,6 +214,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 
 			tv_spacing.setVisibility(View.VISIBLE);
 			rl_editbar.setVisibility(View.VISIBLE);
+			rl_edithead.setVisibility(View.GONE);
 		}
 	}
 
@@ -163,62 +225,12 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			tv_name.setVisibility(View.VISIBLE);
 			tv_yewu.setVisibility(View.VISIBLE);
 			if (isSave) {
-				tv_name.setText(et_name.getText().toString());
-				tv_yewu.setText(et_yewu.getText().toString());
-				JSONObject account = new JSONObject();
-				try {
-					account.put("nickName", et_name.getText().toString());
-					account.put("mainBusiness", et_yewu.getText().toString());
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Bundle params = new Bundle();
-				params.putString("phone", app.data.user.phone);
-				params.putString("accessKey", app.data.user.accessKey);
-				params.putString("account", account.toString());
-				MCNetTools.ajax(getActivity(), API.ACCOUNT_MODIFY, params,
-						MCHttpTools.SEND_POST, 5000, new ResponseListener() {
-
-							@Override
-							public void success(JSONObject data) {
-								System.out.println(data);
-								try {
-									showMsg(data
-											.getString(getString(R.string.app_reason)));
-									tv_name.setText(app.data.user.nickName);
-									tv_yewu.setText(app.data.user.mainBusiness);
-									return;
-								} catch (Exception e) {
-									// TODO: handle exception
-								}
-								System.out.println("success");
-								app.data.user.nickName = tv_name.getText()
-										.toString();
-								app.data.user.mainBusiness = tv_yewu.getText()
-										.toString();
-
-							}
-
-							@Override
-							public void noInternet() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void failed() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void connectionCreated(
-									HttpURLConnection httpURLConnection) {
-								// TODO Auto-generated method stub
-
-							}
-						});
+				User user = new User();
+				user.nickName = et_name.getText().toString();
+				user.mainBusiness = et_yewu.getText().toString();
+				tv_name.setText(user.nickName);
+				tv_yewu.setText(user.mainBusiness);
+				modify(user);
 			}
 			et_name.setVisibility(View.GONE);
 			et_yewu.setVisibility(View.GONE);
@@ -230,20 +242,117 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		}
 	}
 
+	void modify(final User user) {
+		JSONObject account = new JSONObject();
+		try {
+			if (user.head != null && !user.head.equals("")) {
+				account.put("head", user.head);
+			}
+			if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
+				account.put("mainBusiness", user.mainBusiness);
+			}
+			if (user.nickName != null && !user.mainBusiness.equals("")) {
+				account.put("nickName", user.nickName);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Bundle params = new Bundle();
+		params.putString("phone", app.data.user.phone);
+		params.putString("accessKey", app.data.user.accessKey);
+		params.putString("account", account.toString());
+		MCNetTools.ajax(getActivity(), API.ACCOUNT_MODIFY, params,
+				MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+
+					@Override
+					public void success(JSONObject data) {
+						System.out.println(data);
+						try {
+							showMsg(data
+									.getString(getString(R.string.app_reason)));
+							tv_name.setText(app.data.user.nickName);
+							tv_yewu.setText(app.data.user.mainBusiness);
+							return;
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+						System.out.println("success");
+
+						if (user.head != null && !user.head.equals("")) {
+							app.data.user.head = user.head;
+							iv_head.setImageBitmap(app.heads
+									.get(app.data.user.head));
+
+						}
+						if (user.mainBusiness != null
+								&& !user.mainBusiness.equals("")) {
+							app.data.user.mainBusiness = user.mainBusiness;
+						}
+						if (user.nickName != null
+								&& !user.mainBusiness.equals("")) {
+							app.data.user.nickName = user.nickName;
+						}
+
+					}
+
+					@Override
+					public void noInternet() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void failed() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void connectionCreated(
+							HttpURLConnection httpURLConnection) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+	}
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.rl_head:
+			if (isEdit) {
+				new AlertDialog.Builder(getActivity())
+						.setTitle("保存修改")
+						.setMessage("是否保存修改?")
+						.setPositiveButton("保存", new Dialog.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								endModify(true);
+								modifyHead();
+							}
+						})
+						.setNegativeButton("取消", new Dialog.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.cancel();
+							}
+						}).create().show();
+			} else {
+				modifyHead();
+			}
+			break;
 		case R.id.rl_name:
 			modifyMode(v);
 			requestFocus(et_name);
-			rl_name.setBackgroundColor(Color.argb(32, 255, 255, 255));
-			rl_yewu.setBackgroundColor(Color.argb(0, 255, 255, 255));
 			break;
 		case R.id.rl_yewu:
 			modifyMode(v);
 			requestFocus(et_yewu);
-			rl_name.setBackgroundColor(Color.argb(0, 255, 255, 255));
-			rl_yewu.setBackgroundColor(Color.argb(32, 255, 255, 255));
 			break;
 		case R.id.rl_save:
 			endModify(true);
@@ -255,9 +364,33 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			et_yewu.requestFocus();
 			et_yewu.setText(yewu.get(new Random().nextInt(yewu.size())));
 			break;
+		case R.id.rl_fromgallery:
+			Intent selectFromGallery = new Intent(
+					Intent.ACTION_PICK,
+					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+			startActivityForResult(selectFromGallery, RESULT_SELECTHEAD);
+			break;
+		case R.id.rl_takepicture:
+			Intent tackPicture = new Intent(
+					android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+			startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
+			break;
+		case R.id.rl_cancelselect:
+			rl_edithead.setVisibility(View.GONE);
+			break;
 		default:
 			break;
 		}
+	}
+
+	void modifyHead() {
+		rl_edithead.setVisibility(View.VISIBLE);
+	}
+
+	void changeSelectBackGround(View selectView) {
+		rl_name.setBackgroundColor(Color.argb(0, 0, 0, 0));
+		rl_yewu.setBackgroundColor(Color.argb(0, 0, 0, 0));
+		selectView.setBackgroundColor(Color.argb(32, 255, 255, 255));
 	}
 
 	void requestFocus(EditText editText) {
@@ -269,12 +402,10 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (et_name.hasFocus()) {
-			rl_name.setBackgroundColor(Color.argb(32, 255, 255, 255));
-			rl_yewu.setBackgroundColor(Color.argb(0, 255, 255, 255));
+			changeSelectBackGround(rl_name);
 		}
 		if (et_yewu.hasFocus()) {
-			rl_name.setBackgroundColor(Color.argb(0, 255, 255, 255));
-			rl_yewu.setBackgroundColor(Color.argb(32, 255, 255, 255));
+			changeSelectBackGround(rl_yewu);
 		}
 
 	}
@@ -322,5 +453,208 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		yewu.add("吸收热爱公益事业、愿意为公众服务的人士为会员。");
 		yewu.add("全矿的基层组织建设进一步加强，基层组织建设扎实有效，逐年上台阶。");
 		yewu.add("对社员干部进行思想政治教育和风气纪律教育，组织民主评议工作");
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Bitmap tempHeadBitmap = null;
+		if (requestCode == RESULT_SELECTHEAD
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			Uri selectedImage = data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getActivity().getContentResolver().query(
+					selectedImage, filePathColumn, null, null, null);
+			cursor.moveToFirst();
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			final String picturePath = cursor.getString(columnIndex);
+			final String format = picturePath.substring(picturePath
+					.lastIndexOf("."));
+			cursor.close();
+			tempHeadBitmap = BitmapFactory.decodeFile(picturePath);
+
+		} else if (requestCode == RESULT_TAKEPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			Bitmap picture = (Bitmap) data.getExtras().get("data");
+			tempHeadBitmap = picture;
+		}
+
+		final Bitmap sourceHead = tempHeadBitmap;
+		new Thread() {
+			public void run() {
+
+				if (sourceHead != null) {
+					int width = sourceHead.getWidth() > 100 ? 100 : sourceHead
+							.getWidth();
+					int height = sourceHead.getHeight() > 100 ? 100
+							: sourceHead.getHeight();
+					int border = width > height ? height : width;
+					Bitmap head = Bitmap.createBitmap(sourceHead, 0, 0, border,
+							border);
+					File tempHead = new File(app.sdcardHeadImageFolder,
+							"tempimage.png");
+					int i = 1;
+					while (tempHead.exists()) {
+						tempHead = new File(app.sdcardHeadImageFolder,
+								"tempimage" + (i++) + ".png");
+					}
+					FileOutputStream fileOutputStream;
+					try {
+						fileOutputStream = new FileOutputStream(tempHead);
+						head.compress(Bitmap.CompressFormat.PNG, 0,
+								fileOutputStream);
+						try {
+							fileOutputStream.flush();
+							fileOutputStream.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					try {
+						InputStream inputStream = new FileInputStream(tempHead);
+						byte[] b = StreamTools.isToData(inputStream);
+
+						if (b != null) {
+							final String base64 = Base64.encodeToString(b,
+									Base64.DEFAULT);
+							String uploadFile = sha1.getDigestOfString(base64
+									.trim().getBytes()) + ".png";
+
+							final String uploadFileName = uploadFile
+									.toLowerCase(Locale.getDefault());
+							app.heads.put(uploadFileName,
+									MCImageTools.getCircleBitmap(head, true, 5,
+											Color.WHITE));
+							File headFile = new File(app.sdcardHeadImageFolder,
+									uploadFileName);
+							if (headFile.exists()) {
+								tempHead.delete();
+							} else {
+								tempHead.renameTo(headFile);
+							}
+
+							Bundle params = new Bundle();
+							params.putString("phone", app.data.user.phone);
+							params.putString("accessKey",
+									app.data.user.accessKey);
+							params.putString("filename", uploadFileName);
+
+							MCNetTools.ajax(getActivity(), API.IMAGE_CHECK,
+									params, MCHttpTools.SEND_POST, 5000,
+									new ResponseListener() {
+
+										@Override
+										public void success(JSONObject data) {
+											try {
+												boolean isExists = data
+														.getBoolean("exists");
+
+												if (!isExists) {
+													Bundle params = new Bundle();
+													params.putString("phone",
+															app.data.user.phone);
+													params.putString(
+															"accessKey",
+															app.data.user.accessKey);
+													params.putString(
+															"filename",
+															uploadFileName);
+													params.putString(
+															"imagedata", base64);
+													MCNetTools
+															.ajax(getActivity(),
+																	API.IMAGE_UPLOAD,
+																	params,
+																	MCHttpTools.SEND_POST,
+																	5000,
+																	new ResponseListener() {
+
+																		@Override
+																		public void success(
+																				JSONObject data) {
+																			try {
+																				data.get(getString(R.string.app_reason));
+																				return;
+																			} catch (JSONException e) {
+																				// TODO
+																				// Auto-generated
+																				// catch
+																				// block
+																				e.printStackTrace();
+																			}
+																			User user = new User();
+																			user.head = uploadFileName;
+
+																			modify(user);
+																		}
+
+																		@Override
+																		public void noInternet() {
+																			// TODO
+																			// Auto-generated
+																			// method
+																			// stub
+																		}
+
+																		@Override
+																		public void failed() {
+																			// TODO
+																			// Auto-generated
+																			// method
+																			// stub
+																		}
+
+																		@Override
+																		public void connectionCreated(
+																				HttpURLConnection httpURLConnection) {
+																			// TODO
+																			// Auto-generated
+																			// method
+																			// stub
+																		}
+																	});
+												} else {
+
+												}
+											} catch (JSONException e) {
+												// TODO Auto-generated catch
+												// block
+												e.printStackTrace();
+											}
+										}
+
+										@Override
+										public void connectionCreated(
+												HttpURLConnection httpURLConnection) {
+											// TODO Auto-generated method stub
+
+										}
+
+										@Override
+										public void noInternet() {
+											// TODO Auto-generated method stub
+
+										}
+
+										@Override
+										public void failed() {
+											// TODO Auto-generated method stub
+
+										}
+									});
+
+						}
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
+
 	}
 }

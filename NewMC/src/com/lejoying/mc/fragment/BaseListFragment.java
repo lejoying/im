@@ -89,6 +89,7 @@ public abstract class BaseListFragment extends ListFragment {
 		if (getActivity().getCurrentFocus() != null) {
 			flag = getInputMethodManager().hideSoftInputFromWindow(
 					getActivity().getCurrentFocus().getWindowToken(), 0);
+			System.out.println(flag);
 		}
 		return flag;
 	}
@@ -148,6 +149,6 @@ public abstract class BaseListFragment extends ListFragment {
 	}
 
 	protected void changeContentFragment(Fragment fragment) {
-		
+
 	}
 }

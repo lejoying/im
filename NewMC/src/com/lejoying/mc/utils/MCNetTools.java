@@ -11,9 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -112,9 +111,10 @@ public class MCNetTools {
 		}
 	}
 
-	public static void getImage(final Context context,
-			final String imageFileName, final int timeout,
-			final ImageResponseListener imageResponseListener) {
+	public static void downloadFile(final Context context,
+			final String location, final String fileName, final File savePath,
+			final String rename, final int timeout,
+			final DownloadListener downloadListener) {
 		if (context == null) {
 			return;
 		}
@@ -123,7 +123,7 @@ public class MCNetTools {
 			handler.post(new Runnable() {
 				@Override
 				public void run() {
-					imageResponseListener.noInternet();
+					downloadListener.noInternet();
 				}
 			});
 		} else {
@@ -133,26 +133,70 @@ public class MCNetTools {
 				public void run() {
 					super.run();
 					HttpListener httpListener = new HttpListener() {
+						float fileLength = 0;
 
 						@Override
-						public void handleInputStream(InputStream is) {
+						public void connectionCreated(
+								final HttpURLConnection httpURLConnection) {
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									downloadListener
+											.connectionCreated(httpURLConnection);
+								}
+							});
+							fileLength = httpURLConnection.getContentLength();
+						}
+
+						@Override
+						public void handleInputStream(final InputStream is) {
+							if (!Environment.getExternalStorageState().equals(
+									Environment.MEDIA_MOUNTED)) {
+								handler.post(new Runnable() {
+									@Override
+									public void run() {
+										downloadListener.success(null,is);
+									}
+								});
+								return;
+							}
 							FileOutputStream fileOutputStream = null;
-							File imageFile = new File(app.sdcardImageFolder,
-									imageFileName);
+							String localFileName = fileName;
+							if (rename != null && !rename.equals("")) {
+								localFileName = rename;
+							}
+							final File file = new File(app.sdcardImageFolder,
+									localFileName);
 							try {
-								fileOutputStream = new FileOutputStream(
-										imageFile);
+								fileOutputStream = new FileOutputStream(file);
 								int length = 0;
 								byte[] buffer = new byte[1024];
+								handler.post(new Runnable() {
+									@Override
+									public void run() {
+										downloadListener.downloading(0);
+									}
+								});
+								float nowReadLength = 0;
 								while ((length = is.read(buffer)) > 0) {
 									fileOutputStream.write(buffer, 0, length);
+									nowReadLength += length;
+									downloadListener
+											.downloading((int) (nowReadLength
+													/ fileLength * 100));
 								}
 								fileOutputStream.flush();
+								handler.post(new Runnable() {
+									@Override
+									public void run() {
+										downloadListener.success(file, null);
+									}
+								});
 							} catch (FileNotFoundException e) {
 								handler.post(new Runnable() {
 									@Override
 									public void run() {
-										imageResponseListener.failed();
+										downloadListener.failed();
 									}
 								});
 								e.printStackTrace();
@@ -160,7 +204,7 @@ public class MCNetTools {
 								handler.post(new Runnable() {
 									@Override
 									public void run() {
-										imageResponseListener.failed();
+										downloadListener.failed();
 									}
 								});
 								e.printStackTrace();
@@ -182,40 +226,11 @@ public class MCNetTools {
 									}
 								}
 							}
-							final Bitmap bitmap = BitmapFactory
-									.decodeFile(imageFile.getAbsolutePath());
-							if (bitmap == null) {
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										imageResponseListener.failed();
-									}
-								});
-							} else {
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										imageResponseListener.success(bitmap);
-									}
-								});
-							}
 						}
 
-						@Override
-						public void connectionCreated(
-								final HttpURLConnection httpURLConnection) {
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									imageResponseListener
-											.connectionCreated(httpURLConnection);
-								}
-							});
-						}
 					};
-					MCHttpTools.sendGet(
-							app.config.DOMAIN_IMAGE + imageFileName, timeout,
-							null, httpListener);
+					MCHttpTools.sendGet(location + fileName, timeout, null,
+							httpListener);
 				}
 			}.start();
 		}
@@ -254,12 +269,14 @@ public class MCNetTools {
 		public void failed();
 	}
 
-	public interface ImageResponseListener {
+	public interface DownloadListener {
 		public void connectionCreated(HttpURLConnection httpURLConnection);
 
 		public void noInternet();
 
-		public void success(Bitmap bitmap);
+		public void downloading(int progress);
+
+		public void success(File localFile, InputStream inputStream);
 
 		public void failed();
 	}

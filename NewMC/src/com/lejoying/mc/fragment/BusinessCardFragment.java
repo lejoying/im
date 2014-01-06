@@ -192,7 +192,10 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 		} else if (app.businessCardStatus == app.SHOW_SELF) {
 			button1.setText("修改个人信息");
-			iv_head.setImageBitmap(head);
+			if (app.heads.get(app.data.user.head) == null) {
+				app.heads.put(app.data.user.head, head);
+			}
+			iv_head.setImageBitmap(app.heads.get(app.data.user.head));
 			tv_nickname.setText(app.data.user.nickName);
 			tv_phone.setText(app.data.user.phone);
 			tv_mainbusiness.setText(app.data.user.mainBusiness);
