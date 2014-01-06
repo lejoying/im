@@ -178,6 +178,20 @@ window.onload = function () {
             var flag = 0, rate = 0, wheelFlag = 0;
             if (node) {
                 mouseWheel(node, function (data) {
+//                    alert(wheelFlag + "=--" + data);
+                    if (scrollInitFlag == false && mainBox.getAttribute("id") == "chatFrame") {
+                        wheelFlag = ($(".js_chatContents").height() / 10) * 120;
+                        scrollInitFlag = true;
+                    } else if (mainBox.getAttribute("id") == "mainBox") {
+                        if (selectPanel != "js_tempChatTop") {
+                            return;
+                        } else {
+                            if (!scrollFlagTempChatTop) {
+                                scrollFlagTempChatTop = true;
+                                wheelFlag = 0;
+                            }
+                        }
+                    }
                     wheelFlag += data;
                     if (_wheelData >= 0) {
                         flag = _wheelData;
@@ -201,7 +215,7 @@ window.onload = function () {
                     } else {
                         element.style.top = flag + "px";
                     }
-
+//                    alert(wheelFlag);
                     contentBox.style.top = -flag * (contentBox.offsetHeight / mainBox.offsetHeight) + "px";
                 });
             }
@@ -228,7 +242,7 @@ window.onload = function () {
             }
         }
     }
-//    new addScroll('mainBox','conversationListContent','scrollDiv');
+//    new addScroll('mainBox', 'conversationListContent', 'scrollDiv1');
     new addScroll('chatFrame', 'chat_chatmsglist', 'scrollDiv');
 }
 window.onresize = function () {

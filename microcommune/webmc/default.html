@@ -169,28 +169,28 @@
 <div class="chatListSearch">
     <div class="chatListSearchPanel">
         <div class="listOperatorContent">
-            <a title="聊天" href="javascript:;" class="conmuButton_chat js_selectedPanel">
+            <a title="聊天" href="javascript:;" class="conmuButton_chat js_tempChatTop">
                 <div id="js_chooseConversationBtn" un="conversation" class="conmu left active"
                      style="width: 70px;height:40px;margin-left: -28px;margin-top: -10px">
                 </div>
             </a>
 
             <div class="cutOffRule" style="margin-left: 15px"></div>
-            <a title="好友" href="javascript:;" class="conmuButton">
+            <a title="好友" href="javascript:;" class="conmuButton js_circlesTop">
                 <div id="js_txlBtn" un="conversation" class="conmu left active"
                      style="width: 65px;height:40px;margin-left: -20px;margin-top: -10px">
                 </div>
             </a>
 
             <div class="cutOffRule" style="margin-left: 20px"></div>
-            <a title="密友圈" href="javascript:;" class="closefriend_icon js_circletop">
+            <a title="群组" href="javascript:;" class="closefriend_icon js_clustersTop">
                 <div un="contact" id="js_circleBtn" class="addr notChooseOpera right"
                      style="width: 65px;float: left;height:40px;margin-left: -20px;margin-top: -10px">
                 </div>
             </a>
 
             <div class="cutOffRule"></div>
-            <a title="应用" href="javascript:;" class="js_appButton">
+            <a title="应用" href="javascript:;" class="js_appButton js_appManageTop">
                 <div un="publicapp" id="js_publicapp" class="publicapp notChooseOpera right"
                      style="width: 65px;float: left;height: 40px;margin-top: -10px;margin-left: -20px">
                 </div>
@@ -206,11 +206,11 @@
 <div style="position: relative; overflow-y: hidden; height:470px;" class="listContentWrap"> <!--height470px-->
 <!--mainBox 的hidden改为visible，背景把白色去掉了，coolspan-->
 <div id="mainBox" style="height: 100%; width: 100%; overflow-y: visible; position: relative;">
-<div style="width: 100%; top: 0px; position: absolute;" id="conversationListContent" class="listContent" ctrl="1">
-<div id="conversationContainer" style="display:none;">
+<div style="width: 100%; top: 0px; position: absolute;" id="conversationListContent" class="listContent" ctrl="1" onmousewheel="tempChatMainContent()">
+<div id="conversationContainer" style="" class="js_mainContent js_js_tempChatMainContent">
 
 <div id="conv_wxid_user2" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21"
-     onClick="WebMM.chooseConversation(this)" class="chatListColumn activeColumn">
+     class="chatListColumn activeColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
 
@@ -239,7 +239,7 @@
 </div>
 
 
-<div id="conv_as117064513" username="as117064513" un="as117064513" onClick="WebMM.chooseConversation(this)"
+<div id="conv_as117064513" username="as117064513" un="as117064513"
      class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
@@ -268,7 +268,7 @@
     <div class="clr"></div>
 </div>
 <div id="conv_wxid_edcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22"
-     onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+     class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
 
@@ -296,7 +296,7 @@
     <div class="clr"></div>
 </div>
 <div id="conv_wxid_h6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41"
-     onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+     class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
 
@@ -323,7 +323,7 @@
     </div>
     <div class="clr"></div>
 </div>
-<div id="conv_kevinTong" username="kevin-Tong" un="kevin-Tong" onClick="WebMM.chooseConversation(this)"
+<div id="conv_kevinTong" username="kevin-Tong" un="kevin-Tong"
      class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
@@ -351,7 +351,7 @@
     </div>
     <div class="clr"></div>
 </div>
-<div id="conv_as117064d513" username="as117064513" un="as117064513" onClick="WebMM.chooseConversation(this)"
+<div id="conv_as117064d513" username="as117064513" un="as117064513"
      class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
@@ -380,7 +380,7 @@
     <div class="clr"></div>
 </div>
 <div id="conv_wxid_eddcat2inu4zq22" username="wxid_edcat2inu4zq22" un="wxid_edcat2inu4zq22"
-     onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+     class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
 
@@ -408,7 +408,7 @@
     <div class="clr"></div>
 </div>
 <div id="conv_wxid_hd6pvqzr6whzm41" username="wxid_h6pvqzr6whzm41" un="wxid_h6pvqzr6whzm41"
-     onClick="WebMM.chooseConversation(this)" class="chatListColumn">
+     class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
 
@@ -435,7 +435,7 @@
     </div>
     <div class="clr"></div>
 </div>
-<div id="conv_kevidnTong" username="kevin-Tong" un="kevin-Tong" onClick="WebMM.chooseConversation(this)"
+<div id="conv_kevidnTong2" username="kevin-Tong" un="kevin-Tong"
      class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
@@ -463,14 +463,182 @@
     </div>
     <div class="clr"></div>
 </div>
-<div click="loadMoreConv" id="conv_load_more"><a href="javascript:;" class="chatListColumn loadMoreConv"> <span
+<div id="conv_kevidnTong3" username="kevin-Tong" un="kevin-Tong"
+     class="chatListColumn">
+    <div style="display:none;" class="clicked"></div>
+    <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+
+    <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg"
+                                  class="avatar"></div>
+    <div class="extend">
+        <p class="time"></p>
+
+        <div class="edited"><i class="editedIcon"></i></div>
+        <div style="display:none;" class="mute"></div>
+    </div>
+    <div class="info">
+        <div class="nickName">
+            <div style="" class="left name">xiao老头</div>
+            <div class="clr"></div>
+        </div>
+        <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                      src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img
+                class="tipIcon iconSending sendingStatus hide"
+                src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+
+            <p class="desc"></p>
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+<div id="conv_kevidnTong" username="kevin-Tong" un="kevin-Tong"
+     class="chatListColumn">
+    <div style="display:none;" class="clicked"></div>
+    <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+
+    <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg"
+                                  class="avatar"></div>
+    <div class="extend">
+        <p class="time"></p>
+
+        <div class="edited"><i class="editedIcon"></i></div>
+        <div style="display:none;" class="mute"></div>
+    </div>
+    <div class="info">
+        <div class="nickName">
+            <div style="" class="left name">da老头</div>
+            <div class="clr"></div>
+        </div>
+        <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                      src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img
+                class="tipIcon iconSending sendingStatus hide"
+                src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+
+            <p class="desc"></p>
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+<div id="conv_kevidnTongf" username="kevin-Tong" un="kevin-Tong"
+     class="chatListColumn">
+    <div style="display:none;" class="clicked"></div>
+    <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+
+    <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg"
+                                  class="avatar"></div>
+    <div class="extend">
+        <p class="time"></p>
+
+        <div class="edited"><i class="editedIcon"></i></div>
+        <div style="display:none;" class="mute"></div>
+    </div>
+    <div class="info">
+        <div class="nickName">
+            <div style="" class="left name">da老头</div>
+            <div class="clr"></div>
+        </div>
+        <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                      src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img
+                class="tipIcon iconSending sendingStatus hide"
+                src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+
+            <p class="desc"></p>
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+<div id="conv_kevidnTongd" username="kevin-Tong" un="kevin-Tong"
+     class="chatListColumn">
+    <div style="display:none;" class="clicked"></div>
+    <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+
+    <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg"
+                                  class="avatar"></div>
+    <div class="extend">
+        <p class="time"></p>
+
+        <div class="edited"><i class="editedIcon"></i></div>
+        <div style="display:none;" class="mute"></div>
+    </div>
+    <div class="info">
+        <div class="nickName">
+            <div style="" class="left name">da老头</div>
+            <div class="clr"></div>
+        </div>
+        <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                      src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img
+                class="tipIcon iconSending sendingStatus hide"
+                src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+
+            <p class="desc"></p>
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+<div id="conv_kevidnTongs" username="kevin-Tong" un="kevin-Tong"
+     class="chatListColumn">
+    <div style="display:none;" class="clicked"></div>
+    <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+
+    <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg"
+                                  class="avatar"></div>
+    <div class="extend">
+        <p class="time"></p>
+
+        <div class="edited"><i class="editedIcon"></i></div>
+        <div style="display:none;" class="mute"></div>
+    </div>
+    <div class="info">
+        <div class="nickName">
+            <div style="" class="left name">da老头</div>
+            <div class="clr"></div>
+        </div>
+        <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                      src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img
+                class="tipIcon iconSending sendingStatus hide"
+                src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+
+            <p class="desc"></p>
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+<div id="conv_kevidnTonga" username="kevin-Tong" un="kevin-Tong"
+     class="chatListColumn">
+    <div style="display:none;" class="clicked"></div>
+    <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+
+    <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon3.jpg"
+                                  class="avatar"></div>
+    <div class="extend">
+        <p class="time"></p>
+
+        <div class="edited"><i class="editedIcon"></i></div>
+        <div style="display:none;" class="mute"></div>
+    </div>
+    <div class="info">
+        <div class="nickName">
+            <div style="" class="left name">da老头</div>
+            <div class="clr"></div>
+        </div>
+        <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                      src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img
+                class="tipIcon iconSending sendingStatus hide"
+                src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+
+            <p class="desc"></p>
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+<div class="js_loadingTempData" id="conv_load_more"><a href="javascript:;" class="chatListColumn loadMoreConv"> <span
         class="tipPic"></span> <span class="desc">点击显示更多</span> </a></div>
 </div>
 
 
 <!-------------密友圈------------------------------------->
 
-<div class="js_circlesFriends" style=" display: block; position: relative;   height:100%">
+<div class="js_mainContent js_circlesFriends" style="position: relative;   height:100%">
     <!-- <div class="left_content" style="  background-color:#FFF;  height:100%; position: relative;  ">-->
 
     <div class="js_groups" style="width:276px; height:350px; ">
@@ -502,8 +670,15 @@
     <!--popmenuFrame-->
 </div>
 <!-------------密友圈------------------------------------->
+<div class="js_mainContent js_clusterMainContent">
+    <div style="margin-top: 300px;">群组正在建设中...</div>
+</div>
+<div class="js_mainContent js_appManageMainContent">
+    <div style="margin-top: 300px;">应用正在建设中...</div>
 </div>
 </div>
+</div>
+啊啊啊啊啊
 </div>
 <div class="chatLeftPanelShadow js_menuPanel">
     <!---------------------------------删除和黑名单--------------------------->
@@ -545,7 +720,8 @@
                             </tr>
                             <tr style="height: 20px;">
                                 <td>
-                                    <div class="js_onlyfriend_mainBusiness" style="overflow: hidden;width: 500px;height: 33px;">
+                                    <div class="js_onlyfriend_mainBusiness"
+                                         style="overflow: hidden;width: 500px;height: 33px;">
                                         主要业务：社区化服务：送水，按摩，家政等等...以及帮小孩写作业哟...只有想不到的......
                                     </div>
                                 </td>
@@ -674,7 +850,7 @@
             </div>
         </div>
         <?js } else { ?>
-        <div un="item_1377586579199" class="chatItem me">
+        <div un="item_#{post1.time}" class="chatItem me">
             <div class="time">
                 <?js if(beforeTime != formattertime(post1.time)) { ?>
                 <span class="timeBg left"></span>

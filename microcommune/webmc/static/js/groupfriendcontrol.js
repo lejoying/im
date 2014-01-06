@@ -142,7 +142,7 @@ $(document).ready(function () {
                                     }
                                 });
                                 $(".user_icon").addClass("js_none");
-                                $(".popmenuFrame").slideDown(1000);
+                                $(".popmenuFrame").slideDown(100);
                                 oldSelectedGroupClass = parentClass;
 //                                alert(oldSelectedGroupClass);
                                 if (i > 5) {
@@ -286,11 +286,11 @@ $(document).ready(function () {
                 currentChatUser = allCirclesFriends[phone];
                 if (currentChatUser.head != "") {
                     $(".js_js_onlyfriend_headimg").attr("src", window.globaldata.serverSetting.imageServer + currentChatUser.head + ".png");
-                }else{
+                } else {
                     $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
                 }
-                $(".js_onlyfriend_nickName").html(currentChatUser.nickName+" ("+currentChatUser.phone+") ");
-                $(".js_onlyfriend_mainBusiness").html("主要业务: "+currentChatUser.mainBusiness);
+                $(".js_onlyfriend_nickName").html(currentChatUser.nickName + " (" + currentChatUser.phone + ") ");
+                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
                 $(".js_rightChatPanel").show();
 //                alert(JSON.stringify(allCirclesFriends[phone]));//获取当前聊天用户的信息
 //                icon.addClass("js_none");
@@ -345,7 +345,7 @@ $(document).ready(function () {
         var group_user = getTemplate("js_group_user");
         $(".sildPopContent").html(group_user.render([]));
         $(".js_modifycirclename input[type=text]").val("")
-        $(".popmenuFrame").slideDown(1000);
+        $(".popmenuFrame").slideDown(100);
 //        $(".schoolmate_txt").html("aa");
         $(".schoolmate_txt").slideUp(10);
         $(".js_modifycirclename").slideDown(10);
@@ -804,32 +804,10 @@ function ScroNow(event) {
     var SH = Y / H * ($(".group_user")[0].scrollHeight - $(".group_user")[0].clientHeight);
     if (Y < 0)Y = 0;
     if (Y > H)Y = H;
-//    $("#ScroLine")[0].style.top = Y + "px";
     $("#ScroLine")[0].style.top = Y + "px";
     $(".group_user").css({
         marginTop: -Y * 0.5 + "px"
     });
-    //    $("#ScroRight").css({
-//        marginTop: "0px"
-//    });
-//    alert(Y);
-    /*var box = $(".group_user");
-     var toState = new State();
-     var fromState = new State();
-     animateTransform(box[0], fromState, toState, 1,
-     {
-     onStart: function () {
-     },
-     onEnd: function () {
-     var fromState1 = new State(toState);
-     var toState1 = new State(toState);
-     toState1.translate.y = - Y;
-     animateTransform(box[0], fromState1, toState1, 1);
-     }
-     }
-     );*/
-//    $(".group_user")[0].scrollTop = SH;
-//    $(".group_user")[0].style.top = -500 + "px";
 }
 
 function ScrollWheel() {
@@ -847,4 +825,57 @@ function ScrollWheel() {
     var SH = Y / H * $("#ScroRight")[0].clientHeight - $("#ScroLine")[0].clientHeight;
     if (SH < 0)SH = 0;
     $("#ScroLine")[0].style.top = SH + "px";
+}
+function tempChatMainContent() {
+//    alert(window.screen.availHeight);
+//    alert(document.documentElement.clientHeight);
+//    alert($(".listContentWrap").height()+"--"+$("#mainBox")[0].clientHeight);
+//    alert(event.wheelDelta);
+//    alert($(".js_js_tempChatMainContent")[0].scrollTop);
+//    alert($("#mainBox")[0].scrollHeight);
+//    alert($("#mainBox")[0].clientHeight);
+    var flag = event.wheelDelta == 120;
+//    var H = $("#mainBox")[0].clientHeight - $("#mainBox")[0].scrollHeight-280;
+    var H = ($(".listContentWrap").height() - $("#mainBox")[0].scrollHeight-288)*((window.screen.availHeight+90)/document.documentElement.clientHeight);
+    var top = ($(".listContent").css("top")).replace("px", "");
+//    alert(top);
+    if (event.wheelDelta < 0) {
+        var Y = parseInt(top) - 30;
+        if (Y <= H) {
+            Y = H;
+            return;
+//            alert("这是最底部了.");
+        }
+//        alert(Y);
+        $(".listContent").css({
+            top: Y + "px"
+        });
+    } else {
+        var Y = parseInt(top) + 30;
+        if (Y > 0) {
+            Y = 0;
+            return;
+//            alert("这是最顶部了.");
+        }
+//        alert(Y);
+        $(".listContent").css({
+            top: Y + "px"
+        });
+    }
+    /*var flag = event.wheelDelta == 120;
+     var Y = $(".listContent")[0].scrollTop;
+     var H = $(".listContent")[0].scrollHeight - $(".listContent")[0].clientHeight;
+     if (event.wheelDelta >= 120) {
+     Y = Y - 80
+     } else {
+     Y = Y + 80
+     }
+     if (Y < 0)Y = 0;
+     if (Y > H)Y = H;
+     $(".listContent").css({
+     top: 100 + "px"
+     });*/
+    /*var SH = Y / H * $("#ScroRight")[0].clientHeight - $("#ScroLine")[0].clientHeight;
+     if (SH < 0)SH = 0;
+     $("#ScroLine")[0].style.top = SH + "px";*/
 }

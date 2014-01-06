@@ -139,6 +139,7 @@ imagesManage.get = function (data, response) {
                         "提示信息": "获取图片成功",
                         image: "data:image/png;base64," + data
                     }));
+                    console.log("SHA1:---" + sha1.hex_sha1(data.trim()));
                     response.end();
                 }
             });

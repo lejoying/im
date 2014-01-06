@@ -1,3 +1,4 @@
+var scrollInitFlag = false;
 $(function () {
 //    $(".js_rightChatPanel").hide();
 
@@ -11,7 +12,8 @@ $(function () {
         var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         var message = $(".js_chatmessagecontent").val();
         var listPhone = [];
-        listPhone.push("122");
+
+        listPhone.push(currentChatUser.phone);
         var messageObj = {
             type: "text",
             content: message
@@ -21,28 +23,11 @@ $(function () {
         ];
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").append(js_chatmessagetemplate.render(sendMessage));
-        $.ajax({
-            type: "POST",
-            url: "/api2/message/send?",
-            data: {
-                phone: "121",
-                accessKey: "lejoying",
-                phoneto: JSON.stringify(listPhone),
-                message: JSON.stringify(messageObj)
-            },
-            success: function (data) {
-                if (data["提示信息"] == "发送成功") {
-                    setScrollPosition();
-                } else {
-                    alert(data["提示信息"] + "---" + data["失败原因"]);
-                }
-            }
-        });
+        sendMessages(JSON.stringify(listPhone), JSON.stringify(messageObj));
     });
 
 
 //    alert($(".chatItem[un=item_2070333132]").html());//根据属性值获取对象jQuery对象
-//    js_chatContents
     getMessages("0", function (data) {
 //        console.log(data);
 //        console.log(data.messages[0]);
@@ -53,7 +38,32 @@ $(function () {
     });
     keepQuest();
 });
+function sendMessages(listPhone, messageObj) {
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $.ajax({
+        type: "POST",
+        url: "/api2/message/send?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            phoneto: listPhone,
+            message: messageObj
+        },
+        success: function (data) {
+            if (data["提示信息"] == "发送成功") {
+                setScrollPosition();
+            } else {
+                alert(data["提示信息"] + "---" + data["失败原因"]);
+            }
+        }
+    });
+}
 function setScrollPosition() {
+    if ($(".js_chatContents").height() < $(".chatScorll").height()) {
+        $(".scrollDiv").hide();
+    } else {
+        $(".scrollDiv").show();
+    }
 //    alert($(".scrollDiv").);
     var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
     $(".scrollDiv").css({
