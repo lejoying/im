@@ -10,6 +10,7 @@ var newSelectedGroupClass = "";
 
 var selectedAddCircleGroupFlag = false;
 
+var selectedDeleteOrBlack = "";
 
 var currentChatUser = {};
 $(document).ready(function () {
@@ -42,7 +43,7 @@ $(document).ready(function () {
     var imageServer = window.globaldata.serverSetting.imageServer;
 //    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying", nickName: "麦穗儿香", head: "d9fb7db5dc6e4b06046f0114b12d581ee84cec73"}));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
-    $(".js_accountNickName").html(accountObj.nickName + "-Active");
+    $(".js_accountNickName").html(accountObj.nickName);
     $(".js_accountNickName").attr("title", accountObj.nickName);
     if (accountObj.head != "") {
         $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head + ".png");
@@ -105,7 +106,7 @@ $(document).ready(function () {
                                 });
                                 var group_user = getTemplate("js_group_user");
                                 $(".sildPopContent").html(group_user.render(circles[i]));
-                                getScroll();
+//                                getScroll();
 //                            $("#ScroLine").css("height", "100px");
 //                            alert(Math.ceil(((data.circles)[i].accounts.length + 1) / 4));
 //                            alert((180 / Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64) * 180);
@@ -117,18 +118,18 @@ $(document).ready(function () {
                                     $("#ScroLine").css("height", "214");
                                 }
                                 $(".user_icon").longPress(200, function (e, x, y) {
-                                    $(".js_menuPanel").show();
-                                    $(".popmenuFrame").css({
-                                        marginTop: "500px"
-                                    });
-                                    $("#mainBox").css({
-                                        marginTop: 0
-//                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
-                                    });
                                     if (dropStatus == "down") {
 //                                        $(".popmenuFrame").slideUp(1000);
                                         dropStatus = "dropping";
 //                                alert("longPress");
+                                        $(".js_menuPanel").show();
+                                        $(".popmenuFrame").css({
+                                            marginTop: "500px"
+                                        });
+                                        $("#mainBox").css({
+                                            marginTop: 0
+//                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
+                                        });
                                     }
                                     var icon1 = $(this);
                                     if (icon1.hasClass("js_selected")) {
@@ -151,27 +152,6 @@ $(document).ready(function () {
 //                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
                                     });
                                 }
-                                /*if (i > 5) {
-                                 var box = $("#mainBox");
-                                 var toState = new State();
-                                 toState.scale.x = 0.5;
-                                 toState.scale.y = 0.5;
-                                 var fromState = new State();
-                                 animateTransform(box[0], fromState, toState, 200,
-                                 {
-                                 onStart: function () {
-                                 },
-                                 onEnd: function () {
-                                 var fromState1 = new State(toState);
-                                 var toState1 = new State(toState);
-                                 toState1.translate.y = -((Math.floor(i / 3)) * 90 + 5);
-                                 toState1.scale.x = 1;
-                                 toState1.scale.y = 1;
-                                 animateTransform(box[0], fromState1, toState1, 400);
-                                 }
-                                 }
-                                 );
-                                 }*/
                             }
                             $(".schoolmate_txt").slideDown(10);
                             $(".js_modifycirclename").slideUp(10);
@@ -202,6 +182,20 @@ $(document).ready(function () {
     });
     $("body").mouseup(function (e) {
         if (dropStatus == "dropping") {
+            var phoneTo = [];
+            for (var index in selectedDropUsers) {
+                phoneTo.push(index);
+            }
+            if (selectedDeleteOrBlack == "delete") {
+                selectedDeleteOrBlack = "";
+                deleteFriend(JSON.stringify(phoneTo));
+            } else if (selectedDeleteOrBlack == "blacklist") {
+                selectedDeleteOrBlack = "";
+                blacklistFriend(JSON.stringify(phoneTo));
+            } else {
+                selectedDeleteOrBlack = "";
+            }
+
             //            var iconGroups = $(".js_icon_group_dropping");
             //            iconGroups.removeClass("js_icon_group_dropping");
         }
@@ -211,6 +205,7 @@ $(document).ready(function () {
         });
         $(".appGroup").removeClass("js_icon_group_dropping");
         $(".user_icon").removeClass("js_moving");
+        $(".js_menuPanel").hide();
         if (dropStatus == "down") {
             $(".user_icon").addClass("js_none");//可以实现仅选择一个好友进行操作
         }
@@ -230,41 +225,14 @@ $(document).ready(function () {
                     array.push(index);
                 }
                 moveOutFriendGroup(accountObj, JSON.stringify(array), checkGroupId, selectedDropUsers[index0]);
-                /*for (var index in selectedDropUsers) {
-                 //                    alert(selectedDropUsers[index]);
-                 if (selectedDropUsers[index] != checkGroupId) {
-                 var oldCircleRid = selectedDropUsers[index];
-                 moveOutFriendGroup(accountObj, index, checkGroupId, selectedDropUsers[index]);
-                 var newSelectLength = $("." + newSelectedGroupClass).find("img").length;
-                 if (newSelectLength < 4) {
-                 var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
-                 $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
-                 moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
-                 } else {
-                 var $img = ($("." + oldSelectedGroupClass).find("img"))[0];
-                 //                            $($img).appendTo($("." + newSelectedGroupClass).find(".appGroup"));
-                 //                            ($("." + newSelectedGroupClass).find(".appGroup"))[0].removeChild($img);
-                 //                            alert("新的分组的好友大于4人");
-                 moveOutFriendModifyCirclesData(index, checkGroupId, oldCircleRid, circles);
-                 }
-                 } else {
-                 continue;
-                 }
-                 }*/
             } else {
                 checkGroupId = -1;
                 selectedDropUsers = {};
             }
         }
-        /*$(".popmenuFrame").css({
-         marginTop: "0px"
-         });*/
-        //        $(".sildPopContent .popappIcon").removeClass("js_moving1");
-        //        $(".sildPopContent .popappIcon").removeClass("js_moving2");
     });
     $(document).on("mousedown", ".user_icon", function (event) {
         if (dropStatus == "none") {
-            dropStatus = "down";
             mouseX = event.clientX;
 //            mouseX = event.clientX - 500;
             mouseY = event.clientY;
@@ -277,6 +245,7 @@ $(document).ready(function () {
         if (icon.hasClass("js_none")) {
 
             if (event.ctrlKey && event.button == 0) {
+                dropStatus = "down";
                 icon.removeClass("js_none");
                 icon.addClass("js_selected");
                 selectedDropUsers[phone] = circle_rid;
@@ -519,19 +488,68 @@ $(document).ready(function () {
         $(".js_addFriendErrorMessage").html("");
     });
     $(".js_menuPanel").hide();
-    $(document).on("mouseover", ".js_deleteFriend", function () {
-        alert("删除-js_deleteFriend");
+    $(document).on("mouseenter", ".js_deleteFriend", function () {
+        selectedDeleteOrBlack = "delete";
+        $(this).css({
+            opacity: 1
+        });
+//        alert("删除-js_deleteFriendover");
     });
-    $(document).on("mouseover", ".js_blackListFriend", function () {
-        alert("黑名单-js_blackListFriend");
+    $(document).on("mouseleave", ".js_deleteFriend", function () {
+        selectedDeleteOrBlack = "";
+        $(this).css({
+            opacity: 0.5
+        });
+//        alert("删除-js_deleteFriendleave");
+    });
+    $(document).on("mouseenter", ".js_blackListFriend", function () {
+        selectedDeleteOrBlack = "blacklist";
+        $(this).css({
+            opacity: 1
+        });
+    });
+    $(document).on("mouseleave", ".js_blackListFriend", function () {
+        selectedDeleteOrBlack = "";
+        $(this).css({
+            opacity: 0.5
+        });
     });
     /* $(document).on("click", ".js_user_icon", function () {
      alert($(this).find("span").attr("phone"));
      });*/
 });
-function getScroll() {
-
+function deleteFriend(phoneTo) {
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $.ajax({
+        type: "POST",
+        url: "/api2/relation/deletefriend?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            phoneto: phoneTo
+        },
+        success: function (data) {
+            alert(data["提示信息"]);
+        }
+    });
 }
+
+function blacklistFriend(phoneTo) {
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $.ajax({
+        type: "POST",
+        url: "/api2/relation/blacklist?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            phoneto: phoneTo
+        },
+        success: function (data) {
+            alert(data["提示信息"]);
+        }
+    });
+}
+
 function moveOutFriendModifyCirclesData(phoneTo, newCircleRid, oldCircleRid, circles) {
 //    alert(oldCircleRid);
     var circles = circles;
@@ -836,7 +854,7 @@ function tempChatMainContent() {
 //    alert($("#mainBox")[0].clientHeight);
     var flag = event.wheelDelta == 120;
 //    var H = $("#mainBox")[0].clientHeight - $("#mainBox")[0].scrollHeight-280;
-    var H = ($(".listContentWrap").height() - $("#mainBox")[0].scrollHeight-288)*((window.screen.availHeight+90)/document.documentElement.clientHeight);
+    var H = ($(".listContentWrap").height() - $("#mainBox")[0].scrollHeight - 288) * ((window.screen.availHeight + 90) / document.documentElement.clientHeight);
     var top = ($(".listContent").css("top")).replace("px", "");
 //    alert(top);
     if (event.wheelDelta < 0) {

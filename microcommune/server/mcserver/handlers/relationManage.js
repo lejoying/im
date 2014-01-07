@@ -125,10 +125,12 @@ relationManage.deletefriend = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
-    var phoneTo = data.phoneto;
+    var phoneToStr = data.phoneto;
+    var phoneTo = JSON.parse(phoneToStr);
     var query = [
         'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
-        'WHERE account1.phone={phone} AND account2.phone={phoneTo}',
+        'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
+        'SET r.friendStatus="delete",r.phone={phone}',
         'RETURN r'
     ].join('\n');
     var params = {
@@ -145,12 +147,12 @@ relationManage.deletefriend = function (data, response) {
             console.log(error);
             return;
         } else if (results.length > 0) {
-            var rNode = results.pop().r;
-            var rData = rNode.data;
-            rData.friendStatus = "delete";
-            rData.phone = phone;
-            rNode.save(function (error, node) {
-            });
+            /*var rNode = results.pop().r;
+             var rData = rNode.data;
+             rData.friendStatus = "delete";
+             rData.phone = phone;
+             rNode.save(function (error, node) {
+             });*/
             deleteCircleAccountRelaNode(phone, phoneTo);
         } else {
             response.write(JSON.stringify({
@@ -163,7 +165,7 @@ relationManage.deletefriend = function (data, response) {
     function deleteCircleAccountRelaNode(phone, phoneTo) {
         var query = [
             'MATCH (account:Account)-[r:HAS_CIRCLE]->(circle:Circle)-[r1:HAS_FRIEND]->(account1:Account)',
-            'WHERE account.phone={phone} AND account1.phone={phoneTo}',
+            'WHERE account.phone={phone} AND account1.phone IN {phoneTo}',
             'DELETE r1',
             'RETURN account'
         ].join('\n');
@@ -202,10 +204,12 @@ relationManage.blacklist = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
-    var phoneTo = data.phoneto;
+    var phoneToStr = data.phoneto;
+    var phoneTo = JSON.parse(phoneToStr);
     var query = [
         'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
-        'WHERE account1.phone={phone} AND account2.phone={phoneTo}',
+        'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
+        'SET r.friendStatus="blacklist",r.phone={phone}',
         'RETURN r'
     ].join('\n');
     var params = {
@@ -222,12 +226,12 @@ relationManage.blacklist = function (data, response) {
             console.log(error);
             return;
         } else if (results.length > 0) {
-            var rNode = results.pop().r;
-            var rData = rNode.data;
-            rData.friendStatus = "blacklist";
-            rData.phone = phone;
-            rNode.save(function (error, node) {
-            });
+            /*var rNode = results.pop().r;
+             var rData = rNode.data;
+             rData.friendStatus = "blacklist";
+             rData.phone = phone;
+             rNode.save(function (error, node) {
+             });*/
             response.write(JSON.stringify({
                 "提示信息": "添加黑名单成功"
             }));
