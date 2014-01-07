@@ -155,7 +155,7 @@ public class MCNetTools {
 								handler.post(new Runnable() {
 									@Override
 									public void run() {
-										downloadListener.success(null,is);
+										downloadListener.success(null, is);
 									}
 								});
 								return;
@@ -165,8 +165,7 @@ public class MCNetTools {
 							if (rename != null && !rename.equals("")) {
 								localFileName = rename;
 							}
-							final File file = new File(app.sdcardImageFolder,
-									localFileName);
+							final File file = new File(savePath, localFileName);
 							try {
 								fileOutputStream = new FileOutputStream(file);
 								int length = 0;

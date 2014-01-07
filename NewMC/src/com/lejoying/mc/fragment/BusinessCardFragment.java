@@ -1,5 +1,9 @@
 package com.lejoying.mc.fragment;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -25,7 +29,9 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.utils.MCImageTools;
+import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
+import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 
 public class BusinessCardFragment extends BaseFragment {
 	App app = App.getInstance();
@@ -162,7 +168,8 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public void initData() {
 		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
-		ImageView iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
+		final ImageView iv_head = (ImageView) mContent
+				.findViewById(R.id.iv_head);
 		TextView tv_nickname = (TextView) mContent
 				.findViewById(R.id.tv_nickname);
 		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
@@ -170,10 +177,12 @@ public class BusinessCardFragment extends BaseFragment {
 				.findViewById(R.id.tv_mainbusiness);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
+		String fileName = "";
 		if (app.businessCardStatus == app.SHOW_TEMPFRIEND) {
 			iv_head.setImageBitmap(head);
 			tv_nickname.setText(app.tempFriend.nickName);
 			tv_phone.setText(app.tempFriend.phone);
+			fileName = app.tempFriend.head;
 			tv_mainbusiness.setText(app.tempFriend.mainBusiness);
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
@@ -192,11 +201,9 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 		} else if (app.businessCardStatus == app.SHOW_SELF) {
 			button1.setText("修改个人信息");
-			if (app.heads.get(app.data.user.head) == null) {
-				app.heads.put(app.data.user.head, head);
-			}
-			iv_head.setImageBitmap(app.heads.get(app.data.user.head));
+			iv_head.setImageBitmap(head);
 			tv_nickname.setText(app.data.user.nickName);
+			fileName = app.data.user.head;
 			tv_phone.setText(app.data.user.phone);
 			tv_mainbusiness.setText(app.data.user.mainBusiness);
 			group.removeView(button2);
@@ -214,6 +221,7 @@ public class BusinessCardFragment extends BaseFragment {
 			iv_head.setImageBitmap(head);
 			tv_nickname.setText(app.tempFriend.nickName);
 			tv_phone.setText(app.tempFriend.phone);
+			fileName = app.tempFriend.head;
 			tv_mainbusiness.setText(app.tempFriend.mainBusiness);
 			button1.setOnClickListener(new OnClickListener() {
 
@@ -232,6 +240,68 @@ public class BusinessCardFragment extends BaseFragment {
 
 				}
 			});
+		}
+		final String headFileName = fileName;
+		if (app.heads.get(headFileName) == null) {
+			app.heads.put(headFileName, MCImageTools.getCircleBitmap(
+					BitmapFactory.decodeResource(getResources(),
+							R.drawable.face_man), true, 10, Color.WHITE));
+			final File headFile = new File(app.sdcardHeadImageFolder,
+					headFileName);
+			if (headFile.exists()) {
+				Bitmap image = BitmapFactory.decodeFile(headFile
+						.getAbsolutePath());
+
+				if (image != null) {
+					Bitmap head = MCImageTools.getCircleBitmap(image, true, 5,
+							Color.WHITE);
+					app.heads.put(headFileName, head);
+					iv_head.setImageBitmap(head);
+				}
+			} else {
+				MCNetTools.downloadFile(getActivity(), app.config.DOMAIN_IMAGE,
+						headFileName, app.sdcardHeadImageFolder, null, 5000,
+						new DownloadListener() {
+							@Override
+							public void success(File localFile,
+									InputStream inputStream) {
+								Bitmap image = BitmapFactory
+										.decodeFile(localFile.getAbsolutePath());
+								if (image != null) {
+									Bitmap head = MCImageTools.getCircleBitmap(
+											image, true, 5, Color.WHITE);
+									app.heads.put(headFileName, head);
+									iv_head.setImageBitmap(head);
+								}
+							}
+
+							@Override
+							public void noInternet() {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void failed() {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void connectionCreated(
+									HttpURLConnection httpURLConnection) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void downloading(int progress) {
+								// TODO Auto-generated method stub
+							}
+						});
+			}
+		} else {
+			iv_head.setImageBitmap(app.heads.get(headFileName));
 		}
 	}
 }

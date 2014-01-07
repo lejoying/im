@@ -19,7 +19,7 @@
         android:layout_below="@+id/iv_head"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="3dp"
-        android:textColor="#ddd"
+        android:textColor="#eee"
         android:textSize="12sp" />
 
 </RelativeLayout>

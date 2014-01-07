@@ -807,16 +807,79 @@ public class ChatFragment extends BaseListFragment {
 				messageHolder.text.setVisibility(View.VISIBLE);
 				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.tv_chat.setText(message.content);
+				String fileName = app.data.user.head;
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
-					messageHolder.iv_head.setImageBitmap(headman);
+					fileName = app.data.user.head;
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					messageHolder.iv_head.setImageBitmap(headwoman);
+					fileName = app.nowChatFriend.head;
 					break;
 				default:
 					break;
 				}
+				final String headFileName = fileName;
+				if (app.heads.get(headFileName) == null) {
+					app.heads.put(headFileName, headman);
+					final File headFile = new File(app.sdcardHeadImageFolder,
+							headFileName);
+					if (headFile.exists()) {
+						Bitmap image = BitmapFactory.decodeFile(headFile
+								.getAbsolutePath());
+
+						if (image != null) {
+							Bitmap head = MCImageTools.getCircleBitmap(image,
+									true, 5, Color.WHITE);
+							app.heads.put(headFileName, head);
+						}
+					} else {
+						MCNetTools.downloadFile(getActivity(),
+								app.config.DOMAIN_IMAGE, headFileName,
+								app.sdcardHeadImageFolder, null, 5000,
+								new DownloadListener() {
+									@Override
+									public void success(File localFile,
+											InputStream inputStream) {
+										Bitmap image = BitmapFactory
+												.decodeFile(localFile
+														.getAbsolutePath());
+										if (image != null) {
+											Bitmap head = MCImageTools
+													.getCircleBitmap(image,
+															true, 5,
+															Color.WHITE);
+											app.heads.put(headFileName, head);
+											mAdapter.notifyDataSetChanged();
+										}
+									}
+
+									@Override
+									public void noInternet() {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void failed() {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void connectionCreated(
+											HttpURLConnection httpURLConnection) {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void downloading(int progress) {
+										// TODO Auto-generated method stub
+									}
+								});
+					}
+				}
+				messageHolder.iv_head.setImageBitmap(app.heads.get(fileName));
 			} else if (message.messageType.equals("image")) {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);

@@ -50,6 +50,7 @@ import com.lejoying.mc.utils.MCDataTools;
 import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 import com.lejoying.utils.SHA1;
 import com.lejoying.utils.StreamTools;
@@ -136,12 +137,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		rl_name = mContent.findViewById(R.id.rl_name);
 		rl_yewu = mContent.findViewById(R.id.rl_yewu);
 		tv_random = mContent.findViewById(R.id.tv_random);
-
-		if (app.heads.get(app.data.user.head) == null) {
-			app.heads.put(app.data.user.head, MCImageTools.getCircleBitmap(
-					BitmapFactory.decodeResource(getResources(),
-							R.drawable.face_man), true, 10, Color.WHITE));
-		}
 
 		iv_head.setImageBitmap(app.heads.get(app.data.user.head));
 
@@ -369,11 +364,13 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 					Intent.ACTION_PICK,
 					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			startActivityForResult(selectFromGallery, RESULT_SELECTHEAD);
+			rl_edithead.setVisibility(View.GONE);
 			break;
 		case R.id.rl_takepicture:
 			Intent tackPicture = new Intent(
 					android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 			startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
+			rl_edithead.setVisibility(View.GONE);
 			break;
 		case R.id.rl_cancelselect:
 			rl_edithead.setVisibility(View.GONE);

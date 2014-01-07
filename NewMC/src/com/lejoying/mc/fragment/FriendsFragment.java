@@ -255,82 +255,70 @@ public class FriendsFragment extends BaseListFragment {
 						- messageFirstPosition));
 				messageHolder.tv_lastchat.setText(friend.messages
 						.get(friend.messages.size() - 1).content);
-				if (app.heads.get(friend.head) == null) {
-					app.heads.put(friend.head, head);
-					if (friend.head == null || friend.head.equals("")) {
+				final String headFileName = friend.head;
+				if (app.heads.get(headFileName) == null) {
+					app.heads.put(headFileName, head);
+					final File headFile = new File(app.sdcardHeadImageFolder,
+							headFileName);
+					if (headFile.exists()) {
+						Bitmap image = BitmapFactory.decodeFile(headFile
+								.getAbsolutePath());
 
+						if (image != null) {
+							Bitmap head = MCImageTools.getCircleBitmap(image,
+									true, 5, Color.WHITE);
+							app.heads.put(headFileName, head);
+						}
 					} else {
-						new Thread() {
-							public void run() {
-								File headFile = new File(
-										app.sdcardHeadImageFolder, friend.head);
-								if (headFile.exists()) {
-									Bitmap head = BitmapFactory
-											.decodeFile(headFile
-													.getAbsolutePath());
-									app.heads.put(friend.head, head);
-									mFriendsHandler
-											.sendEmptyMessage(NOTIFYDATASETCHANGED);
-								} else {
-									MCNetTools.downloadFile(getActivity(),
-											app.config.DOMAIN_IMAGE,
-											friend.head,
-											app.sdcardHeadImageFolder, "",
-											5000, new DownloadListener() {
-
-												@Override
-												public void success(
-														File localFile,
-														InputStream inputStream) {
-													Bitmap head = MCImageTools.getCircleBitmap(
-															BitmapFactory
-																	.decodeFile(localFile
-																			.getAbsolutePath()),
-															true, 10,
+						MCNetTools.downloadFile(getActivity(),
+								app.config.DOMAIN_IMAGE, headFileName,
+								app.sdcardHeadImageFolder, null, 5000,
+								new DownloadListener() {
+									@Override
+									public void success(File localFile,
+											InputStream inputStream) {
+										Bitmap image = BitmapFactory
+												.decodeFile(localFile
+														.getAbsolutePath());
+										if (image != null) {
+											Bitmap head = MCImageTools
+													.getCircleBitmap(image,
+															true, 5,
 															Color.WHITE);
-													app.heads.put(friend.head,
-															head);
-													mFriendsHandler
-															.sendEmptyMessage(NOTIFYDATASETCHANGED);
-												}
+											app.heads.put(headFileName, head);
+											mFriendsAdapter
+													.notifyDataSetChanged();
+										}
+									}
 
-												@Override
-												public void noInternet() {
-													// TODO Auto-generated
-													// method stub
+									@Override
+									public void noInternet() {
+										// TODO Auto-generated method stub
 
-												}
+									}
 
-												@Override
-												public void failed() {
-													// TODO Auto-generated
-													// method stub
+									@Override
+									public void failed() {
+										// TODO Auto-generated method stub
 
-												}
+									}
 
-												@Override
-												public void downloading(
-														int progress) {
-													// TODO Auto-generated
-													// method stub
+									@Override
+									public void connectionCreated(
+											HttpURLConnection httpURLConnection) {
+										// TODO Auto-generated method stub
 
-												}
+									}
 
-												@Override
-												public void connectionCreated(
-														HttpURLConnection httpURLConnection) {
-													// TODO Auto-generated
-													// method stub
-
-												}
-											});
-								}
-							}
-						}.start();
+									@Override
+									public void downloading(int progress) {
+										// TODO Auto-generated method stub
+									}
+								});
 					}
 				}
-				messageHolder.iv_head
-						.setImageBitmap(app.heads.get(friend.head));
+				messageHolder.iv_head.setImageBitmap(app.heads
+						.get(headFileName));
 				Integer notread = friends.get(lastChatFriends.get(arg0
 						- messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {
@@ -458,8 +446,84 @@ public class FriendsFragment extends BaseListFragment {
 							} else {
 								itemHolder = (ItemHolder) convertView.getTag();
 							}
+							final String headFileName = friends.get(phones
+									.get(a * 6 + position)).head;
+							if (app.heads.get(headFileName) == null) {
+								app.heads.put(headFileName, head);
+								final File headFile = new File(
+										app.sdcardHeadImageFolder, headFileName);
+								if (headFile.exists()) {
+									Bitmap image = BitmapFactory
+											.decodeFile(headFile
+													.getAbsolutePath());
 
-							itemHolder.iv_head.setImageBitmap(head);
+									if (image != null) {
+										Bitmap head = MCImageTools
+												.getCircleBitmap(image, true,
+														5, Color.WHITE);
+										app.heads.put(headFileName, head);
+									}
+								} else {
+									MCNetTools.downloadFile(getActivity(),
+											app.config.DOMAIN_IMAGE,
+											headFileName,
+											app.sdcardHeadImageFolder, null,
+											5000, new DownloadListener() {
+												@Override
+												public void success(
+														File localFile,
+														InputStream inputStream) {
+													Bitmap image = BitmapFactory
+															.decodeFile(localFile
+																	.getAbsolutePath());
+													if (image != null) {
+														Bitmap head = MCImageTools
+																.getCircleBitmap(
+																		image,
+																		true,
+																		5,
+																		Color.WHITE);
+														app.heads.put(
+																headFileName,
+																head);
+														mFriendsAdapter
+																.notifyDataSetChanged();
+													}
+												}
+
+												@Override
+												public void noInternet() {
+													// TODO Auto-generated
+													// method stub
+
+												}
+
+												@Override
+												public void failed() {
+													// TODO Auto-generated
+													// method stub
+
+												}
+
+												@Override
+												public void connectionCreated(
+														HttpURLConnection httpURLConnection) {
+													// TODO Auto-generated
+													// method stub
+
+												}
+
+												@Override
+												public void downloading(
+														int progress) {
+													// TODO Auto-generated
+													// method stub
+												}
+											});
+								}
+							}
+							itemHolder.iv_head.setImageBitmap(app.heads
+									.get(headFileName));
 							itemHolder.tv_nickname.setText(friends.get(phones
 									.get(a * 6 + position)).nickName);
 							convertView
