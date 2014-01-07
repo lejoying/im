@@ -1,5 +1,6 @@
 package com.lejoying.mc.fragment;
 
+import java.net.HttpURLConnection;
 import java.util.Date;
 
 import org.json.JSONException;
@@ -20,6 +21,9 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
+import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 
 public class RegisterPassFragment extends BaseFragment implements
 		OnClickListener {
@@ -97,13 +101,43 @@ public class RegisterPassFragment extends BaseFragment implements
 				e.printStackTrace();
 			}
 			params.putString("account", account.toString());
-			System.out.println(params);
-			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_MODIFY,
-					params, true, new NetworkStatusAdapter() {
+			MCNetTools.ajax(getActivity(), API.ACCOUNT_MODIFY, params,
+					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+
 						@Override
-						public void success() {
+						public void success(JSONObject data) {
+							try {
+								data.getString(getString(R.string.app_reason));
+								return;
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							app.data.user.phone = app.registerBundle
+									.getString("phone");
+							app.data.user.accessKey = app.registerBundle
+									.getString("accessKey");
 							mMCFragmentManager.startToActivity(
 									MainActivity.class, true);
+						}
+
+						@Override
+						public void noInternet() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void failed() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void connectionCreated(
+								HttpURLConnection httpURLConnection) {
+							// TODO Auto-generated method stub
+
 						}
 					});
 			break;

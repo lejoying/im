@@ -316,6 +316,14 @@ public class ChatFragment extends BaseListFragment {
 																												app.data.user.flag)
 																										.intValue() + 1);
 																					}
+																					if (app.data.lastChatFriends
+																							.indexOf(app.nowChatFriend.phone) != 0) {
+																						app.data.lastChatFriends
+																								.remove(app.nowChatFriend.phone);
+																						app.data.lastChatFriends
+																								.add(0,
+																										app.nowChatFriend.phone);
+																					}
 																				}
 
 																				@Override
@@ -396,6 +404,14 @@ public class ChatFragment extends BaseListFragment {
 																				.valueOf(
 																						app.data.user.flag)
 																				.intValue() + 1);
+															}
+															if (app.data.lastChatFriends
+																	.indexOf(app.nowChatFriend.phone) != 0) {
+																app.data.lastChatFriends
+																		.remove(app.nowChatFriend.phone);
+																app.data.lastChatFriends
+																		.add(0,
+																				app.nowChatFriend.phone);
 															}
 														}
 
@@ -657,6 +673,13 @@ public class ChatFragment extends BaseListFragment {
 												.valueOf(Integer.valueOf(
 														app.data.user.flag)
 														.intValue() + 1);
+									}
+									if (app.data.lastChatFriends
+											.indexOf(app.nowChatFriend.phone) != 0) {
+										app.data.lastChatFriends
+												.remove(app.nowChatFriend.phone);
+										app.data.lastChatFriends.add(0,
+												app.nowChatFriend.phone);
 									}
 								}
 

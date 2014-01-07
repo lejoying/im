@@ -1,5 +1,10 @@
 package com.lejoying.mc.fragment;
 
+import java.net.HttpURLConnection;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +15,15 @@ import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.api.API;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.RSAUtils;
 
 public class RegisterPhoneFragment extends BaseFragment implements
 		OnClickListener {
+	App app = App.getInstance();
 	private View mContent;
 	private EditText mView_phone;
 	private Button mView_next;
@@ -51,12 +62,40 @@ public class RegisterPhoneFragment extends BaseFragment implements
 			final Bundle params = new Bundle();
 			params.putString("phone", mView_phone.getText().toString());
 			params.putString("usage", "register");
-			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
-					params, true, new NetworkStatusAdapter() {
+			MCNetTools.ajax(getActivity(), API.ACCOUNT_VERIFYPHONE, params,
+					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+
 						@Override
-						public void success() {
+						public void success(JSONObject data) {
+							app.registerBundle = params;
+							try {
+								app.registerBundle.putString("code",
+										data.getString("code"));
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
 							mMCFragmentManager.replaceToContent(
 									new RegisterCodeFragment(), true);
+
+						}
+
+						@Override
+						public void noInternet() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void failed() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void connectionCreated(
+								HttpURLConnection httpURLConnection) {
+							// TODO Auto-generated method stub
+
 						}
 					});
 			break;

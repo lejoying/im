@@ -305,6 +305,7 @@ public class DataHandler {
 					}
 					circle.name = jCircle.getString("name");
 					JSONArray jFriends = jCircle.getJSONArray("accounts");
+					System.out.println(jFriends);
 					List<String> phones = new ArrayList<String>();
 					for (int j = 0; j < jFriends.length(); j++) {
 						JSONObject jFriend = jFriends.getJSONObject(j);
@@ -326,6 +327,10 @@ public class DataHandler {
 			}
 			app.data.circles = circles;
 			app.data.friends = friends;
+			if (FriendsFragment.instance != null) {
+				FriendsFragment.instance.mFriendsHandler
+						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
+			}
 			break;
 		case HANDLER_MESSAGE:
 			JSONArray jMessages = (JSONArray) msg.obj;
@@ -392,6 +397,10 @@ public class DataHandler {
 					}
 				}
 			}
+			if (FriendsFragment.instance != null) {
+				FriendsFragment.instance.mFriendsHandler
+						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
+			}
 			break;
 		case HANDLER_NEWFRIEND:
 			JSONArray jFriends = (JSONArray) msg.obj;
@@ -410,8 +419,11 @@ public class DataHandler {
 					e.printStackTrace();
 				}
 			}
+			if (FriendsFragment.instance != null) {
+				FriendsFragment.instance.mFriendsHandler
+						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
+			}
 			break;
-
 		case HANDLER_UPDATEUSER:
 			updateUser((JSONObject) msg.obj);
 			break;

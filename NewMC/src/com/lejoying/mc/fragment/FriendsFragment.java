@@ -80,39 +80,50 @@ public class FriendsFragment extends BaseListFragment {
 	Bitmap head;
 	Map<Integer, List<View>> circlePageViews;
 
-	void initData() {
+	int newFriendsCount;
+
+	void initData(boolean initShowMessages) {
 		circles = app.data.circles;
 		friends = app.data.friends;
 		newFriends = app.data.newFriends;
 		lastChatFriends = app.data.lastChatFriends;
-		if (newFriends.size() != 0) {
+		newFriendsCount = 0;
+		for (Friend friend : newFriends) {
+			System.out.println(friend.friendStatus);
+			if (app.data.friends.get(friend.phone) == null) {
+				newFriendsCount++;
+			}
+		}
+		if (newFriendsCount != 0) {
 			showNewFriends = true;
+		} else {
+			showNewFriends = false;
+		}
+		if (initShowMessages) {
+			showMessageCount = lastChatFriends.size() > 5 ? 5 : lastChatFriends
+					.size();
 		}
 		buttonCount = showNewFriends ? 4 : 3;
 		messageFirstPosition = showNewFriends ? 2 : 1;
+		messageFirstPosition = showMessageCount == 0 ? messageFirstPosition - 1
+				: messageFirstPosition;
+		buttonCount = showMessageCount == 0 ? buttonCount - 1 : buttonCount;
 		circleFirstPosition = messageFirstPosition + showMessageCount + 1;
-		showMessageCount = lastChatFriends.size() > 5 ? 5 : lastChatFriends
-				.size();
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-
 		mInflater = getActivity().getLayoutInflater();
 		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
-
 		app.dataHandler.sendMessage(app.dataHandler.HANDLER_GETUSERDATA,
 				getActivity());
-
 		Intent service = new Intent(getActivity(), PushService.class);
 		service.putExtra("objective", "start");
 		getActivity().startService(service);
-
-		initData();
-		getUser();
+		initData(true);
 		mFriendsAdapter = new FriendsAdapter();
 		mFriendsHandler = new FriendsHandler();
 		circlePageViews = new Hashtable<Integer, List<View>>();
@@ -347,7 +358,8 @@ public class FriendsFragment extends BaseListFragment {
 			case TYPE_BUTTON:
 				if (showNewFriends && arg0 == 1) {
 					bHolder.button.setText(getActivity().getString(
-							R.string.btn_newfriends));
+							R.string.btn_newfriends)
+							+ "(" + newFriendsCount + ")");
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -361,7 +373,10 @@ public class FriendsFragment extends BaseListFragment {
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							System.out.println("bbb");
+							showMessageCount = lastChatFriends.size() > showMessageCount + 5 ? showMessageCount + 5
+									: lastChatFriends.size();
+							initData(false);
+							mFriendsAdapter.notifyDataSetChanged();
 						}
 					});
 				} else if (arg0 == getCount() - 3) {
@@ -799,11 +814,8 @@ public class FriendsFragment extends BaseListFragment {
 							app.dataHandler.sendMessage(
 									app.dataHandler.HANDLER_NEWFRIEND,
 									data.getJSONArray("accounts"));
-							if (app.data.newFriends.size() != 0) {
-								showNewFriends = true;
-								mFriendsHandler
-										.sendEmptyMessage(NOTIFYDATASETCHANGED);
-							}
+							mFriendsHandler
+									.sendEmptyMessage(NOTIFYDATASETCHANGED);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -837,7 +849,7 @@ public class FriendsFragment extends BaseListFragment {
 			int what = msg.what;
 			switch (what) {
 			case NOTIFYDATASETCHANGED:
-				initData();
+				initData(true);
 				mFriendsAdapter.notifyDataSetChanged();
 				break;
 

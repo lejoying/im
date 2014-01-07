@@ -74,6 +74,105 @@ public class PushService extends Service {
 											.valueOf(app.data.user.flag)
 											.intValue() + 1);
 								}
+							} else if (event.equals("newfriend")) {
+								Bundle params = new Bundle();
+								params.putString("phone", app.data.user.phone);
+								params.putString("accessKey",
+										app.data.user.accessKey);
+								MCNetTools.ajax(PushService.this,
+										API.RELATION_GETASKFRIENDS, params,
+										MCHttpTools.SEND_POST, 5000,
+										new ResponseListener() {
+
+											@Override
+											public void success(JSONObject data) {
+												System.out.println(data);
+												try {
+													data.getString("失败原因");
+													return;
+												} catch (JSONException e) {
+												}
+												try {
+													app.dataHandler
+															.sendMessage(
+																	app.dataHandler.HANDLER_NEWFRIEND,
+																	data.getJSONArray("accounts"));
+
+												} catch (JSONException e) {
+													// TODO Auto-generated catch
+													// block
+													e.printStackTrace();
+												}
+											}
+
+											@Override
+											public void noInternet() {
+												// TODO Auto-generated method
+												// stub
+
+											}
+
+											@Override
+											public void failed() {
+												// TODO Auto-generated method
+												// stub
+
+											}
+
+											@Override
+											public void connectionCreated(
+													HttpURLConnection httpURLConnection) {
+												// TODO Auto-generated method
+												// stub
+
+											}
+										});
+
+							} else if (event.equals("friendaccept")) {
+								Bundle params = new Bundle();
+								params.putString("phone", app.data.user.phone);
+								params.putString("accessKey",
+										app.data.user.accessKey);
+								MCNetTools.ajax(PushService.this,
+										API.RELATION_GETCIRCLESANDFRIENDS,
+										params, MCHttpTools.SEND_POST, 5000,
+										new ResponseListener() {
+											@Override
+											public void success(JSONObject data) {
+												try {
+													app.dataHandler
+															.sendMessage(
+																	app.dataHandler.HANDLER_CIRCLE,
+																	data.getJSONArray("circles"));
+												} catch (JSONException e) {
+													// TODO Auto-generated catch
+													// block
+													e.printStackTrace();
+												}
+											}
+
+											@Override
+											public void noInternet() {
+												// TODO Auto-generated method
+												// stub
+
+											}
+
+											@Override
+											public void failed() {
+												// TODO Auto-generated method
+												// stub
+
+											}
+
+											@Override
+											public void connectionCreated(
+													HttpURLConnection httpURLConnection) {
+												// TODO Auto-generated method
+												// stub
+
+											}
+										});
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
