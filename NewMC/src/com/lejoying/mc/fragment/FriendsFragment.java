@@ -35,16 +35,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Circle;
 import com.lejoying.mc.data.Friend;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.service.PushService;
-import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.HttpTools;
 
 public class FriendsFragment extends BaseListFragment {
 
@@ -89,7 +89,6 @@ public class FriendsFragment extends BaseListFragment {
 		lastChatFriends = app.data.lastChatFriends;
 		newFriendsCount = 0;
 		for (Friend friend : newFriends) {
-			System.out.println(friend.friendStatus);
 			if (app.data.friends.get(friend.phone) == null) {
 				newFriendsCount++;
 			}
@@ -118,7 +117,7 @@ public class FriendsFragment extends BaseListFragment {
 		mInflater = getActivity().getLayoutInflater();
 		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
-		app.dataHandler.sendMessage(app.dataHandler.HANDLER_GETUSERDATA,
+		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_GETUSERDATA,
 				getActivity());
 		Intent service = new Intent(getActivity(), PushService.class);
 		service.putExtra("objective", "start");
@@ -675,13 +674,13 @@ public class FriendsFragment extends BaseListFragment {
 		params.putString("target", app.data.user.phone);
 
 		MCNetTools.ajax(getActivity(), API.ACCOUNT_GET, params,
-				MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+				HttpTools.SEND_POST, 5000, new ResponseListener() {
 
 					@Override
 					public void success(JSONObject data) {
 						try {
 							app.dataHandler.sendMessage(
-									app.dataHandler.HANDLER_UPDATEUSER,
+									app.dataHandler.DATA_HANDLER_UPDATEUSER,
 									data.getJSONObject("account"));
 							getCirclesAndFriends();
 						} catch (JSONException e) {
@@ -712,12 +711,12 @@ public class FriendsFragment extends BaseListFragment {
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 		MCNetTools.ajax(getActivity(), API.RELATION_GETCIRCLESANDFRIENDS,
-				params, MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+				params, HttpTools.SEND_POST, 5000, new ResponseListener() {
 					@Override
 					public void success(JSONObject data) {
 						try {
 							app.dataHandler.sendMessage(
-									app.dataHandler.HANDLER_CIRCLE,
+									app.dataHandler.DATA_HANDLER_CIRCLE,
 									data.getJSONArray("circles"));
 							getMessages();
 						} catch (JSONException e) {
@@ -754,7 +753,7 @@ public class FriendsFragment extends BaseListFragment {
 		String flag = app.data.user.flag;
 		params.putString("flag", flag);
 		MCNetTools.ajax(getActivity(), API.MESSAGE_GET, params,
-				MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+				HttpTools.SEND_POST, 5000, new ResponseListener() {
 
 					@Override
 					public void success(JSONObject data) {
@@ -762,7 +761,7 @@ public class FriendsFragment extends BaseListFragment {
 							getAskFriends();
 							System.out.println(data);
 							app.dataHandler.sendMessage(
-									app.dataHandler.HANDLER_MESSAGE,
+									app.dataHandler.DATA_HANDLER_MESSAGE,
 									data.getJSONArray("messages"));
 							app.data.user.flag = String.valueOf(data
 									.getInt("flag"));
@@ -800,7 +799,7 @@ public class FriendsFragment extends BaseListFragment {
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 		MCNetTools.ajax(getActivity(), API.RELATION_GETASKFRIENDS, params,
-				MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+				HttpTools.SEND_POST, 5000, new ResponseListener() {
 
 					@Override
 					public void success(JSONObject data) {
@@ -812,7 +811,7 @@ public class FriendsFragment extends BaseListFragment {
 						}
 						try {
 							app.dataHandler.sendMessage(
-									app.dataHandler.HANDLER_NEWFRIEND,
+									app.dataHandler.DATA_HANDLER_NEWFRIEND,
 									data.getJSONArray("accounts"));
 							mFriendsHandler
 									.sendEmptyMessage(NOTIFYDATASETCHANGED);

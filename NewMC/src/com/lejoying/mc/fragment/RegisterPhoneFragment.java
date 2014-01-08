@@ -14,12 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.RSAUtils;
+import com.lejoying.utils.HttpTools;
 
 public class RegisterPhoneFragment extends BaseFragment implements
 		OnClickListener {
@@ -63,7 +62,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 			params.putString("phone", mView_phone.getText().toString());
 			params.putString("usage", "register");
 			MCNetTools.ajax(getActivity(), API.ACCOUNT_VERIFYPHONE, params,
-					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+					HttpTools.SEND_POST, 5000, new ResponseListener() {
 
 						@Override
 						public void success(JSONObject data) {

@@ -11,9 +11,7 @@ import android.widget.TextView;
 
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
-import com.lejoying.mc.service.handler.MainServiceHandler;
-import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
+import com.lejoying.mc.network.API;
 
 public class LoginUseCodeFragment extends BaseFragment implements
 		OnClickListener {
@@ -44,23 +42,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 		mView_login.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
 
-		mMCFragmentManager.setNetworkRemainListener(new RemainListener() {
-
-			@Override
-			public String setRemainType() {
-				return MainServiceHandler.REMAIN_LOGIN;
-			}
-
-			@Override
-			public void remain(int remain) {
-				if (remain > 0) {
-					mView_sendcode.setText(getString(R.string.tv_resend) + "("
-							+ remain + ")");
-				} else {
-					mView_sendcode.setText(getString(R.string.tv_resend));
-				}
-			}
-		});
+		
 
 		return mContent;
 	}
@@ -87,14 +69,14 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			Bundle params = new Bundle();
 			params.putString("phone", phone);
 			params.putString("code", code);
-			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
-					params, true, new NetworkStatusAdapter() {
-						@Override
-						public void success() {
-							mMCFragmentManager.startToActivity(
-									MainActivity.class, true);
-						}
-					});
+			// mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYCODE,
+			// params, true, new NetworkStatusAdapter() {
+			// @Override
+			// public void success() {
+			// mMCFragmentManager.startToActivity(
+			// MainActivity.class, true);
+			// }
+			// });
 			break;
 		case R.id.tv_sendcode:
 			if (phone == null || phone.equals("")) {
@@ -104,13 +86,13 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			Bundle verifyParams = new Bundle();
 			verifyParams.putString("phone", phone);
 			verifyParams.putString("usage", "login");
-			mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
-					verifyParams, new NetworkStatusAdapter() {
-						@Override
-						public void success() {
-
-						}
-					});
+			// mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
+			// verifyParams, new NetworkStatusAdapter() {
+			// @Override
+			// public void success() {
+			//
+			// }
+			// });
 
 			break;
 		default:

@@ -3,10 +3,8 @@ package com.lejoying.mc;
 import java.util.Hashtable;
 import java.util.Map;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -21,16 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.fragment.BaseInterface;
 import com.lejoying.mc.fragment.CircleMenuFragment;
-import com.lejoying.mc.service.MainService;
-import com.lejoying.mc.service.handler.MainServiceHandler;
-import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
-import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.BackgroundView;
 
 public abstract class BaseFragmentActivity extends FragmentActivity implements
 		BaseInterface {
-	
+
 	private FragmentManager mFragmentManager;
 
 	private CircleMenuFragment mCircle;
@@ -49,13 +43,8 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	private boolean isLoading;
 	private String loadingAPI;
 
-	private Map<String, NetworkStatusListener> mReceiverListreners;
 	private Map<String, Integer> mNetworkPermission;
-	private RemainListener mRemainListener;
 	private OnKeyDownListener mKeyDownListener;
-
-	private NetworkRemainReceiver mNetworkRemainReceiver;
-	private NetworkReceiver mNetworkReceiver;
 
 	private InputMethodManager mInputMethodManager;
 
@@ -72,18 +61,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		super.onCreate(arg0);
 		mFragmentManager = getSupportFragmentManager();
 
-		mReceiverListreners = new Hashtable<String, NetworkStatusListener>();
 		mNetworkPermission = new Hashtable<String, Integer>();
-
-		mNetworkReceiver = new NetworkReceiver();
-		IntentFilter networkFilter = new IntentFilter();
-		networkFilter.addAction(MainServiceHandler.ACTION_STATUS);
-		registerReceiver(mNetworkReceiver, networkFilter);
-
-		mNetworkRemainReceiver = new NetworkRemainReceiver();
-		IntentFilter networkRemainFilter = new IntentFilter();
-		networkRemainFilter.addAction(MainServiceHandler.ACTION_REMAIN);
-		registerReceiver(mNetworkRemainReceiver, networkRemainFilter);
 
 		mContentId = R.id.fl_content;
 		mTopId = R.id.fl_top;
@@ -150,9 +128,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(mNetworkReceiver);
-		unregisterReceiver(mNetworkRemainReceiver);
-		mReceiverListreners = null;
 		mNetworkPermission = null;
 	}
 
@@ -307,23 +282,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void startNetworkForResult(String api, Bundle params,
-			NetworkStatusListener listener) {
-		startNetwork(api, params, false, listener);
-	}
-
-	@Override
-	public void startNetworkForResult(String api, Bundle params,
-			boolean showLoading, NetworkStatusListener listener) {
-		startNetwork(api, params, showLoading, listener);
-	}
-
-	@Override
-	public void setNetworkRemainListener(RemainListener listener) {
-		mRemainListener = listener;
-	}
-
-	@Override
 	public void setNotifyListener(NotifyListener notifyListener) {
 		this.mNotifyListener = notifyListener;
 	}
@@ -335,80 +293,81 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		return this.mNotifyListener;
 	}
 
-	protected void startNetwork(String api, Bundle params, boolean showLoading,
-			NetworkStatusListener listener) {
-		int permissionCode = createPermissionCode();
-		mReceiverListreners.put(api, listener);
-		mNetworkPermission.put(api, permissionCode);
-		Intent service = new Intent(this, MainService.class);
-		service.putExtra("SERVICE", MainServiceHandler.SERVICE_NETWORK);
-		service.putExtra("API", api);
-		service.putExtra("PERMISSION", permissionCode);
-		if (params != null) {
-			service.putExtras(params);
-		}
-		startService(service);
-		if (showLoading) {
-			startLoading(api);
-		}
-	}
-
-	protected void startViewProcessing(int notify, boolean showLoading) {
-		startViewProcessing(notify, null, showLoading);
-	}
-
-	protected void startViewProcessing(int notify, Bundle params,
-			boolean showLoading) {
-		Intent service = new Intent(this, MainService.class);
-		service.putExtra("SERVICE", MainServiceHandler.SERVICE_NOTIFYVIEW);
-		service.putExtra("NOTIFY", notify);
-		if (params != null) {
-			service.putExtras(params);
-		}
-		startService(service);
-		if (showLoading) {
-			startLoading(null);
-		}
-	}
-
-	public class NetworkReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			int PERMISSION = intent.getIntExtra("PERMISSION", -1);
-			String api = intent.getStringExtra("API");
-			if (mNetworkPermission == null
-					|| mNetworkPermission.get(api) == null
-					|| PERMISSION != mNetworkPermission.get(api)) {
-				return;
-			}
-
-			if (api != null && mReceiverListreners != null) {
-				NetworkStatusListener listener = mReceiverListreners.get(api);
-				if (listener != null) {
-					if (isLoading && api.equals(loadingAPI)) {
-						cancelLoading();
-					}
-					mReceiverListreners.remove(api);
-					listener.onReceive(intent.getIntExtra("STATUS", -1),
-							intent.getStringExtra("LOG"));
-
-				}
-			}
-		}
-	}
-
-	public class NetworkRemainReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (mRemainListener != null) {
-				int remain = intent.getIntExtra(
-						mRemainListener.setRemainType(), -1);
-				if (remain != -1) {
-					mRemainListener.remain(remain);
-				}
-			}
-		}
-	}
+	// protected void startNetwork(String api, Bundle params, boolean
+	// showLoading,
+	// NetworkStatusListener listener) {
+	// int permissionCode = createPermissionCode();
+	// mReceiverListreners.put(api, listener);
+	// mNetworkPermission.put(api, permissionCode);
+	// Intent service = new Intent(this, MainService.class);
+	// service.putExtra("SERVICE", MainServiceHandler.SERVICE_NETWORK);
+	// service.putExtra("API", api);
+	// service.putExtra("PERMISSION", permissionCode);
+	// if (params != null) {
+	// service.putExtras(params);
+	// }
+	// startService(service);
+	// if (showLoading) {
+	// startLoading(api);
+	// }
+	// }
+	//
+	// protected void startViewProcessing(int notify, boolean showLoading) {
+	// startViewProcessing(notify, null, showLoading);
+	// }
+	//
+	// protected void startViewProcessing(int notify, Bundle params,
+	// boolean showLoading) {
+	// Intent service = new Intent(this, MainService.class);
+	// service.putExtra("SERVICE", MainServiceHandler.SERVICE_NOTIFYVIEW);
+	// service.putExtra("NOTIFY", notify);
+	// if (params != null) {
+	// service.putExtras(params);
+	// }
+	// startService(service);
+	// if (showLoading) {
+	// startLoading(null);
+	// }
+	// }
+	//
+	// public class NetworkReceiver extends BroadcastReceiver {
+	// @Override
+	// public void onReceive(Context context, Intent intent) {
+	// int PERMISSION = intent.getIntExtra("PERMISSION", -1);
+	// String api = intent.getStringExtra("API");
+	// if (mNetworkPermission == null
+	// || mNetworkPermission.get(api) == null
+	// || PERMISSION != mNetworkPermission.get(api)) {
+	// return;
+	// }
+	//
+	// if (api != null && mReceiverListreners != null) {
+	// NetworkStatusListener listener = mReceiverListreners.get(api);
+	// if (listener != null) {
+	// if (isLoading && api.equals(loadingAPI)) {
+	// cancelLoading();
+	// }
+	// mReceiverListreners.remove(api);
+	// listener.onReceive(intent.getIntExtra("STATUS", -1),
+	// intent.getStringExtra("LOG"));
+	//
+	// }
+	// }
+	// }
+	// }
+	//
+	// public class NetworkRemainReceiver extends BroadcastReceiver {
+	// @Override
+	// public void onReceive(Context context, Intent intent) {
+	// if (mRemainListener != null) {
+	// int remain = intent.getIntExtra(
+	// mRemainListener.setRemainType(), -1);
+	// if (remain != -1) {
+	// mRemainListener.remain(remain);
+	// }
+	// }
+	// }
+	// }
 
 	protected void startLoading(String api) {
 		mLoadingView.setVisibility(View.VISIBLE);
@@ -422,13 +381,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		isLoading = false;
 		if (loadingAPI != null) {
 			if (!loadingAPI.equals("")) {
-				Intent service = new Intent(this, MainServiceHandler.class);
-				service.putExtra("SERVICE",
-						MainServiceHandler.SERVICE_CANCELNETWORK);
-				service.putExtra("API", loadingAPI);
-				startService(service);
 				mNetworkPermission.remove(loadingAPI);
-				mReceiverListreners.remove(loadingAPI);
 				loadingAPI = "";
 			}
 		}

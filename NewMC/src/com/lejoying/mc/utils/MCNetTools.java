@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,7 +19,8 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCHttpTools.HttpListener;
+import com.lejoying.utils.HttpTools;
+import com.lejoying.utils.HttpTools.HttpListener;
 import com.lejoying.utils.StreamTools;
 
 public class MCNetTools {
@@ -35,8 +37,7 @@ public class MCNetTools {
 		if (context == null) {
 			return;
 		}
-		boolean hasNetwork = MCHttpTools.hasNetwork(context);
-
+		boolean hasNetwork = HttpTools.hasNetwork(context);
 		if (!hasNetwork) {
 			handler.post(new Runnable() {
 				@Override
@@ -69,13 +70,13 @@ public class MCNetTools {
 							});
 						}
 					};
-					if (method == MCHttpTools.SEND_GET) {
-						MCHttpTools.sendGet(app.config.DOMAIN + url, timeout,
-								params, httpListener);
+					if (method == HttpTools.SEND_GET) {
+						HttpTools.sendGetUseBundle(app.config.DOMAIN + url,
+								timeout, params, httpListener);
 					}
-					if (method == MCHttpTools.SEND_POST) {
-						MCHttpTools.sendPost(app.config.DOMAIN + url, timeout,
-								params, httpListener);
+					if (method == HttpTools.SEND_POST) {
+						HttpTools.sendPostUseBundle(app.config.DOMAIN + url,
+								timeout, params, httpListener);
 					}
 					try {
 						if (b == null) {
@@ -118,7 +119,7 @@ public class MCNetTools {
 		if (context == null) {
 			return;
 		}
-		boolean hasNetwork = MCHttpTools.hasNetwork(context);
+		boolean hasNetwork = HttpTools.hasNetwork(context);
 		if (!hasNetwork) {
 			handler.post(new Runnable() {
 				@Override
@@ -228,8 +229,8 @@ public class MCNetTools {
 						}
 
 					};
-					MCHttpTools.sendGet(location + fileName, timeout, null,
-							httpListener);
+					HttpTools.sendGetUseBundle(location + fileName, timeout,
+							null, httpListener);
 				}
 			}.start();
 		}

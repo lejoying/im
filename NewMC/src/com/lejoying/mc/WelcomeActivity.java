@@ -10,13 +10,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.data.DataHandler;
-import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.SHA1;
+import com.lejoying.utils.HttpTools;
 
 public class WelcomeActivity extends BaseFragmentActivity {
 
@@ -28,7 +26,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
-		app.dataHandler.sendMessage(app.dataHandler.HANDLER_GETCONFIGANDDATA,
+		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_GETCONFIGANDDATA,
 				app.dataHandler.DOSYNC, this);
 		start = new Date().getTime();
 		if (app.config.lastLoginPhone.equals("none")
@@ -41,13 +39,13 @@ public class WelcomeActivity extends BaseFragmentActivity {
 			params.putString("target", app.data.user.phone);
 
 			MCNetTools.ajax(this, API.ACCOUNT_GET, params,
-					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+					HttpTools.SEND_POST, 5000, new ResponseListener() {
 
 						@Override
 						public void success(JSONObject data) {
 							try {
 								app.dataHandler.sendMessage(
-										app.dataHandler.HANDLER_UPDATEUSER,
+										app.dataHandler.DATA_HANDLER_UPDATEUSER,
 										data.getJSONObject("account"));
 								startToMain();
 							} catch (JSONException e) {
@@ -77,7 +75,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	}
 
 	void startToLogin() {
-		app.dataHandler.sendEmptyMessage(app.dataHandler.HANDLER_CLEANDATA);
+		app.dataHandler.sendEmptyMessage(app.dataHandler.DATA_HANDLER_CLEANDATA);
 		new Thread() {
 			public void run() {
 				long end = new Date().getTime();

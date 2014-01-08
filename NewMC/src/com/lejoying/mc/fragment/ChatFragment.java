@@ -49,15 +49,15 @@ import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Message;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
-import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.HttpTools;
 import com.lejoying.utils.SHA1;
 import com.lejoying.utils.StreamTools;
 
@@ -252,7 +252,7 @@ public class ChatFragment extends BaseListFragment {
 					params.putString("filename", uploadFileName);
 
 					MCNetTools.ajax(getActivity(), API.IMAGE_CHECK, params,
-							MCHttpTools.SEND_POST, 5000,
+							HttpTools.SEND_POST, 5000,
 							new ResponseListener() {
 
 								@Override
@@ -273,7 +273,7 @@ public class ChatFragment extends BaseListFragment {
 													base64);
 											MCNetTools.ajax(getActivity(),
 													API.IMAGE_UPLOAD, params,
-													MCHttpTools.SEND_POST,
+													HttpTools.SEND_POST,
 													5000,
 													new ResponseListener() {
 
@@ -297,7 +297,7 @@ public class ChatFragment extends BaseListFragment {
 																	.ajax(getActivity(),
 																			API.MESSAGE_SEND,
 																			params,
-																			MCHttpTools.SEND_POST,
+																			HttpTools.SEND_POST,
 																			5000,
 																			new ResponseListener() {
 
@@ -386,7 +386,7 @@ public class ChatFragment extends BaseListFragment {
 													"image", uploadFileName);
 											MCNetTools.ajax(getActivity(),
 													API.MESSAGE_SEND, params,
-													MCHttpTools.SEND_POST,
+													HttpTools.SEND_POST,
 													5000,
 													new ResponseListener() {
 
@@ -660,7 +660,7 @@ public class ChatFragment extends BaseListFragment {
 				if (message != null && !message.equals("")) {
 					Bundle params = generateParams("text", message);
 					MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params,
-							MCHttpTools.SEND_POST, 5000,
+							HttpTools.SEND_POST, 5000,
 							new ResponseListener() {
 
 								@Override

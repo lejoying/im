@@ -7,10 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.service.handler.MainServiceHandler;
-import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 
@@ -48,7 +45,6 @@ public abstract class BaseFragment extends Fragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		mMCFragmentManager.setNetworkRemainListener(null);
 		mMCFragmentManager.setFragmentKeyDownListener(null);
 		mMCFragmentManager.setNotifyListener(null);
 	}
@@ -98,43 +94,6 @@ public abstract class BaseFragment extends Fragment {
 		MCNetTools.cleanMsg();
 	}
 
-	protected abstract class NetworkStatusAdapter implements
-			NetworkStatusListener {
-		@Override
-		public void onReceive(int STATUS, String log) {
-			switch (STATUS) {
-			case MainServiceHandler.STATUS_NETWORK_SUCCESS:
-				success();
-				break;
-			case MainServiceHandler.STATUS_NETWORK_UNSUCCESS:
-				unSuccess(log);
-				break;
-			case MainServiceHandler.STATUS_NETWORK_NOINTERNET:
-				noInternet();
-				break;
-			case MainServiceHandler.STATUS_NETWORK_FAILED:
-				failed();
-				break;
-			default:
-				break;
-			}
-		}
-
-		public abstract void success();
-
-		public void unSuccess(String log) {
-			showMsg(log);
-		}
-
-		public void noInternet() {
-			showMsg(getString(R.string.app_nointernet));
-		}
-
-		public void failed() {
-			showMsg(getString(R.string.app_timeout));
-		}
-	}
-
 	public FragmentManager getmFragmentManager() {
 		if (mFragmentManager == null) {
 			mFragmentManager = getActivity().getSupportFragmentManager();
@@ -143,7 +102,7 @@ public abstract class BaseFragment extends Fragment {
 	}
 
 	protected void changeContentFragment(Fragment fragment) {
-		
+
 	}
 
 }

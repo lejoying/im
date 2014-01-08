@@ -16,12 +16,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCDataTools;
-import com.lejoying.mc.utils.MCHttpTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.HttpTools;
 
 public class SearchFriendFragment extends BaseListFragment {
 
@@ -98,7 +98,7 @@ public class SearchFriendFragment extends BaseListFragment {
 						params.putString("accessKey", app.data.user.accessKey);
 						params.putSerializable("target", phone);
 						MCNetTools.ajax(getActivity(), API.ACCOUNT_GET, params,
-								MCHttpTools.SEND_POST, 5000,
+								HttpTools.SEND_POST, 5000,
 								new ResponseListener() {
 
 									@Override
@@ -107,7 +107,7 @@ public class SearchFriendFragment extends BaseListFragment {
 											try {
 												app.dataHandler
 														.sendMessage(
-																app.dataHandler.HANDLER_UPDATEUSER,
+																app.dataHandler.DATA_HANDLER_UPDATEUSER,
 																data.getJSONObject("account"));
 												app.businessCardStatus = app.SHOW_SELF;
 												mMCFragmentManager

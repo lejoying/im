@@ -1,4 +1,4 @@
-package com.lejoying.mc.api;
+package com.lejoying.mc.network;
 
 public abstract class API {
 	protected static final String SLASH = "/";

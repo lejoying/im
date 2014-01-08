@@ -1,4 +1,4 @@
-package com.lejoying.mc.data;
+package com.lejoying.mc.data.handler;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,6 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Circle;
+import com.lejoying.mc.data.Friend;
+import com.lejoying.mc.data.StaticConfig;
+import com.lejoying.mc.data.StaticData;
+import com.lejoying.mc.data.User;
 import com.lejoying.mc.fragment.ChatFragment;
 import com.lejoying.mc.fragment.FriendsFragment;
 
@@ -28,19 +34,19 @@ public class DataHandler {
 	public final int DOSYNC = 0x31;
 
 	App app;
-	public final int HANDLER_USER = 0x01;
-	public final int HANDLER_CIRCLE = 0x02;
-	public final int HANDLER_MESSAGE = 0x03;
-	public final int HANDLER_NEWFRIEND = 0x04;
+	public final int DATA_HANDLER_USER = 0x01;
+	public final int DATA_HANDLER_CIRCLE = 0x02;
+	public final int DATA_HANDLER_MESSAGE = 0x03;
+	public final int DATA_HANDLER_NEWFRIEND = 0x04;
 
-	public final int HANDLER_UPDATEUSER = 0x05;
-	public final int HANDLER_UPDATEFRIEND = 0x06;
+	public final int DATA_HANDLER_UPDATEUSER = 0x05;
+	public final int DATA_HANDLER_UPDATEFRIEND = 0x06;
 
-	public final int HANDLER_GETCONFIGANDDATA = 0x11;
-	public final int HANDLER_SAVECONFIGANDDATA = 0x12;
-	public final int HANDLER_GETUSERDATA = 0x13;
+	public final int DATA_HANDLER_GETCONFIGANDDATA = 0x11;
+	public final int DATA_HANDLER_SAVECONFIGANDDATA = 0x12;
+	public final int DATA_HANDLER_GETUSERDATA = 0x13;
 
-	public final int HANDLER_CLEANDATA = 0x21;
+	public final int DATA_HANDLER_CLEANDATA = 0x21;
 
 	List<Message> mQueue = new ArrayList<Message>();
 
@@ -104,10 +110,10 @@ public class DataHandler {
 		InputStream inputStream = null;
 		ObjectInputStream objectInputStream = null;
 		switch (msg.what) {
-		case HANDLER_CLEANDATA:
+		case DATA_HANDLER_CLEANDATA:
 			app.initData();
 			break;
-		case HANDLER_GETUSERDATA:
+		case DATA_HANDLER_GETUSERDATA:
 			// read data
 			try {
 				inputStream = ((Context) msg.obj)
@@ -149,7 +155,7 @@ public class DataHandler {
 			}
 
 			break;
-		case HANDLER_SAVECONFIGANDDATA:
+		case DATA_HANDLER_SAVECONFIGANDDATA:
 			OutputStream outputStream = null;
 			ObjectOutputStream objectOutputStream = null;
 			if (app.isDataChanged) {
@@ -213,7 +219,7 @@ public class DataHandler {
 				}
 			}
 			break;
-		case HANDLER_GETCONFIGANDDATA:
+		case DATA_HANDLER_GETCONFIGANDDATA:
 
 			// read config
 
@@ -285,10 +291,10 @@ public class DataHandler {
 
 			}
 			break;
-		case HANDLER_USER:
+		case DATA_HANDLER_USER:
 			updateUser((JSONObject) msg.obj);
 			break;
-		case HANDLER_CIRCLE:
+		case DATA_HANDLER_CIRCLE:
 			JSONArray jCircles = (JSONArray) msg.obj;
 			app.isDataChanged = true;
 			Map<String, Friend> friends = new Hashtable<String, Friend>();
@@ -305,7 +311,6 @@ public class DataHandler {
 					}
 					circle.name = jCircle.getString("name");
 					JSONArray jFriends = jCircle.getJSONArray("accounts");
-					System.out.println(jFriends);
 					List<String> phones = new ArrayList<String>();
 					for (int j = 0; j < jFriends.length(); j++) {
 						JSONObject jFriend = jFriends.getJSONObject(j);
@@ -332,7 +337,7 @@ public class DataHandler {
 						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
 			}
 			break;
-		case HANDLER_MESSAGE:
+		case DATA_HANDLER_MESSAGE:
 			JSONArray jMessages = (JSONArray) msg.obj;
 			if (jMessages.length() != 0) {
 				app.isDataChanged = true;
@@ -402,7 +407,7 @@ public class DataHandler {
 						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
 			}
 			break;
-		case HANDLER_NEWFRIEND:
+		case DATA_HANDLER_NEWFRIEND:
 			JSONArray jFriends = (JSONArray) msg.obj;
 			for (int i = 0; i < jFriends.length(); i++) {
 				try {
@@ -424,10 +429,10 @@ public class DataHandler {
 						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
 			}
 			break;
-		case HANDLER_UPDATEUSER:
+		case DATA_HANDLER_UPDATEUSER:
 			updateUser((JSONObject) msg.obj);
 			break;
-		case HANDLER_UPDATEFRIEND:
+		case DATA_HANDLER_UPDATEFRIEND:
 			updateFriend((JSONObject) msg.obj);
 			break;
 		default:

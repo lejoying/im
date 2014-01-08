@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
 
+import com.lejoying.mc.data.handler.DataHandler;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -73,6 +75,8 @@ public class App {
 	public StaticConfig config;
 
 	public DataHandler dataHandler;
+	
+	
 	// temp data
 	public Bundle registerBundle;
 	public Friend tempFriend;

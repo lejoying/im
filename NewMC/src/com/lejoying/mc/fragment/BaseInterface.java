@@ -1,11 +1,7 @@
 package com.lejoying.mc.fragment;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
-
-import com.lejoying.mc.service.handler.NetworkHandler.NetworkStatusListener;
-import com.lejoying.mc.service.handler.NetworkRemain.RemainListener;
 
 public interface BaseInterface {
 	public void hideCircleMenu();
@@ -21,14 +17,6 @@ public interface BaseInterface {
 	public int replaceToContent(Fragment fragment, boolean toBackStack);
 
 	public void startToActivity(Class<?> clazz, boolean finishSelf);
-
-	public void startNetworkForResult(String api, Bundle params,
-			NetworkStatusListener listener);
-
-	public void startNetworkForResult(String api, Bundle params,
-			boolean showLoading, NetworkStatusListener listener);
-
-	public void setNetworkRemainListener(RemainListener listener);
 
 	public void setNotifyListener(NotifyListener notifyListener);
 

@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -14,11 +16,11 @@ import android.os.IBinder;
 import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.HttpTools;
 
 public class PushService extends Service {
 	App app = App.getInstance();
@@ -35,7 +37,7 @@ public class PushService extends Service {
 
 	public void startLongAjax(final Bundle params) {
 		isStart = true;
-		MCNetTools.ajax(this, API.SESSION_EVENT, params, MCHttpTools.SEND_POST,
+		MCNetTools.ajax(this, API.SESSION_EVENT, params, HttpTools.SEND_POST,
 				30000, new ResponseListener() {
 
 					@Override
@@ -64,7 +66,7 @@ public class PushService extends Service {
 									.getJSONObject("event_content");
 							if (event.equals("message")) {
 								app.dataHandler.sendMessage(
-										app.dataHandler.HANDLER_MESSAGE,
+										app.dataHandler.DATA_HANDLER_MESSAGE,
 										eventContent.getJSONArray("message"));
 								app.isDataChanged = true;
 								if (app.data.user.flag.equals("none")) {
@@ -81,7 +83,7 @@ public class PushService extends Service {
 										app.data.user.accessKey);
 								MCNetTools.ajax(PushService.this,
 										API.RELATION_GETASKFRIENDS, params,
-										MCHttpTools.SEND_POST, 5000,
+										HttpTools.SEND_POST, 5000,
 										new ResponseListener() {
 
 											@Override
@@ -95,7 +97,7 @@ public class PushService extends Service {
 												try {
 													app.dataHandler
 															.sendMessage(
-																	app.dataHandler.HANDLER_NEWFRIEND,
+																	app.dataHandler.DATA_HANDLER_NEWFRIEND,
 																	data.getJSONArray("accounts"));
 
 												} catch (JSONException e) {
@@ -135,14 +137,14 @@ public class PushService extends Service {
 										app.data.user.accessKey);
 								MCNetTools.ajax(PushService.this,
 										API.RELATION_GETCIRCLESANDFRIENDS,
-										params, MCHttpTools.SEND_POST, 5000,
+										params, HttpTools.SEND_POST, 5000,
 										new ResponseListener() {
 											@Override
 											public void success(JSONObject data) {
 												try {
 													app.dataHandler
 															.sendMessage(
-																	app.dataHandler.HANDLER_CIRCLE,
+																	app.dataHandler.DATA_HANDLER_CIRCLE,
 																	data.getJSONArray("circles"));
 												} catch (JSONException e) {
 													// TODO Auto-generated catch
@@ -243,4 +245,5 @@ public class PushService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

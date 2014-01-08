@@ -41,14 +41,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.User;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
-import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.HttpTools;
 import com.lejoying.utils.SHA1;
 import com.lejoying.utils.StreamTools;
 
@@ -255,7 +255,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		params.putString("accessKey", app.data.user.accessKey);
 		params.putString("account", account.toString());
 		MCNetTools.ajax(getActivity(), API.ACCOUNT_MODIFY, params,
-				MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+				HttpTools.SEND_POST, 5000, new ResponseListener() {
 
 					@Override
 					public void success(JSONObject data) {
@@ -538,7 +538,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 							params.putString("filename", uploadFileName);
 
 							MCNetTools.ajax(getActivity(), API.IMAGE_CHECK,
-									params, MCHttpTools.SEND_POST, 5000,
+									params, HttpTools.SEND_POST, 5000,
 									new ResponseListener() {
 
 										@Override
@@ -563,7 +563,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 															.ajax(getActivity(),
 																	API.IMAGE_UPLOAD,
 																	params,
-																	MCHttpTools.SEND_POST,
+																	HttpTools.SEND_POST,
 																	5000,
 																	new ResponseListener() {
 

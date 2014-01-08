@@ -18,7 +18,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -47,10 +47,14 @@
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
-        <service android:name=".service.MainService" >
-        </service>
         <service android:name=".service.PushService" >
         </service>
+
+        <receiver android:name=".network.NetworkStatusReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

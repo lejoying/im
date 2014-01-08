@@ -14,7 +14,7 @@ public class LoginActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout._main);
-		app.dataHandler.sendEmptyMessage(app.dataHandler.HANDLER_CLEANDATA);
+		app.dataHandler.sendEmptyMessage(app.dataHandler.DATA_HANDLER_CLEANDATA);
 	}
 
 	@Override

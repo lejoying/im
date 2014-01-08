@@ -17,11 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.HttpTools;
 
 public class NewFriendsFragment extends BaseListFragment {
 
@@ -132,7 +132,7 @@ public class NewFriendsFragment extends BaseListFragment {
 									params.putString("status", "true");
 									MCNetTools.ajax(getActivity(),
 											API.RELATION_ADDFRIENDAGREE,
-											params, MCHttpTools.SEND_POST,
+											params, HttpTools.SEND_POST,
 											5000, new ResponseListener() {
 
 												@Override
@@ -156,7 +156,7 @@ public class NewFriendsFragment extends BaseListFragment {
 															.ajax(getActivity(),
 																	API.RELATION_GETCIRCLESANDFRIENDS,
 																	params,
-																	MCHttpTools.SEND_POST,
+																	HttpTools.SEND_POST,
 																	5000,
 																	new ResponseListener() {
 																		@Override
@@ -165,7 +165,7 @@ public class NewFriendsFragment extends BaseListFragment {
 																			try {
 																				app.dataHandler
 																						.sendMessage(
-																								app.dataHandler.HANDLER_CIRCLE,
+																								app.dataHandler.DATA_HANDLER_CIRCLE,
 																								data.getJSONArray("circles"));
 																				notifyDataSetChanged();
 																			} catch (JSONException e) {

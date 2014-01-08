@@ -35,7 +35,7 @@ public class MainActivity extends BaseFragmentActivity {
 	protected void onPause() {
 		super.onPause();
 		System.out.println("pause");
-		app.dataHandler.sendMessage(app.dataHandler.HANDLER_SAVECONFIGANDDATA,
+		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_SAVECONFIGANDDATA,
 				app.dataHandler.DOSYNC, this);
 	}
 

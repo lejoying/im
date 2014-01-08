@@ -15,11 +15,11 @@ import android.widget.TextView;
 
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
-import com.lejoying.mc.api.API;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCHttpTools;
+import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.utils.HttpTools;
 import com.lejoying.utils.RSAUtils;
 import com.lejoying.utils.SHA1;
 
@@ -99,7 +99,7 @@ public class LoginUsePassFragment extends BaseFragment implements
 			params.putString("password", pass);
 
 			MCNetTools.ajax(getActivity(), API.ACCOUNT_AUTH, params,
-					MCHttpTools.SEND_POST, 5000, new ResponseListener() {
+					HttpTools.SEND_POST, 5000, new ResponseListener() {
 
 						@Override
 						public void success(JSONObject data) {
