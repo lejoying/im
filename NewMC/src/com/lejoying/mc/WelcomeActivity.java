@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.StaticData;
+import com.lejoying.mc.data.handler.DataHandler1.Modification;
+import com.lejoying.mc.data.handler.DataHandler2;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
@@ -26,11 +29,9 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
-		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_GETCONFIGANDDATA,
-				app.dataHandler.DOSYNC, this);
+		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_GETCONFIGANDDATA, app.dataHandler.DOSYNC, this);
 		start = new Date().getTime();
-		if (app.config.lastLoginPhone.equals("none")
-				|| app.data.user.accessKey == null) {
+		if (app.config.lastLoginPhone.equals("none") || app.data.user.accessKey == null) {
 			startToLogin();
 		} else {
 			Bundle params = new Bundle();
@@ -38,38 +39,40 @@ public class WelcomeActivity extends BaseFragmentActivity {
 			params.putString("accessKey", app.data.user.accessKey);
 			params.putString("target", app.data.user.phone);
 
-			MCNetTools.ajax(this, API.ACCOUNT_GET, params,
-					HttpTools.SEND_POST, 5000, new ResponseListener() {
+			MCNetTools.ajax(this, API.ACCOUNT_GET, params, HttpTools.SEND_POST, 5000, new ResponseListener() {
 
-						@Override
-						public void success(JSONObject data) {
-							try {
-								app.dataHandler.sendMessage(
-										app.dataHandler.DATA_HANDLER_UPDATEUSER,
-										data.getJSONObject("account"));
-								startToMain();
-							} catch (JSONException e) {
-								startToLogin();
+				@Override
+				public void success(JSONObject data) {
+					try {
+						final JSONObject jUser = data.getJSONObject("account");
+						app.dataHandler1.modifyData(new Modification() {
+							public void modify(StaticData data) {
+								DataHandler2 dataHandler2 = new DataHandler2();
+								dataHandler2.updateUser(jUser, data);
 							}
-						}
+						});
+						startToMain();
+					} catch (JSONException e) {
+						startToLogin();
+					}
+				}
 
-						@Override
-						public void noInternet() {
-							startToMain();
-						}
+				@Override
+				public void noInternet() {
+					startToMain();
+				}
 
-						@Override
-						public void failed() {
-							startToMain();
-						}
+				@Override
+				public void failed() {
+					startToMain();
+				}
 
-						@Override
-						public void connectionCreated(
-								HttpURLConnection httpURLConnection) {
-							// TODO Auto-generated method stub
+				@Override
+				public void connectionCreated(HttpURLConnection httpURLConnection) {
+					// TODO Auto-generated method stub
 
-						}
-					});
+				}
+			});
 		}
 
 	}
@@ -82,8 +85,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 				if (end - start < 1000) {
 					try {
 						Thread.sleep(1000 - end + start);
-						Intent intent = new Intent(WelcomeActivity.this,
-								LoginActivity.class);
+						Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
 						startActivity(intent);
 						WelcomeActivity.this.finish();
 					} catch (InterruptedException e) {
@@ -91,8 +93,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 						e.printStackTrace();
 					}
 				} else {
-					Intent intent = new Intent(WelcomeActivity.this,
-							LoginActivity.class);
+					Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
 					startActivity(intent);
 					WelcomeActivity.this.finish();
 				}
@@ -108,8 +109,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 				if (end - start < 1000) {
 					try {
 						Thread.sleep(1000 - end + start);
-						Intent intent = new Intent(WelcomeActivity.this,
-								MainActivity.class);
+						Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
 						startActivity(intent);
 						WelcomeActivity.this.finish();
 					} catch (InterruptedException e) {
@@ -117,8 +117,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 						e.printStackTrace();
 					}
 				} else {
-					Intent intent = new Intent(WelcomeActivity.this,
-							MainActivity.class);
+					Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
 					startActivity(intent);
 					WelcomeActivity.this.finish();
 				}

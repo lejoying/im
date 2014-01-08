@@ -51,6 +51,9 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Message;
+import com.lejoying.mc.data.StaticData;
+import com.lejoying.mc.data.handler.DataHandler1.Modification;
+import com.lejoying.mc.data.handler.DataHandler1.UIModification;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCImageTools;
@@ -81,7 +84,7 @@ public class ChatFragment extends BaseListFragment {
 	View iv_send;
 	View iv_more;
 	View iv_more_select;
-	EditText et_message;
+	EditText editText_message;
 	RelativeLayout rl_chatbottom;
 	RelativeLayout rl_message;
 	RelativeLayout rl_select;
@@ -131,17 +134,14 @@ public class ChatFragment extends BaseListFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RESULT_SELECTPICTURE
-				&& resultCode == Activity.RESULT_OK && data != null) {
+		if (requestCode == RESULT_SELECTPICTURE && resultCode == Activity.RESULT_OK && data != null) {
 			Uri selectedImage = data.getData();
 			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			Cursor cursor = getActivity().getContentResolver().query(
-					selectedImage, filePathColumn, null, null, null);
+			Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
 			cursor.moveToFirst();
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 			final String picturePath = cursor.getString(columnIndex);
-			final String format = picturePath.substring(picturePath
-					.lastIndexOf("."));
+			final String format = picturePath.substring(picturePath.lastIndexOf("."));
 			cursor.close();
 
 			new Thread() {
@@ -159,38 +159,25 @@ public class ChatFragment extends BaseListFragment {
 						inputStream = new FileInputStream(sourceFile);
 						byte[] tempBytes = StreamTools.isToData(inputStream);
 						if (!MCImageTools.isNeedToZoom(tempBytes, 960, 540)) {
-							base64 = Base64.encodeToString(tempBytes,
-									Base64.DEFAULT);
-							String uploadFile = sha1.getDigestOfString(base64
-									.trim().getBytes()) + format;
-							uploadFileName = uploadFile.toLowerCase(Locale
-									.getDefault());
-							tempImages.put(uploadFileName, BitmapFactory
-									.decodeByteArray(tempBytes, 0,
-											tempBytes.length));
-							imageFile = new File(app.sdcardImageFolder,
-									uploadFileName);
+							base64 = Base64.encodeToString(tempBytes, Base64.DEFAULT);
+							String uploadFile = sha1.getDigestOfString(base64.trim().getBytes()) + format;
+							uploadFileName = uploadFile.toLowerCase(Locale.getDefault());
+							tempImages.put(uploadFileName, BitmapFactory.decodeByteArray(tempBytes, 0, tempBytes.length));
+							imageFile = new File(app.sdcardImageFolder, uploadFileName);
 
 							if (!imageFile.exists()) {
-								StreamTools.copyFile(sourceFile, imageFile,
-										true);
+								StreamTools.copyFile(sourceFile, imageFile, true);
 							}
 
 						} else {
-							Bitmap tempImageBitmap = MCImageTools
-									.getZoomBitmapFromStream(tempBytes, 960,
-											540);
-							tempImage = new File(app.sdcardImageFolder,
-									"tempimage.jpg");
+							Bitmap tempImageBitmap = MCImageTools.getZoomBitmapFromStream(tempBytes, 960, 540);
+							tempImage = new File(app.sdcardImageFolder, "tempimage.jpg");
 							int i = 1;
 							while (tempImage.exists()) {
-								tempImage = new File(app.sdcardImageFolder,
-										"tempimage" + (i++) + ".jpg");
+								tempImage = new File(app.sdcardImageFolder, "tempimage" + (i++) + ".jpg");
 							}
 							fileOutputStream = new FileOutputStream(tempImage);
-							tempImageBitmap.compress(
-									Bitmap.CompressFormat.JPEG, 70,
-									fileOutputStream);
+							tempImageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, fileOutputStream);
 							try {
 								fileOutputStream.flush();
 								fileOutputStream.close();
@@ -203,19 +190,12 @@ public class ChatFragment extends BaseListFragment {
 							byte[] b = StreamTools.isToData(zoomImageStream);
 
 							if (b != null) {
-								base64 = Base64.encodeToString(b,
-										Base64.DEFAULT);
-								String uploadFile = sha1
-										.getDigestOfString(base64.trim()
-												.getBytes())
-										+ ".jpg";
+								base64 = Base64.encodeToString(b, Base64.DEFAULT);
+								String uploadFile = sha1.getDigestOfString(base64.trim().getBytes()) + ".jpg";
 
-								uploadFileName = uploadFile.toLowerCase(Locale
-										.getDefault());
-								tempImages.put(uploadFileName, BitmapFactory
-										.decodeByteArray(b, 0, b.length));
-								imageFile = new File(app.sdcardImageFolder,
-										uploadFileName);
+								uploadFileName = uploadFile.toLowerCase(Locale.getDefault());
+								tempImages.put(uploadFileName, BitmapFactory.decodeByteArray(b, 0, b.length));
+								imageFile = new File(app.sdcardImageFolder, uploadFileName);
 								if (imageFile.exists()) {
 									tempImage.delete();
 								} else {
@@ -251,225 +231,174 @@ public class ChatFragment extends BaseListFragment {
 					params.putString("accessKey", app.data.user.accessKey);
 					params.putString("filename", uploadFileName);
 
-					MCNetTools.ajax(getActivity(), API.IMAGE_CHECK, params,
-							HttpTools.SEND_POST, 5000,
-							new ResponseListener() {
+					MCNetTools.ajax(getActivity(), API.IMAGE_CHECK, params, HttpTools.SEND_POST, 5000, new ResponseListener() {
 
-								@Override
-								public void success(JSONObject data) {
-									try {
-										boolean isExists = data
-												.getBoolean("exists");
+						@Override
+						public void success(JSONObject data) {
+							try {
+								boolean isExists = data.getBoolean("exists");
 
-										if (!isExists) {
-											Bundle params = new Bundle();
-											params.putString("phone",
-													app.data.user.phone);
-											params.putString("accessKey",
-													app.data.user.accessKey);
-											params.putString("filename",
-													uploadFileName);
-											params.putString("imagedata",
-													base64);
-											MCNetTools.ajax(getActivity(),
-													API.IMAGE_UPLOAD, params,
-													HttpTools.SEND_POST,
-													5000,
-													new ResponseListener() {
+								if (!isExists) {
+									Bundle params = new Bundle();
+									params.putString("phone", app.data.user.phone);
+									params.putString("accessKey", app.data.user.accessKey);
+									params.putString("filename", uploadFileName);
+									params.putString("imagedata", base64);
+									MCNetTools.ajax(getActivity(), API.IMAGE_UPLOAD, params, HttpTools.SEND_POST, 5000, new ResponseListener() {
 
-														@Override
-														public void success(
-																JSONObject data) {
-															try {
-																data.get(getString(R.string.app_reason));
-																return;
-															} catch (JSONException e) {
-																// TODO
-																// Auto-generated
-																// catch block
-																e.printStackTrace();
-															}
+										@Override
+										public void success(JSONObject data) {
+											try {
+												data.get(getString(R.string.app_reason));
+												return;
+											} catch (JSONException e) {
+												// TODO
+												// Auto-generated
+												// catch block
+												e.printStackTrace();
+											}
 
-															Bundle params = generateParams(
-																	"image",
-																	uploadFileName);
-															MCNetTools
-																	.ajax(getActivity(),
-																			API.MESSAGE_SEND,
-																			params,
-																			HttpTools.SEND_POST,
-																			5000,
-																			new ResponseListener() {
+											Bundle params = generateParams("image", uploadFileName);
+											MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params, HttpTools.SEND_POST, 5000, new ResponseListener() {
 
-																				@Override
-																				public void success(
-																						JSONObject data) {
-																					app.isDataChanged = true;
-																					if (app.data.user.flag
-																							.equals("none")) {
-																						app.data.user.flag = String
-																								.valueOf(1);
-																					} else {
-																						app.data.user.flag = String
-																								.valueOf(Integer
-																										.valueOf(
-																												app.data.user.flag)
-																										.intValue() + 1);
-																					}
-																					if (app.data.lastChatFriends
-																							.indexOf(app.nowChatFriend.phone) != 0) {
-																						app.data.lastChatFriends
-																								.remove(app.nowChatFriend.phone);
-																						app.data.lastChatFriends
-																								.add(0,
-																										app.nowChatFriend.phone);
-																					}
-																				}
+												@Override
+												public void success(JSONObject data) {
+													app.isDataChanged = true;
+													if (app.data.user.flag.equals("none")) {
+														app.data.user.flag = String.valueOf(1);
+													} else {
+														app.data.user.flag = String.valueOf(Integer.valueOf(app.data.user.flag).intValue() + 1);
+													}
+													if (app.data.lastChatFriends.indexOf(app.data.nowChatFriend.phone) != 0) {
+														app.data.lastChatFriends.remove(app.data.nowChatFriend.phone);
+														app.data.lastChatFriends.add(0, app.data.nowChatFriend.phone);
+													}
+												}
 
-																				@Override
-																				public void noInternet() {
-																					// TODO
-																					// Auto-generated
-																					// method
-																					// stub
+												@Override
+												public void noInternet() {
+													// TODO
+													// Auto-generated
+													// method
+													// stub
 
-																				}
+												}
 
-																				@Override
-																				public void failed() {
-																					// TODO
-																					// Auto-generated
-																					// method
-																					// stub
+												@Override
+												public void failed() {
+													// TODO
+													// Auto-generated
+													// method
+													// stub
 
-																				}
+												}
 
-																				@Override
-																				public void connectionCreated(
-																						HttpURLConnection httpURLConnection) {
-																					// TODO
-																					// Auto-generated
-																					// method
-																					// stub
+												@Override
+												public void connectionCreated(HttpURLConnection httpURLConnection) {
+													// TODO
+													// Auto-generated
+													// method
+													// stub
 
-																				}
-																			});
-														}
-
-														@Override
-														public void noInternet() {
-															// TODO
-															// Auto-generated
-															// method
-															// stub
-														}
-
-														@Override
-														public void failed() {
-															// TODO
-															// Auto-generated
-															// method
-															// stub
-														}
-
-														@Override
-														public void connectionCreated(
-																HttpURLConnection httpURLConnection) {
-															// TODO
-															// Auto-generated
-															// method
-															// stub
-														}
-													});
-										} else {
-											Bundle params = generateParams(
-													"image", uploadFileName);
-											MCNetTools.ajax(getActivity(),
-													API.MESSAGE_SEND, params,
-													HttpTools.SEND_POST,
-													5000,
-													new ResponseListener() {
-
-														@Override
-														public void success(
-																JSONObject data) {
-															app.isDataChanged = true;
-															if (app.data.user.flag
-																	.equals("none")) {
-																app.data.user.flag = String
-																		.valueOf(1);
-															} else {
-																app.data.user.flag = String
-																		.valueOf(Integer
-																				.valueOf(
-																						app.data.user.flag)
-																				.intValue() + 1);
-															}
-															if (app.data.lastChatFriends
-																	.indexOf(app.nowChatFriend.phone) != 0) {
-																app.data.lastChatFriends
-																		.remove(app.nowChatFriend.phone);
-																app.data.lastChatFriends
-																		.add(0,
-																				app.nowChatFriend.phone);
-															}
-														}
-
-														@Override
-														public void noInternet() {
-															// TODO
-															// Auto-generated
-															// method
-															// stub
-
-														}
-
-														@Override
-														public void failed() {
-															// TODO
-															// Auto-generated
-															// method
-															// stub
-
-														}
-
-														@Override
-														public void connectionCreated(
-																HttpURLConnection httpURLConnection) {
-															// TODO
-															// Auto-generated
-															// method
-															// stub
-
-														}
-													});
+												}
+											});
 										}
-									} catch (JSONException e) {
-										// TODO Auto-generated catch
-										// block
-										e.printStackTrace();
-									}
-								}
 
-								@Override
-								public void noInternet() {
-									// TODO Auto-generated method
-									// stub
-								}
+										@Override
+										public void noInternet() {
+											// TODO
+											// Auto-generated
+											// method
+											// stub
+										}
 
-								@Override
-								public void failed() {
-									// TODO Auto-generated method
-									// stub
-								}
+										@Override
+										public void failed() {
+											// TODO
+											// Auto-generated
+											// method
+											// stub
+										}
 
-								@Override
-								public void connectionCreated(
-										HttpURLConnection httpURLConnection) {
-									// TODO Auto-generated method
-									// stub
+										@Override
+										public void connectionCreated(HttpURLConnection httpURLConnection) {
+											// TODO
+											// Auto-generated
+											// method
+											// stub
+										}
+									});
+								} else {
+									Bundle params = generateParams("image", uploadFileName);
+									MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params, HttpTools.SEND_POST, 5000, new ResponseListener() {
+
+										@Override
+										public void success(JSONObject data) {
+											app.isDataChanged = true;
+											if (app.data.user.flag.equals("none")) {
+												app.data.user.flag = String.valueOf(1);
+											} else {
+												app.data.user.flag = String.valueOf(Integer.valueOf(app.data.user.flag).intValue() + 1);
+											}
+											if (app.data.lastChatFriends.indexOf(app.data.nowChatFriend.phone) != 0) {
+												app.data.lastChatFriends.remove(app.data.nowChatFriend.phone);
+												app.data.lastChatFriends.add(0, app.data.nowChatFriend.phone);
+											}
+										}
+
+										@Override
+										public void noInternet() {
+											// TODO
+											// Auto-generated
+											// method
+											// stub
+
+										}
+
+										@Override
+										public void failed() {
+											// TODO
+											// Auto-generated
+											// method
+											// stub
+
+										}
+
+										@Override
+										public void connectionCreated(HttpURLConnection httpURLConnection) {
+											// TODO
+											// Auto-generated
+											// method
+											// stub
+
+										}
+									});
 								}
-							});
+							} catch (JSONException e) {
+								// TODO Auto-generated catch
+								// block
+								e.printStackTrace();
+							}
+						}
+
+						@Override
+						public void noInternet() {
+							// TODO Auto-generated method
+							// stub
+						}
+
+						@Override
+						public void failed() {
+							// TODO Auto-generated method
+							// stub
+						}
+
+						@Override
+						public void connectionCreated(HttpURLConnection httpURLConnection) {
+							// TODO Auto-generated method
+							// stub
+						}
+					});
 
 				}
 			}.start();
@@ -478,8 +407,7 @@ public class ChatFragment extends BaseListFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mInflater = inflater;
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_chat, null);
@@ -496,13 +424,12 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
-		app.nowChatFriend.notReadMessagesCount = 0;
+		app.data.nowChatFriend.notReadMessagesCount = 0;
 		iv_send = mContent.findViewById(R.id.iv_send);
 		iv_more = mContent.findViewById(R.id.iv_more);
 		iv_more_select = mContent.findViewById(R.id.iv_more_select);
-		et_message = (EditText) mContent.findViewById(R.id.et_message);
-		rl_chatbottom = (RelativeLayout) mContent
-				.findViewById(R.id.rl_chatbottom);
+		editText_message = (EditText) mContent.findViewById(R.id.et_message);
+		rl_chatbottom = (RelativeLayout) mContent.findViewById(R.id.rl_chatbottom);
 		rl_message = (RelativeLayout) mContent.findViewById(R.id.rl_message);
 		rl_select = (RelativeLayout) mContent.findViewById(R.id.rl_select);
 		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
@@ -511,9 +438,7 @@ public class ChatFragment extends BaseListFragment {
 
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(
-						Intent.ACTION_PICK,
-						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				startActivityForResult(i, RESULT_SELECTPICTURE);
 			}
 		});
@@ -534,52 +459,49 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
-		final GestureDetector gestureDetector = new GestureDetector(
-				getActivity(), new OnGestureListener() {
+		final GestureDetector gestureDetector = new GestureDetector(getActivity(), new OnGestureListener() {
 
-					@Override
-					public boolean onSingleTapUp(MotionEvent e) {
-						// TODO Auto-generated method stub
-						return false;
-					}
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				// TODO Auto-generated method stub
+				return false;
+			}
 
-					@Override
-					public void onShowPress(MotionEvent e) {
-						// TODO Auto-generated method stub
+			@Override
+			public void onShowPress(MotionEvent e) {
+				// TODO Auto-generated method stub
 
-					}
+			}
 
-					@Override
-					public boolean onScroll(MotionEvent e1, MotionEvent e2,
-							float distanceX, float distanceY) {
-						// TODO Auto-generated method stub
-						return false;
-					}
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				// TODO Auto-generated method stub
+				return false;
+			}
 
-					@Override
-					public void onLongPress(MotionEvent e) {
-						// TODO Auto-generated method stub
+			@Override
+			public void onLongPress(MotionEvent e) {
+				// TODO Auto-generated method stub
 
-					}
+			}
 
-					@Override
-					public boolean onFling(MotionEvent e1, MotionEvent e2,
-							float velocityX, float velocityY) {
-						boolean flag = false;
-						if (e2.getX() - e1.getX() > 0 && velocityX > 2000) {
-							showSelectTab();
-							flag = true;
-						}
-						return flag;
-					}
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+				boolean flag = false;
+				if (e2.getX() - e1.getX() > 0 && velocityX > 2000) {
+					showSelectTab();
+					flag = true;
+				}
+				return flag;
+			}
 
-					@Override
-					public boolean onDown(MotionEvent e) {
-						return false;
-					}
-				});
+			@Override
+			public boolean onDown(MotionEvent e) {
+				return false;
+			}
+		});
 
-		et_message.setOnTouchListener(new OnTouchListener() {
+		editText_message.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -595,22 +517,21 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
-		et_message.addTextChangedListener(new TextWatcher() {
+		editText_message.addTextChangedListener(new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (beforeHeight == 0) {
-					beforeHeight = et_message.getHeight();
+					beforeHeight = editText_message.getHeight();
 				}
 				if (beforeLineHeight == 0) {
-					beforeLineHeight = et_message.getLineHeight();
+					beforeLineHeight = editText_message.getLineHeight();
 				}
 
-				LayoutParams etparams = et_message.getLayoutParams();
+				LayoutParams etparams = editText_message.getLayoutParams();
 				LayoutParams rlparams = rl_chatbottom.getLayoutParams();
 
-				int lineCount = et_message.getLineCount();
+				int lineCount = editText_message.getLineCount();
 
 				switch (lineCount) {
 				case 3:
@@ -633,13 +554,12 @@ public class ChatFragment extends BaseListFragment {
 					etparams.height = beforeHeight + beforeLineHeight * 2;
 					rlparams.height = beforeHeight + beforeLineHeight * 2;
 				}
-				et_message.setLayoutParams(etparams);
+				editText_message.setLayoutParams(etparams);
 				rl_chatbottom.setLayoutParams(rlparams);
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 				// TODO Auto-generated method stub
 
 			}
@@ -655,61 +575,51 @@ public class ChatFragment extends BaseListFragment {
 
 			@Override
 			public void onClick(View v) {
-				String message = et_message.getText().toString();
-				et_message.setText("");
+				String message = editText_message.getText().toString();
+				editText_message.setText("");
 				if (message != null && !message.equals("")) {
+					addMessage("text", message);
 					Bundle params = generateParams("text", message);
-					MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params,
-							HttpTools.SEND_POST, 5000,
-							new ResponseListener() {
+					MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params, HttpTools.SEND_POST, 5000, new ResponseListener() {
 
-								@Override
-								public void success(JSONObject data) {
-									app.isDataChanged = true;
-									if (app.data.user.flag.equals("none")) {
-										app.data.user.flag = String.valueOf(1);
-									} else {
-										app.data.user.flag = String
-												.valueOf(Integer.valueOf(
-														app.data.user.flag)
-														.intValue() + 1);
-									}
-									if (app.data.lastChatFriends
-											.indexOf(app.nowChatFriend.phone) != 0) {
-										app.data.lastChatFriends
-												.remove(app.nowChatFriend.phone);
-										app.data.lastChatFriends.add(0,
-												app.nowChatFriend.phone);
-									}
-								}
+						@Override
+						public void success(JSONObject data) {
+							app.isDataChanged = true;
+							if (app.data.user.flag.equals("none")) {
+								app.data.user.flag = String.valueOf(1);
+							} else {
+								app.data.user.flag = String.valueOf(Integer.valueOf(app.data.user.flag).intValue() + 1);
+							}
+							if (app.data.lastChatFriends.indexOf(app.data.nowChatFriend.phone) != 0) {
+								app.data.lastChatFriends.remove(app.data.nowChatFriend.phone);
+								app.data.lastChatFriends.add(0, app.data.nowChatFriend.phone);
+							}
+						}
 
-								@Override
-								public void noInternet() {
-									// TODO Auto-generated method stub
+						@Override
+						public void noInternet() {
+							// TODO Auto-generated method stub
 
-								}
+						}
 
-								@Override
-								public void failed() {
-									// TODO Auto-generated method stub
+						@Override
+						public void failed() {
+							// TODO Auto-generated method stub
 
-								}
+						}
 
-								@Override
-								public void connectionCreated(
-										HttpURLConnection httpURLConnection) {
-									// TODO Auto-generated method stub
+						@Override
+						public void connectionCreated(HttpURLConnection httpURLConnection) {
+							// TODO Auto-generated method stub
 
-								}
-							});
+						}
+					});
 				}
 			}
 		});
 
-		headman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
-				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
-		headwoman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
-				getResources(), R.drawable.face_woman), true, 10, Color.WHITE);
+		headman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_man), true, 10, Color.WHITE);
+		headwoman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_woman), true, 10, Color.WHITE);
 
 		return mContent;
 	}
@@ -722,8 +632,7 @@ public class ChatFragment extends BaseListFragment {
 
 	public void showSelectTab() {
 		hideSoftInput();
-		Animation outAnimation = new TranslateAnimation(0,
-				rl_chatbottom.getWidth(), 0, 0);
+		Animation outAnimation = new TranslateAnimation(0, rl_chatbottom.getWidth(), 0, 0);
 		outAnimation.setDuration(150);
 		outAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -734,16 +643,14 @@ public class ChatFragment extends BaseListFragment {
 		});
 		rl_message.startAnimation(outAnimation);
 
-		Animation inAnimation = new TranslateAnimation(
-				-rl_chatbottom.getWidth(), 0, 0, 0);
+		Animation inAnimation = new TranslateAnimation(-rl_chatbottom.getWidth(), 0, 0, 0);
 		inAnimation.setDuration(150);
 		rl_select.setVisibility(View.VISIBLE);
 		rl_select.startAnimation(inAnimation);
 	}
 
 	public void hideSelectTab() {
-		Animation outAnimation = new TranslateAnimation(0,
-				-rl_chatbottom.getWidth(), 0, 0);
+		Animation outAnimation = new TranslateAnimation(0, -rl_chatbottom.getWidth(), 0, 0);
 		outAnimation.setDuration(150);
 		outAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -754,11 +661,10 @@ public class ChatFragment extends BaseListFragment {
 		});
 		rl_select.startAnimation(outAnimation);
 
-		Animation inAnimation = new TranslateAnimation(
-				rl_chatbottom.getWidth(), 0, 0, 0);
+		Animation inAnimation = new TranslateAnimation(rl_chatbottom.getWidth(), 0, 0, 0);
 		inAnimation.setDuration(150);
 		rl_message.setVisibility(View.VISIBLE);
-		et_message.requestFocus();
+		editText_message.requestFocus();
 		rl_message.startAnimation(inAnimation);
 	}
 
@@ -766,12 +672,12 @@ public class ChatFragment extends BaseListFragment {
 
 		@Override
 		public int getCount() {
-			return app.nowChatFriend.messages.size();
+			return app.data.nowChatFriend.messages.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return app.nowChatFriend.messages.get(position);
+			return app.data.nowChatFriend.messages.get(position);
 		}
 
 		@Override
@@ -797,30 +703,21 @@ public class ChatFragment extends BaseListFragment {
 				messageHolder = new MessageHolder();
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
-					convertView = mInflater.inflate(R.layout.f_chat_item_right,
-							null);
-					messageHolder.text = convertView
-							.findViewById(R.id.rl_chatright);
+					convertView = mInflater.inflate(R.layout.f_chat_item_right, null);
+					messageHolder.text = convertView.findViewById(R.id.rl_chatright);
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					convertView = mInflater.inflate(R.layout.f_chat_item_left,
-							null);
-					messageHolder.text = convertView
-							.findViewById(R.id.rl_chatleft);
+					convertView = mInflater.inflate(R.layout.f_chat_item_left, null);
+					messageHolder.text = convertView.findViewById(R.id.rl_chatleft);
 					break;
 				default:
 					break;
 				}
-				messageHolder.image = convertView
-						.findViewById(R.id.rl_chatleft_image);
-				messageHolder.iv_image = (ImageView) convertView
-						.findViewById(R.id.iv_image);
-				messageHolder.tv_nickname = (TextView) convertView
-						.findViewById(R.id.tv_nickname);
-				messageHolder.iv_head = (ImageView) convertView
-						.findViewById(R.id.iv_head);
-				messageHolder.tv_chat = (TextView) convertView
-						.findViewById(R.id.tv_chat);
+				messageHolder.image = convertView.findViewById(R.id.rl_chatleft_image);
+				messageHolder.iv_image = (ImageView) convertView.findViewById(R.id.iv_image);
+				messageHolder.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
+				messageHolder.iv_head = (ImageView) convertView.findViewById(R.id.iv_head);
+				messageHolder.tv_chat = (TextView) convertView.findViewById(R.id.tv_chat);
 				convertView.setTag(messageHolder);
 			} else {
 				messageHolder = (MessageHolder) convertView.getTag();
@@ -836,7 +733,7 @@ public class ChatFragment extends BaseListFragment {
 					fileName = app.data.user.head;
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					fileName = app.nowChatFriend.head;
+					fileName = app.data.nowChatFriend.head;
 					break;
 				default:
 					break;
@@ -844,62 +741,49 @@ public class ChatFragment extends BaseListFragment {
 				final String headFileName = fileName;
 				if (app.heads.get(headFileName) == null) {
 					app.heads.put(headFileName, headman);
-					final File headFile = new File(app.sdcardHeadImageFolder,
-							headFileName);
+					final File headFile = new File(app.sdcardHeadImageFolder, headFileName);
 					if (headFile.exists()) {
-						Bitmap image = BitmapFactory.decodeFile(headFile
-								.getAbsolutePath());
+						Bitmap image = BitmapFactory.decodeFile(headFile.getAbsolutePath());
 
 						if (image != null) {
-							Bitmap head = MCImageTools.getCircleBitmap(image,
-									true, 5, Color.WHITE);
+							Bitmap head = MCImageTools.getCircleBitmap(image, true, 5, Color.WHITE);
 							app.heads.put(headFileName, head);
 						}
 					} else {
-						MCNetTools.downloadFile(getActivity(),
-								app.config.DOMAIN_IMAGE, headFileName,
-								app.sdcardHeadImageFolder, null, 5000,
-								new DownloadListener() {
-									@Override
-									public void success(File localFile,
-											InputStream inputStream) {
-										Bitmap image = BitmapFactory
-												.decodeFile(localFile
-														.getAbsolutePath());
-										if (image != null) {
-											Bitmap head = MCImageTools
-													.getCircleBitmap(image,
-															true, 5,
-															Color.WHITE);
-											app.heads.put(headFileName, head);
-											mAdapter.notifyDataSetChanged();
-										}
-									}
+						MCNetTools.downloadFile(getActivity(), app.config.DOMAIN_IMAGE, headFileName, app.sdcardHeadImageFolder, null, 5000, new DownloadListener() {
+							@Override
+							public void success(File localFile, InputStream inputStream) {
+								Bitmap image = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+								if (image != null) {
+									Bitmap head = MCImageTools.getCircleBitmap(image, true, 5, Color.WHITE);
+									app.heads.put(headFileName, head);
+									mAdapter.notifyDataSetChanged();
+								}
+							}
 
-									@Override
-									public void noInternet() {
-										// TODO Auto-generated method stub
+							@Override
+							public void noInternet() {
+								// TODO Auto-generated method stub
 
-									}
+							}
 
-									@Override
-									public void failed() {
-										// TODO Auto-generated method stub
+							@Override
+							public void failed() {
+								// TODO Auto-generated method stub
 
-									}
+							}
 
-									@Override
-									public void connectionCreated(
-											HttpURLConnection httpURLConnection) {
-										// TODO Auto-generated method stub
+							@Override
+							public void connectionCreated(HttpURLConnection httpURLConnection) {
+								// TODO Auto-generated method stub
 
-									}
+							}
 
-									@Override
-									public void downloading(int progress) {
-										// TODO Auto-generated method stub
-									}
-								});
+							@Override
+							public void downloading(int progress) {
+								// TODO Auto-generated method stub
+							}
+						});
 					}
 				}
 				messageHolder.iv_head.setImageBitmap(app.heads.get(fileName));
@@ -908,69 +792,57 @@ public class ChatFragment extends BaseListFragment {
 				messageHolder.image.setVisibility(View.VISIBLE);
 				final String imageFileName = message.content;
 				if (tempImages.get(imageFileName) == null) {
-					final File imageFile = new File(app.sdcardImageFolder,
-							imageFileName);
+					final File imageFile = new File(app.sdcardImageFolder, imageFileName);
 					if (imageFile.exists()) {
-						Bitmap image = BitmapFactory.decodeFile(imageFile
-								.getAbsolutePath());
+						Bitmap image = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 						if (image != null) {
 							tempImages.put(imageFileName, image);
 						}
 						mAdapter.notifyDataSetChanged();
 					} else {
 						if (defaultImage == null) {
-							defaultImage = BitmapFactory.decodeResource(
-									getResources(), R.drawable.defaultimage);
+							defaultImage = BitmapFactory.decodeResource(getResources(), R.drawable.defaultimage);
 						}
 						tempImages.put(imageFileName, defaultImage);
-						MCNetTools.downloadFile(getActivity(),
-								app.config.DOMAIN_IMAGE, imageFileName,
-								app.sdcardImageFolder, null, 5000,
-								new DownloadListener() {
-									@Override
-									public void success(File localFile,
-											InputStream inputStream) {
-										Bitmap bitmap = BitmapFactory
-												.decodeFile(localFile
-														.getAbsolutePath());
-										tempImages.put(imageFileName, bitmap);
-										mAdapter.notifyDataSetChanged();
-									}
+						MCNetTools.downloadFile(getActivity(), app.config.DOMAIN_IMAGE, imageFileName, app.sdcardImageFolder, null, 5000, new DownloadListener() {
+							@Override
+							public void success(File localFile, InputStream inputStream) {
+								Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+								tempImages.put(imageFileName, bitmap);
+								mAdapter.notifyDataSetChanged();
+							}
 
-									@Override
-									public void noInternet() {
-										// TODO Auto-generated method stub
+							@Override
+							public void noInternet() {
+								// TODO Auto-generated method stub
 
-									}
+							}
 
-									@Override
-									public void failed() {
-										// TODO Auto-generated method stub
+							@Override
+							public void failed() {
+								// TODO Auto-generated method stub
 
-									}
+							}
 
-									@Override
-									public void connectionCreated(
-											HttpURLConnection httpURLConnection) {
-										// TODO Auto-generated method stub
+							@Override
+							public void connectionCreated(HttpURLConnection httpURLConnection) {
+								// TODO Auto-generated method stub
 
-									}
+							}
 
-									@Override
-									public void downloading(int progress) {
-										// TODO Auto-generated method stub
-									}
-								});
+							@Override
+							public void downloading(int progress) {
+								// TODO Auto-generated method stub
+							}
+						});
 					}
 				}
-				messageHolder.iv_image.setImageBitmap(tempImages
-						.get(imageFileName));
+				messageHolder.iv_image.setImageBitmap(tempImages.get(imageFileName));
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					messageHolder.tv_nickname
-							.setText(app.nowChatFriend.nickName);
+					messageHolder.tv_nickname.setText(app.data.nowChatFriend.nickName);
 					break;
 				default:
 					break;
@@ -992,21 +864,33 @@ public class ChatFragment extends BaseListFragment {
 		TextView tv_nickname;
 	}
 
-	public Bundle generateParams(String type, String content) {
-		Message message = new Message();
+	public void addMessage(String type, String content) {
+		final Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
 		message.content = content;
 		message.messageType = type;
 		message.status = "sending";
 		message.time = String.valueOf(new Date().getTime());
-		app.nowChatFriend.messages.add(message);
-		mAdapter.notifyDataSetChanged();
-		getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
+		app.dataHandler1.modifyData(new Modification() {
+			public void modify(StaticData data) {
+				data.nowChatFriend.messages.add(message);
+			}
+		}, new UIModification() {
+			public void modifyUI() {
+				mAdapter.notifyDataSetChanged();
+				getListView().setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+			}
+		});
+	}
+
+	public Bundle generateParams(String type, String content) {
+
 		Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 		JSONArray jFriends = new JSONArray();
-		jFriends.put(app.nowChatFriend.phone);
+		jFriends.put(app.data.nowChatFriend.phone);
 		params.putString("phoneto", jFriends.toString());
 		JSONObject jMessage = new JSONObject();
 		try {

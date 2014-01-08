@@ -111,13 +111,12 @@ public class DataHandler {
 		ObjectInputStream objectInputStream = null;
 		switch (msg.what) {
 		case DATA_HANDLER_CLEANDATA:
-			app.initData();
+//			app.initData();
 			break;
 		case DATA_HANDLER_GETUSERDATA:
 			// read data
 			try {
-				inputStream = ((Context) msg.obj)
-						.openFileInput(app.data.user.phone);
+				inputStream = ((Context) msg.obj).openFileInput(app.data.user.phone);
 				objectInputStream = new ObjectInputStream(inputStream);
 				StaticData data = (StaticData) objectInputStream.readObject();
 				app.data.user.flag = data.user.flag;
@@ -162,8 +161,7 @@ public class DataHandler {
 				app.isDataChanged = false;
 				// save data
 				try {
-					outputStream = ((Context) msg.obj).openFileOutput(
-							app.data.user.phone, Context.MODE_PRIVATE);
+					outputStream = ((Context) msg.obj).openFileOutput(app.data.user.phone, Context.MODE_PRIVATE);
 					app.config.lastLoginPhone = app.data.user.phone;
 					objectOutputStream = new ObjectOutputStream(outputStream);
 					objectOutputStream.writeObject(app.data);
@@ -191,8 +189,7 @@ public class DataHandler {
 				}
 				// save config
 				try {
-					outputStream = ((Context) msg.obj).openFileOutput("config",
-							Context.MODE_PRIVATE);
+					outputStream = ((Context) msg.obj).openFileOutput("config", Context.MODE_PRIVATE);
 					objectOutputStream = new ObjectOutputStream(outputStream);
 					objectOutputStream.writeObject(app.config);
 				} catch (FileNotFoundException e) {
@@ -258,8 +255,7 @@ public class DataHandler {
 			// read data
 
 			try {
-				inputStream = ((Context) msg.obj)
-						.openFileInput(app.config.lastLoginPhone);
+				inputStream = ((Context) msg.obj).openFileInput(app.config.lastLoginPhone);
 				objectInputStream = new ObjectInputStream(inputStream);
 				app.data = (StaticData) objectInputStream.readObject();
 			} catch (FileNotFoundException e) {
@@ -292,7 +288,7 @@ public class DataHandler {
 			}
 			break;
 		case DATA_HANDLER_USER:
-			updateUser((JSONObject) msg.obj);
+			// updateUser((JSONObject) msg.obj);
 			break;
 		case DATA_HANDLER_CIRCLE:
 			JSONArray jCircles = (JSONArray) msg.obj;
@@ -333,8 +329,7 @@ public class DataHandler {
 			app.data.circles = circles;
 			app.data.friends = friends;
 			if (FriendsFragment.instance != null) {
-				FriendsFragment.instance.mFriendsHandler
-						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
+				FriendsFragment.instance.mFriendsHandler.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
 			}
 			break;
 		case DATA_HANDLER_MESSAGE:
@@ -343,13 +338,11 @@ public class DataHandler {
 				app.isDataChanged = true;
 				for (int i = 0; i < jMessages.length(); i++) {
 					try {
-						JSONObject jMessage = new JSONObject(
-								jMessages.getString(i));
+						JSONObject jMessage = new JSONObject(jMessages.getString(i));
 						com.lejoying.mc.data.Message message = new com.lejoying.mc.data.Message();
 
 						String phoneSend = jMessage.getString("phone");
-						String phoneReceive = new JSONArray(
-								jMessage.getString("phoneto")).getString(0);
+						String phoneReceive = new JSONArray(jMessage.getString("phoneto")).getString(0);
 
 						String friendPhone = phoneSend;
 
@@ -371,9 +364,7 @@ public class DataHandler {
 
 						app.data.friends.get(friendPhone).messages.add(message);
 						if (message.type == com.lejoying.mc.data.Message.MESSAGE_TYPE_RECEIVE) {
-							if (ChatFragment.instance == null
-									|| !app.nowChatFriend.phone
-											.equals(friendPhone)) {
+							if (ChatFragment.instance == null || !app.data.nowChatFriend.phone.equals(friendPhone)) {
 								app.data.friends.get(friendPhone).notReadMessagesCount++;
 							}
 						} else {
@@ -387,12 +378,10 @@ public class DataHandler {
 							@Override
 							public void run() {
 								if (ChatFragment.instance != null) {
-									ChatFragment.instance.mAdapter
-											.notifyDataSetChanged();
+									ChatFragment.instance.mAdapter.notifyDataSetChanged();
 								}
 								if (FriendsFragment.instance != null) {
-									FriendsFragment.instance.mFriendsHandler
-											.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
+									FriendsFragment.instance.mFriendsHandler.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
 								}
 							}
 						});
@@ -403,8 +392,7 @@ public class DataHandler {
 				}
 			}
 			if (FriendsFragment.instance != null) {
-				FriendsFragment.instance.mFriendsHandler
-						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
+				FriendsFragment.instance.mFriendsHandler.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
 			}
 			break;
 		case DATA_HANDLER_NEWFRIEND:
@@ -425,12 +413,11 @@ public class DataHandler {
 				}
 			}
 			if (FriendsFragment.instance != null) {
-				FriendsFragment.instance.mFriendsHandler
-						.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
+				FriendsFragment.instance.mFriendsHandler.sendEmptyMessage(FriendsFragment.instance.NOTIFYDATASETCHANGED);
 			}
 			break;
 		case DATA_HANDLER_UPDATEUSER:
-			updateUser((JSONObject) msg.obj);
+			// updateUser((JSONObject) msg.obj);
 			break;
 		case DATA_HANDLER_UPDATEFRIEND:
 			updateFriend((JSONObject) msg.obj);
@@ -441,20 +428,20 @@ public class DataHandler {
 
 	}
 
-	int updateUser(JSONObject jUser) {
+	public int updateUser(JSONObject jUser, StaticData data) {
 		app.isDataChanged = true;
 		int count = 0;
 		User user = generateUserFromJSON(jUser);
 		if (user.head != null && !user.head.equals("")) {
-			app.data.user.head = user.head;
+			data.user.head = user.head;
 			count++;
 		}
 		if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
-			app.data.user.mainBusiness = user.mainBusiness;
+			data.user.mainBusiness = user.mainBusiness;
 			count++;
 		}
 		if (user.nickName != null && !user.nickName.equals("")) {
-			app.data.user.nickName = user.nickName;
+			data.user.nickName = user.nickName;
 			count++;
 		}
 		return count;
@@ -486,7 +473,7 @@ public class DataHandler {
 		return count;
 	}
 
-	User generateUserFromJSON(JSONObject jUser) {
+	public User generateUserFromJSON(JSONObject jUser) {
 		User user = new User();
 		try {
 			user.phone = jUser.getString("phone");

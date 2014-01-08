@@ -227,7 +227,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					app.nowChatFriend = app.tempFriend;
+					app.data.nowChatFriend = app.tempFriend;
 					mMCFragmentManager.replaceToContent(new ChatFragment(),
 							true);
 				}

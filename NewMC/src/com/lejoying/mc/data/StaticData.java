@@ -22,4 +22,6 @@ public class StaticData implements Serializable {
 
 	// new friends
 	public List<Friend> newFriends = new ArrayList<Friend>();
+	
+	public Friend nowChatFriend;
 }

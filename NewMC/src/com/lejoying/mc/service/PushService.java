@@ -225,6 +225,10 @@ public class PushService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		if(intent==null){
+			//todo to be discussed
+			return super.onStartCommand(intent, flags, startId);
+		}
 		String objective = intent.getStringExtra("objective");
 		if (objective.equals("start")) {
 			Bundle params = new Bundle();

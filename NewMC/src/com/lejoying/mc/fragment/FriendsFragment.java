@@ -342,7 +342,7 @@ public class FriendsFragment extends BaseListFragment {
 
 					@Override
 					public void onClick(View view) {
-						app.nowChatFriend = friends.get(lastChatFriends
+						app.data.nowChatFriend = friends.get(lastChatFriends
 								.get(arg0 - messageFirstPosition));
 						mMCFragmentManager.replaceToContent(new ChatFragment(),
 								true);

@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import com.lejoying.mc.data.handler.DataHandler;
+import com.lejoying.mc.data.handler.DataHandler1;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -50,7 +51,7 @@ public class App {
 				sdcardHeadImageFolder.mkdir();
 			}
 		} else {
-			// sdcard is not found
+			//todo sdcard is not found
 		}
 	}
 
@@ -65,13 +66,17 @@ public class App {
 		config = new StaticConfig();
 	}
 
+	public StaticData data;
+	public DataHandler1 dataHandler1;
 	public void initData() {
 		data = new StaticData();
+		dataHandler1=new DataHandler1();
+		dataHandler1.initailize(this);
 	}
 
 	public boolean isDataChanged;
 
-	public StaticData data;
+
 	public StaticConfig config;
 
 	public DataHandler dataHandler;
@@ -84,7 +89,7 @@ public class App {
 	public final int SHOW_FRIEND = 2;
 	public final int SHOW_TEMPFRIEND = 3;
 	public int businessCardStatus;
-	public Friend nowChatFriend;
+//	public Friend nowChatFriend;
 	public Map<String, Bitmap> heads = new Hashtable<String, Bitmap>();
 	public File sdcardAppFolder;
 	public File sdcardImageFolder;
