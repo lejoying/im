@@ -825,6 +825,85 @@ a.btnSecondary:active {
     z-index: 2;
 }
 
+/*------------------    头像上传      --------------------------*/
+.modify_head{
+    position: absolute;
+    top: 150px;
+    left: 415px;
+    width: 420px;
+    height: 400px;
+    border-radius: 5px 5px 5px 5px;
+    z-index: 11111;
+    border: 1px solid #0099cd;
+    background-color: #EFF3F7;
+}
+.modify_head_tooltip{
+    position: relative;
+    width: 420px;
+    height: 40px;
+    background-color: #0099cd;
+    color: #ffffff;
+}
+.modify_head_text{
+    float: left;
+    margin-top: 10px;
+    text-indent: 1em
+}
+.modify_head_close{
+    float: right;
+    margin-top: 8px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.modify_head_images_max{
+    position: absolute;
+    top: 80px;
+    left: 40px;
+    width: 232px;
+    height: 232px;
+    border: 1px solid #0099CD;
+}
+.modify_head_images_min{
+    position: absolute;
+    top: 80px;
+    right:30px;
+    width: 72px;
+    height: 72px;
+    border: 1px solid #0099CD;
+}
+.modify_head_images_button{
+    background-color: #5F78AB;
+    border-radius:  3px 3px 3px 3px;
+    width:95px;
+}
+.modify_head_button{
+    position: absolute;
+    top: 170px;
+    right: 20px;
+    width:95px;
+    height: 25px;
+}
+.modify_head_button_two{
+    position: absolute;
+    top: 345px;
+    left: 90px;
+    width: 100px;
+    height: 25px;
+}
+.modify_head_button_save{
+    background-color: #5F78AB;
+    border-radius:  3px 3px 3px 3px;
+    width: 95px;
+    height: 25px;
+}
+.modify_head_button_cancel{
+    position: absolute;
+    top: 0px;
+    left: 150px;
+    opacity: 0.7;
+    background-color: #5F78AB;
+    border-radius:  3px 3px 3px 3px;
+}
 /*------------------    查找好友      --------------------------*/
 .se_fd {
     position: absolute;
@@ -842,7 +921,6 @@ a.btnSecondary:active {
     width: 350px;
     height: 40px;
     background-color: #0099cd;
-    border-radius: 5px 5px 0px 0px;
     color: #ffffff;
 }
 
@@ -945,7 +1023,6 @@ a.btnSecondary:active {
     width: 350px;
     height: 40px;
     background-color: #0099cd;
-    border-radius: 5px 5px 0px 0px;
     color: #ffffff;
 }
 
