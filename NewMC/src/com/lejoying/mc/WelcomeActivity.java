@@ -118,6 +118,11 @@ public class WelcomeActivity extends BaseFragmentActivity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+				} else {
+					Intent intent = new Intent(WelcomeActivity.this,
+							MainActivity.class);
+					startActivity(intent);
+					WelcomeActivity.this.finish();
 				}
 			};
 		}.start();
