@@ -1,7 +1,11 @@
 var scrollInitFlag = false;
 $(function () {
-//    $(".js_rightChatPanel").hide();
+    $(".js_chatRightFrame").css({
+        visibility: "hidden"
+    });
 
+//    $(".js_rightChatPanel").hide();
+//    $(".js_chatRightFrame").hide();
     $(".js_morefriend").hide();
     $(".js_morefriend").slideUp();
     $(".js_onlyfriend").slideUp(1);
@@ -28,18 +32,42 @@ $(function () {
 
 
 //    alert($(".chatItem[un=item_2070333132]").html());//根据属性值获取对象jQuery对象
+
+    keepQuest();
+});
+function pullUsersMessage(account) {
     getMessages("0", function (data) {
 //        console.log(data);
 //        console.log(data.messages[0]);
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").html(js_chatmessagetemplate.render(data.messages));
         setScrollPosition();
-//        $(".js_rightChatPanel").show();
     });
-    keepQuest();
-});
+}
+
+function messagesDataSplit(data) {
+    var tempAccountChatMessage = {};
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    for (var i = 0; i < data.length; i++) {
+        var message = JSON.parse(data[i]);
+        if (message.phone == accountObj.phone) {
+            /*tempAccountChatMessage[message.phone] = tempAccountChatMessage[message.phone] || [];
+            tempAccountChatMessage[message.phone].push(JSON.stringify(message));*/
+            if (tempAccountChatMessage[message.phone] != undefined) {
+                tempAccountChatMessage[message.phone]
+            } else {
+                var array = [];
+                array.push(JSON.stringify(message));
+                tempAccountChatMessage[message.phone] = array;
+            }
+        } else {
+
+        }
+    }
+}
 function sendMessages(listPhone, messageObj) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $(".js_chatmessagecontent").val("")
     $.ajax({
         type: "POST",
         url: "/api2/message/send?",
@@ -58,6 +86,7 @@ function sendMessages(listPhone, messageObj) {
         }
     });
 }
+
 function setScrollPosition() {
     if ($(".js_chatContents").height() < $(".chatScorll").height()) {
         $(".scrollDiv").hide();
@@ -75,7 +104,13 @@ function setScrollPosition() {
     $(".js_chatContents").css({
         "top": -($(".js_chatContents").height() - $(".chatScorll").height() + 55) + "px"
     });
+    if ($(".js_chatRightFrame").css("visibility") == "hidden") {
+        $(".js_chatRightFrame").css({
+            visibility: "visible"
+        });
+    }
 }
+
 function keepQuest() {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
@@ -91,7 +126,8 @@ function keepQuest() {
                     var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
                     $(".js_chatContents").append(js_chatmessagetemplate.render(data.event_content.message));
                     setScrollPosition();
-                    alert("message");
+                    keepQuest();
+//                    alert("message");
                 } else if (data.event == "newfriend") {
                     alert("newFriend");
                 } else if (data.event == "friendaccept") {
@@ -109,6 +145,7 @@ function keepQuest() {
         }
     });
 }
+
 function getMessages(flag, next) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
@@ -124,6 +161,7 @@ function getMessages(flag, next) {
         }
     });
 }
+
 function formattertime(millisecond) {
     var date = new Date(millisecond);
     var Hours = date.getHours().toString().length == 1 ? "0" + date.getHours() : date.getHours();
@@ -132,6 +170,7 @@ function formattertime(millisecond) {
     var formattertime = Hours + ":" + Minutes;
     return formattertime;
 }
+
 function getTemplate(id) {
     var tenjin = nTenjin;
     var templateDiv = $('.templates #' + id).parent();

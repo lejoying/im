@@ -12,15 +12,14 @@
             listPhone.push(phoneto);
             var messages = {
                 type: "text",
-                content: {
-                    text: message
-                }
+                content: message
             };
             $.ajax({
                 type: "POST",
                 url: "/api2/message/send?",
                 data: {
                     phone: phone,
+                    accessKey: "lejoying",
                     phoneto: JSON.stringify(listPhone),
                     message: JSON.stringify(messages)
                 },

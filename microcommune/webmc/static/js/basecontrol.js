@@ -6,11 +6,11 @@ $(function () {
     $(".js_mainContent").slideUp(1);
     $(".js_js_tempChatMainContent").slideDown(1);
     $(document).on("click", ".js_circlesTop", function () {
-        $(".js_onlyfriend").slideUp(500, function () {
-            $(".js_morefriend").show();
-        });
-        $(".js_morefriend").slideDown(500, function () {
-        });
+        /*$(".js_onlyfriend").slideUp(500, function () {
+         $(".js_morefriend").show();
+         });
+         $(".js_morefriend").slideDown(500, function () {
+         });*/
     });
     $(".js_tempChatTop").click(function () {
         $(".js_tempChatTop").addClass("conmuButton_chatStyle");
@@ -56,5 +56,9 @@ $(function () {
     });
     $(".js_loadingTempData").click(function () {
         alert("九妹正在为您努力加载数据");
+    });
+
+    $(".js_Account_HeadImg").click(function () {
+        alert("js_Account_HeadImg");
     });
 });

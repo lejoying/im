@@ -46,7 +46,7 @@ $(document).ready(function () {
     $(".js_accountNickName").html(accountObj.nickName);
     $(".js_accountNickName").attr("title", accountObj.nickName);
     if (accountObj.head != "") {
-        $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head + ".png");
+        $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head);
     } else {
         $(".js_accountHead").attr("src", "/static/images/face_man.png");
     }
@@ -231,13 +231,14 @@ $(document).ready(function () {
             }
         }
     });
-    $(document).on("mousedown", ".user_icon", function (event) {
-        if (dropStatus == "none") {
-            mouseX = event.clientX;
-//            mouseX = event.clientX - 500;
-            mouseY = event.clientY;
-        }
-    });
+    //这段代码导致发送消息框无法使用
+    /*$(document).on("mousedown", ".user_icon", function (event) {
+     if (dropStatus == "none") {
+     mouseX = event.clientX;
+     //            mouseX = event.clientX - 500;
+     mouseY = event.clientY;
+     }
+     });*/
     $(document).on("mouseup", ".user_icon", function (event) {
         var icon = $(this);
         var phone = icon.find("span").attr("phone");
@@ -253,8 +254,10 @@ $(document).ready(function () {
                 //------------------------------------------------------------------------------------------------------点击头像聊天的处理
 //                clickHeadImgToChatPanel();
                 currentChatUser = allCirclesFriends[phone];
+//                $(".js_rightChatPanel").show();
+                pullUsersMessage(currentChatUser.phone);
                 if (currentChatUser.head != "") {
-                    $(".js_js_onlyfriend_headimg").attr("src", window.globaldata.serverSetting.imageServer + currentChatUser.head + ".png");
+                    $(".js_js_onlyfriend_headimg").attr("src", window.globaldata.serverSetting.imageServer + currentChatUser.head);
                 } else {
                     $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
                 }
@@ -743,33 +746,8 @@ function modifyCircleName(rid, newCircleName, oldCircleName) {
 }
 
 function getTemplateHtml(templateHtml, next) {
-    /*    var tenjin = nTenjin;
-     var templateDiv = $('.templates #' + id).parent();
-     var string = templateDiv.html().toString();
-     $.get("/static/templates/circles_friends.html", function (templates) {
-     //        alert(string);
-     alert(string.length == templates.length);
-     alert(string == templates);
-     alert(string);
-     alert(templates.replace(/\r/g, ""));
-     }, "html");
-     var template = new tenjin.Template();
-     string = string.replace(/\
-     <\!\-\-\?/g, "
-     <?");
-     string = string.replace(/\?\-\-\>/g, "?>");
-     string = string.replace(/比较符号大于/g, ">");
-     string = string.replace(/比较符号兄小于/g, "
-     <");
-     template.convert(string);
-     return template;*/
     var tenjin = nTenjin;
     $.get("/static/templates/" + templateHtml + ".html", function (result) {
-        //        alert(string);
-//                    alert(string.length == templates.length);
-//                    alert(string == templates);
-//                    alert(string);
-//                    alert(templates.replace(/\r/g,""));
         var template = new tenjin.Template();
         var string = result.replace(/\r/g, "");
         string = string.replace(/\<\!\-\-\?/g, "<?");
@@ -845,13 +823,6 @@ function ScrollWheel() {
     $("#ScroLine")[0].style.top = SH + "px";
 }
 function tempChatMainContent() {
-//    alert(window.screen.availHeight);
-//    alert(document.documentElement.clientHeight);
-//    alert($(".listContentWrap").height()+"--"+$("#mainBox")[0].clientHeight);
-//    alert(event.wheelDelta);
-//    alert($(".js_js_tempChatMainContent")[0].scrollTop);
-//    alert($("#mainBox")[0].scrollHeight);
-//    alert($("#mainBox")[0].clientHeight);
     var flag = event.wheelDelta == 120;
 //    var H = $("#mainBox")[0].clientHeight - $("#mainBox")[0].scrollHeight-280;
     var H = ($(".listContentWrap").height() - $("#mainBox")[0].scrollHeight - 288) * ((window.screen.availHeight + 90) / document.documentElement.clientHeight);

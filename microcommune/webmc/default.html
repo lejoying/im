@@ -59,7 +59,7 @@
     <p>微型公社网页版</p>
 </div>
 <!--     头像上传    -->
-<div class="modify_head" style="display: block">
+<div class="modify_head" style="display: none">
     <div class="modify_head_tooltip">
         <div>
             <span class="modify_head_text">修改头像</span>
@@ -72,13 +72,13 @@
             <img src=""/>
         </div>
         <div class="modify_head_button">
-            <input class="modify_head_images_button" type="button" value="上传图片" />
+            <input class="modify_head_images_button" type="button" value="上传图片"/>
         </div>
         <div class="modify_head_button_two">
             <div style="width: 95px;height: 25px">
                 <input class="modify_head_button_save" type="button" value="保存"/>
             </div>
-            <div >
+            <div>
                 <input class="modify_head_button_cancel" type="button" value="取消"/>
             </div>
         </div>
@@ -91,9 +91,9 @@
         <span class="se_close js_findFriend_close">X</span>
     </div>
     <div class="sj_in">
-        <span style="float: left;margin-top: 8px;margin-left: 60px">手机号：</span>
+        <span style="float: left;margin-top: 8px;margin-left: 60px">手机号&nbsp;:&nbsp;&nbsp;</span>
         <input class="sdw js_findFriendPhone" type="text"
-               style="margin-left: -130px;width:150px; height: 30px;border-radius: 3px;letter-spacing: 2px;text-indent: 20px;border: 1px solid #A0BACA;">
+               style="margin-left: -120px;width:150px; height: 30px;border-radius: 3px;letter-spacing: 2px;text-indent: 20px;border: 1px solid #A0BACA;">
         <br/>
         <label class="js_findFriendErrorMessage"></label>
     </div>
@@ -164,7 +164,7 @@
         <div class="myProfile"><img class="js_accountHead" un="avatar_wxid_7832428324312"
                                     src="static/images/webwxgeticonhead.jpg">
 
-            <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar"></div>
+            <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar js_Account_HeadImg"></div>
             <a style="display:none;" href="javascript:;" id="unreadTotalCount" class="unreadTotalCount">0</a>
 
             <div class="info"><span class="nickName js_accountNickName" id="username">麦穗儿香</span></div>
@@ -281,7 +281,7 @@
     </div>
     <div class="info">
         <div class="nickName">
-            <div style="" class="left name"> ิ̶昧 بسيط°</div>
+            <div style="" class="left name"> ??昧 ????°</div>
             <div class="clr"></div>
         </div>
         <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
@@ -393,7 +393,7 @@
     </div>
     <div class="info">
         <div class="nickName">
-            <div style="" class="left name"> ิ̶昧 بسيط°</div>
+            <div style="" class="left name"> ??昧 ????°</div>
             <div class="clr"></div>
         </div>
         <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
@@ -730,7 +730,7 @@
      id="vernierContainer">
     <div class="activeChatVernier" style="top: 20px;"><img src="static/images/spacer17ced3.gif"></div>
 </div>
-<div style="visibility:visible;" class="chat lightBorder">
+<div style="visibility:visible;" class="chat lightBorder js_chatRightFrame">
     <div class="chatContainer js_rightChatPanel" style="height: 442px;">
         <div id="chatMainPanel" class="chatMainPanel">
             <div class="chatTitle">
@@ -932,7 +932,7 @@
                 <?js } ?>
                 <div class="user_icon js_user_icon">
                     <?js if(post.head!=""){ ?>
-                    <img class="user_icon_img1 js_user_headicon" src="#{imageServer}/#{post.head}.png"/>
+                    <img class="user_icon_img1 js_user_headicon" src="#{imageServer}#{post.head}"/>
                     <?js }else{ ?>
                     <img class="user_icon_img1 js_user_headicon" src="/static/images/face_man.png"/>
                     <?js } ?>

@@ -906,6 +906,7 @@ a.btnSecondary:active {
 }
 /*------------------    查找好友      --------------------------*/
 .se_fd {
+    background-color: #ffffff;
     position: absolute;
     top: 200px;
     left: 315px;
