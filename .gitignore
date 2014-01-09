@@ -32,3 +32,6 @@ proguard/
 /microcommune/.idea
 
 /microcommune/node_modules/
+.classpath
+.project
+.settings

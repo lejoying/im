@@ -261,8 +261,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 					public void success(JSONObject data) {
 						System.out.println(data);
 						try {
-							showMsg(data
-									.getString(getString(R.string.app_reason)));
+							data
+									.getString(getString(R.string.app_reason));
 							tv_name.setText(app.data.user.nickName);
 							tv_yewu.setText(app.data.user.mainBusiness);
 							return;

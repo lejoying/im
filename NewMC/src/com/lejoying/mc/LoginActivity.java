@@ -1,10 +1,12 @@
 package com.lejoying.mc;
 
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.fragment.LoginUsePassFragment;
+import com.lejoying.utils.HttpTools;
 
 public class LoginActivity extends BaseFragmentActivity {
 
@@ -30,6 +32,12 @@ public class LoginActivity extends BaseFragmentActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		app.context = this;
 	}
 
 }

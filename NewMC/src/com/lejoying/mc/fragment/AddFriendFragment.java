@@ -72,7 +72,7 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 						public void success(JSONObject data) {
 							System.out.println(data);
 							try {
-								showMsg(data.getString("失败原因"));
+								data.getString("失败原因");
 								return;
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block

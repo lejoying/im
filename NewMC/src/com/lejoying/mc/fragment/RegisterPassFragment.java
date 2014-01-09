@@ -61,7 +61,7 @@ public class RegisterPassFragment extends BaseFragment implements
 						getActivity().getSupportFragmentManager().popBackStack(
 								1, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 					} else {
-						showMsg(getString(R.string.app_cancelregister));
+						getString(R.string.app_cancelregister);
 						cancelTime = now;
 					}
 				}
@@ -83,10 +83,10 @@ public class RegisterPassFragment extends BaseFragment implements
 		case R.id.btn_next:
 			String pass = mView_pass.getText().toString();
 			if (pass == null || pass.equals("")) {
-				showMsg(getString(R.string.app_passnotnull));
+				getString(R.string.app_passnotnull);
 				return;
 			} else if (pass.length() < 6) {
-				showMsg(getString(R.string.app_passlength));
+				getString(R.string.app_passlength);
 				return;
 			}
 			Bundle params = app.registerBundle;

@@ -83,12 +83,12 @@ public class LoginUsePassFragment extends BaseFragment implements
 			break;
 		case R.id.btn_login:
 			if (mView_phone.getText().toString().equals("")) {
-				showMsg(getString(R.string.app_phonenotnull));
+				getString(R.string.app_phonenotnull);
 				showSoftInput(mView_phone);
 				return;
 			}
 			if (mView_pass.getText().toString().equals("")) {
-				showMsg(getString(R.string.app_passnotnull));
+				getString(R.string.app_passnotnull);
 				showSoftInput(mView_pass);
 				return;
 			}

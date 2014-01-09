@@ -57,13 +57,13 @@ public class LoginUseCodeFragment extends BaseFragment implements
 		String phone = mView_phone.getText().toString();
 		String code = mView_code.getText().toString();
 		if (phone == null || phone.equals("")) {
-			showMsg(getString(R.string.app_phonenotnull));
+			getString(R.string.app_phonenotnull);
 			return;
 		}
 		switch (v.getId()) {
 		case R.id.btn_login:
 			if (code == null || code.equals("")) {
-				showMsg(getString(R.string.app_codenotnull));
+				getString(R.string.app_codenotnull);
 				return;
 			}
 			Bundle params = new Bundle();
@@ -80,7 +80,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			break;
 		case R.id.tv_sendcode:
 			if (phone == null || phone.equals("")) {
-				showMsg(getString(R.string.app_phonenotnull));
+				getString(R.string.app_phonenotnull);
 				return;
 			}
 			Bundle verifyParams = new Bundle();

@@ -13,7 +13,7 @@ import android.support.v4.app.Fragment;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.data.handler.DataHandler1.Modification;
-import com.lejoying.mc.data.handler.DataHandler2;
+import com.lejoying.mc.data.handler.JSONHandler;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
@@ -28,6 +28,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		app.context=this;
 		setContentView(R.layout._welcome);
 		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_GETCONFIGANDDATA, app.dataHandler.DOSYNC, this);
 		start = new Date().getTime();
@@ -47,8 +48,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 						final JSONObject jUser = data.getJSONObject("account");
 						app.dataHandler1.modifyData(new Modification() {
 							public void modify(StaticData data) {
-								DataHandler2 dataHandler2 = new DataHandler2();
-								dataHandler2.updateUser(jUser, data);
+								app.mJSONHandler.updateUser(jUser, data);
 							}
 						});
 						startToMain();
@@ -133,6 +133,12 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	@Override
 	protected int setBackground() {
 		return R.drawable.app_start;
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		app.context=this;
 	}
 
 }

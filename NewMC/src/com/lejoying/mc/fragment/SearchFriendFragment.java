@@ -90,7 +90,7 @@ public class SearchFriendFragment extends BaseListFragment {
 					public void onClick(View v) {
 						final String phone = mView_phone.getText().toString();
 						if (phone.equals("")) {
-							showMsg("请输入好友手机号");
+							//showMsg("请输入好友手机号");
 							return;
 						}
 						Bundle params = new Bundle();

@@ -40,6 +40,11 @@ public class MainActivity extends BaseFragmentActivity {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		app.context=this;
+	}
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		boolean flag = true;
 		// if (keyCode == KeyEvent.KEYCODE_BACK) {

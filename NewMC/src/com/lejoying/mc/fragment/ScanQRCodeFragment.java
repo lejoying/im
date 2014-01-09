@@ -130,8 +130,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 				destoryCamera();
 				initCamera();
 			} else {
-				// 相机故障或被占用
-				showMsg(getString(R.string.app_cameranotready));
+				getString(R.string.app_cameranotready);
 				getActivity().getSupportFragmentManager().popBackStack();
 			}
 		}

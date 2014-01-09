@@ -9,7 +9,7 @@ public class ToTry {
 		if (delay < 0 || times < 0 || toTryListener == null) {
 			return;
 		}
-		final Handler handler = MCNetTools.handler;
+		final Handler handler = new Handler();
 		toTryListener.beforeDoing();
 		final Thread thread = new Thread() {
 			int tryCount = 0;

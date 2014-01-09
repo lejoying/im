@@ -65,7 +65,7 @@ public class FriendsFragment extends BaseListFragment {
 	List<Friend> newFriends;
 	List<String> lastChatFriends;
 
-	FriendsAdapter mFriendsAdapter;
+	public FriendsAdapter mFriendsAdapter;
 	public FriendsHandler mFriendsHandler;
 
 	private View mContent;
@@ -82,7 +82,7 @@ public class FriendsFragment extends BaseListFragment {
 
 	int newFriendsCount;
 
-	void initData(boolean initShowMessages) {
+	public void initData(boolean initShowMessages) {
 		circles = app.data.circles;
 		friends = app.data.friends;
 		newFriends = app.data.newFriends;
@@ -158,7 +158,7 @@ public class FriendsFragment extends BaseListFragment {
 		super.onDestroyView();
 	}
 
-	class FriendsAdapter extends BaseAdapter {
+	public class FriendsAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
@@ -794,7 +794,7 @@ public class FriendsFragment extends BaseListFragment {
 				});
 	}
 
-	private void getAskFriends() {
+	public void getAskFriends() {
 		Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
@@ -805,7 +805,7 @@ public class FriendsFragment extends BaseListFragment {
 					public void success(JSONObject data) {
 						System.out.println(data);
 						try {
-							showMsg(data.getString("失败原因"));
+							data.getString("失败原因");
 							return;
 						} catch (JSONException e) {
 						}

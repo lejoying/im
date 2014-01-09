@@ -64,7 +64,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 		case R.id.btn_next:
 			String code = mView_code.getText().toString();
 			if (code.equals("")) {
-				showMsg(getString(R.string.app_codenotnull));
+				getString(R.string.app_codenotnull);
 				return;
 			}
 			Bundle nextParams = new Bundle();

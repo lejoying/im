@@ -41,7 +41,6 @@ public abstract class BaseListFragment extends ListFragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		cleanMsg();
 		hideSoftInput();
 	}
 
@@ -87,14 +86,6 @@ public abstract class BaseListFragment extends ListFragment {
 					getActivity().getCurrentFocus().getWindowToken(), 0);
 		}
 		return flag;
-	}
-
-	protected void showMsg(String message) {
-		MCNetTools.showMsg(getActivity(), message);
-	}
-
-	protected void cleanMsg() {
-		MCNetTools.cleanMsg();
 	}
 
 	public FragmentManager getmFragmentManager() {

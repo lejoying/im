@@ -54,7 +54,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 		switch (v.getId()) {
 		case R.id.btn_next:
 			if (mView_phone.getText().toString().equals("")) {
-				showMsg(getString(R.string.app_phonenotnull));
+				getString(R.string.app_phonenotnull);
 				showSoftInput(mView_phone);
 				return;
 			}

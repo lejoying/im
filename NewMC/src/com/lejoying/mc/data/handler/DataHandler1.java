@@ -1,6 +1,7 @@
 package com.lejoying.mc.data.handler;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import android.os.Handler;
 
@@ -27,7 +28,7 @@ public class DataHandler1 {
 		Operation operation = new Operation();
 		operation.mModification = modification;
 		operation.mUIModification = mUIModification;
-		mQueue.add(operation);
+		mQueue.offer(operation);
 		handleData();
 	}
 
@@ -38,8 +39,7 @@ public class DataHandler1 {
 			return;
 		}
 		isHandling = true;
-		final Operation operation = mQueue.get(0);
-		mQueue.remove(0);
+		final Operation operation = mQueue.poll();
 
 		new Thread() {
 			public void run() {
@@ -51,6 +51,7 @@ public class DataHandler1 {
 	}
 	
 	void handleOperation(final Operation operation){
+		app.isDataChanged = true;
 		operation.mModification.modify(this.app.data);
 		if(operation.mUIModification!=null){
 			mUIThreadHandler.post(new Runnable() {
@@ -66,7 +67,7 @@ public class DataHandler1 {
 		public UIModification mUIModification;
 	}
 
-	ArrayList<Operation> mQueue = new ArrayList<Operation>();
+	Queue<Operation> mQueue = new LinkedList<Operation>();
 
 	public interface Modification {
 		public void modify(StaticData data);

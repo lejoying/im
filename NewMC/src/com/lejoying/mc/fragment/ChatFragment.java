@@ -58,8 +58,10 @@ import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
+import com.lejoying.mc.utils.MCNetTools.AjaxInterface;
 import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 import com.lejoying.utils.HttpTools;
 import com.lejoying.utils.SHA1;
 import com.lejoying.utils.StreamTools;
@@ -575,45 +577,67 @@ public class ChatFragment extends BaseListFragment {
 
 			@Override
 			public void onClick(View v) {
-				String message = editText_message.getText().toString();
+				final String message = editText_message.getText().toString();
 				editText_message.setText("");
 				if (message != null && !message.equals("")) {
 					addMessage("text", message);
-					Bundle params = generateParams("text", message);
-					MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params, HttpTools.SEND_POST, 5000, new ResponseListener() {
-
-						@Override
-						public void success(JSONObject data) {
-							app.isDataChanged = true;
-							if (app.data.user.flag.equals("none")) {
-								app.data.user.flag = String.valueOf(1);
-							} else {
-								app.data.user.flag = String.valueOf(Integer.valueOf(app.data.user.flag).intValue() + 1);
-							}
-							if (app.data.lastChatFriends.indexOf(app.data.nowChatFriend.phone) != 0) {
-								app.data.lastChatFriends.remove(app.data.nowChatFriend.phone);
-								app.data.lastChatFriends.add(0, app.data.nowChatFriend.phone);
-							}
+					MCNetTools.ajaxAPI(new AjaxInterface() {
+						public void setParams(Settings settings){
+							settings.url=API.MESSAGE_SEND;
+							settings.params = generateParams("text", message);
 						}
-
-						@Override
-						public void noInternet() {
-							// TODO Auto-generated method stub
-
+						public void onSuccess(JSONObject data) {
+							app.dataHandler1.modifyData(new Modification() {
+								public void modify(StaticData data) {
+									if (app.data.user.flag.equals("none")) {
+										app.data.user.flag = String.valueOf(1);
+									} else {
+										app.data.user.flag = String.valueOf(Integer.valueOf(app.data.user.flag).intValue() + 1);
+									}
+									if (app.data.lastChatFriends.indexOf(app.data.nowChatFriend.phone) != 0) {
+										app.data.lastChatFriends.remove(app.data.nowChatFriend.phone);
+										app.data.lastChatFriends.add(0, app.data.nowChatFriend.phone);
+									}
+								}
+							}, new UIModification() {
+								public void modifyUI() {
+									//?
+								}
+							});
 						}
-
 						@Override
 						public void failed() {
 							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void connectionCreated(HttpURLConnection httpURLConnection) {
-							// TODO Auto-generated method stub
-
+							
 						}
 					});
+					// MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params,
+					// HttpTools.SEND_POST, 5000, new ResponseListener() {
+					//
+					// @Override
+					// public void success(JSONObject data) {
+					//
+					// }
+					//
+					// @Override
+					// public void noInternet() {
+					// // TODO Auto-generated method stub
+					//
+					// }
+					//
+					// @Override
+					// public void failed() {
+					// // TODO Auto-generated method stub
+					//
+					// }
+					//
+					// @Override
+					// public void connectionCreated(HttpURLConnection
+					// httpURLConnection) {
+					// // TODO Auto-generated method stub
+					//
+					// }
+					// });
 				}
 			}
 		});

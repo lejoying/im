@@ -27,24 +27,66 @@ public class MCNetTools {
 
 	static App app = App.getInstance();
 
-	public static Handler handler = new Handler();
-
 	private static Toast toast;
 
-	public static void ajax(final Context context, final String url,
-			final Bundle params, final int method, final int timeout,
-			final ResponseListener responseListener) {
-		if (context == null) {
-			return;
+	public static class Settings {
+		public String url = null;
+		public int method = HttpTools.SEND_POST;
+		public int timeout = 5000;
+		public Bundle params = null;
+	};
+
+	public static void ajaxAPI(final AjaxInterface ajaxInterface) {
+
+		Settings settings = new Settings();
+		ajaxInterface.setParams(settings);
+
+		ajax(null, settings.url, settings.params, settings.method, settings.timeout, new ResponseListener() {
+			public void success(JSONObject data) {
+				ajaxInterface.onSuccess(data);
+			}
+
+			public void noInternet() {
+				Toast.makeText(app.context, "没有网络连接，网络不给力呀~", Toast.LENGTH_SHORT).show();
+			}
+
+			public void failed() {
+				ajaxInterface.failed();
+				Toast.makeText(app.context, "网络连接失败，网络不给力呀~", Toast.LENGTH_SHORT).show();
+			}
+
+			public void connectionCreated(HttpURLConnection httpURLConnection) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+	}
+
+	public interface AjaxInterface {
+		public void setParams(Settings settings);
+
+		public void onSuccess(JSONObject data);
+
+		public void failed();
+
+	}
+
+	// public interface AjaxInterfaceAdvanced {
+	// public void failed();
+	// public void connectionCreated();
+	// public void noInternet();
+	// }
+
+	public static void ajax(final Context context, final String url, final Bundle params, final int method, final int timeout, final ResponseListener responseListener) {
+		// boolean hasNetwork = HttpTools.hasNetwork(context);
+		if (app.networkStatus == "none") {
+			NetworkInfo networkInfo = HttpTools.getActiveNetworkInfo(app.context);
+			if (networkInfo != null) {
+				app.networkStatus = networkInfo.getTypeName();
+			}
 		}
-		boolean hasNetwork = HttpTools.hasNetwork(context);
-		if (!hasNetwork) {
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					responseListener.noInternet();
-				}
-			});
+		if (app.networkStatus == "none") {
+			responseListener.noInternet();
 		} else {
 			new Thread() {
 				private byte[] b = null;
@@ -59,74 +101,44 @@ public class MCNetTools {
 						}
 
 						@Override
-						public void connectionCreated(
-								final HttpURLConnection httpURLConnection) {
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									responseListener
-											.connectionCreated(httpURLConnection);
-								}
-							});
+						public void connectionCreated(final HttpURLConnection httpURLConnection) {
+							responseListener.connectionCreated(httpURLConnection);
+						}
+
+						@Override
+						public void failed() {
+							responseListener.failed();
 						}
 					};
 					if (method == HttpTools.SEND_GET) {
-						HttpTools.sendGetUseBundle(app.config.DOMAIN + url,
-								timeout, params, httpListener);
+						HttpTools.sendGetUseBundle(app.config.DOMAIN + url, timeout, params, httpListener);
 					}
 					if (method == HttpTools.SEND_POST) {
-						HttpTools.sendPostUseBundle(app.config.DOMAIN + url,
-								timeout, params, httpListener);
+						HttpTools.sendPostUseBundle(app.config.DOMAIN + url, timeout, params, httpListener);
 					}
 					try {
 						if (b == null) {
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									responseListener.failed();
-								}
-							});
+
 						} else {
-							final JSONObject data = new JSONObject(
-									new String(b));
+							final JSONObject data = new JSONObject(new String(b));
 							if (data != null) {
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										responseListener.success(data);
-									}
-								});
+								responseListener.success(data);
 							}
 						}
 					} catch (JSONException e) {
-						e.printStackTrace();
-						handler.post(new Runnable() {
-							@Override
-							public void run() {
-								responseListener.failed();
-							}
-						});
 					}
 				}
 			}.start();
 		}
 	}
 
-	public static void downloadFile(final Context context,
-			final String location, final String fileName, final File savePath,
-			final String rename, final int timeout,
-			final DownloadListener downloadListener) {
+	public static void downloadFile(final Context context, final String location, final String fileName, final File savePath, final String rename, final int timeout, final DownloadListener downloadListener) {
 		if (context == null) {
 			return;
 		}
 		boolean hasNetwork = HttpTools.hasNetwork(context);
 		if (!hasNetwork) {
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					downloadListener.noInternet();
-				}
-			});
+			downloadListener.noInternet();
 		} else {
 			new Thread() {
 
@@ -137,28 +149,15 @@ public class MCNetTools {
 						float fileLength = 0;
 
 						@Override
-						public void connectionCreated(
-								final HttpURLConnection httpURLConnection) {
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									downloadListener
-											.connectionCreated(httpURLConnection);
-								}
-							});
+						public void connectionCreated(final HttpURLConnection httpURLConnection) {
+							downloadListener.connectionCreated(httpURLConnection);
 							fileLength = httpURLConnection.getContentLength();
 						}
 
 						@Override
 						public void handleInputStream(final InputStream is) {
-							if (!Environment.getExternalStorageState().equals(
-									Environment.MEDIA_MOUNTED)) {
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										downloadListener.success(null, is);
-									}
-								});
+							if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+								downloadListener.success(null, is);
 								return;
 							}
 							FileOutputStream fileOutputStream = null;
@@ -171,43 +170,19 @@ public class MCNetTools {
 								fileOutputStream = new FileOutputStream(file);
 								int length = 0;
 								byte[] buffer = new byte[1024];
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										downloadListener.downloading(0);
-									}
-								});
+								downloadListener.downloading(0);
+
 								float nowReadLength = 0;
 								while ((length = is.read(buffer)) > 0) {
 									fileOutputStream.write(buffer, 0, length);
 									nowReadLength += length;
-									downloadListener
-											.downloading((int) (nowReadLength
-													/ fileLength * 100));
+									downloadListener.downloading((int) (nowReadLength / fileLength * 100));
 								}
 								fileOutputStream.flush();
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										downloadListener.success(file, null);
-									}
-								});
+								downloadListener.success(file, null);
+
 							} catch (FileNotFoundException e) {
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										downloadListener.failed();
-									}
-								});
-								e.printStackTrace();
 							} catch (IOException e) {
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										downloadListener.failed();
-									}
-								});
-								e.printStackTrace();
 							} finally {
 								if (fileOutputStream != null) {
 									try {
@@ -227,37 +202,17 @@ public class MCNetTools {
 								}
 							}
 						}
-
+						@Override
+						public void failed() {
+							downloadListener.failed();
+						}
 					};
-					HttpTools.sendGetUseBundle(location + fileName, timeout,
-							null, httpListener);
+					HttpTools.sendGetUseBundle(location + fileName, timeout, null, httpListener);
 				}
 			}.start();
 		}
 	}
 
-	public static void showMsg(final Context context, final String text) {
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (text == null || text.equals("")) {
-					return;
-				}
-				if (toast != null) {
-					toast.cancel();
-				}
-				toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
-			}
-		});
-	}
-
-	public static void cleanMsg() {
-		if (toast != null) {
-			toast.cancel();
-		}
-	}
 
 	public interface ResponseListener {
 		public void connectionCreated(HttpURLConnection httpURLConnection);
