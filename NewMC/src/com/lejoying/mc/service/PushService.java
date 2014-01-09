@@ -13,10 +13,9 @@ import android.os.IBinder;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.AjaxInterface;
 import com.lejoying.mc.utils.MCNetTools.Settings;
-import com.lejoying.utils.HttpTools;
 
 public class PushService extends Service {
 	App app = App.getInstance();
@@ -34,7 +33,7 @@ public class PushService extends Service {
 	public void startLongAjax(final Bundle params) {
 		isStart = true;
 
-		MCNetTools.ajaxAPI(new AjaxInterface() {
+		MCNetTools.ajaxAPI(new AjaxAdapter() {
 			public void setParams(Settings settings) {
 				settings.url = API.SESSION_EVENT;
 				settings.params = params;
@@ -56,61 +55,13 @@ public class PushService extends Service {
 			}
 
 			@Override
-			public void failed() {
+			public void timeout() {
 				if (isStart) {
 					startLongAjax(params);
 					System.out.println("long ajax failed");
 				}
 			}
 		});
-
-		// MCNetTools.ajax(this, API.SESSION_EVENT, params, HttpTools.SEND_POST,
-		// 30000, new ResponseListener() {
-		//
-		// @Override
-		// public void success(JSONObject data) {
-		//
-		//
-		// }
-		//
-		// @Override
-		// public void noInternet() {
-		// System.out.println("noInternet");
-		// }
-		//
-		// @Override
-		// public void failed() {
-		// // if (isStart) {
-		// // startLongAjax(params);
-		// // } else {
-		// // if (MainActivity.instance != null) {
-		// // Intent intent = new Intent(
-		// // MainActivity.instance,
-		// // LoginActivity.class);
-		// // MainActivity.instance.startActivity(intent);
-		// // MainActivity.instance.finish();
-		// // MainActivity.instance = null;
-		// // }
-		// // }
-		// long nowTime = new Date().getTime();
-		// if (nowTime - failTime < 5000) {
-		// failCount++;
-		// }
-		// failTime = nowTime;
-		// if (failCount > 5) {
-		// isStart = false;
-		// failCount = 0;
-		// }
-		// System.out.println("failed");
-		// }
-		//
-		// @Override
-		// public void connectionCreated(
-		// HttpURLConnection httpURLConnection) {
-		// System.out.println("create long ajax");
-		// longAjaxConnection = httpURLConnection;
-		// }
-		// });
 	}
 
 	@Override
@@ -136,7 +87,6 @@ public class PushService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

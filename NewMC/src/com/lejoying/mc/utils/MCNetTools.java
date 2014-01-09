@@ -14,9 +14,6 @@ import android.content.Context;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import com.lejoying.mc.data.App;
 import com.lejoying.utils.HttpTools;
@@ -27,8 +24,6 @@ public class MCNetTools {
 
 	static App app = App.getInstance();
 
-	private static Toast toast;
-
 	public static class Settings {
 		public String url = null;
 		public int method = HttpTools.SEND_POST;
@@ -36,49 +31,80 @@ public class MCNetTools {
 		public Bundle params = null;
 	};
 
-	public static void ajaxAPI(final AjaxInterface ajaxInterface) {
-
-		Settings settings = new Settings();
-		ajaxInterface.setParams(settings);
-
-		ajax(null, settings.url, settings.params, settings.method, settings.timeout, new ResponseListener() {
-			public void success(JSONObject data) {
-				ajaxInterface.onSuccess(data);
-			}
-
-			public void noInternet() {
-				Toast.makeText(app.context, "没有网络连接，网络不给力呀~", Toast.LENGTH_SHORT).show();
-			}
-
-			public void failed() {
-				ajaxInterface.failed();
-				Toast.makeText(app.context, "网络连接失败，网络不给力呀~", Toast.LENGTH_SHORT).show();
-			}
-
-			public void connectionCreated(HttpURLConnection httpURLConnection) {
-				// TODO Auto-generated method stub
-			}
-		});
-
-	}
-
 	public interface AjaxInterface {
 		public void setParams(Settings settings);
 
-		public void onSuccess(JSONObject data);
+		public void onSuccess(JSONObject jData);
 
 		public void failed();
 
+		public void noInternet();
+
+		public void timeout();
+
+		public void connectionCreated(HttpURLConnection httpURLConnection);
 	}
 
-	// public interface AjaxInterfaceAdvanced {
-	// public void failed();
-	// public void connectionCreated();
-	// public void noInternet();
-	// }
+	public static void ajaxAPI(final AjaxInterface ajaxInterface) {
+
+		final Settings settings = new Settings();
+		ajaxInterface.setParams(settings);
+
+		if (app.networkStatus == "none") {
+			NetworkInfo networkInfo = HttpTools.getActiveNetworkInfo(app.context);
+			if (networkInfo != null) {
+				app.networkStatus = networkInfo.getTypeName();
+			}
+		}
+		if (app.networkStatus == "none") {
+			ajaxInterface.noInternet();
+		} else {
+			new Thread() {
+				private byte[] b = null;
+
+				@Override
+				public void run() {
+					super.run();
+					HttpListener httpListener = new HttpListener() {
+						@Override
+						public void handleInputStream(InputStream is) {
+							b = StreamTools.isToData(is);
+						}
+
+						@Override
+						public void connectionCreated(final HttpURLConnection httpURLConnection) {
+							ajaxInterface.connectionCreated(httpURLConnection);
+						}
+
+						@Override
+						public void failed() {
+							ajaxInterface.failed();
+						}
+					};
+					if (settings.method == HttpTools.SEND_GET) {
+						HttpTools.sendGetUseBundle(app.config.DOMAIN + settings.url, settings.timeout, settings.params, httpListener);
+					}
+					if (settings.method == HttpTools.SEND_POST) {
+						HttpTools.sendPostUseBundle(app.config.DOMAIN + settings.url, settings.timeout, settings.params, httpListener);
+					}
+					try {
+						if (b == null) {
+							ajaxInterface.timeout();
+						} else {
+							final JSONObject jData = new JSONObject(new String(b));
+							if (jData != null) {
+								ajaxInterface.onSuccess(jData);
+							}
+						}
+					} catch (JSONException e) {
+					}
+				}
+			}.start();
+		}
+	}
+
 
 	public static void ajax(final Context context, final String url, final Bundle params, final int method, final int timeout, final ResponseListener responseListener) {
-		// boolean hasNetwork = HttpTools.hasNetwork(context);
 		if (app.networkStatus == "none") {
 			NetworkInfo networkInfo = HttpTools.getActiveNetworkInfo(app.context);
 			if (networkInfo != null) {
@@ -202,6 +228,7 @@ public class MCNetTools {
 								}
 							}
 						}
+
 						@Override
 						public void failed() {
 							downloadListener.failed();
@@ -212,7 +239,6 @@ public class MCNetTools {
 			}.start();
 		}
 	}
-
 
 	public interface ResponseListener {
 		public void connectionCreated(HttpURLConnection httpURLConnection);

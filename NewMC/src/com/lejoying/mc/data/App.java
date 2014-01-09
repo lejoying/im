@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 
 import com.lejoying.mc.data.handler.DataHandler;
 import com.lejoying.mc.data.handler.DataHandler1;
@@ -75,8 +76,12 @@ public class App {
 	public EventHandler eventHandler;
 	public JSONHandler mJSONHandler;
 	public ServerHandler serverHandler;
+	
+	public Handler mUIThreadHandler;
 
 	public void initData() {
+		mUIThreadHandler = new Handler();
+		
 		data = new StaticData();
 		dataHandler1 = new DataHandler1();
 		dataHandler1.initailize(this);
@@ -89,7 +94,6 @@ public class App {
 
 		serverHandler = new ServerHandler();
 		serverHandler.initailize(this);
-
 	}
 
 	public boolean isDataChanged;

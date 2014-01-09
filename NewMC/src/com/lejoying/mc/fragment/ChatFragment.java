@@ -56,9 +56,9 @@ import com.lejoying.mc.data.handler.DataHandler1.Modification;
 import com.lejoying.mc.data.handler.DataHandler1.UIModification;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.AjaxInterface;
 import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 import com.lejoying.mc.utils.MCNetTools.Settings;
@@ -581,7 +581,7 @@ public class ChatFragment extends BaseListFragment {
 				editText_message.setText("");
 				if (message != null && !message.equals("")) {
 					addMessage("text", message);
-					MCNetTools.ajaxAPI(new AjaxInterface() {
+					MCNetTools.ajaxAPI(new AjaxAdapter() {
 						public void setParams(Settings settings){
 							settings.url=API.MESSAGE_SEND;
 							settings.params = generateParams("text", message);

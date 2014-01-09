@@ -3,8 +3,6 @@ package com.lejoying.mc.data.handler;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import android.os.Handler;
-
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.StaticData;
 
@@ -12,12 +10,12 @@ public class DataHandler1 {
 	App app;
 //	public StaticData data;
 
-	public Handler mUIThreadHandler;
+
 
 	public void initailize(App app) {
 		this.app = app;
 //		this.data = app.data;
-		this.mUIThreadHandler = new Handler();
+
 	}
 
 	public void modifyData(Modification modification) {
@@ -54,7 +52,7 @@ public class DataHandler1 {
 		app.isDataChanged = true;
 		operation.mModification.modify(this.app.data);
 		if(operation.mUIModification!=null){
-			mUIThreadHandler.post(new Runnable() {
+			app.mUIThreadHandler.post(new Runnable() {
 				public void run() {
 					operation.mUIModification.modifyUI();
 				}
