@@ -59,17 +59,17 @@
     <p>微型公社网页版</p>
 </div>
 <!--     头像上传    -->
-<div class="modify_head" style="display: none">
+<div class="modify_head js_modifyAccountHeadImgPanel" id="js_modifyAccountHeadImgPanel" style="">
     <div class="modify_head_tooltip">
-        <div>
-            <span class="modify_head_text">修改头像</span>
-            <span class="modify_head_close">X</span>
+        <div class="js_modify_head_top" id="js_modify_head_top" style="width: 100%;text-align: left;">
+            <span class="modify_head_text" style="width: 95%;">修改头像</span>
+            <span class="modify_head_close js_modify_head_close">X</span>
         </div>
         <div class="modify_head_images_max">
-            <img src=""/>
+            <img src="/static/images/face_man.png" style="width: 100%;height: 100%;"/>
         </div>
         <div class="modify_head_images_min">
-            <img src=""/>
+            <img src="/static/images/face_man.png" style="width: 100%;height: 100%;"/>
         </div>
         <div class="modify_head_button">
             <input class="modify_head_images_button" type="button" value="上传图片"/>
@@ -164,7 +164,8 @@
         <div class="myProfile"><img class="js_accountHead" un="avatar_wxid_7832428324312"
                                     src="static/images/webwxgeticonhead.jpg">
 
-            <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper" class="avatar js_Account_HeadImg"></div>
+            <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper"
+                 class="avatar js_Account_HeadImg"></div>
             <a style="display:none;" href="javascript:;" id="unreadTotalCount" class="unreadTotalCount">0</a>
 
             <div class="info"><span class="nickName js_accountNickName" id="username">麦穗儿香</span></div>
@@ -705,7 +706,6 @@
 </div>
 </div>
 </div>
-啊啊啊啊啊
 </div>
 <div class="chatLeftPanelShadow js_menuPanel">
     <!---------------------------------删除和黑名单--------------------------->
@@ -731,7 +731,7 @@
     <div class="activeChatVernier" style="top: 20px;"><img src="static/images/spacer17ced3.gif"></div>
 </div>
 <div style="visibility:visible;" class="chat lightBorder js_chatRightFrame">
-    <div class="chatContainer js_rightChatPanel" style="height: 442px;">
+    <div class="chatContainer js_rightChatPanel" style="height: 442px;"><!--442px-->
         <div id="chatMainPanel" class="chatMainPanel">
             <div class="chatTitle">
                 <div class="js_onlyfriend">
@@ -740,7 +740,8 @@
                             <tr style="height: 23px;">
                                 <td rowspan="2" style="width: 60px;"><a class="username" href="javascript:void(0);"><img
                                         src="static/images/safen.png" class="iconname js_js_onlyfriend_headimg"
-                                        style="width: 50px;height: 50px;"> </a></td>
+                                        style="width: 50px;height: 50px;border:2px solid #ffffff;border-radius: 60%;">
+                                </a></td>
                                 <td>
                                     <div class="name js_onlyfriend_nickName"> 萨芬(10086)</div>
                                 </td>
@@ -794,7 +795,7 @@
             <div id="chatFrame" class="chatScorll" style="height: 343px; overflow-y: hidden; position: relative;">
                 <div class="chatContent js_chatContents" id="chat_chatmsglist" ctrl="1"
                      style="top: 0px; position: absolute;">
-                    <div class="noMsgIip" id="noMsgTip">
+                    <div class="noMsgIip js_noMsgIip" id="noMsgTip">
                         <div class="noMsgTipPic"></div>
                         <p>暂时没有新消息</p>
                     </div>
@@ -881,7 +882,7 @@
             <div class="time">
                 <?js if(beforeTime != formattertime(post1.time)) { ?>
                 <span class="timeBg left"></span>
-                #{formattertime(post1.time)}
+                <label class="js_messageTime_#{post1.time}">#{formattertime(post1.time)}</label>
                 <span class="timeBg right"></span>
                 <?js } ?>
             </div>
@@ -925,6 +926,7 @@
             <div class="group_user">
                 <?js var imageServer=window.globaldata.serverSetting.imageServer; ?>
                 <?js var it1 = it.accounts; ?>
+                <?js var length = it1.length; ?>
                 <?js for(var index in it1){ ?>
                 <?js post=it1[index]; ?>
                 <?js if(post==null) { ?>
@@ -952,11 +954,13 @@
             </div>
         </div>
         <!--滚动条的设置-->
+        <?js if(length比较符号大于7){ ?>
         <div style="float: right;width: 6px;height: 214px;">
             <div id="ScroRight" onclick="ScroNow(event)">
                 <div id="ScroLine" OnMouseDown="ScroMove()" style="border-radius: 20%;" draggable="false"></div>
             </div>
         </div>
+        <?js } ?>
     </div>
 </div>
 </body>

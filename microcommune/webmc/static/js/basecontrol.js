@@ -1,6 +1,7 @@
 var selectPanel = "js_tempChatTop";
 var scrollFlagTempChatTop = false;
 $(function () {
+    $(".js_modifyAccountHeadImgPanel").hide();
     $(".scrollDiv1").hide();
     $(".js_tempChatTop").addClass("conmuButton_chatStyle");
     $(".js_mainContent").slideUp(1);
@@ -59,6 +60,57 @@ $(function () {
     });
 
     $(".js_Account_HeadImg").click(function () {
-        alert("js_Account_HeadImg");
+     if ($(".js_modifyAccountHeadImgPanel").css('display') != "block") {
+     $(".js_modifyAccountHeadImgPanel").show();
+     $(".js_modifyAccountHeadImgPanel").css({
+     "top": "150px",
+     "left": "415px"
+     });
+     }
+     });
+    $(".js_modify_head_close").click(function () {
+        $(".js_modifyAccountHeadImgPanel").hide();
     });
+
+    new Drag($("#js_modifyAccountHeadImgPanel")[0]);
 });
+function Drag(o){
+    var rDrag = {
+        o: null,
+        init: function (o) {
+            o.onmousedown = this.start;
+        },
+        start: function (e) {
+            var o;
+            e = rDrag.fixEvent(e);
+            e.preventDefault && e.preventDefault();
+            rDrag.o = o = this;
+            o.x = e.clientX - rDrag.o.offsetLeft;
+            o.y = e.clientY - rDrag.o.offsetTop;
+            document.onmousemove = rDrag.move;
+            document.onmouseup = rDrag.end;
+        },
+        move: function (e) {
+            e = rDrag.fixEvent(e);
+            var oLeft, oTop;
+            oLeft = e.clientX - rDrag.o.x;
+            oTop = e.clientY - rDrag.o.y;
+            rDrag.o.style.left = oLeft + 'px';
+            rDrag.o.style.top = oTop + 'px';
+        },
+        end: function (e) {
+            e = rDrag.fixEvent(e);
+            rDrag.o = document.onmousemove = document.onmouseup = null;
+        },
+        fixEvent: function (e) {
+            if (!e) {
+                e = window.event;
+                e.target = e.srcElement;
+                e.layerX = e.offsetX;
+                e.layerY = e.offsetY;
+            }
+            return e;
+        }
+    }
+    rDrag.init(o);
+}

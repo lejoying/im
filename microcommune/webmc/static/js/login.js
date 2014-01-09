@@ -1,4 +1,7 @@
+var browerType = getOs().Browser;
 $(document).ready(function () {
+
+//    alert("您的浏览器类型为:" + getOs().Browser);
     window.localStorage.clear();
     window.sessionStorage.clear();
     $(".js_login").hide();
@@ -6,13 +9,21 @@ $(document).ready(function () {
     var selectLoginMode = "js_webcodelogin";
     initHtml();
     $(document).on("mouseenter", ".js_checklogin", function () {
+//        initPosition();
         $(".js_login").hide();
         var checkThis = $(this.parentNode);
         if (checkThis.find(".js_applogin").length > 0) {
             $(".js_loginCodeError").html("&nbsp;");
             checkDefault = true;
             if (selectLoginMode != "js_applogin") {
-                animationPlay("js_applogin", -100);
+                if (browerType == "Chrome") {
+                    animationPlay("js_applogin", -100);
+                } else {
+                    $(".js_applogin").css({
+                        "top": "-200px"
+                    });
+                    $(".js_applogin").show();
+                }
                 selectLoginMode = "js_applogin";
             } else {
                 checkThis.find(".js_applogin").show();
@@ -21,7 +32,14 @@ $(document).ready(function () {
             $(".js_loginCodeError").html("&nbsp;");
             if (checkDefault) {
                 if (selectLoginMode != "js_webcodelogin") {
-                    animationPlay("js_webcodelogin", -330);
+                    if (browerType == "Chrome") {
+                        animationPlay("js_webcodelogin", -330);
+                    } else {
+                        $(".js_webcodelogin").css({
+                            "top": "-430px"
+                        });
+                        $(".js_webcodelogin").show();
+                    }
                     selectLoginMode = "js_webcodelogin";
                 } else {
                     checkThis.find(".js_webcodelogin").show();
@@ -31,7 +49,14 @@ $(document).ready(function () {
         } else if (checkThis.find(".js_phonecodelogin").length > 0) {
             checkDefault = true;
             if (selectLoginMode != "js_phonecodelogin") {
-                animationPlay("js_phonecodelogin", -200);
+                if (browerType == "Chrome") {
+                    animationPlay("js_phonecodelogin", -200);
+                } else {
+                    $(".js_phonecodelogin").css({
+                        "top": "-200px"
+                    });
+                    $(".js_phonecodelogin").show();
+                }
                 selectLoginMode = "js_phonecodelogin";
             } else {
                 checkThis.find(".js_phonecodelogin").show();
@@ -71,6 +96,8 @@ $(document).ready(function () {
                         var accountData = data.account;
                         accountData.accessKey = "lejoying";
                         window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(accountData));
+                        window.sessionStorage.setItem("wxgs_messageFlag", "none");
+                        window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify({}));
                         location.href = "./default.html";
                     }
                 });
@@ -129,19 +156,68 @@ function longRequest(sessionID) {
     setInterval(getAccount, 30000);
 }
 function initHtml() {
-    var box = $(".js_webcodelogin");
-    var toState = new State();
-    toState.translate.y = -330;
-    var fromState = new State();
-    animateTransform(box[0], fromState, toState, 100, {
-        onStart: function () {
-        },
-        onEnd: function () {
-            $(".js_webcodelogin").show();
-        }
+    if (browerType == "Chrome") {
+        var box = $(".js_webcodelogin");
+        var toState = new State();
+        toState.translate.y = -330;
+        var fromState = new State();
+        animateTransform(box[0], fromState, toState, 100, {
+            onStart: function () {
+            },
+            onEnd: function () {
+                $(".js_webcodelogin").show();
+            }
+        });
+    } else {
+        $(".js_webcodelogin").show();
+        $(".js_webcodelogin").css({
+            "top": "-430px"
+        });
+    }
+}
+function initPosition() {
+    $(".js_applogin").css({
+        "top": "-100px"
+    });
+    $(".js_webcodelogin").css({
+        "top": "-100px"
+    });
+    $(".js_phonecodelogin").css({
+        "top": "0px"
     });
 }
+function getOs() {
+    var ClientParams = {};
 
+    var Sys = {};
+    var ua = navigator.userAgent.toLowerCase();
+    var s;
+    (s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+        (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+            (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+                (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+                    (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+    if (Sys.ie) {
+        ClientParams.Browser = "IE";
+    }
+    else if (Sys.firefox) {
+        ClientParams.Browser = "Firefox";
+    }
+    else if (Sys.chrome) {
+        ClientParams.Browser = "Chrome";
+    }
+    else if (Sys.opera) {
+        ClientParams.Browser = "Opera";
+    }
+    else if (Sys.safari) {
+        ClientParams.Browser = "Safari";
+    }
+    else {
+        ClientParams.Browser = "无法检测出您正在使用的浏览器版本!";
+        return false;
+    }
+    return ClientParams;
+}
 function animationPlay(className, y) {
     var box = $("." + className);
     var toState = new State();
