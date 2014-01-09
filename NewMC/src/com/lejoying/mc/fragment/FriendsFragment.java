@@ -266,69 +266,68 @@ public class FriendsFragment extends BaseListFragment {
 				messageHolder.tv_lastchat.setText(friend.messages
 						.get(friend.messages.size() - 1).content);
 				final String headFileName = friend.head;
-				if (app.heads.get(headFileName) == null) {
-					app.heads.put(headFileName, head);
-					final File headFile = new File(app.sdcardHeadImageFolder,
-							headFileName);
-					if (headFile.exists()) {
-						Bitmap image = BitmapFactory.decodeFile(headFile
-								.getAbsolutePath());
-
-						if (image != null) {
-							Bitmap head = MCImageTools.getCircleBitmap(image,
-									true, 5, Color.WHITE);
-							app.heads.put(headFileName, head);
-						}
-					} else {
-						MCNetTools.downloadFile(getActivity(),
-								app.config.DOMAIN_IMAGE, headFileName,
-								app.sdcardHeadImageFolder, null, 5000,
-								new DownloadListener() {
-									@Override
-									public void success(File localFile,
-											InputStream inputStream) {
-										Bitmap image = BitmapFactory
-												.decodeFile(localFile
-														.getAbsolutePath());
-										if (image != null) {
-											Bitmap head = MCImageTools
-													.getCircleBitmap(image,
-															true, 5,
-															Color.WHITE);
-											app.heads.put(headFileName, head);
-											mFriendsAdapter
-													.notifyDataSetChanged();
-										}
-									}
-
-									@Override
-									public void noInternet() {
-										// TODO Auto-generated method stub
-
-									}
-
-									@Override
-									public void failed() {
-										// TODO Auto-generated method stub
-
-									}
-
-									@Override
-									public void connectionCreated(
-											HttpURLConnection httpURLConnection) {
-										// TODO Auto-generated method stub
-
-									}
-
-									@Override
-									public void downloading(int progress) {
-										// TODO Auto-generated method stub
-									}
-								});
-					}
-				}
-				messageHolder.iv_head.setImageBitmap(app.heads
-						.get(headFileName));
+//				if (app.heads.get(headFileName) == null) {
+//					app.heads.put(headFileName, head);
+//					final File headFile = new File(app.sdcardHeadImageFolder,
+//							headFileName);
+//					if (headFile.exists()) {
+//						Bitmap image = BitmapFactory.decodeFile(headFile
+//								.getAbsolutePath());
+//
+//						if (image != null) {
+//							Bitmap head = MCImageTools.getCircleBitmap(image,
+//									true, 5, Color.WHITE);
+//							app.heads.put(headFileName, head);
+//						}
+//					} else {
+//						MCNetTools.downloadFile(getActivity(),
+//								app.config.DOMAIN_IMAGE, headFileName,
+//								app.sdcardHeadImageFolder, null, 5000,
+//								new DownloadListener() {
+//									@Override
+//									public void success(File localFile,
+//											InputStream inputStream) {
+//										Bitmap image = BitmapFactory
+//												.decodeFile(localFile
+//														.getAbsolutePath());
+//										if (image != null) {
+//											Bitmap head = MCImageTools
+//													.getCircleBitmap(image,
+//															true, 5,
+//															Color.WHITE);
+//											app.heads.put(headFileName, head);
+//											mFriendsAdapter
+//													.notifyDataSetChanged();
+//										}
+//									}
+//
+//									@Override
+//									public void noInternet() {
+//										// TODO Auto-generated method stub
+//
+//									}
+//
+//									@Override
+//									public void failed() {
+//										// TODO Auto-generated method stub
+//
+//									}
+//
+//									@Override
+//									public void connectionCreated(
+//											HttpURLConnection httpURLConnection) {
+//										// TODO Auto-generated method stub
+//
+//									}
+//
+//									@Override
+//									public void downloading(int progress) {
+//										// TODO Auto-generated method stub
+//									}
+//								});
+//					}
+//				}
+				messageHolder.iv_head.setImageBitmap(head);
 				Integer notread = friends.get(lastChatFriends.get(arg0
 						- messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {

@@ -54,12 +54,12 @@ import com.lejoying.mc.data.Message;
 import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.data.handler.DataHandler1.Modification;
 import com.lejoying.mc.data.handler.DataHandler1.UIModification;
+import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 import com.lejoying.mc.utils.MCNetTools.ResponseListener;
 import com.lejoying.mc.utils.MCNetTools.Settings;
 import com.lejoying.utils.HttpTools;
@@ -582,10 +582,11 @@ public class ChatFragment extends BaseListFragment {
 				if (message != null && !message.equals("")) {
 					addMessage("text", message);
 					MCNetTools.ajaxAPI(new AjaxAdapter() {
-						public void setParams(Settings settings){
-							settings.url=API.MESSAGE_SEND;
+						public void setParams(Settings settings) {
+							settings.url = API.MESSAGE_SEND;
 							settings.params = generateParams("text", message);
 						}
+
 						public void onSuccess(JSONObject data) {
 							app.dataHandler1.modifyData(new Modification() {
 								public void modify(StaticData data) {
@@ -601,14 +602,15 @@ public class ChatFragment extends BaseListFragment {
 								}
 							}, new UIModification() {
 								public void modifyUI() {
-									//?
+									// ?
 								}
 							});
 						}
+
 						@Override
 						public void failed() {
 							// TODO Auto-generated method stub
-							
+
 						}
 					});
 					// MCNetTools.ajax(getActivity(), API.MESSAGE_SEND, params,
@@ -721,7 +723,7 @@ public class ChatFragment extends BaseListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			MessageHolder messageHolder;
+			 final MessageHolder messageHolder;
 			int type = getItemViewType(position);
 			if (convertView == null) {
 				messageHolder = new MessageHolder();
@@ -763,105 +765,31 @@ public class ChatFragment extends BaseListFragment {
 					break;
 				}
 				final String headFileName = fileName;
-				if (app.heads.get(headFileName) == null) {
-					app.heads.put(headFileName, headman);
-					final File headFile = new File(app.sdcardHeadImageFolder, headFileName);
-					if (headFile.exists()) {
-						Bitmap image = BitmapFactory.decodeFile(headFile.getAbsolutePath());
-
-						if (image != null) {
-							Bitmap head = MCImageTools.getCircleBitmap(image, true, 5, Color.WHITE);
-							app.heads.put(headFileName, head);
+				app.fileHandler.getImageFile(fileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						System.out.println(where);
+						if(where==app.fileHandler.FROM_DEFAULT){
+							app.fileHandler.bitmaps.put(headFileName, headman);
+						}else if (where != app.fileHandler.FROM_MEMORY) {
+							Bitmap head = app.fileHandler.bitmaps.get(headFileName);
+							app.fileHandler.bitmaps.put(headFileName, MCImageTools.getCircleBitmap(head, true, 5, Color.WHITE));
+							messageHolder.iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 						}
-					} else {
-						MCNetTools.downloadFile(getActivity(), app.config.DOMAIN_IMAGE, headFileName, app.sdcardHeadImageFolder, null, 5000, new DownloadListener() {
-							@Override
-							public void success(File localFile, InputStream inputStream) {
-								Bitmap image = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-								if (image != null) {
-									Bitmap head = MCImageTools.getCircleBitmap(image, true, 5, Color.WHITE);
-									app.heads.put(headFileName, head);
-									mAdapter.notifyDataSetChanged();
-								}
-							}
-
-							@Override
-							public void noInternet() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void failed() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void connectionCreated(HttpURLConnection httpURLConnection) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void downloading(int progress) {
-								// TODO Auto-generated method stub
-							}
-						});
 					}
-				}
-				messageHolder.iv_head.setImageBitmap(app.heads.get(fileName));
+				});
+				messageHolder.iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			} else if (message.messageType.equals("image")) {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
-				final String imageFileName = message.content;
-				if (tempImages.get(imageFileName) == null) {
-					final File imageFile = new File(app.sdcardImageFolder, imageFileName);
-					if (imageFile.exists()) {
-						Bitmap image = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-						if (image != null) {
-							tempImages.put(imageFileName, image);
-						}
+				String imageFileName = message.content;
+				app.fileHandler.getImageFile(imageFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
 						mAdapter.notifyDataSetChanged();
-					} else {
-						if (defaultImage == null) {
-							defaultImage = BitmapFactory.decodeResource(getResources(), R.drawable.defaultimage);
-						}
-						tempImages.put(imageFileName, defaultImage);
-						MCNetTools.downloadFile(getActivity(), app.config.DOMAIN_IMAGE, imageFileName, app.sdcardImageFolder, null, 5000, new DownloadListener() {
-							@Override
-							public void success(File localFile, InputStream inputStream) {
-								Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-								tempImages.put(imageFileName, bitmap);
-								mAdapter.notifyDataSetChanged();
-							}
-
-							@Override
-							public void noInternet() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void failed() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void connectionCreated(HttpURLConnection httpURLConnection) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void downloading(int progress) {
-								// TODO Auto-generated method stub
-							}
-						});
 					}
-				}
-				messageHolder.iv_image.setImageBitmap(tempImages.get(imageFileName));
+				});
+				messageHolder.iv_image.setImageBitmap(app.fileHandler.bitmaps.get(imageFileName));
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
 					break;

@@ -13,6 +13,7 @@ import android.os.Handler;
 import com.lejoying.mc.data.handler.DataHandler;
 import com.lejoying.mc.data.handler.DataHandler1;
 import com.lejoying.mc.data.handler.EventHandler;
+import com.lejoying.mc.data.handler.FileHandler;
 import com.lejoying.mc.data.handler.JSONHandler;
 import com.lejoying.mc.data.handler.ServerHandler;
 
@@ -76,12 +77,13 @@ public class App {
 	public EventHandler eventHandler;
 	public JSONHandler mJSONHandler;
 	public ServerHandler serverHandler;
-	
+	public FileHandler fileHandler;
+
 	public Handler mUIThreadHandler;
 
 	public void initData() {
 		mUIThreadHandler = new Handler();
-		
+
 		data = new StaticData();
 		dataHandler1 = new DataHandler1();
 		dataHandler1.initailize(this);
@@ -94,6 +96,9 @@ public class App {
 
 		serverHandler = new ServerHandler();
 		serverHandler.initailize(this);
+
+		fileHandler = new FileHandler();
+		fileHandler.initailize(this);
 	}
 
 	public boolean isDataChanged;
