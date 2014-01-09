@@ -1,9 +1,9 @@
 var scrollInitFlag = false;
+var tempSendMessageTimeStamp = [];
 $(function () {
     $(".js_chatRightFrame").css({
         visibility: "hidden"
     });
-
 //    $(".js_rightChatPanel").hide();
 //    $(".js_chatRightFrame").hide();
     $(".js_morefriend").hide();
@@ -22,50 +22,98 @@ $(function () {
             type: "text",
             content: message
         };
+        var time = new Date().getTime()
+        tempSendMessageTimeStamp.push(time);
         var sendMessage = [
-            JSON.stringify({type: "text", time: new Date().getTime(), phone: accountObj.phone, phoneto: JSON.stringify(listPhone), content: message})
+            JSON.stringify({type: "text", time: time, phone: accountObj.phone, phoneto: JSON.stringify(listPhone), content: message})
         ];
+        var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
+        if (wxgs_tempAccountChatMessages[currentChatUser.phone] == undefined) {
+            $(".js_chatContents").html("");
+        }
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").append(js_chatmessagetemplate.render(sendMessage));
+
         sendMessages(JSON.stringify(listPhone), JSON.stringify(messageObj));
     });
 
 
 //    alert($(".chatItem[un=item_2070333132]").html());//根据属性值获取对象jQuery对象
-
-    keepQuest();
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    if (accountObj != undefined) {
+        keepQuest();
+        pullUsersMessage(accountObj);
+    }
 });
+function showUserChatMessages(account) {
+    var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
+    var messages = wxgs_tempAccountChatMessages[account.phone];
+    if (messages != undefined) {
+        var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+        $(".js_chatContents").html(js_chatmessagetemplate.render(wxgs_tempAccountChatMessages[account.phone]));
+        setScrollPosition();
+    } else {
+        var htmlStr = '<div class="noMsgIip" id="noMsgTip">' +
+            '<div class="noMsgTipPic"></div>' +
+            '<p>暂时没有新消息</p>' +
+            '</div>';
+        $(".js_chatContents").html(htmlStr);
+    }
+    if ($(".js_chatRightFrame").css("visibility") == "hidden") {
+        $(".js_chatRightFrame").css({
+            visibility: "visible"
+        });
+    }
+}
 function pullUsersMessage(account) {
-    getMessages("0", function (data) {
+    getMessages(window.sessionStorage.getItem("wxgs_messageFlag"), function (data) {
+        messagesDataSplit(data);
 //        console.log(data);
 //        console.log(data.messages[0]);
-        var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
-        $(".js_chatContents").html(js_chatmessagetemplate.render(data.messages));
-        setScrollPosition();
+//        var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+//        $(".js_chatContents").html(js_chatmessagetemplate.render(data.messages));
+//        setScrollPosition();
     });
 }
 
 function messagesDataSplit(data) {
-    var tempAccountChatMessage = {};
+    var messsageFlag = data.flag;
+    window.sessionStorage.setItem("wxgs_messageFlag", messsageFlag);
+    var data = data.messages;
+//    alert(JSON.stringify(data));
+    var tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     for (var i = 0; i < data.length; i++) {
         var message = JSON.parse(data[i]);
         if (message.phone == accountObj.phone) {
-            /*tempAccountChatMessage[message.phone] = tempAccountChatMessage[message.phone] || [];
-            tempAccountChatMessage[message.phone].push(JSON.stringify(message));*/
-            if (tempAccountChatMessage[message.phone] != undefined) {
-                tempAccountChatMessage[message.phone]
+            /*tempAccountChatMessages[message.phone] = tempAccountChatMessages[message.phone] || [];
+             tempAccountChatMessages[message.phone].push(JSON.stringify(message));*/
+            var phoneTo = JSON.parse(message.phoneto);
+            for (var j = 0; j < phoneTo.length; j++) {
+                var phone = phoneTo[j];
+                if (tempAccountChatMessages[phone] != undefined) {
+                    tempAccountChatMessages[phone].push(JSON.stringify(message));
+                } else {
+                    var array = [];
+                    array.push(JSON.stringify(message));
+                    tempAccountChatMessages[phone] = array;
+                }
+            }
+        } else {
+//            var phoneTo = JSON.parse(message.phoneto);
+            if (tempAccountChatMessages[message.phone] != undefined) {
+                tempAccountChatMessages[message.phone].push(JSON.stringify(message));
             } else {
                 var array = [];
                 array.push(JSON.stringify(message));
-                tempAccountChatMessage[message.phone] = array;
+                tempAccountChatMessages[message.phoneTo] = array;
             }
-        } else {
-
         }
+//        alert(JSON.stringify(tempAccountChatMessages));
     }
+    window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify(tempAccountChatMessages));
 }
-function sendMessages(listPhone, messageObj) {
+function sendMessages(listPhone, message) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $(".js_chatmessagecontent").val("")
     $.ajax({
@@ -75,11 +123,17 @@ function sendMessages(listPhone, messageObj) {
             phone: accountObj.phone,
             accessKey: accountObj.accessKey,
             phoneto: listPhone,
-            message: messageObj
+            message: message
         },
         success: function (data) {
             if (data["提示信息"] == "发送成功") {
                 setScrollPosition();
+//                var message = JSON.stringify(message);
+//                message.time = data.time;
+//                alert(formattertime(time));
+                var time = tempSendMessageTimeStamp.shift();
+                $(".js_messageTime_" + time).html(formattertime(data.time));
+
             } else {
                 alert(data["提示信息"] + "---" + data["失败原因"]);
             }
@@ -127,6 +181,7 @@ function keepQuest() {
                     $(".js_chatContents").append(js_chatmessagetemplate.render(data.event_content.message));
                     setScrollPosition();
                     keepQuest();
+                    getMessages(window.sessionStorage.getItem("wxgs_messageFlag"), messagesDataSplit);
 //                    alert("message");
                 } else if (data.event == "newfriend") {
                     alert("newFriend");

@@ -14,6 +14,10 @@ var selectedDeleteOrBlack = "";
 
 var currentChatUser = {};
 $(document).ready(function () {
+    var accountStr = window.localStorage.getItem("wxgs_nowAccount");
+    if (accountStr == undefined) {
+        location.href = "./index.html";
+    }
 //    $.getScript("/static/js/nTenjin.js");
 //    $.getScript("/static/js/animation.js");
     (function ($) {
@@ -43,126 +47,129 @@ $(document).ready(function () {
     var imageServer = window.globaldata.serverSetting.imageServer;
 //    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying", nickName: "麦穗儿香", head: "d9fb7db5dc6e4b06046f0114b12d581ee84cec73"}));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
-    $(".js_accountNickName").html(accountObj.nickName);
-    $(".js_accountNickName").attr("title", accountObj.nickName);
-    if (accountObj.head != "") {
-        $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head);
-    } else {
-        $(".js_accountHead").attr("src", "/static/images/face_man.png");
-    }
-    $.ajax({
-        type: "POST",
-        url: "/api2/relation/getcirclesandfriends?",
-        data: {
-            phone: accountObj.phone,
-            accessKey: accountObj.accessKey
-        },
-        success: function (data) {
-            if (data["提示信息"] == "获取密友圈成功") {
-                getTemplateHtml("circles_friends", function (template) {
-                    $(".js_groups").html(template.render(data.circles));
-                    for (var index in data.circles) {
-                        var circle = (data.circles)[index];
-                        var accounts = circle.accounts;
-                        for (var i = 0; i < accounts.length; i++) {
-                            var account = accounts[i];
-                            account.rid = circle.rid;
-                            allCirclesFriends[account.phone] = account;
+    if (accountObj != undefined) {
+        $(".js_accountNickName").html(accountObj.nickName);
+        $(".js_accountNickName").attr("title", accountObj.nickName);
+        if (accountObj.head != "") {
+            $(".js_accountHead").attr("src", imageServer + "/" + accountObj.head);
+        } else {
+            $(".js_accountHead").attr("src", "/static/images/face_man.png");
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/api2/relation/getcirclesandfriends?",
+            data: {
+                phone: accountObj.phone,
+                accessKey: accountObj.accessKey
+            },
+            success: function (data) {
+                if (data["提示信息"] == "获取密友圈成功") {
+                    getTemplateHtml("circles_friends", function (template) {
+                        $(".js_groups").html(template.render(data.circles));
+                        for (var index in data.circles) {
+                            var circle = (data.circles)[index];
+                            var accounts = circle.accounts;
+                            for (var i = 0; i < accounts.length; i++) {
+                                var account = accounts[i];
+                                account.rid = circle.rid;
+                                allCirclesFriends[account.phone] = account;
+                            }
                         }
-                    }
-                    window.sessionStorage.setItem("wxgs_circles", JSON.stringify(data.circles));
-                    var clickGroupIndex = -1;
-                    $(".appGroup").each(function (i) {
-                        $($(".appGroup")[i]).click(function () {
-                            var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
-                            checkGroup = false;
-                            checkGroupId = -1;
-                            selectedDropUsers = {};
-                            $(".popmenuFrame").css({
-                                marginTop: "0px"
-                            });
-                            var parentClass = this.parentNode.className;
-                            var i = parentClass.substr(parentClass.lastIndexOf("_") + 1);
-                            if (i == clickGroupIndex) {
-                                clickGroupIndex = -1;
-                                $(".popmenuFrame").slideUp(200);
-                                oldSelectedGroupClass = "";
-//                                alert(oldSelectedGroupClass);
-                                if (i > 5) {
-                                    $("#mainBox").css({
-                                        marginTop: 0
-                                    });
-                                }
-                            } else {
-                                $(".popmenuFrame").slideUp(1);
-                                oldSelectedGroupClass = parentClass;
-                                clickGroupIndex = i;
+                        window.sessionStorage.setItem("wxgs_circles", JSON.stringify(data.circles));
+                        var clickGroupIndex = -1;
+                        $(".appGroup").each(function (i) {
+                            $($(".appGroup")[i]).click(function () {
+                                var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+                                checkGroup = false;
+                                checkGroupId = -1;
+                                selectedDropUsers = {};
                                 $(".popmenuFrame").css({
-                                    visibility: "visible",
-                                    top: 95 + (Math.floor(i / 3)) * 90 + "px"
+                                    marginTop: "0px"
                                 });
-                                $(".sildLeftSharp").css({
-                                    left: 45 + (i % 3) * 82 + "px"
-                                });
-                                var group_user = getTemplate("js_group_user");
-                                $(".sildPopContent").html(group_user.render(circles[i]));
+                                var parentClass = this.parentNode.className;
+                                var i = parentClass.substr(parentClass.lastIndexOf("_") + 1);
+                                if (i == clickGroupIndex) {
+                                    clickGroupIndex = -1;
+                                    $(".popmenuFrame").slideUp(200);
+                                    oldSelectedGroupClass = "";
+//                                alert(oldSelectedGroupClass);
+                                    if (i > 5) {
+                                        $("#mainBox").css({
+                                            marginTop: 0
+                                        });
+                                    }
+                                } else {
+                                    $(".popmenuFrame").slideUp(1);
+                                    oldSelectedGroupClass = parentClass;
+                                    clickGroupIndex = i;
+                                    $(".popmenuFrame").css({
+                                        visibility: "visible",
+                                        top: 95 + (Math.floor(i / 3)) * 90 + "px"
+                                    });
+                                    $(".sildLeftSharp").css({
+                                        left: 45 + (i % 3) * 82 + "px"
+                                    });
+                                    var group_user = getTemplate("js_group_user");
+                                    $(".sildPopContent").html(group_user.render(circles[i]));
 //                                getScroll();
 //                            $("#ScroLine").css("height", "100px");
 //                            alert(Math.ceil(((data.circles)[i].accounts.length + 1) / 4));
 //                            alert((180 / Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64) * 180);
-                                if (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) > 2) {
+                                    if (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) > 2) {
 //                                alert(180 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64));
 //                                $("#ScroLine").css("height", (180 / $(".group_user").height) * 180);
-                                    $("#ScroLine").css("height", (195 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64)) * 195);
-                                } else {
-                                    $("#ScroLine").css("height", "214");
-                                }
-                                $(".user_icon").longPress(200, function (e, x, y) {
-                                    if (dropStatus == "down") {
+                                        $("#ScroLine").css("height", (195 / (Math.ceil(((data.circles)[i].accounts.length + 1) / 4) * 64)) * 195);
+                                    } else {
+                                        $("#ScroLine").css("height", "214");
+                                    }
+                                    $(".user_icon").longPress(200, function (e, x, y) {
+                                        if (dropStatus == "down") {
 //                                        $(".popmenuFrame").slideUp(1000);
-                                        dropStatus = "dropping";
+                                            dropStatus = "dropping";
 //                                alert("longPress");
-                                        $(".js_menuPanel").show();
-                                        $(".popmenuFrame").css({
-                                            marginTop: "500px"
-                                        });
-                                        $("#mainBox").css({
-                                            marginTop: 0
+                                            $(".js_menuPanel").show();
+                                            $(".popmenuFrame").css({
+                                                marginTop: "500px"
+                                            });
+                                            $("#mainBox").css({
+                                                marginTop: 0
 //                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
-                                        });
-                                    }
-                                    var icon1 = $(this);
-                                    if (icon1.hasClass("js_selected")) {
-                                        icon1.removeClass("js_selected");
-                                        icon1.addClass("js_moving");
-                                        next();
-                                    }
-                                    function next() {
-                                        icon1.css("top", mouseY - y);
-                                        icon1.css("left", mouseX - x);
-                                    }
-                                });
-                                $(".user_icon").addClass("js_none");
-                                $(".popmenuFrame").slideDown(100);
-                                oldSelectedGroupClass = parentClass;
-//                                alert(oldSelectedGroupClass);
-                                if (i > 5) {
-                                    $("#mainBox").css({
-                                        marginTop: -((Math.floor(i / 3) - 1) * 90 + 5)
-//                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
+                                            });
+                                        }
+                                        var icon1 = $(this);
+                                        if (icon1.hasClass("js_selected")) {
+                                            icon1.removeClass("js_selected");
+                                            icon1.addClass("js_moving");
+                                            next();
+                                        }
+                                        function next() {
+                                            icon1.css("top", mouseY - y);
+                                            icon1.css("left", mouseX - x);
+                                        }
                                     });
+                                    $(".user_icon").addClass("js_none");
+                                    $(".popmenuFrame").slideDown(100);
+                                    oldSelectedGroupClass = parentClass;
+//                                alert(oldSelectedGroupClass);
+                                    if (i > 5) {
+                                        $("#mainBox").css({
+                                            marginTop: -((Math.floor(i / 3) - 1) * 90 + 5)
+//                                        marginTop: -((Math.floor(i / 3)) * 90 + 5)
+                                        });
+                                    }
                                 }
-                            }
-                            $(".schoolmate_txt").slideDown(10);
-                            $(".js_modifycirclename").slideUp(10);
+                                $(".schoolmate_txt").slideDown(10);
+                                $(".js_modifycirclename").slideUp(10);
+                            });
                         });
                     });
-                });
-            } else {
-                alert(data["提示信息"]);//获取密友圈失败的处理
+                } else {
+                    alert(data["提示信息"]);//获取密友圈失败的处理
+                }
             }
-        }
-    });
+        });
+    }
     $("body").mousemove(function (e) {
         if (dropStatus == "dropping") {
             var icon = $(".js_moving");
@@ -255,7 +262,7 @@ $(document).ready(function () {
 //                clickHeadImgToChatPanel();
                 currentChatUser = allCirclesFriends[phone];
 //                $(".js_rightChatPanel").show();
-                pullUsersMessage(currentChatUser.phone);
+                showUserChatMessages(currentChatUser);
                 if (currentChatUser.head != "") {
                     $(".js_js_onlyfriend_headimg").attr("src", window.globaldata.serverSetting.imageServer + currentChatUser.head);
                 } else {
@@ -306,6 +313,7 @@ $(document).ready(function () {
             display: "block"
         });
         $(".js_findFriendPhone").focus();
+        new Drag($(".js_findFriend")[0]);
     });
     $(document).on("click", ".js_addcircle", function () {
 //        alert("新建密友圈");
@@ -405,6 +413,7 @@ $(document).ready(function () {
                         var mainBusiness = accountData.mainBusiness;
                         $(".js_findFriend").css({display: "none"});
                         $(".js_friendMessage").css({display: "block"});
+                        new Drag($(".js_friendMessage")[0]);
                         $(".js_friendMessage_nickName").html("昵&nbsp;&nbsp;&nbsp;称：" + accountData.nickName);
                         $(".js_friendMessage_phone").html("手机号：" + accountData.phone);
                         $(".js_friendMessage_mainBusiness").html(mainBusiness.substr(0, 72) + "...");
@@ -445,6 +454,7 @@ $(document).ready(function () {
                 $(".js_addFriendSubmit").attr("phone", $(this).attr("phone"));
                 $(".js_friendMessage").css({display: "none"});
                 $(".js_addFriend").css({display: "block"});
+                new Drag($(".js_addFriend")[0]);
                 //                $(".js_addFriendErrorMessage").html(phone + "不是您的好友。");
             }
         } else {
