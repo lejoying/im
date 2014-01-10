@@ -7,12 +7,11 @@ session.event = function (data, response) {
     smsSession["sms"] = response;
 }
 
-session.notify = notify;
-function notify(data, response) {
+session.notify = function (data, response) {
 
-    var session = smsSession["sms"];
-    session.write(data);
-    session.end();
+    var sessionResponse = smsSession["sms"];
+    sessionResponse.write(JSON.stringify(data));
+    sessionResponse.end();
 
     response.write(JSON.stringify({
         "information": "send sms success"

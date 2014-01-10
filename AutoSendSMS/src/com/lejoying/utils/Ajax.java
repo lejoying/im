@@ -38,7 +38,7 @@ public class Ajax {
 
 		final Settings settings = new Settings();
 		ajaxInterface.setParams(settings);
-		if (HttpTools.hasNetwork(context)) {
+		if (!HttpTools.hasNetwork(context)) {
 			ajaxInterface.noInternet();
 		} else {
 			new Thread() {

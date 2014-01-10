@@ -162,7 +162,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	@Override
 	public void setParams(Settings settings) {
-		settings.url = "http://115.28.51.197:8074";
+		settings.url = "http://115.28.51.197:8074/api2/session/event";
 		settings.params = null;
 		settings.timeout = 30000;
 	}
@@ -172,7 +172,7 @@ public class MainActivity extends Activity implements OnClickListener,
 		if (isStart) {
 			startListener(this);
 		}
-		
+		System.out.println(jData);
 	}
 
 	@Override
