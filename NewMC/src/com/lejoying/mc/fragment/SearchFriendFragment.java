@@ -1,7 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import java.net.HttpURLConnection;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,11 +15,13 @@ import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Data;
+import com.lejoying.mc.data.handler.DataHandler.Modification;
+import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
-import com.lejoying.mc.utils.MCDataTools;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.HttpTools;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 
 public class SearchFriendFragment extends BaseListFragment {
 
@@ -90,96 +90,10 @@ public class SearchFriendFragment extends BaseListFragment {
 					public void onClick(View v) {
 						final String phone = mView_phone.getText().toString();
 						if (phone.equals("")) {
-							//showMsg("请输入好友手机号");
+							// showMsg("请输入好友手机号");
 							return;
 						}
-						Bundle params = new Bundle();
-						params.putString("phone", app.data.user.phone);
-						params.putString("accessKey", app.data.user.accessKey);
-						params.putSerializable("target", phone);
-						MCNetTools.ajax(getActivity(), API.ACCOUNT_GET, params,
-								HttpTools.SEND_POST, 5000,
-								new ResponseListener() {
-
-									@Override
-									public void success(JSONObject data) {
-										if (phone.equals(app.data.user.phone)) {
-											try {
-												app.dataHandler
-														.sendMessage(
-																app.dataHandler.DATA_HANDLER_UPDATEUSER,
-																data.getJSONObject("account"));
-												app.businessCardStatus = app.SHOW_SELF;
-												mMCFragmentManager
-														.replaceToContent(
-																new BusinessCardFragment(),
-																true);
-											} catch (JSONException e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
-											}
-											return;
-										}
-										if (app.data.friends.get(phone) != null) {
-
-											app.tempFriend = app.data.friends
-													.get(phone);
-											app.businessCardStatus = app.SHOW_FRIEND;
-											mMCFragmentManager
-													.replaceToContent(
-															new BusinessCardFragment(),
-															true);
-
-											return;
-										}
-										try {
-											data.getString("失败原因");
-											mMCFragmentManager
-													.replaceToContent(
-															new FriendNotFoundFragment(),
-															true);
-											return;
-										} catch (JSONException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-										try {
-											app.tempFriend = MCDataTools
-													.generateFriendFromJSON(data
-															.getJSONObject("account"));
-
-											app.tempFriend.temp = true;
-											app.businessCardStatus = app.SHOW_TEMPFRIEND;
-											mMCFragmentManager
-													.replaceToContent(
-															new BusinessCardFragment(),
-															true);
-										} catch (JSONException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									}
-
-									@Override
-									public void noInternet() {
-										// TODO Auto-generated method stub
-
-									}
-
-									@Override
-									public void failed() {
-										// TODO Auto-generated method stub
-
-									}
-
-									@Override
-									public void connectionCreated(
-											HttpURLConnection httpURLConnection) {
-										// TODO Auto-generated method stub
-
-									}
-								});
+						search(phone);
 					}
 				});
 
@@ -196,6 +110,84 @@ public class SearchFriendFragment extends BaseListFragment {
 			}
 			return convertView;
 		}
+	}
+
+	public void search(final String phone) {
+		final Bundle params = new Bundle();
+		params.putString("phone", app.data.user.phone);
+		params.putString("accessKey", app.data.user.accessKey);
+		params.putSerializable("target", phone);
+
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.ACCOUNT_GET;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
+					@Override
+					public void modify(Data data) {
+						try {
+							jData.getString(getString(R.string.app_reason));
+							return;
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if (phone.equals(data.user.phone)) {
+							try {
+								app.mJSONHandler.updateUser(
+										jData.getJSONObject("account"), data);
+								app.businessCardStatus = app.SHOW_SELF;
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							return;
+						}
+						if (data.friends.get(phone) != null) {
+							data.tempFriend = data.friends.get(phone);
+							app.businessCardStatus = app.SHOW_FRIEND;
+							return;
+						}
+
+						try {
+							data.tempFriend = app.mJSONHandler
+									.generateFriendFromJSON(jData
+											.getJSONObject("account"));
+							data.tempFriend.temp = true;
+							app.businessCardStatus = app.SHOW_TEMPFRIEND;
+							mMCFragmentManager.replaceToContent(
+									new BusinessCardFragment(), true);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}, new UIModification() {
+
+					@Override
+					public void modifyUI() {
+						try {
+							jData.getString(getString(R.string.app_reason));
+							mMCFragmentManager.replaceToContent(
+									new FriendNotFoundFragment(), true);
+							return;
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						mMCFragmentManager.replaceToContent(
+								new BusinessCardFragment(), true);
+					}
+				});
+			}
+		});
+
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import java.net.HttpURLConnection;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,10 +13,13 @@ import android.widget.EditText;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Data;
+import com.lejoying.mc.data.handler.DataHandler.Modification;
+import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.HttpTools;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 
 public class RegisterPhoneFragment extends BaseFragment implements
 		OnClickListener {
@@ -53,54 +54,55 @@ public class RegisterPhoneFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_next:
-			if (mView_phone.getText().toString().equals("")) {
+			String phone = mView_phone.getText().toString();
+			if (phone.equals("")) {
 				getString(R.string.app_phonenotnull);
 				showSoftInput(mView_phone);
 				return;
 			}
-			final Bundle params = new Bundle();
-			params.putString("phone", mView_phone.getText().toString());
-			params.putString("usage", "register");
-			MCNetTools.ajax(getActivity(), API.ACCOUNT_VERIFYPHONE, params,
-					HttpTools.SEND_POST, 5000, new ResponseListener() {
-
-						@Override
-						public void success(JSONObject data) {
-							app.registerBundle = params;
-							try {
-								app.registerBundle.putString("code",
-										data.getString("code"));
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-							mMCFragmentManager.replaceToContent(
-									new RegisterCodeFragment(), true);
-
-						}
-
-						@Override
-						public void noInternet() {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void failed() {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void connectionCreated(
-								HttpURLConnection httpURLConnection) {
-							// TODO Auto-generated method stub
-
-						}
-					});
+			next(phone);
 			break;
 		default:
 			break;
 		}
+	}
+
+	public void next(String phone) {
+		final Bundle params = new Bundle();
+		params.putString("phone", phone);
+		params.putString("usage", "register");
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.ACCOUNT_VERIFYPHONE;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
+
+					@Override
+					public void modify(Data data) {
+						app.data.registerBundle = params;
+						try {
+							app.data.registerBundle.putString("code",
+									jData.getString("code"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}, new UIModification() {
+
+					@Override
+					public void modifyUI() {
+						mMCFragmentManager.replaceToContent(
+								new RegisterCodeFragment(), true);
+					}
+				});
+			}
+		});
 	}
 
 	@Override

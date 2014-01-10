@@ -8,22 +8,38 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 
-import com.lejoying.autosendsms.R;
-import com.lejoying.utils.MCHttpTools.HttpListener;
+import com.lejoying.utils.HttpTools.HttpListener;
 
 public class Ajax {
 
-	public static Handler handler = new Handler();
+	public static class Settings {
+		public String url = null;
+		public int method = HttpTools.SEND_POST;
+		public int timeout = 5000;
+		public Bundle params = null;
+	};
 
-	public static void ajax(final Context context, final String url,
-			final Bundle param, final int method, final int timeout,
-			final ResponseListener responseListener) {
-		boolean hasNetwork = MCHttpTools.hasNetwork(context);
+	public interface AjaxInterface {
+		public void setParams(Settings settings);
 
-		if (!hasNetwork) {
-			responseListener.noInternet();
+		public void onSuccess(JSONObject jData);
+
+		public void failed();
+
+		public void noInternet();
+
+		public void timeout();
+
+		public void connectionCreated(HttpURLConnection httpURLConnection);
+	}
+
+	public static void ajax(Context context, final AjaxInterface ajaxInterface) {
+
+		final Settings settings = new Settings();
+		ajaxInterface.setParams(settings);
+		if (HttpTools.hasNetwork(context)) {
+			ajaxInterface.noInternet();
 		} else {
 			new Thread() {
 				private byte[] b = null;
@@ -33,77 +49,48 @@ public class Ajax {
 					super.run();
 					HttpListener httpListener = new HttpListener() {
 						@Override
-						public void handleInputStream(InputStream is,
-								HttpURLConnection httpURLConnection) {
-							responseListener
-									.connectionCreated(httpURLConnection);
+						public void handleInputStream(InputStream is) {
 							b = StreamTools.isToData(is);
 						}
 
+						@Override
+						public void connectionCreated(
+								final HttpURLConnection httpURLConnection) {
+							ajaxInterface.connectionCreated(httpURLConnection);
+						}
+
+						@Override
+						public void failed() {
+							ajaxInterface.failed();
+						}
 					};
-					if (method == MCHttpTools.SEND_GET) {
-						MCHttpTools.sendGet(url, timeout,
-								param, httpListener);
+					if (settings.method == HttpTools.SEND_GET) {
+						HttpTools
+								.sendGetUseBundle(settings.url,
+										settings.timeout, settings.params,
+										httpListener);
 					}
-					if (method == MCHttpTools.SEND_POST) {
-						MCHttpTools.sendPost(url,
-								timeout, param, httpListener);
+					if (settings.method == HttpTools.SEND_POST) {
+						HttpTools
+								.sendPostUseBundle(settings.url,
+										settings.timeout, settings.params,
+										httpListener);
 					}
 					try {
 						if (b == null) {
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									responseListener.failed();
-								}
-							});
+							ajaxInterface.timeout();
 						} else {
-							final JSONObject data = new JSONObject(
-									new String(b));
-							if (data != null) {
-								String info = data.getString(context
-										.getString(R.string.app_notice));
-								info = info.substring(info.length() - 2,
-										info.length());
-
-								if (info.equals(context
-										.getString(R.string.app_success))) {
-									handler.post(new Runnable() {
-										@Override
-										public void run() {
-											responseListener.success(data);
-										}
-									});
-								}
-								if (info.equals(context
-										.getString(R.string.app_unsuccess))) {
-									handler.post(new Runnable() {
-										@Override
-										public void run() {
-											responseListener.unsuccess(data);
-										}
-									});
-								}
+							final JSONObject jData = new JSONObject(new String(
+									b));
+							if (jData != null) {
+								ajaxInterface.onSuccess(jData);
 							}
 						}
 					} catch (JSONException e) {
-						e.printStackTrace();
 					}
 				}
 			}.start();
 		}
-	}
-
-	public interface ResponseListener {
-		public void connectionCreated(HttpURLConnection httpURLConnection);
-
-		public void noInternet();
-
-		public void success(JSONObject data);
-
-		public void unsuccess(JSONObject data);
-
-		public void failed();
 	}
 
 }

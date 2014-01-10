@@ -26,11 +26,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lejoying.utils.Ajax;
-import com.lejoying.utils.Ajax.ResponseListener;
-import com.lejoying.utils.MCHttpTools;
+import com.lejoying.utils.Ajax.AjaxInterface;
+import com.lejoying.utils.Ajax.Settings;
 
 public class MainActivity extends Activity implements OnClickListener,
-		ResponseListener {
+		AjaxInterface {
 
 	static final String path = "";
 
@@ -55,6 +55,10 @@ public class MainActivity extends Activity implements OnClickListener,
 	List<String> unsuccess = new ArrayList<String>();
 
 	HttpURLConnection currentConnection;
+	
+	
+
+	boolean isStart;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +85,6 @@ public class MainActivity extends Activity implements OnClickListener,
 				case Activity.RESULT_OK:
 					Toast.makeText(MainActivity.this, "短信发送成功",
 							Toast.LENGTH_SHORT).show();
-					System.out.println("发送成功");
-					System.out.println(_intent);
 					Set<String> set = _intent.getExtras().keySet();
 					System.out.println(set.size());
 					break;
@@ -103,19 +105,13 @@ public class MainActivity extends Activity implements OnClickListener,
 			public void onReceive(Context _context, Intent _intent) {
 				Toast.makeText(MainActivity.this, "收信人已经成功接收",
 						Toast.LENGTH_SHORT).show();
-				System.out.println("接收到了");
 			}
 		}, new IntentFilter(DELIVERED_SMS_ACTION));
 
-		// smsManager.sendTextMessage("18612450783", null, "哈哈1", sentPI,
-		// deliverPI);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+	public void sendSMS(String phone, String text) {
+		smsManager.sendTextMessage(phone, null, text, sentPI, deliverPI);
 	}
 
 	@Override
@@ -133,6 +129,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	}
 
 	public void start() {
+		isStart = true;
 		btn_start.setClickable(false);
 		btn_start.setTextColor(Color.GRAY);
 		btn_stop.setClickable(true);
@@ -142,6 +139,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	}
 
 	public void stop() {
+		isStart = false;
 		btn_start.setClickable(true);
 		btn_start.setTextColor(Color.BLACK);
 		btn_stop.setClickable(false);
@@ -152,8 +150,8 @@ public class MainActivity extends Activity implements OnClickListener,
 		System.out.println("停止");
 	}
 
-	public void startListener(ResponseListener responseListener) {
-		Ajax.ajax(this, "", null, MCHttpTools.SEND_GET, 30000, responseListener);
+	public void startListener(AjaxInterface ajaxInterface) {
+		Ajax.ajax(this, ajaxInterface);
 	}
 
 	@Override
@@ -163,29 +161,43 @@ public class MainActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	public void connectionCreated(HttpURLConnection httpURLConnection) {
-		currentConnection = httpURLConnection;
+	public void setParams(Settings settings) {
+		settings.url = "http://115.28.51.197:8074";
+		settings.params = null;
+		settings.timeout = 30000;
 	}
 
 	@Override
-	public void noInternet() {
-		Toast.makeText(MainActivity.this, "没有网络连接", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public void success(JSONObject data) {
+	public void onSuccess(JSONObject jData) {
+		if (isStart) {
+			startListener(this);
+		}
 		
-
-		startListener(this);
-	}
-
-	@Override
-	public void unsuccess(JSONObject data) {
-		startListener(this);
 	}
 
 	@Override
 	public void failed() {
-		startListener(this);
+		if (isStart) {
+			startListener(this);
+		}
+		Toast.makeText(this, "连接失败", Toast.LENGTH_SHORT).show();
 	}
+
+	@Override
+	public void noInternet() {
+		Toast.makeText(this, "没有网络连接", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void timeout() {
+		if (isStart) {
+			startListener(this);
+		}
+	}
+
+	@Override
+	public void connectionCreated(HttpURLConnection httpURLConnection) {
+		this.currentConnection = httpURLConnection;
+	}
+
 }

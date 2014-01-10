@@ -2,7 +2,7 @@ package com.lejoying.mc.data;
 
 import java.io.Serializable;
 
-public class StaticConfig implements Serializable {
+public class Config implements Serializable {
 
 	/**
 	 * 

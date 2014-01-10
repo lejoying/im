@@ -5,11 +5,11 @@ import java.util.List;
 import org.json.JSONObject;
 
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.Event;
 import com.lejoying.mc.data.Message;
-import com.lejoying.mc.data.StaticData;
-import com.lejoying.mc.data.handler.DataHandler1.Modification;
-import com.lejoying.mc.data.handler.DataHandler1.UIModification;
+import com.lejoying.mc.data.handler.DataHandler.Modification;
+import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.fragment.ChatFragment;
 import com.lejoying.mc.fragment.FriendsFragment;
 
@@ -22,12 +22,16 @@ public class EventHandler {
 	}
 
 	public void handleEvent(final JSONObject jEvnet) {
-		app.dataHandler1.modifyData(new Modification() {
-			public void modify(StaticData data) {
+		app.dataHandler.modifyData(new Modification() {
+			public void modify(Data data) {
 				Event event = app.mJSONHandler.generateEventFromJSON(jEvnet);
 				if (event.event.equals("message")) {
-					List<Message> messages = (List<Message>) event.eventContent;
-					handleMessage(data, messages);
+					try {
+						List<Message> messages = (List<Message>) event.eventContent;
+						handleMessage(data, messages);
+					} catch (Exception e) {
+
+					}
 				} else if (event.event.equals("newfriend")) {
 					app.serverHandler.getAskFriends();
 				}
@@ -39,17 +43,20 @@ public class EventHandler {
 				}
 				if (FriendsFragment.instance != null) {
 					FriendsFragment.instance.initData(true);
-					FriendsFragment.instance.mFriendsAdapter.notifyDataSetChanged();
+					FriendsFragment.instance.mFriendsAdapter
+							.notifyDataSetChanged();
 				}
 			}
 		});
 	}
 
-	public void handleMessage(StaticData data, List<Message> messages) {
+	public void handleMessage(Data data, List<Message> messages) {
 		for (Message message : messages) {
 			data.friends.get(message.friendPhone).messages.add(message);
 			if (message.type == Message.MESSAGE_TYPE_RECEIVE) {
-				if (ChatFragment.instance == null || !data.nowChatFriend.phone.equals(message.friendPhone)) {
+				if (ChatFragment.instance == null
+						|| !data.nowChatFriend.phone
+								.equals(message.friendPhone)) {
 					data.friends.get(message.friendPhone).notReadMessagesCount++;
 				}
 			} else {

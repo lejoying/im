@@ -1,17 +1,20 @@
 package com.lejoying.mc.data.handler;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Circle;
+import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.Event;
 import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.Message;
-import com.lejoying.mc.data.StaticData;
 import com.lejoying.mc.data.User;
 
 public class JSONHandler {
@@ -21,23 +24,103 @@ public class JSONHandler {
 		this.app = app;
 	}
 
-	public int updateUser(JSONObject jUser, StaticData data) {
-		app.isDataChanged = true;
-		int count = 0;
+	public void updateUser(JSONObject jUser, Data data) {
 		User user = generateUserFromJSON(jUser);
 		if (user.head != null && !user.head.equals("")) {
 			data.user.head = user.head;
-			count++;
 		}
 		if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
 			data.user.mainBusiness = user.mainBusiness;
-			count++;
 		}
 		if (user.nickName != null && !user.nickName.equals("")) {
 			data.user.nickName = user.nickName;
-			count++;
 		}
-		return count;
+	}
+
+	public void updateFriend(JSONObject jFriend, Data data) {
+		Friend friend = generateFriendFromJSON(jFriend);
+		Friend updateFriend = data.friends.get(friend.phone);
+		if (updateFriend != null) {
+			if (friend.head != null && !friend.head.equals("")) {
+				updateFriend.head = friend.head;
+			}
+			if (friend.nickName != null && !friend.nickName.equals("")) {
+				updateFriend.nickName = friend.nickName;
+			}
+			if (friend.mainBusiness != null && !friend.mainBusiness.equals("")) {
+				updateFriend.mainBusiness = friend.mainBusiness;
+			}
+			if (friend.friendStatus != null && !friend.friendStatus.equals("")) {
+				updateFriend.friendStatus = friend.friendStatus;
+			}
+		}
+	}
+
+	public void saveCircles(JSONArray jCircles, Data data) {
+		Map<String, Friend> friends = new Hashtable<String, Friend>();
+		friends.putAll(app.data.friends);
+		List<Circle> circles = new ArrayList<Circle>();
+		for (int i = 0; i < jCircles.length(); i++) {
+			try {
+				JSONObject jCircle = jCircles.getJSONObject(i);
+				Circle circle = new Circle();
+				try {
+					circle.rid = jCircle.getInt("rid");
+				} catch (JSONException e) {
+
+				}
+				circle.name = jCircle.getString("name");
+				JSONArray jFriends = jCircle.getJSONArray("accounts");
+				List<String> phones = new ArrayList<String>();
+				for (int j = 0; j < jFriends.length(); j++) {
+					JSONObject jFriend = jFriends.getJSONObject(j);
+					String phone = jFriend.getString("phone");
+					phones.add(phone);
+					if (friends.get(phone) == null) {
+						Friend friend = generateFriendFromJSON(jFriend);
+						friends.put(phone, friend);
+					} else {
+						updateFriend(jFriend, data);
+					}
+				}
+				circle.phones = phones;
+				circles.add(circle);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		data.circles = circles;
+		data.friends = friends;
+	}
+
+	public void saveMessages(JSONArray jMessages, Data data) {
+		List<Message> messages = generateMessagesFromJSON(jMessages);
+		for (Message message : messages) {
+			data.friends.get(message.friendPhone).messages.add(message);
+			if (message.type == Message.MESSAGE_TYPE_RECEIVE) {
+				data.friends.get(message.friendPhone).notReadMessagesCount++;
+			} else {
+				data.friends.get(message.friendPhone).notReadMessagesCount = 0;
+			}
+			data.lastChatFriends.remove(message.friendPhone);
+			data.lastChatFriends.add(0, message.friendPhone);
+		}
+	}
+
+	public void saveNewFriends(JSONArray jFriends, Data data) {
+		for (int i = 0; i < jFriends.length(); i++) {
+			try {
+				JSONObject jFriend = jFriends.getJSONObject(i);
+				Friend friend = generateFriendFromJSON(jFriend);
+				if (data.newFriends.contains(friend)) {
+					data.newFriends.add(0, friend);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public User generateUserFromJSON(JSONObject jUser) {
@@ -70,7 +153,8 @@ public class JSONHandler {
 					Message message = new Message();
 
 					String phoneSend = jMessage.getString("phone");
-					String phoneReceive = new JSONArray(jMessage.getString("phoneto")).getString(0);
+					String phoneReceive = new JSONArray(
+							jMessage.getString("phoneto")).getString(0);
 
 					String friendPhone = phoneSend;
 
@@ -104,8 +188,9 @@ public class JSONHandler {
 			event.event = jEvnet.getString("event");
 			JSONObject jEventContent = jEvnet.getJSONObject("event_content");
 			if (event.event.equals("message")) {
-				event.eventContent = generateMessagesFromJSON(jEventContent.getJSONArray("message"));
-			}else if(event.event.equals("newfriend")){
+				event.eventContent = generateMessagesFromJSON(jEventContent
+						.getJSONArray("message"));
+			} else if (event.event.equals("newfriend")) {
 				event.eventContent = null;
 			}
 		} catch (JSONException e) {

@@ -1,11 +1,6 @@
 package com.lejoying.mc.fragment;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -28,10 +23,9 @@ import android.widget.TextView;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.utils.MCImageTools;
-import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
-import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 
 public class BusinessCardFragment extends BaseFragment {
 	App app = App.getInstance();
@@ -50,8 +44,6 @@ public class BusinessCardFragment extends BaseFragment {
 	private Handler handler;
 	private boolean stopSend;
 
-	Bitmap head;
-
 	@Override
 	protected EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
@@ -63,8 +55,6 @@ public class BusinessCardFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
-		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
-				getResources(), R.drawable.face_man), true, 5, Color.WHITE);
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -179,11 +169,10 @@ public class BusinessCardFragment extends BaseFragment {
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		String fileName = "";
 		if (app.businessCardStatus == app.SHOW_TEMPFRIEND) {
-			iv_head.setImageBitmap(head);
-			tv_nickname.setText(app.tempFriend.nickName);
-			tv_phone.setText(app.tempFriend.phone);
-			fileName = app.tempFriend.head;
-			tv_mainbusiness.setText(app.tempFriend.mainBusiness);
+			tv_nickname.setText(app.data.tempFriend.nickName);
+			tv_phone.setText(app.data.tempFriend.phone);
+			fileName = app.data.tempFriend.head;
+			tv_mainbusiness.setText(app.data.tempFriend.mainBusiness);
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -201,7 +190,6 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 		} else if (app.businessCardStatus == app.SHOW_SELF) {
 			button1.setText("修改个人信息");
-			iv_head.setImageBitmap(head);
 			tv_nickname.setText(app.data.user.nickName);
 			fileName = app.data.user.head;
 			tv_phone.setText(app.data.user.phone);
@@ -218,16 +206,15 @@ public class BusinessCardFragment extends BaseFragment {
 		} else if (app.businessCardStatus == app.SHOW_FRIEND) {
 			button1.setText("发起聊天");
 			button2.setText("修改备注");
-			iv_head.setImageBitmap(head);
-			tv_nickname.setText(app.tempFriend.nickName);
-			tv_phone.setText(app.tempFriend.phone);
-			fileName = app.tempFriend.head;
-			tv_mainbusiness.setText(app.tempFriend.mainBusiness);
+			tv_nickname.setText(app.data.tempFriend.nickName);
+			tv_phone.setText(app.data.tempFriend.phone);
+			fileName = app.data.tempFriend.head;
+			tv_mainbusiness.setText(app.data.tempFriend.mainBusiness);
 			button1.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View arg0) {
-					app.data.nowChatFriend = app.tempFriend;
+					app.data.nowChatFriend = app.data.tempFriend;
 					mMCFragmentManager.replaceToContent(new ChatFragment(),
 							true);
 				}
@@ -242,66 +229,22 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 		}
 		final String headFileName = fileName;
-		if (app.heads.get(headFileName) == null) {
-			app.heads.put(headFileName, MCImageTools.getCircleBitmap(
-					BitmapFactory.decodeResource(getResources(),
-							R.drawable.face_man), true, 10, Color.WHITE));
-			final File headFile = new File(app.sdcardHeadImageFolder,
-					headFileName);
-			if (headFile.exists()) {
-				Bitmap image = BitmapFactory.decodeFile(headFile
-						.getAbsolutePath());
-
-				if (image != null) {
-					Bitmap head = MCImageTools.getCircleBitmap(image, true, 5,
+		app.fileHandler.getImageFile(headFileName, new FileResult() {
+			@Override
+			public void onResult(String where) {
+				if (where == app.fileHandler.FROM_DEFAULT) {
+					iv_head.setImageBitmap(app.fileHandler.defaultHead);
+				} else if (where != app.fileHandler.FROM_MEMORY) {
+					Bitmap head = app.fileHandler.bitmaps.get(headFileName);
+					head = MCImageTools.getCircleBitmap(head, true, 5,
 							Color.WHITE);
-					app.heads.put(headFileName, head);
+					app.fileHandler.bitmaps.put(headFileName, head);
 					iv_head.setImageBitmap(head);
+				} else {
+					iv_head.setImageBitmap(app.fileHandler.bitmaps
+							.get(headFileName));
 				}
-			} else {
-				MCNetTools.downloadFile(getActivity(), app.config.DOMAIN_IMAGE,
-						headFileName, app.sdcardHeadImageFolder, null, 5000,
-						new DownloadListener() {
-							@Override
-							public void success(File localFile,
-									InputStream inputStream) {
-								Bitmap image = BitmapFactory
-										.decodeFile(localFile.getAbsolutePath());
-								if (image != null) {
-									Bitmap head = MCImageTools.getCircleBitmap(
-											image, true, 5, Color.WHITE);
-									app.heads.put(headFileName, head);
-									iv_head.setImageBitmap(head);
-								}
-							}
-
-							@Override
-							public void noInternet() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void failed() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void connectionCreated(
-									HttpURLConnection httpURLConnection) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void downloading(int progress) {
-								// TODO Auto-generated method stub
-							}
-						});
 			}
-		} else {
-			iv_head.setImageBitmap(app.heads.get(headFileName));
-		}
+		});
 	}
 }

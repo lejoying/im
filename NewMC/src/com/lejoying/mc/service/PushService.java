@@ -33,7 +33,7 @@ public class PushService extends Service {
 	public void startLongAjax(final Bundle params) {
 		isStart = true;
 
-		MCNetTools.ajaxAPI(new AjaxAdapter() {
+		MCNetTools.ajax(new AjaxAdapter() {
 			public void setParams(Settings settings) {
 				settings.url = API.SESSION_EVENT;
 				settings.params = params;
@@ -41,16 +41,15 @@ public class PushService extends Service {
 			}
 
 			public void onSuccess(JSONObject jData) {
-				if (isStart) {
-					startLongAjax(params);
-				}
 				try {
 					jData.getString(getString(R.string.app_reason));
+					return;
 					// TODO how to resolve when server returns fail message?
 				} catch (JSONException e) {
 				}
-				System.out.println(jData);
-
+				if (isStart) {
+					startLongAjax(params);
+				}
 				app.eventHandler.handleEvent(jData);
 			}
 
@@ -60,6 +59,12 @@ public class PushService extends Service {
 					startLongAjax(params);
 					System.out.println("long ajax failed");
 				}
+			}
+
+			@Override
+			public void connectionCreated(HttpURLConnection httpURLConnection) {
+				longAjaxConnection = httpURLConnection;
+				System.out.println("long ajax is created");
 			}
 		});
 	}
@@ -81,6 +86,7 @@ public class PushService extends Service {
 		} else if (objective.equals("stop")) {
 			isStart = false;
 			longAjaxConnection.disconnect();
+			System.out.println("stop long ajax");
 		}
 		return super.onStartCommand(intent, flags, startId);
 	}

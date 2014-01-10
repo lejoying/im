@@ -1,7 +1,9 @@
 package com.lejoying.mc.fragment;
 
-import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Bundle;
@@ -16,10 +18,16 @@ import android.widget.TextView;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Circle;
+import com.lejoying.mc.data.Data;
+import com.lejoying.mc.data.Friend;
+import com.lejoying.mc.data.User;
+import com.lejoying.mc.data.handler.DataHandler.Modification;
+import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.HttpTools;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 import com.lejoying.utils.RSAUtils;
 import com.lejoying.utils.SHA1;
 
@@ -39,7 +47,22 @@ public class LoginUsePassFragment extends BaseFragment implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		app.dataHandler.modifyData(new Modification() {
+			@Override
+			public void modify(Data data) {
+				data.user = new User();
+				data.circles = new ArrayList<Circle>();
+				data.friends = new Hashtable<String, Friend>();
+
+				// Last messages list
+				data.lastChatFriends = new ArrayList<String>();
+
+				// new friends
+				data.newFriends = new ArrayList<Friend>();
+
+				data.nowChatFriend = null;
+			}
+		});
 		super.onCreate(savedInstanceState);
 	}
 
@@ -82,62 +105,65 @@ public class LoginUsePassFragment extends BaseFragment implements
 					true);
 			break;
 		case R.id.btn_login:
-			if (mView_phone.getText().toString().equals("")) {
+			final String phone = mView_phone.getText().toString();
+			String pass = mView_pass.getText().toString();
+			if (phone.equals("")) {
 				getString(R.string.app_phonenotnull);
 				showSoftInput(mView_phone);
 				return;
 			}
-			if (mView_pass.getText().toString().equals("")) {
+			if (pass.equals("")) {
 				getString(R.string.app_passnotnull);
 				showSoftInput(mView_pass);
 				return;
 			}
-			Bundle params = new Bundle();
-			params.putString("phone", mView_phone.getText().toString());
-			String pass = mSha1.getDigestOfString(mView_pass.getText()
-					.toString().getBytes());
+			final Bundle params = new Bundle();
+			params.putString("phone", phone);
+			pass = mSha1.getDigestOfString(pass.getBytes());
 			params.putString("password", pass);
 
-			MCNetTools.ajax(getActivity(), API.ACCOUNT_AUTH, params,
-					HttpTools.SEND_POST, 5000, new ResponseListener() {
+			MCNetTools.ajax(new AjaxAdapter() {
+
+				@Override
+				public void setParams(Settings settings) {
+					settings.url = API.ACCOUNT_AUTH;
+					settings.params = params;
+				}
+
+				@Override
+				public void onSuccess(final JSONObject jData) {
+					app.dataHandler.modifyData(new Modification() {
 
 						@Override
-						public void success(JSONObject data) {
+						public void modify(Data data) {
 							try {
-								String accessKey = data.getString("accessKey");
+								String accessKey = jData.getString("accessKey");
 								accessKey = RSAUtils.decrypt(app.config.pbKey0,
 										accessKey);
-								app.data.user.phone = mView_phone.getText()
-										.toString();
-								app.data.user.accessKey = accessKey;
-								mMCFragmentManager.startToActivity(
-										MainActivity.class, true);
+								data.user.phone = phone;
+								data.user.accessKey = accessKey;
 							} catch (Exception e) {
+								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-
 						}
-
+					}, new UIModification() {
 						@Override
-						public void noInternet() {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void failed() {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void connectionCreated(
-								HttpURLConnection httpURLConnection) {
-							// TODO Auto-generated method stub
+						public void modifyUI() {
+							try {
+								jData.getString(getString(R.string.app_reason));
+								return;
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							mMCFragmentManager.startToActivity(
+									MainActivity.class, true);
 
 						}
 					});
-
+				}
+			});
 			break;
 		case R.id.btn_register:
 			mMCFragmentManager.replaceToContent(new RegisterPhoneFragment(),

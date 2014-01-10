@@ -6,7 +6,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class StaticData implements Serializable {
+import android.os.Bundle;
+
+public class Data implements Serializable {
 
 	/**
 	 * 
@@ -22,6 +24,9 @@ public class StaticData implements Serializable {
 
 	// new friends
 	public List<Friend> newFriends = new ArrayList<Friend>();
-	
+
+	// temp data
 	public Friend nowChatFriend;
+	public Bundle registerBundle;
+	public Friend tempFriend;
 }

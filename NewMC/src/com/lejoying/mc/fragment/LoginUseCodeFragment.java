@@ -9,9 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
-import com.lejoying.mc.network.API;
 
 public class LoginUseCodeFragment extends BaseFragment implements
 		OnClickListener {

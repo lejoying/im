@@ -45,13 +45,14 @@ public class MCNetTools {
 		public void connectionCreated(HttpURLConnection httpURLConnection);
 	}
 
-	public static void ajaxAPI(final AjaxInterface ajaxInterface) {
+	public static void ajax(final AjaxInterface ajaxInterface) {
 
 		final Settings settings = new Settings();
 		ajaxInterface.setParams(settings);
 
 		if (app.networkStatus == "none") {
-			NetworkInfo networkInfo = HttpTools.getActiveNetworkInfo(app.context);
+			NetworkInfo networkInfo = HttpTools
+					.getActiveNetworkInfo(app.context);
 			if (networkInfo != null) {
 				app.networkStatus = networkInfo.getTypeName();
 			}
@@ -72,7 +73,8 @@ public class MCNetTools {
 						}
 
 						@Override
-						public void connectionCreated(final HttpURLConnection httpURLConnection) {
+						public void connectionCreated(
+								final HttpURLConnection httpURLConnection) {
 							ajaxInterface.connectionCreated(httpURLConnection);
 						}
 
@@ -82,16 +84,21 @@ public class MCNetTools {
 						}
 					};
 					if (settings.method == HttpTools.SEND_GET) {
-						HttpTools.sendGetUseBundle(app.config.DOMAIN + settings.url, settings.timeout, settings.params, httpListener);
+						HttpTools.sendGetUseBundle(app.config.DOMAIN
+								+ settings.url, settings.timeout,
+								settings.params, httpListener);
 					}
 					if (settings.method == HttpTools.SEND_POST) {
-						HttpTools.sendPostUseBundle(app.config.DOMAIN + settings.url, settings.timeout, settings.params, httpListener);
+						HttpTools.sendPostUseBundle(app.config.DOMAIN
+								+ settings.url, settings.timeout,
+								settings.params, httpListener);
 					}
 					try {
 						if (b == null) {
 							ajaxInterface.timeout();
 						} else {
-							final JSONObject jData = new JSONObject(new String(b));
+							final JSONObject jData = new JSONObject(new String(
+									b));
 							if (jData != null) {
 								ajaxInterface.onSuccess(jData);
 							}
@@ -103,62 +110,10 @@ public class MCNetTools {
 		}
 	}
 
-
-	public static void ajax(final Context context, final String url, final Bundle params, final int method, final int timeout, final ResponseListener responseListener) {
-		if (app.networkStatus == "none") {
-			NetworkInfo networkInfo = HttpTools.getActiveNetworkInfo(app.context);
-			if (networkInfo != null) {
-				app.networkStatus = networkInfo.getTypeName();
-			}
-		}
-		if (app.networkStatus == "none") {
-			responseListener.noInternet();
-		} else {
-			new Thread() {
-				private byte[] b = null;
-
-				@Override
-				public void run() {
-					super.run();
-					HttpListener httpListener = new HttpListener() {
-						@Override
-						public void handleInputStream(InputStream is) {
-							b = StreamTools.isToData(is);
-						}
-
-						@Override
-						public void connectionCreated(final HttpURLConnection httpURLConnection) {
-							responseListener.connectionCreated(httpURLConnection);
-						}
-
-						@Override
-						public void failed() {
-							responseListener.failed();
-						}
-					};
-					if (method == HttpTools.SEND_GET) {
-						HttpTools.sendGetUseBundle(app.config.DOMAIN + url, timeout, params, httpListener);
-					}
-					if (method == HttpTools.SEND_POST) {
-						HttpTools.sendPostUseBundle(app.config.DOMAIN + url, timeout, params, httpListener);
-					}
-					try {
-						if (b == null) {
-
-						} else {
-							final JSONObject data = new JSONObject(new String(b));
-							if (data != null) {
-								responseListener.success(data);
-							}
-						}
-					} catch (JSONException e) {
-					}
-				}
-			}.start();
-		}
-	}
-
-	public static void downloadFile(final Context context, final String location, final String fileName, final File savePath, final String rename, final int timeout, final DownloadListener downloadListener) {
+	public static void downloadFile(final Context context,
+			final String location, final String fileName, final File savePath,
+			final String rename, final int timeout,
+			final DownloadListener downloadListener) {
 		if (context == null) {
 			return;
 		}
@@ -175,14 +130,17 @@ public class MCNetTools {
 						float fileLength = 0;
 
 						@Override
-						public void connectionCreated(final HttpURLConnection httpURLConnection) {
-							downloadListener.connectionCreated(httpURLConnection);
+						public void connectionCreated(
+								final HttpURLConnection httpURLConnection) {
+							downloadListener
+									.connectionCreated(httpURLConnection);
 							fileLength = httpURLConnection.getContentLength();
 						}
 
 						@Override
 						public void handleInputStream(final InputStream is) {
-							if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+							if (!Environment.getExternalStorageState().equals(
+									Environment.MEDIA_MOUNTED)) {
 								downloadListener.success(null, is);
 								return;
 							}
@@ -191,7 +149,8 @@ public class MCNetTools {
 							if (rename != null && !rename.equals("")) {
 								localFileName = rename;
 							}
-							final File file = new File(savePath, localFileName);
+							File file = new File(savePath, localFileName
+									+ ".tmp");
 							try {
 								fileOutputStream = new FileOutputStream(file);
 								int length = 0;
@@ -202,11 +161,15 @@ public class MCNetTools {
 								while ((length = is.read(buffer)) > 0) {
 									fileOutputStream.write(buffer, 0, length);
 									nowReadLength += length;
-									downloadListener.downloading((int) (nowReadLength / fileLength * 100));
+									downloadListener
+											.downloading((int) (nowReadLength
+													/ fileLength * 100));
 								}
 								fileOutputStream.flush();
-								downloadListener.success(file, null);
-
+								File localFile = new File(savePath,
+										localFileName);
+								file.renameTo(localFile);
+								downloadListener.success(localFile, null);
 							} catch (FileNotFoundException e) {
 							} catch (IOException e) {
 							} finally {
@@ -226,6 +189,11 @@ public class MCNetTools {
 										e.printStackTrace();
 									}
 								}
+								File tempFile = new File(savePath,
+										localFileName + ".tmp");
+								if (tempFile.exists()) {
+									tempFile.delete();
+								}
 							}
 						}
 
@@ -234,20 +202,11 @@ public class MCNetTools {
 							downloadListener.failed();
 						}
 					};
-					HttpTools.sendGetUseBundle(location + fileName, timeout, null, httpListener);
+					HttpTools.sendGetUseBundle(location + fileName, timeout,
+							null, httpListener);
 				}
 			}.start();
 		}
-	}
-
-	public interface ResponseListener {
-		public void connectionCreated(HttpURLConnection httpURLConnection);
-
-		public void noInternet();
-
-		public void success(JSONObject data);
-
-		public void failed();
 	}
 
 	public interface DownloadListener {

@@ -3,7 +3,7 @@ var requestHandlers = {};
 var globaldata = root.globaldata;
 
 var session = require('./handlers/session.js');
-requestHandlers.imagesManage = function (request, response, pathObject, data) {
+requestHandlers.session = function (request, response, pathObject, data) {
     if (data == null) {
         return;
     }

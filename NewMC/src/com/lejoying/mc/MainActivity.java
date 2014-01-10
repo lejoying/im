@@ -16,6 +16,7 @@ public class MainActivity extends BaseFragmentActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+		app.context = this;
 		setContentView(R.layout._main);
 		instance = this;
 	}
@@ -35,15 +36,15 @@ public class MainActivity extends BaseFragmentActivity {
 	protected void onPause() {
 		super.onPause();
 		System.out.println("pause");
-		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_SAVECONFIGANDDATA,
-				app.dataHandler.DOSYNC, this);
+		app.sDcardDataResolver.saveToSDcard();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		app.context=this;
+		app.context = this;
 	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		boolean flag = true;

@@ -1,35 +1,21 @@
 package com.lejoying.mc.fragment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,15 +28,18 @@ import android.widget.TextView;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.User;
+import com.lejoying.mc.data.handler.DataHandler.Modification;
+import com.lejoying.mc.data.handler.DataHandler.UIModification;
+import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
 import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.HttpTools;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 import com.lejoying.utils.SHA1;
-import com.lejoying.utils.StreamTools;
 
 public class ModifyFragment extends BaseFragment implements OnClickListener,
 		OnFocusChangeListener {
@@ -135,7 +124,25 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		rl_yewu = mContent.findViewById(R.id.rl_yewu);
 		tv_random = mContent.findViewById(R.id.tv_random);
 
-		iv_head.setImageBitmap(app.heads.get(app.data.user.head));
+		final String headFileName = app.data.user.head;
+		app.fileHandler.getImageFile(headFileName, new FileResult() {
+			@Override
+			public void onResult(String where) {
+
+				if (where == app.fileHandler.FROM_DEFAULT) {
+					iv_head.setImageBitmap(app.fileHandler.defaultHead);
+				} else if (where != app.fileHandler.FROM_MEMORY) {
+					Bitmap head = app.fileHandler.bitmaps.get(headFileName);
+					head = MCImageTools.getCircleBitmap(head, true, 5,
+							Color.WHITE);
+					app.fileHandler.bitmaps.put(headFileName, head);
+					iv_head.setImageBitmap(head);
+				} else {
+					iv_head.setImageBitmap(app.fileHandler.bitmaps
+							.get(headFileName));
+				}
+			}
+		});
 
 		rl_edithead = mContent.findViewById(R.id.rl_edithead);
 		rl_fromgallery = mContent.findViewById(R.id.rl_fromgallery);
@@ -250,63 +257,74 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Bundle params = new Bundle();
+		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 		params.putString("account", account.toString());
-		MCNetTools.ajax(getActivity(), API.ACCOUNT_MODIFY, params,
-				HttpTools.SEND_POST, 5000, new ResponseListener() {
 
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.ACCOUNT_MODIFY;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
 					@Override
-					public void success(JSONObject data) {
-						System.out.println(data);
+					public void modify(Data data) {
+						if (user.head != null && !user.head.equals("")) {
+							data.user.head = user.head;
+							final String headFileName = user.head;
+							app.fileHandler.getImageFile(headFileName,
+									new FileResult() {
+										@Override
+										public void onResult(String where) {
+											if (where == app.fileHandler.FROM_DEFAULT) {
+												iv_head.setImageBitmap(app.fileHandler.defaultHead);
+											} else if (where != app.fileHandler.FROM_MEMORY) {
+												Bitmap head = app.fileHandler.bitmaps
+														.get(headFileName);
+												head = MCImageTools
+														.getCircleBitmap(head,
+																true, 5,
+																Color.WHITE);
+												app.fileHandler.bitmaps.put(
+														headFileName, head);
+												iv_head.setImageBitmap(head);
+											} else {
+												iv_head.setImageBitmap(app.fileHandler.bitmaps
+														.get(headFileName));
+											}
+										}
+									});
+						}
+						if (user.mainBusiness != null
+								&& !user.mainBusiness.equals("")) {
+							data.user.mainBusiness = user.mainBusiness;
+						}
+						if (user.nickName != null
+								&& !user.mainBusiness.equals("")) {
+							data.user.nickName = user.nickName;
+						}
+					}
+				}, new UIModification() {
+					@Override
+					public void modifyUI() {
 						try {
-							data
-									.getString(getString(R.string.app_reason));
+							jData.getString(getString(R.string.app_reason));
 							tv_name.setText(app.data.user.nickName);
 							tv_yewu.setText(app.data.user.mainBusiness);
 							return;
 						} catch (Exception e) {
 							// TODO: handle exception
 						}
-						System.out.println("success");
-
-						if (user.head != null && !user.head.equals("")) {
-							app.data.user.head = user.head;
-							iv_head.setImageBitmap(app.heads
-									.get(app.data.user.head));
-
-						}
-						if (user.mainBusiness != null
-								&& !user.mainBusiness.equals("")) {
-							app.data.user.mainBusiness = user.mainBusiness;
-						}
-						if (user.nickName != null
-								&& !user.mainBusiness.equals("")) {
-							app.data.user.nickName = user.nickName;
-						}
-
-					}
-
-					@Override
-					public void noInternet() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void failed() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void connectionCreated(
-							HttpURLConnection httpURLConnection) {
-						// TODO Auto-generated method stub
-
 					}
 				});
+			}
+		});
 	}
 
 	@Override
@@ -452,203 +470,203 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Bitmap tempHeadBitmap = null;
-		if (requestCode == RESULT_SELECTHEAD
-				&& resultCode == Activity.RESULT_OK && data != null) {
-			Uri selectedImage = data.getData();
-			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			Cursor cursor = getActivity().getContentResolver().query(
-					selectedImage, filePathColumn, null, null, null);
-			cursor.moveToFirst();
-			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			final String picturePath = cursor.getString(columnIndex);
-			final String format = picturePath.substring(picturePath
-					.lastIndexOf("."));
-			cursor.close();
-			tempHeadBitmap = BitmapFactory.decodeFile(picturePath);
-
-		} else if (requestCode == RESULT_TAKEPICTURE
-				&& resultCode == Activity.RESULT_OK && data != null) {
-			Bitmap picture = (Bitmap) data.getExtras().get("data");
-			tempHeadBitmap = picture;
-		}
-
-		final Bitmap sourceHead = tempHeadBitmap;
-		new Thread() {
-			public void run() {
-
-				if (sourceHead != null) {
-					int width = sourceHead.getWidth() > 100 ? 100 : sourceHead
-							.getWidth();
-					int height = sourceHead.getHeight() > 100 ? 100
-							: sourceHead.getHeight();
-					int border = width > height ? height : width;
-					Bitmap head = Bitmap.createBitmap(sourceHead, 0, 0, border,
-							border);
-					File tempHead = new File(app.sdcardHeadImageFolder,
-							"tempimage.png");
-					int i = 1;
-					while (tempHead.exists()) {
-						tempHead = new File(app.sdcardHeadImageFolder,
-								"tempimage" + (i++) + ".png");
-					}
-					FileOutputStream fileOutputStream;
-					try {
-						fileOutputStream = new FileOutputStream(tempHead);
-						head.compress(Bitmap.CompressFormat.PNG, 0,
-								fileOutputStream);
-						try {
-							fileOutputStream.flush();
-							fileOutputStream.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					try {
-						InputStream inputStream = new FileInputStream(tempHead);
-						byte[] b = StreamTools.isToData(inputStream);
-
-						if (b != null) {
-							final String base64 = Base64.encodeToString(b,
-									Base64.DEFAULT);
-							String uploadFile = sha1.getDigestOfString(base64
-									.trim().getBytes()) + ".png";
-
-							final String uploadFileName = uploadFile
-									.toLowerCase(Locale.getDefault());
-							app.heads.put(uploadFileName,
-									MCImageTools.getCircleBitmap(head, true, 5,
-											Color.WHITE));
-							File headFile = new File(app.sdcardHeadImageFolder,
-									uploadFileName);
-							if (headFile.exists()) {
-								tempHead.delete();
-							} else {
-								tempHead.renameTo(headFile);
-							}
-
-							Bundle params = new Bundle();
-							params.putString("phone", app.data.user.phone);
-							params.putString("accessKey",
-									app.data.user.accessKey);
-							params.putString("filename", uploadFileName);
-
-							MCNetTools.ajax(getActivity(), API.IMAGE_CHECK,
-									params, HttpTools.SEND_POST, 5000,
-									new ResponseListener() {
-
-										@Override
-										public void success(JSONObject data) {
-											try {
-												boolean isExists = data
-														.getBoolean("exists");
-
-												if (!isExists) {
-													Bundle params = new Bundle();
-													params.putString("phone",
-															app.data.user.phone);
-													params.putString(
-															"accessKey",
-															app.data.user.accessKey);
-													params.putString(
-															"filename",
-															uploadFileName);
-													params.putString(
-															"imagedata", base64);
-													MCNetTools
-															.ajax(getActivity(),
-																	API.IMAGE_UPLOAD,
-																	params,
-																	HttpTools.SEND_POST,
-																	5000,
-																	new ResponseListener() {
-
-																		@Override
-																		public void success(
-																				JSONObject data) {
-																			try {
-																				data.get(getString(R.string.app_reason));
-																				return;
-																			} catch (JSONException e) {
-																				// TODO
-																				// Auto-generated
-																				// catch
-																				// block
-																				e.printStackTrace();
-																			}
-																			User user = new User();
-																			user.head = uploadFileName;
-
-																			modify(user);
-																		}
-
-																		@Override
-																		public void noInternet() {
-																			// TODO
-																			// Auto-generated
-																			// method
-																			// stub
-																		}
-
-																		@Override
-																		public void failed() {
-																			// TODO
-																			// Auto-generated
-																			// method
-																			// stub
-																		}
-
-																		@Override
-																		public void connectionCreated(
-																				HttpURLConnection httpURLConnection) {
-																			// TODO
-																			// Auto-generated
-																			// method
-																			// stub
-																		}
-																	});
-												} else {
-
-												}
-											} catch (JSONException e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
-											}
-										}
-
-										@Override
-										public void connectionCreated(
-												HttpURLConnection httpURLConnection) {
-											// TODO Auto-generated method stub
-
-										}
-
-										@Override
-										public void noInternet() {
-											// TODO Auto-generated method stub
-
-										}
-
-										@Override
-										public void failed() {
-											// TODO Auto-generated method stub
-
-										}
-									});
-
-						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}.start();
+		// Bitmap tempHeadBitmap = null;
+		// if (requestCode == RESULT_SELECTHEAD
+		// && resultCode == Activity.RESULT_OK && data != null) {
+		// Uri selectedImage = data.getData();
+		// String[] filePathColumn = { MediaStore.Images.Media.DATA };
+		// Cursor cursor = getActivity().getContentResolver().query(
+		// selectedImage, filePathColumn, null, null, null);
+		// cursor.moveToFirst();
+		// int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+		// final String picturePath = cursor.getString(columnIndex);
+		// final String format = picturePath.substring(picturePath
+		// .lastIndexOf("."));
+		// cursor.close();
+		// tempHeadBitmap = BitmapFactory.decodeFile(picturePath);
+		//
+		// } else if (requestCode == RESULT_TAKEPICTURE
+		// && resultCode == Activity.RESULT_OK && data != null) {
+		// Bitmap picture = (Bitmap) data.getExtras().get("data");
+		// tempHeadBitmap = picture;
+		// }
+		//
+		// final Bitmap sourceHead = tempHeadBitmap;
+		// new Thread() {
+		// public void run() {
+		//
+		// if (sourceHead != null) {
+		// int width = sourceHead.getWidth() > 100 ? 100 : sourceHead
+		// .getWidth();
+		// int height = sourceHead.getHeight() > 100 ? 100
+		// : sourceHead.getHeight();
+		// int border = width > height ? height : width;
+		// Bitmap head = Bitmap.createBitmap(sourceHead, 0, 0, border,
+		// border);
+		// File tempHead = new File(app.sdcardHeadImageFolder,
+		// "tempimage.png");
+		// int i = 1;
+		// while (tempHead.exists()) {
+		// tempHead = new File(app.sdcardHeadImageFolder,
+		// "tempimage" + (i++) + ".png");
+		// }
+		// FileOutputStream fileOutputStream;
+		// try {
+		// fileOutputStream = new FileOutputStream(tempHead);
+		// head.compress(Bitmap.CompressFormat.PNG, 0,
+		// fileOutputStream);
+		// try {
+		// fileOutputStream.flush();
+		// fileOutputStream.close();
+		// } catch (IOException e1) {
+		// e1.printStackTrace();
+		// }
+		// } catch (FileNotFoundException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		//
+		// try {
+		// InputStream inputStream = new FileInputStream(tempHead);
+		// byte[] b = StreamTools.isToData(inputStream);
+		//
+		// if (b != null) {
+		// final String base64 = Base64.encodeToString(b,
+		// Base64.DEFAULT);
+		// String uploadFile = sha1.getDigestOfString(base64
+		// .trim().getBytes()) + ".png";
+		//
+		// final String uploadFileName = uploadFile
+		// .toLowerCase(Locale.getDefault());
+		// app.heads.put(uploadFileName,
+		// MCImageTools.getCircleBitmap(head, true, 5,
+		// Color.WHITE));
+		// File headFile = new File(app.sdcardHeadImageFolder,
+		// uploadFileName);
+		// if (headFile.exists()) {
+		// tempHead.delete();
+		// } else {
+		// tempHead.renameTo(headFile);
+		// }
+		//
+		// Bundle params = new Bundle();
+		// params.putString("phone", app.data.user.phone);
+		// params.putString("accessKey",
+		// app.data.user.accessKey);
+		// params.putString("filename", uploadFileName);
+		//
+		// MCNetTools.ajax(getActivity(), API.IMAGE_CHECK,
+		// params, HttpTools.SEND_POST, 5000,
+		// new ResponseListener() {
+		//
+		// @Override
+		// public void success(JSONObject data) {
+		// try {
+		// boolean isExists = data
+		// .getBoolean("exists");
+		//
+		// if (!isExists) {
+		// Bundle params = new Bundle();
+		// params.putString("phone",
+		// app.data.user.phone);
+		// params.putString(
+		// "accessKey",
+		// app.data.user.accessKey);
+		// params.putString(
+		// "filename",
+		// uploadFileName);
+		// params.putString(
+		// "imagedata", base64);
+		// MCNetTools
+		// .ajax(getActivity(),
+		// API.IMAGE_UPLOAD,
+		// params,
+		// HttpTools.SEND_POST,
+		// 5000,
+		// new ResponseListener() {
+		//
+		// @Override
+		// public void success(
+		// JSONObject data) {
+		// try {
+		// data.get(getString(R.string.app_reason));
+		// return;
+		// } catch (JSONException e) {
+		// // TODO
+		// // Auto-generated
+		// // catch
+		// // block
+		// e.printStackTrace();
+		// }
+		// User user = new User();
+		// user.head = uploadFileName;
+		//
+		// modify(user);
+		// }
+		//
+		// @Override
+		// public void noInternet() {
+		// // TODO
+		// // Auto-generated
+		// // method
+		// // stub
+		// }
+		//
+		// @Override
+		// public void failed() {
+		// // TODO
+		// // Auto-generated
+		// // method
+		// // stub
+		// }
+		//
+		// @Override
+		// public void connectionCreated(
+		// HttpURLConnection httpURLConnection) {
+		// // TODO
+		// // Auto-generated
+		// // method
+		// // stub
+		// }
+		// });
+		// } else {
+		//
+		// }
+		// } catch (JSONException e) {
+		// // TODO Auto-generated catch
+		// // block
+		// e.printStackTrace();
+		// }
+		// }
+		//
+		// @Override
+		// public void connectionCreated(
+		// HttpURLConnection httpURLConnection) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public void noInternet() {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public void failed() {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		// });
+		//
+		// }
+		// } catch (FileNotFoundException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// }
+		// }.start();
 
 	}
 }

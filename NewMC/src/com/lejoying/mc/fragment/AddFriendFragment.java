@@ -1,7 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import java.net.HttpURLConnection;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,9 +13,9 @@ import android.widget.EditText;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.HttpTools;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 
 public class AddFriendFragment extends BaseFragment implements OnClickListener {
 
@@ -59,66 +57,51 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_send:
-			Bundle params = new Bundle();
+			final Bundle params = new Bundle();
 			params.putString("phone", app.data.user.phone);
 			params.putString("accessKey", app.data.user.accessKey);
-			params.putString("phoneto", app.tempFriend.phone);
+			params.putString("phoneto", app.data.tempFriend.phone);
 			params.putString("message", mView_message.getText().toString());
-			app.tempFriend.addMessage = mView_message.getText().toString();
-			MCNetTools.ajax(getActivity(), API.RELATION_ADDFRIEND, params,
-					HttpTools.SEND_POST, 5000, new ResponseListener() {
+			app.data.tempFriend.addMessage = mView_message.getText().toString();
 
+			MCNetTools.ajax(new AjaxAdapter() {
+
+				@Override
+				public void setParams(Settings settings) {
+					settings.url = API.RELATION_ADDFRIEND;
+					settings.params = params;
+				}
+
+				@Override
+				public void onSuccess(JSONObject jData) {
+					try {
+						jData.getString(getString(R.string.app_reason));
+						return;
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					app.data.tempFriend.addMessage = mView_message.getText()
+							.toString();
+					while (app.data.newFriends.contains(app.data.tempFriend)) {
+						app.data.newFriends.remove(app.data.tempFriend);
+					}
+					app.data.newFriends.add(0, app.data.tempFriend);
+					app.mUIThreadHandler.post(new Runnable() {
 						@Override
-						public void success(JSONObject data) {
-							System.out.println(data);
-							try {
-								data.getString("失败原因");
-								return;
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+						public void run() {
 							getActivity().getSupportFragmentManager()
 									.popBackStack();
 							getActivity().getSupportFragmentManager()
 									.popBackStack();
 							getActivity().getSupportFragmentManager()
 									.popBackStack();
-							app.tempFriend.addMessage = mView_message.getText()
-									.toString();
-							while (app.data.newFriends.contains(app.tempFriend)) {
-								app.data.newFriends.remove(app.tempFriend);
-							}
-							app.data.newFriends.add(0, app.tempFriend);
 							mMCFragmentManager.replaceToContent(
 									new NewFriendsFragment(), true);
 						}
-
-						@Override
-						public void noInternet() {
-							// TODO Auto-generated method stub
-							System.out.println("noInternet");
-						}
-
-						@Override
-						public void failed() {
-							// TODO Auto-generated method stub
-							System.out.println("failed");
-
-						}
-
-						@Override
-						public void connectionCreated(
-								HttpURLConnection httpURLConnection) {
-							// TODO Auto-generated method stub
-							System.out.println("connection");
-
-						}
 					});
-			break;
-
-		default:
-			break;
+				}
+			});
 		}
 	}
 }

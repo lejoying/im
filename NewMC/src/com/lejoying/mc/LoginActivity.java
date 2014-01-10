@@ -1,12 +1,10 @@
 package com.lejoying.mc;
 
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.fragment.LoginUsePassFragment;
-import com.lejoying.utils.HttpTools;
 
 public class LoginActivity extends BaseFragmentActivity {
 
@@ -15,8 +13,8 @@ public class LoginActivity extends BaseFragmentActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+		app.context = this;
 		setContentView(R.layout._main);
-		app.dataHandler.sendEmptyMessage(app.dataHandler.DATA_HANDLER_CLEANDATA);
 	}
 
 	@Override

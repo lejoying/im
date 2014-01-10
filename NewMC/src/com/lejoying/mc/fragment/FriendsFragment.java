@@ -1,8 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -17,8 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -37,14 +32,17 @@ import android.widget.TextView;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Circle;
+import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.Friend;
+import com.lejoying.mc.data.handler.DataHandler.Modification;
+import com.lejoying.mc.data.handler.DataHandler.UIModification;
+import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.service.PushService;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.DownloadListener;
-import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.HttpTools;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 
 public class FriendsFragment extends BaseListFragment {
 
@@ -66,7 +64,6 @@ public class FriendsFragment extends BaseListFragment {
 	List<String> lastChatFriends;
 
 	public FriendsAdapter mFriendsAdapter;
-	public FriendsHandler mFriendsHandler;
 
 	private View mContent;
 	private LayoutInflater mInflater;
@@ -87,9 +84,10 @@ public class FriendsFragment extends BaseListFragment {
 		friends = app.data.friends;
 		newFriends = app.data.newFriends;
 		lastChatFriends = app.data.lastChatFriends;
+
 		newFriendsCount = 0;
 		for (Friend friend : newFriends) {
-			if (app.data.friends.get(friend.phone) == null) {
+			if (friends.get(friend.phone) == null) {
 				newFriendsCount++;
 			}
 		}
@@ -117,16 +115,12 @@ public class FriendsFragment extends BaseListFragment {
 		mInflater = getActivity().getLayoutInflater();
 		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
-		app.dataHandler.sendMessage(app.dataHandler.DATA_HANDLER_GETUSERDATA,
-				getActivity());
 		Intent service = new Intent(getActivity(), PushService.class);
 		service.putExtra("objective", "start");
 		getActivity().startService(service);
-		initData(true);
 		mFriendsAdapter = new FriendsAdapter();
-		mFriendsHandler = new FriendsHandler();
 		circlePageViews = new Hashtable<Integer, List<View>>();
-		changeContentFragment(new CircleMenuFragment());
+		initData(true);
 	}
 
 	@Override
@@ -143,7 +137,15 @@ public class FriendsFragment extends BaseListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setListAdapter(mFriendsAdapter);
+		if (getListAdapter() == null) {
+			app.sDcardDataResolver.readLocalData(new UIModification() {
+				@Override
+				public void modifyUI() {
+					initData(true);
+					setListAdapter(mFriendsAdapter);
+				}
+			});
+		}
 	}
 
 	public void onResume() {
@@ -266,68 +268,25 @@ public class FriendsFragment extends BaseListFragment {
 				messageHolder.tv_lastchat.setText(friend.messages
 						.get(friend.messages.size() - 1).content);
 				final String headFileName = friend.head;
-//				if (app.heads.get(headFileName) == null) {
-//					app.heads.put(headFileName, head);
-//					final File headFile = new File(app.sdcardHeadImageFolder,
-//							headFileName);
-//					if (headFile.exists()) {
-//						Bitmap image = BitmapFactory.decodeFile(headFile
-//								.getAbsolutePath());
-//
-//						if (image != null) {
-//							Bitmap head = MCImageTools.getCircleBitmap(image,
-//									true, 5, Color.WHITE);
-//							app.heads.put(headFileName, head);
-//						}
-//					} else {
-//						MCNetTools.downloadFile(getActivity(),
-//								app.config.DOMAIN_IMAGE, headFileName,
-//								app.sdcardHeadImageFolder, null, 5000,
-//								new DownloadListener() {
-//									@Override
-//									public void success(File localFile,
-//											InputStream inputStream) {
-//										Bitmap image = BitmapFactory
-//												.decodeFile(localFile
-//														.getAbsolutePath());
-//										if (image != null) {
-//											Bitmap head = MCImageTools
-//													.getCircleBitmap(image,
-//															true, 5,
-//															Color.WHITE);
-//											app.heads.put(headFileName, head);
-//											mFriendsAdapter
-//													.notifyDataSetChanged();
-//										}
-//									}
-//
-//									@Override
-//									public void noInternet() {
-//										// TODO Auto-generated method stub
-//
-//									}
-//
-//									@Override
-//									public void failed() {
-//										// TODO Auto-generated method stub
-//
-//									}
-//
-//									@Override
-//									public void connectionCreated(
-//											HttpURLConnection httpURLConnection) {
-//										// TODO Auto-generated method stub
-//
-//									}
-//
-//									@Override
-//									public void downloading(int progress) {
-//										// TODO Auto-generated method stub
-//									}
-//								});
-//					}
-//				}
-				messageHolder.iv_head.setImageBitmap(head);
+				final ImageView iv_head = messageHolder.iv_head;
+				app.fileHandler.getImageFile(headFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						if (where == app.fileHandler.FROM_DEFAULT) {
+							iv_head.setImageBitmap(app.fileHandler.defaultHead);
+						} else if (where != app.fileHandler.FROM_MEMORY) {
+							Bitmap head = app.fileHandler.bitmaps
+									.get(headFileName);
+							head = MCImageTools.getCircleBitmap(head, true, 5,
+									Color.WHITE);
+							app.fileHandler.bitmaps.put(headFileName, head);
+							iv_head.setImageBitmap(head);
+						} else {
+							iv_head.setImageBitmap(app.fileHandler.bitmaps
+									.get(headFileName));
+						}
+					}
+				});
 				Integer notread = friends.get(lastChatFriends.get(arg0
 						- messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {
@@ -383,7 +342,6 @@ public class FriendsFragment extends BaseListFragment {
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							System.out.println("cccc");
 						}
 					});
 				} else if (arg0 == getCount() - 2) {
@@ -461,82 +419,29 @@ public class FriendsFragment extends BaseListFragment {
 							}
 							final String headFileName = friends.get(phones
 									.get(a * 6 + position)).head;
-							if (app.heads.get(headFileName) == null) {
-								app.heads.put(headFileName, head);
-								final File headFile = new File(
-										app.sdcardHeadImageFolder, headFileName);
-								if (headFile.exists()) {
-									Bitmap image = BitmapFactory
-											.decodeFile(headFile
-													.getAbsolutePath());
-
-									if (image != null) {
-										Bitmap head = MCImageTools
-												.getCircleBitmap(image, true,
-														5, Color.WHITE);
-										app.heads.put(headFileName, head);
-									}
-								} else {
-									MCNetTools.downloadFile(getActivity(),
-											app.config.DOMAIN_IMAGE,
-											headFileName,
-											app.sdcardHeadImageFolder, null,
-											5000, new DownloadListener() {
-												@Override
-												public void success(
-														File localFile,
-														InputStream inputStream) {
-													Bitmap image = BitmapFactory
-															.decodeFile(localFile
-																	.getAbsolutePath());
-													if (image != null) {
-														Bitmap head = MCImageTools
-																.getCircleBitmap(
-																		image,
-																		true,
-																		5,
-																		Color.WHITE);
-														app.heads.put(
-																headFileName,
-																head);
-														mFriendsAdapter
-																.notifyDataSetChanged();
-													}
-												}
-
-												@Override
-												public void noInternet() {
-													// TODO Auto-generated
-													// method stub
-
-												}
-
-												@Override
-												public void failed() {
-													// TODO Auto-generated
-													// method stub
-
-												}
-
-												@Override
-												public void connectionCreated(
-														HttpURLConnection httpURLConnection) {
-													// TODO Auto-generated
-													// method stub
-
-												}
-
-												@Override
-												public void downloading(
-														int progress) {
-													// TODO Auto-generated
-													// method stub
-												}
-											});
-								}
-							}
-							itemHolder.iv_head.setImageBitmap(app.heads
-									.get(headFileName));
+							final ImageView iv_head = itemHolder.iv_head;
+							app.fileHandler.getImageFile(headFileName,
+									new FileResult() {
+										@Override
+										public void onResult(String where) {
+											if (where == app.fileHandler.FROM_DEFAULT) {
+												iv_head.setImageBitmap(app.fileHandler.defaultHead);
+											} else if (where != app.fileHandler.FROM_MEMORY) {
+												Bitmap head = app.fileHandler.bitmaps
+														.get(headFileName);
+												head = MCImageTools
+														.getCircleBitmap(head,
+																true, 5,
+																Color.WHITE);
+												app.fileHandler.bitmaps.put(
+														headFileName, head);
+												iv_head.setImageBitmap(head);
+											} else {
+												iv_head.setImageBitmap(app.fileHandler.bitmaps
+														.get(headFileName));
+											}
+										}
+									});
 							itemHolder.tv_nickname.setText(friends.get(phones
 									.get(a * 6 + position)).nickName);
 							convertView
@@ -544,7 +449,7 @@ public class FriendsFragment extends BaseListFragment {
 
 										@Override
 										public void onClick(View v) {
-											app.tempFriend = (Friend) getItem(position);
+											app.data.tempFriend = (Friend) getItem(position);
 											app.businessCardStatus = app.SHOW_FRIEND;
 											mMCFragmentManager
 													.replaceToContent(
@@ -667,193 +572,146 @@ public class FriendsFragment extends BaseListFragment {
 	}
 
 	private void getUser() {
-		Bundle params = new Bundle();
+		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 		params.putString("target", app.data.user.phone);
 
-		MCNetTools.ajax(getActivity(), API.ACCOUNT_GET, params,
-				HttpTools.SEND_POST, 5000, new ResponseListener() {
+		System.out.println(params);
 
-					@Override
-					public void success(JSONObject data) {
-						try {
-							app.dataHandler.sendMessage(
-									app.dataHandler.DATA_HANDLER_UPDATEUSER,
-									data.getJSONObject("account"));
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.ACCOUNT_GET;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(JSONObject jData) {
+				try {
+					final JSONObject jUser = jData.getJSONObject("account");
+					app.dataHandler.modifyData(new Modification() {
+						public void modify(Data data) {
+							app.mJSONHandler.updateUser(jUser, data);
 							getCirclesAndFriends();
-						} catch (JSONException e) {
 						}
-					}
-
-					@Override
-					public void noInternet() {
-						// TODO Auto-generated method stub
-					}
-
-					@Override
-					public void failed() {
-						// TODO Auto-generated method stub
-					}
-
-					@Override
-					public void connectionCreated(
-							HttpURLConnection httpURLConnection) {
-						// TODO Auto-generated method stub
-
-					}
-				});
+					});
+				} catch (JSONException e) {
+				}
+			}
+		});
 	}
 
 	private void getCirclesAndFriends() {
-		Bundle params = new Bundle();
+		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
-		MCNetTools.ajax(getActivity(), API.RELATION_GETCIRCLESANDFRIENDS,
-				params, HttpTools.SEND_POST, 5000, new ResponseListener() {
+
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.RELATION_GETCIRCLESANDFRIENDS;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
 					@Override
-					public void success(JSONObject data) {
+					public void modify(Data data) {
 						try {
-							app.dataHandler.sendMessage(
-									app.dataHandler.DATA_HANDLER_CIRCLE,
-									data.getJSONArray("circles"));
+							app.mJSONHandler.saveCircles(
+									jData.getJSONArray("circles"), data);
 							getMessages();
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-
-					@Override
-					public void noInternet() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void failed() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void connectionCreated(
-							HttpURLConnection httpURLConnection) {
-						// TODO Auto-generated method stub
-
-					}
 				});
+			}
+		});
 	}
 
 	private void getMessages() {
-		Bundle params = new Bundle();
+		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 		String flag = app.data.user.flag;
 		params.putString("flag", flag);
-		MCNetTools.ajax(getActivity(), API.MESSAGE_GET, params,
-				HttpTools.SEND_POST, 5000, new ResponseListener() {
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.MESSAGE_GET;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
 
 					@Override
-					public void success(JSONObject data) {
+					public void modify(Data data) {
+						getAskFriends();
 						try {
-							getAskFriends();
-							System.out.println(data);
-							app.dataHandler.sendMessage(
-									app.dataHandler.DATA_HANDLER_MESSAGE,
-									data.getJSONArray("messages"));
-							app.data.user.flag = String.valueOf(data
-									.getInt("flag"));
-							mFriendsHandler
-									.sendEmptyMessage(NOTIFYDATASETCHANGED);
+							app.mJSONHandler.saveMessages(
+									jData.getJSONArray("messages"), data);
+							data.user.flag = jData.getString("flag");
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-
+				}, new UIModification() {
 					@Override
-					public void noInternet() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void failed() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void connectionCreated(
-							HttpURLConnection httpURLConnection) {
-						// TODO Auto-generated method stub
-
+					public void modifyUI() {
+						initData(true);
+						mFriendsAdapter.notifyDataSetChanged();
 					}
 				});
+			}
+		});
 	}
 
 	public void getAskFriends() {
-		Bundle params = new Bundle();
+		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
-		MCNetTools.ajax(getActivity(), API.RELATION_GETASKFRIENDS, params,
-				HttpTools.SEND_POST, 5000, new ResponseListener() {
+
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.RELATION_GETASKFRIENDS;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
 
 					@Override
-					public void success(JSONObject data) {
-						System.out.println(data);
+					public void modify(Data data) {
 						try {
-							data.getString("失败原因");
-							return;
-						} catch (JSONException e) {
-						}
-						try {
-							app.dataHandler.sendMessage(
-									app.dataHandler.DATA_HANDLER_NEWFRIEND,
-									data.getJSONArray("accounts"));
-							mFriendsHandler
-									.sendEmptyMessage(NOTIFYDATASETCHANGED);
+							app.mJSONHandler.saveNewFriends(
+									jData.getJSONArray("accounts"), data);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
+				}, new UIModification() {
 
 					@Override
-					public void noInternet() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void failed() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void connectionCreated(
-							HttpURLConnection httpURLConnection) {
-						// TODO Auto-generated method stub
-
+					public void modifyUI() {
+						initData(false);
+						mFriendsAdapter.notifyDataSetChanged();
 					}
 				});
-	}
-
-	public class FriendsHandler extends Handler {
-		@Override
-		public void handleMessage(Message msg) {
-			int what = msg.what;
-			switch (what) {
-			case NOTIFYDATASETCHANGED:
-				initData(true);
-				mFriendsAdapter.notifyDataSetChanged();
-				break;
-
-			default:
-				break;
 			}
-		}
+		});
 	}
 }

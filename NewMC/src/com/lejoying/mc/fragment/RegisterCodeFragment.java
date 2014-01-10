@@ -1,7 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import java.net.HttpURLConnection;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,9 +15,9 @@ import android.widget.TextView;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.ResponseListener;
-import com.lejoying.utils.HttpTools;
+import com.lejoying.mc.utils.MCNetTools.Settings;
 import com.lejoying.utils.RSAUtils;
 
 public class RegisterCodeFragment extends BaseFragment implements
@@ -46,7 +44,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
 		mView_phone = (TextView) mContent.findViewById(R.id.tv_phone);
 		mView_sendcode = (TextView) mContent.findViewById(R.id.tv_sendcode);
-		mView_phone.setText(app.registerBundle.getString("phone"));
+		mView_phone.setText(app.data.registerBundle.getString("phone"));
 		mView_next.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
 
@@ -67,54 +65,10 @@ public class RegisterCodeFragment extends BaseFragment implements
 				getString(R.string.app_codenotnull);
 				return;
 			}
-			Bundle nextParams = new Bundle();
-			nextParams
-					.putString("phone", app.registerBundle.getString("phone"));
-			nextParams.putString("code", code);
-			MCNetTools.ajax(getActivity(), API.ACCOUNT_VERIFYCODE, nextParams,
-					HttpTools.SEND_POST, 5000, new ResponseListener() {
-
-						@Override
-						public void success(JSONObject data) {
-							try {
-								app.registerBundle.putString("accessKey",
-										RSAUtils.decrypt(app.config.pbKey0,
-												data.getString("accessKey")));
-								app.registerBundle.putString("PbKey",
-										data.getString("PbKey"));
-
-								mMCFragmentManager.replaceToContent(
-										new RegisterPassFragment(), true);
-							} catch (JSONException e) {
-								e.printStackTrace();
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-
-						@Override
-						public void noInternet() {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void failed() {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void connectionCreated(
-								HttpURLConnection httpURLConnection) {
-							// TODO Auto-generated method stub
-
-						}
-					});
+			next(code);
 			break;
 		case R.id.tv_sendcode:
-			Bundle resendParams = app.registerBundle;
+			Bundle resendParams = app.data.registerBundle;
 			resendParams.remove("code");
 			// mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
 			// resendParams, new NetworkStatusAdapter() {
@@ -126,6 +80,41 @@ public class RegisterCodeFragment extends BaseFragment implements
 		default:
 			break;
 		}
+	}
+
+	public void next(String code) {
+		final Bundle nextParams = new Bundle();
+		nextParams.putString("phone", app.data.registerBundle.getString("phone"));
+		nextParams.putString("code", code);
+
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.ACCOUNT_VERIFYCODE;
+				settings.params = nextParams;
+			}
+
+			@Override
+			public void onSuccess(JSONObject jData) {
+				try {
+					app.data.registerBundle.putString(
+							"accessKey",
+							RSAUtils.decrypt(app.config.pbKey0,
+									jData.getString("accessKey")));
+					app.data.registerBundle.putString("PbKey",
+							jData.getString("PbKey"));
+
+					mMCFragmentManager.replaceToContent(
+							new RegisterPassFragment(), true);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	@Override

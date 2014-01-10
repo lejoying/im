@@ -3,14 +3,12 @@ package com.lejoying.mc.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.lejoying.mc.adapter.ToTryAdapter;
-import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.ToTry;
 
 public abstract class BaseListFragment extends ListFragment {
@@ -95,7 +93,4 @@ public abstract class BaseListFragment extends ListFragment {
 		return mFragmentManager;
 	}
 
-	protected void changeContentFragment(Fragment fragment) {
-
-	}
 }

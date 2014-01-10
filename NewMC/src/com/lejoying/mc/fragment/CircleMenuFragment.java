@@ -25,12 +25,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.data.StaticConfig;
-import com.lejoying.mc.data.StaticData;
+import com.lejoying.mc.data.Config;
+import com.lejoying.mc.data.Data;
 import com.lejoying.mc.entity.MenuEntity;
 import com.lejoying.mc.service.PushService;
 import com.lejoying.mc.utils.ToTry;
@@ -40,8 +41,8 @@ import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
 public class CircleMenuFragment extends BaseFragment {
 
 	App app = App.getInstance();
-	StaticData data = app.data;
-	StaticConfig config = app.config;
+	Data data = app.data;
+	Config config = app.config;
 
 	private int mWhere;
 	private int mOldWhere;
@@ -949,6 +950,7 @@ public class CircleMenuFragment extends BaseFragment {
 			Intent service = new Intent(getActivity(), PushService.class);
 			service.putExtra("objective", "stop");
 			getActivity().startService(service);
+			mMCFragmentManager.startToActivity(LoginActivity.class, true);
 			break;
 		case 13:
 
