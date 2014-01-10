@@ -21,7 +21,6 @@ session.notify = function (data, response) {
 		 response.write(JSON.stringify({
         "information": "send sms failed"
     }));
-	response.end();
 	}
 }
 
