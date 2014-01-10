@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -30,7 +31,8 @@ import com.lejoying.utils.Ajax.AjaxInterface;
 import com.lejoying.utils.Ajax.Settings;
 import com.lejoying.utils.HttpTools;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener,
+		AjaxInterface {
 
 	static final String path = "";
 
@@ -83,7 +85,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		sentPI = PendingIntent.getBroadcast(this, 0, sentIntent, 0);
 		registerReceiver(new BroadcastReceiver() {
 			@Override
-			public void onReceive(Context _context, Intent _intent) {
+			public void onReceive(Context context, Intent intent) {
 				switch (getResultCode()) {
 				case Activity.RESULT_OK:
 					if (toast != null) {
@@ -92,8 +94,6 @@ public class MainActivity extends Activity implements OnClickListener {
 					toast = Toast.makeText(MainActivity.this, "短信发送成功",
 							Toast.LENGTH_SHORT);
 					toast.show();
-					Set<String> set = _intent.getExtras().keySet();
-					System.out.println(set.size());
 					break;
 				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
 					break;
@@ -109,7 +109,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		deliverPI = PendingIntent.getBroadcast(this, 0, deliverIntent, 0);
 		registerReceiver(new BroadcastReceiver() {
 			@Override
-			public void onReceive(Context _context, Intent _intent) {
+			public void onReceive(Context context, Intent intent) {
 				if (toast != null) {
 					toast.cancel();
 				}
@@ -121,7 +121,18 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	}
 
-	public void sendSMS(String phone, String text) {
+	public void sendSMS(final String phone, String text) {
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (toast != null) {
+					toast.cancel();
+				}
+				toast = Toast.makeText(MainActivity.this, "发送给："+phone,
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		});
 		smsManager.sendTextMessage(phone, null, text, sentPI, deliverPI);
 	}
 
@@ -170,7 +181,89 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	public void startListener() {
-		Ajax.ajax(this, new AjaxListenerImpl());
+		Ajax.ajax(this, new AjaxInterface() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = "http://115.28.51.197:8074/api2/session/event";
+				Bundle params = new Bundle();
+				params.putString("text", "haha");
+				settings.params = params;
+				settings.timeout = 30000;
+				settings.method = HttpTools.SEND_POST;
+			}
+
+			@Override
+			public void onSuccess(JSONObject jData) {
+				if (isStart) {
+					startListener();
+				}
+				System.out.println(jData);
+				try {
+					sendSMS(jData.getString("phone"), jData.getString("text"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void failed() {
+				if (isStart) {
+					startListener();
+				}
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (toast != null) {
+							toast.cancel();
+						}
+						toast = Toast.makeText(MainActivity.this, "连接失败",
+								Toast.LENGTH_SHORT);
+						toast.show();
+					}
+				});
+			}
+
+			@Override
+			public void noInternet() {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (toast != null) {
+							toast.cancel();
+						}
+						toast = Toast.makeText(MainActivity.this, "没有网络连接",
+								Toast.LENGTH_SHORT);
+						toast.show();
+					}
+				});
+			}
+
+			@Override
+			public void timeout() {
+				if (isStart) {
+					startListener();
+				}
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if (toast != null) {
+							toast.cancel();
+						}
+						toast = Toast.makeText(MainActivity.this, "超时了",
+								Toast.LENGTH_SHORT);
+						toast.show();
+					}
+				});
+			}
+
+			@Override
+			public void connectionCreated(HttpURLConnection httpURLConnection) {
+				currentConnection = httpURLConnection;
+			}
+
+		});
 		System.out.println("重新连接");
 	}
 
@@ -180,125 +273,75 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.finish();
 	}
 
-	class AjaxListenerImpl implements AjaxInterface {
-		@Override
-		public void setParams(Settings settings) {
-			settings.url = "http://115.28.51.197:8074/api2/session/event";
-			Bundle params = new Bundle();
-			params.putString("text", "nihao");
-			settings.params = params;
-			settings.timeout = 30000;
-			settings.method = HttpTools.SEND_POST;
-		}
-
-		@Override
-		public void onSuccess(JSONObject jData) {
-			if (isStart) {
-				startListener();
-			}
-			System.out.println(jData);
-		}
-
-		@Override
-		public void failed() {
-			System.out.println("连接失败");
-			if (isStart) {
-				startListener();
-			}
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					if (toast != null) {
-						toast.cancel();
-					}
-					toast = Toast.makeText(MainActivity.this, "连接失败",
-							Toast.LENGTH_SHORT);
-					toast.show();
-				}
-			});
-		}
-
-		@Override
-		public void noInternet() {
-			System.out.println("没有网络连接");
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					if (toast != null) {
-						toast.cancel();
-					}
-					toast = Toast.makeText(MainActivity.this, "没有网络连接",
-							Toast.LENGTH_SHORT);
-					toast.show();
-				}
-			});
-		}
-
-		@Override
-		public void timeout() {
-			System.out.println("超时了");
-			if (isStart) {
-				startListener();
-			}
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					if (toast != null) {
-						toast.cancel();
-					}
-					toast = Toast.makeText(MainActivity.this, "超时了",
-							Toast.LENGTH_SHORT);
-					toast.show();
-				}
-			});
-		}
-
-		@Override
-		public void connectionCreated(HttpURLConnection httpURLConnection) {
-			currentConnection = httpURLConnection;
-			sendNotify();
-		}
+	@Override
+	public void setParams(Settings settings) {
+		settings.url = "http://115.28.51.197:8074/api2/session/event";
+		settings.timeout = 30000;
+		settings.method = HttpTools.SEND_POST;
 	}
 
-	public void sendNotify() {
-		Ajax.ajax(this, new AjaxInterface() {
+	@Override
+	public void onSuccess(JSONObject jData) {
+		if (isStart) {
+			startListener();
+		}
+		System.out.println(jData);
+	}
 
+	@Override
+	public void failed() {
+		if (isStart) {
+			startListener();
+		}
+		handler.post(new Runnable() {
 			@Override
-			public void timeout() {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void setParams(Settings settings) {
-				settings.url = "http://115.28.51.197:8074/api2/session/notify";
-				Bundle params = new Bundle();
-				params.putString("text", "nihao");
-				settings.params = params;
-			}
-
-			@Override
-			public void onSuccess(JSONObject jData) {
-				System.out.println(jData);
-			}
-
-			@Override
-			public void noInternet() {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void failed() {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void connectionCreated(HttpURLConnection httpURLConnection) {
-				// TODO Auto-generated method stub
-
+			public void run() {
+				if (toast != null) {
+					toast.cancel();
+				}
+				toast = Toast.makeText(MainActivity.this, "连接失败",
+						Toast.LENGTH_SHORT);
+				toast.show();
 			}
 		});
 	}
+
+	@Override
+	public void noInternet() {
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (toast != null) {
+					toast.cancel();
+				}
+				toast = Toast.makeText(MainActivity.this, "没有网络连接",
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		});
+	}
+
+	@Override
+	public void timeout() {
+		if (isStart) {
+			startListener();
+		}
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (toast != null) {
+					toast.cancel();
+				}
+				toast = Toast.makeText(MainActivity.this, "超时了",
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		});
+	}
+
+	@Override
+	public void connectionCreated(HttpURLConnection httpURLConnection) {
+		currentConnection = httpURLConnection;
+	}
+
 }
