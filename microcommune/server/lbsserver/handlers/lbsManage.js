@@ -3,8 +3,10 @@ var lbsManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var ajax = require('./../lib/ajax.js');
+var MD5 = require('./../lib/md5.js');
 var gps = require('./../lib/convertGPS.js');
-
+var ak = "qD4I881MqTR7NZQ2TYTa2ZGh";
+var sk = "ACfYlSkHjGkuie3GmKVdsXTPuINEFUim";
 //LBS 云存储
 /***************************************
  *     URL：/lbs/create
@@ -16,6 +18,18 @@ lbsManage.geotable_create = function (data, response) {
     var geotype = data.geotype;
     var is_published = data.is_published;
     var ak = data.ak;
+    var url = (getMySign({
+        name: name,
+        geotype: geotype,
+        is_published: is_published,
+        ak: ak
+    }));
+    var crypto = require('crypto');
+    console.log(url);
+    console.log(encodeURI(url));
+    var sn = crypto.createHash('md5').update("/geodata/v2/geotable/create" + "?" + url + sk, 'utf8').digest("hex");
+    console.log(sn);
+    console.log(MD5.hex_md5(url));
     ajax.ajax({
         type: "POST",
         ajaxType: "FORM",
@@ -24,10 +38,11 @@ lbsManage.geotable_create = function (data, response) {
             name: name,
             geotype: geotype,
             is_published: is_published,
-            ak: ak
+            ak: ak,
+            sn: sn
         },
         success: function (data) {
-            //            console.log(unescape(data.replace(/\\u/gi, '%u')));
+            console.log(unescape(data.replace(/\\u/gi, '%u')));
             console.log(data);
             response.write(data);
             response.end();
@@ -38,6 +53,32 @@ lbsManage.geotable_create = function (data, response) {
      console.log(data);
      });*/
 }
+function getSn(ak, sk, url, queryString_arrays, method) {
+
+}
+var getMySign = function (params) {
+    var sPara = [];
+    if (!params) return null;
+    for (var key in params) {
+        sPara.push([key, params[key]]);
+    }
+    console.log(sPara.toString());
+    sPara.sort();
+    var prestr = "";
+    for (var i2 = 0; i2 < sPara.length; i2++) {
+        var obj = sPara[i2];
+        if (i2 == sPara.length - 1) {
+            prestr = prestr + obj[0] + "=" + obj[1];
+        } else {
+            prestr = prestr + obj[0] + "=" + obj[1] + "&";
+        }
+    }
+    return prestr;
+    /*prestr = prestr + AlipayConfig.key;
+     var crypto = require('crypto');
+     str = prestr;
+     return crypto.createHash('md5').update(prestr, 'utf8').digest("hex");*/
+};
 lbsManage.geotable_list = function (data, response) {
     response.asynchronous = 1;
     ajax.ajax({
@@ -308,7 +349,7 @@ lbsManage.nearby = function (data, response) {
             geotable_id: 47530,
             ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
             q: "xiaosong",
-            location: "116.25,40.25",
+            location: "116.3,40.3",//"116.25,40.25"
             radius: 200000 // 默认1000 M
         },
         success: function (data) {

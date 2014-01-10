@@ -39,6 +39,7 @@
     <script src="/static/js/sha1.js" charset="utf-8"></script>
     <script src="/static/js/groupfriendcontrol.js" charset="utf-8"></script>
     <script src="/static/js/chatclustercontrol.js" charset="utf-8"></script>
+    <script src="/static/js/jquery.Jcrop.js" charset="utf-8"></script>
     <script src="/static/js/basecontrol.js" charset="utf-8"></script>
     <!--<script src="/static/js/message.js"></script>-->
     <style type="text/css">
@@ -52,8 +53,8 @@
 <body>
 <div style="" id="container">
 <div class="chatPanel normalPanel" id="chat" ctrl="1">
-<div class="panelBackground"><img src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif">
-
+<div class="panelBackground"><img src="/static/images/logocenter.png">
+    <!-- https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif 微信图标-->
     <p>欢迎来到</p>
 
     <p>微型公社网页版</p>
@@ -65,11 +66,13 @@
             <span class="modify_head_text" style="width: 95%;">修改头像</span>
             <span class="modify_head_close js_modify_head_close">X</span>
         </div>
-        <div class="modify_head_images_max">
-            <img src="/static/images/face_man.png" style="width: 100%;height: 100%;"/>
+        <div class="modify_head_images_max js_head_file">
+            <img id="js_modify_head_file" src="" style="width: 234px;height: 234px;"/>
         </div>
         <div class="modify_head_images_min">
-            <img src="/static/images/face_man.png" style="width: 100%;height: 100%;"/>
+            <span id="preview_box" class="crop_preview">
+                <img id="js_modify_jcrophead_show" src="" style="width: 100px;height: 100px;"/>
+            </span>
         </div>
         <div class="modify_head_button">
             <input class="modify_head_images_button" type="button" value="上传图片"/>
@@ -237,7 +240,7 @@
      onmousewheel="tempChatMainContent()">
 <div id="conversationContainer" style="" class="js_mainContent js_js_tempChatMainContent">
 
-<div id="conv_wxid_user2" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21"
+<!--<div id="conv_wxid_user2" username="wxid_t2fqz99bmakt21" un="wxid_t2fqz99bmakt21"
      class="chatListColumn activeColumn">
     <div style="display:none;" class="clicked"></div>
     <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
@@ -658,8 +661,9 @@
         </div>
     </div>
     <div class="clr"></div>
-</div>
-<div class="js_loadingTempData" id="conv_load_more"><a href="javascript:;" class="chatListColumn loadMoreConv"> <span
+</div>-->
+<div style="visibility: hidden;" class="js_loadingTempData" id="conv_load_more"><a href="javascript:;"
+                                                                                   class="chatListColumn loadMoreConv"> <span
         class="tipPic"></span> <span class="desc">点击显示更多</span> </a></div>
 </div>
 
@@ -959,6 +963,46 @@
             <div id="ScroRight" onclick="ScroNow(event)">
                 <div id="ScroLine" OnMouseDown="ScroMove()" style="border-radius: 20%;" draggable="false"></div>
             </div>
+        </div>
+        <?js } ?>
+    </div>
+</div>
+<div class="templates hide">
+    <div class="js_chat_user" id="js_chat_user">
+        <?js for(var index in it){ ?>
+        <?js post=it[index]; ?>
+        <?js if(post==null) { ?>
+        <?js continue; ?>
+        <?js } ?>
+        <div id="js_wxgsid_${post.phone}" username="#{post.nickName}" phone="#{post.phone}"
+             class="chatListColumn activeColumn">
+            <div style="display:none;" class="clicked"></div>
+            <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
+
+            <div class="avatar_wrap"><img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon4.jpg"
+                                          class="avatar"></div>
+            <div class="extend">
+                <p class="time"></p>
+
+                <div class="edited"><i class="editedIcon"></i></div>
+                <div style="display:none;" class="mute"></div>
+            </div>
+            <div class="info">
+                <div class="nickName">
+                    <div style="" class="left name">user2</div>
+                    <div class="clr"></div>
+                </div>
+                <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                              src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif">
+                    <img
+                            class="tipIcon iconSending sendingStatus hide"
+                            src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"
+                            style="display: none;">
+
+                    <p class="desc"></p>
+                </div>
+            </div>
+            <div class="clr"></div>
         </div>
         <?js } ?>
     </div>

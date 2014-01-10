@@ -866,9 +866,9 @@ a.btnSecondary:active {
 .modify_head_images_min{
     position: absolute;
     top: 80px;
-    right:30px;
-    width: 72px;
-    height: 72px;
+    right:17px;
+    width: 100px;
+    height: 100px;
     border: 1px solid #0099CD;
 }
 .modify_head_images_button{
@@ -878,7 +878,7 @@ a.btnSecondary:active {
 }
 .modify_head_button{
     position: absolute;
-    top: 170px;
+    top: 190px;
     right: 20px;
     width:95px;
     height: 25px;
@@ -1138,7 +1138,7 @@ a.btnSecondary:active {
 }
 
 .chatPanel .panelBackground img {
-    background: url("../images/illustration_chat17ced3.png") no-repeat scroll -360px -165px transparent;
+    background: url("../images/logocenter.png");
     height: 65px;
     width: 65px;
 }

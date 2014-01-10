@@ -44,6 +44,11 @@ $(function () {
         keepQuest();
         pullUsersMessage(accountObj);
     }
+
+    $("#conversationContainer>div").click(function () {
+        //临时会话好友列表的显示操作
+//        ($(this).attr("class", "chatListColumn"));
+    });
 });
 function showUserChatMessages(account) {
     var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));

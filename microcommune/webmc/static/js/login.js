@@ -1,9 +1,10 @@
 var browerType = getOs().Browser;
 $(document).ready(function () {
-
+//    alert(browerType);
 //    alert("您的浏览器类型为:" + getOs().Browser);
     window.localStorage.clear();
     window.sessionStorage.clear();
+    window.sessionStorage.setItem("wxgs_browerType", browerType);
     $(".js_login").hide();
     var checkDefault = false;
     var selectLoginMode = "js_webcodelogin";

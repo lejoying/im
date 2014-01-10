@@ -499,6 +499,18 @@ $(document).ready(function () {
         $(".js_findFriendPhone").val("");
         $(".js_findFriendErrorMessage").html("");
         $(".js_addFriendErrorMessage").html("");
+        $(".js_findFriend").css({
+            "top": "200px",
+            "left": "315px"
+        });
+        $(".js_friendMessage").css({
+            "top": "200px",
+            "left": "315px"
+        });
+        $(".js_addFriend").css({
+            "top": "200px",
+            "left": "315px"
+        });
     });
     $(".js_menuPanel").hide();
     $(document).on("mouseenter", ".js_deleteFriend", function () {

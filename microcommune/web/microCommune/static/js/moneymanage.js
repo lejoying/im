@@ -61,7 +61,7 @@ $(document).ready(function () {
         showHeadImgModify();
     });
     $(".js_editheadimg").click(function (e) {
-        $('body').html2canvas();
+//        $('body').html2canvas();
         $(".js_headjrop1").slideUp(100, function () {
             $(".js_headjrop2").css("visibility", "visible");
             $(".js_headjrop2").slideDown(100, function () {
