@@ -291,9 +291,11 @@ public class FriendsFragment extends BaseListFragment {
 						- messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {
 					if (notread > 0) {
+						messageHolder.tv_notread.setVisibility(View.VISIBLE);
 						messageHolder.tv_notread.setText(notread.toString());
 					} else {
 						messageHolder.tv_notread.setText("");
+						messageHolder.tv_notread.setVisibility(View.GONE);
 					}
 				}
 				arg1.setOnClickListener(new OnClickListener() {

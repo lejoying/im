@@ -1,139 +1,73 @@
 package com.lejoying.autosendsms;
 
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.telephony.SmsManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.lejoying.utils.Ajax;
-import com.lejoying.utils.Ajax.AjaxInterface;
-import com.lejoying.utils.Ajax.Settings;
-import com.lejoying.utils.HttpTools;
-
-public class MainActivity extends Activity implements OnClickListener,
-		AjaxInterface {
-
-	static final String path = "";
+public class MainActivity extends Activity implements OnClickListener {
 
 	Button btn_start;
 	Button btn_stop;
+	Button btn_startSend;
+	Button btn_stopSend;
+	TextView tv_nowsending;
 	TextView tv_list;
 	TextView tv_send;
 
-	SmsManager smsManager;
-
-	String SENT_SMS_ACTION = "SENT_SMS_ACTION";
-	Intent sentIntent;
-	PendingIntent sentPI;
-
-	String DELIVERED_SMS_ACTION = "DELIVERED_SMS_ACTION";
-	Intent deliverIntent;
-	PendingIntent deliverPI;
-
-	List<String> phones = new ArrayList<String>();
-	Map<String, String> phoneText = new HashMap<String, String>();
-	List<String> successed = new ArrayList<String>();
-	List<String> unsuccess = new ArrayList<String>();
-
-	HttpURLConnection currentConnection;
-
-	Handler handler;
-
-	boolean isStart;
-
-	Toast toast;
+	SMSStatusReceiver mReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		initView();
-		handler = new Handler();
+
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(SMSService.ACTION);
+		mReceiver = new SMSStatusReceiver();
+		registerReceiver(mReceiver, intentFilter);
+
+		startService(new Intent(this, SMSService.class));
+	}
+
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(mReceiver);
+		super.onDestroy();
 	}
 
 	public void initView() {
 		btn_start = (Button) findViewById(R.id.btn_start);
 		btn_stop = (Button) findViewById(R.id.btn_stop);
+		btn_startSend = (Button) findViewById(R.id.btn_startsend);
+		btn_stopSend = (Button) findViewById(R.id.btn_stopsend);
+		tv_nowsending = (TextView) findViewById(R.id.tv_nowsending);
 		tv_list = (TextView) findViewById(R.id.tv_list);
 		tv_send = (TextView) findViewById(R.id.tv_send);
 		btn_start.setOnClickListener(this);
 		btn_stop.setOnClickListener(this);
-		stop();
-		smsManager = SmsManager.getDefault();
-		sentIntent = new Intent(SENT_SMS_ACTION);
-		sentPI = PendingIntent.getBroadcast(this, 0, sentIntent, 0);
-		registerReceiver(new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				switch (getResultCode()) {
-				case Activity.RESULT_OK:
-					if (toast != null) {
-						toast.cancel();
-					}
-					toast = Toast.makeText(MainActivity.this, "短信发送成功",
-							Toast.LENGTH_SHORT);
-					toast.show();
-					break;
-				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-					break;
-				case SmsManager.RESULT_ERROR_RADIO_OFF:
-					break;
-				case SmsManager.RESULT_ERROR_NULL_PDU:
-					break;
-				}
-			}
-		}, new IntentFilter(SENT_SMS_ACTION));
+		btn_startSend.setOnClickListener(this);
+		btn_stopSend.setOnClickListener(this);
 
-		deliverIntent = new Intent(DELIVERED_SMS_ACTION);
-		deliverPI = PendingIntent.getBroadcast(this, 0, deliverIntent, 0);
-		registerReceiver(new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (toast != null) {
-					toast.cancel();
-				}
-				toast = Toast.makeText(MainActivity.this, "收信人已经成功接收",
-						Toast.LENGTH_SHORT);
-				toast.show();
-			}
-		}, new IntentFilter(DELIVERED_SMS_ACTION));
+		if (SMSService.isStart) {
+			start();
+		} else {
+			stop();
+		}
 
-	}
-
-	public void sendSMS(final String phone, String text) {
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (toast != null) {
-					toast.cancel();
-				}
-				toast = Toast.makeText(MainActivity.this, "发送给："+phone,
-						Toast.LENGTH_SHORT);
-				toast.show();
-			}
-		});
-		smsManager.sendTextMessage(phone, null, text, sentPI, deliverPI);
+		if (SMSService.isStartSend) {
+			startSend();
+		} else {
+			stopSend();
+		}
 	}
 
 	@Override
@@ -145,203 +79,69 @@ public class MainActivity extends Activity implements OnClickListener,
 		case R.id.btn_stop:
 			stop();
 			break;
+		case R.id.btn_startsend:
+			startSend();
+			break;
+		case R.id.btn_stopsend:
+			stopSend();
+			break;
 		default:
 			break;
 		}
 	}
 
 	public void start() {
-		isStart = true;
 		btn_start.setClickable(false);
 		btn_start.setTextColor(Color.GRAY);
 		btn_stop.setClickable(true);
 		btn_stop.setTextColor(Color.BLACK);
-		startListener();
-		if (toast != null) {
-			toast.cancel();
-		}
-		toast = Toast.makeText(MainActivity.this, "开始", Toast.LENGTH_SHORT);
-		toast.show();
+		Intent service = new Intent(this, SMSService.class);
+		service.putExtra("operation", "start");
+		startService(service);
 	}
 
 	public void stop() {
-		isStart = false;
 		btn_start.setClickable(true);
 		btn_start.setTextColor(Color.BLACK);
 		btn_stop.setClickable(false);
 		btn_stop.setTextColor(Color.GRAY);
-		if (currentConnection != null) {
-			currentConnection.disconnect();
+		Intent service = new Intent(this, SMSService.class);
+		service.putExtra("operation", "stop");
+		startService(service);
+	}
+
+	public void startSend() {
+		btn_startSend.setClickable(false);
+		btn_startSend.setTextColor(Color.GRAY);
+		btn_stopSend.setClickable(true);
+		btn_stopSend.setTextColor(Color.BLACK);
+		Intent service = new Intent(this, SMSService.class);
+		service.putExtra("operation", "startSend");
+		startService(service);
+	}
+
+	public void stopSend() {
+		btn_startSend.setClickable(true);
+		btn_startSend.setTextColor(Color.BLACK);
+		btn_stopSend.setClickable(false);
+		btn_stopSend.setTextColor(Color.GRAY);
+		Intent service = new Intent(this, SMSService.class);
+		service.putExtra("operation", "stopSend");
+		startService(service);
+	}
+
+	class SMSStatusReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String nowSending = intent.getStringExtra("nowSending");
+			int queueCount = intent.getIntExtra("queueCount", 0);
+			long sentCount = intent.getLongExtra("sentCount", 0);
+
+			tv_nowsending.setText(getString(R.string.sendingto) + nowSending);
+			tv_list.setText(getString(R.string.tv_list) + queueCount);
+			tv_send.setText(getString(R.string.tv_send) + sentCount);
 		}
-		if (toast != null) {
-			toast.cancel();
-		}
-		toast = Toast.makeText(MainActivity.this, "停止", Toast.LENGTH_SHORT);
-		toast.show();
-	}
 
-	public void startListener() {
-		Ajax.ajax(this, new AjaxInterface() {
-
-			@Override
-			public void setParams(Settings settings) {
-				settings.url = "http://115.28.51.197:8074/api2/session/event";
-				Bundle params = new Bundle();
-				params.putString("text", "haha");
-				settings.params = params;
-				settings.timeout = 30000;
-				settings.method = HttpTools.SEND_POST;
-			}
-
-			@Override
-			public void onSuccess(JSONObject jData) {
-				if (isStart) {
-					startListener();
-				}
-				System.out.println(jData);
-				try {
-					sendSMS(jData.getString("phone"), jData.getString("text"));
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public void failed() {
-				if (isStart) {
-					startListener();
-				}
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						if (toast != null) {
-							toast.cancel();
-						}
-						toast = Toast.makeText(MainActivity.this, "连接失败",
-								Toast.LENGTH_SHORT);
-						toast.show();
-					}
-				});
-			}
-
-			@Override
-			public void noInternet() {
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						if (toast != null) {
-							toast.cancel();
-						}
-						toast = Toast.makeText(MainActivity.this, "没有网络连接",
-								Toast.LENGTH_SHORT);
-						toast.show();
-					}
-				});
-			}
-
-			@Override
-			public void timeout() {
-				if (isStart) {
-					startListener();
-				}
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						if (toast != null) {
-							toast.cancel();
-						}
-						toast = Toast.makeText(MainActivity.this, "超时了",
-								Toast.LENGTH_SHORT);
-						toast.show();
-					}
-				});
-			}
-
-			@Override
-			public void connectionCreated(HttpURLConnection httpURLConnection) {
-				currentConnection = httpURLConnection;
-			}
-
-		});
-		System.out.println("重新连接");
-	}
-
-	@Override
-	public void finish() {
-		stop();
-		super.finish();
-	}
-
-	@Override
-	public void setParams(Settings settings) {
-		settings.url = "http://115.28.51.197:8074/api2/session/event";
-		settings.timeout = 30000;
-		settings.method = HttpTools.SEND_POST;
-	}
-
-	@Override
-	public void onSuccess(JSONObject jData) {
-		if (isStart) {
-			startListener();
-		}
-		System.out.println(jData);
-	}
-
-	@Override
-	public void failed() {
-		if (isStart) {
-			startListener();
-		}
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (toast != null) {
-					toast.cancel();
-				}
-				toast = Toast.makeText(MainActivity.this, "连接失败",
-						Toast.LENGTH_SHORT);
-				toast.show();
-			}
-		});
-	}
-
-	@Override
-	public void noInternet() {
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (toast != null) {
-					toast.cancel();
-				}
-				toast = Toast.makeText(MainActivity.this, "没有网络连接",
-						Toast.LENGTH_SHORT);
-				toast.show();
-			}
-		});
-	}
-
-	@Override
-	public void timeout() {
-		if (isStart) {
-			startListener();
-		}
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (toast != null) {
-					toast.cancel();
-				}
-				toast = Toast.makeText(MainActivity.this, "超时了",
-						Toast.LENGTH_SHORT);
-				toast.show();
-			}
-		});
-	}
-
-	@Override
-	public void connectionCreated(HttpURLConnection httpURLConnection) {
-		currentConnection = httpURLConnection;
 	}
 
 }

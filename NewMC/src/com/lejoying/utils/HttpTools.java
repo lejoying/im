@@ -88,6 +88,8 @@ public final class HttpTools {
 					}
 					paramData = paramData.substring(0, paramData.length() - 1);
 				}
+			} else {
+				paramData = " ";
 			}
 			URL url = new URL(path);
 			httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -182,6 +184,8 @@ public final class HttpTools {
 					}
 					paramData = paramData.substring(0, paramData.length() - 1);
 				}
+			} else {
+				paramData = " ";
 			}
 			URL url = new URL(path);
 			httpURLConnection = (HttpURLConnection) url.openConnection();
