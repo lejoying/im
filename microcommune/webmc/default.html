@@ -36,10 +36,10 @@
     <script src="/static/js/setting.js"></script>
     <script src="/static/js/nTenjin.js"></script>
     <script src="/static/js/animation.js"></script>
+    <script src="/static/js/jquery.Jcrop.js" charset="utf-8"></script>
     <script src="/static/js/sha1.js" charset="utf-8"></script>
     <script src="/static/js/groupfriendcontrol.js" charset="utf-8"></script>
     <script src="/static/js/chatclustercontrol.js" charset="utf-8"></script>
-    <script src="/static/js/jquery.Jcrop.js" charset="utf-8"></script>
     <script src="/static/js/basecontrol.js" charset="utf-8"></script>
     <!--<script src="/static/js/message.js"></script>-->
     <style type="text/css">
@@ -66,13 +66,14 @@
             <span class="modify_head_text" style="width: 95%;">修改头像</span>
             <span class="modify_head_close js_modify_head_close">X</span>
         </div>
-        <div class="modify_head_images_max js_head_file">
-            <img id="js_modify_head_file" src="" style="width: 234px;height: 234px;"/>
+        <div class="modify_head_images_max js_head_file" id="js_head_file">
+            <!--<img id="js_modify_head_file" src="/static/images/face_woman.png" style="width: 234px;height: 234px;"/>-->
+            <img id="js_modify_head_file" src="http://im.lejoying.com/static/images/face_man.png"
+                 style="width: 234px;height: 234px;"/>
         </div>
         <div class="modify_head_images_min">
-            <span id="preview_box" class="crop_preview">
-                <img id="js_modify_jcrophead_show" src="" style="width: 100px;height: 100px;"/>
-            </span>
+            <img id="js_modify_jcrophead_show" src="http://im.lejoying.com/static/images/face_man.png"
+                 style="width: 100px;height: 100px;"/>
         </div>
         <div class="modify_head_button">
             <input class="modify_head_images_button" type="button" value="上传图片"/>
