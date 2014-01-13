@@ -6,6 +6,19 @@ var loadImageFlag = false;
 var imageServer = window.globaldata.serverSetting.imageServer;
 $(function () {//show js_modify_jcrophead_show
     var img = new Image();
+
+    function getBase64() {
+        var img = document.getElementById("js_modify_head_file");
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.width;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");
+        image.src = dataURL
+    }
+
+    getBase64();
     /*$.ajax({
      type: "GET",
      url: "/image/get?",
@@ -20,32 +33,33 @@ $(function () {//show js_modify_jcrophead_show
      }
      });*/
 //    image.src = "http://im.lejoying.com/static/images/face_man.png";
-    image.src = "/static/images/face_man.png";
+    image = document.getElementById("js_modify_head_file");
+//    image.src = "/static/images/face_man.png";
 //    img.crossOrigin = "*";
 //    image.src = "/static/images/face_man.png";
 //    img.crossOrigin = "Anonymous";
 
-    img.onload = function () {
-        console.log(img.complete);
-        console.log("img:" + img.height + "-" + img.width + "--");
-        var temp_ctx, temp_canvas;
-        temp_canvas = document.createElement('canvas');
-        temp_canvas.style.marginTop = "-1800px";
-        temp_ctx = temp_canvas.getContext('2d');
-        temp_canvas.width = img.width;
-        temp_canvas.height = img.height;
-        temp_ctx.drawImage(img, 0, 0);
-        document.body.appendChild(temp_canvas);
-        console.log(temp_canvas);
-        //        var data = (temp_canvas.toDataURL("image/png"));
-        var data = (temp_canvas.toDataURL("image/png"));
-        //        image.src = data;
-        //    $(images).attr("src", temp_canvas.toDataURL());
-        console.log(data);
-        //        $("#js_modify_head_file").attr("src", data);
-        //        console.log(image.width + "--" + image.height);
-    }
-
+    /*img.onload = function () {
+     console.log(img.complete);
+     console.log("img:" + img.height + "-" + img.width + "--");
+     var temp_ctx, temp_canvas;
+     temp_canvas = document.createElement('canvas');
+     temp_canvas.style.marginTop = "-1800px";
+     temp_ctx = temp_canvas.getContext('2d');
+     temp_canvas.width = img.width;
+     temp_canvas.height = img.height;
+     temp_ctx.drawImage(img, 0, 0);
+     document.body.appendChild(temp_canvas);
+     console.log(temp_canvas);
+     //        var data = (temp_canvas.toDataURL("image/png"));
+     var data = (temp_canvas.toDataURL("image/png"));
+     //        image.src = data;
+     //    $(images).attr("src", temp_canvas.toDataURL());
+     console.log(data);
+     //        $("#js_modify_head_file").attr("src", data);
+     //        console.log(image.width + "--" + image.height);
+     }
+     */
     /*    image.src = "/static/images/face_woman.png";
      var images = document.getElementById("js_modify_head_file");
      var temp_ctx, temp_canvas;

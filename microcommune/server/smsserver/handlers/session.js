@@ -35,6 +35,7 @@ session.notify = function (data, response) {
     var message = data.message;
     var smsResponse = (sessionList.pop());
     if (smsResponse != undefined) {
+        delete smsSession[smsResponse.sessionID];
         var sessionResponse = smsResponse.session;
         sessionResponse.write(JSON.stringify({
             information: "event success",
