@@ -1,13 +1,12 @@
 package com.lejoying.mc.utils;
 
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-
-import com.lejoying.utils.StreamTools;
 
 public final class MCImageTools {
 
@@ -65,35 +64,26 @@ public final class MCImageTools {
 		return bitmap;
 	}
 
-	public static boolean isNeedToZoom(byte[] imageByte, Integer maxWidth,
-			Integer maxHeight) {
-		boolean flag = false;
-		BitmapFactory.Options boptions = new BitmapFactory.Options();
-		boptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length, boptions);
-		int width = boptions.outWidth;
-		int height = boptions.outHeight;
-		if (width > maxWidth || height > maxHeight) {
-			flag = true;
+	public static byte[] getByteArrayFromBitmap(Bitmap source,
+			Bitmap.CompressFormat format, int quality) {
+		byte[] data = null;
+		if (source != null) {
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			source.compress(format, quality, byteArrayOutputStream);
+			data = byteArrayOutputStream.toByteArray();
 		}
-		return flag;
+		return data;
 	}
 
-	public static Bitmap getZoomBitmapFromStream(InputStream is,
+	public static Bitmap getZoomBitmapFromFile(File imageFile,
 			Integer maxWidth, Integer maxHeight) {
-		byte[] data = StreamTools.isToData(is);
-		return getZoomBitmapFromStream(data, maxWidth, maxHeight);
-	}
-
-	public static Bitmap getZoomBitmapFromStream(byte[] imageByte,
-			Integer maxWidth, Integer maxHeight) {
-		if (imageByte == null) {
+		if (!imageFile.exists()) {
 			return null;
 		}
 		BitmapFactory.Options boptions = new BitmapFactory.Options();
 		boptions.inJustDecodeBounds = true;
-		Bitmap bitmap = BitmapFactory.decodeByteArray(imageByte, 0,
-				imageByte.length, boptions);
+		Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(),
+				boptions);
 		int width = boptions.outWidth;
 		int height = boptions.outHeight;
 
@@ -104,8 +94,7 @@ public final class MCImageTools {
 			maxHeight = height;
 		}
 		if (maxWidth > width && maxHeight > height) {
-			bitmap = BitmapFactory.decodeByteArray(imageByte, 0,
-					imageByte.length);
+			bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 		} else {
 			int scale = 1;
 			int scaleHeight = boptions.outHeight % maxHeight != 0 ? boptions.outHeight
@@ -117,8 +106,8 @@ public final class MCImageTools {
 			scale = scaleHeight > scaleWidth ? scaleHeight : scaleWidth;
 			boptions.inJustDecodeBounds = false;
 			boptions.inSampleSize = scale;
-			bitmap = BitmapFactory.decodeByteArray(imageByte, 0,
-					imageByte.length, boptions);
+			bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(),
+					boptions);
 		}
 		return bitmap;
 	}

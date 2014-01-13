@@ -15,6 +15,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -110,6 +111,9 @@ public class SMSService extends Service {
 		registerReceiver(deliveredReceiver, new IntentFilter(
 				DELIVERED_SMS_ACTION));
 
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(new NetworkStatusReceiver(), intentFilter);
 		super.onCreate();
 	}
 
@@ -186,15 +190,9 @@ public class SMSService extends Service {
 			String operation = intent.getStringExtra("operation");
 			if (operation != null) {
 				if (operation.equals("start")) {
-					if (!isStart) {
-						isStart = true;
-						startLongAjax();
-					}
+					startLongAjax();
 				} else if (operation.equals("stop")) {
-					if (isStart) {
-						isStart = false;
-						stopLongAjax();
-					}
+					stopLongAjax();
 				} else if (operation.equals("stopSend")) {
 					isStartSend = false;
 				} else if (operation.equals("startSend")) {
@@ -215,6 +213,23 @@ public class SMSService extends Service {
 	Bundle params;
 
 	public void startLongAjax() {
+		if (!isStart && currentConnection == null) {
+			isStart = true;
+			longAjax();
+		}
+	}
+
+	public void stopLongAjax() {
+		if (isStart) {
+			isStart = false;
+			if (currentConnection != null) {
+				currentConnection.disconnect();
+				currentConnection = null;
+			}
+		}
+	}
+
+	public void longAjax() {
 		if (params == null) {
 			String sessionID = String.valueOf(new Date().getTime());
 			params = new Bundle();
@@ -232,28 +247,22 @@ public class SMSService extends Service {
 			@Override
 			public void onSuccess(JSONObject jData) {
 				if (isStart) {
-					startLongAjax();
+					longAjax();
 				}
-				System.out.println(jData);
 				sendSMS(generateSMSEntityFromJSON(jData));
-				System.out.println("success");
 			}
 
 			@Override
 			public void failed() {
 				if (isStart) {
-					stopLongAjax();
-				}
-				handler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						Toast.makeText(SMSService.this,
-								getString(R.string.failed), Toast.LENGTH_SHORT)
-								.show();
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				});
-				sendSMSBroadcast("failed");
+					longAjax();
+				}
 			}
 
 			@Override
@@ -275,8 +284,7 @@ public class SMSService extends Service {
 			@Override
 			public void timeout() {
 				if (isStart) {
-					startLongAjax();
-					System.out.println("timeout");
+					longAjax();
 				}
 			}
 
@@ -286,13 +294,6 @@ public class SMSService extends Service {
 			}
 
 		});
-	}
-
-	public void stopLongAjax() {
-		isStart = false;
-		if (currentConnection != null) {
-			currentConnection.disconnect();
-		}
 	}
 
 	public void cleanQueue() {
@@ -305,6 +306,16 @@ public class SMSService extends Service {
 		unregisterReceiver(sentReceiver);
 		unregisterReceiver(deliveredReceiver);
 		super.onDestroy();
+	}
+
+	public class NetworkStatusReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (HttpTools.hasNetwork(context)) {
+				startLongAjax();
+			}
+		}
 	}
 
 }

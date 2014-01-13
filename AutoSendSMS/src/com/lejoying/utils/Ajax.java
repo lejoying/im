@@ -81,7 +81,7 @@ public class Ajax {
 					try {
 						if (b == null) {
 							long endTime = new Date().getTime();
-							if (endTime - startTime < settings.timeout / 2) {
+							if (endTime - startTime < settings.timeout) {
 								ajaxInterface.failed();
 							} else {
 								ajaxInterface.timeout();

@@ -70,7 +70,7 @@ public class MCNetTools {
 					HttpListener httpListener = new HttpListener() {
 						@Override
 						public void handleInputStream(InputStream is) {
-							b = StreamTools.isToData(is);
+							b = StreamTools.getByteArrayFromInputStream(is);
 						}
 
 						@Override
@@ -97,7 +97,7 @@ public class MCNetTools {
 					try {
 						if (b == null) {
 							long endTime = new Date().getTime();
-							if (endTime - startTime < settings.timeout / 2) {
+							if (endTime - startTime < settings.timeout) {
 								ajaxInterface.failed();
 							} else {
 								ajaxInterface.timeout();

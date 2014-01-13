@@ -12,6 +12,7 @@ import com.lejoying.mc.data.handler.FileHandler;
 import com.lejoying.mc.data.handler.JSONHandler;
 import com.lejoying.mc.data.handler.SDcardDataResolver;
 import com.lejoying.mc.data.handler.ServerHandler;
+import com.lejoying.utils.SHA1;
 
 public class App {
 	private static App app;
@@ -36,9 +37,69 @@ public class App {
 	public String networkStatus = "none";// "WIFI"|"mobile"
 	public String sdcardStatus = "none";// "exist"
 
+	public SHA1 sha1;
 	private App() {
 		initData();
 		initConfig();
+		initHandler();
+		initSDCard();
+		sha1 = new SHA1();
+	}
+
+	public static App getInstance() {
+		if (app == null) {
+			app = new App();
+		}
+		return app;
+	}
+
+	public void initConfig() {
+		config = new Config();
+	}
+
+	public Data data;
+
+	public void initData() {
+		data = new Data();
+	}
+
+	public DataHandler dataHandler;
+	public EventHandler eventHandler;
+	public JSONHandler mJSONHandler;
+	public ServerHandler serverHandler;
+	public FileHandler fileHandler;
+	public SDcardDataResolver sDcardDataResolver;
+
+	public Handler mUIThreadHandler;
+
+	public void initHandler() {
+
+		mUIThreadHandler = new Handler();
+		dataHandler = new DataHandler();
+		dataHandler.initailize(this);
+
+		eventHandler = new EventHandler();
+		eventHandler.initailize(this);
+
+		mJSONHandler = new JSONHandler();
+		mJSONHandler.initailize(this);
+
+		serverHandler = new ServerHandler();
+		serverHandler.initailize(this);
+
+		fileHandler = new FileHandler();
+		fileHandler.initailize(this);
+
+		sDcardDataResolver = new SDcardDataResolver();
+		sDcardDataResolver.initailize(this);
+	}
+
+
+
+	public File sdcardAppFolder;
+	public File sdcardImageFolder;
+	public File sdcardHeadImageFolder;
+	public void initSDCard() {
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
 			sdcardStatus = "exist";
@@ -63,50 +124,6 @@ public class App {
 		}
 	}
 
-	public static App getInstance() {
-		if (app == null) {
-			app = new App();
-		}
-		return app;
-	}
-
-	public void initConfig() {
-		config = new Config();
-	}
-
-	public Data data;
-	public DataHandler dataHandler;
-	public EventHandler eventHandler;
-	public JSONHandler mJSONHandler;
-	public ServerHandler serverHandler;
-	public FileHandler fileHandler;
-	public SDcardDataResolver sDcardDataResolver;
-
-	public Handler mUIThreadHandler;
-
-	public void initData() {
-		mUIThreadHandler = new Handler();
-
-		data = new Data();
-		dataHandler = new DataHandler();
-		dataHandler.initailize(this);
-
-		eventHandler = new EventHandler();
-		eventHandler.initailize(this);
-
-		mJSONHandler = new JSONHandler();
-		mJSONHandler.initailize(this);
-
-		serverHandler = new ServerHandler();
-		serverHandler.initailize(this);
-
-		fileHandler = new FileHandler();
-		fileHandler.initailize(this);
-
-		sDcardDataResolver = new SDcardDataResolver();
-		sDcardDataResolver.initailize(this);
-	}
-
 	public boolean isDataChanged;
 
 	public Config config;
@@ -117,8 +134,4 @@ public class App {
 	public final int SHOW_FRIEND = 2;
 	public final int SHOW_TEMPFRIEND = 3;
 	public int businessCardStatus;
-
-	public File sdcardAppFolder;
-	public File sdcardImageFolder;
-	public File sdcardHeadImageFolder;
 }

@@ -3,14 +3,17 @@ package com.lejoying.mc.data.handler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Base64;
 import android.widget.Toast;
 
 import com.lejoying.mc.R;
@@ -191,34 +194,76 @@ public class FileHandler {
 
 	}
 
-	public void saveBitmap(SaveBitmapInterface saveBitmapInterface) {
-		// try {
-		// if (!folder.exists()) {
-		// folder.mkdirs();
-		// }
-		// File file = new File(folder, fileName);
-		// FileOutputStream fileOutputStream = new FileOutputStream(file);
-		// bitmap.compress(Bitmap.CompressFormat.PNG, 70, fileOutputStream);
-		// } catch (FileNotFoundException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+	public void saveBitmap(final SaveBitmapInterface saveBitmapInterface) {
+		final SaveSettings settings = new SaveSettings();
+		saveBitmapInterface.setParams(settings);
+		final Bitmap source = settings.source;
+		if (source != null) {
+			new Thread() {
+				public void run() {
+					byte[] imageByteArray = MCImageTools
+							.getByteArrayFromBitmap(source,
+									settings.compressFormat, 100);
+					if (imageByteArray != null) {
+						String base64 = Base64.encodeToString(imageByteArray,
+								Base64.DEFAULT);
+						base64 = base64.trim();
+						String sha1 = app.sha1.getDigestOfString(base64
+								.getBytes());
+						sha1 = sha1.toLowerCase(Locale.getDefault());
+						String format = settings.compressFormat == settings.PNG ? ".png"
+								: ".jpg";
+						File localFile = new File(settings.folder, sha1
+								+ format);
+						if (!localFile.exists()) {
+							FileOutputStream fileOutputStream = null;
+							try {
+								fileOutputStream = new FileOutputStream(
+										localFile);
+								fileOutputStream.write(imageByteArray);
+								fileOutputStream.flush();
+							} catch (FileNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} finally {
+								if (fileOutputStream != null) {
+									try {
+										fileOutputStream.close();
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+							}
+						}
+						saveBitmapInterface.onSuccess(sha1 + format, base64);
+					}
+				}
+			}.start();
+
+		}
+	}
+
+	public void saveBitmapAndUpload(SaveBitmapInterface saveBitmapInterface) {
+
 	}
 
 	public class SaveSettings {
-		Bitmap source;
-		File folder = app.sdcardImageFolder;
-		String fileName;
-		Bitmap.CompressFormat compressFormat;
+		public Bitmap.CompressFormat PNG = Bitmap.CompressFormat.PNG;
+		public Bitmap.CompressFormat JPG = Bitmap.CompressFormat.JPEG;
+		public Bitmap source;
+		public File folder = app.sdcardImageFolder;
+		public Bitmap.CompressFormat compressFormat = JPG;
 	}
 
 	public interface SaveBitmapInterface {
 
-		public void setParams();
+		public void setParams(SaveSettings settings);
 
-		public void failed();
-
-		public void onSuccess();
+		public void onSuccess(String fileName, String base64);
 	}
 
 	public interface FileResult {

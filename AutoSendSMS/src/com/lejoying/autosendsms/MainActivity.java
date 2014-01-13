@@ -60,17 +60,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		btn_stopSend.setOnClickListener(this);
 		btn_clearqueue.setOnClickListener(this);
 
-		if (SMSService.isStart) {
-			start();
-		} else {
-			stop();
-		}
-
-		if (SMSService.isStartSend) {
-			startSend();
-		} else {
-			stopSend();
-		}
 	}
 
 	@Override
@@ -155,10 +144,18 @@ public class MainActivity extends Activity implements OnClickListener {
 			tv_send.setText(getString(R.string.tv_send) + sentCount);
 			if (internetStatus.equals("noInternet")) {
 				stop();
-			} else if (internetStatus.equals("failed")) {
+			}
+			if (SMSService.isStart) {
+				start();
+			} else {
 				stop();
 			}
 
+			if (SMSService.isStartSend) {
+				startSend();
+			} else {
+				stopSend();
+			}
 		}
 
 	}

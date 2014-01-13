@@ -37,6 +37,8 @@ import com.lejoying.mc.data.User;
 import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
+import com.lejoying.mc.data.handler.FileHandler.SaveBitmapInterface;
+import com.lejoying.mc.data.handler.FileHandler.SaveSettings;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
@@ -234,78 +236,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		}
 	}
 
-	void modify(final User user) {
-		JSONObject account = new JSONObject();
-		try {
-			if (user.head != null && !user.head.equals("")) {
-				account.put("head", user.head);
-			}
-			if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
-				account.put("mainBusiness", user.mainBusiness);
-			}
-			if (user.nickName != null && !user.mainBusiness.equals("")) {
-				account.put("nickName", user.nickName);
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		final Bundle params = new Bundle();
-		params.putString("phone", app.data.user.phone);
-		params.putString("accessKey", app.data.user.accessKey);
-		params.putString("account", account.toString());
-
-		MCNetTools.ajax(new AjaxAdapter() {
-
-			@Override
-			public void setParams(Settings settings) {
-				settings.url = API.ACCOUNT_MODIFY;
-				settings.params = params;
-			}
-
-			@Override
-			public void onSuccess(final JSONObject jData) {
-				app.dataHandler.modifyData(new Modification() {
-					@Override
-					public void modify(Data data) {
-						if (user.head != null && !user.head.equals("")) {
-							data.user.head = user.head;
-							final String headFileName = user.head;
-							app.fileHandler.getHeadImage(headFileName,
-									new FileResult() {
-										@Override
-										public void onResult(String where) {
-											iv_head.setImageBitmap(app.fileHandler.bitmaps
-													.get(headFileName));
-										}
-									});
-						}
-						if (user.mainBusiness != null
-								&& !user.mainBusiness.equals("")) {
-							data.user.mainBusiness = user.mainBusiness;
-						}
-						if (user.nickName != null
-								&& !user.mainBusiness.equals("")) {
-							data.user.nickName = user.nickName;
-						}
-					}
-				}, new UIModification() {
-					@Override
-					public void modifyUI() {
-						try {
-							jData.getString(getString(R.string.app_reason));
-							tv_name.setText(app.data.user.nickName);
-							tv_yewu.setText(app.data.user.mainBusiness);
-							return;
-						} catch (Exception e) {
-							// TODO: handle exception
-						}
-					}
-				});
-			}
-		});
-	}
-
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -442,10 +372,163 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			startPhotoZoom(uri);
 		} else if (requestCode == RESULT_CATPICTURE
 				&& resultCode == Activity.RESULT_OK && data != null) {
-			Bitmap head = (Bitmap) data.getExtras().get("data");
-			// head.compress(format, quality, stream)
+			if (tempFile != null && tempFile.exists()) {
+				tempFile.delete();
+			}
+			final Bitmap head = (Bitmap) data.getExtras().get("data");
+			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+				@Override
+				public void setParams(SaveSettings settings) {
+					settings.source = head;
+					settings.compressFormat = settings.PNG;
+					settings.folder = app.sdcardHeadImageFolder;
+				}
+
+				@Override
+				public void onSuccess(String fileName, String base64) {
+					if (!fileName.equals(app.data.user.head)) {
+						checkImage(fileName, base64);
+					}
+				}
+			});
 		}
 
+	}
+
+	public void checkImage(final String fileName, final String base64) {
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.IMAGE_CHECK;
+				Bundle params = new Bundle();
+				params.putString("phone", app.data.user.phone);
+				params.putString("accessKey", app.data.user.accessKey);
+				params.putString("filename", fileName);
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(JSONObject jData) {
+				try {
+					System.out.println(jData);
+					System.out.println(fileName);
+					if (jData.getBoolean("exists")) {
+						User user = new User();
+						user.head = fileName;
+						modify(user);
+					} else {
+						uploadImage(fileName, base64);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void uploadImage(final String fileName, final String base64) {
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.IMAGE_UPLOAD;
+				Bundle params = new Bundle();
+				params.putString("phone", app.data.user.phone);
+				params.putString("accessKey", app.data.user.accessKey);
+				params.putString("filename", fileName);
+				params.putString("imagedata", base64);
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(JSONObject jData) {
+				try {
+					jData.getString(getString(R.string.app_reason));
+					return;
+				} catch (JSONException e) {
+				}
+				User user = new User();
+				user.head = fileName;
+				modify(user);
+			}
+		});
+	}
+
+	public void modify(final User user) {
+		JSONObject account = new JSONObject();
+		try {
+			if (user.head != null && !user.head.equals("")) {
+				account.put("head", user.head);
+			}
+			if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
+				account.put("mainBusiness", user.mainBusiness);
+			}
+			if (user.nickName != null && !user.mainBusiness.equals("")) {
+				account.put("nickName", user.nickName);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		final Bundle params = new Bundle();
+		params.putString("phone", app.data.user.phone);
+		params.putString("accessKey", app.data.user.accessKey);
+		params.putString("account", account.toString());
+
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.ACCOUNT_MODIFY;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
+					@Override
+					public void modify(Data data) {
+						if (user.head != null && !user.head.equals("")) {
+							data.user.head = user.head;
+						}
+						if (user.mainBusiness != null
+								&& !user.mainBusiness.equals("")) {
+							data.user.mainBusiness = user.mainBusiness;
+						}
+						if (user.nickName != null
+								&& !user.mainBusiness.equals("")) {
+							data.user.nickName = user.nickName;
+						}
+					}
+				}, new UIModification() {
+					@Override
+					public void modifyUI() {
+						try {
+							jData.getString(getString(R.string.app_reason));
+							tv_name.setText(app.data.user.nickName);
+							tv_yewu.setText(app.data.user.mainBusiness);
+							return;
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+						if (user.head != null && !user.head.equals("")) {
+							final String headFileName = app.data.user.head;
+							app.fileHandler.getHeadImage(headFileName,
+									new FileResult() {
+										@Override
+										public void onResult(String where) {
+											iv_head.setImageBitmap(app.fileHandler.bitmaps
+													.get(headFileName));
+										}
+									});
+						}
+					}
+				});
+			}
+		});
 	}
 
 	public void initData() {

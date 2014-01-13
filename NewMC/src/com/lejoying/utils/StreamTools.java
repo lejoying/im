@@ -9,14 +9,14 @@ import java.io.InputStream;
 
 public final class StreamTools {
 
-	public static byte[] isToData(InputStream is) {
+	public static byte[] getByteArrayFromInputStream(InputStream inputStream) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		byte buffer[] = new byte[1024];
 		int len = 0;
 		byte data[] = null;
-		if (is != null) {
+		if (inputStream != null) {
 			try {
-				while ((len = is.read(buffer)) != -1) {
+				while ((len = inputStream.read(buffer)) != -1) {
 					bos.write(buffer, 0, len);
 				}
 			} catch (IOException e) {
@@ -26,8 +26,8 @@ public final class StreamTools {
 					bos.flush();
 					data = bos.toByteArray();
 					bos.close();
-					if (is != null) {
-						is.close();
+					if (inputStream != null) {
+						inputStream.close();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

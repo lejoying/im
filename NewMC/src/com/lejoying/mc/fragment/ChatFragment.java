@@ -1,11 +1,6 @@
 package com.lejoying.mc.fragment;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -27,7 +22,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
@@ -51,9 +45,12 @@ import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.Message;
+import com.lejoying.mc.data.User;
 import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
+import com.lejoying.mc.data.handler.FileHandler.SaveBitmapInterface;
+import com.lejoying.mc.data.handler.FileHandler.SaveSettings;
 import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
@@ -61,7 +58,6 @@ import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.Settings;
 import com.lejoying.utils.SHA1;
-import com.lejoying.utils.StreamTools;
 
 public class ChatFragment extends BaseListFragment {
 
@@ -70,7 +66,9 @@ public class ChatFragment extends BaseListFragment {
 	private View mContent;
 	public ChatAdapter mAdapter;
 
-	public final int RESULT_SELECTPICTURE = 0x4232;
+	int RESULT_SELECTPICTURE = 0x124;
+	int RESULT_TAKEPICTURE = 0xa3;
+	int RESULT_CATPICTURE = 0x3d;
 
 	LayoutInflater mInflater;
 
@@ -131,369 +129,6 @@ public class ChatFragment extends BaseListFragment {
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RESULT_SELECTPICTURE
-				&& resultCode == Activity.RESULT_OK && data != null) {
-			Uri selectedImage = data.getData();
-			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			Cursor cursor = getActivity().getContentResolver().query(
-					selectedImage, filePathColumn, null, null, null);
-			cursor.moveToFirst();
-			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			final String picturePath = cursor.getString(columnIndex);
-			final String format = picturePath.substring(picturePath
-					.lastIndexOf("."));
-			cursor.close();
-
-			new Thread() {
-				InputStream inputStream = null;
-				FileOutputStream fileOutputStream = null;
-				File tempImage = null;
-				String base64;
-				String uploadFileName;
-				File imageFile;
-				InputStream zoomImageStream;
-
-				public void run() {
-					try {
-						File sourceFile = new File(picturePath);
-						inputStream = new FileInputStream(sourceFile);
-						byte[] tempBytes = StreamTools.isToData(inputStream);
-						if (!MCImageTools.isNeedToZoom(tempBytes, 960, 540)) {
-							base64 = Base64.encodeToString(tempBytes,
-									Base64.DEFAULT);
-							String uploadFile = sha1.getDigestOfString(base64
-									.trim().getBytes()) + format;
-							uploadFileName = uploadFile.toLowerCase(Locale
-									.getDefault());
-							tempImages.put(uploadFileName, BitmapFactory
-									.decodeByteArray(tempBytes, 0,
-											tempBytes.length));
-							imageFile = new File(app.sdcardImageFolder,
-									uploadFileName);
-
-							if (!imageFile.exists()) {
-								StreamTools.copyFile(sourceFile, imageFile,
-										true);
-							}
-
-						} else {
-							Bitmap tempImageBitmap = MCImageTools
-									.getZoomBitmapFromStream(tempBytes, 960,
-											540);
-							tempImage = new File(app.sdcardImageFolder,
-									"tempimage.jpg");
-							int i = 1;
-							while (tempImage.exists()) {
-								tempImage = new File(app.sdcardImageFolder,
-										"tempimage" + (i++) + ".jpg");
-							}
-							fileOutputStream = new FileOutputStream(tempImage);
-							tempImageBitmap.compress(
-									Bitmap.CompressFormat.JPEG, 70,
-									fileOutputStream);
-							try {
-								fileOutputStream.flush();
-								fileOutputStream.close();
-							} catch (IOException e1) {
-								e1.printStackTrace();
-							}
-
-							zoomImageStream = new FileInputStream(tempImage);
-
-							byte[] b = StreamTools.isToData(zoomImageStream);
-
-							if (b != null) {
-								base64 = Base64.encodeToString(b,
-										Base64.DEFAULT);
-								String uploadFile = sha1
-										.getDigestOfString(base64.trim()
-												.getBytes())
-										+ ".jpg";
-
-								uploadFileName = uploadFile.toLowerCase(Locale
-										.getDefault());
-								tempImages.put(uploadFileName, BitmapFactory
-										.decodeByteArray(b, 0, b.length));
-								imageFile = new File(app.sdcardImageFolder,
-										uploadFileName);
-								if (imageFile.exists()) {
-									tempImage.delete();
-								} else {
-									tempImage.renameTo(imageFile);
-								}
-
-							}
-						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} finally {
-						if (zoomImageStream != null) {
-							try {
-								zoomImageStream.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-						if (inputStream != null) {
-							try {
-								inputStream.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-
-					final Bundle params = new Bundle();
-					params.putString("phone", app.data.user.phone);
-					params.putString("accessKey", app.data.user.accessKey);
-					params.putString("filename", uploadFileName);
-
-					MCNetTools.ajax(new AjaxAdapter() {
-
-						@Override
-						public void setParams(Settings settings) {
-							settings.url = API.IMAGE_CHECK;
-							settings.params = params;
-						}
-
-						@Override
-						public void onSuccess(JSONObject jData) {
-							try {
-								boolean isExists = jData.getBoolean("exists");
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					});
-				}
-			}.start();
-			// MCNetTools.ajax(getActivity(), API.IMAGE_CHECK, params,
-			// HttpTools.SEND_POST, 5000, new ResponseListener() {
-			//
-			// @Override
-			// public void success(JSONObject data) {
-			// try {
-			// boolean isExists = data
-			// .getBoolean("exists");
-			//
-			// if (!isExists) {
-			// Bundle params = new Bundle();
-			// params.putString("phone",
-			// app.data.user.phone);
-			// params.putString("accessKey",
-			// app.data.user.accessKey);
-			// params.putString("filename",
-			// uploadFileName);
-			// params.putString("imagedata",
-			// base64);
-			// MCNetTools.ajax(getActivity(),
-			// API.IMAGE_UPLOAD, params,
-			// HttpTools.SEND_POST, 5000,
-			// new ResponseListener() {
-			//
-			// @Override
-			// public void success(
-			// JSONObject data) {
-			// try {
-			// data.get(getString(R.string.app_reason));
-			// return;
-			// } catch (JSONException e) {
-			// // TODO
-			// // Auto-generated
-			// // catch block
-			// e.printStackTrace();
-			// }
-			//
-			// Bundle params = generateParams(
-			// "image",
-			// uploadFileName);
-			// MCNetTools
-			// .ajax(getActivity(),
-			// API.MESSAGE_SEND,
-			// params,
-			// HttpTools.SEND_POST,
-			// 5000,
-			// new ResponseListener() {
-			//
-			// @Override
-			// public void success(
-			// JSONObject data) {
-			// app.isDataChanged = true;
-			// if (app.data.user.flag
-			// .equals("none")) {
-			// app.data.user.flag = String
-			// .valueOf(1);
-			// } else {
-			// app.data.user.flag = String
-			// .valueOf(Integer
-			// .valueOf(
-			// app.data.user.flag)
-			// .intValue() + 1);
-			// }
-			// if (app.data.lastChatFriends
-			// .indexOf(app.data.nowChatFriend.phone) != 0) {
-			// app.data.lastChatFriends
-			// .remove(app.data.nowChatFriend.phone);
-			// app.data.lastChatFriends
-			// .add(0,
-			// app.data.nowChatFriend.phone);
-			// }
-			// }
-			//
-			// @Override
-			// public void noInternet() {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			//
-			// }
-			//
-			// @Override
-			// public void failed() {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			//
-			// }
-			//
-			// @Override
-			// public void connectionCreated(
-			// HttpURLConnection httpURLConnection) {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			//
-			// }
-			// });
-			// }
-			//
-			// @Override
-			// public void noInternet() {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			// }
-			//
-			// @Override
-			// public void failed() {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			// }
-			//
-			// @Override
-			// public void connectionCreated(
-			// HttpURLConnection httpURLConnection) {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			// }
-			// });
-			// } else {
-			// Bundle params = generateParams(
-			// "image", uploadFileName);
-			// MCNetTools.ajax(getActivity(),
-			// API.MESSAGE_SEND, params,
-			// HttpTools.SEND_POST, 5000,
-			// new ResponseListener() {
-			//
-			// @Override
-			// public void success(
-			// JSONObject data) {
-			// app.isDataChanged = true;
-			// if (app.data.user.flag
-			// .equals("none")) {
-			// app.data.user.flag = String
-			// .valueOf(1);
-			// } else {
-			// app.data.user.flag = String
-			// .valueOf(Integer
-			// .valueOf(
-			// app.data.user.flag)
-			// .intValue() + 1);
-			// }
-			// if (app.data.lastChatFriends
-			// .indexOf(app.data.nowChatFriend.phone) != 0) {
-			// app.data.lastChatFriends
-			// .remove(app.data.nowChatFriend.phone);
-			// app.data.lastChatFriends
-			// .add(0,
-			// app.data.nowChatFriend.phone);
-			// }
-			// }
-			//
-			// @Override
-			// public void noInternet() {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			//
-			// }
-			//
-			// @Override
-			// public void failed() {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			//
-			// }
-			//
-			// @Override
-			// public void connectionCreated(
-			// HttpURLConnection httpURLConnection) {
-			// // TODO
-			// // Auto-generated
-			// // method
-			// // stub
-			//
-			// }
-			// });
-			// }
-			// } catch (JSONException e) {
-			// // TODO Auto-generated catch
-			// // block
-			// e.printStackTrace();
-			// }
-			// }
-			//
-			// @Override
-			// public void noInternet() {
-			// // TODO Auto-generated method
-			// // stub
-			// }
-			//
-			// @Override
-			// public void failed() {
-			// // TODO Auto-generated method
-			// // stub
-			// }
-			//
-			// @Override
-			// public void connectionCreated(
-			// HttpURLConnection httpURLConnection) {
-			// // TODO Auto-generated method
-			// // stub
-			// }
-			// });
-
-		}
-	}
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mInflater = inflater;
@@ -527,10 +162,7 @@ public class ChatFragment extends BaseListFragment {
 
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(
-						Intent.ACTION_PICK,
-						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-				startActivityForResult(i, RESULT_SELECTPICTURE);
+				selectPicture();
 			}
 		});
 
@@ -603,6 +235,8 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
+		editText_message.requestFocus();
+
 		iv_more.setOnTouchListener(new OnTouchListener() {
 
 			@Override
@@ -674,45 +308,7 @@ public class ChatFragment extends BaseListFragment {
 				final String message = editText_message.getText().toString();
 				editText_message.setText("");
 				if (message != null && !message.equals("")) {
-					addMessage("text", message);
-					MCNetTools.ajax(new AjaxAdapter() {
-						public void setParams(Settings settings) {
-							settings.url = API.MESSAGE_SEND;
-							settings.params = generateParams("text", message);
-						}
-
-						public void onSuccess(JSONObject data) {
-							app.dataHandler.modifyData(new Modification() {
-								public void modify(Data data) {
-									if (app.data.user.flag.equals("none")) {
-										app.data.user.flag = String.valueOf(1);
-									} else {
-										app.data.user.flag = String
-												.valueOf(Integer.valueOf(
-														app.data.user.flag)
-														.intValue() + 1);
-									}
-									if (app.data.lastChatFriends
-											.indexOf(app.data.nowChatFriend.phone) != 0) {
-										app.data.lastChatFriends
-												.remove(app.data.nowChatFriend.phone);
-										app.data.lastChatFriends.add(0,
-												app.data.nowChatFriend.phone);
-									}
-								}
-							}, new UIModification() {
-								public void modifyUI() {
-									// ?
-								}
-							});
-						}
-
-						@Override
-						public void failed() {
-							// TODO Auto-generated method stub
-
-						}
-					});
+					sendMessage("text", message);
 				}
 			}
 		});
@@ -903,7 +499,7 @@ public class ChatFragment extends BaseListFragment {
 		TextView tv_nickname;
 	}
 
-	public void addMessage(String type, String content) {
+	public void sendMessage(final String type, final String content) {
 		final Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
 		message.content = content;
@@ -920,6 +516,39 @@ public class ChatFragment extends BaseListFragment {
 				mAdapter.notifyDataSetChanged();
 				getListView().setTranscriptMode(
 						ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+			}
+		});
+
+		MCNetTools.ajax(new AjaxAdapter() {
+			public void setParams(Settings settings) {
+				settings.url = API.MESSAGE_SEND;
+				settings.params = generateParams(type, content);
+			}
+
+			public void onSuccess(JSONObject data) {
+				app.dataHandler.modifyData(new Modification() {
+					public void modify(Data data) {
+						if (app.data.user.flag.equals("none")) {
+							app.data.user.flag = String.valueOf(1);
+						} else {
+							app.data.user.flag = String
+									.valueOf(Integer
+											.valueOf(app.data.user.flag)
+											.intValue() + 1);
+						}
+						if (app.data.lastChatFriends
+								.indexOf(app.data.nowChatFriend.phone) != 0) {
+							app.data.lastChatFriends
+									.remove(app.data.nowChatFriend.phone);
+							app.data.lastChatFriends.add(0,
+									app.data.nowChatFriend.phone);
+						}
+					}
+				}, new UIModification() {
+					public void modifyUI() {
+						// ?
+					}
+				});
 			}
 		});
 	}
@@ -941,4 +570,142 @@ public class ChatFragment extends BaseListFragment {
 
 		return params;
 	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			Uri selectedImage = data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getActivity().getContentResolver().query(
+					selectedImage, filePathColumn, null, null, null);
+			cursor.moveToFirst();
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			final String picturePath = cursor.getString(columnIndex)
+					.toLowerCase(Locale.getDefault());
+			final String format = picturePath.substring(picturePath
+					.lastIndexOf("."));
+			cursor.close();
+
+			final Bitmap bitmap = MCImageTools.getZoomBitmapFromFile(new File(
+					picturePath), 960, 540);
+			if (bitmap != null) {
+				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+					@Override
+					public void setParams(SaveSettings settings) {
+						settings.compressFormat = format.equals(".jpg") ? settings.JPG
+								: settings.PNG;
+						settings.source = bitmap;
+					}
+
+					@Override
+					public void onSuccess(String fileName, String base64) {
+						checkImage(fileName, base64);
+					}
+				});
+			}
+
+		} else if (requestCode == RESULT_TAKEPICTURE
+				&& resultCode == Activity.RESULT_OK) {
+
+		} else if (requestCode == RESULT_CATPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			final Bitmap image = (Bitmap) data.getExtras().get("data");
+			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+				@Override
+				public void setParams(SaveSettings settings) {
+					settings.source = image;
+					settings.compressFormat = settings.JPG;
+					settings.folder = app.sdcardImageFolder;
+				}
+
+				@Override
+				public void onSuccess(String fileName, String base64) {
+
+				}
+			});
+		}
+	}
+
+	void selectPicture() {
+		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
+	}
+
+	void takePicture() {
+		tempFile = new File(app.sdcardImageFolder, "tempimage");
+		int i = 1;
+		while (tempFile.exists()) {
+			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++));
+		}
+		Uri uri = Uri.fromFile(tempFile);
+		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		tackPicture.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
+		tackPicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
+	}
+
+	public void checkImage(final String fileName, final String base64) {
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.IMAGE_CHECK;
+				Bundle params = new Bundle();
+				params.putString("phone", app.data.user.phone);
+				params.putString("accessKey", app.data.user.accessKey);
+				params.putString("filename", fileName);
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(JSONObject jData) {
+				try {
+					System.out.println(jData);
+					System.out.println(fileName);
+					if (jData.getBoolean("exists")) {
+						sendMessage("image", fileName);
+					} else {
+						uploadImage(fileName, base64);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void uploadImage(final String fileName, final String base64) {
+		MCNetTools.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.IMAGE_UPLOAD;
+				Bundle params = new Bundle();
+				params.putString("phone", app.data.user.phone);
+				params.putString("accessKey", app.data.user.accessKey);
+				params.putString("filename", fileName);
+				params.putString("imagedata", base64);
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(JSONObject jData) {
+				try {
+					jData.getString(getString(R.string.app_reason));
+					return;
+				} catch (JSONException e) {
+				}
+				sendMessage("image", fileName);
+			}
+		});
+	}
+
+	File tempFile;
+
 }
