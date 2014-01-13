@@ -33,8 +33,9 @@ session.notify = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var message = data.message;
-    var sessionResponse = (sessionList.pop()).session;
-    if (sessionResponse != undefined) {
+    var smsResponse = (sessionList.pop());
+    if (smsResponse != undefined) {
+        var sessionResponse = smsResponse.session;
         sessionResponse.write(JSON.stringify({
             information: "event success",
             phone: phone,
