@@ -1,28 +1,57 @@
 var session = {};
 
 smsSession = {};
-
+var sessionList = [];
 session.event = function (data, response) {
     response.asynchronous = 1;
-    smsSession["sms"] = response;
+    var sessionID = data.sessionID;
+    if (smsSession[sessionID] != undefined) {
+        smsSession[sessionID] = response;
+        for (var i = 0; i < sessionList.length; i++) {
+            var smsResponse = sessionList[i];
+            if (smsResponse.sessionID == sessionID) {
+                sessionList.splice(i, 1);
+                var smsResponse = {
+                    sessionID: sessionID,
+                    session: response
+                };
+                sessionList.push(smsResponse);
+                break;
+            }
+        }
+    } else {
+        smsSession[sessionID] = response;
+        var smsResponse = {
+            sessionID: sessionID,
+            session: response
+        };
+        sessionList.push(smsResponse);
+    }
 }
 
 session.notify = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var message = data.message;
+    var sessionResponse = (sessionList.pop()).session;
+    if (sessionResponse != undefined) {
+        sessionResponse.write(JSON.stringify({
+            information: "event success",
+            phone: phone,
+            message: message
+        }));
+        sessionResponse.end();
 
-    var sessionResponse = smsSession["sms"];
-	if(sessionResponse!=undefined){
-    sessionResponse.write(JSON.stringify(data));
-    sessionResponse.end();
-
-    response.write(JSON.stringify({
-        "information": "send sms success"
-    }));
-    response.end();}else{
-		 response.write(JSON.stringify({
-        "information": "send sms failed"
-    }));
-	response.end();
-	}
+        response.write(JSON.stringify({
+            information: "notify success"
+        }));
+        response.end();
+    } else {
+        response.write(JSON.stringify({
+            information: "notify failed"
+        }));
+        response.end();
+    }
 }
 
 module.exports = session;

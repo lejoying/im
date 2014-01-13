@@ -853,21 +853,22 @@
 <div class="templates hide">
     <div class="js_chatmessagetemplate" id="js_chatmessagetemplate">
         <!--左右消息模版-->
-        <?js var phone = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")).phone; ?>
+        <?js var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount")); ?>
         <?js var beforeTime = ""; ?>
         <?js for(var index in it) { ?>
         <?js var post1 = JSON.parse(it[index]); ?>
         <?js if(post1 == null) { ?>
         <?js continue; ?>
         <?js } ?>
-        <?js if(post1.phone!=phone) { ?>
+        <?js if(post1.phone!=accountObj.phone) { ?>
         <div un="item_2070333132" class="chatItem you">
             <div class="time"><span class="timeBg left"></span>
                 #{formattertime(post1.time)}
                 <span class="timeBg right"></span></div>
-            <div class="chatItemContent"><img username="gh_c639eef72f78" click="showProfile" title="云上"
-                                              un="avatar_gh_c639eef72f78" onerror="reLoadImg(this)"
-                                              src="static/images/webwxgeticon4.jpg" class="avatar">
+            <div class="chatItemContent"><img username="gh_c639eef72f78" click="showProfile"
+                                              title="#{currentChatUser.nickName}"
+                                              un="avatar_gh_c639eef72f78"
+                                              src="#{imageServer}#{currentChatUser.head}" class="avatar">
 
                 <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
                     <div style="" class="cloudPannel">
@@ -891,9 +892,10 @@
                 <span class="timeBg right"></span>
                 <?js } ?>
             </div>
-            <div class="chatItemContent"><img username="wxid_7832428324312" click="showProfile" title="123"
-                                              un="avatar_wxid_7832428324312" onerror="reLoadImg(this)"
-                                              src="static/images/face.jpg" class="avatar">
+            <div class="chatItemContent"><img username="wxid_7832428324312" click="showProfile"
+                                              title="#{accountObj.nickName}"
+                                              un="avatar_wxid_7832428324312"
+                                              src="/static/images/face_man.png" class="avatar">
 
                 <div msgid="2070333140" un="cloud_2070333140" class="cloud cloudText">
                     <div style="" class="cloudPannel">

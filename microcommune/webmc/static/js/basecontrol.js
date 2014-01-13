@@ -3,6 +3,7 @@ var scrollFlagTempChatTop = false;
 var image = new Image();
 var vData;
 var loadImageFlag = false;
+var imageServer = window.globaldata.serverSetting.imageServer;
 $(function () {//show js_modify_jcrophead_show
     var img = new Image();
     /*$.ajax({
@@ -19,7 +20,7 @@ $(function () {//show js_modify_jcrophead_show
      }
      });*/
 //    image.src = "http://im.lejoying.com/static/images/face_man.png";
-    Image.Source = "http://im.lejoying.com/static/images/face_man.png";
+    image.src = "/static/images/face_man.png";
 //    img.crossOrigin = "*";
 //    image.src = "/static/images/face_man.png";
 //    img.crossOrigin = "Anonymous";
@@ -180,7 +181,7 @@ $(function () {//show js_modify_jcrophead_show
     new Drag($("#js_modifyAccountHeadImgPanel")[0]);
 });
 function showPreview(coords) {
-    console.log(image.src.length);
+//    console.log(image.src.length);
     if (parseInt(coords.w) > 0) {
         var cx = image.width / 234;
         var cy = image.height / 234;
@@ -195,8 +196,8 @@ function showPreview(coords) {
         temp_canvas.height = 100;
         temp_ctx.drawImage(image, ax, ay, cwidth, cheight, 0, 0, 100, 100);
         var vData = temp_canvas.toDataURL();
-        console.log("vData:" + vData + "---length:" + vData.length + "cwidth:" + cwidth + "--cheight:" +
-            cheight + "--ax:" + ax + "--ay:" + ay + "--canves:" + temp_canvas.height);
+//        console.log("vData:" + vData + "---length:" + vData.length + "cwidth:" + cwidth + "--cheight:" +
+//            cheight + "--ax:" + ax + "--ay:" + ay + "--canves:" + temp_canvas.height);
 //        tempData = temp_canvas.toDataURL();
         setImagesPostion(vData);
     }

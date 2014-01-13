@@ -4,8 +4,6 @@ $(function () {
     $(".js_chatRightFrame").css({
         visibility: "hidden"
     });
-//    $(".js_rightChatPanel").hide();
-//    $(".js_chatRightFrame").hide();
     $(".js_morefriend").hide();
     $(".js_morefriend").slideUp();
     $(".js_onlyfriend").slideUp(1);

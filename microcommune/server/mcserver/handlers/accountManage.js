@@ -6,6 +6,7 @@ var ajax = require("./../lib/ajax.js");
 var sms = require("./../lib/SMS.js");
 var sha1 = require("./../tools/sha1.js");
 var verifyEmpty = require("./../lib/verifyParams.js");
+var push = require("./../lib/push.js");
 var RSA = require('../../alipayserver/tools/RSA');
 RSA.setMaxDigits(38);
 var pbkeyStr0 = RSA.RSAKeyStr("5db114f97e3b71e1316464bd4ba54b25a8f015ccb4bdf7796eb4767f9828841",
@@ -159,14 +160,21 @@ accountManage.verifyphone = function (data, response) {
         var message = "微型公社手机验证码：" + code + "，欢迎您使用";
         console.log(message);
         if (sms_power == true) {
-            sms.sendMsg(account.phone, message, function (data) {
-                var smsObj = JSON.parse(data);
-                if (smsObj.statusCode == "000000") {
+            push.smsSend(account.phone, message, function (data) {
+                if (JSON.parse(data).information == "notify success") {
                     next();
-                } else {
+                }else{
                     responseFailMessage(response, promptMessage + "失败", "手机号不正确");
                 }
             });
+            /*sms.sendMsg(account.phone, message, function (data) {
+             var smsObj = JSON.parse(data);
+             if (smsObj.statusCode == "000000") {
+             next();
+             } else {
+             responseFailMessage(response, promptMessage + "失败", "手机号不正确");
+             }
+             });*/
         } else {
             next();
         }

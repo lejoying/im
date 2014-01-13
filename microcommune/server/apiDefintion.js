@@ -47,7 +47,7 @@ api = {
             typical: {"phone": "XXX", "accessKey": "XXX"}
         },
         response: {
-            success: {"提示信息": "成功", event: "message" || "newfriend" || "friendaccept", event_content: {phone: "XXX",messages:"XXX"}},
+            success: {"提示信息": "成功", event: "message" || "newfriend" || "friendaccept", event_content: {phone: "XXX", messages: "XXX"}},
             failed: {"提示信息": "失败", "失败原因": ["数据异常"]}
         }
     },
@@ -665,6 +665,40 @@ api = {
         response: {
             success: "success",
             failed: "fail"
+        }
+    }
+}
+/*************************************** ***************************************
+ * *    Class：sms
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/api2/sms/event
+     ***************************************/
+    "sms_event": {
+        description: {
+            id: 1000900,
+            url: "/api2/sms/event"
+        },
+        request: {
+            typical: {sessionID: "XXX"}
+        },
+        response: {
+            success: {"information": "event success", phone: "XXX", message: "XXX"},
+            failed: {"information": "event failed"}
+        }
+    },
+    "sms_notify": {
+        description: {
+            id: 1000901,
+            url: "/api2/sms/notify"
+        },
+        request: {
+            typical: {phone: "XXX", messgae: "XXX"}
+        },
+        response: {
+            success: {"information": "notify success"},
+            failed: {"information": "notify failed"}
         }
     }
 }
