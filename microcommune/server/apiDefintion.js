@@ -718,7 +718,7 @@ api = {
             url: "/api2/group/create"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", tempGid: "XXX", groupName: "XXX", members: ["XXX", "XXX", "XXX"]}
+            typical: {phone: "XXX", accessKey: "XXX", phone: "XXX", tempGid: "XXX", groupName: "XXX", members: ["XXX", "XXX", "XXX"]}
         },
         response: {
             success: {"提示信息": "创建群组成功", group: {}},
@@ -758,12 +758,12 @@ api = {
         }
     },
     /***************************************
-     *     URL：/api2/group/getallmember
+     *     URL：/api2/group/getallmembers
      ***************************************/
-    "group_getallmember": {
+    "group_getallmembers": {
         description: {
             id: 1001003,
-            url: "/api2/group/getallmember"
+            url: "/api2/group/getallmembers"
         },
         request: {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
