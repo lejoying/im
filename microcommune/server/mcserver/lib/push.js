@@ -40,7 +40,6 @@ push.notifywebcodelogin = function (phone, phoneTo, accessKey, sessionID, next) 
     });
 }
 push.smsSend = function (phone, message, next) {
-    console.log(phone + "---" + message);
     ajax.ajax({
         type: "POST",
         url: "http://127.0.0.1:8074/api2/sms/notify?",
