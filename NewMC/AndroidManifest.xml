@@ -42,6 +42,7 @@
         </activity>
         <activity
             android:name="MainActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@style/MyActivityStyle"
             android:windowSoftInputMode="adjustResize" >

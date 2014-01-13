@@ -28,6 +28,7 @@ public class WelcomeActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		app.context = this;
+		
 		setContentView(R.layout._welcome);
 		app.sDcardDataResolver.readConfig();
 		start = new Date().getTime();

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,8 +49,8 @@ public class MCNetTools {
 	public static void ajax(final AjaxInterface ajaxInterface) {
 
 		final Settings settings = new Settings();
+		final long startTime = new Date().getTime();
 		ajaxInterface.setParams(settings);
-
 		if (app.networkStatus == "none") {
 			NetworkInfo networkInfo = HttpTools
 					.getActiveNetworkInfo(app.context);
@@ -95,7 +96,12 @@ public class MCNetTools {
 					}
 					try {
 						if (b == null) {
-							ajaxInterface.timeout();
+							long endTime = new Date().getTime();
+							if (endTime - startTime < settings.timeout / 2) {
+								ajaxInterface.failed();
+							} else {
+								ajaxInterface.timeout();
+							}
 						} else {
 							final JSONObject jData = new JSONObject(new String(
 									b));

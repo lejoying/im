@@ -2,6 +2,7 @@ package com.lejoying.utils;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +38,7 @@ public class Ajax {
 	public static void ajax(Context context, final AjaxInterface ajaxInterface) {
 
 		final Settings settings = new Settings();
+		final long startTime = new Date().getTime();
 		ajaxInterface.setParams(settings);
 		if (!HttpTools.hasNetwork(context)) {
 			ajaxInterface.noInternet();
@@ -78,7 +80,12 @@ public class Ajax {
 					}
 					try {
 						if (b == null) {
-							ajaxInterface.timeout();
+							long endTime = new Date().getTime();
+							if (endTime - startTime < settings.timeout / 2) {
+								ajaxInterface.failed();
+							} else {
+								ajaxInterface.timeout();
+							}
 						} else {
 							final JSONObject jData = new JSONObject(new String(
 									b));

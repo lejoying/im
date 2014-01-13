@@ -1,6 +1,7 @@
 package com.lejoying.autosendsms;
 
 import java.net.HttpURLConnection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -14,8 +15,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.telephony.SmsManager;
+import android.widget.Toast;
 
 import com.lejoying.utils.Ajax;
 import com.lejoying.utils.Ajax.AjaxInterface;
@@ -46,6 +50,8 @@ public class SMSService extends Service {
 
 	SMSEntity nowSendingEntity;
 
+	Handler handler;
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -54,6 +60,9 @@ public class SMSService extends Service {
 
 	@Override
 	public void onCreate() {
+
+		handler = new Handler();
+
 		smsManager = SmsManager.getDefault();
 		String SENT_SMS_ACTION = "SENT_SMS_ACTION";
 		Intent sentIntent;
@@ -137,6 +146,10 @@ public class SMSService extends Service {
 	}
 
 	public void sendSMSBroadcast() {
+		sendSMSBroadcast("success");
+	}
+
+	public void sendSMSBroadcast(String internetStatus) {
 		Intent intent = new Intent();
 		intent.setAction(ACTION);
 		if (nowSendingEntity != null) {
@@ -146,8 +159,8 @@ public class SMSService extends Service {
 		}
 		intent.putExtra("queueCount", mSMSQueue.size());
 		intent.putExtra("sentCount", sentCount);
+		intent.putExtra("internet", internetStatus);
 		sendBroadcast(intent);
-
 	}
 
 	public void handleOver() {
@@ -161,7 +174,7 @@ public class SMSService extends Service {
 		SMSEntity smsEntity = new SMSEntity();
 		try {
 			smsEntity.phone = jSMSEntity.getString("phone");
-			smsEntity.text = jSMSEntity.getString("text");
+			smsEntity.text = jSMSEntity.getString("message");
 		} catch (JSONException e) {
 		}
 		return smsEntity;
@@ -189,6 +202,8 @@ public class SMSService extends Service {
 						isStartSend = true;
 						handleSMSQueue();
 					}
+				} else if (operation.equals("clearQueue")) {
+					cleanQueue();
 				}
 			} else {
 				sendSMSBroadcast();
@@ -197,12 +212,20 @@ public class SMSService extends Service {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
+	Bundle params;
+
 	public void startLongAjax() {
+		if (params == null) {
+			String sessionID = String.valueOf(new Date().getTime());
+			params = new Bundle();
+			params.putString("sessionID", sessionID);
+		}
 		Ajax.ajax(this, new AjaxInterface() {
 			@Override
 			public void setParams(Settings settings) {
-				settings.url = "http://115.28.51.197:8074/api2/session/event";
+				settings.url = "http://115.28.51.197:8074/api2/sms/event";
 				settings.timeout = 30000;
+				settings.params = params;
 				settings.method = HttpTools.SEND_POST;
 			}
 
@@ -211,24 +234,49 @@ public class SMSService extends Service {
 				if (isStart) {
 					startLongAjax();
 				}
+				System.out.println(jData);
 				sendSMS(generateSMSEntityFromJSON(jData));
+				System.out.println("success");
 			}
 
 			@Override
 			public void failed() {
 				if (isStart) {
-					startLongAjax();
+					stopLongAjax();
 				}
+				handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						Toast.makeText(SMSService.this,
+								getString(R.string.failed), Toast.LENGTH_SHORT)
+								.show();
+					}
+				});
+				sendSMSBroadcast("failed");
 			}
 
 			@Override
 			public void noInternet() {
+				if (isStart) {
+					stopLongAjax();
+				}
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(SMSService.this,
+								getString(R.string.nointernet),
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+				sendSMSBroadcast("noInternet");
 			}
 
 			@Override
 			public void timeout() {
 				if (isStart) {
 					startLongAjax();
+					System.out.println("timeout");
 				}
 			}
 
@@ -245,6 +293,11 @@ public class SMSService extends Service {
 		if (currentConnection != null) {
 			currentConnection.disconnect();
 		}
+	}
+
+	public void cleanQueue() {
+		mSMSQueue.clear();
+		sendSMSBroadcast();
 	}
 
 	@Override

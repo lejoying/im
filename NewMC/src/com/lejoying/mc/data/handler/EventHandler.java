@@ -43,7 +43,7 @@ public class EventHandler {
 				}
 				if (FriendsFragment.instance != null) {
 					FriendsFragment.instance.initData(true);
-					FriendsFragment.instance.mFriendsAdapter
+					FriendsFragment.instance.mAdapter
 							.notifyDataSetChanged();
 				}
 			}

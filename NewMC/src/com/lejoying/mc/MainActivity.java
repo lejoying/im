@@ -1,8 +1,8 @@
 package com.lejoying.mc;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
 
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.fragment.FriendsFragment;
@@ -46,15 +46,7 @@ public class MainActivity extends BaseFragmentActivity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		boolean flag = true;
-		// if (keyCode == KeyEvent.KEYCODE_BACK) {
-		// if (app.mark.equals(app.friendsFragment)
-		// || app.mark.equals(app.ShareFragment)) {
-		// moveTaskToBack(false);
-		// flag = false;
-		// }
-		// }
-		return flag && super.onKeyDown(keyCode, event);
+	public void onConfigurationChanged(Configuration config) {
+		super.onConfigurationChanged(config);
 	}
 }

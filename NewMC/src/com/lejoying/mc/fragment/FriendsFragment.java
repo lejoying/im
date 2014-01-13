@@ -63,7 +63,7 @@ public class FriendsFragment extends BaseListFragment {
 	List<Friend> newFriends;
 	List<String> lastChatFriends;
 
-	public FriendsAdapter mFriendsAdapter;
+	public FriendsAdapter mAdapter;
 
 	private View mContent;
 	private LayoutInflater mInflater;
@@ -118,9 +118,10 @@ public class FriendsFragment extends BaseListFragment {
 		Intent service = new Intent(getActivity(), PushService.class);
 		service.putExtra("objective", "start");
 		getActivity().startService(service);
-		mFriendsAdapter = new FriendsAdapter();
+		mAdapter = new FriendsAdapter();
 		circlePageViews = new Hashtable<Integer, List<View>>();
 		initData(true);
+		getUser();
 	}
 
 	@Override
@@ -142,7 +143,7 @@ public class FriendsFragment extends BaseListFragment {
 				@Override
 				public void modifyUI() {
 					initData(true);
-					setListAdapter(mFriendsAdapter);
+					setListAdapter(mAdapter);
 				}
 			});
 		}
@@ -152,7 +153,6 @@ public class FriendsFragment extends BaseListFragment {
 		super.onResume();
 		instance = this;
 		app.mark = app.friendsFragment;
-		getUser();
 	}
 
 	public void onDestroyView() {
@@ -269,21 +269,13 @@ public class FriendsFragment extends BaseListFragment {
 						.get(friend.messages.size() - 1).content);
 				final String headFileName = friend.head;
 				final ImageView iv_head = messageHolder.iv_head;
-				app.fileHandler.getImageFile(headFileName, new FileResult() {
+				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						if (where == app.fileHandler.FROM_DEFAULT) {
-							iv_head.setImageBitmap(app.fileHandler.defaultHead);
-						} else if (where != app.fileHandler.FROM_MEMORY) {
-							Bitmap head = app.fileHandler.bitmaps
-									.get(headFileName);
-							head = MCImageTools.getCircleBitmap(head, true, 5,
-									Color.WHITE);
-							app.fileHandler.bitmaps.put(headFileName, head);
-							iv_head.setImageBitmap(head);
-						} else {
-							iv_head.setImageBitmap(app.fileHandler.bitmaps
-									.get(headFileName));
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+						if (where == app.fileHandler.FROM_WEB) {
+							mAdapter.notifyDataSetChanged();
 						}
 					}
 				});
@@ -335,7 +327,7 @@ public class FriendsFragment extends BaseListFragment {
 							showMessageCount = lastChatFriends.size() > showMessageCount + 5 ? showMessageCount + 5
 									: lastChatFriends.size();
 							initData(false);
-							mFriendsAdapter.notifyDataSetChanged();
+							mAdapter.notifyDataSetChanged();
 						}
 					});
 				} else if (arg0 == getCount() - 3) {
@@ -422,25 +414,14 @@ public class FriendsFragment extends BaseListFragment {
 							final String headFileName = friends.get(phones
 									.get(a * 6 + position)).head;
 							final ImageView iv_head = itemHolder.iv_head;
-							app.fileHandler.getImageFile(headFileName,
+							app.fileHandler.getHeadImage(headFileName,
 									new FileResult() {
 										@Override
 										public void onResult(String where) {
-											if (where == app.fileHandler.FROM_DEFAULT) {
-												iv_head.setImageBitmap(app.fileHandler.defaultHead);
-											} else if (where != app.fileHandler.FROM_MEMORY) {
-												Bitmap head = app.fileHandler.bitmaps
-														.get(headFileName);
-												head = MCImageTools
-														.getCircleBitmap(head,
-																true, 5,
-																Color.WHITE);
-												app.fileHandler.bitmaps.put(
-														headFileName, head);
-												iv_head.setImageBitmap(head);
-											} else {
-												iv_head.setImageBitmap(app.fileHandler.bitmaps
-														.get(headFileName));
+											iv_head.setImageBitmap(app.fileHandler.bitmaps
+													.get(headFileName));
+											if (where == app.fileHandler.FROM_WEB) {
+												mAdapter.notifyDataSetChanged();
 											}
 										}
 									});
@@ -671,7 +652,7 @@ public class FriendsFragment extends BaseListFragment {
 					@Override
 					public void modifyUI() {
 						initData(true);
-						mFriendsAdapter.notifyDataSetChanged();
+						mAdapter.notifyDataSetChanged();
 					}
 				});
 			}
@@ -710,7 +691,7 @@ public class FriendsFragment extends BaseListFragment {
 					@Override
 					public void modifyUI() {
 						initData(false);
-						mFriendsAdapter.notifyDataSetChanged();
+						mAdapter.notifyDataSetChanged();
 					}
 				});
 			}

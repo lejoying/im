@@ -1,7 +1,5 @@
 package com.lejoying.mc.fragment;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +22,6 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
-import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.ToTry;
 
 public class BusinessCardFragment extends BaseFragment {
@@ -229,20 +226,13 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 		}
 		final String headFileName = fileName;
-		app.fileHandler.getImageFile(headFileName, new FileResult() {
+		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
 			public void onResult(String where) {
-				if (where == app.fileHandler.FROM_DEFAULT) {
-					iv_head.setImageBitmap(app.fileHandler.defaultHead);
-				} else if (where != app.fileHandler.FROM_MEMORY) {
-					Bitmap head = app.fileHandler.bitmaps.get(headFileName);
-					head = MCImageTools.getCircleBitmap(head, true, 5,
-							Color.WHITE);
-					app.fileHandler.bitmaps.put(headFileName, head);
-					iv_head.setImageBitmap(head);
-				} else {
-					iv_head.setImageBitmap(app.fileHandler.bitmaps
-							.get(headFileName));
+				iv_head.setImageBitmap(app.fileHandler.bitmaps
+						.get(headFileName));
+				if(where==app.fileHandler.FROM_WEB){
+					
 				}
 			}
 		});

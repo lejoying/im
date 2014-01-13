@@ -76,4 +76,13 @@
         android:layout_toRightOf="@+id/btn_startsend"
         android:text="@string/btn_pause" />
 
+    <Button
+        android:id="@+id/btn_clearqueue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_startsend"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/btn_stopsend"
+        android:text="@string/clearQueue" />
+
 </RelativeLayout>

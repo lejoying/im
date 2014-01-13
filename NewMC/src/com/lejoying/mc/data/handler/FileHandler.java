@@ -1,6 +1,8 @@
 package com.lejoying.mc.data.handler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Hashtable;
@@ -18,7 +20,7 @@ import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.DownloadListener;
 
 public class FileHandler {
-	App app;
+	public App app;
 
 	public void initailize(App app) {
 		this.app = app;
@@ -44,9 +46,21 @@ public class FileHandler {
 	public Bitmap defaultImage;
 	public Bitmap defaultHead;
 
+	public final int TYPE_IMAGE_COMMON = 0x01;
+	public final int TYPE_IMAGE_HEAD = 0x02;
+
+	public void getImage(String imageFileName, FileResult fileResult) {
+		getImageFile(imageFileName, TYPE_IMAGE_COMMON, fileResult);
+	}
+
+	public void getHeadImage(String imageFileName, FileResult fileResult) {
+		getImageFile(imageFileName, TYPE_IMAGE_HEAD, fileResult);
+	}
+
 	// TODO sd_card space checking
 	// TODO zip images in the sd_card
-	public void getImageFile(String imageFileName, FileResult fileResult) {
+	public void getImageFile(String imageFileName, int type,
+			FileResult fileResult) {
 		// get from mem directly
 		// get from sdcard
 
@@ -63,52 +77,77 @@ public class FileHandler {
 					.decodeResource(app.context.getResources(),
 							R.drawable.face_man), true, 5, Color.WHITE);
 		}
+		Bitmap dImage = defaultImage;
+		if (type == TYPE_IMAGE_HEAD) {
+			dImage = defaultHead;
+		}
 		String where = FROM_DEFAULT;
 		if (bitmaps.get(imageFileName) != null
 				&& !bitmaps.get(imageFileName).equals(defaultImage)) {
 			// todo return bitmaps.get(imageFileName) ;
 			where = FROM_MEMORY;
 		} else {
+			if (bitmaps.get(imageFileName) == null) {
+				bitmaps.put(imageFileName, dImage);
+			}
 			if (!imageFileName.equals("")) {
-				final File imageFile = new File(app.sdcardImageFolder,
-						imageFileName);
+				File imageFile = new File(app.sdcardImageFolder, imageFileName);
+				if (type == TYPE_IMAGE_HEAD) {
+					imageFile = new File(app.sdcardHeadImageFolder,
+							imageFileName);
+				}
 				if (imageFile.exists()) {
 					Bitmap image = BitmapFactory.decodeFile(imageFile
 							.getAbsolutePath());
 					if (image != null) {
-						bitmaps.put(imageFileName, image);
+						if (type == TYPE_IMAGE_COMMON) {
+							bitmaps.put(imageFileName, image);
+						} else if (type == TYPE_IMAGE_HEAD) {
+							bitmaps.put(imageFileName, MCImageTools
+									.getCircleBitmap(image, true, 5,
+											Color.WHITE));
+						}
+						where = FROM_SDCARD;
 					} else {
-						bitmaps.put(imageFileName, defaultImage);
+						if (getImageFromWebStatus.get(imageFileName) == null
+								|| getImageFromWebStatus.get(imageFileName)
+										.equals("failed")) {
+							getImageFileFromWeb(imageFileName, type, fileResult);
+						}
 					}
-					where = FROM_SDCARD;
 				} else {
-					if (getImageFromWebStatus.get(imageFileName) == null) {
-						// bitmaps.put(imageFileName, defaultImage);
-						getImageFileFromWeb(imageFileName, fileResult);
+					if (getImageFromWebStatus.get(imageFileName) == null
+							|| getImageFromWebStatus.get(imageFileName).equals(
+									"failed")) {
+						getImageFileFromWeb(imageFileName, type, fileResult);
 					}
 				}
-			} else {
-				bitmaps.put(imageFileName, defaultImage);
 			}
 		}
 		fileResult.onResult(where);
-
 	}
 
 	// key:imageFilename value:"loading"|"success"|"failed"
 	Map<String, String> getImageFromWebStatus = new Hashtable<String, String>();
 
 	private void getImageFileFromWeb(final String imageFileName,
-			final FileResult fileResult) {
+			final int type, final FileResult fileResult) {
 		getImageFromWebStatus.put(imageFileName, "loading");
+		File folder = app.sdcardImageFolder;
+		if (type == TYPE_IMAGE_HEAD) {
+			folder = app.sdcardHeadImageFolder;
+		}
 		MCNetTools.downloadFile(app.context, app.config.DOMAIN_IMAGE,
-				imageFileName, app.sdcardImageFolder, null, 5000,
-				new DownloadListener() {
+				imageFileName, folder, null, 5000, new DownloadListener() {
 					@Override
 					public void success(File localFile, InputStream inputStream) {
 						getImageFromWebStatus.put(imageFileName, "success");
 						Bitmap bitmap = BitmapFactory.decodeFile(localFile
 								.getAbsolutePath());
+						if (type == TYPE_IMAGE_HEAD) {
+							bitmap = MCImageTools.getCircleBitmap(bitmap, true,
+									5, Color.WHITE);
+						}
 						bitmaps.put(imageFileName, bitmap);
 						app.mUIThreadHandler.post(new Runnable() {
 							public void run() {
@@ -128,7 +167,7 @@ public class FileHandler {
 					}
 
 					public void failed() {
-						getImageFromWebStatus.put(imageFileName, "success");
+						getImageFromWebStatus.put(imageFileName, "failed");
 						app.mUIThreadHandler.post(new Runnable() {
 							public void run() {
 								Toast.makeText(app.context, "网络连接失败，网络不给力呀~",
@@ -150,6 +189,36 @@ public class FileHandler {
 					}
 				});
 
+	}
+
+	public void saveBitmap(SaveBitmapInterface saveBitmapInterface) {
+		// try {
+		// if (!folder.exists()) {
+		// folder.mkdirs();
+		// }
+		// File file = new File(folder, fileName);
+		// FileOutputStream fileOutputStream = new FileOutputStream(file);
+		// bitmap.compress(Bitmap.CompressFormat.PNG, 70, fileOutputStream);
+		// } catch (FileNotFoundException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+	}
+
+	public class SaveSettings {
+		Bitmap source;
+		File folder = app.sdcardImageFolder;
+		String fileName;
+		Bitmap.CompressFormat compressFormat;
+	}
+
+	public interface SaveBitmapInterface {
+
+		public void setParams();
+
+		public void failed();
+
+		public void onSuccess();
 	}
 
 	public interface FileResult {

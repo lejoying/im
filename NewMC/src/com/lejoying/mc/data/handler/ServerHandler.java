@@ -67,7 +67,7 @@ public class ServerHandler {
 				public void modifyUI() {
 					if (FriendsFragment.instance != null) {
 						FriendsFragment.instance.initData(true);
-						FriendsFragment.instance.mFriendsAdapter
+						FriendsFragment.instance.mAdapter
 								.notifyDataSetChanged();
 					} else if (NewFriendsFragment.instance != null) {
 						NewFriendsFragment.instance.mAdapter

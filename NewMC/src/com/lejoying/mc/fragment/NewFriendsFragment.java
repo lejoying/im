@@ -3,8 +3,6 @@ package com.lejoying.mc.fragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +21,6 @@ import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCImageTools;
 import com.lejoying.mc.utils.MCNetTools;
 import com.lejoying.mc.utils.MCNetTools.Settings;
 
@@ -123,21 +120,11 @@ public class NewFriendsFragment extends BaseListFragment {
 					.get(position - 1).addMessage);
 			final String headFileName = app.data.newFriends.get(position - 1).head;
 			final ImageView iv_head = newFriendsHolder.iv_head;
-			app.fileHandler.getImageFile(headFileName, new FileResult() {
+			app.fileHandler.getHeadImage(headFileName, new FileResult() {
 				@Override
 				public void onResult(String where) {
-					if (where == app.fileHandler.FROM_DEFAULT) {
-						iv_head.setImageBitmap(app.fileHandler.defaultHead);
-					} else if (where != app.fileHandler.FROM_MEMORY) {
-						Bitmap head = app.fileHandler.bitmaps.get(headFileName);
-						head = MCImageTools.getCircleBitmap(head, true, 5,
-								Color.WHITE);
-						app.fileHandler.bitmaps.put(headFileName, head);
-						iv_head.setImageBitmap(head);
-					} else {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
+					iv_head.setImageBitmap(app.fileHandler.bitmaps
+							.get(headFileName));
 				}
 			});
 

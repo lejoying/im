@@ -854,21 +854,13 @@ public class ChatFragment extends BaseListFragment {
 				}
 				final String headFileName = fileName;
 				final ImageView iv_head = messageHolder.iv_head;
-				app.fileHandler.getImageFile(fileName, new FileResult() {
+				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						if (where == app.fileHandler.FROM_DEFAULT) {
-							iv_head.setImageBitmap(app.fileHandler.defaultHead);
-						} else if (where != app.fileHandler.FROM_MEMORY) {
-							Bitmap head = app.fileHandler.bitmaps
-									.get(headFileName);
-							head = MCImageTools.getCircleBitmap(head, true, 5,
-									Color.WHITE);
-							app.fileHandler.bitmaps.put(headFileName, head);
-							iv_head.setImageBitmap(head);
-						} else {
-							iv_head.setImageBitmap(app.fileHandler.bitmaps
-									.get(headFileName));
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+						if (where == app.fileHandler.FROM_WEB) {
+							mAdapter.notifyDataSetChanged();
 						}
 					}
 				});
@@ -877,15 +869,11 @@ public class ChatFragment extends BaseListFragment {
 				messageHolder.image.setVisibility(View.VISIBLE);
 				final String imageFileName = message.content;
 				final ImageView iv_image = messageHolder.iv_image;
-				app.fileHandler.getImageFile(imageFileName, new FileResult() {
+				app.fileHandler.getImage(imageFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						if (where == app.fileHandler.FROM_DEFAULT) {
-							iv_image.setImageBitmap(app.fileHandler.defaultImage);
-						} else {
-							iv_image.setImageBitmap(app.fileHandler.bitmaps
-									.get(imageFileName));
-						}
+						iv_image.setImageBitmap(app.fileHandler.bitmaps
+								.get(imageFileName));
 					}
 				});
 				switch (type) {

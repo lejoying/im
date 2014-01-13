@@ -18,6 +18,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	Button btn_stop;
 	Button btn_startSend;
 	Button btn_stopSend;
+	Button btn_clearqueue;
 	TextView tv_nowsending;
 	TextView tv_list;
 	TextView tv_send;
@@ -49,6 +50,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		btn_stop = (Button) findViewById(R.id.btn_stop);
 		btn_startSend = (Button) findViewById(R.id.btn_startsend);
 		btn_stopSend = (Button) findViewById(R.id.btn_stopsend);
+		btn_clearqueue = (Button) findViewById(R.id.btn_clearqueue);
 		tv_nowsending = (TextView) findViewById(R.id.tv_nowsending);
 		tv_list = (TextView) findViewById(R.id.tv_list);
 		tv_send = (TextView) findViewById(R.id.tv_send);
@@ -56,6 +58,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		btn_stop.setOnClickListener(this);
 		btn_startSend.setOnClickListener(this);
 		btn_stopSend.setOnClickListener(this);
+		btn_clearqueue.setOnClickListener(this);
 
 		if (SMSService.isStart) {
 			start();
@@ -84,6 +87,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.btn_stopsend:
 			stopSend();
+			break;
+		case R.id.btn_clearqueue:
+			clearQueue();
 			break;
 		default:
 			break;
@@ -130,16 +136,29 @@ public class MainActivity extends Activity implements OnClickListener {
 		startService(service);
 	}
 
+	public void clearQueue() {
+		Intent service = new Intent(this, SMSService.class);
+		service.putExtra("operation", "clearQueue");
+		startService(service);
+	}
+
 	class SMSStatusReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String nowSending = intent.getStringExtra("nowSending");
 			int queueCount = intent.getIntExtra("queueCount", 0);
 			long sentCount = intent.getLongExtra("sentCount", 0);
+			String internetStatus = intent.getStringExtra("internet");
 
 			tv_nowsending.setText(getString(R.string.sendingto) + nowSending);
 			tv_list.setText(getString(R.string.tv_list) + queueCount);
 			tv_send.setText(getString(R.string.tv_send) + sentCount);
+			if (internetStatus.equals("noInternet")) {
+				stop();
+			} else if (internetStatus.equals("failed")) {
+				stop();
+			}
+
 		}
 
 	}
