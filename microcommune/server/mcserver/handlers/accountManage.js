@@ -19,7 +19,7 @@ var pvkeyStr0 = RSA.RSAKeyStr("10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d
     "3e4ee7b8455ad00c3014e82057cbbe0bd7365f1fa858750830f01ca7e456b659");
 var pvkey0 = RSA.RSAKey(pvkeyStr0);
 //sms.createsub("coolspan@sina.cn");此子账户已创建
-var sms_power = false;
+var sms_power = true;
 //sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
 
 /***************************************

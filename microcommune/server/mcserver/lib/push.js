@@ -50,6 +50,8 @@ push.smsSend = function (phone, message, next) {
         success: function (data) {
             next(data);
             console.log("push-smsSend--" + data);
+        }, error: function () {
+            console.log("sms error");
         }
     });
 }

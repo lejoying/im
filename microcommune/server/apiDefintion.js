@@ -688,6 +688,9 @@ api = {
             failed: {"information": "event failed"}
         }
     },
+    /***************************************
+     *     URL：/api2/sms/notify
+     ***************************************/
     "sms_notify": {
         description: {
             id: 1000901,
@@ -702,4 +705,108 @@ api = {
         }
     }
 }
-
+/*************************************** ***************************************
+ * *    Class：group
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/api2/group/create
+     ***************************************/
+    "group_create": {
+        description: {
+            id: 1001000,
+            url: "/api2/group/create"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", tempGid: "XXX", groupName: "XXX", members: ["XXX", "XXX", "XXX"]}
+        },
+        response: {
+            success: {"提示信息": "创建群组成功", group: {}},
+            failed: {"提示信息": "创建群组失败", "失败原因": "群组已创建" || "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/group/addmembers
+     ***************************************/
+    "group_addmembers": {
+        description: {
+            id: 1001001,
+            url: "/api2/group/addmembers"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", members: ["XXX", "XXX", "XXX"]}
+        },
+        response: {
+            success: {"提示信息": "加入群组成功"},
+            failed: {"提示信息": "加入群组失败", "失败原因": "群组不存在" || "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/group/removemembers
+     ***************************************/
+    "group_removemembers": {
+        description: {
+            id: 1001002,
+            url: "/api2/group/removemembers"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", members: ["XXX", "XXX", "XXX"]}
+        },
+        response: {
+            success: {"提示信息": "退出群组成功"},
+            failed: {"提示信息": "退出群组失败", "失败原因": "群组不存在" || "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/group/getallmember
+     ***************************************/
+    "group_getallmember": {
+        description: {
+            id: 1001003,
+            url: "/api2/group/getallmember"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取群组成员成功", members: [
+                {},
+                {},
+                {}
+            ]},
+            failed: {"提示信息": "获取群组成员失败", "失败原因": "群组不存在" || "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/group/modify
+     ***************************************/
+    "group_modify": {
+        description: {
+            id: 1001004,
+            url: "/api2/group/modify"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", gruopName: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "修改群组信息成功", group: {}},
+            failed: {"提示信息": "修改群组信息失败", "失败原因": "群组不存在" || "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/group/getusergroups
+     ***************************************/
+    "group_getusergroups": {
+        description: {
+            id: 1001005,
+            url: "/api2/group/getusergroups"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", phone: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取好友群组成功", groups: {}},
+            failed: {"提示信息": "获取好友群组失败", "失败原因": "数据异常"}
+        }
+    }
+}
