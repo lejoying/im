@@ -27,6 +27,7 @@ public class EventHandler {
 				Event event = app.mJSONHandler.generateEventFromJSON(jEvnet);
 				if (event.event.equals("message")) {
 					try {
+						@SuppressWarnings("unchecked")
 						List<Message> messages = (List<Message>) event.eventContent;
 						handleMessage(data, messages);
 					} catch (Exception e) {

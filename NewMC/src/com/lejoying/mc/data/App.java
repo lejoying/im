@@ -38,6 +38,7 @@ public class App {
 	public String sdcardStatus = "none";// "exist"
 
 	public SHA1 sha1;
+
 	private App() {
 		initData();
 		initConfig();
@@ -94,11 +95,10 @@ public class App {
 		sDcardDataResolver.initailize(this);
 	}
 
-
-
 	public File sdcardAppFolder;
 	public File sdcardImageFolder;
 	public File sdcardHeadImageFolder;
+
 	public void initSDCard() {
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
@@ -124,11 +124,11 @@ public class App {
 		}
 	}
 
+	public Context context;
+
 	public boolean isDataChanged;
 
 	public Config config;
-
-	public Context context;
 
 	public final int SHOW_SELF = 1;
 	public final int SHOW_FRIEND = 2;

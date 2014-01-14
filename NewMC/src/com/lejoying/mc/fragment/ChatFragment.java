@@ -45,7 +45,6 @@ import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.Message;
-import com.lejoying.mc.data.User;
 import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
@@ -602,6 +601,7 @@ public class ChatFragment extends BaseListFragment {
 
 					@Override
 					public void onSuccess(String fileName, String base64) {
+						System.out.println(fileName);
 						checkImage(fileName, base64);
 					}
 				});
@@ -613,20 +613,7 @@ public class ChatFragment extends BaseListFragment {
 		} else if (requestCode == RESULT_CATPICTURE
 				&& resultCode == Activity.RESULT_OK && data != null) {
 			final Bitmap image = (Bitmap) data.getExtras().get("data");
-			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
 
-				@Override
-				public void setParams(SaveSettings settings) {
-					settings.source = image;
-					settings.compressFormat = settings.JPG;
-					settings.folder = app.sdcardImageFolder;
-				}
-
-				@Override
-				public void onSuccess(String fileName, String base64) {
-
-				}
-			});
 		}
 	}
 

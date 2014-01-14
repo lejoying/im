@@ -15,7 +15,7 @@
     <string name="tv_send">已发送条数：</string>
     <string name="sendingto">正在发送到：</string>
     <string name="failed">服务器异常，请重试</string>
-    <string name="nointernet">无网络连接，请连接网络后重试</string>
+    <string name="nointernet">无网络，等待网络连接……</string>
     <string name="clearQueue">清空队列</string>
 
 </resources>

@@ -12,7 +12,8 @@
         android:background="@drawable/frame_background"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingTop="7dp" >
+        android:paddingTop="7dp"
+        tools:ignore="UselessParent" >
 
         <RelativeLayout
             android:id="@+id/rl_content"
@@ -54,7 +55,6 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/iv_head"
-                android:text="小王"
                 android:textColor="#fff"
                 android:textSize="16sp" />
 
@@ -70,10 +70,10 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:singleLine="true"
-                android:text="12312312312"
                 android:textColor="#fff"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
         </RelativeLayout>
     </RelativeLayout>
 

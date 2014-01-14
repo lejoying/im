@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -14,7 +15,7 @@
         <LinearLayout
             android:id="@+id/ll_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -41,7 +42,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:text="修改个人信息"
+                        android:text="@string/tv_modifyuserinfo"
                         android:textColor="#fff"
                         android:textSize="18sp" />
                 </RelativeLayout>
@@ -52,7 +53,8 @@
                     android:layout_height="1dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="#addd" />
+                    android:background="#addd"
+                    tools:ignore="ContentDescription" />
 
                 <RelativeLayout
                     android:id="@+id/rl_head"
@@ -69,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:text="头像"
+                        android:text="@string/tv_head"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -79,7 +81,8 @@
                         android:layout_height="44dp"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
-                        android:src="@drawable/face_man" />
+                        android:src="@drawable/face_man"
+                        tools:ignore="ContentDescription" />
                 </RelativeLayout>
 
                 <ImageView
@@ -88,7 +91,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/barometer" />
+                    android:background="@drawable/barometer"
+                    tools:ignore="ContentDescription" />
 
                 <RelativeLayout
                     android:id="@+id/rl_name"
@@ -106,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:text="名字"
+                        android:text="@string/tv_nickname"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -118,7 +122,6 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/tv_title_name"
                         android:gravity="right"
-                        android:text="李伟"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -134,7 +137,6 @@
                         android:gravity="right|center_vertical"
                         android:inputType="text"
                         android:singleLine="true"
-                        android:text="李伟"
                         android:textColor="#fff"
                         android:textSize="15sp"
                         android:visibility="gone" >
@@ -147,7 +149,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/barometer" />
+                    android:background="@drawable/barometer"
+                    tools:ignore="ContentDescription" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -162,7 +165,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:text="手机"
+                        android:text="@string/tv_phone"
                         android:textColor="#fff"
                         android:textSize="15sp" />
 
@@ -172,7 +175,6 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:text="12312312312"
                         android:textColor="#fff"
                         android:textSize="15sp" />
                 </RelativeLayout>
@@ -183,7 +185,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/barometer" />
+                    android:background="@drawable/barometer"
+                    tools:ignore="ContentDescription" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -207,7 +210,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_alignParentTop="true"
                             android:layout_marginTop="8dp"
-                            android:text="主要业务"
+                            android:text="@string/tv_mainbusiness"
                             android:textColor="#fff"
                             android:textSize="15sp" />
 
@@ -219,7 +222,6 @@
                             android:layout_marginLeft="25dp"
                             android:layout_marginTop="8dp"
                             android:layout_toRightOf="@id/tv_title_yewu"
-                            android:text="................."
                             android:textColor="#fff"
                             android:textSize="15sp" />
 
@@ -235,7 +237,6 @@
                             android:background="#0999"
                             android:ems="10"
                             android:inputType="textMultiLine"
-                            android:text="................."
                             android:textColor="#fff"
                             android:textSize="15sp"
                             android:visibility="gone" >
@@ -259,7 +260,7 @@
                             android:layout_marginBottom="2dp"
                             android:layout_marginRight="2dp"
                             android:gravity="center"
-                            android:text="0/240"
+                            android:text="@string/tv_mainbusinesscount"
                             android:textColor="#eee"
                             android:textSize="14sp" />
 
@@ -271,7 +272,7 @@
                             android:layout_toLeftOf="@+id/tv_yewulength"
                             android:clickable="true"
                             android:gravity="center"
-                            android:text="随机生成"
+                            android:text="@string/tv_mainbusinessrandom"
                             android:textColor="@color/click_textcolor"
                             android:textSize="14sp" />
                     </RelativeLayout>
@@ -305,7 +306,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:text="保存"
+                android:text="@string/tv_save"
                 android:textColor="#fff" />
 
             <ImageView
@@ -314,7 +315,8 @@
                 android:layout_height="40dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/btn_setting_normal" />
+                android:src="@drawable/btn_setting_normal"
+                tools:ignore="ContentDescription" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -329,7 +331,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:text="取消"
+                android:text="@string/tv_cancel"
                 android:textColor="#fff" />
 
             <ImageView
@@ -339,7 +341,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/test_menu_item2_4"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                tools:ignore="ContentDescription" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -362,16 +365,17 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:text="相册"
+                android:text="@string/tv_picture"
                 android:textColor="#fff" />
 
             <ImageView
-                android:id="@+id/imageView7"
+                android:id="@+id/imageView8"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/btn_setting_normal" />
+                android:src="@drawable/picturs"
+                tools:ignore="ContentDescription" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -386,16 +390,18 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:text="拍照"
+                android:text="@string/tv_camera"
                 android:textColor="#fff" />
 
             <ImageView
-                android:id="@+id/imageView8"
+                android:id="@+id/imageView9"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/btn_setting_normal" />
+                android:paddingTop="1dp"
+                android:src="@drawable/camer"
+                tools:ignore="ContentDescription" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -410,17 +416,18 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:text="取消"
+                android:text="@string/tv_cancel"
                 android:textColor="#fff" />
 
             <ImageView
-                android:id="@+id/imageView9"
+                android:id="@+id/imageView10"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/test_menu_item2_4"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                tools:ignore="ContentDescription" />
         </RelativeLayout>
     </RelativeLayout>
 

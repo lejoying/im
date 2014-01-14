@@ -30,8 +30,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 	private CircleMenuFragment mCircle;
 
 	private int mContentId;
-	private int mTopId;
-	private int mBottomId;
 
 	private View mLoadingView;
 	private View mCircleMenuView;
@@ -64,8 +62,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		mNetworkPermission = new Hashtable<String, Integer>();
 
 		mContentId = R.id.fl_content;
-		mTopId = R.id.fl_top;
-		mBottomId = R.id.fl_bottom;
 
 		mDefaultNotifyListener = new NotifyListener() {
 
@@ -244,28 +240,6 @@ public abstract class BaseFragmentActivity extends FragmentActivity implements
 		transaction.setCustomAnimations(R.anim.activity_in,
 				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
 		transaction.replace(mContentId, fragment);
-		if (toBackStack) {
-			transaction.addToBackStack(null);
-		}
-		return transaction.commit();
-	}
-
-	public int replaceTopFragment(Fragment fragment, boolean toBackStack) {
-		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		transaction.setCustomAnimations(R.anim.activity_in,
-				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
-		transaction.replace(mTopId, fragment);
-		if (toBackStack) {
-			transaction.addToBackStack(null);
-		}
-		return transaction.commit();
-	}
-
-	public int replaceBottomFragment(Fragment fragment, boolean toBackStack) {
-		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		transaction.setCustomAnimations(R.anim.activity_in,
-				R.anim.activity_out, R.anim.activity_in2, R.anim.activity_out2);
-		transaction.replace(mBottomId, fragment);
 		if (toBackStack) {
 			transaction.addToBackStack(null);
 		}

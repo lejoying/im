@@ -65,5 +65,16 @@
     <string name="text_verify">对方启用了朋友验证</string>
     <string name="et_verify">请输入验证消息</string>
     <string name="btn_send">发送</string>
+    <string name="tv_modifyuserinfo">修改个人信息</string>
+    <string name="tv_head">头像</string>
+    <string name="tv_nickname">名字</string>
+    <string name="tv_phone">手机</string>
+    <string name="tv_mainbusiness">主要业务</string>
+    <string name="tv_mainbusinesscount">0/240</string>
+    <string name="tv_mainbusinessrandom">随机生成</string>
+    <string name="tv_save">保存</string>
+    <string name="tv_cancel">取消</string>
+    <string name="tv_picture">相册</string>
+    <string name="tv_camera">拍照</string>
 
 </resources>

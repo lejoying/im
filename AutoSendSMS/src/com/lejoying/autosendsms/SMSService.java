@@ -32,25 +32,24 @@ public class SMSService extends Service {
 	public static final String ACTION = "SMSSERVICE";
 
 	SmsManager smsManager;
-
-	BroadcastReceiver sentReceiver;
-	BroadcastReceiver deliveredReceiver;
-	NetworkStatusReceiver networkStatusReceiver;
-
 	PendingIntent sentPI;
 	PendingIntent deliverPI;
+	BroadcastReceiver sentReceiver;
+	BroadcastReceiver deliveredReceiver;
+
+	NetworkStatusReceiver networkStatusReceiver;
 
 	public static boolean isStart;
 	public static boolean isStartSend = true;
 	boolean isSending;
+	boolean isWaitForInternet;
 
+	long currentConnectionCode;
 	HttpURLConnection currentConnection;
 
 	Queue<SMSEntity> mSMSQueue = new LinkedList<SMSEntity>();
-
-	long sentCount;
-
 	SMSEntity nowSendingEntity;
+	long sentCount;
 
 	Handler handler;
 
@@ -81,7 +80,6 @@ public class SMSService extends Service {
 				case Activity.RESULT_OK:
 					// System.out.println("RESULT_OK");
 					sentCount++;
-					handleOver();
 					break;
 				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
 					// System.out.println("RESULT_ERROR_GENERIC_FAILURE");
@@ -96,6 +94,7 @@ public class SMSService extends Service {
 					handleOver();
 					break;
 				}
+				handleOver();
 			}
 		};
 		registerReceiver(sentReceiver, new IntentFilter(SENT_SMS_ACTION));
@@ -152,10 +151,6 @@ public class SMSService extends Service {
 	}
 
 	public void sendSMSBroadcast() {
-		sendSMSBroadcast("success");
-	}
-
-	public void sendSMSBroadcast(String internetStatus) {
 		Intent intent = new Intent();
 		intent.setAction(ACTION);
 		if (nowSendingEntity != null) {
@@ -165,7 +160,6 @@ public class SMSService extends Service {
 		}
 		intent.putExtra("queueCount", mSMSQueue.size());
 		intent.putExtra("sentCount", sentCount);
-		intent.putExtra("internet", internetStatus);
 		sendBroadcast(intent);
 	}
 
@@ -215,9 +209,11 @@ public class SMSService extends Service {
 	Bundle params;
 
 	public void startLongAjax() {
-		if (!isStart && currentConnection == null) {
+		if (!isStart) {
 			isStart = true;
-			longAjax();
+			isWaitForInternet = false;
+			currentConnectionCode = new Date().getTime();
+			longAjax(currentConnectionCode);
 		}
 	}
 
@@ -226,12 +222,14 @@ public class SMSService extends Service {
 			isStart = false;
 			if (currentConnection != null) {
 				currentConnection.disconnect();
-				currentConnection = null;
 			}
 		}
 	}
 
-	public void longAjax() {
+	public void longAjax(final long code) {
+		if (code != currentConnectionCode) {
+			return;
+		}
 		if (params == null) {
 			String sessionID = String.valueOf(new Date().getTime());
 			params = new Bundle();
@@ -249,7 +247,7 @@ public class SMSService extends Service {
 			@Override
 			public void onSuccess(JSONObject jData) {
 				if (isStart) {
-					longAjax();
+					longAjax(code);
 				}
 				sendSMS(generateSMSEntityFromJSON(jData));
 			}
@@ -263,13 +261,14 @@ public class SMSService extends Service {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					longAjax();
+					longAjax(code);
 				}
 			}
 
 			@Override
 			public void noInternet() {
 				if (isStart) {
+					isWaitForInternet = true;
 					stopLongAjax();
 				}
 				handler.post(new Runnable() {
@@ -280,13 +279,12 @@ public class SMSService extends Service {
 								Toast.LENGTH_SHORT).show();
 					}
 				});
-				sendSMSBroadcast("noInternet");
 			}
 
 			@Override
 			public void timeout() {
 				if (isStart) {
-					longAjax();
+					longAjax(code);
 				}
 			}
 
@@ -316,7 +314,9 @@ public class SMSService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (HttpTools.hasNetwork(context)) {
-				startLongAjax();
+				if (isWaitForInternet) {
+					startLongAjax();
+				}
 				sendSMSBroadcast();
 			}
 		}

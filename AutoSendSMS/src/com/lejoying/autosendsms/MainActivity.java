@@ -36,7 +36,20 @@ public class MainActivity extends Activity implements OnClickListener {
 		mReceiver = new SMSStatusReceiver();
 		registerReceiver(mReceiver, intentFilter);
 
+		if (SMSService.isStart) {
+			start();
+		} else {
+			stop();
+		}
+
+		if (SMSService.isStartSend) {
+			startSend();
+		} else {
+			stopSend();
+		}
+
 		startService(new Intent(this, SMSService.class));
+
 	}
 
 	@Override
@@ -137,25 +150,11 @@ public class MainActivity extends Activity implements OnClickListener {
 			String nowSending = intent.getStringExtra("nowSending");
 			int queueCount = intent.getIntExtra("queueCount", 0);
 			long sentCount = intent.getLongExtra("sentCount", 0);
-			String internetStatus = intent.getStringExtra("internet");
 
 			tv_nowsending.setText(getString(R.string.sendingto) + nowSending);
 			tv_list.setText(getString(R.string.tv_list) + queueCount);
 			tv_send.setText(getString(R.string.tv_send) + sentCount);
-			if (internetStatus.equals("noInternet")) {
-				stop();
-			}
-			if (SMSService.isStart) {
-				start();
-			} else {
-				stop();
-			}
 
-			if (SMSService.isStartSend) {
-				startSend();
-			} else {
-				stopSend();
-			}
 		}
 
 	}

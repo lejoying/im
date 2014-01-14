@@ -19,6 +19,8 @@
         android:layout_below="@+id/iv_head"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:textColor="#eee"
         android:textSize="12sp" />
 
