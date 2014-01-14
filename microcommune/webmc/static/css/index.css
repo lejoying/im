@@ -1728,10 +1728,10 @@ a.more_icon:link {
     /*更多:未被访问的链接 */
     background: url(../images/weixinggongshe_button.png) no-repeat scroll -110px -52px;
     display: block;
-    float: left;
+    /*//float: right;*/
     margin-top: 32px;
     width: 0px;
-    margin-left: 206px;
+   margin-left: 50px;
     width: 26px;
     height: 8px;
     text-indent: -9999px;
