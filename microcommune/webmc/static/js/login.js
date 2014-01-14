@@ -218,7 +218,8 @@ function longRequest(sessionID) {
                     alert(data["提示信息"]);
                 }
             },
-            error: function () {
+            error: function (xhr, error) {
+                xhr.abort();
 //                longRequest(sessionID);
             }
         });

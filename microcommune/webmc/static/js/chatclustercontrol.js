@@ -29,6 +29,7 @@ $(function () {
         if (wxgs_tempAccountChatMessages[currentChatUser.phone] == undefined) {
             $(".js_chatContents").html("");
         }
+        messagesDataSplit({messages: [sendMessage]});
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").append(js_chatmessagetemplate.render(sendMessage));
 
@@ -86,8 +87,10 @@ function pullUsersMessage(account) {
 }
 
 function messagesDataSplit(data) {
-    var messsageFlag = data.flag;
-    window.sessionStorage.setItem("wxgs_messageFlag", messsageFlag);
+    if (data.flag != undefined) {
+        var messsageFlag = data.flag;
+        window.sessionStorage.setItem("wxgs_messageFlag", messsageFlag);
+    }
     var data = data.messages;
 //    alert(JSON.stringify(data));
     var tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
@@ -124,30 +127,45 @@ function messagesDataSplit(data) {
 }
 function sendMessages(listPhone, message) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
-    $(".js_chatmessagecontent").val("")
+    $(".js_chatmessagecontent").val("");
     $.ajax({
-        type: "POST",
-        url: "/api2/message/send?",
-        data: {
-            phone: accountObj.phone,
-            accessKey: accountObj.accessKey,
-            phoneto: listPhone,
-            message: message
-        },
-        success: function (data) {
-            if (data["提示信息"] == "发送成功") {
-                setScrollPosition();
+            type: "POST",
+            timeout: 5000,
+            url: "/api2/message/send?",
+            data: {
+                phone: accountObj.phone,
+                accessKey: accountObj.accessKey,
+                phoneto: listPhone,
+                message: message
+            },
+            success: function (data) {
+                var time = tempSendMessageTimeStamp.shift();
+                if (data["提示信息"] == "发送成功") {
+                    setScrollPosition();
 //                var message = JSON.stringify(message);
 //                message.time = data.time;
 //                alert(formattertime(time));
-                var time = tempSendMessageTimeStamp.shift();
-                $(".js_messageTime_" + time).html(formattertime(data.time));
+                    $(".js_messageTime_" + time).html(formattertime(data.time));
 
-            } else {
-                alert(data["提示信息"] + "---" + data["失败原因"]);
+                } else {
+//                js_sendStatus_#{post1.time}
+                    $(".js_sendStatus_" + time).find("label").css({
+                        "visibility": "visible"
+                    });
+                    alert(data["提示信息"] + "---" + data["失败原因"]);
+                }
+            },
+            error: function (XMLHttpRequest, error) {
+                XMLHttpRequest.abort();
+                console.log(error);
+                var time = tempSendMessageTimeStamp.shift();
+                $(".js_sendStatus_" + time).find("label").css({
+                    "visibility": "visible"
+                });
             }
         }
-    });
+    )
+    ;
 }
 
 function setScrollPosition() {
@@ -178,6 +196,7 @@ function keepQuest() {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "GET",
+        timeout: 20000,
         url: "/api2/session/event?",
         data: {
             phone: accountObj.phone,
@@ -204,7 +223,8 @@ function keepQuest() {
                 keepQuest();
             }
         },
-        error: function () {
+        error: function (xhr, error) {
+            xhr.abort();
             keepQuest();
         }
     });
