@@ -7,7 +7,8 @@ var routemap = {
         "/api2/community/:operation": requestHandlers.communityManage,
         "/api2/relation/:operation": requestHandlers.relationManage,
         "/api2/circle/:operation": requestHandlers.circleManage,
-        "/api2/webcode/:operation": requestHandlers.webcodeManage
+        "/api2/webcode/:operation": requestHandlers.webcodeManage,
+        "/api2/group/:operation": requestHandlers.groupManage
     },
     "post": {
         "/api2/message/:operation": requestHandlers.messageManage,
@@ -15,7 +16,8 @@ var routemap = {
         "/api2/community/:operation": requestHandlers.communityManage,
         "/api2/relation/:operation": requestHandlers.relationManage,
         "/api2/circle/:operation": requestHandlers.circleManage,
-        "/api2/webcode/:operation": requestHandlers.webcodeManage
+        "/api2/webcode/:operation": requestHandlers.webcodeManage,
+        "/api2/group/:operation": requestHandlers.groupManage
     }
 };
 

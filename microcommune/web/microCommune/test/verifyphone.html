@@ -12,6 +12,7 @@
                 url: "/api2/account/verifyphone?",
                 data: {
                     phone: phone,
+                    accessKey: "lejoying",
                     usage: usage
                 },
                 success: function (data) {
@@ -27,6 +28,7 @@
                 url: "/api2/account/verifycode?",
                 data: {
                     phone: phone,
+                    accessKey: "lejoying",
                     code: code
                 },
                 success: function (data) {
@@ -42,6 +44,7 @@
                 url: "/api2/account/auth?",
                 data: {
                     phone: phone,
+                    accessKey: "lejoying",
                     password: password
                 },
                 success: function (data) {
@@ -57,6 +60,7 @@
                 url: "/api2/account/auth?",
                 data: {
                     phone: phone,
+                    accessKey: "lejoying",
                     password: password
                 },
                 success: function (data) {
@@ -75,6 +79,7 @@
                 url: "/api2/account/modify?",
                 data: {
                     phone: phone,
+                    accessKey: "lejoying",
                     account:JSON.stringify(temp)
                 },
                 success: function (data) {
@@ -91,6 +96,7 @@
                 url: "/api2/account/?get",
                 data: {
                     phone: phone,
+                    accessKey: "lejoying",
                     target:target
                 },
                 success: function (data) {

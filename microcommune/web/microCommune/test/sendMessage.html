@@ -5,7 +5,7 @@
     <script type="text/javascript" src="/static/js/jquery.js"></script>
     <script type="text/javascript">
         function commit() {
-            var phone = document.getElementById("phone").value;
+            var phone = document.getElementById("phone").value;// $("#phone")[0].value;
             var phoneto = document.getElementById("phoneto").value;
             var message = document.getElementById("message").value;
             var listPhone = [];
@@ -24,14 +24,14 @@
                     message: JSON.stringify(messages)
                 },
                 success: function (data) {
-                    $("#msg").html(data["提示信息"]);
+                    $("#msg").html(data["提示信息"] + "--" + data["time"]);
                 }
             });
         }
     </script>
 </head>
 <body>
-phone:<input type="text" id="phone"><br>
+phone:<input type="text" id="phone" class="phone"><br>
 phoneTo:<input type="text" id="phoneto"><br>
 message:<input type="text" id="message"><br>
 <input type="submit" value="发送" onclick="commit()">

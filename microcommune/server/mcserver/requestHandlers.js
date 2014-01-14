@@ -185,6 +185,44 @@ requestHandlers.webcodeManage = function (request, response, pathObject, data) {
         });
     }
 }
+var groupManage = require("./handlers/groupManage.js");
+requestHandlers.groupManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "create") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.create(data, response);
+        });
+    }
+    else if (operation == "addmembers") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.addmembers(data, response);
+        });
+    }
+    else if (operation == "removemembers") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.removemembers(data, response);
+        });
+    }
+    else if (operation == "getallmembers") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getallmembers(data, response);
+        });
+    }
+    else if (operation == "modify") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.modify(data, response);
+        });
+    }
+    else if (operation == "getusergroups") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getusergroups(data, response);
+        });
+    }
+}
+
 function setOauthAccessKey(phone, accessKey, next) {
     client.rpush(phone + "_accessKey", accessKey, function (err, reply) {
         if (err != null) {

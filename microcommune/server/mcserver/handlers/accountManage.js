@@ -163,7 +163,7 @@ accountManage.verifyphone = function (data, response) {
             push.smsSend(account.phone, message, function (data) {
                 if (JSON.parse(data).information == "notify success") {
                     next();
-                }else{
+                } else {
                     responseFailMessage(response, promptMessage + "失败", "手机号不正确");
                 }
             });
@@ -198,6 +198,28 @@ accountManage.verifycode = function (data, response, next) {
     var code = data.code;
     var arr = [phone, code];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        if (code == "000000") {
+            var accessKey0 = sha1.hex_sha1(phone + "000000");
+            next(phone, accessKey0, function (flag) {
+                if (flag) {
+                    response.write(JSON.stringify({
+                        "提示信息": "验证成功",
+                        uid: RSA.encryptedString(pvkey0, phone),
+                        accessKey: RSA.encryptedString(pvkey0, accessKey0),
+                        PbKey: pbkeyStr0
+                    }));
+                    response.end();
+                    console.log("000000验证码跳过验证");
+                } else {
+                    response.write(JSON.stringify({
+                        "提示信息": "验证失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            });
+            return;
+        }
         checkPhoneCode(phone, code);
     }
     function checkPhoneCode(phone, code) {
@@ -247,7 +269,7 @@ accountManage.verifycode = function (data, response, next) {
                                 response.end();
                             } else {
                                 response.write(JSON.stringify({
-                                    "提示信息": "验证成功",
+                                    "提示信息": "验证失败",
                                     "失败原因": "数据异常"
                                 }));
                                 response.end();

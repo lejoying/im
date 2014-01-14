@@ -268,8 +268,8 @@ $(document).ready(function () {
                 } else {
                     $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
                 }
-                $(".js_onlyfriend_nickName").html(currentChatUser.nickName + " (" + currentChatUser.phone + ") ");
-                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
+                $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
+//                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
                 $(".js_rightChatPanel").show();
 //                alert(JSON.stringify(allCirclesFriends[phone]));//获取当前聊天用户的信息
 //                icon.addClass("js_none");

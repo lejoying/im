@@ -65,7 +65,6 @@ $(document).ready(function () {
         }
     });
     $(document).on("mouseenter", ".js_login", function () {
-
     });
     $(".js_downloadAppHtml").click(function () {
         location.href = "./app.html";
@@ -86,20 +85,44 @@ $(document).ready(function () {
             } else {
                 phone = phone.trim();
                 $.ajax({
-                    type: "POST",
-                    url: "/api2/account/get?",
+                    type: "GET",
+                    url: "/api2/account/verifycode?",
                     data: {
                         phone: phone,
-                        accessKey: "lejoying",
-                        target: phone
+                        code: code
                     },
                     success: function (data) {
-                        var accountData = data.account;
-                        accountData.accessKey = "lejoying";
-                        window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(accountData));
-                        window.sessionStorage.setItem("wxgs_messageFlag", "none");
-                        window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify({}));
-                        location.href = "./default.html";
+                        if (data["提示信息"] == "验证成功") {
+                            RSA.setMaxDigits(38);
+                            var pbkey = data.PbKey;
+                            var pbkey0 = RSA.RSAKey(pbkey);
+                            var phone0 = RSA.decryptedString(pbkey0, data.uid);
+                            var accessKey0 = RSA.decryptedString(pbkey0, data.accessKey);
+                            $.ajax({
+                                type: "GET",
+                                url: "/api2/account/get?",
+                                data: {
+                                    phone: phone0,
+                                    accessKey: accessKey0,
+                                    target: phone0
+                                },
+                                success: function (data) {
+                                    var accountData = {};
+                                    accountData = data.account;
+                                    accountData.accessKey = accessKey0;
+                                    accountData.PbKey = pbkey;
+                                    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(accountData));
+                                    window.sessionStorage.setItem("wxgs_messageFlag", "none");
+                                    window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify({}));
+                                    location.href = "./default.html";
+                                }
+                            });
+                        } else {
+                            $(".js_loginCodeError").html(data["提示信息"] + "," + data["失败原因"] + ".");
+                        }
+                    },
+                    error: function () {
+                        $(".js_loginCodeError").html("网络超时,请重试.");
                     }
                 });
             }
@@ -107,9 +130,8 @@ $(document).ready(function () {
         }
     )
     ;
-    $(".js_sendPhoneCode").click(function () {
-        alert("正在发送验证码，请稍等片刻....开发中");
-    });
+//    $(".js_sendPhoneCode").bind("click", getCodeClickEvent());
+    $(".js_sendPhoneCode").bind("click", getCodeClickEvent);
     var chars = [
         "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
         "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
@@ -127,11 +149,59 @@ $(document).ready(function () {
         "&logo=http://im.lejoying.com/static/images/icon.png&fg=6E6E6E&w=200&m=12");
     longRequest(hex_sha1(str));
 });
+function getCodeClickEvent() {
+    var time = 60;
+    $(".js_sendPhoneCode").html("短信已发出,请耐心等候...60");
+    var interval = setInterval(function () {
+        $(".js_sendPhoneCode").html("短信已发出,请耐心等候..." + --time);
+        if (time == 0) {
+            $(".js_sendPhoneCode").bind("click", getCodeClickEvent);
+            $(".js_sendPhoneCode").html("发送手机验证码");
+            window.clearInterval(interval);
+        }
+    }, 1000);
+    $(".js_loginCodeError").html("&nbsp;");
+    var phone = $(".js_loginPhone").val();
+    if (phone.trim() == "") {
+        $(".js_loginCodeError").html("手机号不能为空");
+        return;
+    } else if (isNaN(phone)) {
+        $(".js_loginCodeError").html("手机号仅能是数字");
+        return;
+    } else if (phone.indexOf(" ") != -1) {
+        $(".js_loginCodeError").html("手机号不能含有空格");
+        return;
+    } else {
+        $(".js_sendPhoneCode").unbind("click", getCodeClickEvent);
+        $.ajax({
+            type: "POST",
+            url: "/api2/account/verifyphone?",
+            data: {
+                phone: phone,
+                usage: "login"
+            },
+            success: function (data) {
+                var message = data["提示信息"];
+                message = message.substr(message.length - 2);
+                if (message == "成功") {
+                    $(".js_loginCodeError").html(data["提示信息"]);
+                } else {
+                    $(".js_loginCodeError").html(data["提示信息"] + "," + data["失败原因"]);
+                }
+            },
+            error: function () {
+                $(".js_loginCodeError").html("网络超时,请重试.");
+            }
+        });
+    }
+//    alert("正在发送验证码，请稍等片刻....开发中");
+}
 function longRequest(sessionID) {
     getAccount();
     function getAccount() {
         $.ajax({
             type: "POST",
+            timeout: 32000,
             url: "/api2/session/eventwebcodelogin?",
             data: {
                 sessionID: sessionID
@@ -149,7 +219,7 @@ function longRequest(sessionID) {
                 }
             },
             error: function () {
-                longRequest(sessionID);
+//                longRequest(sessionID);
             }
         });
     }

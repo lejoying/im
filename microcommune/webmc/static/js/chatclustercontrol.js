@@ -47,6 +47,12 @@ $(function () {
         //临时会话好友列表的显示操作
 //        ($(this).attr("class", "chatListColumn"));
     });
+
+    $(".js_inviteUserChat").click(function () {
+        alert("js_inviteUserChat邀请好友聊天");
+    });
+
+
 });
 function showUserChatMessages(account) {
     var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));

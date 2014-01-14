@@ -39,9 +39,9 @@ $(function () {//show js_modify_jcrophead_show
      image.src = data.image;
      }
      });*/
-    img.src = "http://im.lejoying.com/static/images/face_man.png";
+//    img.src = "http://im.lejoying.com/static/images/face_man.png";
 //    image = document.getElementById("js_modify_head_file");
-//    image.src = "/static/images/face_man.png";
+    image.src = "/static/images/face_man.png";
 //    img.crossOrigin = "*";
 //    image.src = "/static/images/face_man.png";
 //    img.crossOrigin = "Anonymous";

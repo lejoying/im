@@ -2,29 +2,31 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
-<script type="text/javascript" src="/static/js/jquery.js"></script>
-<script type="text/javascript">
-function commit(){
-	var phone = document.getElementById("phone").value;
-	var flag = document.getElementById("flag").value;
-	$.ajax({
-		type:"POST",
-		url:"/api2/message/get?",
-		data:{
-			phone:phone,
-			flag:flag
-		},
-        success: function(data){
-            $("#msg").html(data);
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var phone = document.getElementById("phone").value;
+            var flag = document.getElementById("flag").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/message/get?",
+                data: {
+                    phone: phone,
+                    accessKey: "lejoying",
+                    flag: flag
+                },
+                success: function (data) {
+                    $("#msg").html(data);
+                }
+            });
         }
-	});
-}
-</script>
+    </script>
 </head>
 <body>
 phone:<input type="text" id="phone"><br>
 flag:<input type="text" id="flag"><br>
 <input type="submit" value="获取" onclick="commit()">
+
 <div id="msg"></div>
 </body>
 </html>

@@ -536,7 +536,7 @@ api = {
             url: "/api2/message/send"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phoneto: [], message: {type: "text" || "image" || "voice", content: "XXX"}}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], message: {type: "text" || "image" || "voice", content: "XXX"}}
         },
         response: {
             success: {"提示信息": "发送成功", time: "XXX"},
@@ -718,11 +718,11 @@ api = {
             url: "/api2/group/create"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phone: "XXX", tempGid: "XXX", groupName: "XXX", members: ["XXX", "XXX", "XXX"]}
+            typical: {phone: "XXX", accessKey: "XXX", tempGid: "XXX", name: "XXX", members: ["XXX", "XXX", "XXX"]}
         },
         response: {
             success: {"提示信息": "创建群组成功", group: {}},
-            failed: {"提示信息": "创建群组失败", "失败原因": "群组已创建" || "数据异常"}
+            failed: {"提示信息": "创建群组失败", "失败原因": "数据异常" || "用户不存在"}
         }
     },
     /***************************************
@@ -738,7 +738,7 @@ api = {
         },
         response: {
             success: {"提示信息": "加入群组成功"},
-            failed: {"提示信息": "加入群组失败", "失败原因": "群组不存在" || "数据异常"}
+            failed: {"提示信息": "加入群组失败", "失败原因": "群组不存在" || "数据异常" || "数据格式不正确" || "好友不存在"}
         }
     },
     /***************************************
@@ -754,7 +754,7 @@ api = {
         },
         response: {
             success: {"提示信息": "退出群组成功"},
-            failed: {"提示信息": "退出群组失败", "失败原因": "群组不存在" || "数据异常"}
+            failed: {"提示信息": "退出群组失败", "失败原因": "群组不存在" || "数据异常" || "好友不存在该组" || "数据格式不正确"}
         }
     },
     /***************************************
@@ -786,7 +786,7 @@ api = {
             url: "/api2/group/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", gruopName: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", name: "XXX"}
         },
         response: {
             success: {"提示信息": "修改群组信息成功", group: {}},
@@ -802,11 +802,11 @@ api = {
             url: "/api2/group/getusergroups"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phone: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", target: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取好友群组成功", groups: {}},
-            failed: {"提示信息": "获取好友群组失败", "失败原因": "数据异常"}
+            success: {"提示信息": "获取好友群组成功", groups: []},
+            failed: {"提示信息": "获取好友群组失败", "失败原因": "数据异常" || "好友不存在"}
         }
     }
 }
