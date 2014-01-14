@@ -35,6 +35,7 @@ public class SMSService extends Service {
 
 	BroadcastReceiver sentReceiver;
 	BroadcastReceiver deliveredReceiver;
+	NetworkStatusReceiver networkStatusReceiver;
 
 	PendingIntent sentPI;
 	PendingIntent deliverPI;
@@ -113,7 +114,8 @@ public class SMSService extends Service {
 
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		registerReceiver(new NetworkStatusReceiver(), intentFilter);
+		networkStatusReceiver = new NetworkStatusReceiver();
+		registerReceiver(networkStatusReceiver, intentFilter);
 		super.onCreate();
 	}
 
@@ -305,6 +307,7 @@ public class SMSService extends Service {
 	public void onDestroy() {
 		unregisterReceiver(sentReceiver);
 		unregisterReceiver(deliveredReceiver);
+		unregisterReceiver(networkStatusReceiver);
 		super.onDestroy();
 	}
 
@@ -314,6 +317,7 @@ public class SMSService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			if (HttpTools.hasNetwork(context)) {
 				startLongAjax();
+				sendSMSBroadcast();
 			}
 		}
 	}
