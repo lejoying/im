@@ -3,16 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <include layout="@layout/fmain_loading" />
-
     <include layout="@layout/fmain_background" />
 
     <include layout="@layout/fmain_content" />
 
-    <include layout="@layout/fmain_top" />
-
-    <include layout="@layout/fmain_bottom" />
-
     <include layout="@layout/fmain_circlemenu" />
+
+    <include layout="@layout/fmain_loading" />
 
 </RelativeLayout>
