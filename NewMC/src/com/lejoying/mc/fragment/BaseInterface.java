@@ -18,14 +18,6 @@ public interface BaseInterface {
 
 	public void startToActivity(Class<?> clazz, boolean finishSelf);
 
-	public void setNotifyListener(NotifyListener notifyListener);
-
-	public interface NotifyListener {
-		public static final int NOTIFY_MESSAGEANDFRIEND = 0x01;
-
-		public void notifyDataChanged(int notify);
-	}
-
 	public void setFragmentKeyDownListener(OnKeyDownListener listener);
 
 	public interface OnKeyDownListener {
