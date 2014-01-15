@@ -1,0 +1,41 @@
+<?js for (var index in it) { ?>
+<?js post=it[index]; ?>
+<?js if(post==null) { ?>
+<?js continue; ?>
+<?js } ?>
+<div id="js_conv_wxgsid_#{post.phone}" username="#{post.phone}" un="wxgsid_edcat2inu4zq22"
+     class="chatListColumn">
+    <div style="display:none;" class="clicked"></div>
+    <span style="display:block" class="unreadDot">1</span> <span style="display:none" class="unreadDotS"></span>
+
+    <div class="avatar_wrap">
+        <?js if(post.head!="" && post.head!=null) { ?>
+        <img click1="showProfile@.chatListColumn" src="#{imageServer}#{post.head}"
+             class="avatar">
+        <?js }else{ ?>
+        <img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon2.jpg"
+             class="avatar">
+        <?js } ?>
+    </div>
+    <div class="extend">
+        <p class="time"></p>
+
+        <div class="edited"><i class="editedIcon"></i></div>
+        <div style="display:none;" class="mute"></div>
+    </div>
+    <div class="info">
+        <div class="nickName">
+            <div style="" class="left name">&nbsp;&nbsp;#{post.nickName}</div>
+            <div class="clr"></div>
+        </div>
+        <div class="descWrapper"><img style="display:none;" class="tipIcon iconSendFailed sendFailedStatus"
+                                      src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif"> <img
+                class="tipIcon iconSending sendingStatus hide"
+                src="https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif" style="display: none;">
+
+            <p class="desc"></p>
+        </div>
+    </div>
+    <div class="clr"></div>
+</div>
+<?js } ?>

@@ -1,20 +1,35 @@
 var scrollInitFlag = false;
 var tempSendMessageTimeStamp = [];
 $(function () {
+
+    getTemplateHtml("tempChatUserInfo", function (template) {
+        var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
+        if (tempChatUsersList != null) {
+            $("#conversationContainer").html(template.render(tempChatUsersList.reverse()));
+        }
+    });
+
     $(".js_chatRightFrame").css({
-        visibility: "hidden"
+        visibility: "visible"
     });
-    $(".js_morefriend").hide();
-    $(".js_morefriend").slideUp();
-    $(".js_onlyfriend").slideUp(1);
-    $(".js_onlyfriend").slideDown(100, function () {
-    });
+    /*$(".js_morefriend").hide();
+     $(".js_morefriend").slideUp();
+     $(".js_onlyfriend").slideUp(1);
+     $(".js_onlyfriend").slideDown(100, function () {
+     });*/
 
     $(document).on("click", ".js_chatsendmessage", function () {
         var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         var message = $(".js_chatmessagecontent").val();
+        if (message.trim() == "") {
+            alert("不能发送空白信息");
+            return;
+        }
+        getTemplateHtml("tempChatUserInfo", function (template) {
+            $("#conversationContainer")[0].insertBefore(template.render([allCirclesFriends[currentChatUser.phone]]), $("#conversationContainer")[0].firstChild);
+        });
+        modifyTempChatUser(currentChatUser.phone);
         var listPhone = [];
-
         listPhone.push(currentChatUser.phone);
         var messageObj = {
             type: "text",
@@ -53,8 +68,50 @@ $(function () {
         alert("js_inviteUserChat邀请好友聊天");
     });
 
-
+    $(document).on("click", "#conversationContainer>div", function () {
+        $("#conversationContainer>div").attr("class", "chatListColumn");
+        $(this).attr("class", "chatListColumn activeColumn");
+        currentChatUser = allCirclesFriends[$(this).attr("username")];
+//                $(".js_rightChatPanel").show();
+        showUserChatMessages(currentChatUser);
+        if (currentChatUser.head != "") {
+            $(".js_js_onlyfriend_headimg").attr("src", window.globaldata.serverSetting.imageServer + currentChatUser.head);
+        } else {
+            $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
+        }
+        $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
+//                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
+        $(".js_rightChatPanel").show();
+//        alert($(this).attr("id"));
+    });
 });
+function modifyTempChatUser(phone) {
+    var tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));
+    var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
+    if (tempChatUsers == null) {
+        tempChatUsers = {};
+        tempChatUsersList = [];
+    }
+    var account = allCirclesFriends[phone];
+    console.log(allCirclesFriends);
+    if (tempChatUsers[phone] == undefined) {
+        tempChatUsers[phone] = account;
+        tempChatUsersList.push(account);
+        window.sessionStorage.setItem("wxgs_tempChatUsers", JSON.stringify(tempChatUsers));
+        window.sessionStorage.setItem("wxgss_tempChatUsersList", JSON.stringify(tempChatUsersList));
+    } else {
+        for (var i = 0; i < tempChatUsersList.length; i++) {
+            var accountItem = tempChatUsersList[i];
+            if (accountItem.phone == phone) {
+                tempChatUsersList.splice(i, 1);
+                tempChatUsersList.push(account);
+                window.sessionStorage.setItem("wxgs_tempChatUsers", JSON.stringify(tempChatUsers));
+                window.sessionStorage.setItem("wxgss_tempChatUsersList", JSON.stringify(tempChatUsersList));
+                break;
+            }
+        }
+    }
+}
 function showUserChatMessages(account) {
     var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
     var messages = wxgs_tempAccountChatMessages[account.phone];
