@@ -46,7 +46,6 @@ public abstract class BaseListFragment extends ListFragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 		mMCFragmentManager.setFragmentKeyDownListener(null);
-		mMCFragmentManager.setNotifyListener(null);
 	}
 
 	private InputMethodManager getInputMethodManager() {

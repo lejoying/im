@@ -18,7 +18,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -50,7 +49,6 @@ import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.data.handler.FileHandler.SaveBitmapInterface;
 import com.lejoying.mc.data.handler.FileHandler.SaveSettings;
-import com.lejoying.mc.fragment.BaseInterface.NotifyListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCImageTools;
@@ -133,20 +131,15 @@ public class ChatFragment extends BaseListFragment {
 		mInflater = inflater;
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_chat, null);
-		mMCFragmentManager.setNotifyListener(new NotifyListener() {
-			@Override
-			public void notifyDataChanged(int notify) {
-				new Handler().post(new Runnable() {
 
-					@Override
-					public void run() {
-						mAdapter.notifyDataSetChanged();
-					}
-				});
+		app.dataHandler.modifyData(new Modification() {
+
+			@Override
+			public void modify(Data data) {
+				data.nowChatFriend.notReadMessagesCount = 0;
 			}
 		});
 
-		app.data.nowChatFriend.notReadMessagesCount = 0;
 		iv_send = mContent.findViewById(R.id.iv_send);
 		iv_more = mContent.findViewById(R.id.iv_more);
 		iv_more_select = mContent.findViewById(R.id.iv_more_select);
@@ -469,6 +462,9 @@ public class ChatFragment extends BaseListFragment {
 					public void onResult(String where) {
 						iv_image.setImageBitmap(app.fileHandler.bitmaps
 								.get(imageFileName));
+						if (where == app.fileHandler.FROM_WEB) {
+							mAdapter.notifyDataSetChanged();
+						}
 					}
 				});
 				switch (type) {
@@ -612,7 +608,6 @@ public class ChatFragment extends BaseListFragment {
 
 		} else if (requestCode == RESULT_CATPICTURE
 				&& resultCode == Activity.RESULT_OK && data != null) {
-			final Bitmap image = (Bitmap) data.getExtras().get("data");
 
 		}
 	}
