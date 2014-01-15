@@ -58,14 +58,10 @@ public final class HttpTools {
 			if (httpURLConnection.getResponseCode() == 200) {
 				is = httpURLConnection.getInputStream();
 			}
-			if (is != null) {
-				httpListener.handleInputStream(is);
-			} else {
-				httpListener.failed();
-			}
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
+			httpListener.handleInputStream(is);
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 			}
@@ -112,14 +108,10 @@ public final class HttpTools {
 			if (httpURLConnection.getResponseCode() == 200) {
 				is = httpURLConnection.getInputStream();
 			}
-			if (is != null) {
-				httpListener.handleInputStream(is);
-			} else {
-				httpListener.failed();
-			}
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
+			httpListener.handleInputStream(is);
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 			}
@@ -152,14 +144,10 @@ public final class HttpTools {
 			if (httpURLConnection.getResponseCode() == 200) {
 				is = httpURLConnection.getInputStream();
 			}
-			if (is != null) {
-				httpListener.handleInputStream(is);
-			} else {
-				httpListener.failed();
-			}
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
+			httpListener.handleInputStream(is);
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 			}
@@ -208,14 +196,10 @@ public final class HttpTools {
 			if (httpURLConnection.getResponseCode() == 200) {
 				is = httpURLConnection.getInputStream();
 			}
-			if (is != null) {
-				httpListener.handleInputStream(is);
-			} else {
-				httpListener.failed();
-			}
 		} catch (IOException e) {
 			// e.printStackTrace();
 		} finally {
+			httpListener.handleInputStream(is);
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 			}
@@ -224,8 +208,6 @@ public final class HttpTools {
 
 	public interface HttpListener {
 		public void handleInputStream(InputStream is);
-
-		public void failed();
 
 		public void connectionCreated(HttpURLConnection httpURLConnection);
 	}

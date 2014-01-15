@@ -647,8 +647,6 @@ public class ChatFragment extends BaseListFragment {
 			@Override
 			public void onSuccess(JSONObject jData) {
 				try {
-					System.out.println(jData);
-					System.out.println(fileName);
 					if (jData.getBoolean("exists")) {
 						sendMessage("image", fileName);
 					} else {

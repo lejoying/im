@@ -208,7 +208,7 @@ public class SMSService extends Service {
 
 	Bundle params;
 
-	public void startLongAjax() {
+	public synchronized void startLongAjax() {
 		if (!isStart) {
 			isStart = true;
 			isWaitForInternet = false;
@@ -217,9 +217,10 @@ public class SMSService extends Service {
 		}
 	}
 
-	public void stopLongAjax() {
+	public synchronized void stopLongAjax() {
 		if (isStart) {
 			isStart = false;
+			currentConnectionCode = 0;
 			if (currentConnection != null) {
 				currentConnection.disconnect();
 			}
@@ -227,73 +228,80 @@ public class SMSService extends Service {
 	}
 
 	public void longAjax(final long code) {
-		if (code != currentConnectionCode) {
-			return;
-		}
-		if (params == null) {
-			String sessionID = String.valueOf(new Date().getTime());
-			params = new Bundle();
-			params.putString("sessionID", sessionID);
-		}
-		Ajax.ajax(this, new AjaxInterface() {
-			@Override
-			public void setParams(Settings settings) {
-				settings.url = "http://115.28.51.197:8074/api2/sms/event";
-				settings.timeout = 30000;
-				settings.params = params;
-				settings.method = HttpTools.SEND_POST;
-			}
+		if (code == currentConnectionCode) {
 
-			@Override
-			public void onSuccess(JSONObject jData) {
-				if (isStart) {
-					longAjax(code);
+			if (params == null) {
+				String sessionID = String.valueOf(new Date().getTime());
+				params = new Bundle();
+				params.putString("sessionID", sessionID);
+			}
+			Ajax.ajax(this, new AjaxInterface() {
+				@Override
+				public void setParams(Settings settings) {
+					settings.url = "http://115.28.51.197:8074/api2/sms/event";
+					settings.timeout = 30000;
+					settings.params = params;
+					settings.method = HttpTools.SEND_POST;
 				}
-				sendSMS(generateSMSEntityFromJSON(jData));
-			}
 
-			@Override
-			public void failed() {
-				if (isStart) {
-					try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				@Override
+				public void onSuccess(JSONObject jData) {
+					System.out.println("success:" + code);
+					if (isStart) {
+						longAjax(code);
 					}
-					longAjax(code);
+					sendSMS(generateSMSEntityFromJSON(jData));
 				}
-			}
 
-			@Override
-			public void noInternet() {
-				if (isStart) {
-					isWaitForInternet = true;
-					stopLongAjax();
-				}
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(SMSService.this,
-								getString(R.string.nointernet),
-								Toast.LENGTH_SHORT).show();
+				@Override
+				public void failed() {
+					System.out.println("failed:" + code);
+					if (isStart) {
+						try {
+							Thread.sleep(10000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						longAjax(code);
 					}
-				});
-			}
-
-			@Override
-			public void timeout() {
-				if (isStart) {
-					longAjax(code);
 				}
-			}
 
-			@Override
-			public void connectionCreated(HttpURLConnection httpURLConnection) {
-				currentConnection = httpURLConnection;
-			}
+				@Override
+				public void noInternet() {
+					System.out.println("nointernet:" + code);
+					if (isStart) {
+						isWaitForInternet = true;
+						stopLongAjax();
+					}
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(SMSService.this,
+									getString(R.string.nointernet),
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
 
-		});
+				@Override
+				public void timeout() {
+					System.out.println("timeout:" + code);
+					if (isStart) {
+						longAjax(code);
+					}
+				}
+
+				@Override
+				public void connectionCreated(
+						HttpURLConnection httpURLConnection) {
+					if (code == currentConnectionCode) {
+						currentConnection = httpURLConnection;
+					}
+				}
+
+			});
+		}
 	}
 
 	public void cleanQueue() {

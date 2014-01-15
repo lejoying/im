@@ -78,11 +78,6 @@ public class MCNetTools {
 								final HttpURLConnection httpURLConnection) {
 							ajaxInterface.connectionCreated(httpURLConnection);
 						}
-
-						@Override
-						public void failed() {
-							ajaxInterface.failed();
-						}
 					};
 					if (settings.method == HttpTools.SEND_GET) {
 						HttpTools.sendGetUseBundle(app.config.DOMAIN
@@ -145,6 +140,10 @@ public class MCNetTools {
 
 						@Override
 						public void handleInputStream(final InputStream is) {
+							if (is == null) {
+								downloadListener.failed();
+								return;
+							}
 							if (!Environment.getExternalStorageState().equals(
 									Environment.MEDIA_MOUNTED)) {
 								downloadListener.success(null, is);
@@ -177,7 +176,9 @@ public class MCNetTools {
 								file.renameTo(localFile);
 								downloadListener.success(localFile, null);
 							} catch (FileNotFoundException e) {
+								downloadListener.failed();
 							} catch (IOException e) {
+								downloadListener.failed();
 							} finally {
 								if (fileOutputStream != null) {
 									try {
@@ -201,11 +202,6 @@ public class MCNetTools {
 									tempFile.delete();
 								}
 							}
-						}
-
-						@Override
-						public void failed() {
-							downloadListener.failed();
 						}
 					};
 					HttpTools.sendGetUseBundle(location + fileName, timeout,

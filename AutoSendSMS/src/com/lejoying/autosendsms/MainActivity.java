@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -35,6 +36,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		intentFilter.addAction(SMSService.ACTION);
 		mReceiver = new SMSStatusReceiver();
 		registerReceiver(mReceiver, intentFilter);
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		if (SMSService.isStart) {
 			start();

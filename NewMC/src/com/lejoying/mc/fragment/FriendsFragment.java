@@ -16,10 +16,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -376,6 +379,8 @@ public class FriendsFragment extends BaseListFragment {
 		ViewPager vp_content;
 		PagerAdapter vp_contentAdapter;
 
+		GestureDetector gestureDetector;
+
 		Circle circle;
 
 		class ItemHolder {
@@ -383,13 +388,66 @@ public class FriendsFragment extends BaseListFragment {
 			TextView tv_nickname;
 		}
 
+		void generateGestureDetector() {
+			if (gestureDetector == null) {
+				OnGestureListener listener = new OnGestureListener() {
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					@Override
+					public void onShowPress(MotionEvent e) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						getListView().requestDisallowInterceptTouchEvent(true);
+						return true;
+					}
+
+					@Override
+					public void onLongPress(MotionEvent e) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public boolean onFling(MotionEvent e1, MotionEvent e2,
+							float velocityX, float velocityY) {
+						boolean flag = true;
+						if (velocityX > velocityY) {
+							getListView().requestDisallowInterceptTouchEvent(
+									false);
+							flag = true;
+						}
+						return flag;
+					}
+
+					@Override
+					public boolean onDown(MotionEvent e) {
+						// TODO Auto-generated method stub
+						return true;
+					}
+				};
+				gestureDetector = new GestureDetector(getActivity(), listener);
+			}
+		}
+
 		public void setCircle(Circle c) {
+			generateGestureDetector();
 			this.circle = c;
-			if (circlePageViews.get(circle.rid) == null) {
-				final List<String> phones = circle.phones;
-				final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6
-						: phones.size() / 6 + 1;
-				List<View> pageviews = new ArrayList<View>();
+			final List<String> phones = circle.phones;
+			final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6
+					: phones.size() / 6 + 1;
+			List<View> pageviews = circlePageViews.get(circle.rid);
+			if (pageviews == null) {
+				pageviews = new ArrayList<View>();
 				for (int i = 0; i < pagecount; i++) {
 					final int a = i;
 					BaseAdapter gridpageAdapter = new BaseAdapter() {
@@ -440,6 +498,15 @@ public class FriendsFragment extends BaseListFragment {
 															true);
 										}
 									});
+							convertView
+									.setOnLongClickListener(new OnLongClickListener() {
+
+										@Override
+										public boolean onLongClick(View v) {
+											System.out.println("longpress");
+											return true;
+										}
+									});
 							return convertView;
 						}
 
@@ -477,6 +544,13 @@ public class FriendsFragment extends BaseListFragment {
 							R.layout.f_group_panelitem_gridpage, null);
 					gridpage.setAdapter(gridpageAdapter);
 					pageviews.add(gridpage);
+					gridpage.setOnTouchListener(new OnTouchListener() {
+
+						@Override
+						public boolean onTouch(View v, MotionEvent event) {
+							return gestureDetector.onTouchEvent(event);
+						}
+					});
 				}
 				circlePageViews.put(circle.rid, pageviews);
 			}
@@ -484,64 +558,51 @@ public class FriendsFragment extends BaseListFragment {
 				vp_content.setAdapter(null);
 				return;
 			}
-			vp_contentAdapter = new PagerAdapter() {
-				@Override
-				public boolean isViewFromObject(View arg0, Object arg1) {
-					return arg0 == arg1;
-				}
+			if (vp_contentAdapter == null) {
+				vp_contentAdapter = new PagerAdapter() {
+					@Override
+					public boolean isViewFromObject(View arg0, Object arg1) {
+						return arg0 == arg1;
+					}
 
-				@Override
-				public int getCount() {
-					return circlePageViews.get(circle.rid).size();
-				}
+					@Override
+					public int getCount() {
+						return circlePageViews.get(circle.rid).size();
+					}
 
-				@Override
-				public void destroyItem(View container, int position,
-						Object object) {
-					if (circlePageViews.get(circle.rid).size() > position)
-						((ViewPager) container).removeView(circlePageViews.get(
+					@Override
+					public void destroyItem(View container, int position,
+							Object object) {
+						if (circlePageViews.get(circle.rid).size() > position)
+							((ViewPager) container).removeView(circlePageViews
+									.get(circle.rid).get(position));
+					}
+
+					@Override
+					public Object instantiateItem(View container, int position) {
+						if (circlePageViews.get(circle.rid).get(position)
+								.getParent() != null) {
+							((ViewGroup) (circlePageViews.get(circle.rid).get(
+									position).getParent())).removeAllViews();
+						}
+						((ViewPager) container).addView(circlePageViews.get(
 								circle.rid).get(position));
-				}
-
-				@Override
-				public Object instantiateItem(View container, int position) {
-					if (circlePageViews.get(circle.rid).get(position)
-							.getParent() != null) {
-						((ViewGroup) (circlePageViews.get(circle.rid).get(
-								position).getParent())).removeAllViews();
+						return circlePageViews.get(circle.rid).get(position);
 					}
-					((ViewPager) container).addView(circlePageViews.get(
-							circle.rid).get(position));
-					return circlePageViews.get(circle.rid).get(position);
-				}
 
-				@Override
-				public void unregisterDataSetObserver(DataSetObserver observer) {
-					if (observer != null) {
-						super.unregisterDataSetObserver(observer);
+					@Override
+					public void unregisterDataSetObserver(
+							DataSetObserver observer) {
+						if (observer != null) {
+							super.unregisterDataSetObserver(observer);
+						}
 					}
-				}
-			};
+				};
+			}
 
 			vp_content.setAdapter(vp_contentAdapter);
-			vp_content.setOnTouchListener(new OnTouchListener() {
-
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					int action = event.getAction();
-					boolean flag = false;
-					switch (action) {
-					case MotionEvent.ACTION_MOVE:
-						getListView().requestDisallowInterceptTouchEvent(true);
-						flag = true;
-						break;
-					default:
-						break;
-					}
-					return flag;
-				}
-			});
 		}
+
 	}
 
 	class ButtonHolder {

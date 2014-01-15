@@ -60,19 +60,13 @@ public class Ajax {
 								final HttpURLConnection httpURLConnection) {
 							ajaxInterface.connectionCreated(httpURLConnection);
 						}
-
-						@Override
-						public void failed() {
-							ajaxInterface.failed();
-						}
 					};
 					if (settings.method == HttpTools.SEND_GET) {
 						HttpTools
 								.sendGetUseBundle(settings.url,
 										settings.timeout, settings.params,
 										httpListener);
-					}
-					if (settings.method == HttpTools.SEND_POST) {
+					} else if (settings.method == HttpTools.SEND_POST) {
 						HttpTools
 								.sendPostUseBundle(settings.url,
 										settings.timeout, settings.params,
