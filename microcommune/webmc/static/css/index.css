@@ -1180,30 +1180,18 @@ a.btnSecondary:active {
     display: block;
     width: 100%;
 }
-
-/* ==========================白色圆圈===================*/
-.chatPanel .myProfile .avatar {
-    background: url("../images/border_myprofile_avatar17ced3.png") no-repeat scroll 0 0 transparent;
-    height: 47px;
-    left: 12px;
-    position: absolute;
-    top: 12px;
-    width: 45px;
-    z-index: 101;
-}
-
 /* ==========================头像===================*/
 .chatPanel .myProfile img {
     background: url("../images/avatar_default17ced3.png") no-repeat scroll center center transparent;
-    height: 45px;
+    height: 41px;
     left: 13px;
     position: absolute;
     top: 13px;
-    width: 44px;
+    width: 41px;
     z-index: 100;
-    border-radius: 50% 50% 50% 50%;
+    border-radius: 50%;
+    border: 2.5px solid #ffffff;
 }
-
 .chatPanel .myProfile a {
     text-decoration: none;
 }
@@ -1592,16 +1580,6 @@ a.btnSecondary:active {
     position: relative;
 }
 
-.chatPanel .chatTitle {
-    background-color: #0099cd;
-    background-image: -moz-linear-gradient(center top, #0099cd 10%, #008ab8 50%, #0091c2 90%, #0082ad 100%);
-    border-bottom: 1px solid #333333;
-    border-radius: 4px 4px 0 0;
-    border-top: 1px solid #9BA3AE;
-    height: 71px;
-    position: relative;
-}
-
 /* =============================================================================
    群聊成员	start
    ========================================================================== */
@@ -1692,55 +1670,6 @@ a.js_appButton {
     margin-left: 23px;
 }
 
-a.left_icon:link {
-    /*向左 */
-    background: url(../images/weixinggongshe_button.png) no-repeat scroll -20px -48px;
-    display: block;
-    float: left;
-    margin-top: 30px;
-    margin-left: -5px;
-    width: 12px;
-    height: 12px;
-    text-indent: -9999px;
-}
-
-a.left_icon:active {
-    background-position: -77px -47px;
-}
-
-a.right_icon:link {
-    /*向右 */
-    background: url(../images/weixinggongshe_button.png) no-repeat scroll -40px -48px;
-    display: block;
-    float: left;
-    margin-top: 30px;
-    margin-left: 91px;
-    width: 10px;
-    height: 10px;
-    text-indent: -9999px;
-}
-
-a.right_icon:active {
-    background-position: -58px -48px;
-}
-
-a.more_icon:link {
-    /*更多:未被访问的链接 */
-    background: url(../images/weixinggongshe_button.png) no-repeat scroll -110px -52px;
-    display: block;
-    /*//float: right;*/
-    margin-top: 32px;
-    width: 0px;
-   margin-left: 50px;
-    width: 26px;
-    height: 8px;
-    text-indent: -9999px;
-}
-
-a.more_icon:active {
-    /* 正在被点击的链接 */
-    background-position: -141px -52px;
-}
 
 /* =============================================================================
    群聊成员	end
@@ -6375,19 +6304,137 @@ a.btnBlue:active .btnBluePanel {
     float: left;
 }
 
-.popmenuFrame .sildPopContent .schoolmate_txt {
-    margin-left: 34px;
-    margin-top: 3px;
-    float: left;
-    font-size: 24px;
-    font-family: "微软雅黑";
-    color: #008EBD;
-}
-
 .sildPopContent {
     border-top: 1px solid rgb(0, 153, 205);
     border-bottom: 1px solid rgb(0, 153, 205);
     background: none repeat scroll 0% 0% rgb(206, 234, 243);
     margin-top: 8px;
     height: 245px;
-}  
+}
+/****************************    聊天面板头部设计   -->个人聊天      ***********************/
+.chatPanel .chatTitle {
+    background-color: #0099cd;
+    background-image: -moz-linear-gradient(center top, #0099cd 10%, #008ab8 50%, #0091c2 90%, #0082ad 100%);
+    border-bottom: 1px solid #333333;
+    border-radius: 4px 4px 0 0;
+    border-top: 1px solid #9BA3AE;
+    height: 71px;
+    position: relative;
+}
+.chat_one_image{
+    position: absolute;
+    width: 41px;
+    height: 41px;
+    border: 2.5px solid #ffffff;
+    border-radius: 50%;
+    top: 14px;
+    left: 22px;
+}
+.chat_one_name{
+    font-family: '微软雅黑';
+    font-size: 14px;
+    color: #ffffff;
+    position: absolute;
+    left: 85px;
+    top: 25px;
+}
+.chat_one_addfrends{
+    font-family: '微软雅黑';
+    font-size: 14px;
+    color: #ffffff;
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    right: 120px;
+    top: 10px;
+}
+.chat_one_more{
+    position: absolute;
+    right:25px;
+    width:30px;
+    height: 10px;
+    top: 30px;
+}
+a.chat_one_more_button{
+    background: url("../images/weixinggongshe_button.png") no-repeat  -110px -52px;
+    width: 26px;
+    height: 8px;
+    display: block;
+    position: absolute;
+    text-indent: -9999px;
+}
+/*.chat_one_more:active{       *//* 这个是更多按钮的灰色值 */
+    /*background-position: -141px -52px;*/
+/*}*/
+/****************************    聊天面板头部设计   -->多人人聊天      ***********************/
+.chat_group_info{
+    font-family: '微软雅黑';
+    font-size: 15px;
+    line-height: 17px;
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    top: 23px;
+    left:40px ;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+.chat_group_left_icon{      /*     向左按钮     */
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -20px -48px;
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    text-indent: -9999px;
+    left: 134px;
+    top: 30px;
+    cursor: pointer;
+}
+a.chat_group_left_icon:active{
+    background-position: -77px -47px;
+}
+.chat_group_right_icon{         /**/
+    position: absolute;
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -40px -48px;
+    width: 10px;
+    height: 10px;
+    top: 30px;
+    right: 150px;
+    cursor: pointer;
+}
+a.chat_group_right_icon:active{
+    background-position: -58px -48px;
+}
+.chat_group_frends{     /*  存5个好友的层    */
+    position: relative;
+    width: 310px;
+    height: 70px;
+    background-color: gray;
+    margin-left: 160px;
+}
+.chat_group_frends_of_one{   /*  每个好友的框框        */
+    float: left;
+    width: 50px;
+    height: 70px;
+    /*background-color: #A0A4AA;*/
+    text-align: center;
+    vertical-align: middle;
+    text-align: center;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.chat_group_user_head{          /*   好友头像       */
+    position: relative;
+    width: 35px;
+    height: 35px;
+    border: 2.5px solid #ffffff;
+    border-radius: 50%;
+    top: 8px;
+}
+.chat_group_user_name{      /*   好友姓名       */
+    font-family: '微软雅黑';
+    font-size: 12px;
+    position: relative;
+    color: #ffffff;
+    margin-top: 20px;
+    top: 8px;
+}
