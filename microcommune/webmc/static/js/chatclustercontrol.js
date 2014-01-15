@@ -2,13 +2,13 @@ var scrollInitFlag = false;
 var tempSendMessageTimeStamp = [];
 $(function () {
     $(".js_chatRightFrame").css({
-        visibility: "hidden"
+        visibility: "visible"
     });
-    $(".js_morefriend").hide();
+    /*$(".js_morefriend").hide();
     $(".js_morefriend").slideUp();
     $(".js_onlyfriend").slideUp(1);
     $(".js_onlyfriend").slideDown(100, function () {
-    });
+    });*/
 
     $(document).on("click", ".js_chatsendmessage", function () {
         var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
