@@ -13,8 +13,11 @@ $(function () {
     $(document).on("click", ".js_chatsendmessage", function () {
         var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         var message = $(".js_chatmessagecontent").val();
+        if (message.trim() == "") {
+            alert("不能发送空白信息");
+            return;
+        }
         var listPhone = [];
-
         listPhone.push(currentChatUser.phone);
         var messageObj = {
             type: "text",
@@ -52,9 +55,38 @@ $(function () {
     $(".js_inviteUserChat").click(function () {
         alert("js_inviteUserChat邀请好友聊天");
     });
+    $(".js_onlyfriend_more").click(function () {
+        alert("js_onlyfriend_more");
+    });
 
-
+//    modifyTempChatUser("121");
 });
+function modifyTempChatUser(phone) {
+    var tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));
+    var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
+    if (tempChatUsers == null) {
+        tempChatUsers = {};
+        tempChatUsersList = [];
+    }
+    var account = allCirclesFriends[phone];
+    if(tempChatUsers[phone] == undefined){
+        tempChatUsers[phone] = account;
+        tempChatUsers.push(account);
+        window.sessionStorage.setItem("wxgs_tempChatUsers",JSON.stringify(tempChatUsers));
+        window.sessionStorage.setItem("wxgss_tempChatUsersList",JSON.stringify(tempChatUsersList));
+    }else{
+        for(var i=0;i<tempChatUsersList.length;i++){
+            var accountItem = tempChatUsersList[i];
+            if(accountItem.phone == phone){
+                tempChatUsersList.splice(i,1);
+                tempChatUsersList.push(account);
+                window.sessionStorage.setItem("wxgs_tempChatUsers",JSON.stringify(tempChatUsers));
+                window.sessionStorage.setItem("wxgss_tempChatUsersList",JSON.stringify(tempChatUsersList));
+                break;
+            }
+        }
+    }
+}
 function showUserChatMessages(account) {
     var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
     var messages = wxgs_tempAccountChatMessages[account.phone];
