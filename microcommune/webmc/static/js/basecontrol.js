@@ -5,6 +5,9 @@ var vData;
 var loadImageFlag = false;
 var imageServer = window.globaldata.serverSetting.imageServer;
 $(function () {//show js_modify_jcrophead_show
+    console.log("如果你能看到这段话，那么欢迎你加入微型公社团队，" +
+        "让我们一起从事这件伟大的，准备拯救世界的前端攻城师事业，^_-。" +
+        "请发送邮件到open@lejoying.com，请注明这是来自微型公社js信息的应聘信息。");
     var img = new Image();
 
     /*function getBase64() {
