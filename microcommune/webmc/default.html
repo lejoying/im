@@ -167,8 +167,8 @@
 <div class="list" id="chat_leftpanel" ctrl="1">
 <div class="top">
     <div class="title" id="profile">
-        <div class="myProfile"><img class="js_accountHead" un="avatar_wxid_7832428324312"
-                                    src="static/images/webwxgeticonhead.jpg">
+        <div class="myProfile">
+            <img class="js_accountHead" un="avatar_wxid_7832428324312"src="static/images/webwxgeticonhead.jpg">
 
             <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper"
                  class="avatar js_Account_HeadImg"></div>
@@ -738,35 +738,79 @@
     <div class="activeChatVernier" style="top: 20px;"><img src="static/images/spacer17ced3.gif"></div>
 </div>
 <div style="visibility:visible;" class="chat lightBorder js_chatRightFrame">
-    <div class="chatContainer js_rightChatPanel" style="height: 442px;"><!--442px-->
+    <div class="chatContainer js_rightChatPanel" style="height: 442px;">
         <div id="chatMainPanel" class="chatMainPanel">
             <div class="chatTitle">
-                <div class="js_onlyfriend">
-                    <div class="member">
-                        <table style="width: 550px;" border="1px">
-                            <tr style="height: 42px;">
-                                <td rowspan="1" style="width: 46px;"><a class="username" href="javascript:void(0);"><img
-                                        src="/static/images/face_man.png" class="iconname js_js_onlyfriend_headimg"
-                                        style="width: 42px;height: 42px;border:2px solid #ffffff;border-radius: 50%;">
-                                </a></td>
-                                <td>
-                                    <div class="name js_onlyfriend_nickName"
-                                         style="font-size: 15px;margin-left: 10px;"></div>
-                                </td>
-                            </tr>
+                <div class="chat_one" style="display: none">      <!------   个人聊天界面 start    --------->
+                    <div>
+                        <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_one_image">                                         <span class="chat_one_name">萨芬</span>
+                    </div>
+                    <div class="chat_one_addfrends">
+                        <img src="static/images/yaoqing.png" alt="邀请好友加入" class="chat_one_addfrends_image"/>
+                        <span>邀请</span>
+                    </div>
+                    <div class="chat_one_more">
+                        <a class="chat_one_more_button"></a>
+                    </div>
+                </div>          <!------   个人聊天界面  end   --------->
 
-                        </table>
+                <div class="chat_group">        <!------   多人聊天界面 start    --------->
+                    <div class="chat_group_info">
+                        <span>联谊会</span>
+                        <span style="font-size: 12px;letter-spacing: 1px">(15人)</span>
                     </div>
-                    <div class="member js_inviteUserChat" style="margin-left: 450px;margin-top: 10px;">
-                        <img src="static/images/yaoqing.png" style="width: 39px;height: 39px;">
+                    <div>
+                        <a class="chat_group_left_icon"></a>
+                    </div>
+                    <div class="chat_group_frends">
+                        <div class="chat_group_frends_of_one">
+                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">萨芬哈</span>
+                        </div>
 
-                        <div class="name" style="margin-left: 13px;">邀请</div>
+                        <div class="chat_group_frends_of_one">
+                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">haha哈</span>
+                        </div>
+                        <div class="chat_group_frends_of_one">
+                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">萨芬哈</span>
+                        </div>
+                        <div class="chat_group_frends_of_one">
+                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">萨芬哈</span>
+                        </div>
+                        <div class="chat_group_frends_of_one" >
+                            <img src="static/images/yaoqing.png"alt="聊天对象图像"class="chat_group_user_head" style="border: 0px;width: 40px;height: 40px">                                  <span class="chat_group_user_name">邀请</span>
+                        </div>
+
                     </div>
-                    <div class="more" style="float: right;margin-top: -70px;margin-right: 20px;">
-                        <a class="more_icon" href="javascript:;"></a>
+                    <div>
+                        <a class="chat_group_right_icon"></a>
                     </div>
-                </div>
-                <div class="js_morefriend" style="display: none;">
+                </div>          <!------   多人聊天界面  end   --------->
+                <!--<div class="js_onlyfriend" style="display: none">-->
+                    <!--&lt;!&ndash;<div class="member">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<table style="width: 550px;" border="1px">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<tr style="height: 42px;">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<td rowspan="1" style="width: 46px;"><a class="username" href="javascript:void(0);"><img&ndash;&gt;-->
+                                        <!--&lt;!&ndash;src="/static/images/face_man.png" class="iconname js_js_onlyfriend_headimg"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;style="width: 42px;height: 42px;border:2px solid #ffffff;border-radius: 50%;">&ndash;&gt;-->
+                                <!--&lt;!&ndash;</a></td>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<td>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="name js_onlyfriend_nickName"&ndash;&gt;-->
+                                         <!--&lt;!&ndash;style="font-size: 15px;margin-left: 10px;"></div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</td>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;</table>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="member js_inviteUserChat" style="margin-left: 450px;margin-top: 10px;">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<img src="static/images/yaoqing.png" style="width: 39px;height: 39px;">&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;<div class="name" style="margin-left: 13px;">邀请</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="more" style="float: right;margin-top: -70px;margin-right: 20px;">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a class="more_icon" href="javascript:;"></a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--</div>-->
+             <!--   <div class="js_morefriend" style="display: none;">
                     <div class="organization">
                         <p>联谊会</p>
 
@@ -782,11 +826,11 @@
 
                             <div class="name"> 萨芬</div>
                         </div>
-                        <!--<div class="member">
+                        &lt;!&ndash;<div class="member">
                             <a class="username" href="javascript:;"><img src="static/images/sundasheng.png" class="iconname">
                             </a>
                             <div class="name">孙大圣</div>
-                        </div>-->
+                        </div>&ndash;&gt;
                     </div>
                     <div class="member">
                         <a class="username" href="javascript:;"><img src="static/images/yaoqing.png"> </a>
@@ -799,7 +843,7 @@
                     <div class="more">
                         <a class="more_icon" href="javascript:;"></a>
                     </div>
-                </div>
+                </div>-->
             </div>
             <div id="chatFrame" class="chatScorll" style="height: 343px; overflow-y: hidden; position: relative;">
                 <div class="chatContent js_chatContents" id="chat_chatmsglist" ctrl="1"
