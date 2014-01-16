@@ -225,8 +225,55 @@ $(function () {//show js_modify_jcrophead_show
     $(".js_upload_headimg_file").change(function () {
         scanHeadImg();
     });
-    $(".js_modify_head_button_save_img").click(function(){
-        alert("XXX");
+    $(".js_modify_head_button_save_img").click(function () {
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+        var base64Data = vData.replace(/^data:image\/\w+;base64,/, "");
+        var fileName = hex_sha1(base64Data) + ".png";
+        $.ajax({
+            type: "GET",
+            url: "/image/check?",
+            data: {
+                filename: fileName
+            },
+            success: function (data) {
+                if (data.exists) {
+                    alert("图片已存在");
+                } else if (!data.exists) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/image/upload?",
+                        data: {
+                            phone: accountObj.phone,
+                            accessKey: accountObj.accessKey,
+                            filename: fileName,
+                            imagedata: base64Data
+                        },
+                        success: function (data) {
+                            if (data["提示信息"] == "图片上传成功") {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/api2/account/modify?",
+                                    data: {
+                                        phone: accountObj.phone,
+                                        accessKey: accountObj.accessKey,
+                                        account: JSON.stringify({head: fileName})
+                                    },
+                                    success: function (data) {
+                                        if (data["提示信息"] == "修改用户信息成功") {
+                                            alert("上传成功");
+                                        } else {
+                                            alert("上传失败");
+                                        }
+                                    }
+                                });
+                            } else {
+                                alert(data["提示信息"]);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     });
 //    new Drag($("#js_modifyAccountHeadImgPanel")[0]);
 });

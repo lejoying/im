@@ -24,8 +24,8 @@ imagesManage.upload = function (data, response) {
         });
         return;
     }
-    var base64Data = imageStr;
-//    var base64Data = imageStr.replace(/^data:image\/\w+;base64,/, "");
+//    var base64Data = imageStr;
+    var base64Data = imageStr.replace(/^data:image\/\w+;base64,/, "");
     var dataBuffer = new Buffer(base64Data, 'base64');
     fs.writeFile(serverSetting.imageFolder + fileName, dataBuffer, function (error) {
         if (error) {
