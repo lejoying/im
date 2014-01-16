@@ -741,7 +741,7 @@
     <div class="chatContainer js_rightChatPanel" style="height: 442px;">
         <div id="chatMainPanel" class="chatMainPanel">
             <div class="chatTitle">
-                <div class="chat_one" style="display: none">      <!------   个人聊天界面 start    --------->
+                <div class="chat_one" style="display: block">      <!------   个人聊天界面 start    --------->
                     <div>
                         <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_one_image">                                         <span class="chat_one_name">萨芬</span>
                     </div>
@@ -754,7 +754,7 @@
                     </div>
                 </div>          <!------   个人聊天界面  end   --------->
 
-                <div class="chat_group">        <!------   多人聊天界面 start    --------->
+                <div class="chat_group" style="display: none">        <!------   多人聊天界面 start    --------->
                     <div class="chat_group_info">
                         <span>联谊会</span>
                         <span style="font-size: 12px;letter-spacing: 1px">(15人)</span>
@@ -777,73 +777,22 @@
                             <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">萨芬哈</span>
                         </div>
                         <div class="chat_group_frends_of_one" >
-                            <img src="static/images/yaoqing.png"alt="聊天对象图像"class="chat_group_user_head" style="border: 0px;width: 40px;height: 40px">                                  <span class="chat_group_user_name">邀请</span>
+                            <img src="static/images/yaoqing.png"alt="聊天对象图像"class="chat_group_user_head" style="border: 0px;width: 40px;height: 40px">
+                            <span class="chat_group_user_name">邀请</span>
                         </div>
-
                     </div>
                     <div>
                         <a class="chat_group_right_icon"></a>
                     </div>
+                    <div class="chat_group_temp" style="display: none">     <!--  ；临时组标志        -->
+                        <img src="static/images/temp_groups_image.png" alt="临时组图标">
+                    </div>
+                    <div class="chat_group_temp_up" style="display: none"></div>      <!--  up按钮        -->
+                    <div class="chat_one_more" style="display: block">     <!--  更多按钮        -->
+                        <a class="chat_one_more_button"></a>
+                    </div>
                 </div>          <!------   多人聊天界面  end   --------->
-                <!--<div class="js_onlyfriend" style="display: none">-->
-                    <!--&lt;!&ndash;<div class="member">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<table style="width: 550px;" border="1px">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<tr style="height: 42px;">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<td rowspan="1" style="width: 46px;"><a class="username" href="javascript:void(0);"><img&ndash;&gt;-->
-                                        <!--&lt;!&ndash;src="/static/images/face_man.png" class="iconname js_js_onlyfriend_headimg"&ndash;&gt;-->
-                                        <!--&lt;!&ndash;style="width: 42px;height: 42px;border:2px solid #ffffff;border-radius: 50%;">&ndash;&gt;-->
-                                <!--&lt;!&ndash;</a></td>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<td>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<div class="name js_onlyfriend_nickName"&ndash;&gt;-->
-                                         <!--&lt;!&ndash;style="font-size: 15px;margin-left: 10px;"></div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
 
-                        <!--&lt;!&ndash;</table>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<div class="member js_inviteUserChat" style="margin-left: 450px;margin-top: 10px;">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<img src="static/images/yaoqing.png" style="width: 39px;height: 39px;">&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<div class="name" style="margin-left: 13px;">邀请</div>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<div class="more" style="float: right;margin-top: -70px;margin-right: 20px;">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="more_icon" href="javascript:;"></a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                <!--</div>-->
-             <!--   <div class="js_morefriend" style="display: none;">
-                    <div class="organization">
-                        <p>联谊会</p>
-
-                        <p id="peonumber" style="font-family:'微软雅黑';font-size:12px;">(15人)</p>
-                    </div>
-                    <div class="iconleft">
-                        <a class="left_icon" href="javascript:;"></a>
-                    </div>
-                    <div class="js_chatfriend">
-                        <div class="member">
-                            <a class="username" href="javascript:;"><img src="static/images/safen.png" class="iconname">
-                            </a>
-
-                            <div class="name"> 萨芬</div>
-                        </div>
-                        &lt;!&ndash;<div class="member">
-                            <a class="username" href="javascript:;"><img src="static/images/sundasheng.png" class="iconname">
-                            </a>
-                            <div class="name">孙大圣</div>
-                        </div>&ndash;&gt;
-                    </div>
-                    <div class="member">
-                        <a class="username" href="javascript:;"><img src="static/images/yaoqing.png"> </a>
-
-                        <div class="name" style="margin-left: 10px;">邀请</div>
-                    </div>
-                    <div class="iconright">
-                        <a class="right_icon" href="javascript:;"></a>
-                    </div>
-                    <div class="more">
-                        <a class="more_icon" href="javascript:;"></a>
-                    </div>
-                </div>-->
             </div>
             <div id="chatFrame" class="chatScorll" style="height: 343px; overflow-y: hidden; position: relative;">
                 <div class="chatContent js_chatContents" id="chat_chatmsglist" ctrl="1"

@@ -6362,10 +6362,11 @@ a.chat_one_more_button{
     display: block;
     position: absolute;
     text-indent: -9999px;
+    cursor: pointer;
 }
-/*.chat_one_more:active{       *//* 这个是更多按钮的灰色值 */
-    /*background-position: -141px -52px;*/
-/*}*/
+a.chat_one_more_button:active{        /*这个是更多按钮的灰色值 */
+    background-position: -141px -52px;
+}
 /****************************    聊天面板头部设计   -->多人人聊天      ***********************/
 .chat_group_info{
     font-family: '微软雅黑';
@@ -6385,7 +6386,7 @@ a.chat_one_more_button{
     width: 12px;
     height: 12px;
     text-indent: -9999px;
-    left: 134px;
+    left: 140px;
     top: 30px;
     cursor: pointer;
 }
@@ -6398,7 +6399,7 @@ a.chat_group_left_icon:active{
     width: 10px;
     height: 10px;
     top: 30px;
-    right: 150px;
+    right: 175px;
     cursor: pointer;
 }
 a.chat_group_right_icon:active{
@@ -6408,14 +6409,12 @@ a.chat_group_right_icon:active{
     position: relative;
     width: 310px;
     height: 70px;
-    background-color: gray;
-    margin-left: 160px;
+    margin-left: 150px;
 }
 .chat_group_frends_of_one{   /*  每个好友的框框        */
     float: left;
     width: 50px;
     height: 70px;
-    /*background-color: #A0A4AA;*/
     text-align: center;
     vertical-align: middle;
     text-align: center;
@@ -6437,4 +6436,25 @@ a.chat_group_right_icon:active{
     color: #ffffff;
     margin-top: 20px;
     top: 8px;
+}
+.chat_group_temp{           /*     临时组标志图片         */
+    width: 70px;
+    height: 70px;
+    /*background-color: #ffffff;*/
+    position: absolute;
+    right: 0px;
+    z-index: 9999;
+    top: 0px;
+}
+.chat_group_temp_up{        /*     临时组按钮         */
+    position: absolute;
+    width: 25px;
+    height: 45px;
+    /*background-color: gray;*/
+    z-index: 9999;
+    right: 0px;
+    top: 0px;
+    margin-right:40px;
+    margin-top: 20px;
+    cursor: pointer;
 }
