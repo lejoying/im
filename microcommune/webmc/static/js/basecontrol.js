@@ -48,29 +48,29 @@ $(function () {//show js_modify_jcrophead_show
 //    img.crossOrigin = "*";
 //    image.src = "/static/images/face_man.png";
 //    img.crossOrigin = "Anonymous";
-    var temp_ctx, temp_canvas;
-    temp_canvas = document.createElement('canvas');
-    temp_canvas.style.marginTop = "-1800px";
-    temp_ctx = temp_canvas.getContext('2d');
-    temp_canvas.width = img.width;
-    temp_canvas.height = img.height;
-    img.crossOrigin = "Anonymous";
-    temp_canvas.seto
-    img.onload = function () {
-        console.log(img.complete);
-        console.log("img:" + img.height + "-" + img.width + "--");
+    /*var temp_ctx, temp_canvas;
+     temp_canvas = document.createElement('canvas');
+     temp_canvas.style.marginTop = "-1800px";
+     temp_ctx = temp_canvas.getContext('2d');
+     temp_canvas.width = img.width;
+     temp_canvas.height = img.height;
+     img.crossOrigin = "Anonymous";
+     temp_canvas.seto
+     img.onload = function () {
+     console.log(img.complete);
+     console.log("img:" + img.height + "-" + img.width + "--");
 
-        temp_ctx.drawImage(img, 0, 0);
-        document.body.appendChild(temp_canvas);
-        console.log(temp_canvas);
-        //        var data = (temp_canvas.toDataURL("image/png"));
-        var data = (temp_canvas.toDataURL("image/png", 1));
-        //        image.src = data;
-        //    $(images).attr("src", temp_canvas.toDataURL());
-        console.log(data);
-        //        $("#js_modify_head_file").attr("src", data);
-        //        console.log(image.width + "--" + image.height);
-    }
+     temp_ctx.drawImage(img, 0, 0);
+     document.body.appendChild(temp_canvas);
+     console.log(temp_canvas);
+     //        var data = (temp_canvas.toDataURL("image/png"));
+     var data = (temp_canvas.toDataURL("image/png", 1));
+     //        image.src = data;
+     //    $(images).attr("src", temp_canvas.toDataURL());
+     console.log(data);
+     //        $("#js_modify_head_file").attr("src", data);
+     //        console.log(image.width + "--" + image.height);
+     }*/
     /*    image.src = "/static/images/face_woman.png";
      var images = document.getElementById("js_modify_head_file");
      var temp_ctx, temp_canvas;
@@ -144,7 +144,7 @@ $(function () {//show js_modify_jcrophead_show
         alert("九妹正在为您努力加载数据");
     });
 
-    $(".js_Account_HeadImg").click(function () {
+    $(".js_accountHead").click(function () {
         if ($(".js_modifyAccountHeadImgPanel").css('display') != "block") {
             $(".js_modifyAccountHeadImgPanel").css({
                 "top": "40px",
@@ -201,10 +201,62 @@ $(function () {//show js_modify_jcrophead_show
         });
     });
     $(".js_modify_head_close").click(function () {
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+        if (accountObj.head != "") {
+            $(".js_accountHead").attr("src", imageServer + accountObj.head);
+        } else {
+            $(".js_accountHead").attr("src", "/static/images/face_man.png");
+        }
         $(".js_modifyAccountHeadImgPanel").hide();
     });
-    new Drag($("#js_modifyAccountHeadImgPanel")[0]);
+    $(".js_modify_head_button_cancel").click(function () {
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+        if (accountObj.head != "") {
+            $(".js_accountHead").attr("src", imageServer + accountObj.head);
+        } else {
+            $(".js_accountHead").attr("src", "/static/images/face_man.png");
+        }
+        $(".js_modifyAccountHeadImgPanel").hide();
+    });
+    $(".js_modify_head_images_button").click(function () {
+        $(".js_upload_headimg_file").click();
+//        alert($(".js_upload_headimg_file").val());
+    });
+    $(".js_upload_headimg_file").change(function () {
+        scanHeadImg();
+    });
+    $(".js_modify_head_button_save_img").click(function(){
+        alert("XXX");
+    });
+//    new Drag($("#js_modifyAccountHeadImgPanel")[0]);
 });
+function scanHeadImg() {
+    var file = $(".js_upload_headimg_file")[0].files[0];
+    var path = $(".js_upload_headimg_file").val();
+    alert(path);
+    var last = path.substr(path.lastIndexOf(".") + 1).toLowerCase();
+    if (last != "jpg" && last != "bmp" && last != "jpeg" && last != "png") {
+        alert("$.Prompt('此文件不是图片格式')");
+        return;
+    } else if (path == "") {
+        return;
+    }
+    if (file.size > window.globaldata.serverSetting.maxUploadImg) {
+        alert("$.Prompt('文件大小不能超过1M')");
+        return;
+    } else {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (e) {
+//            $(".jcrop-holder img").attr("src", e.target.result);
+//            $("#crop_preview").attr("src", e.target.result);
+            image.src = e.target.result;
+            vData = e.target.result;
+            $("#js_modify_head_file").attr("src", vData);
+            $("#js_modify_jcrophead_show").attr("src", vData);
+        }
+    }
+}
 function showPreview(coords) {
 //    console.log(image.src.length);
     if (parseInt(coords.w) > 0) {
@@ -220,7 +272,7 @@ function showPreview(coords) {
         temp_canvas.width = 100
         temp_canvas.height = 100;
         temp_ctx.drawImage(image, ax, ay, cwidth, cheight, 0, 0, 100, 100);
-        var vData = temp_canvas.toDataURL();
+        vData = temp_canvas.toDataURL();
 //        console.log("vData:" + vData + "---length:" + vData.length + "cwidth:" + cwidth + "--cheight:" +
 //            cheight + "--ax:" + ax + "--ay:" + ay + "--canves:" + temp_canvas.height);
 //        tempData = temp_canvas.toDataURL();

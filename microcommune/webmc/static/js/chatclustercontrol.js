@@ -26,7 +26,15 @@ $(function () {
             return;
         }
         getTemplateHtml("tempChatUserInfo", function (template) {
-            $("#conversationContainer")[0].insertBefore(template.render([allCirclesFriends[currentChatUser.phone]]), $("#conversationContainer")[0].firstChild);
+            var div = document.createElement("div");
+            var text = template.render([allCirclesFriends[currentChatUser.phone]]);
+            div.innerHTML = text;
+            $("#conversationContainer")[0].insertBefore($(div).find(".chatListColumn")[0], $("#conversationContainer")[0].firstChild);
+            $(".listContent").css({
+                top: 0 + "px"
+            });
+            $(".chatListColumn").attr("class", "chatListColumn");
+            $("#js_conv_wxgsid_" + currentChatUser.phone).attr("class", "chatListColumn activeColumn");
         });
         modifyTempChatUser(currentChatUser.phone);
         var listPhone = [];

@@ -78,14 +78,15 @@
                  style="width: 100px;height: 100px;"/>
         </div>
         <div class="modify_head_button">
-            <input class="modify_head_images_button" type="button" value="上传图片"/>
+            <input type="file" class="js_upload_headimg_file" hidden="hidden">
+            <input class="modify_head_images_button js_modify_head_images_button" type="button" value="上传图片"/>
         </div>
         <div class="modify_head_button_two">
             <div style="width: 95px;height: 25px">
-                <input class="modify_head_button_save" type="button" value="保存"/>
+                <input class="modify_head_button_save js_modify_head_button_save_img" type="button" value="保存"/>
             </div>
             <div>
-                <input class="modify_head_button_cancel" type="button" value="取消"/>
+                <input class="modify_head_button_cancel js_modify_head_button_cancel" type="button" value="取消"/>
             </div>
         </div>
     </div>
@@ -168,7 +169,7 @@
 <div class="top">
     <div class="title" id="profile">
         <div class="myProfile">
-            <img class="js_accountHead" un="avatar_wxid_7832428324312"src="static/images/webwxgeticonhead.jpg">
+            <img class="js_accountHead" un="avatar_wxid_7832428324312" src="static/images/webwxgeticonhead.jpg">
 
             <div style="cursor:pointer;" click="popupModifyAvatarWin" id="accountAvatarWrapper"
                  class="avatar js_Account_HeadImg"></div>
@@ -743,7 +744,8 @@
             <div class="chatTitle">
                 <div class="chat_one" style="display: block">      <!------   个人聊天界面 start    --------->
                     <div>
-                        <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_one_image">                                         <span class="chat_one_name">萨芬</span>
+                        <img src="static/images/webwxgeticon1.jpg" alt="聊天对象图像" class="chat_one_image"> <span
+                            class="chat_one_name">萨芬</span>
                     </div>
                     <div class="chat_one_addfrends">
                         <img src="static/images/yaoqing.png" alt="邀请好友加入" class="chat_one_addfrends_image"/>
@@ -752,7 +754,8 @@
                     <div class="chat_one_more">
                         <a class="chat_one_more_button"></a>
                     </div>
-                </div>          <!------   个人聊天界面  end   --------->
+                </div>
+                <!------   个人聊天界面  end   --------->
 
                 <div class="chat_group" style="display: none">        <!------   多人聊天界面 start    --------->
                     <div class="chat_group_info">
@@ -764,20 +767,25 @@
                     </div>
                     <div class="chat_group_frends">
                         <div class="chat_group_frends_of_one">
-                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">萨芬哈</span>
+                            <img src="static/images/webwxgeticon1.jpg" alt="聊天对象图像" class="chat_group_user_head"> <span
+                                class="chat_group_user_name">萨芬哈</span>
                         </div>
 
                         <div class="chat_group_frends_of_one">
-                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">haha哈</span>
+                            <img src="static/images/webwxgeticon1.jpg" alt="聊天对象图像" class="chat_group_user_head"> <span
+                                class="chat_group_user_name">haha哈</span>
                         </div>
                         <div class="chat_group_frends_of_one">
-                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">萨芬哈</span>
+                            <img src="static/images/webwxgeticon1.jpg" alt="聊天对象图像" class="chat_group_user_head"> <span
+                                class="chat_group_user_name">萨芬哈</span>
                         </div>
                         <div class="chat_group_frends_of_one">
-                            <img src="static/images/webwxgeticon1.jpg"alt="聊天对象图像"class="chat_group_user_head">                                  <span class="chat_group_user_name">萨芬哈</span>
+                            <img src="static/images/webwxgeticon1.jpg" alt="聊天对象图像" class="chat_group_user_head"> <span
+                                class="chat_group_user_name">萨芬哈</span>
                         </div>
-                        <div class="chat_group_frends_of_one" >
-                            <img src="static/images/yaoqing.png"alt="聊天对象图像"class="chat_group_user_head" style="border: 0px;width: 40px;height: 40px">
+                        <div class="chat_group_frends_of_one">
+                            <img src="static/images/yaoqing.png" alt="聊天对象图像" class="chat_group_user_head"
+                                 style="border: 0px;width: 40px;height: 40px">
                             <span class="chat_group_user_name">邀请</span>
                         </div>
                     </div>
@@ -787,11 +795,13 @@
                     <div class="chat_group_temp" style="display: none">     <!--  ；临时组标志        -->
                         <img src="static/images/temp_groups_image.png" alt="临时组图标">
                     </div>
-                    <div class="chat_group_temp_up" style="display: none"></div>      <!--  up按钮        -->
+                    <div class="chat_group_temp_up" style="display: none"></div>
+                    <!--  up按钮        -->
                     <div class="chat_one_more" style="display: block">     <!--  更多按钮        -->
                         <a class="chat_one_more_button"></a>
                     </div>
-                </div>          <!------   多人聊天界面  end   --------->
+                </div>
+                <!------   多人聊天界面  end   --------->
 
             </div>
             <div id="chatFrame" class="chatScorll" style="height: 343px; overflow-y: hidden; position: relative;">

@@ -1,5 +1,6 @@
 var serverSetting = root.globaldata.serverSetting;
 var groupManage = {};
+var verifyEmpty = require("./../lib/verifyParams.js");
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 /***************************************
@@ -12,18 +13,21 @@ groupManage.create = function (data, response) {
     var name = data.name;
     var members = data.members;
     console.log("phone:" + phone + "tempGid:" + tempGid + ",name:" + name + ",members:" + members);
-    try {
-        members = JSON.parse(members);
-    } catch (e) {
-        console.log(e + "数据格式不正确");
-        response.write(JSON.stringify({
-            "提示信息": "创建群组失败",
-            "失败原因": "数据格式不正确"
-        }));
-        response.end();
-        return;
+    var list = [phone, tempGid, name, members];
+    if (verifyEmpty.verifyEmpty(data, list, response)) {
+        try {
+            members = JSON.parse(members);
+        } catch (e) {
+            console.log(e + "数据格式不正确");
+            response.write(JSON.stringify({
+                "提示信息": "创建群组失败",
+                "失败原因": "数据格式不正确"
+            }));
+            response.end();
+            return;
+        }
+        createGroupNode();
     }
-    createGroupNode();
     function createGroupNode() {
         var group = {
             name: name
@@ -112,21 +116,25 @@ groupManage.addmembers = function (data, response) {
     var gid = data.gid;
     var members = data.members;
     console.log("phone:" + phone + "gid:" + gid + ",members:" + members);
-    try {
-        gid = parseInt(gid);
-        if (isNaN(gid))
-            throw "gid不是数值";
-        members = JSON.parse(members);
-    } catch (e) {
-        console.log(e + "数据格式不正确");
-        response.write(JSON.stringify({
-            "提示信息": "加入群组失败",
-            "失败原因": "数据格式不正确"
-        }));
-        response.end();
-        return;
+    var list = [phone, gid, members];
+    if (verifyEmpty.verifyEmpty(data, list, response)) {
+        try {
+            gid = parseInt(gid);
+            if (isNaN(gid))
+                throw "gid不是数值";
+            members = JSON.parse(members);
+        } catch (e) {
+            console.log(e + "数据格式不正确");
+            response.write(JSON.stringify({
+                "提示信息": "加入群组失败",
+                "失败原因": "数据格式不正确"
+            }));
+            response.end();
+            return;
+        }
+        checkGroupNode(gid);
     }
-    checkGroupNode(gid);
+
     function checkGroupNode(gid) {
         var query = [
             'MATCH (group:Group)',
@@ -203,21 +211,25 @@ groupManage.removemembers = function (data, response) {
     var gid = data.gid;
     var members = data.members;
     console.log("phone:" + phone + "gid:" + gid + ",members:" + members);
-    try {
-        gid = parseInt(gid);
-        if (isNaN(gid))
-            throw "gid不是数值";
-        members = JSON.parse(members);
-    } catch (e) {
-        console.log(e + "数据格式不正确");
-        response.write(JSON.stringify({
-            "提示信息": "退出群组失败",
-            "失败原因": "数据格式不正确"
-        }));
-        response.end();
-        return;
+    var list = [phone, gid, members];
+    if (verifyEmpty.verifyEmpty(data, list, response)) {
+        try {
+            gid = parseInt(gid);
+            if (isNaN(gid))
+                throw "gid不是数值";
+            members = JSON.parse(members);
+        } catch (e) {
+            console.log(e + "数据格式不正确");
+            response.write(JSON.stringify({
+                "提示信息": "退出群组失败",
+                "失败原因": "数据格式不正确"
+            }));
+            response.end();
+            return;
+        }
+        checkGroupNode(gid);
     }
-    checkGroupNode(gid);
+
     function checkGroupNode(gid) {
         var query = [
             'MATCH (group:Group)',
@@ -293,20 +305,23 @@ groupManage.getallmembers = function (data, response) {
     var phone = data.phone;
     var gid = data.gid;
     console.log("phone:" + phone + ",gid:" + gid);
-    try {
-        gid = parseInt(gid);
-        if (isNaN(gid))
-            throw "gid不是数值";
-    } catch (e) {
-        console.log(e + "数据格式不正确");
-        response.write(JSON.stringify({
-            "提示信息": "获取群组成员失败",
-            "失败原因": "数据格式不正确"
-        }));
-        response.end();
-        return;
+    var list = [phone, gid];
+    if (verifyEmpty.verifyEmpty(data, list, response)) {
+        try {
+            gid = parseInt(gid);
+            if (isNaN(gid))
+                throw "gid不是数值";
+        } catch (e) {
+            console.log(e + "数据格式不正确");
+            response.write(JSON.stringify({
+                "提示信息": "获取群组成员失败",
+                "失败原因": "数据格式不正确"
+            }));
+            response.end();
+            return;
+        }
+        checkGroupNode(gid);
     }
-    checkGroupNode(gid);
     function checkGroupNode(gid) {
         var query = [
             'MATCH (group:Group)',
@@ -394,20 +409,24 @@ groupManage.modify = function (data, response) {
     var gid = data.gid;
     var name = data.name;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
-    try {
-        gid = parseInt(gid);
-        if (isNaN(gid))
-            throw "gid不是数值";
-    } catch (e) {
-        console.log(e + "数据格式不正确");
-        response.write(JSON.stringify({
-            "提示信息": "修改群组信息失败",
-            "失败原因": "数据格式不正确"
-        }));
-        response.end();
-        return;
+    var list = [phone, gid, name];
+    if (verifyEmpty.verifyEmpty(data, list, response)) {
+        try {
+            gid = parseInt(gid);
+            if (isNaN(gid))
+                throw "gid不是数值";
+        } catch (e) {
+            console.log(e + "数据格式不正确");
+            response.write(JSON.stringify({
+                "提示信息": "修改群组信息失败",
+                "失败原因": "数据格式不正确"
+            }));
+            response.end();
+            return;
+        }
+        checkGroupNode(gid);
     }
-    checkGroupNode(gid);
+
     function checkGroupNode(gid) {
         var query = [
             'MATCH (group:Group)',
@@ -482,7 +501,11 @@ groupManage.getusergroups = function (data, response) {
     response.asynchronous = 1;
     var target = data.target;
     console.log("target:" + target);
-    checkUserNode(target);
+    var list = [target];
+    if (verifyEmpty.verifyEmpty(data, list, response)) {
+        checkUserNode(target);
+    }
+
     function checkUserNode(target) {
         var query = [
             'MATCH (account:Account)',
@@ -546,6 +569,68 @@ groupManage.getusergroups = function (data, response) {
                 response.write(JSON.stringify({
                     "提示信息": "获取好友群组成功",
                     groups: []
+                }));
+                response.end();
+            }
+        });
+    }
+}
+/***************************************
+ *     URL：/api2/group/getusergroups
+ ***************************************/
+groupManage.get = function (data, response) {
+    response.asynchronous = 1;
+    var maxPrime = 100000000000;
+    var gid = data.gid;
+    var list = [gid];
+    if (verifyEmpty.verifyEmpty(data, list, response)) {
+        try {
+            gid = parseInt(gid);
+            if (isNaN(gid)) {
+                throw "gid不是数值";
+            } else {
+                gid = maxPrime - gid;
+                getGroupNode(gid);
+            }
+        } catch (e) {
+            console.log(e + "数据格式不正确");
+            response.write(JSON.stringify({
+                "提示信息": "获取群组信息失败",
+                "失败原因": "数据格式不正确"
+            }));
+            response.end();
+            return;
+        }
+    }
+    function getGroupNode(gid) {
+        var query = [
+            'MATCH (group:Group)',
+            'WHERE group.gid={gid}',
+            'RETURN group'
+        ].join('\n');
+        var params = {
+            gid: gid
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else if (results.length > 0) {
+                var group = results.pop().group.data;
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组信息成功",
+                    group: group
+                }));
+                response.end();
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组信息失败",
+                    "失败原因": "群组不存在"
                 }));
                 response.end();
             }
