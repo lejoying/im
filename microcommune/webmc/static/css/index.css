@@ -6458,3 +6458,67 @@ a.chat_group_right_icon:active{
     margin-top: 20px;
     cursor: pointer;
 }
+/*------------   邀请好友聊天 ---------*/
+.add_frend_chat{
+    background-color: #ffffff;
+    position: absolute;
+    left: 340px;
+    top: 130px;
+    width: 270px;
+    height: 400px;
+    border: 1px solid #0099CD;
+    border-radius: 5px;
+    z-index: 99999;
+}
+.add_frend_chat_head{
+    width: 270px;
+    height: 40px;
+    background-color: #0099CD;
+}
+.add_frend_chat_name{
+    font-family: '微软雅黑';
+    color: #ffffff;
+    font-size: 15px;
+    position: absolute;
+    left: 20px;
+    top: 10px;
+    letter-spacing: 2px;
+}
+.add_frend_chat_complete{
+    position: absolute;
+    width: 100px;
+    height: 30px;
+    background-color: #5F78AB;
+    left: 120px;
+    top: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.add_frend_chat_groups{
+    position: relative;
+    width: 270px;
+    height: 280px;
+    /*background-color: gray;*/
+}
+.add_frend_chat_box{
+    position: relative;
+    float: left;
+    width: 56px;
+    height: 56px;
+    background-color: #ffffff;
+    margin-left: 25px;
+    margin-top: 25px;
+}
+.add_frend_chat_group{
+    width: 44px;
+    height: 44px;
+    border: 2px solid rgb(0, 153, 205);
+    border-radius: 15px;
+    padding: 4px;
+    float: left;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+.add_frend_chat_bottom{
+
+}
