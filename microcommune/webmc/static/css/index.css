@@ -6329,6 +6329,7 @@ a.btnBlue:active .btnBluePanel {
     border-radius: 50%;
     top: 14px;
     left: 22px;
+    cursor: pointer;
 }
 .chat_one_name{
     font-family: '微软雅黑';
@@ -6347,6 +6348,7 @@ a.btnBlue:active .btnBluePanel {
     height: 60px;
     right: 120px;
     top: 10px;
+    cursor: pointer;
 }
 .chat_one_more{
     position: absolute;
@@ -6417,7 +6419,6 @@ a.chat_group_right_icon:active{
     height: 70px;
     text-align: center;
     vertical-align: middle;
-    text-align: center;
     margin-left: 10px;
     cursor: pointer;
 }
@@ -6470,7 +6471,7 @@ a.chat_group_right_icon:active{
     border-radius: 5px;
     z-index: 99999;
 }
-.add_frend_chat_head{
+.add_frend_chat_head{       /*     邀请好友头部栏     */
     width: 270px;
     height: 40px;
     background-color: #0099CD;
@@ -6484,11 +6485,11 @@ a.chat_group_right_icon:active{
     top: 10px;
     letter-spacing: 2px;
 }
-.add_frend_chat_complete{
+.add_frend_chat_complete{       /* 完成按钮   */
     position: absolute;
     width: 100px;
     height: 30px;
-    background-color: #5F78AB;
+    background-color: #ffffff;
     left: 120px;
     top: 5px;
     border-radius: 3px;
@@ -6498,16 +6499,15 @@ a.chat_group_right_icon:active{
     position: relative;
     width: 270px;
     height: 280px;
-    /*background-color: gray;*/
+    /*background-color: #DFDBDE;*/
 }
 .add_frend_chat_box{
     position: relative;
     float: left;
     width: 56px;
     height: 56px;
-    background-color: #ffffff;
     margin-left: 25px;
-    margin-top: 25px;
+    margin-top: 30px;
 }
 .add_frend_chat_group{
     width: 44px;
@@ -6515,10 +6515,123 @@ a.chat_group_right_icon:active{
     border: 2px solid rgb(0, 153, 205);
     border-radius: 15px;
     padding: 4px;
-    float: left;
     margin-bottom: 5px;
     cursor: pointer;
 }
-.add_frend_chat_bottom{
-
+.add_frend_chat_pop{        /*  弹出框    */
+    position: absolute;
+    border-top: 1px solid #0099CD;
+    border-bottom: 1px solid #0099CD;
+    top: 155px;
+    width: 270px;
+    height: 160px;
+    background-color: #CEEAF3;
+    z-index: 1;
+}
+.add_frend_chat_sild{       /*  箭头   */
+    position: absolute;
+    top: -11px;
+    left: 45px;
+}
+.add_frend_chat_pop_frends{ /*  放置所有好友的框框    */
+    position: relative;
+    width: 270px;
+    height: 160px;
+    /*background-color: gray;*/
+}
+.add_frend_chat_group_head{     /*    每个分组的好友        */
+    width: 20px;
+    height: 20px;
+    float: left;
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-bottom: 3px;
+}
+.add_frend_chat_pop_frends_ofone{         /*    每个待选好友的框框       */
+    float: left;
+    width: 50px;
+    height: 75px;
+    margin-left: 14px;
+    text-align: center;
+    vertical-align: middle;
+    /*background-color: darkolivegreen;*/
+}
+.add_frend_chat_pop_head{           /*    每个待选好友的头像      */
+    width: 41px;
+    height: 41px;
+    border-radius: 50%;
+    border: 2.5px solid #ffffff;
+    margin-top: 13px;
+    cursor: pointer;
+}
+.add_frend_chat_pop_name{       /*    每个待选好友的姓名       */
+    font-family: '微软雅黑';
+    font-size: 12px;
+    margin-top: 15px;
+}
+.add_frend_chat_bottom{     /*  底部好友选中状态栏    */
+    width: 270px;
+    height: 80px;
+    background-color: #EFF3F7;
+    border-radius: 5px;
+}
+.add_frend_chat_lefticon{
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -18px -11px;
+    width: 19px;
+    height: 19px;
+    position: absolute;
+    cursor: pointer;
+    left: 20px;
+    margin-top: 30px;
+}
+/*a.add_frend_chat_lefticon:active{*/
+    /*background-position: -18px -11px;*/
+    /*opacity: 0.2;*/
+/*}*/
+.add_frend_chat_righticon{
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -39px -11px;
+    width: 19px;
+    height: 19px;
+    cursor: pointer;
+    margin-right: 20px;
+    margin-top: -50px;
+    float: right;
+}
+.add_frend_chat_checked{    /*     选中好友大框     */
+    width: 180px;
+    height: 80px;
+    position: relative;
+    left: 45px;
+}
+.add_frend_chat_checkedfrend{       /*     每个单独选中的好友框框     */
+    float: left;
+    width: 50px;
+    height: 80px;
+    margin-left: 8px;
+    text-align: center;
+    vertical-align: middle;
+    /*background-color: gray;*/
+}
+.add_frend_chat_checkedhead{    /* 被选中好友头像   */
+    width: 41px;
+    height: 41px;
+    border-radius: 50%;
+    margin-top: -10px;
+    cursor: pointer;
+    border: 2.5px solid #ffffff;
+}
+.add_frend_chat_checkedname{    /* 被选中好友姓名   */
+    position: relative;
+    font-family: '微软雅黑';
+    font-size: 12px;
+    top: -2px;
+}
+.add_frend_chat_checkedheadimage{
+    /*float: right;*/
+    position: relative;
+    margin-left: 30px;
+    width: 18px;
+    height: 19px;
+    background: url(../images/weixinggongshe_button.png) no-repeat scroll -18px -112px;
+    cursor: pointer;
 }
