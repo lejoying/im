@@ -3,7 +3,6 @@ var scrollFlagTempChatTop = false;
 var image = new Image();
 var vData;
 var loadImageFlag = false;
-var imageServer = window.globaldata.serverSetting.imageServer;
 $(function () {//show js_modify_jcrophead_show
     console.log("如果你能看到这段话，那么欢迎你加入微型公社团队，" +
         "让我们一起从事这件伟大的，准备拯救世界的前端攻城师事业，^_-。" +
@@ -185,20 +184,28 @@ $(function () {//show js_modify_jcrophead_show
                 });
                 $(".js_modifyAccountHeadImgPanel").show();
             }
+            $("#js_head_file").Jcrop({
+                onChange: showPreview,
+                onSelect: showPreview,
+                aspectRatio: 1,
+                setSelect: [0, 0, 100, 100]
+            });
+            $(".jcrop-holder").css({
+                "top": "80px",
+                "left": "40px"
+            });
+            $(".jcrop-keymgr").css({
+                "visibility": "hidden"
+            });
+            var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+            if (accountObj.head != "") {
+                $("#js_modify_head_file").attr("src", imageServer + accountObj.head);
+                $("#js_modify_jcrophead_show").attr("src", imageServer + accountObj.head);
+            } else {
+                $("#js_modify_head_file").attr("src", "/static/images/face_man.png");
+                $("#js_modify_jcrophead_show").attr("src", "/static/images/face_man.png");
+            }
         }
-        $("#js_head_file").Jcrop({
-            onChange: showPreview,
-            onSelect: showPreview,
-            aspectRatio: 1,
-            setSelect: [0, 0, 100, 100]
-        });
-        $(".jcrop-holder").css({
-            "top": "80px",
-            "left": "40px"
-        });
-        $(".jcrop-keymgr").css({
-            "visibility": "hidden"
-        });
     });
     $(".js_modify_head_close").click(function () {
         var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
@@ -237,7 +244,7 @@ $(function () {//show js_modify_jcrophead_show
             },
             success: function (data) {
                 if (data.exists) {
-                    alert("图片已存在");
+                    modifyUserHeadImg(fileName);
                 } else if (!data.exists) {
                     $.ajax({
                         type: "POST",
@@ -250,24 +257,9 @@ $(function () {//show js_modify_jcrophead_show
                         },
                         success: function (data) {
                             if (data["提示信息"] == "图片上传成功") {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/api2/account/modify?",
-                                    data: {
-                                        phone: accountObj.phone,
-                                        accessKey: accountObj.accessKey,
-                                        account: JSON.stringify({head: fileName})
-                                    },
-                                    success: function (data) {
-                                        if (data["提示信息"] == "修改用户信息成功") {
-                                            alert("上传成功");
-                                        } else {
-                                            alert("上传失败");
-                                        }
-                                    }
-                                });
+                                modifyUserHeadImg(fileName);
                             } else {
-                                alert(data["提示信息"]);
+                                modifyLocalHeadImgSrc(accountObj);
                             }
                         }
                     });
@@ -275,12 +267,46 @@ $(function () {//show js_modify_jcrophead_show
             }
         });
     });
-//    new Drag($("#js_modifyAccountHeadImgPanel")[0]);
+    new Drag($("#js_modifyAccountHeadImgPanel")[0]);
 });
+function onLoadUserHeadImgError() {
+    $(".js_accountHead").attr("src", "/static/images/face_man.png");
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    accountObj.head = "";
+    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(accountObj));
+}
+function modifyUserHeadImg(fileName) {
+    var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    $.ajax({
+        type: "POST",
+        url: "/api2/account/modify?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            account: JSON.stringify({phone: accountObj.phone, head: fileName})
+        },
+        success: function (data) {
+            if (data["提示信息"] == "修改用户信息成功") {
+                $(".js_modifyAccountHeadImgPanel").hide();
+                accountObj.head = fileName;
+                window.localStorage.setItem("wxsgs_nowAccount", JSON.stringify(accountObj));
+                modifyLocalHeadImgSrc(accountObj);
+            } else {
+                modifyLocalHeadImgSrc(accountObj);
+            }
+        }
+    });
+}
+function modifyLocalHeadImgSrc(accountObj) {
+    if (accountObj.head != "") {
+        $(".js_accountHead").attr("src", imageServer + accountObj.head);
+    } else {
+        $(".js_accountHead").attr("src", "/static/images/face_man.png");
+    }
+}
 function scanHeadImg() {
     var file = $(".js_upload_headimg_file")[0].files[0];
     var path = $(".js_upload_headimg_file").val();
-    alert(path);
     var last = path.substr(path.lastIndexOf(".") + 1).toLowerCase();
     if (last != "jpg" && last != "bmp" && last != "jpeg" && last != "png") {
         alert("$.Prompt('此文件不是图片格式')");

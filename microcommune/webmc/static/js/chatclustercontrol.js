@@ -72,8 +72,36 @@ $(function () {
 //        ($(this).attr("class", "chatListColumn"));
     });
 
-    $(".js_inviteUserChat").click(function () {
-        alert("js_inviteUserChat邀请好友聊天");
+    $(".js_chat_one_addfrriends").click(function () {
+        $(".js_invite_SelectUserChat_frame").show();
+        getTemplateHtml("invite_circles_friends", function (template) {
+            var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+            $(".js_invite_friends_chat_frame").html(template.render(circles));
+        });
+    });
+    $(".js_add_friend_chat_complete").click(function () {
+        $(".js_invite_SelectUserChat_frame").hide();
+    });
+    $(document).on("click", ".js_add_friend_chat_group", function () {
+        var index = $(this).attr("index");
+        var circle_id = $(this).attr("circle_id");
+        if(circle_id == "undefined"){
+            circle_id = undefined;
+        }
+        $(".js_add_friend_chat_pop").show();
+        $(".js_add_friend_chat_sild").css({
+            left: 45 + (index % 3) * 80 + "px"
+        });
+        getTemplateHtml("invite_circles_friends_item",function(template){
+            var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+            for(var index in circles){
+                var circle = circles[index];
+                if(JSON.stringify(circle.rid) == circle_id){
+                    $(".js_add_friend_chat_pop_frends").html(template.render(circle));
+                    break;
+                }
+            }
+        });
     });
 
     $(document).on("click", "#conversationContainer>div", function () {
@@ -92,6 +120,11 @@ $(function () {
         $(".js_rightChatPanel").show();
 //        alert($(this).attr("id"));
     });
+    //add_frend_chat
+    //邀请好友加入聊天的窗口拖动注册
+    new Drag($(".js_invite_SelectUserChat_frame")[0]);
+
+
 });
 function modifyTempChatUser(phone) {
     var tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));

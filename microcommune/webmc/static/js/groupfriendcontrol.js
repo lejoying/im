@@ -11,7 +11,7 @@ var newSelectedGroupClass = "";
 var selectedAddCircleGroupFlag = false;
 
 var selectedDeleteOrBlack = "";
-
+var imageServer = window.globaldata.serverSetting.imageServer;
 var currentChatUser = {};
 $(document).ready(function () {
     var accountStr = window.localStorage.getItem("wxgs_nowAccount");
@@ -769,7 +769,7 @@ function modifyCircleName(rid, newCircleName, oldCircleName) {
 
 function getTemplateHtml(templateHtml, next) {
     var tenjin = nTenjin;
-    $.get("/static/templates/" + templateHtml + ".html", function (result) {
+    $.get("/static/templates/" + templateHtml + ".html?time=" + new Date().getTime(), function (result) {
         var template = new tenjin.Template();
         var string = result.replace(/\r/g, "");
         string = string.replace(/\<\!\-\-\?/g, "<?");

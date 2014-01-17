@@ -1,0 +1,17 @@
+<div class="js_invite_circles_friends_item" id="js_invite_circles_friends_item">
+    <?js var it1 = it.accounts; ?>
+    <?js for (var index in it1) { ?>
+    <?js post=it1[index]; ?>
+    <?js if(post==null) { ?>
+    <?js continue; ?>
+    <?js } ?>
+    <div class="add_frend_chat_pop_frends_ofone">
+        <?js if(post.head != "" && post.head != null){ ?>
+        <img src="#{imageServer}#{post.head}" class="add_frend_chat_pop_head" alt="选中好友头像"/>
+        <?js }else{ ?>
+        <img src="/static/images/face_man.png" class="add_frend_chat_pop_head" alt="选中好友头像">
+        <?js } ?>
+        <span class="add_frend_chat_pop_name">#{(post.nickName).substr(0,4)}</span>
+    </div>
+    <?js } ?>
+</div>

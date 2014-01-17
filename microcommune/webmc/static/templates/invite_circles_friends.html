@@ -1,0 +1,27 @@
+<!--邀请好友分组的模版-->
+<div class="js_invite_circles_friends" id="js_invite_circles_friends">
+    <?js for (var index in it) { ?>
+    <?js post=it[index]; ?>
+    <?js if(post==null) { ?>
+    <?js continue; ?>
+    <?js } ?>
+    <div class="add_frend_chat_box">
+        <div class="add_frend_chat_group js_add_friend_chat_group" circle_id="#{post.rid}" index="#{index}">
+            <?js var it1 = post.accounts;var count=0; ?>
+            <?js for (var index1 in it1) { ?>
+            <?js if(count比较符号大于=4){break;} ?>
+            <?js post1=it1[index1];count++; ?>
+            <?js if(post1==null) { ?>
+            <?js continue; ?>
+            <?js } ?>
+            <?js if(post1.head != "" && post1.head != null){ ?>
+            <img src="#{imageServer}#{post1.head}" class="add_frend_chat_group_head" alt="分组好友头像">
+            <?js }else{ ?>
+            <img src="/static/images/webwxgeticonhead.jpg" class="add_frend_chat_group_head" alt="分组好友头像">
+            <?js } ?>
+            <?js } ?>
+        </div>
+        <div style="font-size: 12px;">#{post.name}</div>
+    </div>
+    <?js } ?>
+</div>
