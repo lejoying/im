@@ -127,7 +127,7 @@ $(function () {
             icon.addClass("js_no_invite_chat_icon");
             var targetObj = $(".js_already_invite_selected_user_"+phone)[0];
             targetObj.parentNode.removeChild(targetObj);
-            
+
         } else {
             icon.addClass("js_invite_chat_icon");
             inviteSelectedUsers[phone] = "select";
