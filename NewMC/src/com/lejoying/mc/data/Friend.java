@@ -31,7 +31,6 @@ public class Friend implements Serializable {
 						&& friendStatus.equals(f.friendStatus)
 						&& temp == f.temp
 						&& notReadMessagesCount == f.notReadMessagesCount
-						&& addMessage.equals(f.addMessage)
 						&& messages.containsAll(f.messages)) {
 					flag = true;
 				}

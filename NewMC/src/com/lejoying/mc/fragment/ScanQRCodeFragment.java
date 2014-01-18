@@ -78,9 +78,9 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		int height = dm.heightPixels;
 
 		if (width < height) {
-			int temp = width;
-			width = height;
-			height = temp;
+			width ^= height;
+			height ^= width;
+			width ^= height;
 		}
 		handler = new ScanHandler();
 		screenResolution = new Point(width, height);
@@ -160,7 +160,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		new Thread() {
 			public void run() {
 				initCamera();
-				if(!isTake){
+				if (!isTake) {
 					destoryCamera();
 				}
 			}

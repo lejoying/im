@@ -517,7 +517,7 @@ public class ChatFragment extends BaseListFragment {
 		MCNetTools.ajax(new AjaxAdapter() {
 			public void setParams(Settings settings) {
 				settings.url = API.MESSAGE_SEND;
-				settings.params = generateParams(type, content);
+				settings.params = generateMessageParams(type, content);
 			}
 
 			public void onSuccess(JSONObject data) {
@@ -548,7 +548,7 @@ public class ChatFragment extends BaseListFragment {
 		});
 	}
 
-	public Bundle generateParams(String type, String content) {
+	public Bundle generateMessageParams(String type, String content) {
 		Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);

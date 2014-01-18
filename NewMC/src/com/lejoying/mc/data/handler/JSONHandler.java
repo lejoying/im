@@ -113,7 +113,10 @@ public class JSONHandler {
 			try {
 				JSONObject jFriend = jFriends.getJSONObject(i);
 				Friend friend = generateFriendFromJSON(jFriend);
-				if (data.newFriends.contains(friend)) {
+				if (!data.newFriends.contains(friend)) {
+					data.newFriends.add(0, friend);
+				} else {
+					data.newFriends.remove(friend);
 					data.newFriends.add(0, friend);
 				}
 			} catch (JSONException e) {

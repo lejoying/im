@@ -4,6 +4,7 @@ import java.net.HttpURLConnection;
 
 import org.json.JSONObject;
 
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.lejoying.mc.data.App;
@@ -14,6 +15,13 @@ public abstract class AjaxAdapter implements AjaxInterface {
 	App app = App.getInstance();
 
 	public JSONObject jData;
+
+	public Bundle generateParams() {
+		Bundle params = new Bundle();
+		params.putString("phone", app.data.user.phone);
+		params.putString("accessKey", app.data.user.accessKey);
+		return params;
+	}
 
 	public abstract void setParams(Settings settings);
 

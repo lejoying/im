@@ -49,13 +49,10 @@ import com.lejoying.mc.utils.MCNetTools.Settings;
 
 public class FriendsFragment extends BaseListFragment {
 
-	private final int TYPE_MAX_COUNT = 5;
+	private final int TYPE_MAX_COUNT = 4;
 	private final int TYPE_MESSAGE = 1;
 	private final int TYPE_CIRCLE = 2;
 	private final int TYPE_BUTTON = 3;
-	private final int TYPE_MARGIN = 4;
-
-	public final int NOTIFYDATASETCHANGED = 10;
 
 	public static FriendsFragment instance;
 
@@ -82,12 +79,13 @@ public class FriendsFragment extends BaseListFragment {
 
 	int newFriendsCount;
 
+	View rl_control;
+
 	public void initData(boolean initShowMessages) {
 		circles = app.data.circles;
 		friends = app.data.friends;
 		newFriends = app.data.newFriends;
 		lastChatFriends = app.data.lastChatFriends;
-
 		newFriendsCount = 0;
 		for (Friend friend : newFriends) {
 			if (friends.get(friend.phone) == null) {
@@ -104,11 +102,12 @@ public class FriendsFragment extends BaseListFragment {
 					.size();
 		}
 		buttonCount = showNewFriends ? 4 : 3;
-		messageFirstPosition = showNewFriends ? 2 : 1;
-		messageFirstPosition = showMessageCount == 0 ? messageFirstPosition - 1
-				: messageFirstPosition;
+		messageFirstPosition = showNewFriends ? 1 : 0;
 		buttonCount = showMessageCount == 0 ? buttonCount - 1 : buttonCount;
 		circleFirstPosition = messageFirstPosition + showMessageCount + 1;
+		if (showMessageCount == 0) {
+			circleFirstPosition = circleFirstPosition - 1;
+		}
 	}
 
 	@Override
@@ -134,7 +133,7 @@ public class FriendsFragment extends BaseListFragment {
 		mMCFragmentManager
 				.setCircleMenuPageName(getString(R.string.page_friend));
 		mContent = inflater.inflate(R.layout.f_friends, null);
-
+		rl_control = mContent.findViewById(R.id.rl_control);
 		return mContent;
 	}
 
@@ -156,6 +155,8 @@ public class FriendsFragment extends BaseListFragment {
 		super.onResume();
 		instance = this;
 		app.mark = app.friendsFragment;
+		initData(true);
+		mAdapter.notifyDataSetChanged();
 	}
 
 	public void onDestroyView() {
@@ -167,7 +168,7 @@ public class FriendsFragment extends BaseListFragment {
 
 		@Override
 		public int getCount() {
-			return showMessageCount + circles.size() + buttonCount + 2;
+			return showMessageCount + circles.size() + buttonCount;
 		}
 
 		@Override
@@ -178,9 +179,7 @@ public class FriendsFragment extends BaseListFragment {
 		@Override
 		public int getItemViewType(int position) {
 			int type = 0;
-			if (position == 0 || position == getCount() - 1) {
-				type = TYPE_MARGIN;
-			} else if (position >= messageFirstPosition
+			if (position >= messageFirstPosition
 					&& position < messageFirstPosition + showMessageCount) {
 				type = TYPE_MESSAGE;
 			} else if (position >= circleFirstPosition
@@ -237,10 +236,6 @@ public class FriendsFragment extends BaseListFragment {
 					bHolder = new ButtonHolder();
 					bHolder.button = (Button) arg1.findViewById(R.id.button);
 					arg1.setTag(bHolder);
-					break;
-
-				case TYPE_MARGIN:
-					arg1 = mInflater.inflate(R.layout.f_margin, null);
 					break;
 				default:
 					break;
@@ -307,10 +302,10 @@ public class FriendsFragment extends BaseListFragment {
 			case TYPE_CIRCLE:
 				Circle circle = circles.get(arg0 - circleFirstPosition);
 				friendHolder.tv_groupname.setText(circle.name);
-				friendHolder.setCircle(circle);
+				friendHolder.setCircle(circle, arg0);
 				break;
 			case TYPE_BUTTON:
-				if (showNewFriends && arg0 == 1) {
+				if (showNewFriends && arg0 == 0) {
 					bHolder.button.setText(getActivity().getString(
 							R.string.btn_newfriends)
 							+ "(" + newFriendsCount + ")");
@@ -333,15 +328,31 @@ public class FriendsFragment extends BaseListFragment {
 							mAdapter.notifyDataSetChanged();
 						}
 					});
-				} else if (arg0 == getCount() - 3) {
+				} else if (arg0 == getCount() - 2) {
 					bHolder.button.setText(getActivity().getString(
 							R.string.btn_newgroup));
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
+							// MCNetTools.ajax(new AjaxAdapter() {
+							//
+							// @Override
+							// public void setParams(Settings settings) {
+							// settings.url = API.CIRCLE_ADDCIRCLE;
+							// Bundle params = generateParams();
+							// params.putString("circleName", "");
+							// settings.params = params;
+							// }
+							//
+							// @Override
+							// public void onSuccess(JSONObject jData) {
+							// // TODO Auto-generated method stub
+							//
+							// }
+							// });
 						}
 					});
-				} else if (arg0 == getCount() - 2) {
+				} else if (arg0 == getCount() - 1) {
 					bHolder.button.setText(getActivity().getString(
 							R.string.btn_findmorefriend));
 					bHolder.button.setOnClickListener(new OnClickListener() {
@@ -439,7 +450,7 @@ public class FriendsFragment extends BaseListFragment {
 			}
 		}
 
-		public void setCircle(Circle c) {
+		public void setCircle(Circle c, final int viewPosition) {
 			generateGestureDetector();
 			this.circle = c;
 			final List<String> phones = circle.phones;
@@ -500,10 +511,14 @@ public class FriendsFragment extends BaseListFragment {
 									});
 							convertView
 									.setOnLongClickListener(new OnLongClickListener() {
+										int nowposition = viewPosition;
 
 										@Override
 										public boolean onLongClick(View v) {
-											System.out.println("longpress");
+											View nowPressView = getListView()
+													.getChildAt(nowposition);
+											nowPressView
+													.setVisibility(View.GONE);
 											return true;
 										}
 									});
