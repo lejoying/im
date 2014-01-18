@@ -5,11 +5,19 @@
     <?js if(post==null) { ?>
     <?js continue; ?>
     <?js } ?>
-    <div class="add_frend_chat_pop_frends_ofone">
+    <div class="add_frend_chat_pop_frends_ofone js_invite_friend_chat_icon" phone="#{post.phone}">
         <?js if(post.head != "" && post.head != null){ ?>
+        <?js if(inviteSelectedUsers[post.phone]=="select") { ?>
+        <img src="#{imageServer}#{post.head}" class="add_frend_chat_pop_head js_invite_chat_icon" alt="选中好友头像"/>
+        <?js }else{ ?>
         <img src="#{imageServer}#{post.head}" class="add_frend_chat_pop_head" alt="选中好友头像"/>
+        <?js } ?>
+        <?js }else{ ?>
+        <?js if(inviteSelectedUsers[post.phone]=="select") { ?>
+        <img src="/static/images/face_man.png" class="add_frend_chat_pop_head js_invite_chat_icon" alt="选中好友头像">
         <?js }else{ ?>
         <img src="/static/images/face_man.png" class="add_frend_chat_pop_head" alt="选中好友头像">
+        <?js } ?>
         <?js } ?>
         <span class="add_frend_chat_pop_name">#{(post.nickName).substr(0,4)}</span>
     </div>

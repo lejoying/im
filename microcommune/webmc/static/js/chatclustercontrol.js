@@ -1,6 +1,7 @@
 var scrollInitFlag = false;
 var tempSendMessageTimeStamp = [];
 var inviteSelectGroupID = -1;
+var inviteSelectedUsers = {};
 $(function () {
 
     getTemplateHtml("tempChatUserInfo", function (template) {
@@ -84,6 +85,7 @@ $(function () {
         $(".js_invite_SelectUserChat_frame").hide();
     });
     $(document).on("click", ".js_add_friend_chat_group", function () {
+        //js_invite_circles_friends
         var index = $(this).attr("index");
         var circle_id = $(this).attr("circle_id");
         if (inviteSelectGroupID != circle_id) {
@@ -95,6 +97,9 @@ $(function () {
             $(".js_add_friend_chat_sild").css({
                 left: 45 + (index % 3) * 80 + "px"
             });
+            $(".js_invite_circles_friends").css({
+                "margin-top": -(Math.floor(index / 3)) * 85 + "px"
+            });
             getTemplateHtml("invite_circles_friends_item", function (template) {
                 var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
                 for (var index in circles) {
@@ -105,8 +110,36 @@ $(function () {
                     }
                 }
             });
+        } else {
+            inviteSelectGroupID = -1;
+            $(".js_add_friend_chat_pop").hide();
+            $(".js_invite_circles_friends").css({
+                "margin-top": "0px"
+            });
         }
     });
+    $(document).on("click", ".js_invite_friend_chat_icon", function () {
+        var icon = $(this).find("img");
+        var phone = $(this).attr("phone");
+        if (icon.hasClass("js_invite_chat_icon")) {
+            delete inviteSelectedUsers[phone];
+            icon.removeClass("js_invite_chat_icon");
+            icon.addClass("js_no_invite_chat_icon");
+            var targetObj = $(".js_already_invite_selected_user_"+phone)[0];
+            targetObj.parentNode.removeChild(targetObj);
+            
+        } else {
+            icon.addClass("js_invite_chat_icon");
+            inviteSelectedUsers[phone] = "select";
+            if (icon.hasClass("js_no_invite_chat_icon")) {
+                icon.removeClass("js_no_invite_chat_icon");
+            }
+            getTemplateHtml("already_invite_circles_friends",function(template){
+                $(".add_frend_chat_checked").append(template.render([allCirclesFriends[phone]]));
+            });
+        }
+    });
+
 
     $(document).on("click", "#conversationContainer>div", function () {
         $("#conversationContainer>div").attr("class", "chatListColumn");

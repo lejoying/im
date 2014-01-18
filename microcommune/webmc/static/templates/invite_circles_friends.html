@@ -1,12 +1,12 @@
 <!--邀请好友分组的模版-->
 <div class="js_invite_circles_friends" id="js_invite_circles_friends">
     <?js for (var index in it) { ?>
-    <?js post=it[index]; ?>
-    <?js if(post==null) { ?>
-    <?js continue; ?>
-    <?js } ?>
-    <div class="add_frend_chat_box">
-        <div class="add_frend_chat_group js_add_friend_chat_group" circle_id="#{post.rid}" index="#{index}">
+        <?js post=it[index]; ?>
+        <?js if(post==null) { ?>
+        <?js continue; ?>
+        <?js } ?>
+    <div class="add_frend_chat_box js_add_friend_chat_group"  circle_id="#{post.rid}" index="#{index}">
+        <div class="add_frend_chat_group">
             <?js var it1 = post.accounts;var count=0; ?>
             <?js for (var index1 in it1) { ?>
             <?js if(count比较符号大于=4){break;} ?>

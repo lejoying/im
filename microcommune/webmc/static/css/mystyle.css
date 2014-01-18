@@ -73,6 +73,14 @@
     background: #666666;
 }
 
-.js_chatonlyfriend{
+.js_chatonlyfriend {
     margin-left: 290px;
+}
+
+.js_invite_chat_icon {
+    border: 2.5px solid #0099cd;
+}
+
+.js_no_invite_chat_icon {
+    border: 2.5px solid #ffffff;
 }

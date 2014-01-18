@@ -1,0 +1,15 @@
+<?js for (var index in it) { ?>
+<?js post=it[index]; ?>
+<?js if(post==null) { ?>
+<?js continue; ?>
+<?js } ?>
+<div class="add_frend_chat_checkedfrend js_already_invite_selected_user_#{post.phone}">
+    <div class="add_frend_chat_checkedheadimage" style="visibility: visible"></div>
+    <?js if(post.head != "" && post.head != null){ ?>
+    <img src="#{imageServer}#{post.head}" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
+    <?js }else{ ?>
+    <img src="/static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
+    <?js } ?>
+    <span class="add_frend_chat_checkedname">#{(post.nickName).substr(0,4)}</span>
+</div>
+<?js } ?>
