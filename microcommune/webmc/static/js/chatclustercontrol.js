@@ -1,5 +1,6 @@
 var scrollInitFlag = false;
 var tempSendMessageTimeStamp = [];
+var inviteSelectGroupID = -1;
 $(function () {
 
     getTemplateHtml("tempChatUserInfo", function (template) {
@@ -85,23 +86,26 @@ $(function () {
     $(document).on("click", ".js_add_friend_chat_group", function () {
         var index = $(this).attr("index");
         var circle_id = $(this).attr("circle_id");
-        if(circle_id == "undefined"){
-            circle_id = undefined;
-        }
-        $(".js_add_friend_chat_pop").show();
-        $(".js_add_friend_chat_sild").css({
-            left: 45 + (index % 3) * 80 + "px"
-        });
-        getTemplateHtml("invite_circles_friends_item",function(template){
-            var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
-            for(var index in circles){
-                var circle = circles[index];
-                if(JSON.stringify(circle.rid) == circle_id){
-                    $(".js_add_friend_chat_pop_frends").html(template.render(circle));
-                    break;
-                }
+        if (inviteSelectGroupID != circle_id) {
+            inviteSelectGroupID = circle_id;
+            if (circle_id == "undefined") {
+                circle_id = undefined;
             }
-        });
+            $(".js_add_friend_chat_pop").show();
+            $(".js_add_friend_chat_sild").css({
+                left: 45 + (index % 3) * 80 + "px"
+            });
+            getTemplateHtml("invite_circles_friends_item", function (template) {
+                var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+                for (var index in circles) {
+                    var circle = circles[index];
+                    if (JSON.stringify(circle.rid) == circle_id) {
+                        $(".js_add_friend_chat_pop_frends").html(template.render(circle));
+                        break;
+                    }
+                }
+            });
+        }
     });
 
     $(document).on("click", "#conversationContainer>div", function () {
