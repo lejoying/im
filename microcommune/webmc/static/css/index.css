@@ -6603,6 +6603,12 @@ a.chat_group_right_icon:active{
     height: 80px;
     position: relative;
     left: 45px;
+    overflow: hidden;
+}
+.add_frend_chat_checked_two{
+    width: 2000px;
+    height: 80px;
+    margin-left: -200px;
 }
 .add_frend_chat_checkedfrend{       /*     每个单独选中的好友框框     */
     float: left;
