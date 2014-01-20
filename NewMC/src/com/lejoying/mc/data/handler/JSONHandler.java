@@ -97,14 +97,26 @@ public class JSONHandler {
 	public void saveMessages(JSONArray jMessages, Data data) {
 		List<Message> messages = generateMessagesFromJSON(jMessages);
 		for (Message message : messages) {
-			data.friends.get(message.friendPhone).messages.add(message);
-			if (message.type == Message.MESSAGE_TYPE_RECEIVE) {
-				data.friends.get(message.friendPhone).notReadMessagesCount++;
-			} else {
-				data.friends.get(message.friendPhone).notReadMessagesCount = 0;
+			if (message.sendType.equals("point")) {
+				List<Message> friendMessages = data.friends
+						.get(message.friendPhone).messages;
+				if (!friendMessages.contains(message)) {
+					friendMessages.add(message);
+					if (message.type == Message.MESSAGE_TYPE_RECEIVE) {
+						if (data.nowChatFriend == null
+								|| data.nowChatFriend.phone != message.friendPhone
+								|| !app.mark.equals(app.chatFragment)) {
+							data.friends.get(message.friendPhone).notReadMessagesCount++;
+						}
+					}
+				}
+				data.lastChatFriends.remove(message.friendPhone);
+				data.lastChatFriends.add(0, message.friendPhone);
+			} else if (message.sendType.equals("group")) {
+
+			} else if (message.sendType.equals("tempGroup")) {
+
 			}
-			data.lastChatFriends.remove(message.friendPhone);
-			data.lastChatFriends.add(0, message.friendPhone);
 		}
 	}
 
@@ -154,26 +166,36 @@ public class JSONHandler {
 				try {
 					JSONObject jMessage = new JSONObject(jMessages.getString(i));
 					Message message = new Message();
+					message.sendType = jMessage.getString("sendType");
+					if (message.sendType.equals("point")) {
+						String phoneSend = jMessage.getString("phone");
+						String phoneReceive = new JSONArray(
+								jMessage.getString("phoneto")).getString(0);
 
-					String phoneSend = jMessage.getString("phone");
-					String phoneReceive = new JSONArray(
-							jMessage.getString("phoneto")).getString(0);
+						String friendPhone = phoneSend;
 
-					String friendPhone = phoneSend;
-
-					if (phoneSend.equals(app.data.user.phone)) {
-						message.type = Message.MESSAGE_TYPE_SEND;
-						friendPhone = phoneReceive;
-					} else if (phoneReceive.equals(app.data.user.phone)) {
-						message.type = Message.MESSAGE_TYPE_RECEIVE;
-						friendPhone = phoneSend;
+						if (phoneSend.equals(app.data.user.phone)) {
+							message.type = Message.MESSAGE_TYPE_SEND;
+							friendPhone = phoneReceive;
+						} else if (phoneReceive.equals(app.data.user.phone)) {
+							message.type = Message.MESSAGE_TYPE_RECEIVE;
+							friendPhone = phoneSend;
+						}
+						message.friendPhone = friendPhone;
+					} else if (message.sendType.equals("group")
+							|| message.sendType.equals("tempGroup")) {
+						String phoneSend = jMessage.getString("phone");
+						if (phoneSend.equals(app.data.user.phone)) {
+							message.type = Message.MESSAGE_TYPE_SEND;
+						} else {
+							message.type = Message.MESSAGE_TYPE_RECEIVE;
+						}
+						message.gid = jMessage.getString("gid");
 					}
 
 					message.time = jMessage.getString("time");
-					message.messageType = jMessage.getString("type");
+					message.contentType = jMessage.getString("contentType");
 					message.content = jMessage.getString("content");
-
-					message.friendPhone = friendPhone;
 
 					message.status = "sent";
 					messages.add(message);

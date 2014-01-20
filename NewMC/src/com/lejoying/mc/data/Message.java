@@ -15,7 +15,9 @@ public class Message implements Serializable {
 	public int type;
 	public String content = "";
 	public String time = "";
-	public String messageType = "";
+	public String sendType = "";
+	public String gid = "";
+	public String contentType = "";
 	public String status;
 	public String friendPhone;
 
@@ -25,7 +27,12 @@ public class Message implements Serializable {
 		if (o != null) {
 			try {
 				Message m = (Message) o;
-				if (type == m.type && content.equals(m.content) && time.equals(m.time) && messageType.equals(m.messageType) && status.equals(m.status) && friendPhone.equals(m.status)) {
+				if (type == m.type && content.equals(m.content)
+						&& time.equals(m.time) && sendType.equals(m.sendType)
+						&& gid.equals(m.gid)
+						&& contentType.equals(m.contentType)
+						&& status.equals(m.status)
+						&& friendPhone.equals(m.friendPhone)) {
 					flag = true;
 				}
 			} catch (Exception e) {

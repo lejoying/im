@@ -5,9 +5,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
@@ -40,12 +37,8 @@ import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
-import com.lejoying.mc.network.API;
 import com.lejoying.mc.service.PushService;
-import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCImageTools;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
 
 public class FriendsFragment extends BaseListFragment {
 
@@ -631,146 +624,39 @@ public class FriendsFragment extends BaseListFragment {
 	}
 
 	private void getUser() {
-		final Bundle params = new Bundle();
-		params.putString("phone", app.data.user.phone);
-		params.putString("accessKey", app.data.user.accessKey);
-		params.putString("target", app.data.user.phone);
-
-		System.out.println(params);
-
-		MCNetTools.ajax(new AjaxAdapter() {
-
+		app.serverHandler.getUser(new Modification() {
 			@Override
-			public void setParams(Settings settings) {
-				settings.url = API.ACCOUNT_GET;
-				settings.params = params;
+			public void modify(Data data) {
+				getCirclesAndFriends();
 			}
-
-			@Override
-			public void onSuccess(JSONObject jData) {
-				try {
-					final JSONObject jUser = jData.getJSONObject("account");
-					app.dataHandler.modifyData(new Modification() {
-						public void modify(Data data) {
-							app.mJSONHandler.updateUser(jUser, data);
-							getCirclesAndFriends();
-						}
-					});
-				} catch (JSONException e) {
-				}
-			}
-		});
+		}, null);
 	}
 
 	private void getCirclesAndFriends() {
-		final Bundle params = new Bundle();
-		params.putString("phone", app.data.user.phone);
-		params.putString("accessKey", app.data.user.accessKey);
-
-		MCNetTools.ajax(new AjaxAdapter() {
+		app.serverHandler.getCirclesAndFriends(new Modification() {
 
 			@Override
-			public void setParams(Settings settings) {
-				settings.url = API.RELATION_GETCIRCLESANDFRIENDS;
-				settings.params = params;
+			public void modify(Data data) {
+				getMessages();
 			}
-
-			@Override
-			public void onSuccess(final JSONObject jData) {
-				app.dataHandler.modifyData(new Modification() {
-					@Override
-					public void modify(Data data) {
-						try {
-							app.mJSONHandler.saveCircles(
-									jData.getJSONArray("circles"), data);
-							getMessages();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		});
+		}, null);
 	}
 
 	private void getMessages() {
-		final Bundle params = new Bundle();
-		params.putString("phone", app.data.user.phone);
-		params.putString("accessKey", app.data.user.accessKey);
-		String flag = app.data.user.flag;
-		params.putString("flag", flag);
-		MCNetTools.ajax(new AjaxAdapter() {
-
+		System.out.println("到了");
+		app.serverHandler.getMessages(new Modification() {
 			@Override
-			public void setParams(Settings settings) {
-				settings.url = API.MESSAGE_GET;
-				settings.params = params;
+			public void modify(Data data) {
+				app.serverHandler.getAskFriends(null, null);
 			}
+		}, new UIModification() {
 
 			@Override
-			public void onSuccess(final JSONObject jData) {
-				app.dataHandler.modifyData(new Modification() {
-
-					@Override
-					public void modify(Data data) {
-						getAskFriends();
-						try {
-							app.mJSONHandler.saveMessages(
-									jData.getJSONArray("messages"), data);
-							data.user.flag = jData.getString("flag");
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}, new UIModification() {
-					@Override
-					public void modifyUI() {
-						initData(true);
-						mAdapter.notifyDataSetChanged();
-					}
-				});
+			public void modifyUI() {
+				initData(true);
+				mAdapter.notifyDataSetChanged();
 			}
 		});
 	}
 
-	public void getAskFriends() {
-		final Bundle params = new Bundle();
-		params.putString("phone", app.data.user.phone);
-		params.putString("accessKey", app.data.user.accessKey);
-
-		MCNetTools.ajax(new AjaxAdapter() {
-
-			@Override
-			public void setParams(Settings settings) {
-				settings.url = API.RELATION_GETASKFRIENDS;
-				settings.params = params;
-			}
-
-			@Override
-			public void onSuccess(final JSONObject jData) {
-				app.dataHandler.modifyData(new Modification() {
-
-					@Override
-					public void modify(Data data) {
-						try {
-							app.mJSONHandler.saveNewFriends(
-									jData.getJSONArray("accounts"), data);
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}, new UIModification() {
-
-					@Override
-					public void modifyUI() {
-						initData(false);
-						mAdapter.notifyDataSetChanged();
-					}
-				});
-			}
-		});
-	}
 }

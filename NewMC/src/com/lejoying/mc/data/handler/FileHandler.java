@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Base64;
-import android.widget.Toast;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
@@ -161,22 +160,10 @@ public class FileHandler {
 
 					public void noInternet() {
 						getImageFromWebStatus.put(imageFileName, "failed");
-						app.mUIThreadHandler.post(new Runnable() {
-							public void run() {
-								Toast.makeText(app.context, "没有网络连接，网络不给力呀~",
-										Toast.LENGTH_SHORT).show();
-							}
-						});
 					}
 
 					public void failed() {
 						getImageFromWebStatus.put(imageFileName, "failed");
-						app.mUIThreadHandler.post(new Runnable() {
-							public void run() {
-								Toast.makeText(app.context, "网络连接失败，网络不给力呀~",
-										Toast.LENGTH_SHORT).show();
-							}
-						});
 					}
 
 					@Override

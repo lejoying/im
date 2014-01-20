@@ -35,7 +35,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -317,6 +316,7 @@ public class ChatFragment extends BaseListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setListAdapter(mAdapter);
+		getListView().setSelection(mAdapter.getCount() - 1);
 	}
 
 	public void showSelectTab() {
@@ -425,7 +425,7 @@ public class ChatFragment extends BaseListFragment {
 				messageHolder = (MessageHolder) convertView.getTag();
 			}
 			Message message = (Message) getItem(position);
-			if (message.messageType.equals("text")) {
+			if (message.contentType.equals("text")) {
 				messageHolder.text.setVisibility(View.VISIBLE);
 				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.tv_chat.setText(message.content);
@@ -452,7 +452,7 @@ public class ChatFragment extends BaseListFragment {
 						}
 					}
 				});
-			} else if (message.messageType.equals("image")) {
+			} else if (message.contentType.equals("image")) {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
 				final String imageFileName = message.content;
@@ -477,7 +477,7 @@ public class ChatFragment extends BaseListFragment {
 				default:
 					break;
 				}
-			} else if (message.messageType.equals("voice")) {
+			} else if (message.contentType.equals("voice")) {
 
 			}
 			return convertView;
@@ -497,9 +497,11 @@ public class ChatFragment extends BaseListFragment {
 	public void sendMessage(final String type, final String content) {
 		final Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
+		message.sendType = "point";
 		message.content = content;
-		message.messageType = type;
+		message.contentType = type;
 		message.status = "sending";
+		message.friendPhone = app.data.nowChatFriend.phone;
 		message.time = String.valueOf(new Date().getTime());
 
 		app.dataHandler.modifyData(new Modification() {
@@ -509,8 +511,7 @@ public class ChatFragment extends BaseListFragment {
 		}, new UIModification() {
 			public void modifyUI() {
 				mAdapter.notifyDataSetChanged();
-				getListView().setTranscriptMode(
-						ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+				getListView().setSelection(mAdapter.getCount() - 1);
 			}
 		});
 
@@ -520,16 +521,21 @@ public class ChatFragment extends BaseListFragment {
 				settings.params = generateMessageParams(type, content);
 			}
 
-			public void onSuccess(JSONObject data) {
+			public void onSuccess(final JSONObject jData) {
+				try {
+					jData.getString(getString(R.string.app_reason));
+					message.status = "failed";
+					return;
+				} catch (JSONException e) {
+				}
 				app.dataHandler.modifyData(new Modification() {
 					public void modify(Data data) {
-						if (app.data.user.flag.equals("none")) {
-							app.data.user.flag = String.valueOf(1);
-						} else {
-							app.data.user.flag = String
-									.valueOf(Integer
-											.valueOf(app.data.user.flag)
-											.intValue() + 1);
+						try {
+							String time = jData.getString("time");
+							message.time = time;
+							message.status = "sent";
+						} catch (JSONException e) {
+							message.status = "failed";
 						}
 						if (app.data.lastChatFriends
 								.indexOf(app.data.nowChatFriend.phone) != 0) {
@@ -552,12 +558,13 @@ public class ChatFragment extends BaseListFragment {
 		Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
+		params.putString("sendType", "point");
 		JSONArray jFriends = new JSONArray();
 		jFriends.put(app.data.nowChatFriend.phone);
 		params.putString("phoneto", jFriends.toString());
 		JSONObject jMessage = new JSONObject();
 		try {
-			jMessage.put("type", type);
+			jMessage.put("contentType", type);
 			jMessage.put("content", content);
 			params.putString("message", jMessage.toString());
 		} catch (JSONException e) {
@@ -597,7 +604,6 @@ public class ChatFragment extends BaseListFragment {
 
 					@Override
 					public void onSuccess(String fileName, String base64) {
-						System.out.println(fileName);
 						checkImage(fileName, base64);
 					}
 				});

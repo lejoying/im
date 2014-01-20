@@ -34,7 +34,7 @@ public class EventHandler {
 
 					}
 				} else if (event.event.equals("newfriend")) {
-					app.serverHandler.getAskFriends();
+					app.serverHandler.getAskFriends(null, null);
 				}
 			}
 		}, new UIModification() {
@@ -44,28 +44,28 @@ public class EventHandler {
 				}
 				if (FriendsFragment.instance != null) {
 					FriendsFragment.instance.initData(true);
-					FriendsFragment.instance.mAdapter
-							.notifyDataSetChanged();
+					FriendsFragment.instance.mAdapter.notifyDataSetChanged();
 				}
 			}
 		});
 	}
 
 	public void handleMessage(Data data, List<Message> messages) {
-		for (Message message : messages) {
-			data.friends.get(message.friendPhone).messages.add(message);
-			if (message.type == Message.MESSAGE_TYPE_RECEIVE) {
-				if (ChatFragment.instance == null
-						|| !data.nowChatFriend.phone
-								.equals(message.friendPhone)) {
-					data.friends.get(message.friendPhone).notReadMessagesCount++;
-				}
-			} else {
-				data.friends.get(message.friendPhone).notReadMessagesCount = 0;
-			}
-
-			data.lastChatFriends.remove(message.friendPhone);
-			data.lastChatFriends.add(0, message.friendPhone);
-		}
+		// for (Message message : messages) {
+		// data.friends.get(message.friendPhone).messages.add(message);
+		// if (message.type == Message.MESSAGE_TYPE_RECEIVE) {
+		// if (ChatFragment.instance == null
+		// || !data.nowChatFriend.phone
+		// .equals(message.friendPhone)) {
+		// data.friends.get(message.friendPhone).notReadMessagesCount++;
+		// }
+		// } else {
+		// data.friends.get(message.friendPhone).notReadMessagesCount = 0;
+		// }
+		//
+		// data.lastChatFriends.remove(message.friendPhone);
+		// data.lastChatFriends.add(0, message.friendPhone);
+		// }
+		app.serverHandler.getMessages(null, null);
 	}
 }
