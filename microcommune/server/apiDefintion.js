@@ -536,7 +536,7 @@ api = {
             url: "/api2/message/send"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], message: {type: "text" || "image" || "voice", content: "XXX"}}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], gid: "XXX", sendType: ["point" || "group" || "tempGroup"], message: {contentType: "text" || "image" || "voice", content: "XXX"}}
         },
         response: {
             success: {"提示信息": "发送成功", time: "XXX"},

@@ -184,71 +184,15 @@
     </div>
     <div class="add_frend_chat_bottom">
         <a>
-            <div class="add_frend_chat_lefticon"></div>
+            <div class="add_frend_chat_lefticon js_add_friend_chat_lefticon"></div>
         </a>
 
         <div class="add_frend_chat_checked">
-            <div class="add_frend_chat_checked_two">
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage" style="visibility: hidden"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
-                <div class="add_frend_chat_checkedfrend">
-                    <div class="add_frend_chat_checkedheadimage"></div>
-                    <img src="static/images/webwxgeticon1.jpg" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
-                    <span class="add_frend_chat_checkedname">石头</span>
-                </div>
+            <div class="add_frend_chat_checked_two js_already_invite_select_friends">
             </div>
-
         </div>
         <a>
-            <div class="add_frend_chat_righticon"></div>
+            <div class="add_frend_chat_righticon js_add_friend_chat_righticon"></div>
         </a>
     </div>
 </div>
@@ -326,128 +270,141 @@
 </div>
 <!--search end-->
 <div style="position: relative; overflow-y: hidden; height:470px;" class="listContentWrap"> <!--height470px-->
-<!--mainBox 的hidden改为visible，背景把白色去掉了，coolspan-->
-<div id="mainBox" style="height: 100%; width: 100%; overflow-y: visible; position: relative;">
-<div style="width: 100%; top: 0px; position: absolute;" id="conversationListContent" class="listContent" ctrl="1"
-     onmousewheel="tempChatMainContent()">
-<div id="conversationContainer" style="" class="js_mainContent js_js_tempChatMainContent">
+    <!--mainBox 的hidden改为visible，背景把白色去掉了，coolspan-->
+    <div id="mainBox" style="height: 100%; width: 100%; overflow-y: visible; position: relative;">
+        <div style="width: 100%; top: 0px; position: absolute;" id="conversationListContent" class="listContent"
+             ctrl="1"
+             onmousewheel="tempChatMainContent()">
+            <div id="conversationContainer" style="" class="js_mainContent js_js_tempChatMainContent">
 
-<div style="visibility: hidden;" class="js_loadingTempData" id="conv_load_more"><a href="javascript:;"
-                                                                                   class="chatListColumn loadMoreConv"> <span
-        class="tipPic"></span> <span class="desc">点击显示更多</span> </a></div>
-</div>
+                <div style="visibility: hidden;" class="js_loadingTempData" id="conv_load_more"><a href="javascript:;"
+                                                                                                   class="chatListColumn loadMoreConv"> <span
+                        class="tipPic"></span> <span class="desc">点击显示更多</span> </a></div>
+            </div>
 
 
-<!-------------密友圈------------------------------------->
+            <!-------------密友圈------------------------------------->
 
-<div class="js_mainContent js_circlesFriends" style="position: relative;   height:100%">
-    <!-- <div class="left_content" style="  background-color:#FFF;  height:100%; position: relative;  ">-->
+            <div class="js_mainContent js_circlesFriends" style="position: relative;   height:100%">
+                <!-- <div class="left_content" style="  background-color:#FFF;  height:100%; position: relative;  ">-->
 
-    <div class="js_groups" style="width:276px; height:350px; ">
-        <div class="js_addcircle" style="float:left;margin-left:25px; margin-top:25px;cursor:pointer;">
-            <img src="static/images/new_create_icon.png"
-                 style="height: 44px;width: 43px;float:left;opacity:0.2; cursor:pointer;"/>
+                <div class="js_groups" style="width:276px; height:350px; ">
+                    <div class="js_addcircle" style="float:left;margin-left:25px; margin-top:25px;cursor:pointer;">
+                        <img src="static/images/new_create_icon.png"
+                             style="height: 44px;width: 43px;float:left;opacity:0.2; cursor:pointer;"/>
 
-            <div class="clr"></div>
-            <span style="display:block; font-size:12px; margin-top:8px;">新建</span>
+                        <div class="clr"></div>
+                        <span style="display:block; font-size:12px; margin-top:8px;">新建</span>
+                    </div>
+
+                </div>
+                <!--group-->
+
+                <div class="popmenuFrame" style="left: 0px; top: 90px; display:block;visibility: hidden;">
+                    <div class="sildLeftSharp">
+                        <img src="static/images/sildLeftSharp.png"/>
+                    </div>
+
+                    <div class="sildPopContent">
+                        <div class="schoolmate_txt">同学</div>
+
+                        <div class="clr"></div>
+                        <div class="group_user"></div>
+                        <!--group_user-->
+                    </div>
+                    <!--sildPopContent-->
+                </div>
+                <!--popmenuFrame-->
+            </div>
+            <!-------------密友圈------------------------------------->
+            <div class="js_mainContent js_clusterMainContent">
+                <div class="groupchat_bigbox">      <!--  群组大盒子   -->
+                    <div class="groupchat_boderbox_template">   <!--    可作为模板     -->
+                        <div class="groupchat_boderbox">
+                            <div class="groupchat_number">       <!--    红色圆心数字     -->
+                                <div class="groupchat_number_info">66</div>
+                            </div>
+                            <div class="groupchat_boderbox_minbox">
+                                <div style="margin-top: 5px">联谊会</div>
+                                <div style="font-size: 12px">(15人)</div>
+                            </div>
+                            <div class="groupchat_frends_head">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                            </div>
+                            <div class="groupchat_frends_message">
+                                <span class="groupchat_frends_message_info">最后一条聊天的内容...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="groupchat_boderbox_template">   <!--    可作为模板     -->
+                        <div class="groupchat_boderbox">
+                            <div class="groupchat_number">       <!--    红色圆心数字     -->
+                                <div class="groupchat_number_info">66</div>
+                            </div>
+                            <div class="groupchat_boderbox_minbox">
+                                <div style="margin-top: 5px">工作组</div>
+                                <div style="font-size: 12px">(15人)</div>
+                            </div>
+                            <div class="groupchat_frends_head">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                            </div>
+                            <div class="groupchat_frends_message">
+                                <span class="groupchat_frends_message_info">最后一条聊天的内容...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="groupchat_boderbox_template">   <!--    可作为模板     -->
+                        <div class="groupchat_boderbox">
+                            <div class="groupchat_boderbox_minbox">
+                                <div style="margin-top: 5px">发改组</div>
+                                <div style="font-size: 12px">(15人)</div>
+                            </div>
+                            <div class="groupchat_frends_head">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                                <img src="static/images/webwxgeticon1.jpg" alt="群好友头像"
+                                     class="groupchat_frends_head_icon">
+                            </div>
+                            <div class="groupchat_frends_message">
+                                <span class="groupchat_frends_message_info">最后一条聊天的内容...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="groupchat_boderbox_template">       <!--    创建一个群组    -->
+                        <div class="groupchat_boderbox">
+                            <div class="groupchat_boderbox_minbox">
+                                <img src="static/images/add_groupchat.jpg" style="margin-top: 7px">
+                            </div>
+                            <div class="groupchat_frends_message" style="margin-top: 20px">
+                                <span class="groupchat_frends_message_info">创建一个群组</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="js_mainContent js_appManageMainContent">
+                <div style="margin-top: 300px;">应用正在建设中...</div>
+            </div>
         </div>
-
     </div>
-    <!--group-->
-
-    <div class="popmenuFrame" style="left: 0px; top: 90px; display:block;visibility: hidden;">
-        <div class="sildLeftSharp">
-            <img src="static/images/sildLeftSharp.png"/>
-        </div>
-
-        <div class="sildPopContent">
-            <div class="schoolmate_txt">同学</div>
-
-            <div class="clr"></div>
-            <div class="group_user"></div>
-            <!--group_user-->
-        </div>
-        <!--sildPopContent-->
-    </div>
-    <!--popmenuFrame-->
-</div>
-<!-------------密友圈------------------------------------->
-<div class="js_mainContent js_clusterMainContent">
-    <div class="groupchat_bigbox">      <!--  群组大盒子   -->
-        <div class="groupchat_boderbox_template">   <!--    可作为模板     -->
-            <div class="groupchat_boderbox">
-                <div class="groupchat_number">       <!--    红色圆心数字     -->
-                    <div class="groupchat_number_info">66</div>
-                </div>
-                <div class="groupchat_boderbox_minbox">
-                    <div style="margin-top: 5px">联谊会</div>
-                    <div style="font-size: 12px">(15人)</div>
-                </div>
-                <div class="groupchat_frends_head">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                </div>
-                <div class="groupchat_frends_message">
-                    <span class="groupchat_frends_message_info">最后一条聊天的内容...</span>
-                </div>
-            </div>
-        </div>
-        <div class="groupchat_boderbox_template">   <!--    可作为模板     -->
-            <div class="groupchat_boderbox">
-                <div class="groupchat_number">       <!--    红色圆心数字     -->
-                    <div class="groupchat_number_info">66</div>
-                </div>
-                <div class="groupchat_boderbox_minbox">
-                    <div style="margin-top: 5px">工作组</div>
-                    <div style="font-size: 12px">(15人)</div>
-                </div>
-                <div class="groupchat_frends_head">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                </div>
-                <div class="groupchat_frends_message">
-                    <span class="groupchat_frends_message_info">最后一条聊天的内容...</span>
-                </div>
-            </div>
-        </div>
-        <div class="groupchat_boderbox_template">   <!--    可作为模板     -->
-            <div class="groupchat_boderbox">
-                <div class="groupchat_boderbox_minbox">
-                    <div style="margin-top: 5px">发改组</div>
-                    <div style="font-size: 12px">(15人)</div>
-                </div>
-                <div class="groupchat_frends_head">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                    <img src="static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
-                </div>
-                <div class="groupchat_frends_message">
-                    <span class="groupchat_frends_message_info">最后一条聊天的内容...</span>
-                </div>
-            </div>
-        </div>
-        <div class="groupchat_boderbox_template">       <!--    创建一个群组    -->
-            <div class="groupchat_boderbox">
-                <div class="groupchat_boderbox_minbox">
-                    <img src="static/images/add_groupchat.jpg" style="margin-top: 7px">
-                </div>
-                <div class="groupchat_frends_message" style="margin-top: 20px">
-                    <span class="groupchat_frends_message_info">创建一个群组</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="js_mainContent js_appManageMainContent">
-    <div style="margin-top: 300px;">应用正在建设中...</div>
-</div>
-</div>
-</div>
 </div>
 <div class="chatLeftPanelShadow js_menuPanel">
     <!---------------------------------删除和黑名单--------------------------->

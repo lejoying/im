@@ -3,8 +3,8 @@
 <?js if(post==null) { ?>
 <?js continue; ?>
 <?js } ?>
-<div class="add_frend_chat_checkedfrend js_already_invite_selected_user_#{post.phone}">
-    <div class="add_frend_chat_checkedheadimage" style="visibility: visible"></div>
+<div class="add_frend_chat_checkedfrend js_invite_users js_already_invite_selected_user_#{post.phone}" phone="#{post.phone}">
+    <div class="add_frend_chat_checkedheadimage js_add_friend_chat_checked_headimg" style="visibility: hidden"></div>
     <?js if(post.head != "" && post.head != null){ ?>
     <img src="#{imageServer}#{post.head}" class="add_frend_chat_checkedhead" alt="选中好友头像"/>
     <?js }else{ ?>

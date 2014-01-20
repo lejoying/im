@@ -125,18 +125,80 @@ $(function () {
             delete inviteSelectedUsers[phone];
             icon.removeClass("js_invite_chat_icon");
             icon.addClass("js_no_invite_chat_icon");
-            var targetObj = $(".js_already_invite_selected_user_"+phone)[0];
+            var targetObj = $(".js_already_invite_selected_user_" + phone)[0];
             targetObj.parentNode.removeChild(targetObj);
-
+            if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
+                $(".js_already_invite_select_friends").css({
+                    width: parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", "")) - 60 + "px"
+                });
+            }
         } else {
             icon.addClass("js_invite_chat_icon");
             inviteSelectedUsers[phone] = "select";
             if (icon.hasClass("js_no_invite_chat_icon")) {
                 icon.removeClass("js_no_invite_chat_icon");
             }
-            getTemplateHtml("already_invite_circles_friends",function(template){
-                $(".add_frend_chat_checked").append(template.render([allCirclesFriends[phone]]));
+            getTemplateHtml("already_invite_circles_friends", function (template) {
+                $(".js_already_invite_select_friends").append(template.render([allCirclesFriends[phone]]));
+                if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
+                    $(".js_already_invite_select_friends").css({
+                        width: parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", "")) + 60 + "px"
+                    });
+                }
             });
+        }
+    });
+    $(document).on("click", ".js_invite_users", function () {
+        var phone = $(this).attr("phone");
+        var targetObj = $(".js_invite_friend_chat_icon[phone=" + phone + "]");
+        if (targetObj.attr("class") != undefined) {
+            var img = targetObj.find("img");
+            if (img.hasClass("js_invite_chat_icon")) {
+                img.removeClass("js_invite_chat_icon");
+                img.addClass("js_no_invite_chat_icon");
+            }
+        }
+        delete inviteSelectedUsers[phone];
+        var invite_user = $(".js_already_invite_selected_user_" + phone)[0];
+        invite_user.parentNode.removeChild(invite_user);
+        if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
+            $(".js_already_invite_select_friends").css({
+                width: parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", "")) - 60 + "px"
+            });
+        }
+    });
+    $(document).on("mouseover", ".js_already_invite_select_friends", function () {
+        ($(this).find(".js_add_friend_chat_checked_headimg")).css({
+            visibility: "visible"
+        });
+    });
+    $(document).on("mouseout", ".js_already_invite_select_friends", function () {
+        ($(this).find(".js_add_friend_chat_checked_headimg")).css({
+            visibility: "hidden"
+        });
+    });
+    $(document).on("click", ".js_add_friend_chat_lefticon", function () {
+        if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
+            var width = parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", ""));
+            var marginLeft = parseInt(($(".js_already_invite_select_friends").css("marginLeft")).replace("px", ""));
+            var maxMarginLeft = width - 180;
+            if (marginLeft + 60 <= 0) {
+                $(".js_already_invite_select_friends").css({
+                    "margin-left": (marginLeft + 60) + "px"
+                });
+            }
+        }
+    });
+    $(document).on("click", ".js_add_friend_chat_righticon", function () {
+        if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
+            var width = parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", ""));
+            var marginLeft = parseInt(($(".js_already_invite_select_friends").css("marginLeft")).replace("px", ""));
+            var maxMarginLeft = width - 180;
+            if (marginLeft - 60 > -maxMarginLeft) {
+                $(".js_already_invite_select_friends").css({
+                    "margin-left": marginLeft - 60 + "px"
+                });
+            }
         }
     });
 

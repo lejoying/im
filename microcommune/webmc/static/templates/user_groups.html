@@ -1,0 +1,34 @@
+<?js for (var index in it) { ?>
+<?js post0=it[index]; ?>
+<?js if(post0==null) { ?>
+<?js continue; ?>
+<?js } ?>
+<?js var it1 = it.members; ?>
+<?js var length = it1.length; ?>
+<div class="groupchat_boderbox">    <!--    可作为模板     -->
+    <div class="groupchat_boderbox_template">
+        <div class="groupchat_boderbox_minbox">
+            <div style="margin-top: 5px">#{post0.name}</div>
+            <div style="font-size: 12px">(#{length}人)</div>
+        </div>
+        <div class="groupchat_frends_head">
+            <?js var count++; ?>
+            <?js for (var index1 in it1) { ?>
+            <?js if(count比较符号大于=4){break;} ?>
+            <?js post1=it1[index1];count++; ?>
+            <?js if(post1==null) { ?>
+            <?js continue; ?>
+            <?js } ?>
+            <?js if(post1.head != "" && post1.head != null){ ?>
+            <img src="/static/images/webwxgeticon1.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
+            <?js }else{ ?>
+            <img src="/static/images/webwxgeticonhead.jpg" alt="群好友头像" class="groupchat_frends_head_icon">
+            <?js } ?>
+            <?js } ?>
+        </div>
+        <div class="groupchat_frends_message">
+            <span class="groupchat_frends_message_info">最后一条聊天的内容...</span>
+        </div>
+    </div>
+</div>
+<?js } ?>

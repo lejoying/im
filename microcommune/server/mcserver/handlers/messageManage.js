@@ -14,6 +14,8 @@ messageManage.send = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
+    var gid = data.gid;
+    var sendType = data.sendType;
     var phoneto = {};
     var message = {};
     try {
@@ -29,13 +31,27 @@ messageManage.send = function (data, response) {
         return;
     }
     var time = new Date().getTime();
-    var messageOwn = JSON.stringify({
-        type: message.type,
+    var messageSelf = {
+        contentType: message.contentType,
+        sendType: sendType,
         phone: phone,
-        phoneto: phoneToStr,
         content: message.content,
         time: time
-    });
+    };
+    if (sendType == "point") {
+        messageSelf.phoneto = phoneToStr;
+    } else if (sendType == "group" || sendType == "tempGroup") {
+        messageSelf.gid = gid;
+    } else {
+        response.write(JSON.stringify({
+            "提示信息": "发送失败",
+            "失败原因": "数据格式不正确"
+        }));
+        response.end();
+        return;
+    }
+    var messageOwn = JSON.stringify(messageSelf);
+
     client.rpush(phone, messageOwn, function (err, reply) {
         if (err != null) {
             response.write(JSON.stringify({
@@ -47,13 +63,19 @@ messageManage.send = function (data, response) {
             return;
         }
         for (var index in phoneto) {
-            var messageOther = JSON.stringify({
-                type: message.type,
+            var messageToOther = {
+                contentType: message.contentType,
+                sendType: sendType,
                 phone: phone,
-                phoneto: JSON.stringify([phoneto[index]]),
                 content: message.content,
                 time: time
-            });
+            };
+            if (sendType == "point") {
+                messageToOther.phoneto = JSON.stringify([phoneto[index]]);
+            } else if (sendType == "group" || sendType == "tempGroup") {
+                messageToOther.gid = gid;
+            }
+            var messageOther = JSON.stringify(messageToOther);
             client.rpush(phoneto[index], messageOther, function (err, reply) {
                 if (err != null) {
                     response.write(JSON.stringify({
