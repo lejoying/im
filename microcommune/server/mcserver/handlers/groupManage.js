@@ -3,6 +3,8 @@ var groupManage = {};
 var verifyEmpty = require("./../lib/verifyParams.js");
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
+var redis = require("redis");
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 /***************************************
  *     URL：/api2/group/create
  ***************************************/
@@ -10,9 +12,45 @@ groupManage.create = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var tempGid = data.tempGid;
+    var type = data.type;//createTempGroup,createGroup,upgradeGroup
     var name = data.name;
     var members = data.members;
     console.log("phone:" + phone + "tempGid:" + tempGid + ",name:" + name + ",members:" + members);
+    if (type == "createTempGroup") {
+        var timeGid = new Date().getTime() + "";
+        if (tempGid != undefined) {
+            timeGid = tempGid;
+        }
+        var group = {
+            tempGid: timeGid,
+            name: name,
+            members: members
+        };
+        client.hset("tempGroup", timeGid, JSON.stringify(group), function (err, reply) {
+            if (err != null) {
+                response.write(JSON.stringify({
+                    "提示信息": "创建群组失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(err);
+                return;
+            } else {
+                console.log(reply);
+                response.write(JSON.stringify({
+                    "提示信息": "创建群组成功",
+                    tempGid: reply
+                }));
+                response.end();
+            }
+        });
+        //session 推送提示信息给用户，群组信息更新的提醒
+
+    } else if (type == "createTempGroup") {
+    } else if (type == "createGroup") {
+    }
+
+
     var list = [phone, tempGid, name, members];
     if (verifyEmpty.verifyEmpty(data, list, response)) {
         try {

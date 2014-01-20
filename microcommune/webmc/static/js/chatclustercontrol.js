@@ -83,6 +83,19 @@ $(function () {
     });
     $(".js_add_friend_chat_complete").click(function () {
         $(".js_invite_SelectUserChat_frame").hide();
+        $(".js_add_friend_chat_pop").hide();
+        $(".js_already_invite_select_friends").html("");
+        var array = [];
+        for (var index in inviteSelectedUsers) {
+            array.push(index);
+        }
+        alert(JSON.stringify(array));
+        $.ajax({
+            type: "POST",
+            url: "/api2/"
+        });
+        inviteSelectGroupID = -1;
+        inviteSelectedUsers = {};
     });
     $(document).on("click", ".js_add_friend_chat_group", function () {
         //js_invite_circles_friends
@@ -187,6 +200,10 @@ $(function () {
                     "margin-left": (marginLeft + 60) + "px"
                 });
             }
+        } else {
+            $(".js_already_invite_select_friends").css({
+                "margin-left": 0 + "px"
+            });
         }
     });
     $(document).on("click", ".js_add_friend_chat_righticon", function () {
@@ -199,6 +216,10 @@ $(function () {
                     "margin-left": marginLeft - 60 + "px"
                 });
             }
+        } else {
+            $(".js_already_invite_select_friends").css({
+                "margin-left": 0 + "px"
+            });
         }
     });
 

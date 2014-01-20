@@ -718,7 +718,7 @@ api = {
             url: "/api2/group/create"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", tempGid: "XXX", name: "XXX", members: ["XXX", "XXX", "XXX"]}
+            typical: {phone: "XXX", accessKey: "XXX", type: ["createTempGroup", "createGroup", "upgradeGroup"], tempGid: "XXX", name: "XXX", members: ["XXX", "XXX", "XXX"]}
         },
         response: {
             success: {"提示信息": "创建群组成功", group: {}},
