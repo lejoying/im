@@ -2,6 +2,10 @@ var scrollInitFlag = false;
 var tempSendMessageTimeStamp = [];
 var inviteSelectGroupID = -1;
 var inviteSelectedUsers = {};
+
+var currentChatType = "";
+var currentChatGroup = {};
+
 $(function () {
 
     getTemplateHtml("tempChatUserInfo", function (template) {
@@ -82,18 +86,30 @@ $(function () {
         });
     });
     $(".js_add_friend_chat_complete").click(function () {
+        var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         $(".js_invite_SelectUserChat_frame").hide();
         $(".js_add_friend_chat_pop").hide();
         $(".js_already_invite_select_friends").html("");
-        var array = [];
+        var members = [];
         for (var index in inviteSelectedUsers) {
-            array.push(index);
+            members.push(index);
         }
-        alert(JSON.stringify(array));
-        $.ajax({
-            type: "POST",
-            url: "/api2/"
-        });
+        if (members.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/api2/group/create?",
+                data: {
+                    phone: accountObj.phone,
+                    accessKey: accountObj.accessKey,
+                    type: "createTempGroup",
+                    name: "",
+                    members: JSON.stringify(members)
+                },
+                success: function (data) {
+                    alert(data["提示信息"]);
+                }
+            });
+        }
         inviteSelectGroupID = -1;
         inviteSelectedUsers = {};
     });
@@ -190,6 +206,10 @@ $(function () {
             visibility: "hidden"
         });
     });
+    $(document).on("click", ".js_groupchat_boderbox_template", function () {
+        alert("js_groupchat_boderbox_template");
+    });
+
     $(document).on("click", ".js_add_friend_chat_lefticon", function () {
         if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
             var width = parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", ""));
@@ -436,6 +456,14 @@ function keepQuest() {
                 } else {
                     keepQuest();
                     alert("神器的效果");
+                }
+            } else if (data["提示信息"] == "请求失败") {
+                if (data["失败原因"] == "AccessKey Invalid") {
+                    window.localStorage.clear();
+                    window.sessionStorage.clear();
+                    location.href = "./index.html";
+                } else {
+                    keepQuest();
                 }
             } else {
                 keepQuest();

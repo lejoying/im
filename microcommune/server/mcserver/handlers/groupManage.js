@@ -10,6 +10,7 @@ var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
  ***************************************/
 groupManage.create = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var tempGid = data.tempGid;
     var type = data.type;//createTempGroup,createGroup,upgradeGroup
@@ -24,7 +25,7 @@ groupManage.create = function (data, response) {
         var group = {
             tempGid: timeGid,
             name: name,
-            members: members
+            members: JSON.parse(members)
         };
         client.hset("tempGroup", timeGid, JSON.stringify(group), function (err, reply) {
             if (err != null) {
@@ -35,37 +36,45 @@ groupManage.create = function (data, response) {
                 response.end();
                 console.log(err);
                 return;
-            } else {
-                console.log(reply);
+            } else if (reply == 1) {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组成功",
-                    tempGid: reply
+                    tempGid: timeGid
                 }));
                 response.end();
+                return;
+            } else if (reply == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "更新群组成功",
+                    tempGid: timeGid
+                }));
+                response.end();
+                return;
             }
         });
         //session 推送提示信息给用户，群组信息更新的提醒
 
-    } else if (type == "createTempGroup") {
+    } else if (type == "upgradeGroup") {
+
     } else if (type == "createGroup") {
-    }
-
-
-    var list = [phone, tempGid, name, members];
-    if (verifyEmpty.verifyEmpty(data, list, response)) {
-        try {
-            members = JSON.parse(members);
-        } catch (e) {
-            console.log(e + "数据格式不正确");
-            response.write(JSON.stringify({
-                "提示信息": "创建群组失败",
-                "失败原因": "数据格式不正确"
-            }));
-            response.end();
-            return;
+        var list = [phone, tempGid, name, members];
+        if (verifyEmpty.verifyEmpty(data, list, response)) {
+            try {
+                members = JSON.parse(members);
+            } catch (e) {
+                console.log(e + "数据格式不正确");
+                response.write(JSON.stringify({
+                    "提示信息": "创建群组失败",
+                    "失败原因": "数据格式不正确"
+                }));
+                response.end();
+                return;
+            }
+            createGroupNode();
         }
-        createGroupNode();
     }
+
+
     function createGroupNode() {
         var group = {
             name: name

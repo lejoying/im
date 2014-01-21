@@ -127,6 +127,25 @@ $(function () {//show js_modify_jcrophead_show
         $(".js_mainContent").slideUp(1);
         $(".js_clusterMainContent").slideDown(1);
         selectPanel = "js_clustersTop";
+        var groups = [];
+        for (var i = 0; i < 4; i++) {
+            var group = {
+                tempGid: i,
+                name: "群组" + i,
+                members: [
+                    {"uid": 185, "phone": "125478", "mainBusiness": "", "head": "", "byPhone": "checked", "nickName": "用户125478", "friendStatus": "success"},
+                    {"uid": 21, "phone": "125455525", "mainBusiness": "", "head": "", "byPhone": "checked", "nickName": "用户125455525", "friendStatus": "success"},
+                    {"uid": 21, "phone": "125455525", "mainBusiness": "", "head": "", "byPhone": "checked", "nickName": "用户125455525", "friendStatus": "success"},
+                    {"uid": 62, "phone": "18601330540", "mainBusiness": "联合国亚太地区首席联络官", "head": "1ca76da7e324705acf8686135f0faab7054dd625.png", "byPhone": "checked", "nickName": "小麦田", "friendStatus": "success"},
+                    {"uid": 62, "phone": "18601330540", "mainBusiness": "联合国亚太地区首席联络官", "head": "1ca76da7e324705acf8686135f0faab7054dd625.png", "byPhone": "checked", "nickName": "小麦田", "friendStatus": "success"},
+                    {"uid": 62, "phone": "18601330540", "mainBusiness": "联合国亚太地区首席联络官", "head": "1ca76da7e324705acf8686135f0faab7054dd625.png", "byPhone": "checked", "nickName": "小麦田", "friendStatus": "success"}
+                ]
+            };
+            groups.push(group);
+        }
+        getTemplateHtml("user_groups", function (template) {
+//            $(".js_user_groups").html(template.render(groups));
+        });
     });
     $(".js_appManageTop").click(function () {
         $("#conversationListContent").css({
