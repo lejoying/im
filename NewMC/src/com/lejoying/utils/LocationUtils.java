@@ -6,7 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.widget.Toast;
 
-public class LocationTools {
+public class LocationUtils {
 
 	public static double[] getLocation(Context context) {
 		LocationManager lm = (LocationManager) context

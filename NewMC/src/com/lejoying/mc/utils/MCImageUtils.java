@@ -8,7 +8,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-public final class MCImageTools {
+public final class MCImageUtils {
 
 	public static Bitmap getCircleBitmap(Bitmap source) {
 		return getCircleBitmap(source, false, null, null);

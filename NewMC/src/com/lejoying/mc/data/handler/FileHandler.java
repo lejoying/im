@@ -17,14 +17,14 @@ import android.util.Base64;
 
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCImageTools;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.DownloadListener;
+import com.lejoying.mc.utils.MCImageUtils;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.DownloadListener;
 
 public class FileHandler {
 	public App app;
 
-	public void initailize(App app) {
+	public void initialize(App app) {
 		this.app = app;
 	}
 
@@ -75,7 +75,7 @@ public class FileHandler {
 					app.context.getResources(), R.drawable.defaultimage);
 		}
 		if (defaultHead == null) {
-			defaultHead = MCImageTools.getCircleBitmap(BitmapFactory
+			defaultHead = MCImageUtils.getCircleBitmap(BitmapFactory
 					.decodeResource(app.context.getResources(),
 							R.drawable.face_man), true, 5, Color.WHITE);
 		}
@@ -105,7 +105,7 @@ public class FileHandler {
 						if (type == TYPE_IMAGE_COMMON) {
 							bitmaps.put(imageFileName, image);
 						} else if (type == TYPE_IMAGE_HEAD) {
-							bitmaps.put(imageFileName, MCImageTools
+							bitmaps.put(imageFileName, MCImageUtils
 									.getCircleBitmap(image, true, 5,
 											Color.WHITE));
 						}
@@ -139,7 +139,7 @@ public class FileHandler {
 		if (type == TYPE_IMAGE_HEAD) {
 			folder = app.sdcardHeadImageFolder;
 		}
-		MCNetTools.downloadFile(app.context, app.config.DOMAIN_IMAGE,
+		MCNetUtils.downloadFile(app.context, app.config.DOMAIN_IMAGE,
 				imageFileName, folder, null, 5000, new DownloadListener() {
 					@Override
 					public void success(File localFile, InputStream inputStream) {
@@ -147,7 +147,7 @@ public class FileHandler {
 						Bitmap bitmap = BitmapFactory.decodeFile(localFile
 								.getAbsolutePath());
 						if (type == TYPE_IMAGE_HEAD) {
-							bitmap = MCImageTools.getCircleBitmap(bitmap, true,
+							bitmap = MCImageUtils.getCircleBitmap(bitmap, true,
 									5, Color.WHITE);
 						}
 						bitmaps.put(imageFileName, bitmap);
@@ -188,7 +188,7 @@ public class FileHandler {
 		if (source != null) {
 			new Thread() {
 				public void run() {
-					byte[] imageByteArray = MCImageTools
+					byte[] imageByteArray = MCImageUtils
 							.getByteArrayFromBitmap(source,
 									settings.compressFormat, 100);
 					if (imageByteArray != null) {

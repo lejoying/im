@@ -16,8 +16,8 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 import com.lejoying.utils.RSAUtils;
 
 public class RegisterCodeFragment extends BaseFragment implements
@@ -35,6 +35,12 @@ public class RegisterCodeFragment extends BaseFragment implements
 		super.onCreate(savedInstanceState);
 	}
 
+	@Override
+	public void onResume() {
+		app.mark = app.registerCodeFragment;
+		super.onResume();
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -87,7 +93,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 		nextParams.putString("phone", app.data.registerBundle.getString("phone"));
 		nextParams.putString("code", code);
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {

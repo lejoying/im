@@ -38,7 +38,7 @@ import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.service.PushService;
-import com.lejoying.mc.utils.MCImageTools;
+import com.lejoying.mc.utils.MCImageUtils;
 
 public class FriendsFragment extends BaseListFragment {
 
@@ -108,7 +108,7 @@ public class FriendsFragment extends BaseListFragment {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		mInflater = getActivity().getLayoutInflater();
-		head = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+		head = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
 		Intent service = new Intent(getActivity(), PushService.class);
 		service.putExtra("objective", "start");
@@ -116,7 +116,39 @@ public class FriendsFragment extends BaseListFragment {
 		mAdapter = new FriendsAdapter();
 		circlePageViews = new Hashtable<Integer, List<View>>();
 		initData(true);
-		getUser();
+		app.serverHandler.getUser(new Modification() {
+			@Override
+			public void modify(Data data) {
+				app.serverHandler.getCirclesAndFriends(new Modification() {
+					@Override
+					public void modify(Data data) {
+						app.serverHandler.getMessages(new Modification() {
+							@Override
+							public void modify(Data data) {
+								app.serverHandler.getAskFriends(null, null);
+							}
+						}, null);
+					}
+				}, new UIModification() {
+
+					@Override
+					public void modifyUI() {
+						new Thread() {
+							public void run() {
+								generateCircleViews();
+								app.mUIThreadHandler.post(new Runnable() {
+
+									@Override
+									public void run() {
+										mAdapter.notifyDataSetChanged();
+									}
+								});
+							}
+						}.start();
+					}
+				});
+			}
+		}, null);
 	}
 
 	@Override
@@ -161,7 +193,8 @@ public class FriendsFragment extends BaseListFragment {
 
 		@Override
 		public int getCount() {
-			return showMessageCount + circles.size() + buttonCount;
+			// return showMessageCount + circles.size() + buttonCount;
+			return showMessageCount + mCircleViews.size() + buttonCount;
 		}
 
 		@Override
@@ -175,7 +208,8 @@ public class FriendsFragment extends BaseListFragment {
 			if (position >= messageFirstPosition
 					&& position < messageFirstPosition + showMessageCount) {
 				type = TYPE_MESSAGE;
-			} else if (position >= circleFirstPosition
+			} else if (mCircleViews.size() != 0
+					&& position >= circleFirstPosition
 					&& position < circleFirstPosition + circles.size()) {
 				type = TYPE_CIRCLE;
 			} else {
@@ -216,13 +250,14 @@ public class FriendsFragment extends BaseListFragment {
 					arg1.setTag(messageHolder);
 					break;
 				case TYPE_CIRCLE:
-					arg1 = mInflater.inflate(R.layout.f_group_panel, null);
-					friendHolder = new FriendHolder();
-					friendHolder.tv_groupname = (TextView) arg1
-							.findViewById(R.id.tv_groupname);
-					friendHolder.vp_content = (ViewPager) arg1
-							.findViewById(R.id.vp_content);
-					arg1.setTag(friendHolder);
+					arg1 = mCircleViews.get(arg0 - circleFirstPosition);
+					// arg1 = mInflater.inflate(R.layout.f_group_panel, null);
+					// friendHolder = new FriendHolder();
+					// friendHolder.tv_groupname = (TextView) arg1
+					// .findViewById(R.id.tv_groupname);
+					// friendHolder.vp_content = (ViewPager) arg1
+					// .findViewById(R.id.vp_content);
+					// arg1.setTag(friendHolder);
 					break;
 				case TYPE_BUTTON:
 					arg1 = mInflater.inflate(R.layout.f_button, null);
@@ -293,9 +328,9 @@ public class FriendsFragment extends BaseListFragment {
 				});
 				break;
 			case TYPE_CIRCLE:
-				Circle circle = circles.get(arg0 - circleFirstPosition);
-				friendHolder.tv_groupname.setText(circle.name);
-				friendHolder.setCircle(circle, arg0);
+				// Circle circle = circles.get(arg0 - circleFirstPosition);
+				// friendHolder.tv_groupname.setText(circle.name);
+				// friendHolder.setCircle(circle, arg0);
 				break;
 			case TYPE_BUTTON:
 				if (showNewFriends && arg0 == 0) {
@@ -376,6 +411,165 @@ public class FriendsFragment extends BaseListFragment {
 		TextView tv_nickname;
 		TextView tv_lastchat;
 		TextView tv_notread;
+	}
+
+	class ButtonHolder {
+		Button button;
+	}
+
+	List<View> mCircleViews = new ArrayList<View>();
+	Map<Integer, View> mCircleViewsMap = new Hashtable<Integer, View>();
+
+	class ItemHolder {
+		ImageView iv_head;
+		TextView tv_nickname;
+	}
+
+	public void generateCircleViews() {
+		List<View> circleViews = new ArrayList<View>();
+		Map<Integer, View> circleViewsMap = new Hashtable<Integer, View>();
+		for (final Circle circle : app.data.circles) {
+			View groupPanel = mInflater.inflate(R.layout.f_group_panel, null);
+			TextView tv_groupname = (TextView) groupPanel
+					.findViewById(R.id.tv_groupname);
+			tv_groupname.setText(circle.name);
+			ViewPager vp_content = (ViewPager) groupPanel
+					.findViewById(R.id.vp_content);
+			final List<String> friendPhones = circle.phones;
+			final int pagecount = friendPhones.size() % 6 == 0 ? friendPhones
+					.size() / 6 : friendPhones.size() / 6 + 1;
+
+			final List<View> pageViews = new ArrayList<View>();
+			for (int i = 0; i < pagecount; i++) {
+				final int a = i;
+				BaseAdapter gridpageAdapter = new BaseAdapter() {
+					@Override
+					public View getView(final int position, View convertView,
+							final ViewGroup parent) {
+						ItemHolder itemHolder = null;
+						if (convertView == null) {
+							convertView = mInflater
+									.inflate(
+											R.layout.f_group_panelitem_gridpageitem_user,
+											null);
+							itemHolder = new ItemHolder();
+							itemHolder.iv_head = (ImageView) convertView
+									.findViewById(R.id.iv_head);
+							itemHolder.tv_nickname = (TextView) convertView
+									.findViewById(R.id.tv_nickname);
+							convertView.setTag(itemHolder);
+						} else {
+							itemHolder = (ItemHolder) convertView.getTag();
+						}
+						final String headFileName = friends.get(friendPhones
+								.get(a * 6 + position)).head;
+						final ImageView iv_head = itemHolder.iv_head;
+						app.fileHandler.getHeadImage(headFileName,
+								new FileResult() {
+									@Override
+									public void onResult(String where) {
+										iv_head.setImageBitmap(app.fileHandler.bitmaps
+												.get(headFileName));
+										if (where == app.fileHandler.FROM_WEB) {
+											mAdapter.notifyDataSetChanged();
+										}
+									}
+								});
+						itemHolder.tv_nickname.setText(friends.get(friendPhones
+								.get(a * 6 + position)).nickName);
+						convertView.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								app.data.tempFriend = (Friend) getItem(position);
+								app.businessCardStatus = app.SHOW_FRIEND;
+								mMCFragmentManager.replaceToContent(
+										new BusinessCardFragment(), true);
+							}
+						});
+						convertView
+								.setOnLongClickListener(new OnLongClickListener() {
+
+									@Override
+									public boolean onLongClick(View v) {
+
+										return true;
+									}
+								});
+						return convertView;
+					}
+
+					@Override
+					public long getItemId(int position) {
+						return position;
+					}
+
+					@Override
+					public Object getItem(int position) {
+						return friends.get(friendPhones.get(a * 6 + position));
+					}
+
+					@Override
+					public int getCount() {
+						int nowcount = 0;
+						if (a < pagecount - 1) {
+							nowcount = 6;
+						} else {
+							nowcount = friendPhones.size() - a * 6;
+						}
+						return nowcount;
+					}
+
+					@Override
+					public void unregisterDataSetObserver(
+							DataSetObserver observer) {
+						if (observer != null) {
+							super.unregisterDataSetObserver(observer);
+						}
+					}
+				};
+				GridView gridpage = (GridView) mInflater.inflate(
+						R.layout.f_group_panelitem_gridpage, null);
+				gridpage.setAdapter(gridpageAdapter);
+				pageViews.add(gridpage);
+			}
+
+			PagerAdapter vp_contentAdapter = new PagerAdapter() {
+				@Override
+				public boolean isViewFromObject(View arg0, Object arg1) {
+					return arg0 == arg1;
+				}
+
+				@Override
+				public int getCount() {
+					return pageViews.size();
+				}
+
+				@Override
+				public void destroyItem(View container, int position,
+						Object object) {
+					((ViewPager) container).removeView(pageViews.get(position));
+				}
+
+				@Override
+				public Object instantiateItem(View container, int position) {
+					((ViewPager) container).addView(pageViews.get(position));
+					return pageViews.get(position);
+				}
+
+				@Override
+				public void unregisterDataSetObserver(DataSetObserver observer) {
+					if (observer != null) {
+						super.unregisterDataSetObserver(observer);
+					}
+				}
+			};
+			vp_content.setAdapter(vp_contentAdapter);
+			circleViews.add(0, groupPanel);
+			circleViewsMap.put(circle.rid, groupPanel);
+		}
+		this.mCircleViews = circleViews;
+		this.mCircleViewsMap = circleViewsMap;
 	}
 
 	class FriendHolder {
@@ -613,50 +807,10 @@ public class FriendsFragment extends BaseListFragment {
 
 	}
 
-	class ButtonHolder {
-		Button button;
-	}
-
 	@Override
 	protected EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	private void getUser() {
-		app.serverHandler.getUser(new Modification() {
-			@Override
-			public void modify(Data data) {
-				getCirclesAndFriends();
-			}
-		}, null);
-	}
-
-	private void getCirclesAndFriends() {
-		app.serverHandler.getCirclesAndFriends(new Modification() {
-
-			@Override
-			public void modify(Data data) {
-				getMessages();
-			}
-		}, null);
-	}
-
-	private void getMessages() {
-		System.out.println("到了");
-		app.serverHandler.getMessages(new Modification() {
-			@Override
-			public void modify(Data data) {
-				app.serverHandler.getAskFriends(null, null);
-			}
-		}, new UIModification() {
-
-			@Override
-			public void modifyUI() {
-				initData(true);
-				mAdapter.notifyDataSetChanged();
-			}
-		});
 	}
 
 }

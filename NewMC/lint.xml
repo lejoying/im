@@ -8,4 +8,7 @@
     </issue>
     <issue id="DrawAllocation" severity="ignore" />
     <issue id="HandlerLeak" severity="ignore" />
+    <issue id="NewApi">
+        <ignore path="src/com/lejoying/mc/view/BounceListView.java" />
+    </issue>
 </lint>

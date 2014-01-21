@@ -1,6 +1,7 @@
 package com.lejoying.mc.fragment;
 
 import com.lejoying.mc.R;
+import com.lejoying.mc.data.App;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.EditText;
 
 public class FriendNotFoundFragment extends BaseFragment implements
 		OnClickListener {
+
+	App app = App.getInstance();
 
 	private View mContent;
 	private View mView_callfor;
@@ -34,6 +37,12 @@ public class FriendNotFoundFragment extends BaseFragment implements
 	@Override
 	protected EditText showSoftInputOnShow() {
 		return null;
+	}
+
+	@Override
+	public void onResume() {
+		app.mark = app.friendNotFoundFragment;
+		super.onResume();
 	}
 
 	@Override

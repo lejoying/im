@@ -24,8 +24,8 @@ import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public class RegisterPassFragment extends BaseFragment implements
 		OnClickListener {
@@ -40,6 +40,12 @@ public class RegisterPassFragment extends BaseFragment implements
 		super.onCreate(savedInstanceState);
 	}
 
+	@Override
+	public void onResume() {
+		app.mark = app.registerPassFragment;
+		super.onResume();
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -113,7 +119,7 @@ public class RegisterPassFragment extends BaseFragment implements
 		}
 		params.putString("account", account.toString());
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {

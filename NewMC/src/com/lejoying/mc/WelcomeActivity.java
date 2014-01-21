@@ -19,8 +19,8 @@ import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public class WelcomeActivity extends Activity {
 
@@ -36,7 +36,10 @@ public class WelcomeActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		app.context = this;
+		app.initialize();
+		
 		setContentView(R.layout._welcome);
+
 		checkLocalData();
 		imageview_mar = (ImageView) findViewById(R.id.imageview_mar);
 		imageview_star = (ImageView) findViewById(R.id.imageview_star);
@@ -100,70 +103,77 @@ public class WelcomeActivity extends Activity {
 		new Thread() {
 			public void run() {
 				app.sDcardDataResolver.readConfig();
-				app.sDcardDataResolver.readData(new UIModification() {
-					@Override
-					public void modifyUI() {
-						if (app.config.lastLoginPhone.equals("none")
-								|| app.data.user.accessKey == null) {
-							selectDirection(STATUS_LOGIN);
-						} else {
-							final Bundle params = new Bundle();
-							params.putString("phone", app.data.user.phone);
-							params.putString("accessKey",
-									app.data.user.accessKey);
-							params.putString("target", app.data.user.phone);
-
-							MCNetTools.ajax(new AjaxAdapter() {
-
-								@Override
-								public void setParams(Settings settings) {
-									settings.url = API.ACCOUNT_GET;
-									settings.params = params;
-								}
-
-								@Override
-								public void onSuccess(JSONObject jData) {
-									try {
-										final JSONObject jUser = jData
-												.getJSONObject("account");
-										app.dataHandler.modifyData(
-												new Modification() {
-													public void modify(Data data) {
-														app.mJSONHandler
-																.updateUser(
-																		jUser,
-																		data);
-													}
-												}, new UIModification() {
-
-													@Override
-													public void modifyUI() {
-														selectDirection(STATUS_MAIN);
-													}
-												});
-									} catch (JSONException e) {
-										selectDirection(STATUS_LOGIN);
+				if (app.config.lastLoginPhone == null
+						|| app.config.lastLoginPhone.equals("none")
+						|| app.config.lastLoginPhone.equals("")) {
+					selectDirection(STATUS_LOGIN);
+				} else {
+					app.sDcardDataResolver.readData(new UIModification() {
+						@Override
+						public void modifyUI() {
+							if (app.data.user.accessKey == null
+									|| app.data.user.accessKey.equals("")) {
+								selectDirection(STATUS_LOGIN);
+							} else {
+								MCNetUtils.ajax(new AjaxAdapter() {
+									@Override
+									public void setParams(Settings settings) {
+										settings.url = API.ACCOUNT_GET;
+										Bundle params = new Bundle();
+										params.putString("phone",
+												app.data.user.phone);
+										params.putString("accessKey",
+												app.data.user.accessKey);
+										params.putString("target",
+												app.data.user.phone);
+										settings.params = params;
 									}
-								}
 
-								@Override
-								public void noInternet() {
-									selectDirection(STATUS_MAIN);
-								}
+									@Override
+									public void onSuccess(JSONObject jData) {
+										try {
+											final JSONObject jUser = jData
+													.getJSONObject("account");
+											app.dataHandler.modifyData(
+													new Modification() {
+														public void modify(
+																Data data) {
+															app.mJSONHandler
+																	.updateUser(
+																			jUser,
+																			data);
+														}
+													}, new UIModification() {
 
-								@Override
-								public void failed() {
-									selectDirection(STATUS_MAIN);
-								}
+														@Override
+														public void modifyUI() {
+															selectDirection(STATUS_MAIN);
+														}
+													});
+										} catch (JSONException e) {
+											selectDirection(STATUS_LOGIN);
+										}
+									}
 
-								@Override
-								public void timeout() {
-									selectDirection(STATUS_MAIN);
-								}
-							});
+									@Override
+									public void noInternet() {
+										selectDirection(STATUS_MAIN);
+									}
+
+									@Override
+									public void failed() {
+										selectDirection(STATUS_MAIN);
+									}
+
+									@Override
+									public void timeout() {
+										selectDirection(STATUS_MAIN);
+									}
+								});
+							}
 						}
-					}
-				});
+					});
+				}
 			}
 		}.start();
 

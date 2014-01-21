@@ -21,8 +21,8 @@ import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public class NewFriendsFragment extends BaseListFragment {
 
@@ -164,7 +164,7 @@ public class NewFriendsFragment extends BaseListFragment {
 		params.putString("accessKey", app.data.user.accessKey);
 		params.putString("phoneask", phoneask);
 		params.putString("status", "true");
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 			@Override
 			public void setParams(Settings settings) {
 				settings.url = API.RELATION_ADDFRIENDAGREE;
@@ -187,7 +187,7 @@ public class NewFriendsFragment extends BaseListFragment {
 		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {

@@ -48,7 +48,7 @@ public abstract class BaseListFragment extends ListFragment {
 		mMCFragmentManager.setFragmentKeyDownListener(null);
 	}
 
-	private InputMethodManager getInputMethodManager() {
+	InputMethodManager getInputMethodManager() {
 		if (mInputMethodManager == null) {
 			mInputMethodManager = (InputMethodManager) getActivity()
 					.getSystemService(Context.INPUT_METHOD_SERVICE);

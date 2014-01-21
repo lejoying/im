@@ -10,9 +10,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
+import com.lejoying.mc.data.App;
 
 public class LoginUseCodeFragment extends BaseFragment implements
 		OnClickListener {
+	
+	App app = App.getInstance();
+	
 	private View mContent;
 
 	private EditText mView_phone;
@@ -101,6 +105,12 @@ public class LoginUseCodeFragment extends BaseFragment implements
 	@Override
 	public EditText showSoftInputOnShow() {
 		return mView_phone;
+	}
+	
+	@Override
+	public void onResume() {
+		app.mark = app.loginUseCodeFragment;
+		super.onResume();
 	}
 
 }

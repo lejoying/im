@@ -86,6 +86,8 @@ public class CircleMenuFragment extends BaseFragment {
 
 	private GestureDetector mGestureDetector;
 
+	private Instrumentation inst;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -329,10 +331,11 @@ public class CircleMenuFragment extends BaseFragment {
 								if (mShowBack) {
 									// getActivity().getSupportFragmentManager()
 									// .popBackStack();
-									hideSoftInput();
 									new Thread() {
 										public void run() {
-											Instrumentation inst = new Instrumentation();
+											if (inst == null) {
+												inst = new Instrumentation();
+											}
 											inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
 										}
 									}.start();

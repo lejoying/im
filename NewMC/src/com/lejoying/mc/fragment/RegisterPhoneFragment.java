@@ -18,8 +18,8 @@ import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public class RegisterPhoneFragment extends BaseFragment implements
 		OnClickListener {
@@ -34,6 +34,12 @@ public class RegisterPhoneFragment extends BaseFragment implements
 		super.onCreate(savedInstanceState);
 	}
 
+	@Override
+	public void onResume() {
+		app.mark = app.registerPhoneFragment;
+		super.onResume();
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -71,7 +77,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 		final Bundle params = new Bundle();
 		params.putString("phone", phone);
 		params.putString("usage", "register");
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {

@@ -42,8 +42,8 @@ import com.lejoying.mc.data.handler.FileHandler.SaveSettings;
 import com.lejoying.mc.fragment.BaseInterface.OnKeyDownListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 import com.lejoying.utils.SHA1;
 
 public class ModifyFragment extends BaseFragment implements OnClickListener,
@@ -92,6 +92,12 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	protected EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void onResume() {
+		app.mark = app.modifyFragment;
+		super.onResume();
 	}
 
 	@Override
@@ -397,7 +403,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	}
 
 	public void checkImage(final String fileName, final String base64) {
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {
@@ -430,7 +436,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	}
 
 	public void uploadImage(final String fileName, final String base64) {
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {
@@ -478,7 +484,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		params.putString("accessKey", app.data.user.accessKey);
 		params.putString("account", account.toString());
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {

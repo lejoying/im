@@ -14,7 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
-public final class HttpTools {
+public final class HttpUtils {
 
 	public static final int SEND_GET = 0xff01;
 	public static final int SEND_POST = 0xff02;

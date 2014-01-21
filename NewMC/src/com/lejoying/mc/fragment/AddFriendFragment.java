@@ -14,8 +14,8 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public class AddFriendFragment extends BaseFragment implements OnClickListener {
 
@@ -64,7 +64,7 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 			params.putString("message", mView_message.getText().toString());
 			app.data.tempFriend.addMessage = mView_message.getText().toString();
 
-			MCNetTools.ajax(new AjaxAdapter() {
+			MCNetUtils.ajax(new AjaxAdapter() {
 
 				@Override
 				public void setParams(Settings settings) {

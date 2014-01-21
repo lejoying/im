@@ -1,7 +1,8 @@
 package com.lejoying.mc.fragment;
 
 import com.lejoying.mc.R;
-import com.lejoying.mc.utils.MCImageTools;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.utils.MCImageUtils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,8 @@ import android.widget.ImageView;
 
 public class ShareFragment extends BaseListFragment {
 
+	App app = App.getInstance();
+	
 	private View mContent;
 	private LayoutInflater mInflater;
 
@@ -30,16 +33,22 @@ public class ShareFragment extends BaseListFragment {
 	}
 
 	@Override
+	public void onResume() {
+		app.mark = app.shareFragment;
+		super.onResume();
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mContent = inflater.inflate(R.layout.f_share, null);
 		mInflater = inflater;
 		mMCFragmentManager.showCircleMenuToTop(false, false);
 		mMCFragmentManager.setCircleMenuPageName("分享");
-		headman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+		headman = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
 
-		headwoman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+		headwoman = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_woman), true, 10, Color.WHITE);
 
 		return mContent;

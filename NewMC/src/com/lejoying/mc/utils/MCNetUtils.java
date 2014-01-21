@@ -17,17 +17,17 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import com.lejoying.mc.data.App;
-import com.lejoying.utils.HttpTools;
-import com.lejoying.utils.HttpTools.HttpListener;
-import com.lejoying.utils.StreamTools;
+import com.lejoying.utils.HttpUtils;
+import com.lejoying.utils.HttpUtils.HttpListener;
+import com.lejoying.utils.StreamUtils;
 
-public class MCNetTools {
+public class MCNetUtils {
 
 	static App app = App.getInstance();
 
 	public static class Settings {
 		public String url = null;
-		public int method = HttpTools.SEND_POST;
+		public int method = HttpUtils.SEND_POST;
 		public int timeout = 5000;
 		public Bundle params = null;
 	};
@@ -52,7 +52,7 @@ public class MCNetTools {
 		final long startTime = new Date().getTime();
 		ajaxInterface.setParams(settings);
 		if (app.networkStatus == "none") {
-			NetworkInfo networkInfo = HttpTools
+			NetworkInfo networkInfo = HttpUtils
 					.getActiveNetworkInfo(app.context);
 			if (networkInfo != null) {
 				app.networkStatus = networkInfo.getTypeName();
@@ -70,7 +70,7 @@ public class MCNetTools {
 					HttpListener httpListener = new HttpListener() {
 						@Override
 						public void handleInputStream(InputStream is) {
-							b = StreamTools.getByteArrayFromInputStream(is);
+							b = StreamUtils.getByteArrayFromInputStream(is);
 						}
 
 						@Override
@@ -79,13 +79,13 @@ public class MCNetTools {
 							ajaxInterface.connectionCreated(httpURLConnection);
 						}
 					};
-					if (settings.method == HttpTools.SEND_GET) {
-						HttpTools.sendGetUseBundle(app.config.DOMAIN
+					if (settings.method == HttpUtils.SEND_GET) {
+						HttpUtils.sendGetUseBundle(app.config.DOMAIN
 								+ settings.url, settings.timeout,
 								settings.params, httpListener);
 					}
-					if (settings.method == HttpTools.SEND_POST) {
-						HttpTools.sendPostUseBundle(app.config.DOMAIN
+					if (settings.method == HttpUtils.SEND_POST) {
+						HttpUtils.sendPostUseBundle(app.config.DOMAIN
 								+ settings.url, settings.timeout,
 								settings.params, httpListener);
 					}
@@ -118,7 +118,7 @@ public class MCNetTools {
 		if (context == null) {
 			return;
 		}
-		boolean hasNetwork = HttpTools.hasNetwork(context);
+		boolean hasNetwork = HttpUtils.hasNetwork(context);
 		if (!hasNetwork) {
 			downloadListener.noInternet();
 		} else {
@@ -204,7 +204,7 @@ public class MCNetTools {
 							}
 						}
 					};
-					HttpTools.sendGetUseBundle(location + fileName, timeout,
+					HttpUtils.sendGetUseBundle(location + fileName, timeout,
 							null, httpListener);
 				}
 			}.start();

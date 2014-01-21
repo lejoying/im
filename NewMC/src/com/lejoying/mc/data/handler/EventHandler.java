@@ -17,7 +17,7 @@ public class EventHandler {
 
 	App app;
 
-	public void initailize(App app) {
+	public void initialize(App app) {
 		this.app = app;
 	}
 

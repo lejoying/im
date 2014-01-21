@@ -40,6 +40,12 @@ public class MainActivity extends BaseFragmentActivity {
 	}
 
 	@Override
+	protected void onDestroy() {
+		instance = null;
+		super.onDestroy();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		app.context = this;

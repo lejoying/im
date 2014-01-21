@@ -20,8 +20,8 @@ import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public class SearchFriendFragment extends BaseListFragment {
 
@@ -34,6 +34,12 @@ public class SearchFriendFragment extends BaseListFragment {
 	protected EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void onResume() {
+		app.mark = app.searchFriendFragment;
+		super.onResume();
 	}
 
 	@Override
@@ -118,7 +124,7 @@ public class SearchFriendFragment extends BaseListFragment {
 		params.putString("accessKey", app.data.user.accessKey);
 		params.putSerializable("target", phone);
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {

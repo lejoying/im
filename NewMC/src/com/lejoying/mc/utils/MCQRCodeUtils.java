@@ -13,7 +13,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
-public class MCQRCodeTools {
+public class MCQRCodeUtils {
 
 	private final static int QRCODE_SIZE = 300;
 	private static BitMatrix mBitMatrix;

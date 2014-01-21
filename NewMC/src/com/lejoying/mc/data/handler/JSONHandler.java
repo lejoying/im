@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Circle;
 import com.lejoying.mc.data.Data;
@@ -16,11 +17,12 @@ import com.lejoying.mc.data.Event;
 import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.Message;
 import com.lejoying.mc.data.User;
+import com.lejoying.utils.VibratorUtil;
 
 public class JSONHandler {
 	App app;
 
-	public void initailize(App app) {
+	public void initialize(App app) {
 		this.app = app;
 	}
 
@@ -103,9 +105,11 @@ public class JSONHandler {
 				if (!friendMessages.contains(message)) {
 					friendMessages.add(message);
 					if (message.type == Message.MESSAGE_TYPE_RECEIVE) {
-						if (data.nowChatFriend == null
-								|| data.nowChatFriend.phone != message.friendPhone
-								|| !app.mark.equals(app.chatFragment)) {
+						VibratorUtil.CommonVibrate(app.context);
+						app.playSound(R.raw.message);
+						if (!app.mark.equals(app.chatFragment)
+								|| !data.nowChatFriend.phone
+										.equals(message.friendPhone)) {
 							data.friends.get(message.friendPhone).notReadMessagesCount++;
 						}
 					}

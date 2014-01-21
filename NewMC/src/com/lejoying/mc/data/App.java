@@ -3,9 +3,12 @@ package com.lejoying.mc.data;
 import java.io.File;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Environment;
 import android.os.Handler;
 
+import com.lejoying.mc.R;
 import com.lejoying.mc.data.handler.DataHandler;
 import com.lejoying.mc.data.handler.EventHandler;
 import com.lejoying.mc.data.handler.FileHandler;
@@ -22,7 +25,8 @@ public class App {
 	public String chatFragment = "chatFragment";
 	public String friendNotFoundFragment = "friendNotFoundFragment";
 	public String friendsFragment = "friendsFragment";
-	public String loginUserCodeFragment = "loginUserCodeFragment";
+	public String loginUseCodeFragment = "loginUseCodeFragment";
+	public String loginUsePassFragment = "loginUsePassFragment";
 	public String modifyFragment = "modifyFragment";
 	public String newFriendsFragment = "newFriendsFragment";
 	public String registerCodeFragment = "registerCodeFragment";
@@ -30,9 +34,9 @@ public class App {
 	public String registerPhoneFragment = "registerPhoneFragment";
 	public String scanQRCodeFragment = "scanQRCodeFragment";
 	public String searchFriendFragment = "searchFriendFragment";
-	public String ShareFragment = "ShareFragment";
+	public String shareFragment = "shareFragment";
 
-	public String mark;
+	public String mark = "";
 
 	public String networkStatus = "none";// "WIFI"|"mobile"
 	public String sdcardStatus = "none";// "exist"
@@ -40,10 +44,22 @@ public class App {
 	public SHA1 sha1;
 
 	private App() {
+
+	}
+
+	private boolean isInitialized;
+
+	public void initialize() {
+		if (isInitialized) {
+			return;
+		} else {
+			isInitialized = true;
+		}
 		initData();
 		initConfig();
 		initHandler();
 		initSDCard();
+		initSound();
 		sha1 = new SHA1();
 	}
 
@@ -77,22 +93,22 @@ public class App {
 
 		mUIThreadHandler = new Handler();
 		dataHandler = new DataHandler();
-		dataHandler.initailize(this);
+		dataHandler.initialize(this);
 
 		eventHandler = new EventHandler();
-		eventHandler.initailize(this);
+		eventHandler.initialize(this);
 
 		mJSONHandler = new JSONHandler();
-		mJSONHandler.initailize(this);
+		mJSONHandler.initialize(this);
 
 		serverHandler = new ServerHandler();
-		serverHandler.initailize(this);
+		serverHandler.initialize(this);
 
 		fileHandler = new FileHandler();
-		fileHandler.initailize(this);
+		fileHandler.initialize(this);
 
 		sDcardDataResolver = new SDcardDataResolver();
-		sDcardDataResolver.initailize(this);
+		sDcardDataResolver.initialize(this);
 	}
 
 	public File sdcardAppFolder;
@@ -122,6 +138,29 @@ public class App {
 				sdcardHeadImageFolder.mkdir();
 			}
 		}
+	}
+
+	public SoundPool soundPool;
+	public int SOUND_MESSAGE;
+
+	public void initSound() {
+		soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
+		SOUND_MESSAGE = soundPool.load(context, R.raw.message, 1);
+	}
+
+	public void playSound(int sound) {
+		AudioManager mgr = (AudioManager) context
+				.getSystemService(Context.AUDIO_SERVICE);
+
+		float streamVolumeCurrent = mgr
+				.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+		float streamVolumeMax = mgr
+				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+		float volume = streamVolumeCurrent / streamVolumeMax;
+
+		soundPool.play(SOUND_MESSAGE, volume, volume, 1, 0, 1f);
 	}
 
 	public Context context;

@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public final class StreamTools {
+public final class StreamUtils {
 
 	public static byte[] getByteArrayFromInputStream(InputStream inputStream) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

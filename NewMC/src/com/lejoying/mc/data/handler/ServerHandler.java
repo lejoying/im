@@ -13,17 +13,18 @@ import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
+import com.lejoying.mc.fragment.ChatFragment;
 import com.lejoying.mc.fragment.FriendsFragment;
 import com.lejoying.mc.fragment.NewFriendsFragment;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public class ServerHandler {
 	App app;
 
-	public void initailize(App app) {
+	public void initialize(App app) {
 		this.app = app;
 	}
 
@@ -34,7 +35,7 @@ public class ServerHandler {
 		params.putString("accessKey", app.data.user.accessKey);
 		params.putString("target", app.data.user.phone);
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {
@@ -76,7 +77,7 @@ public class ServerHandler {
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {
@@ -107,13 +108,17 @@ public class ServerHandler {
 					}
 				}, new UIModification() {
 					public void modifyUI() {
-						if (FriendsFragment.instance != null) {
-							FriendsFragment.instance.initData(true);
-							FriendsFragment.instance.mAdapter
-									.notifyDataSetChanged();
-						} else if (NewFriendsFragment.instance != null) {
-							NewFriendsFragment.instance.mAdapter
-									.notifyDataSetChanged();
+						if (app.mark.equals(app.friendsFragment)) {
+							if (FriendsFragment.instance != null) {
+								FriendsFragment.instance.initData(true);
+								FriendsFragment.instance.mAdapter
+										.notifyDataSetChanged();
+							}
+						} else if (app.mark.equals(app.newFriendsFragment)) {
+							if (NewFriendsFragment.instance != null) {
+								NewFriendsFragment.instance.mAdapter
+										.notifyDataSetChanged();
+							}
 						}
 						if (uiModification != null) {
 							uiModification.modifyUI();
@@ -131,7 +136,7 @@ public class ServerHandler {
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {
@@ -160,6 +165,13 @@ public class ServerHandler {
 					@Override
 					public void modifyUI() {
 						// TODO Auto-generated method stub
+						if (app.mark.equals(app.friendsFragment)) {
+							if (FriendsFragment.instance != null) {
+								FriendsFragment.instance.initData(true);
+								FriendsFragment.instance.mAdapter
+										.notifyDataSetChanged();
+							}
+						}
 						if (uiModification != null) {
 							uiModification.modifyUI();
 						}
@@ -176,7 +188,7 @@ public class ServerHandler {
 		params.putString("accessKey", app.data.user.accessKey);
 		String flag = app.data.user.flag;
 		params.putString("flag", flag);
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {
@@ -205,7 +217,18 @@ public class ServerHandler {
 				}, new UIModification() {
 					@Override
 					public void modifyUI() {
-
+						if (app.mark.equals(app.friendsFragment)) {
+							if (FriendsFragment.instance != null) {
+								FriendsFragment.instance.initData(true);
+								FriendsFragment.instance.mAdapter
+										.notifyDataSetChanged();
+							}
+						} else if (app.mark.equals(app.chatFragment)) {
+							if (ChatFragment.instance != null) {
+								ChatFragment.instance.mAdapter
+										.notifyDataSetChanged();
+							}
+						}
 						if (uiModification != null) {
 							uiModification.modifyUI();
 						}
@@ -213,6 +236,25 @@ public class ServerHandler {
 				});
 			}
 		});
+	}
+
+	public void getAllData() {
+		getUser(new Modification() {
+			@Override
+			public void modify(Data data) {
+				getCirclesAndFriends(new Modification() {
+					@Override
+					public void modify(Data data) {
+						getMessages(new Modification() {
+							@Override
+							public void modify(Data data) {
+								getAskFriends(null, null);
+							}
+						}, null);
+					}
+				}, null);
+			}
+		}, null);
 	}
 
 }

@@ -32,6 +32,8 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -50,9 +52,9 @@ import com.lejoying.mc.data.handler.FileHandler.SaveBitmapInterface;
 import com.lejoying.mc.data.handler.FileHandler.SaveSettings;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCImageTools;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCImageUtils;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 import com.lejoying.utils.SHA1;
 
 public class ChatFragment extends BaseListFragment {
@@ -91,16 +93,33 @@ public class ChatFragment extends BaseListFragment {
 	Bitmap headman;
 	Bitmap headwoman;
 
+	public int showFirstPosition;
+
 	public static ChatFragment instance;
 
 	public ChatFragment() {
-		mAdapter = new ChatAdapter();
+
 	}
 
 	@Override
 	public EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void initShowFirstPosition() {
+		int initShowCount = 10;
+		System.out.println(app.data.nowChatFriend.notReadMessagesCount);
+		if (app.data.nowChatFriend.notReadMessagesCount > 10) {
+			initShowCount = app.data.nowChatFriend.notReadMessagesCount;
+		}
+		int messagesTotalCount = app.data.nowChatFriend.messages.size();
+		if (messagesTotalCount < 10) {
+			initShowCount = messagesTotalCount;
+		}
+		showFirstPosition = messagesTotalCount - initShowCount;
+		System.out.println(messagesTotalCount);
+		System.out.println(initShowCount);
 	}
 
 	@Override
@@ -127,6 +146,7 @@ public class ChatFragment extends BaseListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		initShowFirstPosition();
 		mInflater = inflater;
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_chat, null);
@@ -157,14 +177,6 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
-		iv_more.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				showSelectTab();
-			}
-		});
-
 		iv_more_select.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -178,7 +190,6 @@ public class ChatFragment extends BaseListFragment {
 
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
-						// TODO Auto-generated method stub
 						return false;
 					}
 
@@ -226,13 +237,23 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
-		editText_message.requestFocus();
+		editText_message.setVisibility(View.GONE);
+		editText_message.setVisibility(View.VISIBLE);
+		// editText_message.requestFocus();
 
 		iv_more.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				return gestureDetector.onTouchEvent(event);
+			}
+		});
+
+		iv_more.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				showSelectTab();
 			}
 		});
 
@@ -304,9 +325,9 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
-		headman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+		headman = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
-		headwoman = MCImageTools.getCircleBitmap(BitmapFactory.decodeResource(
+		headwoman = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(
 				getResources(), R.drawable.face_woman), true, 10, Color.WHITE);
 
 		return mContent;
@@ -315,8 +336,32 @@ public class ChatFragment extends BaseListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		if (mAdapter == null) {
+			mAdapter = new ChatAdapter();
+		}
 		setListAdapter(mAdapter);
 		getListView().setSelection(mAdapter.getCount() - 1);
+		getListView().setOnScrollListener(new OnScrollListener() {
+			boolean isFirst = true;
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				if (firstVisibleItem == 0 && showFirstPosition != 0 && !isFirst) {
+					int old = showFirstPosition;
+					showFirstPosition = showFirstPosition > 10 ? showFirstPosition - 10
+							: 0;
+					mAdapter.notifyDataSetChanged();
+					getListView().setSelection(old - showFirstPosition);
+				}
+				isFirst = false;
+			}
+		});
 	}
 
 	public void showSelectTab() {
@@ -365,12 +410,13 @@ public class ChatFragment extends BaseListFragment {
 
 		@Override
 		public int getCount() {
-			return app.data.nowChatFriend.messages.size();
+			return app.data.nowChatFriend.messages.size() - showFirstPosition;
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return app.data.nowChatFriend.messages.get(position);
+			return app.data.nowChatFriend.messages.get(showFirstPosition
+					+ position);
 		}
 
 		@Override
@@ -515,7 +561,7 @@ public class ChatFragment extends BaseListFragment {
 			}
 		});
 
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 			public void setParams(Settings settings) {
 				settings.url = API.MESSAGE_SEND;
 				settings.params = generateMessageParams(type, content);
@@ -590,7 +636,7 @@ public class ChatFragment extends BaseListFragment {
 					.lastIndexOf("."));
 			cursor.close();
 
-			final Bitmap bitmap = MCImageTools.getZoomBitmapFromFile(new File(
+			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
 					picturePath), 960, 540);
 			if (bitmap != null) {
 				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
@@ -638,7 +684,7 @@ public class ChatFragment extends BaseListFragment {
 	}
 
 	public void checkImage(final String fileName, final String base64) {
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {
@@ -667,7 +713,7 @@ public class ChatFragment extends BaseListFragment {
 	}
 
 	public void uploadImage(final String fileName, final String base64) {
-		MCNetTools.ajax(new AjaxAdapter() {
+		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
 			public void setParams(Settings settings) {

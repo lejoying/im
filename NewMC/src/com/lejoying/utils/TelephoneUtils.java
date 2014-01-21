@@ -3,7 +3,7 @@ package com.lejoying.utils;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 
-public final class TelephoneTools {
+public final class TelephoneUtils {
 
 	public static String getPhoneNumber(Context context) {
 		TelephonyManager telephonyManager = (TelephonyManager) context

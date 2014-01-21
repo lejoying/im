@@ -26,8 +26,8 @@ import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
-import com.lejoying.mc.utils.MCNetTools;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 import com.lejoying.utils.RSAUtils;
 import com.lejoying.utils.SHA1;
 
@@ -122,7 +122,7 @@ public class LoginUsePassFragment extends BaseFragment implements
 			pass = mSha1.getDigestOfString(pass.getBytes());
 			params.putString("password", pass);
 
-			MCNetTools.ajax(new AjaxAdapter() {
+			MCNetUtils.ajax(new AjaxAdapter() {
 
 				@Override
 				public void setParams(Settings settings) {
@@ -172,6 +172,12 @@ public class LoginUsePassFragment extends BaseFragment implements
 		default:
 			break;
 		}
+	}
+	
+	@Override
+	public void onResume() {
+		app.mark = app.loginUsePassFragment;
+		super.onResume();
 	}
 
 	@Override

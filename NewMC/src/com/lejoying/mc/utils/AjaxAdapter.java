@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.lejoying.mc.data.App;
-import com.lejoying.mc.utils.MCNetTools.AjaxInterface;
-import com.lejoying.mc.utils.MCNetTools.Settings;
+import com.lejoying.mc.utils.MCNetUtils.AjaxInterface;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 
 public abstract class AjaxAdapter implements AjaxInterface {
 	App app = App.getInstance();
