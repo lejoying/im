@@ -684,4 +684,60 @@ groupManage.get = function (data, response) {
         });
     }
 }
+/***************************************
+ *     URL：/api2/group/getgroupsandmembers
+ ***************************************/
+groupManage.getgroupsandmembers = function (data, response) {
+    response.asynchronous = 1;
+
+    var phone = data.phone;
+
+    var query = [
+        'MATCH (account1:Account)-[r:HAS_GROUP]->(group:Group)-[r1:HAS_MEMBER]->(account:Account)',
+        'WHERE account1.phone={phone}',
+        'RETURN group,account'
+    ].join('\n');
+    var params = {
+        phone: phone
+    };
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "获取群组失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        } else {
+            var groups = {};
+            for (var index in results) {
+                var it = results[index];
+                var groupData = it.group.data;
+                var accountData = it.account.data;
+                var account = {
+                    uid: accountData.uid,
+                    phone: accountData.phone,
+                    mainBusiness: accountData.mainBusiness,
+                    head: accountData.head,
+                    byPhone: accountData.byPhone,
+                    nickName: accountData.nickName
+                };
+                if (groups[groupData.gid] == null) {
+                    var accounts = [];
+                    accounts.push(account);
+                    groupData.accounts = accounts;
+                    groups[groupData.gid] = groupData;
+                } else {
+                    groups[groupData.gid].accounts.push(account);
+                }
+            }
+            response.write(JSON.stringify({
+                "提示信息": "获取群组成功",
+                groups: groups
+            }));
+            response.end();
+        }
+    });
+}
 module.exports = groupManage;

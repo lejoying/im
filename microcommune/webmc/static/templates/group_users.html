@@ -1,0 +1,20 @@
+<?js var members = it.members; ?>
+<?js for(var index in members) { ?>
+<?js post=members[index];post=allCirclesFriends[post]; ?>
+<?js if(post==null) { ?>
+<?js continue; ?>
+<?js } ?>
+<div class="chat_group_frends_of_one" phone="#{post.phone}">
+    <?js if(post.head != "" && post.head != null){ ?>
+    <img src="#{imageServer}#{post.head}" alt="聊天对象图像" class="chat_group_user_head">
+    <?js }else{ ?>
+    <img src="/static/images/face_man.png" alt="聊天对象图像" class="chat_group_user_head">
+    <?js } ?>
+    <span class="chat_group_user_name">#{(post.nickName).substr(0,4)}</span>
+</div>
+<?js } ?>
+<div class="chat_group_frends_of_one js_chat_one_addfrriends">
+    <img src="static/images/yaoqing.png" alt="聊天对象图像" class="chat_group_user_head"
+         style="border: 0px;width: 40px;height: 40px">
+    <span class="chat_group_user_name">邀请</span>
+</div>

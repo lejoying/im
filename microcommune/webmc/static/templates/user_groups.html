@@ -5,8 +5,12 @@
 <?js } ?>
 <?js var it1 = post0.members; ?>
 <?js var length = it1.length; ?>
-<div class="groupchat_boderbox_template js_groupchat_boderbox_template">   <!--    可作为模板     -->
+<?js var groupType = "tempGroup";var gid=post0.tempGid; ?>
+<?js if(post0.gid != undefined) { ?>
+<?js groupType="group";gid=post0.gid;} ?>
+<div class="groupchat_boderbox_template js_groupchat_boderbox_template" groupType="#{groupType}" group_gid="#{gid}">   <!--    可作为模板     -->
     <div class="groupchat_boderbox">
+        <img src="static/images/temp_chatgroup_logo.png" alt="临时群组标志" class="groupchat_boderbox_logo">
         <div class="groupchat_number" style="visibility: hidden;">       <!--    红色圆心数字     -->
             <div class="groupchat_number_info">66</div>
         </div>
@@ -18,7 +22,7 @@
         <div class="groupchat_frends_head">
             <?js var count=0; ?>
             <?js for (var index1 in it1) { ?>
-            <?js if(count比较符号大于=4){break;} ?>
+            <?js if(count比较符号大于=4 || count==length){break;} ?>
             <?js post1=it1[index1];count++; ?>
             <?js if(post1==null) { ?>
             <?js continue; ?>

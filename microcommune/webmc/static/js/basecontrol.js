@@ -107,6 +107,10 @@ $(function () {//show js_modify_jcrophead_show
         selectPanel = "js_tempChatTop";
     });
     $(".js_circlesTop").click(function () {
+        $(".chat_one").show();
+        $(".chat_group").hide();
+
+
         $("#conversationListContent").css({
             top: "0px"
         });
@@ -117,7 +121,16 @@ $(function () {//show js_modify_jcrophead_show
         $(".js_circlesFriends").slideDown(1);
         selectPanel = "js_circlesTop";
     });
+    $(".chat_group_temp_up").click(function () {
+        $(".chat_group_temp").hide();
+        $(".chat_one_more").show();
+    });
     $(".js_clustersTop").click(function () {
+        $(".chat_one").hide();
+        $(".chat_group").show();
+        $(".chat_group_temp_up").show();
+
+
         $("#conversationListContent").css({
             top: "0px"
         });
@@ -132,19 +145,13 @@ $(function () {//show js_modify_jcrophead_show
             var group = {
                 tempGid: i,
                 name: "群组" + i,
-                members: [
-                    {"uid": 185, "phone": "125478", "mainBusiness": "", "head": "", "byPhone": "checked", "nickName": "用户125478", "friendStatus": "success"},
-                    {"uid": 21, "phone": "125455525", "mainBusiness": "", "head": "", "byPhone": "checked", "nickName": "用户125455525", "friendStatus": "success"},
-                    {"uid": 21, "phone": "125455525", "mainBusiness": "", "head": "", "byPhone": "checked", "nickName": "用户125455525", "friendStatus": "success"},
-                    {"uid": 62, "phone": "18601330540", "mainBusiness": "联合国亚太地区首席联络官", "head": "1ca76da7e324705acf8686135f0faab7054dd625.png", "byPhone": "checked", "nickName": "小麦田", "friendStatus": "success"},
-                    {"uid": 62, "phone": "18601330540", "mainBusiness": "联合国亚太地区首席联络官", "head": "1ca76da7e324705acf8686135f0faab7054dd625.png", "byPhone": "checked", "nickName": "小麦田", "friendStatus": "success"},
-                    {"uid": 62, "phone": "18601330540", "mainBusiness": "联合国亚太地区首席联络官", "head": "1ca76da7e324705acf8686135f0faab7054dd625.png", "byPhone": "checked", "nickName": "小麦田", "friendStatus": "success"}
-                ]
+                members: ["125478", "18601330540", "125455525", "18601330540", "125455525", "18601330540"]
             };
             groups.push(group);
+            tempGroupsInfo[i] = group;
         }
         getTemplateHtml("user_groups", function (template) {
-//            $(".js_user_groups").html(template.render(groups));
+            $(".js_user_groups").append(template.render(groups));
         });
     });
     $(".js_appManageTop").click(function () {

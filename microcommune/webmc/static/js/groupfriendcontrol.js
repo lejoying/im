@@ -48,6 +48,7 @@ $(document).ready(function () {
 //    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify({phone: "121", accessKey: "lejoying", nickName: "麦穗儿香", head: "d9fb7db5dc6e4b06046f0114b12d581ee84cec73"}));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     if (accountObj != undefined) {
+        allCirclesFriends[accountObj.phone] = accountObj;
         $(".js_accountNickName").html(accountObj.nickName);
         $(".js_accountNickName").attr("title", accountObj.nickName);
         if (accountObj.head != "") {
@@ -259,6 +260,7 @@ $(document).ready(function () {
                 selectedDropUsers[phone] = circle_rid;
             } else {
                 //------------------------------------------------------------------------------------------------------点击头像聊天的处理
+                currentChatType = "POINT";
 //                clickHeadImgToChatPanel();
                 currentChatUser = allCirclesFriends[phone];
 //                $(".js_rightChatPanel").show();

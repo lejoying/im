@@ -221,6 +221,11 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
             groupManage.getusergroups(data, response);
         });
     }
+    else if (operation == "getgroupsandmembers") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getgroupsandmembers(data, response);
+        });
+    }
 }
 
 function setOauthAccessKey(phone, accessKey, next) {
