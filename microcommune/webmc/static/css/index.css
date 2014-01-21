@@ -6650,8 +6650,12 @@ a.chat_group_right_icon:active{
     background-color: #0099CD;
     width: 76px;
     height: 71px;
-
     border-radius: 2px;
+}
+.groupchat_boderbox_logo{
+    position: absolute;
+    width: 38px;
+    height: 38px;
 }
 .groupchat_number{        /*红色圆心*/
     position: absolute;
