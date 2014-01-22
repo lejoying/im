@@ -818,7 +818,7 @@ api = {
             url: "/api2/group/get"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", type: ["group" || "tempGroup"]}
         },
         response: {
             success: {"提示信息": "获取群组信息成功", group: {}},

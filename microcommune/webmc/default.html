@@ -39,8 +39,8 @@
     <script src="/static/js/jquery.Jcrop.js" charset="utf-8"></script>
     <script src="/static/js/sha1.js" charset="utf-8"></script>
     <script src="/static/js/chatgroupscontrol.js" charset="utf-8"></script>
-    <script src="/static/js/groupfriendcontrol.js" charset="utf-8"></script>
     <script src="/static/js/chatclustercontrol.js" charset="utf-8"></script>
+    <script src="/static/js/groupfriendcontrol.js" charset="utf-8"></script>
     <script src="/static/js/basecontrol.js" charset="utf-8"></script>
     <!--<script src="/static/js/message.js"></script>-->
     <style type="text/css">
@@ -161,9 +161,9 @@
         </a>
     </div>
 </div>
-<div class="add_frend_chat js_invite_SelectUserChat_frame" style="visibility: visible">   <!--     邀请好友聊天  stat  -->
+<div class="add_frend_chat js_invite_SelectUserChat_frame" style="display: none">   <!--     邀请好友聊天  stat  -->
     <div class="add_frend_chat_head">
-        <span class="add_frend_chat_name">我的朋友</span>
+        <span class="add_frend_chat_name">群组好友</span>
 
         <div class="add_frend_chat_complete js_add_friend_chat_complete">
             <span style="position:relative;color: #000000;top: 5px">完成</span>
@@ -435,7 +435,7 @@
     <div class="chatContainer js_rightChatPanel" style="height: 442px;">
         <div id="chatMainPanel" class="chatMainPanel">
             <div class="chatTitle">
-                <div class="chat_one" style="display: none">      <!------   个人聊天界面 start    --------->
+                <div class="chat_one js_chat_one" style="display: none">      <!------   个人聊天界面 start    --------->
                     <div>
                         <img src="static/images/webwxgeticon1.jpg" alt="聊天对象图像"
                              class="chat_one_image js_js_onlyfriend_headimg"> <span
@@ -451,13 +451,13 @@
                 </div>
                 <!------   个人聊天界面  end   --------->
 
-                <div class="chat_group" style="display: block">        <!------   多人聊天界面 start    --------->
+                <div class="chat_group js_chat_group" style="display: block">        <!------   多人聊天界面 start    --------->
                     <div class="chat_group_info">
                         <span class="js_chat_group_info_groupName">联谊会</span>
                         <span style="font-size: 12px;letter-spacing: 1px" class="js_chat_group_info_count">(15人)</span>
                     </div>
                     <div>
-                        <a class="chat_group_left_icon"></a>
+                        <a class="chat_group_left_icon js_chat_group_left_icon"></a>
                     </div>
                     <div class="chat_group_frends" style="overflow: hidden;">
                         <div class="js_chat_group_friends"></div>
@@ -485,14 +485,14 @@
                         </div>-->
                     </div>
                     <div>
-                        <a class="chat_group_right_icon"></a>
+                        <a class="chat_group_right_icon js_chat_group_right_icon"></a>
                     </div>
-                    <div class="chat_group_temp" style="display: block">     <!--  ；临时组标志        -->
+                    <div class="chat_group_temp js_chat_group_temp" style="display: block">     <!--  ；临时组标志        -->
                         <img src="static/images/temp_groups_image.png" alt="临时组图标">
                     </div>
-                    <div class="chat_group_temp_up" style="display: none"></div>
+                    <div class="chat_group_temp_up js_chat_group_temp_up" style="display: block"></div>
                     <!--  up按钮        -->
-                    <div class="chat_one_more" style="display: none">     <!--  更多按钮        -->
+                    <div class="chat_one_more js_chat_one_more" style="display: none">     <!--  更多按钮        -->
                         <a class="chat_one_more_button"></a>
                     </div>
                 </div>
@@ -568,9 +568,9 @@
                 #{formattertime(post1.time)}
                 <span class="timeBg right"></span></div>
             <div class="chatItemContent"><img username="gh_c639eef72f78" click="showProfile"
-                                              title="#{currentChatUser.nickName}"
+                                              title="#{allCirclesFriends[post1.phone].nickName}"
                                               un="avatar_gh_c639eef72f78"
-                                              src="#{imageServer}#{currentChatUser.head}" class="avatar">
+                                              src="#{imageServer}#{allCirclesFriends[post1.phone].head}" class="avatar">
 
                 <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
                     <div style="" class="cloudPannel">

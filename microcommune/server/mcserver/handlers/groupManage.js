@@ -629,24 +629,46 @@ groupManage.get = function (data, response) {
     response.asynchronous = 1;
     var maxPrime = 100000000000;
     var gid = data.gid;
-    var list = [gid];
-    if (verifyEmpty.verifyEmpty(data, list, response)) {
-        try {
-            gid = parseInt(gid);
-            if (isNaN(gid)) {
-                throw "gid不是数值";
+    var type = data.type;
+    if (type == "tempGroup") {
+        client.hget("tempGroup", gid, function (err, reply) {
+            if (err != null) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(err);
+                return;
             } else {
-                gid = maxPrime - gid;
-                getGroupNode(gid);
+                console.log(reply);
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组信息成功",
+                    group: JSON.parse(reply)
+                }));
+                response.end();
             }
-        } catch (e) {
-            console.log(e + "数据格式不正确");
-            response.write(JSON.stringify({
-                "提示信息": "获取群组信息失败",
-                "失败原因": "数据格式不正确"
-            }));
-            response.end();
-            return;
+        });
+    } else {
+        var list = [gid];
+        if (verifyEmpty.verifyEmpty(data, list, response)) {
+            try {
+                gid = parseInt(gid);
+                if (isNaN(gid)) {
+                    throw "gid不是数值";
+                } else {
+                    gid = maxPrime - gid;
+                    getGroupNode(gid);
+                }
+            } catch (e) {
+                console.log(e + "数据格式不正确");
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组信息失败",
+                    "失败原因": "数据格式不正确"
+                }));
+                response.end();
+                return;
+            }
         }
     }
     function getGroupNode(gid) {

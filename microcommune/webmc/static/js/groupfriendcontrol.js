@@ -77,6 +77,7 @@ $(document).ready(function () {
                                 allCirclesFriends[account.phone] = account;
                             }
                         }
+                        showTempChatUsersInfo();
                         window.sessionStorage.setItem("wxgs_circles", JSON.stringify(data.circles));
                         var clickGroupIndex = -1;
                         $(".appGroup").each(function (i) {
@@ -273,6 +274,8 @@ $(document).ready(function () {
                 $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
 //                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
                 $(".js_rightChatPanel").show();
+                $(".js_chat_one").show();
+                $(".js_chat_group").hide();
 //                alert(JSON.stringify(allCirclesFriends[phone]));//获取当前聊天用户的信息
 //                icon.addClass("js_none");
 //                delete selectedDropUsers[phone];

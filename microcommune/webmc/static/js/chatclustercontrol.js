@@ -1,15 +1,11 @@
 var scrollInitFlag = false;
 var tempSendMessageTimeStamp = [];
-
+var tempAccountChatMessages = {}
 $(function () {
-
-    getTemplateHtml("tempChatUserInfo", function (template) {
-        var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
-        if (tempChatUsersList != null) {
-            $("#conversationContainer").html(template.render(tempChatUsersList.reverse()));
-        }
-    });
-
+    var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
+    if (wxgs_tempAccountChatMessages != null) {
+        tempAccountChatMessages = wxgs_tempAccountChatMessages;
+    }
     $(".js_chatRightFrame").css({
         visibility: "visible"
     });
@@ -20,44 +16,81 @@ $(function () {
      });*/
 
     $(document).on("click", ".js_chatsendmessage", function () {
+        alert(currentChatType);
         var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
         var message = $(".js_chatmessagecontent").val();
         if (message.trim() == "") {
             alert("不能发送空白信息");
             return;
         }
-        getTemplateHtml("tempChatUserInfo", function (template) {
-            var div = document.createElement("div");
-            var text = template.render([allCirclesFriends[currentChatUser.phone]]);
-            div.innerHTML = text;
-            $("#conversationContainer")[0].insertBefore($(div).find(".chatListColumn")[0], $("#conversationContainer")[0].firstChild);
-            $(".listContent").css({
-                top: 0 + "px"
-            });
-            $(".chatListColumn").attr("class", "chatListColumn");
-            $("#js_conv_wxgsid_" + currentChatUser.phone).attr("class", "chatListColumn activeColumn");
-        });
         modifyTempChatUser(currentChatUser.phone);
         var listPhone = [];
-        listPhone.push(currentChatUser.phone);
+        if (currentChatType == "POINT") {
+            listPhone.push(currentChatUser.phone);
+        } else if (currentChatType == "TEMPGROUP" || currentChatType == "GROUP") {
+            listPhone = currentChatGroup.members;
+        }
         var messageObj = {
-            type: "text",
+            contentType: "text",
             content: message
         };
         var time = new Date().getTime()
         tempSendMessageTimeStamp.push(time);
+        var showMessage = { sendType: "point",
+            contentType: "text",
+            time: time,
+            phone: accountObj.phone,
+            phoneto: JSON.stringify(listPhone),
+            content: message
+        };
+        var data = {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            sendType: "point",
+            phoneto: JSON.stringify(listPhone),
+            message: JSON.stringify(messageObj)
+        };
+        if (currentChatType == "TEMPGROUP") {
+            data.gid = currentChatGroup.tempGid;
+            showMessage.sendType = "tempGroup";
+            data.sendType = "tempGroup";
+            showMessage.tempGid = currentChatGroup.tempGid;
+        } else if (currentChatType == "GROUP") {
+            data.gid = currentChatGroup.gid;
+            data.sendType = "group";
+            showMessage.sendType = "group";
+            showMessage.gid = currentChatGroup.gid;
+        }
+        sendMessages(data);
+
         var sendMessage = [
-            JSON.stringify({type: "text", time: time, phone: accountObj.phone, phoneto: JSON.stringify(listPhone), content: message})
+            JSON.stringify(showMessage)
         ];
         var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
-        if (wxgs_tempAccountChatMessages[currentChatUser.phone] == undefined) {
-            $(".js_chatContents").html("");
+        var baseString = (currentChatType.substr(0, 1)).toLowerCase();
+        if (wxgs_tempAccountChatMessages[baseString + "_" + currentChatUser.phone] == undefined) {
+            ($(".js_chatContents").find(".noMsgIip")).html("");
         }
         messagesDataSplit({messages: [sendMessage]});
-        var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
-        $(".js_chatContents").append(js_chatmessagetemplate.render(sendMessage));
-
-        sendMessages(JSON.stringify(listPhone), JSON.stringify(messageObj));
+        if (currentChatType == "POINT") {
+            getTemplateHtml("tempChatUserInfo", function (template) {
+                if ($("#js_conv_wxgsid_" + currentChatUser.phone).attr("id") != undefined) {
+                    $("#conversationContainer")[0].insertBefore($("#js_conv_wxgsid_" + currentChatUser.phone)[0], $("#conversationContainer")[0].firstChild);
+                } else {
+                    var div = document.createElement("div");
+                    var text = template.render([currentChatUser.phone]);
+                    div.innerHTML = text;
+                    $("#conversationContainer")[0].insertBefore($(div).find(".chatListColumn")[0], $("#conversationContainer")[0].firstChild);
+                }
+                $(".listContent").css({
+                    top: 0 + "px"
+                });
+                $(".chatListColumn").attr("class", "chatListColumn");
+                $("#js_conv_wxgsid_" + currentChatUser.phone).attr("class", "chatListColumn activeColumn");
+            });
+            var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+            $(".js_chatContents").append(js_chatmessagetemplate.render(sendMessage));
+        }
     });
 
 
@@ -87,6 +120,10 @@ $(function () {
         $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
 //                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
         $(".js_rightChatPanel").show();
+        currentChatType = "POINT";
+        $(".chat_one").show();
+        $(".chat_group").hide();
+        $(this).find(".unreadDot").html("0");
 //        alert($(this).attr("id"));
     });
     //add_frend_chat
@@ -95,6 +132,14 @@ $(function () {
 
 
 });
+function showTempChatUsersInfo() {
+    getTemplateHtml("tempChatUserInfo", function (template) {
+        var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
+        if (tempChatUsersList != null) {
+            $("#conversationContainer").html(template.render(tempChatUsersList.reverse()));
+        }
+    });
+}
 function modifyTempChatUser(phone) {
     var tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));
     var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
@@ -103,18 +148,18 @@ function modifyTempChatUser(phone) {
         tempChatUsersList = [];
     }
     var account = allCirclesFriends[phone];
-    console.log(allCirclesFriends);
+//    console.log(allCirclesFriends);
     if (tempChatUsers[phone] == undefined) {
-        tempChatUsers[phone] = account;
-        tempChatUsersList.push(account);
+        tempChatUsers[phone] = "chat";
+        tempChatUsersList.push(phone);
         window.sessionStorage.setItem("wxgs_tempChatUsers", JSON.stringify(tempChatUsers));
         window.sessionStorage.setItem("wxgss_tempChatUsersList", JSON.stringify(tempChatUsersList));
     } else {
         for (var i = 0; i < tempChatUsersList.length; i++) {
             var accountItem = tempChatUsersList[i];
-            if (accountItem.phone == phone) {
+            if (accountItem == phone) {
                 tempChatUsersList.splice(i, 1);
-                tempChatUsersList.push(account);
+                tempChatUsersList.push(phone);
                 window.sessionStorage.setItem("wxgs_tempChatUsers", JSON.stringify(tempChatUsers));
                 window.sessionStorage.setItem("wxgss_tempChatUsersList", JSON.stringify(tempChatUsersList));
                 break;
@@ -123,11 +168,12 @@ function modifyTempChatUser(phone) {
     }
 }
 function showUserChatMessages(account) {
+    var baseString = (currentChatType.substr(0, 1)).toLowerCase();
     var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
-    var messages = wxgs_tempAccountChatMessages[account.phone];
+    var messages = wxgs_tempAccountChatMessages[baseString + "_" + account.phone];
     if (messages != undefined) {
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
-        $(".js_chatContents").html(js_chatmessagetemplate.render(wxgs_tempAccountChatMessages[account.phone]));
+        $(".js_chatContents").html(js_chatmessagetemplate.render(wxgs_tempAccountChatMessages[baseString + "_" + account.phone]));
         setScrollPosition();
     } else {
         var htmlStr = '<div class="noMsgIip" id="noMsgTip">' +
@@ -153,58 +199,88 @@ function pullUsersMessage(account) {
     });
 }
 
-function messagesDataSplit(data) {
-    if (data.flag != undefined) {
-        var messsageFlag = data.flag;
+function messagesDataSplit(datas) {
+    if (datas.flag != undefined) {
+        var messsageFlag = datas.flag;
         window.sessionStorage.setItem("wxgs_messageFlag", messsageFlag);
     }
-    var data = data.messages;
+    var data = datas.messages;
 //    alert(JSON.stringify(data));
-    var tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
+//    var tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
+    var count = 0;
     for (var i = 0; i < data.length; i++) {
+        count++;
         var message = JSON.parse(data[i]);
-        if (message.phone == accountObj.phone) {
-            /*tempAccountChatMessages[message.phone] = tempAccountChatMessages[message.phone] || [];
-             tempAccountChatMessages[message.phone].push(JSON.stringify(message));*/
-            var phoneTo = JSON.parse(message.phoneto);
-            for (var j = 0; j < phoneTo.length; j++) {
-                var phone = phoneTo[j];
-                if (tempAccountChatMessages[phone] != undefined) {
-                    tempAccountChatMessages[phone].push(JSON.stringify(message));
-                } else {
-                    var array = [];
-                    array.push(JSON.stringify(message));
-                    tempAccountChatMessages[phone] = array;
+        var sendType = message.sendType;
+        if (sendType == "point") {
+            if (message.phone == accountObj.phone) {
+                /*tempAccountChatMessages[message.phone] = tempAccountChatMessages[message.phone] || [];
+                 tempAccountChatMessages[message.phone].push(JSON.stringify(message));*/
+                var phoneTo = JSON.parse(message.phoneto);
+                for (var j = 0; j < phoneTo.length; j++) {
+                    var phone = phoneTo[j];
+                    tempAccountChatMessages["p_" + phone] = tempAccountChatMessages["p_" + phone] || [];
+                    tempAccountChatMessages["p_" + phone].push(JSON.stringify(message));
+                }
+            } else {
+                tempAccountChatMessages["p_" + phone] = tempAccountChatMessages["p_" + phone] || [];
+                tempAccountChatMessages["p_" + phone].push(JSON.stringify(message));
+            }
+        } else if (sendType == "tempGroup") {
+            tempAccountChatMessages["t_" + message.tempGid] = tempAccountChatMessages["t_" + message.tempGid] || [];
+            tempAccountChatMessages["t_" + message.tempGid].push(JSON.stringify(message));
+            if (tempGroupsInfo[message.tempGid] == undefined) {
+                getTempGroupInfo(message.tempGid);
+                function getTempGroupInfo(tempGid) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/api2/group/get?",
+                        data: {
+                            phone: accountObj.phone,
+                            accessKey: accountObj.accessKey,
+                            gid: tempGid,
+                            type: "tempGroup"
+                        },
+                        success: function (data) {
+                            if (data["提示信息"] == "获取群组信息成功") {
+                                var tempGroup = data.group;
+                                tempGroupsInfo[tempGid] = tempGroup;
+                                var members = tempGroup.members;
+                                var noFriends = [];
+                                for (var i = 0; i < members.length; i++) {
+                                    if (allCirclesFriends[members[i]] == undefined) {
+                                        noFriends.push(members[i]);
+                                    }
+                                }
+                                getTempGroupMembers();
+                                getTemplateHtml("user_groups", function (template) {
+                                    $(".js_user_groups").append(template.render([tempGroup]));
+                                });
+                            } else {
+                                alert(data["提示信息"] + "," + data["失败原因"]);
+                            }
+                        }
+                    });
                 }
             }
+        } else if (sendType == "group") {
+            tempAccountChatMessages["g_" + message.tempGid] = tempAccountChatMessages["g_" + message.tempGid] || [];
+            tempAccountChatMessages["g_" + message.tempGid].push(JSON.stringify(message));
         } else {
-//            var phoneTo = JSON.parse(message.phoneto);
-            if (tempAccountChatMessages[message.phone] != undefined) {
-                tempAccountChatMessages[message.phone].push(JSON.stringify(message));
-            } else {
-                var array = [];
-                array.push(JSON.stringify(message));
-                tempAccountChatMessages[message.phoneTo] = array;
-            }
+            console.log("请注意,逻辑错误-丢失数据--数据为:-" + message);
         }
-//        alert(JSON.stringify(tempAccountChatMessages));
     }
     window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify(tempAccountChatMessages));
 }
-function sendMessages(listPhone, message) {
+function sendMessages(data) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $(".js_chatmessagecontent").val("");
     $.ajax({
             type: "POST",
             timeout: 5000,
             url: "/api2/message/send?",
-            data: {
-                phone: accountObj.phone,
-                accessKey: accountObj.accessKey,
-                phoneto: listPhone,
-                message: message
-            },
+            data: data,
             success: function (data) {
                 var time = tempSendMessageTimeStamp.shift();
                 if (data["提示信息"] == "发送成功") {
@@ -311,12 +387,16 @@ function getMessages(flag, next) {
         type: "GET",
         url: "/api2/message/get?",
         data: {
-            phone: "121",
+            phone: accountObj.phone,
             accessKey: accountObj.accessKey,
             flag: flag
         },
         success: function (data) {
-            next(data);
+            if (data["提示信息"] == "获取成功") {
+                next(data);
+            } else {
+                alert(data["提示信息"] + "," + data["失败原因"]);
+            }
         }
     });
 }

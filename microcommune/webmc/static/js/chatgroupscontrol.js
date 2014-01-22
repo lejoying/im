@@ -18,7 +18,7 @@ $(function () {
             $(".js_user_groups").append(template.render(tempGroups));
         });
     }
-    $(document).on("click",".js_chat_one_addfrriends",function(){
+    $(document).on("click", ".js_chat_one_addfrriends", function () {
         $(".js_invite_SelectUserChat_frame").show();
         getTemplateHtml("invite_circles_friends", function (template) {
             var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
@@ -42,6 +42,7 @@ $(function () {
             };
             if (currentChatType == "POINT") {
                 members.push(accountObj.phone);
+                members.push(currentChatUser.phone);
                 data.members = JSON.stringify(members);
                 data.name = "";
                 data.type = "createTempGroup";
@@ -195,6 +196,9 @@ $(function () {
         });
     });
     $(document).on("click", ".js_groupchat_boderbox_template", function () {
+        $(".js_chat_one").hide();
+        $(".js_chat_group").show();
+        $(".js_chat_group_temp_up").show();
         var target = $(this);
         currentChatType = (target.attr("groupType")).toUpperCase();
         if (currentChatType == "TEMPGROUP") {
@@ -256,8 +260,19 @@ $(function () {
             });
         }
     });
+    $(document).on("click", ".js_chat_group_temp_up", function () {
+        alert("UP");
+//        $(".js_chat_group_temp").hide();
+//        $(".js_chat_one_more").show();
+    });
+    $(document).on("click", ".js_chat_group_left_icon", function () {
+        alert("js_chat_group_left_icon");
+    });
+    $(document).on("click", ".js_chat_group_right_icon", function () {
+        alert("js_chat_group_right_icon");
+    });
 });
-function getUserAllGroups(){
+function getUserAllGroups() {
     $.ajax({
         type: "GET",
         url: "/api2/group/get"

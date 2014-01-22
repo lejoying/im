@@ -216,6 +216,11 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
             groupManage.modify(data, response);
         });
     }
+    else if (operation == "get") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.get(data, response);
+        });
+    }
     else if (operation == "getusergroups") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.getusergroups(data, response);

@@ -107,8 +107,8 @@ $(function () {//show js_modify_jcrophead_show
         selectPanel = "js_tempChatTop";
     });
     $(".js_circlesTop").click(function () {
-        $(".chat_one").show();
-        $(".chat_group").hide();
+        /*$(".js_chat_one").show();
+        $(".js_chat_group").hide();*/
 
 
         $("#conversationListContent").css({
@@ -121,14 +121,10 @@ $(function () {//show js_modify_jcrophead_show
         $(".js_circlesFriends").slideDown(1);
         selectPanel = "js_circlesTop";
     });
-    $(".chat_group_temp_up").click(function () {
-        $(".chat_group_temp").hide();
-        $(".chat_one_more").show();
-    });
     $(".js_clustersTop").click(function () {
-        $(".chat_one").hide();
-        $(".chat_group").show();
-        $(".chat_group_temp_up").show();
+        /*$(".js_chat_one").hide();
+        $(".js_chat_group").show();
+        $(".js_chat_group_temp_up").show();*/
 
 
         $("#conversationListContent").css({
@@ -140,19 +136,19 @@ $(function () {//show js_modify_jcrophead_show
         $(".js_mainContent").slideUp(1);
         $(".js_clusterMainContent").slideDown(1);
         selectPanel = "js_clustersTop";
-        var groups = [];
-        for (var i = 0; i < 4; i++) {
-            var group = {
-                tempGid: i,
-                name: "群组" + i,
-                members: ["125478", "18601330540", "125455525", "18601330540", "125455525", "18601330540"]
-            };
-            groups.push(group);
-            tempGroupsInfo[i] = group;
-        }
-        getTemplateHtml("user_groups", function (template) {
-            $(".js_user_groups").append(template.render(groups));
-        });
+        /*var groups = [];
+         for (var i = 0; i < 4; i++) {
+         var group = {
+         tempGid: i,
+         name: "群组" + i,
+         members: ["125478", "18601330540", "125455525", "18601330540", "125455525", "18601330540"]
+         };
+         groups.push(group);
+         tempGroupsInfo[i] = group;
+         }
+         getTemplateHtml("user_groups", function (template) {
+         $(".js_user_groups").append(template.render(groups));
+         });*/
     });
     $(".js_appManageTop").click(function () {
         $("#conversationListContent").css({

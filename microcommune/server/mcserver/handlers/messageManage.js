@@ -40,8 +40,10 @@ messageManage.send = function (data, response) {
     };
     if (sendType == "point") {
         messageSelf.phoneto = phoneToStr;
-    } else if (sendType == "group" || sendType == "tempGroup") {
+    } else if (sendType == "group") {
         messageSelf.gid = gid;
+    } else if (sendType == "tempGroup") {
+        messageSelf.tempGid = gid;
     } else {
         response.write(JSON.stringify({
             "提示信息": "发送失败",
@@ -63,6 +65,8 @@ messageManage.send = function (data, response) {
             return;
         }
         for (var index in phoneto) {
+            if (index == phone)
+                continue;
             var messageToOther = {
                 contentType: message.contentType,
                 sendType: sendType,
@@ -71,9 +75,11 @@ messageManage.send = function (data, response) {
                 time: time
             };
             if (sendType == "point") {
-                messageToOther.phoneto = JSON.stringify([phoneto[index]]);
-            } else if (sendType == "group" || sendType == "tempGroup") {
+                messageToOther.phoneto = phoneto[index];
+            } else if (sendType == "group") {
                 messageToOther.gid = gid;
+            } else if (sendType == "tempGroup") {
+                messageToOther.tempGid = gid;
             }
             var messageOther = JSON.stringify(messageToOther);
             client.rpush(phoneto[index], messageOther, function (err, reply) {
