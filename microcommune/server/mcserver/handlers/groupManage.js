@@ -54,10 +54,8 @@ groupManage.create = function (data, response) {
         });
         //session 推送提示信息给用户，群组信息更新的提醒
 
-    } else if (type == "upgradeGroup") {
-
-    } else if (type == "createGroup") {
-        var list = [phone, tempGid, name, members];
+    } else if (type == "upgradeGroup" || type == "createGroup") {
+        var list = [phone, name, members];
         if (verifyEmpty.verifyEmpty(data, list, response)) {
             try {
                 members = JSON.parse(members);
@@ -748,10 +746,10 @@ groupManage.getgroupsandmembers = function (data, response) {
                 if (groups[groupData.gid] == null) {
                     var accounts = [];
                     accounts.push(account);
-                    groupData.accounts = accounts;
+                    groupData.members = accounts;
                     groups[groupData.gid] = groupData;
                 } else {
-                    groups[groupData.gid].accounts.push(account);
+                    groups[groupData.gid].members.push(account);
                 }
             }
             response.write(JSON.stringify({

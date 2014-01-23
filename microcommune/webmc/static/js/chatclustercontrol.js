@@ -1,10 +1,19 @@
 var scrollInitFlag = false;
 var tempSendMessageTimeStamp = [];
 var tempAccountChatMessages = {}
+var tempChatUsers = {};
+var tempChatUsersList = [];
 $(function () {
+
     var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
     if (wxgs_tempAccountChatMessages != null) {
         tempAccountChatMessages = wxgs_tempAccountChatMessages;
+    }
+    var wxgs_tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));
+    var wxgs_tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
+    if (wxgs_tempChatUsers != null) {
+        tempChatUsers = wxgs_tempChatUsers;
+        tempChatUsersList = wxgs_tempChatUsersList;
     }
     $(".js_chatRightFrame").css({
         visibility: "visible"
@@ -23,7 +32,9 @@ $(function () {
             alert("不能发送空白信息");
             return;
         }
-        modifyTempChatUser(currentChatUser.phone);
+        if (currentChatType == "POINT") {
+            modifyTempChatUser(currentChatUser.phone);
+        }
         var listPhone = [];
         if (currentChatType == "POINT") {
             listPhone.push(currentChatUser.phone);
@@ -141,8 +152,8 @@ function showTempChatUsersInfo() {
     });
 }
 function modifyTempChatUser(phone) {
-    var tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));
-    var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
+//    var tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));
+//    var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
     if (tempChatUsers == null) {
         tempChatUsers = {};
         tempChatUsersList = [];
@@ -231,47 +242,103 @@ function messagesDataSplit(datas) {
             tempAccountChatMessages["t_" + message.tempGid] = tempAccountChatMessages["t_" + message.tempGid] || [];
             tempAccountChatMessages["t_" + message.tempGid].push(JSON.stringify(message));
             if (tempGroupsInfo[message.tempGid] == undefined) {
-                getTempGroupInfo(message.tempGid);
-                function getTempGroupInfo(tempGid) {
-                    $.ajax({
-                        type: "GET",
-                        url: "/api2/group/get?",
-                        data: {
-                            phone: accountObj.phone,
-                            accessKey: accountObj.accessKey,
-                            gid: tempGid,
-                            type: "tempGroup"
-                        },
-                        success: function (data) {
-                            if (data["提示信息"] == "获取群组信息成功") {
-                                var tempGroup = data.group;
-                                tempGroupsInfo[tempGid] = tempGroup;
-                                var members = tempGroup.members;
-                                var noFriends = [];
-                                for (var i = 0; i < members.length; i++) {
-                                    if (allCirclesFriends[members[i]] == undefined) {
-                                        noFriends.push(members[i]);
-                                    }
-                                }
-                                getTempGroupMembers();
-                                getTemplateHtml("user_groups", function (template) {
-                                    $(".js_user_groups").append(template.render([tempGroup]));
-                                });
-                            } else {
-                                alert(data["提示信息"] + "," + data["失败原因"]);
-                            }
-                        }
-                    });
-                }
+                getTempGroupInfo(accountObj, message.tempGid, "tempGroup");
             }
         } else if (sendType == "group") {
-            tempAccountChatMessages["g_" + message.tempGid] = tempAccountChatMessages["g_" + message.tempGid] || [];
-            tempAccountChatMessages["g_" + message.tempGid].push(JSON.stringify(message));
+            tempAccountChatMessages["g_" + message.gid] = tempAccountChatMessages["g_" + message.gid] || [];
+            tempAccountChatMessages["g_" + message.gid].push(JSON.stringify(message));
         } else {
             console.log("请注意,逻辑错误-丢失数据--数据为:-" + message);
         }
     }
     window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify(tempAccountChatMessages));
+}
+function getTempGroupInfo(accountObj, tempGid, type) {
+    $.ajax({
+        type: "POST",
+        url: "/api2/group/get?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            gid: tempGid,
+            type: type
+        },
+        success: function (data) {
+            if (data["提示信息"] == "获取群组信息成功") {
+                if (type == "tempGroup") {
+                    var tempGroup = data.group;
+                    tempGroupsInfo[tempGid] = tempGroup;
+                    window.sessionStorage.setItem("wxgs_tempGroupsInfo", JSON.stringify(tempGroupsInfo));
+                    var members = tempGroup.members;
+                    var noFriends = [];
+                    for (var i = 0; i < members.length; i++) {
+                        if (allCirclesFriends[members[i]] == undefined) {
+                            noFriends.push(members[i]);
+                        }
+                    }
+                    getTempGroupMembers(accountObj, noFriends);
+                    getTemplateHtml("user_groups", function (template) {
+                        $(".js_user_groups").append(template.render([tempGroup]));
+                    });
+                } else if (type == "group") {
+                    var group = data.group;
+                    groupsInfo[group.gid] = group;
+                    getGroupMembers(accountObj, group.gid);
+                }
+            } else {
+                alert(data["提示信息"] + "," + data["失败原因"]);
+            }
+        }
+    });
+}
+function getGroupMembers(accountObj, gid) {
+    $.ajax({
+        type: "POST",
+        url: "/api2/group/getallmembers?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            gid: gid
+        },
+        success: function (data) {
+            if (data["提示信息"] == "获取群组成员成功") {
+                var members = data.members;
+                var membersPhone = [];
+                for (var i = 0; i < members.length; i++) {
+                    var member = members[i];
+                    membersPhone.push(member.phone);
+                    allCirclesFriends[member.phone] = member;
+                }
+                var group = groupsInfo[gid];
+                group.members = membersPhone;
+                window.sessionStorage.setItem("wxgs_groupsInfo", JSON.stringify(groupsInfo));
+                window.session.setItem("wxgs_allCirclesFriends", JSON.stringify(allCirclesFriends));
+            }
+        }
+    });
+}
+function getTempGroupMembers(accountObj, noFriends) {
+    $.ajax({
+        type: "POST",
+        url: "/api2/account/get?",
+        data: {
+            phone: accountObj.phone,
+            accessKey: accountObj.accessKey,
+            target: JSON.stringify(noFriends)
+        },
+        success: function (data) {
+            if (data["提示信息"] == "获取用户信息成功") {
+                var members = data.accounts;
+                for (var i = 0; i < members.length; i++) {
+                    var member = members[i];
+                    allCirclesFriends[member.phone] = member;
+                }
+                window.sessionStorage.setItem("wxgs_allCirclesFriends", JSON.stringify(allCirclesFriends));
+            } else {
+                getTempGroupMembers(accountObj, noFriends);
+            }
+        }
+    });
 }
 function sendMessages(data) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
@@ -299,7 +366,7 @@ function sendMessages(data) {
                 }
             },
             error: function (XMLHttpRequest, error) {
-                XMLHttpRequest.abort();
+//                XMLHttpRequest.abort();
                 console.log(error);
                 var time = tempSendMessageTimeStamp.shift();
                 $(".js_sendStatus_" + time).find("label").css({
@@ -314,31 +381,34 @@ function sendMessages(data) {
 function setScrollPosition() {
     if ($(".js_chatContents").height() < $(".chatScorll").height()) {
         $(".scrollDiv").hide();
+        $(".js_chatContents").css({
+            "top": "0px"
+        });
     } else {
         $(".scrollDiv").show();
+        var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
+        $(".scrollDiv").css({
+            height: height + "px"
+        });
+        $(".scrollDiv").css({
+            "top": $(".chatScorll").height() - height - 30 + "px"
+        });
+        $(".js_chatContents").css({
+            "top": -($(".js_chatContents").height() - $(".chatScorll").height() + 55) + "px"
+        });
+        if ($(".js_chatRightFrame").css("visibility") == "hidden") {
+            $(".js_chatRightFrame").css({
+                visibility: "visible"
+            });
+        }
     }
 //    alert($(".scrollDiv").);
-    var height = (($(".chatScorll").height() / $(".js_chatContents").height()) * $(".chatScorll").height()) - 15;
-    $(".scrollDiv").css({
-        height: height + "px"
-    });
-    $(".scrollDiv").css({
-        "top": $(".chatScorll").height() - height - 30 + "px"
-    });
-    $(".js_chatContents").css({
-        "top": -($(".js_chatContents").height() - $(".chatScorll").height() + 55) + "px"
-    });
-    if ($(".js_chatRightFrame").css("visibility") == "hidden") {
-        $(".js_chatRightFrame").css({
-            visibility: "visible"
-        });
-    }
 }
 
 function keepQuest() {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
-        type: "GET",
+        type: "POST",
         timeout: 20000,
         url: "/api2/session/event?",
         data: {
@@ -348,9 +418,66 @@ function keepQuest() {
         success: function (data) {
             if (data["提示信息"] == "成功") {
                 if (data.event == "message") {
-                    var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
-                    $(".js_chatContents").append(js_chatmessagetemplate.render(data.event_content.message));
-                    setScrollPosition();
+                    var message = JSON.parse(data.event_content.message);
+                    var sendType = message.sendType;
+                    if (sendType == "point") {
+                        if (currentChatType == "POINT") {
+                            if (currentChatUser.phone == message.phone) {
+                                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+                                $(".js_chatContents").append(js_chatmessagetemplate.render());
+                                setScrollPosition();
+                            } else {
+                                //---------------------------------------------------------------------------------------
+                                next();
+                            }
+                        } else {
+                            next();
+                        }
+                        function next() {
+                            if (tempChatUsers[message.phone] != undefined) {
+                                var target = $("#js_conv_wxgsid_" + message.phone).find(".unreadDot");
+                                var messageAccount = parseInt(target.html());
+                                target.html(messageAccount + 1);
+                            } else {
+                                getTemplateHtml("tempChatUserInfo", function (template) {
+                                    $("#conversationContainer").append(template.render([allCirclesFriends[message.phone]]));
+                                });
+                            }
+                        }
+                    } else if (sendType == "tempGroup") {
+                        if (currentChatType == "TEMPGROUP") {
+                            if (currentChatGroup.tempGid == message.tempGid) {
+                                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+                                $(".js_chatContents").append(js_chatmessagetemplate.render([data.event_content.message]));
+                            } else {
+                                next();
+                            }
+                        } else {
+                            next();
+                        }
+                        function next() {
+                            if (tempGroupsInfo[message.tempGid] != undefined) {
+                                $(".js_groupchat_boderbox_template[group_gid=" + message.tempGid + "]").find(".groupchat_number").html("1");
+                            } else {
+                                getTempGroupInfo(accountObj, message.tempGid, "tempGroup");
+                            }
+                        }
+                    } else if (sendType == "group") {
+                        if (currentChatType == "GROUP") {
+                            if (currentChatGroup.gid == message.gid) {
+                                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+                                $(".js_chatContents").append(js_chatmessagetemplate.render([data.event_content.message]));
+                            } else {
+                                if (groupsInfo[message.gid] != undefined) {
+                                    $(".js_groupchat_boderbox_template[group_gid=" + message.gid + "]").find(".groupchat_number").html("1");
+                                } else {
+
+                                }
+                            }
+                        } else {
+
+                        }
+                    }
                     keepQuest();
                     getMessages(window.sessionStorage.getItem("wxgs_messageFlag"), messagesDataSplit);
 //                    alert("message");
@@ -362,6 +489,7 @@ function keepQuest() {
                     keepQuest();
                     alert("神器的效果");
                 }
+//                keepQuest();
             } else if (data["提示信息"] == "请求失败") {
                 if (data["失败原因"] == "AccessKey Invalid") {
                     window.localStorage.clear();
@@ -375,7 +503,7 @@ function keepQuest() {
             }
         },
         error: function (xhr, error) {
-            xhr.abort();
+//            xhr.abort();
             keepQuest();
         }
     });
@@ -384,7 +512,7 @@ function keepQuest() {
 function getMessages(flag, next) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "/api2/message/get?",
         data: {
             phone: accountObj.phone,

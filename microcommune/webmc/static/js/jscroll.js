@@ -178,6 +178,9 @@ window.onload = function () {
             var flag = 0, rate = 0, wheelFlag = 0;
             if (node) {
                 mouseWheel(node, function (data) {
+                    if($(".scrollDiv").css("display") == "none"){
+                        return;
+                    }
 //                    alert(wheelFlag + "=--" + data);
                     if (scrollInitFlag == false && mainBox.getAttribute("id") == "chatFrame") {
                         wheelFlag = ($(".js_chatContents").height() / 10) * 120;

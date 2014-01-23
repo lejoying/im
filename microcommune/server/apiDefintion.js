@@ -131,10 +131,14 @@ api = {
             url: "/api2/account/get"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", target: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", target: ["XXX", "XXX", "XXX"]}
         },
         response: {
-            success: {"提示信息": "获取用户信息成功", account: {}},
+            success: {"提示信息": "获取用户信息成功", accounts: [
+                {},
+                {},
+                {}
+            ]},
             failed: {"提示信息": "获取用户信息失败", "失败原因": "用户不存在" || "数据异常"}
         }
     },

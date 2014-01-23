@@ -412,12 +412,13 @@ accountManage.get = function (data, response) {
     var target = data.target;
     var arr = [phone, accessKey, target];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        target = JSON.parse(target);
         getAccountNode(target);
     }
     function getAccountNode(target) {
         var query = [
             'MATCH (account:Account)',
-            'WHERE account.phone={phone}',
+            'WHERE account.phone IN {phone}',
             'RETURN account'
         ].join('\n');
         var params = {
@@ -439,17 +440,21 @@ accountManage.get = function (data, response) {
                 }));
                 response.end();
             } else {
-                var accountData = results.pop().account.data;
-                var account = {
-                    phone: accountData.phone,
-                    nickName: accountData.nickName,
-                    mainBusiness: accountData.mainBusiness,
-                    head: accountData.head,
-                    byPhone: accountData.byPhone
-                };
+                var accounts = [];
+                for (var index in results) {
+                    var accountData = results[index].account.data;
+                    var account = {
+                        phone: accountData.phone,
+                        nickName: accountData.nickName,
+                        mainBusiness: accountData.mainBusiness,
+                        head: accountData.head,
+                        byPhone: accountData.byPhone
+                    };
+                    accounts.push(account);
+                }
                 response.write(JSON.stringify({
                     "提示信息": "获取用户信息成功",
-                    account: account
+                    accounts: accounts
                 }));
                 response.end();
             }

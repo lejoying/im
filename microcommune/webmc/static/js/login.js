@@ -99,22 +99,26 @@ $(document).ready(function () {
                             var phone0 = RSA.decryptedString(pbkey0, data.uid);
                             var accessKey0 = RSA.decryptedString(pbkey0, data.accessKey);
                             $.ajax({
-                                type: "GET",
+                                type: "POST",
                                 url: "/api2/account/get?",
                                 data: {
                                     phone: phone0,
                                     accessKey: accessKey0,
-                                    target: phone0
+                                    target: JSON.stringify([phone0])
                                 },
                                 success: function (data) {
-                                    var accountData = {};
-                                    accountData = data.account;
-                                    accountData.accessKey = accessKey0;
-                                    accountData.PbKey = pbkey;
-                                    window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(accountData));
-                                    window.sessionStorage.setItem("wxgs_messageFlag", "none");
-                                    window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify({}));
-                                    location.href = "./default.html";
+                                    if (data["提示信息"] == "获取用户信息成功") {
+                                        var accountData = {};
+                                        accountData = (data.accounts)[0];
+                                        accountData.accessKey = accessKey0;
+                                        accountData.PbKey = pbkey;
+                                        window.localStorage.setItem("wxgs_nowAccount", JSON.stringify(accountData));
+                                        window.sessionStorage.setItem("wxgs_messageFlag", "none");
+                                        window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify({}));
+                                        location.href = "./default.html";
+                                    } else {
+                                        $(".js_loginCodeError").html(data["提示信息"] + "," + data["失败原因"]);
+                                    }
                                 }
                             });
                         } else {

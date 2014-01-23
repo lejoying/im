@@ -11,12 +11,13 @@ var push = require('../lib/push.js');
  ***************************************/
 messageManage.send = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
     var gid = data.gid;
     var sendType = data.sendType;
-    var phoneto = {};
+    var phoneto = [];
     var message = {};
     try {
         phoneto = JSON.parse(phoneToStr);
@@ -53,7 +54,6 @@ messageManage.send = function (data, response) {
         return;
     }
     var messageOwn = JSON.stringify(messageSelf);
-
     client.rpush(phone, messageOwn, function (err, reply) {
         if (err != null) {
             response.write(JSON.stringify({
@@ -64,9 +64,11 @@ messageManage.send = function (data, response) {
             console.log(err);
             return;
         }
-        for (var index in phoneto) {
-            if (index == phone)
+        for (var i=0;i<phoneto.length;i++) {
+            var friendPhone = phoneto[i];
+            if (friendPhone == phone){
                 continue;
+            }
             var messageToOther = {
                 contentType: message.contentType,
                 sendType: sendType,
@@ -75,14 +77,14 @@ messageManage.send = function (data, response) {
                 time: time
             };
             if (sendType == "point") {
-                messageToOther.phoneto = phoneto[index];
+                messageToOther.phoneto = friendPhone;
             } else if (sendType == "group") {
                 messageToOther.gid = gid;
             } else if (sendType == "tempGroup") {
                 messageToOther.tempGid = gid;
             }
             var messageOther = JSON.stringify(messageToOther);
-            client.rpush(phoneto[index], messageOther, function (err, reply) {
+            client.rpush(friendPhone, messageOther, function (err, reply) {
                 if (err != null) {
                     response.write(JSON.stringify({
                         "提示信息": "发送失败",
@@ -93,15 +95,14 @@ messageManage.send = function (data, response) {
                     return;
                 }
                 //通知
-                push.inform(phone, phoneto[index], accessKey, "*", {"提示信息": "成功", event: "message", event_content: {message: [messageOther]}});
-                //response
-                response.write(JSON.stringify({
-                    "提示信息": "发送成功",
-                    time: time
-                }));
-                response.end();
             });
+            push.inform(phone, friendPhone, accessKey, "*", {"提示信息": "成功", event: "message", event_content: {message: [messageOther]}});
         }
+        response.write(JSON.stringify({
+            "提示信息": "发送成功",
+            time: time
+        }));
+        response.end();
     });
 }
 /***************************************

@@ -451,7 +451,8 @@
                 </div>
                 <!------   个人聊天界面  end   --------->
 
-                <div class="chat_group js_chat_group" style="display: block">        <!------   多人聊天界面 start    --------->
+                <div class="chat_group js_chat_group" style="display: block">
+                    <!------   多人聊天界面 start    --------->
                     <div class="chat_group_info">
                         <span class="js_chat_group_info_groupName">联谊会</span>
                         <span style="font-size: 12px;letter-spacing: 1px" class="js_chat_group_info_count">(15人)</span>
@@ -567,11 +568,22 @@
             <div class="time"><span class="timeBg left"></span>
                 #{formattertime(post1.time)}
                 <span class="timeBg right"></span></div>
-            <div class="chatItemContent"><img username="gh_c639eef72f78" click="showProfile"
-                                              title="#{allCirclesFriends[post1.phone].nickName}"
-                                              un="avatar_gh_c639eef72f78"
-                                              src="#{imageServer}#{allCirclesFriends[post1.phone].head}" class="avatar">
-
+            <div class="chatItemContent">
+                <?js if(allCirclesFriends[post1.phone].head != "") { ?>
+                <img username="gh_c639eef72f78"
+                     click="showProfile"
+                     title="#{allCirclesFriends[post1.phone].nickName}"
+                     un="avatar_gh_c639eef72f78"
+                     src="#{imageServer}#{allCirclesFriends[post1.phone].head}"
+                     class="avatar">
+                <?js }else{ ?>
+                <img username="gh_c639eef72f78"
+                     click="showProfile"
+                     title="#{allCirclesFriends[post1.phone].nickName}"
+                     un="avatar_gh_c639eef72f78"
+                     src="/static/images/face_man.png"
+                     class="avatar">
+                <?js } ?>
                 <div msgid="2070333132" un="cloud_2070333132" class="cloud cloudText">
                     <div style="" class="cloudPannel">
                         <div class="sendStatus"><label style="visibility: hidden;">&nbsp;ERROR</label></div>
