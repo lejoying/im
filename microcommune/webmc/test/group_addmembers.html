@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function addcommit() {
+            var phone = document.getElementById("phone").value;
+            var gid = document.getElementById("gid").value;
+            var members = document.getElementById("members").value;
+            var listmembers=[];
+            listmembers.push(members);
+            $.ajax({
+                type: "POST",
+                url: "/api2/group/addmembers?",
+                data: {
+                    phone: phone,
+                    gid:gid,
+                    accessKey: "lejoying",
+                    members: JSON.stringify(listmembers)
+                },
+                success: function (data) {
+                    alert(data["提示信息"] + "--" + data["time"]);
+                }
+            });
+        }
+        function removecommit() {
+            var phone = document.getElementById("phone").value;
+            var gid = document.getElementById("gid").value;
+            var members = document.getElementById("members").value;
+            var listmembers=[];
+            listmembers.push(members);
+            $.ajax({
+                type: "POST",
+                url: "/api2/group/removemembers?",
+                data: {
+                    phone: phone,
+                    gid:gid,
+                    accessKey: "lejoying",
+                    members: JSON.stringify(listmembers)
+                },
+                success: function (data) {
+                    alert(data["提示信息"] + "--" + data["time"]);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div style="width: 240px;height: 200px;border: 1px solid #0099cd;margin: 0 auto;padding-top: 20px">
+<span style="margin-left: 15px">phone:<input type="text" id="phone"/></span>
+<span style="margin-left: 32px">gid:<input type="text" id="gid"/></span>
+<span>members:<input type="text" id="members"/></span>
+<span>accessKey:<input type="text" id="accessKey" value="lejoying"/></span>
+<input type="button" value="加入群组" style="margin-top: 20px;margin-left:30px" onclick="addcommit()"/>
+    <input type="button" value="退出群组" style="margin-top: 20px;margin-left:10px" onclick="removecommit()"/>
+</div>
+</body>
+</html>

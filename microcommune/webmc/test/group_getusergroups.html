@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var phone = document.getElementById("phone").value;
+            var gid = document.getElementById("gid").value;
+            var target= document.getElementById("target").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/group/getusergroups?",
+                data: {
+                    phone: phone,
+                    gid:gid,
+                    target:target,
+                    accessKey: "lejoying"
+                },
+                success: function (data) {
+                    alert(data["提示信息"] + "--" + data["time"]);
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+<div style="width: 240px;height: 200px;border: 1px solid #0099cd;margin: 0 auto;padding-top: 20px">
+    <span style="margin-left: 15px">phone:<input type="text" id="phone"/></span>
+    <span style="margin-left: 32px">gid:<input type="text" id="gid"/></span>
+    <span style="margin-left: 1px">target:<input type="text" id="target"/></span>
+    <span>accessKey:<input type="text" id="accessKey" value="lejoying"/></span>
+    <input type="button" value="获取好友群组" style="margin-top: 20px;margin-left:30px" onclick="commit()"/>
+</div>
+</body>
+</html>

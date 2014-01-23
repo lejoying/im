@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>创建群组</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var phone = document.getElementById("phone").value;
+            var tempGid = document.getElementById("tempGid").value;
+            var name = document.getElementById("name").value;
+            var listtype= [];
+            listtype.push(type);
+            var listmembers=[];
+            listmembers.push(members);
+            $.ajax({
+                type: "POST",
+                url: "/api2/group/create?",
+                data: {
+                    phone: phone,
+                    name:name,
+                    tempGid:tempGid,
+                    accessKey: "lejoying",
+                    type: JSON.stringify(listtype),
+                    members: JSON.stringify(listmembers)
+                },
+                success: function (data) {
+                    alert(data["提示信息"] + "--" + data["time"]);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div style="position: relative;margin: 0 auto;width: 250px;height: 300px;border: 1px solid #0099cd;padding:20px 0px 0px 10px;">
+    <span style="margin-left: 30px">phone:</span><input type="text" id="phone" />
+    <span >accessKey:</span><input type="text" id="accessKey" value="lejoying"/>
+    <span>type:</span><input type="text" id="type" />
+    tempGid:<input type="text" id="tempGid">
+    name:<input type="text" id="name"/>
+    members:<input type="text" id="members"/>
+    <input type="button" value="创建" style="margin-top: 20px;margin-left: 100px" onclick="commit()"/>
+</div>
+</body>
+</html>
