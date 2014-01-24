@@ -8,16 +8,18 @@
 <?js var groupType = "tempGroup";var gid=post0.tempGid; ?>
 <?js if(post0.gid != undefined) { ?>
 <?js groupType="group";gid=post0.gid;} ?>
-<div class="groupchat_boderbox_template js_groupchat_boderbox_template" groupType="#{groupType}" group_gid="#{gid}">   <!--    可作为模板     -->
+<div class="groupchat_boderbox_template js_groupchat_boderbox_template" groupType="#{groupType}" group_gid="#{gid}">
+    <!--    可作为模板     -->
     <div class="groupchat_boderbox">
         <?js if(groupType == "tempGroup") { ?>
         <img src="static/images/temp_chatgroup_logo.png" alt="临时群组标志" class="groupchat_boderbox_logo">
         <?js } ?>
         <div class="groupchat_number" style="visibility: hidden;">       <!--    红色圆心数字     -->
-            <div class="groupchat_number_info">66</div>
+            <div class="groupchat_number_info">0</div>
         </div>
-        <div class="groupchat_boderbox_minbox"  title="#{post0.name}">
-            <div style="margin-top: 5px"><?js if(post0.name!=undefined) { ?>#{(post0.name).substr(0,4)}<?js } else { ?>
+        <div class="groupchat_boderbox_minbox" title="#{post0.name}">
+            <div style="margin-top: 5px"><?js if(post0.name!=undefined && post0.name!="") { ?>
+                #{(post0.name).substr(0,4)}<?js } else { ?>
                 未命名<?js } ?></div>
             <div style="font-size: 12px">(#{length}人)</div>
         </div>
@@ -37,7 +39,7 @@
             <?js } ?>
         </div>
         <div class="groupchat_frends_message">
-            <span class="groupchat_frends_message_info">${getGroupFinalMessage(groupType, gid)}</span>
+            <span class="groupchat_frends_message_info js_groupchat_friends_message_info">${getGroupFinalMessage(groupType, gid)}</span>
         </div>
     </div>
 </div>

@@ -7,7 +7,9 @@ var tempGroupsInfo = {};
 var currentChatType = "POINT";//POINT,GROUP,TEMPGROUP
 var currentChatGroup;
 $(function () {
-    getUserAllGroups();//获取所有的正式群组和好友
+    if (window.localStorage.getItem("wxgs_nowAccount")) {
+        getUserAllGroups();//获取所有的正式群组和好友
+    }
     var tempData = window.sessionStorage.getItem("wxgs_tempGroupsInfo");
     if (tempData != undefined) {
         tempGroupsInfo = JSON.parse(tempData);
@@ -19,17 +21,18 @@ $(function () {
             $(".js_user_groups").append(template.render(tempGroups));
         });
     }
-    var groupData = window.sessionStorage.getItem("wxgs_groupsInfo");
-    if (groupData != undefined) {
-        groupsInfo = JSON.parse(groupData);
-        var groups = [];
-        for (var index in groupsInfo) {
-            groups.push(groupsInfo[index]);
-        }
-        getTemplateHtml("user_groups", function (template) {
-            $(".js_user_groups").append(template.render(groups));
-        });
-    }
+    //正式群组不显示
+    /*var groupData = window.sessionStorage.getItem("wxgs_groupsInfo");
+     if (groupData != undefined) {
+     groupsInfo = JSON.parse(groupData);
+     var groups = [];
+     for (var index in groupsInfo) {
+     groups.push(groupsInfo[index]);
+     }
+     getTemplateHtml("user_groups", function (template) {
+     $(".js_user_groups").append(template.render(groups));
+     });
+     }*/
     $(document).on("click", ".js_chat_one_addfrriends", function () {
         $(".js_invite_SelectUserChat_frame").show();
         getTemplateHtml("invite_circles_friends", function (template) {
@@ -71,6 +74,11 @@ $(function () {
             } else if (currentChatType == "GROUP") {
                 //正式群，邀请部分好机油加入群组聊天
                 data.gid = currentChatGroup.gid;
+                /*var group = groupsInfo[currentChatGroup.gid];
+                 if (group != undefined) {
+                 var groupMembers = group.members;
+                 members = members.concat(groupMembers);
+                 }*/
                 data.members = JSON.stringify(members);
                 addMembersToGroup(data);
             }
@@ -105,13 +113,24 @@ $(function () {
                 });
             }
 
+            //正式群组添加好友
             function addMembersToGroup(dataFrom) {
                 $.ajax({
                     type: "POST",
                     url: "/api2/group/addmembers?",
                     data: dataFrom,
                     success: function (data) {
-                        console.log(data);
+                        if (data["提示信息"] == "加入群组成功") {
+                            var currentMembers = JSON.parse(dataFrom.members);
+                            var gid = dataFrom.gid;
+                            var group = groupsInfo[gid];
+                            var members = groups.members;
+                            group.members = members.concat(currentMembers);
+                            currentChatGroup = group;
+                            window.sessionStorage.setItem("wxgs_groupsInfo", JSON.stringify(groupsInfo));
+                        } else {
+                            alert(data["提示信息"] + "," + data["失败原因"]);
+                        }
                     }
                 });
             }
@@ -156,31 +175,49 @@ $(function () {
     $(document).on("click", ".js_invite_friend_chat_icon", function () {
         var icon = $(this).find("img");
         var phone = $(this).attr("phone");
-        if (icon.hasClass("js_invite_chat_icon")) {
-            delete inviteSelectedUsers[phone];
-            icon.removeClass("js_invite_chat_icon");
-            icon.addClass("js_no_invite_chat_icon");
-            var targetObj = $(".js_already_invite_selected_user_" + phone)[0];
-            targetObj.parentNode.removeChild(targetObj);
-            if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
-                $(".js_already_invite_select_friends").css({
-                    width: parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", "")) - 60 + "px"
-                });
+        if (currentChatType == "TEMPGROUP" || currentChatType == "GROUP") {
+            var flag = true;
+            var members = currentChatGroup.members;
+            for (var i = 0; i < members.length; i++) {
+                if (members[i] == phone) {
+                    flag = false;
+                    alert("此好友已在该群组");
+                    break;
+                }
             }
-        } else {
-            icon.addClass("js_invite_chat_icon");
-            inviteSelectedUsers[phone] = "select";
-            if (icon.hasClass("js_no_invite_chat_icon")) {
-                icon.removeClass("js_no_invite_chat_icon");
+            if (flag) {
+                next();
             }
-            getTemplateHtml("already_invite_circles_friends", function (template) {
-                $(".js_already_invite_select_friends").append(template.render([allCirclesFriends[phone]]));
+        } else if (currentChatType == "POINT") {
+            next();
+        }
+        function next() {
+            if (icon.hasClass("js_invite_chat_icon")) {
+                delete inviteSelectedUsers[phone];
+                icon.removeClass("js_invite_chat_icon");
+                icon.addClass("js_no_invite_chat_icon");
+                var targetObj = $(".js_already_invite_selected_user_" + phone)[0];
+                targetObj.parentNode.removeChild(targetObj);
                 if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
                     $(".js_already_invite_select_friends").css({
-                        width: parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", "")) + 60 + "px"
+                        width: parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", "")) - 60 + "px"
                     });
                 }
-            });
+            } else {
+                icon.addClass("js_invite_chat_icon");
+                inviteSelectedUsers[phone] = "select";
+                if (icon.hasClass("js_no_invite_chat_icon")) {
+                    icon.removeClass("js_no_invite_chat_icon");
+                }
+                getTemplateHtml("already_invite_circles_friends", function (template) {
+                    $(".js_already_invite_select_friends").append(template.render([allCirclesFriends[phone]]));
+                    if ($(".js_already_invite_select_friends .add_frend_chat_checkedfrend").length >= 3) {
+                        $(".js_already_invite_select_friends").css({
+                            width: parseInt(($(".js_already_invite_select_friends").css("width")).replace("px", "")) + 60 + "px"
+                        });
+                    }
+                });
+            }
         }
     });
     $(document).on("click", ".js_invite_users", function () {
@@ -229,6 +266,12 @@ $(function () {
             $(".js_chat_group_temp").hide();
             $(".js_chat_one_more").show();
         }
+        var messageNum = target.find(".groupchat_number");
+        var num = messageNum.find(".groupchat_number_info");
+        num.html("0");
+        messageNum.css({
+            "visibility": "hidden"
+        });
     });
 
     $(document).on("click", ".js_add_friend_chat_lefticon", function () {
@@ -298,24 +341,43 @@ $(function () {
         });
     });
     $(document).on("click", ".js_chat_group_left_icon", function () {
-        alert("js_chat_group_left_icon");
+        var maxLeft = $(".js_chat_group_friends").width() - 310;
+        var margin_left = parseInt(($(".js_chat_group_friends").css("margin-left")).replace("px", ""));
+        if (margin_left + 60 <= 0) {
+            $(".js_chat_group_friends").css({
+                "margin-left": margin_left + 60 + "px"
+            });
+        } else {
+            alert("已经到最左侧了");
+        }
     });
     $(document).on("click", ".js_chat_group_right_icon", function () {
-        alert("js_chat_group_right_icon");
+        var maxLeft = ($(".js_chat_group_friends").width()) - 310;
+        var margin_left = parseInt(($(".js_chat_group_friends").css("margin-left")).replace("px", ""));
+//        alert(maxLeft);
+        if (margin_left - 60 > -maxLeft) {
+            $(".js_chat_group_friends").css({
+                "margin-left": margin_left - 60 + "px"
+            });
+        } else {
+            alert("已经到最右侧了");
+        }
     });
 });
 function getGroupFinalMessage(type, gid) {
     if (type == "tempGroup") {
         var messages = tempAccountChatMessages["t_" + gid];
         if (messages != undefined) {
-            return JSON.parse(messages[messages.length - 1]).content;
+            var content = JSON.parse(messages[messages.length - 1]).content;
+            return content.substr(0, 10) + "...";
         } else {
             return "";
         }
     } else if (type == "group") {
         var messages = tempAccountChatMessages["g_" + gid];
         if (messages != undefined) {
-            return JSON.parse(messages[messages.length - 1]).content;
+            var content = JSON.parse(messages[messages.length - 1]).content;
+            return content.substr(0, 10) + "...";
         } else {
             return "";
         }
@@ -338,10 +400,11 @@ function showTempGroupInfoAndMessages(type, tempGid) {
             $(".js_chat_group_info_groupName").html("临时群");
         }
         $(".js_chat_group_info_count").html("(" + length + "人)");
-        if (length > 4) {
+        if (length > 5) {
             var left = (length + 1) * 60 - 300;
             $(".js_chat_group_friends").css({
-                "margin-left": -left + "px"
+                "margin-left": -left + "px",
+                "width": (length + 2) * 60 + "px"
             });
         } else {
             $(".js_chat_group_friends").css({

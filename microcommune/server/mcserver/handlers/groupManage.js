@@ -711,11 +711,11 @@ groupManage.getgroupsandmembers = function (data, response) {
     response.asynchronous = 1;
 
     var phone = data.phone;
-
+    //(account1:Account)-[r:HAS_GROUP]->(group:Group)-[r1:HAS_MEMBER]->(account:Account)
     var query = [
-        'MATCH (account1:Account)-[r:HAS_GROUP]->(group:Group)-[r1:HAS_MEMBER]->(account:Account)',
+        'MATCH (account1:Account)<-[r:HAS_MEMBER]-(group:Group)-[r1:HAS_MEMBER]->(account:Account)',
         'WHERE account1.phone={phone}',
-        'RETURN group,account'
+        'RETURN group,account,account1'
     ].join('\n');
     var params = {
         phone: phone
@@ -745,6 +745,8 @@ groupManage.getgroupsandmembers = function (data, response) {
                 };
                 if (groups[groupData.gid] == null) {
                     var accounts = [];
+                    var account_own = it.account1.data;
+                    accounts.push(account_own);
                     accounts.push(account);
                     groupData.members = accounts;
                     groups[groupData.gid] = groupData;

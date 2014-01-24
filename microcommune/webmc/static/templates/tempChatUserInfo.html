@@ -6,14 +6,14 @@
 <div id="js_conv_wxgsid_#{post.phone}" username="#{post.phone}" un="wxgsid_edcat2inu4zq22"
      class="chatListColumn">
     <div style="display:none;" class="clicked"></div>
-    <span style="display:block" class="unreadDot">1</span> <span style="display:none" class="unreadDotS"></span>
+    <span style="display:none" class="unreadDot">0</span> <span style="display:none" class="unreadDotS"></span>
 
     <div class="avatar_wrap">
         <?js if(post.head!="" && post.head!=null) { ?>
-        <img click1="showProfile@.chatListColumn" src="#{imageServer}#{post.head}"
+        <img src="#{imageServer}#{post.head}"
              class="avatar">
         <?js }else{ ?>
-        <img click1="showProfile@.chatListColumn" src="static/images/webwxgeticon2.jpg"
+        <img src="static/images/webwxgeticon2.jpg"
              class="avatar">
         <?js } ?>
     </div>
