@@ -108,7 +108,7 @@ $(function () {//show js_modify_jcrophead_show
     });
     $(".js_circlesTop").click(function () {
         /*$(".js_chat_one").show();
-        $(".js_chat_group").hide();*/
+         $(".js_chat_group").hide();*/
 
 
         $("#conversationListContent").css({
@@ -123,8 +123,8 @@ $(function () {//show js_modify_jcrophead_show
     });
     $(".js_clustersTop").click(function () {
         /*$(".js_chat_one").hide();
-        $(".js_chat_group").show();
-        $(".js_chat_group_temp_up").show();*/
+         $(".js_chat_group").show();
+         $(".js_chat_group_temp_up").show();*/
 
 
         $("#conversationListContent").css({
@@ -167,6 +167,7 @@ $(function () {//show js_modify_jcrophead_show
 
     $(".js_accountHead").click(function () {
         if ($(".js_modifyAccountHeadImgPanel").css('display') != "block") {
+
             $(".js_modifyAccountHeadImgPanel").css({
                 "top": "40px",
                 "left": "0px"
@@ -220,9 +221,26 @@ $(function () {//show js_modify_jcrophead_show
                 "visibility": "hidden"
             });
             var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
-            if (accountObj.head != "") {
-                $("#js_modify_head_file").attr("src", imageServer + accountObj.head);
-                $("#js_modify_jcrophead_show").attr("src", imageServer + accountObj.head);
+            if (accountObj.head != "" && accountObj.head != null) {
+                $.ajax({
+                    type: "POST",
+                    url: "/image/get?",
+                    data: {
+                        phone: accountObj.phone,
+                        accessKey: accountObj.accessKey,
+                        filename: accountObj.head
+                    },
+                    success: function (data) {
+                        if(data["提示信息"] == "获取图片成功"){
+                            image.src = data.image;
+                            $("#js_modify_head_file").attr("src", data.image);
+                            $("#js_modify_jcrophead_show").attr("src", data.image);
+                        }else{
+                            $("#js_modify_head_file").attr("src", "/static/images/face_man.png");
+                            $("#js_modify_jcrophead_show").attr("src", "/static/images/face_man.png");
+                        }
+                    }
+                });
             } else {
                 $("#js_modify_head_file").attr("src", "/static/images/face_man.png");
                 $("#js_modify_jcrophead_show").attr("src", "/static/images/face_man.png");

@@ -108,6 +108,9 @@ $(function () {
                             $(".js_chat_one").hide();
                             $(".js_chat_group").show();
                             $(".js_chat_group_temp_up").show();
+                            $(".js_chat_group_temp_up").css({
+                                "display": "block"
+                            });
                         }
                     }
                 });
@@ -250,20 +253,32 @@ $(function () {
         });
     });
     $(document).on("click", ".js_groupchat_boderbox_template", function () {
+        $(".js_chatRightFrame").css({
+            visibility: "visible"
+        });
         $(".js_chat_one").hide();
         $(".js_chat_group").show();
         $(".js_chat_group_temp_up").show();
+        $(".js_chat_group_temp_up").css({
+            "display": "block"
+        });
         var target = $(this);
         currentChatType = (target.attr("groupType")).toUpperCase();
         var tempGid = target.attr("group_gid");
         if (currentChatType == "TEMPGROUP") {
             showTempGroupInfoAndMessages("TEMPGROUP", tempGid);
             $(".js_chat_group_temp").show();
+            $(".js_chat_group_temp_up").css({
+                "display": "block"
+            });
             $(".js_chat_one_more").hide();
 
         } else if (currentChatType == "GROUP") {
             showTempGroupInfoAndMessages("GROUP", tempGid);
             $(".js_chat_group_temp").hide();
+            $(".js_chat_group_temp_up").css({
+                "display": "none"
+            });
             $(".js_chat_one_more").show();
         }
         var messageNum = target.find(".groupchat_number");
@@ -333,6 +348,9 @@ $(function () {
                      tempAccountChatMessages["g_" + group.gid] = messages;
                      }*/
                     $(".js_chat_group_temp").hide();
+                    $(".js_chat_group_temp_up").css({
+                        "display": "none"
+                    });
                     $(".js_chat_one_more").show();
                 } else {
                     alert(data["提示信息"] + "," + data["失败原因"]);
@@ -361,6 +379,33 @@ $(function () {
             });
         } else {
             alert("已经到最右侧了");
+        }
+    });
+    $(document).on("click", ".js_chat_one_more", function () {
+        alert("js_chat_one_more");
+    });
+    $(document).on("click", ".js_chat_group_friends .js_chat_group_friends_onlyone", function () {
+//        alert($(this).attr("phone"));
+        var accountData = allCirclesFriends[$(this).attr("phone")];
+        $(".js_findFriendPhone").val("");
+        $(".js_findFriendErrorMessage").html("");
+        $(".js_addFriendErrorMessage").html("");
+        $(".js_friendMessage_addFriend").attr("circle_rid", $(".js_findFriendBtn").attr("circle_rid"));
+        $(".js_friendMessage_addFriend").attr("phone", accountData.phone);
+        var mainBusiness = accountData.mainBusiness;
+        $(".js_findFriend").css({display: "none"});
+        $(".js_friendMessage").css({display: "block"});
+        new Drag($(".js_friendMessage")[0]);
+        $(".js_friendMessage_nickName").html("昵&nbsp;&nbsp;&nbsp;称：" + accountData.nickName);
+        $(".js_friendMessage_phone").html("手机号：" + accountData.phone);
+        $(".js_friendMessage_mainBusiness").html(mainBusiness.substr(0, 72) + "...");
+        $(".js_friendMessage_mainBusiness").attr("title", mainBusiness);
+        $(".js_addFriendTitle").html("添加好友 (" + accountData.phone + ")");
+        $(".js_addFriendNickName").html("昵&nbsp;&nbsp;&nbsp;称：" + accountData.nickName);
+        if (accountData.head != "" && accountData.head != null) {
+            $(".js_friendMessage_img").attr("src", imageServer + accountData.head);
+        } else {
+            $(".js_friendMessage_img").attr("src", "/static/images/face_man.png");
         }
     });
 });
@@ -418,7 +463,7 @@ function showTempGroupInfoAndMessages(type, tempGid) {
         var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
         $(".js_chatContents").html(js_chatmessagetemplate.render(tempAccountChatMessages[firstStr + "_" + tempGid]));
     } else {
-        var htmlStr = '<div class="noMsgIip" id="noMsgTip">' +
+        var htmlStr = '<div class="noMsgIip" ide="noMsgTip">' +
             '<div class="noMsgTipPic"></div>' +
             '<p>暂时没有新消息</p>' +
             '</div>';

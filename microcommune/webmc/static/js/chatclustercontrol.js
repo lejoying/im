@@ -16,7 +16,7 @@ $(function () {
         tempChatUsersList = wxgs_tempChatUsersList;
     }
     $(".js_chatRightFrame").css({
-        visibility: "visible"
+        visibility: "hidden"
     });
     /*$(".js_morefriend").hide();
      $(".js_morefriend").slideUp();
@@ -140,6 +140,7 @@ $(function () {
         } else {
             $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
         }
+        $(".js_js_onlyfriend_headimg").attr("phone",currentChatUser.phone);
         $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
 //                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
         $(".js_rightChatPanel").show();
@@ -153,7 +154,29 @@ $(function () {
     //邀请好友加入聊天的窗口拖动注册
     new Drag($(".js_invite_SelectUserChat_frame")[0]);
 
-
+    $(document).on("click",".js_js_onlyfriend_headimg",function(){
+        var accountData = allCirclesFriends[$(this).attr("phone")];
+        $(".js_findFriendPhone").val("");
+        $(".js_findFriendErrorMessage").html("");
+        $(".js_addFriendErrorMessage").html("");
+        $(".js_friendMessage_addFriend").attr("circle_rid", $(".js_findFriendBtn").attr("circle_rid"));
+        $(".js_friendMessage_addFriend").attr("phone", accountData.phone);
+        var mainBusiness = accountData.mainBusiness;
+        $(".js_findFriend").css({display: "none"});
+        $(".js_friendMessage").css({display: "block"});
+        new Drag($(".js_friendMessage")[0]);
+        $(".js_friendMessage_nickName").html("昵&nbsp;&nbsp;&nbsp;称：" + accountData.nickName);
+        $(".js_friendMessage_phone").html("手机号：" + accountData.phone);
+        $(".js_friendMessage_mainBusiness").html(mainBusiness.substr(0, 72) + "...");
+        $(".js_friendMessage_mainBusiness").attr("title", mainBusiness);
+        $(".js_addFriendTitle").html("添加好友 (" + accountData.phone + ")");
+        $(".js_addFriendNickName").html("昵&nbsp;&nbsp;&nbsp;称：" + accountData.nickName);
+        if (accountData.head != "" && accountData.head != null) {
+            $(".js_friendMessage_img").attr("src", imageServer + accountData.head);
+        } else {
+            $(".js_friendMessage_img").attr("src", "/static/images/face_man.png");
+        }
+    });
 });
 function showTempChatUsersInfo() {
     getTemplateHtml("tempChatUserInfo", function (template) {

@@ -271,6 +271,7 @@ $(document).ready(function () {
                 } else {
                     $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
                 }
+                $(".js_js_onlyfriend_headimg").attr("phone",currentChatUser.phone);
                 $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
 //                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
                 $(".js_rightChatPanel").show();
