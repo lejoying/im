@@ -1,11 +1,13 @@
 package com.lejoying.mc;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.fragment.FriendsFragment;
+import com.lejoying.mc.service.PushService;
 
 public class MainActivity extends BaseFragmentActivity {
 
@@ -16,7 +18,6 @@ public class MainActivity extends BaseFragmentActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		app.context = this;
 		setContentView(R.layout._main);
 		instance = this;
 	}
@@ -46,9 +47,16 @@ public class MainActivity extends BaseFragmentActivity {
 	}
 
 	@Override
+	public void finish() {
+		Intent service = new Intent(this, PushService.class);
+		service.putExtra("objective", "stop");
+		startService(service);
+		super.finish();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
-		app.context = this;
 	}
 
 	@Override

@@ -49,6 +49,7 @@
             android:hint="@string/et_phone"
             android:inputType="number"
             android:textColor="#fff"
+            android:textColorHint="#ddd"
             tools:ignore="TextFields" >
 
             <requestFocus />

@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
@@ -35,9 +36,6 @@ public class WelcomeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		app.context = this;
-		app.initialize();
-		
 		setContentView(R.layout._welcome);
 
 		checkLocalData();
@@ -59,11 +57,15 @@ public class WelcomeActivity extends Activity {
 				int[] cityLocation = new int[2];
 				imageview_city.getLocationInWindow(cityLocation);
 				int cityX = cityLocation[0];
-				int cityWidth = imageview_city.getWidth();
 
-				Animation cityAnimation = new TranslateAnimation(
-						-(cityWidth - (width - cityX)), 0, 0, 0);
+				ImageView imageview_city_before = (ImageView) findViewById(R.id.imageview_city_before);
+				imageview_city_before.getLocationInWindow(cityLocation);
+				int cityBeforeX = cityLocation[0];
+				Animation cityAnimation = new TranslateAnimation(cityBeforeX
+						- cityX, 0, 0, 0);
 				cityAnimation.setDuration(1800);
+				imageview_city_before.setVisibility(View.GONE);
+				imageview_city.setVisibility(View.VISIBLE);
 				imageview_city.startAnimation(cityAnimation);
 
 				int starWidth = imageview_star.getWidth();
@@ -208,8 +210,6 @@ public class WelcomeActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		app.context = this;
-
 	}
 
 }

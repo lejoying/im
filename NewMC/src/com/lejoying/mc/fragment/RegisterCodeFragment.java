@@ -1,5 +1,8 @@
 package com.lejoying.mc.fragment;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,9 +14,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Data;
+import com.lejoying.mc.data.handler.DataHandler.Modification;
+import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetUtils;
@@ -38,9 +46,13 @@ public class RegisterCodeFragment extends BaseFragment implements
 	@Override
 	public void onResume() {
 		app.mark = app.registerCodeFragment;
+		startRemain();
+
 		super.onResume();
 	}
-	
+
+	public Timer mTimer;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -57,9 +69,49 @@ public class RegisterCodeFragment extends BaseFragment implements
 		return mContent;
 	}
 
+	public void startRemain() {
+		if (LoginActivity.remainTime != 0) {
+			mTimer = new Timer();
+			mTimer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					app.mUIThreadHandler.post(new Runnable() {
+						int remainTime = LoginActivity.remainTime;
+
+						@Override
+						public void run() {
+							remainTime--;
+							if (isAdded()) {
+								if (remainTime <= 0) {
+									mView_sendcode
+											.setText(getString(R.string.tv_resend));
+								} else {
+									mView_sendcode
+											.setText(getString(R.string.tv_resend)
+													+ "(" + remainTime + ")");
+								}
+							}
+						}
+					});
+				}
+			}, 0, 1000);
+		} else {
+			mView_sendcode.setText(getString(R.string.tv_resend));
+		}
+	}
+
 	@Override
 	public void onPause() {
+		if (mTimer != null) {
+			mTimer.cancel();
+		}
 		super.onPause();
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
 	}
 
 	@Override
@@ -68,20 +120,67 @@ public class RegisterCodeFragment extends BaseFragment implements
 		case R.id.btn_next:
 			String code = mView_code.getText().toString();
 			if (code.equals("")) {
-				getString(R.string.app_codenotnull);
+				Toast.makeText(getActivity(),
+						getString(R.string.app_codenotnull), Toast.LENGTH_SHORT)
+						.show();
 				return;
 			}
 			next(code);
 			break;
 		case R.id.tv_sendcode:
-			Bundle resendParams = app.data.registerBundle;
-			resendParams.remove("code");
-			// mMCFragmentManager.startNetworkForResult(API.ACCOUNT_VERIFYPHONE,
-			// resendParams, new NetworkStatusAdapter() {
-			// @Override
-			// public void success() {
-			// }
-			// });
+			final Bundle params = app.data.registerBundle;
+			params.remove("code");
+			if (LoginActivity.remainTime == 0) {
+				LoginActivity.startRemain();
+				startRemain();
+				MCNetUtils.ajax(new AjaxAdapter() {
+
+					@Override
+					public void setParams(Settings settings) {
+						settings.url = API.ACCOUNT_VERIFYPHONE;
+						settings.params = params;
+					}
+
+					@Override
+					public void onSuccess(final JSONObject jData) {
+						try {
+							final String failed = jData
+									.getString(getString(R.string.app_reason));
+							app.mUIThreadHandler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									Toast.makeText(getActivity(), failed,
+											Toast.LENGTH_SHORT).show();
+								}
+							});
+							return;
+						} catch (JSONException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						app.dataHandler.modifyData(new Modification() {
+
+							@Override
+							public void modify(Data data) {
+								try {
+									app.data.registerBundle.putString("code",
+											jData.getString("code"));
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+							}
+						}, new UIModification() {
+
+							@Override
+							public void modifyUI() {
+								LoginActivity.startRemain();
+								startRemain();
+							}
+						});
+					}
+				});
+			}
 			break;
 		default:
 			break;
@@ -90,7 +189,8 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 	public void next(String code) {
 		final Bundle nextParams = new Bundle();
-		nextParams.putString("phone", app.data.registerBundle.getString("phone"));
+		nextParams.putString("phone",
+				app.data.registerBundle.getString("phone"));
 		nextParams.putString("code", code);
 
 		MCNetUtils.ajax(new AjaxAdapter() {
@@ -104,6 +204,22 @@ public class RegisterCodeFragment extends BaseFragment implements
 			@Override
 			public void onSuccess(JSONObject jData) {
 				try {
+					final String failed = jData
+							.getString(getString(R.string.app_reason));
+					app.mUIThreadHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(getActivity(), failed,
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+					return;
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
 					app.data.registerBundle.putString(
 							"accessKey",
 							RSAUtils.decrypt(app.config.pbKey0,
@@ -114,9 +230,12 @@ public class RegisterCodeFragment extends BaseFragment implements
 					mMCFragmentManager.replaceToContent(
 							new RegisterPassFragment(), true);
 				} catch (JSONException e) {
+					Toast.makeText(getActivity(), "验证失败", Toast.LENGTH_SHORT)
+							.show();
 					e.printStackTrace();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					Toast.makeText(getActivity(), "验证失败", Toast.LENGTH_SHORT)
+							.show();
 					e.printStackTrace();
 				}
 			}

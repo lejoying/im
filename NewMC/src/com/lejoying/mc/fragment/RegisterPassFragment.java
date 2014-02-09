@@ -14,7 +14,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.MainActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
@@ -45,7 +47,7 @@ public class RegisterPassFragment extends BaseFragment implements
 		app.mark = app.registerPassFragment;
 		super.onResume();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -55,8 +57,7 @@ public class RegisterPassFragment extends BaseFragment implements
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
 
 		mView_next.setOnClickListener(this);
-
-		System.out.println(app.data.registerBundle);
+		LoginActivity.stopRemain();
 		mMCFragmentManager.setFragmentKeyDownListener(new OnKeyDownListener() {
 
 			long cancelTime;
@@ -69,7 +70,9 @@ public class RegisterPassFragment extends BaseFragment implements
 						getActivity().getSupportFragmentManager().popBackStack(
 								1, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 					} else {
-						getString(R.string.app_cancelregister);
+						Toast.makeText(getActivity(),
+								getString(R.string.app_cancelregister),
+								Toast.LENGTH_SHORT).show();
 						cancelTime = now;
 					}
 				}
@@ -91,10 +94,14 @@ public class RegisterPassFragment extends BaseFragment implements
 		case R.id.btn_next:
 			String pass = mView_pass.getText().toString();
 			if (pass == null || pass.equals("")) {
-				getString(R.string.app_passnotnull);
+				Toast.makeText(getActivity(),
+						getString(R.string.app_passnotnull), Toast.LENGTH_SHORT)
+						.show();
 				return;
 			} else if (pass.length() < 6) {
-				getString(R.string.app_passlength);
+				Toast.makeText(getActivity(),
+						getString(R.string.app_passlength), Toast.LENGTH_SHORT)
+						.show();
 				return;
 			}
 			next(pass);
@@ -129,18 +136,28 @@ public class RegisterPassFragment extends BaseFragment implements
 
 			@Override
 			public void onSuccess(final JSONObject jData) {
+				try {
+					final String failed = jData
+							.getString(getString(R.string.app_reason));
+					app.mUIThreadHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(getActivity(), failed,
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+					return;
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				app.dataHandler.modifyData(new Modification() {
 
 					@Override
 					public void modify(Data data) {
-						try {
-							jData.getString(getString(R.string.app_reason));
-							return;
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						data.user.phone = data.registerBundle.getString("phone");
+						data.user.phone = data.registerBundle
+								.getString("phone");
 						data.user.accessKey = data.registerBundle
 								.getString("accessKey");
 					}

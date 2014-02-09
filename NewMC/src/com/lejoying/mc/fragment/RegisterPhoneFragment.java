@@ -1,5 +1,8 @@
 package com.lejoying.mc.fragment;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,7 +13,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Data;
@@ -39,7 +44,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 		app.mark = app.registerPhoneFragment;
 		super.onResume();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -62,7 +67,18 @@ public class RegisterPhoneFragment extends BaseFragment implements
 		case R.id.btn_next:
 			String phone = mView_phone.getText().toString();
 			if (phone.equals("")) {
-				getString(R.string.app_phonenotnull);
+				Toast.makeText(getActivity(),
+						getString(R.string.app_phonenotnull),
+						Toast.LENGTH_SHORT).show();
+				showSoftInput(mView_phone);
+				return;
+			}
+			Pattern p = Pattern
+					.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+			Matcher m = p.matcher(phone);
+			if (!m.matches()) {
+				Toast.makeText(getActivity(), "手机号码格式不正确", Toast.LENGTH_SHORT)
+						.show();
 				showSoftInput(mView_phone);
 				return;
 			}
@@ -73,10 +89,17 @@ public class RegisterPhoneFragment extends BaseFragment implements
 		}
 	}
 
-	public void next(String phone) {
+	public void next(final String phone) {
+		boolean flag = LoginActivity.setRemain(phone);
+		if (!flag) {
+			mMCFragmentManager.replaceToContent(new RegisterCodeFragment(),
+					true);
+			return;
+		}
 		final Bundle params = new Bundle();
 		params.putString("phone", phone);
 		params.putString("usage", "register");
+		LoginActivity.startRemain();
 		MCNetUtils.ajax(new AjaxAdapter() {
 
 			@Override
@@ -87,6 +110,22 @@ public class RegisterPhoneFragment extends BaseFragment implements
 
 			@Override
 			public void onSuccess(final JSONObject jData) {
+				try {
+					final String failed = jData
+							.getString(getString(R.string.app_reason));
+					app.mUIThreadHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(getActivity(), failed,
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+					return;
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				app.dataHandler.modifyData(new Modification() {
 
 					@Override

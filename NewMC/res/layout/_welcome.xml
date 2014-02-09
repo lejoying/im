@@ -10,9 +10,9 @@
         android:layout_height="122dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_marginBottom="-20dp"
         android:layout_marginLeft="-20dp"
         android:layout_marginRight="-20dp"
-        android:layout_marginBottom="-20dp"
         android:background="@drawable/app_start_mar"
         tools:ignore="ContentDescription" />
 
@@ -34,6 +34,17 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="-100dp"
+        android:background="@drawable/app_start_space_city"
+        android:visibility="invisible"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/imageview_city_before"
+        android:layout_width="160dp"
+        android:layout_height="140dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="-50dp"
         android:background="@drawable/app_start_space_city"
         tools:ignore="ContentDescription" />
 
