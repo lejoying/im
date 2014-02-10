@@ -828,5 +828,25 @@ api = {
             success: {"提示信息": "获取群组信息成功", group: {}},
             failed: {"提示信息": "获取群组信息失败", "失败原因": "数据异常" || "群组不存在" || "数据格式不正确"}
         }
+    },
+    /***************************************
+     *     URL：/api2/group/getgroupsandmembers
+     ***************************************/
+    "group_getgroupsandmembers": {
+        description: {
+            id: 1001007,
+            url: "/api2/group/getgroupsandmembers"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取群组成功", groups: [
+                {},
+                {},
+                {}
+            ]},
+            failed: {"提示信息": "获取群组失败", "失败原因": "数据异常"}
+        }
     }
 }

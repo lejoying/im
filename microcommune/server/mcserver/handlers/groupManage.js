@@ -621,7 +621,7 @@ groupManage.getusergroups = function (data, response) {
     }
 }
 /***************************************
- *     URL：/api2/group/getusergroups
+ *     URL：/api2/group/get
  ***************************************/
 groupManage.get = function (data, response) {
     response.asynchronous = 1;

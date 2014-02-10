@@ -1,13 +1,33 @@
 var selectPanel = "js_tempChatTop";
-var scrollFlagTempChatTop = false;
-var image = new Image();
-var vData;
+var scrollFlagTempChatTop = false;//滚动条的状态
+var image = new Image();//初始化图片对象
+var vData;//裁剪的图片的数据
 var loadImageFlag = false;
+var toastFlag = true;//窗口的活跃状态显示，根据Boolean来判断是否给用户提示消息
 $(function () {//show js_modify_jcrophead_show
     console.log("如果你能看到这段话，那么欢迎你加入微型公社团队，" +
         "让我们一起从事这件伟大的，准备拯救世界的前端攻城师事业，^_-。" +
         "请发送邮件到open@lejoying.com，请注明这是来自微型公社js信息的应聘信息。");
     var img = new Image();
+    $.getScript("/static/js/ifvisible.js", function () {
+        ifvisible.setIdleDuration(60);
+
+        ifvisible.on('statusChanged', function (e) {
+            var status = e.status;
+            if (status == "active") {
+                toastFlag = true;
+            } else {
+                toastFlag = false;
+            }
+        });
+        /*ifvisible.idle(function () {
+         //            alert("ZzzZZzz...");
+         });
+
+         ifvisible.wakeup(function () {
+         alert("(O_o) Hey!, you woke me up.");
+         });*/
+    });
 
     /*function getBase64() {
      var img = document.getElementById("js_modify_head_file");
@@ -231,11 +251,11 @@ $(function () {//show js_modify_jcrophead_show
                         filename: accountObj.head
                     },
                     success: function (data) {
-                        if(data["提示信息"] == "获取图片成功"){
+                        if (data["提示信息"] == "获取图片成功") {
                             image.src = data.image;
                             $("#js_modify_head_file").attr("src", data.image);
                             $("#js_modify_jcrophead_show").attr("src", data.image);
-                        }else{
+                        } else {
                             $("#js_modify_head_file").attr("src", "/static/images/face_man.png");
                             $("#js_modify_jcrophead_show").attr("src", "/static/images/face_man.png");
                         }
@@ -436,4 +456,26 @@ function Drag(o) {
         }
     }
     rDrag.init(o);
+}
+if (!window.webkitNotifications) {
+    alert("您的浏览器不支持Notification桌面通知!");
+}
+function RequestPermission(callback) {
+    window.webkitNotifications.requestPermission(callback);
+}
+
+var notification;
+
+function showNotification() {
+    if (window.webkitNotifications.checkPermission() > 0) {
+        RequestPermission(showNotification);
+    } else {
+        notification = window.webkitNotifications.createNotification("http://avatar.csdn.net/F/8/1/1_qxs965266509.jpg", "乔晓松", "上班中...！");
+        notification.onshow = function () {
+            setTimeout('notification.cancel()', 5000);
+        }
+        notification.onclick = function () {
+        }
+        notification.show();
+    }
 }
