@@ -22,7 +22,7 @@ import com.lejoying.mc.utils.MCNetUtils;
 import com.lejoying.mc.utils.MCNetUtils.DownloadListener;
 
 public class FileHandler {
-	public App app;
+	App app;
 
 	public void initialize(App app) {
 		this.app = app;

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.lejoying.mc.view.BounceListView
+    <com.lejoying.mc.view.FriendListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,8 +14,7 @@
         android:choiceMode="none"
         android:divider="#0000"
         android:dividerHeight="18dp"
-        android:listSelector="#0000" >
-    </com.lejoying.mc.view.BounceListView>
+        android:listSelector="#0000" />
 
     <RelativeLayout
         android:id="@+id/rl_control"

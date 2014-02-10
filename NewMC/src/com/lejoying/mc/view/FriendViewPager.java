@@ -5,11 +5,9 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.ListView;
+import android.view.ViewParent;
 
 public class FriendViewPager extends ViewPager {
-
-	ListView mContentListView;
 
 	GestureDetector mGestureDetector;
 
@@ -31,11 +29,24 @@ public class FriendViewPager extends ViewPager {
 
 					}
 
+					boolean flag = false;
+					boolean isDisallowAllInteracept = false;
+
 					@Override
 					public boolean onScroll(MotionEvent arg0, MotionEvent arg1,
 							float arg2, float arg3) {
-						System.out.println(arg2+":::"+arg3);
-						return true;
+						if (Math.abs(arg3) < Math.abs(arg2)) {
+							if (!isDisallowAllInteracept) {
+								ViewParent viewParent = FriendViewPager.this;
+								while ((viewParent = viewParent.getParent()) != null) {
+									viewParent
+											.requestDisallowInterceptTouchEvent(true);
+								}
+								isDisallowAllInteracept = true;
+							}
+							flag = true;
+						}
+						return flag;
 					}
 
 					@Override
@@ -54,18 +65,25 @@ public class FriendViewPager extends ViewPager {
 					@Override
 					public boolean onDown(MotionEvent arg0) {
 						// TODO Auto-generated method stub
+						flag = false;
+						isDisallowAllInteracept = false;
 						return true;
 					}
+
 				});
 	}
 
-	public void setContentListView(ListView listView) {
-		this.mContentListView = listView;
-	}
-
 	@Override
-	public boolean onTouchEvent(MotionEvent e) {		
-		return mGestureDetector.onTouchEvent(e);
+	public boolean onTouchEvent(MotionEvent arg0) {
+		super.onTouchEvent(arg0);
+		if(arg0.getAction()==MotionEvent.ACTION_DOWN){
+			ViewParent viewParent = FriendViewPager.this;
+			while ((viewParent = viewParent.getParent()) != null) {
+				viewParent
+						.requestDisallowInterceptTouchEvent(true);
+			}
+		}
+		return true;
 	}
 
 }

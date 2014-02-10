@@ -18,7 +18,7 @@ import com.lejoying.mc.data.handler.DataHandler.UIModification;
 
 public class SDcardDataResolver {
 
-	public App app;
+	App app;
 
 	public void initialize(App app) {
 		this.app = app;
