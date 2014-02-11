@@ -328,6 +328,33 @@ $(function () {//show js_modify_jcrophead_show
         });
     });
     new Drag($("#js_modifyAccountHeadImgPanel")[0]);
+
+    //exit menu set Event
+    $(".operaterBoxPanel>a").mouseover(function () {
+        /*alert($(this));*/
+        $(".operaterBoxPanel>a").css({
+            "background-color": "#FFFFFF"
+        });
+        $(this).css({
+            "background-color": "#1960AE"
+        });
+    });
+    $(".js_addFriends").click(function () {
+        $(".js_operaterBox")[0].style.display = "none";
+        alert("发起聊天");
+    });
+    $(".js_voiceCancel").click(function () {
+        $(".js_operaterBox")[0].style.display = "none";
+        alert("关闭声音");
+    });
+    $(".js_feedback").click(function () {
+        $(".js_operaterBox")[0].style.display = "none";
+        alert("意见反馈");
+    });
+    $(".js_iconLogout").click(function () {
+        $(".js_operaterBox")[0].style.display = "none";
+        location.replace("./index.html");
+    });
 });
 function onLoadUserHeadImgError() {
     $(".js_accountHead").attr("src", "/static/images/face_man.png");
@@ -457,6 +484,7 @@ function Drag(o) {
     }
     rDrag.init(o);
 }
+//桌面消息通知
 if (!window.webkitNotifications) {
     alert("您的浏览器不支持Notification桌面通知!");
 }
