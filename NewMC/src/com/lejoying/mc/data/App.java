@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Environment;
 import android.os.Handler;
+import android.view.LayoutInflater;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -19,6 +20,7 @@ import com.lejoying.mc.data.handler.FileHandler;
 import com.lejoying.mc.data.handler.JSONHandler;
 import com.lejoying.mc.data.handler.SDcardDataResolver;
 import com.lejoying.mc.data.handler.ServerHandler;
+import com.lejoying.mc.data.handler.ViewHandler;
 import com.lejoying.utils.SHA1;
 
 public class App {
@@ -52,6 +54,8 @@ public class App {
 	}
 
 	private boolean isInitialized;
+	
+	public LayoutInflater inflater;
 
 	public void initialize(Context applicationContext) {
 		if (isInitialized) {
@@ -60,6 +64,8 @@ public class App {
 			isInitialized = true;
 		}
 		context = applicationContext;
+		inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		initData();
 		initConfig();
 		initHandler();
@@ -92,6 +98,7 @@ public class App {
 	public ServerHandler serverHandler;
 	public FileHandler fileHandler;
 	public SDcardDataResolver sDcardDataResolver;
+	public ViewHandler viewHandler;
 
 	public Handler mUIThreadHandler;
 
@@ -115,6 +122,9 @@ public class App {
 
 		sDcardDataResolver = new SDcardDataResolver();
 		sDcardDataResolver.initialize(this);
+
+		viewHandler = new ViewHandler();
+		viewHandler.initialize(this);
 	}
 
 	public File sdcardAppFolder;
@@ -182,7 +192,7 @@ public class App {
 		option.setOpenGps(true);
 		option.setAddrType("all");// 返回的定位结果包含地址信息
 		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-		option.setScanSpan(10*1000*60);// 设置发起定位请求的间隔时间为10min
+		option.setScanSpan(10 * 1000 * 60);// 设置发起定位请求的间隔时间为10min
 		option.disableCache(true);// 禁止启用缓存定位
 		option.setPoiNumber(5); // 最多返回POI个数
 		option.setPoiDistance(1000); // poi查询距离

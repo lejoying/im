@@ -76,5 +76,6 @@
     <string name="tv_cancel">取消</string>
     <string name="tv_picture">相册</string>
     <string name="tv_camera">拍照</string>
+    <string name="message_picture">[图片]</string>
 
 </resources>

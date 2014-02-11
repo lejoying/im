@@ -7,6 +7,9 @@ import java.util.Map;
 
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -29,16 +32,17 @@ import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.service.PushService;
+import com.lejoying.mc.utils.MCImageUtils;
 import com.lejoying.mc.view.FriendViewPager;
 
-public class FriendsFragment extends BaseListFragment {
+public class CopyOfFriendsFragment extends BaseListFragment {
 
 	private final int TYPE_MAX_COUNT = 4;
 	private final int TYPE_MESSAGE = 1;
 	private final int TYPE_CIRCLE = 2;
 	private final int TYPE_BUTTON = 3;
 
-	public static FriendsFragment instance;
+	public static CopyOfFriendsFragment instance;
 
 	App app = App.getInstance();
 
@@ -58,6 +62,7 @@ public class FriendsFragment extends BaseListFragment {
 	int messageFirstPosition;
 	int circleFirstPosition;
 
+	Bitmap head;
 	Map<Integer, List<View>> circlePageViews;
 
 	int newFriendsCount;
@@ -98,11 +103,15 @@ public class FriendsFragment extends BaseListFragment {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		mInflater = getActivity().getLayoutInflater();
+		head = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
 		Intent service = new Intent(getActivity(), PushService.class);
 		service.putExtra("objective", "start");
 		getActivity().startService(service);
 		mAdapter = new FriendsAdapter();
 		circlePageViews = new Hashtable<Integer, List<View>>();
+		initData(true);
+		app.serverHandler.getAllData();
 	}
 
 	@Override
@@ -125,8 +134,6 @@ public class FriendsFragment extends BaseListFragment {
 				public void modifyUI() {
 					initData(true);
 					setListAdapter(mAdapter);
-					app.serverHandler.getAllData();
-					app.viewHandler.generateFriendView();
 				}
 			});
 		}
