@@ -110,7 +110,6 @@ public class ServerHandler {
 					public void modifyUI() {
 						if (app.mark.equals(app.friendsFragment)) {
 							if (FriendsFragment.instance != null) {
-								FriendsFragment.instance.initData(true);
 								FriendsFragment.instance.mAdapter
 										.notifyDataSetChanged();
 							}
@@ -167,7 +166,6 @@ public class ServerHandler {
 						// TODO Auto-generated method stub
 						if (app.mark.equals(app.friendsFragment)) {
 							if (FriendsFragment.instance != null) {
-								FriendsFragment.instance.initData(true);
 								FriendsFragment.instance.mAdapter
 										.notifyDataSetChanged();
 							}
@@ -219,7 +217,6 @@ public class ServerHandler {
 					public void modifyUI() {
 						if (app.mark.equals(app.friendsFragment)) {
 							if (FriendsFragment.instance != null) {
-								FriendsFragment.instance.initData(true);
 								FriendsFragment.instance.mAdapter
 										.notifyDataSetChanged();
 							}

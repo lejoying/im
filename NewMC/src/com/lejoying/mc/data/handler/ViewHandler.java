@@ -6,8 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import android.database.DataSetObserver;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +23,7 @@ import com.lejoying.mc.data.Circle;
 import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.Message;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
+import com.lejoying.mc.view.FriendViewPager;
 
 public class ViewHandler {
 	App app;
@@ -27,9 +34,12 @@ public class ViewHandler {
 
 	Queue<Runnable> queue = new LinkedList<Runnable>();
 
-	List<View> friendViews = new ArrayList<View>();
+	public interface GenerateViewListener {
+		public void success(List<View> views);
+	}
 
-	public void generateFriendView() {
+	public void generateFriendView(
+			final GenerateViewListener generateViewListener) {
 		Runnable runnable = new Runnable() {
 			List<Circle> circles;
 			Map<String, Friend> friends;
@@ -56,8 +66,8 @@ public class ViewHandler {
 				List<View> friendViews = new ArrayList<View>();
 
 				if (newFriendsCount != 0) {
-					Button newFriendButton = (Button) app.inflater.inflate(
-							R.layout.item_button, null);
+					Button newFriendButton = (Button) (app.inflater.inflate(
+							R.layout.f_button, null).findViewById(R.id.button));
 					newFriendButton.setText(app.context
 							.getString(R.string.btn_newfriends)
 							+ "("
@@ -120,29 +130,160 @@ public class ViewHandler {
 					friendViews.add(showMoreMessage);
 				}
 
-				generateCircles(friendViews,circles);
+				//generateCircles(friendViews, circles, friends);
 
 				Button newGroup = (Button) app.inflater.inflate(
 						R.layout.item_button, null);
 				newGroup.setText(app.context
-						.getString(R.string.btn_moremessages));
+						.getString(R.string.btn_newgroup));
 				friendViews.add(newGroup);
 
 				Button findMoreFriend = (Button) app.inflater.inflate(
 						R.layout.item_button, null);
 				findMoreFriend.setText(app.context
-						.getString(R.string.btn_moremessages));
+						.getString(R.string.btn_findmorefriend));
 				friendViews.add(findMoreFriend);
-				
-				ViewHandler.this.friendViews = friendViews;
+
+				if (generateViewListener != null) {
+					generateViewListener.success(friendViews);
+				}
 			}
 		};
 		queue.offer(runnable);
 		startHandle();
 	}
 
-	private void generateCircles(List<View> viewList,List<Circle> circles) {
-		
+	private void generateCircles(List<View> viewList, List<Circle> circles,
+			final Map<String, Friend> friends) {
+		class ItemHolder {
+			ImageView iv_head;
+			TextView tv_nickname;
+		}
+		for (int m = circles.size() - 1; m > -1; m--) {
+			final Circle circle = circles.get(m);
+
+			View group = app.inflater.inflate(R.layout.f_group_panel, null);
+
+			TextView tv_groupname = (TextView) group
+					.findViewById(R.id.tv_groupname);
+			FriendViewPager vp_content = (FriendViewPager) group
+					.findViewById(R.id.vp_content);
+
+			tv_groupname.setText(circle.name);
+
+			PagerAdapter vp_contentAdapter;
+
+			final List<String> phones = circle.phones;
+			final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6
+					: phones.size() / 6 + 1;
+			final List<View> pageviews = new ArrayList<View>();
+			for (int i = 0; i < pagecount; i++) {
+				final int a = i;
+				BaseAdapter gridpageAdapter = new BaseAdapter() {
+					@Override
+					public View getView(final int position, View convertView,
+							final ViewGroup parent) {
+						ItemHolder itemHolder = null;
+						if (convertView == null) {
+							convertView = app.inflater
+									.inflate(
+											R.layout.f_group_panelitem_gridpageitem_user,
+											null);
+							itemHolder = new ItemHolder();
+							itemHolder.iv_head = (ImageView) convertView
+									.findViewById(R.id.iv_head);
+							itemHolder.tv_nickname = (TextView) convertView
+									.findViewById(R.id.tv_nickname);
+							convertView.setTag(itemHolder);
+						} else {
+							itemHolder = (ItemHolder) convertView.getTag();
+						}
+						final String headFileName = friends.get(phones.get(a
+								* 6 + position)).head;
+						final ImageView iv_head = itemHolder.iv_head;
+						app.fileHandler.getHeadImage(headFileName,
+								new FileResult() {
+									@Override
+									public void onResult(String where) {
+										iv_head.setImageBitmap(app.fileHandler.bitmaps
+												.get(headFileName));
+									}
+								});
+						itemHolder.tv_nickname.setText(friends.get(phones.get(a
+								* 6 + position)).nickName);
+
+						return convertView;
+					}
+
+					@Override
+					public long getItemId(int position) {
+						return position;
+					}
+
+					@Override
+					public Object getItem(int position) {
+						return friends.get(phones.get(a * 6 + position));
+					}
+
+					@Override
+					public int getCount() {
+						int nowcount = 0;
+						if (a < pagecount - 1) {
+							nowcount = 6;
+						} else {
+							nowcount = phones.size() - a * 6;
+						}
+						return nowcount;
+					}
+
+					@Override
+					public void unregisterDataSetObserver(
+							DataSetObserver observer) {
+						if (observer != null) {
+							super.unregisterDataSetObserver(observer);
+						}
+					}
+
+				};
+				GridView gridpage = (GridView) app.inflater.inflate(
+						R.layout.f_group_panelitem_gridpage, null);
+				gridpage.setAdapter(gridpageAdapter);
+				pageviews.add(gridpage);
+			}
+
+			vp_contentAdapter = new PagerAdapter() {
+				@Override
+				public boolean isViewFromObject(View arg0, Object arg1) {
+					return arg0 == arg1;
+				}
+
+				@Override
+				public int getCount() {
+					return pageviews.size();
+				}
+
+				@Override
+				public void destroyItem(View container, int position,
+						Object object) {
+					((ViewPager) container).removeView(pageviews.get(position));
+				}
+
+				@Override
+				public Object instantiateItem(View container, int position) {
+					((ViewPager) container).addView(pageviews.get(position));
+					return pageviews.get(position);
+				}
+
+				@Override
+				public void unregisterDataSetObserver(DataSetObserver observer) {
+					if (observer != null) {
+						super.unregisterDataSetObserver(observer);
+					}
+				}
+			};
+			vp_content.setAdapter(vp_contentAdapter);
+			viewList.add(vp_content);
+		}
 	}
 
 	boolean isStart = false;
