@@ -271,7 +271,7 @@ $(document).ready(function () {
                 } else {
                     $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
                 }
-                $(".js_js_onlyfriend_headimg").attr("phone",currentChatUser.phone);
+                $(".js_js_onlyfriend_headimg").attr("phone", currentChatUser.phone);
                 $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
 //                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
                 $(".js_rightChatPanel").show();
@@ -406,14 +406,14 @@ $(document).ready(function () {
                 data: {
                     phone: accountObj.phone,
                     accessKey: accountObj.accessKey,
-                    target: phone
+                    target: JSON.stringify([phone])
                 },
                 success: function (data) {
                     if (data["提示信息"] == "获取用户信息成功") {
                         $(".js_findFriendPhone").val("");
                         $(".js_findFriendErrorMessage").html("");
                         $(".js_addFriendErrorMessage").html("");
-                        var accountData = data.account;
+                        var accountData = (data.accounts)[0];
                         $(".js_friendMessage_addFriend").attr("circle_rid", $(".js_findFriendBtn").attr("circle_rid"));
                         $(".js_friendMessage_addFriend").attr("phone", accountData.phone);
                         var mainBusiness = accountData.mainBusiness;

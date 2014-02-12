@@ -8,6 +8,14 @@
 $(document).ready(function () {
     $(".js_iconOperater").click(function () {
         $(".js_operaterBox").toggle(50);
+        var operaterBox = document.getElementById("operaterBox");
+        var style = $("#operaterBox").css("display");
+//        alert(style);
+        if (style != "none") {
+            operaterBox.style.display = "block";
+        } else {
+            operaterBox.style.display = "none";
+        }
         addEvent(document.body, "mousedown", clickother);
     });
     $(".chatListColumn").click(function () {
@@ -178,7 +186,7 @@ window.onload = function () {
             var flag = 0, rate = 0, wheelFlag = 0;
             if (node) {
                 mouseWheel(node, function (data) {
-                    if($(".scrollDiv").css("display") == "none"){
+                    if ($(".scrollDiv").css("display") == "none") {
                         return;
                     }
 //                    alert(wheelFlag + "=--" + data);
@@ -269,7 +277,7 @@ function clickother(el) {
         document.getElementById("operaterBox").style.display = "none";
         return;
     }
-    if (thisObj.id == "operaterBox " || thisObj.id == "iconOperater" || (thisObj.parentNode).parentNode.parentNode.id == "operaterBox ") {
+    if (thisObj.id == "operaterBox" || thisObj.id == "iconOperater" || (thisObj.parentNode).parentNode.parentNode.id == "operaterBox") {
         return;
     }
     do {
