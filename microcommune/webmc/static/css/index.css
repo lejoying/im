@@ -1013,7 +1013,7 @@ a.btnSecondary:active {
     top: 200px;
     left: 315px;
     width: 350px;
-    height: 280px;
+    height: 300px;
     border-radius: 5px 5px 5px 5px;
     z-index: 11111;
     border: 1px solid #0099cd;
@@ -1090,17 +1090,17 @@ a.btnSecondary:active {
     text-indent: 1em;
 }
 
-.complete_tt:focus {
+/*.complete_tt:focus {*/
     /*文本域获得焦点时发光*/
-    transition: border linear .2s, box-shadow linear .5s;
-    -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
-    -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
-    outline: none;
-    border-color: rgba(0, 153, 205, .75);
-    box-shadow: 0 0 5px rgba(0, 153, 190, .5);
-    -moz-box-shadow: 0 0 5px rgba(0, 153, 190, .5);
-    -webkit-box-shadow: 0 0 5px rgba(0, 153, 190, 3);
-}
+    /*transition: border linear .2s, box-shadow linear .5s;*/
+    /*-moz-transition: border linear .2s, -moz-box-shadow linear .5s;*/
+    /*-webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;*/
+    /*outline: none;*/
+    /*border-color: rgba(0, 153, 205, .75);*/
+    /*box-shadow: 0 0 5px rgba(0, 153, 190, .5);*/
+    /*-moz-box-shadow: 0 0 5px rgba(0, 153, 190, .5);*/
+    /*-webkit-box-shadow: 0 0 5px rgba(0, 153, 190, 3);*/
+/*}*/
 
 .complete_bu {
     float: left;
