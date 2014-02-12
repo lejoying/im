@@ -460,7 +460,7 @@ $(document).ready(function () {
                 $(".js_addFriendSubmit").attr("phone", $(this).attr("phone"));
                 $(".js_friendMessage").css({display: "none"});
                 $(".js_addFriend").css({display: "block"});
-                new Drag($(".js_addFriend")[0]);
+//                new Drag($(".js_addFriend")[0]);
                 //                $(".js_addFriendErrorMessage").html(phone + "不是您的好友。");
             }
         } else {
@@ -857,7 +857,7 @@ function tempChatMainContent() {
     var top = ($(".listContent").css("top")).replace("px", "");
 //    alert(top);
     if (event.wheelDelta < 0) {
-        var Y = parseInt(top) - 30;
+        var Y = parseInt(top);// - 30
         if (Y <= H) {
             Y = H;
             return;
@@ -868,7 +868,7 @@ function tempChatMainContent() {
             top: Y + "px"
         });
     } else {
-        var Y = parseInt(top) + 30;
+        var Y = parseInt(top);// +30
         if (Y > 0) {
             Y = 0;
             return;
