@@ -75,6 +75,13 @@ session.event = function (data, response) {
     accountSession[phone] = accountSession[phone] || [];
     console.log("长连接--event");
     accountSession[phone][accessKey] = response;
+    for (var index in accountSession[phone]) {
+
+        var resp = accountSession[phone][index];
+        resp.write(phone + "-" + index,function(){
+            console.log("session---" + resp.statusCode);
+        });
+    }
     /*if(accountSession[phone]!=undefined){
      if(accountSession[phone][accessKey] != undefined){
      //        accountSession[phone] = accountSession[phone] || [];

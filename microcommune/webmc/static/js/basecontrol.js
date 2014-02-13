@@ -448,9 +448,10 @@ function Drag(o) {
     var rDrag = {
         o: null,
         init: function (o) {
-            o.onmousedown = this.start;
+            o.onmousedown = this.start;//($(o).find(".se_1"))[0]
         },
         start: function (e) {
+//            alert($(this).attr("class"));
             var o;
             e = rDrag.fixEvent(e);
             e.preventDefault && e.preventDefault();
