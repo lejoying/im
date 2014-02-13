@@ -214,7 +214,7 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 					arg1 = mInflater.inflate(R.layout.f_group_panel, null);
 					friendHolder = new FriendHolder();
 					friendHolder.tv_groupname = (TextView) arg1
-							.findViewById(R.id.tv_groupname);
+							.findViewById(R.id.tv_broadcast);
 					friendHolder.vp_content = (FriendViewPager) arg1
 							.findViewById(R.id.vp_content);
 					arg1.setTag(friendHolder);

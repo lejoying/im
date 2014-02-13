@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lejoying.mc.HotActivity;
 import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
@@ -890,8 +891,10 @@ public class CircleMenuFragment extends BaseFragment {
 			back(mOldWhere, new CircleDiskAnimationEnd() {
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.replaceToContent(new FriendsFragment(),
-							false);
+					if (!app.mark.equals(app.squareFragment)) {
+						mMCFragmentManager.replaceToContent(
+								new SquareFragment(), false);
+					}
 				}
 
 				@Override
@@ -901,26 +904,15 @@ public class CircleMenuFragment extends BaseFragment {
 			});
 			break;
 		case 2:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
 
-				@Override
-				public void outAnimationEnd() {
-					mMCFragmentManager.replaceToContent(
-							new ScanQRCodeFragment(), true);
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
 			break;
 		case 3:
 			back(mOldWhere, new CircleDiskAnimationEnd() {
+
 				@Override
 				public void outAnimationEnd() {
-					mMCFragmentManager.replaceToContent(new ShareFragment(),
-							false);
+					mMCFragmentManager
+							.startToActivity(HotActivity.class, false);
 				}
 
 				@Override
@@ -949,11 +941,20 @@ public class CircleMenuFragment extends BaseFragment {
 			});
 			break;
 		case 12:
-			data.user.accessKey = null;
-			Intent service = new Intent(getActivity(), PushService.class);
-			service.putExtra("objective", "stop");
-			getActivity().startService(service);
-			mMCFragmentManager.startToActivity(LoginActivity.class, true);
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+
+				@Override
+				public void outAnimationEnd() {
+					mMCFragmentManager.replaceToContent(
+							new ScanQRCodeFragment(), true);
+				}
+
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
+
 			break;
 		case 13:
 
@@ -963,9 +964,28 @@ public class CircleMenuFragment extends BaseFragment {
 			break;
 		case 15:
 
+			data.user.accessKey = null;
+			Intent service = new Intent(getActivity(), PushService.class);
+			service.putExtra("objective", "stop");
+			getActivity().startService(service);
+			mMCFragmentManager.startToActivity(LoginActivity.class, true);
+
 			break;
 		case 16:
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+				@Override
+				public void outAnimationEnd() {
+					if (!app.mark.equals(app.friendsFragment)) {
+						mMCFragmentManager.replaceToContent(
+								new FriendsFragment(), false);
+					}
+				}
 
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
 			break;
 
 		default:

@@ -18,7 +18,7 @@
         tools:ignore="UselessParent" >
 
         <TextView
-            android:id="@+id/tv_groupname"
+            android:id="@+id/tv_broadcast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -31,8 +31,8 @@
             android:id="@+id/iv_line2"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:layout_alignLeft="@+id/tv_groupname"
-            android:layout_below="@+id/tv_groupname"
+            android:layout_alignLeft="@+id/tv_broadcast"
+            android:layout_below="@+id/tv_broadcast"
             android:layout_marginTop="8dp"
             android:background="#9fff"
             tools:ignore="ContentDescription" />

@@ -41,6 +41,7 @@ public class App {
 	public String scanQRCodeFragment = "scanQRCodeFragment";
 	public String searchFriendFragment = "searchFriendFragment";
 	public String shareFragment = "shareFragment";
+	public String squareFragment = "squareFragment";
 
 	public String mark = "";
 

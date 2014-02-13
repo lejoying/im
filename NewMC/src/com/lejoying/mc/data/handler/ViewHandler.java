@@ -165,7 +165,7 @@ public class ViewHandler {
 			View group = app.inflater.inflate(R.layout.f_group_panel, null);
 
 			TextView tv_groupname = (TextView) group
-					.findViewById(R.id.tv_groupname);
+					.findViewById(R.id.tv_broadcast);
 			FriendViewPager vp_content = (FriendViewPager) group
 					.findViewById(R.id.vp_content);
 

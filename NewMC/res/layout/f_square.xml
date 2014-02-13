@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/frame_background" >
+
+            <TextView
+                android:id="@+id/tv_square"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:clickable="true"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:singleLine="true"
+                android:text="广场(600人在线)"
+                android:textColor="#fff"
+                android:textSize="18sp" >
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/tv_square"
+                android:clickable="true"
+                android:gravity="right|center"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:singleLine="true"
+                android:text="亦庄站(游客)"
+                android:textColor="#fff"
+                android:textSize="18sp" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/iv_line"
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:layout_below="@+id/tv_square"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="2dp"
+                android:background="#9fff"
+                tools:ignore="ContentDescription" />
+
+            <ScrollView
+                android:id="@+id/scrollView2"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_below="@+id/iv_line"
+                android:padding="10dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/tv_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小麦田(512m):门口的保安太坏了。。[5分钟前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="石中海(38m):在附近创建了一个吃喝玩乐群组[1小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="麦穗儿(1km):分享了xxx的图片。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|left"
+                        android:clickable="true"
+                        android:lineSpacingExtra="2dp"
+                        android:text="小白菜(300m):想找个人去逛街。[2小时前]"
+                        android:textColor="#fff"
+                        android:textSize="15sp" >
+                    </TextView>
+                </LinearLayout>
+            </ScrollView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_broadcast"
+            android:layout_width="fill_parent"
+            android:layout_height="205dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/frame_background"
+            android:padding="10dp"
+            tools:ignore="UselessParent" >
+
+            <TextView
+                android:id="@+id/tv_broadcast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="广播"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                
+                android:text="亦庄站(游客)"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/iv_line2"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_alignLeft="@+id/tv_broadcast"
+                android:layout_below="@+id/tv_broadcast"
+                android:layout_marginTop="8dp"
+                android:background="#9fff"
+                tools:ignore="ContentDescription" />
+
+            <EditText
+                android:id="@+id/et_broadcast"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_below="@+id/iv_line2"
+                android:background="#0000"
+                android:ems="10"
+                android:hint="可在此输入广播内容..."
+                android:textColorHint="#bbb"
+                android:paddingBottom="2dp"
+                android:paddingTop="2dp"
+                android:layout_marginTop="10dp"
+                android:textColor="#fff"
+                android:gravity="top|left"
+                android:textCursorDrawable="@drawable/cursor"
+                tools:ignore="TextFields" >
+            </EditText>
+
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignLeft="@+id/et_broadcast"
+                android:layout_alignRight="@+id/et_broadcast"
+                android:layout_below="@+id/et_broadcast"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_background"
+                android:text="发布"
+                android:textColor="#fff"
+                android:textSize="19sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/frame_background"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="热点推荐"
+            android:textColor="#fff"
+            android:textSize="19sp" >
+        </Button>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/frame_background"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="好友推荐"
+            android:textColor="#fff"
+            android:textSize="19sp" >
+        </Button>
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/frame_background"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="群组推荐"
+            android:textColor="#fff"
+            android:textSize="19sp" >
+        </Button>
+    </LinearLayout>
+
+</ScrollView>

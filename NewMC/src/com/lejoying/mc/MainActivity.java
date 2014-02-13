@@ -19,6 +19,9 @@ public class MainActivity extends BaseFragmentActivity {
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout._main);
+		Intent service = new Intent(this, PushService.class);
+		service.putExtra("objective", "start");
+		startService(service);
 		instance = this;
 	}
 

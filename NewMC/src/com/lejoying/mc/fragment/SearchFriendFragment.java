@@ -82,7 +82,7 @@ public class SearchFriendFragment extends BaseListFragment {
 			case 1:
 				convertView = mInflater.inflate(R.layout.f_group_panel, null);
 				TextView tv_groupname = (TextView) convertView
-						.findViewById(R.id.tv_groupname);
+						.findViewById(R.id.tv_broadcast);
 				tv_groupname.setText("附近好友");
 				break;
 			case 2:
