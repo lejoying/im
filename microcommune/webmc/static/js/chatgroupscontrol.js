@@ -430,12 +430,13 @@ function getGroupFinalMessage(type, gid) {
 }
 function showTempGroupInfoAndMessages(type, tempGid) {
 //    var tempGid = target.attr("group_gid");
-    if (type == "TEMPGROUP") {
-        currentChatGroup = tempGroupsInfo[tempGid];
-    } else if (type == "GROUP") {
-        currentChatGroup = groupsInfo[tempGid];
-    }
+
     getTemplateHtml("group_users", function (template) {
+        if (type == "TEMPGROUP") {
+            currentChatGroup = tempGroupsInfo[tempGid];
+        } else if (type == "GROUP") {
+            currentChatGroup = groupsInfo[tempGid];
+        }
         var length = (currentChatGroup.members).length;
         $(".js_chat_group_friends").html(template.render(currentChatGroup));
         var tempGroupName = currentChatGroup.name;

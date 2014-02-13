@@ -64,9 +64,9 @@ messageManage.send = function (data, response) {
             console.log(err);
             return;
         }
-        for (var i=0;i<phoneto.length;i++) {
+        for (var i = 0; i < phoneto.length; i++) {
             var friendPhone = phoneto[i];
-            if (friendPhone == phone){
+            if (friendPhone == phone) {
                 continue;
             }
             var messageToOther = {
