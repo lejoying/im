@@ -66,13 +66,15 @@ public class ViewHandler {
 				List<View> friendViews = new ArrayList<View>();
 
 				if (newFriendsCount != 0) {
-					Button newFriendButton = (Button) (app.inflater.inflate(
-							R.layout.f_button, null).findViewById(R.id.button));
+					View viewNewFrined = app.inflater.inflate(
+							R.layout.f_button, null);
+					Button newFriendButton = (Button) (viewNewFrined
+							.findViewById(R.id.button));
 					newFriendButton.setText(app.context
 							.getString(R.string.btn_newfriends)
 							+ "("
 							+ newFriendsCount + ")");
-					friendViews.add(newFriendButton);
+					friendViews.add(viewNewFrined);
 				}
 
 				for (int i = 0; i < showMessageCount; i++) {
@@ -123,26 +125,31 @@ public class ViewHandler {
 				}
 
 				if (showMessageCount != 0) {
-					Button showMoreMessage = (Button) app.inflater.inflate(
-							R.layout.item_button, null);
+					View viewShowMoreMessage = app.inflater.inflate(
+							R.layout.f_button, null);
+					Button showMoreMessage = (Button) viewShowMoreMessage
+							.findViewById(R.id.button);
 					showMoreMessage.setText(app.context
 							.getString(R.string.btn_moremessages));
-					friendViews.add(showMoreMessage);
+					friendViews.add(viewShowMoreMessage);
 				}
 
-				//generateCircles(friendViews, circles, friends);
+				generateCircles(friendViews, circles, friends);
 
-				Button newGroup = (Button) app.inflater.inflate(
-						R.layout.item_button, null);
-				newGroup.setText(app.context
-						.getString(R.string.btn_newgroup));
-				friendViews.add(newGroup);
+				View viewNewGroup = app.inflater.inflate(R.layout.f_button,
+						null);
+				Button newGroup = (Button) viewNewGroup
+						.findViewById(R.id.button);
+				newGroup.setText(app.context.getString(R.string.btn_newgroup));
+				friendViews.add(viewNewGroup);
 
-				Button findMoreFriend = (Button) app.inflater.inflate(
-						R.layout.item_button, null);
+				View viewFindMoreFriend = app.inflater.inflate(
+						R.layout.f_button, null);
+				Button findMoreFriend = (Button) viewFindMoreFriend
+						.findViewById(R.id.button);
 				findMoreFriend.setText(app.context
 						.getString(R.string.btn_findmorefriend));
-				friendViews.add(findMoreFriend);
+				friendViews.add(viewFindMoreFriend);
 
 				if (generateViewListener != null) {
 					generateViewListener.success(friendViews);
@@ -169,6 +176,8 @@ public class ViewHandler {
 			FriendViewPager vp_content = (FriendViewPager) group
 					.findViewById(R.id.vp_content);
 
+			
+			
 			tv_groupname.setText(circle.name);
 
 			PagerAdapter vp_contentAdapter;
@@ -282,7 +291,7 @@ public class ViewHandler {
 				}
 			};
 			vp_content.setAdapter(vp_contentAdapter);
-			viewList.add(vp_content);
+			viewList.add(group);
 		}
 	}
 

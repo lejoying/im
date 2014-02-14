@@ -1,5 +1,6 @@
 package com.lejoying.mc.fragment;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,7 +36,7 @@ public class SearchFriendFragment extends BaseListFragment {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void onResume() {
 		app.mark = app.searchFriendFragment;
@@ -122,7 +123,9 @@ public class SearchFriendFragment extends BaseListFragment {
 		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
-		params.putSerializable("target", phone);
+		JSONArray jTarget = new JSONArray();
+		jTarget.put(phone);
+		params.putString("target", jTarget.toString());
 
 		MCNetUtils.ajax(new AjaxAdapter() {
 
@@ -147,7 +150,8 @@ public class SearchFriendFragment extends BaseListFragment {
 						if (phone.equals(data.user.phone)) {
 							try {
 								app.mJSONHandler.updateUser(
-										jData.getJSONObject("account"), data);
+										jData.getJSONArray("accounts")
+												.getJSONObject(0), data);
 								app.businessCardStatus = app.SHOW_SELF;
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
@@ -163,8 +167,8 @@ public class SearchFriendFragment extends BaseListFragment {
 
 						try {
 							data.tempFriend = app.mJSONHandler
-									.generateFriendFromJSON(jData
-											.getJSONObject("account"));
+									.generateFriendFromJSON(jData.getJSONArray(
+											"accounts").getJSONObject(0));
 							data.tempFriend.temp = true;
 							app.businessCardStatus = app.SHOW_TEMPFRIEND;
 							mMCFragmentManager.replaceToContent(

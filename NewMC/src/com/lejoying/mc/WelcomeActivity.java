@@ -1,5 +1,6 @@
 package com.lejoying.mc;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -126,8 +127,10 @@ public class WelcomeActivity extends Activity {
 												app.data.user.phone);
 										params.putString("accessKey",
 												app.data.user.accessKey);
+										JSONArray jTarget = new JSONArray();
+										jTarget.put(app.data.user.phone);
 										params.putString("target",
-												app.data.user.phone);
+												jTarget.toString());
 										settings.params = params;
 									}
 
@@ -135,7 +138,9 @@ public class WelcomeActivity extends Activity {
 									public void onSuccess(JSONObject jData) {
 										try {
 											final JSONObject jUser = jData
-													.getJSONObject("account");
+													.getJSONArray("accounts")
+													.getJSONObject(0);
+											System.out.println(jData);
 											app.dataHandler.modifyData(
 													new Modification() {
 														public void modify(
