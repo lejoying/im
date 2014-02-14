@@ -33,7 +33,9 @@ public class ServerHandler {
 		final Bundle params = new Bundle();
 		params.putString("phone", app.data.user.phone);
 		params.putString("accessKey", app.data.user.accessKey);
-		params.putString("target", app.data.user.phone);
+		JSONArray jTarget = new JSONArray();
+		jTarget.put(app.data.user.phone);
+		params.putString("target", jTarget.toString());
 
 		MCNetUtils.ajax(new AjaxAdapter() {
 
@@ -46,7 +48,8 @@ public class ServerHandler {
 			@Override
 			public void onSuccess(JSONObject jData) {
 				try {
-					final JSONObject jUser = jData.getJSONObject("account");
+					final JSONObject jUser = jData.getJSONArray("accounts")
+							.getJSONObject(0);
 					app.dataHandler.modifyData(new Modification() {
 						public void modify(Data data) {
 							app.mJSONHandler.updateUser(jUser, data);
@@ -166,6 +169,7 @@ public class ServerHandler {
 						// TODO Auto-generated method stub
 						if (app.mark.equals(app.friendsFragment)) {
 							if (FriendsFragment.instance != null) {
+								FriendsFragment.instance.initData(true);
 								FriendsFragment.instance.mAdapter
 										.notifyDataSetChanged();
 							}

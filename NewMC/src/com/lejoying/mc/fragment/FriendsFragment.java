@@ -5,7 +5,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -27,6 +31,8 @@ import com.lejoying.mc.data.Circle;
 import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
+import com.lejoying.mc.service.PushService;
+import com.lejoying.mc.utils.MCImageUtils;
 import com.lejoying.mc.view.FriendViewPager;
 
 public class FriendsFragment extends BaseListFragment {
@@ -56,6 +62,7 @@ public class FriendsFragment extends BaseListFragment {
 	int messageFirstPosition;
 	int circleFirstPosition;
 
+	Bitmap head;
 	Map<Integer, List<View>> circlePageViews;
 
 	int newFriendsCount;
@@ -96,6 +103,11 @@ public class FriendsFragment extends BaseListFragment {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		mInflater = getActivity().getLayoutInflater();
+		head = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(
+				getResources(), R.drawable.face_man), true, 10, Color.WHITE);
+		Intent service = new Intent(getActivity(), PushService.class);
+		service.putExtra("objective", "start");
+		getActivity().startService(service);
 		mAdapter = new FriendsAdapter();
 		circlePageViews = new Hashtable<Integer, List<View>>();
 		initData(true);
@@ -366,7 +378,7 @@ public class FriendsFragment extends BaseListFragment {
 		FriendViewPager vp_content;
 		PagerAdapter vp_contentAdapter;
 
-		//GestureDetector gestureDetector;
+		// GestureDetector gestureDetector;
 
 		Circle circle;
 
@@ -427,7 +439,7 @@ public class FriendsFragment extends BaseListFragment {
 		// }
 
 		public void setCircle(Circle c, final int viewPosition) {
-			//generateGestureDetector();
+			// generateGestureDetector();
 			this.circle = c;
 			final List<String> phones = circle.phones;
 			final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6
@@ -487,7 +499,7 @@ public class FriendsFragment extends BaseListFragment {
 									});
 							convertView
 									.setOnLongClickListener(new OnLongClickListener() {
-										//int nowposition = viewPosition;
+										// int nowposition = viewPosition;
 
 										@Override
 										public boolean onLongClick(View v) {
