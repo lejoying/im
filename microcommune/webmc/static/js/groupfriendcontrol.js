@@ -321,11 +321,10 @@ $(document).ready(function () {
         $(".js_findFriendPhone").focus();
         new Drag($(".js_findFriend")[0]);
     });
-//    $(".schoolmate_txt").slideDown(10);
-//    $(".js_modifycirclename").slideUp(10);
+    $(".schoolmate_txt").slideDown(10);
+    $(".js_modifycirclename").slideUp(10);
     $(document).on("click", ".js_addcircle", function () {
 //        alert("新建密友圈");
-//        alert((JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length + 1);
         var i = (JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length + 1;
         $(".popmenuFrame").css({
             visibility: "visible",
@@ -333,7 +332,9 @@ $(document).ready(function () {
         });
         var group_user = getTemplate("js_group_user");
         $(".sildPopContent").html(group_user.render([]));
-        $(".js_modifycirclename input[type=text]").val("")
+        //新建分组不显示任何元素
+//        $(".sildPopContent").html("");
+        $(".js_modifycirclename input[type=text]").val("");
         $(".popmenuFrame").slideDown(100);
 //        $(".schoolmate_txt").html("aa");
         $(".schoolmate_txt").slideUp(10);
