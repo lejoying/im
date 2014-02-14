@@ -77,7 +77,7 @@ messageManage.send = function (data, response) {
                 time: time
             };
             if (sendType == "point") {
-                messageToOther.phoneto = friendPhone;
+                messageToOther.phoneto = phoneToStr;
             } else if (sendType == "group") {
                 messageToOther.gid = gid;
             } else if (sendType == "tempGroup") {
