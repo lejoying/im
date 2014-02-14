@@ -140,7 +140,7 @@ $(function () {
         } else {
             $(".js_js_onlyfriend_headimg").attr("src", "static/images/face_man.png");
         }
-        $(".js_js_onlyfriend_headimg").attr("phone",currentChatUser.phone);
+        $(".js_js_onlyfriend_headimg").attr("phone", currentChatUser.phone);
         $(".js_onlyfriend_nickName").html(currentChatUser.nickName);
 //                $(".js_onlyfriend_mainBusiness").html("主要业务: " + currentChatUser.mainBusiness);
         $(".js_rightChatPanel").show();
@@ -154,7 +154,7 @@ $(function () {
     //邀请好友加入聊天的窗口拖动注册
     new Drag($(".js_invite_SelectUserChat_frame")[0]);
 
-    $(document).on("click",".js_js_onlyfriend_headimg",function(){
+    $(document).on("click", ".js_js_onlyfriend_headimg", function () {
         var accountData = allCirclesFriends[$(this).attr("phone")];
         $(".js_findFriendPhone").val("");
         $(".js_findFriendErrorMessage").html("");
@@ -178,6 +178,19 @@ $(function () {
         }
     });
 });
+function messageContentTypeSplitShow(type, content) {
+    if (type == "text") {
+        return content;
+    } else if (type == "image") {
+//        var img = document.createElement("img");
+//        img.src = imageServer + content;
+        var image = new Image();
+        
+        return "<img src=" + imageServer + content + ">";
+    } else {
+        return content + "---" + type;
+    }
+}
 function showTempChatUsersInfo() {
     getTemplateHtml("tempChatUserInfo", function (template) {
         var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsersList"));
@@ -277,7 +290,7 @@ function messagesDataSplit(datas) {
                 tempAccountChatMessages["p_" + phone].push(JSON.stringify(message));
             }
         } else if (sendType == "tempGroup") {
-            if(message.phone == accountObj.phone && datas.flag != undefined){
+            if (message.phone == accountObj.phone && datas.flag != undefined) {
                 continue;
             }
             if (tempGroupsInfo[message.tempGid] == undefined) {
@@ -285,14 +298,14 @@ function messagesDataSplit(datas) {
             }
             tempAccountChatMessages["t_" + message.tempGid] = tempAccountChatMessages["t_" + message.tempGid] || [];
             tempAccountChatMessages["t_" + message.tempGid].push(JSON.stringify(message));
-            $(".js_groupchat_boderbox_template[group_gid="+message.tempGid+"]").find(".js_groupchat_friends_message_info").html((message.content).substr(0,10)+"...");
+            $(".js_groupchat_boderbox_template[group_gid=" + message.tempGid + "]").find(".js_groupchat_friends_message_info").html((message.content).substr(0, 10) + "...");
         } else if (sendType == "group") {
-            if(message.phone == accountObj.phone&& datas.flag != undefined){
+            if (message.phone == accountObj.phone && datas.flag != undefined) {
                 continue;
             }
             tempAccountChatMessages["g_" + message.gid] = tempAccountChatMessages["g_" + message.gid] || [];
             tempAccountChatMessages["g_" + message.gid].push(JSON.stringify(message));
-            $(".js_groupchat_boderbox_template[group_gid="+message.gid+"]").find(".js_groupchat_friends_message_info").html((message.content).substr(0,10)+"...");
+            $(".js_groupchat_boderbox_template[group_gid=" + message.gid + "]").find(".js_groupchat_friends_message_info").html((message.content).substr(0, 10) + "...");
         } else {
             console.log("请注意,逻辑错误-丢失数据--数据为:-" + message);
         }
@@ -313,7 +326,7 @@ function getTempGroupInfo(accountObj, tempGid, type) {
             if (data["提示信息"] == "获取群组信息成功") {
                 if (type == "tempGroup") {
                     var tempGroup = data.group;
-                    tempGroupsInfo[tempGid.tempGid] = tempGroup;
+                    tempGroupsInfo[tempGroup.tempGid] = tempGroup;
                     window.sessionStorage.setItem("wxgs_tempGroupsInfo", JSON.stringify(tempGroupsInfo));
                     var members = tempGroup.members;
                     var noFriends = [];
@@ -370,27 +383,29 @@ function getGroupMembers(accountObj, gid) {
     });
 }
 function getTempGroupMembers(accountObj, noFriends) {
-    $.ajax({
-        type: "POST",
-        url: "/api2/account/get?",
-        data: {
-            phone: accountObj.phone,
-            accessKey: accountObj.accessKey,
-            target: JSON.stringify(noFriends)
-        },
-        success: function (data) {
-            if (data["提示信息"] == "获取用户信息成功") {
-                var members = data.accounts;
-                for (var i = 0; i < members.length; i++) {
-                    var member = members[i];
-                    allCirclesFriends[member.phone] = member;
+    if (noFriends.length > 0) {
+        $.ajax({
+            type: "POST",
+            url: "/api2/account/get?",
+            data: {
+                phone: accountObj.phone,
+                accessKey: accountObj.accessKey,
+                target: JSON.stringify(noFriends)
+            },
+            success: function (data) {
+                if (data["提示信息"] == "获取用户信息成功") {
+                    var members = data.accounts;
+                    for (var i = 0; i < members.length; i++) {
+                        var member = members[i];
+                        allCirclesFriends[member.phone] = member;
+                    }
+                    window.sessionStorage.setItem("wxgs_allCirclesFriends", JSON.stringify(allCirclesFriends));
+                } else {
+                    getTempGroupMembers(accountObj, noFriends);
                 }
-                window.sessionStorage.setItem("wxgs_allCirclesFriends", JSON.stringify(allCirclesFriends));
-            } else {
-                getTempGroupMembers(accountObj, noFriends);
             }
-        }
-    });
+        });
+    }
 }
 function sendMessages(data, showMessage) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));

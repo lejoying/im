@@ -64,9 +64,9 @@ messageManage.send = function (data, response) {
             console.log(err);
             return;
         }
-        for (var i=0;i<phoneto.length;i++) {
+        for (var i = 0; i < phoneto.length; i++) {
             var friendPhone = phoneto[i];
-            if (friendPhone == phone){
+            if (friendPhone == phone) {
                 continue;
             }
             var messageToOther = {
@@ -77,7 +77,7 @@ messageManage.send = function (data, response) {
                 time: time
             };
             if (sendType == "point") {
-                messageToOther.phoneto = friendPhone;
+                messageToOther.phoneto = phoneToStr;
             } else if (sendType == "group") {
                 messageToOther.gid = gid;
             } else if (sendType == "tempGroup") {

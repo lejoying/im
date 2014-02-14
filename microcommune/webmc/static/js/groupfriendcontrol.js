@@ -129,7 +129,7 @@ $(document).ready(function () {
                                         if (dropStatus == "down") {
 //                                        $(".popmenuFrame").slideUp(1000);
                                             dropStatus = "dropping";
-//                                alert("longPress");
+//                                          alert("longPress");
                                             $(".js_menuPanel").show();
                                             $(".popmenuFrame").css({
                                                 marginTop: "500px"
@@ -321,9 +321,12 @@ $(document).ready(function () {
         $(".js_findFriendPhone").focus();
         new Drag($(".js_findFriend")[0]);
     });
+//    $(".schoolmate_txt").slideDown(10);
+//    $(".js_modifycirclename").slideUp(10);
     $(document).on("click", ".js_addcircle", function () {
 //        alert("新建密友圈");
-        var i = JSON.parse(window.sessionStorage.getItem("wxgs_circles")).length + 1;
+//        alert((JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length + 1);
+        var i = (JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length + 1;
         $(".popmenuFrame").css({
             visibility: "visible",
             top: 95 + (Math.floor(i / 3)) * 90 + "px"
