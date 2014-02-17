@@ -40,6 +40,16 @@ public class ViewHandler {
 
 	public void generateFriendView(
 			final GenerateViewListener generateViewListener) {
+		
+		View v = app.inflater
+		.inflate(
+				R.layout.f_group_panelitem_gridpageitem_user,
+				null);
+		
+		System.out.println("............");
+		v.measure(0, 0);
+		System.out.println(v.getMeasuredHeight());
+		
 		Runnable runnable = new Runnable() {
 			List<Circle> circles;
 			Map<String, Friend> friends;
@@ -176,8 +186,6 @@ public class ViewHandler {
 			FriendViewPager vp_content = (FriendViewPager) group
 					.findViewById(R.id.vp_content);
 
-			
-			
 			tv_groupname.setText(circle.name);
 
 			PagerAdapter vp_contentAdapter;
