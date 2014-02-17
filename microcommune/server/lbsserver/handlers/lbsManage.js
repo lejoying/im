@@ -244,6 +244,8 @@ lbsManage.column_delete = function (data, response) {
 
 lbsManage.poi_create = function (data, response) {
     response.asynchronous = 1;
+    var time1 = new Date().getTime();
+    console.log("开始事件：" + time1);
     ajax.ajax({
         type: "POST",
         ajaxType: "FORM",
@@ -261,6 +263,10 @@ lbsManage.poi_create = function (data, response) {
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
+            var time2 = new Date().getTime();
+            console.log("结束事件：" + time2);
+            var time = time2 - time1;
+            console.log("耗时：" + time + "ms");
             response.write(data);
             response.end();
         }
@@ -268,6 +274,8 @@ lbsManage.poi_create = function (data, response) {
 }
 lbsManage.poi_list = function (data, response) {
     response.asynchronous = 1;
+    var time1 = new Date().getTime();
+    console.log("开始事件：" + time1 + "---------------------");
     ajax.ajax({
         type: "GET",
         url: "http://api.map.baidu.com/geodata/v2/poi/list",
@@ -278,6 +286,10 @@ lbsManage.poi_list = function (data, response) {
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
+            var time2 = new Date().getTime();
+            console.log("结束事件：" + time2);
+            var time = time2 - time1;
+            console.log("耗时：" + time + "ms----------------------------");
             response.write(data);
             response.end();
         }

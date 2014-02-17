@@ -178,6 +178,7 @@ $(function () {
         }
     });
 });
+//分析消息的内容并进行显示
 function messageContentTypeSplitShow(type, content) {
     if (type == "text") {
         return content;
@@ -185,12 +186,13 @@ function messageContentTypeSplitShow(type, content) {
 //        var img = document.createElement("img");
 //        img.src = imageServer + content;
         var image = new Image();
-        
+
         return "<img src=" + imageServer + content + ">";
     } else {
         return content + "---" + type;
     }
 }
+//显示临时聊天用户的详细信息
 function showTempChatUsersInfo() {
     getTemplateHtml("tempChatUserInfo", function (template) {
         var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsersList"));
@@ -199,6 +201,7 @@ function showTempChatUsersInfo() {
         }
     });
 }
+//修改临时聊天用户的显示顺序
 function modifyTempChatUser(phone) {
 //    var tempChatUsers = JSON.parse(window.sessionStorage.getItem("wxgs_tempChatUsers"));
 //    var tempChatUsersList = JSON.parse(window.sessionStorage.getItem("wxgss_tempChatUsersList"));
@@ -226,6 +229,7 @@ function modifyTempChatUser(phone) {
         }
     }
 }
+//显示当前的聊天消息记录
 function showUserChatMessages(account) {
     var baseString = (currentChatType.substr(0, 1)).toLowerCase();
     var wxgs_tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
@@ -247,6 +251,7 @@ function showUserChatMessages(account) {
         });
     }
 }
+//获取聊天记录
 function pullUsersMessage(account) {
     getMessages(window.sessionStorage.getItem("wxgs_messageFlag"), function (data) {
         messagesDataSplit(data);
@@ -257,8 +262,9 @@ function pullUsersMessage(account) {
 //        setScrollPosition();
     });
 }
-
+//分析用户聊天消息并进行存储
 function messagesDataSplit(datas) {
+    var flag = window.sessionStorage.getItem("wxgs_messageFlag");
     if (datas.flag != undefined) {
         var messsageFlag = datas.flag;
         window.sessionStorage.setItem("wxgs_messageFlag", messsageFlag);
@@ -268,9 +274,14 @@ function messagesDataSplit(datas) {
 //    var tempAccountChatMessages = JSON.parse(window.sessionStorage.getItem("wxgs_tempAccountChatMessages"));
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     var count = 0;
+    var phones = {};
     for (var i = 0; i < data.length; i++) {
         count++;
         var message = JSON.parse(data[i]);
+        if (flag == "none") {
+            messageCountNotice(phones, accountObj, message);
+            phones[message.phone] = "message";
+        }
         var sendType = message.sendType;
         if (sendType == "point") {
             if (message.phone == accountObj.phone) {
@@ -312,6 +323,7 @@ function messagesDataSplit(datas) {
     }
     window.sessionStorage.setItem("wxgs_tempAccountChatMessages", JSON.stringify(tempAccountChatMessages));
 }
+//获取临时群组的详细信息
 function getTempGroupInfo(accountObj, tempGid, type) {
     $.ajax({
         type: "POST",
@@ -356,6 +368,7 @@ function getTempGroupInfo(accountObj, tempGid, type) {
         }
     });
 }
+//获取正式群组的所有群组和用户
 function getGroupMembers(accountObj, gid) {
     $.ajax({
         type: "POST",
@@ -382,6 +395,7 @@ function getGroupMembers(accountObj, gid) {
         }
     });
 }
+//获取临时分组的用户信息
 function getTempGroupMembers(accountObj, noFriends) {
     if (noFriends.length > 0) {
         $.ajax({
@@ -407,6 +421,7 @@ function getTempGroupMembers(accountObj, noFriends) {
         });
     }
 }
+//发送消息
 function sendMessages(data, showMessage) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $(".js_chatmessagecontent").val("");
@@ -446,7 +461,7 @@ function sendMessages(data, showMessage) {
     )
     ;
 }
-
+//设置滚动条的位置
 function setScrollPosition() {
     if ($(".js_chatContents").height() < $(".chatScorll").height()) {
         $(".scrollDiv").hide();
@@ -473,7 +488,7 @@ function setScrollPosition() {
     }
 //    alert($(".scrollDiv").);
 }
-
+//长连接
 function keepQuest() {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
@@ -488,93 +503,10 @@ function keepQuest() {
             if (data["提示信息"] == "成功") {
                 if (data.event == "message") {
                     var message = JSON.parse(data.event_content.message);
-                    var sendType = message.sendType;
-                    if (sendType == "point") {
-                        function next() {
-                            if (tempChatUsers[message.phone] != undefined) {
-                                var target = $("#js_conv_wxgsid_" + message.phone).find(".unreadDot");
-                                var messageAccount = parseInt(target.html());
-                                target.html(messageAccount + 1);
-                                target.show();
-                            } else {
-                                getTemplateHtml("tempChatUserInfo", function (template) {
-                                    $("#conversationContainer").append(template.render([message.phone]));
-                                    var target = $("#js_conv_wxgsid_" + message.phone).find(".unreadDot");
-                                    var messageAccount = parseInt(target.html());
-                                    target.html(messageAccount + 1);
-                                    target.show();
-                                    tempChatUsers[message.phone] = "chat";
-                                    tempChatUsersList.push(message.phone);
-                                    window.sessionStorage.setItem("wxgs_tempChatUsers", JSON.stringify(tempChatUsers));
-                                    window.sessionStorage.setItem("wxgs_tempChatUsersList", JSON.stringify(tempChatUsersList));
-                                });
-                            }
-                        }
-
-                        if (currentChatType == "POINT") {
-                            if (currentChatUser.phone == message.phone) {
-                                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
-                                $(".js_chatContents").append(js_chatmessagetemplate.render([data.event_content.message]));
-                                setScrollPosition();
-                            } else {
-                                //---------------------------------------------------------------------------------------
-                                next();
-                            }
-                        } else {
-                            next();
-                        }
-                    } else if (sendType == "tempGroup") {
-                        function next2() {
-                            if (tempGroupsInfo[message.tempGid] != undefined) {
-                                var messageAccountObj = $(".js_groupchat_boderbox_template[group_gid=" + message.tempGid + "]").find(".groupchat_number");
-                                var num = messageAccountObj.find(".groupchat_number_info");
-                                num.html(parseInt(num.html()) + 1);
-                                messageAccountObj.css({
-                                    "visibility": "visible"
-                                });
-                            } else {
-                                getTempGroupInfo(accountObj, message.tempGid, "tempGroup");
-                            }
-                        }
-
-                        if (currentChatType == "TEMPGROUP") {
-                            if (currentChatGroup.tempGid == message.tempGid) {
-                                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
-                                $(".js_chatContents").append(js_chatmessagetemplate.render([data.event_content.message]));
-                                setScrollPosition();
-                            } else {
-                                next2();
-                            }
-                        } else {
-                            next2();
-                        }
-                    } else if (sendType == "group") {
-                        function next3() {
-                            if (groupsInfo[message.gid] != undefined) {
-                                var messageAccountObj = $(".js_groupchat_boderbox_template[group_gid=" + message.gid + "]").find(".groupchat_number");
-                                var num = messageAccountObj.find(".groupchat_number_info");
-                                num.html(parseInt(num.html()) + 1);
-                                messageAccountObj.css({
-                                    "visibility": "visible"
-                                });
-                            } else {
-                                getTempGroupInfo(accountObj, message.gid, "group");
-                            }
-                        }
-
-                        if (currentChatType == "GROUP") {
-                            if (currentChatGroup.gid == message.gid) {
-                                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
-                                $(".js_chatContents").append(js_chatmessagetemplate.render([data.event_content.message]));
-                                setScrollPosition();
-                            } else {
-                                next3();
-                            }
-                        } else {
-                            next3();
-                        }
-                    }
-                    keepQuest();
+                    var phones = {};
+                    messageCountNotice(phones, accountObj, message);
+                    phones[message.phone] = "message";
+//                    keepQuest();
                     getMessages(window.sessionStorage.getItem("wxgs_messageFlag"), messagesDataSplit);
 //                    alert("message");
                 } else if (data.event == "newfriend") {
@@ -582,10 +514,10 @@ function keepQuest() {
                 } else if (data.event == "friendaccept") {
                     alert("friendAccept");
                 } else {
-                    keepQuest();
+//                    keepQuest();
                     alert("神器的效果");
                 }
-//                keepQuest();
+                keepQuest();
             } else if (data["提示信息"] == "请求失败") {
                 if (data["失败原因"] == "AccessKey Invalid") {
                     window.localStorage.clear();
@@ -598,13 +530,112 @@ function keepQuest() {
                 keepQuest();
             }
         },
-        error: function (xhr, error) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
 //            xhr.abort();
-            keepQuest();
+//            alert(textStatus + "---" + errorThrown);
+            if (textStatus == "timeout") {
+//                XMLHttpRequest.abort();
+                keepQuest();
+            }
         }
     });
 }
+//处理临时聊天页面的用户信息和消息条数的显示
+function messageCountNotice(phones, accountObj, message) {
+    var sendType = message.sendType;
+    if (sendType == "point") {
+        function next() {
+            if (tempChatUsers[message.phone] != undefined) {
+                var target = $("#js_conv_wxgsid_" + message.phone).find(".unreadDot");
+                var messageAccount = parseInt(target.html());
+                target.html(messageAccount + 1);
+                target.show();
+            } else {
+                if (phones[message.phone] == undefined) {
+                    getTemplateHtml("tempChatUserInfo", function (template) {
+                        $("#conversationContainer").append(template.render([message.phone]));
+                        var target = $("#js_conv_wxgsid_" + message.phone).find(".unreadDot");
+                        var messageAccount = parseInt(target.html());
+                        target.html(messageAccount + 1);
+                        target.show();
+                        tempChatUsers[message.phone] = "chat";
+                        tempChatUsersList.push(message.phone);
+                        window.sessionStorage.setItem("wxgs_tempChatUsers", JSON.stringify(tempChatUsers));
+                        window.sessionStorage.setItem("wxgs_tempChatUsersList", JSON.stringify(tempChatUsersList));
+                    });
+                }
+                /*var target = $("#js_conv_wxgsid_" + message.phone).find(".unreadDot");
+                 var messageAccount = parseInt(target.html());
+                 target.html(messageAccount + 1);
+                 target.show();*/
+            }
+        }
 
+        if (currentChatType == "POINT") {
+            if (currentChatUser.phone == message.phone) {
+                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+                $(".js_chatContents").append(js_chatmessagetemplate.render([JSON.stringify(message)]));
+                setScrollPosition();
+            } else {
+                //---------------------------------------------------------------------------------------
+                next();
+            }
+        } else {
+            next();
+        }
+    } else if (sendType == "tempGroup") {
+        function next2() {
+            if (tempGroupsInfo[message.tempGid] != undefined) {
+                var messageAccountObj = $(".js_groupchat_boderbox_template[group_gid=" + message.tempGid + "]").find(".groupchat_number");
+                var num = messageAccountObj.find(".groupchat_number_info");
+                num.html(parseInt(num.html()) + 1);
+                messageAccountObj.css({
+                    "visibility": "visible"
+                });
+            } else {
+                getTempGroupInfo(accountObj, message.tempGid, "tempGroup");
+            }
+        }
+
+        if (currentChatType == "TEMPGROUP") {
+            if (currentChatGroup.tempGid == message.tempGid) {
+                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+                $(".js_chatContents").append(js_chatmessagetemplate.render([JSON.stringify(message)]));
+                setScrollPosition();
+            } else {
+                next2();
+            }
+        } else {
+            next2();
+        }
+    } else if (sendType == "group") {
+        function next3() {
+            if (groupsInfo[message.gid] != undefined) {
+                var messageAccountObj = $(".js_groupchat_boderbox_template[group_gid=" + message.gid + "]").find(".groupchat_number");
+                var num = messageAccountObj.find(".groupchat_number_info");
+                num.html(parseInt(num.html()) + 1);
+                messageAccountObj.css({
+                    "visibility": "visible"
+                });
+            } else {
+                getTempGroupInfo(accountObj, message.gid, "group");
+            }
+        }
+
+        if (currentChatType == "GROUP") {
+            if (currentChatGroup.gid == message.gid) {
+                var js_chatmessagetemplate = getTemplate("js_chatmessagetemplate");
+                $(".js_chatContents").append(js_chatmessagetemplate.render([JSON.stringify(message)]));
+                setScrollPosition();
+            } else {
+                next3();
+            }
+        } else {
+            next3();
+        }
+    }
+}
+//获取服务器上的聊天信息
 function getMessages(flag, next) {
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
@@ -624,7 +655,7 @@ function getMessages(flag, next) {
         }
     });
 }
-
+//格式化时间的格式
 function formattertime(millisecond) {
     var date = new Date(millisecond);
     var Hours = date.getHours().toString().length == 1 ? "0" + date.getHours() : date.getHours();
@@ -633,7 +664,7 @@ function formattertime(millisecond) {
     var formattertime = Hours + ":" + Minutes;
     return formattertime;
 }
-
+//nTenjin模版的使用
 function getTemplate(id) {
     var tenjin = nTenjin;
     var templateDiv = $('.templates #' + id).parent();

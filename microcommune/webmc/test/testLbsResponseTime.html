@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="./../static/js/jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            setInterval(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/lbs/poi_list?",
+                    data: {},
+                    success: function (data) {
+                        var dom = document.createElement("span");
+                        dom.innerHTML = 1 + "-";
+                        document.body.appendChild(dom);
+                    }
+                });
+            }, 1);
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

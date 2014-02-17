@@ -93,7 +93,7 @@ $(document).ready(function () {
                                 var i = parentClass.substr(parentClass.lastIndexOf("_") + 1);
                                 if (i == clickGroupIndex) {
                                     clickGroupIndex = -1;
-                                    $(".popmenuFrame").slideUp(200);
+                                    $(".popmenuFrame").slideUp(1);
                                     oldSelectedGroupClass = "";
 //                                alert(oldSelectedGroupClass);
                                     if (i > 5) {
@@ -151,7 +151,7 @@ $(document).ready(function () {
                                         }
                                     });
                                     $(".user_icon").addClass("js_none");
-                                    $(".popmenuFrame").slideDown(100);
+                                    $(".popmenuFrame").slideDown(10);
                                     oldSelectedGroupClass = parentClass;
 //                                alert(oldSelectedGroupClass);
                                     if (i > 5) {
@@ -321,8 +321,8 @@ $(document).ready(function () {
         $(".js_findFriendPhone").focus();
         new Drag($(".js_findFriend")[0]);
     });
-    $(".schoolmate_txt").slideDown(10);
-    $(".js_modifycirclename").slideUp(10);
+//    $(".schoolmate_txt").slideDown(10);
+//    $(".js_modifycirclename").slideUp(10);
     $(document).on("click", ".js_addcircle", function () {
 //        alert("新建密友圈");
         var i = (JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length + 1;
@@ -779,7 +779,7 @@ function modifyCircleName(rid, newCircleName, oldCircleName) {
 
 function getTemplateHtml(templateHtml, next) {
     var tenjin = nTenjin;
-    $.get("/static/templates/" + templateHtml + ".html?time=" + new Date().getTime(), function (result) {
+    $.get("/static/templates/" + templateHtml + ".html", function (result) {
         var template = new tenjin.Template();
         var string = result.replace(/\r/g, "");
         string = string.replace(/\<\!\-\-\?/g, "<?");
