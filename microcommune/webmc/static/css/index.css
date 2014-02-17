@@ -6734,3 +6734,58 @@ a.chat_group_right_icon:active{
     font-family: '微软雅黑';
     letter-spacing: 2px;
 }
+.possion_Panel{
+    position: absolute;
+    bottom: 50px;
+}
+/*.smile_Tab{*/
+    /*z-index: 1111111;*/
+    /*background-color: #E7EBEE;*/
+    /*font-size: 12px;*/
+    /*width: 453px;*/
+    /*height: 15px;*/
+    /*padding-top: 10px;*/
+    /*margin-bottom: -20px;*/
+    /*border-bottom: 1px solid #D5D5D5;*/
+    /*-moz-border-radius: 3px 3px 0px 0px;*/
+    /*-webkit-border-radius: 3px 3px 0px 0px;*/
+    /*border-radius: 3px 3px 0px 0px;*/
+    /*vertical-align: middle;*/
+    /*margin-bottom: 15px;*/
+/*}*/
+.gs_smile{
+   color: gray;
+   font-size: 12px;
+   margin-top: 10px;
+   margin-bottom: 10px;
+   margin-left: 6px;
+}
+.smile_warp{
+    background-color: #ffffff;
+    width: 434px;
+    border: 1px solid #9FA0A0;
+    padding: 0px 20px 20px 20px;
+    bottom: 4px;
+    margin-bottom: 10px;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+    border-radius: 3px 3px 3px 3px;
+}
+.smile_box{
+    position: relative;
+    clear: both;
+    width: 435px;
+    height: 200px;
+    overflow: hidden;
+    background: url("../images/wxgsSmilies.png") no-repeat ;
+    cursor: pointer;
+}
+.smile_box a{
+    display: block;
+    float: left;
+    width: 28px;
+    height: 28px;
+    border-right: 1px solid #DFE6F6;
+    border-bottom: 1px solid #DFE6F6;
+
+}
