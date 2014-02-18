@@ -246,31 +246,35 @@ lbsManage.poi_create = function (data, response) {
     response.asynchronous = 1;
     var time1 = new Date().getTime();
     console.log("开始事件：" + time1);
-    ajax.ajax({
-        type: "POST",
-        ajaxType: "FORM",
-        url: "http://api.map.baidu.com/geodata/v2/poi/create",
-        data: {
-            latitude: 40.3,
-            longitude: 116.3,
-            coord_type: 3,
-            geotable_id: 47530,
-            ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
-            title: "xiaosong"
+    for (var i = 0; i < 100; i++) {
+        ajax.ajax({
+            type: "POST",
+            ajaxType: "FORM",
+            url: "http://api.map.baidu.com/geodata/v2/poi/create",
+            data: {
+                latitude: 40.2001 + i / 10000,
+                longitude: 116.2001 + i / 10000,
+                coord_type: 3,
+                geotable_id: 47530,
+                ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
+                title: "xiaosong" + i
 //            name: "song",
 //            address: "北京市",
 //            tags: "song"
-        },
-        success: function (data) {
+            },
+            success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
-            var time2 = new Date().getTime();
-            console.log("结束事件：" + time2);
-            var time = time2 - time1;
-            console.log("耗时：" + time + "ms");
-            response.write(data);
-            response.end();
-        }
-    });
+                var time2 = new Date().getTime();
+                console.log("结束事件：" + time2);
+                var time = time2 - time1;
+//                console.log("耗时：" + time + "ms");
+//                response.write(data);
+//                response.end();
+            }
+        });
+    }
+    console.log("发送结束" + ((new Date().getTime()) - time1));
+    response.end();
 }
 lbsManage.poi_list = function (data, response) {
     response.asynchronous = 1;
@@ -281,7 +285,8 @@ lbsManage.poi_list = function (data, response) {
         url: "http://api.map.baidu.com/geodata/v2/poi/list",
         data: {
             geotable_id: 47530,
-            ak: "qD4I881MqTR7NZQ2TYTa2ZGh"
+            ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
+            page_index: 0
 //            name: "api"
         },
         success: function (data) {
@@ -341,7 +346,7 @@ lbsManage.poi_delete = function (data, response) {
         data: {
             geotable_id: 47530,
             ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
-            id: 50817106
+            title: "xiaosong"
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
@@ -360,9 +365,12 @@ lbsManage.nearby = function (data, response) {
         data: {
             geotable_id: 47530,
             ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
-            q: "xiaosong",
-            location: "116.3,40.3",//"116.25,40.25"
-            radius: 200000 // 默认1000 M
+            q: "",
+            location: "116.25,40.25",//"116.25,40.25"
+            radius: 5000, // 默认1000 M,
+            sortby: "distance:1",
+            page_index: 0,
+            page_size: 12
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
@@ -414,6 +422,34 @@ lbsManage.detail = function (data, response) {
         data: {
             geotable_id: 47530,
             ak: "qD4I881MqTR7NZQ2TYTa2ZGh"
+        },
+        success: function (data) {
+//            console.log(unescape(data.replace(/\\u/gi, '%u')));
+            response.write(data);
+            response.end();
+        }
+    });
+}
+//----------------------------------------------------------------------------------------------------------------------
+/***************************************
+ *     URL：/lbs/loginpoi
+ ***************************************/
+lbsManage.loginpoi = function (data, response) {
+    response.asynchronous = 1;
+    ajax.ajax({
+        type: "POST",
+        ajaxType: "FORM",
+        url: "http://api.map.baidu.com/geodata/v2/poi/create",
+        data: {
+            latitude: 40.2001 + i / 10000,
+            longitude: 116.2001 + i / 10000,
+            coord_type: 3,
+            geotable_id: 47530,
+            ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
+            title: "xiaosong" + i
+//            name: "song",
+//            address: "北京市",
+//            tags: "song"
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));

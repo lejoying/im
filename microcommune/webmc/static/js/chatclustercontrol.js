@@ -181,6 +181,28 @@ $(function () {
 //分析消息的内容并进行显示
 function messageContentTypeSplitShow(type, content) {
     if (type == "text") {
+        if (content.indexOf("[") != -1 && content.indexOf("]") != -1) {
+
+            var firstPosition = content.indexOf("[");
+
+
+
+            var firstIndex = -1;
+            var count = 1;
+            for (var i = 0; i < content.length; i++) {
+                var char = content[i];
+                if (char == "[") {
+                    firstIndex = i;
+                } else if (char == "]") {
+                    if (firstIndex != -1) {
+                        var str = content.substr(firstIndex + 1, i - 1);
+                        console.log(str + "-" + count);
+                        count++;
+                        firstIndex = -1;
+                    }
+                }
+            }
+        }
         return content;
     } else if (type == "image") {
 //        var img = document.createElement("img");
