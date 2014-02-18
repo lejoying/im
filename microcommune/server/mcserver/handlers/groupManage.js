@@ -782,8 +782,6 @@ groupManage.getgroupsandmembers = function (data, response) {
                     groupData.members.push(account);
                 }
             }
-
-
             response.write(JSON.stringify({
                 "提示信息": "获取群组成功",
                 groups: groups

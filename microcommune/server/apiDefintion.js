@@ -850,3 +850,76 @@ api = {
         }
     }
 }
+/*************************************** ***************************************
+ * *    Class：group
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/lbs/loginpoi
+     ***************************************/
+    "lbs_loginpoi": {
+        description: {
+            id: 1001100,
+            url: "/lbs/loginpoi"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN", account: { mainBusiness: "XXX", head: "XXX", nickName: "XXX" }}
+        },
+        response: {
+            success: {"提示信息": "标记登录位置成功"},
+            failed: {"提示信息": "标记登录位置失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/lbs/grouppoi
+     ***************************************/
+    "lbs_grouppoi": {
+        description: {
+            id: 1001101,
+            url: "/lbs/grouppoi"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN", group: {gid: "NNN", name: "XXX", description: "XXX"}}
+        },
+        response: {
+            success: {"提示信息": "标记群组位置成功"},
+            failed: {"提示信息": "标记群组位置失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/lbs/nearbyaccount
+     ***************************************/
+    "lbs_nearbyaccount": {
+        description: {
+            id: 1001102,
+            url: "/lbs/nearbyaccount"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取附近好友成功", accounts: [
+                {phone: "NNN", mainBusiness: "XXX", head: "XXX", nickName: "XXX"}
+            ]},
+            failed: {"提示信息": "获取附近好友失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/lbs/nearbygroup
+     ***************************************/
+    "lbs_nearbygroup": {
+        description: {
+            id: 1001103,
+            url: "/lbs/nearbygroup"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取附近群组成功", groups: [
+                {gid: "NNN", name: "XXX", description: "XXX"}
+            ]},
+            failed: {"提示信息": "获取附近群组失败", "失败原因": "数据异常"}
+        }
+    }
+}
