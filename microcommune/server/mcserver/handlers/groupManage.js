@@ -730,7 +730,33 @@ groupManage.getgroupsandmembers = function (data, response) {
             console.log(error);
             return;
         } else {
-            var groups = {};
+            /*var groups = {};
+             for (var index in results) {
+             var it = results[index];
+             var groupData = it.group.data;
+             var accountData = it.account.data;
+             var account = {
+             uid: accountData.uid,
+             phone: accountData.phone,
+             mainBusiness: accountData.mainBusiness,
+             head: accountData.head,
+             byPhone: accountData.byPhone,
+             nickName: accountData.nickName
+             };
+             if (groups[groupData.gid] == null) {
+             var accounts = [];
+             var account_own = it.account1.data;
+             accounts.push(account_own);
+             accounts.push(account);
+             groupData.members = accounts;
+             groups[groupData.gid] = groupData;
+             } else {
+             groups[groupData.gid].members.push(account);
+             }
+             }*/
+
+            var groups = [];
+            var groupZ = {};
             for (var index in results) {
                 var it = results[index];
                 var groupData = it.group.data;
@@ -743,17 +769,21 @@ groupManage.getgroupsandmembers = function (data, response) {
                     byPhone: accountData.byPhone,
                     nickName: accountData.nickName
                 };
-                if (groups[groupData.gid] == null) {
+                if (groupZ[groupData.gid] == null) {
                     var accounts = [];
                     var account_own = it.account1.data;
                     accounts.push(account_own);
                     accounts.push(account);
                     groupData.members = accounts;
-                    groups[groupData.gid] = groupData;
+                    groupZ[groupData.gid] = groupData;
+                    groups.push(groupData);
                 } else {
-                    groups[groupData.gid].members.push(account);
+                    var groupData = groupZ[groupData.gid];
+                    groupData.members.push(account);
                 }
             }
+
+
             response.write(JSON.stringify({
                 "提示信息": "获取群组成功",
                 groups: groups
