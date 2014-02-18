@@ -904,7 +904,20 @@ public class CircleMenuFragment extends BaseFragment {
 			});
 			break;
 		case 2:
+			back(mOldWhere, new CircleDiskAnimationEnd() {
+				@Override
+				public void outAnimationEnd() {
+					if (!app.mark.equals(app.groupFragment)) {
+						mMCFragmentManager.replaceToContent(
+								new GroupFragment(), false);
+					}
+				}
 
+				@Override
+				public void diskAnimationEnd() {
+
+				}
+			});
 			break;
 		case 3:
 			back(mOldWhere, new CircleDiskAnimationEnd() {

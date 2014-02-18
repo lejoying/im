@@ -37,6 +37,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -84,6 +85,15 @@ public class ChatFragment extends BaseListFragment {
 	RelativeLayout rl_message;
 	RelativeLayout rl_select;
 	View rl_selectpicture;
+
+	View groupTopBar;
+	TextView textView_groupName;
+	TextView textView_memberCount;
+	LinearLayout linearlayout_members;
+
+	View groupCenterBar;
+	TextView textView_groupNameAndMemberCount;
+	LinearLayout linearlayout;
 
 	int beforeHeight;
 	int beforeLineHeight;
@@ -168,6 +178,70 @@ public class ChatFragment extends BaseListFragment {
 		rl_message = (RelativeLayout) mContent.findViewById(R.id.rl_message);
 		rl_select = (RelativeLayout) mContent.findViewById(R.id.rl_select);
 		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
+
+		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
+		textView_groupName = (TextView) mContent
+				.findViewById(R.id.textview_groupname);
+		textView_memberCount = (TextView) mContent
+				.findViewById(R.id.textview_membercount);
+
+		linearlayout_members = (LinearLayout) mContent
+				.findViewById(R.id.linearlayout_members);
+
+		for (int i = 0; i < 4; i++) {
+			ImageView iv_head = new ImageView(getActivity());
+			iv_head.setImageBitmap(app.fileHandler.defaultHead);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					40, 40);
+			if (i != 3)
+				params.setMargins(0, 0, 10, 0);
+			iv_head.setLayoutParams(params);
+			linearlayout_members.addView(iv_head);
+		}
+
+		groupCenterBar = mContent.findViewById(R.id.relativeLayout_group);
+		textView_groupNameAndMemberCount = (TextView) mContent
+				.findViewById(R.id.textView_groupNameAndMemberCount);
+		linearlayout = (LinearLayout) groupCenterBar
+				.findViewById(R.id.linearlayout_user);
+
+		groupTopBar.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				groupCenterBar.setVisibility(View.VISIBLE);
+			}
+		});
+
+		groupCenterBar.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				groupCenterBar.setVisibility(View.GONE);
+			}
+		});
+
+		for (int i = 0; i < 14; i++) {
+			View userView = inflater.inflate(
+					R.layout.f_friend_panelitem_gridpage_item, null);
+			ImageView iv_head = (ImageView) userView.findViewById(R.id.iv_head);
+			TextView tv_nickname = (TextView) userView
+					.findViewById(R.id.tv_nickname);
+			iv_head.setImageBitmap(app.fileHandler.defaultHead);
+			tv_nickname.setText("测试" + i);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.WRAP_CONTENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+
+			params.setMargins(40, 0, 0, 0);
+
+			if (i == 13) {
+				params.setMargins(40, 0, 40, 0);
+			}
+
+			userView.setLayoutParams(params);
+			linearlayout.addView(userView);
+		}
 
 		rl_selectpicture.setOnClickListener(new OnClickListener() {
 
@@ -275,10 +349,6 @@ public class ChatFragment extends BaseListFragment {
 				int lineCount = editText_message.getLineCount();
 
 				switch (lineCount) {
-				case 3:
-					etparams.height = beforeHeight;
-					rlparams.height = beforeHeight;
-					break;
 				case 4:
 					etparams.height = beforeHeight + beforeLineHeight;
 					rlparams.height = beforeHeight + beforeLineHeight;
@@ -289,6 +359,10 @@ public class ChatFragment extends BaseListFragment {
 					break;
 
 				default:
+					if (lineCount <= 3) {
+						etparams.height = beforeHeight;
+						rlparams.height = beforeHeight;
+					}
 					break;
 				}
 				if (lineCount > 5) {

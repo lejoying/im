@@ -43,7 +43,6 @@ public class EventHandler {
 					ChatFragment.instance.mAdapter.notifyDataSetChanged();
 				}
 				if (FriendsFragment.instance != null) {
-					FriendsFragment.instance.mAdapter.notifyDataSetChanged();
 				}
 			}
 		});

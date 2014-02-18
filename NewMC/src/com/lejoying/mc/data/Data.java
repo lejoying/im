@@ -17,6 +17,9 @@ public class Data implements Serializable {
 
 	public User user = new User();
 	public List<Circle> circles = new ArrayList<Circle>();
+	public List<Group> groups = new ArrayList<Group>();
+
+	public Map<String, Friend> groupFriends = new Hashtable<String, Friend>();
 	public Map<String, Friend> friends = new Hashtable<String, Friend>();
 
 	// Last messages list

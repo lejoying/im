@@ -49,6 +49,16 @@ public abstract class API {
 	public static final String IMAGE_UPLOAD = "image/upload";
 	public static final String IMAGE_CHECK = "image/check";
 
+	public static final String GROUP = "group";
+	public static final String GROUP_CREATE = "api2/group/create";
+	public static final String GROUP_ADDMEMBERS = "api2/group/addmembers";
+	public static final String GROUP_REMOVEMEMBERS = "api2/group/removemembers";
+	public static final String GROUP_GETALLMEMBERS = "api2/group/getallmembers";
+	public static final String GROUP_MODIFY = "api2/group/modify";
+	public static final String GROUP_GETUSERGROUPS = "api2/group/getusergroups";
+	public static final String GROUP_GET = "api2/group/get";
+	public static final String GROUP_GETGROUPSANDMEMBERS = "api2/group/getgroupsandmembers";
+
 	public static String getClazz(String api) {
 		return api.substring(0, api.indexOf(SLASH));
 	}

@@ -7,20 +7,23 @@
     <RelativeLayout
         android:id="@+id/rl_panel"
         android:layout_width="fill_parent"
-        android:layout_height="280dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/frame_background"
-        android:padding="10dp" >
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp" >
 
         <TextView
-            android:id="@+id/tv_broadcast"
+            android:id="@+id/textView_groupNameAndMemberCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:text="我加入的群组"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -28,31 +31,39 @@
             android:id="@+id/iv_line"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:layout_alignLeft="@+id/tv_broadcast"
-            android:layout_below="@+id/tv_broadcast"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textView_groupNameAndMemberCount"
             android:layout_marginTop="8dp"
-            android:background="#9fff"
-            tools:ignore="ContentDescription" />
+            android:background="#9fff" />
 
         <com.lejoying.mc.view.FriendViewPager
             android:id="@+id/vp_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/ll_bottom"
+            android:layout_height="0dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/iv_line" />
 
-        <LinearLayout
-            android:id="@+id/ll_bottom"
+        <ImageView
+            android:id="@+id/iv_line2"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_height="1dp"
             android:layout_alignParentLeft="true"
-            android:gravity="center_vertical|center_horizontal"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp" >
-        </LinearLayout>
+            android:layout_below="@+id/vp_content"
+            android:layout_marginTop="2dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/iv_line2"
+            android:padding="10dp"
+            android:text="群组设置"
+            android:textColor="#fff"
+            android:textSize="13sp" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -19,153 +19,250 @@
     <RelativeLayout
         android:id="@+id/rl_control"
         android:layout_width="fill_parent"
-        android:layout_height="152dp"
+        android:layout_height="160dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="@drawable/frame_bottombackground"
         android:visibility="gone"
+        android:background="@drawable/frame_bottombackground"
         tools:ignore="UselessParent" >
 
-        <LinearLayout
-            android:id="@+id/ll_item"
+        <HorizontalScrollView
+            android:id="@+id/hs_item"
             android:layout_width="fill_parent"
             android:layout_height="75dp"
             android:layout_alignParentBottom="true"
             android:baselineAligned="false"
-            android:paddingBottom="2dp" >
+            android:paddingBottom="2dp"
+            android:scrollbars="none" >
 
             <LinearLayout
+                android:id="@+id/ll_item"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="5dp" >
+                android:layout_height="75dp"
+                android:baselineAligned="false"
+                android:paddingBottom="2dp" >
 
-                <ImageView
-                    android:id="@+id/img_weixin"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item1"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="88dp"
                     android:layout_height="wrap_content"
-                    android:text="移出改组"
-                    android:textColor="#fff"
-                    android:textSize="13sp" />
-            </LinearLayout>
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="5dp" >
+                    <ImageView
+                        android:id="@+id/img_weixin"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clickable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/emoji_normal"
+                        tools:ignore="ContentDescription" />
 
-                <ImageView
-                    android:id="@+id/img_address"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item2"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="移出改组"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="88dp"
                     android:layout_height="wrap_content"
-                    android:text="修改组名"
-                    android:textColor="#fff"
-                    android:textSize="13sp" />
-            </LinearLayout>
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="5dp" >
+                    <ImageView
+                        android:id="@+id/img_address"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
+                        android:src="@drawable/emoji_normal"
+                        android:clickable="true"
+                        tools:ignore="ContentDescription" />
 
-                <ImageView
-                    android:id="@+id/img_friends"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item3"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="修改组名"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="88dp"
                     android:layout_height="wrap_content"
-                    android:text="删除该组"
-                    android:textColor="#fff"
-                    android:textSize="13sp" />
-            </LinearLayout>
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="5dp" >
+                    <ImageView
+                        android:id="@+id/img_friends"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
+                        android:src="@drawable/emoji_normal"
+                        android:clickable="true"
+                        tools:ignore="ContentDescription" />
 
-                <ImageView
-                    android:id="@+id/img_settings"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/test_item4"
-                    android:clickable="true"
-                    android:scaleType="matrix"
-                    tools:ignore="ContentDescription" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="删除该组"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="88dp"
                     android:layout_height="wrap_content"
-                    android:text="更多"
-                    android:textColor="#fff"
-                    android:textSize="13sp" />
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
+                        android:src="@drawable/emoji_normal"
+                        android:clickable="true"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更多"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
+                        android:src="@drawable/emoji_normal"
+                        android:clickable="true"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更多"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
+                        android:src="@drawable/emoji_normal"
+                        android:clickable="true"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更多"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="4dp"
+                        android:src="@drawable/emoji_normal"
+                        android:clickable="true"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更多"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </HorizontalScrollView>
 
         <ImageView
             android:id="@+id/imageView5"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:layout_above="@+id/ll_item"
+            android:layout_above="@+id/hs_item"
             android:background="#9fff"
             tools:ignore="ContentDescription" />
 
         <RelativeLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="fill_parent"
-            android:layout_height="75dp"
+            android:layout_height="80dp"
             android:layout_above="@+id/imageView5"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true" >
 
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_alignLeft="@+id/imageView3"
+                android:scrollbars="none" >
+
+                <LinearLayout
+                    android:id="@+id/linearlayout_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp" >
+                </LinearLayout>
+            </HorizontalScrollView>
+
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="15dp"
+                android:layout_height="80dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
                 android:src="@drawable/left_nav"
                 tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="15dp"
+                android:layout_height="80dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@+id/imageView3"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
                 android:src="@drawable/right_nav"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>

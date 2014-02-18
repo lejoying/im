@@ -10,6 +10,7 @@ import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -17,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -29,6 +32,7 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Circle;
 import com.lejoying.mc.data.Friend;
+import com.lejoying.mc.data.Message;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
 import com.lejoying.mc.service.PushService;
@@ -211,10 +215,10 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 					arg1.setTag(messageHolder);
 					break;
 				case TYPE_CIRCLE:
-					arg1 = mInflater.inflate(R.layout.f_group_panel, null);
+					arg1 = mInflater.inflate(R.layout.f_friend_panel, null);
 					friendHolder = new FriendHolder();
 					friendHolder.tv_groupname = (TextView) arg1
-							.findViewById(R.id.tv_broadcast);
+							.findViewById(R.id.textView_groupNameAndMemberCount);
 					friendHolder.vp_content = (FriendViewPager) arg1
 							.findViewById(R.id.vp_content);
 					arg1.setTag(friendHolder);
@@ -251,8 +255,18 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 
 				final Friend friend = friends.get(lastChatFriends.get(arg0
 						- messageFirstPosition));
-				messageHolder.tv_lastchat.setText(friend.messages
-						.get(friend.messages.size() - 1).content);
+				Message lastMessage = friend.messages.get(friend.messages
+						.size() - 1);
+				if (lastMessage.contentType.equals("text")) {
+
+					messageHolder.tv_lastchat.setText(friend.messages
+							.get(friend.messages.size() - 1).content);
+				} else if (lastMessage.contentType.equals("image")) {
+					messageHolder.tv_lastchat
+							.setText(getString(R.string.message_picture));
+				} else if (lastMessage.contentType.equals("voice")) {
+
+				}
 				final String headFileName = friend.head;
 				final ImageView iv_head = messageHolder.iv_head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
@@ -290,6 +304,20 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 			case TYPE_CIRCLE:
 				Circle circle = circles.get(arg0 - circleFirstPosition);
 				friendHolder.tv_groupname.setText(circle.name);
+				arg1.setOnLongClickListener(new OnLongClickListener() {
+
+					@Override
+					public boolean onLongClick(View v) {
+						System.out.println(getListView()
+								.getFirstVisiblePosition());
+						System.out.println(getListAdapter().getView(
+								getListView().getFirstVisiblePosition(), null,
+								null));
+						System.out.println(getListView()
+								.getLastVisiblePosition());
+						return true;
+					}
+				});
 				friendHolder.setCircle(circle, arg0);
 				break;
 			case TYPE_BUTTON:
@@ -378,7 +406,7 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 		FriendViewPager vp_content;
 		PagerAdapter vp_contentAdapter;
 
-		//GestureDetector gestureDetector;
+		// GestureDetector gestureDetector;
 
 		Circle circle;
 
@@ -439,7 +467,7 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 		// }
 
 		public void setCircle(Circle c, final int viewPosition) {
-			//generateGestureDetector();
+			// generateGestureDetector();
 			this.circle = c;
 			final List<String> phones = circle.phones;
 			final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6
@@ -457,7 +485,7 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 							if (convertView == null) {
 								convertView = mInflater
 										.inflate(
-												R.layout.f_group_panelitem_gridpageitem_user,
+												R.layout.f_friend_panelitem_gridpage_item,
 												null);
 								itemHolder = new ItemHolder();
 								itemHolder.iv_head = (ImageView) convertView
@@ -497,16 +525,31 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 															true);
 										}
 									});
+
 							convertView
 									.setOnLongClickListener(new OnLongClickListener() {
-										//int nowposition = viewPosition;
 
 										@Override
 										public boolean onLongClick(View v) {
-											// View nowPressView = getListView()
-											// .getChildAt(nowposition);
-											// nowPressView
-											// .setVisibility(View.GONE);
+											int firstPosition = getListView()
+													.getFirstVisiblePosition();
+											int lastPosition = getListView()
+													.getLastVisiblePosition();
+											System.out.println(viewPosition);
+											Animation animation = AnimationUtils
+													.loadAnimation(
+															getActivity(),
+															R.anim.tran_out_top);
+											for (int i = firstPosition; i <= lastPosition; i++) {
+												if (i != viewPosition) {
+													getListAdapter().getView(i,
+															null, null)
+															.startAnimation(
+																	animation);
+													System.out.println("start"
+															+ i);
+												}
+											}
 											return true;
 										}
 									});
@@ -544,7 +587,7 @@ public class CopyOfFriendsFragment extends BaseListFragment {
 
 					};
 					GridView gridpage = (GridView) mInflater.inflate(
-							R.layout.f_group_panelitem_gridpage, null);
+							R.layout.f_friend_panelitem_gridpage, null);
 					gridpage.setAdapter(gridpageAdapter);
 					pageviews.add(gridpage);
 					// gridpage.setOnTouchListener(new OnTouchListener() {

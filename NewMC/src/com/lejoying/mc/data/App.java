@@ -42,6 +42,7 @@ public class App {
 	public String searchFriendFragment = "searchFriendFragment";
 	public String shareFragment = "shareFragment";
 	public String squareFragment = "squareFragment";
+	public String groupFragment = "groupFragment";
 
 	public String mark = "";
 
@@ -55,7 +56,7 @@ public class App {
 	}
 
 	private boolean isInitialized;
-	
+
 	public LayoutInflater inflater;
 
 	public void initialize(Context applicationContext) {

@@ -3,64 +3,31 @@ package com.lejoying.mc.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
-import android.widget.AbsListView;
-import android.widget.ListView;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.widget.ScrollView;
 
-public class FriendListView extends ListView {
+public class VScrollView extends ScrollView {
 
 	GestureDetector mGestureDetector;
 
-	public FriendListView(Context context) {
-		super(context);
-	}
-
-	public FriendListView(Context context, AttributeSet attrs) {
+	public VScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		// TODO Auto-generated constructor stub
 		mGestureDetector = new GestureDetector(context, new YScrollDetector());
-		this.setOnScrollListener(new OnScrollListener() {
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				// TODO Auto-generated method stub
-				switch (scrollState) {
-				case SCROLL_STATE_FLING:
-					isFling = true;
-					break;
-
-				default:
-					isFling = false;
-					break;
-				}
-			}
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				// TODO Auto-generated method stub
-
-			}
-		});
 	}
-
-	public FriendListView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
-
-	boolean isFling;
 
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		// TODO Auto-generated method stub
+
 		if (ev.getAction() == MotionEvent.ACTION_DOWN
 				|| ev.getAction() == MotionEvent.ACTION_UP) {
 			state = 0;
 		}
 		boolean flag = mGestureDetector.onTouchEvent(ev);
 		boolean flagSuper = super.onInterceptTouchEvent(ev);
-
-		return (flagSuper && flag) || isFling;
+		return flagSuper && flag;
 	}
 
 	int state;

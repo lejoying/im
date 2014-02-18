@@ -10,6 +10,7 @@ import android.database.DataSetObserver;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import com.lejoying.mc.data.Circle;
 import com.lejoying.mc.data.Friend;
 import com.lejoying.mc.data.Message;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
+import com.lejoying.mc.fragment.FriendsFragment;
 import com.lejoying.mc.view.FriendViewPager;
 
 public class ViewHandler {
@@ -36,20 +38,16 @@ public class ViewHandler {
 
 	public interface GenerateViewListener {
 		public void success(List<View> views);
+
+	}
+
+	public interface FriendViewTag {
+		public String viewType = "";
 	}
 
 	public void generateFriendView(
-			final GenerateViewListener generateViewListener) {
-		
-		View v = app.inflater
-		.inflate(
-				R.layout.f_group_panelitem_gridpageitem_user,
-				null);
-		
-		System.out.println("............");
-		v.measure(0, 0);
-		System.out.println(v.getMeasuredHeight());
-		
+			final GenerateViewListener generateViewListener,FriendsFragment fragment) {
+
 		Runnable runnable = new Runnable() {
 			List<Circle> circles;
 			Map<String, Friend> friends;
@@ -84,6 +82,14 @@ public class ViewHandler {
 							.getString(R.string.btn_newfriends)
 							+ "("
 							+ newFriendsCount + ")");
+					newFriendButton.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							
+						}
+					});
 					friendViews.add(viewNewFrined);
 				}
 
@@ -179,10 +185,10 @@ public class ViewHandler {
 		for (int m = circles.size() - 1; m > -1; m--) {
 			final Circle circle = circles.get(m);
 
-			View group = app.inflater.inflate(R.layout.f_group_panel, null);
+			View group = app.inflater.inflate(R.layout.f_friend_panel, null);
 
 			TextView tv_groupname = (TextView) group
-					.findViewById(R.id.tv_broadcast);
+					.findViewById(R.id.textView_groupNameAndMemberCount);
 			FriendViewPager vp_content = (FriendViewPager) group
 					.findViewById(R.id.vp_content);
 
@@ -204,7 +210,7 @@ public class ViewHandler {
 						if (convertView == null) {
 							convertView = app.inflater
 									.inflate(
-											R.layout.f_group_panelitem_gridpageitem_user,
+											R.layout.f_friend_panelitem_gridpage_item,
 											null);
 							itemHolder = new ItemHolder();
 							itemHolder.iv_head = (ImageView) convertView
@@ -263,7 +269,7 @@ public class ViewHandler {
 
 				};
 				GridView gridpage = (GridView) app.inflater.inflate(
-						R.layout.f_group_panelitem_gridpage, null);
+						R.layout.f_friend_panelitem_gridpage, null);
 				gridpage.setAdapter(gridpageAdapter);
 				pageviews.add(gridpage);
 			}

@@ -81,9 +81,9 @@ public class SearchFriendFragment extends BaseListFragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			switch (position) {
 			case 1:
-				convertView = mInflater.inflate(R.layout.f_group_panel, null);
+				convertView = mInflater.inflate(R.layout.f_friend_panel, null);
 				TextView tv_groupname = (TextView) convertView
-						.findViewById(R.id.tv_broadcast);
+						.findViewById(R.id.textView_groupNameAndMemberCount);
 				tv_groupname.setText("附近好友");
 				break;
 			case 2:

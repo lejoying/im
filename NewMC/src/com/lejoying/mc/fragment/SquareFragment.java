@@ -25,6 +25,8 @@ public class SquareFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		mMCFragmentManager
+				.setCircleMenuPageName("广场");
 		mContent = inflater.inflate(R.layout.f_square, null);
 		ScrollView scrollView2 = (ScrollView) mContent
 				.findViewById(R.id.scrollView2);

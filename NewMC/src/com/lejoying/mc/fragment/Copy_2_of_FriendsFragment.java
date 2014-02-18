@@ -16,8 +16,9 @@ import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.ViewHandler.GenerateViewListener;
 import com.lejoying.mc.service.PushService;
+import com.lejoying.mc.view.NoScrollListView;
 
-public class Copy_2_of_FriendsFragment extends BaseListFragment {
+public class Copy_2_of_FriendsFragment extends BaseFragment {
 
 	public static Copy_2_of_FriendsFragment instance;
 
@@ -28,6 +29,8 @@ public class Copy_2_of_FriendsFragment extends BaseListFragment {
 	private View mContent;
 
 	View rl_control;
+
+	NoScrollListView mListView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,8 @@ public class Copy_2_of_FriendsFragment extends BaseListFragment {
 		mMCFragmentManager.showCircleMenuToTop(false, false);
 		mMCFragmentManager
 				.setCircleMenuPageName(getString(R.string.page_friend));
-		mContent = inflater.inflate(R.layout.f_friends, null);
+		mContent = inflater.inflate(R.layout.f_scroll_friends, null);
+		mListView = (NoScrollListView) mContent.findViewById(R.id.linearlayout);
 		rl_control = mContent.findViewById(R.id.rl_control);
 		return mContent;
 	}
@@ -55,36 +59,31 @@ public class Copy_2_of_FriendsFragment extends BaseListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if (getListAdapter() == null) {
-			app.sDcardDataResolver.readLocalData(new UIModification() {
-				@Override
-				public void modifyUI() {
-					setListAdapter(mAdapter);
-					app.viewHandler
-							.generateFriendView(new GenerateViewListener() {
-								@Override
-								public void success(List<View> views) {
-									mAdapter = new FriendsAdapter(views);
-									// viewList = views;
-									app.mUIThreadHandler.post(new Runnable() {
-										@Override
-										public void run() {
-											getListView().setAdapter(mAdapter);
-										}
-									});
-								}
-							});
-					app.serverHandler.getAllData();
-				}
-			});
-		}
+		app.sDcardDataResolver.readLocalData(new UIModification() {
+			@Override
+			public void modifyUI() {
+				app.viewHandler.generateFriendView(new GenerateViewListener() {
+					@Override
+					public void success(List<View> views) {
+						mAdapter = new FriendsAdapter(views);
+						// viewList = views;
+						app.mUIThreadHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								mListView.setAdapter(mAdapter);
+							}
+						});
+					}
+				}, null);
+				app.serverHandler.getAllData();
+			}
+		});
 	}
 
 	public void onResume() {
 		super.onResume();
 		instance = this;
 		app.mark = app.friendsFragment;
-		mAdapter.notifyDataSetChanged();
 	}
 
 	public void onDestroyView() {

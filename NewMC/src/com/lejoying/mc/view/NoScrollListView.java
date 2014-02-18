@@ -31,6 +31,11 @@ public class NoScrollListView extends LinearLayout {
 		int count = adapter.getCount();
 		for (int i = 0; i < count; i++) {
 			View v = adapter.getDropDownView(i, null, null);
+			LayoutParams layoutParams = new LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			layoutParams.setMargins(layoutParams.leftMargin, 20,
+					layoutParams.rightMargin, layoutParams.bottomMargin);
+			v.setLayoutParams(layoutParams);
 			this.addView(v);
 		}
 		Log.v("countTAG", "" + count);

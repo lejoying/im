@@ -113,8 +113,6 @@ public class ServerHandler {
 					public void modifyUI() {
 						if (app.mark.equals(app.friendsFragment)) {
 							if (FriendsFragment.instance != null) {
-								FriendsFragment.instance.mAdapter
-										.notifyDataSetChanged();
 							}
 						} else if (app.mark.equals(app.newFriendsFragment)) {
 							if (NewFriendsFragment.instance != null) {
@@ -167,12 +165,51 @@ public class ServerHandler {
 					@Override
 					public void modifyUI() {
 						// TODO Auto-generated method stub
-						if (app.mark.equals(app.friendsFragment)) {
-							if (FriendsFragment.instance != null) {
-								FriendsFragment.instance.mAdapter
-										.notifyDataSetChanged();
-							}
+						if (uiModification != null) {
+							uiModification.modifyUI();
 						}
+					}
+				});
+			}
+		});
+	}
+
+	public void getGroupsAndMembers(final Modification modification,
+			final UIModification uiModification) {
+		final Bundle params = new Bundle();
+		params.putString("phone", app.data.user.phone);
+		params.putString("accessKey", app.data.user.accessKey);
+
+		MCNetUtils.ajax(new AjaxAdapter() {
+
+			@Override
+			public void setParams(Settings settings) {
+				settings.url = API.GROUP_GETGROUPSANDMEMBERS;
+				settings.params = params;
+			}
+
+			@Override
+			public void onSuccess(final JSONObject jData) {
+				app.dataHandler.modifyData(new Modification() {
+					@Override
+					public void modify(Data data) {
+						try {
+							app.mJSONHandler.saveCircles(
+									jData.getJSONArray("circles"), data);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						System.out.println(jData);
+						if (modification != null) {
+							modification.modify(data);
+						}
+					}
+				}, new UIModification() {
+
+					@Override
+					public void modifyUI() {
+						// TODO Auto-generated method stub
 						if (uiModification != null) {
 							uiModification.modifyUI();
 						}
@@ -220,8 +257,7 @@ public class ServerHandler {
 					public void modifyUI() {
 						if (app.mark.equals(app.friendsFragment)) {
 							if (FriendsFragment.instance != null) {
-								FriendsFragment.instance.mAdapter
-										.notifyDataSetChanged();
+								
 							}
 						} else if (app.mark.equals(app.chatFragment)) {
 							if (ChatFragment.instance != null) {
@@ -245,10 +281,15 @@ public class ServerHandler {
 				getCirclesAndFriends(new Modification() {
 					@Override
 					public void modify(Data data) {
-						getMessages(new Modification() {
+						getGroupsAndMembers(new Modification() {
 							@Override
 							public void modify(Data data) {
-								getAskFriends(null, null);
+								getMessages(new Modification() {
+									@Override
+									public void modify(Data data) {
+										getAskFriends(null, null);
+									}
+								}, null);
 							}
 						}, null);
 					}
