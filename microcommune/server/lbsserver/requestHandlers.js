@@ -63,6 +63,11 @@ requestHandlers.lbsManage = function (request, response, pathObject, data) {
     else if (operation == "detail") {
         lbsManage.detail(data, response);
     }
+    if (operation == "loginpoi") {
+        lbsManage.loginpoi(data, response);
+    } else if (operation == "grouppoi") {
+        lbsManage.grouppoi(data, response);
+    }
 };
 
 module.exports = requestHandlers;
