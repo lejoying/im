@@ -20,43 +20,60 @@ public class VScrollView extends ScrollView {
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		// TODO Auto-generated method stub
-
-		if (ev.getAction() == MotionEvent.ACTION_DOWN
-				|| ev.getAction() == MotionEvent.ACTION_UP) {
-			state = 0;
-		}
-		boolean flag = mGestureDetector.onTouchEvent(ev);
-		boolean flagSuper = super.onInterceptTouchEvent(ev);
-		return flagSuper && flag;
+		return super.onInterceptTouchEvent(ev)
+				&& mGestureDetector.onTouchEvent(ev);
 	}
-
-	int state;
-
-	final int STATE_SELF = 1;
-	final int STATE_CHILD = 2;
 
 	class YScrollDetector extends SimpleOnGestureListener {
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2,
-				float distanceX, float distanceY) {
-			boolean flag = false;
-			switch (state) {
-			case 0:
-				if (Math.abs(distanceY) >= Math.abs(distanceX)) {
-					state = STATE_SELF;
-				} else if (Math.abs(distanceY) < Math.abs(distanceX)) {
-					state = STATE_CHILD;
-				}
-			case STATE_SELF:
-				flag = true;
-				break;
-			case STATE_CHILD:
-				flag = false;
-				break;
-			}
-			return flag;
-		}
 
+		public final boolean onScroll(MotionEvent paramMotionEvent1,
+				MotionEvent paramMotionEvent2, float paramFloat1,
+				float paramFloat2) {
+			return 180.0D * Math.atan2(Math.abs(paramFloat2),
+					Math.abs(paramFloat1)) / 3.141592653589793D < 180.0D;
+		}
 	}
+
+	// @Override
+	// public boolean onInterceptTouchEvent(MotionEvent ev) {
+	// // TODO Auto-generated method stub
+	//
+	// if (ev.getAction() == MotionEvent.ACTION_DOWN
+	// || ev.getAction() == MotionEvent.ACTION_UP) {
+	// state = 0;
+	// }
+	// boolean flag = mGestureDetector.onTouchEvent(ev);
+	// boolean flagSuper = super.onInterceptTouchEvent(ev);
+	// return flagSuper && flag;
+	// }
+	//
+	// int state;
+	//
+	// final int STATE_SELF = 1;
+	// final int STATE_CHILD = 2;
+	//
+	// class YScrollDetector extends SimpleOnGestureListener {
+	// @Override
+	// public boolean onScroll(MotionEvent e1, MotionEvent e2,
+	// float distanceX, float distanceY) {
+	// boolean flag = false;
+	// switch (state) {
+	// case 0:
+	// if (Math.abs(distanceY) >= Math.abs(distanceX)) {
+	// state = STATE_SELF;
+	// } else if (Math.abs(distanceY) < Math.abs(distanceX)) {
+	// state = STATE_CHILD;
+	// }
+	// case STATE_SELF:
+	// flag = true;
+	// break;
+	// case STATE_CHILD:
+	// flag = false;
+	// break;
+	// }
+	// return flag;
+	// }
+	//
+	// }
 
 }

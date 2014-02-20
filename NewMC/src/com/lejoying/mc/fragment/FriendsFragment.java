@@ -537,7 +537,7 @@ public class FriendsFragment extends BaseListFragment {
 													.replaceToContent(
 															new EditFragment(),
 															true);
-											return true;
+											return false;
 										}
 									});
 							return convertView;

@@ -50,6 +50,8 @@ public class FriendListView extends ListView {
 
 	boolean isFling;
 
+	
+
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		// TODO Auto-generated method stub

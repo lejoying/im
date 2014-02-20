@@ -45,8 +45,7 @@ public class GroupFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method
-		mMCFragmentManager
-				.setCircleMenuPageName("群组");
+		mMCFragmentManager.setCircleMenuPageName("群组");
 		scrollview_group = (ScrollView) inflater
 				.inflate(R.layout.f_group, null);
 		gv_page = (GridView) scrollview_group.findViewById(R.id.gv_page);
@@ -82,24 +81,25 @@ public class GroupFragment extends BaseFragment {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return groups.size();
+			return app.data.groups.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
 			// TODO Auto-generated method stub
-			return groups.get(position);
+			return app.data.groups.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
 			// TODO Auto-generated method stub
-			return groups.get(position).gid;
+			return app.data.groups.get(position).gid;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
+
 			if (convertView == null) {
 				convertView = inflater.inflate(
 						R.layout.f_group_panelitem_gridpage_item, null);
@@ -112,9 +112,9 @@ public class GroupFragment extends BaseFragment {
 			LinearLayout linearlayout_members = (LinearLayout) convertView
 					.findViewById(R.id.linearlayout_members);
 
-			textview_groupname.setText(groups.get(position).name);
+			textview_groupname.setText(app.data.groups.get(position).name);
 			textview_membercount.setText("("
-					+ groups.get(position).members.size() + "人)");
+					+ app.data.groups.get(position).members.size() + "人)");
 
 			for (int i = 0; i < 5; i++) {
 				ImageView iv_head = new ImageView(getActivity());

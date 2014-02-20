@@ -194,13 +194,12 @@ public class ServerHandler {
 					@Override
 					public void modify(Data data) {
 						try {
-							app.mJSONHandler.saveCircles(
-									jData.getJSONArray("circles"), data);
+							app.mJSONHandler.saveGroup(
+									jData.getJSONArray("groups"), data);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						System.out.println(jData);
 						if (modification != null) {
 							modification.modify(data);
 						}
@@ -257,7 +256,7 @@ public class ServerHandler {
 					public void modifyUI() {
 						if (app.mark.equals(app.friendsFragment)) {
 							if (FriendsFragment.instance != null) {
-								
+
 							}
 						} else if (app.mark.equals(app.chatFragment)) {
 							if (ChatFragment.instance != null) {
@@ -288,6 +287,10 @@ public class ServerHandler {
 									@Override
 									public void modify(Data data) {
 										getAskFriends(null, null);
+										System.out.println(app.data.groups
+												.size()
+												+ "::::::"
+												+ app.data.groupFriends.size());
 									}
 								}, null);
 							}

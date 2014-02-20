@@ -74,7 +74,7 @@ public class Copy_2_of_FriendsFragment extends BaseFragment {
 							}
 						});
 					}
-				}, null);
+				});
 				app.serverHandler.getAllData();
 			}
 		});

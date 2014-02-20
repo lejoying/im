@@ -106,6 +106,8 @@ public class SDcardDataResolver {
 					data.user = finalData.user;
 					data.circles = finalData.circles;
 					data.friends = finalData.friends;
+					data.groups = finalData.groups;
+					data.groupFriends = finalData.groupFriends;
 					data.lastChatFriends = finalData.lastChatFriends;
 					data.newFriends = finalData.newFriends;
 				}
@@ -155,6 +157,8 @@ public class SDcardDataResolver {
 					data.user.accessKey = accessKey;
 					data.circles = finalData.circles;
 					data.friends = finalData.friends;
+					data.groups = finalData.groups;
+					data.groupFriends = finalData.groupFriends;
 					data.lastChatFriends = finalData.lastChatFriends;
 					data.newFriends = finalData.newFriends;
 				}
@@ -174,6 +178,8 @@ public class SDcardDataResolver {
 				Data saveData = new Data();
 				saveData.circles = app.data.circles;
 				saveData.friends = app.data.friends;
+				saveData.groups = app.data.groups;
+				saveData.groupFriends = app.data.groupFriends;
 				saveData.lastChatFriends = app.data.lastChatFriends;
 				saveData.newFriends = app.data.newFriends;
 				saveData.user = app.data.user;

@@ -46,7 +46,7 @@ public class ViewHandler {
 	}
 
 	public void generateFriendView(
-			final GenerateViewListener generateViewListener,FriendsFragment fragment) {
+			final GenerateViewListener generateViewListener) {
 
 		Runnable runnable = new Runnable() {
 			List<Circle> circles;
