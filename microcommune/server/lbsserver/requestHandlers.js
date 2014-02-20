@@ -1,72 +1,76 @@
 var requestHandlers = {};
-var lbsManage = require('./handlers/lbsManage.js');
+var lbsyunManage = require('./handlers/lbsyunManage.js');
 requestHandlers.lbsManage = function (request, response, pathObject, data) {
     var operation = pathObject["operation"];
     if (data == null) {
         return;
     }
     if (operation == "geotable_create") {
-        lbsManage.geotable_create(data, response);
+        lbsyunManage.geotable_create(data, response);
     }
     else if (operation == "geotable_list") {
-        lbsManage.geotable_list(data, response);
+        lbsyunManage.geotable_list(data, response);
     }
     else if (operation == "geotable_detail") {
-        lbsManage.geotable_detail(data, response);
+        lbsyunManage.geotable_detail(data, response);
     }
     else if (operation == "geotable_update") {
-        lbsManage.geotable_update(data, response);
+        lbsyunManage.geotable_update(data, response);
     }
     else if (operation == "geotable_delete") {
-        lbsManage.geotable_delete(data, response);
+        lbsyunManage.geotable_delete(data, response);
     }
     else if (operation == "column_create") {
-        lbsManage.column_create(data, response);
+        lbsyunManage.column_create(data, response);
     }
     else if (operation == "column_list") {
-        lbsManage.column_list(data, response);
+        lbsyunManage.column_list(data, response);
     }
     else if (operation == "column_detail") {
-        lbsManage.column_detail(data, response);
+        lbsyunManage.column_detail(data, response);
     }
     else if (operation == "column_update") {
-        lbsManage.column_update(data, response);
+        lbsyunManage.column_update(data, response);
     }
     else if (operation == "column_delete") {
-        lbsManage.column_delete(data, response);
+        lbsyunManage.column_delete(data, response);
     }
     else if (operation == "poi_create") {
-        lbsManage.poi_create(data, response);
+        lbsyunManage.poi_create(data, response);
     }
     else if (operation == "poi_list") {
-        lbsManage.poi_list(data, response);
+        lbsyunManage.poi_list(data, response);
     }
     else if (operation == "poi_detail") {
-        lbsManage.poi_detail(data, response);
+        lbsyunManage.poi_detail(data, response);
     }
     else if (operation == "poi_update") {
-        lbsManage.poi_update(data, response);
+        lbsyunManage.poi_update(data, response);
     }
     else if (operation == "poi_delete") {
-        lbsManage.poi_delete(data, response);
+        lbsyunManage.poi_delete(data, response);
     }
 
     else if (operation == "nearby") {
-        lbsManage.nearby(data, response);
+        lbsyunManage.nearby(data, response);
     }
     else if (operation == "local") {
-        lbsManage.local(data, response);
+        lbsyunManage.local(data, response);
     }
     else if (operation == "bound") {
-        lbsManage.bound(data, response);
+        lbsyunManage.bound(data, response);
     }
     else if (operation == "detail") {
-        lbsManage.detail(data, response);
+        lbsyunManage.detail(data, response);
     }
-    if (operation == "loginpoi") {
-        lbsManage.loginpoi(data, response);
-    } else if (operation == "grouppoi") {
-        lbsManage.grouppoi(data, response);
+    if (operation == "updatelocation") {
+        lbsyunManage.updatelocation(data, response);
+    } else if (operation == "setgrouplocation") {
+        lbsyunManage.setgrouplocation(data, response);
+    } else if (operation == "nearbyaccounts") {
+        lbsyunManage.nearbyaccounts(data, response);
+    } else if (operation == "nearbygroups") {
+        lbsyunManage.nearbygroups(data, response);
     }
 };
 

@@ -851,75 +851,75 @@ api = {
     }
 }
 /*************************************** ***************************************
- * *    Class：group
+ * *    Class：LBS YUN
  *************************************** ***************************************/
 api = {
     /***************************************
-     *     URL：/lbs/loginpoi
+     *     URL：/lbs/updatelocation
      ***************************************/
-    "lbs_loginpoi": {
+    "lbs_updatelocation": {
         description: {
             id: 1001100,
-            url: "/lbs/loginpoi"
+            url: "/lbs/updatelocation"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN", account: { mainBusiness: "XXX", head: "XXX", nickName: "XXX" }}
+            typical: {phone: "XXX", accessKey: "XXX", location: {longitude: "NNN", latitude: "NNN"}, account: { mainBusiness: "XXX", head: "XXX", nickName: "XXX" }}
         },
         response: {
-            success: {"提示信息": "标记登录位置成功"},
-            failed: {"提示信息": "标记登录位置失败", "失败原因": "数据异常" || "数据格式错误"}
+            success: {"提示信息": "标记用户位置成功", phone: "XXX"},
+            failed: {"提示信息": "标记用户位置失败", "失败原因": "数据异常" || "参数格式错误"}
         }
     },
     /***************************************
-     *     URL：/lbs/grouppoi
+     *     URL：/lbs/setgrouplocation
      ***************************************/
-    "lbs_grouppoi": {
+    "lbs_setgrouplocation": {
         description: {
             id: 1001101,
-            url: "/lbs/grouppoi"
+            url: "/lbs/setgrouplocation"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN", group: {gid: "NNN", name: "XXX", description: "XXX"}}
+            typical: {phone: "XXX", accessKey: "XXX", location: {longitude: "NNN", latitude: "NNN"}, group: {gid: "NNN", name: "XXX", description: "XXX"}}
         },
         response: {
-            success: {"提示信息": "标记群组位置成功"},
-            failed: {"提示信息": "标记群组位置失败", "失败原因": "数据异常"}
+            success: {"提示信息": "标记群组位置成功", gid: "NNN"},
+            failed: {"提示信息": "标记群组位置失败", "失败原因": "数据异常" || "参数格式错误"}
         }
     },
     /***************************************
-     *     URL：/lbs/nearbyaccount
+     *     URL：/lbs/nearbyaccounts
      ***************************************/
-    "lbs_nearbyaccount": {
+    "lbs_nearbyaccounts": {
         description: {
             id: 1001102,
-            url: "/lbs/nearbyaccount"
+            url: "/lbs/nearbyaccounts"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN"}
+            typical: {phone: "XXX", accessKey: "XXX", area: {longitude: "NNN", latitude: "NNN", radius: "NNN"}}
         },
         response: {
             success: {"提示信息": "获取附近好友成功", accounts: [
-                {phone: "NNN", mainBusiness: "XXX", head: "XXX", nickName: "XXX"}
+                {phone: "NNN", mainBusiness: "XXX", head: "XXX", nickName: "XXX", location: {longitude: "NNN", latitude: "NNN"}, modify_time: "NNN", distance: "NNN"}
             ]},
-            failed: {"提示信息": "获取附近好友失败", "失败原因": "数据异常"}
+            failed: {"提示信息": "获取附近好友失败", "失败原因": "数据异常" || "参数格式错误"}
         }
     },
     /***************************************
-     *     URL：/lbs/nearbygroup
+     *     URL：/lbs/nearbygroups
      ***************************************/
-    "lbs_nearbygroup": {
+    "lbs_nearbygroups": {
         description: {
             id: 1001103,
-            url: "/lbs/nearbygroup"
+            url: "/lbs/nearbygroups"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", longitude: "NNN", latitude: "NNN"}
+            typical: {phone: "XXX", accessKey: "XXX", area: {longitude: "NNN", latitude: "NNN", radius: "NNN"}}
         },
         response: {
             success: {"提示信息": "获取附近群组成功", groups: [
-                {gid: "NNN", name: "XXX", description: "XXX"}
+                {gid: "NNN", name: "XXX", description: "XXX", location: {longitude: "NNN", latitude: "NNN"}, modify_time: "NNN", distance: "NNN"}
             ]},
-            failed: {"提示信息": "获取附近群组失败", "失败原因": "数据异常"}
+            failed: {"提示信息": "获取附近群组失败", "失败原因": "数据异常" || "参数格式错误"}
         }
     }
 }
