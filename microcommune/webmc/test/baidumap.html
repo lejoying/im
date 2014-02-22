@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>添加点标注工具--高级示例</title>
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/MarkerTool/1.2/src/MarkerTool_min.js"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=1.5&ak=A40e77d9d908f2b7f2b66e0bbb297439"></script>
+    <style type="text/css">
+        /* 样式选择面板相关css */
+        #divStyle {
+            width: 280px;
+            height: 160px;
+            border: solid 1px gray;
+            display: block;
+            margin: 2px 0px;
+            display: none;
+        }
+
+        #divStyle ul {
+            list-style-type: none;
+            padding: 2px 2px;
+            margin: 2px 2px
+        }
+
+        #divStyle ul li a {
+            cursor: pointer;
+            margin: 2px 2px;
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            border: solid 1px #ffffff;
+            text-align: center;
+        }
+
+        #divStyle ul li a:hover {
+            background: none;
+            border: solid 1px gray;
+        }
+
+        #divStyle ul li img {
+            border: none;
+            background: url('http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/icon.gif');
+        }
+
+        /* infowindow相关css */
+        .common {
+            font-size: 12px;
+        }
+
+        .star {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+<div style="width:1040px;height:680px;border:1px solid gray" id="container"></div>
+<div id="js_phones"
+     style="width: 400px;height: 400px;overflow-x: hidden;border: 1px red solid;float: right;margin-top: -680px;"></div>
+<!-- <input type="button" value="选择标注样式" onclick="openStylePnl()" />
+<input type="button" value="关闭" onclick="mkrTool.close()" />
+<div id="divStyle" >
+    <ul>
+        <li>
+            <a onclick="selectStyle(0)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:12px;height:21px;background-position: 0 0" /></a>
+            <a onclick="selectStyle(1)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:12px;height:21px;background-position: -23px 0" /></a>
+            <a onclick="selectStyle(2)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:12px;height:21px;background-position: -46px 0" /></a>
+            <a onclick="selectStyle(3)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:12px;height:21px;background-position: -69px 0" /></a>
+            <a onclick="selectStyle(4)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:12px;height:21px;background-position: -92px 0" /></a>
+            <a onclick="selectStyle(5)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:12px;height:21px;background-position: -115px 0" /></a>
+        </li>
+        <li>
+            <a onclick="selectStyle(6)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:19px;height:25px;background-position: 0 -21px" /></a>
+            <a onclick="selectStyle(7)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:19px;height:25px;background-position: -23px -21px" /></a>
+            <a onclick="selectStyle(8)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:19px;height:25px;background-position: -46px  -21px " /></a>
+            <a onclick="selectStyle(9)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:19px;height:25px;background-position: -69px  -21px " /></a>
+            <a onclick="selectStyle(10)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:19px;height:25px;background-position: -92px  -21px " /></a>
+            <a onclick="selectStyle(11)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:19px;height:25px;background-position: -115px  -21px " /></a>
+        </li>
+        <li>
+            <a onclick="selectStyle(12)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:17px;height:21px;background-position: 0 -46px " /></a>
+            <a onclick="selectStyle(13)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:17px;height:21px;background-position: -23px  -46px " /></a>
+            <a onclick="selectStyle(14)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:17px;height:21px;background-position: -46px  -46px " /></a>
+            <a onclick="selectStyle(15)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:17px;height:21px;background-position: -69px  -46px " /></a>
+            <a onclick="selectStyle(16)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:17px;height:21px;background-position: -92px  -46px " /></a>
+            <a onclick="selectStyle(17)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:17px;height:21px;background-position: -115px  -46px " /></a>
+        </li>
+        <li>
+            <a onclick="selectStyle(18)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:25px;height:25px;background-position: 0 -67px " /></a>
+            <a onclick="selectStyle(19)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:25px;height:25px;background-position: -25px  -67px " /></a>
+            <a onclick="selectStyle(20)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:25px;height:25px;background-position: -50px  -67px " /></a>
+            <a onclick="selectStyle(21)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:25px;height:25px;background-position: -75px  -67px " /></a>
+            <a onclick="selectStyle(22)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:25px;height:25px;background-position: -100px  -67px " /></a>
+            <a onclick="selectStyle(23)" href = 'javascript:void(0)'><img src="http://api.map.baidu.com/library/MarkerTool/1.2/examples/images/transparent.gif" style="width:19px;height:25px;background-position: -125px  -67px " /></a>
+        </li>
+    </ul>
+</div> -->
+</body>
+</html>
+<script type="text/javascript">
+    var map = new BMap.Map("container");
+    var distance = map.getDistance(new BMap.Point(116.404, 39.916), new BMap.Point(116.404, 39.915))
+    console.log("distance:" + distance);
+    map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
+    map.enableScrollWheelZoom();
+    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_LEFT, type: BMAP_NAVIGATION_CONTROL_LARGE}));
+    //拼接infowindow内容字串
+    var html = [];
+    html.push('<span style="font-size:12px">属性信息: </span><br/>');
+    html.push('<table border="0" cellpadding="1" cellspacing="1" >');
+    html.push('  <tr>');
+    html.push('      <td align="left" class="common">手 机：</td>');
+    html.push('      <td colspan="2"><input type="text" maxlength="50" size="18"  id="txtTel"></td>');
+    html.push('	     <td valign="top"><span class="star">*</span></td>');
+    html.push('  </tr>');
+    html.push('  <tr>');
+    html.push('      <td  align="left" class="common">昵 称：</td>');
+    html.push('      <td colspan="2"><input type="text" maxlength="30" size="18"  id="txtName"></td>');
+    html.push('	     <td valign="top"><span class="star">*</span></td>');
+    html.push('  </tr>');
+    html.push('  <tr>');
+    html.push('      <td  align="left" class="common">头 像：</td>');
+    html.push('      <td  colspan="2"><input type="text" maxlength="50" size="18"  id="txtAddr" value="6330116f4ca1332647429154fbe50cd7b17bd95d.png"></td>');
+    html.push('	     <td valign="top"><span class="star"></span></td>');
+    html.push('  </tr>');
+    html.push('  <tr>');
+    html.push('      <td align="left" class="common">描 述：</td>');
+    html.push('      <td colspan="2"><textarea rows="2" cols="15"  id="areaDesc">你是神马？</textarea></td>');
+    html.push('	     <td valign="top"></td>');
+    html.push('  </tr>');
+    html.push('  <tr>');
+    html.push('	     <td  align="center" colspan="3">');
+    html.push('          <input type="button" name="btnOK"  onclick="fnOK()" value="确定">&nbsp;&nbsp;');
+    html.push('		     <input type="button" name="btnClear" onclick="fnClear();" value="重填">');
+    html.push('	     </td>');
+    html.push('  </tr>');
+    html.push('</table>');
+
+    var infoWin = new BMap.InfoWindow(html.join(""), {offset: new BMap.Size(0, -10)});
+    var curMkr = null; // 记录当前添加的Mkr
+
+    var mkrTool = new BMapLib.MarkerTool(map, {autoClose: true});
+    mkrTool.addEventListener("markend", function (evt) {
+        var mkr = evt.marker;
+        mkr.openInfoWindow(infoWin);
+        curMkr = mkr;
+    });
+
+    //打开样式面板
+    function openStylePnl() {
+        document.getElementById("divStyle").style.display = "block";
+    }
+
+    //选择样式
+    function selectStyle(index) {
+        mkrTool.open(); //打开工具
+        var icon = BMapLib.MarkerTool.SYS_ICONS[index]; //设置工具样式，使用系统提供的样式BMapLib.MarkerTool.SYS_ICONS[0] -- BMapLib.MarkerTool.SYS_ICONS[23]
+        mkrTool.setIcon(icon);
+        //document.getElementById("divStyle").style.display = "none";
+    }
+    var points = {};
+    //提交数据
+    function fnOK() {
+        var name = encodeHTML(document.getElementById("txtName").value);
+        var tel = encodeHTML(document.getElementById("txtTel").value);
+        var addr = encodeHTML(document.getElementById("txtAddr").value);
+        var desc = encodeHTML(document.getElementById("areaDesc").value);
+
+        if (!name || !tel) {
+            alert("星号字段必须填写");
+            return;
+        }
+
+        if (curMkr) {
+            var labelData = "名称: " + name + "\n\r" + "<br/>电话: " + tel + "\n\r" + "<br/>地址: " + addr + "\n\r" + "<br/>描述: " + desc;
+            //设置label
+            //设置label
+            var lbl = new BMap.Label(tel, {offset: new BMap.Size(20, -10)});
+            lbl.setStyle({border: "solid 1px gray"});
+            curMkr.setLabel(lbl);
+
+            //设置title
+            var title = "手机: " + tel + "\r" + "昵称: " + name + "\r" + "地址: " + addr + "\r" + "描述: " + desc;
+            curMkr.setTitle(title);
+        }
+        if (infoWin.isOpen()) {
+            map.closeInfoWindow();
+        }
+
+        //在此用户可将数据提交到后台数据库中
+        //console.log(tel);
+        console.log((curMkr.point ? curMkr.point.lng : curMkr.N.lng) + "," + (curMkr.point ? curMkr.point.lat : curMkr.N.lat));
+        var lng = curMkr.point ? curMkr.point.lng : curMkr.N.lng;
+        var lat = curMkr.point ? curMkr.point.lat : curMkr.N.lat;
+        points[tel] = {
+            lng: lng,
+            lat: lat
+        }
+        $.ajax({
+            type: "POST",
+            url: "/lbs/updatelocation?",
+            data: {
+                phone: tel,
+                accessKey: "lejoying",
+                location: JSON.stringify({
+                    longitude: lng,
+                    latitude: lat
+                }),
+                account: JSON.stringify({
+                    nickName: name,
+                    head: addr,
+                    mainBusiness: desc
+                })
+            },
+            success: function (data) {
+                if (data["提示信息"] == "标记用户位置成功") {
+                    console.log(data["提示信息"] + "," + data.phone);
+                    var dom = document.createElement("a");
+                    dom.title = title;
+                    dom.innerHTML = "phone:" + tel + "-lng:" + lng + "-lat:" + lat;
+                    $("#js_phones")[0].append(dom);
+                } else {
+                    console.log(data["提示信息"] + "," + data["失败原因"]);
+                }
+            }
+        });
+    }
+
+    //输入校验
+    function encodeHTML(a) {
+        return a.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    //重填数据
+    function fnClear() {
+        document.getElementById("txtName").value = "";
+        document.getElementById("txtTel").value = "";
+        document.getElementById("txtAddr").value = "";
+        document.getElementById("areaDesc").value = "";
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------------
+    var contextMenu = new BMap.ContextMenu();              //右键添加标注菜单
+    contextMenu.addItem(new BMap.MenuItem('在此添加标注', function (p) {
+        rightMenuAddMarker(p);
+    }, 100));
+    contextMenu.addItem(new BMap.MenuItem('删除所有标记标注', function (p) {
+        map.clearOverlays();
+    }, 100));
+    map.addContextMenu(contextMenu);
+    //添加标注闭包
+    function rightMenuAddMarker(p) {
+        var marker = new BMap.Marker(p), px = map.pointToPixel(p);
+        marker.addContextMenu(rightMenuDeleteMarker(marker));
+        map.addOverlay(marker);
+        curMkr = marker;
+        marker.openInfoWindow(infoWin);
+        //表单ajax
+    }
+    function rightMenuDeleteMarker(marker) {                //右键删除标注菜单
+        var contextMenuClose = new BMap.ContextMenu();
+        contextMenuClose.addItem(new BMap.MenuItem('删除此标记标注', function (p) {
+            deleteMarker(marker);
+        }, 100));
+        return contextMenuClose;
+    }
+    //删除标注闭包
+    function deleteMarker(marker) {
+        map.removeOverlay(marker);
+// console.log(marker.N.lng);
+// console.log(marker.N.lat);
+        var data = { "type": "del", "lng": marker.N.lng, "lat": marker.N.lat};
+        console.log((marker.point ? marker.point.lng : marker.N.lng) + "," + (marker.point ? marker.point.lat : marker.N.lat));
+        zyc(data);
+    }
+    function zyc(data) {
+        if (infoWin.isOpen()) {
+            map.closeInfoWindow();
+        }
+        /**$('.zFade').show('normal');
+         $.post("http://localhost/1.php",data,function(returnData){
+  var typeData='标注添加成功';
+  if(data.type == 'del')
+   typeData="标注删除成功";
+   setTimeout(function(){
+   $('.zFade').css('background-color','#60C99B').html(typeData);
+   },500);
+  setTimeout(function(){
+   $('.zFade').hide('slow');
+   },1000);
+}
+         ); */
+
+    }
+</script>
+
