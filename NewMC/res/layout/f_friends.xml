@@ -22,8 +22,8 @@
         android:layout_height="160dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:visibility="gone"
         android:background="@drawable/frame_bottombackground"
+        android:visibility="gone"
         tools:ignore="UselessParent" >
 
         <HorizontalScrollView
@@ -77,9 +77,9 @@
                         android:id="@+id/img_address"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:clickable="true"
                         android:padding="4dp"
                         android:src="@drawable/emoji_normal"
-                        android:clickable="true"
                         tools:ignore="ContentDescription" />
 
                     <TextView
@@ -91,6 +91,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/delete"
                     android:layout_width="88dp"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
@@ -101,9 +102,9 @@
                         android:id="@+id/img_friends"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:clickable="false"
                         android:padding="4dp"
                         android:src="@drawable/emoji_normal"
-                        android:clickable="true"
                         tools:ignore="ContentDescription" />
 
                     <TextView
@@ -115,6 +116,30 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/copy"
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_cpoy"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="6dp"
+                        android:src="@drawable/choise_up"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="复制"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="88dp"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
@@ -125,9 +150,9 @@
                         android:id="@+id/img_settings"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:clickable="true"
                         android:padding="4dp"
                         android:src="@drawable/emoji_normal"
-                        android:clickable="true"
                         tools:ignore="ContentDescription" />
 
                     <TextView
@@ -149,9 +174,9 @@
                         android:id="@+id/img_settings"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:clickable="true"
                         android:padding="4dp"
                         android:src="@drawable/emoji_normal"
-                        android:clickable="true"
                         tools:ignore="ContentDescription" />
 
                     <TextView
@@ -173,33 +198,9 @@
                         android:id="@+id/img_settings"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:clickable="true"
                         android:padding="4dp"
                         android:src="@drawable/emoji_normal"
-                        android:clickable="true"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="更多"
-                        android:textColor="#fff"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="88dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="5dp" >
-
-                    <ImageView
-                        android:id="@+id/img_settings"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="4dp"
-                        android:src="@drawable/emoji_normal"
-                        android:clickable="true"
                         tools:ignore="ContentDescription" />
 
                     <TextView
@@ -266,6 +267,47 @@
                 android:src="@drawable/right_nav"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:layout_centerVertical="true"
+        android:background="#9000"
+        android:visibility="gone"
+        android:padding="15dp" >
+
+        <TextView
+            android:id="@+id/show"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="您将删除该组，该组好友将移动到默认分组中"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/show"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_background"
+            android:text="确定"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/show"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_background"
+            android:text="取消"
+            android:textColor="#fff"
+            android:textSize="19sp" />
     </RelativeLayout>
 
 </RelativeLayout>

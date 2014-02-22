@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -31,6 +32,18 @@ public class EditFragment extends BaseFragment {
 
 	LinearLayout linearlayout_user;
 
+	View popup;
+
+	View delete;
+
+	View btn_ok;
+	View btn_cancel;
+
+	View copy;
+
+	View textView_pagename;
+	View rl_panel_bottom;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -41,6 +54,54 @@ public class EditFragment extends BaseFragment {
 		rl_control.setVisibility(View.VISIBLE);
 		listView = (ListView) mContent.findViewById(android.R.id.list);
 		listView.setAdapter(new MyAdapter());
+		// test
+		popup = mContent.findViewById(R.id.rl_panel);
+		delete = mContent.findViewById(R.id.delete);
+		delete.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				popup.setVisibility(View.VISIBLE);
+			}
+		});
+
+		btn_ok = mContent.findViewById(R.id.btn_ok);
+		btn_cancel = mContent.findViewById(R.id.btn_cancel);
+
+		OnClickListener listener = new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				popup.setVisibility(View.GONE);
+			}
+		};
+		btn_ok.setOnClickListener(listener);
+		btn_cancel.setOnClickListener(listener);
+		copy = mContent.findViewById(R.id.copy);
+		final ImageView img_copy = (ImageView) copy.findViewById(R.id.img_cpoy);
+		copy.setOnClickListener(new OnClickListener() {
+			boolean flag;
+
+			@Override
+			public void onClick(View v) {
+				if (!flag) {
+					img_copy.setImageResource(R.drawable.choise_down);
+					flag = true;
+				} else {
+					img_copy.setImageResource(R.drawable.choise_up);
+					flag = false;
+				}
+			}
+		});
+
+		textView_pagename = vg.findViewById(R.id.textView_pagename);
+		rl_panel_bottom = vg.findViewById(R.id.rl_panel_bottom);
+		textView_pagename.setVisibility(View.VISIBLE);
+		rl_panel_bottom.setVisibility(View.VISIBLE);
+
+		// test end
 		linearlayout_user = (LinearLayout) mContent
 				.findViewById(R.id.linearlayout_user);
 		for (int i = 0; i < 14; i++) {
@@ -60,13 +121,22 @@ public class EditFragment extends BaseFragment {
 			if (i == 13) {
 				params.setMargins(40, 0, 40, 0);
 			}
-			
+
 			userView.setLayoutParams(params);
 			linearlayout_user.addView(userView);
 		}
 		return mContent;
 	}
 
+	@Override
+	public void onDestroyView() {
+		// TODO Auto-generated method stub
+		rl_panel_bottom.setVisibility(View.GONE);
+		textView_pagename.setVisibility(View.GONE);
+		super.onDestroyView();
+		
+	}
+	
 	class MyAdapter extends BaseAdapter {
 
 		@Override

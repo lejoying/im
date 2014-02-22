@@ -1,20 +1,18 @@
 package com.lejoying.mc;
 
-import com.lejoying.mc.utils.MCImageUtils;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+
+import com.lejoying.mc.utils.MCImageUtils;
 
 public class HotActivity extends Activity {
 

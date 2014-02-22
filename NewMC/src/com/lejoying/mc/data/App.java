@@ -187,7 +187,7 @@ public class App {
 
 	public void initBaiduLocation() {
 		mLocationClient = new LocationClient(context); // 声明LocationClient类
-		mLocationClient.setAK("leGdMGbFo6G0fXW9Vwh3ODwc");
+		mLocationClient.setAK("WcjShod0qos0j8pQExf7fMxh");
 		mLocationClient.registerLocationListener(myListener);
 
 		LocationClientOption option = new LocationClientOption();

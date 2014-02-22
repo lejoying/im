@@ -39,6 +39,12 @@ public class WelcomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._welcome);
 
+		app.initialize(getApplicationContext());
+
+		if (!app.mLocationClient.isStarted()) {
+			app.mLocationClient.start();
+		}
+
 		checkLocalData();
 		imageview_mar = (ImageView) findViewById(R.id.imageview_mar);
 		imageview_star = (ImageView) findViewById(R.id.imageview_star);

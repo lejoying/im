@@ -59,6 +59,12 @@ public abstract class API {
 	public static final String GROUP_GET = "api2/group/get";
 	public static final String GROUP_GETGROUPSANDMEMBERS = "api2/group/getgroupsandmembers";
 
+	public static final String LBS = "lbs";
+	public static final String LBS_UPDATELOCATION = "lbs/updatelocation";
+	public static final String LBS_SETGROUPLOCATION = "lbs/setgrouplocation";
+	public static final String LBS_NEARBYACCOUNTS = "lbs/nearbyaccounts";
+	public static final String LBS_NEARBYGROUPS = "lbs/nearbygroups";
+
 	public static String getClazz(String api) {
 		return api.substring(0, api.indexOf(SLASH));
 	}
