@@ -41,8 +41,8 @@ public class WelcomeActivity extends Activity {
 
 		app.initialize(getApplicationContext());
 
-		if (!app.mLocationClient.isStarted()) {
-			app.mLocationClient.start();
+		if (!app.locationHandler.mLocationClient.isStarted()) {
+			app.locationHandler.mLocationClient.start();
 		}
 
 		checkLocalData();

@@ -1,9 +1,14 @@
 package com.lejoying.mc.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Group {
+public class Group implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public int gid;
 	public String name = "";
 	public List<String> members = new ArrayList<String>();
