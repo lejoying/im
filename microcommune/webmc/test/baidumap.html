@@ -58,8 +58,18 @@
 </head>
 <body>
 <div style="width:1040px;height:680px;border:1px solid gray" id="container"></div>
+<div id=""
+     style="width: 200px;height: 400px;overflow-x: hidden;border: 1px blue solid;float: right;margin-top: -680px;margin-right: 500px;">
+    测试接口<br/>&nbsp;&nbsp;&nbsp;&nbsp;
+    <select>
+        <option>uploadlocation</option>
+        <option>setgrouppoi</option>
+        <option>nearbyaccounts</option>
+        <option>nearbygroups</option>
+    </select>
+</div>
 <div id="js_phones"
-     style="width: 400px;height: 400px;overflow-x: hidden;border: 1px red solid;float: right;margin-top: -680px;"></div>
+     style="width: 500px;height: 400px;overflow-x: hidden;border: 1px red solid;float: right;margin-top: -680px;"></div>
 <!-- <input type="button" value="选择标注样式" onclick="openStylePnl()" />
 <input type="button" value="关闭" onclick="mkrTool.close()" />
 <div id="divStyle" >
@@ -101,187 +111,300 @@
 </body>
 </html>
 <script type="text/javascript">
-    var map = new BMap.Map("container");
-    var distance = map.getDistance(new BMap.Point(116.404, 39.916), new BMap.Point(116.404, 39.915))
-    console.log("distance:" + distance);
-    map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
-    map.enableScrollWheelZoom();
-    map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_LEFT, type: BMAP_NAVIGATION_CONTROL_LARGE}));
-    //拼接infowindow内容字串
-    var html = [];
-    html.push('<span style="font-size:12px">属性信息: </span><br/>');
-    html.push('<table border="0" cellpadding="1" cellspacing="1" >');
-    html.push('  <tr>');
-    html.push('      <td align="left" class="common">手 机：</td>');
-    html.push('      <td colspan="2"><input type="text" maxlength="50" size="18"  id="txtTel"></td>');
-    html.push('	     <td valign="top"><span class="star">*</span></td>');
-    html.push('  </tr>');
-    html.push('  <tr>');
-    html.push('      <td  align="left" class="common">昵 称：</td>');
-    html.push('      <td colspan="2"><input type="text" maxlength="30" size="18"  id="txtName"></td>');
-    html.push('	     <td valign="top"><span class="star">*</span></td>');
-    html.push('  </tr>');
-    html.push('  <tr>');
-    html.push('      <td  align="left" class="common">头 像：</td>');
-    html.push('      <td  colspan="2"><input type="text" maxlength="50" size="18"  id="txtAddr" value="6330116f4ca1332647429154fbe50cd7b17bd95d.png"></td>');
-    html.push('	     <td valign="top"><span class="star"></span></td>');
-    html.push('  </tr>');
-    html.push('  <tr>');
-    html.push('      <td align="left" class="common">描 述：</td>');
-    html.push('      <td colspan="2"><textarea rows="2" cols="15"  id="areaDesc">你是神马？</textarea></td>');
-    html.push('	     <td valign="top"></td>');
-    html.push('  </tr>');
-    html.push('  <tr>');
-    html.push('	     <td  align="center" colspan="3">');
-    html.push('          <input type="button" name="btnOK"  onclick="fnOK()" value="确定">&nbsp;&nbsp;');
-    html.push('		     <input type="button" name="btnClear" onclick="fnClear();" value="重填">');
-    html.push('	     </td>');
-    html.push('  </tr>');
-    html.push('</table>');
+var map = new BMap.Map("container");
+//    var distance = map.getDistance(new BMap.Point(116.404, 39.916), new BMap.Point(116.404, 39.915))
+//    console.log("distance:" + distance);
+map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
+map.enableScrollWheelZoom();
+map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_LEFT, type: BMAP_NAVIGATION_CONTROL_LARGE}));
+//拼接infowindow内容字串
+var html = [];
+html.push('<span style="font-size:12px">属性信息: </span><br/>');
+html.push('<table border="0" cellpadding="1" cellspacing="1" >');
+html.push('  <tr>');
+html.push('      <td align="left" class="common">手 机：</td>');
+html.push('      <td colspan="2"><input type="text" maxlength="50" size="18"  id="txtTel"></td>');
+html.push('	     <td valign="top"><span class="star">*</span></td>');
+html.push('  </tr>');
+html.push('  <tr>');
+html.push('      <td  align="left" class="common">昵 称：</td>');
+html.push('      <td colspan="2"><input type="text" maxlength="30" size="18"  id="txtName"></td>');
+html.push('	     <td valign="top"><span class="star">*</span></td>');
+html.push('  </tr>');
+html.push('  <tr>');
+html.push('      <td  align="left" class="common">头 像：</td>');
+html.push('      <td  colspan="2"><input type="text" maxlength="50" size="18"  id="txtAddr" value="6330116f4ca1332647429154fbe50cd7b17bd95d.png"></td>');
+html.push('	     <td valign="top"><span class="star"></span></td>');
+html.push('  </tr>');
+html.push('  <tr>');
+html.push('      <td align="left" class="common">描 述：</td>');
+html.push('      <td colspan="2"><textarea rows="2" cols="15"  id="areaDesc">你是神马？</textarea></td>');
+html.push('	     <td valign="top"></td>');
+html.push('  </tr>');
+html.push('  <tr>');
+html.push('	     <td  align="center" colspan="3">');
+html.push('          <input type="button" name="btnOK"  onclick="fnOK()" value="确定">&nbsp;&nbsp;');
+html.push('		     <input type="button" name="btnClear" onclick="fnClear();" value="重填">');
+html.push('	     </td>');
+html.push('  </tr>');
+html.push('</table>');
 
-    var infoWin = new BMap.InfoWindow(html.join(""), {offset: new BMap.Size(0, -10)});
-    var curMkr = null; // 记录当前添加的Mkr
+var infoWin = new BMap.InfoWindow(html.join(""), {offset: new BMap.Size(0, -10)});
+var htmlgroup = [];
+htmlgroup.push('<span style="font-size:12px">属性信息: </span><br/>');
+htmlgroup.push('<table border="0" cellpadding="1" cellspacing="1" >');
+htmlgroup.push('  <tr>');
+htmlgroup.push('      <td align="left" class="common">群组id：</td>');
+htmlgroup.push('      <td colspan="2"><input type="text" maxlength="50" size="18"  id="txtGid"></td>');
+htmlgroup.push('	     <td valign="top"><span class="star">*</span></td>');
+htmlgroup.push('  </tr>');
+htmlgroup.push('  <tr>');
+htmlgroup.push('      <td  align="left" class="common">名 称：</td>');
+htmlgroup.push('      <td colspan="2"><input type="text" maxlength="30" size="18"  id="txtGname"></td>');
+htmlgroup.push('	     <td valign="top"><span class="star">*</span></td>');
+htmlgroup.push('  </tr>');
+htmlgroup.push('  <tr>');
+htmlgroup.push('      <td align="left" class="common">描 述：</td>');
+htmlgroup.push('      <td colspan="2"><textarea rows="2" cols="15"  id="areaGdesc">群组</textarea></td>');
+htmlgroup.push('	     <td valign="top"></td>');
+htmlgroup.push('  </tr>');
+htmlgroup.push('  <tr>');
+htmlgroup.push('	     <td  align="center" colspan="3">');
+htmlgroup.push('          <input type="button" name="btnOK"  onclick="fnGroupOK()" value="确定">&nbsp;&nbsp;');
+htmlgroup.push('		     <input type="button" name="btnClear" onclick="fnGroupClear();" value="重填">');
+htmlgroup.push('	     </td>');
+htmlgroup.push('  </tr>');
+htmlgroup.push('</table>');
 
-    var mkrTool = new BMapLib.MarkerTool(map, {autoClose: true});
-    mkrTool.addEventListener("markend", function (evt) {
-        var mkr = evt.marker;
-        mkr.openInfoWindow(infoWin);
-        curMkr = mkr;
-    });
+var groupInfoWin = new BMap.InfoWindow(htmlgroup.join(""), {offset: new BMap.Size(0, -10)});
+var curMkr = null; // 记录当前添加的Mkr
 
-    //打开样式面板
-    function openStylePnl() {
-        document.getElementById("divStyle").style.display = "block";
+var mkrTool = new BMapLib.MarkerTool(map, {autoClose: true});
+mkrTool.addEventListener("markend", function (evt) {
+    var mkr = evt.marker;
+    mkr.openInfoWindow(infoWin);
+    curMkr = mkr;
+});
+
+//打开样式面板
+function openStylePnl() {
+    document.getElementById("divStyle").style.display = "block";
+}
+
+//选择样式
+function selectStyle(index) {
+    mkrTool.open(); //打开工具
+    var icon = BMapLib.MarkerTool.SYS_ICONS[index]; //设置工具样式，使用系统提供的样式BMapLib.MarkerTool.SYS_ICONS[0] -- BMapLib.MarkerTool.SYS_ICONS[23]
+    mkrTool.setIcon(icon);
+    //document.getElementById("divStyle").style.display = "none";
+}
+var points = {};
+var groups = {};
+//提交数据
+function fnOK() {
+    var name = encodeHTML(document.getElementById("txtName").value);
+    var tel = encodeHTML(document.getElementById("txtTel").value);
+    var addr = encodeHTML(document.getElementById("txtAddr").value);
+    var desc = encodeHTML(document.getElementById("areaDesc").value);
+
+    if (!name || !tel) {
+        alert("星号字段必须填写");
+        return;
     }
 
-    //选择样式
-    function selectStyle(index) {
-        mkrTool.open(); //打开工具
-        var icon = BMapLib.MarkerTool.SYS_ICONS[index]; //设置工具样式，使用系统提供的样式BMapLib.MarkerTool.SYS_ICONS[0] -- BMapLib.MarkerTool.SYS_ICONS[23]
-        mkrTool.setIcon(icon);
-        //document.getElementById("divStyle").style.display = "none";
+    if (curMkr) {
+        var labelData = "名称: " + name + "\n\r" + "<br/>电话: " + tel + "\n\r" + "<br/>地址: " + addr + "\n\r" + "<br/>描述: " + desc;
+        //设置label
+        //设置label
+        var lbl = new BMap.Label("用户:" + tel, {offset: new BMap.Size(20, -10)});
+        lbl.setStyle({border: "solid 1px gray"});
+        curMkr.setLabel(lbl);
+
+        //设置title
+        var title = "手机: " + tel + "\r" + "昵称: " + name + "\r" + "地址: " + addr + "\r" + "描述: " + desc;
+        curMkr.setTitle(title);
     }
-    var points = {};
-    //提交数据
-    function fnOK() {
-        var name = encodeHTML(document.getElementById("txtName").value);
-        var tel = encodeHTML(document.getElementById("txtTel").value);
-        var addr = encodeHTML(document.getElementById("txtAddr").value);
-        var desc = encodeHTML(document.getElementById("areaDesc").value);
+    if (infoWin.isOpen()) {
+        map.closeInfoWindow();
+    }
 
-        if (!name || !tel) {
-            alert("星号字段必须填写");
-            return;
-        }
-
-        if (curMkr) {
-            var labelData = "名称: " + name + "\n\r" + "<br/>电话: " + tel + "\n\r" + "<br/>地址: " + addr + "\n\r" + "<br/>描述: " + desc;
-            //设置label
-            //设置label
-            var lbl = new BMap.Label(tel, {offset: new BMap.Size(20, -10)});
-            lbl.setStyle({border: "solid 1px gray"});
-            curMkr.setLabel(lbl);
-
-            //设置title
-            var title = "手机: " + tel + "\r" + "昵称: " + name + "\r" + "地址: " + addr + "\r" + "描述: " + desc;
-            curMkr.setTitle(title);
-        }
-        if (infoWin.isOpen()) {
-            map.closeInfoWindow();
-        }
-
-        //在此用户可将数据提交到后台数据库中
-        //console.log(tel);
-        console.log((curMkr.point ? curMkr.point.lng : curMkr.N.lng) + "," + (curMkr.point ? curMkr.point.lat : curMkr.N.lat));
-        var lng = curMkr.point ? curMkr.point.lng : curMkr.N.lng;
-        var lat = curMkr.point ? curMkr.point.lat : curMkr.N.lat;
-        points[tel] = {
-            lng: lng,
-            lat: lat
-        }
-        $.ajax({
-            type: "POST",
-            url: "/lbs/updatelocation?",
-            data: {
-                phone: tel,
-                accessKey: "lejoying",
-                location: JSON.stringify({
-                    longitude: lng,
-                    latitude: lat
-                }),
-                account: JSON.stringify({
-                    nickName: name,
-                    head: addr,
-                    mainBusiness: desc
-                })
-            },
-            success: function (data) {
-                if (data["提示信息"] == "标记用户位置成功") {
-                    console.log(data["提示信息"] + "," + data.phone);
-                    var dom = document.createElement("a");
-                    dom.title = title;
-                    dom.innerHTML = "phone:" + tel + "-lng:" + lng + "-lat:" + lat;
-                    $("#js_phones")[0].append(dom);
-                } else {
-                    console.log(data["提示信息"] + "," + data["失败原因"]);
-                }
+    //在此用户可将数据提交到后台数据库中
+    //console.log(tel);
+    console.log((curMkr.point ? curMkr.point.lng : curMkr.N.lng) + "," + (curMkr.point ? curMkr.point.lat : curMkr.N.lat));
+    var lng = curMkr.point ? curMkr.point.lng : curMkr.N.lng;
+    var lat = curMkr.point ? curMkr.point.lat : curMkr.N.lat;
+    points[tel] = {
+        lng: lng,
+        lat: lat
+    }
+    $.ajax({
+        type: "POST",
+        url: "/lbs/updatelocation?",
+        data: {
+            phone: tel,
+            accessKey: "lejoying",
+            location: JSON.stringify({
+                longitude: lng,
+                latitude: lat
+            }),
+            account: JSON.stringify({
+                nickName: name,
+                head: addr,
+                mainBusiness: desc
+            })
+        },
+        success: function (data) {
+            if (data["提示信息"] == "标记用户位置成功") {
+                console.log(data["提示信息"] + "," + data.phone);
+                var dom = document.createElement("a");
+                dom.title = title;
+                dom.innerHTML = new Date().toLocaleTimeString() + "  phone:" + tel + ",lng:" + lng + ",lat:" + lat + "\n\r";
+                $("#js_phones").append(dom);
+            } else {
+                console.log(data["提示信息"] + "," + data["失败原因"]);
             }
-        });
+        }
+    });
+}
+function fnGroupOK() {
+    var gid = encodeHTML(document.getElementById("txtGid").value);
+    var name = encodeHTML(document.getElementById("txtGname").value);
+    var desc = encodeHTML(document.getElementById("areaGdesc").value);
+
+    if (!name || !gid) {
+        alert("星号字段必须填写");
+        return;
     }
 
-    //输入校验
-    function encodeHTML(a) {
-        return a.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    if (curMkr) {
+//        var labelData = "名称: " + name + "\n\r" + "<br/>电话: " + tel + "\n\r" + "<br/>地址: " + addr + "\n\r" + "<br/>描述: " + desc;
+        //设置label
+        //设置label
+        var lbl = new BMap.Label("群组:" + gid, {offset: new BMap.Size(20, -10)});
+        lbl.setStyle({border: "solid 1px gray"});
+        curMkr.setLabel(lbl);
+
+        //设置title
+        var title = "群组gid: " + gid + "\r" + "名称: " + name + "\r" + "描述: " + desc;
+        curMkr.setTitle(title);
+    }
+    if (groupInfoWin.isOpen()) {
+        map.closeInfoWindow();
     }
 
-    //重填数据
-    function fnClear() {
-        document.getElementById("txtName").value = "";
-        document.getElementById("txtTel").value = "";
-        document.getElementById("txtAddr").value = "";
-        document.getElementById("areaDesc").value = "";
+    //在此用户可将数据提交到后台数据库中
+    //console.log(tel);
+    console.log((curMkr.point ? curMkr.point.lng : curMkr.N.lng) + "," + (curMkr.point ? curMkr.point.lat : curMkr.N.lat));
+    var lng = curMkr.point ? curMkr.point.lng : curMkr.N.lng;
+    var lat = curMkr.point ? curMkr.point.lat : curMkr.N.lat;
+    groups[gid] = {
+        lng: lng,
+        lat: lat
     }
+    $.ajax({
+        type: "POST",
+        url: "/lbs/setgrouplocation?",
+        data: {
+            phone: "121",
+            accessKey: "lejoying",
+            location: JSON.stringify({longitude: lng, latitude: lat}),
+            group: JSON.stringify({gid: parseInt(gid), name: name, description: desc})
+        },
+        success: function (data) {
+            if (data["提示信息"] == "标记群组位置成功") {
+                console.log(data["提示信息"] + "," + data.gid);
+                var dom = document.createElement("a");
+                dom.title = title;
+                dom.innerHTML = new Date().toLocaleTimeString() + "  gid:" + gid + ",lng:" + lng + ",lat:" + lat + "\n\r";
+                $("#js_phones").append(dom);
+            } else {
+                console.log(data["提示信息"] + "," + data["失败原因"]);
+            }
+        }
+    });
+}
 
-    //-------------------------------------------------------------------------------------------------------------------------------
-    var contextMenu = new BMap.ContextMenu();              //右键添加标注菜单
-    contextMenu.addItem(new BMap.MenuItem('在此添加标注', function (p) {
-        rightMenuAddMarker(p);
+//输入校验
+function encodeHTML(a) {
+    return a.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+//重填数据
+function fnClear() {
+    document.getElementById("txtName").value = "";
+    document.getElementById("txtTel").value = "";
+    document.getElementById("txtAddr").value = "";
+    document.getElementById("areaDesc").value = "";
+}
+function fnGroupClear() {
+    document.getElementById("txtGid").value = "";
+    document.getElementById("txtGname").value = "";
+    document.getElementById("areaGdesc").value = "";
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------------------
+var contextMenu = new BMap.ContextMenu();              //右键添加标注菜单
+contextMenu.addItem(new BMap.MenuItem('在此标注用户', function (p) {
+    rightMenuAddMarker(p);
+}, 100));
+contextMenu.addItem(new BMap.MenuItem('在此标注群组', function (p) {
+    var marker = new BMap.Marker(p), px = map.pointToPixel(p);
+    marker.addContextMenu(rightMenuDeleteMarker(marker));
+    map.addOverlay(marker);
+    curMkr = marker;
+    marker.openInfoWindow(groupInfoWin);
+}, 100));
+contextMenu.addItem(new BMap.MenuItem('附近用户', function (p) {
+    $("#js_phones").html("");
+    map.clearOverlays();
+    var marker = new BMap.Marker(p), px = map.pointToPixel(p);
+    map.addOverlay(marker);
+    marker.openInfoWindow(infoWin);
+}, 100));
+contextMenu.addItem(new BMap.MenuItem('附近群组', function (p) {
+    $("#js_phones").html("");
+    map.clearOverlays();
+    var marker = new BMap.Marker(p), px = map.pointToPixel(p);
+    map.addOverlay(marker);
+    marker.openInfoWindow(infoWin);
+}, 100));
+contextMenu.addItem(new BMap.MenuItem('删除所有标记标注', function (p) {
+    $("#js_phones").html("");
+    map.clearOverlays();
+}, 100));
+map.addContextMenu(contextMenu);
+//添加标注闭包
+function rightMenuAddMarker(p) {
+    var marker = new BMap.Marker(p), px = map.pointToPixel(p);
+    marker.addContextMenu(rightMenuDeleteMarker(marker));
+    map.addOverlay(marker);
+    curMkr = marker;
+    marker.openInfoWindow(infoWin);
+    //表单ajax
+}
+function rightMenuDeleteMarker(marker) {                //右键删除标注菜单
+    var contextMenuClose = new BMap.ContextMenu();
+    contextMenuClose.addItem(new BMap.MenuItem('删除此标记标注', function (p) {
+        deleteMarker(marker);
     }, 100));
-    contextMenu.addItem(new BMap.MenuItem('删除所有标记标注', function (p) {
-        map.clearOverlays();
-    }, 100));
-    map.addContextMenu(contextMenu);
-    //添加标注闭包
-    function rightMenuAddMarker(p) {
-        var marker = new BMap.Marker(p), px = map.pointToPixel(p);
-        marker.addContextMenu(rightMenuDeleteMarker(marker));
-        map.addOverlay(marker);
-        curMkr = marker;
-        marker.openInfoWindow(infoWin);
-        //表单ajax
-    }
-    function rightMenuDeleteMarker(marker) {                //右键删除标注菜单
-        var contextMenuClose = new BMap.ContextMenu();
-        contextMenuClose.addItem(new BMap.MenuItem('删除此标记标注', function (p) {
-            deleteMarker(marker);
-        }, 100));
-        return contextMenuClose;
-    }
-    //删除标注闭包
-    function deleteMarker(marker) {
-        map.removeOverlay(marker);
+    return contextMenuClose;
+}
+//删除标注闭包
+function deleteMarker(marker) {
+    map.removeOverlay(marker);
 // console.log(marker.N.lng);
 // console.log(marker.N.lat);
-        var data = { "type": "del", "lng": marker.N.lng, "lat": marker.N.lat};
-        console.log((marker.point ? marker.point.lng : marker.N.lng) + "," + (marker.point ? marker.point.lat : marker.N.lat));
-        zyc(data);
+    var data = { "type": "del", "lng": marker.N.lng, "lat": marker.N.lat};
+    console.log((marker.point ? marker.point.lng : marker.N.lng) + "," + (marker.point ? marker.point.lat : marker.N.lat));
+    zyc(data);
+}
+function zyc(data) {
+    if (infoWin.isOpen()) {
+        map.closeInfoWindow();
     }
-    function zyc(data) {
-        if (infoWin.isOpen()) {
-            map.closeInfoWindow();
-        }
-        /**$('.zFade').show('normal');
-         $.post("http://localhost/1.php",data,function(returnData){
+    /**$('.zFade').show('normal');
+     $.post("http://localhost/1.php",data,function(returnData){
   var typeData='标注添加成功';
   if(data.type == 'del')
    typeData="标注删除成功";
@@ -292,8 +415,8 @@
    $('.zFade').hide('slow');
    },1000);
 }
-         ); */
+     ); */
 
-    }
+}
 </script>
 

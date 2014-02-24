@@ -177,7 +177,7 @@ lbsManage.column_list = function (data, response) {
         url: "http://api.map.baidu.com/geodata/v3/column/list",
         data: {
             geotable_id: "50513",
-            ak: "qD4I881MqTR7NZQ2TYTa2ZGh"
+            ak: "9MBoVuWESUbrqxL5indWugNn"
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
@@ -192,9 +192,9 @@ lbsManage.column_detail = function (data, response) {
         type: "GET",
         url: "http://api.map.baidu.com/geodata/v3/column/detail",
         data: {
-            id: 20053,
-            geotable_id: "47530",
-            ak: "qD4I881MqTR7NZQ2TYTa2ZGh"
+            id: 26289,
+            geotable_id: "50513",
+            ak: "9MBoVuWESUbrqxL5indWugNn"
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
@@ -212,10 +212,9 @@ lbsManage.column_update = function (data, response) {
         data: {
             id: 26289,
             geotable_id: "50513",
-            ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
+            ak: "9MBoVuWESUbrqxL5indWugNn",
             is_sortfilter_field: 1,
-            is_index_field: 1,
-            is_unique_field: 1
+            is_index_field: 1
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
@@ -280,23 +279,24 @@ lbsManage.poi_create = function (data, response) {
 }
 lbsManage.poi_list = function (data, response) {
     response.asynchronous = 1;
-    var time1 = new Date().getTime();
-    console.log("开始事件：" + time1 + "---------------------");
+//    var time1 = new Date().getTime();
+//    console.log("开始事件：" + time1 + "---------------------");
     ajax.ajax({
         type: "GET",
         url: "http://api.map.baidu.com/geodata/v3/poi/list",
         data: {
-            geotable_id: 50512,
-            ak: "qD4I881MqTR7NZQ2TYTa2ZGh",
-            page_index: 0
-//            name: "api"
+            geotable_id: 50513,
+            ak: "9MBoVuWESUbrqxL5indWugNn",
+            gid: "120,120",
+            page_index: 0,
+            page_size: 200
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
             var time2 = new Date().getTime();
-            console.log("结束事件：" + time2);
-            var time = time2 - time1;
-            console.log("耗时：" + time + "ms----------------------------");
+//            console.log("结束事件：" + time2);
+//            var time = time2 - time1;
+//            console.log("耗时：" + time + "ms----------------------------");
             response.write(data);
             response.end();
         }
@@ -446,6 +446,7 @@ lbsManage.updatelocation = function (data, response) {
     var accountStr = data.account;
     var location = {};
     var account = {};
+
     var EARTH_RADIUS = 6378137.0;    //单位M
     var PI = Math.PI;
 
@@ -485,7 +486,7 @@ lbsManage.updatelocation = function (data, response) {
     try {
         location = JSON.parse(locationStr);
         account = JSON.parse(accountStr);
-        console.log(getFlatternDistance(39.916, 116.404, 39.915, 116.404));
+//        console.log(getFlatternDistance(39.916, 116.404, 39.915, 116.404));
         /*response.write(JSON.stringify({
          "提示信息": "标记用户位置成功",
          phone: phone
@@ -505,105 +506,68 @@ lbsManage.updatelocation = function (data, response) {
     function nearbyLoginPoi(account) {
         ajax.ajax({
             type: "GET",
-            url: "http://api.map.baidu.com/geosearch/v3/nearby",
+            url: "http://api.map.baidu.com/geodata/v3/poi/list",
             data: {
                 geotable_id: 50512,
                 ak: LBS_AK,
-                q: "",
-                coord_type: 3,
-                location: location.longitude + "," + location.latitude,//"116.25,40.25"
-                radius: 50000, // 默认1000 M,
-                filter: "phone:[" + phone + "]|status:[1]"
+                phone: phone,
+                title: phone,
+                status: "1,1",
+                tags: "account",
+                page_index: 0,
+                page_size: 200
             },
-            success: function (data1) {
-                var poisObj = JSON.parse(data1);
+            success: function (data) {
+                var poisObj = JSON.parse(data);
                 if (poisObj.status == 0) {
                     if (poisObj.size == 0) {
-                        ajax.ajax({
-                            type: "GET",
-                            url: "http://api.map.baidu.com/geodata/v3/poi/list",
-                            data: {
-                                geotable_id: 50512,
-                                ak: LBS_AK,
-                                phone: phone,
-                                title: phone,
-                                tags: "account"
-                            },
-                            success: function (data11) {
-                                var poisObj11 = JSON.parse(data11);
-//                                console.log("---" + data11);
-                                if (poisObj11.status == 0) {
-                                    if (poisObj11.size == 0) {
-                                        createLoginPoi();
-                                        console.log(poisObj11.size);
-                                    } else if (poisObj11.size == 1) {
-                                        var poiObj = (poisObj11.contents)[0];
-                                        modifyLoginPoi(poiObj, true);
-                                    } else {
-                                        var contents = poisObj.contents;
-                                        for (var i = 0; i < contents.length; i++) {
-                                            var poiObj = contents[i];
-                                            if (i == contents.length - 1) {
-                                                modifyLoginPoi(poiObj, true);
-                                            } else {
-                                                modifyLoginPoi(poiObj, false);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    console.log(data1);
+                        createLoginPoi();
+                    } else if (poisObj.size >= 1) {
+                        var pois = poisObj.pois;
+                        var createPoiFlag = true;
+                        for (var i = 0; i < pois.length; i++) {
+                            var poiObj = pois[i];
+                            var modify_time = 0;
+                            if (poiObj.modify_time) {
+                                modify_time = (new Date(poiObj.modify_time)).getTime();
+                            } else {
+                                modify_time = (new Date(poiObj.create_time)).getTime();
+                            }
+                            var now_time = new Date().getTime();
+                            var bad_time = now_time - modify_time;
+                            if (bad_time < 1000 * 60 * 60) {
+                                var distance = getFlatternDistance(location.latitude, location.longitude, (poiObj.location)[1], (poiObj.location)[0])
+                                if (distance <= 1000) {
+//                                    modifyLoginPoi(poiObj, true);
                                     response.write(JSON.stringify({
-                                        "提示信息": "标记用户位置失败",
-                                        "失败原因": "数据异常"
+                                        "提示信息": "标记用户位置成功",
+                                        phone: phone
                                     }));
                                     response.end();
+                                    console.log("时间在1个小时内，" + bad_time + "并且距离在1公里内" + distance);
+                                } else {
+                                    if (createPoiFlag) {
+                                        createPoiFlag = false;
+                                        modifyLoginPoi(poiObj, true);
+                                    } else {
+                                        modifyLoginPoi(poiObj, false);
+                                    }
+                                }
+                            } else {
+                                if (i == pois.length - 1) {
+                                    if (!createPoiFlag) {
+                                        modifyLoginPoi(poiObj, true);
+                                    } else {
+                                        modifyLoginPoi(poiObj, false);
+                                    }
+                                } else {
+                                    modifyLoginPoi(poiObj, false);
                                 }
                             }
-                        });
-                    } else if (poisObj.size == 1) {
-                        //modify_time,create_time   format  example 1392783009
-                        var poiObj = (poisObj.contents)[0];
-                        if (!(poiObj.modify_time)) {
-                            var create_time = poiObj.create_time;
-                            next(create_time);
-                        } else {
-                            var modify_time = poiObj.modify_time;
-                            next(modify_time);
                         }
-                        function next(time) {
-                            var now_time = Math.floor((new Date().getTime()) / 1000);
-                            var bad = now_time - time;
-                            if (bad > 60 * 60) {
-                                modifyLoginPoi(poiObj, true);
-                            } else {
-                                console.log("标记用户位置成功" + bad);
-                                response.write(JSON.stringify({
-                                    "提示信息": "标记用户位置成功",
-                                    phone: phone
-                                }));
-                                response.end();
-                            }
-                        }
-                    } else if (poisObj.size > 1) {
-                        var contents = poisObj.contents;
-                        for (var i = 0; i < contents.length; i++) {
-                            var poiObj = contents[i];
-                            if (i == contents.length - 1) {
-                                modifyLoginPoi(poiObj, true);
-                            } else {
-                                modifyLoginPoi(poiObj, false);
-                            }
-                        }
-                    } else {
-                        console.log(data1);
-                        response.write(JSON.stringify({
-                            "提示信息": "标记用户位置失败",
-                            "失败原因": "数据异常"
-                        }));
-                        response.end();
                     }
                 } else {
-                    console.log(data1);
+                    console.log(unescape(data.replace(/\\u/gi, '%u')));
                     response.write(JSON.stringify({
                         "提示信息": "标记用户位置失败",
                         "失败原因": "数据异常"
@@ -612,6 +576,75 @@ lbsManage.updatelocation = function (data, response) {
                 }
             }
         });
+        /*ajax.ajax({
+         type: "GET",
+         url: "http://api.map.baidu.com/geosearch/v3/nearby",
+         data: {
+         geotable_id: 50512,
+         ak: LBS_AK,
+         q: "",
+         coord_type: 3,
+         location: location.longitude + "," + location.latitude,//"116.25,40.25"
+         radius: 50000, // 默认1000 M,
+         filter: "phone:[" + phone + "]|status:[1]"
+         },
+         success: function (data1) {
+         var poisObj = JSON.parse(data1);
+         if (poisObj.status == 0) {
+         if (poisObj.size == 0) {
+
+         } else if (poisObj.size == 1) {
+         //modify_time,create_time   format  example 1392783009
+         var poiObj = (poisObj.contents)[0];
+         if (!(poiObj.modify_time)) {
+         var create_time = poiObj.create_time;
+         next(create_time);
+         } else {
+         var modify_time = poiObj.modify_time;
+         next(modify_time);
+         }
+         function next(time) {
+         var now_time = Math.floor((new Date().getTime()) / 1000);
+         var bad = now_time - time;
+         if (bad > 60 * 60) {
+         modifyLoginPoi(poiObj, true);
+         } else {
+         console.log("标记用户位置成功" + bad);
+         response.write(JSON.stringify({
+         "提示信息": "标记用户位置成功",
+         phone: phone
+         }));
+         response.end();
+         }
+         }
+         } else if (poisObj.size > 1) {
+         var contents = poisObj.contents;
+         for (var i = 0; i < contents.length; i++) {
+         var poiObj = contents[i];
+         if (i == contents.length - 1) {
+         modifyLoginPoi(poiObj, true);
+         } else {
+         modifyLoginPoi(poiObj, false);
+         }
+         }
+         } else {
+         console.log(data1);
+         response.write(JSON.stringify({
+         "提示信息": "标记用户位置失败",
+         "失败原因": "数据异常"
+         }));
+         response.end();
+         }
+         } else {
+         console.log(data1);
+         response.write(JSON.stringify({
+         "提示信息": "标记用户位置失败",
+         "失败原因": "数据异常"
+         }));
+         response.end();
+         }
+         }
+         });*/
     }
 
     function modifyLoginPoi(poiObj, flag) {
@@ -622,7 +655,7 @@ lbsManage.updatelocation = function (data, response) {
             data: {
                 geotable_id: 50512,
                 ak: LBS_AK,
-                id: poiObj.uid,
+                id: poiObj.id,
                 coord_type: 3,
                 status: 0
             },
@@ -632,7 +665,7 @@ lbsManage.updatelocation = function (data, response) {
                     if (poiObj.status == 0) {
                         createLoginPoi();
                     } else {
-                        console.log(data2);
+                        console.log(unescape(data2.replace(/\\u/gi, '%u')));
                         response.write(JSON.stringify({
                             "提示信息": "标记用户位置失败",
                             "失败原因": "数据异常"
@@ -676,7 +709,7 @@ lbsManage.updatelocation = function (data, response) {
                     }));
                     response.end();
                 } else {
-                    console.log(data3);
+                    console.log(unescape(data3.replace(/\\u/gi, '%u')));
                     response.write(JSON.stringify({
                         "提示信息": "标记登录位置失败",
                         "失败原因": "数据异常"
@@ -700,13 +733,13 @@ lbsManage.setgrouplocation = function (data, response) {
     try {
         location = JSON.parse(locationStr);
         group = JSON.parse(groupStr);
-        response.write(JSON.stringify({
-            "提示信息": "标记群组位置成功",
-            gid: group.gid
-        }));
-        response.end();
-        return;
-//        checkGroup();
+        /*response.write(JSON.stringify({
+         "提示信息": "标记群组位置成功",
+         gid: group.gid
+         }));
+         response.end();
+         return;*/
+        checkGroup();
     } catch (e) {
         response.write(JSON.stringify({
             "提示信息": "标记群组位置失败",
@@ -723,12 +756,15 @@ lbsManage.setgrouplocation = function (data, response) {
             data: {
                 geotable_id: 50513,
                 ak: LBS_AK,
-                gid: group.gid
+                gid: group.gid + "," + group.gid,
+                title: group.name,
+                tags: "group"
             },
             success: function (data) {
                 var poisObj = JSON.parse(data);
+//                console.log(unescape(data.replace(/\\u/gi, '%u')));
                 if (poisObj.status == 0) {
-                    var contents = poisObj.contents;
+                    var contents = poisObj.pois;
                     if (poisObj.size == 0) {
                         createGroupPoi(group);
                     } else if (poisObj.size == 1) {
@@ -767,6 +803,7 @@ lbsManage.setgrouplocation = function (data, response) {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 name: group.name,
+                title: group.name,
                 description: group.description
             },
             success: function (data) {
