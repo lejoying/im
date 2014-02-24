@@ -898,10 +898,10 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", area: {longitude: "NNN", latitude: "NNN", radius: "NNN"}}
         },
         response: {
-            success: {"提示信息": "获取附近好友成功", accounts: [
+            success: {"提示信息": "获取附近用户成功", accounts: [
                 {phone: "NNN", mainBusiness: "XXX", head: "XXX", nickName: "XXX", location: {longitude: "NNN", latitude: "NNN"}, modify_time: "NNN", distance: "NNN"}
             ]},
-            failed: {"提示信息": "获取附近好友失败", "失败原因": "数据异常" || "参数格式错误"}
+            failed: {"提示信息": "获取附近用户失败", "失败原因": "数据异常" || "参数格式错误"}
         }
     },
     /***************************************

@@ -881,8 +881,8 @@ lbsManage.nearbyaccounts = function (data, response) {
                 head: "6330116f4ca1332647429154fbe50cd7b17bd95d.png",
                 mainBusiness: "送水，按摩，家政",
                 location: {
-                    longitude: 116.25,
-                    latitude: 40.25
+                    longitude: 116.25 + i / 100,
+                    latitude: 40.25 + i / 100
                 },
                 modify_time: new Date().getTime(),
                 distance: 100 * i
@@ -890,7 +890,7 @@ lbsManage.nearbyaccounts = function (data, response) {
             accounts.push(account);
         }
         response.write(JSON.stringify({
-            "提示信息": "获取附近好友成功",
+            "提示信息": "获取附近用户成功",
             accounts: accounts
         }));
         response.end();
@@ -950,14 +950,14 @@ lbsManage.nearbyaccounts = function (data, response) {
                         accounts.push(account);
                     }
                     response.write(JSON.stringify({
-                        "提示信息": "获取附近好友成功",
+                        "提示信息": "获取附近用户成功",
                         accounts: accounts
                     }));
                     response.end();
                 } else {
                     console.log(data);
                     response.write(JSON.stringify({
-                        "提示信息": "获取附近好友失败",
+                        "提示信息": "获取附近用户失败",
                         "失败原因": "数据异常"
                     }));
                     response.end();
