@@ -107,7 +107,7 @@ function ajax(settings) {
 //            return false;
 //        }
 //    }
-
+//    req.setHeader("Cookie","JSESSIONID=1575588CD8BFABF5FF4C62593F770519");
     if (settings.type === "POST") {
         if (settings.ajaxType == "FORM") {
             var postData = "";

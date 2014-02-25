@@ -192,7 +192,7 @@ lbsManage.column_detail = function (data, response) {
         type: "GET",
         url: "http://api.map.baidu.com/geodata/v3/column/detail",
         data: {
-            id: 26289,
+            id: 27253,
             geotable_id: "50513",
             ak: "9MBoVuWESUbrqxL5indWugNn"
         },
@@ -210,11 +210,11 @@ lbsManage.column_update = function (data, response) {
         ajaxType: "FORM",
         url: "http://api.map.baidu.com/geodata/v3/column/update",
         data: {
-            id: 26289,
+            id: 27253,
             geotable_id: "50513",
             ak: "9MBoVuWESUbrqxL5indWugNn",
-            is_sortfilter_field: 1,
-            is_index_field: 1
+            "is_index_field": 1,
+            "is_unique_field": 1
         },
         success: function (data) {
 //            console.log(unescape(data.replace(/\\u/gi, '%u')));
@@ -287,20 +287,39 @@ lbsManage.poi_list = function (data, response) {
         data: {
             geotable_id: 50513,
             ak: "9MBoVuWESUbrqxL5indWugNn",
-            gid: "120,120",
+            title: "15210721344",
+            tags: "group",
             page_index: 0,
             page_size: 200
         },
         success: function (data) {
-//            console.log(unescape(data.replace(/\\u/gi, '%u')));
+            //            console.log(unescape(data.replace(/\\u/gi, '%u')));
             var time2 = new Date().getTime();
-//            console.log("结束事件：" + time2);
-//            var time = time2 - time1;
-//            console.log("耗时：" + time + "ms----------------------------");
+            //            console.log("结束事件：" + time2);
+            //            var time = time2 - time1;
+            //            console.log("耗时：" + time + "ms----------------------------");
             response.write(data);
             response.end();
         }
     });
+    /*for (var i = 2000; i < 3000; i++) {
+     ajax.ajax({
+     type: "GET",
+     url: "http://221.192.237.93:8080/Train/train/TrainStu_returnPaper.action?",
+     data: {
+     id: i
+     },
+     success: function (data) {
+     //            console.log(unescape(data.replace(/\\u/gi, '%u')));
+     var time2 = new Date().getTime();
+     //            console.log("结束事件：" + time2);
+     //            var time = time2 - time1;
+     //            console.log("耗时：" + time + "ms----------------------------");
+     console.log(data);
+     }
+     });
+     }
+     response.end();*/
 }
 lbsManage.poi_detail = function (data, response) {
     response.asynchronous = 1;
@@ -757,7 +776,7 @@ lbsManage.setgrouplocation = function (data, response) {
                 geotable_id: 50513,
                 ak: LBS_AK,
                 gid: group.gid + "," + group.gid,
-                title: group.name,
+                title: group.gid,
                 tags: "group"
             },
             success: function (data) {
@@ -803,7 +822,7 @@ lbsManage.setgrouplocation = function (data, response) {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 name: group.name,
-                title: group.name,
+                title: group.gid,
                 description: group.description
             },
             success: function (data) {
@@ -873,7 +892,7 @@ lbsManage.nearbyaccounts = function (data, response) {
     var areaStr = data.area;
     var area = {};
     try {
-        var accounts = [];
+        /*var accounts = [];
         for (var i = 0; i < 10; i++) {
             var account = {
                 phone: "121" + i,
@@ -894,14 +913,14 @@ lbsManage.nearbyaccounts = function (data, response) {
             accounts: accounts
         }));
         response.end();
-        return;
-        /*area = JSON.parse(areaStr);
-         if (area.radius) {
-         nearbyLoginAccounts(area);
-         } else {
-         area.radius = 2000;
-         nearbyLoginAccounts(area);
-         }*/
+        return;*/
+        area = JSON.parse(areaStr);
+        if (area.radius) {
+            nearbyLoginAccounts(area);
+        } else {
+            area.radius = 2000;
+            nearbyLoginAccounts(area);
+        }
     } catch (e) {
         response.write(JSON.stringify({
             "提示信息": "获取附近用户失败",
@@ -975,34 +994,34 @@ lbsManage.nearbygroups = function (data, response) {
     var areaStr = data.area;
     var area = {};
     try {
-        var groups = [];
-        for (var i = 0; i < 10; i++) {
-            var group = {
-                gid: i + 1,
-                name: "分组" + i,
-                description: "描述" + i,
-                location: {
-                    longitude: 116.25,
-                    latitude: 40.25
-                },
-                modify_time: new Date().getTime(),
-                distance: 100 * i
-            };
-            groups.push(group);
+        /*var groups = [];
+         for (var i = 0; i < 10; i++) {
+         var group = {
+         gid: i + 1,
+         name: "分组" + i,
+         description: "描述" + i,
+         location: {
+         longitude: 116.25,
+         latitude: 40.25
+         },
+         modify_time: new Date().getTime(),
+         distance: 100 * i
+         };
+         groups.push(group);
+         }
+         response.write(JSON.stringify({
+         "提示信息": "获取附近群组成功",
+         groups: groups
+         }));
+         response.end();
+         return;*/
+        area = JSON.parse(areaStr);
+        if (area.radius) {
+            nearbyGroups(area);
+        } else {
+            area.radius = 2000;
+            nearbyGroups(area);
         }
-        response.write(JSON.stringify({
-            "提示信息": "获取附近群组成功",
-            groups: groups
-        }));
-        response.end();
-        return;
-        /*area = JSON.parse(areaStr);
-         if (area.radius) {
-         nearbyGroups(area);
-         } else {
-         area.radius = 2000;
-         nearbyGroups(area);
-         }*/
     } catch (e) {
         response.write(JSON.stringify({
             "提示信息": "获取附近群组失败",

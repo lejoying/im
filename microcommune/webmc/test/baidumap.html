@@ -201,6 +201,17 @@ mkrTool.addEventListener("markend", function (evt) {
     var mkr = evt.marker;
     mkr.openInfoWindow(infoWin);
     curMkr = mkr;
+    /*mkr.enableDragging();
+     mkr.addEventListener('dragstart', function () {
+     console.log(222222222222222222222);
+     });
+     mkr.addEventListener('dragging', function () {
+     console.log(333333333333333333333);
+     });
+
+     mkr.addEventListener('dragend', function (e) {
+     console.log(4444);
+     });*/
 });
 
 //打开样式面板
@@ -215,6 +226,8 @@ function selectStyle(index) {
     mkrTool.setIcon(icon);
     //document.getElementById("divStyle").style.display = "none";
 }
+var areaType = "account";
+var url = "";
 var points = {};
 var groups = {};
 //提交数据
@@ -338,7 +351,6 @@ function fnGroupOK() {
 }
 function fnAreaOK() {
     var txtArea = encodeHTML(document.getElementById("txtArea").value);
-
     if (!txtArea) {
         alert("星号字段必须填写");
         return;
@@ -351,7 +363,7 @@ function fnAreaOK() {
         curMkr.setLabel(lbl);
 
         //设置title
-        var title = txtArea + "m范围的用户,当前位置...";
+        var title = txtArea + "m范围的" + areaType + ",当前位置...";
         curMkr.setTitle(title);
     }
     if (areaInfoWin.isOpen()) {
@@ -367,34 +379,64 @@ function fnAreaOK() {
         lng: lng,
         lat: lat
     }
+    if (areaType == "account") {
+        url = "/lbs/nearbyaccounts?";
+    } else {
+        url = "/lbs/nearbygroups?";
+    }
     $.ajax({
         type: "POST",
-        url: "/lbs/nearbyaccounts?",
+        url: url,
         data: {
             phone: "121",
             accessKey: "lejoying",
             area: JSON.stringify({longitude: lng, latitude: lat, radius: parseFloat(txtArea)})
         },
         success: function (data) {
-            if (data["提示信息"] == "获取附近用户成功") {
-                var accounts = data.accounts;
-                for (var index in accounts) {
-                    var account = accounts[index];
-                    var location = account.location;
-//                    alert(location.longitude);
-                    var marker = new BMap.Marker(new BMap.Point(parseFloat(location.longitude), parseFloat(location.latitude)));
-//                    marker.addContextMenu(rightMenuDeleteMarker(marker));
-                    var staticTitle = "用户:" + account.phone;
-                    marker.setLabel(new BMap.Label(staticTitle, {offset: new BMap.Size(20, -10)}));
-                    map.addOverlay(marker);
+            if (areaType == "account") {
+                if (data["提示信息"] == "获取附近用户成功") {
+                    var accounts = data.accounts;
+                    for (var index in accounts) {
+                        var account = accounts[index];
+                        var location = account.location;
+                        var marker = new BMap.Marker(new BMap.Point(parseFloat(location.longitude), parseFloat(location.latitude)));
+                        marker.addContextMenu(rightMenuDeleteMarker(marker));
+                        var staticTitle = "用户:" + account.phone;
+                        marker.setLabel(new BMap.Label(staticTitle, {offset: new BMap.Size(20, -10)}));
+                        var title = "用户: " + account.phone + "\r" + "昵称: " + account.nickName + "\r" + "描述: " + account.mainBusiness + "\r" + "距离: " + (account.distance / 1000) + " km";
+                        marker.setTitle(title);
+                        map.addOverlay(marker);
+                    }
+                    console.log(data["提示信息"] + "," + (data.accounts).length);
+                    var dom = document.createElement("a");
+                    dom.title = title;
+                    dom.innerHTML = new Date().toLocaleTimeString() + "  Area:" + txtArea + ",lng:" + lng + ",lat:" + lat + "\n\r";
+                    $("#js_phones").append(dom);
+                } else {
+                    console.log(data["提示信息"] + "," + data["失败原因"]);
                 }
-                /* console.log(data["提示信息"] + "," + (data.accounts).length);
-                 var dom = document.createElement("a");
-                 dom.title = title;
-                 dom.innerHTML = new Date().toLocaleTimeString() + "  Area:" + txtArea + ",lng:" + lng + ",lat:" + lat + "\n\r";
-                 $("#js_phones").append(dom);*/
             } else {
-                console.log(data["提示信息"] + "," + data["失败原因"]);
+                if (data["提示信息"] == "获取附近群组成功") {
+                    var groups = data.groups;
+                    for (var index in groups) {
+                        var group = groups[index];
+                        var location = group.location;
+                        var marker = new BMap.Marker(new BMap.Point(parseFloat(location.longitude), parseFloat(location.latitude)));
+                        marker.addContextMenu(rightMenuDeleteMarker(marker));
+                        var staticTitle = "群组:" + group.gid;
+                        marker.setLabel(new BMap.Label(staticTitle, {offset: new BMap.Size(20, -10)}));
+                        var title = "群组gid: " + group.gid + "\r" + "名称: " + group.name + "\r" + "描述: " + group.description + "\r" + "距离: " + (group.distance / 1000) + " km";
+                        marker.setTitle(title);
+                        map.addOverlay(marker);
+                    }
+                    console.log(data["提示信息"] + "," + (data.groups).length);
+                    var dom = document.createElement("a");
+                    dom.title = title;
+                    dom.innerHTML = new Date().toLocaleTimeString() + "  Area:" + txtArea + ",lng:" + lng + ",lat:" + lat + "\n\r";
+                    $("#js_phones").append(dom);
+                } else {
+                    console.log(data["提示信息"] + "," + data["失败原因"]);
+                }
             }
         }
     });
@@ -434,6 +476,7 @@ contextMenu.addItem(new BMap.MenuItem('在此标注群组', function (p) {
     marker.openInfoWindow(groupInfoWin);
 }, 100));
 contextMenu.addItem(new BMap.MenuItem('附近用户', function (p) {
+    areaType = "account";
     $("#js_phones").html("");
     map.clearOverlays();
     var marker = new BMap.Marker(p), px = map.pointToPixel(p);
@@ -442,12 +485,13 @@ contextMenu.addItem(new BMap.MenuItem('附近用户', function (p) {
     marker.openInfoWindow(areaInfoWin);
 }, 100));
 contextMenu.addItem(new BMap.MenuItem('附近群组', function (p) {
+    areaType = "group";
     $("#js_phones").html("");
     map.clearOverlays();
     var marker = new BMap.Marker(p), px = map.pointToPixel(p);
     map.addOverlay(marker);
     curMkr = marker;
-    marker.openInfoWindow(infoWin);
+    marker.openInfoWindow(areaInfoWin);
 }, 100));
 contextMenu.addItem(new BMap.MenuItem('删除所有标记标注', function (p) {
     $("#js_phones").html("");
@@ -456,6 +500,7 @@ contextMenu.addItem(new BMap.MenuItem('删除所有标记标注', function (p) {
 map.addContextMenu(contextMenu);
 //添加标注闭包
 function rightMenuAddMarker(p) {
+    console.log(p);
     var marker = new BMap.Marker(p), px = map.pointToPixel(p);
     marker.addContextMenu(rightMenuDeleteMarker(marker));
     map.addOverlay(marker);
