@@ -7,14 +7,14 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 
-public class NoScrollListView extends LinearLayout {
+public class ScrollContent extends LinearLayout {
 	public BaseAdapter adapter;
 
-	public NoScrollListView(Context context) {
+	public ScrollContent(Context context) {
 		super(context);
 	}
 
-	public NoScrollListView(Context context, AttributeSet attrs) {
+	public ScrollContent(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 

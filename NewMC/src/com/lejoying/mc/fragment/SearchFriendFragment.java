@@ -14,20 +14,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.baidu.location.BDLocation;
 import com.lejoying.mc.R;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Data;
 import com.lejoying.mc.data.handler.DataHandler.Modification;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
+import com.lejoying.mc.data.handler.LocationHandler.LocationListener;
 import com.lejoying.mc.network.API;
 import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetUtils;
 import com.lejoying.mc.utils.MCNetUtils.Settings;
+import com.lejoying.mc.view.ScrollContent;
 
-public class SearchFriendFragment extends BaseListFragment {
+public class SearchFriendFragment extends BaseFragment {
 
 	App app = App.getInstance();
 	LayoutInflater mInflater;
+
+	View mContent;
+
+	ScrollContent mScrollContent;
 
 	public static SearchFriendFragment instance;
 
@@ -50,13 +57,56 @@ public class SearchFriendFragment extends BaseListFragment {
 		mInflater = inflater;
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 
-		return inflater.inflate(R.layout.android_list, null);
+		mContent = inflater.inflate(R.layout.f_vertical_scroll, null);
+
+		mScrollContent = (ScrollContent) mContent.findViewById(R.id.content);
+
+		app.locationHandler.requestLocation(new LocationListener() {
+
+			@Override
+			public void onReceivePoi(BDLocation poiLocation) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onReceiveLocation(final BDLocation location) {
+				MCNetUtils.ajax(new AjaxAdapter() {
+
+					@Override
+					public void setParams(Settings settings) {
+						try {
+							settings.url = API.LBS_NEARBYACCOUNTS;
+							JSONObject jArea = new JSONObject();
+							jArea.put("latitude", location.getLatitude());
+							jArea.put("longitude", location.getLongitude());
+							jArea.put("radius", 2000);
+							Bundle params = new Bundle();
+							params.putString("phone", app.data.user.phone);
+							params.putString("accessKey", app.data.user.accessKey);
+							params.putString("area", jArea.toString());
+							settings.params = params;
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void onSuccess(JSONObject jData) {
+						System.out.println(jData);
+					}
+				});
+			}
+		});
+
+		return mContent;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setListAdapter(new SearchFriendAdapter());
+		mScrollContent.setAdapter(new SearchFriendAdapter());
 	}
 
 	class SearchFriendAdapter extends BaseAdapter {
