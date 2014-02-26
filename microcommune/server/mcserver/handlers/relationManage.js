@@ -292,12 +292,14 @@ relationManage.getcirclesandfriends = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     getCirclesNode(phone);
+    var circleOrder = {};
 
     function getCirclesNode(phone) {
         var query = [
             'MATCH (account:Account)-[HAS_CIRCLE]->(circle:Circle)',
             'WHERE account.phone={phone}',
-            'RETURN circle'
+            'RETURN circle',
+            'ORDER BY circle.rid ASC'
         ].join('\n');
         var params = {
             phone: phone
@@ -313,8 +315,12 @@ relationManage.getcirclesandfriends = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 var circles = {};
+
                 for (var index in results) {
                     var circleData = results[index].circle.data;
+                    console.log(index)
+                    circleOrder[circleData.rid + "order"] = index;
+//                    console.log(index);
                     circles[circleData.rid] = circleData;
                 }
                 getAccountsNode(circles, phone);
@@ -396,7 +402,9 @@ relationManage.getcirclesandfriends = function (data, response) {
 //                        console.log(accounts[accountData.phone]+"--");
                             circleData.accounts = accounts2;
                             arr[circleData.rid] = circleData;
-                            circles2.push(circleData);
+//                            circles2.push(circleData);
+                            circles2[circleOrder[circleData.rid + "order"]] = circleData;
+                            console.log(circleOrder[circleData.rid + "order"])
                             delete circles[circleData.rid];
                         } else {
                             arr[circleData.rid].accounts.push(accounts[accountData.phone]);
@@ -407,7 +415,8 @@ relationManage.getcirclesandfriends = function (data, response) {
                         for (var index in circles) {
                             var it = circles[index];
                             it.accounts = [];
-                            circles2.push(it);
+//                            circles2.push(it);
+                            circles2[circleOrder[it.rid + "order"]] = it;
                         }
                     }
                     var circle = {
@@ -433,7 +442,8 @@ relationManage.getcirclesandfriends = function (data, response) {
                         for (var index in circles) {
                             var it = circles[index];
                             it.accounts = [];
-                            circles2.push(it);
+//                            circles2.push(it);
+                            circles2[circleOrder[it.rid + "order"]] = it;
                         }
                     }
                     var accounts2 = [];

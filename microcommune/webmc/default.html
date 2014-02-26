@@ -665,7 +665,7 @@
              style="overflow: hidden;height: 214px;float: left;width: 268px;" onmousewheel="ScrollWheel()">
             <div class="group_user">
                 <?js var imageServer=window.globaldata.serverSetting.imageServer; ?>
-                <?js if(it.length<=0) return; ?>
+                <?js if(it.name==undefined) return; ?>
                 <?js var it1 = it.accounts; ?>
                 <?js var length = it1.length; ?>
                 <?js for(var index in it1){ ?>

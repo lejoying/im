@@ -114,6 +114,7 @@ $(document).ready(function () {
                                     });
                                     var group_user = getTemplate("js_group_user");
                                     $(".sildPopContent").html(group_user.render(circles[i]));
+                                    $(".js_group_users").show();
 //                                getScroll();
 //                            $("#ScroLine").css("height", "100px");
 //                            alert(Math.ceil(((data.circles)[i].accounts.length + 1) / 4));
@@ -324,23 +325,40 @@ $(document).ready(function () {
 //    $(".schoolmate_txt").slideDown(10);
 //    $(".js_modifycirclename").slideUp(10);
     $(document).on("click", ".js_addcircle", function () {
-//        alert("新建密友圈");
-        var i = (JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length + 1;
         $(".popmenuFrame").css({
-            visibility: "visible",
-            top: 95 + (Math.floor(i / 3)) * 90 + "px"
+            visibility: "visible"
         });
         var group_user = getTemplate("js_group_user");
-        $(".sildPopContent").html(group_user.render([]));
-        //新建分组不显示任何元素
-//        $(".sildPopContent").html("");
-        $(".js_modifycirclename input[type=text]").val("");
+        $(".sildPopContent").html(group_user.render({name: "", accounts: []}));
         $(".popmenuFrame").slideDown(100);
-//        $(".schoolmate_txt").html("aa");
         $(".schoolmate_txt").slideUp(10);
-        $(".js_modifycirclename").slideDown(10);
         selectedAddCircleGroupFlag = true;
-//        $(".js_modifycirclename").slideUp(10);
+        $(".js_modifycirclename").slideDown(10);
+        /*var i = (JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length;
+         if (!selectedAddCircleGroupFlag) {
+         $(".popmenuFrame").css({
+         visibility: "visible",
+         top: 95 + (Math.floor(i / 3)) * 90 + "px"
+         });
+         $(".sildLeftSharp").css({
+         left: 45 + (i % 3) * 82 + "px"
+         });
+         var group_user = getTemplate("js_group_user");
+         $(".sildPopContent").html(group_user.render({}));
+         //新建分组不显示任何元素
+         //            $(".js_group_users").hide();
+         $(".js_modifycirclename input[type=text]").val("");
+         $(".popmenuFrame").slideDown(100);
+         //        $(".schoolmate_txt").html("aa");
+         $(".schoolmate_txt").slideUp(10);
+         $(".js_modifycirclename").slideDown(10);
+         selectedAddCircleGroupFlag = true;
+         //            $(".js_modifycirclename").slideUp(10);
+         } else {
+         selectedAddCircleGroupFlag = false;
+         $(".popmenuFrame").slideUp(10);
+         $(".js_group_users").show();
+         }*/
     });
     $(document).on("click", ".user_icon", function () {
         var span = $(this).find("span");
