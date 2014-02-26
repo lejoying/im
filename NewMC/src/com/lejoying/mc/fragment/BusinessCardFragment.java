@@ -32,10 +32,13 @@ public class BusinessCardFragment extends BaseFragment {
 
 	private TextView tv_spacing;
 	private TextView tv_spacing2;
-	private TextView tv_spacing3;
 	private TextView tv_mainbusiness;
 	private RelativeLayout rl_show;
 	private ScrollView sv_content;
+
+	View sureToDelete;
+	Button btn_ok;
+	Button btn_cancel;
 
 	// DEFINITION object
 	private Handler handler;
@@ -52,6 +55,25 @@ public class BusinessCardFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
+		sureToDelete = mContent.findViewById(R.id.rl_panel);
+		btn_ok = (Button) sureToDelete.findViewById(R.id.btn_ok);
+		btn_cancel = (Button) sureToDelete.findViewById(R.id.btn_cancel);
+
+		btn_ok.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				getActivity().getSupportFragmentManager().popBackStack();
+			}
+		});
+		btn_cancel.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				sureToDelete.setVisibility(View.GONE);
+			}
+		});
+
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -84,7 +106,6 @@ public class BusinessCardFragment extends BaseFragment {
 
 		tv_spacing = (TextView) mContent.findViewById(R.id.tv_spacing);
 		tv_spacing2 = (TextView) mContent.findViewById(R.id.tv_spacing2);
-		tv_spacing3 = (TextView) mContent.findViewById(R.id.tv_spacing3);
 		tv_mainbusiness = (TextView) mContent
 				.findViewById(R.id.tv_mainbusiness);
 		rl_show = (RelativeLayout) mContent.findViewById(R.id.rl_show);
@@ -108,7 +129,6 @@ public class BusinessCardFragment extends BaseFragment {
 				tv_spacing.setHeight((int) (dm.heightPixels
 						- rl_show.getHeight() - statusBarHeight - tv_spacing2
 						.getHeight()));
-				tv_spacing3.setHeight((int) (dm.heightPixels * 0.2));
 
 				sv_content.setOnTouchListener(new OnTouchListener() {
 
@@ -164,6 +184,7 @@ public class BusinessCardFragment extends BaseFragment {
 				.findViewById(R.id.tv_mainbusiness);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
+		Button button3 = (Button) mContent.findViewById(R.id.button3);
 		String fileName = "";
 		if (app.businessCardStatus == app.SHOW_TEMPFRIEND) {
 			tv_nickname.setText(app.data.tempFriend.nickName);
@@ -192,6 +213,7 @@ public class BusinessCardFragment extends BaseFragment {
 			tv_phone.setText(app.data.user.phone);
 			tv_mainbusiness.setText(app.data.user.mainBusiness);
 			group.removeView(button2);
+			group.removeView(button3);
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -203,6 +225,7 @@ public class BusinessCardFragment extends BaseFragment {
 		} else if (app.businessCardStatus == app.SHOW_FRIEND) {
 			button1.setText("发起聊天");
 			button2.setText("修改备注");
+			button3.setText("解除好友关系");
 			tv_nickname.setText(app.data.tempFriend.nickName);
 			tv_phone.setText(app.data.tempFriend.phone);
 			fileName = app.data.tempFriend.head;
@@ -224,6 +247,13 @@ public class BusinessCardFragment extends BaseFragment {
 
 				}
 			});
+			button3.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					sureToDelete.setVisibility(View.VISIBLE);
+				}
+			});
 		}
 		final String headFileName = fileName;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
@@ -231,8 +261,8 @@ public class BusinessCardFragment extends BaseFragment {
 			public void onResult(String where) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
 						.get(headFileName));
-				if(where==app.fileHandler.FROM_WEB){
-					
+				if (where == app.fileHandler.FROM_WEB) {
+
 				}
 			}
 		});

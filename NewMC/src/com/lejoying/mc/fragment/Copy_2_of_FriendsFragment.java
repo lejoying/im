@@ -16,7 +16,7 @@ import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.handler.DataHandler.UIModification;
 import com.lejoying.mc.data.handler.ViewHandler.GenerateViewListener;
 import com.lejoying.mc.service.PushService;
-import com.lejoying.mc.view.NoScrollListView;
+import com.lejoying.mc.view.ScrollContent;
 
 public class Copy_2_of_FriendsFragment extends BaseFragment {
 
@@ -30,7 +30,7 @@ public class Copy_2_of_FriendsFragment extends BaseFragment {
 
 	View rl_control;
 
-	NoScrollListView mListView;
+	ScrollContent mListView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class Copy_2_of_FriendsFragment extends BaseFragment {
 		mMCFragmentManager
 				.setCircleMenuPageName(getString(R.string.page_friend));
 		mContent = inflater.inflate(R.layout.f_scroll_friends, null);
-		mListView = (NoScrollListView) mContent.findViewById(R.id.linearlayout);
+		mListView = (ScrollContent) mContent.findViewById(R.id.linearlayout);
 		rl_control = mContent.findViewById(R.id.rl_control);
 		return mContent;
 	}
