@@ -322,18 +322,36 @@ $(document).ready(function () {
         $(".js_findFriendPhone").focus();
         new Drag($(".js_findFriend")[0]);
     });
-//    $(".schoolmate_txt").slideDown(10);
-//    $(".js_modifycirclename").slideUp(10);
     $(document).on("click", ".js_addcircle", function () {
-        $(".popmenuFrame").css({
-            visibility: "visible"
-        });
-        var group_user = getTemplate("js_group_user");
-        $(".sildPopContent").html(group_user.render({name: "", accounts: []}));
-        $(".popmenuFrame").slideDown(100);
-        $(".schoolmate_txt").slideUp(10);
-        selectedAddCircleGroupFlag = true;
-        $(".js_modifycirclename").slideDown(10);
+        if (!selectedAddCircleGroupFlag) {
+            var i = (JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length;
+            $(".popmenuFrame").css({
+                visibility: "visible",
+                top: 95 + (Math.floor(i / 3)) * 90 + "px"
+            });
+            $(".sildLeftSharp").css({
+                left: 45 + (i % 3) * 82 + "px"
+            });
+            if (i > 5) {
+                $("#mainBox").css({
+                    marginTop: -((Math.floor(i / 3) - 1) * 90 + 5)
+                });
+            }
+            var group_user = getTemplate("js_group_user");
+            $(".sildPopContent").html(group_user.render({name: "", accounts: []}));
+            $(".popmenuFrame").slideDown(100);
+            $(".schoolmate_txt").slideUp(10);
+            selectedAddCircleGroupFlag = true;
+            $(".js_group_users").hide();
+            $(".js_modifycirclename").slideDown(10);
+        } else {
+            $("#mainBox").css({
+                marginTop: 0
+            });
+            selectedAddCircleGroupFlag = false;
+            $(".popmenuFrame").slideUp(10);
+            $(".js_group_users").show();
+        }
         /*var i = (JSON.parse(window.sessionStorage.getItem("wxgs_circles"))).length;
          if (!selectedAddCircleGroupFlag) {
          $(".popmenuFrame").css({
@@ -882,7 +900,7 @@ function tempChatMainContent() {
         var Y = parseInt(top);// - 30
         if (Y <= H) {
             Y = H;
-            return;
+//            return;
 //            alert("这是最底部了.");
         }
 //        alert(Y);
@@ -893,7 +911,7 @@ function tempChatMainContent() {
         var Y = parseInt(top);// +30
         if (Y > 0) {
             Y = 0;
-            return;
+//            return;
 //            alert("这是最顶部了.");
         }
 //        alert(Y);

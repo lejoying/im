@@ -408,58 +408,91 @@ accountManage.get = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
-    console.log(phone);
-    var target = data.target;
-    var arr = [phone, accessKey, target];
-    if (verifyEmpty.verifyEmpty(data, arr, response)) {
-        target = JSON.parse(target);
-        getAccountNode(target);
-    }
-    function getAccountNode(target) {
-        var query = [
-            'MATCH (account:Account)',
-            'WHERE account.phone IN {phone}',
-            'RETURN account'
-        ].join('\n');
-        var params = {
-            phone: target
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "获取用户信息失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-                console.log(error);
-                return;
-            } else if (results.length == 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "获取用户信息失败",
-                    "失败原因": "用户不存在"
-                }));
-                response.end();
-            } else {
-                var accounts = [];
-                for (var index in results) {
-                    var accountData = results[index].account.data;
-                    var account = {
-                        phone: accountData.phone,
-                        nickName: accountData.nickName,
-                        mainBusiness: accountData.mainBusiness,
-                        head: accountData.head,
-                        byPhone: accountData.byPhone
-                    };
-                    accounts.push(account);
-                }
-                response.write(JSON.stringify({
-                    "提示信息": "获取用户信息成功",
-                    accounts: accounts
-                }));
-                response.end();
+    var query = [
+        'MATCH (account:Account)-[r]->(account1:Account)',
+        'WHERE account.phone="121" AND account1.phone="151"',
+        'CREATE UNIQUE account<-[r1:FRIEND]-account1',
+        'RETURN account,account1,r1,r'
+    ].join('\n');
+    var params = {};
+    db.query(query, params, function (error, results) {
+        if (error) {
+            response.write(JSON.stringify({
+                "提示信息": "获取用户信息失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error);
+            return;
+        } else {
+            var accounts = [];
+            for (var index in results) {
+                var account = results[index].account.data;
+                accounts.push(account);
+                var account1 = results[index].account1.data;
+                accounts.push(account1);
+                console.log("r:" + results[index].r.data.friendStatus);
+                console.log("r1:" + results[index].r1.data.friendStatus);
             }
-        });
-    }
+            response.write(JSON.stringify({
+                "提示信息": "获取用户信息成功",
+                accounts: accounts
+            }));
+            response.end();
+        }
+    });
+    /*console.log(phone);
+     var target = data.target;
+     var arr = [phone, accessKey, target];
+     if (verifyEmpty.verifyEmpty(data, arr, response)) {
+     target = JSON.parse(target);
+     getAccountNode(target);
+     }
+     function getAccountNode(target) {
+     var query = [
+     'MATCH (account:Account)',
+     'WHERE account.phone IN {phone}',
+     'RETURN account'
+     ].join('\n');
+     var params = {
+     phone: target
+     };
+     db.query(query, params, function (error, results) {
+     if (error) {
+     response.write(JSON.stringify({
+     "提示信息": "获取用户信息失败",
+     "失败原因": "数据异常"
+     }));
+     response.end();
+     console.log(error);
+     return;
+     } else if (results.length == 0) {
+     response.write(JSON.stringify({
+     "提示信息": "获取用户信息失败",
+     "失败原因": "用户不存在"
+     }));
+     response.end();
+     } else {
+     var accounts = [];
+     for (var index in results) {
+     var accountData = results[index].account.data;
+     var account = {
+     phone: accountData.phone,
+     nickName: accountData.nickName,
+     mainBusiness: accountData.mainBusiness,
+     head: accountData.head,
+     byPhone: accountData.byPhone
+     };
+     accounts.push(account);
+     }
+     response.write(JSON.stringify({
+     "提示信息": "获取用户信息成功",
+     accounts: accounts
+     }));
+     response.end();
+     }
+     });
+     }*/
 }
 /***************************************
  *     URL：/api2/account/modify

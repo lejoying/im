@@ -318,7 +318,7 @@ relationManage.getcirclesandfriends = function (data, response) {
 
                 for (var index in results) {
                     var circleData = results[index].circle.data;
-                    console.log(index)
+//                    console.log(index)
                     circleOrder[circleData.rid + "order"] = index;
 //                    console.log(index);
                     circles[circleData.rid] = circleData;
@@ -404,7 +404,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                             arr[circleData.rid] = circleData;
 //                            circles2.push(circleData);
                             circles2[circleOrder[circleData.rid + "order"]] = circleData;
-                            console.log(circleOrder[circleData.rid + "order"])
+//                            console.log(circleOrder[circleData.rid + "order"])
                             delete circles[circleData.rid];
                         } else {
                             arr[circleData.rid].accounts.push(accounts[accountData.phone]);
@@ -417,6 +417,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                             it.accounts = [];
 //                            circles2.push(it);
                             circles2[circleOrder[it.rid + "order"]] = it;
+//                            console.log(circleOrder[it.rid + "order"])
                         }
                     }
                     var circle = {
