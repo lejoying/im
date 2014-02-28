@@ -10,6 +10,7 @@ public class Friend implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public String phone = "";
+	public int distance;
 	public String nickName = "";
 	public String mainBusiness = "";
 	public String head = "";

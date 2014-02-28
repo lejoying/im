@@ -165,6 +165,11 @@ public class ServerHandler {
 					@Override
 					public void modifyUI() {
 						// TODO Auto-generated method stub
+						if (FriendsFragment.instance != null) {
+							FriendsFragment.instance.initData(true);
+							FriendsFragment.instance.mAdapter
+									.notifyDataSetChanged();
+						}
 						if (uiModification != null) {
 							uiModification.modifyUI();
 						}

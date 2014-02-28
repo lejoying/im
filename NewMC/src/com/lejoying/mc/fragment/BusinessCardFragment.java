@@ -1,5 +1,7 @@
 package com.lejoying.mc.fragment;
 
+import org.json.JSONObject;
+
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,10 @@ import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.ToTryAdapter;
 import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.handler.FileHandler.FileResult;
+import com.lejoying.mc.network.API;
+import com.lejoying.mc.utils.AjaxAdapter;
+import com.lejoying.mc.utils.MCNetUtils;
+import com.lejoying.mc.utils.MCNetUtils.Settings;
 import com.lejoying.mc.utils.ToTry;
 
 public class BusinessCardFragment extends BaseFragment {
@@ -63,6 +69,26 @@ public class BusinessCardFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				MCNetUtils.ajax(new AjaxAdapter() {
+
+					@Override
+					public void setParams(Settings settings) {
+						settings.url = API.RELATION_DELETEFRIEND;
+						Bundle params = new Bundle();
+						params.putString("phone", app.data.user.phone);
+						params.putString("accessKey", app.data.user.accessKey);
+						params.putString("phoneto", app.data.tempFriend.phone);
+						settings.params = params;
+					}
+
+					@Override
+					public void onSuccess(JSONObject jData) {
+						System.out.println("delete success");
+						app.data.friends.remove(app.data.tempFriend.phone);
+						
+					}
+				});
+				sureToDelete.setVisibility(View.GONE);
 				getActivity().getSupportFragmentManager().popBackStack();
 			}
 		});

@@ -103,9 +103,8 @@ public class MainActivity extends BaseFragmentActivity {
 
 	@Override
 	protected void onPause() {
-		super.onPause();
-		System.out.println("pause");
 		app.sDcardDataResolver.saveToSDcard();
+		super.onPause();
 	}
 
 	@Override

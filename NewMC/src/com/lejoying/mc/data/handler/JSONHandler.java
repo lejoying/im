@@ -115,37 +115,7 @@ public class JSONHandler {
 	}
 
 	public void saveGroup(JSONArray jGroups, Data data) {
-		Map<String, Friend> groupFriends = new Hashtable<String, Friend>();
-		groupFriends.putAll(app.data.groupFriends);
-		List<Group> groups = new ArrayList<Group>();
-		for (int i = 0; i < jGroups.length(); i++) {
-			try {
-				JSONObject jGroup = jGroups.getJSONObject(i);
-				Group group = new Group();
-				group.gid = jGroup.getInt("gid");
-
-				List<Friend> tempGroupFriends = generateFriends(jGroup
-						.getJSONArray("members"));
-
-				List<String> phones = new ArrayList<String>();
-				for (Friend friend : tempGroupFriends) {
-					String phone = friend.phone;
-					phones.add(phone);
-					if (groupFriends.get(phone) == null) {
-						groupFriends.put(phone, friend);
-					} else {
-						updateFriend(friend, data);
-					}
-				}
-				group.members = phones;
-				groups.add(group);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		app.data.groups = groups;
-		app.data.groupFriends = groupFriends;
+		data.groups = generateGroups(jGroups);
 	}
 
 	public void saveMessages(JSONArray jMessages, Data data) {
@@ -194,12 +164,50 @@ public class JSONHandler {
 		}
 	}
 
+	public void saveNearByFriends(JSONArray jFriends, Data data) {
+		data.nearByFriends = generateFriends(jFriends);
+	}
+
+	public void saveNearByGroups(JSONArray jGroups, Data data) {
+		data.nearByGroups = generateGroups(jGroups);
+	}
+
+	public List<Group> generateGroups(JSONArray jGroups) {
+		List<Group> groups = new ArrayList<Group>();
+		for (int i = 0; i < jGroups.length(); i++) {
+			try {
+				JSONObject jGroup = jGroups.getJSONObject(i);
+				Group group = new Group();
+				group.gid = jGroup.getInt("gid");
+				List<Friend> tempGroupFriends = generateFriends(jGroup
+						.getJSONArray("members"));
+				List<String> phones = new ArrayList<String>();
+				for (Friend friend : tempGroupFriends) {
+					String phone = friend.phone;
+					phones.add(phone);
+					if (app.data.groupFriends.get(phone) == null) {
+						app.data.groupFriends.put(phone, friend);
+					} else {
+						updateFriend(friend, app.data);
+					}
+				}
+				group.members = phones;
+				groups.add(group);
+			} catch (JSONException e) {
+			}
+		}
+		return groups;
+	}
+
 	public List<Friend> generateFriends(JSONArray jFriends) {
 		List<Friend> users = new ArrayList<Friend>();
 		for (int i = 0; i < jFriends.length(); i++) {
 			try {
 				JSONObject jFriend = jFriends.getJSONObject(i);
 				Friend friend = generateFriendFromJSON(jFriend);
+				if (friend.phone.equals(app.data.user.phone)) {
+					continue;
+				}
 				users.add(friend);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -335,6 +343,10 @@ public class JSONHandler {
 		}
 		try {
 			friend.addMessage = jFriend.getString("message");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.distance = jFriend.getInt("distance");
 		} catch (JSONException e) {
 		}
 		return friend;

@@ -29,6 +29,8 @@ public class Data implements Serializable {
 	public List<Friend> newFriends = new ArrayList<Friend>();
 
 	// temp data
+	public List<Friend> nearByFriends = new ArrayList<Friend>();
+	public List<Group> nearByGroups = new ArrayList<Group>();
 	public Friend nowChatFriend;
 	public Bundle registerBundle;
 	public Friend tempFriend;

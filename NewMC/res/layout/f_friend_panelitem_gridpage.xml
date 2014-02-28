@@ -6,6 +6,7 @@
     android:layout_alignParentLeft="true"
     android:layout_alignParentTop="true"
     android:horizontalSpacing="25dp"
+    android:listSelector="@color/Transparent"
     android:numColumns="3"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"

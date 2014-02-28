@@ -2,7 +2,6 @@ package com.lejoying.mc.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
@@ -29,6 +28,7 @@ public class ScrollContent extends LinearLayout {
 
 	public void bindLinearLayout() {
 		int count = adapter.getCount();
+		this.removeAllViews();
 		for (int i = 0; i < count; i++) {
 			View v = adapter.getDropDownView(i, null, null);
 			LayoutParams layoutParams = new LayoutParams(
@@ -38,11 +38,10 @@ public class ScrollContent extends LinearLayout {
 			v.setLayoutParams(layoutParams);
 			this.addView(v);
 		}
-		Log.v("countTAG", "" + count);
 	}
 
 	public void setSelection(int position) {
 		this.setSelection(position);
-
 	}
+
 }
