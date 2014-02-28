@@ -424,6 +424,9 @@ $(function () {
             $(".js_friendMessage_img").attr("src", "/static/images/face_man.png");
         }
     });
+    $(document).on("click", ".js_createCircle_btn", function () {
+        alert("js_createCircle_btn");
+    });
 });
 function getGroupFinalMessage(type, gid) {
     if (type == "tempGroup") {

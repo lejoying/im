@@ -16,7 +16,32 @@ relationManage.addfriend = function (data, response) {
     var rid = data.rid;
     var message = data.message;
     var accessKey = data.accessKey;
-    addFriendNode();
+    checkAccountBetweenRelation();
+    function checkAccountBetweenRelation() {
+        var query = [
+            'MATCH (account:Account)-[r]-(account1:Account)',
+            'WHERE account.phone={phone} AND account1.phone={phoneTo}',
+            'DELETE r',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "添加失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else {
+                addFriendNode();
+            }
+        });
+    }
 
     function addFriendNode() {
         var query = [
@@ -130,7 +155,6 @@ relationManage.deletefriend = function (data, response) {
     var query = [
         'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
         'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
-        'SET r.friendStatus="delete",r.phone={phone}',
         'RETURN r'
     ].join('\n');
     var params = {
@@ -140,6 +164,7 @@ relationManage.deletefriend = function (data, response) {
     db.query(query, params, function (error, results) {
         if (error) {
             response.write(JSON.stringify({
+
                 "提示信息": "删除失败",
                 "失败原因": "数据异常"
             }));
@@ -147,13 +172,17 @@ relationManage.deletefriend = function (data, response) {
             console.log(error);
             return;
         } else if (results.length > 0) {
-            /*var rNode = results.pop().r;
-             var rData = rNode.data;
-             rData.friendStatus = "delete";
-             rData.phone = phone;
-             rNode.save(function (error, node) {
-             });*/
-            deleteCircleAccountRelaNode(phone, phoneTo);
+            var rNode = results.pop().r;
+            var rData = rNode.data;
+            if (rData.friendStatus == "delete") {
+                deleteAccountToAccountRelationNode();
+            } else {
+                rData.friendStatus = "delete";
+                rData.phone = phone;
+                rNode.save(function (error, node) {
+                });
+                deleteCircleAccountRelaNode(phone, phoneTo);
+            }
         } else {
             response.write(JSON.stringify({
                 "提示信息": "删除失败",
@@ -162,6 +191,33 @@ relationManage.deletefriend = function (data, response) {
             response.end();
         }
     });
+
+    function deleteAccountToAccountRelationNode() {
+        var query = [
+            'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
+            'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
+            'DELETE r',
+            'RETURN account1'
+        ].join('\n');
+        var params = {
+            phone: phone,
+            phoneTo: phoneTo
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "删除失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else {
+                deleteCircleAccountRelaNode(phone, phoneTo);
+            }
+        });
+    }
+
     function deleteCircleAccountRelaNode(phone, phoneTo) {
         var query = [
             'MATCH (account:Account)-[r:HAS_CIRCLE]->(circle:Circle)-[r1:HAS_FRIEND]->(account1:Account)',
