@@ -4,7 +4,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var push = require('../lib/push.js');
 var sha1 = require('../tools/sha1.js');
-
+var verifyEmpty = require("./../lib/verifyParams.js");
 /***************************************
  *     URL：/api2/relation/addfriend
  ***************************************/
@@ -16,7 +16,10 @@ relationManage.addfriend = function (data, response) {
     var rid = data.rid;
     var message = data.message;
     var accessKey = data.accessKey;
-    checkAccountBetweenRelation();
+    var arr = [phone, phoneTo, rid, accessKey];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        checkAccountBetweenRelation();
+    }
     function checkAccountBetweenRelation() {
         var query = [
             'MATCH (account:Account)-[r]-(account1:Account)',
@@ -151,6 +154,10 @@ relationManage.deletefriend = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
+    /*var arr = [phone, phoneTo, rid, accessKey];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+
+    }*/
     var phoneTo = JSON.parse(phoneToStr);
     var query = [
         'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
@@ -411,6 +418,8 @@ relationManage.getcirclesandfriends = function (data, response) {
                     var accountData = results[index].account1.data;
                     var account = {
                         uid: accountData.uid,
+                        ID: accountData.ID,
+                        sex: accountData.sex,
                         phone: accountData.phone,
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
@@ -777,6 +786,8 @@ relationManage.getaskfriends = function (data, response) {
                 var rData = results[index].r.data;
                 var account = {
                     uid: accountData.uid,
+                    ID: accountData.ID,
+                    sex: accountData.sex,
                     phone: accountData.phone,
                     mainBusiness: accountData.mainBusiness,
                     head: accountData.head,

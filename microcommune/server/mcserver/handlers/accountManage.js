@@ -21,7 +21,25 @@ var pvkey0 = RSA.RSAKey(pvkeyStr0);
 //sms.createsub("coolspan@sina.cn");此子账户已创建
 var sms_power = true;
 //sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
-
+var accountID = -1;
+var redis = require("redis");
+var client = redis.createClient("6379", "115.28.51.197");
+client.get("ID", function (err, reply) {
+    if (err != null) {
+        console.log(err);
+        throw "用户ID初始化失败...";
+        return;
+    } else {
+        if (reply == null) {
+            console.log(reply);
+            throw "用户ID初始化失败...";
+            return;
+        } else {
+            console.log("ID:" + reply + "...init data");
+            accountID = reply;
+        }
+    }
+});
 /***************************************
  *     URL：/api2/account/verifyphone
  ***************************************/
@@ -244,43 +262,51 @@ accountManage.verifycode = function (data, response, next) {
             } else if (results.length > 0) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
-                if (accountData.code == code && code != "none") {
-                    var time = new Date().getTime();
-                    var bad = time - parseInt(accountData.time);
-                    if (bad > 600000) {
+                if (accountData.status == "active") {
+                    if (accountData.code == code && code != "none") {
+                        var time = new Date().getTime();
+                        var bad = time - parseInt(accountData.time);
+                        if (bad > 600000) {
+                            response.write(JSON.stringify({
+                                "提示信息": "验证失败",
+                                "失败原因": "验证码超时"
+                            }));
+                            response.end();
+                        } else {
+                            console.log("验证成功---");
+                            accountData.code = "none";
+                            accountNode.save(function (error, node) {
+                            });
+                            var accessKey0 = sha1.hex_sha1(phone + code);
+                            next(phone, accessKey0, function (flag) {
+                                if (flag) {
+                                    response.write(JSON.stringify({
+                                        "提示信息": "验证成功",
+                                        uid: RSA.encryptedString(pvkey0, phone),
+                                        accessKey: RSA.encryptedString(pvkey0, accessKey0),
+                                        PbKey: pbkeyStr0
+                                    }));
+                                    response.end();
+                                } else {
+                                    response.write(JSON.stringify({
+                                        "提示信息": "验证失败",
+                                        "失败原因": "数据异常"
+                                    }));
+                                    response.end();
+                                }
+                            });
+                        }
+                    } else {
                         response.write(JSON.stringify({
                             "提示信息": "验证失败",
-                            "失败原因": "验证码超时"
+                            "失败原因": "验证码不正确"
                         }));
                         response.end();
-                    } else {
-                        console.log("验证成功---");
-                        accountData.code = "none";
-                        accountNode.save(function (error, node) {
-                        });
-                        var accessKey0 = sha1.hex_sha1(phone + code);
-                        next(phone, accessKey0, function (flag) {
-                            if (flag) {
-                                response.write(JSON.stringify({
-                                    "提示信息": "验证成功",
-                                    uid: RSA.encryptedString(pvkey0, phone),
-                                    accessKey: RSA.encryptedString(pvkey0, accessKey0),
-                                    PbKey: pbkeyStr0
-                                }));
-                                response.end();
-                            } else {
-                                response.write(JSON.stringify({
-                                    "提示信息": "验证失败",
-                                    "失败原因": "数据异常"
-                                }));
-                                response.end();
-                            }
-                        });
                     }
                 } else {
                     response.write(JSON.stringify({
                         "提示信息": "验证失败",
-                        "失败原因": "验证码不正确"
+                        "失败原因": "手机号已锁定"
                     }));
                     response.end();
                 }
@@ -340,33 +366,41 @@ accountManage.auth = function (data, response, next) {
                     }));
                     response.end();
                 } else {
-                    if (sha1.hex_sha1(accountData.password) == password) {
-                        console.log("普通鉴权成功---");
-                        var accessKey = sha1.hex_sha1(phone + new Date().getTime());
-                        console.log("accessKey:---" + accessKey);
-                        next(phone, accessKey, function (flag) {
-                            if (flag) {
-                                response.write(JSON.stringify({
-                                    "提示信息": "普通鉴权成功",
-                                    "uid": RSA.encryptedString(pvkey0, accountData.phone),
-                                    "accessKey": RSA.encryptedString(pvkey0, accessKey),
-                                    "PbKey": pbkeyStr0
-                                }));
-                                response.end();
-                            } else {
-                                response.write(JSON.stringify({
-                                    "提示信息": "普通鉴权失败",
-                                    "失败原因": "数据异常"
-                                }));
-                                response.end();
-                            }
-                        });
+                    if (accountData.status == "active") {
+                        if (sha1.hex_sha1(accountData.password) == password) {
+                            console.log("普通鉴权成功---");
+                            var accessKey = sha1.hex_sha1(phone + new Date().getTime());
+                            console.log("accessKey:---" + accessKey);
+                            next(phone, accessKey, function (flag) {
+                                if (flag) {
+                                    response.write(JSON.stringify({
+                                        "提示信息": "普通鉴权成功",
+                                        "uid": RSA.encryptedString(pvkey0, accountData.phone),
+                                        "accessKey": RSA.encryptedString(pvkey0, accessKey),
+                                        "PbKey": pbkeyStr0
+                                    }));
+                                    response.end();
+                                } else {
+                                    response.write(JSON.stringify({
+                                        "提示信息": "普通鉴权失败",
+                                        "失败原因": "数据异常"
+                                    }));
+                                    response.end();
+                                }
+                            });
 //                        accountSession[phone] = accountSession[phone] || [];
 //                        accountSession[phone][accessKey] = null;
+                        } else {
+                            response.write(JSON.stringify({
+                                "提示信息": "普通鉴权失败",
+                                "失败原因": "密码不正确"
+                            }));
+                            response.end();
+                        }
                     } else {
                         response.write(JSON.stringify({
                             "提示信息": "普通鉴权失败",
-                            "失败原因": "密码不正确"
+                            "失败原因": "手机号已锁定"
                         }));
                         response.end();
                     }
@@ -445,10 +479,12 @@ accountManage.get = function (data, response) {
                 for (var index in results) {
                     var accountData = results[index].account.data;
                     var account = {
+                        ID: accountData.ID,
                         phone: accountData.phone,
                         nickName: accountData.nickName,
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
+                        sex: accountData.sex,
                         byPhone: accountData.byPhone
                     };
                     accounts.push(account);
@@ -475,7 +511,11 @@ accountManage.modify = function (data, response) {
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
             account = JSON.parse(accountStr);
-            modifyAccountNode(phone, account);
+            if (account.nickName != undefined && account.nickName != null && account.nickName != "") {
+                checkAccountNickName(phone, account);
+            } else {
+                modifyAccountNode(phone, account);
+            }
         } catch (e) {
             response.write(JSON.stringify({
                 "提示信息": "修改用户信息失败",
@@ -484,6 +524,36 @@ accountManage.modify = function (data, response) {
             response.end();
             return;
         }
+    }
+    function checkAccountNickName(phone, account) {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone} AND account.nickName={nickName}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone,
+            nickName: account.nickName
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else if (results.length == 0) {
+                modifyAccountNode(phone, account);
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户信息失败",
+                    "失败原因": "昵称已存在"
+                }));
+                response.end();
+            }
+        });
     }
 
     function modifyAccountNode(phone, account) {
@@ -519,20 +589,45 @@ accountManage.modify = function (data, response) {
                 if (account.mainBusiness != undefined && account.mainBusiness != null && account.mainBusiness != "") {
                     accountData.mainBusiness = account.mainBusiness;
                 }
+                if (account.sex != undefined && account.sex != null && account.sex != "") {
+                    accountData.sex = account.sex;
+                }
                 if (account.password != undefined && account.password != null && account.password != "") {
                     accountData.password = account.password;
                     if (accountData.status == "init") {
+                        accountData.ID = ++accountID;
                         accountData.status = "active";
+                        client.set("ID", accountID, function (err, reply) {
+                            if (err != null) {
+                                response.write(JSON.stringify({
+                                    "提示信息": "修改用户信息失败",
+                                    "失败原因": "数据异常"
+                                }));
+                                response.end();
+                                console.log(err);
+                                return;
+                            }
+                        });
                     }
                 }
                 if (account.head != undefined && account.head != null && account.head != "") {
                     accountData.head = account.head;
                 }
-                accountNode.save(function (error, node) {
-                    response.write(JSON.stringify({
-                        "提示信息": "修改用户信息成功"
-                    }));
-                    response.end();
+                accountNode.save(function (err, node) {
+                    if (err) {
+                        response.write(JSON.stringify({
+                            "提示信息": "修改用户信息失败",
+                            "失败原因": "数据异常"
+                        }));
+                        response.end();
+                        console.log(err);
+                        return;
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "修改用户信息成功"
+                        }));
+                        response.end();
+                    }
                 });
             }
         });

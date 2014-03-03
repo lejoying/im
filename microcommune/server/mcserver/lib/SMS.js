@@ -39,7 +39,7 @@ var send_msg = function (to, msg) {
     var opt = {
         hostname: 'app.cloopen.com',
         port: 8883,
-        path: '/2013-03-22/Accounts/%s/SMS/Messages'.replace('%s', ACCOUNT_ID) + '?sig=' + sign.sign,
+        path: '/2013-12-26/Accounts/%s/SMS/Messages'.replace('%s', ACCOUNT_ID) + '?sig=' + sign.sign,
         method: 'POST',
         headers: {
             'Authorization': sign.header,

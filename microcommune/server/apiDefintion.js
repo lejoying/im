@@ -103,7 +103,7 @@ api = {
         },
         response: {
             success: {"提示信息": "验证成功", "uid": "XXX", accessKey: sha1("phone" + "code"), "PbKey": "XXX"},
-            failed: {"提示信息": "验证失败", "失败原因": ["验证码不正确" || "验证码超时" || "手机号不存在" || "数据异常"]}
+            failed: {"提示信息": "验证失败", "失败原因": ["验证码不正确" || "验证码超时" || "手机号不存在" || "数据异常" || "手机号已锁定"]}
         }
     },
     /***************************************
@@ -119,7 +119,7 @@ api = {
         },
         response: {
             success: {"提示信息": "普通鉴权成功", "uid": "XXX", accessKey: sha1("phone" + "time"), "PbKey": "XXX"},
-            failed: {"提示信息": "普通鉴权失败", "失败原因": ["手机号不存在" || "密码不正确" || "数据异常"]}
+            failed: {"提示信息": "普通鉴权失败", "失败原因": ["手机号不存在" || "密码不正确" || "数据异常" || "手机号已锁定"]}
         }
     },
     /***************************************
@@ -151,11 +151,11 @@ api = {
             url: "/api2/account/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", mainBusiness: "XXX", password: "XXX", head: "XXX"})}
+            typical: {phone: "XXX", accessKey: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", sex: "XXX", mainBusiness: "XXX", password: "XXX", head: "XXX"})}
         },
         response: {
             success: {"提示信息": "修改用户信息成功"},
-            failed: {"提示信息": "修改用户信息失败", "失败原因": "数据异常" || "用户不存在"}
+            failed: {"提示信息": "修改用户信息失败", "失败原因": "数据异常" || "用户不存在" || "昵称已存在"}
         }
     },
     /***************************************

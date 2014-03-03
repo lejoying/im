@@ -420,10 +420,12 @@ groupManage.getallmembers = function (data, response) {
                 for (var i = 0; i < results.length; i++) {
                     var member = results[i].account.data;
                     var account = {
+                        ID: member.ID,
                         phone: member.phone,
                         nickName: member.nickName,
                         mainBusiness: member.mainBusiness,
                         head: member.head,
+                        sex: member.sex,
                         byPhone: member.byPhone
                     };
                     members.push(account);
@@ -762,10 +764,11 @@ groupManage.getgroupsandmembers = function (data, response) {
                 var groupData = it.group.data;
                 var accountData = it.account.data;
                 var account = {
-                    uid: accountData.uid,
+                    ID: accountData.ID,
                     phone: accountData.phone,
                     mainBusiness: accountData.mainBusiness,
                     head: accountData.head,
+                    sex: accountData.sex,
                     byPhone: accountData.byPhone,
                     nickName: accountData.nickName
                 };
