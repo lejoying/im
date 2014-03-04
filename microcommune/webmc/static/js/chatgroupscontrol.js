@@ -425,7 +425,12 @@ $(function () {
         }
     });
     $(document).on("click", ".js_createCircle_btn", function () {
-        alert("js_createCircle_btn");
+//        alert("js_createCircle_btnddddd");
+        $(".js_invite_SelectUserChat_frame").show();
+        getTemplateHtml("invite_circles_friends", function (template) {
+            var circles = JSON.parse(window.sessionStorage.getItem("wxgs_circles"));
+            $(".js_invite_friends_chat_frame").html(template.render(circles));
+        });
     });
 });
 function getGroupFinalMessage(type, gid) {
