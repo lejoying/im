@@ -532,10 +532,10 @@
             <div class="chatOperator lightBorder" id="chat_editor" ctrl="1">
                 <div class="inputArea" style="z-index: 999999">
                     <div class="attach">
-                        <a title="选择表情" click="showEmojiPanel" class="func expression" id="sendEmojiIcon"
+                        <a title="选择表情" click="showEmojiPanel" class="func expression js_checkFace" id="sendEmojiIcon"
                            href="javascript:;"></a>
-                        <a style="" title="发送截屏" click="screenSnap" class="func screensnap" id="screenSnapIcon"
-                           href="javascript:;"></a>
+                        <!--<a style="" title="发送截屏" click="screenSnap" class="func screensnap" id="screenSnapIcon"
+                           href="javascript:;"></a>-->
 
                         <form style="" target="actionFrame" method="post" enctype="multipart/form-data"
                               url="http://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?cgi=sendfile&amp;t=chat&amp;callbackfun=sendFile"
@@ -553,9 +553,10 @@
                             </a>
                         </form>
                     </div>
-                    <textarea class="chatInput lightBorder js_chatmessagecontent" id="textInput" type="text"
-                            >AAA</textarea>
-                    <a click="sendMsg@.inputArea" class="chatSend js_chatsendmessage" href="javascript:;"><b>发送</b></a>
+                    <textarea onmouseup="getValue(this)" class="chatInput lightBorder js_chatmessagecontent" id="textInput" type="text"
+                            ></textarea>
+                    <a click="sendMsg@.inputArea" class="chatSend js_chatsendmessage" href="javascript:;"
+                       style="margin-right: 20px;"><b>发送</b></a>
 
                     <div style="display:none;" class="recordInput chatInput" id="recordInput"></div>
                     <div class="clr"></div>
@@ -563,7 +564,7 @@
                               style="visibility: hidden; position: absolute; left: -1000px; padding: 0px 10px; width: 403px; overflow: hidden;">
                     </textarea>
 
-                    <div class="possion_Panel" style="display: block"> <!-- 表情  -->
+                    <div class="possion_Panel js_wxgsFacePanel" style="display: none"> <!-- 表情  -->
                         <div class="smile_warp">
                             <div class="gs_smile">公社表情</div>
                             <div class="smile_box">

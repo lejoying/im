@@ -177,38 +177,392 @@ $(function () {
             $(".js_friendMessage_img").attr("src", "/static/images/face_man.png");
         }
     });
+    //初始化表情的Title显示
+    var smail = $(".smile_box");
+    var smailWXGSFace = ["微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞", "闭嘴", "睡", "大哭", "尴尬", "发怒", "调皮", "呲牙", "惊讶", "难过", "酷", "冷汗", "抓狂", "吐", "偷笑", "可爱", "白眼", "傲慢", "饥饿", "困", "惊恐", "流汗", "憨笑", "大兵", "奋斗", "咒骂", "疑问", "嘘", "晕", "折磨", "衰", "骷髅", "敲打", "再见", "擦汗", "抠鼻", "鼓掌", "糗大了", "坏笑", "左哼哼", "右哼哼", "哈欠", "鄙视", "委屈", "快哭了", "阴险", "亲亲", "吓", "可怜", "菜刀", "西瓜", "啤酒", "篮球", "乒乓", "咖啡", "饭", "猪头", "玫瑰", "凋谢", "示爱", "爱心", "心碎", "蛋糕", "闪电", "炸弹", "刀", "足球", "瓢虫", "便便", "月亮", "太阳", "礼物", "拥抱", "强", "弱", "握手", "胜利", "抱拳", "勾引", "拳头", "差劲", "爱你", "NO", "OK", "爱情", "飞吻", "跳跳", "发抖", "怄火", "转圈", "磕头", "回头", "跳绳", "挥手", "激动", "街舞", "献吻", "左太极", "右太极"];
+    for (var i = 0; i < 105; i++) {
+        var dom = document.createElement("a");
+        dom.title = smailWXGSFace[i];
+        dom.name = i;
+        smail[0].appendChild(dom);
+    }
+    $(document).on("click", ".smile_box>a", function () {
+        var face = "[" + $(this).attr("title") + "]";
+        alert(face);
+    });
+    $(".js_checkFace").click(function () {
+        if ($(".js_wxgsFacePanel").css("display") == "block") {
+            $(".js_wxgsFacePanel").hide();
+        } else {
+            $(".js_wxgsFacePanel").show();
+        }
+    });
 });
+function getPosition(obj) {
+    var result = 0;
+    if (obj.selectionStart) { //IE以外
+        console.log(event);
+        result = obj.selectionStart
+    } else { //IE
+        var rng;
+        console.log((obj.tagName).toLowerCase() == "textarea");
+        if ((obj.tagName).toLowerCase() == "textarea") { //TEXTAREA
+            console.log(event);
+            rng = event.srcElement.createTextRange();
+            rng.moveToPoint(event.x, event.y);
+        } else { //Text
+            rng = document.selection.createRange();
+        }
+        rng.moveStart("character", -event.srcElement.value.length);
+        result = rng.text.length;
+    }
+    return result;
+}
+function getValue(obj) {
+    if (obj.value) {
+        var pos = getPosition(obj);
+        alert(obj.value.substr(0, pos) + "[输入内容]" + obj.value.substr(pos, obj.value.length));
+    }
+}
+var WXGSFaceMap = {
+    "微笑": "0", "撇嘴": "1", "色": "2", "发呆": "3", "得意": "4", "流泪": "5", "害羞": "6", "闭嘴": "7", "睡": "8", "大哭": "9",
+    "尴尬": "10", "发怒": "11", "调皮": "12", "呲牙": "13", "惊讶": "14", "难过": "15", "酷": "16", "冷汗": "17", "抓狂": "18", "吐": "19",
+    "偷笑": "20", "可爱": "21", "愉快": "21", "白眼": "22", "傲慢": "23", "饥饿": "24", "困": "25", "惊恐": "26", "流汗": "27", "憨笑": "28",
+    "悠闲": "29", "大兵": "29", "奋斗": "30", "咒骂": "31", "疑问": "32", "嘘": "33", "晕": "34", "疯了": "35", "折磨": "35", "衰": "36",
+    "骷髅": "37", "敲打": "38", "再见": "39", "擦汗": "40", "抠鼻": "41", "鼓掌": "42", "糗大了": "43", "坏笑": "44", "左哼哼": "45", "右哼哼": "46",
+    "哈欠": "47", "鄙视": "48", "委屈": "49", "快哭了": "50", "阴险": "51", "亲亲": "52", "吓": "53", "可怜": "54", "菜刀": "55", "西瓜": "56",
+    "啤酒": "57",
+    "篮球": "58",
+    "乒乓": "59",
+    "咖啡": "60",
+    "饭": "61",
+    "猪头": "62",
+    "玫瑰": "63",
+    "凋谢": "64",
+    "嘴唇": "65",
+    "示爱": "65",
+    "爱心": "66",
+    "心碎": "67",
+    "蛋糕": "68",
+    "闪电": "69",
+    "炸弹": "70",
+    "刀": "71",
+    "足球": "72",
+    "瓢虫": "73",
+    "便便": "74",
+    "月亮": "75",
+    "太阳": "76",
+    "礼物": "77",
+    "拥抱": "78",
+    "强": "79",
+    "弱": "80",
+    "握手": "81",
+    "胜利": "82",
+    "抱拳": "83",
+    "勾引": "84",
+    "拳头": "85",
+    "差劲": "86",
+    "爱你": "87",
+    "NO": "88",
+    "OK": "89",
+    "爱情": "90",
+    "飞吻": "91",
+    "跳跳": "92",
+    "发抖": "93",
+    "怄火": "94",
+    "转圈": "95",
+    "磕头": "96",
+    "回头": "97",
+    "跳绳": "98",
+    "挥手": "99",
+    "激动": "100",
+    "街舞": "101",
+    "献吻": "102",
+    "左太极": "103",
+    "右太极": "104",
+
+
+    "Smile": "0",
+    "Grimace": "1",
+    "Drool": "2",
+    "Scowl": "3",
+    "Chill": "4",
+    "Sob": "5",
+    "Shy": "6",
+    "Shutup": "7",
+    "Silent": "7",
+    "Sleep": "8",
+    "Cry": "9",
+    "Awkward": "10",
+    "Pout": "11",
+    "Angry": "11",
+    "Wink": "12",
+    "Tongue": "12",
+    "Grin": "13",
+    "Surprised": "14",
+    "Surprise": "14",
+    "Frown": "15",
+    "Cool": "16",
+    "Ruthless": "16",
+    "Tension": "17",
+    "Blush": "17",
+    "Scream": "18",
+    "Crazy": "18",
+    "Puke": "19",
+    "Chuckle": "20",
+    "Joyful": "21",
+    "Slight": "22",
+    "Smug": "23",
+    "Hungry": "24",
+    "Drowsy": "25",
+    "Panic": "26",
+    "Sweat": "27",
+    "Laugh": "28",
+    "Loafer": "29",
+    "Commando": "29",
+    "Strive": "30",
+    "Determined": "30",
+    "Scold": "31",
+    "Doubt": "32",
+    "Shocked": "32",
+    "Shhh": "33",
+    "Dizzy": "34",
+    //"Crazy" : "35",
+    "Tormented": "35",
+    "BadLuck": "36",
+    "Toasted": "36",
+    "Skull": "37",
+    "Hammer": "38",
+    "Wave": "39",
+    "Relief": "40",
+    "Speechless": "40",
+    "DigNose": "41",
+    "NosePick": "41",
+    "Clap": "42",
+    "Shame": "43",
+    "Trick": "44",
+    "Bah！L": "45",
+    "Bah！R": "46",
+    "Yawn": "47",
+    "Lookdown": "48",
+    "Pooh-pooh": "48",
+    "Wronged": "49",
+    "Shrunken": "49",
+    "Puling": "50",
+    "TearingUp": "50",
+    "Sly": "51",
+    "Kiss": "52",
+    "Uh-oh": "53",
+    "Wrath": "53",
+    "Whimper": "54",
+    "Cleaver": "55",
+    "Melon": "56",
+    "Watermelon": "56",
+    "Beer": "57",
+    "Basketball": "58",
+    "PingPong": "59",
+    "Coffee": "60",
+    "Rice": "61",
+    "Pig": "62",
+    "Rose": "63",
+    "Wilt": "64",
+    "Lip": "65",
+    "Heart": "66",
+    "BrokenHeart": "67",
+    "Cake": "68",
+    "Lightning": "69",
+    "Bomb": "70",
+    "Dagger": "71",
+    "Soccer": "72",
+    "Ladybug": "73",
+    "Poop": "74",
+    "Moon": "75",
+    "Sun": "76",
+    "Gift": "77",
+    "Hug": "78",
+    "Strong": "79",
+    "ThumbsUp": "79",
+    "Weak": "80",
+    "ThumbsDown": "80",
+    "Shake": "81",
+    "Victory": "82",
+    "Peace": "82",
+    "Admire": "83",
+    "Fight": "83",
+    "Beckon": "84",
+    "Fist": "85",
+    "Pinky": "86",
+    "Love": "87",
+    "RockOn": "87",
+    "No": "88",
+    "Nuh-uh": "88",
+    "OK": "89",
+    "InLove": "90",
+    "Blowkiss": "91",
+    "Waddle": "92",
+    "Tremble": "93",
+    "Aaagh!": "94",
+    "Twirl": "95",
+    "Kotow": "96",
+    "Lookback": "97",
+    "Dramatic": "97",
+    "Jump": "98",
+    "JumpRope": "98",
+    "Give-in": "99",
+    "Surrender": "99",
+    "Hooray": "100",
+    "HeyHey": "101",
+    "Meditate": "101",
+    "Smooch": "102",
+    "TaiJi L": "103",
+    "TaiChi L": "103",
+    "TaiJi R": "104",
+    "TaiChi R": "104",
+
+    "微笑": "0",
+    "撇嘴": "1",
+    "色": "2",
+    "發呆": "3",
+    "得意": "4",
+    "流淚": "5",
+    "害羞": "6",
+    "閉嘴": "7",
+    "睡": "8",
+    "大哭": "9",
+    "尷尬": "10",
+    "發怒": "11",
+    "調皮": "12",
+    "呲牙": "13",
+    "驚訝": "14",
+    "難過": "15",
+    "酷": "16",
+    "冷汗": "17",
+    "抓狂": "18",
+    "吐": "19",
+    "偷笑": "20",
+    "愉快": "21",
+    "白眼": "22",
+    "傲慢": "23",
+    "饑餓": "24",
+    "累": "25",
+    "驚恐": "26",
+    "流汗": "27",
+    "憨笑": "28",
+    "悠閑": "29",
+    "奮鬥": "30",
+    "咒罵": "31",
+    "疑問": "32",
+    "噓": "33",
+    "暈": "34",
+    "瘋了": "35",
+    "衰": "36",
+    "骷髏頭": "37",
+    "敲打": "38",
+    "再見": "39",
+    "擦汗": "40",
+    "摳鼻": "41",
+    "鼓掌": "42",
+    "羞辱": "43",
+    "壞笑": "44",
+    "左哼哼": "45",
+    "右哼哼": "46",
+    "哈欠": "47",
+    "鄙視": "48",
+    "委屈": "49",
+    "快哭了": "50",
+    "陰險": "51",
+    "親親": "52",
+    "嚇": "53",
+    "可憐": "54",
+    "菜刀": "55",
+    "西瓜": "56",
+    "啤酒": "57",
+    "籃球": "58",
+    "乒乓": "59",
+    "咖啡": "60",
+    "飯": "61",
+    "豬頭": "62",
+    "玫瑰": "63",
+    "枯萎": "64",
+    "嘴唇": "65",
+    "愛心": "66",
+    "心碎": "67",
+    "蛋糕": "68",
+    "閃電": "69",
+    "炸彈": "70",
+    "刀": "71",
+    "足球": "72",
+    "甲蟲": "73",
+    "便便": "74",
+    "月亮": "75",
+    "太陽": "76",
+    "禮物": "77",
+    "擁抱": "78",
+    "強": "79",
+    "弱": "80",
+    "握手": "81",
+    "勝利": "82",
+    "抱拳": "83",
+    "勾引": "84",
+    "拳頭": "85",
+    "差勁": "86",
+    "愛你": "87",
+    "愛你": "88",
+    "OK": "89",
+    "愛情": "90",
+    "飛吻": "91",
+    "跳跳": "92",
+    "發抖": "93",
+    "噴火": "94",
+    "轉圈": "95",
+    "磕頭": "96",
+    "回頭": "97",
+    "跳繩": "98",
+    "投降": "99",
+    "激動": "100",
+    "亂舞": "101",
+    "獻吻": "102",
+    "左太極": "103",
+    "右太極": "104"};
 //分析消息的内容并进行显示
 function messageContentTypeSplitShow(type, content) {
     if (type == "text") {
         if (content.indexOf("[") != -1 && content.indexOf("]") != -1) {
-
-            var firstPosition = content.indexOf("[");
-
-
-
-            var firstIndex = -1;
-            var count = 1;
-            for (var i = 0; i < content.length; i++) {
-                var char = content[i];
-                if (char == "[") {
-                    firstIndex = i;
-                } else if (char == "]") {
-                    if (firstIndex != -1) {
-                        var str = content.substr(firstIndex + 1, i - 1);
-                        console.log(str + "-" + count);
-                        count++;
-                        firstIndex = -1;
+            var contents = "";
+            var arr = content.split("[");
+            for (var index in arr) {
+                var str = arr[index];
+                if (str.indexOf("]") != -1) {
+                    var i = str.indexOf("]");
+                    if (i >= 1) {
+                        var faceStr = str.substr(0, i);
+                        if (WXGSFaceMap[faceStr] != undefined) {
+                            contents += "<img src=/static/images/wxgsface/" + WXGSFaceMap[faceStr] + ".png />" + str.substr(i + 1);
+                        } else {
+                            contents += "smile" + str.substr(i + 1);
+                        }
+                    } else {
+                        contents += "[" + str;
+                    }
+                } else {
+                    if (str == "") {
+                        if (index == (arr.length - 1)) {
+                            contents += "[" + str;
+                        } else {
+                            contents += str;
+                        }
+                    } else if (content.substr(0, 1) == "[") {
+                        contents += "[" + str;
+                    } else {
+                        contents += str;
                     }
                 }
             }
+//            console.log(contents + "---" + content);
         }
-        return content;
+        return contents;
     } else if (type == "image") {
-//        var img = document.createElement("img");
-//        img.src = imageServer + content;
-        var image = new Image();
-
+//        var image = new Image();
         return "<img src=" + imageServer + content + ">";
     } else {
         return content + "---" + type;
