@@ -198,30 +198,35 @@ $(function () {
         }
     });
 });
+var pos = -1;
 function getPosition(obj) {
-    var result = 0;
-    if (obj.selectionStart) { //IE以外
-        console.log(event);
-        result = obj.selectionStart
-    } else { //IE
-        var rng;
-        console.log((obj.tagName).toLowerCase() == "textarea");
-        if ((obj.tagName).toLowerCase() == "textarea") { //TEXTAREA
+    try {
+        var result = 0;
+        if (obj.selectionStart) { //IE以外
             console.log(event);
-            rng = event.srcElement.createTextRange();
-            rng.moveToPoint(event.x, event.y);
-        } else { //Text
-            rng = document.selection.createRange();
+            result = obj.selectionStart
+        } else { //IE
+            var rng;
+            console.log((obj.tagName).toLowerCase() == "textarea");
+            if ((obj.tagName).toLowerCase() == "textarea") { //TEXTAREA
+                console.log(event);
+                rng = event.srcElement.createTextRange();
+                rng.moveToPoint(event.x, event.y);
+            } else { //Text
+                rng = document.selection.createRange();
+            }
+            rng.moveStart("character", -event.srcElement.value.length);
+            result = rng.text.length;
         }
-        rng.moveStart("character", -event.srcElement.value.length);
-        result = rng.text.length;
+    } catch (e) {
+        return 0;
     }
     return result;
 }
 function getValue(obj) {
     if (obj.value) {
-        var pos = getPosition(obj);
-        alert(obj.value.substr(0, pos) + "[输入内容]" + obj.value.substr(pos, obj.value.length));
+        pos = getPosition(obj);
+//        alert(obj.value.substr(0, pos) + "[输入内容]" + obj.value.substr(pos, obj.value.length));
     }
 }
 var WXGSFaceMap = {
@@ -558,9 +563,9 @@ function messageContentTypeSplitShow(type, content) {
                     }
                 }
             }
-//            console.log(contents + "---" + content);
+            return contents;
         }
-        return contents;
+        return content;
     } else if (type == "image") {
 //        var image = new Image();
         return "<img src=" + imageServer + content + ">";
