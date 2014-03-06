@@ -26,12 +26,12 @@ var redis = require("redis");
 var client = redis.createClient("6379", "115.28.51.197");
 client.get("ID", function (err, reply) {
     if (err != null) {
-        console.log(err);
+        console.error(err);
         throw "用户ID初始化失败...";
         return;
     } else {
         if (reply == null) {
-            console.log(reply);
+            console.warn(reply);
             throw "用户ID初始化失败...";
             return;
         } else {
@@ -228,7 +228,7 @@ accountManage.verifycode = function (data, response, next) {
                         PbKey: pbkeyStr0
                     }));
                     response.end();
-                    console.log("000000验证码跳过验证");
+                    console.warn("000000验证码跳过验证");
                 } else {
                     response.write(JSON.stringify({
                         "提示信息": "验证失败",
@@ -466,7 +466,7 @@ accountManage.get = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.error(error);
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
@@ -542,7 +542,7 @@ accountManage.modify = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.error(error);
                 return;
             } else if (results.length == 0) {
                 modifyAccountNode(phone, account);
@@ -572,7 +572,7 @@ accountManage.modify = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.error(error);
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
@@ -604,7 +604,7 @@ accountManage.modify = function (data, response) {
                                     "失败原因": "数据异常"
                                 }));
                                 response.end();
-                                console.log(err);
+                                console.error(err);
                                 return;
                             }
                         });
@@ -620,7 +620,7 @@ accountManage.modify = function (data, response) {
                             "失败原因": "数据异常"
                         }));
                         response.end();
-                        console.log(err);
+                        console.error(err);
                         return;
                     } else {
                         response.write(JSON.stringify({
