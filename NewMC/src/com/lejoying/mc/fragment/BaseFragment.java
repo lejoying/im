@@ -8,9 +8,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.lejoying.mc.adapter.ToTryAdapter;
+import com.lejoying.mc.data.App;
 import com.lejoying.mc.utils.ToTry;
 
 public abstract class BaseFragment extends Fragment {
+
+	App app = App.getInstance();
 
 	public BaseInterface mMCFragmentManager;
 
@@ -19,6 +22,8 @@ public abstract class BaseFragment extends Fragment {
 	public InputMethodManager mInputMethodManager;
 
 	protected abstract EditText showSoftInputOnShow();
+
+	public abstract String setMark();
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -29,6 +34,10 @@ public abstract class BaseFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		String mark = setMark();
+		if (mark != null && !isHidden()) {
+			app.mark = mark;
+		}
 		if (showSoftInputOnShow() != null) {
 			showSoftInput(showSoftInputOnShow());
 		}
@@ -60,10 +69,10 @@ public abstract class BaseFragment extends Fragment {
 			@Override
 			public boolean isSuccess() {
 				boolean flag = false;
-				if (mMCFragmentManager.circleMenuIsShow()) {
-					flag = getInputMethodManager().showSoftInput(editText,
-							InputMethodManager.SHOW_FORCED);
-				}
+				// if (mMCFragmentManager.circleMenuIsShow()) {
+				flag = getInputMethodManager().showSoftInput(editText,
+						InputMethodManager.SHOW_FORCED);
+				// }
 				return flag;
 			}
 

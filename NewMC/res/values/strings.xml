@@ -18,6 +18,7 @@
     <string name="app_cameranotready">相机故障,重新打开试试~~</string>
     <string name="page_friend">密友圈</string>
     <string name="page_group">群组</string>
+    <string name="page_square">广场</string>
     <string name="circleitem1_1">广场</string>
     <string name="circleitem1_2">群组</string>
     <string name="circleitem1_3">Hot</string>

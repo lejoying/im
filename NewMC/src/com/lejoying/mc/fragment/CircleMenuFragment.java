@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Instrumentation;
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.KeyEvent;
@@ -25,8 +23,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lejoying.mc.HotActivity;
-import com.lejoying.mc.LoginActivity;
 import com.lejoying.mc.R;
 import com.lejoying.mc.adapter.AnimationAdapter;
 import com.lejoying.mc.adapter.ToTryAdapter;
@@ -34,7 +30,6 @@ import com.lejoying.mc.data.App;
 import com.lejoying.mc.data.Config;
 import com.lejoying.mc.data.Data;
 import com.lejoying.mc.entity.MenuEntity;
-import com.lejoying.mc.service.PushService;
 import com.lejoying.mc.utils.ToTry;
 import com.lejoying.mc.view.CircleMenuView;
 import com.lejoying.mc.view.CircleMenuView.SizeChangedListener;
@@ -412,7 +407,10 @@ public class CircleMenuFragment extends BaseFragment {
 										}
 									}
 								}
-								onItemClick(item + mMenuIndex * 10);
+								if (onMenuItemClickListener != null) {
+									onMenuItemClickListener.onItemClick(item
+											+ mMenuIndex * 10);
+								}
 							} else {
 								// cancelMenu();
 								back(mOldWhere, null);
@@ -594,6 +592,10 @@ public class CircleMenuFragment extends BaseFragment {
 					first = false;
 				}
 				mIsCreated = true;
+				if (circleMenuCreateListener != null) {
+					circleMenuCreateListener.created();
+					circleMenuCreateListener = null;
+				}
 			}
 		});
 	}
@@ -684,13 +686,13 @@ public class CircleMenuFragment extends BaseFragment {
 		return views;
 	}
 
-	private void showBack() {
+	public void showBack() {
 		if (mMenuIndex - 1 >= 0) {
 			showMenu(mMenuIndex, mMenuIndex -= 1);
 		}
 	}
 
-	private void showNext() {
+	public void showNext() {
 		if (mMenuIndex + 1 < mMenuItemList.size()) {
 			showMenu(mMenuIndex, mMenuIndex += 1);
 		}
@@ -797,6 +799,10 @@ public class CircleMenuFragment extends BaseFragment {
 		return flag;
 	}
 
+	public void back(CircleDiskAnimationEnd animationEnd) {
+		back(mOldWhere, animationEnd);
+	}
+
 	private void back(final int toWhere,
 			final CircleDiskAnimationEnd animationEnd) {
 		mStatus = STATUS_ANIMATION;
@@ -869,7 +875,7 @@ public class CircleMenuFragment extends BaseFragment {
 				* radius;
 	}
 
-	private interface CircleDiskAnimationEnd {
+	public interface CircleDiskAnimationEnd {
 		public void diskAnimationEnd();
 
 		public void outAnimationEnd();
@@ -881,133 +887,30 @@ public class CircleMenuFragment extends BaseFragment {
 		super.onPause();
 	}
 
-	FragmentManager fm;
-
-	public void onItemClick(int item) {
-		if (fm == null)
-			fm = getActivity().getSupportFragmentManager();
-		switch (item) {
-		case 1:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-				@Override
-				public void outAnimationEnd() {
-					if (!app.mark.equals(app.squareFragment)) {
-						mMCFragmentManager.replaceToContent(
-								new SquareFragment(), false);
-					}
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
-			break;
-		case 2:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-				@Override
-				public void outAnimationEnd() {
-					if (!app.mark.equals(app.groupFragment)) {
-						mMCFragmentManager.replaceToContent(
-								new GroupFragment(), false);
-					}
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
-			break;
-		case 3:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-
-				@Override
-				public void outAnimationEnd() {
-					mMCFragmentManager
-							.startToActivity(HotActivity.class, false);
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
-			break;
-		case 4:
-			showNext();
-			break;
-		case 11:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-
-				@Override
-				public void outAnimationEnd() {
-					app.businessCardStatus = app.SHOW_SELF;
-					mMCFragmentManager.replaceToContent(
-							new BusinessCardFragment(), true);
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
-			break;
-		case 12:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-
-				@Override
-				public void outAnimationEnd() {
-					mMCFragmentManager.replaceToContent(
-							new ScanQRCodeFragment(), true);
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
-
-			break;
-		case 13:
-
-			break;
-		case 14:
-			showBack();
-			break;
-		case 15:
-
-			data.user.accessKey = null;
-			Intent service = new Intent(getActivity(), PushService.class);
-			service.putExtra("objective", "stop");
-			getActivity().startService(service);
-			mMCFragmentManager.startToActivity(LoginActivity.class, true);
-
-			break;
-		case 16:
-			back(mOldWhere, new CircleDiskAnimationEnd() {
-				@Override
-				public void outAnimationEnd() {
-					if (!app.mark.equals(app.friendsFragment)) {
-						mMCFragmentManager.replaceToContent(
-								new FriendsFragment(), false);
-					}
-				}
-
-				@Override
-				public void diskAnimationEnd() {
-
-				}
-			});
-			break;
-
-		default:
-			break;
-		}
-	}
-
 	public boolean isCreated() {
 		return mIsCreated;
+	}
+
+	private CircleMenuCreateListener circleMenuCreateListener;
+
+	public interface CircleMenuCreateListener {
+		public void created();
+	}
+
+	public void setCreateListener(
+			CircleMenuCreateListener circleMenuCreateListener) {
+		this.circleMenuCreateListener = circleMenuCreateListener;
+	}
+
+	private OnMenuItemClickListener onMenuItemClickListener;
+
+	public interface OnMenuItemClickListener {
+		public void onItemClick(int itemLocation);
+	}
+
+	public void setOnMenuItemClickListener(
+			OnMenuItemClickListener onMenuItemClickListener) {
+		this.onMenuItemClickListener = onMenuItemClickListener;
 	}
 
 	public boolean isShow() {
@@ -1017,6 +920,12 @@ public class CircleMenuFragment extends BaseFragment {
 
 	@Override
 	public EditText showSoftInputOnShow() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String setMark() {
 		// TODO Auto-generated method stub
 		return null;
 	}

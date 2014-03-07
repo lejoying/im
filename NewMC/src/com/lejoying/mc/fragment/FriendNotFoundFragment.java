@@ -27,7 +27,6 @@ public class FriendNotFoundFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_friendnotfound, null);
 		mView_callfor = mContent.findViewById(R.id.btn_callfor);
 		mView_callfor.setOnClickListener(this);
@@ -41,7 +40,6 @@ public class FriendNotFoundFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		app.mark = app.friendNotFoundFragment;
 		super.onResume();
 	}
 
@@ -55,6 +53,12 @@ public class FriendNotFoundFragment extends BaseFragment implements
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.friendNotFoundFragment;
 	}
 
 }

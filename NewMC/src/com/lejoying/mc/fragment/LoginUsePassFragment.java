@@ -69,7 +69,6 @@ public class LoginUsePassFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.hideCircleMenu();
 
 		mContent = inflater.inflate(R.layout.f_plogin, null);
 
@@ -176,13 +175,18 @@ public class LoginUsePassFragment extends BaseFragment implements
 	
 	@Override
 	public void onResume() {
-		app.mark = app.loginUsePassFragment;
 		super.onResume();
 	}
 
 	@Override
 	public EditText showSoftInputOnShow() {
 		return mView_phone;
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.loginUsePassFragment;
 	}
 
 }

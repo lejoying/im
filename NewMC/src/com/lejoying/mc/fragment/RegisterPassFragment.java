@@ -44,14 +44,12 @@ public class RegisterPassFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		app.mark = app.registerPassFragment;
 		super.onResume();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.hideCircleMenu();
 		mContent = inflater.inflate(R.layout.f_registerpass, null);
 		mView_pass = (EditText) mContent.findViewById(R.id.et_broadcast);
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
@@ -176,5 +174,11 @@ public class RegisterPassFragment extends BaseFragment implements
 	@Override
 	public EditText showSoftInputOnShow() {
 		return mView_pass;
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.registerPassFragment;
 	}
 }

@@ -3,18 +3,7 @@ package com.lejoying.mc.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.lejoying.mc.R;
-import com.lejoying.mc.data.App;
-import com.lejoying.mc.data.Circle;
-import com.lejoying.mc.data.Group;
-import com.lejoying.mc.data.handler.FileHandler.FileResult;
-import com.lejoying.mc.view.FriendViewPager;
-
-import android.database.DataSetObserver;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.lejoying.mc.R;
+import com.lejoying.mc.data.App;
+import com.lejoying.mc.data.Group;
 
 public class GroupFragment extends BaseFragment {
 
@@ -45,7 +38,6 @@ public class GroupFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method
-		mMCFragmentManager.setCircleMenuPageName("群组");
 		scrollview_group = (ScrollView) inflater
 				.inflate(R.layout.f_group, null);
 		gv_page = (GridView) scrollview_group.findViewById(R.id.gv_page);
@@ -132,7 +124,6 @@ public class GroupFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		app.mark = app.groupFragment;
 		super.onResume();
 	}
 
@@ -272,6 +263,11 @@ public class GroupFragment extends BaseFragment {
 	protected EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String setMark() {
+		return app.groupFragment;
 	}
 
 }

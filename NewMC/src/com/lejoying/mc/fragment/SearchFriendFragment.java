@@ -61,7 +61,6 @@ public class SearchFriendFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		app.mark = app.searchFriendFragment;
 		super.onResume();
 	}
 
@@ -70,7 +69,6 @@ public class SearchFriendFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		instance = this;
 		mInflater = inflater;
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 
 		mContent = inflater.inflate(R.layout.f_vertical_scroll, null);
 
@@ -416,6 +414,12 @@ public class SearchFriendFragment extends BaseFragment {
 			}
 		});
 
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.searchFriendFragment;
 	}
 
 }

@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
@@ -36,7 +37,7 @@ import com.lejoying.mc.service.PushService;
 import com.lejoying.mc.utils.MCImageUtils;
 import com.lejoying.mc.view.FriendViewPager;
 
-public class FriendsFragment extends BaseListFragment {
+public class FriendsFragment extends BaseFragment {
 
 	private final int TYPE_MAX_COUNT = 4;
 	private final int TYPE_MESSAGE = 1;
@@ -71,6 +72,8 @@ public class FriendsFragment extends BaseListFragment {
 	View rl_control;
 
 	public static View editView;
+
+	public ListView friendContent;
 
 	public void initData(boolean initShowMessages) {
 		circles = app.data.circles;
@@ -120,23 +123,21 @@ public class FriendsFragment extends BaseListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(false, false);
-		mMCFragmentManager
-				.setCircleMenuPageName(getString(R.string.page_friend));
 		mContent = inflater.inflate(R.layout.f_friends, null);
 		rl_control = mContent.findViewById(R.id.rl_control);
+		friendContent = (ListView) mContent.findViewById(R.id.friendContent);
 		return mContent;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if (getListAdapter() == null) {
+		if (friendContent.getAdapter() == null) {
 			app.sDcardDataResolver.readLocalData(new UIModification() {
 				@Override
 				public void modifyUI() {
 					initData(true);
-					setListAdapter(mAdapter);
+					friendContent.setAdapter(mAdapter);
 				}
 			});
 		}
@@ -145,7 +146,6 @@ public class FriendsFragment extends BaseListFragment {
 	public void onResume() {
 		super.onResume();
 		instance = this;
-		app.mark = app.friendsFragment;
 		initData(true);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -307,13 +307,8 @@ public class FriendsFragment extends BaseListFragment {
 
 					@Override
 					public boolean onLongClick(View v) {
-						System.out.println(getListView()
+						System.out.println(friendContent
 								.getFirstVisiblePosition());
-						System.out.println(getListAdapter().getView(
-								getListView().getFirstVisiblePosition(), null,
-								null));
-						System.out.println(getListView()
-								.getLastVisiblePosition());
 						return true;
 					}
 				});
@@ -530,9 +525,8 @@ public class FriendsFragment extends BaseListFragment {
 
 										@Override
 										public boolean onLongClick(View v) {
-											editView = getListAdapter()
-													.getView(viewPosition,
-															null, null);
+											editView = mAdapter.getView(
+													viewPosition, null, null);
 											mMCFragmentManager
 													.replaceToContent(
 															new EditFragment(),
@@ -647,4 +641,11 @@ public class FriendsFragment extends BaseListFragment {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.friendsFragment;
+	}
+
 }

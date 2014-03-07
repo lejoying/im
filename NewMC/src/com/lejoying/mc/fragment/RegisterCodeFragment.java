@@ -45,9 +45,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		app.mark = app.registerCodeFragment;
 		startRemain();
-
 		super.onResume();
 	}
 
@@ -56,7 +54,6 @@ public class RegisterCodeFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_registercode, null);
 		mView_code = (EditText) mContent.findViewById(R.id.et_code);
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
@@ -245,6 +242,12 @@ public class RegisterCodeFragment extends BaseFragment implements
 	@Override
 	public EditText showSoftInputOnShow() {
 		return mView_code;
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.registerCodeFragment;
 	}
 
 }

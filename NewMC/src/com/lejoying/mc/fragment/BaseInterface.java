@@ -4,15 +4,6 @@ import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 
 public interface BaseInterface {
-	public void hideCircleMenu();
-
-	public void showCircleMenuToTop(boolean lock, boolean showBack);
-
-	public void showCircleMenuToBottom();
-
-	public void setCircleMenuPageName(String pageName);
-
-	public boolean circleMenuIsShow();
 
 	public int replaceToContent(Fragment fragment, boolean toBackStack);
 

@@ -38,6 +38,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -58,7 +59,7 @@ import com.lejoying.mc.utils.MCNetUtils;
 import com.lejoying.mc.utils.MCNetUtils.Settings;
 import com.lejoying.utils.SHA1;
 
-public class ChatFragment extends BaseListFragment {
+public class ChatFragment extends BaseFragment {
 
 	App app = App.getInstance();
 
@@ -107,9 +108,7 @@ public class ChatFragment extends BaseListFragment {
 
 	public static ChatFragment instance;
 
-	public ChatFragment() {
-
-	}
+	public ListView chatContent;
 
 	@Override
 	public EditText showSoftInputOnShow() {
@@ -134,7 +133,6 @@ public class ChatFragment extends BaseListFragment {
 
 	@Override
 	public void onResume() {
-		app.mark = app.chatFragment;
 		instance = this;
 		if (sha1 == null) {
 			sha1 = new SHA1();
@@ -158,8 +156,9 @@ public class ChatFragment extends BaseListFragment {
 			Bundle savedInstanceState) {
 		initShowFirstPosition();
 		mInflater = inflater;
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_chat, null);
+
+		chatContent = (ListView) mContent.findViewById(R.id.chatContent);
 
 		app.dataHandler.modifyData(new Modification() {
 
@@ -413,9 +412,9 @@ public class ChatFragment extends BaseListFragment {
 		if (mAdapter == null) {
 			mAdapter = new ChatAdapter();
 		}
-		setListAdapter(mAdapter);
-		getListView().setSelection(mAdapter.getCount() - 1);
-		getListView().setOnScrollListener(new OnScrollListener() {
+		chatContent.setAdapter(mAdapter);
+		chatContent.setSelection(mAdapter.getCount() - 1);
+		chatContent.setOnScrollListener(new OnScrollListener() {
 			boolean isFirst = true;
 
 			@Override
@@ -431,7 +430,7 @@ public class ChatFragment extends BaseListFragment {
 					showFirstPosition = showFirstPosition > 10 ? showFirstPosition - 10
 							: 0;
 					mAdapter.notifyDataSetChanged();
-					getListView().setSelection(old - showFirstPosition);
+					chatContent.setSelection(old - showFirstPosition);
 				}
 				isFirst = false;
 			}
@@ -631,7 +630,7 @@ public class ChatFragment extends BaseListFragment {
 		}, new UIModification() {
 			public void modifyUI() {
 				mAdapter.notifyDataSetChanged();
-				getListView().setSelection(mAdapter.getCount() - 1);
+				chatContent.setSelection(mAdapter.getCount() - 1);
 			}
 		});
 
@@ -813,5 +812,11 @@ public class ChatFragment extends BaseListFragment {
 	}
 
 	File tempFile;
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.chatFragment;
+	}
 
 }

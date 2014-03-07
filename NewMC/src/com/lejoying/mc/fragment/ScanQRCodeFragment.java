@@ -93,7 +93,6 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	
 	@Override
 	public void onResume() {
-		app.mark = app.scanQRCodeFragment;
 		super.onResume();
 	}
 
@@ -101,7 +100,6 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_scanqrcode, null);
 
 		sfv_scanqrcode = (SurfaceView) mContent
@@ -392,6 +390,12 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	public EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.scanQRCodeFragment;
 	}
 
 }

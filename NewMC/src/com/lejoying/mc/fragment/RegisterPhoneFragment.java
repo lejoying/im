@@ -41,14 +41,12 @@ public class RegisterPhoneFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		app.mark = app.registerPhoneFragment;
 		super.onResume();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_registerphone, null);
 		mView_phone = (EditText) mContent.findViewById(R.id.et_phone);
 		mView_next = (Button) mContent.findViewById(R.id.btn_next);
@@ -153,5 +151,11 @@ public class RegisterPhoneFragment extends BaseFragment implements
 	@Override
 	public EditText showSoftInputOnShow() {
 		return mView_phone;
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.registerPhoneFragment;
 	}
 }

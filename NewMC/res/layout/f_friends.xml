@@ -5,7 +5,7 @@
     android:layout_height="match_parent" >
 
     <com.lejoying.mc.view.FriendListView
-        android:id="@id/android:list"
+        android:id="@+id/friendContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/rl_control"

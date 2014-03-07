@@ -48,7 +48,6 @@ public class EditFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_friends, null);
 		rl_control = mContent.findViewById(R.id.rl_control);
 		rl_control.setVisibility(View.VISIBLE);
@@ -212,6 +211,12 @@ public class EditFragment extends BaseFragment {
 	protected EditText showSoftInputOnShow() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.editFragment;
 	}
 
 }

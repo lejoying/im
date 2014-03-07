@@ -51,7 +51,6 @@ public class LoginUseCodeFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_clogin, null);
 
 		mView_phone = (EditText) mContent.findViewById(R.id.et_clogin_phone);
@@ -204,7 +203,6 @@ public class LoginUseCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		app.mark = app.loginUseCodeFragment;
 		modifyView = true;
 		super.onResume();
 	}
@@ -261,6 +259,12 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			timer.cancel();
 		}
 		remainTime = 0;
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.loginUseCodeFragment;
 	}
 
 }

@@ -40,6 +40,8 @@ public class App {
 	public String shareFragment = "shareFragment";
 	public String squareFragment = "squareFragment";
 	public String groupFragment = "groupFragment";
+	// ?
+	public String editFragment = "editFragment";
 
 	public String mark = "";
 
@@ -47,6 +49,10 @@ public class App {
 	public String sdcardStatus = "none";// "exist"
 
 	public SHA1 sha1;
+
+	public int screenWidth;
+	public int screenHeight;
+	public int topbarHeight;
 
 	private App() {
 

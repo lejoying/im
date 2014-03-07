@@ -96,7 +96,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	
 	@Override
 	public void onResume() {
-		app.mark = app.modifyFragment;
 		super.onResume();
 	}
 
@@ -104,7 +103,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		sha1 = new SHA1();
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_modifyinfo, null);
 		initData();
 		initView();
@@ -626,6 +624,12 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		yewu.add("有人嫩得一掐就出水，我却怂得一掐就出鼻涕泡儿。");
 		yewu.add("奥巴马，你还记得大明湖畔的那个小拉登么？");
 		yewu.add("我不但手气好，脚气也不错。");
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.modifyFragment;
 	}
 
 }

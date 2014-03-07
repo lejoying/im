@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lejoying.mc.R;
@@ -24,10 +25,10 @@ import com.lejoying.mc.utils.AjaxAdapter;
 import com.lejoying.mc.utils.MCNetUtils;
 import com.lejoying.mc.utils.MCNetUtils.Settings;
 
-public class NewFriendsFragment extends BaseListFragment {
+public class NewFriendsFragment extends BaseFragment {
 
 	App app = App.getInstance();
-	View mContent;
+	ListView mContent;
 
 	LayoutInflater mInflater;
 
@@ -56,8 +57,7 @@ public class NewFriendsFragment extends BaseListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
-		mContent = inflater.inflate(R.layout.android_list, null);
+		mContent = (ListView) inflater.inflate(R.layout.f_newfriends, null);
 		mInflater = inflater;
 		return mContent;
 	}
@@ -67,7 +67,7 @@ public class NewFriendsFragment extends BaseListFragment {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 		mAdapter = new NewFriendsAdapter();
-		setListAdapter(mAdapter);
+		mContent.setAdapter(mAdapter);
 	}
 
 	public class NewFriendsAdapter extends BaseAdapter {
@@ -224,8 +224,13 @@ public class NewFriendsFragment extends BaseListFragment {
 
 	@Override
 	public void onResume() {
-		app.mark = app.newFriendsFragment;
 		super.onResume();
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.newFriendsFragment;
 	}
 
 }

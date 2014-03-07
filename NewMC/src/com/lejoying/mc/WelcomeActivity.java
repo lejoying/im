@@ -103,6 +103,11 @@ public class WelcomeActivity extends Activity {
 
 	}
 
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		
+	}
+
 	String STATUS_NONE = "none";
 	String STATUS_LOGIN = "login";
 	String STATUS_MAIN = "main";

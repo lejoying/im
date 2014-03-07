@@ -4,24 +4,42 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import com.lejoying.mc.data.App;
+import com.lejoying.mc.fragment.CircleMenuFragment;
+import com.lejoying.mc.fragment.LoginUseCodeFragment;
 import com.lejoying.mc.fragment.LoginUsePassFragment;
+import com.lejoying.mc.fragment.RegisterCodeFragment;
+import com.lejoying.mc.fragment.RegisterPassFragment;
+import com.lejoying.mc.fragment.RegisterPhoneFragment;
 
 public class LoginActivity extends BaseFragmentActivity {
 
 	App app = App.getInstance();
 
+	public CircleMenuFragment circleMenuFragment;
+	public LoginUsePassFragment loginUsePassFragment;
+	public LoginUseCodeFragment loginUseCodeFragment;
+	public RegisterPhoneFragment registerPhoneFragment;
+	public RegisterCodeFragment registerCodeFragment;
+	public RegisterPassFragment registerPassFragment;
+
+	FragmentManager fragmentManager;
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		setContentView(R.layout._main);
-	}
+		setContentView(R.layout._login);
+		fragmentManager = getSupportFragmentManager();
+		circleMenuFragment = (CircleMenuFragment) fragmentManager
+				.findFragmentById(R.id.circleMenu);
 
-	@Override
-	public Fragment setFirstPreview() {
-		return new LoginUsePassFragment();
+		if (loginUsePassFragment == null) {
+			loginUsePassFragment = new LoginUsePassFragment();
+		}
+		fragmentManager.beginTransaction()
+				.add(R.id.fl_content, loginUsePassFragment).commit();
 	}
 
 	@Override
@@ -69,7 +87,7 @@ public class LoginActivity extends BaseFragmentActivity {
 	}
 
 	public static void stopRemain() {
-		if(timer!=null){
+		if (timer != null) {
 			timer.cancel();
 		}
 		remainTime = 0;

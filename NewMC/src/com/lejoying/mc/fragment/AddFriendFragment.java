@@ -34,7 +34,7 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
+		
 		mContent = inflater.inflate(R.layout.f_addfriend, null);
 		mView_message = (EditText) mContent.findViewById(R.id.et_message);
 		mView_send = mContent.findViewById(R.id.btn_send);
@@ -49,7 +49,6 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 
 	@Override
 	public void onResume() {
-		app.mark = app.addFriendFragment;
 		super.onResume();
 	}
 
@@ -103,5 +102,11 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 				}
 			});
 		}
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.addFriendFragment;
 	}
 }

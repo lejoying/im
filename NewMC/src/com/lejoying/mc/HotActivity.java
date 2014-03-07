@@ -30,12 +30,14 @@ public class HotActivity extends Activity {
 
 	RelativeLayout relativeLayout1;
 	View menu1;
+	View menu2;
 	ImageView imageView1;
 	ScrollView ScrollView1;
 
 	void initView() {
 		relativeLayout1 = (RelativeLayout) findViewById(R.id.relativeLayout1);
 		menu1 = findViewById(R.id.menu1);
+		menu2 = findViewById(R.id.menu2);
 		imageView1 = (ImageView) findViewById(R.id.imageView1);
 		ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
 
@@ -56,6 +58,16 @@ public class HotActivity extends Activity {
 			public boolean onTouch(View v, MotionEvent event) {
 				relativeLayout1.setBackgroundColor(Color.TRANSPARENT);
 				menu1.setVisibility(View.GONE);
+				return true;
+			}
+		});
+
+		menu2.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				relativeLayout1.setBackgroundColor(Color.TRANSPARENT);
+				menu2.setVisibility(View.GONE);
 				return true;
 			}
 		});
@@ -126,4 +138,10 @@ public class HotActivity extends Activity {
 		relativeLayout1.setBackgroundResource(R.drawable.frame_background);
 		menu1.setVisibility(View.VISIBLE);
 	}
+
+	public void moreClick(View v) {
+		relativeLayout1.setBackgroundResource(R.drawable.frame_background);
+		menu2.setVisibility(View.VISIBLE);
+	}
+
 }

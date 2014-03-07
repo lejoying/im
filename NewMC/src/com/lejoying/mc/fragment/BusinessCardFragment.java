@@ -59,7 +59,6 @@ public class BusinessCardFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mMCFragmentManager.showCircleMenuToTop(true, true);
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
 		sureToDelete = mContent.findViewById(R.id.rl_panel);
 		btn_ok = (Button) sureToDelete.findViewById(R.id.btn_ok);
@@ -85,7 +84,7 @@ public class BusinessCardFragment extends BaseFragment {
 					public void onSuccess(JSONObject jData) {
 						System.out.println("delete success");
 						app.data.friends.remove(app.data.tempFriend.phone);
-						
+
 					}
 				});
 				sureToDelete.setVisibility(View.GONE);
@@ -123,7 +122,6 @@ public class BusinessCardFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		app.mark = app.businessCardFragment;
 		super.onResume();
 	}
 
@@ -292,5 +290,11 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			}
 		});
+	}
+
+	@Override
+	public String setMark() {
+		// TODO Auto-generated method stub
+		return app.businessCardFragment;
 	}
 }
