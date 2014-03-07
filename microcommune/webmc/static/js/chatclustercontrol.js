@@ -188,7 +188,11 @@ $(function () {
     }
     $(document).on("click", ".smile_box>a", function () {
         var face = "[" + $(this).attr("title") + "]";
-        alert(face);
+        var obj = document.getElementById("textInput");
+        obj.value = (obj.value.substr(0, pos) + face + obj.value.substr(pos, obj.value.length));
+        $(".js_wxgsFacePanel").hide();
+        pos += face.length;
+        setCaret();
     });
     $(".js_checkFace").click(function () {
         if ($(".js_wxgsFacePanel").css("display") == "block") {
@@ -199,6 +203,17 @@ $(function () {
     });
 });
 var pos = -1;
+function setCaret() {
+    var oTxt1 = document.getElementById("textInput");
+    var cursurPosition = -1;
+    if (oTxt1.selectionStart) {//非IE浏览器
+        oTxt1.selectionStart = pos;
+    } else {//IE
+        var range = oTxt1.createTextRange();
+        range.move("character", pos);
+        range.select();
+    }
+}
 function getPosition(obj) {
     try {
         var result = 0;
@@ -226,6 +241,7 @@ function getPosition(obj) {
 function getValue(obj) {
     if (obj.value) {
         pos = getPosition(obj);
+        console.log(pos);
 //        alert(obj.value.substr(0, pos) + "[输入内容]" + obj.value.substr(pos, obj.value.length));
     }
 }
@@ -558,7 +574,9 @@ function messageContentTypeSplitShow(type, content) {
                         }
                     } else if (content.substr(0, 1) == "[") {
                         contents += "[" + str;
-                    } else {
+                    } else if(index !=0) {
+                        contents += "[" + str;
+                    }else{
                         contents += str;
                     }
                 }
