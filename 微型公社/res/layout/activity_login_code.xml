@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lejoying.wxgs.view.BackgroundView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="240dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="63dp"
+        android:background="@drawable/card_background"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        tools:ignore="UselessParent" >
+
+        <TextView
+            android:id="@+id/panel_codelogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/panel_codelogin"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/panel_codelogin"
+            android:layout_below="@+id/panel_codelogin"
+            android:layout_marginTop="8dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <EditText
+            android:id="@+id/input_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/line"
+            android:layout_alignRight="@+id/line"
+            android:layout_below="@+id/line"
+            android:layout_marginTop="15dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="@string/hint_enterphone"
+            android:inputType="number"
+            android:textColor="#fff"
+            android:textColorHint="#ddd"
+            tools:ignore="TextFields" >
+        </EditText>
+
+        <Button
+            android:id="@+id/button_clogin"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/input_code"
+            android:layout_alignRight="@+id/input_code"
+            android:layout_below="@+id/input_code"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/button_background"
+            android:text="@string/button_login"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+
+        <EditText
+            android:id="@+id/input_code"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/input_phone"
+            android:layout_alignRight="@+id/input_phone"
+            android:layout_below="@+id/input_phone"
+            android:layout_marginTop="15dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="@string/hint_entercode"
+            android:inputType="number"
+            android:textColor="#fff"
+            android:textColorHint="#ddd" />
+
+        <TextView
+            android:id="@+id/button_sendcode"
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_alignRight="@+id/button_clogin"
+            android:layout_below="@+id/button_clogin"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:text="@string/button_sendcode"
+            android:textColor="@color/click_textcolor"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+</com.lejoying.wxgs.view.BackgroundView>
