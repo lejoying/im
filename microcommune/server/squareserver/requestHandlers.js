@@ -8,11 +8,11 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
         return;
     }
     var operation = pathObject["operation"];
-    if (operation == "event") {
-        squareManage.event(data, response);
+    if (operation == "sendsquaremessage") {
+        squareManage.sendsquaremessage(data, response);
     }
-    else if (operation == "notify") {
-        squareManage.notify(data, response);
+    else if (operation == "getsquaremessage") {
+        squareManage.getsquaremessage(data, response);
     }
 };
 

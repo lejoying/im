@@ -17,8 +17,8 @@ http.createServer(
         });
         route(routemap, request.url, request, response);
 
-        i++;
         console.log("The square server has been accessed " + i);
+        i++;
         if (response.asynchronous == null) {
             response.end();
         }
