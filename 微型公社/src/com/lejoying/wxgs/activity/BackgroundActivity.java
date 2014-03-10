@@ -24,16 +24,4 @@ public class BackgroundActivity extends BaseActivity {
 		super.onResume();
 	}
 
-	@Override
-	public void initView() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void initEvent() {
-		// TODO Auto-generated method stub
-
-	}
-
 }

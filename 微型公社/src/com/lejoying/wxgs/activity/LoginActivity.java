@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.adapter.AnimationAdapter;
 import com.lejoying.wxgs.view.widget.CircleMenu;
 
 public class LoginActivity extends BaseActivity implements OnClickListener {
@@ -44,12 +42,13 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		initView();
 		initEvent();
-		
+
 		// 启动activity时自动弹出软键盘
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		super.onCreate(savedInstanceState);
-		overridePendingTransition(R.anim.translate_in_bottom, R.anim.translate_out_top);
+		overridePendingTransition(R.anim.translate_in_bottom,
+				R.anim.translate_out_top);
 	}
 
 	@Override
@@ -78,8 +77,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 				R.anim.translate_out_bottom);
 
 		mInflater = getLayoutInflater();
-		mPassLogin = mInflater.inflate(R.layout.activity_login_pass, null);
-		mCodeLogin = mInflater.inflate(R.layout.activity_login_code, null);
+		mPassLogin = mInflater.inflate(R.layout.page_login_pass, null);
+		mCodeLogin = mInflater.inflate(R.layout.page_login_code, null);
 
 		mPLoginInputPhone = (EditText) mPassLogin
 				.findViewById(R.id.input_phone);
@@ -119,16 +118,14 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
 			break;
 		case R.id.button_register:
-			mCurrentView.startAnimation(mTranslateOutTop);
 			mCurrentView.setVisibility(View.GONE);
-			startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
 			break;
 		case R.id.button_opencodelogin:
 			mCodeLogin.setVisibility(View.VISIBLE);
 			mCLoginInputPhone.requestFocus();
+			mPassLogin.startAnimation(mTranslateOutTop);
 			mPassLogin.setVisibility(View.GONE);
 			mCurrentView = mCodeLogin;
-			mPassLogin.startAnimation(mTranslateOutTop);
 			mCurrentView.startAnimation(mTranslateInBottom);
 			CircleMenu.showBack(LoginActivity.this);
 			break;
@@ -147,11 +144,11 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void finish() {
 		if (mCurrentView.equals(mCodeLogin)) {
+			mCodeLogin.startAnimation(mTranslateOutBottom);
 			mCodeLogin.setVisibility(View.GONE);
 			mPassLogin.setVisibility(View.VISIBLE);
 			mPLoginInputPhone.requestFocus();
 			mCurrentView = mPassLogin;
-			mCodeLogin.startAnimation(mTranslateOutBottom);
 			mCurrentView.startAnimation(mTranslateInTop);
 			CircleMenu.hide();
 		} else {
