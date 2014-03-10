@@ -209,9 +209,10 @@ function setCaret() {
     if (oTxt1.selectionStart) {//非IE浏览器
         oTxt1.selectionStart = pos;
     } else {//IE
-        var range = oTxt1.createTextRange();
-        range.move("character", pos);
-        range.select();
+        oTxt1.focus();
+        /*var range = oTxt1.createTextRange();//创建出现bug
+         range.move("character", pos);
+         range.select();*/
     }
 }
 function getPosition(obj) {
@@ -574,9 +575,9 @@ function messageContentTypeSplitShow(type, content) {
                         }
                     } else if (content.substr(0, 1) == "[") {
                         contents += "[" + str;
-                    } else if(index !=0) {
+                    } else if (index != 0) {
                         contents += "[" + str;
-                    }else{
+                    } else {
                         contents += str;
                     }
                 }

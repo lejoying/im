@@ -27,15 +27,15 @@ var client = redis.createClient("6379", "115.28.51.197");
 client.get("ID", function (err, reply) {
     if (err != null) {
         console.error(err);
-        throw "用户ID初始化失败...";
+        throw "用户ID初始化失败...请查看115.28.51.197服务器";
         return;
     } else {
         if (reply == null) {
             console.warn(reply);
-            throw "用户ID初始化失败...";
+            throw "用户ID初始化失败...请查看115.28.51.197服务器";
             return;
         } else {
-            console.log("ID:" + reply + "...init data");
+            console.log("ID:" + reply + "...init data,from server...115.28.51.197");
             accountID = reply;
         }
     }

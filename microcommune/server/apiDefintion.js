@@ -9,7 +9,8 @@ api = {
     "session_eventwebcodelogin": {
         description: {
             id: 1000000,
-            url: "/api2/session/eventwebcodelogin"
+            url: "/api2/session/eventwebcodelogin",
+            type: "long pull"
         },
         request: {
             typical: {"sessionID": "XXX"}
@@ -41,7 +42,8 @@ api = {
     "session_event": {
         description: {
             id: 1000002,
-            url: "/api2/session/event"
+            url: "/api2/session/event",
+            type: "long pull"
         },
         request: {
             typical: {"phone": "XXX", "accessKey": "XXX"}
@@ -920,6 +922,46 @@ api = {
                 {gid: "NNN", name: "XXX", description: "XXX", location: {longitude: "NNN", latitude: "NNN"}, modify_time: "NNN", distance: "NNN"}
             ]},
             failed: {"提示信息": "获取附近群组失败", "失败原因": "数据异常" || "参数格式错误"}
+        }
+    }
+}
+/*************************************** ***************************************
+ * *    Class：SQUARE
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/api2/square/sendsquaremessage
+     ***************************************/
+    "square_sendsquaremessage": {
+        description: {
+            id: 1001200,
+            url: "/api2/square/sendsquaremessage"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", message: {contentType: "text" || "image" || "voice", content: "XXX"}}
+        },
+        response: {
+            success: {"提示信息": "发布广播成功", time: "NNN"},
+            failed: {"提示信息": "发布广播失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/getsquaremessage
+     ***************************************/
+    "square_getsquaremessage": {
+        description: {
+            id: 1001201,
+            url: "/api2/square/getsquaremessage",
+            type: "long pull"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", flag: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取广播成功", messages: [
+                {contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
+            ], flag: "NNN"},
+            failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
     }
 }
