@@ -39,27 +39,14 @@
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Transparent" >
+            android:theme="@style/Transparent"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Translucent" >
-        </activity>
-        <activity
-            android:name=".activity.RegisterActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Translucent" >
-        </activity>
-        <activity
-            android:name=".activity.BusinessCardActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Transparent" >
-        </activity>
-        <activity
-            android:name=".activity.ChatActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Transparent" >
+            android:theme="@style/Translucent"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <service android:name=".service.PushService" >

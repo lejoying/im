@@ -2,19 +2,19 @@ package com.lejoying.wxgs.app;
 
 import java.util.List;
 
-import com.lejoying.wxgs.activity.BaseActivity;
-import com.lejoying.wxgs.app.data.Config;
-import com.lejoying.wxgs.app.data.Data;
-import com.lejoying.wxgs.handler.DataHandler;
-import com.lejoying.wxgs.handler.NetworkHandler;
-import com.lejoying.wxgs.view.widget.CircleMenu;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Process;
+
+import com.lejoying.wxgs.activity.BaseActivity;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.app.data.Config;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.handler.DataHandler;
+import com.lejoying.wxgs.handler.NetworkHandler;
 
 public class MainApplication extends Application {
 
@@ -83,4 +83,5 @@ public class MainApplication extends Application {
 		}
 		return false;
 	}
+
 }

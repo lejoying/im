@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.view.widget;
+package com.lejoying.wxgs.activity.view.widget;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

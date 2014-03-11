@@ -25,18 +25,14 @@ public class DataHandler {
 		mWorkThread.start();
 	}
 
-	public void exclude(Modification modification) {
+	public synchronized void exclude(Modification modification) {
 		mQueue.offer(modification);
-		synchronized (this) {
-			notify();
-		}
+		notify();
 	}
 
-	public Modification getExclude() throws InterruptedException {
+	public synchronized Modification getExclude() throws InterruptedException {
 		if (mQueue.size() == 0) {
-			synchronized (this) {
-				wait();
-			}
+			wait();
 		}
 		return mQueue.poll();
 	}

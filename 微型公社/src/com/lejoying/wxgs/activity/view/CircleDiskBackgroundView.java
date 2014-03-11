@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.view;
+package com.lejoying.wxgs.activity.view;
 
 import android.content.Context;
 import android.graphics.Canvas;

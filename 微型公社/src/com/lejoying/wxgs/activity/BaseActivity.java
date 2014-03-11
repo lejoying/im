@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -9,16 +10,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.lejoying.wxgs.activity.page.BasePage;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.view.widget.CircleMenu;
 
 public abstract class BaseActivity extends Activity {
 
-	public abstract void initView();
-
-	public abstract void initEvent();
-
 	ActivityManager mActivityManager;
+
+	public List<BasePage> mBackStack = new ArrayList<BasePage>();
+
+	public BasePage mContentPage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +29,32 @@ public abstract class BaseActivity extends Activity {
 		super.onCreate(savedInstanceState);
 	}
 
+	public void addToBackStack(BasePage basePage) {
+		if (basePage != null) {
+			mBackStack.add(basePage);
+			basePage.hide(BasePage.ANIMATION_DIRECTION_TOP);
+		}
+	}
+
+	public void changeContentPage(BasePage basePage, int direction) {
+		if (basePage != null) {
+			basePage.show(direction);
+			mContentPage = basePage;
+		}
+	}
+
 	@Override
 	protected void onResume() {
 		MainApplication.currentActivity = this;
 		super.onResume();
+	}
+
+	@Override
+	public void finish() {
+		if (mBackStack.size() != 0) {
+		} else {
+			super.finish();
+		}
 	}
 
 	@Override

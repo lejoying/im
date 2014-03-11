@@ -1,7 +1,7 @@
 package com.lejoying.wxgs.activity;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 
 public class BackgroundActivity extends BaseActivity {
 
@@ -22,18 +22,6 @@ public class BackgroundActivity extends BaseActivity {
 		}
 		isCreated = true;
 		super.onResume();
-	}
-
-	@Override
-	public void initView() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void initEvent() {
-		// TODO Auto-generated method stub
-
 	}
 
 }
