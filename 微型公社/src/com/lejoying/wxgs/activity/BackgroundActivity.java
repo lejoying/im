@@ -1,7 +1,7 @@
 package com.lejoying.wxgs.activity;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 
 public class BackgroundActivity extends BaseActivity {
 

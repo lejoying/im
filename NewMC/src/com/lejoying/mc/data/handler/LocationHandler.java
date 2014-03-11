@@ -15,6 +15,8 @@ public class LocationHandler {
 	}
 
 	public interface LocationListener {
+		public boolean runable = true;
+
 		public void onReceiveLocation(BDLocation location);
 
 		public void onReceivePoi(BDLocation poiLocation);

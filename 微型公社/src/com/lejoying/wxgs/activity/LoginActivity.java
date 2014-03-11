@@ -11,7 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 
 public class LoginActivity extends BaseActivity implements OnClickListener {
 

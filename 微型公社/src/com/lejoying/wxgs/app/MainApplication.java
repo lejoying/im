@@ -10,11 +10,11 @@ import android.os.Handler;
 import android.os.Process;
 
 import com.lejoying.wxgs.activity.BaseActivity;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.data.Config;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.handler.DataHandler;
 import com.lejoying.wxgs.handler.NetworkHandler;
-import com.lejoying.wxgs.view.widget.CircleMenu;
 
 public class MainApplication extends Application {
 

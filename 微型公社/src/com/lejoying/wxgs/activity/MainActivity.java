@@ -2,9 +2,9 @@ package com.lejoying.wxgs.activity;
 
 import android.os.Bundle;
 
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.service.PushService;
-import com.lejoying.wxgs.view.widget.CircleMenu;
 
 public class MainActivity extends BaseActivity {
 

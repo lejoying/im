@@ -43,11 +43,9 @@ public class NetworkHandler {
 		}
 	}
 
-	public void connection(NetConnection netConnection) {
+	public synchronized void connection(NetConnection netConnection) {
 		mNetConnections.offer(netConnection);
-		synchronized (this) {
-			notify();
-		}
+		notify();
 	}
 
 	public void disConnection(String url) {
@@ -65,11 +63,9 @@ public class NetworkHandler {
 		}
 	}
 
-	public NetConnection getExclude() throws InterruptedException {
+	public synchronized NetConnection getExclude() throws InterruptedException {
 		if (mNetConnections.size() == 0) {
-			synchronized (this) {
-				wait();
-			}
+			wait();
 		}
 		return mNetConnections.poll();
 	}
