@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Fragment;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ComponentName;
 import android.content.Context;
@@ -34,8 +33,6 @@ public abstract class BaseActivity extends Activity {
 		if (basePage != null) {
 			mBackStack.add(basePage);
 			basePage.hide(BasePage.ANIMATION_DIRECTION_TOP);
-			new Fragment();
-			getFragmentManager().beginTransaction();
 		}
 	}
 
@@ -54,8 +51,7 @@ public abstract class BaseActivity extends Activity {
 
 	@Override
 	public void finish() {
-		BasePage basePage = null;
-		if (mBackStack.size()!=0) {
+		if (mBackStack.size() != 0) {
 		} else {
 			super.finish();
 		}

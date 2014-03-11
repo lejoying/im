@@ -34,7 +34,6 @@ public class LaunchActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 	}
 
-	@Override
 	public void initView() {
 		mViewMar = (ImageView) findViewById(R.id.imageview_mar);
 		mViewStar = (ImageView) findViewById(R.id.imageview_star);
@@ -101,7 +100,6 @@ public class LaunchActivity extends BaseActivity {
 		mViewMar.startAnimation(marScaleAnimation);
 	}
 
-	@Override
 	public void initEvent() {
 		// TODO Auto-generated method stub
 

@@ -34,16 +34,13 @@ public class MainActivity extends BaseActivity {
 		super.finish();
 	}
 
-	@Override
 	public void initView() {
 		// TODO Auto-generated method stub
 		PushService.startLongConnection("123", "123123");
 	}
 
-	@Override
 	public void initEvent() {
 		// TODO Auto-generated method stub
-
 	}
 
 }

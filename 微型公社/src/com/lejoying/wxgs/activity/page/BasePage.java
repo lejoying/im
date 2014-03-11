@@ -32,11 +32,10 @@ public abstract class BasePage {
 	}
 
 	public void show(int direction) {
-		
+
 	}
 
 	public void show(int direction, AnimationListener listener) {
-		Animation animation = null;
 
 	}
 

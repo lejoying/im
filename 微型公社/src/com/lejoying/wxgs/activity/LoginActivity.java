@@ -65,7 +65,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 		super.onResume();
 	}
 
-	@Override
 	public void initView() {
 		mTranslateInTop = AnimationUtils.loadAnimation(this,
 				R.anim.translate_in_top);
@@ -102,7 +101,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 		mCurrentView.startAnimation(mTranslateInBottom);
 	}
 
-	@Override
 	public void initEvent() {
 		mButtonPLogin.setOnClickListener(this);
 		mButtonRegister.setOnClickListener(this);

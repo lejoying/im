@@ -17,7 +17,6 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.parser.StreamParser;
 import com.lejoying.wxgs.utils.HttpUtils;
 import com.lejoying.wxgs.utils.HttpUtils.Callback;
-import com.lejoying.wxgs.utils.StreamUtils;
 
 public class PushService extends Service {
 
