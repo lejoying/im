@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.app.service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
@@ -85,38 +84,16 @@ public class PushService extends Service {
 				params.put("phone", phone);
 				params.put("accessKey", accessKey);
 				settings.params = params;
+				settings.circulatingDo = true;
 			}
 
 			@Override
 			public void success(InputStream is,
-					HttpURLConnection httpURLConnection) throws IOException {
+					HttpURLConnection httpURLConnection) {
 				// TODO Auto-generated method stub
 
 			}
 
-			@Override
-			public void failed(int responseCode) {
-				// TODO Auto-generated method stub
-				super.failed(responseCode);
-			}
-
-			@Override
-			public void error() {
-				// TODO Auto-generated method stub
-				super.error();
-			}
-
-			@Override
-			public void timeout() {
-				// TODO Auto-generated method stub
-				super.timeout();
-			}
-
-			@Override
-			public boolean circulatingDo() {
-				// TODO Auto-generated method stub
-				return true;
-			}
 		};
 		return netConnection;
 	}
@@ -140,20 +117,15 @@ public class PushService extends Service {
 				params.put("gid", gid);
 				params.put("flag", flag);
 				settings.params = params;
+				settings.circulatingDo = true;
 			}
 
 			@Override
 			public void success(InputStream is,
-					HttpURLConnection httpURLConnection) throws IOException {
+					HttpURLConnection httpURLConnection) {
 				// TODO Auto-generated method stub
-
 			}
 
-			@Override
-			public boolean circulatingDo() {
-				// TODO Auto-generated method stub
-				return true;
-			}
 		};
 		return netConnection;
 	}

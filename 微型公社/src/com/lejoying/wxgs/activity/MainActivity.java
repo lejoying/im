@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.service.PushService;
 
 public class MainActivity extends BaseActivity {
 

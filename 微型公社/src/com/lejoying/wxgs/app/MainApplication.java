@@ -7,13 +7,11 @@ import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Process;
 
 import com.lejoying.wxgs.activity.BaseActivity;
-import com.lejoying.wxgs.activity.LoginActivity;
 import com.lejoying.wxgs.app.data.Config;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler;
@@ -42,7 +40,6 @@ public class MainApplication extends Application {
 	@Override
 	public void onCreate() {
 		if (isInMainProcess() && mMainApplication == null) {
-			startActivity(new Intent(this, LoginActivity.class));
 			initMainApplication();
 		}
 		super.onCreate();
