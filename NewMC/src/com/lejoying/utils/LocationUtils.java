@@ -9,8 +9,6 @@ import android.telephony.gsm.GsmCellLocation;
 import android.widget.Toast;
 
 import com.lejoying.mc.data.App;
-//假如用到位置提醒功能，需要import该类
-//如果使用地理围栏功能，需要import如下类
 
 public class LocationUtils {
 

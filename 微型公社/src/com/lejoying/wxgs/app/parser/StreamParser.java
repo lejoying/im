@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.parser;
+package com.lejoying.wxgs.app.parser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

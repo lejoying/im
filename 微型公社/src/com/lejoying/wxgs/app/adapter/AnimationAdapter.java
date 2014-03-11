@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.adapter;
+package com.lejoying.wxgs.app.adapter;
 
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;

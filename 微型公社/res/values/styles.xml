@@ -17,13 +17,6 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-    <style name="ActivityAnimation" parent="@android:style/Animation">
-        <item name="android:activityOpenEnterAnimation">@anim/translate_in_bottom</item>
-        <item name="android:activityOpenExitAnimation">@anim/translate_out_top</item>
-        <item name="android:activityCloseEnterAnimation">@anim/translate_in_top</item>
-        <item name="android:activityCloseExitAnimation">@anim/translate_out_bottom</item>
-    </style>
-
     <style name="NoAnimation">
         <item name="android:activityOpenEnterAnimation">@null</item>
         <item name="android:activityOpenExitAnimation">@null</item>
@@ -39,14 +32,21 @@
         <item name="android:taskToBackExitAnimation">@null</item>
     </style>
 
-    <style name="Transparent" parent="android:Theme.NoTitleBar">
-        <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
+    <style name="actAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/activity_new</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/activity_back</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_finish</item>
+        <item name="android:taskOpenEnterAnimation">@anim/activity_new</item>
+        <item name="android:taskOpenExitAnimation">@anim/activity_out</item>
+        <item name="android:taskCloseEnterAnimation">@anim/activity_back</item>
+        <item name="android:taskCloseExitAnimation">@anim/activity_finish</item>
     </style>
 
-    <style name="Translucent" parent="android:Theme.Translucent.NoTitleBar">
-        <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
+    <style name="Translucent" parent="android:Theme.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/actAnimation</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 </resources>

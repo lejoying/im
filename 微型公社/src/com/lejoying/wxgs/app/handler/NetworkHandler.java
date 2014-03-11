@@ -1,18 +1,17 @@
-package com.lejoying.wxgs.handler;
+package com.lejoying.wxgs.app.handler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.utils.HttpUtils;
 import com.lejoying.wxgs.utils.HttpUtils.Callback;
 
 public class NetworkHandler {
-
-	MainApplication app;
 
 	public static final int WORKTHREADCOUNT_MIN = 1;
 	public static final int WORKTHREADCOUNT_MAX = 10;
@@ -23,12 +22,7 @@ public class NetworkHandler {
 
 	Map<String, HttpURLConnection> mConnections;
 
-	public NetworkHandler() {
-
-	}
-
-	public void initialize(MainApplication app, int connectionCount) {
-		this.app = app;
+	public NetworkHandler(int connectionCount) {
 		mNetConnections = new LinkedList<NetConnection>();
 		mConnections = new Hashtable<String, HttpURLConnection>();
 		if (connectionCount > WORKTHREADCOUNT_MAX) {
@@ -59,6 +53,7 @@ public class NetworkHandler {
 
 	public void disConnection(NetConnection netConnection) {
 		if (netConnection != null) {
+			netConnection.circulatingDo = false;
 			disConnection(netConnection.settings.url);
 		}
 	}
@@ -81,8 +76,12 @@ public class NetworkHandler {
 	public static abstract class NetConnection implements Callback, Runnable {
 
 		Settings settings = new Settings();
+		boolean circulatingDo;
 
 		public abstract void settings(Settings settings);
+
+		public abstract void success(InputStream is,
+				HttpURLConnection httpURLConnection) throws IOException;
 
 		@Override
 		public void connectionCreated(HttpURLConnection httpURLConnection) {
@@ -90,8 +89,20 @@ public class NetworkHandler {
 
 		}
 
+		public boolean circulatingDo() {
+			// TODO Auto-generated method stub
+
+			return false;
+		}
+
 		@Override
 		public void timeout() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void failed(int responseCode) {
 			// TODO Auto-generated method stub
 
 		}
@@ -137,10 +148,21 @@ public class NetworkHandler {
 							connection.disconnect();
 						}
 					}
-					HttpUtils.connection(netConnection.settings.url,
-							netConnection.settings.method,
-							netConnection.settings.timeout,
-							netConnection.settings.params, netConnection);
+					netConnection.circulatingDo = netConnection.circulatingDo();
+					if (!netConnection.circulatingDo) {
+						HttpUtils.connection(netConnection.settings.url,
+								netConnection.settings.method,
+								netConnection.settings.timeout,
+								netConnection.settings.params, netConnection);
+					} else {
+						while (netConnection.circulatingDo) {
+							HttpUtils.connection(netConnection.settings.url,
+									netConnection.settings.method,
+									netConnection.settings.timeout,
+									netConnection.settings.params,
+									netConnection);
+						}
+					}
 				}
 			}
 		}

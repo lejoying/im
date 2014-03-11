@@ -666,7 +666,6 @@ public class CircleMenu {
 		mAppNmae.setVisibility(View.INVISIBLE);
 		mPageName.setVisibility(View.INVISIBLE);
 
-
 		switch (location) {
 		case LOCATION_TOP:
 			switch (mStatus) {
@@ -1130,8 +1129,12 @@ public class CircleMenu {
 	}
 
 	public static final void show(BaseActivity activity) {
-		show(activity, mCircleMenu.mLocation != 0 ? mCircleMenu.mLocation
-				: LOCATION_TOP);
+		int location = LOCATION_TOP;
+		if (mCircleMenu != null) {
+			location = mCircleMenu.mLocation != 0 ? mCircleMenu.mLocation
+					: LOCATION_TOP;
+		}
+		show(activity, location);
 	}
 
 	public static final void show(BaseActivity activity, int location) {
@@ -1140,20 +1143,32 @@ public class CircleMenu {
 				location = mCircleMenu.mLocation != 0 ? mCircleMenu.mLocation
 						: LOCATION_TOP;
 				mCircleMenu.isLeave = false;
+			} else {
+				mCircleMenu.isLock = false;
+				mCircleMenu.isShowBack = false;
 			}
 			mCurrentActivity = activity;
-			mCircleMenu.isLock = false;
-			mCircleMenu.isShowBack = false;
 			mCircleMenu.addShowOperation(location);
+		} else if (activity != null && mCircleMenu == null) {
+			create(activity);
+			show(activity, location);
 		}
 	}
 
 	public static final void showBack(BaseActivity activity) {
 		if (mCircleMenu != null) {
 			mCurrentActivity = activity;
+			if (mCircleMenu.mStatus != STATUS_HIDE && !mCircleMenu.isLock
+					&& !mCircleMenu.isShowBack) {
+				mCircleMenu.addHideOperation(true);
+			}
 			mCircleMenu.isLock = true;
 			mCircleMenu.isShowBack = true;
 			mCircleMenu.addShowOperation(LOCATION_TOP);
+		} else if (activity != null && mCircleMenu == null) {
+			System.out.println("wait create");
+			create(activity);
+			showBack(activity);
 		}
 	}
 
@@ -1182,6 +1197,19 @@ public class CircleMenu {
 	public static void setPageName(String pageName) {
 		if (mCircleMenu != null) {
 			mCircleMenu.changePageName(pageName);
+		}
+	}
+
+	public static void destroy() {
+		if (mCircleMenu != null) {
+			CircleMenu waitGC = mCircleMenu;
+			CircleMenu.mCurrentActivity = null;
+			mCircleMenu = null;
+			waitGC.mContext = null;
+			waitGC.mWindowManager.removeView(waitGC.mMenuContent);
+			waitGC.mWindowManager.removeView(waitGC.mTouchSpace);
+			waitGC = null;
+			System.gc();
 		}
 	}
 

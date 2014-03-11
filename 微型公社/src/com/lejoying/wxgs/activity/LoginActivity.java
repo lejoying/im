@@ -47,8 +47,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		super.onCreate(savedInstanceState);
-		overridePendingTransition(R.anim.translate_in_bottom,
-				R.anim.translate_out_top);
+		overridePendingTransition(R.anim.activity_new, R.anim.activity_out);
 	}
 
 	@Override
@@ -57,23 +56,23 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 			mCurrentView.setVisibility(View.VISIBLE);
 			mCurrentView.startAnimation(mTranslateInTop);
 		}
+		CircleMenu.show(this,CircleMenu.LOCATION_BOTTOM);
 		if (mCurrentView.equals(mCodeLogin)) {
-			CircleMenu.showBack(this);
 		} else {
-			CircleMenu.hide();
+			// CircleMenu.hide();
 		}
 		super.onResume();
 	}
 
 	public void initView() {
 		mTranslateInTop = AnimationUtils.loadAnimation(this,
-				R.anim.translate_in_top);
+				R.anim.activity_back);
 		mTranslateOutTop = AnimationUtils.loadAnimation(this,
-				R.anim.translate_out_top);
+				R.anim.activity_out);
 		mTranslateInBottom = AnimationUtils.loadAnimation(this,
-				R.anim.translate_in_bottom);
+				R.anim.activity_new);
 		mTranslateOutBottom = AnimationUtils.loadAnimation(this,
-				R.anim.translate_out_bottom);
+				R.anim.activity_finish);
 
 		mInflater = getLayoutInflater();
 		mPassLogin = mInflater.inflate(R.layout.page_login_pass, null);

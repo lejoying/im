@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.handler;
+package com.lejoying.wxgs.app.handler;
 
 import java.util.LinkedList;
 import java.util.Queue;

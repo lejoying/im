@@ -73,6 +73,7 @@ public abstract class BaseActivity extends Activity {
 		boolean flag = false;
 		List<RunningTaskInfo> runningTaskInfos = mActivityManager
 				.getRunningTasks(1);
+
 		if (runningTaskInfos != null) {
 			ComponentName f = runningTaskInfos.get(0).topActivity;
 			flag = !f.getPackageName().equals(getPackageName());

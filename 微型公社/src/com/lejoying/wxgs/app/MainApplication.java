@@ -5,16 +5,19 @@ import java.util.List;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
+import android.content.ComponentCallbacks;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Process;
 
 import com.lejoying.wxgs.activity.BaseActivity;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.LoginActivity;
 import com.lejoying.wxgs.app.data.Config;
 import com.lejoying.wxgs.app.data.Data;
-import com.lejoying.wxgs.handler.DataHandler;
-import com.lejoying.wxgs.handler.NetworkHandler;
+import com.lejoying.wxgs.app.handler.DataHandler;
+import com.lejoying.wxgs.app.handler.NetworkHandler;
 
 public class MainApplication extends Application {
 
@@ -38,7 +41,8 @@ public class MainApplication extends Application {
 
 	@Override
 	public void onCreate() {
-		if (isInMainProcess()) {
+		if (isInMainProcess() && mMainApplication == null) {
+			startActivity(new Intent(this, LoginActivity.class));
 			initMainApplication();
 		}
 		super.onCreate();
@@ -46,19 +50,17 @@ public class MainApplication extends Application {
 
 	public void initMainApplication() {
 		mMainApplication = this;
-		// init circle menu
-		CircleMenu.create(this);
 
 		// init handler
 		UIHandler = new Handler();
 		dataHandler = new DataHandler();
 		dataHandler.initialize(this);
-		networkHandler = new NetworkHandler();
-		networkHandler.initialize(this, 5);
+		networkHandler = new NetworkHandler(5);
 
 		// init data and config
 		data = new Data();
 		config = new Config();
+
 	}
 
 	public boolean isInMainProcess() {
@@ -82,6 +84,65 @@ public class MainApplication extends Application {
 			}
 		}
 		return false;
+	}
+
+	// override
+
+	@Override
+	public void onTerminate() {
+		// TODO Auto-generated method stub
+		super.onTerminate();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		// TODO Auto-generated method stub
+		// super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public void onLowMemory() {
+		// TODO Auto-generated method stub
+		super.onLowMemory();
+	}
+
+	@Override
+	public void onTrimMemory(int level) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void registerComponentCallbacks(ComponentCallbacks callback) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unregisterComponentCallbacks(ComponentCallbacks callback) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void registerActivityLifecycleCallbacks(
+			ActivityLifecycleCallbacks callback) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unregisterActivityLifecycleCallbacks(
+			ActivityLifecycleCallbacks callback) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void registerOnProvideAssistDataListener(
+			OnProvideAssistDataListener callback) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unregisterOnProvideAssistDataListener(
+			OnProvideAssistDataListener callback) {
+		// TODO Auto-generated method stub
 	}
 
 }

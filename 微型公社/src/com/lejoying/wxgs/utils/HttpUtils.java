@@ -37,7 +37,6 @@ public final class HttpUtils {
 			Map<String, String> params, Callback callback) {
 		HttpURLConnection httpURLConnection = null;
 		URL connectionURL = null;
-		long start = System.currentTimeMillis();
 		try {
 			switch (method) {
 			case SEND_GET:
@@ -106,11 +105,10 @@ public final class HttpUtils {
 					callback.success(httpURLConnection.getInputStream(),
 							httpURLConnection);
 				} else {
-					if (System.currentTimeMillis() - start < timeout) {
-						callback.error();
-					} else {
-						callback.timeout();
-					}
+					callback.failed(httpURLConnection.getResponseCode());
+
+					callback.timeout();
+
 					if (httpURLConnection != null) {
 						httpURLConnection.disconnect();
 					}
@@ -129,6 +127,8 @@ public final class HttpUtils {
 				HttpURLConnection httpURLConnection) throws IOException;
 
 		public void error();
+
+		public void failed(int responseCode);
 
 		public void timeout();
 
