@@ -34,10 +34,9 @@ public final class HttpUtils {
 	}
 
 	public static void connection(String url, int method, int timeout,
-			Map<String, String> params, Callback callback) {
+			Map<String, String> params, NetworkCallback callback) {
 		HttpURLConnection httpURLConnection = null;
 		URL connectionURL = null;
-		long start = System.currentTimeMillis();
 		try {
 			switch (method) {
 			case SEND_GET:
@@ -106,31 +105,35 @@ public final class HttpUtils {
 					callback.success(httpURLConnection.getInputStream(),
 							httpURLConnection);
 				} else {
-					if (System.currentTimeMillis() - start < timeout) {
-						callback.error();
-					} else {
-						callback.timeout();
-					}
+					callback.failed(NetworkCallback.FAILED_WRONECODE,
+							httpURLConnection.getResponseCode());
+
 					if (httpURLConnection != null) {
 						httpURLConnection.disconnect();
 					}
 				}
 			}
 		} catch (IOException e) {
-			callback.error();
+			callback.failed(NetworkCallback.FAILED_ERROR,
+					NetworkCallback.RESPONSECODE_DEFAULT);
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 			}
 		}
 	}
 
-	public interface Callback {
+	public interface NetworkCallback {
+
+		public static final int RESPONSECODE_DEFAULT = 0;
+		public static final int FAILED_TIMEOUT = 1;
+		public static final int FAILED_WRONECODE = 2;
+		public static final int FAILED_INTERRUPT = 3;
+		public static final int FAILED_ERROR = 4;
+
 		public abstract void success(InputStream is,
 				HttpURLConnection httpURLConnection) throws IOException;
 
-		public void error();
-
-		public void timeout();
+		public void failed(int failedType, int responseCode);
 
 		public void connectionCreated(HttpURLConnection httpURLConnection);
 	}

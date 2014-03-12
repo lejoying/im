@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.handler;
+package com.lejoying.wxgs.app.handler;
 
 import com.lejoying.wxgs.app.MainApplication;
 

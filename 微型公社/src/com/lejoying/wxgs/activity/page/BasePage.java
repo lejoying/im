@@ -54,19 +54,19 @@ public abstract class BasePage {
 		switch (animOperation & animDirection) {
 		case ANIMATION_OPERATION_SHOW & ANIMATION_DIRECTION_TOP:
 			animation = AnimationUtils.loadAnimation(mBaseActivity,
-					R.anim.translate_in_top);
+					R.anim.activity_back);
 			break;
 		case ANIMATION_OPERATION_SHOW & ANIMATION_DIRECTION_BOTTOM:
 			animation = AnimationUtils.loadAnimation(mBaseActivity,
-					R.anim.translate_in_bottom);
+					R.anim.activity_new);
 			break;
 		case ANIMATION_OPERATION_HIDE & ANIMATION_DIRECTION_TOP:
 			animation = AnimationUtils.loadAnimation(mBaseActivity,
-					R.anim.translate_out_top);
+					R.anim.activity_out);
 			break;
 		case ANIMATION_OPERATION_HIDE & ANIMATION_DIRECTION_BOTTOM:
 			animation = AnimationUtils.loadAnimation(mBaseActivity,
-					R.anim.translate_out_bottom);
+					R.anim.activity_finish);
 			break;
 
 		default:

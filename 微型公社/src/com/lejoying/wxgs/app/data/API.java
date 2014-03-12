@@ -1,7 +1,9 @@
 package com.lejoying.wxgs.app.data;
 
 public class API {
-	protected static final String SLASH = "/";
+
+	public static final String DOMAIN = "http://im.lejoying.com/";
+	public static final String DOMAIN_IMAGE = "http://images1.lejoying.com/";
 
 	public static final String ACCOUNT = "account";
 	public static final String ACCOUNT_VERIFYPHONE = "api2/account/verifyphone";
@@ -64,5 +66,9 @@ public class API {
 	public static final String LBS_SETGROUPLOCATION = "lbs/setgrouplocation";
 	public static final String LBS_NEARBYACCOUNTS = "lbs/nearbyaccounts";
 	public static final String LBS_NEARBYGROUPS = "lbs/nearbygroups";
+
+	public static final String SQUARE = "square";
+	public static final String SQUARE_SENDSQUAREMESSAGE = "api2/square/sendsquaremessage";
+	public static final String SQUARE_GETSQUAREMESSAGE = "api2/square/getsquaremessage";
 
 }

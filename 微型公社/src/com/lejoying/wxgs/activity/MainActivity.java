@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.service.PushService;
 
 public class MainActivity extends BaseActivity {
 
@@ -36,7 +35,6 @@ public class MainActivity extends BaseActivity {
 
 	public void initView() {
 		// TODO Auto-generated method stub
-		PushService.startLongConnection("123", "123123");
 	}
 
 	public void initEvent() {

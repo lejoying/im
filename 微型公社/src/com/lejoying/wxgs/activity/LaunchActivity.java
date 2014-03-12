@@ -10,8 +10,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 
 public class LaunchActivity extends BaseActivity {
 
@@ -47,7 +47,7 @@ public class LaunchActivity extends BaseActivity {
 				0.5f, 0.5f);
 		marScaleAnimation.setDuration(1800);
 		marScaleAnimation
-				.setAnimationListener(new com.lejoying.wxgs.adapter.AnimationAdapter() {
+				.setAnimationListener(new com.lejoying.wxgs.app.adapter.AnimationAdapter() {
 					@Override
 					public void onAnimationStart(Animation animation) {
 						super.onAnimationStart(animation);
