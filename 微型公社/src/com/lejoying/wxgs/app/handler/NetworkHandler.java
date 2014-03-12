@@ -15,7 +15,7 @@ import java.util.Set;
 public class NetworkHandler {
 
 	public static final int WORKTHREADCOUNT_MIN = 1;
-	public static final int WORKTHREADCOUNT_MAX = 10;
+	public static final int WORKTHREADCOUNT_MAX = 50;
 	public int mWorkThreadCount;
 
 	Queue<NetConnection> mNetConnections;
@@ -39,7 +39,7 @@ public class NetworkHandler {
 		notify();
 	}
 
-	public synchronized NetConnection getExclude() throws InterruptedException {
+	synchronized NetConnection getExclude() throws InterruptedException {
 		if (mNetConnections.size() == 0) {
 			wait();
 		}
@@ -51,7 +51,7 @@ public class NetworkHandler {
 		public Map<String, String> params;
 		public int timeout = 5000;
 		public int method = NetConnection.POST;
-		public boolean circulatingDo = false;
+		public boolean circulating = false;
 	}
 
 	public static abstract class NetConnection {
@@ -68,7 +68,9 @@ public class NetworkHandler {
 
 		HttpURLConnection httpURLConnection;
 
-		boolean isDisconnected = false;
+		boolean isRunning;
+		boolean isDisconnected;
+		boolean isCirculating;
 
 		protected abstract void settings(Settings settings);
 
@@ -83,63 +85,39 @@ public class NetworkHandler {
 			// TODO Auto-generated method stub
 		}
 
-		public void cancelCirculatingDo(boolean disconnectionImmediately) {
-			if (settings.circulatingDo) {
-				settings.circulatingDo = false;
+		public synchronized void disConnection() {
+			if (isCirculating) {
+				isCirculating = false;
 			}
-			if (disconnectionImmediately) {
-				disConnection();
-			}
-		}
-
-		public void disConnection() {
 			isDisconnected = true;
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 				httpURLConnection = null;
 			}
+
 		}
 
-	}
-
-	class NetworkHandlerWorkThread extends Thread {
-
-		public int id;
-
-		boolean interrupt;
-
-		public NetworkHandlerWorkThread(int id) {
-			this.id = id;
+		public boolean isRunning() {
+			return isRunning;
 		}
 
-		@Override
-		public void run() {
-			while (!interrupt) {
-				try {
-					NetConnection netConnection;
-					while ((netConnection = getExclude()) == null)
-						;
-					if (!netConnection.isDisconnected) {
-						netConnection.settings(netConnection.settings);
-						if (netConnection.settings.url != null
-								&& !netConnection.settings.url.equals("")) {
-							if (!netConnection.settings.circulatingDo) {
-								startConnection(netConnection);
-							} else {
-								while (netConnection.settings.circulatingDo) {
-									startConnection(netConnection);
-								}
-							}
-						}
-					}
-				} catch (InterruptedException e) {
-					return;
-				}
+		synchronized boolean getRunning() {
+			if (!isRunning) {
+				isRunning = true;
+				return true;
+			}
+			return false;
+		}
+
+		synchronized void stopRunning() {
+			if (isRunning) {
+				isRunning = false;
 			}
 		}
+
 	}
 
-	public void startConnection(NetConnection connection) {
+	boolean startConnection(NetConnection connection) {
 		String url = connection.settings.url;
 		int method = connection.settings.method;
 		int timeout = connection.settings.timeout;
@@ -169,7 +147,7 @@ public class NetworkHandler {
 						.openConnection();
 				httpURLConnection.setRequestMethod("GET");
 
-				// httpURLConnection.setReadTimeout(timeout);
+				httpURLConnection.setReadTimeout(timeout);
 				httpURLConnection.setConnectTimeout(timeout);
 				break;
 			case NetConnection.POST:
@@ -213,7 +191,6 @@ public class NetworkHandler {
 			}
 			connection.httpURLConnection = httpURLConnection;
 			connection.connectionCreated(httpURLConnection);
-
 			if (!connection.isDisconnected) {
 				InputStream is = httpURLConnection.getInputStream();
 
@@ -227,8 +204,6 @@ public class NetworkHandler {
 						httpURLConnection.disconnect();
 					}
 				}
-			} else {
-				connection.isDisconnected = false;
 			}
 		} catch (SocketTimeoutException e) {
 			// TODO: handle exception
@@ -242,6 +217,44 @@ public class NetworkHandler {
 					NetConnection.RESPONSECODE_DEFAULT);
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
+			}
+		}
+
+		return connection.isCirculating;
+	}
+
+	class NetworkHandlerWorkThread extends Thread {
+
+		public int id;
+
+		boolean interrupt;
+
+		public NetworkHandlerWorkThread(int id) {
+			this.id = id;
+		}
+
+		@Override
+		public void run() {
+			while (!interrupt) {
+				try {
+					NetConnection netConnection;
+					while ((netConnection = getExclude()) == null)
+						;
+					if (netConnection.getRunning()) {
+						netConnection.settings(netConnection.settings);
+						if (netConnection.settings.url != null
+								&& !netConnection.settings.url.equals("")) {
+
+							netConnection.isDisconnected = false;
+							netConnection.isCirculating = netConnection.settings.circulating;
+							while (startConnection(netConnection))
+								;
+						}
+						netConnection.stopRunning();
+					}
+				} catch (InterruptedException e) {
+					return;
+				}
 			}
 		}
 	}

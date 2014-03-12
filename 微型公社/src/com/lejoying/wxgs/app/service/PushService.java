@@ -17,9 +17,14 @@ import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 public class PushService extends Service {
 
+	public static final int LONGPULLSTATE_CONNECTION = 1;
+	public static final int LONGPULLSTATE_WAITFORCONNECTION = 2;
+
+	int mStatus;
+
 	static PushService mPushService;
 
-	MainApplication app;
+	MainApplication app = MainApplication.getMainApplication();;
 
 	NetworkHandler mPushHandler;
 
@@ -34,6 +39,7 @@ public class PushService extends Service {
 		// TODO Auto-generated method stub
 		mPushService = this;
 		mPushHandler = new NetworkHandler(2);
+		mStatus = LONGPULLSTATE_WAITFORCONNECTION;
 		super.onCreate();
 	}
 
@@ -49,22 +55,21 @@ public class PushService extends Service {
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		mPushService = null;
+		mIMLongPullConnection = null;
+		mSquareLongPullConnection = null;
 		super.onDestroy();
 	}
 
-	boolean isConnected = false;
 	static NetConnection mIMLongPullConnection;
 	static NetConnection mSquareLongPullConnection;
 
-	public static void startIMLongPull(final String phone,
+	public synchronized static void startIMLongPull(final String phone,
 			final String accessKey) {
-		if (mPushService != null) {
-			if (!mPushService.isConnected) {
-				mPushService.isConnected = true;
-				mIMLongPullConnection = createIMNetConnection(phone, accessKey);
-				mPushService.startIMLongPull();
-			}
-		} else {
+		if (mPushService != null
+				&& mPushService.mStatus == LONGPULLSTATE_WAITFORCONNECTION) {
+			mIMLongPullConnection = createIMNetConnection(phone, accessKey);
+			mPushService.startIMLongPull();
+		} else if (mPushService == null) {
 			mIMLongPullConnection = createIMNetConnection(phone, accessKey);
 			MainApplication.getMainApplication().startService(
 					new Intent(MainApplication.getMainApplication(),
@@ -84,7 +89,7 @@ public class PushService extends Service {
 				params.put("phone", phone);
 				params.put("accessKey", accessKey);
 				settings.params = params;
-				settings.circulatingDo = true;
+				settings.circulating = true;
 			}
 
 			@Override
@@ -98,15 +103,24 @@ public class PushService extends Service {
 		return netConnection;
 	}
 
-	public static void startSquareLongPull(String phone, String accessKey,
-			String gid, String flag) {
-
+	public synchronized static void startSquareLongPull(String phone,
+			String accessKey, String gid, String flag) {
+		if (mPushService != null) {
+			mSquareLongPullConnection = createSquareNetConnection(phone,
+					accessKey, gid, flag);
+			mPushService.startSquareLongPull();
+		} else {
+			mSquareLongPullConnection = createSquareNetConnection(phone,
+					accessKey, gid, flag);
+			MainApplication.getMainApplication().startService(
+					new Intent(MainApplication.getMainApplication(),
+							PushService.class));
+		}
 	}
 
 	static NetConnection createSquareNetConnection(final String phone,
 			final String accessKey, final String gid, final String flag) {
 		NetConnection netConnection = new NetConnection() {
-
 			@Override
 			public void settings(Settings settings) {
 				settings.url = API.DOMAIN + API.SESSION_EVENT;
@@ -117,7 +131,7 @@ public class PushService extends Service {
 				params.put("gid", gid);
 				params.put("flag", flag);
 				settings.params = params;
-				settings.circulatingDo = true;
+				settings.circulating = true;
 			}
 
 			@Override
@@ -130,13 +144,13 @@ public class PushService extends Service {
 		return netConnection;
 	}
 
-	public void startIMLongPull() {
+	public synchronized void startIMLongPull() {
 		if (mIMLongPullConnection != null) {
 			mPushHandler.connection(mIMLongPullConnection);
 		}
 	}
 
-	public void startSquareLongPull() {
+	public synchronized void startSquareLongPull() {
 		if (mSquareLongPullConnection != null) {
 			mPushHandler.connection(mSquareLongPullConnection);
 		}

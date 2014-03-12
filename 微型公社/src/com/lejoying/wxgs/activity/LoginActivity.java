@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
@@ -19,7 +18,6 @@ import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
-import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class LoginActivity extends BaseActivity implements OnClickListener {
 
@@ -118,39 +116,30 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 		mButtonSendCode.setOnClickListener(this);
 	}
 
-	NetConnection con = new NetConnection() {
-
-		@Override
-		protected void success(InputStream is,
-				HttpURLConnection httpURLConnection) {
-			System.out.println("success");
-			try {
-				StreamParser.parseToByteArray(is);
-			} catch (IOException e) {
-				System.out.println("???");
-			}
-		}
-
-		@Override
-		protected void settings(Settings settings) {
-			// TODO Auto-generated method stub
-			settings.url = "http://www.baidu.com";
-		}
-
-		@Override
-		protected void failed(int failedType, int responseCode) {
-			System.out.println(failedType);
-		}
-	};
+	NetConnection con;
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.button_plogin:
+			app.networkHandler.connection(con = new NetConnection() {
 
+				@Override
+				protected void success(InputStream is,
+						HttpURLConnection httpURLConnection) {
+					// TODO Auto-generated method stub
+					System.out.println(httpURLConnection);
+					httpURLConnection.disconnect();
+				}
+
+				@Override
+				protected void settings(Settings settings) {
+					// TODO Auto-generated method stub
+					settings.url = "http://www.baidu.com";
+				}
+			});
 			break;
 		case R.id.button_register:
-
 			break;
 		case R.id.button_opencodelogin:
 			mCodeLogin.setVisibility(View.VISIBLE);
@@ -172,7 +161,23 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 			break;
 		}
 	}
+	
+	A A = new B();
 
+	public abstract class A{
+		public abstract void A();
+	}
+	
+	public class B extends A{
+
+		@Override
+		public void A() {
+			// TODO Auto-generated method stub
+			System.out.println("abc");
+		}
+		
+	}
+	
 	@Override
 	public void finish() {
 		if (mCurrentView.equals(mCodeLogin)) {
