@@ -50,6 +50,7 @@ squareManage.sendsquaremessage = function (data, response) {
 
     function sendSquareMessage(content) {
         var message = {
+            sendType: "square",
             contentType: content.contentType,
             phone: phone,
             gid: gid,

@@ -1,10 +1,9 @@
 var requestHandlers = {};
-
 var globaldata = root.globaldata;
 var accessKeyPool = {};
 var serverSetting = root.globaldata.serverSetting;
 var redis = require("redis");
-var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
+var client = redis.createClient("6379", "115.28.51.197");
 
 var squareManage = require('./handlers/squareManage.js');
 requestHandlers.squareManage = function (request, response, pathObject, data) {
