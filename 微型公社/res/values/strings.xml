@@ -4,6 +4,7 @@
     <string name="app_name">微型公社</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="network_failed">失败原因</string>
     <string name="circleMenu_back">返回</string>
     <string name="circleMenu_pageName"></string>
     <string name="circleitem1_1">密友圈</string>
