@@ -51,7 +51,6 @@ public class NetworkHandler {
 		public Map<String, String> params;
 		public int timeout = 5000;
 		public int method = NetConnection.POST;
-		public boolean circulating = false;
 	}
 
 	public static abstract class NetConnection {
@@ -66,11 +65,7 @@ public class NetworkHandler {
 		public static final int FAILED_WRONGCODE = 2;
 		public static final int FAILED_ERROR = 3;
 
-		HttpURLConnection httpURLConnection;
-
-		boolean isRunning;
 		boolean isDisconnected;
-		boolean isCirculating;
 
 		protected abstract void settings(Settings settings);
 
@@ -81,43 +76,9 @@ public class NetworkHandler {
 			// TODO Auto-generated method stub
 		}
 
-		protected void connectionCreated(HttpURLConnection httpURLConnection) {
-			// TODO Auto-generated method stub
-		}
-
-		public synchronized void disConnection() {
-			if (isCirculating) {
-				isCirculating = false;
-			}
-			isDisconnected = true;
-			if (httpURLConnection != null) {
-				httpURLConnection.disconnect();
-				httpURLConnection = null;
-			}
-
-		}
-
-		public boolean isRunning() {
-			return isRunning;
-		}
-
-		synchronized boolean getRunning() {
-			if (!isRunning) {
-				isRunning = true;
-				return true;
-			}
-			return false;
-		}
-
-		synchronized void stopRunning() {
-			if (isRunning) {
-				isRunning = false;
-			}
-		}
-
 	}
 
-	boolean startConnection(NetConnection connection) {
+	void startConnection(NetConnection connection) {
 		String url = connection.settings.url;
 		int method = connection.settings.method;
 		int timeout = connection.settings.timeout;
@@ -189,8 +150,6 @@ public class NetworkHandler {
 				os.close();
 				break;
 			}
-			connection.httpURLConnection = httpURLConnection;
-			connection.connectionCreated(httpURLConnection);
 			if (!connection.isDisconnected) {
 				InputStream is = httpURLConnection.getInputStream();
 
@@ -219,8 +178,6 @@ public class NetworkHandler {
 				httpURLConnection.disconnect();
 			}
 		}
-
-		return connection.isCirculating;
 	}
 
 	class NetworkHandlerWorkThread extends Thread {
@@ -240,19 +197,17 @@ public class NetworkHandler {
 					NetConnection netConnection;
 					while ((netConnection = getExclude()) == null)
 						;
-					if (netConnection.getRunning()) {
-						netConnection.settings(netConnection.settings);
-						if (netConnection.settings.url != null
-								&& !netConnection.settings.url.equals("")) {
+					netConnection.settings(netConnection.settings);
+					if (netConnection.settings.url != null
+							&& !netConnection.settings.url.equals("")) {
 
-							netConnection.isDisconnected = false;
-							netConnection.isCirculating = netConnection.settings.circulating;
-							while (startConnection(netConnection))
-								;
-						}
-						netConnection.stopRunning();
+						netConnection.isDisconnected = false;
+						netConnection.isCirculating = netConnection.settings.circulating;
+						while (startConnection(netConnection))
+							;
 					}
-				} catch (InterruptedException e) {
+					netConnection.stopRunning();
+o9g				} catch (InterruptedException e) {
 					return;
 				}
 			}
