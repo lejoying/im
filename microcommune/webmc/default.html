@@ -553,7 +553,8 @@
                             </a>
                         </form>
                     </div>
-                    <textarea onblur="getValue(this)" class="chatInput lightBorder js_chatmessagecontent" id="textInput" type="text"
+                    <textarea onblur="getValue(this)" class="chatInput lightBorder js_chatmessagecontent" id="textInput"
+                              type="text"
                             ></textarea>
                     <a click="sendMsg@.inputArea" class="chatSend js_chatsendmessage" href="javascript:;"
                        style="margin-right: 20px;"><b>发送</b></a>
@@ -662,7 +663,9 @@
 <div class="templates hide">
     <!--分组好友的模版-->
     <div class="js_group_user" id="js_group_user">
-        <div class="schoolmate_txt js_circleName_#{it.rid}" title="#{it.name}" circle_rid="#{it.rid}">#{it.name}</div>
+        <div class="schoolmate_txt js_circleName_#{it.rid}" title="#{it.name}" circle_rid="#{it.rid}"
+             style="margin-right: 200px;">#{it.name}
+        </div>
         <div class="js_modifycirclename" circle_rid="#{it.rid}" style="margin-top: 10px;"><input
                 type="text" value="#{it.name}" style="width: 100px;height: 30px;border-radius: 5px;"><input
                 type="button"

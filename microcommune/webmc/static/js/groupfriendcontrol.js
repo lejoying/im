@@ -746,7 +746,7 @@ function ModifyCirclesLocalData(circles, newCircleRid, account, next) {
     }
 }
 function addCircleGroup(circleName) {
-    alert(circleName);
+//    alert(circleName);
     var accountObj = JSON.parse(window.localStorage.getItem("wxgs_nowAccount"));
     $.ajax({
         type: "POST",
@@ -758,6 +758,9 @@ function addCircleGroup(circleName) {
         },
         success: function (data) {
             if (data["提示信息"] == "添加成功") {
+
+
+
                 alert(data["提示信息"]);
             } else {
                 alert(data["提示信息"] + "---" + alert(data["失败原因"]));
