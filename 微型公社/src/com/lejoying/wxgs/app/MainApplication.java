@@ -57,6 +57,8 @@ public class MainApplication extends Application {
 		// init data and config
 		data = new Data();
 		config = new Config();
+		data.user.phone = "123";
+		data.user.accessKey = "lejoying";
 
 	}
 

@@ -5,28 +5,35 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.widget.Toast;
 
+import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.entity.Event;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Response;
+import com.lejoying.wxgs.app.handler.NetworkHandler.ResponseHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
+import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class PushService extends Service {
-
-	public static final int LONGPULLSTATE_CONNECTION = 1;
-	public static final int LONGPULLSTATE_WAITFORCONNECTION = 2;
-
-	int mStatus;
-
-	static PushService mPushService;
 
 	MainApplication app = MainApplication.getMainApplication();;
 
 	NetworkHandler mPushHandler;
+	ResponseHandler mResponseHandler;
+
+	String mCurrentConnectionGid = "";
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -37,48 +44,70 @@ public class PushService extends Service {
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
-		mPushService = this;
 		mPushHandler = new NetworkHandler(2);
-		mStatus = LONGPULLSTATE_WAITFORCONNECTION;
+		mResponseHandler = new ResponseHandler(2);
 		super.onCreate();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// TODO Auto-generated method stub
-		startIMLongPull();
-		startSquareLongPull();
+		if (intent != null) {
+			startIMConnection();
+			String gid = intent.getStringExtra("gid");
+			String flag = intent.getStringExtra("flag");
+			if (gid != null && !gid.equals("") && flag != null
+					&& !flag.equals("")) {
+				if (!mCurrentConnectionGid.equals(gid)) {
+					if (mSquareConnection != null
+							&& !mSquareConnection.isDisconnected()) {
+						mSquareConnection.disConnection();
+					}
+				}
+				mCurrentConnectionGid = gid;
+				startSquareConnection(gid, flag);
+			}
+		}
+		notifyWaitingForConnection();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
-	@Override
-	public void onDestroy() {
-		// TODO Auto-generated method stub
-		mPushService = null;
-		mIMLongPullConnection = null;
-		mSquareLongPullConnection = null;
-		super.onDestroy();
+	public static void startIMLongPull(Context context) {
+		context.startService(new Intent(context, PushService.class));
 	}
 
-	static NetConnection mIMLongPullConnection;
-	static NetConnection mSquareLongPullConnection;
-
-	public synchronized static void startIMLongPull(final String phone,
-			final String accessKey) {
-		if (mPushService != null
-				&& mPushService.mStatus == LONGPULLSTATE_WAITFORCONNECTION) {
-			mIMLongPullConnection = createIMNetConnection(phone, accessKey);
-			mPushService.startIMLongPull();
-		} else if (mPushService == null) {
-			mIMLongPullConnection = createIMNetConnection(phone, accessKey);
-			MainApplication.getMainApplication().startService(
-					new Intent(MainApplication.getMainApplication(),
-							PushService.class));
+	public static void startSquareLongPull(Context context, String gid,
+			String flag) {
+		if (gid != null && !gid.equals("") && flag != null && !flag.equals("")) {
+			Intent service = new Intent(context, PushService.class);
+			service.putExtra("gid", gid);
+			service.putExtra("flag", flag);
+			context.startService(service);
 		}
 	}
 
-	static NetConnection createIMNetConnection(final String phone,
-			final String accessKey) {
+	NetConnection mIMConnection;
+	NetConnection mSquareConnection;
+	boolean isConnection;
+
+	void startIMConnection() {
+		if (mIMConnection == null || mIMConnection.isDisconnected()) {
+			isConnection = true;
+			mPushHandler.connection(mIMConnection = createIMNetConnection());
+		}
+	}
+
+	void startSquareConnection(String gid, String flag) {
+		if (!mIMConnection.isDisconnected()
+				&& (mSquareConnection == null || mSquareConnection
+						.isDisconnected())) {
+			mPushHandler
+					.connection(mSquareConnection = createSquareNetConnection(
+							gid, flag));
+		}
+	}
+
+	NetConnection createIMNetConnection() {
 		NetConnection netConnection = new NetConnection() {
 
 			@Override
@@ -86,48 +115,79 @@ public class PushService extends Service {
 				settings.url = API.DOMAIN + API.SESSION_EVENT;
 				settings.timeout = 30000;
 				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", phone);
-				params.put("accessKey", accessKey);
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
 				settings.params = params;
 				settings.circulating = true;
 			}
 
 			@Override
 			public void success(InputStream is,
-					HttpURLConnection httpURLConnection) {
-				// TODO Auto-generated method stub
+					final HttpURLConnection httpURLConnection) {
+				Response response = new Response(is) {
+					@Override
+					public void handleResponse(InputStream is) {
+						JSONObject jObject = StreamParser.parseToJSONObject(is);
+						httpURLConnection.disconnect();
+						if (jObject != null) {
+							try {
+								System.out
+										.println(jObject
+												.get(getString(R.string.network_failed)));
 
+								// disconnection long pull
+								if (mIMConnection != null) {
+									mIMConnection.disConnection();
+									mIMConnection = null;
+								}
+								if (mSquareConnection != null) {
+									mSquareConnection.disConnection();
+									mSquareConnection = null;
+								}
+								return;
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+							Event event = JSONParser
+									.generateEventFromJSON(jObject);
+							System.out.println(event);
+						}
+					}
+				};
+				mResponseHandler.exclude(response);
+			}
+
+			@Override
+			protected void failed(int failedType, int responseCode) {
+				switch (failedType) {
+				case FAILED_TIMEOUT:
+					break;
+				default:
+					synchronized (this) {
+						try {
+							waitForConnection();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					break;
+				}
 			}
 
 		};
 		return netConnection;
 	}
 
-	public synchronized static void startSquareLongPull(String phone,
-			String accessKey, String gid, String flag) {
-		if (mPushService != null) {
-			mSquareLongPullConnection = createSquareNetConnection(phone,
-					accessKey, gid, flag);
-			mPushService.startSquareLongPull();
-		} else {
-			mSquareLongPullConnection = createSquareNetConnection(phone,
-					accessKey, gid, flag);
-			MainApplication.getMainApplication().startService(
-					new Intent(MainApplication.getMainApplication(),
-							PushService.class));
-		}
-	}
-
-	static NetConnection createSquareNetConnection(final String phone,
-			final String accessKey, final String gid, final String flag) {
+	NetConnection createSquareNetConnection(final String gid, final String flag) {
 		NetConnection netConnection = new NetConnection() {
 			@Override
 			public void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.SESSION_EVENT;
+				settings.url = API.DOMAIN + API.SQUARE_GETSQUAREMESSAGE;
 				settings.timeout = 30000;
 				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", phone);
-				params.put("accessKey", accessKey);
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
 				params.put("gid", gid);
 				params.put("flag", flag);
 				settings.params = params;
@@ -136,23 +196,61 @@ public class PushService extends Service {
 
 			@Override
 			public void success(InputStream is,
-					HttpURLConnection httpURLConnection) {
-				// TODO Auto-generated method stub
+					final HttpURLConnection httpURLConnection) {
+				Response response = new Response(is) {
+					@Override
+					public void handleResponse(InputStream is) {
+						JSONObject jObject = StreamParser.parseToJSONObject(is);
+						httpURLConnection.disconnect();
+						if (jObject != null) {
+							try {
+								jObject.get(getString(R.string.network_failed));
+								// disconnection long pull
+								Toast.makeText(PushService.this, "连接到广场失败",
+										Toast.LENGTH_LONG).show();
+								if (mSquareConnection != null) {
+									mSquareConnection.disConnection();
+									mSquareConnection = null;
+								}
+								return;
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+							System.out.println(jObject.toString());
+						}
+					}
+				};
+				mResponseHandler.exclude(response);
+			}
+
+			@Override
+			protected void failed(int failedType, int responseCode) {
+				switch (failedType) {
+				case FAILED_TIMEOUT:
+					break;
+				default:
+					synchronized (this) {
+						try {
+							waitForConnection();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					break;
+				}
 			}
 
 		};
 		return netConnection;
 	}
 
-	public synchronized void startIMLongPull() {
-		if (mIMLongPullConnection != null) {
-			mPushHandler.connection(mIMLongPullConnection);
-		}
+	public synchronized void waitForConnection() throws InterruptedException {
+		wait();
 	}
 
-	public synchronized void startSquareLongPull() {
-		if (mSquareLongPullConnection != null) {
-			mPushHandler.connection(mSquareLongPullConnection);
-		}
+	public synchronized void notifyWaitingForConnection() {
+		notifyAll();
 	}
+
 }

@@ -2,7 +2,13 @@ package com.lejoying.wxgs.activity;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +22,15 @@ import android.widget.EditText;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.entity.Event;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Response;
+import com.lejoying.wxgs.app.handler.NetworkHandler.ResponseHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
+import com.lejoying.wxgs.app.parser.StreamParser;
+import com.lejoying.wxgs.app.service.PushService;
 
 public class LoginActivity extends BaseActivity implements OnClickListener {
 
@@ -116,30 +129,78 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 		mButtonSendCode.setOnClickListener(this);
 	}
 
-	NetConnection con;
+	NetConnection con = new NetConnection() {
+
+		@Override
+		public void settings(Settings settings) {
+			settings.url = API.DOMAIN + API.SESSION_EVENT;
+			settings.timeout = 30000;
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("phone", "123");
+			params.put("accessKey", "lejoying");
+			settings.params = params;
+			settings.circulating = true;
+		}
+
+		@Override
+		public void success(InputStream is,
+				final HttpURLConnection httpURLConnection) {
+			Response response = new Response(is) {
+				@Override
+				public void handleResponse(InputStream is) {
+					JSONObject jObject = StreamParser.parseToJSONObject(is);
+					httpURLConnection.disconnect();
+					if (jObject != null) {
+						try {
+							jObject.get(getString(R.string.network_failed));
+							// disconnection long pull
+							con.disConnection();
+							return;
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						Event event = JSONParser.generateEventFromJSON(jObject);
+						System.out.println(event);
+					}
+				}
+			};
+			mResponseHandler.exclude(response);
+
+			System.out.println("success");
+		}
+
+		@Override
+		protected void failed(int failedType, int responseCode) {
+			System.out.println(failedType);
+			switch (failedType) {
+			case FAILED_TIMEOUT:
+				break;
+			default:
+				synchronized (this) {
+					try {
+						System.out.println("wait");
+						wait(5000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				break;
+			}
+		}
+
+	};
+	ResponseHandler mResponseHandler = new ResponseHandler(2);
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.button_plogin:
-			app.networkHandler.connection(con = new NetConnection() {
-
-				@Override
-				protected void success(InputStream is,
-						HttpURLConnection httpURLConnection) {
-					// TODO Auto-generated method stub
-					System.out.println(httpURLConnection);
-					httpURLConnection.disconnect();
-				}
-
-				@Override
-				protected void settings(Settings settings) {
-					// TODO Auto-generated method stub
-					settings.url = "http://www.baidu.com";
-				}
-			});
+			PushService.startSquareLongPull(this, "91", "0");
+			Intent service = new Intent(this, PushService.class);
 			break;
 		case R.id.button_register:
+
 			break;
 		case R.id.button_opencodelogin:
 			mCodeLogin.setVisibility(View.VISIBLE);
@@ -161,23 +222,23 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 			break;
 		}
 	}
-	
+
 	A A = new B();
 
-	public abstract class A{
+	public abstract class A {
 		public abstract void A();
 	}
-	
-	public class B extends A{
+
+	public class B extends A {
 
 		@Override
 		public void A() {
 			// TODO Auto-generated method stub
 			System.out.println("abc");
 		}
-		
+
 	}
-	
+
 	@Override
 	public void finish() {
 		if (mCurrentView.equals(mCodeLogin)) {

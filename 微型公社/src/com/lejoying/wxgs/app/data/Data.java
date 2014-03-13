@@ -11,6 +11,7 @@ import android.os.Bundle;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.data.entity.User;
 
 public class Data implements Serializable {
@@ -26,6 +27,8 @@ public class Data implements Serializable {
 
 	public Map<String, Friend> groupFriends = new HashMap<String, Friend>();
 	public Map<String, Friend> friends = new HashMap<String, Friend>();
+	
+	public Map<String,List<Message>> squareMessages = new HashMap<String, List<Message>>();
 
 	// Last messages list
 	public List<String> lastChatFriends = new ArrayList<String>();

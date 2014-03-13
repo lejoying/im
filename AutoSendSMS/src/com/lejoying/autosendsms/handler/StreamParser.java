@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.app.parser;
+package com.lejoying.autosendsms.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -255,11 +255,11 @@ public class JSONParser {
 		return messages;
 	}
 
-	public static Event generateEventFromJSON(JSONObject jEvnet) {
+	public static Event generateEventFromJSON(JSONObject jEvent) {
 		Event event = new Event();
 		try {
-			event.event = jEvnet.getString("event");
-			JSONObject jEventContent = jEvnet.getJSONObject("event_content");
+			event.event = jEvent.getString("event");
+			JSONObject jEventContent = jEvent.getJSONObject("event_content");
 			if (event.event.equals("message")) {
 				event.eventContent = generateMessagesFromJSON(jEventContent
 						.getJSONArray("message"));
