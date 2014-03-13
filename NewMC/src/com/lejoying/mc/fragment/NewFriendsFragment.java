@@ -59,6 +59,7 @@ public class NewFriendsFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		mContent = (ListView) inflater.inflate(R.layout.f_newfriends, null);
 		mInflater = inflater;
+		System.out.println(app.data.newFriends.toString());
 		return mContent;
 	}
 
@@ -95,7 +96,7 @@ public class NewFriendsFragment extends BaseFragment {
 				return mInflater.inflate(R.layout.f_margin, null);
 			}
 			NewFriendsHolder newFriendsHolder = null;
-			if (arg1 == null) {
+			if (arg1 == null || position == 7 || position == getCount() - 8) {
 				newFriendsHolder = new NewFriendsHolder();
 				arg1 = mInflater.inflate(R.layout.f_newfriends_item, null);
 				newFriendsHolder.btn_agree = (Button) arg1
@@ -110,6 +111,7 @@ public class NewFriendsFragment extends BaseFragment {
 						.findViewById(R.id.tv_message);
 				newFriendsHolder.tv_waitagree = (TextView) arg1
 						.findViewById(R.id.tv_waitagree);
+				newFriendsHolder.position = position;
 				arg1.setTag(newFriendsHolder);
 			} else {
 				newFriendsHolder = (NewFriendsHolder) arg1.getTag();
@@ -220,6 +222,7 @@ public class NewFriendsFragment extends BaseFragment {
 		TextView tv_waitagree;
 		Button btn_agree;
 		TextView tv_added;
+		Integer position;
 	}
 
 	@Override
