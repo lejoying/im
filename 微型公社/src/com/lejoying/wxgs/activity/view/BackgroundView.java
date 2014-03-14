@@ -7,9 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.widget.RelativeLayout;
+import android.view.View;
 
-public class BackgroundView extends RelativeLayout {
+public class BackgroundView extends View {
 
 	private Paint mPaint;
 
