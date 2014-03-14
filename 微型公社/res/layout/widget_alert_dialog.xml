@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="#9000"
+        android:padding="12dp"
+        tools:ignore="UselessParent" >
+
+        <TextView
+            android:id="@+id/dialog_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/dialog_confirm"
+            android:layout_width="140dp"
+            android:layout_height="36dp"
+            android:layout_below="@+id/dialog_text"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/button_background"
+            android:text="@string/alert_dialog_confirm"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/dialog_cancel"
+            android:layout_width="140dp"
+            android:layout_height="36dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/dialog_text"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/button_background"
+            android:text="@string/alert_dialog_cancel"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

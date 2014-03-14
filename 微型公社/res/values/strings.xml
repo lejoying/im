@@ -17,6 +17,8 @@
     <string name="circleitem2_4">返回</string>
     <string name="circleitem2_5">订单</string>
     <string name="circleitem2_6">资金账户</string>
+    <string name="alert_dialog_confirm">确定</string>
+    <string name="alert_dialog_cancel">取消</string>
     <string name="panel_passlogin">登录</string>
     <string name="hint_enterphone">请输入手机号</string>
     <string name="hint_enterpass">请输入密码</string>

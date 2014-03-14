@@ -44,8 +44,8 @@
     </style>
 
     <style name="Translucent" parent="android:Theme.NoTitleBar">
-        <item name="android:windowAnimationStyle">@style/actAnimation</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/NoAnimation</item>
+        <item name="android:windowBackground">@color/Transparent</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
 

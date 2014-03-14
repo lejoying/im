@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.app;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -7,6 +8,7 @@ import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Process;
@@ -15,11 +17,13 @@ import com.lejoying.wxgs.activity.BaseActivity;
 import com.lejoying.wxgs.app.data.Config;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
+import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class MainApplication extends Application {
 
-	public static final String APP_START = "com.lejoying.wxgs.app.start";
+	public static final String APP_DATA_PARSINGISCOMPLETE = "com.lejoying.wxgs.app.parsingiscomplete";
 
 	static MainApplication mMainApplication;
 
@@ -55,11 +59,43 @@ public class MainApplication extends Application {
 		networkHandler = new NetworkHandler(5);
 
 		// init data and config
+		try {
+			config = (Config) StreamParser
+					.parseToObject(openFileInput("config"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if (config == null) {
+			config = new Config();
+		}
 		data = new Data();
-		config = new Config();
-		data.user.phone = "123";
-		data.user.accessKey = "lejoying";
-
+		if (!config.lastLoginPhone.equals("")) {
+			dataHandler.exclude(new Modification() {
+				@Override
+				public void modifyData(Data data) {
+					try {
+						Data localData = (Data) StreamParser
+								.parseToObject(openFileInput(config.lastLoginPhone));
+						if (localData != null) {
+							data.user = localData.user;
+							data.circles = localData.circles;
+							data.friends = localData.friends;
+							data.groups = localData.groups;
+							data.groupFriends = localData.groupFriends;
+							data.lastChatFriends = localData.lastChatFriends;
+							data.newFriends = localData.newFriends;
+						}
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
+				}
+			});
+		} else {
+			sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
+		}
 	}
 
 	public boolean isInMainProcess() {

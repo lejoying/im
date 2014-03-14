@@ -91,6 +91,10 @@ public class PushService extends Service {
 	boolean isConnection;
 
 	void startIMConnection() {
+		if (app.data.user.phone.equals("")
+				|| app.data.user.accessKey.equals("")) {
+			return;
+		}
 		if (mIMConnection == null || mIMConnection.isDisconnected()) {
 			isConnection = true;
 			mPushHandler.connection(mIMConnection = createIMNetConnection());
@@ -119,6 +123,7 @@ public class PushService extends Service {
 				params.put("accessKey", app.data.user.accessKey);
 				settings.params = params;
 				settings.circulating = true;
+				System.out.println("setting");
 			}
 
 			@Override
@@ -129,6 +134,7 @@ public class PushService extends Service {
 					public void handleResponse(InputStream is) {
 						JSONObject jObject = StreamParser.parseToJSONObject(is);
 						httpURLConnection.disconnect();
+						System.out.println("IMSuccess");
 						if (jObject != null) {
 							try {
 								System.out
@@ -136,6 +142,7 @@ public class PushService extends Service {
 												.get(getString(R.string.network_failed)));
 
 								// disconnection long pull
+								isConnection = false;
 								if (mIMConnection != null) {
 									mIMConnection.disConnection();
 									mIMConnection = null;
@@ -202,6 +209,7 @@ public class PushService extends Service {
 					public void handleResponse(InputStream is) {
 						JSONObject jObject = StreamParser.parseToJSONObject(is);
 						httpURLConnection.disconnect();
+						System.out.println("SquareSuccess");
 						if (jObject != null) {
 							try {
 								jObject.get(getString(R.string.network_failed));

@@ -24,7 +24,7 @@
         <activity
             android:name=".activity.LaunchActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Translucent" >
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,22 +32,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.BackgroundActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="adjustPan" >
-        </activity>
-        <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Translucent"
-            android:windowSoftInputMode="adjustResize" >
-        </activity>
-        <activity
-            android:name=".activity.LoginActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Translucent"
+            android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
@@ -62,7 +49,7 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.lejoying.wxgs.app.start" />
+                <action android:name="com.lejoying.wxgs.app.parsingiscomplete" />
             </intent-filter>
         </receiver>
     </application>

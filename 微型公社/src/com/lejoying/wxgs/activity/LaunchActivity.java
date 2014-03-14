@@ -10,6 +10,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 
@@ -28,10 +29,15 @@ public class LaunchActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_launch);
-		sendBroadcast(new Intent(MainApplication.APP_START));
 		initView();
 		initEvent();
+		CircleMenu.create(this);
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 
 	public void initView() {
@@ -82,10 +88,7 @@ public class LaunchActivity extends BaseActivity {
 										isAnimationEnd = true;
 										startActivity(new Intent(
 												LaunchActivity.this,
-												BackgroundActivity.class));
-										startActivity(new Intent(
-												LaunchActivity.this,
-												LoginActivity.class));
+												MainActivity.class));
 										finish();
 									}
 								});

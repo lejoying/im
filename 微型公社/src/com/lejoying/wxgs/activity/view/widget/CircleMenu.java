@@ -124,7 +124,7 @@ public class CircleMenu {
 		mTouchSpaceParams.gravity = mMenuContentParams.gravity = Gravity.TOP
 				| Gravity.LEFT;
 
-		mMenuContent = mInflater.inflate(R.layout.circlemenu, null);
+		mMenuContent = mInflater.inflate(R.layout.widget_circlemenu, null);
 		mItemDisk = mMenuContent.findViewById(R.id.rl_controldiskout);
 		mControlDisk = mMenuContent.findViewById(R.id.controlDisk);
 		mBackView = (TextView) mControlDisk.findViewById(R.id.backview);
@@ -248,7 +248,7 @@ public class CircleMenu {
 		List<View> views = new ArrayList<View>();
 		for (MenuItemEntity entity : entities) {
 			ViewGroup menuItemView = (ViewGroup) mInflater.inflate(
-					R.layout.circlemenu_item, null);
+					R.layout.widget_circlemenu_item, null);
 			((TextView) menuItemView.findViewById(R.id.tv_text))
 					.setText(entity.text);
 			((ImageView) menuItemView.findViewById(R.id.iv_image))
