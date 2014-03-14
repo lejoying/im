@@ -65,6 +65,10 @@ public abstract class API {
 	public static final String LBS_NEARBYACCOUNTS = "lbs/nearbyaccounts";
 	public static final String LBS_NEARBYGROUPS = "lbs/nearbygroups";
 
+	public static final String SQUARE = "square";
+	public static final String SQUARE_GETSQUAREMESSAGE = "api2/square/getsquaremessage";
+	public static final String SQUARE_SENDSQUAREMESSAGE = "api2/square/sendsquaremessage";
+
 	public static String getClazz(String api) {
 		return api.substring(0, api.indexOf(SLASH));
 	}

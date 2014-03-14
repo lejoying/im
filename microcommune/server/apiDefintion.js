@@ -366,8 +366,8 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", longitude: "XXX", latitude: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取成功", community: {}},
-            failed: {"提示信息": "获取失败", "失败原因": "数据异常"}
+            success: {"提示信息": "获取社区成功", group: {}},
+            failed: {"提示信息": "获取社区失败", "失败原因": ["数据异常" || "参数格式错误"]}
         }
     },
     /***************************************
@@ -942,7 +942,7 @@ api = {
         },
         response: {
             success: {"提示信息": "发布广播成功", time: "NNN"},
-            failed: {"提示信息": "发布广播失败", "失败原因": "数据异常"|| "参数格式错误" || "用户权限不足"}
+            failed: {"提示信息": "发布广播失败", "失败原因": "数据异常" || "参数格式错误" || "用户权限不足"}
         }
     },
     /***************************************
@@ -960,7 +960,7 @@ api = {
         response: {
             success: {"提示信息": "获取广播成功", messages: [
                 {contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
-            ], flag: "NNN"},
+            ], flag: "NNN", onlinecount: "NNN"},
             failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
     }

@@ -2,11 +2,112 @@ var serverSetting = root.globaldata.serverSetting;
 var communityManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
-var ajax = require("./../lib/ajax.js");
+var ajax = require('../../lbsserver/lib/ajax.js');
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *URL：/api2/community / add
+ *URL：/api2/community / find
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+communityManage.find = function (data, response) {
+    response.asynchronous = 1;
+    var radius = 10000;
+    var longitude0 = data.longitude;
+    var latitude0 = data.latitude;
+    var longitude = 0;
+    var latitude = 0;
+    try {
+        if (longitude0 == "" || latitude0 == "" || longitude0 == undefined || latitude0 == undefined) {
+            throw "longitude and latitude of undefined";
+        }
+        longitude = parseFloat(longitude0);
+        latitude = parseFloat(latitude0);
+        nearbyGroups(longitude, latitude);
+    } catch (e) {
+        response.write(JSON.stringify({
+            "提示信息": "获取社区失败",
+            "失败原因": "参数格式错误"
+        }));
+        response.end();
+        console.error(e);
+        return;
+    }
+
+    function nearbyGroups(longitude, latitude) {
+        ajax.ajax({
+            type: "GET",
+            url: serverSetting.LBS.NEARBY,
+            data: {
+                geotable_id: 50513,
+                ak: serverSetting.LBS.LBS_AK,
+                q: "",
+                coord_type: 3,
+                location: longitude + "," + latitude,//"116.25,40.25"
+                radius: radius, // 默认1000 M,
+                sortby: "distance:1",
+                tags: "community",
+                gtype: "community",
+                page_index: 0,
+                page_size: 10
+            },
+            success: function (data) {
+                var poisObj = JSON.parse(data);
+                if (poisObj.status == 0) {
+                    var contents = poisObj.contents;
+                    if (contents.length == 0) {
+                        radius += 10000;
+                        nearbyGroups(longitude, latitude);
+                    } else {
+                        var poiObj = contents[0];
+                        var location = {
+                            longitude: (poiObj.location)[0],
+                            latitude: (poiObj.location)[1]
+                        };
+                        var group = {
+                            gid: poiObj.gid,
+                            name: poiObj.name,
+                            description: poiObj.description,
+                            gtype: poiObj.gtype,
+                            location: location
+                        };
+                        ajax.ajax({
+                            type: "POST",
+                            url: "http://127.0.0.1:8078/api2/square/getonlinecount?",
+                            data: {
+                                phone: "121",
+                                accessKey: "lejoying",
+                                gid: poiObj.gid
+                            },
+                            success: function (data1) {
+                                response.write(JSON.stringify({
+                                    "提示信息": "获取社区成功",
+                                    group: group,
+                                    onlinecount: (JSON.parse(data1)).onlinecount
+                                }));
+                                response.end();
+                            },
+                            error: function () {
+                                response.write(JSON.stringify({
+                                    "提示信息": "获取社区失败",
+                                    "失败原因": "数据异常"
+                                }));
+                                response.end();
+                            }
+                        });
+                    }
+
+                } else {
+                    console.log(data);
+                    response.write(JSON.stringify({
+                        "提示信息": "获取社区失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+}
+
 
 communityManage.add = function (data, response) {
     response.asynchronous = 1;
@@ -97,66 +198,66 @@ communityManage.add = function (data, response) {
 /***************************************
  *     URL：/api2/community/find
  ***************************************/
-communityManage.find = function (data, response) {
-    response.asynchronous = 1;
-    var phone = data.phone;
-    var accessKey = data.accessKey;
-    var longitude = parseFloat(data.longitude);
-    var latitude = parseFloat(data.latitude);
-    console.log(longitude + "---" + latitude);
-    findCommunity(longitude, latitude);
+/*communityManage.find = function (data, response) {
+ response.asynchronous = 1;
+ var phone = data.phone;
+ var accessKey = data.accessKey;
+ var longitude = parseFloat(data.longitude);
+ var latitude = parseFloat(data.latitude);
+ console.log(longitude + "---" + latitude);
+ findCommunity(longitude, latitude);
 
-    function findCommunity(longitude, latitude) {
-        var query = [
-            'MATCH (community:Community)',
-            'RETURN community'
-        ].join('\n');
-        var params = {};
-        db.query(query, params, function (error, results) {
-            if (error) {
-                response.write(JSON.stringify({
-                    "提示信息": "获取失败",
-                    "失败原因": "数据异常"
-                }));
-                response.end();
-                console.log(error);
-                return;
-            } else {
-                var community = {};
-                var num = -1;
-                for (var index in results) {
-                    var it = results[index].community.data;
-                    var location = JSON.parse(it.location);
-                    var longitude2 = parseFloat(location.longitude);
-                    var latitude2 = parseFloat(location.latitude);
-                    if (num == -1) {
-                        num = (longitude - longitude2) * (longitude - longitude2) + (latitude - latitude2 ) * (latitude - latitude2);
-                        community = it;
-                    } else {
-                        var num1 = (longitude - longitude2) * (longitude - longitude2) + (latitude - latitude2) * (latitude - latitude2);
-                        if (num1 < num) {
-                            num = num1;
-                            community = it;
-                        }
-                    }
-                }
-                var agent = {
-                    uid: 110,
-                    nickName: "站长",
-                    phone: "110",
-                    mainBusiness: "管理社区"
-                };
-                community.agent = agent;
-                delete community.location;
-                response.write(JSON.stringify({
-                    "提示信息": "获取成功",
-                    community: community
-                }));
-                response.end();
-            }
-        });
-    }
-}
+ function findCommunity(longitude, latitude) {
+ var query = [
+ 'MATCH (community:Community)',
+ 'RETURN community'
+ ].join('\n');
+ var params = {};
+ db.query(query, params, function (error, results) {
+ if (error) {
+ response.write(JSON.stringify({
+ "提示信息": "获取失败",
+ "失败原因": "数据异常"
+ }));
+ response.end();
+ console.log(error);
+ return;
+ } else {
+ var community = {};
+ var num = -1;
+ for (var index in results) {
+ var it = results[index].community.data;
+ var location = JSON.parse(it.location);
+ var longitude2 = parseFloat(location.longitude);
+ var latitude2 = parseFloat(location.latitude);
+ if (num == -1) {
+ num = (longitude - longitude2) * (longitude - longitude2) + (latitude - latitude2 ) * (latitude - latitude2);
+ community = it;
+ } else {
+ var num1 = (longitude - longitude2) * (longitude - longitude2) + (latitude - latitude2) * (latitude - latitude2);
+ if (num1 < num) {
+ num = num1;
+ community = it;
+ }
+ }
+ }
+ var agent = {
+ uid: 110,
+ nickName: "站长",
+ phone: "110",
+ mainBusiness: "管理社区"
+ };
+ community.agent = agent;
+ delete community.location;
+ response.write(JSON.stringify({
+ "提示信息": "获取成功",
+ community: community
+ }));
+ response.end();
+ }
+ });
+ }
+ }*/
 /***************************************
  *     URL：/api2/community/join
  ***************************************/

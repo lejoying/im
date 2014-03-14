@@ -34,4 +34,5 @@ public class Data implements Serializable {
 	public Friend nowChatFriend;
 	public Bundle registerBundle;
 	public Friend tempFriend;
+	public Group nowCommunity;
 }

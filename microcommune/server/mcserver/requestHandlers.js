@@ -267,7 +267,7 @@ function oauth6(phone, accessKey, response, next) {
             "提示信息": "请求失败",
             "失败原因": "数据不完整"
         }), function () {
-            console.log("安全机制数据不完整");
+            console.log("安全机制数据不完整" + console.log(phone + "--" + accessKey));
         });
         response.end();
         return;

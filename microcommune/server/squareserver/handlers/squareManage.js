@@ -3,7 +3,6 @@ var squareManage = {};
 var redis = require("redis");
 var client = redis.createClient("6379", "127.0.0.1");
 //var client = redis.createClient("6379", "115.28.212.79");
-
 var sessionPool = {};
 var notifySquareMessageList = [];
 var threadNotifyCount = 10;
@@ -99,13 +98,15 @@ function notifySquareMessage() {
                 var session = square[index];
                 var sessionResponse = session.response;
                 if (sessionResponse == null || sessionResponse.flag >= message.flag) {
+                    sessionPool[message.gid].count--;
                     continue;
                 }
                 sessionPool[message.gid][index].response = null;
                 sessionResponse.write(JSON.stringify({
                     "提示信息": "获取广播成功",
                     messages: [message],
-                    flag: session.flag + 1
+                    flag: session.flag + 1,
+                    onlinecount: sessionPool[message.gid].count
                 }));
                 sessionResponse.end();
             }
@@ -148,8 +149,7 @@ squareManage.getsquaremessage = function (data, response) {
             console.error(err);
             return;
         } else if (reply.length == 0) {
-            sessionPool[gid] = sessionPool[gid] || [];
-            sessionPool[gid][accessKey] = {flag: parseInt(flag), phone: phone, response: response};
+            next();
         } else {
             client.lrange("square_" + gid, flag, -1, function (err, reply) {
                 if (err) {
@@ -163,8 +163,7 @@ squareManage.getsquaremessage = function (data, response) {
                 } else {
                     if (reply != "") {
                         if (reply.length == 0) {
-                            sessionPool[gid] = sessionPool[gid] || [];
-                            sessionPool[gid][accessKey] = {flag: parseInt(flag), phone: phone, response: response};
+                            next();
                         } else {
                             response.write(JSON.stringify({
                                 "提示信息": "获取广播成功",
@@ -174,13 +173,54 @@ squareManage.getsquaremessage = function (data, response) {
                             response.end();
                         }
                     } else {
-                        sessionPool[gid] = sessionPool[gid] || [];
-                        sessionPool[gid][accessKey] = {flag: parseInt(flag), phone: phone, response: response};
+                        next();
                     }
                 }
             });
         }
+        function next() {
+            sessionPool[gid] = sessionPool[gid] || [];
+            sessionPool[gid].count = sessionPool[gid].count || 0;
+            if (!sessionPool[gid][accessKey]) {
+                sessionPool[gid].count++;
+            } else {
+                if (sessionPool[gid][accessKey].response == null) {
+                    sessionPool[gid].count++;
+                }
+            }
+            sessionPool[gid][accessKey] = {flag: parseInt(flag), phone: phone, response: response};
+        }
     });
 }
+squareManage.getonlinecount = function (data, response) {
+    response.asynchronous = 1;
+    var gid = data.gid;
+    console.log("gid--" + gid);
+    /*try {
+     var agid = parseInt(gid);
+     } catch (e) {
+     response.write(JSON.stringify({
+     "提示信息": "获取广场人数失败",
+     "失败原因": "参数格式错误"
+     }));
+     response.end();
+     console.error(e);
+     return;
+     }
+     */
+    if (sessionPool[gid]) {
+        response.write(JSON.stringify({
+            "提示信息": "获取广场人数成功",
+            onlinecount: sessionPool[gid].count
+        }));
+        response.end();
+    } else {
+        response.write(JSON.stringify({
+            "提示信息": "获取广场人数成功",
+            onlinecount: 0
+        }));
+        response.end();
+    }
 
+}
 module.exports = squareManage;

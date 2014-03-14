@@ -13,12 +13,12 @@ http.createServer(
     function (request, response) {
 
         response.writeHead(200, {
-            "Content-Type":"application/json; charset=UTF-8"
+            "Content-Type": "application/json; charset=UTF-8"
         });
         route(routemap, request.url, request, response);
 
-        i++;
         console.log("The sms server has been accessed " + i);
+        i++;
         if (response.asynchronous == null) {
             response.end();
         }

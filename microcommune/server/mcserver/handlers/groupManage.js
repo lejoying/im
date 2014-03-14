@@ -706,6 +706,7 @@ groupManage.get = function (data, response) {
         });
     }
 }
+var ajax = require('../../lbsserver/lib/ajax.js');
 /***************************************
  *     URL：/api2/group/getgroupsandmembers
  ***************************************/
@@ -732,31 +733,6 @@ groupManage.getgroupsandmembers = function (data, response) {
             console.log(error);
             return;
         } else {
-            /*var groups = {};
-             for (var index in results) {
-             var it = results[index];
-             var groupData = it.group.data;
-             var accountData = it.account.data;
-             var account = {
-             uid: accountData.uid,
-             phone: accountData.phone,
-             mainBusiness: accountData.mainBusiness,
-             head: accountData.head,
-             byPhone: accountData.byPhone,
-             nickName: accountData.nickName
-             };
-             if (groups[groupData.gid] == null) {
-             var accounts = [];
-             var account_own = it.account1.data;
-             accounts.push(account_own);
-             accounts.push(account);
-             groupData.members = accounts;
-             groups[groupData.gid] = groupData;
-             } else {
-             groups[groupData.gid].members.push(account);
-             }
-             }*/
-
             var groups = [];
             var groupZ = {};
             for (var index in results) {
@@ -793,4 +769,5 @@ groupManage.getgroupsandmembers = function (data, response) {
         }
     });
 }
+
 module.exports = groupManage;

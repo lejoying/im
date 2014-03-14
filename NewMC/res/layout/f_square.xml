@@ -11,7 +11,7 @@
         android:background="@drawable/frame_background" >
 
         <TextView
-            android:id="@+id/tv_square"
+            android:id="@+id/tv_square_online"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
@@ -26,10 +26,11 @@
         </TextView>
 
         <TextView
+            android:id="@+id/tv_nowsquare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/tv_square"
+            android:layout_toRightOf="@+id/tv_square_online"
             android:clickable="true"
             android:gravity="right|center"
             android:paddingBottom="10dp"
@@ -39,13 +40,14 @@
             android:text="亦庄站(游客)"
             android:textColor="#fff"
             android:textSize="18sp" >
+
         </TextView>
 
         <ImageView
             android:id="@+id/iv_line"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/tv_square"
+            android:layout_below="@+id/tv_square_online"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="2dp"

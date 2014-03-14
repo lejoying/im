@@ -1,7 +1,5 @@
 var requestHandlers = {};
-var globaldata = root.globaldata;
 var accessKeyPool = {};
-var serverSetting = root.globaldata.serverSetting;
 var redis = require("redis");
 var client = redis.createClient("6379", "115.28.51.197");
 
@@ -19,6 +17,11 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
     else if (operation == "getsquaremessage") {
         oauth6(data.phone, data.accessKey, response, function () {
             squareManage.getsquaremessage(data, response);
+        });
+    }
+    else if (operation == "getonlinecount") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            squareManage.getonlinecount(data, response);
         });
     }
 };

@@ -453,7 +453,7 @@ lbsManage.detail = function (data, response) {
 }
 //----------------------------------------------------------------------------------------------------------------------
 //var LBS_AK = "qD4I881MqTR7NZQ2TYTa2ZGh";
-var LBS_AK = "9MBoVuWESUbrqxL5indWugNn";
+//var LBS_AK = "9MBoVuWESUbrqxL5indWugNn";
 
 /***************************************
  *     URL：/lbs/updatelocation
@@ -466,7 +466,7 @@ lbsManage.updatelocation = function (data, response) {
     var location = {};
     var account = {};
 
-    var EARTH_RADIUS = 6378137.0;    //单位M
+    var EARTH_RADIUS = serverSetting.EARTH_RADIUS;    //单位M
     var PI = Math.PI;
 
     function getRad(d) {
@@ -505,13 +505,6 @@ lbsManage.updatelocation = function (data, response) {
     try {
         location = JSON.parse(locationStr);
         account = JSON.parse(accountStr);
-//        console.log(getFlatternDistance(39.916, 116.404, 39.915, 116.404));
-        /*response.write(JSON.stringify({
-         "提示信息": "标记用户位置成功",
-         phone: phone
-         }));
-         response.end();
-         return;*/
         nearbyLoginPoi(account);
     } catch (e) {
         response.write(JSON.stringify({
@@ -525,10 +518,10 @@ lbsManage.updatelocation = function (data, response) {
     function nearbyLoginPoi(account) {
         ajax.ajax({
             type: "GET",
-            url: "http://api.map.baidu.com/geodata/v3/poi/list",
+            url: serverSetting.LBS.POI_LIST,
             data: {
                 geotable_id: 50512,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 phone: phone,
                 title: phone,
                 status: "1,1",
@@ -600,7 +593,7 @@ lbsManage.updatelocation = function (data, response) {
          url: "http://api.map.baidu.com/geosearch/v3/nearby",
          data: {
          geotable_id: 50512,
-         ak: LBS_AK,
+         ak: serverSetting.LBS.LBS_AK,
          q: "",
          coord_type: 3,
          location: location.longitude + "," + location.latitude,//"116.25,40.25"
@@ -670,10 +663,10 @@ lbsManage.updatelocation = function (data, response) {
         ajax.ajax({
             type: "POST",
             ajaxType: "FORM",
-            url: "http://api.map.baidu.com/geodata/v3/poi/update",
+            url: serverSetting.LBS.POI_UPDATE,
             data: {
                 geotable_id: 50512,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 id: poiObj.id,
                 coord_type: 3,
                 status: 0
@@ -702,13 +695,13 @@ lbsManage.updatelocation = function (data, response) {
         ajax.ajax({
             type: "POST",
             ajaxType: "FORM",
-            url: "http://api.map.baidu.com/geodata/v3/poi/create",
+            url: serverSetting.LBS.POI_CREATE,
             data: {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 coord_type: 3,
                 geotable_id: 50512,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 title: phone,
                 phone: phone,
                 nickName: account.nickName,
@@ -771,13 +764,14 @@ lbsManage.setgrouplocation = function (data, response) {
     function checkGroup() {
         ajax.ajax({
             type: "GET",
-            url: "http://api.map.baidu.com/geodata/v3/poi/list",
+            url: serverSetting.LBS.POI_LIST,
             data: {
                 geotable_id: 50513,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 gid: group.gid + "," + group.gid,
                 title: group.gid,
-                tags: "group"
+                tags: "group",
+                gtype: "group"
             },
             success: function (data) {
                 var poisObj = JSON.parse(data);
@@ -813,10 +807,10 @@ lbsManage.setgrouplocation = function (data, response) {
         ajax.ajax({
             type: "POST",
             ajaxType: "FORM",
-            url: "http://api.map.baidu.com/geodata/v3/poi/update",
+            url: serverSetting.LBS.POI_UPDATE,
             data: {
                 geotable_id: 50513,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 id: id,
                 coord_type: 3,
                 latitude: location.latitude,
@@ -849,18 +843,19 @@ lbsManage.setgrouplocation = function (data, response) {
         ajax.ajax({
             type: "POST",
             ajaxType: "FORM",
-            url: "http://api.map.baidu.com/geodata/v3/poi/create",
+            url: serverSetting.LBS.POI_CREATE,
             data: {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 coord_type: 3,
                 geotable_id: 50513,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 title: group.gid,
                 gid: group.gid,
                 name: group.name,
                 description: group.description,
                 tags: "group",
+                gtype: "group",
                 address: ""
             },
             success: function (data) {
@@ -893,27 +888,27 @@ lbsManage.nearbyaccounts = function (data, response) {
     var area = {};
     try {
         /*var accounts = [];
-        for (var i = 0; i < 10; i++) {
-            var account = {
-                phone: "121" + i,
-                nickName: "李建国" + i,
-                head: "6330116f4ca1332647429154fbe50cd7b17bd95d.png",
-                mainBusiness: "送水，按摩，家政",
-                location: {
-                    longitude: 116.25 + i / 100,
-                    latitude: 40.25 + i / 100
-                },
-                modify_time: new Date().getTime(),
-                distance: 100 * i
-            };
-            accounts.push(account);
-        }
-        response.write(JSON.stringify({
-            "提示信息": "获取附近用户成功",
-            accounts: accounts
-        }));
-        response.end();
-        return;*/
+         for (var i = 0; i < 10; i++) {
+         var account = {
+         phone: "121" + i,
+         nickName: "李建国" + i,
+         head: "6330116f4ca1332647429154fbe50cd7b17bd95d.png",
+         mainBusiness: "送水，按摩，家政",
+         location: {
+         longitude: 116.25 + i / 100,
+         latitude: 40.25 + i / 100
+         },
+         modify_time: new Date().getTime(),
+         distance: 100 * i
+         };
+         accounts.push(account);
+         }
+         response.write(JSON.stringify({
+         "提示信息": "获取附近用户成功",
+         accounts: accounts
+         }));
+         response.end();
+         return;*/
         area = JSON.parse(areaStr);
         if (area.radius) {
             nearbyLoginAccounts(area);
@@ -933,10 +928,10 @@ lbsManage.nearbyaccounts = function (data, response) {
     function nearbyLoginAccounts(area) {
         ajax.ajax({
             type: "GET",
-            url: "http://api.map.baidu.com/geosearch/v3/nearby",
+            url: serverSetting.LBS.NEARBY,
             data: {
                 geotable_id: 50512,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 q: "",
                 coord_type: 3,
                 location: area.longitude + "," + area.latitude,//"116.25,40.25"
@@ -1034,10 +1029,10 @@ lbsManage.nearbygroups = function (data, response) {
     function nearbyGroups(area) {
         ajax.ajax({
             type: "GET",
-            url: "http://api.map.baidu.com/geosearch/v3/nearby",
+            url: serverSetting.LBS.NEARBY,
             data: {
                 geotable_id: 50513,
-                ak: LBS_AK,
+                ak: serverSetting.LBS.LBS_AK,
                 q: "",
                 coord_type: 3,
                 location: area.longitude + "," + area.latitude,//"116.25,40.25"
