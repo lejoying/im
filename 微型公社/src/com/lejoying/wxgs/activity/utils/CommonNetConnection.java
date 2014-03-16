@@ -10,7 +10,6 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
-import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.utils.NetworkUtils;
 
@@ -34,12 +33,6 @@ public abstract class CommonNetConnection extends NetConnection {
 		} catch (Exception e) {
 		}
 		success(jData);
-	}
-
-	@Override
-	protected void settings(Settings settings) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

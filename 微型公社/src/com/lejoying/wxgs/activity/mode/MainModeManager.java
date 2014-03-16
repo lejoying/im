@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
+import com.lejoying.wxgs.activity.mode.fragment.BusinessCardFragment;
 import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
@@ -24,6 +25,7 @@ public class MainModeManager extends BaseModeManager {
 	//
 	public ScanQRCodeFragment mScanQRCodeFragment;
 	public SearchFriendFragment mSearchFriendFragment;
+	public BusinessCardFragment mBusinessCardFragment;
 
 	public MainModeManager(MainActivity activity) {
 		super(activity);
@@ -47,6 +49,8 @@ public class MainModeManager extends BaseModeManager {
 			mScanQRCodeFragment.setMode(this);
 			mSearchFriendFragment = new SearchFriendFragment();
 			mSearchFriendFragment.setMode(this);
+			mBusinessCardFragment = new BusinessCardFragment();
+			mBusinessCardFragment.setMode(this);
 		}
 	}
 

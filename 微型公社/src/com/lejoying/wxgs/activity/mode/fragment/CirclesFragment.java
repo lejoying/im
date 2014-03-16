@@ -508,6 +508,12 @@ public class CirclesFragment extends BaseFragment {
 
 										@Override
 										public void onClick(View v) {
+											mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+											mMainModeManager.mBusinessCardFragment.mShowFriend = friends
+													.get(phones.get(a * 6
+															+ position));
+											mMainModeManager
+													.showNext(mMainModeManager.mBusinessCardFragment);
 										}
 									});
 

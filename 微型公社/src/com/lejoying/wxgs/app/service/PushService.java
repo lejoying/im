@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.Event;
@@ -70,9 +71,29 @@ public class PushService extends Service {
 				mCurrentConnectionGid = gid;
 				startSquareConnection(gid, flag);
 			}
+			String operation = intent.getStringExtra("operation");
+
+			if (operation != null && operation.equals("stop")) {
+				stopLongPull();
+			}
 		}
 		notifyWaitingForConnection();
 		return super.onStartCommand(intent, flags, startId);
+	}
+
+	public void stopLongPull() {
+		app.data.user.accessKey = "";
+		DataUtil.saveData(this);
+		isConnection = false;
+		if (mIMConnection != null) {
+			mIMConnection.disConnection();
+			mIMConnection = null;
+		}
+		if (mSquareConnection != null) {
+			mSquareConnection.disConnection();
+			mSquareConnection = null;
+		}
+		sendBroadcast(new Intent(LONGPULL_FAILED));
 	}
 
 	public static void startIMLongPull(Context context) {
@@ -136,7 +157,6 @@ public class PushService extends Service {
 					public void handleResponse(InputStream is) {
 						JSONObject jObject = StreamParser.parseToJSONObject(is);
 						httpURLConnection.disconnect();
-						System.out.println("IMSuccess");
 						if (jObject != null) {
 							try {
 								System.out
@@ -144,17 +164,7 @@ public class PushService extends Service {
 												.get(getString(R.string.network_failed)));
 
 								// disconnection long pull
-								isConnection = false;
-								if (mIMConnection != null) {
-									mIMConnection.disConnection();
-									mIMConnection = null;
-								}
-								if (mSquareConnection != null) {
-									mSquareConnection.disConnection();
-									mSquareConnection = null;
-								}
-								app.data.user.accessKey = "";
-								sendBroadcast(new Intent(LONGPULL_FAILED));
+								stopLongPull();
 								return;
 							} catch (JSONException e) {
 								e.printStackTrace();

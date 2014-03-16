@@ -171,9 +171,15 @@ public class FileHandler {
 								Color.WHITE);
 					}
 					bitmaps.put(imageFileName, bitmap);
-					for (FileResult result : getFromWebResults
+
+					for (final FileResult result : getFromWebResults
 							.get(imageFileName)) {
-						result.onResult(FROM_WEB);
+						app.UIHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								result.onResult(FROM_WEB);
+							}
+						});
 					}
 				} catch (FileNotFoundException e) {
 					if (getImageFromWebStatus.get(imageFileName).equals(
@@ -196,6 +202,7 @@ public class FileHandler {
 			@Override
 			protected void settings(Settings settings) {
 				settings.url = API.DOMAIN_IMAGE + imageFileName;
+				settings.method = GET;
 			}
 		});
 

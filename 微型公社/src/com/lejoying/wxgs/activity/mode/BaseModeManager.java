@@ -27,7 +27,7 @@ public abstract class BaseModeManager {
 	}
 
 	public void show(Fragment fragment) {
-		if (!fragment.equals(mCurrentFragment)) {
+		if (!fragment.equals(mCurrentFragment) || !mCurrentFragment.isAdded()) {
 			FragmentTransaction transaction = mFragmentManager
 					.beginTransaction();
 			transaction.setCustomAnimations(R.anim.translate_new,
@@ -47,7 +47,7 @@ public abstract class BaseModeManager {
 	}
 
 	public void showNext(Fragment fragment) {
-		if (!fragment.equals(mCurrentFragment)) {
+		if (!fragment.equals(mCurrentFragment) || !mCurrentFragment.isAdded()) {
 			FragmentTransaction transaction = mFragmentManager
 					.beginTransaction();
 			transaction.setCustomAnimations(R.anim.translate_new,

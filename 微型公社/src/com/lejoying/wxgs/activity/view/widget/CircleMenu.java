@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
+import com.lejoying.wxgs.activity.mode.fragment.BusinessCardFragment;
 
 public class CircleMenu {
 
@@ -51,7 +52,7 @@ public class CircleMenu {
 			mStatusBarHeight;
 
 	// circle disk display scale on top or bottom,less than 1
-	final float mDiskDisplayScale = 0.37f;
+	final float mDiskDisplayScale = 0.38f;
 	float mDiskCommonDisplayHeight;
 
 	Point mCurrentDiskCenter;
@@ -131,7 +132,9 @@ public class CircleMenu {
 					setItemDeskIndex(mCurrentMenuIndex, ++mCurrentMenuIndex);
 					break;
 				case 11:
-
+					MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+					MainActivity.instance.mMainMode
+							.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
 					break;
 				case 12:
 					MainActivity.instance.mMainMode

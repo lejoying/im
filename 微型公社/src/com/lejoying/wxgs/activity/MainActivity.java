@@ -88,7 +88,8 @@ public class MainActivity extends BaseActivity {
 			mMainMode.release();
 			mLoginMode.initialize();
 			mLoginMode.show(mLoginMode.mLoginUsePassFragment);
-		} else {
+		} else if (!app.data.user.phone.equals("")
+				&& !app.data.user.accessKey.equals("")) {
 			mode = MODE_MAIN;
 			mLoginMode.release();
 			mMainMode.initialize();
