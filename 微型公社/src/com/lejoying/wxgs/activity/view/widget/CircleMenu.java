@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -107,6 +108,32 @@ public class CircleMenu {
 		mScreenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
 		initView();
 		initEvent();
+		
+		new BackThread().start();
+	}
+
+	synchronized void waitForBack() throws InterruptedException {
+		wait();
+	}
+
+	synchronized void back() {
+		notify();
+	}
+
+	class BackThread extends Thread {
+		@Override
+		public void run() {
+			Instrumentation inst = new Instrumentation();
+			while (true) {
+				try {
+					waitForBack();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+			}
+		}
 	}
 
 	void initView() {
@@ -249,9 +276,9 @@ public class CircleMenu {
 		for (MenuItemEntity entity : entities) {
 			ViewGroup menuItemView = (ViewGroup) mInflater.inflate(
 					R.layout.widget_circlemenu_item, null);
-			((TextView) menuItemView.findViewById(R.id.tv_text))
+			((TextView) menuItemView.findViewById(R.id.menu_item_text))
 					.setText(entity.text);
-			((ImageView) menuItemView.findViewById(R.id.iv_image))
+			((ImageView) menuItemView.findViewById(R.id.menu_item_icon))
 					.setImageResource(entity.imageID);
 			menuItemView.setVisibility(View.INVISIBLE);
 			views.add(menuItemView);
@@ -412,9 +439,7 @@ public class CircleMenu {
 										mAppNmae.setVisibility(View.INVISIBLE);
 										addShowOperation(LOCATION_CENTER);
 									} else if (isShowBack) {
-										if (mCurrentActivity != null) {
-											mCurrentActivity.finish();
-										}
+										back();
 									}
 								}
 								break;

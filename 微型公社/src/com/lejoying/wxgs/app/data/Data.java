@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.os.Bundle;
-
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
@@ -27,8 +25,8 @@ public class Data implements Serializable {
 
 	public Map<String, Friend> groupFriends = new HashMap<String, Friend>();
 	public Map<String, Friend> friends = new HashMap<String, Friend>();
-	
-	public Map<String,List<Message>> squareMessages = new HashMap<String, List<Message>>();
+
+	public Map<String, List<Message>> squareMessages = new HashMap<String, List<Message>>();
 
 	// Last messages list
 	public List<String> lastChatFriends = new ArrayList<String>();
@@ -40,6 +38,20 @@ public class Data implements Serializable {
 	public List<Friend> nearByFriends = new ArrayList<Friend>();
 	public List<Group> nearByGroups = new ArrayList<Group>();
 	public Friend nowChatFriend;
-	public Bundle registerBundle;
 	public Friend tempFriend;
+
+	public void clear() {
+		user = new User();
+		circles.clear();
+		groups.clear();
+		groupFriends.clear();
+		friends.clear();
+		squareMessages.clear();
+		lastChatFriends.clear();
+		newFriends.clear();
+		nearByFriends.clear();
+		nearByGroups.clear();
+		nowChatFriend = null;
+		tempFriend = null;
+	}
 }

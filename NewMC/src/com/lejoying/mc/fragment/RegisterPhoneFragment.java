@@ -112,7 +112,6 @@ public class RegisterPhoneFragment extends BaseFragment implements
 					final String failed = jData
 							.getString(getString(R.string.app_reason));
 					app.mUIThreadHandler.post(new Runnable() {
-
 						@Override
 						public void run() {
 							Toast.makeText(getActivity(), failed,

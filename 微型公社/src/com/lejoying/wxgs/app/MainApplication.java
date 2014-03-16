@@ -6,20 +6,19 @@ import java.util.List;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
-import android.content.ComponentCallbacks;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Process;
 
 import com.lejoying.wxgs.activity.BaseActivity;
-import com.lejoying.wxgs.app.data.Config;
+import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.parser.StreamParser;
+import com.lejoying.wxgs.utils.SHA1;
 
 public class MainApplication extends Application {
 
@@ -28,7 +27,7 @@ public class MainApplication extends Application {
 	static MainApplication mMainApplication;
 
 	public Data data;
-	public Config config;
+	public Configuration config;
 
 	public Handler UIHandler;
 	public DataHandler dataHandler;
@@ -36,6 +35,8 @@ public class MainApplication extends Application {
 
 	public static String currentTAG;
 	public static BaseActivity currentActivity;
+
+	public SHA1 mSHA1;
 
 	public static MainApplication getMainApplication() {
 		return mMainApplication;
@@ -52,22 +53,25 @@ public class MainApplication extends Application {
 	public void initMainApplication() {
 		mMainApplication = this;
 
-		// init handler
+		// initialize handler
 		UIHandler = new Handler();
 		dataHandler = new DataHandler();
 		dataHandler.initialize(this);
 		networkHandler = new NetworkHandler(5);
 
-		// init data and config
+		// initialize tool
+		mSHA1 = new SHA1();
+
+		// initialize data and configuration
 		try {
-			config = (Config) StreamParser
+			config = (Configuration) StreamParser
 					.parseToObject(openFileInput("config"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		if (config == null) {
-			config = new Config();
+			config = new Configuration();
 		}
 		data = new Data();
 		if (!config.lastLoginPhone.equals("")) {
@@ -119,65 +123,6 @@ public class MainApplication extends Application {
 			}
 		}
 		return false;
-	}
-
-	// override
-
-	@Override
-	public void onTerminate() {
-		// TODO Auto-generated method stub
-		super.onTerminate();
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		// TODO Auto-generated method stub
-		// super.onConfigurationChanged(newConfig);
-	}
-
-	@Override
-	public void onLowMemory() {
-		// TODO Auto-generated method stub
-		super.onLowMemory();
-	}
-
-	@Override
-	public void onTrimMemory(int level) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void registerComponentCallbacks(ComponentCallbacks callback) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void unregisterComponentCallbacks(ComponentCallbacks callback) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void registerActivityLifecycleCallbacks(
-			ActivityLifecycleCallbacks callback) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void unregisterActivityLifecycleCallbacks(
-			ActivityLifecycleCallbacks callback) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void registerOnProvideAssistDataListener(
-			OnProvideAssistDataListener callback) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void unregisterOnProvideAssistDataListener(
-			OnProvideAssistDataListener callback) {
-		// TODO Auto-generated method stub
 	}
 
 }

@@ -32,21 +32,25 @@
         <item name="android:taskToBackExitAnimation">@null</item>
     </style>
 
-    <style name="actAnimation" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@anim/activity_new</item>
-        <item name="android:activityOpenExitAnimation">@anim/activity_out</item>
-        <item name="android:activityCloseEnterAnimation">@anim/activity_back</item>
-        <item name="android:activityCloseExitAnimation">@anim/activity_finish</item>
-        <item name="android:taskOpenEnterAnimation">@anim/activity_new</item>
-        <item name="android:taskOpenExitAnimation">@anim/activity_out</item>
-        <item name="android:taskCloseEnterAnimation">@anim/activity_back</item>
-        <item name="android:taskCloseExitAnimation">@anim/activity_finish</item>
+    <style name="CommonAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/translate_new</item>
+        <item name="android:activityOpenExitAnimation">@anim/translate_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/translate_back</item>
+        <item name="android:activityCloseExitAnimation">@anim/translate_finish</item>
+        <item name="android:taskOpenEnterAnimation">@anim/translate_new</item>
+        <item name="android:taskOpenExitAnimation">@anim/translate_out</item>
+        <item name="android:taskCloseEnterAnimation">@anim/translate_back</item>
+        <item name="android:taskCloseExitAnimation">@anim/translate_finish</item>
     </style>
 
     <style name="Translucent" parent="android:Theme.NoTitleBar">
         <item name="android:windowAnimationStyle">@style/NoAnimation</item>
         <item name="android:windowBackground">@color/Transparent</item>
         <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="CommonStyle" parent="android:Theme.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/CommonAnimation</item>
     </style>
 
 </resources>

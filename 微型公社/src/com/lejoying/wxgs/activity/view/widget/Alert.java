@@ -38,7 +38,7 @@ public class Alert {
 
 	View mLoading;
 	View mLoadingKeyListener;
-	boolean isLoadShow;
+	boolean isLoadShowed;
 
 	View mMessage;
 	TextView mMessageText;
@@ -151,6 +151,12 @@ public class Alert {
 
 	}
 
+	public static void initialize(Context context) {
+		if (mAlert == null) {
+			mAlert = new Alert(context);
+		}
+	}
+
 	public interface DialogListener {
 		public boolean confirm();
 
@@ -159,48 +165,54 @@ public class Alert {
 		public void onCancel();
 	}
 
-	public static void showDialog(Context context, String message,
-			DialogListener listener) {
-		if (mAlert == null) {
-			mAlert = new Alert(context);
+	public static void showDialog(String message, DialogListener listener) {
+		if (mAlert != null) {
+			mAlert.dialog(message, listener);
 		}
-		mAlert.showDialog(message, listener);
 	}
 
-	void showDialog(String message, DialogListener listener) {
-		if (!isDialogShow && message != null) {
-			isDialogShow = true;
-			this.mDialogListener = listener;
-			mDialogText.setText(message);
-			mWindowManager
-					.addView(mDialogKeyListener, mKeyListenerLayoutParams);
-			mWindowManager.addView(mDialog, mDialogLayoutParams);
-		}
+	void dialog(final String message, final DialogListener listener) {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (!isDialogShow && message != null) {
+					isDialogShow = true;
+					mDialogListener = listener;
+					mDialogText.setText(message);
+					mWindowManager.addView(mDialogKeyListener,
+							mKeyListenerLayoutParams);
+					mWindowManager.addView(mDialog, mDialogLayoutParams);
+				}
+			}
+		});
 	}
 
 	void cancelDialog() {
-		if (isDialogShow) {
-			isDialogShow = false;
-			mWindowManager.removeView(mDialogKeyListener);
-			mWindowManager.removeView(mDialog);
-		}
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (isDialogShow) {
+					isDialogShow = false;
+					mWindowManager.removeView(mDialogKeyListener);
+					mWindowManager.removeView(mDialog);
+				}
+			}
+		});
 	}
 
 	public interface OnLoadingCancelListener {
 		public void loadingCancel();
 	}
 
-	public static void showLoading(Context context,
-			OnLoadingCancelListener onLoadingCancel) {
-		if (mAlert == null) {
-			mAlert = new Alert(context);
+	public static void showLoading(OnLoadingCancelListener onLoadingCancel) {
+		if (mAlert != null) {
+			mAlert.loading(onLoadingCancel);
 		}
-		mAlert.showLoading(onLoadingCancel);
 	}
 
-	void showLoading(OnLoadingCancelListener onLoadingCancel) {
-		if (!isLoadShow) {
-			isLoadShow = true;
+	void loading(OnLoadingCancelListener onLoadingCancel) {
+		if (!isLoadShowed) {
+			isLoadShowed = true;
 			mWindowManager.addView(mLoadingKeyListener,
 					mKeyListenerLayoutParams);
 			mWindowManager.addView(mLoading, mCommonLayoutParams);
@@ -215,34 +227,42 @@ public class Alert {
 	}
 
 	void cancelLoading() {
-		if (isLoadShow) {
-			isLoadShow = false;
-			mWindowManager.removeView(mLoading);
-			mWindowManager.removeView(mLoadingKeyListener);
+		mHandler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				if (isLoadShowed) {
+					isLoadShowed = false;
+					mWindowManager.removeView(mLoading);
+					mWindowManager.removeView(mLoadingKeyListener);
+				}
+			}
+		});
+	}
+
+	public static void showMessage(String message) {
+		if (mAlert != null) {
+			mAlert.showMessageText(message, 1200);
 		}
 	}
 
-	public static void showMessage(Context context, String message) {
-		if (mAlert == null) {
-			mAlert = new Alert(context);
+	public static void showMessage(String message, long showTime) {
+		if (mAlert != null) {
+			mAlert.showMessageText(message, showTime);
 		}
-		mAlert.showMessage(message, 1200);
 	}
 
-	public static void showMessage(Context context, String message,
-			long showTime) {
-		if (mAlert == null) {
-			mAlert = new Alert(context);
-		}
-		mAlert.showMessage(message, showTime);
-	}
-
-	void showMessage(String message, long showTime) {
-		mMessageText.setText(message);
-		if (!isMessageShow) {
-			isMessageShow = true;
-			mWindowManager.addView(mMessage, mCommonLayoutParams);
-		}
+	void showMessageText(final String message, long showTime) {
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				mMessageText.setText(message);
+				if (!isMessageShow) {
+					isMessageShow = true;
+					mWindowManager.addView(mMessage, mCommonLayoutParams);
+				}
+			}
+		});
 		if (mDelayToClearMessage != null) {
 			mHandler.removeCallbacks(mDelayToClearMessage);
 		}
@@ -280,7 +300,6 @@ public class Alert {
 	}
 
 	public static void hide() {
-		System.out.println("hide");
 		if (mAlert != null && !mAlert.isHide) {
 			mAlert.isHide = true;
 			mAlert.mDialog.setVisibility(View.GONE);

@@ -25,8 +25,11 @@ import com.lejoying.wxgs.app.handler.NetworkHandler.ResponseHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.StreamParser;
+import com.lejoying.wxgs.utils.NetworkUtils;
 
 public class PushService extends Service {
+
+	public static final String LONGPULL_FAILED = "com.lejoying.wxgs.app.service.longpull_failed";
 
 	MainApplication app = MainApplication.getMainApplication();;
 
@@ -123,7 +126,6 @@ public class PushService extends Service {
 				params.put("accessKey", app.data.user.accessKey);
 				settings.params = params;
 				settings.circulating = true;
-				System.out.println("setting");
 			}
 
 			@Override
@@ -151,6 +153,8 @@ public class PushService extends Service {
 									mSquareConnection.disConnection();
 									mSquareConnection = null;
 								}
+								app.data.user.accessKey = "";
+								sendBroadcast(new Intent(LONGPULL_FAILED));
 								return;
 							} catch (JSONException e) {
 								e.printStackTrace();
@@ -172,7 +176,11 @@ public class PushService extends Service {
 				default:
 					synchronized (this) {
 						try {
-							waitForConnection();
+							if (!NetworkUtils.hasNetwork(PushService.this)) {
+								waitForConnection();
+							} else {
+								wait(5000);
+							}
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -207,12 +215,11 @@ public class PushService extends Service {
 				Response response = new Response(is) {
 					@Override
 					public void handleResponse(InputStream is) {
-						JSONObject jObject = StreamParser.parseToJSONObject(is);
+						JSONObject jData = StreamParser.parseToJSONObject(is);
 						httpURLConnection.disconnect();
-						System.out.println("SquareSuccess");
-						if (jObject != null) {
+						if (jData != null) {
 							try {
-								jObject.get(getString(R.string.network_failed));
+								jData.get(getString(R.string.network_failed));
 								// disconnection long pull
 								Toast.makeText(PushService.this, "连接到广场失败",
 										Toast.LENGTH_LONG).show();
@@ -224,7 +231,7 @@ public class PushService extends Service {
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
-							System.out.println(jObject.toString());
+							System.out.println(jData.toString());
 						}
 					}
 				};
@@ -239,7 +246,11 @@ public class PushService extends Service {
 				default:
 					synchronized (this) {
 						try {
-							waitForConnection();
+							if (!NetworkUtils.hasNetwork(PushService.this)) {
+								waitForConnection();
+							} else {
+								wait(5000);
+							}
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
