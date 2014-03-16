@@ -8,16 +8,19 @@
     <!-- circlemenu widget -->
     <string name="circleMenu_back">返回</string>
     <string name="circleMenu_pageName"></string>
-    <string name="circleitem1_1">密友圈</string>
-    <string name="circleitem1_2">扫一扫</string>
-    <string name="circleitem1_3">分享</string>
-    <string name="circleitem1_4">更多</string>
+    <string name="circleitem1_1">广场</string>
+    <string name="circleitem1_2">群组</string>
+    <string name="circleitem1_3">Hot</string>
+    <string name="circleitem1_4">我</string>
     <string name="circleitem2_1">我的名片</string>
-    <string name="circleitem2_2">群组</string>
-    <string name="circleitem2_3">社区服务</string>
+    <string name="circleitem2_2">扫一扫</string>
+    <string name="circleitem2_3">我的Hot</string>
     <string name="circleitem2_4">返回</string>
-    <string name="circleitem2_5">订单</string>
-    <string name="circleitem2_6">资金账户</string>
+    <string name="circleitem2_5">我的账户</string>
+    <string name="circleitem2_6">密友圈</string>
+    <string name="circlemenu_page_circles">密友圈</string>
+    <string name="circlemenu_page_group">群组</string>
+    <string name="circlemenu_page_square">广场</string>
     <!-- alert widget -->
     <string name="alert_dialog_confirm">确定</string>
     <string name="alert_dialog_cancel">取消</string>
@@ -33,6 +36,7 @@
     <!-- common textview -->
     <string name="text_sendto">我们已将短信发送到</string>
     <string name="text_picture">[图片]</string>
+    <string name="text_search">精确查找</string>
     <!-- panel text -->
     <string name="panel_passlogin">登录</string>
     <string name="panel_codelogin">验证码登录</string>
@@ -56,5 +60,7 @@
     <string name="button_moreMessage">点击查看更多</string>
     <string name="button_newcircle">新建分组</string>
     <string name="button_findmorefriend">找到更多密友</string>
+    <string name="button_search">查  找</string>
+    <string name="button_scanbusinesscard">扫描名片</string>
 
 </resources>

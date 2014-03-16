@@ -7,6 +7,7 @@ import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
+import com.lejoying.wxgs.activity.mode.fragment.SearchFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 
 public class MainModeManager extends BaseModeManager {
@@ -22,6 +23,7 @@ public class MainModeManager extends BaseModeManager {
 
 	//
 	public ScanQRCodeFragment mScanQRCodeFragment;
+	public SearchFriendFragment mSearchFriendFragment;
 
 	public MainModeManager(MainActivity activity) {
 		super(activity);
@@ -43,6 +45,8 @@ public class MainModeManager extends BaseModeManager {
 			//
 			mScanQRCodeFragment = new ScanQRCodeFragment();
 			mScanQRCodeFragment.setMode(this);
+			mSearchFriendFragment = new SearchFriendFragment();
+			mSearchFriendFragment.setMode(this);
 		}
 	}
 

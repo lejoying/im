@@ -5,6 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity" >
 
+    <SurfaceView
+        android:layout_width="0px"
+        android:layout_height="0px" />
+
     <com.lejoying.wxgs.activity.view.BackgroundView
         android:id="@+id/mainBackGround"
         android:layout_width="match_parent"

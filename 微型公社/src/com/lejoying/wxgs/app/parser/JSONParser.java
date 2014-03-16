@@ -95,12 +95,18 @@ public class JSONParser {
 
 	private static Object[] generateCircleFromJSON(JSONObject jCircle) {
 		Object[] circleAndFriends = new Object[2];
+		int rid = 0;
+		String name = null;
+		try {
+			name = jCircle.getString("name");
+			rid = jCircle.getInt("rid");
+		} catch (JSONException e) {
+		}
 		try {
 			Circle circle = new Circle();
 			Map<String, Friend> friends = new HashMap<String, Friend>();
-
-			circle.rid = jCircle.getInt("rid");
-			circle.name = jCircle.getString("name");
+			circle.rid = rid;
+			circle.name = name;
 			List<Friend> circleFriends = generateFriendsFromJSON(jCircle
 					.getJSONArray("accounts"));
 			List<String> phones = new ArrayList<String>();
@@ -173,7 +179,7 @@ public class JSONParser {
 
 	public static final class GroupsAndFriends {
 		public List<Group> groups = null;
-		public Map<String, Friend> GroupFriends = null;
+		public Map<String, Friend> groupFriends = null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -194,7 +200,7 @@ public class JSONParser {
 			}
 		}
 		groupsAndFriends.groups = groups;
-		groupsAndFriends.GroupFriends = groupfriends;
+		groupsAndFriends.groupFriends = groupfriends;
 		return groupsAndFriends;
 	}
 

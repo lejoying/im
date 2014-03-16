@@ -30,7 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.BaseActivity;
+import com.lejoying.wxgs.activity.MainActivity;
 
 public class CircleMenu {
 
@@ -108,7 +108,55 @@ public class CircleMenu {
 		mScreenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
 		initView();
 		initEvent();
-		
+
+		mMenuItemClickListener = new MenuItemClickListener() {
+
+			@Override
+			public void onItemClick(int itemPosition) {
+				switch (itemPosition) {
+				case 1:
+					addShowOperation(mBeforeLocation);
+					MainActivity.instance.mMainMode
+							.show(MainActivity.instance.mMainMode.mSquareFragment);
+					break;
+				case 2:
+					addShowOperation(mBeforeLocation);
+					MainActivity.instance.mMainMode
+							.show(MainActivity.instance.mMainMode.mGroupFragment);
+					break;
+				case 3:
+
+					break;
+				case 4:
+					setItemDeskIndex(mCurrentMenuIndex, ++mCurrentMenuIndex);
+					break;
+				case 11:
+
+					break;
+				case 12:
+					MainActivity.instance.mMainMode
+							.showNext(MainActivity.instance.mMainMode.mScanQRCodeFragment);
+					break;
+				case 13:
+
+					break;
+				case 14:
+					cancelMenu();
+					break;
+				case 15:
+
+					break;
+				case 16:
+					addShowOperation(mBeforeLocation);
+					MainActivity.instance.mMainMode
+							.show(MainActivity.instance.mMainMode.mCirclesFragment);
+					break;
+				default:
+					break;
+				}
+			}
+		};
+
 		new BackThread().start();
 	}
 
@@ -242,9 +290,9 @@ public class CircleMenu {
 
 	void initMenuItems() {
 		List<MenuItemEntity> l1MenuItems = new ArrayList<MenuItemEntity>();
-		l1MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item1,
+		l1MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_3,
 				mContext.getString(R.string.circleitem1_1)));
-		l1MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2,
+		l1MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_2,
 				mContext.getString(R.string.circleitem1_2)));
 		l1MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item3,
 				mContext.getString(R.string.circleitem1_3)));
@@ -254,15 +302,15 @@ public class CircleMenu {
 		List<MenuItemEntity> l2MenuItems = new ArrayList<MenuItemEntity>();
 		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_1,
 				mContext.getString(R.string.circleitem2_1)));
-		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_2,
+		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2,
 				mContext.getString(R.string.circleitem2_2)));
-		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_3,
+		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_6,
 				mContext.getString(R.string.circleitem2_3)));
 		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_4,
 				mContext.getString(R.string.circleitem2_4)));
 		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_5,
 				mContext.getString(R.string.circleitem2_5)));
-		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item2_6,
+		l2MenuItems.add(new MenuItemEntity(R.drawable.circlemenu_item1,
 				mContext.getString(R.string.circleitem2_6)));
 
 		mMenuItemList = new ArrayList<List<View>>();
@@ -473,9 +521,6 @@ public class CircleMenu {
 											}
 											if (tan >= 1f || tan < -1f) {
 												item = 4;
-												setItemDeskIndex(
-														mCurrentMenuIndex,
-														++mCurrentMenuIndex);
 											}
 											if (tan > -1f && tan < 0) {
 												item = 1;
@@ -505,8 +550,13 @@ public class CircleMenu {
 											}
 										}
 									}
-									System.out.println(item + mCurrentMenuIndex
-											* 10);
+									// System.out.println(item +
+									// mCurrentMenuIndex
+									// * 10);
+									if (mMenuItemClickListener != null) {
+										mMenuItemClickListener.onItemClick(item
+												+ mCurrentMenuIndex * 10);
+									}
 								} else {
 									addShowOperation(mBeforeLocation);
 								}
@@ -671,7 +721,7 @@ public class CircleMenu {
 			if (location == mLocation) {
 				if (mBackView.getVisibility() == View.VISIBLE
 						&& isShowBack == false) {
-					addHideOperation(true);
+					addHideOperation(false);
 					addShowOperation(location);
 					excludeEnd();
 				} else {
@@ -680,7 +730,7 @@ public class CircleMenu {
 				return;
 			} else if ((location == LOCATION_TOP && mLocation == LOCATION_BOTTOM)
 					|| (location == LOCATION_BOTTOM && mLocation == LOCATION_TOP)) {
-				addHideOperation(true);
+				addHideOperation(false);
 				addShowOperation(location);
 				return;
 			}
@@ -1145,26 +1195,24 @@ public class CircleMenu {
 
 	static CircleMenu mCircleMenu;
 
-	static BaseActivity mCurrentActivity;
-
 	public static void create(Context context) {
 		if (mCircleMenu == null) {
 			mCircleMenu = new CircleMenu(context);
 		}
 	}
 
-	public static final void show(BaseActivity activity) {
+	public static final void show() {
 		int location = LOCATION_TOP;
 		if (mCircleMenu != null) {
 			location = mCircleMenu.mLocation != 0 ? mCircleMenu.mLocation
 					: LOCATION_TOP;
 		}
-		show(activity, location);
+		show(location);
 	}
 
-	public static final void show(BaseActivity activity, int location) {
-		if (mCircleMenu != null && activity != null) {
-			if (mCircleMenu.isLeave && activity.equals(mCurrentActivity)) {
+	public static final void show(int location) {
+		if (mCircleMenu != null) {
+			if (mCircleMenu.isLeave) {
 				location = mCircleMenu.mLocation != 0 ? mCircleMenu.mLocation
 						: LOCATION_TOP;
 				mCircleMenu.isLeave = false;
@@ -1172,28 +1220,21 @@ public class CircleMenu {
 				mCircleMenu.isLock = false;
 				mCircleMenu.isShowBack = false;
 			}
-			mCurrentActivity = activity;
 			mCircleMenu.addShowOperation(location);
-		} else if (activity != null && mCircleMenu == null) {
-			create(activity);
-			show(activity, location);
 		}
 	}
 
-	public static final void showBack(BaseActivity activity) {
+	public static final void showBack() {
 		if (mCircleMenu != null) {
-			mCurrentActivity = activity;
 			if (mCircleMenu.mStatus != STATUS_HIDE && !mCircleMenu.isLock
 					&& !mCircleMenu.isShowBack) {
-				mCircleMenu.addHideOperation(true);
+				if (mCircleMenu.mLocation != LOCATION_CENTER) {
+					mCircleMenu.addHideOperation(false);
+				}
 			}
 			mCircleMenu.isLock = true;
 			mCircleMenu.isShowBack = true;
 			mCircleMenu.addShowOperation(LOCATION_TOP);
-		} else if (activity != null && mCircleMenu == null) {
-			System.out.println("wait create");
-			create(activity);
-			showBack(activity);
 		}
 	}
 
@@ -1228,7 +1269,6 @@ public class CircleMenu {
 	public static void destroy() {
 		if (mCircleMenu != null) {
 			CircleMenu waitGC = mCircleMenu;
-			CircleMenu.mCurrentActivity = null;
 			mCircleMenu = null;
 			waitGC.mContext = null;
 			waitGC.mWindowManager.removeView(waitGC.mMenuContent);

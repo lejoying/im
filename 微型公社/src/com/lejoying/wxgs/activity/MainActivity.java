@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
@@ -38,8 +39,8 @@ public class MainActivity extends BaseActivity {
 
 	LongConnectionReceiver mReceiver;
 
-	LoginModeManager mLoginMode;
-	MainModeManager mMainMode;
+	public LoginModeManager mLoginMode;
+	public MainModeManager mMainMode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class MainActivity extends BaseActivity {
 		registerReceiver(mReceiver, filter);
 
 		Alert.initialize(this);
+		CircleMenu.create(this);
 
 		initMode();
 
@@ -105,6 +107,14 @@ public class MainActivity extends BaseActivity {
 		}
 		return super.onKeyDown(keyCode, event);
 
+	}
+
+	@Override
+	protected void onPause() {
+		if (mode.equals(MODE_MAIN)) {
+			DataUtil.saveData(this);
+		}
+		super.onPause();
 	}
 
 	@Override

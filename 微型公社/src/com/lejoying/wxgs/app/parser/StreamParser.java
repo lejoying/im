@@ -103,7 +103,8 @@ public class StreamParser {
 		return obj;
 	}
 
-	public static void parseToFile(FileOutputStream outputStream, Object obj) {
+	public static void parseToObjectFile(FileOutputStream outputStream,
+			Object obj) {
 		ObjectOutputStream objectOutputStream = null;
 		try {
 			objectOutputStream = new ObjectOutputStream(outputStream);
@@ -127,6 +128,36 @@ public class StreamParser {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+		}
+	}
+
+	public static void parseToFile(InputStream inputStream,
+			FileOutputStream outputStream) {
+		byte buffer[] = new byte[1024];
+		int len = 0;
+		try {
+			while ((len = inputStream.read(buffer)) != -1) {
+				outputStream.write(buffer, 0, len);
+			}
+			outputStream.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (outputStream != null)
+					outputStream.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				if (inputStream != null)
+					inputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

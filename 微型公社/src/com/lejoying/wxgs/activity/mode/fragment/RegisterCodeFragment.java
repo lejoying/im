@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.BaseActivity;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -91,7 +90,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack((BaseActivity) getActivity());
+		CircleMenu.showBack();
 		super.onResume();
 	}
 

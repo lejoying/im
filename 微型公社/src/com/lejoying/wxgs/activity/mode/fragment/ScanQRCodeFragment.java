@@ -30,6 +30,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.view.ScanView;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 
 public class ScanQRCodeFragment extends BaseFragment implements
 		SurfaceHolder.Callback, PreviewCallback, AutoFocusCallback {
@@ -87,6 +88,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
+		CircleMenu.showBack();
 		super.onResume();
 	}
 
@@ -140,6 +142,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		isTake = false;
 		if (camera != null) {
 			camera.release();
+			camera = null;
 		}
 	}
 
@@ -295,7 +298,11 @@ public class ScanQRCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onAutoFocus(boolean success, Camera camera) {
-		autoFocus();
+		if (camera != null) {
+			if (isTake) {
+				autoFocus();
+			}
+		}
 	}
 
 	@SuppressLint("HandlerLeak")
@@ -379,7 +386,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		}
 		return what;
 	}
-	
+
 	public void setMode(MainModeManager mainMode) {
 
 	}

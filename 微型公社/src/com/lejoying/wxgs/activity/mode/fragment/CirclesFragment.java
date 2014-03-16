@@ -1,9 +1,7 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,16 +22,19 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.CommonViewPager;
 import com.lejoying.wxgs.activity.view.ScrollContent;
 import com.lejoying.wxgs.activity.view.ScrollContentAdapter;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Message;
-import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
-import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class CirclesFragment extends BaseFragment {
@@ -69,6 +70,13 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	@Override
+	public void onResume() {
+		CircleMenu.show();
+		CircleMenu.setPageName(getString(R.string.circlemenu_page_circles));
+		super.onResume();
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mContentView = inflater.inflate(R.layout.fragment_circles, null);
@@ -78,7 +86,90 @@ public class CirclesFragment extends BaseFragment {
 		initData(true);
 		mAdapter = new CirclesAdapter(mCirclesContent);
 		mCirclesContent.setAdapter(mAdapter);
-		getUser();
+
+		if (app.data.isClear) {
+			app.dataHandler.exclude(new Modification() {
+				@Override
+				public void modifyData(Data data) {
+					try {
+						Data localData = (Data) StreamParser
+								.parseToObject(getActivity().openFileInput(
+										data.user.phone));
+						if (localData != null) {
+							data.user.head = localData.user.head;
+							data.user.nickName = localData.user.nickName;
+							data.user.mainBusiness = localData.user.mainBusiness;
+							data.circles = localData.circles;
+							data.friends = localData.friends;
+							data.groups = localData.groups;
+							data.groupFriends = localData.groupFriends;
+							data.lastChatFriends = localData.lastChatFriends;
+							data.newFriends = localData.newFriends;
+						}
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				@Override
+				public void modifyUI() {
+					mAdapter.notifyDataSetChanged();
+					super.modifyUI();
+				}
+			});
+		}
+
+		DataUtil.getUser(new GetDataListener() {
+
+			@Override
+			public void getSuccess() {
+				DataUtil.getCircles(new GetDataListener() {
+
+					@Override
+					public void getSuccess() {
+						DataUtil.getMessages(new GetDataListener() {
+
+							@Override
+							public void getSuccess() {
+								DataUtil.getAskFriends(new GetDataListener() {
+
+									@Override
+									public void getSuccess() {
+										mAdapter.notifyDataSetChanged();
+									}
+
+									@Override
+									public void getFailed() {
+										// TODO Auto-generated method stub
+
+									}
+								});
+							}
+
+							@Override
+							public void getFailed() {
+								// TODO Auto-generated method stub
+
+							}
+						});
+					}
+
+					@Override
+					public void getFailed() {
+						// TODO Auto-generated method stub
+
+					}
+				});
+			}
+
+			@Override
+			public void getFailed() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 		return mContentView;
 	}
 
@@ -232,16 +323,13 @@ public class CirclesFragment extends BaseFragment {
 				}
 				final String headFileName = friend.head;
 				final ImageView iv_head = messageHolder.iv_head;
-				// app.fileHandler.getHeadImage(headFileName, new FileResult() {
-				// @Override
-				// public void onResult(String where) {
-				// iv_head.setImageBitmap(app.fileHandler.bitmaps
-				// .get(headFileName));
-				// if (where == app.fileHandler.FROM_WEB) {
-				// mAdapter.notifyDataSetChanged();
-				// }
-				// }
-				// });
+				app.fileHandler.getHeadImage(headFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
 				Integer notread = friends.get(lastChatFriends.get(arg0
 						- messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {
@@ -331,6 +419,8 @@ public class CirclesFragment extends BaseFragment {
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
+							mMainModeManager
+									.showNext(mMainModeManager.mSearchFriendFragment);
 						}
 					});
 				}
@@ -360,8 +450,6 @@ public class CirclesFragment extends BaseFragment {
 		TextView tv_groupname;
 		CommonViewPager vp_content;
 		PagerAdapter vp_contentAdapter;
-
-		// GestureDetector gestureDetector;
 
 		Circle circle;
 
@@ -396,37 +484,42 @@ public class CirclesFragment extends BaseFragment {
 						} else {
 							itemHolder = (ItemHolder) convertView.getTag();
 						}
-						final String headFileName = friends.get(phones.get(a
-								* 6 + position)).head;
-						final ImageView iv_head = itemHolder.iv_head;
-						// app.fileHandler.getHeadImage(headFileName,
-						// new FileResult() {
-						// @Override
-						// public void onResult(String where) {
-						// iv_head.setImageBitmap(app.fileHandler.bitmaps
-						// .get(headFileName));
-						// if (where == app.fileHandler.FROM_WEB) {
-						// mAdapter.notifyDataSetChanged();
-						// }
-						// }
-						// });
-						itemHolder.tv_nickname.setText(friends.get(phones.get(a
-								* 6 + position)).nickName);
-						convertView.setOnClickListener(new OnClickListener() {
+						if (phones.get(a * 6 + position) != null
+								&& friends.get(phones.get(a * 6 + position)) != null) {
 
-							@Override
-							public void onClick(View v) {
-							}
-						});
+							final String headFileName = friends.get(phones
+									.get(a * 6 + position)).head;
+							final ImageView iv_head = itemHolder.iv_head;
+							app.fileHandler.getHeadImage(headFileName,
+									new FileResult() {
+										@Override
+										public void onResult(String where) {
+											iv_head.setImageBitmap(app.fileHandler.bitmaps
+													.get(headFileName));
+											if (where == app.fileHandler.FROM_WEB) {
+												mAdapter.notifyDataSetChanged();
+											}
+										}
+									});
+							itemHolder.tv_nickname.setText(friends.get(phones
+									.get(a * 6 + position)).nickName);
+							convertView
+									.setOnClickListener(new OnClickListener() {
 
-						convertView
-								.setOnLongClickListener(new OnLongClickListener() {
+										@Override
+										public void onClick(View v) {
+										}
+									});
 
-									@Override
-									public boolean onLongClick(View v) {
-										return false;
-									}
-								});
+							convertView
+									.setOnLongClickListener(new OnLongClickListener() {
+
+										@Override
+										public boolean onLongClick(View v) {
+											return false;
+										}
+									});
+						}
 						return convertView;
 					}
 
@@ -497,34 +590,10 @@ public class CirclesFragment extends BaseFragment {
 			};
 			vp_content.setAdapter(vp_contentAdapter);
 		}
-
 	}
 
 	class ButtonHolder {
 		Button button;
-	}
-
-	public void getUser() {
-		NetConnection netConnection = new NetConnection() {
-
-			@Override
-			protected void success(InputStream is,
-					HttpURLConnection httpURLConnection) {
-				System.out.println(StreamParser.parseToJSONObject(is)
-						.toString());
-			}
-
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.ACCOUNT_GET;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("target", "[\"" + app.data.user.phone + "\"]");
-				settings.params = params;
-			}
-		};
-		app.networkHandler.connection(netConnection);
 	}
 
 }

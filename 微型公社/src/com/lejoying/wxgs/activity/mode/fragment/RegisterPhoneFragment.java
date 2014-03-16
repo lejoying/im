@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.BaseActivity;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -52,7 +51,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack((BaseActivity) getActivity());
+		CircleMenu.showBack();
 		if (app.data.user.phone != null) {
 			mView_phone.setText(app.data.user.phone);
 		}

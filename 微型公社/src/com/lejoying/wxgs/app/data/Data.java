@@ -40,7 +40,11 @@ public class Data implements Serializable {
 	public Friend nowChatFriend;
 	public Friend tempFriend;
 
+	public boolean isClear;
+	public boolean isChanged;
+
 	public void clear() {
+		isClear = true;
 		user = new User();
 		circles.clear();
 		groups.clear();

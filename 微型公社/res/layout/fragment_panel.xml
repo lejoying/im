@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/card_background"
+        android:background="@drawable/card_background_normal"
         android:orientation="vertical"
         android:padding="10dp"
         tools:ignore="UselessParent" >
@@ -47,7 +47,7 @@
         <com.lejoying.wxgs.activity.view.CommonViewPager
             android:id="@+id/commonViewPager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="220dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"

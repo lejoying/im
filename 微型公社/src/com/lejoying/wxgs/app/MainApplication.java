@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.app;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Process;
 
@@ -15,6 +17,7 @@ import com.lejoying.wxgs.activity.BaseActivity;
 import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler;
+import com.lejoying.wxgs.app.handler.FileHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.parser.StreamParser;
@@ -32,11 +35,19 @@ public class MainApplication extends Application {
 	public Handler UIHandler;
 	public DataHandler dataHandler;
 	public NetworkHandler networkHandler;
+	public FileHandler fileHandler;
 
 	public static String currentTAG;
 	public static BaseActivity currentActivity;
 
 	public SHA1 mSHA1;
+
+	public File sdcardAppFolder;
+	public File sdcardImageFolder;
+	public File sdcardHeadImageFolder;
+
+	public String sdcardStatus = "none";// "exist"
+	public String networkStatus = "none";// "WIFI"|"mobile"
 
 	public static MainApplication getMainApplication() {
 		return mMainApplication;
@@ -58,6 +69,8 @@ public class MainApplication extends Application {
 		dataHandler = new DataHandler();
 		dataHandler.initialize(this);
 		networkHandler = new NetworkHandler(5);
+		fileHandler = new FileHandler();
+		fileHandler.initialize(this);
 
 		// initialize tool
 		mSHA1 = new SHA1();
@@ -99,6 +112,29 @@ public class MainApplication extends Application {
 			});
 		} else {
 			sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
+		}
+
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
+			sdcardStatus = "exist";
+		} else {
+			sdcardStatus = "none";
+		}
+
+		if (sdcardStatus == "exist") {
+			sdcardAppFolder = new File(
+					Environment.getExternalStorageDirectory(), "lejoying");
+			if (!sdcardAppFolder.exists()) {
+				sdcardAppFolder.mkdirs();
+			}
+			sdcardImageFolder = new File(sdcardAppFolder, "image");
+			if (!sdcardImageFolder.exists()) {
+				sdcardImageFolder.mkdirs();
+			}
+			sdcardHeadImageFolder = new File(sdcardImageFolder, "head");
+			if (!sdcardHeadImageFolder.exists()) {
+				sdcardHeadImageFolder.mkdir();
+			}
 		}
 	}
 

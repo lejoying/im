@@ -63,6 +63,7 @@ public class DataHandler {
 				} catch (InterruptedException e) {
 					return;
 				}
+				app.data.isChanged = true;
 				modification.modifyData(app.data);
 				app.UIHandler.post(modification);
 			}
