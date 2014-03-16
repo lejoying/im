@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="290dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/card_background"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        tools:ignore="UselessParent" >
+
+        <TextView
+            android:id="@+id/panel_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/panel_passlogin"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/panel_name"
+            android:layout_below="@+id/panel_name"
+            android:layout_marginTop="8dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <EditText
+            android:id="@+id/plogin_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/line"
+            android:layout_alignRight="@+id/line"
+            android:layout_below="@+id/line"
+            android:layout_marginTop="15dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="@string/hint_enterphone"
+            android:inputType="number|none"
+            android:textColor="#fff"
+            android:textColorHint="#eee"
+            tools:ignore="TextFields" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/button_plogin"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/plogin_pass"
+            android:layout_alignRight="@+id/plogin_pass"
+            android:layout_below="@+id/plogin_pass"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/button_background"
+            android:text="@string/button_login"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+
+        <EditText
+            android:id="@+id/plogin_pass"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/plogin_phone"
+            android:layout_alignRight="@+id/plogin_phone"
+            android:layout_below="@+id/plogin_phone"
+            android:layout_marginTop="15dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="@string/hint_enterpass"
+            android:inputType="textPassword"
+            android:textColor="#fff"
+            android:textColorHint="#eee" />
+
+        <Button
+            android:id="@+id/button_register"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/button_plogin"
+            android:layout_alignRight="@+id/button_plogin"
+            android:layout_below="@+id/button_plogin"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_background"
+            android:text="@string/button_openregister"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+
+        <TextView
+            android:id="@+id/button_openclogin"
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_alignRight="@+id/button_register"
+            android:layout_below="@+id/button_register"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:text="@string/button_opencodelogin"
+            android:textColor="@color/click_textcolor"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

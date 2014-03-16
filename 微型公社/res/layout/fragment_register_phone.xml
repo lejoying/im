@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rl_regpanel_phone"
+        android:layout_width="fill_parent"
+        android:layout_height="172dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="63dp"
+        android:background="@drawable/card_background"
+        android:padding="10dp"
+        tools:ignore="UselessParent" >
+
+        <TextView
+            android:id="@+id/panel_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/panel_enterphone"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/panel_name"
+            android:layout_below="@+id/panel_name"
+            android:layout_marginTop="8dp"
+            android:background="#9fff"
+            tools:ignore="ContentDescription" />
+
+        <EditText
+            android:id="@+id/register_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/line"
+            android:layout_alignRight="@+id/line"
+            android:layout_below="@+id/line"
+            android:layout_marginTop="20dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="@string/hint_enterphone"
+            android:inputType="number|none"
+            android:textColor="#fff"
+            android:textColorHint="#eee"
+            tools:ignore="TextFields" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/button_next"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/register_phone"
+            android:layout_alignRight="@+id/register_phone"
+            android:layout_below="@+id/register_phone"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_background"
+            android:gravity="center"
+            android:text="@string/button_next"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+</RelativeLayout>
