@@ -1,0 +1,341 @@
+package com.lejoying.wxgs.activity.utils;
+
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+
+import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Configuration;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.data.entity.User;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
+import com.lejoying.wxgs.app.parser.JSONParser.CirclesAndFriends;
+import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
+import com.lejoying.wxgs.app.parser.StreamParser;
+
+public class DataUtil {
+
+	static MainApplication app = MainApplication.getMainApplication();
+
+	public interface GetDataListener {
+		public void getSuccess();
+
+		public void getFailed();
+	}
+
+	public static void getUser(final GetDataListener listener) {
+		NetConnection netConnection = new CommonNetConnection() {
+			@Override
+			public void success(final JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+					@Override
+					public void modifyData(Data data) {
+						try {
+							User user = JSONParser.generateUserFromJSON(jData
+									.getJSONArray("accounts").getJSONObject(0));
+							data.user.head = user.head;
+							data.user.nickName = user.nickName;
+							data.user.mainBusiness = user.mainBusiness;
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (listener != null)
+							listener.getSuccess();
+						super.modifyUI();
+					}
+				});
+
+			}
+
+			@Override
+			protected void unSuccess(JSONObject jData) {
+				if (listener != null)
+					listener.getFailed();
+				super.unSuccess(jData);
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.ACCOUNT_GET;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("target", "[\"" + app.data.user.phone + "\"]");
+				settings.params = params;
+			}
+		};
+		app.networkHandler.connection(netConnection);
+	}
+
+	public static void getCircles(final GetDataListener listener) {
+		NetConnection netConnection = new CommonNetConnection() {
+			@Override
+			public void success(final JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+					@Override
+					public void modifyData(Data data) {
+						try {
+							CirclesAndFriends circlesAndFriends = JSONParser
+									.generateCirclesFromJSON(jData
+											.getJSONArray("circles"));
+							data.circles = circlesAndFriends.circles;
+							Map<String, Friend> friends = circlesAndFriends.circleFriends;
+							Set<String> phones = circlesAndFriends.circleFriends
+									.keySet();
+							for (String phone : phones) {
+								Friend friend = friends.get(phone);
+								if (data.friends.get(phones) != null) {
+									friend.messages = data.friends.get(phones).messages;
+								}
+								data.friends.put(phone, friend);
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (listener != null)
+							listener.getSuccess();
+						super.modifyUI();
+					}
+				});
+			}
+
+			@Override
+			protected void unSuccess(JSONObject jData) {
+				if (listener != null)
+					listener.getFailed();
+				super.unSuccess(jData);
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.RELATION_GETCIRCLESANDFRIENDS;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				settings.params = params;
+			}
+		};
+		app.networkHandler.connection(netConnection);
+	}
+	
+	public void updateFriend(Friend friend, Data data) {
+		Friend updateFriend = data.friends.get(friend.phone);
+		if (updateFriend != null) {
+			if (friend.head != null && !friend.head.equals("")) {
+				updateFriend.head = friend.head;
+			}
+			if (friend.nickName != null && !friend.nickName.equals("")) {
+				updateFriend.nickName = friend.nickName;
+			}
+			if (friend.mainBusiness != null && !friend.mainBusiness.equals("")) {
+				updateFriend.mainBusiness = friend.mainBusiness;
+			}
+			if (friend.friendStatus != null && !friend.friendStatus.equals("")) {
+				updateFriend.friendStatus = friend.friendStatus;
+			}
+		}
+	}
+
+	public static void getGroups(final GetDataListener listener) {
+		NetConnection netConnection = new CommonNetConnection() {
+			@Override
+			public void success(final JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+					@Override
+					public void modifyData(Data data) {
+						try {
+							GroupsAndFriends groupsAndFriends = JSONParser
+									.generateGroupsFromJSON(jData
+											.getJSONArray("groups"));
+							data.groups = groupsAndFriends.groups;
+							data.groupFriends = groupsAndFriends.groupFriends;
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (listener != null)
+							listener.getSuccess();
+						super.modifyUI();
+					}
+				});
+			}
+
+			@Override
+			protected void unSuccess(JSONObject jData) {
+				if (listener != null)
+					listener.getFailed();
+				super.unSuccess(jData);
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.GROUP_GETGROUPSANDMEMBERS;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				settings.params = params;
+			}
+		};
+		app.networkHandler.connection(netConnection);
+	}
+
+	public static void getAskFriends(final GetDataListener listener) {
+		NetConnection netConnection = new CommonNetConnection() {
+			@Override
+			public void success(final JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+					@Override
+					public void modifyData(Data data) {
+						try {
+							List<Friend> friends = JSONParser
+									.generateFriendsFromJSON(jData
+											.getJSONArray("accounts"));
+							for (Friend friend : friends) {
+								if (!data.newFriends.contains(friend)) {
+									data.newFriends.add(0, friend);
+								}
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (listener != null)
+							listener.getSuccess();
+						super.modifyUI();
+					}
+				});
+			}
+
+			@Override
+			protected void unSuccess(JSONObject jData) {
+				if (listener != null)
+					listener.getFailed();
+				super.unSuccess(jData);
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.RELATION_GETASKFRIENDS;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				settings.params = params;
+			}
+		};
+		app.networkHandler.connection(netConnection);
+
+	}
+
+	public static void getMessages(final GetDataListener listener) {
+		NetConnection netConnection = new CommonNetConnection() {
+			@Override
+			public void success(final JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+					@Override
+					public void modifyData(Data data) {
+						try {
+							List<Message> messages = JSONParser
+									.generateMessagesFromJSON(jData
+											.getJSONArray("messages"));
+							for (Message message : messages) {
+								Friend friend = data.friends
+										.get(message.friendPhone);
+								if (friend != null
+										&& !friend.messages.contains(message)) {
+									friend.messages.add(message);
+								}
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (listener != null)
+							listener.getSuccess();
+						super.modifyUI();
+					}
+				});
+			}
+
+			@Override
+			protected void unSuccess(JSONObject jData) {
+				if (listener != null)
+					listener.getFailed();
+				super.unSuccess(jData);
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.MESSAGE_GET;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("flag", app.data.user.flag);
+				settings.params = params;
+			}
+		};
+		app.networkHandler.connection(netConnection);
+	}
+
+	public static void saveData(Context context) {
+		if (app.data.isChanged) {
+			app.data.isChanged = false;
+			try {
+				Data saveData = new Data();
+				saveData.user = app.data.user;
+				saveData.circles = app.data.circles;
+				saveData.friends = app.data.friends;
+				saveData.groups = app.data.groups;
+				saveData.groupFriends = app.data.groupFriends;
+				saveData.lastChatFriends = app.data.lastChatFriends;
+				saveData.newFriends = app.data.newFriends;
+				StreamParser.parseToObjectFile(context.openFileOutput(
+						app.data.user.phone, Context.MODE_PRIVATE), saveData);
+
+				Configuration config = new Configuration();
+				config.lastLoginPhone = app.data.user.phone;
+				StreamParser.parseToObjectFile(
+						context.openFileOutput("config", Context.MODE_PRIVATE),
+						config);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+}
