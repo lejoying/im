@@ -118,8 +118,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 			Alert.showMessage(getString(R.string.alert_text_phonenotnull));
 			return;
 		}
-		Pattern p = Pattern
-				.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+		Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 		Matcher m = p.matcher(mPhone);
 		if (!m.matches()) {
 			Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
@@ -149,7 +148,7 @@ public class LoginUseCodeFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void success(JSONObject jData) {
+				public void success(JSONObject jData) {
 					try {
 						final String accessKey = RSAUtils
 								.decrypt(app.config.pbKey0,
@@ -174,9 +173,17 @@ public class LoginUseCodeFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void failed() {
+				public void unSuccess(JSONObject jData) {
 					Alert.removeLoading();
 					cancelRemain();
+					super.unSuccess(jData);
+				}
+
+				@Override
+				public void failed(int failedType) {
+					Alert.removeLoading();
+					cancelRemain();
+					super.failed(failedType);
 				}
 			};
 
@@ -207,13 +214,20 @@ public class LoginUseCodeFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void success(JSONObject jData) {
+				public void success(JSONObject jData) {
 					startRemain();
 				}
 
 				@Override
-				protected void failed() {
+				public void unSuccess(JSONObject jData) {
 					cancelRemain();
+					super.unSuccess(jData);
+				}
+
+				@Override
+				public void failed(int failedType) {
+					cancelRemain();
+					super.failed(failedType);
 				}
 			};
 

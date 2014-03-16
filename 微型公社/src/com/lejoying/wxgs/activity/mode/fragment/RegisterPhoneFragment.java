@@ -78,7 +78,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 			}
 
 			Pattern p = Pattern
-					.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+					.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 			Matcher m = p.matcher(mPhone);
 			if (!m.matches()) {
 				Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
@@ -107,7 +107,7 @@ public class RegisterPhoneFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void success(JSONObject jData) {
+				public void success(JSONObject jData) {
 					app.dataHandler.exclude(new Modification() {
 
 						@Override
@@ -127,9 +127,17 @@ public class RegisterPhoneFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void failed() {
+				public void unSuccess(JSONObject jData) {
 					Alert.removeLoading();
 					RegisterCodeFragment.cancelRemain();
+					super.unSuccess(jData);
+				}
+
+				@Override
+				public void failed(int failedType) {
+					Alert.removeLoading();
+					RegisterCodeFragment.cancelRemain();
+					super.failed(failedType);
 				}
 			};
 

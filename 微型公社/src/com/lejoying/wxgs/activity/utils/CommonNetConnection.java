@@ -3,12 +3,14 @@ package com.lejoying.wxgs.activity.utils;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.utils.NetworkUtils;
 
@@ -16,9 +18,7 @@ public abstract class CommonNetConnection extends NetConnection {
 
 	MainApplication app = MainApplication.getMainApplication();
 
-	protected abstract void success(JSONObject jData);
-
-	protected abstract void failed();
+	public abstract void success(JSONObject jData);
 
 	@Override
 	protected void success(InputStream is, HttpURLConnection httpURLConnection) {
@@ -28,13 +28,18 @@ public abstract class CommonNetConnection extends NetConnection {
 			return;
 		}
 		try {
-			Alert.showMessage(jData.getString(app
-					.getString(R.string.network_failed)));
-			failed();
+			jData.getString(app.getString(R.string.network_failed));
+			unSuccess(jData);
 			return;
 		} catch (Exception e) {
 		}
 		success(jData);
+	}
+
+	@Override
+	protected void settings(Settings settings) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -46,7 +51,21 @@ public abstract class CommonNetConnection extends NetConnection {
 		} else {
 			Alert.showMessage(app.getString(R.string.alert_text_neterror));
 		}
-		failed();
+		failed(failedType);
 	}
 
+	protected void failed(int failedType) {
+		// TODO Auto-generated method stub
+
+	}
+
+	protected void unSuccess(JSONObject jData) {
+		try {
+			Alert.showMessage(jData.getString(app
+					.getString(R.string.network_failed)));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

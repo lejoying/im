@@ -131,7 +131,7 @@ public class LoginUsePassFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void success(JSONObject jData) {
+				public void success(JSONObject jData) {
 					try {
 						String rasAccessKey = jData.getString("accessKey");
 						final String accessKey = RSAUtils.decrypt(
@@ -155,8 +155,15 @@ public class LoginUsePassFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void failed() {
+				public void unSuccess(JSONObject jData) {
 					Alert.removeLoading();
+					super.unSuccess(jData);
+				}
+				
+				@Override
+				public void failed(int failedType) {
+					Alert.removeLoading();
+					super.failed(failedType);
 				}
 			};
 			Alert.showLoading(new OnLoadingCancelListener() {

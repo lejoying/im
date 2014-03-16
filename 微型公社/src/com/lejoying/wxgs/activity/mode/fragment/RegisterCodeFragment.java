@@ -121,7 +121,7 @@ public class RegisterCodeFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void success(JSONObject jData) {
+				public void success(JSONObject jData) {
 					try {
 						accessKey = RSAUtils.decrypt(app.config.pbKey0,
 								jData.getString("accessKey"));
@@ -134,8 +134,15 @@ public class RegisterCodeFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void failed() {
+				public void unSuccess(JSONObject jData) {
 					Alert.removeLoading();
+					super.unSuccess(jData);
+				}
+
+				@Override
+				public void failed(int failedType) {
+					Alert.removeLoading();
+					super.failed(failedType);
 				}
 			};
 			Alert.showLoading(new OnLoadingCancelListener() {
@@ -163,13 +170,20 @@ public class RegisterCodeFragment extends BaseFragment implements
 				}
 
 				@Override
-				protected void success(JSONObject jData) {
+				public void success(JSONObject jData) {
 					startRemain();
 				}
 
 				@Override
-				protected void failed() {
+				public void unSuccess(JSONObject jData) {
 					cancelRemain();
+					super.unSuccess(jData);
+				}
+
+				@Override
+				public void failed(int failedType) {
+					cancelRemain();
+					super.failed(failedType);
 				}
 			};
 			app.networkHandler.connection(mVerifyPhone);
