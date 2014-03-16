@@ -32,7 +32,7 @@
     <string name="alert_text_neterror">网络错误</string>
     <!-- common textview -->
     <string name="text_sendto">我们已将短信发送到</string>
-    <string name="text_null"></string>
+    <string name="text_picture">[图片]</string>
     <!-- panel text -->
     <string name="panel_passlogin">登录</string>
     <string name="panel_codelogin">验证码登录</string>
@@ -52,5 +52,9 @@
     <string name="button_resend">重新发送</string>
     <string name="button_up">上一组</string>
     <string name="button_down">下一组</string>
+    <string name="button_newfriend">新的朋友</string>
+    <string name="button_moreMessage">点击查看更多</string>
+    <string name="button_newcircle">新建分组</string>
+    <string name="button_findmorefriend">找到更多密友</string>
 
 </resources>
