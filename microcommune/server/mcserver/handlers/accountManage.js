@@ -262,7 +262,7 @@ accountManage.verifycode = function (data, response, next) {
             } else if (results.length > 0) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
-                if (accountData.status == "active") {
+                if (accountData.status == "active" || accountData.status == "init") {
                     if (accountData.code == code && code != "none") {
                         var time = new Date().getTime();
                         var bad = time - parseInt(accountData.time);
