@@ -37,6 +37,7 @@
     <string name="text_sendto">我们已将短信发送到</string>
     <string name="text_picture">[图片]</string>
     <string name="text_search">精确查找</string>
+    <string name="text_verify">对方启用了朋友验证</string>
     <!-- panel text -->
     <string name="panel_passlogin">登录</string>
     <string name="panel_codelogin">验证码登录</string>
@@ -47,6 +48,7 @@
     <string name="hint_enterphone">请输入手机号</string>
     <string name="hint_enterpass">请输入密码</string>
     <string name="hint_entercode">请输入验证码</string>
+    <string name="hint_verify">请输入验证消息</string>
     <!-- button text -->
     <string name="button_login">登    录</string>
     <string name="button_openregister">没有账号/注册</string>
@@ -62,5 +64,6 @@
     <string name="button_findmorefriend">找到更多密友</string>
     <string name="button_search">查  找</string>
     <string name="button_scanbusinesscard">扫描名片</string>
+    <string name="button_send">发送</string>
 
 </resources>

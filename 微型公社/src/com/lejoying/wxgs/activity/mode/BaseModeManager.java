@@ -16,7 +16,7 @@ public abstract class BaseModeManager {
 	public static final int CLEAR_ALL = -1;
 
 	FragmentManager mFragmentManager;
-	List<Fragment> mBackStack;
+	public List<Fragment> mBackStack;
 	Fragment mCurrentFragment;
 
 	int mContentID = R.id.fragmentContent;
@@ -89,11 +89,23 @@ public abstract class BaseModeManager {
 	public void clearBackStack(int count) {
 		if (mBackStack.size() != 0) {
 			if (count >= mBackStack.size() || count == CLEAR_ALL) {
+				FragmentTransaction transaction = mFragmentManager
+						.beginTransaction();
+				for (Fragment fragment : mBackStack) {
+					if (fragment.isAdded())
+						transaction.remove(fragment);
+				}
+				transaction.commit();
 				mBackStack.clear();
 			} else {
+				FragmentTransaction transaction = mFragmentManager
+						.beginTransaction();
 				for (int i = 0; i < count; i++) {
-					mBackStack.remove(0);
+					Fragment fragment = mBackStack.remove(0);
+					if (fragment.isAdded())
+						transaction.remove(fragment);
 				}
+				transaction.commit();
 			}
 		}
 	}
@@ -106,7 +118,6 @@ public abstract class BaseModeManager {
 					.setCustomAnimations(R.anim.translate_new,
 							R.anim.translate_out).remove(mCurrentFragment)
 					.commit();
-
 			FragmentTransaction transaction = mFragmentManager
 					.beginTransaction();
 			for (Fragment fragment : fragments) {
@@ -116,6 +127,7 @@ public abstract class BaseModeManager {
 			}
 			transaction.commit();
 		}
+		clearBackStack(CLEAR_ALL);
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

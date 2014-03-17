@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
+import com.lejoying.wxgs.activity.mode.fragment.AddFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.BusinessCardFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFragment;
 import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment;
@@ -30,6 +31,7 @@ public class MainModeManager extends BaseModeManager {
 	public BusinessCardFragment mBusinessCardFragment;
 	public ChatFragment mChatFragment;
 	public NewFriendsFragment mNewFriendsFragment;
+	public AddFriendFragment mAddFriendFragment;
 
 	public MainModeManager(MainActivity activity) {
 		super(activity);
@@ -59,6 +61,8 @@ public class MainModeManager extends BaseModeManager {
 			mChatFragment.setMode(this);
 			mNewFriendsFragment = new NewFriendsFragment();
 			mNewFriendsFragment.setMode(this);
+			mAddFriendFragment = new AddFriendFragment();
+			mAddFriendFragment.setMode(this);
 		}
 	}
 

@@ -90,78 +90,82 @@ public class MainActivity extends BaseActivity {
 	public void switchMode() {
 		if (app.data.user.phone.equals("")
 				|| app.data.user.accessKey.equals("")) {
-			mode = MODE_LOGIN;
-			mMainMode.release();
-			mLoginMode.initialize();
-			mLoginMode.show(mLoginMode.mLoginUsePassFragment);
+			if (!mode.equals(MODE_LOGIN)) {
+				mode = MODE_LOGIN;
+				mMainMode.release();
+				mLoginMode.initialize();
+				mLoginMode.show(mLoginMode.mLoginUsePassFragment);
+			}
 		} else if (!app.data.user.phone.equals("")
 				&& !app.data.user.accessKey.equals("")) {
-			mode = MODE_MAIN;
-			mLoginMode.release();
-			mMainMode.initialize();
-			mMainMode.show(mMainMode.mSquareFragment);
+			if (!mode.equals(MODE_MAIN)) {
+				mode = MODE_MAIN;
+				mLoginMode.release();
+				mMainMode.initialize();
+				mMainMode.show(mMainMode.mSquareFragment);
 
-			if (app.data.isClear) {
-				app.dataHandler.exclude(new Modification() {
-					@Override
-					public void modifyData(Data data) {
-						try {
-							Data localData = (Data) StreamParser
-									.parseToObject(openFileInput(data.user.phone));
-							if (localData != null) {
-								data.user.head = localData.user.head;
-								data.user.nickName = localData.user.nickName;
-								data.user.mainBusiness = localData.user.mainBusiness;
-								data.circles = localData.circles;
-								data.friends = localData.friends;
-								data.groups = localData.groups;
-								data.groupFriends = localData.groupFriends;
-								data.lastChatFriends = localData.lastChatFriends;
-								data.newFriends = localData.newFriends;
-							}
-						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-
-				});
-			}
-
-			DataUtil.getUser(new GetDataListener() {
-				@Override
-				public void getSuccess() {
-					DataUtil.getCircles(new GetDataListener() {
+				if (app.data.isClear) {
+					app.dataHandler.exclude(new Modification() {
 						@Override
-						public void getSuccess() {
-							DataUtil.getMessages(new GetDataListener() {
-								@Override
-								public void getSuccess() {
-									DataUtil.getAskFriends(new GetDataListener() {
-										@Override
-										public void getSuccess() {
-											// mAdapter.notifyDataSetChanged();
-											if (mMainMode.mCirclesFragment
-													.isAdded()) {
-												mMainMode.mCirclesFragment.mAdapter
-														.notifyDataSetChanged();
-											}
-											if (mMainMode.mChatFragment
-													.isAdded()) {
-												mMainMode.mChatFragment.mAdapter
-														.notifyDataSetChanged();
-											}
-										}
-
-									});
+						public void modifyData(Data data) {
+							try {
+								Data localData = (Data) StreamParser
+										.parseToObject(openFileInput(data.user.phone));
+								if (localData != null) {
+									data.user.head = localData.user.head;
+									data.user.nickName = localData.user.nickName;
+									data.user.mainBusiness = localData.user.mainBusiness;
+									data.circles = localData.circles;
+									data.friends = localData.friends;
+									data.groups = localData.groups;
+									data.groupFriends = localData.groupFriends;
+									data.lastChatFriends = localData.lastChatFriends;
+									data.newFriends = localData.newFriends;
 								}
-							});
+							} catch (FileNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 
 					});
 				}
 
-			});
+				DataUtil.getUser(new GetDataListener() {
+					@Override
+					public void getSuccess() {
+						DataUtil.getCircles(new GetDataListener() {
+							@Override
+							public void getSuccess() {
+								DataUtil.getMessages(new GetDataListener() {
+									@Override
+									public void getSuccess() {
+										DataUtil.getAskFriends(new GetDataListener() {
+											@Override
+											public void getSuccess() {
+												// mAdapter.notifyDataSetChanged();
+												if (mMainMode.mCirclesFragment
+														.isAdded()) {
+													mMainMode.mCirclesFragment.mAdapter
+															.notifyDataSetChanged();
+												}
+												if (mMainMode.mChatFragment
+														.isAdded()) {
+													mMainMode.mChatFragment.mAdapter
+															.notifyDataSetChanged();
+												}
+											}
+
+										});
+									}
+								});
+							}
+
+						});
+					}
+
+				});
+			}
 		}
 	}
 

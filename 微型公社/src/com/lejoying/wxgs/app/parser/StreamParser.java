@@ -19,11 +19,13 @@ public class StreamParser {
 	public static JSONObject parseToJSONObject(InputStream is) {
 		JSONObject jsonObject = null;
 		byte[] b = parseToByteArray(is);
-		try {
-			jsonObject = new JSONObject(new String(b));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (b != null) {
+			try {
+				jsonObject = new JSONObject(new String(b));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return jsonObject;
 	}

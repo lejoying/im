@@ -14,7 +14,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
@@ -86,18 +85,22 @@ public class PushService extends Service {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
+	HttpURLConnection imCon;
+	HttpURLConnection squareCon;
+
 	public void stopLongPull() {
 		app.data.user.accessKey = "";
 		DataUtil.saveData(this);
 		isConnection = false;
-		if (mIMConnection != null) {
-			mIMConnection.disConnection();
-			mIMConnection = null;
-		}
 		if (mSquareConnection != null) {
 			mSquareConnection.disConnection();
 			mSquareConnection = null;
 		}
+		if (mIMConnection != null) {
+			mIMConnection.disConnection();
+			mIMConnection = null;
+		}
+		notifyWaitingForConnection();
 		sendBroadcast(new Intent(LONGPULL_FAILED));
 	}
 
@@ -126,17 +129,18 @@ public class PushService extends Service {
 		}
 		if (mIMConnection == null || mIMConnection.isDisconnected()) {
 			isConnection = true;
-			mPushHandler.connection(mIMConnection = createIMNetConnection());
+			mIMConnection = createIMNetConnection();
+			mPushHandler.connection(mIMConnection);
 		}
 	}
 
 	void startSquareConnection(String gid) {
-		if (!mIMConnection.isDisconnected()
-				&& (mSquareConnection == null || mSquareConnection
-						.isDisconnected())) {
-			mPushHandler
-					.connection(mSquareConnection = createSquareNetConnection(gid));
+		if (mSquareConnection != null) {
+			mSquareConnection.disConnection();
 		}
+		mSquareConnection = createSquareNetConnection(gid);
+		mPushHandler.connection(mSquareConnection);
+
 	}
 
 	NetConnection createIMNetConnection() {
@@ -151,7 +155,12 @@ public class PushService extends Service {
 				params.put("accessKey", app.data.user.accessKey);
 				settings.params = params;
 				settings.circulating = true;
+			}
 
+			@Override
+			protected void connectionCreated(HttpURLConnection httpURLConnection) {
+				imCon = httpURLConnection;
+				super.connectionCreated(httpURLConnection);
 			}
 
 			@Override
@@ -189,17 +198,15 @@ public class PushService extends Service {
 				case FAILED_TIMEOUT:
 					break;
 				default:
-					synchronized (this) {
-						try {
-							if (!NetworkUtils.hasNetwork(PushService.this)) {
-								waitForConnection();
-							} else {
-								wait(5000);
-							}
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					try {
+						if (!NetworkUtils.hasNetwork(PushService.this)) {
+							waitForConnection();
+						} else {
+							waitForConnection(5000);
 						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					break;
 				}
@@ -225,6 +232,12 @@ public class PushService extends Service {
 			}
 
 			@Override
+			protected void connectionCreated(HttpURLConnection httpURLConnection) {
+				squareCon = httpURLConnection;
+				super.connectionCreated(httpURLConnection);
+			}
+
+			@Override
 			public void success(InputStream is,
 					final HttpURLConnection httpURLConnection) {
 				final JSONObject jData = StreamParser.parseToJSONObject(is);
@@ -233,8 +246,6 @@ public class PushService extends Service {
 					try {
 						jData.get(getString(R.string.network_failed));
 						// disconnection long pull
-						Toast.makeText(PushService.this, "连接到广场失败",
-								Toast.LENGTH_LONG).show();
 						if (mSquareConnection != null) {
 							mSquareConnection.disConnection();
 							mSquareConnection = null;
@@ -249,7 +260,7 @@ public class PushService extends Service {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					reSettings();
+					reSetting();
 					app.dataHandler.exclude(new Modification() {
 						@Override
 						public void modifyData(Data data) {
@@ -303,17 +314,15 @@ public class PushService extends Service {
 				case FAILED_TIMEOUT:
 					break;
 				default:
-					synchronized (this) {
-						try {
-							if (!NetworkUtils.hasNetwork(PushService.this)) {
-								waitForConnection();
-							} else {
-								wait(5000);
-							}
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					try {
+						if (!NetworkUtils.hasNetwork(PushService.this)) {
+							waitForConnection();
+						} else {
+							waitForConnection(5000);
 						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					break;
 				}
@@ -325,6 +334,11 @@ public class PushService extends Service {
 
 	public synchronized void waitForConnection() throws InterruptedException {
 		wait();
+	}
+
+	public synchronized void waitForConnection(int time)
+			throws InterruptedException {
+		wait(time);
 	}
 
 	public synchronized void notifyWaitingForConnection() {

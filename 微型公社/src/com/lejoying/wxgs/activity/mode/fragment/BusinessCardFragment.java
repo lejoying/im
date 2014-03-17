@@ -192,8 +192,9 @@ public class BusinessCardFragment extends BaseFragment {
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					// mMCFragmentManager.replaceToContent(
-					// new AddFriendFragment(), true);
+					mMainModeManager.mAddFriendFragment.mAddFriend = mShowFriend;
+					mMainModeManager
+							.showNext(mMainModeManager.mAddFriendFragment);
 				}
 			});
 			button2.setOnClickListener(new OnClickListener() {
@@ -327,9 +328,9 @@ public class BusinessCardFragment extends BaseFragment {
 													params.put(
 															"accessKey",
 															app.data.user.accessKey);
-													params.put("phoneto", "["
+													params.put("phoneto", "[\""
 															+ mShowFriend.phone
-															+ "]");
+															+ "\"]");
 													settings.params = params;
 												}
 											});

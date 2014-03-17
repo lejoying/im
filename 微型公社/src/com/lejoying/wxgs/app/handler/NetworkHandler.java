@@ -66,16 +66,15 @@ public class NetworkHandler {
 		public static final int FAILED_WRONGCODE = 2;
 		public static final int FAILED_ERROR = 3;
 
+		Thread mCurrentWorkThread;
+
 		HttpURLConnection httpURLConnection;
 
 		boolean isRunning;
 		boolean isDisconnected;
+		boolean isCirculating;
 
 		protected abstract void settings(Settings settings);
-
-		protected void reSettings() {
-			settings(settings);
-		}
 
 		protected abstract void success(InputStream is,
 				HttpURLConnection httpURLConnection);
@@ -88,14 +87,23 @@ public class NetworkHandler {
 			// TODO Auto-generated method stub
 		}
 
+		protected void reSetting() {
+			settings(settings);
+		}
+
 		public synchronized void disConnection() {
-			if (settings.circulating) {
-				settings.circulating = false;
+			isRunning = true;
+			if (isCirculating) {
+				isCirculating = false;
 			}
 			isDisconnected = true;
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 				httpURLConnection = null;
+			}
+			if (mCurrentWorkThread != null) {
+				mCurrentWorkThread.interrupt();
+				mCurrentWorkThread = null;
 			}
 		}
 
@@ -118,6 +126,7 @@ public class NetworkHandler {
 	}
 
 	boolean startConnection(NetConnection connection) {
+
 		String url = connection.settings.url;
 		int method = connection.settings.method;
 		int timeout = connection.settings.timeout;
@@ -224,7 +233,7 @@ public class NetworkHandler {
 			}
 		}
 
-		return connection.settings.circulating;
+		return connection.isCirculating;
 	}
 
 	class NetworkHandlerWorkThread extends Thread {
@@ -246,10 +255,16 @@ public class NetworkHandler {
 						;
 					if (!netConnection.isRunning && netConnection.getRunning()) {
 						netConnection.settings(netConnection.settings);
+						netConnection.mCurrentWorkThread = this;
+						netConnection.isCirculating = netConnection.settings.circulating;
 						if (netConnection.settings.url != null
 								&& !netConnection.settings.url.equals("")) {
-							while (startConnection(netConnection))
-								;
+							if (!netConnection.isCirculating) {
+								startConnection(netConnection);
+							} else {
+								while (netConnection.isCirculating)
+									startConnection(netConnection);
+							}
 						}
 					}
 				} catch (InterruptedException e) {
