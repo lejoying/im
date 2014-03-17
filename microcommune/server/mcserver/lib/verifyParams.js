@@ -5,6 +5,7 @@ verifyEmpty.verifyEmpty = function (data, arrObj, response) {
     } else {
         for (var i = 0; i < arrObj.length; i++) {
             var it = arrObj[i];
+            console.log(it + "-");
             if (it == undefined || it == "" || it == null || it == "null" || it == "undefined") {// || it.indexOf(" ") != -1
                 return verifyEmpty.verifyResponse(response);
                 break;

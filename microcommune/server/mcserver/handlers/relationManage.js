@@ -151,10 +151,11 @@ relationManage.addfriend = function (data, response) {
  ***************************************/
 relationManage.deletefriend = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
-    var phoneTo = {};
+    var phoneTo = [];
     var arr = [phone, phoneToStr, accessKey];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
@@ -174,7 +175,7 @@ relationManage.deletefriend = function (data, response) {
         var query = [
             'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
             'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
-            'RETURN r'
+            'RETURN account1,r,account2'
         ].join('\n');
         var params = {
             phone: phone,
@@ -191,16 +192,30 @@ relationManage.deletefriend = function (data, response) {
                 console.log(error);
                 return;
             } else if (results.length > 0) {
-                var rNode = results.pop().r;
-                var rData = rNode.data;
-                if (rData.friendStatus == "delete") {
-                    deleteAccountToAccountRelationNode();
-                } else {
-                    rData.friendStatus = "delete";
-                    rData.phone = phone;
-                    rNode.save(function (error, node) {
-                    });
-                    deleteCircleAccountRelaNode(phone, phoneTo);
+                for (var index in results) {
+                    var rNode = results[index].r;
+                    var account1Data = results[index].account1.data;
+                    var account2Data = results[index].account2.data;
+                    var rData = rNode.data;
+                    if (rData.friendStatus == "delete") {
+                        deleteAccountToAccountRelationNode(account1Data.phone, account2Data.phone);
+                    } else {
+                        if (rData.friendStatus == "blacklist") {
+                            if (rData.phone == account2Data.phone) {
+                                rData.friendStatus = "both";
+                                rData.phone = account1Data.phone;
+                                rNode.save(function (error, node) {
+                                });
+                            }
+                            deleteCircleAccountRelaNode(account1Data.phone, account2Data.phone);
+                        } else {
+                            rData.friendStatus = "delete";
+                            rData.phone = phone;
+                            rNode.save(function (error, node) {
+                            });
+                            deleteCircleAccountRelaNode(account1Data.phone, account2Data.phone);
+                        }
+                    }
                 }
             } else {
                 response.write(JSON.stringify({
@@ -212,10 +227,10 @@ relationManage.deletefriend = function (data, response) {
         });
     }
 
-    function deleteAccountToAccountRelationNode() {
+    function deleteAccountToAccountRelationNode(phone, phoneTo) {
         var query = [
             'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
-            'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
+            'WHERE account1.phone={phone} AND account2.phone={phoneTo}',
             'DELETE r',
             'RETURN account1'
         ].join('\n');
@@ -241,7 +256,7 @@ relationManage.deletefriend = function (data, response) {
     function deleteCircleAccountRelaNode(phone, phoneTo) {
         var query = [
             'MATCH (account:Account)-[r:HAS_CIRCLE]->(circle:Circle)-[r1:HAS_FRIEND]->(account1:Account)',
-            'WHERE account.phone={phone} AND account1.phone IN {phoneTo}',
+            'WHERE account.phone={phone} AND account1.phone={phoneTo}',
             'DELETE r1',
             'RETURN account'
         ].join('\n');
@@ -281,7 +296,7 @@ relationManage.blacklist = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
-    var phoneTo = {};
+    var phoneTo = [];
     var arr = [phone, phoneTo, accessKey];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
@@ -447,19 +462,23 @@ relationManage.getcirclesandfriends = function (data, response) {
                 var accounts = {};
                 for (var index in results) {
                     var rData = results[index].r.data;
-                    var accountData = results[index].account1.data;
-                    var account = {
-                        uid: accountData.uid,
-                        ID: accountData.ID,
-                        sex: accountData.sex,
-                        phone: accountData.phone,
-                        mainBusiness: accountData.mainBusiness,
-                        head: accountData.head,
-                        byPhone: accountData.byPhone,
-                        nickName: accountData.nickName,
-                        friendStatus: rData.friendStatus
-                    };
-                    accounts[accountData.phone] = account;
+                    if ((rData.friendStatus == "delete" || rData.friendStatus == "both") && rData.phone == phone) {
+                        continue;
+                    } else {
+                        var accountData = results[index].account1.data;
+                        var account = {
+                            uid: accountData.uid,
+                            ID: accountData.ID,
+                            sex: accountData.sex,
+                            phone: accountData.phone,
+                            mainBusiness: accountData.mainBusiness,
+                            head: accountData.head,
+                            byPhone: accountData.byPhone,
+                            nickName: accountData.nickName,
+                            friendStatus: rData.friendStatus
+                        };
+                        accounts[accountData.phone] = account;
+                    }
                 }
                 getCircleFriendsNode(accounts, circles, phone);
             } else {

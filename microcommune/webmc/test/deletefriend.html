@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>删除好友</title>
+    <script type="text/javascript" src="./../static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var phone = document.getElementById("js_name").value;
+            var phoneTo = document.getElementById("js_geotype").value;
+            $.ajax({
+                type: "POST",
+                url: "/api2/relation/deletefriend?",
+                data: {
+                    phone: phone,
+                    accessKey: "lejoying",
+                    phoneto: JSON.stringify([phoneTo])
+                },
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div style="margin-left: 800px;margin-top: 200px;">
+    phone: <input type="text" id="js_name"><br/>
+    phoneTo: <input type="text" id="js_geotype"><br/>
+    <input type="button" value="提交" onclick="commit()">
+</div>
+</body>
+</html>

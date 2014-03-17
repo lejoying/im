@@ -4,6 +4,7 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var fs = require('fs');
 var sha1 = require('../../mcserver/tools/sha1');
+var ajax = require('../../mcserver/lib/ajax.js');
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 /***************************************
@@ -148,21 +149,32 @@ imagesManage.get = function (data, response) {
 }
 imagesManage.show = function (data, response) {
     response.asynchronous = 1;
-    var fileName = data.filename;
-    fileName = fileName.toLowerCase();
-    fs.readFile(serverSetting.imageFolder + fileName, "binary", function (error, file) {
-        if (error) {
-            console.log(error + "\n");
-            response.write(JSON.stringify({
-                "提示信息": "获取图片失败",
-                "失败原因": "数据异常"
-            }));
-            response.end();
-        } else {
-            response.writeHead(200, {"Content-Type": "image/png"});
-            response.write(file, "binary");
+    ajax.ajax({
+        url: "https://res.wx.qq.com/zh_CN/htmledition/images/spacer17ced3.gif",
+        type: "POST",
+        data: {},
+        success: function (data) {
+            console.log(data);
+            response.writeHead(200, {"Content-Type": "image/gif"});
+            response.write(JSON.stringify(data));
             response.end();
         }
     });
+    /*var fileName = data.filename;
+     fileName = fileName.toLowerCase();
+     fs.readFile(serverSetting.imageFolder + fileName, "binary", function (error, file) {
+     if (error) {
+     console.log(error + "\n");
+     response.write(JSON.stringify({
+     "提示信息": "获取图片失败",
+     "失败原因": "数据异常"
+     }));
+     response.end();
+     } else {
+     response.writeHead(200, {"Content-Type": "image/png"});
+     response.write(file, "binary");
+     response.end();
+     }
+     });*/
 }
 module.exports = imagesManage;

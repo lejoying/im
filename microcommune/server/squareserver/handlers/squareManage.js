@@ -12,6 +12,7 @@ squareManage.sendsquaremessage = function (data, response) {
     console.log(data);
     var accessKey = data.accessKey;
     var gid = data.gid;
+    var nickName = data.nickName;
     var messageStr = data.message;
     var message = {};
     var one = {
@@ -52,6 +53,7 @@ squareManage.sendsquaremessage = function (data, response) {
             sendType: "square",
             contentType: content.contentType,
             phone: phone,
+            nickName: nickName,
             gid: gid,
             content: content.content,
             time: new Date().getTime()
