@@ -17,6 +17,7 @@ import com.lejoying.wxgs.activity.BaseActivity;
 import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler;
+import com.lejoying.wxgs.app.handler.EventHandler;
 import com.lejoying.wxgs.app.handler.FileHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
@@ -36,6 +37,7 @@ public class MainApplication extends Application {
 	public DataHandler dataHandler;
 	public NetworkHandler networkHandler;
 	public FileHandler fileHandler;
+	public EventHandler eventHandler;
 
 	public static String currentTAG;
 	public static BaseActivity currentActivity;
@@ -71,6 +73,8 @@ public class MainApplication extends Application {
 		networkHandler = new NetworkHandler(5);
 		fileHandler = new FileHandler();
 		fileHandler.initialize(this);
+		eventHandler = new EventHandler();
+		eventHandler.initialize(this);
 
 		// initialize tool
 		mSHA1 = new SHA1();

@@ -155,12 +155,12 @@ public class PushService extends Service {
 				Response response = new Response(is) {
 					@Override
 					public void handleResponse(InputStream is) {
-						JSONObject jObject = StreamParser.parseToJSONObject(is);
+						JSONObject jData = StreamParser.parseToJSONObject(is);
 						httpURLConnection.disconnect();
-						if (jObject != null) {
+						if (jData != null) {
 							try {
 								System.out
-										.println(jObject
+										.println(jData
 												.get(getString(R.string.network_failed)));
 
 								// disconnection long pull
@@ -170,8 +170,8 @@ public class PushService extends Service {
 								e.printStackTrace();
 							}
 							Event event = JSONParser
-									.generateEventFromJSON(jObject);
-							System.out.println(event);
+									.generateEventFromJSON(jData);
+							app.eventHandler.handleEvent(event);
 						}
 					}
 				};
@@ -241,7 +241,9 @@ public class PushService extends Service {
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
-							System.out.println(jData.toString());
+							Event event = JSONParser
+									.generateEventFromJSON(jData);
+							app.eventHandler.handleEvent(event);
 						}
 					}
 				};

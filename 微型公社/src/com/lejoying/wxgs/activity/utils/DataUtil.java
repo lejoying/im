@@ -102,10 +102,7 @@ public class DataUtil {
 									.keySet();
 							for (String phone : phones) {
 								Friend friend = friends.get(phone);
-								if (data.friends.get(phones) != null) {
-									friend.messages = data.friends.get(phones).messages;
-								}
-								data.friends.put(phone, friend);
+								updateFriend(friend, data);
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -140,8 +137,8 @@ public class DataUtil {
 		};
 		app.networkHandler.connection(netConnection);
 	}
-	
-	public void updateFriend(Friend friend, Data data) {
+
+	public static void updateFriend(Friend friend, Data data) {
 		Friend updateFriend = data.friends.get(friend.phone);
 		if (updateFriend != null) {
 			if (friend.head != null && !friend.head.equals("")) {
@@ -156,6 +153,8 @@ public class DataUtil {
 			if (friend.friendStatus != null && !friend.friendStatus.equals("")) {
 				updateFriend.friendStatus = friend.friendStatus;
 			}
+		} else {
+			data.friends.put(friend.phone, friend);
 		}
 	}
 
@@ -273,7 +272,10 @@ public class DataUtil {
 										.get(message.friendPhone);
 								if (friend != null
 										&& !friend.messages.contains(message)) {
+									data.lastChatFriends.remove(friend.phone);
+									data.lastChatFriends.add(0, friend.phone);
 									friend.messages.add(message);
+									friend.notReadMessagesCount++;
 								}
 							}
 						} catch (JSONException e) {

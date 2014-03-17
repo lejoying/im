@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity {
 	public static final String MODE_LOGIN = "login";
 	public static final String MODE_MAIN = "main";
 
-	String mode = "";
+	public String mode = "";
 
 	int mContentID = R.id.fragmentContent;
 

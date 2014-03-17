@@ -263,7 +263,9 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					app.data.nowChatFriend = mShowFriend;
+					mMainModeManager.mChatFragment.mStatus = ChatFragment.CHAT_FRIEND;
+					mMainModeManager.mChatFragment.mNowChatFriend = mShowFriend;
+					mMainModeManager.showNext(mMainModeManager.mChatFragment);
 				}
 			});
 			button2.setOnClickListener(new OnClickListener() {

@@ -189,7 +189,7 @@ public class CirclesFragment extends BaseFragment {
 		} else {
 			showNewFriends = false;
 		}
-		if (initShowMessages) {
+		if (initShowMessages || showMessageCount < 5) {
 			showMessageCount = lastChatFriends.size() > 5 ? 5 : lastChatFriends
 					.size();
 		}
@@ -202,7 +202,7 @@ public class CirclesFragment extends BaseFragment {
 		}
 	}
 
-	class CirclesAdapter extends ScrollContentAdapter {
+	public class CirclesAdapter extends ScrollContentAdapter {
 
 		public CirclesAdapter(ScrollContent scrollContent) {
 			super(scrollContent);
@@ -345,11 +345,10 @@ public class CirclesFragment extends BaseFragment {
 
 					@Override
 					public void onClick(View view) {
-						app.data.nowChatFriend = friends.get(lastChatFriends
-								.get(arg0 - messageFirstPosition));
-						// mMCFragmentManager.replaceToContent(new
-						// ChatFragment(),
-						// true);
+						mMainModeManager.mChatFragment.mStatus = ChatFragment.CHAT_FRIEND;
+						mMainModeManager.mChatFragment.mNowChatFriend = friend;
+						mMainModeManager
+								.showNext(mMainModeManager.mChatFragment);
 					}
 				});
 				break;
@@ -373,8 +372,8 @@ public class CirclesFragment extends BaseFragment {
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							// mMCFragmentManager.replaceToContent(
-							// new NewFriendsFragment(), true);
+							mMainModeManager
+									.showNext(mMainModeManager.mNewFriendsFragment);
 						}
 					});
 				} else if (arg0 == showMessageCount + messageFirstPosition) {
@@ -496,9 +495,6 @@ public class CirclesFragment extends BaseFragment {
 										public void onResult(String where) {
 											iv_head.setImageBitmap(app.fileHandler.bitmaps
 													.get(headFileName));
-											if (where == app.fileHandler.FROM_WEB) {
-												mAdapter.notifyDataSetChanged();
-											}
 										}
 									});
 							itemHolder.tv_nickname.setText(friends.get(phones

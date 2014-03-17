@@ -37,7 +37,6 @@ public class Data implements Serializable {
 	// temp data
 	public List<Friend> nearByFriends = new ArrayList<Friend>();
 	public List<Group> nearByGroups = new ArrayList<Group>();
-	public Friend nowChatFriend;
 
 	public boolean isClear;
 	public boolean isChanged;
@@ -54,6 +53,5 @@ public class Data implements Serializable {
 		newFriends.clear();
 		nearByFriends.clear();
 		nearByGroups.clear();
-		nowChatFriend = null;
 	}
 }
