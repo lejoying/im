@@ -1,5 +1,7 @@
 package com.lejoying.wxgs.activity;
 
+import java.io.FileNotFoundException;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +14,14 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.app.service.PushService;
 
 public class MainActivity extends BaseActivity {
@@ -94,6 +100,68 @@ public class MainActivity extends BaseActivity {
 			mLoginMode.release();
 			mMainMode.initialize();
 			mMainMode.show(mMainMode.mSquareFragment);
+
+			if (app.data.isClear) {
+				app.dataHandler.exclude(new Modification() {
+					@Override
+					public void modifyData(Data data) {
+						try {
+							Data localData = (Data) StreamParser
+									.parseToObject(openFileInput(data.user.phone));
+							if (localData != null) {
+								data.user.head = localData.user.head;
+								data.user.nickName = localData.user.nickName;
+								data.user.mainBusiness = localData.user.mainBusiness;
+								data.circles = localData.circles;
+								data.friends = localData.friends;
+								data.groups = localData.groups;
+								data.groupFriends = localData.groupFriends;
+								data.lastChatFriends = localData.lastChatFriends;
+								data.newFriends = localData.newFriends;
+							}
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+				});
+			}
+
+			DataUtil.getUser(new GetDataListener() {
+				@Override
+				public void getSuccess() {
+					DataUtil.getCircles(new GetDataListener() {
+						@Override
+						public void getSuccess() {
+							DataUtil.getMessages(new GetDataListener() {
+								@Override
+								public void getSuccess() {
+									DataUtil.getAskFriends(new GetDataListener() {
+										@Override
+										public void getSuccess() {
+											// mAdapter.notifyDataSetChanged();
+											if (mMainMode.mCirclesFragment
+													.isAdded()) {
+												mMainMode.mCirclesFragment.mAdapter
+														.notifyDataSetChanged();
+											}
+											if (mMainMode.mChatFragment
+													.isAdded()) {
+												mMainMode.mChatFragment.mAdapter
+														.notifyDataSetChanged();
+											}
+										}
+
+									});
+								}
+							});
+						}
+
+					});
+				}
+
+			});
 		}
 	}
 

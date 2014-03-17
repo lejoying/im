@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Bundle;
@@ -25,8 +26,12 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.service.PushService;
 
 public class SquareFragment extends BaseFragment implements OnClickListener {
@@ -100,7 +105,9 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 			mSquareMessages = app.data.squareMessages.get(mCurrendSquareID);
 			mSquareMessages = mSquareMessages != null ? mSquareMessages
 					: new ArrayList<Message>();
+
 			super.notifyDataSetChanged();
+			mSqureMessageView.setSelection(mAdapter.getCount() - 1);
 		}
 
 		@Override
@@ -122,7 +129,7 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			MessageHolder messageHolder;
 			if (convertView == null) {
 				convertView = mInflater.inflate(
@@ -139,11 +146,74 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 
 			messageHolder.nickName
 					.setText(mSquareMessages.get(position).nickName);
+
+			messageHolder.nickName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					search(mSquareMessages.get(position).phone);
+				}
+			});
 			messageHolder.message
 					.setText(mSquareMessages.get(position).content);
 
 			return convertView;
 		}
+	}
+
+	public void search(final String phone) {
+
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.ACCOUNT_GET;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("target", "[\"" + phone + "\"]");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					final Friend friend = JSONParser
+							.generateFriendFromJSON(jData.getJSONArray(
+									"accounts").getJSONObject(0));
+
+					if (phone.equals(app.data.user.phone)) {
+						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+						app.dataHandler.exclude(new Modification() {
+							@Override
+							public void modifyData(Data data) {
+								data.user.nickName = friend.nickName;
+								data.user.mainBusiness = friend.mainBusiness;
+								data.user.head = friend.head;
+							}
+						});
+					} else if (app.data.friends.get(phone) != null) {
+						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+						app.dataHandler.exclude(new Modification() {
+
+							@Override
+							public void modifyData(Data data) {
+								friend.messages = data.friends.get(phone).messages;
+								data.friends.put(phone, friend);
+							}
+						});
+					} else {
+						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
+					}
+					mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+					mMainModeManager
+							.showNext(mMainModeManager.mBusinessCardFragment);
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 
 	class MessageHolder {
@@ -161,6 +231,7 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 				return;
 			}
 			mViewBroadcast.setText("");
+			hideSoftInput();
 			app.networkHandler.connection(new CommonNetConnection() {
 
 				@Override

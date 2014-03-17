@@ -69,11 +69,8 @@ public class PushService extends Service {
 			String flag = intent.getStringExtra("flag");
 			if (gid != null && !gid.equals("") && flag != null
 					&& !flag.equals("")) {
-				if (!mCurrentConnectionGid.equals(gid)) {
-					if (mSquareConnection != null
-							&& !mSquareConnection.isDisconnected()) {
-						mSquareConnection.disConnection();
-					}
+				if (mSquareConnection != null) {
+					mSquareConnection.disConnection();
 				}
 				mCurrentConnectionGid = gid;
 				mCurrentFlag = flag;

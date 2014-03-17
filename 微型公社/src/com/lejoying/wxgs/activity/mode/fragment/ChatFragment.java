@@ -655,8 +655,10 @@ public class ChatFragment extends BaseFragment {
 			public void modifyUI() {
 				mAdapter.notifyDataSetChanged();
 				chatContent.setSelection(mAdapter.getCount() - 1);
-				mMainModeManager.mCirclesFragment.mAdapter
-						.notifyDataSetChanged();
+				if (mMainModeManager.mCirclesFragment.isAdded()) {
+					mMainModeManager.mCirclesFragment.mAdapter
+							.notifyDataSetChanged();
+				}
 			}
 		});
 

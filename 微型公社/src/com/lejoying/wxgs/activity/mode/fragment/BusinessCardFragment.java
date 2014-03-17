@@ -319,15 +319,17 @@ public class BusinessCardFragment extends BaseFragment {
 												@Override
 												protected void settings(
 														Settings settings) {
-													settings.url = API.RELATION_DELETEFRIEND;
+													settings.url = API.DOMAIN
+															+ API.RELATION_DELETEFRIEND;
 													Map<String, String> params = new HashMap<String, String>();
 													params.put("phone",
 															app.data.user.phone);
 													params.put(
 															"accessKey",
 															app.data.user.accessKey);
-													params.put("phoneto",
-															mShowFriend.phone);
+													params.put("phoneto", "["
+															+ mShowFriend.phone
+															+ "]");
 													settings.params = params;
 												}
 											});

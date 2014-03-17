@@ -30,10 +30,11 @@ public class DataUtil {
 
 	static MainApplication app = MainApplication.getMainApplication();
 
-	public interface GetDataListener {
-		public void getSuccess();
+	public static abstract class GetDataListener {
+		public abstract void getSuccess();
 
-		public void getFailed();
+		public void getFailed() {
+		};
 	}
 
 	public static void getUser(final GetDataListener listener) {
@@ -268,8 +269,7 @@ public class DataUtil {
 									.generateMessagesFromJSON(jData
 											.getJSONArray("messages"));
 							for (Message message : messages) {
-								Friend friend = data.friends
-										.get(message.phone);
+								Friend friend = data.friends.get(message.phone);
 								if (friend != null
 										&& !friend.messages.contains(message)) {
 									data.lastChatFriends.remove(friend.phone);

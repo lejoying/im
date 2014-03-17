@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,20 +21,15 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.utils.DataUtil;
-import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.CommonViewPager;
 import com.lejoying.wxgs.activity.view.ScrollContent;
 import com.lejoying.wxgs.activity.view.ScrollContentAdapter;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Message;
-import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
-import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class CirclesFragment extends BaseFragment {
 
@@ -86,89 +80,6 @@ public class CirclesFragment extends BaseFragment {
 		initData(true);
 		mAdapter = new CirclesAdapter(mCirclesContent);
 		mCirclesContent.setAdapter(mAdapter);
-
-		if (app.data.isClear) {
-			app.dataHandler.exclude(new Modification() {
-				@Override
-				public void modifyData(Data data) {
-					try {
-						Data localData = (Data) StreamParser
-								.parseToObject(getActivity().openFileInput(
-										data.user.phone));
-						if (localData != null) {
-							data.user.head = localData.user.head;
-							data.user.nickName = localData.user.nickName;
-							data.user.mainBusiness = localData.user.mainBusiness;
-							data.circles = localData.circles;
-							data.friends = localData.friends;
-							data.groups = localData.groups;
-							data.groupFriends = localData.groupFriends;
-							data.lastChatFriends = localData.lastChatFriends;
-							data.newFriends = localData.newFriends;
-						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-
-				@Override
-				public void modifyUI() {
-					mAdapter.notifyDataSetChanged();
-					super.modifyUI();
-				}
-			});
-		}
-
-		DataUtil.getUser(new GetDataListener() {
-
-			@Override
-			public void getSuccess() {
-				DataUtil.getCircles(new GetDataListener() {
-
-					@Override
-					public void getSuccess() {
-						DataUtil.getMessages(new GetDataListener() {
-
-							@Override
-							public void getSuccess() {
-								DataUtil.getAskFriends(new GetDataListener() {
-
-									@Override
-									public void getSuccess() {
-										mAdapter.notifyDataSetChanged();
-									}
-
-									@Override
-									public void getFailed() {
-										// TODO Auto-generated method stub
-
-									}
-								});
-							}
-
-							@Override
-							public void getFailed() {
-								// TODO Auto-generated method stub
-
-							}
-						});
-					}
-
-					@Override
-					public void getFailed() {
-						// TODO Auto-generated method stub
-
-					}
-				});
-			}
-
-			@Override
-			public void getFailed() {
-				// TODO Auto-generated method stub
-
-			}
-		});
 
 		return mContentView;
 	}
