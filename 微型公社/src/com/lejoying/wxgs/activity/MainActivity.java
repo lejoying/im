@@ -93,7 +93,7 @@ public class MainActivity extends BaseActivity {
 			mode = MODE_MAIN;
 			mLoginMode.release();
 			mMainMode.initialize();
-			mMainMode.show(mMainMode.mCirclesFragment);
+			mMainMode.show(mMainMode.mSquareFragment);
 		}
 	}
 

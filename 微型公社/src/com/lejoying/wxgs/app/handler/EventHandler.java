@@ -14,6 +14,9 @@ public class EventHandler {
 	}
 
 	public void handleEvent(Event event) {
+		if (event == null) {
+			return;
+		}
 		if (event.event.equals("message")) {
 			try {
 				DataUtil.getMessages(new GetDataListener() {
@@ -22,8 +25,11 @@ public class EventHandler {
 						if (MainActivity.instance != null
 								&& MainActivity.instance.mode
 										.equals(MainActivity.MODE_MAIN)) {
-							MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
-									.notifyDataSetChanged();
+							if (MainActivity.instance.mMainMode.mCirclesFragment
+									.isAdded()) {
+								MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
+										.notifyDataSetChanged();
+							}
 							if (MainActivity.instance.mMainMode.mChatFragment
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mChatFragment.mAdapter
@@ -42,12 +48,36 @@ public class EventHandler {
 
 			}
 		} else if (event.event.equals("newfriend")) {
-			if (MainActivity.instance != null
-					&& MainActivity.instance.mode
-							.equals(MainActivity.MODE_MAIN)) {
-				MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
-						.notifyDataSetChanged();
-			}
+			DataUtil.getAskFriends(new GetDataListener() {
+				@Override
+				public void getSuccess() {
+					if (MainActivity.instance != null
+							&& MainActivity.instance.mode
+									.equals(MainActivity.MODE_MAIN)) {
+						if (MainActivity.instance != null
+								&& MainActivity.instance.mode
+										.equals(MainActivity.MODE_MAIN)) {
+							if (MainActivity.instance.mMainMode.mCirclesFragment
+									.isAdded()) {
+								MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
+										.notifyDataSetChanged();
+							}
+							if (MainActivity.instance.mMainMode.mNewFriendsFragment
+									.isAdded()) {
+								MainActivity.instance.mMainMode.mNewFriendsFragment.mAdapter
+										.notifyDataSetChanged();
+							}
+						}
+					}
+				}
+
+				@Override
+				public void getFailed() {
+					// TODO Auto-generated method stub
+
+				}
+			});
+
 		}
 	}
 }

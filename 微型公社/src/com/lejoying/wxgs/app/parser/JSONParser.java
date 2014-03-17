@@ -213,25 +213,30 @@ public class JSONParser {
 				String phoneReceive = new JSONArray(
 						jMessage.getString("phoneto")).getString(0);
 
-				String friendPhone = phoneSend;
+				String phone = phoneSend;
 
 				if (phoneSend.equals(app.data.user.phone)) {
 					message.type = Message.MESSAGE_TYPE_SEND;
-					friendPhone = phoneReceive;
+					phone = phoneReceive;
 				} else if (phoneReceive.equals(app.data.user.phone)) {
 					message.type = Message.MESSAGE_TYPE_RECEIVE;
-					friendPhone = phoneSend;
+					phone = phoneSend;
 				}
-				message.friendPhone = friendPhone;
+				message.phone = phone;
 			} else if (message.sendType.equals("group")
 					|| message.sendType.equals("tempGroup")) {
-				String phoneSend = jMessage.getString("phone");
-				if (phoneSend.equals(app.data.user.phone)) {
+				String phone = jMessage.getString("phone");
+				if (phone.equals(app.data.user.phone)) {
 					message.type = Message.MESSAGE_TYPE_SEND;
 				} else {
 					message.type = Message.MESSAGE_TYPE_RECEIVE;
 				}
+				message.phone = phone;
 				message.gid = jMessage.getString("gid");
+			} else if (message.sendType.equals("square")) {
+				message.gid = jMessage.getString("gid");
+				message.phone = jMessage.getString("phone");
+				message.nickName = jMessage.getString("nickName");
 			}
 
 			message.time = jMessage.getString("time");

@@ -18,8 +18,9 @@ public class Message implements Serializable {
 	public String sendType = "";
 	public String gid = "";
 	public String contentType = "";
-	public String status;
-	public String friendPhone;
+	public String status = "";
+	public String phone = "";
+	public String nickName = "";
 
 	@Override
 	public boolean equals(Object o) {
@@ -31,8 +32,8 @@ public class Message implements Serializable {
 						&& time.equals(m.time) && sendType.equals(m.sendType)
 						&& gid.equals(m.gid)
 						&& contentType.equals(m.contentType)
-						&& status.equals(m.status)
-						&& friendPhone.equals(m.friendPhone)) {
+						&& status.equals(m.status) && phone.equals(m.phone)
+						&& nickName.equals(m.nickName)) {
 					flag = true;
 				}
 			} catch (Exception e) {

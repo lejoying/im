@@ -2,7 +2,9 @@ package com.lejoying.wxgs.app.service;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -15,10 +17,14 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Event;
+import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Response;
@@ -38,6 +44,7 @@ public class PushService extends Service {
 	ResponseHandler mResponseHandler;
 
 	String mCurrentConnectionGid = "";
+	String mCurrentFlag = "0";
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -69,7 +76,8 @@ public class PushService extends Service {
 					}
 				}
 				mCurrentConnectionGid = gid;
-				startSquareConnection(gid, flag);
+				mCurrentFlag = flag;
+				startSquareConnection(gid);
 			}
 			String operation = intent.getStringExtra("operation");
 
@@ -125,13 +133,12 @@ public class PushService extends Service {
 		}
 	}
 
-	void startSquareConnection(String gid, String flag) {
+	void startSquareConnection(String gid) {
 		if (!mIMConnection.isDisconnected()
 				&& (mSquareConnection == null || mSquareConnection
 						.isDisconnected())) {
 			mPushHandler
-					.connection(mSquareConnection = createSquareNetConnection(
-							gid, flag));
+					.connection(mSquareConnection = createSquareNetConnection(gid));
 		}
 	}
 
@@ -147,6 +154,7 @@ public class PushService extends Service {
 				params.put("accessKey", app.data.user.accessKey);
 				settings.params = params;
 				settings.circulating = true;
+
 			}
 
 			@Override
@@ -204,7 +212,7 @@ public class PushService extends Service {
 		return netConnection;
 	}
 
-	NetConnection createSquareNetConnection(final String gid, final String flag) {
+	NetConnection createSquareNetConnection(final String gid) {
 		NetConnection netConnection = new NetConnection() {
 			@Override
 			public void settings(Settings settings) {
@@ -214,7 +222,7 @@ public class PushService extends Service {
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
 				params.put("gid", gid);
-				params.put("flag", flag);
+				params.put("flag", mCurrentFlag);
 				settings.params = params;
 				settings.circulating = true;
 			}
@@ -222,32 +230,74 @@ public class PushService extends Service {
 			@Override
 			public void success(InputStream is,
 					final HttpURLConnection httpURLConnection) {
-				Response response = new Response(is) {
-					@Override
-					public void handleResponse(InputStream is) {
-						JSONObject jData = StreamParser.parseToJSONObject(is);
-						httpURLConnection.disconnect();
-						if (jData != null) {
+				final JSONObject jData = StreamParser.parseToJSONObject(is);
+				httpURLConnection.disconnect();
+				if (jData != null) {
+					try {
+						jData.get(getString(R.string.network_failed));
+						// disconnection long pull
+						Toast.makeText(PushService.this, "连接到广场失败",
+								Toast.LENGTH_LONG).show();
+						if (mSquareConnection != null) {
+							mSquareConnection.disConnection();
+							mSquareConnection = null;
+						}
+						return;
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					try {
+						mCurrentFlag = jData.getString("flag");
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					reSettings();
+					app.dataHandler.exclude(new Modification() {
+						@Override
+						public void modifyData(Data data) {
 							try {
-								jData.get(getString(R.string.network_failed));
-								// disconnection long pull
-								Toast.makeText(PushService.this, "连接到广场失败",
-										Toast.LENGTH_LONG).show();
-								if (mSquareConnection != null) {
-									mSquareConnection.disConnection();
-									mSquareConnection = null;
+								if (data.squareMessages
+										.get(mCurrentConnectionGid) == null) {
+									data.squareMessages.put(
+											mCurrentConnectionGid,
+											new ArrayList<Message>());
 								}
-								return;
+
+								data.squareFlags.put(mCurrentConnectionGid,
+										jData.getString("flag"));
+
+								List<Message> squareMessages = data.squareMessages
+										.get(mCurrentConnectionGid);
+								List<Message> newMessages = JSONParser
+										.generateMessagesFromJSON(jData
+												.getJSONArray("messages"));
+								for (Message message : newMessages) {
+									if (!squareMessages.contains(message)) {
+										squareMessages.add(message);
+									}
+								}
 							} catch (JSONException e) {
+								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							Event event = JSONParser
-									.generateEventFromJSON(jData);
-							app.eventHandler.handleEvent(event);
 						}
-					}
-				};
-				mResponseHandler.exclude(response);
+
+						@Override
+						public void modifyUI() {
+							if (MainActivity.instance != null
+									&& MainActivity.instance.mode
+											.equals(MainActivity.MODE_MAIN)) {
+								if (MainActivity.instance.mMainMode.mSquareFragment
+										.isAdded()) {
+									MainActivity.instance.mMainMode.mSquareFragment.mAdapter
+											.notifyDataSetChanged();
+								}
+							}
+						}
+					});
+				}
+
 			}
 
 			@Override

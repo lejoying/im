@@ -640,7 +640,7 @@ public class ChatFragment extends BaseFragment {
 		message.content = content;
 		message.contentType = type;
 		message.status = "sending";
-		message.friendPhone = mNowChatFriend.phone;
+		message.phone = mNowChatFriend.phone;
 		message.time = String.valueOf(new Date().getTime());
 
 		app.dataHandler.exclude(new Modification() {

@@ -73,6 +73,10 @@ public class NetworkHandler {
 
 		protected abstract void settings(Settings settings);
 
+		protected void reSettings() {
+			settings(settings);
+		}
+
 		protected abstract void success(InputStream is,
 				HttpURLConnection httpURLConnection);
 

@@ -27,6 +27,7 @@ public class Data implements Serializable {
 	public Map<String, Friend> friends = new HashMap<String, Friend>();
 
 	public Map<String, List<Message>> squareMessages = new HashMap<String, List<Message>>();
+	public Map<String, String> squareFlags = new HashMap<String, String>();
 
 	// Last messages list
 	public List<String> lastChatFriends = new ArrayList<String>();

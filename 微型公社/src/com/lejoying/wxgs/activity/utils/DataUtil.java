@@ -269,7 +269,7 @@ public class DataUtil {
 											.getJSONArray("messages"));
 							for (Message message : messages) {
 								Friend friend = data.friends
-										.get(message.friendPhone);
+										.get(message.phone);
 								if (friend != null
 										&& !friend.messages.contains(message)) {
 									data.lastChatFriends.remove(friend.phone);

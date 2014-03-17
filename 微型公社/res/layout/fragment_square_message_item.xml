@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/nickName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:clickable="true"
+        android:lineSpacingExtra="2dp"
+        android:text="麦穗儿"
+        android:textColor="#fff"
+        android:textSize="15sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/colon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/nickName"
+        android:clickable="true"
+        android:lineSpacingExtra="2dp"
+        android:text=":"
+        android:textColor="#fff"
+        android:textSize="15sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/colon"
+        android:clickable="true"
+        android:lineSpacingExtra="2dp"
+        android:text="分享了xxx的图片。[2小时前]"
+        android:textColor="#fff"
+        android:textSize="15sp" >
+    </TextView>
+
+</RelativeLayout>
