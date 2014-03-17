@@ -167,11 +167,12 @@ relationManage.deletefriend = function (data, response) {
                 "失败原因": "参数格式错误"
             }));
             response.end();
-            console.log(e);
+            console.error(e);
             return;
         }
     }
     function modifyAccountBetweenRelation(phone, phoneTo) {
+        console.log(phoneTo);
         var query = [
             'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
             'WHERE account1.phone={phone} AND account2.phone IN {phoneTo}',
@@ -189,7 +190,7 @@ relationManage.deletefriend = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.error(error + "modifyAccountBetweenRelation");
                 return;
             } else if (results.length > 0) {
                 for (var index in results) {
@@ -218,6 +219,8 @@ relationManage.deletefriend = function (data, response) {
                     }
                 }
             } else {
+                console.log("数据异常0" + "---" + results.length);
+                console.log(phoneTo[0] == 121);
                 response.write(JSON.stringify({
                     "提示信息": "删除失败",
                     "失败原因": "数据异常"
@@ -245,7 +248,7 @@ relationManage.deletefriend = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.error(error + "deleteAccountToAccountRelationNode");
                 return;
             } else {
                 deleteCircleAccountRelaNode(phone, phoneTo);
@@ -271,17 +274,11 @@ relationManage.deletefriend = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.log(error);
+                console.error(error + "deleteCircleAccountRelaNode");
                 return;
-            } else if (results.length > 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "删除成功"
-                }));
-                response.end();
             } else {
                 response.write(JSON.stringify({
-                    "提示信息": "删除失败",
-                    "失败原因": "数据异常"
+                    "提示信息": "删除成功"
                 }));
                 response.end();
             }
