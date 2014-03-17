@@ -17,6 +17,82 @@
     </ListView>
 
     <RelativeLayout
+        android:id="@+id/rl_audiopanel"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/card_background_normal"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="#2fff"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/iv_emoji1"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="4dp"
+                android:src="@drawable/chat_emoji_normal"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/iv_emoji2"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="4dp"
+                android:src="@drawable/chat_emoji_normal"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/iv_emoji3"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="4dp"
+                android:src="@drawable/chat_emoji_normal"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/iv_emoji4"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="4dp"
+                android:src="@drawable/chat_emoji_normal"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/iv_emoji5"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="4dp"
+                android:src="@drawable/chat_emoji_normal"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/iv_emoji6"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="4dp"
+                android:src="@drawable/chat_emoji_normal"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/iv_emoji7"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:padding="4dp"
+                android:src="@drawable/chat_emoji_normal"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/chat_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -132,6 +208,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/rl_makeaudio"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -147,6 +224,7 @@
                         tools:ignore="ContentDescription" />
 
                     <TextView
+                        android:id="@+id/tv_voice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/iv_voice"

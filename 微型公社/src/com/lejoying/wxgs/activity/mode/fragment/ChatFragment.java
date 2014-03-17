@@ -90,7 +90,10 @@ public class ChatFragment extends BaseFragment {
 	RelativeLayout rl_chatbottom;
 	RelativeLayout rl_message;
 	RelativeLayout rl_select;
+	RelativeLayout rl_audiopanel;
 	View rl_selectpicture;
+	View rl_makeaudio;
+	TextView tv_voice;
 
 	View groupTopBar;
 	TextView textView_groupName;
@@ -170,7 +173,11 @@ public class ChatFragment extends BaseFragment {
 				.findViewById(R.id.chat_bottom_bar);
 		rl_message = (RelativeLayout) mContent.findViewById(R.id.rl_message);
 		rl_select = (RelativeLayout) mContent.findViewById(R.id.rl_select);
+		rl_audiopanel = (RelativeLayout) mContent
+				.findViewById(R.id.rl_audiopanel);
 		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
+		rl_makeaudio = mContent.findViewById(R.id.rl_makeaudio);
+		tv_voice = (TextView) mContent.findViewById(R.id.tv_voice);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
 		textView_groupName = (TextView) mContent
@@ -247,6 +254,21 @@ public class ChatFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				selectPicture();
+			}
+		});
+		rl_makeaudio.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				int show_status = rl_audiopanel.getVisibility();
+				if (show_status == View.VISIBLE) {
+					tv_voice.setText("语音");
+					rl_audiopanel.setVisibility(View.GONE);
+				} else {
+					tv_voice.setText("取消");
+					rl_audiopanel.setVisibility(View.VISIBLE);
+				}
 			}
 		});
 

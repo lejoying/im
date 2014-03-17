@@ -153,6 +153,9 @@ squareManage.getsquaremessage = function (data, response) {
         } else if (reply.length == 0) {
             next();
         } else {
+            if (reply.length - flag > 100) {
+                flag = reply.length - 100;
+            }
             client.lrange("square_" + gid, flag, -1, function (err, reply) {
                 if (err) {
                     response.write(JSON.stringify({
