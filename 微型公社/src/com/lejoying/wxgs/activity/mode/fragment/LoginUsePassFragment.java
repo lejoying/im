@@ -34,7 +34,6 @@ public class LoginUsePassFragment extends BaseFragment implements
 
 	MainApplication app = MainApplication.getMainApplication();
 
-	View mContentView;
 	LoginModeManager mLoginMode;
 
 	private EditText mView_phone;
@@ -61,7 +60,8 @@ public class LoginUsePassFragment extends BaseFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mContentView = inflater.inflate(R.layout.fragment_login_pass, null);
+		View mContentView = inflater
+				.inflate(R.layout.fragment_login_pass, null);
 
 		mView_phone = (EditText) mContentView.findViewById(R.id.plogin_phone);
 		mView_pass = (EditText) mContentView.findViewById(R.id.plogin_pass);
@@ -159,7 +159,7 @@ public class LoginUsePassFragment extends BaseFragment implements
 					Alert.removeLoading();
 					super.unSuccess(jData);
 				}
-				
+
 				@Override
 				public void failed(int failedType) {
 					Alert.removeLoading();

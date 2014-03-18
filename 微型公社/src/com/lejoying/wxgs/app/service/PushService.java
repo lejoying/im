@@ -31,7 +31,6 @@ import com.lejoying.wxgs.app.handler.NetworkHandler.ResponseHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.StreamParser;
-import com.lejoying.wxgs.utils.NetworkUtils;
 
 public class PushService extends Service {
 
@@ -54,7 +53,7 @@ public class PushService extends Service {
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
-		mPushHandler = new NetworkHandler(2);
+		mPushHandler = new NetworkHandler(10);
 		mResponseHandler = new ResponseHandler(2);
 		super.onCreate();
 	}
@@ -63,42 +62,39 @@ public class PushService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// TODO Auto-generated method stub
 		if (intent != null) {
-			startIMConnection();
-			String gid = intent.getStringExtra("gid");
-			String flag = intent.getStringExtra("flag");
-			if (gid != null && !gid.equals("") && flag != null
-					&& !flag.equals("")) {
-				if (mSquareConnection != null) {
-					mSquareConnection.disConnection();
-				}
-				mCurrentConnectionGid = gid;
-				mCurrentFlag = flag;
-				startSquareConnection(gid);
-			}
 			String operation = intent.getStringExtra("operation");
-
 			if (operation != null && operation.equals("stop")) {
 				stopLongPull();
+			} else {
+				startIMConnection();
+				String gid = intent.getStringExtra("gid");
+				String flag = intent.getStringExtra("flag");
+				if (gid != null && !gid.equals("") && flag != null
+						&& !flag.equals("")) {
+					if (mSquareConnection != null) {
+						mSquareConnection.disConnection();
+					}
+					mCurrentConnectionGid = gid;
+					mCurrentFlag = flag;
+					startSquareConnection(gid);
+				}
 			}
 		}
 		notifyWaitingForConnection();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
-	HttpURLConnection imCon;
-	HttpURLConnection squareCon;
-
 	public void stopLongPull() {
 		app.data.user.accessKey = "";
 		DataUtil.saveData(this);
 		isConnection = false;
-		if (mSquareConnection != null) {
-			mSquareConnection.disConnection();
-			mSquareConnection = null;
-		}
 		if (mIMConnection != null) {
 			mIMConnection.disConnection();
 			mIMConnection = null;
+		}
+		if (mSquareConnection != null) {
+			mSquareConnection.disConnection();
+			mSquareConnection = null;
 		}
 		notifyWaitingForConnection();
 		sendBroadcast(new Intent(LONGPULL_FAILED));
@@ -158,12 +154,6 @@ public class PushService extends Service {
 			}
 
 			@Override
-			protected void connectionCreated(HttpURLConnection httpURLConnection) {
-				imCon = httpURLConnection;
-				super.connectionCreated(httpURLConnection);
-			}
-
-			@Override
 			public void success(InputStream is,
 					final HttpURLConnection httpURLConnection) {
 				Response response = new Response(is) {
@@ -198,16 +188,16 @@ public class PushService extends Service {
 				case FAILED_TIMEOUT:
 					break;
 				default:
-					try {
-						if (!NetworkUtils.hasNetwork(PushService.this)) {
-							waitForConnection();
-						} else {
-							waitForConnection(5000);
-						}
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					// try {
+					// if (!NetworkUtils.hasNetwork(PushService.this)) {
+					// waitForConnection();
+					// } else {
+					// waitForConnection(5000);
+					// }
+					// } catch (InterruptedException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
 					break;
 				}
 			}
@@ -217,24 +207,18 @@ public class PushService extends Service {
 	}
 
 	NetConnection createSquareNetConnection(final String gid) {
+		final Map<String, String> params = new HashMap<String, String>();
+		params.put("phone", app.data.user.phone);
+		params.put("accessKey", app.data.user.accessKey);
+		params.put("gid", gid);
+		params.put("flag", mCurrentFlag);
 		NetConnection netConnection = new NetConnection() {
 			@Override
 			public void settings(Settings settings) {
 				settings.url = API.DOMAIN + API.SQUARE_GETSQUAREMESSAGE;
 				settings.timeout = 30000;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("gid", gid);
-				params.put("flag", mCurrentFlag);
 				settings.params = params;
 				settings.circulating = true;
-			}
-
-			@Override
-			protected void connectionCreated(HttpURLConnection httpURLConnection) {
-				squareCon = httpURLConnection;
-				super.connectionCreated(httpURLConnection);
 			}
 
 			@Override
@@ -260,7 +244,8 @@ public class PushService extends Service {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					reSetting();
+					params.put("flag", mCurrentFlag);
+					reSetParams(params);
 					app.dataHandler.exclude(new Modification() {
 						@Override
 						public void modifyData(Data data) {
@@ -314,16 +299,16 @@ public class PushService extends Service {
 				case FAILED_TIMEOUT:
 					break;
 				default:
-					try {
-						if (!NetworkUtils.hasNetwork(PushService.this)) {
-							waitForConnection();
-						} else {
-							waitForConnection(5000);
-						}
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					// try {
+					// if (!NetworkUtils.hasNetwork(PushService.this)) {
+					// waitForConnection();
+					// } else {
+					// waitForConnection(5000);
+					// }
+					// } catch (InterruptedException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
 					break;
 				}
 			}

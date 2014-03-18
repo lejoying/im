@@ -1,9 +1,14 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -15,21 +20,27 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.CommonViewPager;
 import com.lejoying.wxgs.activity.view.ScrollContent;
 import com.lejoying.wxgs.activity.view.ScrollContentAdapter;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 public class CirclesFragment extends BaseFragment {
 
@@ -264,7 +275,8 @@ public class CirclesFragment extends BaseFragment {
 				});
 				break;
 			case TYPE_CIRCLE:
-				Circle circle = circles.get(arg0 - circleFirstPosition);
+				Circle circle = circles.get(circles.size()
+						- (arg0 - circleFirstPosition) - 1);
 				friendHolder.tv_groupname.setText(circle.name);
 				arg1.setOnLongClickListener(new OnLongClickListener() {
 
@@ -305,6 +317,59 @@ public class CirclesFragment extends BaseFragment {
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
+							final EditText circleName;
+							new AlertDialog.Builder(getActivity())
+									.setTitle("请输入分组名")
+									.setIcon(android.R.drawable.ic_dialog_info)
+									.setView(
+											circleName = new EditText(
+													getActivity()))
+									.setPositiveButton(
+											"确定",
+											new DialogInterface.OnClickListener() {
+												@Override
+												public void onClick(
+														DialogInterface dialog,
+														int which) {
+													app.networkHandler
+															.connection(new CommonNetConnection() {
+
+																@Override
+																protected void settings(
+																		Settings settings) {
+																	settings.url = API.DOMAIN
+																			+ API.CIRCLE_ADDCIRCLE;
+																	Map<String, String> params = new HashMap<String, String>();
+																	params.put(
+																			"phone",
+																			app.data.user.phone);
+																	params.put(
+																			"accessKey",
+																			app.data.user.accessKey);
+																	params.put(
+																			"circleName",
+																			circleName
+																					.getText()
+																					.toString());
+																	settings.params = params;
+																}
+
+																@Override
+																public void success(
+																		JSONObject jData) {
+																	DataUtil.getCircles(new GetDataListener() {
+
+																		@Override
+																		public void getSuccess() {
+																			mAdapter.notifyDataSetChanged();
+																		}
+																	});
+
+																}
+															});
+												}
+											}).setNegativeButton("取消", null)
+									.show();
 							// MCNetTools.ajax(new AjaxAdapter() {
 							//
 							// @Override

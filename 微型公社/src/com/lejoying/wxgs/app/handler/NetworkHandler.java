@@ -66,8 +66,6 @@ public class NetworkHandler {
 		public static final int FAILED_WRONGCODE = 2;
 		public static final int FAILED_ERROR = 3;
 
-		Thread mCurrentWorkThread;
-
 		HttpURLConnection httpURLConnection;
 
 		boolean isRunning;
@@ -87,8 +85,8 @@ public class NetworkHandler {
 			// TODO Auto-generated method stub
 		}
 
-		protected void reSetting() {
-			settings(settings);
+		protected void reSetParams(Map<String, String> params) {
+			settings.params = params;
 		}
 
 		public synchronized void disConnection() {
@@ -100,10 +98,6 @@ public class NetworkHandler {
 			if (httpURLConnection != null) {
 				httpURLConnection.disconnect();
 				httpURLConnection = null;
-			}
-			if (mCurrentWorkThread != null) {
-				mCurrentWorkThread.interrupt();
-				mCurrentWorkThread = null;
 			}
 		}
 
@@ -198,13 +192,20 @@ public class NetworkHandler {
 				os.close();
 				break;
 			}
-			connection.httpURLConnection = httpURLConnection;
-			connection.connectionCreated(httpURLConnection);
 			if (!connection.isDisconnected) {
-				InputStream is = httpURLConnection.getInputStream();
-
+				connection.connectionCreated(httpURLConnection);
+				connection.httpURLConnection = httpURLConnection;
+				// if (connection.settings.url.equals(API.DOMAIN +
+				// API.SESSION_EVENT)) {
+				// System.out.println("im con");
+				// }
+				// if (connection.settings.url.equals(API.DOMAIN
+				// + API.SQUARE_GETSQUAREMESSAGE)) {
+				// System.out.println("square con");
+				// }
 				int requestCode = httpURLConnection.getResponseCode();
 				if (requestCode == HttpURLConnection.HTTP_OK) {
+					InputStream is = httpURLConnection.getInputStream();
 					connection.success(is, httpURLConnection);
 				} else {
 					connection.failed(NetConnection.FAILED_WRONGCODE,
@@ -215,7 +216,6 @@ public class NetworkHandler {
 				}
 			}
 		} catch (SocketTimeoutException e) {
-			// TODO: handle exception
 			if (!connection.isDisconnected) {
 				connection.failed(NetConnection.FAILED_TIMEOUT,
 						NetConnection.RESPONSECODE_DEFAULT);
@@ -232,7 +232,13 @@ public class NetworkHandler {
 				}
 			}
 		}
-
+		// if (connection.settings.url.equals(API.DOMAIN + API.SESSION_EVENT)) {
+		// System.out.println("im ++");
+		// }
+		// if (connection.settings.url.equals(API.DOMAIN
+		// + API.SQUARE_GETSQUAREMESSAGE)) {
+		// System.out.println("square ++");
+		// }
 		return connection.isCirculating;
 	}
 
@@ -255,16 +261,37 @@ public class NetworkHandler {
 						;
 					if (!netConnection.isRunning && netConnection.getRunning()) {
 						netConnection.settings(netConnection.settings);
-						netConnection.mCurrentWorkThread = this;
 						netConnection.isCirculating = netConnection.settings.circulating;
 						if (netConnection.settings.url != null
 								&& !netConnection.settings.url.equals("")) {
-							if (!netConnection.isCirculating) {
-								startConnection(netConnection);
-							} else {
-								while (netConnection.isCirculating)
-									startConnection(netConnection);
+							// if (netConnection.settings.url.equals(API.DOMAIN
+							// + API.SESSION_EVENT)) {
+							// System.out.println("im start");
+							// }
+							// if (netConnection.settings.url.equals(API.DOMAIN
+							// + API.SQUARE_GETSQUAREMESSAGE)) {
+							// System.out.println("square start");
+							// }
+							while (startConnection(netConnection)) {
+								// if (netConnection.settings.url
+								// .equals(API.DOMAIN + API.SESSION_EVENT)) {
+								// System.out.println("im c");
+								// }
+								// if (netConnection.settings.url
+								// .equals(API.DOMAIN
+								// + API.SQUARE_GETSQUAREMESSAGE)) {
+								// System.out.println("square c");
+								// }
 							}
+							;
+							// if (netConnection.settings.url.equals(API.DOMAIN
+							// + API.SESSION_EVENT)) {
+							// System.out.println("im end");
+							// }
+							// if (netConnection.settings.url.equals(API.DOMAIN
+							// + API.SQUARE_GETSQUAREMESSAGE)) {
+							// System.out.println("square end");
+							// }
 						}
 					}
 				} catch (InterruptedException e) {

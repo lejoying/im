@@ -47,7 +47,6 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
 		mContent = inflater.inflate(R.layout.f_addfriend, null);
 		mView_message = (EditText) mContent.findViewById(R.id.et_message);
 		mView_send = mContent.findViewById(R.id.btn_send);
@@ -64,23 +63,16 @@ public class AddFriendFragment extends BaseFragment implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_send:
-			final Bundle params = new Bundle();
-			params.putString("phone", app.data.user.phone);
-			params.putString("accessKey", app.data.user.accessKey);
-			params.putString("phoneto",
-					mMainModeManager.mBusinessCardFragment.mShowFriend.phone);
-			params.putString("message", mView_message.getText().toString());
 			mAddFriend.addMessage = mView_message.getText().toString();
+			mAddFriend.temp = true;
 			final NetConnection addConnection = new CommonNetConnection() {
 				@Override
 				protected void settings(Settings settings) {
-					settings.url = API.RELATION_ADDFRIEND;
+					settings.url = API.DOMAIN + API.RELATION_ADDFRIEND;
 					Map<String, String> params = new HashMap<String, String>();
 					params.put("phone", app.data.user.phone);
 					params.put("accessKey", app.data.user.accessKey);
-					params.put(
-							"phoneto",
-							mMainModeManager.mBusinessCardFragment.mShowFriend.phone);
+					params.put("phoneto", mAddFriend.phone);
 					params.put("message", mView_message.getText().toString());
 					settings.params = params;
 				}
