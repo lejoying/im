@@ -22,18 +22,14 @@ public class EventHandler {
 				DataUtil.getMessages(new GetDataListener() {
 					@Override
 					public void getSuccess() {
-						if (MainActivity.instance != null
-								&& MainActivity.instance.mode
-										.equals(MainActivity.MODE_MAIN)) {
-							if (MainActivity.instance.mMainMode.mCirclesFragment
-									.isAdded()) {
-								MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
-										.notifyDataSetChanged();
+						if (MainActivity.instance != null && MainActivity.instance.mode.equals(MainActivity.MODE_MAIN)) {
+							if (MainActivity.instance.mMainMode.mCirclesFragment.isAdded()) {
+								// TODO refresh
+								// MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
+								// .notifyDataSetChanged();
 							}
-							if (MainActivity.instance.mMainMode.mChatFragment
-									.isAdded()) {
-								MainActivity.instance.mMainMode.mChatFragment.mAdapter
-										.notifyDataSetChanged();
+							if (MainActivity.instance.mMainMode.mChatFragment.isAdded()) {
+								MainActivity.instance.mMainMode.mChatFragment.mAdapter.notifyDataSetChanged();
 							}
 						}
 					}
@@ -51,21 +47,14 @@ public class EventHandler {
 			DataUtil.getAskFriends(new GetDataListener() {
 				@Override
 				public void getSuccess() {
-					if (MainActivity.instance != null
-							&& MainActivity.instance.mode
-									.equals(MainActivity.MODE_MAIN)) {
-						if (MainActivity.instance != null
-								&& MainActivity.instance.mode
-										.equals(MainActivity.MODE_MAIN)) {
-							if (MainActivity.instance.mMainMode.mCirclesFragment
-									.isAdded()) {
-								MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
-										.notifyDataSetChanged();
+					if (MainActivity.instance != null && MainActivity.instance.mode.equals(MainActivity.MODE_MAIN)) {
+						if (MainActivity.instance != null && MainActivity.instance.mode.equals(MainActivity.MODE_MAIN)) {
+							if (MainActivity.instance.mMainMode.mCirclesFragment.isAdded()) {
+								// TODO refresh
+								// MainActivity.instance.mMainMode.mCirclesFragment.mAdapter.notifyDataSetChanged();
 							}
-							if (MainActivity.instance.mMainMode.mNewFriendsFragment
-									.isAdded()) {
-								MainActivity.instance.mMainMode.mNewFriendsFragment.mAdapter
-										.notifyDataSetChanged();
+							if (MainActivity.instance.mMainMode.mNewFriendsFragment.isAdded()) {
+								MainActivity.instance.mMainMode.mNewFriendsFragment.mAdapter.notifyDataSetChanged();
 							}
 						}
 					}

@@ -43,8 +43,7 @@ public class NewFriendsFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mContent = (ListView) inflater.inflate(R.layout.f_newfriends, null);
 		mInflater = inflater;
 		return mContent;
@@ -83,39 +82,29 @@ public class NewFriendsFragment extends BaseFragment {
 			if (arg1 == null || position == 7 || position == getCount() - 8) {
 				newFriendsHolder = new NewFriendsHolder();
 				arg1 = mInflater.inflate(R.layout.f_newfriends_item, null);
-				newFriendsHolder.btn_agree = (Button) arg1
-						.findViewById(R.id.btn_agreeadd);
-				newFriendsHolder.tv_added = (TextView) arg1
-						.findViewById(R.id.tv_added);
-				newFriendsHolder.iv_head = (ImageView) arg1
-						.findViewById(R.id.iv_head);
-				newFriendsHolder.tv_nickname = (TextView) arg1
-						.findViewById(R.id.tv_nickname);
-				newFriendsHolder.tv_message = (TextView) arg1
-						.findViewById(R.id.tv_message);
-				newFriendsHolder.tv_waitagree = (TextView) arg1
-						.findViewById(R.id.tv_waitagree);
+				newFriendsHolder.btn_agree = (Button) arg1.findViewById(R.id.btn_agreeadd);
+				newFriendsHolder.tv_added = (TextView) arg1.findViewById(R.id.tv_added);
+				newFriendsHolder.iv_head = (ImageView) arg1.findViewById(R.id.iv_head);
+				newFriendsHolder.tv_nickname = (TextView) arg1.findViewById(R.id.tv_nickname);
+				newFriendsHolder.tv_message = (TextView) arg1.findViewById(R.id.tv_message);
+				newFriendsHolder.tv_waitagree = (TextView) arg1.findViewById(R.id.tv_waitagree);
 				newFriendsHolder.position = position;
 				arg1.setTag(newFriendsHolder);
 			} else {
 				newFriendsHolder = (NewFriendsHolder) arg1.getTag();
 			}
-			newFriendsHolder.tv_nickname.setText(app.data.newFriends
-					.get(position).nickName);
-			newFriendsHolder.tv_message.setText(app.data.newFriends
-					.get(position).addMessage);
+			newFriendsHolder.tv_nickname.setText(app.data.newFriends.get(position).nickName);
+			newFriendsHolder.tv_message.setText(app.data.newFriends.get(position).addMessage);
 			final String headFileName = app.data.newFriends.get(position).head;
 			final ImageView iv_head = newFriendsHolder.iv_head;
 			app.fileHandler.getHeadImage(headFileName, new FileResult() {
 				@Override
 				public void onResult(String where) {
-					iv_head.setImageBitmap(app.fileHandler.bitmaps
-							.get(headFileName));
+					iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 				}
 			});
 
-			if (app.data.friends
-					.get(app.data.newFriends.get(position).phone) != null) {
+			if (app.data.friends.get(app.data.newFriends.get(position).phone) != null) {
 				newFriendsHolder.btn_agree.setVisibility(View.GONE);
 				newFriendsHolder.tv_waitagree.setVisibility(View.GONE);
 				newFriendsHolder.tv_added.setVisibility(View.VISIBLE);
@@ -127,14 +116,12 @@ public class NewFriendsFragment extends BaseFragment {
 				} else {
 					newFriendsHolder.btn_agree.setVisibility(View.VISIBLE);
 					newFriendsHolder.tv_added.setVisibility(View.GONE);
-					newFriendsHolder.btn_agree
-							.setOnClickListener(new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									addFriend(app.data.newFriends
-											.get(position).phone);
-								}
-							});
+					newFriendsHolder.btn_agree.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							addFriend(app.data.newFriends.get(position).phone);
+						}
+					});
 				}
 			}
 			return arg1;
@@ -162,8 +149,9 @@ public class NewFriendsFragment extends BaseFragment {
 					@Override
 					public void getSuccess() {
 						mAdapter.notifyDataSetChanged();
-						mMainModeManager.mCirclesFragment.mAdapter
-								.notifyDataSetChanged();
+						// TODO refresh
+						// mMainModeManager.mCirclesFragment.mAdapter
+						// .notifyDataSetChanged();
 					}
 
 					@Override

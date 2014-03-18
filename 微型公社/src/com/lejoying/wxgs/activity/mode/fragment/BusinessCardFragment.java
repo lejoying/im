@@ -70,8 +70,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 	@SuppressLint("HandlerLeak")
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
 
 		handler = new Handler() {
@@ -95,8 +94,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 		tv_spacing = (TextView) mContent.findViewById(R.id.tv_spacing);
 		tv_spacing2 = (TextView) mContent.findViewById(R.id.tv_spacing2);
-		tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
+		tv_mainbusiness = (TextView) mContent.findViewById(R.id.tv_mainbusiness);
 		rl_show = (RelativeLayout) mContent.findViewById(R.id.rl_show);
 
 		initData();
@@ -113,19 +111,14 @@ public class BusinessCardFragment extends BaseFragment {
 			@Override
 			protected void onPostExecute(Boolean result) {
 				DisplayMetrics dm = new DisplayMetrics();
-				getActivity().getWindowManager().getDefaultDisplay()
-						.getMetrics(dm);
+				getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 
 				Rect frame = new Rect();
-				getActivity().getWindow().getDecorView()
-						.getWindowVisibleDisplayFrame(frame);
+				getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
 				int statusBarHeight = frame.top;
-				sv_content = (ScrollView) mContent
-						.findViewById(R.id.sv_content);
+				sv_content = (ScrollView) mContent.findViewById(R.id.sv_content);
 
-				tv_spacing.setHeight((int) (dm.heightPixels
-						- rl_show.getHeight() - statusBarHeight - tv_spacing2
-						.getHeight()));
+				tv_spacing.setHeight((int) (dm.heightPixels - rl_show.getHeight() - statusBarHeight - tv_spacing2.getHeight()));
 
 				sv_content.setOnTouchListener(new OnTouchListener() {
 
@@ -173,13 +166,10 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public void initData() {
 		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
-		final ImageView iv_head = (ImageView) mContent
-				.findViewById(R.id.iv_head);
-		TextView tv_nickname = (TextView) mContent
-				.findViewById(R.id.tv_nickname);
+		final ImageView iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
+		TextView tv_nickname = (TextView) mContent.findViewById(R.id.tv_nickname);
 		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
-		TextView tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
+		TextView tv_mainbusiness = (TextView) mContent.findViewById(R.id.tv_mainbusiness);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		Button button3 = (Button) mContent.findViewById(R.id.button3);
@@ -193,8 +183,7 @@ public class BusinessCardFragment extends BaseFragment {
 				@Override
 				public void onClick(View arg0) {
 					mMainModeManager.mAddFriendFragment.mAddFriend = mShowFriend;
-					mMainModeManager
-							.showNext(mMainModeManager.mAddFriendFragment);
+					mMainModeManager.showNext(mMainModeManager.mAddFriendFragment);
 				}
 			});
 			button2.setOnClickListener(new OnClickListener() {
@@ -225,30 +214,28 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					Alert.showDialog("退出登录后您将接收不到任何消息，确定要退出登录吗？",
-							new DialogListener() {
+					Alert.showDialog("退出登录后您将接收不到任何消息，确定要退出登录吗？", new DialogListener() {
 
-								@Override
-								public void onCancel() {
-									// TODO Auto-generated method stub
+						@Override
+						public void onCancel() {
+							// TODO Auto-generated method stub
 
-								}
+						}
 
-								@Override
-								public boolean confirm() {
-									Intent service = new Intent(getActivity(),
-											PushService.class);
-									service.putExtra("operation", "stop");
-									getActivity().startService(service);
-									return true;
-								}
+						@Override
+						public boolean confirm() {
+							Intent service = new Intent(getActivity(), PushService.class);
+							service.putExtra("operation", "stop");
+							getActivity().startService(service);
+							return true;
+						}
 
-								@Override
-								public void cancel() {
-									// TODO Auto-generated method stub
+						@Override
+						public void cancel() {
+							// TODO Auto-generated method stub
 
-								}
-							});
+						}
+					});
 				}
 			});
 
@@ -281,69 +268,56 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-					Alert.showDialog(
-							"确定解除和" + mShowFriend.nickName + "的好友关系吗？",
-							new DialogListener() {
+					Alert.showDialog("确定解除和" + mShowFriend.nickName + "的好友关系吗？", new DialogListener() {
+
+						@Override
+						public void onCancel() {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public boolean confirm() {
+							app.networkHandler.connection(new CommonNetConnection() {
 
 								@Override
-								public void onCancel() {
-									// TODO Auto-generated method stub
+								public void success(JSONObject jData) {
+									app.dataHandler.exclude(new Modification() {
 
+										@Override
+										public void modifyData(Data data) {
+											app.data.friends.remove(mShowFriend.phone);
+										}
+
+										@Override
+										public void modifyUI() {
+											// TODO refresh
+											// mMainModeManager.mCirclesFragment.mAdapter
+											// .notifyDataSetChanged();
+										}
+									});
 								}
 
 								@Override
-								public boolean confirm() {
-									app.networkHandler
-											.connection(new CommonNetConnection() {
-
-												@Override
-												public void success(
-														JSONObject jData) {
-													app.dataHandler
-															.exclude(new Modification() {
-
-																@Override
-																public void modifyData(
-																		Data data) {
-																	app.data.friends
-																			.remove(mShowFriend.phone);
-																}
-
-																@Override
-																public void modifyUI() {
-																	mMainModeManager.mCirclesFragment.mAdapter
-																			.notifyDataSetChanged();
-																}
-															});
-												}
-
-												@Override
-												protected void settings(
-														Settings settings) {
-													settings.url = API.DOMAIN
-															+ API.RELATION_DELETEFRIEND;
-													Map<String, String> params = new HashMap<String, String>();
-													params.put("phone",
-															app.data.user.phone);
-													params.put(
-															"accessKey",
-															app.data.user.accessKey);
-													params.put("phoneto", "[\""
-															+ mShowFriend.phone
-															+ "\"]");
-													settings.params = params;
-												}
-											});
-									mMainModeManager.back();
-									return true;
-								}
-
-								@Override
-								public void cancel() {
-									// TODO Auto-generated method stub
-
+								protected void settings(Settings settings) {
+									settings.url = API.DOMAIN + API.RELATION_DELETEFRIEND;
+									Map<String, String> params = new HashMap<String, String>();
+									params.put("phone", app.data.user.phone);
+									params.put("accessKey", app.data.user.accessKey);
+									params.put("phoneto", "[\"" + mShowFriend.phone + "\"]");
+									settings.params = params;
 								}
 							});
+							mMainModeManager.back();
+							return true;
+						}
+
+						@Override
+						public void cancel() {
+							// TODO Auto-generated method stub
+
+						}
+					});
 
 				}
 			});
@@ -352,8 +326,7 @@ public class BusinessCardFragment extends BaseFragment {
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
 			public void onResult(String where) {
-				iv_head.setImageBitmap(app.fileHandler.bitmaps
-						.get(headFileName));
+				iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});
 	}
