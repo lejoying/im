@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
 				mode = MODE_MAIN;
 				mLoginMode.release();
 				mMainMode.initialize();
-				mMainMode.show(mMainMode.mSquareFragment);
+				mMainMode.show(mMainMode.mCirclesFragment);
 
 				if (app.data.isClear) {
 					app.dataHandler.exclude(new Modification() {

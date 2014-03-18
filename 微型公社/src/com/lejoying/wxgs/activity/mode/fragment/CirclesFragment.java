@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.DataSetObserver;
@@ -20,14 +21,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -41,6 +46,7 @@ import com.lejoying.wxgs.activity.view.ScrollContentAdapter;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
@@ -72,9 +78,13 @@ public class CirclesFragment extends BaseFragment {
 	int circleFirstPosition;
 	int newFriendsCount;
 
+	RelativeLayout animationContenter;
+
 	LayoutInflater mInflater;
 
 	public CirclesAdapter mAdapter;
+
+	public String mode = "normal";// "normal"||"edit"
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -91,6 +101,7 @@ public class CirclesFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mContentView = inflater.inflate(R.layout.fragment_circles, null);
 		mCirclesContent = (ScrollContent) mContentView.findViewById(R.id.circlesContent);
+		animationContenter = (RelativeLayout) mContentView.findViewById(R.id.animationContenter);
 		mInflater = inflater;
 		initData(true);
 		mAdapter = new CirclesAdapter(mCirclesContent);
@@ -117,6 +128,7 @@ public class CirclesFragment extends BaseFragment {
 		}
 		if (initShowMessages || showMessageCount < 5) {
 			showMessageCount = lastChatFriends.size() > 5 ? 5 : lastChatFriends.size();
+
 		}
 		buttonCount = showNewFriends ? 4 : 3;
 		messageFirstPosition = showNewFriends ? 1 : 0;
@@ -126,12 +138,64 @@ public class CirclesFragment extends BaseFragment {
 			circleFirstPosition = circleFirstPosition - 1;
 		}
 	}
-	
-	public void switchToEditMode(){
+
+	@SuppressLint("NewApi")
+	public void switchToEditMode(View view) {
 		Alert.showMessage("分组管理");
-		
+
+		if (mode.equals("normal")) {
+			mode = "edit";
+		}
+
+		int[] location = new int[2];
+		view.getLocationOnScreen(location);
+		int y = location[1];
+
+		int count = mCirclesContent.getChildCount();
+
+		for (int i = 0; i < count; i++) {
+			View v = mCirclesContent.getChildAt(i);
+			v.setVisibility(View.GONE);
+		}
+
+		mCirclesContent.removeView(view);
+
+		animationContenter.addView(view);
+		RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) view.getLayoutParams();
+		params1.width = LayoutParams.MATCH_PARENT;
+		view.setLayoutParams(params1);
+		view.setVisibility(View.VISIBLE);
+
+		// View v = (View) mCirclesContent.getParent();
+		// RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams)
+		// v.getLayoutParams();
+		// // params1.height = 1000;
+		// // v.setLayoutParams(params1);
+		//
+		// System.out.println(v.getHeight());
+		// System.out.println(mCirclesContent.getHeight());
+		//
+		// LayoutParams params = (LayoutParams)
+		// mCirclesContent.getLayoutParams();
+		// params.height = 1000;
+		// mCirclesContent.setLayoutParams(params);
+
+		view.setVisibility(View.VISIBLE);
+
+		Alert.showMessage("location Y:" + y);
+		TranslateAnimation animation = new TranslateAnimation(0, 0, y - 70, 0);
+		animation.setDuration(100);
+		animation.setFillAfter(true);
+		animation.setAnimationListener(new AnimationAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+
+			}
+		});
+
+		view.startAnimation(animation);
+
 	}
-	
 
 	public class CirclesAdapter extends ScrollContentAdapter {
 
@@ -269,12 +333,9 @@ public class CirclesFragment extends BaseFragment {
 				Circle circle = circles.get(circles.size() - (arg0 - circleFirstPosition) - 1);
 				friendHolder.tv_groupname.setText(circle.name);
 				fragmentView.setOnLongClickListener(new OnLongClickListener() {
-
 					@Override
-					public boolean onLongClick(View v) {
-
-						Alert.showMessage("circle long pressed");
-
+					public boolean onLongClick(View view) {
+						switchToEditMode(view);
 						return true;
 					}
 				});
@@ -422,7 +483,7 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onLongPress(MotionEvent e) {
-				Alert.showMessage("longpress gridpage");
+				switchToEditMode((View) viewPagerContent.getParent().getParent());
 			}
 
 			@Override
@@ -484,8 +545,7 @@ public class CirclesFragment extends BaseFragment {
 
 								@Override
 								public boolean onLongClick(View v) {
-
-									Alert.showMessage("circle's view long pressed");
+									switchToEditMode((View) viewPagerContent.getParent().getParent());
 									return true;
 								}
 							});
@@ -526,19 +586,7 @@ public class CirclesFragment extends BaseFragment {
 				gridpage.setAdapter(gridpageAdapter);
 				pageviews.add(gridpage);
 
-				// gridpage.setOnItemLongClickListener(new
-				// OnItemLongClickListener(){
-				// @Override
-				// public boolean onItemLongClick(AdapterView<?> parent, View
-				// view, int position, long id) {
-				//
-				// Alert.showMessage("circle's gridpage long pressed");
-				// return true;
-				// }
-				// });
-
 				gridpage.setOnTouchListener(new OnTouchListener() {
-
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						return detector.onTouchEvent(event);
@@ -576,16 +624,6 @@ public class CirclesFragment extends BaseFragment {
 				}
 			};
 			viewPagerContent.setAdapter(vp_contentAdapter);
-
-			viewPagerContent.setOnLongClickListener(new OnLongClickListener() {
-
-				@Override
-				public boolean onLongClick(View v) {
-
-					Alert.showMessage("circle's viewPagerContent long pressed");
-					return true;
-				}
-			});
 		}
 	}
 
