@@ -30,7 +30,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,7 +41,7 @@ import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.CommonViewPager;
 import com.lejoying.wxgs.activity.view.ScrollContent;
-import com.lejoying.wxgs.activity.view.ScrollContentAdapter;
+import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -67,7 +66,7 @@ public class CirclesFragment extends BaseFragment {
 
 	LayoutInflater mInflater;
 
-	RelativeLayout circlesViewContenter;
+	ScrollRelativeLayout circlesViewContenter;
 
 	public String mode = "normal";// "normal"||"edit"
 
@@ -104,20 +103,64 @@ public class CirclesFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mContentView = inflater.inflate(R.layout.fragment_circles_scroll, null);
 		mInflater = inflater;
-		circlesViewContenter = (RelativeLayout) mContentView.findViewById(R.id.circlesViewContenter);
+		circlesViewContenter = (ScrollRelativeLayout) mContentView.findViewById(R.id.circlesViewContainer);
+
+		density = getActivity().getResources().getDisplayMetrics().density;
 		notifyViews();
+
+		circlesViewContenter.setOnTouchListener(new OnTouchListener() {
+			float x0 = 0;
+			float y0 = 0;
+			int topMargin0 = 0;
+
+			float dy = 0;
+			RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) circlesViewContenter.getLayoutParams();
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// eventCount++;
+				float x = event.getRawX();
+				float y = event.getRawY();
+
+				long currentMillis = System.currentTimeMillis();
+
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					x0 = x;
+					y0 = y;
+					layoutParams = (android.widget.RelativeLayout.LayoutParams) circlesViewContenter.getLayoutParams();
+					topMargin0 = layoutParams.topMargin;
+				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					dy = y - y0;
+					// layoutParams.topMargin = topMargin0 + (int) dy;
+					// circlesViewContenter.setLayoutParams(layoutParams);
+					circlesViewContenter.scrollBy(0, -(int) (dy));
+					y0 = y;
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+				}
+
+				return true;
+			}
+		});
+
 		return mContentView;
 	}
 
 	public void notifyViews() {
 		generateViews();
 		circlesViewContenter.removeAllViews();
+		int top = 25;
 		for (int i = 0; i < normalShow.size(); i++) {
 			View v = views.get(normalShow.get(i));
-			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(layoutParams.leftMargin, 25, layoutParams.rightMargin, layoutParams.bottomMargin);
+			int height = (int) dp2px(((Integer) v.getTag()).floatValue());
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			layoutParams.setMargins(layoutParams.leftMargin, top, layoutParams.rightMargin, layoutParams.bottomMargin);
+			top = top + height + 25;
 			v.setLayoutParams(layoutParams);
+
+			// v.layout(l, t, r, b)
 			circlesViewContenter.addView(v);
+
 		}
 	}
 
@@ -201,13 +244,20 @@ public class CirclesFragment extends BaseFragment {
 		animation.setDuration(200);
 
 		editControl.setVisibility(View.VISIBLE);
-		float deltaY = getActivity().getResources().getDisplayMetrics().density * 160 + 0.5f;
+		float deltaY = dp2px(160);
 		TranslateAnimation editAnimation = new TranslateAnimation(0, 0, deltaY, 0);
 		editAnimation.setDuration(400);
 		editControl.startAnimation(editAnimation);
 
 		view.startAnimation(animation);
 
+	}
+
+	float density = 1.0f;
+
+	public float dp2px(float px) {
+		float dp = density * px + 0.5f;
+		return dp;
 	}
 
 	public void swichToNormalMode() {
@@ -237,6 +287,7 @@ public class CirclesFragment extends BaseFragment {
 
 		if (views.get("button#newfriend") == null) {
 			View newFriendButtonView = generateNewFriendButtonView();
+			newFriendButtonView.setTag(46);
 			views.put("button#newfriend", newFriendButtonView);
 		}
 		normalShow.add("button#newfriend");
@@ -245,6 +296,7 @@ public class CirclesFragment extends BaseFragment {
 			String phone = app.data.lastChatFriends.get(i);
 			if (views.get("message#" + phone) == null) {
 				View v = generateMessageView(phone);
+				v.setTag(74);
 				views.put("message#" + phone, v);
 			}
 			normalShow.add("message#" + phone);
@@ -252,6 +304,7 @@ public class CirclesFragment extends BaseFragment {
 
 		if (views.get("button#moremessage") == null) {
 			View moreMessageButtonView = generateMoreMessageButtonView();
+			moreMessageButtonView.setTag(46);
 			views.put("button#moremessage", moreMessageButtonView);
 		}
 		normalShow.add("button#moremessage");
@@ -262,18 +315,21 @@ public class CirclesFragment extends BaseFragment {
 			if (views.get("group#" + circle.name) == null) {
 				View v = generateCircleView(circle);
 				views.put("group#" + circle.name, v);
+				v.setTag(272);
 			}
 			normalShow.add("group#" + circle.name);
 		}
 
 		if (views.get("button#creategroup") == null) {
 			View createGroupButtonView = generateCreateGroupButtonView();
+			createGroupButtonView.setTag(46);
 			views.put("button#creategroup", createGroupButtonView);
 		}
 		normalShow.add("button#creategroup");
 
 		if (views.get("button#findmore") == null) {
 			View findMoreFriendButtonView = generateFindMoreFriendButtonView();
+			findMoreFriendButtonView.setTag(46);
 			views.put("button#findmore", findMoreFriendButtonView);
 		}
 		normalShow.add("button#findmore");
@@ -441,179 +497,269 @@ public class CirclesFragment extends BaseFragment {
 
 	View generateCircleView(Circle circle) {
 		final View circleView = mInflater.inflate(R.layout.fragment_panel, null);
-		circleView.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				switchToEditMode(circleView);
-				return true;
-			}
-		});
+		// circleView.setOnLongClickListener(new OnLongClickListener() {
+		// @Override
+		// public boolean onLongClick(View v) {
+		// switchToEditMode(circleView);
+		// return true;
+		// }
+		// });
 		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
-		final CommonViewPager commonViewPager = (CommonViewPager) circleView.findViewById(R.id.commonViewPager);
+		// final CommonViewPager commonViewPager = (CommonViewPager)
+		// circleView.findViewById(R.id.commonViewPager);
+		RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.friendContainer);
 
-		final GestureDetector detector = new GestureDetector(getActivity(), new GestureDetector.OnGestureListener() {
-
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void onShowPress(MotionEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void onLongPress(MotionEvent e) {
-				switchToEditMode((View) commonViewPager.getParent().getParent());
-			}
-
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean onDown(MotionEvent e) {
-				// TODO Auto-generated method stub
-				return true;
-			}
-		});
+		// final GestureDetector detector = new GestureDetector(getActivity(),
+		// new GestureDetector.OnGestureListener() {
+		//
+		// @Override
+		// public boolean onSingleTapUp(MotionEvent e) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		//
+		// @Override
+		// public void onShowPress(MotionEvent e) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public boolean onScroll(MotionEvent e1, MotionEvent e2, float
+		// distanceX, float distanceY) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		//
+		// @Override
+		// public void onLongPress(MotionEvent e) {
+		// switchToEditMode((View) commonViewPager.getParent().getParent());
+		// }
+		//
+		// @Override
+		// public boolean onFling(MotionEvent e1, MotionEvent e2, float
+		// velocityX, float velocityY) {
+		// // TODO Auto-generated method stub
+		// return false;
+		// }
+		//
+		// @Override
+		// public boolean onDown(MotionEvent e) {
+		// // TODO Auto-generated method stub
+		// return true;
+		// }
+		// });
 
 		final List<String> phones = circle.phones;
 		final Map<String, Friend> friends = app.data.friends;
 		final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6 : phones.size() / 6 + 1;
-		final List<View> pageviews = new ArrayList<View>();
-		for (int i = 0; i < pagecount; i++) {
-			final int a = i;
-			BaseAdapter gridpageAdapter = new BaseAdapter() {
+
+		for (int i = 0; i < phones.size(); i++) {
+			View convertView = mInflater.inflate(R.layout.fragment_circles_gridpage_item, null);
+			final ImageView head = (ImageView) convertView.findViewById(R.id.iv_head);
+			TextView nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
+			Friend friend = friends.get(phones.get(i));
+			nickname.setText(friend.nickName);
+			final String headFileName = friend.head;
+			app.fileHandler.getHeadImage(headFileName, new FileResult() {
 				@Override
-				public View getView(final int position, View convertView, final ViewGroup parent) {
-					ItemHolder itemHolder = null;
-					if (convertView == null) {
-						convertView = mInflater.inflate(R.layout.fragment_circles_gridpage_item, null);
-						itemHolder = new ItemHolder();
-						itemHolder.iv_head = (ImageView) convertView.findViewById(R.id.iv_head);
-						itemHolder.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
-						convertView.setTag(itemHolder);
-					} else {
-						itemHolder = (ItemHolder) convertView.getTag();
-					}
-					if (phones.get(a * 6 + position) != null && friends.get(phones.get(a * 6 + position)) != null) {
-
-						final String headFileName = friends.get(phones.get(a * 6 + position)).head;
-						final ImageView iv_head = itemHolder.iv_head;
-						app.fileHandler.getHeadImage(headFileName, new FileResult() {
-							@Override
-							public void onResult(String where) {
-								iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
-							}
-						});
-						itemHolder.tv_nickname.setText(friends.get(phones.get(a * 6 + position)).nickName);
-						convertView.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
-								mMainModeManager.mBusinessCardFragment.mShowFriend = friends.get(phones.get(a * 6 + position));
-								mMainModeManager.showNext(mMainModeManager.mBusinessCardFragment);
-							}
-						});
-
-						convertView.setOnLongClickListener(new OnLongClickListener() {
-
-							@Override
-							public boolean onLongClick(View v) {
-								switchToEditMode((View) commonViewPager.getParent().getParent());
-								return true;
-							}
-						});
-					}
-					return convertView;
-				}
-
-				@Override
-				public long getItemId(int position) {
-					return position;
-				}
-
-				@Override
-				public Object getItem(int position) {
-					return friends.get(phones.get(a * 6 + position));
-				}
-
-				@Override
-				public int getCount() {
-					int nowcount = 0;
-					if (a < pagecount - 1) {
-						nowcount = 6;
-					} else {
-						nowcount = phones.size() - a * 6;
-					}
-					return nowcount;
-				}
-
-				@Override
-				public void unregisterDataSetObserver(DataSetObserver observer) {
-					if (observer != null) {
-						super.unregisterDataSetObserver(observer);
-					}
-				}
-
-			};
-			GridView gridpage = (GridView) mInflater.inflate(R.layout.fragment_circles_gridpage, null);
-			gridpage.setAdapter(gridpageAdapter);
-			pageviews.add(gridpage);
-
-			gridpage.setOnTouchListener(new OnTouchListener() {
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					return detector.onTouchEvent(event);
+				public void onResult(String where) {
+					head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 				}
 			});
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.rightMargin = -Integer.MAX_VALUE;
+			if ((i + 1) % 6 == 1) {
+				params.topMargin = (int) dp2px(11);
+				params.leftMargin = (int) dp2px(26 + i / 6 * 326);
+			} else if ((i + 1) % 6 == 2) {
+				params.topMargin = (int) dp2px(11);
+				params.leftMargin = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
+			} else if ((i + 1) % 6 == 3) {
+				params.topMargin = (int) dp2px(11);
+				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
+			} else if ((i + 1) % 6 == 4) {
+				params.topMargin = (int) dp2px(11 + 73 + 27);
+				params.leftMargin = (int) dp2px(26 + i / 6 * 326);
+			} else if ((i + 1) % 6 == 5) {
+				params.topMargin = (int) dp2px(11 + 73 + 27);
+				params.leftMargin = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
+			} else if ((i + 1) % 6 == 0) {
+				params.topMargin = (int) dp2px(11 + 73 + 27);
+				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
+			}
 
+			convertView.setLayoutParams(params);
+			friendContainer.addView(convertView);
 		}
 
-		PagerAdapter contentAdapter = new PagerAdapter() {
-			@Override
-			public boolean isViewFromObject(View arg0, Object arg1) {
-				return arg0 == arg1;
-			}
+		friendContainer.setOnTouchListener(new OnTouchListener() {
+
+			float x0 = 0;
+			float dx = 0;
 
 			@Override
-			public int getCount() {
-				return pageviews.size();
-			}
+			public boolean onTouch(View v, MotionEvent event) {
+				// eventCount++;
+				float x = event.getRawX();
+				float y = event.getRawY();
 
-			@Override
-			public void destroyItem(View container, int position, Object object) {
-				((ViewPager) container).removeView(pageviews.get(position));
-			}
+				long currentMillis = System.currentTimeMillis();
 
-			@Override
-			public Object instantiateItem(View container, int position) {
-				((ViewPager) container).addView(pageviews.get(position));
-				return pageviews.get(position);
-			}
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					x0 = x;
+				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					dx = x - x0;
+					// layoutParams.topMargin = topMargin0 + (int) dy;
+					// circlesViewContenter.setLayoutParams(layoutParams);
+					v.scrollBy(-(int) (dx), 0);
+					x0 = x;
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
-			@Override
-			public void unregisterDataSetObserver(DataSetObserver observer) {
-				if (observer != null) {
-					super.unregisterDataSetObserver(observer);
 				}
+
+				return true;
 			}
-		};
-		commonViewPager.setAdapter(contentAdapter);
+		});
+
+		// final List<View> pageviews = new ArrayList<View>();
+		// for (int i = 0; i < pagecount; i++) {
+
+		// final int a = i;
+		// BaseAdapter gridpageAdapter = new BaseAdapter() {
+		// @Override
+		// public View getView(final int position, View convertView, final
+		// ViewGroup parent) {
+		// ItemHolder itemHolder = null;
+		// if (convertView == null) {
+		// convertView =
+		// mInflater.inflate(R.layout.fragment_circles_gridpage_item, null);
+		// itemHolder = new ItemHolder();
+		// itemHolder.iv_head = (ImageView)
+		// convertView.findViewById(R.id.iv_head);
+		// itemHolder.tv_nickname = (TextView)
+		// convertView.findViewById(R.id.tv_nickname);
+		// convertView.setTag(itemHolder);
+		// } else {
+		// itemHolder = (ItemHolder) convertView.getTag();
+		// }
+		// if (phones.get(a * 6 + position) != null &&
+		// friends.get(phones.get(a * 6 + position)) != null) {
+		//
+		// final String headFileName = friends.get(phones.get(a * 6 +
+		// position)).head;
+		// final ImageView iv_head = itemHolder.iv_head;
+		// app.fileHandler.getHeadImage(headFileName, new FileResult() {
+		// @Override
+		// public void onResult(String where) {
+		// iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
+		// }
+		// });
+		// itemHolder.tv_nickname.setText(friends.get(phones.get(a * 6 +
+		// position)).nickName);
+		// // convertView.setOnClickListener(new OnClickListener()
+		// // {
+		// //
+		// // @Override
+		// // public void onClick(View v) {
+		// // mMainModeManager.mBusinessCardFragment.mStatus =
+		// // BusinessCardFragment.SHOW_FRIEND;
+		// // mMainModeManager.mBusinessCardFragment.mShowFriend =
+		// // friends.get(phones.get(a * 6 + position));
+		// //
+		// mMainModeManager.showNext(mMainModeManager.mBusinessCardFragment);
+		// // }
+		// // });
+		// //
+		// // convertView.setOnLongClickListener(new
+		// // OnLongClickListener() {
+		// //
+		// // @Override
+		// // public boolean onLongClick(View v) {
+		// // switchToEditMode((View)
+		// // commonViewPager.getParent().getParent());
+		// // return true;
+		// // }
+		// // });
+		// }
+		// return convertView;
+		// }
+		//
+		// @Override
+		// public long getItemId(int position) {
+		// return position;
+		// }
+		//
+		// @Override
+		// public Object getItem(int position) {
+		// return friends.get(phones.get(a * 6 + position));
+		// }
+		//
+		// @Override
+		// public int getCount() {
+		// int nowcount = 0;
+		// if (a < pagecount - 1) {
+		// nowcount = 6;
+		// } else {
+		// nowcount = phones.size() - a * 6;
+		// }
+		// return nowcount;
+		// }
+		//
+		// @Override
+		// public void unregisterDataSetObserver(DataSetObserver observer) {
+		// if (observer != null) {
+		// super.unregisterDataSetObserver(observer);
+		// }
+		// }
+		//
+		// };
+		// GridView gridpage = (GridView)
+		// mInflater.inflate(R.layout.fragment_circles_gridpage, null);
+		// gridpage.setAdapter(gridpageAdapter);
+		// pageviews.add(gridpage);
+		//
+		// // gridpage.setOnTouchListener(new OnTouchListener() {
+		// // @Override
+		// // public boolean onTouch(View v, MotionEvent event) {
+		// // return detector.onTouchEvent(event);
+		// // }
+		// // });
+
+		// }
+
+		// PagerAdapter contentAdapter = new PagerAdapter() {
+		// @Override
+		// public boolean isViewFromObject(View arg0, Object arg1) {
+		// return arg0 == arg1;
+		// }
+		//
+		// @Override
+		// public int getCount() {
+		// return pageviews.size();
+		// }
+		//
+		// @Override
+		// public void destroyItem(View container, int position, Object object)
+		// {
+		// ((ViewPager) container).removeView(pageviews.get(position));
+		// }
+		//
+		// @Override
+		// public Object instantiateItem(View container, int position) {
+		// ((ViewPager) container).addView(pageviews.get(position));
+		// return pageviews.get(position);
+		// }
+		//
+		// @Override
+		// public void unregisterDataSetObserver(DataSetObserver observer) {
+		// if (observer != null) {
+		// super.unregisterDataSetObserver(observer);
+		// }
+		// }
+		// };
+		// commonViewPager.setAdapter(contentAdapter);
 
 		return circleView;
 	}

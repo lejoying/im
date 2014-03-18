@@ -44,10 +44,11 @@
             android:background="#9fff"
             tools:ignore="ContentDescription" />
 
-        <com.lejoying.wxgs.activity.view.CommonViewPager
-            android:id="@+id/commonViewPager"
+        <RelativeLayout
+            android:id="@+id/friendContainer"
             android:layout_width="match_parent"
-            android:layout_height="220dp" />
+            android:layout_height="220dp" >
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/bottomBar"

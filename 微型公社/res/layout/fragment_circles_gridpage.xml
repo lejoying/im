@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.lejoying.wxgs.activity.view.MyGridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gv_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,4 +13,4 @@
     android:paddingTop="10dp"
     android:verticalSpacing="25dp" >
 
-</GridView>
+</com.lejoying.wxgs.activity.view.MyGridView>
