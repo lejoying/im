@@ -43,6 +43,7 @@ import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.CommonViewPager;
 import com.lejoying.wxgs.activity.view.ScrollContent;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
+import com.lejoying.wxgs.activity.view.manager.FrictionAnimation;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -111,13 +112,22 @@ public class CirclesFragment extends BaseFragment {
 		notifyViews();
 
 		circlesViewContenter.setOnTouchListener(new OnTouchListener() {
-			float x0 = 0;
-			float y0 = 0;
-			int topMargin0 = 0;
+			public float x0 = 0;
+			public float y0 = 0;
 
-			float dy = 0;
-			float dx = 0;
-			RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) circlesViewContenter.getLayoutParams();
+			public float x0_0 = 0;
+			public float y0_0 = 0;
+
+			public float vx = 0;
+			public float vy = 0;
+
+			public float dy = 0;
+			public float dx = 0;
+
+			public int preTouchTimes = 5;
+
+			long pre_lastMillis = 0;
+			long lastMillis = 0;
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -130,14 +140,16 @@ public class CirclesFragment extends BaseFragment {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					x0 = x;
 					y0 = y;
-					layoutParams = (android.widget.RelativeLayout.LayoutParams) circlesViewContenter.getLayoutParams();
-					topMargin0 = layoutParams.topMargin;
 				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					if (lastMillis == 0) {
+						lastMillis = currentMillis;
+						return true;
+					}
 					dy = y - y0;
 					dx = x - x0;
 					if (touchEvnetStatus.equals("moving_y")) {
-						circlesViewContenter.scrollBy(0, -(int) (dy));
-						y0 = y;
+						// circlesViewContenter.scrollBy(0, -(int) (dy));
+						// y0 = y;
 					} else if (touchEvnetStatus.equals("static")) {
 						if (dy * dy + dx * dx > 400) {
 							if (dy * dy > dx * dx) {
@@ -147,11 +159,40 @@ public class CirclesFragment extends BaseFragment {
 							}
 						}
 					}
+
+					if (preTouchTimes < 0) {
+						preTouchTimes = 2;
+						x0_0 = x0;
+						y0_0 = y0;
+						pre_lastMillis = lastMillis;
+
+						x0 = x;
+						y0 = y;
+
+						lastMillis = currentMillis;
+					}
+					preTouchTimes--;
+
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+					long delta = currentMillis - lastMillis;
+
+					if (delta == 0 || x == x0 || y == y0) {
+						delta = currentMillis - pre_lastMillis;
+						x0 = x0_0;
+						y0 = y0_0;
+					}
+
+					vx = (x - x0) / delta;
+					vy = (y - y0) / delta;
+
+					System.out.println("vx:    " + vx + "     ----vy:    " + vy);
+
+					FrictionAnimation decelerationAnimation = new FrictionAnimation(vx, vy);
+					circlesViewContenter.startAnimation(decelerationAnimation);
 					if (touchEvnetStatus.equals("moving_y") || touchEvnetStatus.equals("moving_x")) {
 						touchEvnetStatus = "static";
 					}
-
 				}
 
 				return true;
@@ -630,7 +671,7 @@ public class CirclesFragment extends BaseFragment {
 					if (touchEvnetStatus.equals("moving_x")) {
 						v.scrollBy(-(int) (dx), 0);
 						x0 = x;
-					} 
+					}
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
 				}
