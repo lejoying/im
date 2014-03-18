@@ -47,6 +47,7 @@ public class EventHandler {
 			DataUtil.getAskFriends(new GetDataListener() {
 				@Override
 				public void getSuccess() {
+					// TODO refresh
 					if (MainActivity.instance != null && MainActivity.instance.mode.equals(MainActivity.MODE_MAIN)) {
 						if (MainActivity.instance != null && MainActivity.instance.mode.equals(MainActivity.MODE_MAIN)) {
 							if (MainActivity.instance.mMainMode.mCirclesFragment.isAdded()) {

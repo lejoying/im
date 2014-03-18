@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
@@ -65,6 +67,8 @@ public class CirclesFragment extends BaseFragment {
 
 	LayoutInflater mInflater;
 
+	RelativeLayout circlesViewContenter;
+
 	public String mode = "normal";// "normal"||"edit"
 
 	public void setMode(MainModeManager mainMode) {
@@ -78,20 +82,59 @@ public class CirclesFragment extends BaseFragment {
 		super.onResume();
 	}
 
+	// @Override
+	// public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	// Bundle savedInstanceState) {
+	// mContentView = inflater.inflate(R.layout.fragment_circles, null);
+	// mCirclesContent = (ScrollContent)
+	// mContentView.findViewById(R.id.circlesContent);
+	// animationContenter = (RelativeLayout)
+	// mContentView.findViewById(R.id.animationContenter);
+	// editControl = mContentView.findViewById(R.id.editControl);
+	// copy = mContentView.findViewById(R.id.copy);
+	// initEvent();
+	// mInflater = inflater;
+	//
+	// notifyViews();
+	//
+	// return mContentView;
+	// }
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mContentView = inflater.inflate(R.layout.fragment_circles, null);
-		mCirclesContent = (ScrollContent) mContentView.findViewById(R.id.circlesContent);
-		animationContenter = (RelativeLayout) mContentView.findViewById(R.id.animationContenter);
-		editControl = mContentView.findViewById(R.id.editControl);
-		copy = mContentView.findViewById(R.id.copy);
-		initEvent();
+		mContentView = inflater.inflate(R.layout.fragment_circles_scroll, null);
 		mInflater = inflater;
-
+		circlesViewContenter = (RelativeLayout) mContentView.findViewById(R.id.circlesViewContenter);
 		notifyViews();
-
 		return mContentView;
 	}
+
+	public void notifyViews() {
+		generateViews();
+		circlesViewContenter.removeAllViews();
+		for (int i = 0; i < normalShow.size(); i++) {
+			View v = views.get(normalShow.get(i));
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			layoutParams.setMargins(layoutParams.leftMargin, 25, layoutParams.rightMargin, layoutParams.bottomMargin);
+			v.setLayoutParams(layoutParams);
+			circlesViewContenter.addView(v);
+		}
+	}
+
+	// public void notifyViews() {
+	// generateViews();
+	// mCirclesContent.removeAllViews();
+	// for (int i = 0; i < normalShow.size(); i++) {
+	// View v = views.get(normalShow.get(i));
+	// LinearLayout.LayoutParams layoutParams = new
+	// LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+	// LayoutParams.WRAP_CONTENT);
+	// layoutParams.setMargins(layoutParams.leftMargin, 25,
+	// layoutParams.rightMargin, layoutParams.bottomMargin);
+	// v.setLayoutParams(layoutParams);
+	// mCirclesContent.addView(v);
+	// }
+	// }
 
 	void initEvent() {
 		copy.setOnClickListener(new OnClickListener() {
@@ -116,6 +159,18 @@ public class CirclesFragment extends BaseFragment {
 		if (mode.equals("normal")) {
 			mode = "edit";
 		}
+		mMainModeManager.setKeyDownListener(new KeyDownListener() {
+
+			@Override
+			public boolean onKeyDown(int keyCode, KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					swichToNormalMode();
+				}
+				return false;
+			}
+		});
+
+		CircleMenu.showBack();
 
 		int[] location = new int[2];
 		view.getLocationOnScreen(location);
@@ -123,18 +178,20 @@ public class CirclesFragment extends BaseFragment {
 
 		int count = mCirclesContent.getChildCount();
 
-		for (int i = 0; i < count; i++) {
-			View v = mCirclesContent.getChildAt(i);
-			v.setVisibility(View.GONE);
-		}
+		mCirclesContent.removeAllViews();
 
-		mCirclesContent.removeView(view);
+		// for (int i = 0; i < count; i++) {
+		// View v = mCirclesContent.getChildAt(i);
+		// v.setVisibility(View.GONE);
+		// }
+		// mCirclesContent.removeView(view);
 
 		animationContenter.addView(view);
 		RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) view.getLayoutParams();
 		params1.width = LayoutParams.MATCH_PARENT;
 		view.setLayoutParams(params1);
 		view.setVisibility(View.VISIBLE);
+
 		view.findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
 		TextView groupManager = (TextView) view.findViewById(R.id.panel_right_button);
 		groupManager.setVisibility(View.VISIBLE);
@@ -153,20 +210,23 @@ public class CirclesFragment extends BaseFragment {
 
 	}
 
+	public void swichToNormalMode() {
+		if (mode.equals("edit")) {
+			mode = "normal";
+		}
+
+		CircleMenu.show();
+		mMainModeManager.setKeyDownListener(null);
+		editControl.setVisibility(View.GONE);
+		float deltaY = getActivity().getResources().getDisplayMetrics().density * 160 + 0.5f;
+		TranslateAnimation editAnimation = new TranslateAnimation(0, 0, 0, deltaY);
+		editAnimation.setDuration(400);
+		editControl.startAnimation(editAnimation);
+
+	}
+
 	Map<String, View> views = new HashMap<String, View>();
 	List<String> normalShow = new ArrayList<String>();
-
-	public void notifyViews() {
-		generateViews();
-		mCirclesContent.removeAllViews();
-		for (int i = 0; i < normalShow.size(); i++) {
-			View v = views.get(normalShow.get(i));
-			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(layoutParams.leftMargin, 25, layoutParams.rightMargin, layoutParams.bottomMargin);
-			v.setLayoutParams(layoutParams);
-			mCirclesContent.addView(v);
-		}
-	}
 
 	void generateViews() {
 		// generate message views;
@@ -380,7 +440,14 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	View generateCircleView(Circle circle) {
-		View circleView = mInflater.inflate(R.layout.fragment_panel, null);
+		final View circleView = mInflater.inflate(R.layout.fragment_panel, null);
+		circleView.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				switchToEditMode(circleView);
+				return true;
+			}
+		});
 		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
 		final CommonViewPager commonViewPager = (CommonViewPager) circleView.findViewById(R.id.commonViewPager);
