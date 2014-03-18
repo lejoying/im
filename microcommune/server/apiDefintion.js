@@ -521,7 +521,7 @@ api = {
             url: "/api2/circle/addcircle"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", circleName: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", name: "XXX"}
         },
         response: {
             success: {"提示信息": "添加成功", circle: {rid: "NNN", name: "XXX"}},
