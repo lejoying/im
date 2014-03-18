@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,13 +63,14 @@ public class CirclesFragment extends BaseFragment {
 	RelativeLayout animationContenter;
 	View editControl;
 	View copy;
-	String copyStatus = "move";// "move"||"copy"
 
 	LayoutInflater mInflater;
 
 	ScrollRelativeLayout circlesViewContenter;
 
+	public String copyStatus = "move";// "move"||"copy"
 	public String mode = "normal";// "normal"||"edit"
+	public String touchEvnetStatus = "static";// "static"||"moving_x"||"moving_y"
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -114,6 +116,7 @@ public class CirclesFragment extends BaseFragment {
 			int topMargin0 = 0;
 
 			float dy = 0;
+			float dx = 0;
 			RelativeLayout.LayoutParams layoutParams = (android.widget.RelativeLayout.LayoutParams) circlesViewContenter.getLayoutParams();
 
 			@Override
@@ -131,11 +134,23 @@ public class CirclesFragment extends BaseFragment {
 					topMargin0 = layoutParams.topMargin;
 				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 					dy = y - y0;
-					// layoutParams.topMargin = topMargin0 + (int) dy;
-					// circlesViewContenter.setLayoutParams(layoutParams);
-					circlesViewContenter.scrollBy(0, -(int) (dy));
-					y0 = y;
+					dx = x - x0;
+					if (touchEvnetStatus.equals("moving_y")) {
+						circlesViewContenter.scrollBy(0, -(int) (dy));
+						y0 = y;
+					} else if (touchEvnetStatus.equals("static")) {
+						if (dy * dy + dx * dx > 400) {
+							if (dy * dy > dx * dx) {
+								touchEvnetStatus = "moving_y";
+							} else {
+								touchEvnetStatus = "moving_x";
+							}
+						}
+					}
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					if (touchEvnetStatus.equals("moving_y") || touchEvnetStatus.equals("moving_x")) {
+						touchEvnetStatus = "static";
+					}
 
 				}
 
@@ -611,10 +626,11 @@ public class CirclesFragment extends BaseFragment {
 					x0 = x;
 				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 					dx = x - x0;
-					// layoutParams.topMargin = topMargin0 + (int) dy;
-					// circlesViewContenter.setLayoutParams(layoutParams);
-					v.scrollBy(-(int) (dx), 0);
-					x0 = x;
+
+					if (touchEvnetStatus.equals("moving_x")) {
+						v.scrollBy(-(int) (dx), 0);
+						x0 = x;
+					} 
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
 				}

@@ -27,7 +27,7 @@ public class ScrollRelativeLayout extends RelativeLayout {
 
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		System.out.println("intercept");
+		// System.out.println("intercept");
 		onTouchEvent(ev);
 		return false;
 	}
