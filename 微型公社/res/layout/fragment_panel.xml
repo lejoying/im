@@ -50,6 +50,7 @@
             android:layout_height="220dp" />
 
         <RelativeLayout
+            android:id="@+id/bottomBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" >
@@ -61,7 +62,7 @@
                 tools:ignore="ContentDescription" />
 
             <TextView
-                android:id="@+id/button_up"
+                android:id="@+id/buttonPreviousGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -71,7 +72,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/button_down"
+                android:id="@+id/buttonNextGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
