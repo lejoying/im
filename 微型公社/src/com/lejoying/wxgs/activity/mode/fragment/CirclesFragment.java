@@ -13,11 +13,16 @@ import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +38,7 @@ import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.CommonViewPager;
 import com.lejoying.wxgs.activity.view.ScrollContent;
 import com.lejoying.wxgs.activity.view.ScrollContentAdapter;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -82,11 +88,9 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mContentView = inflater.inflate(R.layout.fragment_circles, null);
-		mCirclesContent = (ScrollContent) mContentView
-				.findViewById(R.id.circlesContent);
+		mCirclesContent = (ScrollContent) mContentView.findViewById(R.id.circlesContent);
 		mInflater = inflater;
 		initData(true);
 		mAdapter = new CirclesAdapter(mCirclesContent);
@@ -112,8 +116,7 @@ public class CirclesFragment extends BaseFragment {
 			showNewFriends = false;
 		}
 		if (initShowMessages || showMessageCount < 5) {
-			showMessageCount = lastChatFriends.size() > 5 ? 5 : lastChatFriends
-					.size();
+			showMessageCount = lastChatFriends.size() > 5 ? 5 : lastChatFriends.size();
 		}
 		buttonCount = showNewFriends ? 4 : 3;
 		messageFirstPosition = showNewFriends ? 1 : 0;
@@ -123,6 +126,12 @@ public class CirclesFragment extends BaseFragment {
 			circleFirstPosition = circleFirstPosition - 1;
 		}
 	}
+	
+	public void switchToEditMode(){
+		Alert.showMessage("分组管理");
+		
+	}
+	
 
 	public class CirclesAdapter extends ScrollContentAdapter {
 
@@ -145,11 +154,9 @@ public class CirclesFragment extends BaseFragment {
 		@Override
 		public int getItemViewType(int position) {
 			int type = 0;
-			if (position >= messageFirstPosition
-					&& position < messageFirstPosition + showMessageCount) {
+			if (position >= messageFirstPosition && position < messageFirstPosition + showMessageCount) {
 				type = TYPE_MESSAGE;
-			} else if (position >= circleFirstPosition
-					&& position < circleFirstPosition + circles.size()) {
+			} else if (position >= circleFirstPosition && position < circleFirstPosition + circles.size()) {
 				type = TYPE_CIRCLE;
 			} else {
 				type = TYPE_BUTTON;
@@ -168,42 +175,34 @@ public class CirclesFragment extends BaseFragment {
 		}
 
 		@Override
-		public View getView(final int arg0, View arg1, ViewGroup arg2) {
+		public View getView(final int arg0, View fragmentView, ViewGroup arg2) {
 			int type = getItemViewType(arg0);
 			MessageHolder messageHolder = null;
 			FriendHolder friendHolder = null;
 			ButtonHolder bHolder = null;
-			if (arg1 == null) {
+			if (fragmentView == null) {
 				switch (type) {
 				case TYPE_MESSAGE:
-					arg1 = mInflater.inflate(
-							R.layout.fragment_circles_messages_item, null);
+					fragmentView = mInflater.inflate(R.layout.fragment_circles_messages_item, null);
 					messageHolder = new MessageHolder();
-					messageHolder.iv_head = (ImageView) arg1
-							.findViewById(R.id.iv_head);
-					messageHolder.tv_nickname = (TextView) arg1
-							.findViewById(R.id.tv_nickname);
-					messageHolder.tv_lastchat = (TextView) arg1
-							.findViewById(R.id.tv_lastchat);
-					messageHolder.tv_notread = (TextView) arg1
-							.findViewById(R.id.tv_notread);
-					arg1.setTag(messageHolder);
+					messageHolder.iv_head = (ImageView) fragmentView.findViewById(R.id.iv_head);
+					messageHolder.tv_nickname = (TextView) fragmentView.findViewById(R.id.tv_nickname);
+					messageHolder.tv_lastchat = (TextView) fragmentView.findViewById(R.id.tv_lastchat);
+					messageHolder.tv_notread = (TextView) fragmentView.findViewById(R.id.tv_notread);
+					fragmentView.setTag(messageHolder);
 					break;
 				case TYPE_CIRCLE:
-					arg1 = mInflater.inflate(R.layout.fragment_panel, null);
+					fragmentView = mInflater.inflate(R.layout.fragment_panel, null);
 					friendHolder = new FriendHolder();
-					friendHolder.tv_groupname = (TextView) arg1
-							.findViewById(R.id.panel_name);
-					friendHolder.vp_content = (CommonViewPager) arg1
-							.findViewById(R.id.commonViewPager);
-					arg1.setTag(friendHolder);
+					friendHolder.tv_groupname = (TextView) fragmentView.findViewById(R.id.panel_name);
+					friendHolder.viewPagerContent = (CommonViewPager) fragmentView.findViewById(R.id.commonViewPager);
+					fragmentView.setTag(friendHolder);
 					break;
 				case TYPE_BUTTON:
-					arg1 = mInflater.inflate(R.layout.fragment_item_buttom,
-							null);
+					fragmentView = mInflater.inflate(R.layout.fragment_item_buttom, null);
 					bHolder = new ButtonHolder();
-					bHolder.button = (Button) arg1.findViewById(R.id.button);
-					arg1.setTag(bHolder);
+					bHolder.button = (Button) fragmentView.findViewById(R.id.button);
+					fragmentView.setTag(bHolder);
 					break;
 				default:
 					break;
@@ -211,35 +210,30 @@ public class CirclesFragment extends BaseFragment {
 			} else {
 				switch (type) {
 				case TYPE_MESSAGE:
-					messageHolder = (MessageHolder) arg1.getTag();
+					messageHolder = (MessageHolder) fragmentView.getTag();
 					break;
 				case TYPE_CIRCLE:
-					friendHolder = (FriendHolder) arg1.getTag();
+					friendHolder = (FriendHolder) fragmentView.getTag();
 					break;
 				case TYPE_BUTTON:
-					bHolder = (ButtonHolder) arg1.getTag();
+					bHolder = (ButtonHolder) fragmentView.getTag();
 					break;
 				default:
 					break;
 				}
 			}
-			arg1.setOnClickListener(null);
+			fragmentView.setOnClickListener(null);
 			switch (type) {
 			case TYPE_MESSAGE:
-				messageHolder.tv_nickname.setText(friends.get(lastChatFriends
-						.get(arg0 - messageFirstPosition)).nickName);
+				messageHolder.tv_nickname.setText(friends.get(lastChatFriends.get(arg0 - messageFirstPosition)).nickName);
 
-				final Friend friend = friends.get(lastChatFriends.get(arg0
-						- messageFirstPosition));
-				Message lastMessage = friend.messages.get(friend.messages
-						.size() - 1);
+				final Friend friend = friends.get(lastChatFriends.get(arg0 - messageFirstPosition));
+				Message lastMessage = friend.messages.get(friend.messages.size() - 1);
 				if (lastMessage.contentType.equals("text")) {
 
-					messageHolder.tv_lastchat.setText(friend.messages
-							.get(friend.messages.size() - 1).content);
+					messageHolder.tv_lastchat.setText(friend.messages.get(friend.messages.size() - 1).content);
 				} else if (lastMessage.contentType.equals("image")) {
-					messageHolder.tv_lastchat
-							.setText(getString(R.string.text_picture));
+					messageHolder.tv_lastchat.setText(getString(R.string.text_picture));
 				} else if (lastMessage.contentType.equals("voice")) {
 
 				}
@@ -248,12 +242,10 @@ public class CirclesFragment extends BaseFragment {
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
+						iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 					}
 				});
-				Integer notread = friends.get(lastChatFriends.get(arg0
-						- messageFirstPosition)).notReadMessagesCount;
+				Integer notread = friends.get(lastChatFriends.get(arg0 - messageFirstPosition)).notReadMessagesCount;
 				if (notread != null) {
 					if (notread > 0) {
 						messageHolder.tv_notread.setVisibility(View.VISIBLE);
@@ -263,25 +255,26 @@ public class CirclesFragment extends BaseFragment {
 						messageHolder.tv_notread.setVisibility(View.GONE);
 					}
 				}
-				arg1.setOnClickListener(new OnClickListener() {
+				fragmentView.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View view) {
 						mMainModeManager.mChatFragment.mStatus = ChatFragment.CHAT_FRIEND;
 						mMainModeManager.mChatFragment.mNowChatFriend = friend;
-						mMainModeManager
-								.showNext(mMainModeManager.mChatFragment);
+						mMainModeManager.showNext(mMainModeManager.mChatFragment);
 					}
 				});
 				break;
 			case TYPE_CIRCLE:
-				Circle circle = circles.get(circles.size()
-						- (arg0 - circleFirstPosition) - 1);
+				Circle circle = circles.get(circles.size() - (arg0 - circleFirstPosition) - 1);
 				friendHolder.tv_groupname.setText(circle.name);
-				arg1.setOnLongClickListener(new OnLongClickListener() {
+				fragmentView.setOnLongClickListener(new OnLongClickListener() {
 
 					@Override
 					public boolean onLongClick(View v) {
+
+						Alert.showMessage("circle long pressed");
+
 						return true;
 					}
 				});
@@ -289,87 +282,63 @@ public class CirclesFragment extends BaseFragment {
 				break;
 			case TYPE_BUTTON:
 				if (showNewFriends && arg0 == 0) {
-					bHolder.button.setText(getActivity().getString(
-							R.string.button_newfriend)
-							+ "(" + newFriendsCount + ")");
+					bHolder.button.setText(getActivity().getString(R.string.button_newfriend) + "(" + newFriendsCount + ")");
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							mMainModeManager
-									.showNext(mMainModeManager.mNewFriendsFragment);
+							mMainModeManager.showNext(mMainModeManager.mNewFriendsFragment);
 						}
 					});
 				} else if (arg0 == showMessageCount + messageFirstPosition) {
-					bHolder.button.setText(getActivity().getString(
-							R.string.button_moreMessage));
+					bHolder.button.setText(getActivity().getString(R.string.button_moreMessage));
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							showMessageCount = lastChatFriends.size() > showMessageCount + 5 ? showMessageCount + 5
-									: lastChatFriends.size();
+							showMessageCount = lastChatFriends.size() > showMessageCount + 5 ? showMessageCount + 5 : lastChatFriends.size();
 							initData(false);
 							mAdapter.notifyDataSetChanged();
 						}
 					});
 				} else if (arg0 == getCount() - 2) {
-					bHolder.button.setText(getActivity().getString(
-							R.string.button_newcircle));
+					bHolder.button.setText(getActivity().getString(R.string.button_newcircle));
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
 							final EditText circleName;
-							new AlertDialog.Builder(getActivity())
-									.setTitle("请输入分组名")
-									.setIcon(android.R.drawable.ic_dialog_info)
-									.setView(
-											circleName = new EditText(
-													getActivity()))
-									.setPositiveButton(
-											"确定",
-											new DialogInterface.OnClickListener() {
+							new AlertDialog.Builder(getActivity()).setTitle("请输入分组名").setIcon(android.R.drawable.ic_dialog_info).setView(circleName = new EditText(getActivity())).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									app.networkHandler.connection(new CommonNetConnection() {
+
+										@Override
+										protected void settings(
+
+										Settings settings) {
+
+											int i = 1;
+											i++;
+											settings.url = API.DOMAIN + API.CIRCLE_ADDCIRCLE;
+											Map<String, String> params = new HashMap<String, String>();
+											params.put("phone", app.data.user.phone);
+											params.put("accessKey", app.data.user.accessKey);
+											params.put("name", circleName.getText().toString());
+											settings.params = params;
+										}
+
+										@Override
+										public void success(JSONObject jData) {
+											DataUtil.getCircles(new GetDataListener() {
+
 												@Override
-												public void onClick(
-														DialogInterface dialog,
-														int which) {
-													app.networkHandler
-															.connection(new CommonNetConnection() {
-
-																@Override
-																protected void settings(
-																		Settings settings) {
-																	settings.url = API.DOMAIN
-																			+ API.CIRCLE_ADDCIRCLE;
-																	Map<String, String> params = new HashMap<String, String>();
-																	params.put(
-																			"phone",
-																			app.data.user.phone);
-																	params.put(
-																			"accessKey",
-																			app.data.user.accessKey);
-																	params.put(
-																			"circleName",
-																			circleName
-																					.getText()
-																					.toString());
-																	settings.params = params;
-																}
-
-																@Override
-																public void success(
-																		JSONObject jData) {
-																	DataUtil.getCircles(new GetDataListener() {
-
-																		@Override
-																		public void getSuccess() {
-																			mAdapter.notifyDataSetChanged();
-																		}
-																	});
-
-																}
-															});
+												public void getSuccess() {
+													mAdapter.notifyDataSetChanged();
 												}
-											}).setNegativeButton("取消", null)
-									.show();
+											});
+
+										}
+									});
+								}
+							}).setNegativeButton("取消", null).show();
 							// MCNetTools.ajax(new AjaxAdapter() {
 							//
 							// @Override
@@ -389,13 +358,11 @@ public class CirclesFragment extends BaseFragment {
 						}
 					});
 				} else if (arg0 == getCount() - 1) {
-					bHolder.button.setText(getActivity().getString(
-							R.string.button_findmorefriend));
+					bHolder.button.setText(getActivity().getString(R.string.button_findmorefriend));
 					bHolder.button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							mMainModeManager
-									.showNext(mMainModeManager.mSearchFriendFragment);
+							mMainModeManager.showNext(mMainModeManager.mSearchFriendFragment);
 						}
 					});
 				}
@@ -404,7 +371,7 @@ public class CirclesFragment extends BaseFragment {
 				break;
 			}
 
-			return arg1;
+			return fragmentView;
 		}
 
 		@Override
@@ -423,7 +390,7 @@ public class CirclesFragment extends BaseFragment {
 
 	class FriendHolder {
 		TextView tv_groupname;
-		CommonViewPager vp_content;
+		CommonViewPager viewPagerContent;
 		PagerAdapter vp_contentAdapter;
 
 		Circle circle;
@@ -433,70 +400,95 @@ public class CirclesFragment extends BaseFragment {
 			TextView tv_nickname;
 		}
 
+		GestureDetector detector = new GestureDetector(getActivity(), new GestureDetector.OnGestureListener() {
+
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public void onShowPress(MotionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public void onLongPress(MotionEvent e) {
+				Alert.showMessage("longpress gridpage");
+			}
+
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public boolean onDown(MotionEvent e) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+		});
+
 		public void setCircle(Circle c, final int viewPosition) {
+
 			this.circle = c;
 			final List<String> phones = circle.phones;
-			final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6
-					: phones.size() / 6 + 1;
+			final int pagecount = phones.size() % 6 == 0 ? phones.size() / 6 : phones.size() / 6 + 1;
 			final List<View> pageviews = new ArrayList<View>();
 			for (int i = 0; i < pagecount; i++) {
 				final int a = i;
 				BaseAdapter gridpageAdapter = new BaseAdapter() {
 					@Override
-					public View getView(final int position, View convertView,
-							final ViewGroup parent) {
+					public View getView(final int position, View convertView, final ViewGroup parent) {
 						ItemHolder itemHolder = null;
 						if (convertView == null) {
-							convertView = mInflater.inflate(
-									R.layout.fragment_circles_gridpage_item,
-									null);
+							convertView = mInflater.inflate(R.layout.fragment_circles_gridpage_item, null);
 							itemHolder = new ItemHolder();
-							itemHolder.iv_head = (ImageView) convertView
-									.findViewById(R.id.iv_head);
-							itemHolder.tv_nickname = (TextView) convertView
-									.findViewById(R.id.tv_nickname);
+							itemHolder.iv_head = (ImageView) convertView.findViewById(R.id.iv_head);
+							itemHolder.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
 							convertView.setTag(itemHolder);
 						} else {
 							itemHolder = (ItemHolder) convertView.getTag();
 						}
-						if (phones.get(a * 6 + position) != null
-								&& friends.get(phones.get(a * 6 + position)) != null) {
+						if (phones.get(a * 6 + position) != null && friends.get(phones.get(a * 6 + position)) != null) {
 
-							final String headFileName = friends.get(phones
-									.get(a * 6 + position)).head;
+							final String headFileName = friends.get(phones.get(a * 6 + position)).head;
 							final ImageView iv_head = itemHolder.iv_head;
-							app.fileHandler.getHeadImage(headFileName,
-									new FileResult() {
-										@Override
-										public void onResult(String where) {
-											iv_head.setImageBitmap(app.fileHandler.bitmaps
-													.get(headFileName));
-										}
-									});
-							itemHolder.tv_nickname.setText(friends.get(phones
-									.get(a * 6 + position)).nickName);
-							convertView
-									.setOnClickListener(new OnClickListener() {
+							app.fileHandler.getHeadImage(headFileName, new FileResult() {
+								@Override
+								public void onResult(String where) {
+									iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
+								}
+							});
+							itemHolder.tv_nickname.setText(friends.get(phones.get(a * 6 + position)).nickName);
+							convertView.setOnClickListener(new OnClickListener() {
 
-										@Override
-										public void onClick(View v) {
-											mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
-											mMainModeManager.mBusinessCardFragment.mShowFriend = friends
-													.get(phones.get(a * 6
-															+ position));
-											mMainModeManager
-													.showNext(mMainModeManager.mBusinessCardFragment);
-										}
-									});
+								@Override
+								public void onClick(View v) {
+									mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+									mMainModeManager.mBusinessCardFragment.mShowFriend = friends.get(phones.get(a * 6 + position));
+									mMainModeManager.showNext(mMainModeManager.mBusinessCardFragment);
+								}
+							});
 
-							convertView
-									.setOnLongClickListener(new OnLongClickListener() {
+							convertView.setOnLongClickListener(new OnLongClickListener() {
 
-										@Override
-										public boolean onLongClick(View v) {
-											return false;
-										}
-									});
+								@Override
+								public boolean onLongClick(View v) {
+
+									Alert.showMessage("circle's view long pressed");
+									return true;
+								}
+							});
 						}
 						return convertView;
 					}
@@ -523,18 +515,36 @@ public class CirclesFragment extends BaseFragment {
 					}
 
 					@Override
-					public void unregisterDataSetObserver(
-							DataSetObserver observer) {
+					public void unregisterDataSetObserver(DataSetObserver observer) {
 						if (observer != null) {
 							super.unregisterDataSetObserver(observer);
 						}
 					}
 
 				};
-				GridView gridpage = (GridView) mInflater.inflate(
-						R.layout.fragment_circles_gridpage, null);
+				GridView gridpage = (GridView) mInflater.inflate(R.layout.fragment_circles_gridpage, null);
 				gridpage.setAdapter(gridpageAdapter);
 				pageviews.add(gridpage);
+
+				// gridpage.setOnItemLongClickListener(new
+				// OnItemLongClickListener(){
+				// @Override
+				// public boolean onItemLongClick(AdapterView<?> parent, View
+				// view, int position, long id) {
+				//
+				// Alert.showMessage("circle's gridpage long pressed");
+				// return true;
+				// }
+				// });
+
+				gridpage.setOnTouchListener(new OnTouchListener() {
+
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						return detector.onTouchEvent(event);
+					}
+				});
+
 			}
 			vp_contentAdapter = new PagerAdapter() {
 				@Override
@@ -548,8 +558,7 @@ public class CirclesFragment extends BaseFragment {
 				}
 
 				@Override
-				public void destroyItem(View container, int position,
-						Object object) {
+				public void destroyItem(View container, int position, Object object) {
 					((ViewPager) container).removeView(pageviews.get(position));
 				}
 
@@ -566,7 +575,17 @@ public class CirclesFragment extends BaseFragment {
 					}
 				}
 			};
-			vp_content.setAdapter(vp_contentAdapter);
+			viewPagerContent.setAdapter(vp_contentAdapter);
+
+			viewPagerContent.setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+
+					Alert.showMessage("circle's viewPagerContent long pressed");
+					return true;
+				}
+			});
 		}
 	}
 
