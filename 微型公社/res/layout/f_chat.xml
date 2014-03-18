@@ -24,70 +24,55 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="70dp"
         android:background="@drawable/card_background_normal"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="#2fff"
             android:orientation="horizontal" >
 
             <ImageView
-                android:id="@+id/iv_emoji1"
+                android:id="@+id/iv_voice_play"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="8dp"
+                android:alpha="1"
+                android:src="@drawable/voice_start"
                 tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/iv_emoji2"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
+            <TextView
+                android:id="@+id/tv_voice_start"
+                android:layout_width="215dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/voice_status"
+                android:paddingLeft="60dp"
+                android:paddingTop="8dp"
+                android:text="按住录音"
+                android:textColor="#000"
+                android:textSize="20sp"
                 tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/iv_emoji3"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
-                tools:ignore="ContentDescription" />
+            <TextView
+                android:id="@+id/tv_voice_timelength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="10dp"
+                android:text="5&quot;"
+                android:textColor="#fff"
+                android:textSize="15sp" />
 
             <ImageView
-                android:id="@+id/iv_emoji4"
+                android:id="@+id/iv_voice_send"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/iv_emoji5"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/iv_emoji6"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/iv_emoji7"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="4dp"
+                android:src="@drawable/send_voice_button"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
     </RelativeLayout>

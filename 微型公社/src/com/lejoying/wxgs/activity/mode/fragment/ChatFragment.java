@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -11,12 +12,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,6 +46,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -75,9 +82,13 @@ public class ChatFragment extends BaseFragment {
 	private View mContent;
 	public ChatAdapter mAdapter;
 
+	public MediaRecorder recorder;
+
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
 	int RESULT_CATPICTURE = 0x3d;
+
+	boolean VOICE_PLAYSTATUS = false;
 
 	LayoutInflater mInflater;
 
@@ -94,6 +105,10 @@ public class ChatFragment extends BaseFragment {
 	View rl_selectpicture;
 	View rl_makeaudio;
 	TextView tv_voice;
+	TextView tv_voice_start;
+	ImageView iv_voice_send;
+	ImageView iv_voice_play;
+	TextView tv_voice_timelength;
 
 	View groupTopBar;
 	TextView textView_groupName;
@@ -178,6 +193,11 @@ public class ChatFragment extends BaseFragment {
 		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
 		rl_makeaudio = mContent.findViewById(R.id.rl_makeaudio);
 		tv_voice = (TextView) mContent.findViewById(R.id.tv_voice);
+		tv_voice_start = (TextView) mContent.findViewById(R.id.tv_voice_start);
+		iv_voice_send = (ImageView) mContent.findViewById(R.id.iv_voice_send);
+		iv_voice_play = (ImageView) mContent.findViewById(R.id.iv_voice_play);
+		tv_voice_timelength = (TextView) mContent
+				.findViewById(R.id.tv_voice_timelength);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
 		textView_groupName = (TextView) mContent
@@ -271,7 +291,82 @@ public class ChatFragment extends BaseFragment {
 				}
 			}
 		});
+		rl_audiopanel.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				// not to do
+			}
+		});
+		iv_voice_play.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (!VOICE_PLAYSTATUS) {
+					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
+							getResources(), R.drawable.voice_stop));
+					VOICE_PLAYSTATUS = true;
+				} else {
+					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
+							getResources(), R.drawable.voice_start));
+					VOICE_PLAYSTATUS = false;
+				}
+			}
+		});
+		try {
+			tv_voice_start.setOnTouchListener(new OnTouchListener() {
+
+				@SuppressLint("InlinedApi")
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					int action = event.getAction();
+
+					switch (action) {
+					case MotionEvent.ACTION_DOWN:
+						start();
+						tv_voice_start.setText("正在录音");
+						Toast.makeText(getActivity(), "ACTION_DOWN",
+								Toast.LENGTH_SHORT).show();
+						break;
+					case MotionEvent.ACTION_UP:
+						finish();
+						tv_voice_start.setText("继续录音");
+						Toast.makeText(getActivity(), "ACTION_UP",
+								Toast.LENGTH_SHORT).show();
+						break;
+					case MotionEvent.ACTION_CANCEL:// 当手指移动到view外面，会cancel
+						Toast.makeText(getActivity(), "ACTION_CANCEL",
+								Toast.LENGTH_SHORT).show();
+						break;
+					}
+
+					return true;
+				}
+			});
+		} catch (Exception e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+		// tv_voice_start.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View arg0) {
+		// // TODO Auto-generated method stub
+		// Toast.makeText(getActivity(), "tv_voice_start",
+		// Toast.LENGTH_SHORT).show();
+		// }
+		// });
+		iv_voice_send.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getActivity(), "iv_voice_send",
+						Toast.LENGTH_SHORT).show();
+			}
+		});
 		iv_more_select.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -425,6 +520,30 @@ public class ChatFragment extends BaseFragment {
 		});
 
 		return mContent;
+	}
+
+	@SuppressLint("InlinedApi")
+	public void start() {
+		String path = Environment.getExternalStorageDirectory()
+				.getAbsolutePath();
+		path += "/Coolspan.aac";
+		recorder = new MediaRecorder();
+		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
+		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
+		recorder.setOutputFile(path);
+		try {
+			recorder.prepare();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		recorder.start();
+	}
+
+	public void finish() {
+		recorder.stop();
+		recorder.release();
 	}
 
 	@Override
