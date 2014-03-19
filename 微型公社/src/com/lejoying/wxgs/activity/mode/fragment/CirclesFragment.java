@@ -61,7 +61,6 @@ public class CirclesFragment extends BaseFragment {
 
 	public String copyStatus = "move";// "move"||"copy"
 	public String mode = "normal";// "normal"||"edit"
-	public String touchEvnetStatus = "static";// "static"||"moving_x"||"moving_y"
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -78,12 +77,10 @@ public class CirclesFragment extends BaseFragment {
 	AnimatingView animatingView = new AnimatingView();
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mInflater = inflater;
 		mContentView = inflater.inflate(R.layout.fragment_circles_scroll, null);
-		circlesViewContenter = (ScrollRelativeLayout) mContentView
-				.findViewById(R.id.circlesViewContainer);
+		circlesViewContenter = (ScrollRelativeLayout) mContentView.findViewById(R.id.circlesViewContainer);
 		editControl = mContentView.findViewById(R.id.editControl);
 
 		animatingView.view = circlesViewContenter;
@@ -105,13 +102,10 @@ public class CirclesFragment extends BaseFragment {
 			for (int i = 0; i < normalShow.size(); i++) {
 				View v = views.get(normalShow.get(i));
 				int height = (int) dp2px(((Integer) v.getTag()).floatValue());
-				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams.setMargins(layoutParams.leftMargin, top,
-						layoutParams.rightMargin, -Integer.MAX_VALUE);
+				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				layoutParams.setMargins(layoutParams.leftMargin, top, layoutParams.rightMargin, -Integer.MAX_VALUE);
 
-				if (currentEditPosition != -1
-						&& v.equals(views.get(circles.get(currentEditPosition)))) {
+				if (currentEditPosition != -1 && v.equals(views.get(circles.get(currentEditPosition)))) {
 					scrollToY = top;
 					scrollToY -= dp2px(20);
 				}
@@ -124,6 +118,14 @@ public class CirclesFragment extends BaseFragment {
 			circlesViewContenter.scrollTo(0, scrollToY);
 		}
 	}
+
+	static class TouchEvnetStatus {
+		public static int STATIC = 0;
+		public static int MOVING_X = 1;
+		public static int MOVING_Y = 2;
+	}
+
+	public int touchEvnetStatus = TouchEvnetStatus.STATIC;
 
 	void initEvent() {
 
@@ -163,18 +165,18 @@ public class CirclesFragment extends BaseFragment {
 					}
 					dy = y - y0;
 					dx = x - x0;
-					if (touchEvnetStatus.equals("moving_y")) {
+					if (touchEvnetStatus == TouchEvnetStatus.MOVING_Y) {
 						if (mode.equals("edit")) {
 							return false;
 						}
 						circlesViewContenter.scrollBy(0, -(int) (dy));
 						y0 = y;
-					} else if (touchEvnetStatus.equals("static")) {
+					} else if (touchEvnetStatus == TouchEvnetStatus.STATIC) {
 						if (dy * dy + dx * dx > 400) {
 							if (dy * dy > dx * dx) {
-								touchEvnetStatus = "moving_y";
+								touchEvnetStatus = TouchEvnetStatus.MOVING_Y;
 							} else {
-								touchEvnetStatus = "moving_x";
+								touchEvnetStatus = TouchEvnetStatus.MOVING_X;
 							}
 						}
 					}
@@ -205,15 +207,13 @@ public class CirclesFragment extends BaseFragment {
 					vx = (x - x0) / delta;
 					vy = (y - y0) / delta;
 
-					System.out
-							.println("vx:    " + vx + "     ----vy:    " + vy);
+					System.out.println("vx:    " + vx + "     ----vy:    " + vy);
 
-					FrictionAnimation decelerationAnimation = new FrictionAnimation(
-							vx, vy);
+					// FrictionAnimation decelerationAnimation = new
+					// FrictionAnimation(vx, vy);
 					// circlesViewContenter.startAnimation(decelerationAnimation);
-					if (touchEvnetStatus.equals("moving_y")
-							|| touchEvnetStatus.equals("moving_x")) {
-						touchEvnetStatus = "static";
+					if (touchEvnetStatus == TouchEvnetStatus.MOVING_Y || touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
+						touchEvnetStatus = TouchEvnetStatus.STATIC;
 					}
 				}
 
@@ -264,13 +264,10 @@ public class CirclesFragment extends BaseFragment {
 		for (int i = 0; i < circles.size(); i++) {
 			String group = circles.get(i);
 			View v = views.get(group);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-					cardWidth, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(i * screenWidth + marginLeft,
-					(int) dp2px(20), -Integer.MAX_VALUE, 0);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(cardWidth, LayoutParams.WRAP_CONTENT);
+			layoutParams.setMargins(i * screenWidth + marginLeft, (int) dp2px(20), -Integer.MAX_VALUE, 0);
 			v.setLayoutParams(layoutParams);
-			TextView manager = (TextView) v
-					.findViewById(R.id.panel_right_button);
+			TextView manager = (TextView) v.findViewById(R.id.panel_right_button);
 			manager.setText("分组管理");
 			manager.setVisibility(View.VISIBLE);
 			v.findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
@@ -280,18 +277,14 @@ public class CirclesFragment extends BaseFragment {
 				@Override
 				public void onClick(View v) {
 					if (currentEditPosition > 0) {
-						View currentView = views.get(circles
-								.get(currentEditPosition));
+						View currentView = views.get(circles.get(currentEditPosition));
 						currentEditPosition--;
-						View previousView = views.get(circles
-								.get(currentEditPosition));
+						View previousView = views.get(circles.get(currentEditPosition));
 
-						TranslateAnimation animation = new TranslateAnimation(
-								-screenWidth, 0, 0, 0);
+						TranslateAnimation animation = new TranslateAnimation(-screenWidth, 0, 0, 0);
 						animation.setDuration(300);
 
-						circlesViewContenter.scrollTo(currentEditPosition
-								* screenWidth, 0);
+						circlesViewContenter.scrollTo(currentEditPosition * screenWidth, 0);
 
 						currentView.startAnimation(animation);
 						previousView.startAnimation(animation);
@@ -304,21 +297,17 @@ public class CirclesFragment extends BaseFragment {
 				@Override
 				public void onClick(View v) {
 					if (currentEditPosition < circles.size() - 1) {
-						View currentView = views.get(circles
-								.get(currentEditPosition));
+						View currentView = views.get(circles.get(currentEditPosition));
 						currentEditPosition++;
-						View nextView = views.get(circles
-								.get(currentEditPosition));
+						View nextView = views.get(circles.get(currentEditPosition));
 
-						TranslateAnimation animation = new TranslateAnimation(
-								screenWidth, 0, 0, 0);
+						TranslateAnimation animation = new TranslateAnimation(screenWidth, 0, 0, 0);
 						animation.setDuration(300);
 
-						circlesViewContenter.scrollTo(currentEditPosition
-								* screenWidth, 0);
+						circlesViewContenter.scrollTo(currentEditPosition * screenWidth, 0);
 						currentView.startAnimation(animation);
 						nextView.startAnimation(animation);
-	}
+					}
 				}
 			});
 			circlesViewContenter.addView(v);
@@ -327,16 +316,14 @@ public class CirclesFragment extends BaseFragment {
 				currentEditPosition = i;
 			}
 		}
-		TranslateAnimation editControlIn = new TranslateAnimation(0, 0,
-				dp2px(160), 0);
+		TranslateAnimation editControlIn = new TranslateAnimation(0, 0, dp2px(160), 0);
 		editControlIn.setDuration(500);
 		editControl.setVisibility(View.VISIBLE);
 		editControl.startAnimation(editControlIn);
 
 		circlesViewContenter.scrollTo(currentEditPosition * screenWidth, 0);
 
-		TranslateAnimation viewMove = new TranslateAnimation(0, 0, y - 50
-				- dp2px(20), 0);
+		TranslateAnimation viewMove = new TranslateAnimation(0, 0, y - 50 - dp2px(20), 0);
 		viewMove.setDuration(350);
 		view.startAnimation(viewMove);
 
@@ -351,8 +338,7 @@ public class CirclesFragment extends BaseFragment {
 		CircleMenu.show();
 		mMainModeManager.setKeyDownListener(null);
 
-		TranslateAnimation editControlIn = new TranslateAnimation(0, 0, 0,
-				dp2px(160));
+		TranslateAnimation editControlIn = new TranslateAnimation(0, 0, 0, dp2px(160));
 		editControlIn.setDuration(400);
 		editControl.setVisibility(View.GONE);
 		editControl.startAnimation(editControlIn);
@@ -360,18 +346,16 @@ public class CirclesFragment extends BaseFragment {
 		final int screenWidth = getScreenWidth();
 
 		circlesViewContenter.removeAllViews();
-		circlesViewContenter
-				.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+		circlesViewContenter.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
 
 		for (int i = 0; i < circles.size(); i++) {
 			String group = circles.get(i);
 			View v = views.get(group);
-			TextView manager = (TextView) v
-					.findViewById(R.id.panel_right_button);
+			TextView manager = (TextView) v.findViewById(R.id.panel_right_button);
 			manager.setVisibility(View.GONE);
 			v.findViewById(R.id.bottomBar).setVisibility(View.GONE);
 
-	}
+		}
 
 		notifyViews();
 		currentEditPosition = -1;
@@ -453,10 +437,8 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	View generateNewFriendButtonView() {
-		View newFriendButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
-		Button newFriendButton = (Button) newFriendButtonView
-				.findViewById(R.id.button);
+		View newFriendButtonView = mInflater.inflate(R.layout.fragment_item_buttom, null);
+		Button newFriendButton = (Button) newFriendButtonView.findViewById(R.id.button);
 		newFriendButton.setText("新的好友");
 		newFriendButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -470,10 +452,8 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	View generateMoreMessageButtonView() {
-		View moreMessageButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
-		Button moreMessageButton = (Button) moreMessageButtonView
-				.findViewById(R.id.button);
+		View moreMessageButtonView = mInflater.inflate(R.layout.fragment_item_buttom, null);
+		Button moreMessageButton = (Button) moreMessageButtonView.findViewById(R.id.button);
 		moreMessageButton.setText("点击查看更多");
 		moreMessageButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -487,16 +467,13 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	View generateFindMoreFriendButtonView() {
-		View findMoreFriendButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
-		Button findMoreFriendButton = (Button) findMoreFriendButtonView
-				.findViewById(R.id.button);
+		View findMoreFriendButtonView = mInflater.inflate(R.layout.fragment_item_buttom, null);
+		Button findMoreFriendButton = (Button) findMoreFriendButtonView.findViewById(R.id.button);
 		findMoreFriendButton.setText("找到更多密友");
 		findMoreFriendButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mMainModeManager
-						.showNext(mMainModeManager.mSearchFriendFragment);
+				mMainModeManager.showNext(mMainModeManager.mSearchFriendFragment);
 			}
 		});
 
@@ -505,51 +482,31 @@ public class CirclesFragment extends BaseFragment {
 
 	View generateCreateGroupButtonView() {
 
-		View createGroupButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
-		Button createGroupButton = (Button) createGroupButtonView
-				.findViewById(R.id.button);
+		View createGroupButtonView = mInflater.inflate(R.layout.fragment_item_buttom, null);
+		Button createGroupButton = (Button) createGroupButtonView.findViewById(R.id.button);
 		createGroupButton.setText("新建分组");
 		createGroupButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				CircleMenu.showBack();
 				final EditText circleName;
-				new AlertDialog.Builder(getActivity())
-						.setTitle("请输入分组名")
-						.setIcon(android.R.drawable.ic_dialog_info)
-						.setView(circleName = new EditText(getActivity()))
-						.setPositiveButton("确定",
-								new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(getActivity()).setTitle("请输入分组名").setIcon(android.R.drawable.ic_dialog_info).setView(circleName = new EditText(getActivity())).setPositiveButton("确定", new DialogInterface.OnClickListener() {
 					@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										app.networkHandler
-												.connection(new CommonNetConnection() {
+					public void onClick(DialogInterface dialog, int which) {
+						app.networkHandler.connection(new CommonNetConnection() {
 
 							@Override
-													protected void settings(
-															Settings settings) {
-														settings.url = API.DOMAIN
-																+ API.CIRCLE_ADDCIRCLE;
+							protected void settings(Settings settings) {
+								settings.url = API.DOMAIN + API.CIRCLE_ADDCIRCLE;
 								Map<String, String> params = new HashMap<String, String>();
-														params.put(
-																"phone",
-																app.data.user.phone);
-														params.put(
-																"accessKey",
-																app.data.user.accessKey);
-														params.put(
-																"name",
-																circleName
-																		.getText()
-																		.toString());
+								params.put("phone", app.data.user.phone);
+								params.put("accessKey", app.data.user.accessKey);
+								params.put("name", circleName.getText().toString());
 								settings.params = params;
 							}
 
 							@Override
-													public void success(
-															JSONObject jData) {
+							public void success(JSONObject jData) {
 								DataUtil.getCircles(new GetDataListener() {
 									@Override
 									public void getSuccess() {
@@ -560,12 +517,9 @@ public class CirclesFragment extends BaseFragment {
 							}
 						});
 					}
-								})
-						.setNegativeButton("取消",
-								new DialogInterface.OnClickListener() {
+				}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 					@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
+					public void onClick(DialogInterface dialog, int which) {
 						CircleMenu.show();
 					}
 				}).setOnCancelListener(new OnCancelListener() {
@@ -584,24 +538,18 @@ public class CirclesFragment extends BaseFragment {
 
 	View generateMessageView(String lastChatFriendPhone) {
 
-		View messageView = mInflater.inflate(
-				R.layout.fragment_circles_messages_item, null);
-		final ImageView head = (ImageView) messageView
-				.findViewById(R.id.iv_head);
-		TextView nickName = (TextView) messageView
-				.findViewById(R.id.tv_nickname);
-		TextView lastChatMessage = (TextView) messageView
-				.findViewById(R.id.tv_lastchat);
-		TextView notReadCount = (TextView) messageView
-				.findViewById(R.id.tv_notread);
+		View messageView = mInflater.inflate(R.layout.fragment_circles_messages_item, null);
+		final ImageView head = (ImageView) messageView.findViewById(R.id.iv_head);
+		TextView nickName = (TextView) messageView.findViewById(R.id.tv_nickname);
+		TextView lastChatMessage = (TextView) messageView.findViewById(R.id.tv_lastchat);
+		TextView notReadCount = (TextView) messageView.findViewById(R.id.tv_notread);
 
 		final Friend friend = app.data.friends.get(lastChatFriendPhone);
 
 		nickName.setText(friend.nickName);
 		Message lastMessage = friend.messages.get(friend.messages.size() - 1);
 		if (lastMessage.contentType.equals("text")) {
-			lastChatMessage
-					.setText(friend.messages.get(friend.messages.size() - 1).content);
+			lastChatMessage.setText(friend.messages.get(friend.messages.size() - 1).content);
 		} else if (lastMessage.contentType.equals("image")) {
 			lastChatMessage.setText(getString(R.string.text_picture));
 		} else if (lastMessage.contentType.equals("voice")) {
@@ -639,40 +587,30 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	View generateCircleView(Circle circle) {
-		final View circleView = mInflater
-				.inflate(R.layout.fragment_panel, null);
+		final View circleView = mInflater.inflate(R.layout.fragment_panel, null);
 
-		TextView groupName = (TextView) circleView
-				.findViewById(R.id.panel_name);
+		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
-		final RelativeLayout friendContainer = (RelativeLayout) circleView
-				.findViewById(R.id.friendContainer);
+		final RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.friendContainer);
 
 		List<String> phones = circle.phones;
 		Map<String, Friend> friends = app.data.friends;
-		int pagecount = phones.size() % 6 == 0 ? phones.size() / 6 : phones
-				.size() / 6 + 1;
+		int pagecount = phones.size() % 6 == 0 ? phones.size() / 6 : phones.size() / 6 + 1;
 
 		for (int i = 0; i < phones.size(); i++) {
-			View convertView = mInflater.inflate(
-					R.layout.fragment_circles_gridpage_item, null);
-			final ImageView head = (ImageView) convertView
-					.findViewById(R.id.iv_head);
-			TextView nickname = (TextView) convertView
-					.findViewById(R.id.tv_nickname);
+			View convertView = mInflater.inflate(R.layout.fragment_circles_gridpage_item, null);
+			final ImageView head = (ImageView) convertView.findViewById(R.id.iv_head);
+			TextView nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
 			Friend friend = friends.get(phones.get(i));
 			nickname.setText(friend.nickName);
 			final String headFileName = friend.head;
 			app.fileHandler.getHeadImage(headFileName, new FileResult() {
 				@Override
 				public void onResult(String where) {
-					head.setImageBitmap(app.fileHandler.bitmaps
-							.get(headFileName));
+					head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 				}
 			});
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-					(int) dp2px(55f),
-					android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = -Integer.MAX_VALUE;
 			if ((i + 1) % 6 == 1) {
 				params.topMargin = (int) dp2px(11);
@@ -682,8 +620,7 @@ public class CirclesFragment extends BaseFragment {
 				params.leftMargin = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
 			} else if ((i + 1) % 6 == 3) {
 				params.topMargin = (int) dp2px(11);
-				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6
-						* 326);
+				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
 			} else if ((i + 1) % 6 == 4) {
 				params.topMargin = (int) dp2px(11 + 73 + 27);
 				params.leftMargin = (int) dp2px(26 + i / 6 * 326);
@@ -692,8 +629,7 @@ public class CirclesFragment extends BaseFragment {
 				params.leftMargin = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
 			} else if ((i + 1) % 6 == 0) {
 				params.topMargin = (int) dp2px(11 + 73 + 27);
-				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6
-						* 326);
+				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
 			}
 
 			// convertView.setOnClickListener(new OnClickListener() {
@@ -722,63 +658,40 @@ public class CirclesFragment extends BaseFragment {
 			friendContainer.addView(convertView);
 		}
 
-		final GestureDetector detector = new GestureDetector(getActivity(),
-				new SimpleOnGestureListener() {
+		final GestureDetector detector = new GestureDetector(getActivity(), new SimpleOnGestureListener() {
 			float x0 = 0;
 			float dx = 0;
 
 			@Override
-					public boolean onDown(MotionEvent e) {
-						x0 = e.getRawX();
-						return true;
-					}
+			public boolean onDown(MotionEvent e) {
+				x0 = e.getRawX();
+				return true;
+			}
 
-					@Override
-					public void onLongPress(MotionEvent e) {
-						if (touchEvnetStatus.equals("moving_x")
-								|| touchEvnetStatus.equals("moving_y")) {
-							return;
-						}
-						switchToEditMode(circleView);
-					}
+			@Override
+			public void onLongPress(MotionEvent e) {
+				if (touchEvnetStatus == TouchEvnetStatus.MOVING_X || touchEvnetStatus == TouchEvnetStatus.MOVING_Y) {
+					return;
+				}
+				switchToEditMode(circleView);
+			}
 
-					@Override
-					public boolean onScroll(MotionEvent e1, MotionEvent e2,
-							float distanceX, float distanceY) {
-						dx = e2.getRawX() - x0;
-					if (touchEvnetStatus.equals("moving_x")) {
-							friendContainer.scrollBy(-(int) (dx), 0);
-							x0 = e2.getRawX();
-					}
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				dx = e2.getRawX() - x0;
+				if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
+					friendContainer.scrollBy(-(int) (dx), 0);
+					x0 = e2.getRawX();
+				}
 				return true;
 			}
 		});
 
 		friendContainer.setOnTouchListener(new OnTouchListener() {
 
-			// float x0 = 0;
-			// float dx = 0;
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// float x = event.getRawX();
-				// float y = event.getRawY();
-		//
-				// long currentMillis = System.currentTimeMillis();
-		//
-				// if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				// x0 = x;
-				// } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-				// dx = x - x0;
-		//
-				// if (touchEvnetStatus.equals("moving_x")) {
-				// v.scrollBy(-(int) (dx), 0);
-				// x0 = x;
-		// }
-				// } else if (event.getAction() == MotionEvent.ACTION_UP) {
-		//
-		// }
-
 				return detector.onTouchEvent(event);
 			}
 		});
@@ -787,8 +700,7 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public boolean onLongClick(View v) {
-				if (touchEvnetStatus.equals("moving_x")
-						|| touchEvnetStatus.equals("moving_y")) {
+				if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
 					return false;
 				}
 				switchToEditMode(v);
@@ -798,5 +710,4 @@ public class CirclesFragment extends BaseFragment {
 
 		return circleView;
 	}
-
 }
