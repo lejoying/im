@@ -44,6 +44,7 @@ import com.lejoying.wxgs.activity.view.CommonViewPager;
 import com.lejoying.wxgs.activity.view.ScrollContent;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation;
+import com.lejoying.wxgs.activity.view.manager.FrictionAnimation.AnimatingView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -102,11 +103,16 @@ public class CirclesFragment extends BaseFragment {
 	// return mContentView;
 	// }
 
+	FrictionAnimation decelerationAnimation = new FrictionAnimation();
+	AnimatingView animatingView = new AnimatingView();
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mContentView = inflater.inflate(R.layout.fragment_circles_scroll, null);
 		mInflater = inflater;
 		circlesViewContenter = (ScrollRelativeLayout) mContentView.findViewById(R.id.circlesViewContainer);
+
+		animatingView.view = circlesViewContenter;
 
 		density = getActivity().getResources().getDisplayMetrics().density;
 		notifyViews();
@@ -188,7 +194,10 @@ public class CirclesFragment extends BaseFragment {
 
 					System.out.println("vx:    " + vx + "     ----vy:    " + vy);
 
-					FrictionAnimation decelerationAnimation = new FrictionAnimation(vx, vy);
+					animatingView.vx = vx;
+					animatingView.vy = vy;
+
+					decelerationAnimation.addView("circlesViewContenter", animatingView);
 					circlesViewContenter.startAnimation(decelerationAnimation);
 					if (touchEvnetStatus.equals("moving_y") || touchEvnetStatus.equals("moving_x")) {
 						touchEvnetStatus = "static";
