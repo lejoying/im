@@ -101,6 +101,9 @@ public class CirclesFragment extends BaseFragment {
 		animatingView.view = circlesViewContenter;
 
 		density = getActivity().getResources().getDisplayMetrics().density;
+
+		circleViewCommonAnimation();
+
 		notifyViews();
 
 		initEvent();
@@ -688,6 +691,7 @@ public class CirclesFragment extends BaseFragment {
 		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
 			FriendHolder friendHolder = circleHolder.friendHolders.get(i);
 			friendHolder.position = switchPosition(i);
+			friendHolder.index = i;
 		}
 	}
 
@@ -722,7 +726,6 @@ public class CirclesFragment extends BaseFragment {
 
 			final FriendHolder friendHolder = new FriendHolder();
 			friendHolder.view = convertView;
-			friendHolder.index = i;
 
 			circleHolder.friendHolders.add(friendHolder);
 
@@ -746,8 +749,23 @@ public class CirclesFragment extends BaseFragment {
 
 						circleHolder.friendHolders.remove(friendHolder);
 
+						int animationFromIndex = friendHolder.index;
+						int animationCount = 6 - animationFromIndex % 6;
+
 						resolveFriendsPositions(circleHolder);
 						setFriendsPositions(circleHolder);
+
+						for (int i = 0; i < animationCount; i++) {
+							int index = animationFromIndex + i;
+							if (index < circleHolder.friendHolders.size()) {
+								View view = circleHolder.friendHolders.get(index).view;
+								if (index % 6 == 2) {
+									view.startAnimation(friendToPreLineAnimation);
+								} else {
+									view.startAnimation(friendToLeftAnimation);
+								}
+							}
+						}
 
 						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 						params.leftMargin = location[0];
@@ -875,6 +893,7 @@ public class CirclesFragment extends BaseFragment {
 
 	void circleViewCommonAnimation() {
 		friendToLeftAnimation = new TranslateAnimation(dp2px(103), 0, 0, 0);
+		friendToLeftAnimation.setStartOffset(150);
 		friendToLeftAnimation.setDuration(120);
 		friendToLeftAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -883,6 +902,8 @@ public class CirclesFragment extends BaseFragment {
 		});
 
 		friendToRightAnimation = new TranslateAnimation(dp2px(-103), 0, 0, 0);
+
+		friendToRightAnimation.setStartOffset(150);
 		friendToRightAnimation.setDuration(120);
 		friendToRightAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -891,6 +912,8 @@ public class CirclesFragment extends BaseFragment {
 		});
 
 		friendToNextLineAnimation = new TranslateAnimation(dp2px(206), 0, dp2px(-100), 0);
+
+		friendToNextLineAnimation.setStartOffset(150);
 		friendToNextLineAnimation.setDuration(120);
 		friendToNextLineAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -899,6 +922,8 @@ public class CirclesFragment extends BaseFragment {
 		});
 
 		friendToPreLineAnimation = new TranslateAnimation(dp2px(-206), 0, dp2px(100), 0);
+
+		friendToPreLineAnimation.setStartOffset(150);
 		friendToPreLineAnimation.setDuration(120);
 		friendToPreLineAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
