@@ -6,8 +6,291 @@
     <com.lejoying.wxgs.activity.view.ScrollRelativeLayout
         android:id="@+id/circlesViewContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center_horizontal|top" >
     </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
 
-</RelativeLayout> 
+    <RelativeLayout
+        android:id="@+id/editControl"
+        android:layout_width="fill_parent"
+        android:layout_height="160dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/card_background_normal"
+        android:visibility="gone" >
+
+        <HorizontalScrollView
+            android:id="@+id/hs_item"
+            android:layout_width="fill_parent"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:baselineAligned="false"
+            android:paddingBottom="2dp"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:id="@+id/ll_item"
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:baselineAligned="false"
+                android:paddingBottom="2dp" >
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_weixin"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clickable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/chat_emoji_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="移出改组"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_address"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clickable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/chat_emoji_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="修改组名"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/delete"
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_friends"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clickable="false"
+                        android:padding="4dp"
+                        android:src="@drawable/chat_emoji_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="删除该组"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/copy"
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_copy"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="6dp"
+                        android:src="@drawable/choise_up" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="复制"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clickable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/chat_emoji_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更多"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clickable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/chat_emoji_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更多"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clickable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/chat_emoji_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更多"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/hs_item"
+            android:background="#9fff" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="80dp"
+            android:layout_above="@+id/imageView5"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" >
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_alignLeft="@+id/imageView3"
+                android:scrollbars="none" >
+
+                <LinearLayout
+                    android:id="@+id/linearlayout_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp" >
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="15dp"
+                android:layout_height="80dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
+                android:src="@drawable/chat_left_nav" />
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="15dp"
+                android:layout_height="80dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/imageView3"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
+                android:src="@drawable/chat_right_nav" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:layout_centerVertical="true"
+        android:background="#9000"
+        android:padding="15dp"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/show"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="您将删除该组，该组好友将移动到默认分组中"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/show"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_background"
+            android:text="确定"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/show"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_background"
+            android:text="取消"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

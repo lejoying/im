@@ -75,67 +75,7 @@ public class SearchFriendFragment extends BaseFragment {
 
 		mScrollContent = (ScrollContent) mContent.findViewById(R.id.content);
 
-		// app.locationHandler.requestLocation(new LocationListener() {
-		//
-		// @Override
-		// public void onReceivePoi(BDLocation poiLocation) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void onReceiveLocation(final BDLocation location) {
-		// if (isReceiveLocation) {
-		// return;
-		// }
-		// isReceiveLocation = true;
-		// MCNetUtils.ajax(new AjaxAdapter() {
-		//
-		// @Override
-		// public void setParams(Settings settings) {
-		// try {
-		// settings.url = API.LBS_NEARBYACCOUNTS;
-		// JSONObject jArea = new JSONObject();
-		// jArea.put("latitude", location.getLatitude());
-		// jArea.put("longitude", location.getLongitude());
-		// jArea.put("radius", 500000);
-		// Bundle params = new Bundle();
-		// params.putString("phone", app.data.user.phone);
-		// params.putString("accessKey",
-		// app.data.user.accessKey);
-		// params.putString("area", jArea.toString());
-		// settings.params = params;
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		//
-		// @Override
-		// public void onSuccess(final JSONObject jData) {
-		// app.dataHandler.modifyData(new Modification() {
-		// @Override
-		// public void modify(Data data) {
-		// try {
-		// app.mJSONHandler.saveNearByFriends(
-		// jData.getJSONArray("accounts"),
-		// data);
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }, new UIModification() {
-		//
-		// @Override
-		// public void modifyUI() {
-		// mAdapter.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// });
-		// }
-		// });
+		
 
 		return mContent;
 	}
