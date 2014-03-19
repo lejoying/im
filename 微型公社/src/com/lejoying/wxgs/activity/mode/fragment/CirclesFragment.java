@@ -2,8 +2,10 @@ package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -447,8 +449,12 @@ public class CirclesFragment extends BaseFragment {
 		// generate circles
 		for (int i = 0; i < app.data.circles.size(); i++) {
 			Circle circle = app.data.circles.get(i);
+
+			CircleHolder circleHolder = new CircleHolder();
+			circleHolders.put("group#" + circle.rid, circleHolder);
+
 			if (views.get("group#" + circle.rid) == null) {
-				View v = generateCircleView(circle);
+				View v = generateCircleView(circle, circleHolder);
 				views.put("group#" + circle.rid, v);
 				v.setTag(272);
 			}
@@ -637,7 +643,68 @@ public class CirclesFragment extends BaseFragment {
 		return messageView;
 	}
 
-	View generateCircleView(Circle circle) {
+	class Position {
+		int x = 0;
+		int y = 0;
+	}
+
+	Position switchPosition(int i) {
+		Position position = new Position();
+		if ((i + 1) % 6 == 1) {
+			position.y = (int) dp2px(11);
+			position.x = (int) dp2px(26 + i / 6 * 326);
+		} else if ((i + 1) % 6 == 2) {
+			position.y = (int) dp2px(11);
+			position.x = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
+		} else if ((i + 1) % 6 == 3) {
+			position.y = (int) dp2px(11);
+			position.x = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
+		} else if ((i + 1) % 6 == 4) {
+			position.y = (int) dp2px(11 + 73 + 27);
+			position.x = (int) dp2px(26 + i / 6 * 326);
+		} else if ((i + 1) % 6 == 5) {
+			position.y = (int) dp2px(11 + 73 + 27);
+			position.x = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
+		} else if ((i + 1) % 6 == 0) {
+			position.y = (int) dp2px(11 + 73 + 27);
+			position.x = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
+		}
+		return position;
+	}
+
+	class FriendHolder {
+		Position position;
+		View view;
+		int index;
+	}
+
+	class CircleHolder {
+		public List<FriendHolder> friendHolders = new ArrayList<FriendHolder>();
+	}
+
+	public Map<String, CircleHolder> circleHolders = new Hashtable<String, CircleHolder>();
+
+	public void resolveFriendsPositions(CircleHolder circleHolder) {
+		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
+			FriendHolder friendHolder = circleHolder.friendHolders.get(i);
+			friendHolder.position = switchPosition(i);
+		}
+	}
+
+	public void setFriendsPositions(CircleHolder circleHolder) {
+		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
+			FriendHolder friendHolder = circleHolder.friendHolders.get(i);
+
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.rightMargin = -Integer.MAX_VALUE;
+
+			params.topMargin = friendHolder.position.y;
+			params.leftMargin = friendHolder.position.x;
+			friendHolder.view.setLayoutParams(params);
+		}
+	}
+
+	View generateCircleView(Circle circle, final CircleHolder circleHolder) {
 		final View circleView = mInflater.inflate(R.layout.fragment_panel, null);
 
 		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
@@ -653,27 +720,11 @@ public class CirclesFragment extends BaseFragment {
 
 			View convertView = generateFriendView(friend);
 
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-			params.rightMargin = -Integer.MAX_VALUE;
-			if ((i + 1) % 6 == 1) {
-				params.topMargin = (int) dp2px(11);
-				params.leftMargin = (int) dp2px(26 + i / 6 * 326);
-			} else if ((i + 1) % 6 == 2) {
-				params.topMargin = (int) dp2px(11);
-				params.leftMargin = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
-			} else if ((i + 1) % 6 == 3) {
-				params.topMargin = (int) dp2px(11);
-				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
-			} else if ((i + 1) % 6 == 4) {
-				params.topMargin = (int) dp2px(11 + 73 + 27);
-				params.leftMargin = (int) dp2px(26 + i / 6 * 326);
-			} else if ((i + 1) % 6 == 5) {
-				params.topMargin = (int) dp2px(11 + 73 + 27);
-				params.leftMargin = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
-			} else if ((i + 1) % 6 == 0) {
-				params.topMargin = (int) dp2px(11 + 73 + 27);
-				params.leftMargin = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
-			}
+			final FriendHolder friendHolder = new FriendHolder();
+			friendHolder.view = convertView;
+			friendHolder.index = i;
+
+			circleHolder.friendHolders.add(friendHolder);
 
 			convertView.setOnClickListener(new OnClickListener() {
 
@@ -693,6 +744,11 @@ public class CirclesFragment extends BaseFragment {
 						int[] location = new int[2];
 						v.getLocationInWindow(location);
 
+						circleHolder.friendHolders.remove(friendHolder);
+
+						resolveFriendsPositions(circleHolder);
+						setFriendsPositions(circleHolder);
+
 						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 						params.leftMargin = location[0];
 						params.topMargin = location[1] - 50;
@@ -704,9 +760,17 @@ public class CirclesFragment extends BaseFragment {
 						friendView.setVisibility(View.INVISIBLE);
 						tempFriendsList.addView(friendView, 0, tempParams);
 
+						friendView.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View view) {
+
+								return;
+							}
+						});
+
 						TranslateAnimation allMove = new TranslateAnimation(-dp2px(75), 0, 0, 0);
-						allMove.setStartOffset(300);
-						allMove.setDuration(200);
+						allMove.setStartOffset(150);
+						allMove.setDuration(120);
 						int count = tempFriendsList.getChildCount();
 						for (int i = 1; i < count; i++) {
 							tempFriendsList.getChildAt(i).startAnimation(allMove);
@@ -716,7 +780,7 @@ public class CirclesFragment extends BaseFragment {
 						int currentY = animationLayout.getHeight() - (int) dp2px(150);
 
 						TranslateAnimation moveAnimation = new TranslateAnimation(0, currnetX - location[0], 0, currentY - (location[1] - 50));
-						moveAnimation.setDuration(500);
+						moveAnimation.setDuration(270);
 						moveAnimation.setAnimationListener(new AnimationAdapter() {
 							@Override
 							public void onAnimationEnd(Animation animation) {
@@ -745,9 +809,11 @@ public class CirclesFragment extends BaseFragment {
 			// }
 			// });
 
-			convertView.setLayoutParams(params);
 			friendContainer.addView(convertView);
 		}
+
+		resolveFriendsPositions(circleHolder);
+		setFriendsPositions(circleHolder);
 
 		final GestureDetector detector = new GestureDetector(getActivity(), new SimpleOnGestureListener() {
 			float x0 = 0;
@@ -799,6 +865,46 @@ public class CirclesFragment extends BaseFragment {
 		});
 
 		return circleView;
+	}
+
+	TranslateAnimation friendToLeftAnimation;
+	TranslateAnimation friendToRightAnimation;
+
+	TranslateAnimation friendToNextLineAnimation;
+	TranslateAnimation friendToPreLineAnimation;
+
+	void circleViewCommonAnimation() {
+		friendToLeftAnimation = new TranslateAnimation(dp2px(103), 0, 0, 0);
+		friendToLeftAnimation.setDuration(120);
+		friendToLeftAnimation.setAnimationListener(new AnimationAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+		});
+
+		friendToRightAnimation = new TranslateAnimation(dp2px(-103), 0, 0, 0);
+		friendToRightAnimation.setDuration(120);
+		friendToRightAnimation.setAnimationListener(new AnimationAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+		});
+
+		friendToNextLineAnimation = new TranslateAnimation(dp2px(206), 0, dp2px(-100), 0);
+		friendToNextLineAnimation.setDuration(120);
+		friendToNextLineAnimation.setAnimationListener(new AnimationAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+		});
+
+		friendToPreLineAnimation = new TranslateAnimation(dp2px(-206), 0, dp2px(100), 0);
+		friendToPreLineAnimation.setDuration(120);
+		friendToPreLineAnimation.setAnimationListener(new AnimationAdapter() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+		});
 	}
 
 	View generateFriendView(Friend friend) {
