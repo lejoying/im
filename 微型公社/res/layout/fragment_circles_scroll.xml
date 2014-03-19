@@ -215,13 +215,14 @@
             android:layout_alignParentRight="true" >
 
             <HorizontalScrollView
+                android:id="@+id/tempFriendScroll"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_alignLeft="@+id/imageView3"
                 android:scrollbars="none" >
 
                 <LinearLayout
-                    android:id="@+id/linearlayout_user"
+                    android:id="@+id/tempFriendsList"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
@@ -253,44 +254,9 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_panel"
-        android:layout_width="fill_parent"
-        android:layout_height="120dp"
-        android:layout_centerVertical="true"
-        android:background="#9000"
-        android:padding="15dp"
-        android:visibility="gone" >
-
-        <TextView
-            android:id="@+id/show"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="您将删除该组，该组好友将移动到默认分组中"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/btn_ok"
-            android:layout_width="140dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/show"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_background"
-            android:text="确定"
-            android:textColor="#fff"
-            android:textSize="19sp" />
-
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="140dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/show"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_background"
-            android:text="取消"
-            android:textColor="#fff"
-            android:textSize="19sp" />
+        android:id="@+id/animationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
     </RelativeLayout>
 
 </RelativeLayout>

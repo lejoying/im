@@ -46,11 +46,11 @@
             android:background="#9fff"
             tools:ignore="ContentDescription" />
 
-        <RelativeLayout
+        <com.lejoying.wxgs.activity.view.ScrollRelativeLayout
             android:id="@+id/friendContainer"
             android:layout_width="match_parent"
             android:layout_height="220dp" >
-        </RelativeLayout>
+        </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
 
         <RelativeLayout
             android:id="@+id/bottomBar"
