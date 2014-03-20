@@ -1,6 +1,9 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +23,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -188,8 +194,9 @@ public class ChatFragment extends BaseFragment {
 
 				@Override
 				public void modifyUI() {
-					mMainModeManager.mCirclesFragment.mAdapter
-							.notifyDataSetChanged();
+					// mMainModeManager.mCirclesFragment.mAdapter
+					// .notifyDataSetChanged();
+					mMainModeManager.mCirclesFragment.generateViews();
 				}
 			});
 		}
@@ -309,6 +316,7 @@ public class ChatFragment extends BaseFragment {
 									file.delete();
 								}
 								voice_list.clear();
+								voice_length = 0;
 								return true;
 							}
 
@@ -364,29 +372,6 @@ public class ChatFragment extends BaseFragment {
 										R.drawable.voice_start));
 						VOICE_PLAYSTATUS = false;
 					}
-					// String path = Environment.getExternalStorageDirectory()
-					// .getAbsolutePath();
-					// path += "/20140320.aac";
-					// mPlayer = MediaPlayer.create(getActivity(),
-					// Uri.parse(path));
-					// mPlayer.setOnCompletionListener(new
-					// OnCompletionListener() {
-					//
-					// @Override
-					// public void onCompletion(MediaPlayer mp) {
-					// // TODO Auto-generated method stub
-					// iv_voice_play.setImageBitmap(BitmapFactory
-					// .decodeResource(getResources(),
-					// R.drawable.voice_start));
-					// VOICE_PLAYSTATUS = false;
-					// mPlayer.stop();
-					// }
-					// });
-					// // mediaPlayer.setLooping(false);
-					// mPlayer.start();
-					// Toast.makeText(getActivity(),
-					// "start-" + mPlayer.getDuration(),
-					// Toast.LENGTH_SHORT).show();
 				} else {
 					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
 							getResources(), R.drawable.voice_start));
@@ -428,50 +413,18 @@ public class ChatFragment extends BaseFragment {
 			}
 		};
 		tv_voice_start.setOnTouchListener(mOnTouchListener);
-		// tv_voice_start.setOnTouchListener(new OnTouchListener() {
-		//
-		// @SuppressLint("InlinedApi")
-		// @Override
-		// public boolean onTouch(View v, MotionEvent event) {
-		// int action = event.getAction();
-		//
-		// switch (action) {
-		// case MotionEvent.ACTION_DOWN:
-		// start();
-		// tv_voice_start.setText("正在录音");
-		// Toast.makeText(getActivity(), "ACTION_DOWN",
-		// Toast.LENGTH_SHORT).show();
-		// break;
-		// case MotionEvent.ACTION_UP:
-		// finish();
-		// tv_voice_start.setText("继续录音");
-		// Toast.makeText(getActivity(), "ACTION_UP",
-		// Toast.LENGTH_SHORT).show();
-		// break;
-		// case MotionEvent.ACTION_CANCEL:// 当手指移动到view外面，会cancel
-		// Toast.makeText(getActivity(), "ACTION_CANCEL",
-		// Toast.LENGTH_SHORT).show();
-		// break;
-		// }
-		// return false;
-		// }
-		// });
-		// tv_voice_start.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View arg0) {
-		// // TODO Auto-generated method stub
-		// Toast.makeText(getActivity(), "tv_voice_start",
-		// Toast.LENGTH_SHORT).show();
-		// }
-		// });
 		iv_voice_send.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				Toast.makeText(getActivity(), "iv_voice_send",
-						Toast.LENGTH_SHORT).show();
+				if (voice_length == 0) {
+					Toast.makeText(getActivity(), "语音尚未录音", Toast.LENGTH_SHORT)
+							.show();
+				} else {
+					mergeAACAudioFiles();
+				}
+
 			}
 		});
 		iv_more_select.setOnClickListener(new OnClickListener() {
@@ -629,24 +582,84 @@ public class ChatFragment extends BaseFragment {
 		return mContent;
 	}
 
-	// public boolean dispatchTouchEvent(MotionEvent event) {
-	// if (mOnTouchListener != null && mOnTouchListener.onTouch(this, event)) {
-	// return true;
-	// }
-	// return onTouch(event);
-	// }
+	void mergeAACAudioFiles() {
+		String path = Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + "/wxgs/";
+		File mergeACC = new File(path + new Date().getTime() + ".aac");
+		FileOutputStream mergerAACFos = null;
+		if (!mergeACC.exists()) {
+			try {
+				mergeACC.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			mergerAACFos = new FileOutputStream(mergeACC);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < voice_list.size(); i++) {
+			File file = new File(path + voice_list.get(i));
+			if (file.exists()) {
+				try {
+					FileInputStream fis = new FileInputStream(file);
+					// byte[] buffer = new byte[1024];
+					// int len = 0;
+					// if (i == 0) {
+					// while ((len = fis.read(buffer)) > 0) {
+					// mergerAACFos.write(buffer, 0, len);
+					// }
+					// }
+					//
+					// else {
+					// while ((len = fis.read(buffer)) > 0) {
+					// mergerAACFos.write(buffer, 0, len);
+					// }
+					// }
+					byte[] myByte = new byte[fis.available()];
+					int length = myByte.length;
 
-	// @Override
-	// public void onAttach(Activity activity) {
-	// try {
-	// mOnTouchListener = (OnTouchListener) activity;
-	// } catch (Exception e) {
-	// throw new ClassCastException(activity.toString()
-	// + "must implement mOnTouchListener");
-	// }
-	//
-	// super.onAttach(activity);
-	// }
+					if (i == 0) {
+						while (fis.read(myByte) != -1) {
+							mergerAACFos.write(myByte, 0, length);
+						}
+					} else {
+						while (fis.read(myByte) != -1) {
+							mergerAACFos.write(myByte, 6, length - 6);
+						}
+					}
+					mergerAACFos.flush();
+					fis.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				continue;
+			}
+		}
+		try {
+			mergerAACFos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		deleteRecordFile(path);
+	}
+
+	void deleteRecordFile(String path) {
+		for (int i = 0; i < voice_list.size(); i++) {
+			File file = new File(path + voice_list.get(i));
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+		voice_list.clear();
+		voice_length = 0;
+		tv_voice_timelength.setText("0\"");
+		tv_voice_start.setText("按住录音");
+	}
 
 	void play(int i) {
 		play_order = i;
@@ -682,12 +695,16 @@ public class ChatFragment extends BaseFragment {
 	void start() {
 		String path = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
-		path += "/" + new Date().getTime() + ".aac";
+		File file = new File(path + "/wxgs/");
+		if (!file.exists()) {
+			file.mkdir();
+		}
+		path += "/wxgs/" + new Date().getTime() + ".aac";
 		recorder = new MediaRecorder();
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
 		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-		recorder.setAudioSamplingRate(3500);
+		recorder.setAudioSamplingRate(3000);
 		recorder.setAudioEncodingBitRate(10000);
 		recorder.setOutputFile(path);
 		try {
@@ -698,15 +715,6 @@ public class ChatFragment extends BaseFragment {
 
 		recorder.start();
 		voice_list.add(path);
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// // Looper.prepare();
-		//
-		// // Looper.loop();
-		// }
-		// }).start();
 	}
 
 	void finish() {
@@ -807,8 +815,9 @@ public class ChatFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						mMainModeManager.mCirclesFragment.mAdapter
-								.notifyDataSetChanged();
+						// mMainModeManager.mCirclesFragment.mAdapter
+						// .notifyDataSetChanged();
+						mMainModeManager.mCirclesFragment.generateViews();
 					}
 				});
 			}
@@ -966,8 +975,9 @@ public class ChatFragment extends BaseFragment {
 				mAdapter.notifyDataSetChanged();
 				chatContent.setSelection(mAdapter.getCount() - 1);
 				if (mMainModeManager.mCirclesFragment.isAdded()) {
-					mMainModeManager.mCirclesFragment.mAdapter
-							.notifyDataSetChanged();
+					// mMainModeManager.mCirclesFragment.mAdapter
+					// .notifyDataSetChanged();
+					mMainModeManager.mCirclesFragment.generateViews();
 				}
 			}
 		});

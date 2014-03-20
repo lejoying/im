@@ -161,10 +161,23 @@ circleManage.moveout = function (data, response) {
 //    var phoneTo = data.phoneto;
     var oldRid = data.oldrid;
     var newRid = data.newrid;
-    if (oldRid != "undefined" && oldRid != undefined) {
+    var createFlag = false;
+    if ((newRid != "undefined" && newRid != undefined) && newRid != "none") {
+        createFlag = true;
+    } else {
+        createFlag = false;
+    }
+    if ((oldRid != "undefined" && oldRid != undefined) && oldRid != "none") {
         deleteRelationNode(phoneTo, newRid, oldRid);
     } else {
-        createRelationNode(phoneTo, newRid);
+        if (createFlag) {
+            createRelationNode(phoneTo, newRid);
+        } else {
+            response.write(JSON.stringify({
+                "提示信息": "移动成功"
+            }));
+            response.end();
+        }
     }
     function deleteRelationNode(phoneTo, newRid, oldRid) {
         var query = [
@@ -178,6 +191,7 @@ circleManage.moveout = function (data, response) {
             rid: parseInt(oldRid),
             phoneTo: phoneTo
         };
+
         db.query(query, params, function (error, results) {
             if (error) {
                 response.write(JSON.stringify({
@@ -188,7 +202,7 @@ circleManage.moveout = function (data, response) {
                 console.log(error + "deleteRelationNode");
                 return;
             } else if (results.length > 0) {
-                if (newRid != "undefined" && newRid != undefined) {
+                if (createFlag) {
 //                    throw  "出现异常了，快点处理......哈哈";
                     createRelationNode(phoneTo, newRid);
                 } else {
