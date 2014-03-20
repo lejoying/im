@@ -30,8 +30,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:background="@drawable/card_background_normal"
-        tools:ignore="UselessParent" 
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:ignore="UselessParent" >
 
         <HorizontalScrollView
             android:id="@+id/hs_item"

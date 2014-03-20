@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
 				mode = MODE_MAIN;
 				mLoginMode.release();
 				mMainMode.initialize();
-				mMainMode.show(mMainMode.mCirclesFragment);
+				mMainMode.show(mMainMode.mGroupFragment);
 
 				if (app.data.isClear) {
 					app.dataHandler.exclude(new Modification() {
@@ -131,6 +131,7 @@ public class MainActivity extends BaseActivity {
 				DataUtil.getUser(new GetDataListener() {
 					@Override
 					public void getSuccess() {
+						DataUtil.getGroups(null);
 						DataUtil.getCircles(new GetDataListener() {
 							@Override
 							public void getSuccess() {

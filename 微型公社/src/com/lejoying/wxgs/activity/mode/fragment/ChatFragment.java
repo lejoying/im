@@ -198,8 +198,10 @@ public class ChatFragment extends BaseFragment {
 				.findViewById(R.id.tv_voice_timelength);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
-		textView_groupName = (TextView) mContent.findViewById(R.id.textview_groupname);
-		textView_memberCount = (TextView) mContent.findViewById(R.id.textview_membercount);
+		// textView_groupName = (TextView)
+		// mContent.findViewById(R.id.textview_groupname);
+		// textView_memberCount = (TextView)
+		// mContent.findViewById(R.id.textview_membercount);
 
 		linearlayout_members = (LinearLayout) mContent.findViewById(R.id.linearlayout_members);
 

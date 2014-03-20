@@ -8,18 +8,14 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,7 +32,6 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
@@ -66,16 +61,13 @@ public class SearchFriendFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		instance = this;
 		mInflater = inflater;
 
 		mContent = inflater.inflate(R.layout.f_vertical_scroll, null);
 
 		mScrollContent = (ScrollContent) mContent.findViewById(R.id.content);
-
-		
 
 		return mContent;
 	}
@@ -120,133 +112,24 @@ public class SearchFriendFragment extends BaseFragment {
 			switch (position) {
 			case 0:
 				convertView = mInflater.inflate(R.layout.fragment_panel, null);
-				TextView tv_groupname = (TextView) convertView
-						.findViewById(R.id.panel_name);
+				TextView tv_groupname = (TextView) convertView.findViewById(R.id.panel_name);
 				tv_groupname.setText("附近好友");
 
-				CommonViewPager friendViewPager = (CommonViewPager) convertView
-						.findViewById(R.id.commonViewPager);
+				CommonViewPager friendViewPager = (CommonViewPager) convertView.findViewById(R.id.commonViewPager);
 
 				PagerAdapter vp_contentAdapter;
 
 				final List<Friend> friends = app.data.nearByFriends;
-				final int pagecount = friends.size() % 6 == 0 ? friends.size() / 6
-						: friends.size() / 6 + 1;
+				final int pagecount = friends.size() % 6 == 0 ? friends.size() / 6 : friends.size() / 6 + 1;
 				final List<View> pageviews = new ArrayList<View>();
 				for (int i = 0; i < pagecount; i++) {
-					final int a = i;
-					BaseAdapter gridpageAdapter = new BaseAdapter() {
-						@Override
-						public View getView(final int position,
-								View convertView, final ViewGroup parent) {
-							ItemHolder itemHolder = null;
-							if (convertView == null) {
-								convertView = mInflater
-										.inflate(
-												R.layout.fragment_circles_gridpage_item,
-												null);
-								itemHolder = new ItemHolder();
-								itemHolder.iv_head = (ImageView) convertView
-										.findViewById(R.id.iv_head);
-								itemHolder.tv_nickname = (TextView) convertView
-										.findViewById(R.id.tv_nickname);
-								convertView.setTag(itemHolder);
-							} else {
-								itemHolder = (ItemHolder) convertView.getTag();
-							}
-							final String headFileName = friends.get(a * 6
-									+ position).head;
-							final ImageView iv_head = itemHolder.iv_head;
-							app.fileHandler.getHeadImage(headFileName,
-									new FileResult() {
-										@Override
-										public void onResult(String where) {
-											iv_head.setImageBitmap(app.fileHandler.bitmaps
-													.get(headFileName));
-										}
-									});
-							itemHolder.tv_nickname.setText(friends.get(a * 6
-									+ position).nickName);
 
-							return convertView;
-						}
-
-						@Override
-						public long getItemId(int position) {
-							return position;
-						}
-
-						@Override
-						public Object getItem(int position) {
-							return friends.get(a * 6 + position);
-						}
-
-						@Override
-						public int getCount() {
-							int nowcount = 0;
-							if (a < pagecount - 1) {
-								nowcount = 6;
-							} else {
-								nowcount = friends.size() - a * 6;
-							}
-							return nowcount;
-						}
-
-						@Override
-						public void unregisterDataSetObserver(
-								DataSetObserver observer) {
-							if (observer != null) {
-								super.unregisterDataSetObserver(observer);
-							}
-						}
-
-					};
-					GridView gridpage = (GridView) mInflater.inflate(
-							R.layout.fragment_circles_gridpage, null);
-					gridpage.setAdapter(gridpageAdapter);
-					pageviews.add(gridpage);
 				}
-
-				vp_contentAdapter = new PagerAdapter() {
-					@Override
-					public boolean isViewFromObject(View arg0, Object arg1) {
-						return arg0 == arg1;
-					}
-
-					@Override
-					public int getCount() {
-						return pageviews.size();
-					}
-
-					@Override
-					public void destroyItem(View container, int position,
-							Object object) {
-						((ViewPager) container).removeView(pageviews
-								.get(position));
-					}
-
-					@Override
-					public Object instantiateItem(View container, int position) {
-						((ViewPager) container)
-								.addView(pageviews.get(position));
-						return pageviews.get(position);
-					}
-
-					@Override
-					public void unregisterDataSetObserver(
-							DataSetObserver observer) {
-						if (observer != null) {
-							super.unregisterDataSetObserver(observer);
-						}
-					}
-				};
-				friendViewPager.setAdapter(vp_contentAdapter);
 
 				break;
 			case 1:
 				convertView = mInflater.inflate(R.layout.f_searchfriend, null);
-				final EditText mView_phone = (EditText) convertView
-						.findViewById(R.id.et_phone);
+				final EditText mView_phone = (EditText) convertView.findViewById(R.id.et_phone);
 				View mView_search = convertView.findViewById(R.id.btn_search);
 				mView_search.setOnClickListener(new OnClickListener() {
 
@@ -264,15 +147,13 @@ public class SearchFriendFragment extends BaseFragment {
 
 				break;
 			case 2:
-				convertView = mInflater.inflate(R.layout.fragment_item_buttom,
-						null);
+				convertView = mInflater.inflate(R.layout.fragment_item_buttom, null);
 				Button button = (Button) convertView.findViewById(R.id.button);
 				button.setText(getString(R.string.button_scanbusinesscard));
 				button.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						mMainModeManager
-								.showNext(mMainModeManager.mScanQRCodeFragment);
+						mMainModeManager.showNext(mMainModeManager.mScanQRCodeFragment);
 					}
 				});
 				break;
@@ -300,9 +181,7 @@ public class SearchFriendFragment extends BaseFragment {
 			@Override
 			public void success(JSONObject jData) {
 				try {
-					final Friend friend = JSONParser
-							.generateFriendFromJSON(jData.getJSONArray(
-									"accounts").getJSONObject(0));
+					final Friend friend = JSONParser.generateFriendFromJSON(jData.getJSONArray("accounts").getJSONObject(0));
 
 					if (phone.equals(app.data.user.phone)) {
 						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
@@ -328,8 +207,7 @@ public class SearchFriendFragment extends BaseFragment {
 						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
 					}
 					mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-					mMainModeManager
-							.showNext(mMainModeManager.mBusinessCardFragment);
+					mMainModeManager.showNext(mMainModeManager.mBusinessCardFragment);
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

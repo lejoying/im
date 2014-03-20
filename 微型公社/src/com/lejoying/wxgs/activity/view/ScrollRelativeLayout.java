@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -13,20 +12,19 @@ public class ScrollRelativeLayout extends RelativeLayout {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
 	public void onDraw(Canvas canvas) {
-		 System.out.println("onDraw");
+		System.out.println("onDraw");
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		return listener.onTouch(this, event);
+		return listener != null ? listener.onTouch(this, event) : false;
 	}
 
 	OnTouchListener listener;
 
-	
 	@Override
 	public void setOnTouchListener(OnTouchListener l) {
 		listener = l;

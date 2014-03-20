@@ -152,12 +152,15 @@ public class CirclesFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				ImageView copyStatus = (ImageView) copy.findViewById(R.id.img_copy);
+				TextView copyStatusText = (TextView) copy.findViewById(R.id.copyText);
 				if (!isCopy) {
 					isCopy = true;
 					copyStatus.setImageResource(R.drawable.choise_down);
+					copyStatusText.setText("复制中");
 				} else {
 					isCopy = false;
 					copyStatus.setImageResource(R.drawable.choise_up);
+					copyStatusText.setText("复制");
 				}
 			}
 		});
@@ -712,7 +715,7 @@ public class CirclesFragment extends BaseFragment {
 
 		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
-		final RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.friendContainer);
+		final RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.viewContainer);
 
 		List<String> phones = circle.phones;
 		Map<String, Friend> friends = app.data.friends;
@@ -754,7 +757,7 @@ public class CirclesFragment extends BaseFragment {
 						tempFriendHolders.put(friend.phone, friendHolder);
 
 						View circleView = views.get(circles.get(currentEditPosition));
-						RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.friendContainer);
+						RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.viewContainer);
 						// change
 						friendContainer.removeView(holderView);
 
@@ -796,7 +799,7 @@ public class CirclesFragment extends BaseFragment {
 							public void onClick(View view) {
 
 								View circleView = views.get(circles.get(currentEditPosition));
-								RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.friendContainer);
+								RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.viewContainer);
 								friendContainer.scrollTo(0, 0);
 
 								final FriendHolder friendHolder = tempFriendHolders.get(friend.phone);
