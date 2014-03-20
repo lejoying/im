@@ -225,9 +225,7 @@
                     android:id="@+id/tempFriendsList"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingBottom="5dp"
-                    android:paddingTop="5dp" >
+                    android:orientation="horizontal" >
                 </LinearLayout>
             </HorizontalScrollView>
 
