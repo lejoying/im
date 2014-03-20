@@ -2,9 +2,11 @@ package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -18,7 +20,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +55,8 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
+import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
@@ -83,6 +88,10 @@ public class ChatFragment extends BaseFragment {
 	public ChatAdapter mAdapter;
 
 	public MediaRecorder recorder;
+	public MediaPlayer mPlayer;
+	public List<String> voice_list;
+	public int play_order = 0;
+	public long voice_length = 0;
 
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
@@ -109,6 +118,7 @@ public class ChatFragment extends BaseFragment {
 	ImageView iv_voice_send;
 	ImageView iv_voice_play;
 	TextView tv_voice_timelength;
+	OnTouchListener mOnTouchListener;
 
 	View groupTopBar;
 	TextView textView_groupName;
@@ -155,10 +165,15 @@ public class ChatFragment extends BaseFragment {
 		super.onCreate(savedInstanceState);
 	}
 
+	@SuppressLint({ "HandlerLeak", "NewApi" })
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		initShowFirstPosition();
 		mInflater = inflater;
+
+		voice_list = new ArrayList<String>();
+
 		mContent = inflater.inflate(R.layout.f_chat, null);
 
 		chatContent = (ListView) mContent.findViewById(R.id.chatContent);
@@ -173,9 +188,8 @@ public class ChatFragment extends BaseFragment {
 
 				@Override
 				public void modifyUI() {
-					// TODO refresh
-					// mMainModeManager.mCirclesFragment.mAdapter
-					// .notifyDataSetChanged();
+					mMainModeManager.mCirclesFragment.mAdapter
+							.notifyDataSetChanged();
 				}
 			});
 		}
@@ -184,10 +198,12 @@ public class ChatFragment extends BaseFragment {
 		iv_more = mContent.findViewById(R.id.iv_more);
 		iv_more_select = mContent.findViewById(R.id.iv_more_select);
 		editText_message = (EditText) mContent.findViewById(R.id.et_message);
-		rl_chatbottom = (RelativeLayout) mContent.findViewById(R.id.chat_bottom_bar);
+		rl_chatbottom = (RelativeLayout) mContent
+				.findViewById(R.id.chat_bottom_bar);
 		rl_message = (RelativeLayout) mContent.findViewById(R.id.rl_message);
 		rl_select = (RelativeLayout) mContent.findViewById(R.id.rl_select);
-		rl_audiopanel = (RelativeLayout) mContent.findViewById(R.id.rl_audiopanel);
+		rl_audiopanel = (RelativeLayout) mContent
+				.findViewById(R.id.rl_audiopanel);
 		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
 		rl_makeaudio = mContent.findViewById(R.id.rl_makeaudio);
 		tv_voice = (TextView) mContent.findViewById(R.id.tv_voice);
@@ -198,10 +214,13 @@ public class ChatFragment extends BaseFragment {
 				.findViewById(R.id.tv_voice_timelength);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
-		textView_groupName = (TextView) mContent.findViewById(R.id.textview_groupname);
-		textView_memberCount = (TextView) mContent.findViewById(R.id.textview_membercount);
+		textView_groupName = (TextView) mContent
+				.findViewById(R.id.textview_groupname);
+		textView_memberCount = (TextView) mContent
+				.findViewById(R.id.textview_membercount);
 
-		linearlayout_members = (LinearLayout) mContent.findViewById(R.id.linearlayout_members);
+		linearlayout_members = (LinearLayout) mContent
+				.findViewById(R.id.linearlayout_members);
 
 		// if (mStatus == CHAT_FRIEND) {
 		// groupTopBar.setVisibility(View.GONE);
@@ -212,7 +231,8 @@ public class ChatFragment extends BaseFragment {
 		for (int i = 0; i < 4; i++) {
 			ImageView iv_head = new ImageView(getActivity());
 			iv_head.setImageBitmap(app.fileHandler.defaultHead);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(40, 40);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					40, 40);
 			if (i != 3)
 				params.setMargins(0, 0, 10, 0);
 			iv_head.setLayoutParams(params);
@@ -220,8 +240,10 @@ public class ChatFragment extends BaseFragment {
 		}
 
 		groupCenterBar = mContent.findViewById(R.id.relativeLayout_group);
-		textView_groupNameAndMemberCount = (TextView) mContent.findViewById(R.id.textView_groupNameAndMemberCount);
-		linearlayout = (LinearLayout) groupCenterBar.findViewById(R.id.linearlayout_user);
+		textView_groupNameAndMemberCount = (TextView) mContent
+				.findViewById(R.id.textView_groupNameAndMemberCount);
+		linearlayout = (LinearLayout) groupCenterBar
+				.findViewById(R.id.linearlayout_user);
 
 		groupTopBar.setOnClickListener(new OnClickListener() {
 
@@ -240,12 +262,16 @@ public class ChatFragment extends BaseFragment {
 		});
 
 		for (int i = 0; i < 14; i++) {
-			View userView = inflater.inflate(R.layout.fragment_circles_gridpage_item, null);
+			View userView = inflater.inflate(
+					R.layout.fragment_circles_gridpage_item, null);
 			ImageView iv_head = (ImageView) userView.findViewById(R.id.iv_head);
-			TextView tv_nickname = (TextView) userView.findViewById(R.id.tv_nickname);
+			TextView tv_nickname = (TextView) userView
+					.findViewById(R.id.tv_nickname);
 			iv_head.setImageBitmap(app.fileHandler.defaultHead);
 			tv_nickname.setText("测试" + i);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.WRAP_CONTENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
 
 			params.setMargins(40, 0, 0, 0);
 
@@ -271,10 +297,41 @@ public class ChatFragment extends BaseFragment {
 				// TODO Auto-generated method stub
 				int show_status = rl_audiopanel.getVisibility();
 				if (show_status == View.VISIBLE) {
-					tv_voice.setText("语音");
-					rl_audiopanel.setVisibility(View.GONE);
+					if (voice_list.size() != 0) {
+						Alert.showDialog("语音尚未发送，是否取消？", new DialogListener() {
+
+							@Override
+							public boolean confirm() {
+								tv_voice.setText("语音");
+								rl_audiopanel.setVisibility(View.GONE);
+								for (int i = 0; i < voice_list.size(); i++) {
+									File file = new File(voice_list.get(i));
+									file.delete();
+								}
+								voice_list.clear();
+								return true;
+							}
+
+							@Override
+							public void cancel() {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+
+							}
+						});
+					} else {
+						tv_voice.setText("语音");
+						rl_audiopanel.setVisibility(View.GONE);
+					}
 				} else {
+					tv_voice_timelength.setText("0\"");
 					tv_voice.setText("取消");
+					tv_voice_start.setText("按住录音");
 					rl_audiopanel.setVisibility(View.VISIBLE);
 				}
 			}
@@ -296,47 +353,109 @@ public class ChatFragment extends BaseFragment {
 					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
 							getResources(), R.drawable.voice_stop));
 					VOICE_PLAYSTATUS = true;
+					if (voice_list.size() != 0) {
+						play_order = 0;
+						play(play_order);
+					} else {
+						Toast.makeText(getActivity(), "voice not exist",
+								Toast.LENGTH_SHORT).show();
+						iv_voice_play.setImageBitmap(BitmapFactory
+								.decodeResource(getResources(),
+										R.drawable.voice_start));
+						VOICE_PLAYSTATUS = false;
+					}
+					// String path = Environment.getExternalStorageDirectory()
+					// .getAbsolutePath();
+					// path += "/20140320.aac";
+					// mPlayer = MediaPlayer.create(getActivity(),
+					// Uri.parse(path));
+					// mPlayer.setOnCompletionListener(new
+					// OnCompletionListener() {
+					//
+					// @Override
+					// public void onCompletion(MediaPlayer mp) {
+					// // TODO Auto-generated method stub
+					// iv_voice_play.setImageBitmap(BitmapFactory
+					// .decodeResource(getResources(),
+					// R.drawable.voice_start));
+					// VOICE_PLAYSTATUS = false;
+					// mPlayer.stop();
+					// }
+					// });
+					// // mediaPlayer.setLooping(false);
+					// mPlayer.start();
+					// Toast.makeText(getActivity(),
+					// "start-" + mPlayer.getDuration(),
+					// Toast.LENGTH_SHORT).show();
 				} else {
 					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
 							getResources(), R.drawable.voice_start));
 					VOICE_PLAYSTATUS = false;
+					mPlayer.stop();
 				}
 			}
 		});
-		try {
-			tv_voice_start.setOnTouchListener(new OnTouchListener() {
+		mOnTouchListener = new OnTouchListener() {
 
-				@SuppressLint("InlinedApi")
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					int action = event.getAction();
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				int action = event.getAction();
 
-					switch (action) {
-					case MotionEvent.ACTION_DOWN:
-						start();
-						tv_voice_start.setText("正在录音");
-						Toast.makeText(getActivity(), "ACTION_DOWN",
-								Toast.LENGTH_SHORT).show();
-						break;
-					case MotionEvent.ACTION_UP:
-						finish();
-						tv_voice_start.setText("继续录音");
-						Toast.makeText(getActivity(), "ACTION_UP",
-								Toast.LENGTH_SHORT).show();
-						break;
-					case MotionEvent.ACTION_CANCEL:// 当手指移动到view外面，会cancel
-						Toast.makeText(getActivity(), "ACTION_CANCEL",
-								Toast.LENGTH_SHORT).show();
-						break;
-					}
-
-					return true;
+				switch (action) {
+				case MotionEvent.ACTION_DOWN:
+					start();
+					tv_voice_start.setText("正在录音");
+					Toast.makeText(getActivity(), "ACTION_DOWN",
+							Toast.LENGTH_SHORT).show();
+					break;
+				case MotionEvent.ACTION_UP:
+					finish();
+					mPlayer = MediaPlayer.create(getActivity(),
+							Uri.parse(voice_list.get(voice_list.size() - 1)));
+					voice_length += mPlayer.getDuration();
+					tv_voice_timelength.setText(voice_length / 1000 + "\"");
+					tv_voice_start.setText("继续录音");
+					Toast.makeText(getActivity(), "ACTION_UP",
+							Toast.LENGTH_SHORT).show();
+					break;
+				case MotionEvent.ACTION_CANCEL:// 当手指移动到view外面，会cancel
+					Toast.makeText(getActivity(), "ACTION_CANCEL",
+							Toast.LENGTH_SHORT).show();
+					break;
 				}
-			});
-		} catch (Exception e3) {
-			// TODO Auto-generated catch block
-			e3.printStackTrace();
-		}
+				// tv_voice_start.onTouchEvent(event);
+				return true;
+			}
+		};
+		tv_voice_start.setOnTouchListener(mOnTouchListener);
+		// tv_voice_start.setOnTouchListener(new OnTouchListener() {
+		//
+		// @SuppressLint("InlinedApi")
+		// @Override
+		// public boolean onTouch(View v, MotionEvent event) {
+		// int action = event.getAction();
+		//
+		// switch (action) {
+		// case MotionEvent.ACTION_DOWN:
+		// start();
+		// tv_voice_start.setText("正在录音");
+		// Toast.makeText(getActivity(), "ACTION_DOWN",
+		// Toast.LENGTH_SHORT).show();
+		// break;
+		// case MotionEvent.ACTION_UP:
+		// finish();
+		// tv_voice_start.setText("继续录音");
+		// Toast.makeText(getActivity(), "ACTION_UP",
+		// Toast.LENGTH_SHORT).show();
+		// break;
+		// case MotionEvent.ACTION_CANCEL:// 当手指移动到view外面，会cancel
+		// Toast.makeText(getActivity(), "ACTION_CANCEL",
+		// Toast.LENGTH_SHORT).show();
+		// break;
+		// }
+		// return false;
+		// }
+		// });
 		// tv_voice_start.setOnClickListener(new OnClickListener() {
 		//
 		// @Override
@@ -363,46 +482,49 @@ public class ChatFragment extends BaseFragment {
 			}
 		});
 
-		final GestureDetector gestureDetector = new GestureDetector(getActivity(), new OnGestureListener() {
+		final GestureDetector gestureDetector = new GestureDetector(
+				getActivity(), new OnGestureListener() {
 
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				return false;
-			}
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						return false;
+					}
 
-			@Override
-			public void onShowPress(MotionEvent e) {
-				// TODO Auto-generated method stub
+					@Override
+					public void onShowPress(MotionEvent e) {
+						// TODO Auto-generated method stub
 
-			}
+					}
 
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						// TODO Auto-generated method stub
+						return false;
+					}
 
-			@Override
-			public void onLongPress(MotionEvent e) {
-				// TODO Auto-generated method stub
+					@Override
+					public void onLongPress(MotionEvent e) {
+						// TODO Auto-generated method stub
 
-			}
+					}
 
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-				boolean flag = false;
-				if (e2.getX() - e1.getX() > 0 && velocityX > 2000) {
-					showSelectTab();
-					flag = true;
-				}
-				return flag;
-			}
+					@Override
+					public boolean onFling(MotionEvent e1, MotionEvent e2,
+							float velocityX, float velocityY) {
+						boolean flag = false;
+						if (e2.getX() - e1.getX() > 0 && velocityX > 2000) {
+							showSelectTab();
+							flag = true;
+						}
+						return flag;
+					}
 
-			@Override
-			public boolean onDown(MotionEvent e) {
-				return false;
-			}
-		});
+					@Override
+					public boolean onDown(MotionEvent e) {
+						return false;
+					}
+				});
 
 		editText_message.setOnTouchListener(new OnTouchListener() {
 
@@ -435,7 +557,8 @@ public class ChatFragment extends BaseFragment {
 		editText_message.addTextChangedListener(new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 				if (beforeHeight == 0) {
 					beforeHeight = editText_message.getHeight();
 				}
@@ -478,7 +601,8 @@ public class ChatFragment extends BaseFragment {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
 				// TODO Auto-generated method stub
 
 			}
@@ -505,15 +629,66 @@ public class ChatFragment extends BaseFragment {
 		return mContent;
 	}
 
+	// public boolean dispatchTouchEvent(MotionEvent event) {
+	// if (mOnTouchListener != null && mOnTouchListener.onTouch(this, event)) {
+	// return true;
+	// }
+	// return onTouch(event);
+	// }
+
+	// @Override
+	// public void onAttach(Activity activity) {
+	// try {
+	// mOnTouchListener = (OnTouchListener) activity;
+	// } catch (Exception e) {
+	// throw new ClassCastException(activity.toString()
+	// + "must implement mOnTouchListener");
+	// }
+	//
+	// super.onAttach(activity);
+	// }
+
+	void play(int i) {
+		play_order = i;
+		playAudio(i).setOnCompletionListener(new OnCompletionListener() {
+
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				// TODO Auto-generated method stub
+				mPlayer.reset();
+				play_order++;
+				if (play_order < voice_list.size()) {
+					play(play_order);
+				} else {
+					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
+							getResources(), R.drawable.voice_start));
+					VOICE_PLAYSTATUS = false;
+					mPlayer.stop();
+					mPlayer.release();
+					mPlayer = null;
+				}
+			}
+		});
+	}
+
+	MediaPlayer playAudio(int i) {
+		mPlayer = MediaPlayer.create(getActivity(),
+				Uri.parse(voice_list.get(i)));
+		mPlayer.start();
+		return mPlayer;
+	}
+
 	@SuppressLint("InlinedApi")
-	public void start() {
+	void start() {
 		String path = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
-		path += "/Coolspan.aac";
+		path += "/" + new Date().getTime() + ".aac";
 		recorder = new MediaRecorder();
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
-		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
+		recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+		recorder.setAudioSamplingRate(3500);
+		recorder.setAudioEncodingBitRate(10000);
 		recorder.setOutputFile(path);
 		try {
 			recorder.prepare();
@@ -522,10 +697,21 @@ public class ChatFragment extends BaseFragment {
 		}
 
 		recorder.start();
+		voice_list.add(path);
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// // Looper.prepare();
+		//
+		// // Looper.loop();
+		// }
+		// }).start();
 	}
 
-	public void finish() {
+	void finish() {
 		recorder.stop();
+		recorder.reset();
 		recorder.release();
 	}
 
@@ -546,10 +732,12 @@ public class ChatFragment extends BaseFragment {
 			}
 
 			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
 				if (firstVisibleItem == 0 && showFirstPosition != 0 && !isFirst) {
 					int old = showFirstPosition;
-					showFirstPosition = showFirstPosition > 10 ? showFirstPosition - 10 : 0;
+					showFirstPosition = showFirstPosition > 10 ? showFirstPosition - 10
+							: 0;
 					mAdapter.notifyDataSetChanged();
 					chatContent.setSelection(old - showFirstPosition);
 				}
@@ -565,7 +753,8 @@ public class ChatFragment extends BaseFragment {
 
 	public void showSelectTab() {
 		hideSoftInput();
-		Animation outAnimation = new TranslateAnimation(0, rl_chatbottom.getWidth(), 0, 0);
+		Animation outAnimation = new TranslateAnimation(0,
+				rl_chatbottom.getWidth(), 0, 0);
 		outAnimation.setDuration(150);
 		outAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -576,14 +765,16 @@ public class ChatFragment extends BaseFragment {
 		});
 		rl_message.startAnimation(outAnimation);
 
-		Animation inAnimation = new TranslateAnimation(-rl_chatbottom.getWidth(), 0, 0, 0);
+		Animation inAnimation = new TranslateAnimation(
+				-rl_chatbottom.getWidth(), 0, 0, 0);
 		inAnimation.setDuration(150);
 		rl_select.setVisibility(View.VISIBLE);
 		rl_select.startAnimation(inAnimation);
 	}
 
 	public void hideSelectTab() {
-		Animation outAnimation = new TranslateAnimation(0, -rl_chatbottom.getWidth(), 0, 0);
+		Animation outAnimation = new TranslateAnimation(0,
+				-rl_chatbottom.getWidth(), 0, 0);
 		outAnimation.setDuration(150);
 		outAnimation.setAnimationListener(new AnimationAdapter() {
 			@Override
@@ -594,7 +785,8 @@ public class ChatFragment extends BaseFragment {
 		});
 		rl_select.startAnimation(outAnimation);
 
-		Animation inAnimation = new TranslateAnimation(rl_chatbottom.getWidth(), 0, 0, 0);
+		Animation inAnimation = new TranslateAnimation(
+				rl_chatbottom.getWidth(), 0, 0, 0);
 		inAnimation.setDuration(150);
 		rl_message.setVisibility(View.VISIBLE);
 		editText_message.requestFocus();
@@ -615,8 +807,8 @@ public class ChatFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						// TODO refresh
-						// mMainModeManager.mCirclesFragment.mAdapter.notifyDataSetChanged();
+						mMainModeManager.mCirclesFragment.mAdapter
+								.notifyDataSetChanged();
 					}
 				});
 			}
@@ -657,21 +849,30 @@ public class ChatFragment extends BaseFragment {
 				messageHolder = new MessageHolder();
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
-					convertView = mInflater.inflate(R.layout.f_chat_item_right, null);
-					messageHolder.text = convertView.findViewById(R.id.rl_chatright);
+					convertView = mInflater.inflate(R.layout.f_chat_item_right,
+							null);
+					messageHolder.text = convertView
+							.findViewById(R.id.rl_chatright);
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					convertView = mInflater.inflate(R.layout.f_chat_item_left, null);
-					messageHolder.text = convertView.findViewById(R.id.rl_chatleft);
+					convertView = mInflater.inflate(R.layout.f_chat_item_left,
+							null);
+					messageHolder.text = convertView
+							.findViewById(R.id.rl_chatleft);
 					break;
 				default:
 					break;
 				}
-				messageHolder.image = convertView.findViewById(R.id.rl_chatleft_image);
-				messageHolder.iv_image = (ImageView) convertView.findViewById(R.id.iv_image);
-				messageHolder.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
-				messageHolder.iv_head = (ImageView) convertView.findViewById(R.id.iv_head);
-				messageHolder.tv_chat = (TextView) convertView.findViewById(R.id.tv_chat);
+				messageHolder.image = convertView
+						.findViewById(R.id.rl_chatleft_image);
+				messageHolder.iv_image = (ImageView) convertView
+						.findViewById(R.id.iv_image);
+				messageHolder.tv_nickname = (TextView) convertView
+						.findViewById(R.id.tv_nickname);
+				messageHolder.iv_head = (ImageView) convertView
+						.findViewById(R.id.iv_head);
+				messageHolder.tv_chat = (TextView) convertView
+						.findViewById(R.id.tv_chat);
 				convertView.setTag(messageHolder);
 			} else {
 				messageHolder = (MessageHolder) convertView.getTag();
@@ -697,7 +898,8 @@ public class ChatFragment extends BaseFragment {
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
 					}
 				});
 			} else if (message.contentType.equals("image")) {
@@ -708,7 +910,8 @@ public class ChatFragment extends BaseFragment {
 				app.fileHandler.getImage(imageFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						iv_image.setImageBitmap(app.fileHandler.bitmaps.get(imageFileName));
+						iv_image.setImageBitmap(app.fileHandler.bitmaps
+								.get(imageFileName));
 						if (where == app.fileHandler.FROM_WEB) {
 							mAdapter.notifyDataSetChanged();
 						}
@@ -763,8 +966,8 @@ public class ChatFragment extends BaseFragment {
 				mAdapter.notifyDataSetChanged();
 				chatContent.setSelection(mAdapter.getCount() - 1);
 				if (mMainModeManager.mCirclesFragment.isAdded()) {
-					// TODO refresh
-					// mMainModeManager.mCirclesFragment.mAdapter.notifyDataSetChanged();
+					mMainModeManager.mCirclesFragment.mAdapter
+							.notifyDataSetChanged();
 				}
 			}
 		});
@@ -823,23 +1026,29 @@ public class ChatFragment extends BaseFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RESULT_SELECTPICTURE && resultCode == Activity.RESULT_OK && data != null) {
+		if (requestCode == RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
 			Uri selectedImage = data.getData();
 			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+			Cursor cursor = getActivity().getContentResolver().query(
+					selectedImage, filePathColumn, null, null, null);
 			cursor.moveToFirst();
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			final String picturePath = cursor.getString(columnIndex).toLowerCase(Locale.getDefault());
-			final String format = picturePath.substring(picturePath.lastIndexOf("."));
+			final String picturePath = cursor.getString(columnIndex)
+					.toLowerCase(Locale.getDefault());
+			final String format = picturePath.substring(picturePath
+					.lastIndexOf("."));
 			cursor.close();
 
-			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(picturePath), 960, 540);
+			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
+					picturePath), 960, 540);
 			if (bitmap != null) {
 				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
 
 					@Override
 					public void setParams(SaveSettings settings) {
-						settings.compressFormat = format.equals(".jpg") ? settings.JPG : settings.PNG;
+						settings.compressFormat = format.equals(".jpg") ? settings.JPG
+								: settings.PNG;
 						settings.source = bitmap;
 					}
 
@@ -850,15 +1059,18 @@ public class ChatFragment extends BaseFragment {
 				});
 			}
 
-		} else if (requestCode == RESULT_TAKEPICTURE && resultCode == Activity.RESULT_OK) {
+		} else if (requestCode == RESULT_TAKEPICTURE
+				&& resultCode == Activity.RESULT_OK) {
 
-		} else if (requestCode == RESULT_CATPICTURE && resultCode == Activity.RESULT_OK && data != null) {
+		} else if (requestCode == RESULT_CATPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
 
 		}
 	}
 
 	void selectPicture() {
-		Intent selectFromGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
 	}
 
