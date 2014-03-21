@@ -104,7 +104,7 @@ function notify(data, response) {
     var sessionID = data.sessionID;
     var eventID = data.eventID;
     var event = data.event;
-    event = event || {eventID: eventID};
+//    event = event || {eventID: eventID};
     if (sessionID == "*") {
         var sessions = accountSession[phone];
         for (var sessionID in sessions) {
@@ -112,9 +112,8 @@ function notify(data, response) {
             sessionResponse.write(event);
             sessionResponse.end();
         }
-    }
-    else {
-        var sessionResponse = sessionPool[sessionID];
+    } else {
+        var sessionResponse = accountSession[phone][sessionID];
         sessionResponse.write(event);
         sessionResponse.end();
     }
