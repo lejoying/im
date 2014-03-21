@@ -46,6 +46,7 @@ public class MainApplication extends Application {
 
 	public File sdcardAppFolder;
 	public File sdcardImageFolder;
+	public File sdcardVoiceFolder;
 	public File sdcardHeadImageFolder;
 
 	public String sdcardStatus = "none";// "exist"
@@ -134,6 +135,10 @@ public class MainApplication extends Application {
 			sdcardImageFolder = new File(sdcardAppFolder, "image");
 			if (!sdcardImageFolder.exists()) {
 				sdcardImageFolder.mkdirs();
+			}
+			sdcardVoiceFolder = new File(sdcardAppFolder, "voice");
+			if (!sdcardVoiceFolder.exists()) {
+				sdcardVoiceFolder.mkdirs();
 			}
 			sdcardHeadImageFolder = new File(sdcardImageFolder, "head");
 			if (!sdcardHeadImageFolder.exists()) {

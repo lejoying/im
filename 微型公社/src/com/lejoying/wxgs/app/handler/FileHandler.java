@@ -1,6 +1,8 @@
 package com.lejoying.wxgs.app.handler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Base64;
+import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
@@ -283,4 +286,61 @@ public class FileHandler {
 	public interface FileResult {
 		public void onResult(String where);
 	}
+
+	public void getVoice(final VoiceInterface getVoiceInterface) {
+		final VoiceSettings settings = new VoiceSettings();
+		getVoiceInterface.setParams(settings);
+		final File voiceFile = new File(settings.folder.getAbsolutePath()
+				+ settings.fileName);
+		if (voiceFile.exists()) {
+			new Thread() {
+				public void run() {
+					try {
+						FileInputStream fis = null;
+						fis = new FileInputStream(voiceFile);
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+						byte[] buffer = new byte[1024];
+						int len = 0;
+						while ((len = fis.read(buffer)) != -1) {
+							bos.write(buffer, 0, len);
+						}
+						bos.flush();
+						byte[] data = bos.toByteArray();
+						bos.close();
+						fis.close();
+						String base64 = Base64.encodeToString(data,
+								Base64.DEFAULT);
+						base64 = base64.trim();
+						String sha1 = app.mSHA1.getDigestOfString(base64
+								.getBytes());
+						getVoiceInterface.onSuccess(sha1 + settings.format,
+								base64);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				};
+			}.start();
+		}
+	};
+
+	public void saveVoice(VoiceInterface saveVoiceInterface) {
+		final VoiceSettings settings = new VoiceSettings();
+		saveVoiceInterface.setParams(settings);
+		File voiceFile = new File(settings.folder, settings.fileName);
+
+	}
+
+	public class VoiceSettings {
+		public String fileName;
+		public String format;
+		public File folder = app.sdcardVoiceFolder;
+	}
+
+	public interface VoiceInterface {
+		public void setParams(VoiceSettings settings);
+
+		public void onSuccess(String filename, String base64);
+	}
+
 }
