@@ -179,6 +179,7 @@ public class BusinessCardFragment extends BaseFragment {
 			tv_phone.setText(mShowFriend.phone);
 			fileName = mShowFriend.head;
 			tv_mainbusiness.setText(mShowFriend.mainBusiness);
+			group.removeView(button3);
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {

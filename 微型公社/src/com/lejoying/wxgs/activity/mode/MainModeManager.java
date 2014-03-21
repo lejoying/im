@@ -9,6 +9,7 @@ import com.lejoying.wxgs.activity.mode.fragment.BusinessCardFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFragment;
 import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupFragment;
+import com.lejoying.wxgs.activity.mode.fragment.GroupManagerFragment;
 import com.lejoying.wxgs.activity.mode.fragment.NewFriendsFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SearchFriendFragment;
@@ -32,6 +33,7 @@ public class MainModeManager extends BaseModeManager {
 	public ChatFragment mChatFragment;
 	public NewFriendsFragment mNewFriendsFragment;
 	public AddFriendFragment mAddFriendFragment;
+	public GroupManagerFragment mGroupManagerFragment;
 
 	public MainModeManager(MainActivity activity) {
 		super(activity);
@@ -63,6 +65,8 @@ public class MainModeManager extends BaseModeManager {
 			mNewFriendsFragment.setMode(this);
 			mAddFriendFragment = new AddFriendFragment();
 			mAddFriendFragment.setMode(this);
+			mGroupManagerFragment = new GroupManagerFragment();
+			mGroupManagerFragment.setMode(this);
 		}
 	}
 

@@ -337,6 +337,15 @@ public class GroupFragment extends BaseFragment {
 		params.topMargin = position.y;
 		groupItemView.setLayoutParams(params);
 
+		groupItemView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_NEWGROUP;
+				mMainModeManager.showNext(mMainModeManager.mGroupManagerFragment);
+			}
+		});
+
 		viewContainer.addView(groupItemView);
 
 		final GestureDetector detector = new GestureDetector(getActivity(), new SimpleOnGestureListener() {

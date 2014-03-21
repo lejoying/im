@@ -92,10 +92,15 @@ public class JSONParser {
 
 	private static Object[] generateCircleFromJSON(JSONObject jCircle) {
 		Object[] circleAndFriends = new Object[2];
-		int rid = 0;
-		String name = null;
+		int rid = -1;
+		String name = "";
 		try {
 			name = jCircle.getString("name");
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
 			rid = jCircle.getInt("rid");
 		} catch (JSONException e) {
 		}

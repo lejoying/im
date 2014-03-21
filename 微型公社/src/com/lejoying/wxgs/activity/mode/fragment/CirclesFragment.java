@@ -262,7 +262,6 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	int currentEditPosition = -1;
-	int statusBarHeight;
 
 	public void switchToEditMode(View view) {
 		// Alert.showMessage("分组管理");
@@ -288,8 +287,6 @@ public class CirclesFragment extends BaseFragment {
 		});
 
 		circlesViewContenter.setGravity(Gravity.TOP | Gravity.LEFT);
-		statusBarHeight = circlesViewContenter.getRootView().getTop();
-		System.out.println(statusBarHeight);
 
 		CircleMenu.showBack();
 
@@ -425,7 +422,6 @@ public class CirclesFragment extends BaseFragment {
 		lastChatFriendsSize = lastChatFriendsSize < 5 ? lastChatFriendsSize : 5;
 
 		normalShow.clear();
-		circles.clear();
 
 		if (views.get("button#newfriend") == null) {
 			View newFriendButtonView = generateNewFriendButtonView();
@@ -451,6 +447,7 @@ public class CirclesFragment extends BaseFragment {
 		}
 		normalShow.add("button#moremessage");
 
+		circles.clear();
 		// generate circles
 		for (int i = 0; i < app.data.circles.size(); i++) {
 			Circle circle = app.data.circles.get(i);

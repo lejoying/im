@@ -130,6 +130,7 @@ public class ChatFragment extends BaseFragment {
 	TextView textView_groupName;
 	TextView textView_memberCount;
 	LinearLayout linearlayout_members;
+	View groupSetting;
 
 	View groupCenterBar;
 	TextView textView_groupNameAndMemberCount;
@@ -204,6 +205,7 @@ public class ChatFragment extends BaseFragment {
 		groupCenterBar = mContent.findViewById(R.id.relativeLayout_group);
 		textView_groupNameAndMemberCount = (TextView) mContent.findViewById(R.id.textView_groupNameAndMemberCount);
 		linearlayout = (LinearLayout) groupCenterBar.findViewById(R.id.linearlayout_user);
+		groupSetting = groupCenterBar.findViewById(R.id.groupSetting);
 
 		linearlayout_members = (LinearLayout) mContent.findViewById(R.id.linearlayout_members);
 
@@ -314,6 +316,16 @@ public class ChatFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				groupCenterBar.setVisibility(View.GONE);
+			}
+		});
+
+		groupSetting.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_MANAGER;
+				mMainModeManager.mGroupManagerFragment.mCurrentManagerGroup = mNowChatGroup;
+				mMainModeManager.showNext(mMainModeManager.mGroupManagerFragment);
 			}
 		});
 
