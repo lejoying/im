@@ -277,7 +277,7 @@ public class GroupFragment extends BaseFragment {
 		bottomBar.setVisibility(View.VISIBLE);
 
 		for (int i = 0; i < app.data.groups.size(); i++) {
-			Group group = app.data.groups.get(i);
+			final Group group = app.data.groups.get(i);
 			View groupItemView = mInflater.inflate(R.layout.fragment_group_item, null);
 			TextView groupName = (TextView) groupItemView.findViewById(R.id.groupName);
 			TextView memberCount = (TextView) groupItemView.findViewById(R.id.memberCount);
@@ -319,6 +319,9 @@ public class GroupFragment extends BaseFragment {
 					if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
 						return;
 					}
+					mMainModeManager.mChatFragment.mStatus = ChatFragment.CHAT_GROUP;
+					mMainModeManager.mChatFragment.mNowChatGroup = group;
+					mMainModeManager.showNext(mMainModeManager.mChatFragment);
 				}
 			});
 

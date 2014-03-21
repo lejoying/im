@@ -46,7 +46,7 @@
             android:layout_alignRight="@+id/line"
             android:layout_below="@+id/line"
             android:layout_marginTop="15dp"
-            android:background="#0999"
+            android:background="@drawable/line_gray"
             android:ems="10"
             android:hint="@string/hint_enterphone"
             android:inputType="number|none"

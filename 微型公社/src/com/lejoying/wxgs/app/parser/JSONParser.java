@@ -81,9 +81,6 @@ public class JSONParser {
 			try {
 				JSONObject jFriend = jFriends.getJSONObject(i);
 				Friend friend = generateFriendFromJSON(jFriend);
-				if (friend.phone.equals(app.data.user.phone)) {
-					continue;
-				}
 				friends.add(friend);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
