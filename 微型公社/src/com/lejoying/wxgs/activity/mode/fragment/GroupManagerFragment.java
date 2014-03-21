@@ -8,6 +8,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
@@ -23,6 +24,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.baidu.mapapi.BMapManager;
+import com.baidu.mapapi.MKGeneralListener;
+import com.baidu.mapapi.map.SupportMapFragment;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
@@ -50,6 +54,8 @@ public class GroupManagerFragment extends BaseFragment {
 	View buttonList;
 	View selectFriend;
 
+	View nextToMap;
+
 	public static final String MODE_MANAGER = "manager";
 	public static final String MODE_NEWGROUP = "new";
 	public String status;
@@ -70,6 +76,7 @@ public class GroupManagerFragment extends BaseFragment {
 		nextBar = mContentView.findViewById(R.id.nextBar);
 		buttonList = mContentView.findViewById(R.id.buttonList);
 		selectFriend = mContentView.findViewById(R.id.selectFriend);
+		nextToMap = mContentView.findViewById(R.id.buttonNext);
 		if (status.equals(MODE_MANAGER)) {
 			RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl.getLayoutParams();
 			params.height = (int) dp2px(80);
@@ -87,7 +94,22 @@ public class GroupManagerFragment extends BaseFragment {
 			nextBar.setVisibility(View.VISIBLE);
 			notifyCircles();
 		}
+		initEvent();
 		return mContentView;
+	}
+
+	void initEvent() {
+		nextToMap.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				circlesViewContenter.removeAllViews();
+				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				layoutParams.setMargins(0, (int) dp2px(20), layoutParams.rightMargin, -Integer.MAX_VALUE);
+				circlesViewContenter.addView(generateMapView(), layoutParams);
+				getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mapContainer, SupportMapFragment.newInstance()).commit();
+			}
+		});
 	}
 
 	int screenWidth;
@@ -266,6 +288,15 @@ public class GroupManagerFragment extends BaseFragment {
 			params.leftMargin = friendHolder.position.x;
 			friendHolder.view.setLayoutParams(params);
 		}
+	}
+
+	View generateMapView() {
+		View mapView = mInflater.inflate(R.layout.fragment_panel_map, null);
+
+		TextView groupName = (TextView) mapView.findViewById(R.id.panel_name);
+		groupName.setText("请选择地点");
+
+		return mapView;
 	}
 
 	View generateGroup(CircleHolder circleHolder) {
