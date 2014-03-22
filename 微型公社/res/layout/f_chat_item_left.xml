@@ -76,4 +76,62 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/rl_chatleft_voice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/card_background"
+        android:minHeight="90dp"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/iv_voicehead"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/iv_voicehead_status"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="23dp"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@+id/iv_voicehead"
+            android:orientation="horizontal" >
+
+            <SeekBar
+                android:id="@+id/sk_voice"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:maxHeight="5dp"
+                android:minHeight="5dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:progressDrawable="@drawable/seekbar_style"
+                android:thumb="@drawable/thumb" />
+
+            <TextView
+                android:id="@+id/tv_voicetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11&quot;" />
+        </LinearLayout>
+    </RelativeLayout>
+
 </RelativeLayout>

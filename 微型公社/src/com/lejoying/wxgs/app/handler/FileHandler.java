@@ -15,11 +15,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Base64;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
@@ -290,8 +291,7 @@ public class FileHandler {
 	public void getVoice(final VoiceInterface getVoiceInterface) {
 		final VoiceSettings settings = new VoiceSettings();
 		getVoiceInterface.setParams(settings);
-		final File voiceFile = new File(settings.folder.getAbsolutePath()
-				+ settings.fileName);
+		final File voiceFile = new File(settings.folder, settings.fileName);
 		if (voiceFile.exists()) {
 			new Thread() {
 				public void run() {
@@ -314,8 +314,9 @@ public class FileHandler {
 						base64 = base64.trim();
 						String sha1 = app.mSHA1.getDigestOfString(base64
 								.getBytes());
-						getVoiceInterface.onSuccess(sha1 + settings.format,
-								base64);
+						getVoiceInterface.onSuccess(
+								(sha1 + settings.format).toLowerCase(), base64,
+								null);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -324,11 +325,49 @@ public class FileHandler {
 		}
 	};
 
-	public void saveVoice(VoiceInterface saveVoiceInterface) {
+	@SuppressLint("DefaultLocale")
+	public void saveVoice(final VoiceInterface saveVoiceInterface) {
 		final VoiceSettings settings = new VoiceSettings();
 		saveVoiceInterface.setParams(settings);
 		File voiceFile = new File(settings.folder, settings.fileName);
+		final File folder = settings.folder;
+		final String voiceFileName = (settings.fileName).toLowerCase();
+		if (!voiceFile.exists()) {
+			new Thread() {
+				@Override
+				public void run() {
+					app.networkHandler.connection(new NetConnection() {
 
+						@Override
+						protected void success(InputStream is,
+								HttpURLConnection httpURLConnection) {
+							try {
+								StreamParser.parseToFile(is,
+										new FileOutputStream(new File(folder,
+												voiceFileName)));
+								httpURLConnection.disconnect();
+								saveVoiceInterface.onSuccess(null, null, true);
+							} catch (FileNotFoundException e) {
+								saveVoiceInterface.onSuccess(null, null, false);
+								e.printStackTrace();
+							}
+						}
+
+						@Override
+						protected void failed(int failedType, int responseCode) {
+							saveVoiceInterface.onSuccess(null, null, false);
+							super.failed(failedType, responseCode);
+						}
+
+						@Override
+						protected void settings(Settings settings) {
+							settings.url = API.DOMAIN_IMAGE + voiceFileName;
+							settings.method = GET;
+						}
+					});
+				}
+			}.start();
+		}
 	}
 
 	public class VoiceSettings {
@@ -340,7 +379,7 @@ public class FileHandler {
 	public interface VoiceInterface {
 		public void setParams(VoiceSettings settings);
 
-		public void onSuccess(String filename, String base64);
+		public void onSuccess(String filename, String base64, Boolean flag);
 	}
 
 }

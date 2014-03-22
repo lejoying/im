@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,14 +20,9 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -38,8 +32,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
@@ -51,14 +43,14 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +64,6 @@ import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
-import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
@@ -112,6 +103,7 @@ public class ChatFragment extends BaseFragment {
 	int RESULT_CATPICTURE = 0x3d;
 
 	boolean VOICE_PLAYSTATUS = false;
+	boolean VOICE_SAVESTATUS = false;
 
 	LayoutInflater mInflater;
 
@@ -358,7 +350,8 @@ public class ChatFragment extends BaseFragment {
 			public void onClick(View arg0) {
 				mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_MANAGER;
 				mMainModeManager.mGroupManagerFragment.mCurrentManagerGroup = mNowChatGroup;
-				mMainModeManager.showNext(mMainModeManager.mGroupManagerFragment);
+				mMainModeManager
+						.showNext(mMainModeManager.mGroupManagerFragment);
 			}
 		});
 
@@ -465,17 +458,17 @@ public class ChatFragment extends BaseFragment {
 					break;
 				case MotionEvent.ACTION_UP:
 					finish();
-					mPlayer = MediaPlayer.create(
-							getActivity(),
-							Uri.parse(app.sdcardVoiceFolder.getAbsolutePath()
-									+ voice_list.get(voice_list.size() - 1)));
+					mPlayer = MediaPlayer.create(getActivity(), Uri
+							.parse((new File(app.sdcardVoiceFolder, voice_list
+									.get(voice_list.size() - 1)))
+									.getAbsolutePath()));
 					voice_length += mPlayer.getDuration();
 					tv_voice_timelength.setText(voice_length / 1000 + "\"");
 					tv_voice_start.setText("继续录音");
 					Toast.makeText(getActivity(), "ACTION_UP",
 							Toast.LENGTH_SHORT).show();
 					break;
-				case MotionEvent.ACTION_CANCEL:// 当手指移动到view外面，会cancel
+				case MotionEvent.ACTION_CANCEL:
 					Toast.makeText(getActivity(), "ACTION_CANCEL",
 							Toast.LENGTH_SHORT).show();
 					break;
@@ -511,46 +504,46 @@ public class ChatFragment extends BaseFragment {
 		final GestureDetector gestureDetector = new GestureDetector(
 				getActivity(), new OnGestureListener() {
 
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				return false;
-			}
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						return false;
+					}
 
-			@Override
-			public void onShowPress(MotionEvent e) {
-				// TODO Auto-generated method stub
+					@Override
+					public void onShowPress(MotionEvent e) {
+						// TODO Auto-generated method stub
 
-			}
+					}
 
-			@Override
+					@Override
 					public boolean onScroll(MotionEvent e1, MotionEvent e2,
 							float distanceX, float distanceY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
+						// TODO Auto-generated method stub
+						return false;
+					}
 
-			@Override
-			public void onLongPress(MotionEvent e) {
-				// TODO Auto-generated method stub
+					@Override
+					public void onLongPress(MotionEvent e) {
+						// TODO Auto-generated method stub
 
-			}
+					}
 
-			@Override
+					@Override
 					public boolean onFling(MotionEvent e1, MotionEvent e2,
 							float velocityX, float velocityY) {
-				boolean flag = false;
-				if (e2.getX() - e1.getX() > 0 && velocityX > 2000) {
-					showSelectTab();
-					flag = true;
-				}
-				return flag;
-			}
+						boolean flag = false;
+						if (e2.getX() - e1.getX() > 0 && velocityX > 2000) {
+							showSelectTab();
+							flag = true;
+						}
+						return flag;
+					}
 
-			@Override
-			public boolean onDown(MotionEvent e) {
-				return false;
-			}
-		});
+					@Override
+					public boolean onDown(MotionEvent e) {
+						return false;
+					}
+				});
 
 		editText_message.setOnTouchListener(new OnTouchListener() {
 
@@ -743,30 +736,32 @@ public class ChatFragment extends BaseFragment {
 
 	void play(int i) {
 		play_order = i;
-		playAudio(i).setOnCompletionListener(new OnCompletionListener() {
+		playAudio(play_order).setOnCompletionListener(
+				new OnCompletionListener() {
 
-			@Override
-			public void onCompletion(MediaPlayer mp) {
-				// TODO Auto-generated method stub
-				mPlayer.reset();
-				play_order++;
-				if (play_order < voice_list.size()) {
-					play(play_order);
-				} else {
-					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
-							getResources(), R.drawable.voice_start));
-					VOICE_PLAYSTATUS = false;
-					mPlayer.stop();
-					mPlayer.release();
-					mPlayer = null;
-				}
-			}
-		});
+					@Override
+					public void onCompletion(MediaPlayer mp) {
+						// TODO Auto-generated method stub
+						mp.reset();
+						play_order++;
+						if (play_order < voice_list.size()) {
+							playAudio(play_order);
+						} else {
+							iv_voice_play.setImageBitmap(BitmapFactory
+									.decodeResource(getResources(),
+											R.drawable.voice_start));
+							VOICE_PLAYSTATUS = false;
+							mp.stop();
+							mp.release();
+							mp = null;
+						}
+					}
+				});
 	}
 
 	MediaPlayer playAudio(int i) {
-		mPlayer = MediaPlayer.create(getActivity(),
-				Uri.parse(voice_list.get(i)));
+		mPlayer = MediaPlayer.create(getActivity(), Uri.parse((new File(
+				app.sdcardVoiceFolder, voice_list.get(i))).getAbsolutePath()));
 		mPlayer.start();
 		return mPlayer;
 	}
@@ -786,8 +781,8 @@ public class ChatFragment extends BaseFragment {
 		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 		recorder.setAudioSamplingRate(3000);
 		recorder.setAudioEncodingBitRate(10000);
-		recorder.setOutputFile(app.sdcardVoiceFolder.getAbsolutePath()
-				+ fileName);
+		recorder.setOutputFile((new File(app.sdcardVoiceFolder, fileName))
+				.getAbsolutePath());
 		try {
 			recorder.prepare();
 		} catch (IOException e) {
@@ -964,7 +959,7 @@ public class ChatFragment extends BaseFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			MessageHolder messageHolder;
+			final MessageHolder messageHolder;
 			int type = getItemViewType(position);
 			if (convertView == null) {
 				messageHolder = new MessageHolder();
@@ -996,10 +991,14 @@ public class ChatFragment extends BaseFragment {
 						.findViewById(R.id.tv_chat);
 				messageHolder.voice = convertView
 						.findViewById(R.id.rl_chatleft_voice);
+				messageHolder.iv_voicehead_status = (ImageView) convertView
+						.findViewById(R.id.iv_voicehead_status);
 				messageHolder.iv_voicehead = (ImageView) convertView
 						.findViewById(R.id.iv_voicehead);
 				messageHolder.tv_voicetime = (TextView) convertView
 						.findViewById(R.id.tv_voicetime);
+				messageHolder.sk_voice = (SeekBar) convertView
+						.findViewById(R.id.sk_voice);
 
 				convertView.setTag(messageHolder);
 			} else {
@@ -1009,6 +1008,7 @@ public class ChatFragment extends BaseFragment {
 			if (message.contentType.equals("text")) {
 				messageHolder.text.setVisibility(View.VISIBLE);
 				messageHolder.image.setVisibility(View.GONE);
+				messageHolder.voice.setVisibility(View.GONE);
 				messageHolder.tv_chat.setText(message.content);
 				String fileName = app.data.user.head;
 				switch (type) {
@@ -1033,6 +1033,7 @@ public class ChatFragment extends BaseFragment {
 			} else if (message.contentType.equals("image")) {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
+				messageHolder.voice.setVisibility(View.GONE);
 				final String imageFileName = message.content;
 				final ImageView iv_image = messageHolder.iv_image;
 				app.fileHandler.getImage(imageFileName, new FileResult() {
@@ -1058,8 +1059,6 @@ public class ChatFragment extends BaseFragment {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.voice.setVisibility(View.VISIBLE);
-				messageHolder.tv_voicetime.setText((message.content).length()
-						+ "\"");
 				String fileName = app.data.user.head;
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
@@ -1071,29 +1070,126 @@ public class ChatFragment extends BaseFragment {
 				default:
 					break;
 				}
+				final String voiceContent = message.content;
 				final String headFileName = fileName;
 				final ImageView iv_head = messageHolder.iv_voicehead;
+				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@SuppressWarnings({ "deprecation" })
 					@Override
 					public void onResult(String where) {
-						iv_head.setBackgroundDrawable(new BitmapDrawable(
-								app.fileHandler.bitmaps.get(headFileName)));
-						Resources res = getResources();
-						Bitmap bitmap = BitmapFactory.decodeResource(res,
-								R.drawable.head_voice_start);
-						// iv_head.setImageBitmap(app.fileHandler.bitmaps
-						// .get(headFileName));
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+						// iv_head.setBackgroundDrawable(new BitmapDrawable(
+						// app.fileHandler.bitmaps.get(headFileName)));
+						Bitmap bitmap = BitmapFactory.decodeResource(
+								getResources(), R.drawable.head_voice_start);
+
+						iv_voicehead_status.setImageBitmap(bitmap);
+						iv_voicehead_status.setTag("start");
 					}
 				});
+				app.fileHandler.saveVoice(new VoiceInterface() {
+
+					@Override
+					public void setParams(VoiceSettings settings) {
+						settings.fileName = voiceContent;
+					}
+
+					@Override
+					public void onSuccess(String filename, String base64,
+							Boolean flag) {
+						VOICE_SAVESTATUS = flag;
+						if (VOICE_SAVESTATUS) {
+
+						} else {
+							// to do loading voice failed
+						}
+					}
+				});
+				MediaPlayer mpPlayer = null;
+				try {
+					mpPlayer = MediaPlayer.create(getActivity(), Uri
+							.parse((new File(app.sdcardVoiceFolder,
+									voiceContent)).getAbsolutePath()));
+					messageHolder.mpPlayer = mpPlayer;
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				}
+				messageHolder.tv_voicetime.setText(mpPlayer.getDuration()
+						/ 1000 + "\"");
+				messageHolder.sk_voice.setMax(mpPlayer.getDuration() / 1000);
+				messageHolder.sk_voice.setProgress(0);
+				messageHolder.sk_voice
+						.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+							@Override
+							public void onStopTrackingTouch(SeekBar seekBar) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onStartTrackingTouch(SeekBar seekBar) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onProgressChanged(SeekBar seekBar,
+									int arg1, boolean arg2) {
+								// TODO Auto-generated method stub
+
+							}
+						});
 				iv_head.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						iv_head.setBackgroundDrawable(new BitmapDrawable(
-								app.fileHandler.bitmaps.get(headFileName)));
-			}
+						Bitmap bitmap = null;
+						final MediaPlayer mpPlayer = messageHolder.mpPlayer;
+						if (iv_voicehead_status.getTag() == "start") {
+							bitmap = BitmapFactory.decodeResource(
+									getResources(), R.drawable.head_voice_stop);
+							iv_voicehead_status.setTag("stop");
+							mpPlayer.start();
+							messageHolder.sk_voice.setProgress(mpPlayer
+									.getCurrentPosition());
+							final Thread thread = new Thread() {
+								public void run() {
+									while (true) {
+										try {
+											Thread.sleep(1000);
+											messageHolder.sk_voice.setProgress(mpPlayer
+													.getCurrentPosition());
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+									}
+								};
+							};
+							thread.start();
+							mpPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+								@Override
+								public void onCompletion(MediaPlayer arg0) {
+									Bitmap bitmap = BitmapFactory
+											.decodeResource(getResources(),
+													R.drawable.head_voice_start);
+									iv_voicehead_status.setImageBitmap(bitmap);
+									iv_voicehead_status.setTag("start");
+								}
+							});
+						} else {
+							bitmap = BitmapFactory
+									.decodeResource(getResources(),
+											R.drawable.head_voice_start);
+							iv_voicehead_status.setTag("start");
+							mpPlayer.pause();
+						}
+						iv_voicehead_status.setImageBitmap(bitmap);
+					}
 				});
 			}
 			return convertView;
@@ -1111,7 +1207,10 @@ public class ChatFragment extends BaseFragment {
 
 		View voice;
 		ImageView iv_voicehead;
+		ImageView iv_voicehead_status;
 		TextView tv_voicetime;
+		SeekBar sk_voice;
+		MediaPlayer mpPlayer;
 	}
 
 	public void sendMessage(final String type, final String content) {
@@ -1324,7 +1423,7 @@ public class ChatFragment extends BaseFragment {
 			}
 
 			@Override
-			public void onSuccess(String filename, String base64) {
+			public void onSuccess(String filename, String base64, Boolean flag) {
 				uploadImageOrVoice("voice", filename, base64);
 			}
 		});

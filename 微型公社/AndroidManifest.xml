@@ -45,6 +45,11 @@
 
         <service android:name="com.lejoying.wxgs.app.service.PushService" >
         </service>
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" >
+        </service>
 
         <receiver android:name="com.lejoying.wxgs.app.receiver.InfoReceiver" >
             <intent-filter>
