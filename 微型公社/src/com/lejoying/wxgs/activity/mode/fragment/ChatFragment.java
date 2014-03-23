@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Movie;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -1041,6 +1042,8 @@ public class ChatFragment extends BaseFragment {
 					public void onResult(String where) {
 						iv_image.setImageBitmap(app.fileHandler.bitmaps
 								.get(imageFileName));
+						Movie.decodeFile((new File(app.sdcardImageFolder,
+								imageFileName)).getAbsolutePath());
 						if (where == app.fileHandler.FROM_WEB) {
 							mAdapter.notifyDataSetChanged();
 						}
@@ -1112,14 +1115,15 @@ public class ChatFragment extends BaseFragment {
 							.parse((new File(app.sdcardVoiceFolder,
 									voiceContent)).getAbsolutePath()));
 					messageHolder.mpPlayer = mpPlayer;
+					messageHolder.tv_voicetime.setText(mpPlayer.getDuration()
+							/ 1000 + "\"");
+					messageHolder.sk_voice
+							.setMax(mpPlayer.getDuration() / 1000);
 				} catch (SecurityException e) {
 					e.printStackTrace();
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 				}
-				messageHolder.tv_voicetime.setText(mpPlayer.getDuration()
-						/ 1000 + "\"");
-				messageHolder.sk_voice.setMax(mpPlayer.getDuration() / 1000);
 				messageHolder.sk_voice.setProgress(0);
 				messageHolder.sk_voice
 						.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -1127,7 +1131,10 @@ public class ChatFragment extends BaseFragment {
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
 								// TODO Auto-generated method stub
-
+								messageHolder.sk_voice.setProgress(seekBar
+										.getProgress());
+								messageHolder.mpPlayer.seekTo(seekBar
+										.getProgress() * 1000);
 							}
 
 							@Override
@@ -1153,16 +1160,25 @@ public class ChatFragment extends BaseFragment {
 							bitmap = BitmapFactory.decodeResource(
 									getResources(), R.drawable.head_voice_stop);
 							iv_voicehead_status.setTag("stop");
+							int playTime = messageHolder.sk_voice.getProgress() * 1000;
+							if (mpPlayer.getDuration() - playTime > 1000) {
+								mpPlayer.seekTo(playTime);
+							} else {
+								mpPlayer.seekTo(0);
+							}
+
 							mpPlayer.start();
-							messageHolder.sk_voice.setProgress(mpPlayer
-									.getCurrentPosition());
 							final Thread thread = new Thread() {
 								public void run() {
 									while (true) {
 										try {
-											Thread.sleep(1000);
+											Thread.sleep(100);
 											messageHolder.sk_voice.setProgress(mpPlayer
-													.getCurrentPosition());
+													.getCurrentPosition() / 1000);
+											if (mpPlayer.getCurrentPosition() == mpPlayer
+													.getDuration()) {
+												break;
+											}
 										} catch (InterruptedException e) {
 											e.printStackTrace();
 										}
@@ -1424,6 +1440,9 @@ public class ChatFragment extends BaseFragment {
 
 			@Override
 			public void onSuccess(String filename, String base64, Boolean flag) {
+				File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
+				File to = new File(app.sdcardVoiceFolder, filename);
+				from.renameTo(to);
 				uploadImageOrVoice("voice", filename, base64);
 			}
 		});
