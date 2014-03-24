@@ -19,11 +19,15 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
+import android.media.AudioManager;
+import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -33,6 +37,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
@@ -56,6 +61,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
@@ -97,7 +103,8 @@ public class ChatFragment extends BaseFragment {
 	public MediaPlayer mPlayer;
 	public List<String> voice_list;
 	public int play_order = 0;
-	public long voice_length = 0;
+	public double voice_length = 0;
+	public long startTime = 0;
 
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
@@ -452,29 +459,48 @@ public class ChatFragment extends BaseFragment {
 
 				switch (action) {
 				case MotionEvent.ACTION_DOWN:
+					startTime = System.currentTimeMillis();
 					start();
 					tv_voice_start.setText("正在录音");
-					Toast.makeText(getActivity(), "ACTION_DOWN",
-							Toast.LENGTH_SHORT).show();
 					break;
 				case MotionEvent.ACTION_UP:
-					finish();
-					mPlayer = MediaPlayer.create(getActivity(), Uri
-							.parse((new File(app.sdcardVoiceFolder, voice_list
-									.get(voice_list.size() - 1)))
-									.getAbsolutePath()));
-					voice_length += mPlayer.getDuration();
-					tv_voice_timelength.setText(voice_length / 1000 + "\"");
+					long currentTime = System.currentTimeMillis();
+					if (currentTime - startTime > 1000) {
+						finish();
+						File file = new File(app.sdcardVoiceFolder,
+								voice_list.get(0));
+						if (file.exists()) {
+							mPlayer = MediaPlayer
+									.create(getActivity(),
+											Uri.parse((new File(
+													app.sdcardVoiceFolder,
+													voice_list.get(voice_list
+															.size() - 1)))
+													.getAbsolutePath()));
+							if (mPlayer != null) {
+								voice_length += mPlayer.getDuration();
+							}
+							tv_voice_timelength.setText((int) Math
+									.ceil(voice_length / 1000) + "\"");
+						}
+					} else {
+						File file = new File(app.sdcardVoiceFolder,
+								voice_list.remove(voice_list.size() - 1));
+						if (file.exists()) {
+							file.delete();
+						}
+						Toast.makeText(getActivity(), "录音时间太短",
+								Toast.LENGTH_SHORT).show();
+						recorder.reset();
+						recorder = null;
+					}
 					tv_voice_start.setText("继续录音");
-					Toast.makeText(getActivity(), "ACTION_UP",
-							Toast.LENGTH_SHORT).show();
 					break;
 				case MotionEvent.ACTION_CANCEL:
 					Toast.makeText(getActivity(), "ACTION_CANCEL",
 							Toast.LENGTH_SHORT).show();
 					break;
 				}
-				// tv_voice_start.onTouchEvent(event);
 				return true;
 			}
 		};
@@ -485,11 +511,16 @@ public class ChatFragment extends BaseFragment {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				if (voice_length == 0) {
-					Toast.makeText(getActivity(), "语音尚未录音", Toast.LENGTH_SHORT)
+					Toast.makeText(getActivity(), "尚未录制语音", Toast.LENGTH_SHORT)
 							.show();
 				} else {
 					// mergeAACAudioFiles();
 					getRecordVoice();
+					app.UIHandler.post(new Runnable() {
+						public void run() {
+							initVoice();
+						}
+					});
 				}
 
 			}
@@ -727,8 +758,6 @@ public class ChatFragment extends BaseFragment {
 	}
 
 	void initVoice() {
-		voice_list.clear();
-		voice_length = 0;
 		tv_voice_timelength.setText("0\"");
 		tv_voice.setText("取消");
 		tv_voice_start.setText("按住录音");
@@ -769,19 +798,18 @@ public class ChatFragment extends BaseFragment {
 
 	@SuppressLint("InlinedApi")
 	void start() {
-		// String path = Environment.getExternalStorageDirectory()
-		// .getAbsolutePath();
-		// File file = new File(path + "/wxgs/");
-		// if (!file.exists()) {
-		// file.mkdir();
-		// }
 		String fileName = new Date().getTime() + ".aac";
+		// AudioRecord audioRecord = new AudioRecord(audioSource,
+		// sampleRateInHz, channelConfig, audioFormat,
+		// bufferSizeInBytes)
 		recorder = new MediaRecorder();
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-		recorder.setAudioSamplingRate(3000);
-		recorder.setAudioEncodingBitRate(10000);
+		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//
+		// recorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
+		// recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+		// recorder.setAudioSamplingRate(3000);
+		// recorder.setAudioEncodingBitRate(10000);
 		recorder.setOutputFile((new File(app.sdcardVoiceFolder, fileName))
 				.getAbsolutePath());
 		try {
@@ -792,12 +820,17 @@ public class ChatFragment extends BaseFragment {
 
 		recorder.start();
 		voice_list.add(fileName);
+		System.out.println("start------------------------------");
+		// };
+		// }.start();
 	}
 
 	void finish() {
-		recorder.stop();
-		recorder.reset();
-		recorder.release();
+		if (recorder != null) {
+			recorder.stop();
+			recorder.reset();
+			recorder.release();
+		}
 	}
 
 	@Override
@@ -1102,28 +1135,53 @@ public class ChatFragment extends BaseFragment {
 					public void onSuccess(String filename, String base64,
 							Boolean flag) {
 						VOICE_SAVESTATUS = flag;
-						if (VOICE_SAVESTATUS) {
+						if (flag) {
+							// MediaPlayer mpPlayer = null;
+							try {
+								final MediaPlayer mpPlayer = MediaPlayer
+										.create(getActivity(), Uri
+												.parse((new File(
+														app.sdcardVoiceFolder,
+														voiceContent))
+														.getAbsolutePath()));
+								Log.v("Coolspan",
+										(new File(app.sdcardVoiceFolder,
+												voiceContent))
+												.getAbsolutePath()
+												+ "---"
+												+ mpPlayer
+												+ "---"
+												+ flag);
+								messageHolder.mpPlayer = mpPlayer;
+								app.UIHandler.post(new Runnable() {
 
+									@Override
+									public void run() {
+										messageHolder.tv_voicetime.setText((int) Math
+												.ceil((double) (mpPlayer
+														.getDuration()) / 1000)
+												+ "\"");
+										// messageHolder.tv_voicetime.setText((int)
+										// Math
+										// .ceil(mpPlayer.getDuration() / 1000)
+										// + "\"");
+									}
+								});
+								messageHolder.sk_voice.setMax(mpPlayer
+										.getDuration() / 1000);
+							} catch (SecurityException e) {
+								e.printStackTrace();
+							} catch (IllegalStateException e) {
+								e.printStackTrace();
+							}
 						} else {
 							// to do loading voice failed
 						}
+
 					}
 				});
-				MediaPlayer mpPlayer = null;
-				try {
-					mpPlayer = MediaPlayer.create(getActivity(), Uri
-							.parse((new File(app.sdcardVoiceFolder,
-									voiceContent)).getAbsolutePath()));
-					messageHolder.mpPlayer = mpPlayer;
-					messageHolder.tv_voicetime.setText(mpPlayer.getDuration()
-							/ 1000 + "\"");
-					messageHolder.sk_voice
-							.setMax(mpPlayer.getDuration() / 1000);
-				} catch (SecurityException e) {
-					e.printStackTrace();
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-				}
+				// Log.v("Coolspan", VOICE_SAVESTATUS + "");
+
 				messageHolder.sk_voice.setProgress(0);
 				messageHolder.sk_voice
 						.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -1155,6 +1213,7 @@ public class ChatFragment extends BaseFragment {
 					@Override
 					public void onClick(View v) {
 						Bitmap bitmap = null;
+
 						final MediaPlayer mpPlayer = messageHolder.mpPlayer;
 						if (iv_voicehead_status.getTag() == "start") {
 							bitmap = BitmapFactory.decodeResource(
@@ -1168,15 +1227,26 @@ public class ChatFragment extends BaseFragment {
 							}
 
 							mpPlayer.start();
-							final Thread thread = new Thread() {
+							new Thread() {
 								public void run() {
 									while (true) {
 										try {
-											Thread.sleep(100);
+											Thread.sleep(500);
 											messageHolder.sk_voice.setProgress(mpPlayer
 													.getCurrentPosition() / 1000);
-											if (mpPlayer.getCurrentPosition() == mpPlayer
-													.getDuration()) {
+											Log.v("Coolspan",
+													mpPlayer.getCurrentPosition()
+															+ "---"
+															+ mpPlayer
+																	.getDuration());
+											if (mpPlayer.getDuration()
+													- mpPlayer
+															.getCurrentPosition() < 500) {
+												messageHolder.sk_voice
+														.setProgress(messageHolder.sk_voice
+																.getMax());
+												Thread.currentThread()
+														.interrupt();
 												break;
 											}
 										} catch (InterruptedException e) {
@@ -1184,8 +1254,8 @@ public class ChatFragment extends BaseFragment {
 										}
 									}
 								};
-							};
-							thread.start();
+							}.start();
+
 							mpPlayer.setOnCompletionListener(new OnCompletionListener() {
 
 								@Override
@@ -1443,6 +1513,8 @@ public class ChatFragment extends BaseFragment {
 				File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
 				File to = new File(app.sdcardVoiceFolder, filename);
 				from.renameTo(to);
+				voice_list.clear();
+				voice_length = 0;
 				uploadImageOrVoice("voice", filename, base64);
 			}
 		});

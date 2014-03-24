@@ -80,7 +80,6 @@
         android:id="@+id/rl_chatleft_voice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
@@ -110,14 +109,15 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="6dp"
+            android:layout_marginLeft="5dp"
             android:layout_toRightOf="@+id/iv_voicehead"
             android:orientation="horizontal" >
 
             <SeekBar
                 android:id="@+id/sk_voice"
-                android:layout_width="246dp"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:maxHeight="5dp"
                 android:minHeight="5dp"
@@ -130,7 +130,7 @@
                 android:id="@+id/tv_voicetime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="11&quot;" />
+                android:text="20&quot;" />
         </LinearLayout>
     </RelativeLayout>
 

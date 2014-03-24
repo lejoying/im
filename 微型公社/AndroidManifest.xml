@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
     <application
         android:name=".app.MainApplication"
@@ -44,11 +45,6 @@
         </activity>
 
         <service android:name="com.lejoying.wxgs.app.service.PushService" >
-        </service>
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" >
         </service>
 
         <receiver android:name="com.lejoying.wxgs.app.receiver.InfoReceiver" >

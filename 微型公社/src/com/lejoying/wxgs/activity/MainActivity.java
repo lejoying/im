@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
@@ -27,6 +28,7 @@ import com.lejoying.wxgs.app.service.PushService;
 public class MainActivity extends BaseActivity {
 
 	MainApplication app = MainApplication.getMainApplication();
+	AudioManager audioManager;
 
 	public static MainActivity instance;
 
@@ -63,6 +65,12 @@ public class MainActivity extends BaseActivity {
 		mBackground.setBackground(R.drawable.background);
 		mFragmentManager = getSupportFragmentManager();
 
+		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		// audioManager.setSpeakerphoneOn(false);
+		setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+		// audioManager.setMode(AudioManager.MODE_IN_CALL);
+		audioManager.setMode(AudioManager.MODE_NORMAL);
+
 		mReceiver = new LongConnectionReceiver();
 		IntentFilter filter = new IntentFilter(PushService.LONGPULL_FAILED);
 		registerReceiver(mReceiver, filter);
@@ -88,14 +96,16 @@ public class MainActivity extends BaseActivity {
 	}
 
 	public void switchMode() {
-		if (app.data.user.phone.equals("") || app.data.user.accessKey.equals("")) {
+		if (app.data.user.phone.equals("")
+				|| app.data.user.accessKey.equals("")) {
 			if (!mode.equals(MODE_LOGIN)) {
 				mode = MODE_LOGIN;
 				mMainMode.release();
 				mLoginMode.initialize();
 				mLoginMode.show(mLoginMode.mLoginUsePassFragment);
 			}
-		} else if (!app.data.user.phone.equals("") && !app.data.user.accessKey.equals("")) {
+		} else if (!app.data.user.phone.equals("")
+				&& !app.data.user.accessKey.equals("")) {
 			if (!mode.equals(MODE_MAIN)) {
 				mode = MODE_MAIN;
 				mLoginMode.release();
@@ -107,7 +117,8 @@ public class MainActivity extends BaseActivity {
 						@Override
 						public void modifyData(Data data) {
 							try {
-								Data localData = (Data) StreamParser.parseToObject(openFileInput(data.user.phone));
+								Data localData = (Data) StreamParser
+										.parseToObject(openFileInput(data.user.phone));
 								if (localData != null) {
 									data.user.head = localData.user.head;
 									data.user.nickName = localData.user.nickName;
@@ -142,11 +153,15 @@ public class MainActivity extends BaseActivity {
 											@Override
 											public void getSuccess() {
 												// mAdapter.notifyDataSetChanged();
-												if (mMainMode.mCirclesFragment.isAdded()) {
-													mMainMode.mCirclesFragment.notifyViews();
+												if (mMainMode.mCirclesFragment
+														.isAdded()) {
+													mMainMode.mCirclesFragment
+															.notifyViews();
 												}
-												if (mMainMode.mChatFragment.isAdded()) {
-													mMainMode.mChatFragment.mAdapter.notifyDataSetChanged();
+												if (mMainMode.mChatFragment
+														.isAdded()) {
+													mMainMode.mChatFragment.mAdapter
+															.notifyDataSetChanged();
 												}
 											}
 
@@ -166,9 +181,11 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mode.equals(MODE_LOGIN)) {
-			return mLoginMode.onKeyDown(keyCode, event) && super.onKeyDown(keyCode, event);
+			return mLoginMode.onKeyDown(keyCode, event)
+					&& super.onKeyDown(keyCode, event);
 		} else if (mode.equals(MODE_MAIN)) {
-			return mMainMode.onKeyDown(keyCode, event) && super.onKeyDown(keyCode, event);
+			return mMainMode.onKeyDown(keyCode, event)
+					&& super.onKeyDown(keyCode, event);
 		}
 		return super.onKeyDown(keyCode, event);
 

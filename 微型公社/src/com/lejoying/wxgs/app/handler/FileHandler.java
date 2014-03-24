@@ -367,6 +367,8 @@ public class FileHandler {
 					});
 				}
 			}.start();
+		} else {
+			saveVoiceInterface.onSuccess(null, null, true);
 		}
 	}
 
