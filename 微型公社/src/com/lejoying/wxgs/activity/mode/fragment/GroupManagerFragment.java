@@ -18,9 +18,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,6 +35,7 @@ import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
@@ -58,6 +62,10 @@ public class GroupManagerFragment extends BaseFragment {
 	View newGroupBackButton;
 	View newGroupCompleteButton;
 
+	RelativeLayout animationLayout;
+	HorizontalScrollView tempFriendScroll;
+	LinearLayout tempFriendsList;
+
 	public static final String MODE_MANAGER = "manager";
 	public static final String MODE_NEWGROUP = "new";
 	public String status;
@@ -73,6 +81,7 @@ public class GroupManagerFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		circleViewCommonAnimation();
 		newStatus = "friend";
 		screenWidth = getScreenWidth();
 		currentEditPosition = 0;
@@ -86,6 +95,9 @@ public class GroupManagerFragment extends BaseFragment {
 		newGroupNextButton = mContentView.findViewById(R.id.buttonNext);
 		newGroupBackButton = mContentView.findViewById(R.id.buttonCancel);
 		newGroupCompleteButton = mContentView.findViewById(R.id.buttonComplete);
+		tempFriendsList = (LinearLayout) mContentView.findViewById(R.id.tempFriendsList);
+		animationLayout = (RelativeLayout) mContentView.findViewById(R.id.animationLayout);
+		tempFriendScroll = (HorizontalScrollView) mContentView.findViewById(R.id.tempFriendScroll);
 		if (status.equals(MODE_MANAGER)) {
 			RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl.getLayoutParams();
 			params.height = (int) dp2px(80);
@@ -488,6 +500,75 @@ public class GroupManagerFragment extends BaseFragment {
 
 			circleHolder.friendHolders.add(friendHolder);
 
+			convertView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(final View holderView) {
+					final View tempFriend = generateFriendView(friend);
+					final View animationView = generateFriendView(friend);
+
+					tempFriendScroll.smoothScrollTo(0, 0);
+					int[] location = new int[2];
+					holderView.getLocationInWindow(location);
+
+					tempFriendHolders.put(friend.phone, friendHolder);
+
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+					params.leftMargin = location[0];
+					params.topMargin = location[1] - 50;
+					animationView.setLayoutParams(params);
+					animationLayout.addView(animationView);
+
+					LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams((int) dp2px(55f), LinearLayout.LayoutParams.WRAP_CONTENT);
+					tempParams.leftMargin = (int) dp2px(20);
+					tempFriend.setVisibility(View.INVISIBLE);
+					if (tempFriendsList.getChildCount() == 0) {
+						tempParams.rightMargin = (int) dp2px(75);
+					}
+					tempFriendsList.addView(tempFriend, 0, tempParams);
+
+					tempFriend.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							int count = tempFriendsList.getChildCount();
+							int index = 0;
+							for (int i = 0; i < count; i++) {
+								View v = tempFriendsList.getChildAt(i);
+								if (v.equals(view)) {
+									index = i;
+									break;
+								}
+							}
+							tempFriendsList.removeView(view);
+							for (int i = index; i < count - 1; i++) {
+								View v = tempFriendsList.getChildAt(i);
+								v.startAnimation(allTempFriendMoveToLeft);
+							}
+						}
+					});
+
+					int count = tempFriendsList.getChildCount();
+					for (int i = 1; i < count; i++) {
+						tempFriendsList.getChildAt(i).startAnimation(allTempFriendMoveToRight);
+					}
+
+					int currnetX = (int) dp2px(20);
+					int currentY = animationLayout.getHeight() - (int) dp2px(155);
+
+					TranslateAnimation moveToTempListAnimation = new TranslateAnimation(0, currnetX - location[0], 0, currentY - (location[1] - 50));
+					moveToTempListAnimation.setDuration(270);
+					moveToTempListAnimation.setAnimationListener(new AnimationAdapter() {
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							animationLayout.removeView(animationView);
+							tempFriend.setVisibility(View.VISIBLE);
+						}
+					});
+					animationView.startAnimation(moveToTempListAnimation);
+
+				}
+			});
+
 			friendContainer.addView(convertView);
 		}
 
@@ -568,7 +649,6 @@ public class GroupManagerFragment extends BaseFragment {
 		friendToPreLineAnimation.setDuration(120);
 
 		allTempFriendMoveToLeft = new TranslateAnimation(dp2px(75), 0, 0, 0);
-		allTempFriendMoveToLeft.setStartOffset(150);
 		allTempFriendMoveToLeft.setDuration(120);
 
 		allTempFriendMoveToRight = new TranslateAnimation(-dp2px(75), 0, 0, 0);

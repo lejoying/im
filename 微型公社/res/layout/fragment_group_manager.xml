@@ -266,17 +266,17 @@
             android:visibility="gone" >
 
             <HorizontalScrollView
+                android:id="@+id/tempFriendScroll"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_alignLeft="@+id/imageView3"
                 android:scrollbars="none" >
 
                 <LinearLayout
-                    android:id="@+id/linearlayout_user"
+                    android:id="@+id/tempFriendsList"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:paddingBottom="5dp"
                     android:paddingTop="5dp" >
                 </LinearLayout>
             </HorizontalScrollView>
