@@ -52,6 +52,15 @@
             android:layout_height="220dp" >
         </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
 
+        <TextView
+            android:id="@+id/textContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
         <RelativeLayout
             android:id="@+id/bottomBar"
             android:layout_width="match_parent"
