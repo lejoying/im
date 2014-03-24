@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
@@ -24,9 +24,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.baidu.mapapi.BMapManager;
-import com.baidu.mapapi.MKGeneralListener;
+import com.baidu.mapapi.map.MKMapStatus;
+import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.SupportMapFragment;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
@@ -60,25 +61,33 @@ public class GroupManagerFragment extends BaseFragment {
 	public static final String MODE_NEWGROUP = "new";
 	public String status;
 
+	private MapController mMapController;
+
+	private static final GeoPoint GEO_BEIJING = new GeoPoint(
+			(int) (39.945 * 1E6), (int) (116.404 * 1E6));
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		screenWidth = getScreenWidth();
 		currentEditPosition = 0;
 		mInflater = inflater;
 		mContentView = inflater.inflate(R.layout.fragment_group_manager, null);
-		circlesViewContenter = (ScrollRelativeLayout) mContentView.findViewById(R.id.circlesViewContainer);
+		circlesViewContenter = (ScrollRelativeLayout) mContentView
+				.findViewById(R.id.circlesViewContainer);
 		editControl = mContentView.findViewById(R.id.editControl);
 		nextBar = mContentView.findViewById(R.id.nextBar);
 		buttonList = mContentView.findViewById(R.id.buttonList);
 		selectFriend = mContentView.findViewById(R.id.selectFriend);
 		nextToMap = mContentView.findViewById(R.id.buttonNext);
 		if (status.equals(MODE_MANAGER)) {
-			RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl.getLayoutParams();
+			RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+					.getLayoutParams();
 			params.height = (int) dp2px(80);
 			editControl.setLayoutParams(params);
 			selectFriend.setVisibility(View.GONE);
@@ -86,7 +95,8 @@ public class GroupManagerFragment extends BaseFragment {
 			nextBar.setVisibility(View.GONE);
 			notifyViews();
 		} else if (status.equals(MODE_NEWGROUP)) {
-			RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl.getLayoutParams();
+			RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+					.getLayoutParams();
 			params.height = (int) dp2px(160);
 			editControl.setLayoutParams(params);
 			selectFriend.setVisibility(View.VISIBLE);
@@ -104,12 +114,45 @@ public class GroupManagerFragment extends BaseFragment {
 			@Override
 			public void onClick(View arg0) {
 				circlesViewContenter.removeAllViews();
-				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams.setMargins(0, (int) dp2px(20), layoutParams.rightMargin, -Integer.MAX_VALUE);
+				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				layoutParams.setMargins(0, (int) dp2px(20),
+						layoutParams.rightMargin, -Integer.MAX_VALUE);
 				circlesViewContenter.addView(generateMapView(), layoutParams);
-				getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mapContainer, SupportMapFragment.newInstance()).commit();
+				final SupportMapFragment map = SupportMapFragment.newInstance();
+				getActivity().getSupportFragmentManager().beginTransaction()
+						.replace(R.id.mapContainer, map).commit();
+				selectFriend.setVisibility(View.GONE);
+				RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+						.getLayoutParams();
+				params.height = (int) dp2px(80);
+				editControl.setLayoutParams(params);
+				new AsyncTask<Integer, Integer, Boolean>() {
+					@Override
+					protected Boolean doInBackground(Integer... params) {
+						while (map.getMapView() == null)
+							;
+						return true;
+					}
+
+					protected void onPostExecute(Boolean result) {
+						map.getMapView()
+								.getController()
+								.setMapStatus(
+										newMapStatusWithGeoPointAndZoom(
+												GEO_BEIJING, 15));
+					}
+
+				}.execute();
 			}
 		});
+	}
+
+	private MKMapStatus newMapStatusWithGeoPointAndZoom(GeoPoint p, float zoom) {
+		MKMapStatus status = new MKMapStatus();
+		status.targetGeo = p;
+		status.zoom = zoom;
+		return status;
 	}
 
 	int screenWidth;
@@ -141,10 +184,13 @@ public class GroupManagerFragment extends BaseFragment {
 		for (int i = 0; i < circles.size(); i++) {
 			String group = circles.get(i);
 			View view = views.get(group);
-			RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(screenWidth, LayoutParams.WRAP_CONTENT);
-			layoutParams3.setMargins(marginLeft, marginTop, -Integer.MAX_VALUE, 0);
+			RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(
+					screenWidth, LayoutParams.WRAP_CONTENT);
+			layoutParams3.setMargins(marginLeft, marginTop, -Integer.MAX_VALUE,
+					0);
 			view.setLayoutParams(layoutParams3);
-			TextView manager = (TextView) view.findViewById(R.id.panel_right_button);
+			TextView manager = (TextView) view
+					.findViewById(R.id.panel_right_button);
 			manager.setText("添加成员");
 			manager.setVisibility(View.VISIBLE);
 			view.findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
@@ -171,8 +217,10 @@ public class GroupManagerFragment extends BaseFragment {
 		groupHolder = new CircleHolder();
 		View v = generateGroup(groupHolder);
 		circlesViewContenter.setGravity(Gravity.LEFT | Gravity.TOP);
-		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		layoutParams.setMargins(0, marginTop, layoutParams.rightMargin, -Integer.MAX_VALUE);
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		layoutParams.setMargins(0, marginTop, layoutParams.rightMargin,
+				-Integer.MAX_VALUE);
 		v.setLayoutParams(layoutParams);
 		circlesViewContenter.addView(v);
 
@@ -193,10 +241,13 @@ public class GroupManagerFragment extends BaseFragment {
 		for (int i = 0; i < circles.size(); i++) {
 			String group = circles.get(i);
 			View view = views.get(group);
-			RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(screenWidth, LayoutParams.WRAP_CONTENT);
-			layoutParams3.setMargins((i + 1) * screenWidth, marginTop, -Integer.MAX_VALUE, 0);
+			RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(
+					screenWidth, LayoutParams.WRAP_CONTENT);
+			layoutParams3.setMargins((i + 1) * screenWidth, marginTop,
+					-Integer.MAX_VALUE, 0);
 			view.setLayoutParams(layoutParams3);
-			TextView manager = (TextView) view.findViewById(R.id.panel_right_button);
+			TextView manager = (TextView) view
+					.findViewById(R.id.panel_right_button);
 			manager.setText("添加成员");
 			manager.setVisibility(View.VISIBLE);
 			view.findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
@@ -222,7 +273,8 @@ public class GroupManagerFragment extends BaseFragment {
 	}
 
 	public float dp2px(float px) {
-		float dp = getActivity().getResources().getDisplayMetrics().density * px + 0.5f;
+		float dp = getActivity().getResources().getDisplayMetrics().density
+				* px + 0.5f;
 		return dp;
 	}
 
@@ -281,7 +333,9 @@ public class GroupManagerFragment extends BaseFragment {
 		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
 			FriendHolder friendHolder = circleHolder.friendHolders.get(i);
 
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					(int) dp2px(55f),
+					android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = -Integer.MAX_VALUE;
 
 			params.topMargin = friendHolder.position.y;
@@ -302,12 +356,15 @@ public class GroupManagerFragment extends BaseFragment {
 	View generateGroup(CircleHolder circleHolder) {
 		View circleView = mInflater.inflate(R.layout.fragment_panel, null);
 
-		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
+		TextView groupName = (TextView) circleView
+				.findViewById(R.id.panel_name);
 		groupName.setText(mCurrentManagerGroup.name);
-		TextView rightGroupName = (TextView) circleView.findViewById(R.id.panel_right_button);
+		TextView rightGroupName = (TextView) circleView
+				.findViewById(R.id.panel_right_button);
 		rightGroupName.setText("群组管理");
 		rightGroupName.setVisibility(View.VISIBLE);
-		final RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.viewContainer);
+		final RelativeLayout friendContainer = (RelativeLayout) circleView
+				.findViewById(R.id.viewContainer);
 
 		List<String> phones = mCurrentManagerGroup.members;
 		Map<String, Friend> friends = app.data.groupFriends;
@@ -330,28 +387,30 @@ public class GroupManagerFragment extends BaseFragment {
 		resolveFriendsPositions(circleHolder);
 		setFriendsPositions(circleHolder);
 
-		final GestureDetector detector = new GestureDetector(getActivity(), new SimpleOnGestureListener() {
-			float x0 = 0;
-			float dx = 0;
+		final GestureDetector detector = new GestureDetector(getActivity(),
+				new SimpleOnGestureListener() {
+					float x0 = 0;
+					float dx = 0;
 
-			@Override
-			public boolean onDown(MotionEvent e) {
-				x0 = e.getRawX();
-				return true;
-			}
+					@Override
+					public boolean onDown(MotionEvent e) {
+						x0 = e.getRawX();
+						return true;
+					}
 
-			@Override
-			public void onLongPress(MotionEvent e) {
-			}
+					@Override
+					public void onLongPress(MotionEvent e) {
+					}
 
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-				dx = e2.getRawX() - x0;
-				friendContainer.scrollBy(-(int) (dx), 0);
-				x0 = e2.getRawX();
-				return true;
-			}
-		});
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						dx = e2.getRawX() - x0;
+						friendContainer.scrollBy(-(int) (dx), 0);
+						x0 = e2.getRawX();
+						return true;
+					}
+				});
 
 		friendContainer.setOnTouchListener(new OnTouchListener() {
 
@@ -365,21 +424,27 @@ public class GroupManagerFragment extends BaseFragment {
 	}
 
 	View generateCircleView(Circle circle, CircleHolder circleHolder) {
-		final View circleView = mInflater.inflate(R.layout.fragment_panel, null);
+		final View circleView = mInflater
+				.inflate(R.layout.fragment_panel, null);
 
-		View buttonPreviousGroup = circleView.findViewById(R.id.buttonPreviousGroup);
+		View buttonPreviousGroup = circleView
+				.findViewById(R.id.buttonPreviousGroup);
 		buttonPreviousGroup.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (currentEditPosition > 0) {
-					View currentView = views.get(circles.get(currentEditPosition));
+					View currentView = views.get(circles
+							.get(currentEditPosition));
 					currentEditPosition--;
-					View previousView = views.get(circles.get(currentEditPosition));
+					View previousView = views.get(circles
+							.get(currentEditPosition));
 
-					TranslateAnimation animation = new TranslateAnimation(-screenWidth, 0, 0, 0);
+					TranslateAnimation animation = new TranslateAnimation(
+							-screenWidth, 0, 0, 0);
 					animation.setDuration(300);
 
-					circlesViewContenter.scrollTo(currentEditPosition * screenWidth, 0);
+					circlesViewContenter.scrollTo(currentEditPosition
+							* screenWidth, 0);
 
 					currentView.startAnimation(animation);
 					previousView.startAnimation(animation);
@@ -392,23 +457,28 @@ public class GroupManagerFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				if (currentEditPosition < circles.size() - 1) {
-					View currentView = views.get(circles.get(currentEditPosition));
+					View currentView = views.get(circles
+							.get(currentEditPosition));
 					currentEditPosition++;
 					View nextView = views.get(circles.get(currentEditPosition));
 
-					TranslateAnimation animation = new TranslateAnimation(screenWidth, 0, 0, 0);
+					TranslateAnimation animation = new TranslateAnimation(
+							screenWidth, 0, 0, 0);
 					animation.setDuration(300);
 
-					circlesViewContenter.scrollTo(currentEditPosition * screenWidth, 0);
+					circlesViewContenter.scrollTo(currentEditPosition
+							* screenWidth, 0);
 					currentView.startAnimation(animation);
 					nextView.startAnimation(animation);
 				}
 			}
 		});
 
-		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
+		TextView groupName = (TextView) circleView
+				.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
-		final RelativeLayout friendContainer = (RelativeLayout) circleView.findViewById(R.id.viewContainer);
+		final RelativeLayout friendContainer = (RelativeLayout) circleView
+				.findViewById(R.id.viewContainer);
 
 		List<String> phones = circle.phones;
 		Map<String, Friend> friends = app.data.friends;
@@ -431,28 +501,30 @@ public class GroupManagerFragment extends BaseFragment {
 		resolveFriendsPositions(circleHolder);
 		setFriendsPositions(circleHolder);
 
-		final GestureDetector detector = new GestureDetector(getActivity(), new SimpleOnGestureListener() {
-			float x0 = 0;
-			float dx = 0;
+		final GestureDetector detector = new GestureDetector(getActivity(),
+				new SimpleOnGestureListener() {
+					float x0 = 0;
+					float dx = 0;
 
-			@Override
-			public boolean onDown(MotionEvent e) {
-				x0 = e.getRawX();
-				return true;
-			}
+					@Override
+					public boolean onDown(MotionEvent e) {
+						x0 = e.getRawX();
+						return true;
+					}
 
-			@Override
-			public void onLongPress(MotionEvent e) {
-			}
+					@Override
+					public void onLongPress(MotionEvent e) {
+					}
 
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-				dx = e2.getRawX() - x0;
-				friendContainer.scrollBy(-(int) (dx), 0);
-				x0 = e2.getRawX();
-				return true;
-			}
-		});
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						dx = e2.getRawX() - x0;
+						friendContainer.scrollBy(-(int) (dx), 0);
+						x0 = e2.getRawX();
+						return true;
+					}
+				});
 
 		friendContainer.setOnTouchListener(new OnTouchListener() {
 
@@ -481,7 +553,8 @@ public class GroupManagerFragment extends BaseFragment {
 		lastFriendToLeftAnimation.setStartOffset(150);
 		lastFriendToLeftAnimation.setDuration(120);
 
-		lastFriendToRightAnimation = new TranslateAnimation(dp2px(-118), 0, dp2px(100), dp2px(100));
+		lastFriendToRightAnimation = new TranslateAnimation(dp2px(-118), 0,
+				dp2px(100), dp2px(100));
 		lastFriendToRightAnimation.setStartOffset(150);
 		lastFriendToRightAnimation.setDuration(120);
 
@@ -494,12 +567,14 @@ public class GroupManagerFragment extends BaseFragment {
 		friendToRightAnimation.setStartOffset(150);
 		friendToRightAnimation.setDuration(120);
 
-		friendToNextLineAnimation = new TranslateAnimation(dp2px(206), 0, dp2px(-100), 0);
+		friendToNextLineAnimation = new TranslateAnimation(dp2px(206), 0,
+				dp2px(-100), 0);
 
 		friendToNextLineAnimation.setStartOffset(150);
 		friendToNextLineAnimation.setDuration(120);
 
-		friendToPreLineAnimation = new TranslateAnimation(dp2px(-206), 0, dp2px(100), 0);
+		friendToPreLineAnimation = new TranslateAnimation(dp2px(-206), 0,
+				dp2px(100), 0);
 
 		friendToPreLineAnimation.setStartOffset(150);
 		friendToPreLineAnimation.setDuration(120);
@@ -514,9 +589,12 @@ public class GroupManagerFragment extends BaseFragment {
 	}
 
 	View generateFriendView(Friend friend) {
-		View convertView = mInflater.inflate(R.layout.fragment_circles_gridpage_item, null);
-		final ImageView head = (ImageView) convertView.findViewById(R.id.iv_head);
-		TextView nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
+		View convertView = mInflater.inflate(
+				R.layout.fragment_circles_gridpage_item, null);
+		final ImageView head = (ImageView) convertView
+				.findViewById(R.id.iv_head);
+		TextView nickname = (TextView) convertView
+				.findViewById(R.id.tv_nickname);
 		nickname.setText(friend.nickName);
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
