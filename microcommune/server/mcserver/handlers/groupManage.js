@@ -16,6 +16,7 @@ groupManage.create = function (data, response) {
     var type = data.type;//createTempGroup,createGroup,upgradeGroup
     var name = data.name;
     var members = data.members;
+    var location = data.location;
     console.log("phone:" + phone + "tempGid:" + tempGid + ",name:" + name + ",members:" + members);
     if (type == "createTempGroup") {
         var timeGid = new Date().getTime() + "";
@@ -55,10 +56,14 @@ groupManage.create = function (data, response) {
         //session 推送提示信息给用户，群组信息更新的提醒
 
     } else if (type == "upgradeGroup" || type == "createGroup") {
+
         var list = [phone, name, members];
         if (verifyEmpty.verifyEmpty(data, list, response)) {
             try {
                 members = JSON.parse(members);
+                if (location != undefined) {
+                    location = JSON.parse(location);
+                }
             } catch (e) {
                 console.log(e + "数据格式不正确");
                 response.write(JSON.stringify({
@@ -76,6 +81,17 @@ groupManage.create = function (data, response) {
     function createGroupNode() {
         var group = {
             name: name
+        }
+        if (data.description) {
+            group.description = data.description;
+        } else {
+            group.description = "";
+        }
+        if (location) {
+            group.location = JSON.stringify({
+                longitude: location.longitude,
+                latitude: location.latitude
+            });
         }
         var query = [
             'MATCH (account:Account)',
@@ -109,6 +125,9 @@ groupManage.create = function (data, response) {
                         group: group
                     }))
                     response.end();
+                    if (location != undefined) {
+                        setGroupLBSLocation(phone, data.accessKey, location, group);
+                    }
                 }
             } else {
                 response.write(JSON.stringify({
@@ -151,6 +170,32 @@ groupManage.create = function (data, response) {
             }
         });
     }
+}
+function setGroupLBSLocation(phone, accessKey, location, group) {
+    ajax.ajax({
+        url: "127.0.0.1:8076/lbs/setgrouplocation?",
+        type: "GET",
+        data: {
+            phone: phone,
+            accessKey: accessKey,
+            location: JSON.stringify({
+                longitude: location.longitude,
+                latitude: location.latitude
+            }),
+            group: JSON.stringify({
+                gid: group.gid,
+                name: group.name,
+                description: group.description
+            })
+        },
+        success: function (data) {
+            if (data["提示信息"] == "标记群组位置成功") {
+                console.log(data["提示信息"] + "---" + data.gid);
+            } else {
+                console.error(data["提示信息"] + "---" + data["失败原因"]);
+            }
+        }
+    });
 }
 /***************************************
  *     URL：/api2/group/addmembers
@@ -453,13 +498,19 @@ groupManage.getallmembers = function (data, response) {
 groupManage.modify = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var gid = data.gid;
     var name = data.name;
+    var description = data.description;
+    var location = data.location;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
     var list = [phone, gid, name];
     if (verifyEmpty.verifyEmpty(data, list, response)) {
         try {
             gid = parseInt(gid);
+            if (location) {
+                location = JSON.parse(location);
+            }
             if (isNaN(gid))
                 throw "gid不是数值";
         } catch (e) {
@@ -523,7 +574,19 @@ groupManage.modify = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 var groupNode = results.pop().group;
-                groupNode.data.name = name;
+                var groupData = groupNode.data;
+                if (name) {
+                    groupData.name = name;
+                }
+                if (description) {
+                    groupData.description = description;
+                }
+                if (location) {
+                    groupData.location = JSON.stringify({
+                        longitude: location.longitude,
+                        latitude: location.latitude
+                    });
+                }
                 groupNode.save(function (error) {
                 });
                 response.write(JSON.stringify({
@@ -531,6 +594,9 @@ groupManage.modify = function (data, response) {
                     group: groupNode.data
                 }));
                 response.end();
+                if (location) {
+                    setGroupLBSLocation(phone, accessKey, location, groupData);
+                }
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息失败",
