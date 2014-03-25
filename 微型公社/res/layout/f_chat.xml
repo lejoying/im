@@ -45,12 +45,12 @@
 
             <TextView
                 android:id="@+id/tv_voice_start"
-                android:layout_width="215dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="10dp"
+                android:layout_width="206dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/voice_status"
                 android:paddingLeft="60dp"
-                android:paddingTop="8dp"
+                android:paddingTop="6dp"
                 android:text="按住录音"
                 android:textColor="#000"
                 android:textSize="20sp"
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:layout_marginTop="10dp"
-                android:text="5&quot;"
+                android:text="0&quot;"
                 android:textColor="#fff"
                 android:textSize="15sp" />
 

@@ -788,59 +788,99 @@ groupManage.getgroupsandmembers = function (data, response) {
 
     var phone = data.phone;
     //(account1:Account)-[r:HAS_GROUP]->(group:Group)-[r1:HAS_MEMBER]->(account:Account)
-    var query = [
-        'MATCH (account1:Account)<-[r:HAS_MEMBER]-(group:Group)-[r1:HAS_MEMBER]->(account:Account)',
-        'WHERE account1.phone={phone}',
-        'RETURN group,account,account1'
-    ].join('\n');
-    var params = {
-        phone: phone
-    };
-    db.query(query, params, function (error, results) {
-        if (error) {
-            response.write(JSON.stringify({
-                "提示信息": "获取群组失败",
-                "失败原因": "数据异常"
-            }));
-            response.end();
-            console.log(error);
-            return;
-        } else {
-            var groups = [];
-            var groupZ = {};
-            for (var index in results) {
-                var it = results[index];
-                var groupData = it.group.data;
-                var accountData = it.account.data;
-                var account = {
-                    ID: accountData.ID,
-                    phone: accountData.phone,
-                    mainBusiness: accountData.mainBusiness,
-                    head: accountData.head,
-                    sex: accountData.sex,
-                    byPhone: accountData.byPhone,
-                    nickName: accountData.nickName
-                };
-                if (groupZ[groupData.gid] == null) {
-                    var accounts = [];
-                    var account_own = it.account1.data;
-                    accounts.push(account_own);
-                    accounts.push(account);
-                    groupData.members = accounts;
-                    groupZ[groupData.gid] = groupData;
-                    groups.push(groupData);
-                } else {
-                    var groupData = groupZ[groupData.gid];
-                    groupData.members.push(account);
+    getAccountGroups();
+    function getAccountGroups() {
+        var query = [
+            'MATCH (account:Account)-[HAS_MEMBER]-(group:Group)',
+            'WHERE account.phone={phone}',
+            'RETURN group'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write({
+                    "提示信息": "获取群组成员失败",
+                    "失败原因": "数据异常"
+                });
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length > 0) {
+                var groups = [];
+                var length = results.length;
+                var count = 0;
+                for (var index in results) {
+                    count++;
+                    var groupData = results[index].group.data;
+                    groups.push(groupData.gid);
+                    if (count == length) {
+                        getGroupsMembers(groups);
+                    }
                 }
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组成功",
+                    groups: []
+                }));
             }
-            response.write(JSON.stringify({
-                "提示信息": "获取群组成功",
-                groups: groups
-            }));
-            response.end();
-        }
-    });
+        });
+    }
+
+    function getGroupsMembers(groupIDs) {
+        var query = [
+            'MATCH (group:Group)-[r1:HAS_MEMBER]->(account:Account)',
+            'WHERE group.gid IN {groupIDs}',
+            'RETURN group,account'
+        ].join('\n');
+        var params = {
+            groupIDs: groupIDs
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else {
+                var groups = [];
+                var groupZ = {};
+                for (var index in results) {
+                    var it = results[index];
+                    var groupData = it.group.data;
+                    var accountData = it.account.data;
+                    var account = {
+                        ID: accountData.ID,
+                        phone: accountData.phone,
+                        mainBusiness: accountData.mainBusiness,
+                        head: accountData.head,
+                        sex: accountData.sex,
+                        byPhone: accountData.byPhone,
+                        nickName: accountData.nickName
+                    };
+                    if (groupZ[groupData.gid] == null) {
+                        var accounts = [];
+                        accounts.push(account);
+                        groupData.members = accounts;
+                        groupZ[groupData.gid] = groupData;
+                        groups.push(groupData);
+                    } else {
+                        var groupData = groupZ[groupData.gid];
+                        groupData.members.push(account);
+                    }
+                }
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组成功",
+                    groups: groups
+                }));
+                response.end();
+            }
+        });
+    }
 }
 
 module.exports = groupManage;

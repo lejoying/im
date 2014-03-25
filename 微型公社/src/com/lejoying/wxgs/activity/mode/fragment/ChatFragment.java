@@ -19,15 +19,11 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
-import android.media.AudioManager;
-import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -61,7 +57,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
@@ -1167,8 +1162,8 @@ public class ChatFragment extends BaseFragment {
 										// + "\"");
 									}
 								});
-								messageHolder.sk_voice.setMax(mpPlayer
-										.getDuration() / 1000);
+								messageHolder.sk_voice.setMax((int) Math
+										.ceil((double) (mpPlayer.getDuration()) / 1000));
 							} catch (SecurityException e) {
 								e.printStackTrace();
 							} catch (IllegalStateException e) {
@@ -1180,7 +1175,6 @@ public class ChatFragment extends BaseFragment {
 
 					}
 				});
-				// Log.v("Coolspan", VOICE_SAVESTATUS + "");
 
 				messageHolder.sk_voice.setProgress(0);
 				messageHolder.sk_voice
