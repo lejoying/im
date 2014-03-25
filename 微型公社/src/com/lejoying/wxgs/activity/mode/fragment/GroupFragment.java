@@ -60,22 +60,24 @@ public class GroupFragment extends BaseFragment {
 
 	public int touchEvnetStatus = TouchEvnetStatus.STATIC;
 
-	public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup container, android.os.Bundle savedInstanceState) {
+	public View onCreateView(android.view.LayoutInflater inflater,
+			android.view.ViewGroup container,
+			android.os.Bundle savedInstanceState) {
 		mInflater = inflater;
 		density = getActivity().getResources().getDisplayMetrics().density;
 		screenHeight = getScreenHeight();
 		screenWidth = getScreenWidth();
 		groupPanelWidth = screenWidth - (int) dp2px(20);
-		groupPanelHeight = (int) (dp2px(10 + 1 + 220 + 37) + sp2px(getActivity(), 18));
+		groupPanelHeight = (int) (dp2px(10 + 1 + 220 + 37) + sp2px(
+				getActivity(), 18));
 		groupScrollSpaceWidth = screenWidth - (int) dp2px(40);
 		groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(20);
 		headSize = (int) dp2px(22);
 		headMargin = (int) ((groupItemWidth - dp2px(10) - headSize * 5) / 6);
 
 		mContentView = inflater.inflate(R.layout.fragment_group, null);
-		groupViewContainer = (ScrollRelativeLayout) mContentView.findViewById(R.id.groupViewContainer);
-
-		System.out.println(density);
+		groupViewContainer = (ScrollRelativeLayout) mContentView
+				.findViewById(R.id.groupViewContainer);
 
 		initEvent();
 
@@ -170,7 +172,8 @@ public class GroupFragment extends BaseFragment {
 					// FrictionAnimation decelerationAnimation = new
 					// FrictionAnimation(vx, vy);
 					// circlesViewContenter.startAnimation(decelerationAnimation);
-					if (touchEvnetStatus == TouchEvnetStatus.MOVING_Y || touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
+					if (touchEvnetStatus == TouchEvnetStatus.MOVING_Y
+							|| touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
 						touchEvnetStatus = TouchEvnetStatus.END;
 					}
 				}
@@ -186,7 +189,9 @@ public class GroupFragment extends BaseFragment {
 		groupViewContainer.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 
 		View myGroup = generateMyGroup();
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		params.topMargin = top;
 		params.bottomMargin = -Integer.MAX_VALUE;
 		myGroup.setLayoutParams(params);
@@ -195,7 +200,9 @@ public class GroupFragment extends BaseFragment {
 		top += (groupPanelHeight + (int) dp2px(25));
 
 		View attentionGroup = generateAttentionGroup();
-		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		params2.topMargin = top;
 		params2.bottomMargin = -Integer.MAX_VALUE;
 		attentionGroup.setLayoutParams(params2);
@@ -204,7 +211,9 @@ public class GroupFragment extends BaseFragment {
 		top += (groupPanelHeight + (int) dp2px(25));
 
 		View nearByGroup = generateNearByGroup();
-		RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		params3.topMargin = top;
 		params3.bottomMargin = -Integer.MAX_VALUE;
 		nearByGroup.setLayoutParams(params3);
@@ -213,7 +222,9 @@ public class GroupFragment extends BaseFragment {
 		top += (groupPanelHeight + (int) dp2px(25));
 
 		View tempGroup = generateTempGroup();
-		RelativeLayout.LayoutParams params4 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params4 = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		params4.topMargin = top;
 		params4.bottomMargin = -Integer.MAX_VALUE;
 		tempGroup.setLayoutParams(params4);
@@ -253,13 +264,15 @@ public class GroupFragment extends BaseFragment {
 			position.x = (int) dp2px(10) + i / 4 * groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 2) {
 			position.y = (int) dp2px(20);
-			position.x = groupItemWidth + (int) dp2px(30) + i / 4 * groupScrollSpaceWidth;
+			position.x = groupItemWidth + (int) dp2px(30) + i / 4
+					* groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 3) {
 			position.y = (int) dp2px(115);
 			position.x = (int) dp2px(10) + i / 4 * groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 0) {
 			position.y = (int) dp2px(115);
-			position.x = groupItemWidth + (int) dp2px(30) + i / 4 * groupScrollSpaceWidth;
+			position.x = groupItemWidth + (int) dp2px(30) + i / 4
+					* groupScrollSpaceWidth;
 		}
 		return position;
 	}
@@ -268,44 +281,56 @@ public class GroupFragment extends BaseFragment {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("我加入的群组");
-		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView.findViewById(R.id.viewContainer);
+		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView
+				.findViewById(R.id.viewContainer);
 
 		View bottomBar = groupView.findViewById(R.id.bottomBar);
-		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(View.GONE);
-		TextView buttonManager = (TextView) bottomBar.findViewById(R.id.buttonNextGroup);
+		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(
+				View.GONE);
+		TextView buttonManager = (TextView) bottomBar
+				.findViewById(R.id.buttonNextGroup);
 		buttonManager.setText("群组设置");
 		bottomBar.setVisibility(View.VISIBLE);
 
 		for (int i = 0; i < app.data.groups.size(); i++) {
-			final Group group = app.data.groups.get(i);
-			View groupItemView = mInflater.inflate(R.layout.fragment_group_item, null);
-			TextView groupName = (TextView) groupItemView.findViewById(R.id.groupName);
-			TextView memberCount = (TextView) groupItemView.findViewById(R.id.memberCount);
+			final Group group = app.data.groupsMap.get(app.data.groups.get(i));
+			View groupItemView = mInflater.inflate(
+					R.layout.fragment_group_item, null);
+			TextView groupName = (TextView) groupItemView
+					.findViewById(R.id.groupName);
+			TextView memberCount = (TextView) groupItemView
+					.findViewById(R.id.memberCount);
 			groupName.setText(group.name);
-			memberCount.setText("(" + String.valueOf(group.members.size()) + ")");
+			memberCount.setText("(" + String.valueOf(group.members.size())
+					+ ")");
 
-			LinearLayout members = (LinearLayout) groupItemView.findViewById(R.id.members);
+			LinearLayout members = (LinearLayout) groupItemView
+					.findViewById(R.id.members);
 
 			for (int j = 0; j < group.members.size(); j++) {
 				if (j == 5) {
 					break;
 				}
-				Friend groupFriend = app.data.groupFriends.get(group.members.get(j));
+				Friend groupFriend = app.data.groupFriends.get(group.members
+						.get(j));
 				final ImageView head = new ImageView(getActivity());
-				android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(headSize, headSize);
+				android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
+						headSize, headSize);
 				params.leftMargin = headMargin;
 				head.setLayoutParams(params);
 				final String fileName = groupFriend.head;
 				app.fileHandler.getHeadImage(fileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						head.setImageBitmap(app.fileHandler.bitmaps.get(fileName));
+						head.setImageBitmap(app.fileHandler.bitmaps
+								.get(fileName));
 					}
 				});
 				members.addView(head);
 			}
 
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
 			Position position = switchPosition(i);
 			params.rightMargin = -Integer.MAX_VALUE;
 			params.leftMargin = position.x;
@@ -319,18 +344,21 @@ public class GroupFragment extends BaseFragment {
 					if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
 						return;
 					}
-					mMainModeManager.mChatFragment.mStatus = ChatFragment.CHAT_GROUP;
-					mMainModeManager.mChatFragment.mNowChatGroup = group;
-					mMainModeManager.showNext(mMainModeManager.mChatFragment);
+					mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+					mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
+					mMainModeManager
+							.showNext(mMainModeManager.mChatGroupFragment);
 				}
 			});
 
 			viewContainer.addView(groupItemView);
 		}
 
-		View groupItemView = mInflater.inflate(R.layout.fragment_group_item_add, null);
+		View groupItemView = mInflater.inflate(
+				R.layout.fragment_group_item_add, null);
 
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		Position position = switchPosition(viewContainer.getChildCount());
 		params.rightMargin = -Integer.MAX_VALUE;
 		params.leftMargin = position.x;
@@ -342,36 +370,39 @@ public class GroupFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_NEWGROUP;
-				mMainModeManager.showNext(mMainModeManager.mGroupManagerFragment);
+				mMainModeManager
+						.showNext(mMainModeManager.mGroupManagerFragment);
 			}
 		});
 
 		viewContainer.addView(groupItemView);
 
-		final GestureDetector detector = new GestureDetector(getActivity(), new SimpleOnGestureListener() {
-			float x0 = 0;
-			float dx = 0;
+		final GestureDetector detector = new GestureDetector(getActivity(),
+				new SimpleOnGestureListener() {
+					float x0 = 0;
+					float dx = 0;
 
-			@Override
-			public boolean onDown(MotionEvent e) {
-				x0 = e.getRawX();
-				return true;
-			}
+					@Override
+					public boolean onDown(MotionEvent e) {
+						x0 = e.getRawX();
+						return true;
+					}
 
-			@Override
-			public void onLongPress(MotionEvent e) {
-			}
+					@Override
+					public void onLongPress(MotionEvent e) {
+					}
 
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-				dx = e2.getRawX() - x0;
-				if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
-					viewContainer.scrollBy(-(int) (dx), 0);
-					x0 = e2.getRawX();
-				}
-				return true;
-			}
-		});
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						dx = e2.getRawX() - x0;
+						if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
+							viewContainer.scrollBy(-(int) (dx), 0);
+							x0 = e2.getRawX();
+						}
+						return true;
+					}
+				});
 
 		viewContainer.setOnTouchListener(new OnTouchListener() {
 
@@ -388,22 +419,28 @@ public class GroupFragment extends BaseFragment {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("我关注的群组");
-		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView.findViewById(R.id.viewContainer);
+		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView
+				.findViewById(R.id.viewContainer);
 
 		View bottomBar = groupView.findViewById(R.id.bottomBar);
-		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(View.GONE);
-		TextView buttonManager = (TextView) bottomBar.findViewById(R.id.buttonNextGroup);
+		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(
+				View.GONE);
+		TextView buttonManager = (TextView) bottomBar
+				.findViewById(R.id.buttonNextGroup);
 		buttonManager.setText("查看群组分享");
 		bottomBar.setVisibility(View.VISIBLE);
 
-		View groupItemView = mInflater.inflate(R.layout.fragment_group_item_add, null);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		View groupItemView = mInflater.inflate(
+				R.layout.fragment_group_item_add, null);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		Position position = switchPosition(viewContainer.getChildCount());
 		params.rightMargin = -Integer.MAX_VALUE;
 		params.leftMargin = position.x;
 		params.topMargin = position.y;
 		groupItemView.setLayoutParams(params);
-		TextView text = (TextView) groupItemView.findViewById(R.id.newGroupText);
+		TextView text = (TextView) groupItemView
+				.findViewById(R.id.newGroupText);
 		text.setText("找到更多群组");
 		viewContainer.addView(groupItemView);
 
@@ -414,22 +451,28 @@ public class GroupFragment extends BaseFragment {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("附近活跃群组");
-		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView.findViewById(R.id.viewContainer);
+		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView
+				.findViewById(R.id.viewContainer);
 
 		View bottomBar = groupView.findViewById(R.id.bottomBar);
-		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(View.GONE);
-		TextView buttonManager = (TextView) bottomBar.findViewById(R.id.buttonNextGroup);
+		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(
+				View.GONE);
+		TextView buttonManager = (TextView) bottomBar
+				.findViewById(R.id.buttonNextGroup);
 		buttonManager.setText("亦庄站");
 		bottomBar.setVisibility(View.VISIBLE);
 
-		View groupItemView = mInflater.inflate(R.layout.fragment_group_item_add, null);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		View groupItemView = mInflater.inflate(
+				R.layout.fragment_group_item_add, null);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		Position position = switchPosition(viewContainer.getChildCount());
 		params.rightMargin = -Integer.MAX_VALUE;
 		params.leftMargin = position.x;
 		params.topMargin = position.y;
 		groupItemView.setLayoutParams(params);
-		TextView text = (TextView) groupItemView.findViewById(R.id.newGroupText);
+		TextView text = (TextView) groupItemView
+				.findViewById(R.id.newGroupText);
 		text.setText("找到更多群组");
 		viewContainer.addView(groupItemView);
 
@@ -440,22 +483,28 @@ public class GroupFragment extends BaseFragment {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("临时群组");
-		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView.findViewById(R.id.viewContainer);
+		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView
+				.findViewById(R.id.viewContainer);
 
 		View bottomBar = groupView.findViewById(R.id.bottomBar);
-		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(View.GONE);
-		TextView buttonManager = (TextView) bottomBar.findViewById(R.id.buttonNextGroup);
+		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(
+				View.GONE);
+		TextView buttonManager = (TextView) bottomBar
+				.findViewById(R.id.buttonNextGroup);
 		buttonManager.setText("临时的群组");
 		bottomBar.setVisibility(View.VISIBLE);
 
-		View groupItemView = mInflater.inflate(R.layout.fragment_group_item_add, null);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		View groupItemView = mInflater.inflate(
+				R.layout.fragment_group_item_add, null);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		Position position = switchPosition(viewContainer.getChildCount());
 		params.rightMargin = -Integer.MAX_VALUE;
 		params.leftMargin = position.x;
 		params.topMargin = position.y;
 		groupItemView.setLayoutParams(params);
-		TextView text = (TextView) groupItemView.findViewById(R.id.newGroupText);
+		TextView text = (TextView) groupItemView
+				.findViewById(R.id.newGroupText);
 		text.setText("找到更多群组");
 		viewContainer.addView(groupItemView);
 

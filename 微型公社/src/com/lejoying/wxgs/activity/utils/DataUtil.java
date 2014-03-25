@@ -16,6 +16,7 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.data.entity.User;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
@@ -45,7 +46,8 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
-							User user = JSONParser.generateUserFromJSON(jData.getJSONArray("accounts").getJSONObject(0));
+							User user = JSONParser.generateUserFromJSON(jData
+									.getJSONArray("accounts").getJSONObject(0));
 							data.user.head = user.head;
 							data.user.nickName = user.nickName;
 							data.user.mainBusiness = user.mainBusiness;
@@ -93,10 +95,13 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
-							CirclesAndFriends circlesAndFriends = JSONParser.generateCirclesFromJSON(jData.getJSONArray("circles"));
+							CirclesAndFriends circlesAndFriends = JSONParser
+									.generateCirclesFromJSON(jData
+											.getJSONArray("circles"));
 							data.circles = circlesAndFriends.circles;
 							Map<String, Friend> friends = circlesAndFriends.circleFriends;
-							Set<String> phones = circlesAndFriends.circleFriends.keySet();
+							Set<String> phones = circlesAndFriends.circleFriends
+									.keySet();
 							for (String phone : phones) {
 								Friend friend = friends.get(phone);
 								updateFriend(friend, data);
@@ -163,8 +168,15 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
-							GroupsAndFriends groupsAndFriends = JSONParser.generateGroupsFromJSON(jData.getJSONArray("groups"));
-							data.groups = groupsAndFriends.groups;
+							GroupsAndFriends groupsAndFriends = JSONParser
+									.generateGroupsFromJSON(jData
+											.getJSONArray("groups"));
+							data.groups.clear();
+							for (Group group : groupsAndFriends.groups) {
+								data.groups.add(String.valueOf(group.gid));
+								data.groupsMap.put(String.valueOf(group.gid),
+										group);
+							}
 							data.groupFriends = groupsAndFriends.groupFriends;
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -208,7 +220,9 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
-							List<Friend> friends = JSONParser.generateFriendsFromJSON(jData.getJSONArray("accounts"));
+							List<Friend> friends = JSONParser
+									.generateFriendsFromJSON(jData
+											.getJSONArray("accounts"));
 							for (Friend friend : friends) {
 								if (!data.newFriends.contains(friend)) {
 									data.newFriends.add(0, friend);
@@ -257,14 +271,31 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
-							List<Message> messages = JSONParser.generateMessagesFromJSON(jData.getJSONArray("messages"));
+							List<Message> messages = JSONParser
+									.generateMessagesFromJSON(jData
+											.getJSONArray("messages"));
 							for (Message message : messages) {
-								Friend friend = data.friends.get(message.phone);
-								if (friend != null && !friend.messages.contains(message)) {
-									data.lastChatFriends.remove(friend.phone);
-									data.lastChatFriends.add(0, friend.phone);
-									friend.messages.add(message);
-									friend.notReadMessagesCount++;
+								if (message.sendType.equals("point")) {
+									Friend friend = data.friends
+											.get(message.phone);
+									if (friend != null
+											&& !friend.messages
+													.contains(message)) {
+										data.lastChatFriends
+												.remove(friend.phone);
+										data.lastChatFriends.add(0,
+												friend.phone);
+										friend.messages.add(message);
+										friend.notReadMessagesCount++;
+									}
+								} else if (message.sendType.equals("group")) {
+									Group group = data.groupsMap
+											.get(message.gid);
+									if (group != null
+											&& !group.messages
+													.contains(message)) {
+										group.messages.add(message);
+									}
 								}
 							}
 						} catch (JSONException e) {
@@ -311,14 +342,18 @@ public class DataUtil {
 				saveData.circles = app.data.circles;
 				saveData.friends = app.data.friends;
 				saveData.groups = app.data.groups;
+				saveData.groupsMap = app.data.groupsMap;
 				saveData.groupFriends = app.data.groupFriends;
 				saveData.lastChatFriends = app.data.lastChatFriends;
 				saveData.newFriends = app.data.newFriends;
-				StreamParser.parseToObjectFile(context.openFileOutput(app.data.user.phone, Context.MODE_PRIVATE), saveData);
+				StreamParser.parseToObjectFile(context.openFileOutput(
+						app.data.user.phone, Context.MODE_PRIVATE), saveData);
 
 				Configuration config = new Configuration();
 				config.lastLoginPhone = app.data.user.phone;
-				StreamParser.parseToObjectFile(context.openFileOutput("config", Context.MODE_PRIVATE), config);
+				StreamParser.parseToObjectFile(
+						context.openFileOutput("config", Context.MODE_PRIVATE),
+						config);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -699,7 +699,7 @@ public class CirclesFragment extends BaseFragment {
 				if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
 					return;
 				}
-				mMainModeManager.mChatFragment.mStatus = ChatFragment.CHAT_FRIEND;
+				mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
 				mMainModeManager.mChatFragment.mNowChatFriend = friend;
 				mMainModeManager.showNext(mMainModeManager.mChatFragment);
 			}
@@ -806,7 +806,7 @@ public class CirclesFragment extends BaseFragment {
 						return;
 					}
 					if (mode.equals("normal")) {
-						mMainModeManager.mChatFragment.mStatus = ChatFragment.CHAT_FRIEND;
+						mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
 						mMainModeManager.mChatFragment.mNowChatFriend = friend;
 						mMainModeManager
 								.showNext(mMainModeManager.mChatFragment);

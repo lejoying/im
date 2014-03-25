@@ -1,7 +1,5 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -10,7 +8,9 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -23,6 +23,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.EditText;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -38,6 +39,7 @@ import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
 import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
@@ -46,7 +48,6 @@ import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
-import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 public class GroupManagerFragment extends BaseFragment {
@@ -66,9 +67,14 @@ public class GroupManagerFragment extends BaseFragment {
 	View buttonList;
 	View selectFriend;
 
-	View newGroupNextButton;
-	View newGroupBackButton;
+	View nextButton;
+	View backButton;
 	View newGroupCompleteButton;
+
+	View addMembers;
+	View removeMembers;
+	View quitTheGroup;
+	View modifyGroupName;
 
 	RelativeLayout animationLayout;
 	HorizontalScrollView tempFriendScroll;
@@ -80,7 +86,7 @@ public class GroupManagerFragment extends BaseFragment {
 
 	public String newStatus = "friend";// "friend"||"map"||"complete"
 
-	List<Friend> addFriendList;
+	List<Friend> seleteFriendList;
 
 	private static final GeoPoint GEO_BEIJING = new GeoPoint(
 			(int) (39.945 * 1E6), (int) (116.404 * 1E6));
@@ -94,7 +100,8 @@ public class GroupManagerFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		circleViewCommonAnimation();
-		addFriendList = new ArrayList<Friend>();
+		isRemove = false;
+		seleteFriendList = new ArrayList<Friend>();
 		screenWidth = getScreenWidth();
 		mInflater = inflater;
 		mContentView = inflater.inflate(R.layout.fragment_group_manager, null);
@@ -104,9 +111,15 @@ public class GroupManagerFragment extends BaseFragment {
 		nextBar = mContentView.findViewById(R.id.nextBar);
 		buttonList = mContentView.findViewById(R.id.buttonList);
 		selectFriend = mContentView.findViewById(R.id.selectFriend);
-		newGroupNextButton = mContentView.findViewById(R.id.buttonNext);
-		newGroupBackButton = mContentView.findViewById(R.id.buttonCancel);
+		nextButton = mContentView.findViewById(R.id.buttonNext);
+		backButton = mContentView.findViewById(R.id.buttonCancel);
 		newGroupCompleteButton = mContentView.findViewById(R.id.buttonComplete);
+
+		addMembers = mContentView.findViewById(R.id.addMembers);
+		removeMembers = mContentView.findViewById(R.id.removeMembers);
+		quitTheGroup = mContentView.findViewById(R.id.quitTheGroup);
+		modifyGroupName = mContentView.findViewById(R.id.modifyGroupName);
+
 		tempFriendsList = (LinearLayout) mContentView
 				.findViewById(R.id.tempFriendsList);
 		animationLayout = (RelativeLayout) mContentView
@@ -123,84 +136,131 @@ public class GroupManagerFragment extends BaseFragment {
 	SupportMapFragment map;
 
 	void initEvent() {
-		newGroupNextButton.setOnClickListener(new OnClickListener() {
+		nextButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
-				if (newStatus.equals("friend")) {
+				if (status.equals(MODE_NEWGROUP)) {
+					if (newStatus.equals("friend")) {
 
-					if (addFriendList.size() == 0) {
-						Alert.showMessage("请选择好友");
+						if (seleteFriendList.size() == 0) {
+							Alert.showMessage("请选择好友");
+							return;
+						}
+
+						newStatus = "map";
+						selectFriend.setVisibility(View.GONE);
+
+						RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+								.getLayoutParams();
+						params.height = (int) dp2px(80);
+						editControl.setLayoutParams(params);
+
+						views.get(circles.get(currentFriendIndex));
+
+						circlesViewContenter.scrollTo((circles.size() + 1)
+								* screenWidth, 0);
+
+						TranslateAnimation outAnimation = new TranslateAnimation(
+								(circles.size() - currentFriendIndex)
+										* screenWidth, (circles.size()
+										- currentFriendIndex - 1)
+										* screenWidth, 0, 0);
+						outAnimation.setDuration(300);
+
+						views.get(circles.get(currentFriendIndex))
+								.startAnimation(outAnimation);
+
+						TranslateAnimation animation = new TranslateAnimation(
+								screenWidth, 0, 0, 0);
+						animation.setDuration(300);
+
+						views.get("map").startAnimation(animation);
+
+						map.getMapView()
+								.getController()
+								.setMapStatus(
+										newMapStatusWithGeoPointAndZoom(
+												GEO_BEIJING, 15));
+
+					} else if (newStatus.equals("map")) {
+						newStatus = "complete";
+
+						circlesViewContenter.scrollTo((circles.size() + 2)
+								* screenWidth, 0);
+
+						TranslateAnimation animation = new TranslateAnimation(
+								screenWidth, 0, 0, 0);
+						animation.setDuration(300);
+
+						views.get("map").startAnimation(animation);
+						views.get("complete").startAnimation(animation);
+
+						backButton.setVisibility(View.GONE);
+						nextButton.setVisibility(View.GONE);
+						newGroupCompleteButton.setVisibility(View.VISIBLE);
+						GeoPoint center = map.getMapView().getMapCenter();
+						final double latitude = center.getLatitudeE6() / 1E6;
+						final double longitude = center.getLongitudeE6() / 1E6;
+
+						CommonNetConnection createGroup = new CommonNetConnection() {
+
+							@Override
+							protected void settings(Settings settings) {
+								settings.url = API.DOMAIN + API.GROUP_CREATE;
+								Map<String, String> params = new HashMap<String, String>();
+								params.put("phone", app.data.user.phone);
+								params.put("accessKey", app.data.user.accessKey);
+								params.put("type", "createGroup");
+								params.put("name", "新建群组");
+								StringBuffer members = new StringBuffer("[\""
+										+ app.data.user.phone + "\",");
+								for (Friend friend : seleteFriendList) {
+									members.append("\"" + friend.phone + "\",");
+								}
+								members.replace(members.length() - 1,
+										members.length(), "]");
+								params.put("members", members.toString());
+								String location = "{\"longitude\":\""
+										+ longitude + "\",\"latitude\":\""
+										+ latitude + "\"}";
+								params.put("location", location);
+								settings.params = params;
+							}
+
+							@Override
+							public void success(JSONObject jData) {
+								// TODO refresh UI
+							}
+						};
+						app.networkHandler.connection(createGroup);
+					}
+				} else if (status.equals(MODE_MANAGER)) {
+					if (seleteFriendList.size() == 0) {
+						if (isRemove) {
+							Alert.showMessage("请选择要移除的好友");
+						} else {
+							Alert.showMessage("请选择好友");
+						}
 						return;
 					}
-
-					newStatus = "map";
-					selectFriend.setVisibility(View.GONE);
-
-					RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
-							.getLayoutParams();
-					params.height = (int) dp2px(80);
-					editControl.setLayoutParams(params);
-
-					views.get(circles.get(currentFriendIndex));
-
-					circlesViewContenter.scrollTo((circles.size() + 1)
-							* screenWidth, 0);
-
-					TranslateAnimation outAnimation = new TranslateAnimation(
-							(circles.size() - currentFriendIndex) * screenWidth,
-							(circles.size() - currentFriendIndex - 1)
-									* screenWidth, 0, 0);
-					outAnimation.setDuration(300);
-
-					views.get(circles.get(currentFriendIndex)).startAnimation(
-							outAnimation);
-
-					TranslateAnimation animation = new TranslateAnimation(
-							screenWidth, 0, 0, 0);
-					animation.setDuration(300);
-
-					views.get("map").startAnimation(animation);
-
-					map.getMapView()
-							.getController()
-							.setMapStatus(
-									newMapStatusWithGeoPointAndZoom(
-											GEO_BEIJING, 15));
-
-				} else if (newStatus.equals("map")) {
-					newStatus = "complete";
-
-					circlesViewContenter.scrollTo((circles.size() + 2)
-							* screenWidth, 0);
-
-					TranslateAnimation animation = new TranslateAnimation(
-							screenWidth, 0, 0, 0);
-					animation.setDuration(300);
-
-					views.get("map").startAnimation(animation);
-					views.get("complete").startAnimation(animation);
-
-					newGroupBackButton.setVisibility(View.GONE);
-					newGroupNextButton.setVisibility(View.GONE);
-					newGroupCompleteButton.setVisibility(View.VISIBLE);
-					GeoPoint center = map.getMapView().getMapCenter();
-					double latitude = center.getLatitudeE6() / 1E6;
-					double longitude = center.getLongitudeE6() / 1E6;
-
-					CommonNetConnection createGroup = new CommonNetConnection() {
-
+					final CommonNetConnection modifyMembers = new CommonNetConnection() {
 						@Override
 						protected void settings(Settings settings) {
-							settings.url = API.DOMAIN + API.GROUP_CREATE;
+							if (!isRemove) {
+								settings.url = API.DOMAIN
+										+ API.GROUP_ADDMEMBERS;
+							} else {
+								settings.url = API.DOMAIN
+										+ API.GROUP_REMOVEMEMBERS;
+							}
 							Map<String, String> params = new HashMap<String, String>();
 							params.put("phone", app.data.user.phone);
 							params.put("accessKey", app.data.user.accessKey);
-							params.put("type", "createGroup");
-							params.put("name", "新建群组");
-							StringBuffer members = new StringBuffer("[\""
-									+ app.data.user.phone + "\",");
-							for (Friend friend : addFriendList) {
+							params.put("gid",
+									String.valueOf(mCurrentManagerGroup.gid));
+							StringBuffer members = new StringBuffer("[");
+							for (Friend friend : seleteFriendList) {
 								members.append("\"" + friend.phone + "\",");
 							}
 							members.replace(members.length() - 1,
@@ -214,8 +274,202 @@ public class GroupManagerFragment extends BaseFragment {
 							System.out.println(jData);
 						}
 					};
-					app.networkHandler.connection(createGroup);
+					Alert.showDialog(isRemove?"确定要移除这些成员吗？":"确定要添加这些好友吗？", new DialogListener() {
+						
+						@Override
+						public void onCancel() {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public boolean confirm() {
+							app.networkHandler.connection(modifyMembers);
+							return true;
+						}
+						
+						@Override
+						public void cancel() {
+							// TODO Auto-generated method stub
+							
+						}
+					});
 				}
+			}
+		});
+
+		backButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (status.equals(MODE_MANAGER)) {
+
+				} else if (status.equals(MODE_NEWGROUP)) {
+
+				}
+			}
+		});
+
+		addMembers.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				circlesViewContenter.scrollTo(screenWidth, 0);
+				TranslateAnimation animation = new TranslateAnimation(
+						screenWidth, 0, 0, 0);
+				currentFriendIndex = 0;
+				animation.setDuration(300);
+				views.get("group").startAnimation(animation);
+				views.get(circles.get(0)).startAnimation(animation);
+				selectFriend.setVisibility(View.VISIBLE);
+				buttonList.setVisibility(View.GONE);
+				RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+						.getLayoutParams();
+				params.height = (int) dp2px(160);
+				editControl.setLayoutParams(params);
+				nextBar.setVisibility(View.VISIBLE);
+			}
+		});
+
+		removeMembers.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				selectFriend.setVisibility(View.VISIBLE);
+				buttonList.setVisibility(View.GONE);
+				nextBar.setVisibility(View.VISIBLE);
+				RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+						.getLayoutParams();
+				params.height = (int) dp2px(160);
+				editControl.setLayoutParams(params);
+				isRemove = true;
+			}
+		});
+
+		modifyGroupName.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				final EditText groupName;
+				new AlertDialog.Builder(getActivity())
+						.setTitle("请输入新的群组名称")
+						.setIcon(android.R.drawable.ic_dialog_info)
+						.setView(groupName = new EditText(getActivity()))
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										app.networkHandler
+												.connection(new CommonNetConnection() {
+
+													@Override
+													protected void settings(
+															Settings settings) {
+														settings.url = API.DOMAIN
+																+ API.GROUP_MODIFY;
+														Map<String, String> params = new HashMap<String, String>();
+														params.put(
+																"phone",
+																app.data.user.phone);
+														params.put(
+																"accessKey",
+																app.data.user.accessKey);
+														params.put(
+																"gid",
+																String.valueOf(mCurrentManagerGroup.gid));
+														params.put(
+																"name",
+																groupName
+																		.getText()
+																		.toString());
+														settings.params = params;
+													}
+
+													@Override
+													public void success(
+															JSONObject jData) {
+														System.out
+																.println(jData);
+														app.UIHandler
+																.post(new Runnable() {
+
+																	@Override
+																	public void run() {
+																		((TextView) views
+																				.get("group")
+																				.findViewById(
+																						R.id.panel_name))
+																				.setText(groupName
+																						.getText());
+																	}
+																});
+
+													}
+												});
+									}
+								}).setNegativeButton("取消", null).show();
+			}
+		});
+
+		quitTheGroup.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Alert.showDialog("确定要退出" + mCurrentManagerGroup.name + "吗？",
+						new DialogListener() {
+
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public boolean confirm() {
+								CommonNetConnection quitTheGroup = new CommonNetConnection() {
+
+									@Override
+									protected void settings(Settings settings) {
+										settings.url = API.DOMAIN
+												+ API.GROUP_REMOVEMEMBERS;
+										Map<String, String> params = new HashMap<String, String>();
+										params.put("phone", app.data.user.phone);
+										params.put("accessKey",
+												app.data.user.accessKey);
+										params.put(
+												"gid",
+												String.valueOf(mCurrentManagerGroup.gid));
+										params.put("members", "[\""
+												+ app.data.user.phone + "\"]");
+										settings.params = params;
+									}
+
+									@Override
+									public void success(JSONObject jData) {
+										System.out.println(jData);
+									}
+								};
+								app.networkHandler.connection(quitTheGroup);
+								mMainModeManager.clearBackStack(1);
+								mMainModeManager.back();
+								return true;
+							}
+
+							@Override
+							public void cancel() {
+								// TODO Auto-generated method stub
+
+							}
+						});
+			}
+		});
+
+		newGroupCompleteButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
 			}
 		});
 	}
@@ -493,6 +747,8 @@ public class GroupManagerFragment extends BaseFragment {
 		return mapView;
 	}
 
+	boolean isRemove;
+
 	View generateGroup(CircleHolder circleHolder) {
 		View circleView = mInflater.inflate(R.layout.fragment_panel, null);
 
@@ -523,6 +779,92 @@ public class GroupManagerFragment extends BaseFragment {
 			friendHolder.view = convertView;
 
 			circleHolder.friendHolders.add(friendHolder);
+
+			convertView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(final View holderView) {
+					if (!isRemove || friend.phone.equals(app.data.user.phone)) {
+						return;
+					}
+					if (seleteFriendList.contains(friend)) {
+						Alert.showMessage("用户已选择");
+						return;
+					}
+					seleteFriendList.add(friend);
+					final View tempFriend = generateFriendView(friend);
+					final View animationView = generateFriendView(friend);
+
+					tempFriendScroll.smoothScrollTo(0, 0);
+					int[] location = new int[2];
+					holderView.getLocationInWindow(location);
+
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+							(int) dp2px(55f),
+							android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+					params.leftMargin = location[0];
+					params.topMargin = location[1] - 50;
+					animationView.setLayoutParams(params);
+					animationLayout.addView(animationView);
+
+					LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(
+							(int) dp2px(55f),
+							LinearLayout.LayoutParams.WRAP_CONTENT);
+					tempParams.leftMargin = (int) dp2px(20);
+					tempFriend.setVisibility(View.INVISIBLE);
+					if (tempFriendsList.getChildCount() == 0) {
+						tempParams.rightMargin = (int) dp2px(75);
+					}
+					tempFriendsList.addView(tempFriend, 0, tempParams);
+
+					tempFriend.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							seleteFriendList.remove(friend);
+							int count = tempFriendsList.getChildCount();
+							int index = 0;
+							for (int i = 0; i < count; i++) {
+								View v = tempFriendsList.getChildAt(i);
+								if (v.equals(view)) {
+									index = i;
+									break;
+								}
+							}
+							tempFriendsList.removeView(view);
+							for (int i = index; i < count - 1; i++) {
+								View v = tempFriendsList.getChildAt(i);
+								v.startAnimation(allTempFriendMoveToLeft);
+							}
+						}
+					});
+
+					int count = tempFriendsList.getChildCount();
+					for (int i = 1; i < count; i++) {
+						tempFriendsList.getChildAt(i).startAnimation(
+								allTempFriendMoveToRight);
+					}
+
+					int currnetX = (int) dp2px(20);
+					int currentY = animationLayout.getHeight()
+							- (int) dp2px(155);
+
+					TranslateAnimation moveToTempListAnimation = new TranslateAnimation(
+							0, currnetX - location[0], 0, currentY
+									- (location[1] - 50));
+					moveToTempListAnimation.setDuration(270);
+					moveToTempListAnimation
+							.setAnimationListener(new AnimationAdapter() {
+								@Override
+								public void onAnimationEnd(Animation animation) {
+									animationLayout.removeView(animationView);
+									tempFriend.setVisibility(View.VISIBLE);
+								}
+							});
+					animationView.startAnimation(moveToTempListAnimation);
+
+				}
+			});
 
 			friendContainer.addView(convertView);
 		}
@@ -595,10 +937,17 @@ public class GroupManagerFragment extends BaseFragment {
 
 				@Override
 				public void onClick(final View holderView) {
-					if (addFriendList.contains(friend)) {
+					if (status.equals(MODE_MANAGER)
+							&& mCurrentManagerGroup.members
+									.contains(friend.phone)) {
+						Alert.showMessage("群组中已存在");
 						return;
 					}
-					addFriendList.add(friend);
+					if (seleteFriendList.contains(friend)) {
+						Alert.showMessage("用户已添加");
+						return;
+					}
+					seleteFriendList.add(friend);
 					final View tempFriend = generateFriendView(friend);
 					final View animationView = generateFriendView(friend);
 
@@ -628,7 +977,7 @@ public class GroupManagerFragment extends BaseFragment {
 					tempFriend.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View view) {
-							addFriendList.remove(friend);
+							seleteFriendList.remove(friend);
 							int count = tempFriendsList.getChildCount();
 							int index = 0;
 							for (int i = 0; i < count; i++) {

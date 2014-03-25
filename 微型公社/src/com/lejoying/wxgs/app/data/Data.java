@@ -21,7 +21,8 @@ public class Data implements Serializable {
 
 	public User user = new User();
 	public List<Circle> circles = new ArrayList<Circle>();
-	public List<Group> groups = new ArrayList<Group>();
+	public List<String> groups = new ArrayList<String>();
+	public Map<String, Group> groupsMap = new HashMap<String, Group>();
 
 	public Map<String, Friend> groupFriends = new HashMap<String, Friend>();
 	public Map<String, Friend> friends = new HashMap<String, Friend>();

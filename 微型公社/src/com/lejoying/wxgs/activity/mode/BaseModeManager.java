@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.BaseActivity;
+import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 
 public abstract class BaseModeManager {
 

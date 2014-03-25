@@ -12,6 +12,7 @@ public class Group implements Serializable {
 	public int gid;
 	public String name = "";
 	public List<String> members = new ArrayList<String>();
+	public List<Message> messages = new ArrayList<Message>();
 
 	@Override
 	public boolean equals(Object o) {
@@ -20,7 +21,8 @@ public class Group implements Serializable {
 			try {
 				Group g = (Group) o;
 				if (gid == g.gid && name.equals(g.name)
-						&& members.containsAll(g.members)) {
+						&& members.containsAll(g.members)
+						&& messages.containsAll(g.messages)) {
 					flag = true;
 				}
 			} catch (Exception e) {

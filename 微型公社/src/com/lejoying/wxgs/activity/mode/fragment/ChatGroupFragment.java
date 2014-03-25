@@ -78,7 +78,7 @@ import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
-public class ChatFragment extends BaseFragment {
+public class ChatGroupFragment extends BaseFragment {
 
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
@@ -839,32 +839,6 @@ public class ChatFragment extends BaseFragment {
 		chatContent.setAdapter(mAdapter);
 
 		chatContent.setSelection(mAdapter.getCount() - 1);
-		// chatContent.setOnScrollListener(new OnScrollListener() {
-		// boolean isFirst = true;
-		//
-		// @Override
-		// public void onScrollStateChanged(AbsListView view, int scrollState) {
-		//
-		// }
-		//
-		// @Override
-		// public void onScroll(AbsListView view, int firstVisibleItem, int
-		// visibleItemCount, int totalItemCount) {
-		// if (firstVisibleItem == 0 && showFirstPosition != 0 && !isFirst) {
-		// int old = showFirstPosition;
-		// showFirstPosition = showFirstPosition > 10 ? showFirstPosition - 10 :
-		// 0;
-		// mAdapter.notifyDataSetChanged();
-		// chatContent.setSelection(old - showFirstPosition);
-		// }
-		// isFirst = false;
-		// }
-		// });
-	}
-
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
 	}
 
 	public void showSelectTab() {
@@ -913,26 +887,316 @@ public class ChatFragment extends BaseFragment {
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
-			return 0;
+			return mNowChatGroup.messages.size() - showFirstPosition;
 		}
 
 		@Override
-		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
-			return null;
+		public Object getItem(int position) {
+			return mNowChatGroup.messages.get(showFirstPosition + position);
 		}
 
 		@Override
-		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
-			return 0;
+		public long getItemId(int position) {
+			return position;
 		}
 
 		@Override
-		public View getView(int arg0, View arg1, ViewGroup arg2) {
-			// TODO Auto-generated method stub
-			return null;
+		public int getItemViewType(int position) {
+			return ((Message) getItem(position)).type;
+		}
+
+		@Override
+		public int getViewTypeCount() {
+			return MAXTYPE_COUNT;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup arg2) {
+			final MessageHolder messageHolder;
+			int type = getItemViewType(position);
+			if (convertView == null) {
+				messageHolder = new MessageHolder();
+				switch (type) {
+				case Message.MESSAGE_TYPE_SEND:
+					convertView = mInflater.inflate(R.layout.f_chat_item_right,
+							null);
+					messageHolder.text = convertView
+							.findViewById(R.id.rl_chatright);
+					break;
+				case Message.MESSAGE_TYPE_RECEIVE:
+					convertView = mInflater.inflate(R.layout.f_chat_item_left,
+							null);
+					messageHolder.text = convertView
+							.findViewById(R.id.rl_chatleft);
+					break;
+				default:
+					break;
+				}
+				messageHolder.image = convertView
+						.findViewById(R.id.rl_chatleft_image);
+				messageHolder.iv_image = (ImageView) convertView
+						.findViewById(R.id.iv_image);
+				messageHolder.tv_nickname = (TextView) convertView
+						.findViewById(R.id.tv_nickname);
+				messageHolder.iv_head = (ImageView) convertView
+						.findViewById(R.id.iv_head);
+				messageHolder.tv_chat = (TextView) convertView
+						.findViewById(R.id.tv_chat);
+				messageHolder.voice = convertView
+						.findViewById(R.id.rl_chatleft_voice);
+				messageHolder.iv_voicehead_status = (ImageView) convertView
+						.findViewById(R.id.iv_voicehead_status);
+				messageHolder.iv_voicehead = (ImageView) convertView
+						.findViewById(R.id.iv_voicehead);
+				messageHolder.tv_voicetime = (TextView) convertView
+						.findViewById(R.id.tv_voicetime);
+				messageHolder.sk_voice = (SeekBar) convertView
+						.findViewById(R.id.sk_voice);
+
+				convertView.setTag(messageHolder);
+			} else {
+				messageHolder = (MessageHolder) convertView.getTag();
+			}
+			Message message = (Message) getItem(position);
+			if (message.contentType.equals("text")) {
+				messageHolder.text.setVisibility(View.VISIBLE);
+				messageHolder.image.setVisibility(View.GONE);
+				messageHolder.voice.setVisibility(View.GONE);
+				messageHolder.tv_chat.setText(message.content);
+				String fileName = app.data.user.head;
+				switch (type) {
+				case Message.MESSAGE_TYPE_SEND:
+					fileName = app.data.user.head;
+					break;
+				case Message.MESSAGE_TYPE_RECEIVE:
+					fileName = mNowChatFriend.head;
+					break;
+				default:
+					break;
+				}
+				final String headFileName = fileName;
+				final ImageView iv_head = messageHolder.iv_head;
+				app.fileHandler.getHeadImage(headFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
+			} else if (message.contentType.equals("image")) {
+				messageHolder.text.setVisibility(View.GONE);
+				messageHolder.image.setVisibility(View.VISIBLE);
+				messageHolder.voice.setVisibility(View.GONE);
+				final String imageFileName = message.content;
+				final ImageView iv_image = messageHolder.iv_image;
+				app.fileHandler.getImage(imageFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						iv_image.setImageBitmap(app.fileHandler.bitmaps
+								.get(imageFileName));
+						Movie.decodeFile((new File(app.sdcardImageFolder,
+								imageFileName)).getAbsolutePath());
+						if (where == app.fileHandler.FROM_WEB) {
+							mAdapter.notifyDataSetChanged();
+						}
+					}
+				});
+				switch (type) {
+				case Message.MESSAGE_TYPE_SEND:
+					break;
+				case Message.MESSAGE_TYPE_RECEIVE:
+					messageHolder.tv_nickname.setText(mNowChatFriend.nickName);
+					break;
+				default:
+					break;
+				}
+			} else if (message.contentType.equals("voice")) {
+				messageHolder.text.setVisibility(View.GONE);
+				messageHolder.image.setVisibility(View.GONE);
+				messageHolder.voice.setVisibility(View.VISIBLE);
+				String fileName = app.data.user.head;
+				switch (type) {
+				case Message.MESSAGE_TYPE_SEND:
+					fileName = app.data.user.head;
+					break;
+				case Message.MESSAGE_TYPE_RECEIVE:
+					fileName = mNowChatFriend.head;
+					break;
+				default:
+					break;
+				}
+				final String voiceContent = message.content;
+				final String headFileName = fileName;
+				final ImageView iv_head = messageHolder.iv_voicehead;
+				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
+				app.fileHandler.getHeadImage(headFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+						// iv_head.setBackgroundDrawable(new BitmapDrawable(
+						// app.fileHandler.bitmaps.get(headFileName)));
+						Bitmap bitmap = BitmapFactory.decodeResource(
+								getResources(), R.drawable.head_voice_start);
+
+						iv_voicehead_status.setImageBitmap(bitmap);
+						iv_voicehead_status.setTag("start");
+					}
+				});
+				app.fileHandler.saveVoice(new VoiceInterface() {
+
+					@Override
+					public void setParams(VoiceSettings settings) {
+						settings.fileName = voiceContent;
+					}
+
+					@Override
+					public void onSuccess(String filename, String base64,
+							Boolean flag) {
+						VOICE_SAVESTATUS = flag;
+						if (flag) {
+							// MediaPlayer mpPlayer = null;
+							try {
+								final MediaPlayer mpPlayer = MediaPlayer
+										.create(getActivity(), Uri
+												.parse((new File(
+														app.sdcardVoiceFolder,
+														voiceContent))
+														.getAbsolutePath()));
+								Log.v("Coolspan",
+										(new File(app.sdcardVoiceFolder,
+												voiceContent))
+												.getAbsolutePath()
+												+ "---"
+												+ mpPlayer
+												+ "---"
+												+ flag);
+								messageHolder.mpPlayer = mpPlayer;
+								app.UIHandler.post(new Runnable() {
+
+									@Override
+									public void run() {
+										messageHolder.tv_voicetime.setText((int) Math
+												.ceil((double) (mpPlayer
+														.getDuration()) / 1000)
+												+ "\"");
+										// messageHolder.tv_voicetime.setText((int)
+										// Math
+										// .ceil(mpPlayer.getDuration() / 1000)
+										// + "\"");
+									}
+								});
+								messageHolder.sk_voice.setMax((int) Math
+										.ceil((double) (mpPlayer.getDuration()) / 1000));
+							} catch (SecurityException e) {
+								e.printStackTrace();
+							} catch (IllegalStateException e) {
+								e.printStackTrace();
+							}
+						} else {
+							// to do loading voice failed
+						}
+
+					}
+				});
+
+				messageHolder.sk_voice.setProgress(0);
+				messageHolder.sk_voice
+						.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+							@Override
+							public void onStopTrackingTouch(SeekBar seekBar) {
+								// TODO Auto-generated method stub
+								messageHolder.sk_voice.setProgress(seekBar
+										.getProgress());
+								messageHolder.mpPlayer.seekTo(seekBar
+										.getProgress() * 1000);
+							}
+
+							@Override
+							public void onStartTrackingTouch(SeekBar seekBar) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onProgressChanged(SeekBar seekBar,
+									int arg1, boolean arg2) {
+								// TODO Auto-generated method stub
+
+							}
+						});
+				iv_head.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Bitmap bitmap = null;
+
+						final MediaPlayer mpPlayer = messageHolder.mpPlayer;
+						if (iv_voicehead_status.getTag() == "start") {
+							bitmap = BitmapFactory.decodeResource(
+									getResources(), R.drawable.head_voice_stop);
+							iv_voicehead_status.setTag("stop");
+							int playTime = messageHolder.sk_voice.getProgress() * 1000;
+							if (mpPlayer.getDuration() - playTime > 1000) {
+								mpPlayer.seekTo(playTime);
+							} else {
+								mpPlayer.seekTo(0);
+							}
+
+							mpPlayer.start();
+							new Thread() {
+								public void run() {
+									while (true) {
+										try {
+											Thread.sleep(500);
+											messageHolder.sk_voice.setProgress(mpPlayer
+													.getCurrentPosition() / 1000);
+											Log.v("Coolspan",
+													mpPlayer.getCurrentPosition()
+															+ "---"
+															+ mpPlayer
+																	.getDuration());
+											if (mpPlayer.getDuration()
+													- mpPlayer
+															.getCurrentPosition() < 500) {
+												messageHolder.sk_voice
+														.setProgress(messageHolder.sk_voice
+																.getMax());
+												Thread.currentThread()
+														.interrupt();
+												break;
+											}
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+									}
+								};
+							}.start();
+
+							mpPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+								@Override
+								public void onCompletion(MediaPlayer arg0) {
+									Bitmap bitmap = BitmapFactory
+											.decodeResource(getResources(),
+													R.drawable.head_voice_start);
+									iv_voicehead_status.setImageBitmap(bitmap);
+									iv_voicehead_status.setTag("start");
+								}
+							});
+						} else {
+							bitmap = BitmapFactory
+									.decodeResource(getResources(),
+											R.drawable.head_voice_start);
+							iv_voicehead_status.setTag("start");
+							mpPlayer.pause();
+						}
+						iv_voicehead_status.setImageBitmap(bitmap);
+					}
+				});
+			}
+			return convertView;
 		}
 
 	}
@@ -1296,19 +1560,28 @@ public class ChatFragment extends BaseFragment {
 	public void sendMessage(final String type, final String content) {
 		final Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
-		message.sendType = "point";
+		if (mStatus == CHAT_FRIEND) {
+			message.sendType = "point";
+			message.phone = mNowChatFriend.phone;
+		} else if (mStatus == CHAT_GROUP) {
+			message.sendType = "group";
+		}
 		message.content = content;
 		message.contentType = type;
 		message.status = "sending";
-		message.phone = mNowChatFriend.phone;
 		message.time = String.valueOf(new Date().getTime());
 
 		app.dataHandler.exclude(new Modification() {
 			@Override
 			public void modifyData(Data data) {
-				data.friends.get(mNowChatFriend.phone).messages.add(message);
-				data.lastChatFriends.remove(mNowChatFriend.phone);
-				data.lastChatFriends.add(0, mNowChatFriend.phone);
+				if (mStatus == CHAT_FRIEND) {
+					data.friends.get(mNowChatFriend.phone).messages
+							.add(message);
+					data.lastChatFriends.remove(mNowChatFriend.phone);
+					data.lastChatFriends.add(0, mNowChatFriend.phone);
+				} else {
+					mNowChatGroup.messages.add(message);
+				}
 			}
 
 			@Override
@@ -1318,7 +1591,6 @@ public class ChatFragment extends BaseFragment {
 				if (mMainModeManager.mCirclesFragment.isAdded()) {
 					// mMainModeManager.mCirclesFragment.mAdapter
 					// .notifyDataSetChanged();
-					mMainModeManager.mCirclesFragment.generateViews();
 				}
 			}
 		});
@@ -1340,9 +1612,11 @@ public class ChatFragment extends BaseFragment {
 				} catch (JSONException e) {
 					message.status = "failed";
 				}
-				if (app.data.lastChatFriends.indexOf(mNowChatFriend.phone) != 0) {
-					app.data.lastChatFriends.remove(mNowChatFriend.phone);
-					app.data.lastChatFriends.add(0, mNowChatFriend.phone);
+				if (mStatus == CHAT_FRIEND) {
+					if (app.data.lastChatFriends.indexOf(mNowChatFriend.phone) != 0) {
+						app.data.lastChatFriends.remove(mNowChatFriend.phone);
+						app.data.lastChatFriends.add(0, mNowChatFriend.phone);
+					}
 				}
 			}
 
@@ -1359,10 +1633,19 @@ public class ChatFragment extends BaseFragment {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("phone", app.data.user.phone);
 		params.put("accessKey", app.data.user.accessKey);
-		params.put("sendType", "point");
 		JSONArray jFriends = new JSONArray();
-		jFriends.put(mNowChatFriend.phone);
-		params.put("phoneto", jFriends.toString());
+		if (mStatus == CHAT_FRIEND) {
+			params.put("sendType", "point");
+			jFriends.put(mNowChatFriend.phone);
+			params.put("phoneto", jFriends.toString());
+		} else if (mStatus == CHAT_GROUP) {
+			params.put("sendType", "group");
+			params.put("gid", String.valueOf(mNowChatGroup.gid));
+			for (String phone : mNowChatGroup.members) {
+				jFriends.put(phone);
+			}
+			params.put("phoneto", jFriends.toString());
+		}
 		JSONObject jMessage = new JSONObject();
 		try {
 			jMessage.put("contentType", type);
