@@ -177,7 +177,7 @@ groupManage.create = function (data, response) {
 }
 function setGroupLBSLocation(phone, accessKey, location, group) {
     ajax.ajax({
-        url: "127.0.0.1:8076/lbs/setgrouplocation?",
+        url: "http://127.0.0.1:8076/lbs/setgrouplocation?",
         type: "GET",
         data: {
             phone: phone,
