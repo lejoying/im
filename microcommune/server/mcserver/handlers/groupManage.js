@@ -168,6 +168,9 @@ groupManage.create = function (data, response) {
                     group: group
                 }))
                 response.end();
+                if (location != undefined) {
+                    setGroupLBSLocation(phone, data.accessKey, location, group);
+                }
             }
         });
     }
