@@ -87,9 +87,11 @@ public class MainApplication extends Application {
 			@Override
 			public void onGetNetworkState(int iError) {
 				if (iError == MKEvent.ERROR_NETWORK_CONNECT) {
-					Toast.makeText(MainApplication.this, "您的网络出错啦！", Toast.LENGTH_LONG).show();
+					Toast.makeText(MainApplication.this, "您的网络出错啦！",
+							Toast.LENGTH_LONG).show();
 				} else if (iError == MKEvent.ERROR_NETWORK_DATA) {
-					Toast.makeText(MainApplication.this, "输入正确的检索条件！", Toast.LENGTH_LONG).show();
+					Toast.makeText(MainApplication.this, "输入正确的检索条件！",
+							Toast.LENGTH_LONG).show();
 				}
 				// ...
 			}
@@ -99,11 +101,15 @@ public class MainApplication extends Application {
 				// 非零值表示key验证未通过
 				if (iError != 0) {
 					// 授权Key错误：
-					Toast.makeText(MainApplication.this, "请在 DemoApplication.java文件输入正确的授权Key,并检查您的网络连接是否正常！error: " + iError, Toast.LENGTH_LONG).show();
+					Toast.makeText(
+							MainApplication.this,
+							"请在 DemoApplication.java文件输入正确的授权Key,并检查您的网络连接是否正常！error: "
+									+ iError, Toast.LENGTH_LONG).show();
 					// DemoApplication.getInstance().m_bKeyRight = false;
 				} else {
 					// DemoApplication.getInstance().m_bKeyRight = true;
-					Toast.makeText(MainApplication.this, "key认证成功", Toast.LENGTH_LONG).show();
+					Toast.makeText(MainApplication.this, "key认证成功",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		});
@@ -113,7 +119,8 @@ public class MainApplication extends Application {
 
 		// initialize data and configuration
 		try {
-			config = (Configuration) StreamParser.parseToObject(openFileInput("config"));
+			config = (Configuration) StreamParser
+					.parseToObject(openFileInput("config"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -127,12 +134,14 @@ public class MainApplication extends Application {
 				@Override
 				public void modifyData(Data data) {
 					try {
-						Data localData = (Data) StreamParser.parseToObject(openFileInput(config.lastLoginPhone));
+						Data localData = (Data) StreamParser
+								.parseToObject(openFileInput(config.lastLoginPhone));
 						if (localData != null) {
 							data.user = localData.user;
 							data.circles = localData.circles;
 							data.friends = localData.friends;
 							data.groups = localData.groups;
+							data.groupsMap = localData.groupsMap;
 							data.groupFriends = localData.groupFriends;
 							data.lastChatFriends = localData.lastChatFriends;
 							data.newFriends = localData.newFriends;
@@ -148,14 +157,16 @@ public class MainApplication extends Application {
 			sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
 		}
 
-		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
 			sdcardStatus = "exist";
 		} else {
 			sdcardStatus = "none";
 		}
 
 		if (sdcardStatus == "exist") {
-			sdcardAppFolder = new File(Environment.getExternalStorageDirectory(), "lejoying");
+			sdcardAppFolder = new File(
+					Environment.getExternalStorageDirectory(), "lejoying");
 			if (!sdcardAppFolder.exists()) {
 				sdcardAppFolder.mkdirs();
 			}
@@ -182,8 +193,10 @@ public class MainApplication extends Application {
 		if (packageName == null || packageName.equals("")) {
 			return false;
 		}
-		ActivityManager mActivityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-		List<RunningAppProcessInfo> runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
+		ActivityManager mActivityManager = (ActivityManager) this
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		List<RunningAppProcessInfo> runningAppProcessInfos = mActivityManager
+				.getRunningAppProcesses();
 		if (runningAppProcessInfos != null) {
 			int pid = Process.myPid();
 			for (ActivityManager.RunningAppProcessInfo appProcess : runningAppProcessInfos) {

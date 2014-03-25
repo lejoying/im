@@ -142,35 +142,40 @@ public class MainActivity extends BaseActivity {
 				DataUtil.getUser(new GetDataListener() {
 					@Override
 					public void getSuccess() {
-						DataUtil.getGroups(null);
-						DataUtil.getCircles(new GetDataListener() {
+						DataUtil.getGroups(new GetDataListener() {
 							@Override
 							public void getSuccess() {
-								DataUtil.getMessages(new GetDataListener() {
+								DataUtil.getCircles(new GetDataListener() {
 									@Override
 									public void getSuccess() {
-										DataUtil.getAskFriends(new GetDataListener() {
+										DataUtil.getMessages(new GetDataListener() {
 											@Override
 											public void getSuccess() {
-												// mAdapter.notifyDataSetChanged();
-												if (mMainMode.mCirclesFragment
-														.isAdded()) {
-													mMainMode.mCirclesFragment
-															.notifyViews();
-												}
-												if (mMainMode.mChatFragment
-														.isAdded()) {
-													mMainMode.mChatFragment.mAdapter
-															.notifyDataSetChanged();
-												}
-											}
+												DataUtil.getAskFriends(new GetDataListener() {
+													@Override
+													public void getSuccess() {
+														// mAdapter.notifyDataSetChanged();
+														if (mMainMode.mCirclesFragment
+																.isAdded()) {
+															mMainMode.mCirclesFragment
+																	.notifyViews();
+														}
+														if (mMainMode.mChatFragment
+																.isAdded()) {
+															mMainMode.mChatFragment.mAdapter
+																	.notifyDataSetChanged();
+														}
+													}
 
+												});
+											}
 										});
 									}
+
 								});
 							}
-
 						});
+
 					}
 
 				});
