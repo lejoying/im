@@ -177,8 +177,8 @@ groupManage.create = function (data, response) {
 }
 function setGroupLBSLocation(phone, accessKey, location, group) {
     ajax.ajax({
-        url: "127.0.0.1:8076/lbs/setgrouplocation?",
-        type: "GET",
+        url: "http://127.0.0.1:8076/lbs/setgrouplocation?",
+        type: "POST",
         data: {
             phone: phone,
             accessKey: accessKey,
@@ -193,6 +193,7 @@ function setGroupLBSLocation(phone, accessKey, location, group) {
             })
         },
         success: function (data) {
+            data = JSON.parse(data);
             if (data["提示信息"] == "标记群组位置成功") {
                 console.log(data["提示信息"] + "---" + data.gid);
             } else {
