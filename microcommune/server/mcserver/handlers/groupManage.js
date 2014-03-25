@@ -1,6 +1,7 @@
 var serverSetting = root.globaldata.serverSetting;
 var groupManage = {};
 var verifyEmpty = require("./../lib/verifyParams.js");
+var ajax = require("./../lib/ajax.js");
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var redis = require("redis");
@@ -194,6 +195,8 @@ function setGroupLBSLocation(phone, accessKey, location, group) {
             } else {
                 console.error(data["提示信息"] + "---" + data["失败原因"]);
             }
+        }, error: function (e) {
+            console.error("标记群组位置异常" + e);
         }
     });
 }
