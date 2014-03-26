@@ -43,6 +43,8 @@ import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation;
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation.AnimatingView;
+import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
@@ -63,6 +65,8 @@ public class CirclesFragment extends BaseFragment {
 	View editControl;
 	LinearLayout tempFriendsList;
 	View copy;
+	View modifyCircleName;
+	View deleteCircle;
 
 	RelativeLayout animationLayout;
 	HorizontalScrollView tempFriendScroll;
@@ -94,7 +98,11 @@ public class CirclesFragment extends BaseFragment {
 		circlesViewContenter = (ScrollRelativeLayout) mContentView
 				.findViewById(R.id.circlesViewContainer);
 		editControl = mContentView.findViewById(R.id.editControl);
+
 		copy = mContentView.findViewById(R.id.copy);
+		modifyCircleName = mContentView.findViewById(R.id.modifyCircleName);
+		deleteCircle = mContentView.findViewById(R.id.deleteCircle);
+
 		tempFriendsList = (LinearLayout) mContentView
 				.findViewById(R.id.tempFriendsList);
 		animationLayout = (RelativeLayout) mContentView
@@ -172,6 +180,127 @@ public class CirclesFragment extends BaseFragment {
 					copyStatus.setImageResource(R.drawable.choise_up);
 					copyStatusText.setText("复制");
 				}
+			}
+		});
+
+		deleteCircle.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (String.valueOf(circles.get(currentEditPosition))
+						.substring(6).equals("-1")) {
+					Alert.showMessage("默认分组不能删除");
+					return;
+				}
+				Alert.showDialog("确定要删除该组？删除该组后该组好友将被自动转移到默认分组中。",
+						new DialogListener() {
+
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public boolean confirm() {
+								CommonNetConnection deleteCirccle = new CommonNetConnection() {
+
+									@Override
+									protected void settings(Settings settings) {
+										settings.url = API.DOMAIN
+												+ API.CIRCLE_DELETE;
+										Map<String, String> params = new HashMap<String, String>();
+										params.put("phone", app.data.user.phone);
+										params.put("accessKey",
+												app.data.user.accessKey);
+										params.put(
+												"rid",
+												String.valueOf(
+														circles.get(currentEditPosition))
+														.substring(6));
+										settings.params = params;
+									}
+
+									@Override
+									public void success(JSONObject jData) {
+										System.out.println(jData);
+									}
+								};
+								app.networkHandler.connection(deleteCirccle);
+								return true;
+							}
+
+							@Override
+							public void cancel() {
+								// TODO Auto-generated method stub
+
+							}
+						});
+			}
+		});
+
+		modifyCircleName.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				final EditText circleName;
+				new AlertDialog.Builder(getActivity())
+						.setTitle("请输入新的密友圈名称")
+						.setIcon(android.R.drawable.ic_dialog_info)
+						.setView(circleName = new EditText(getActivity()))
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										if (circleName.getText().toString()
+												.equals("")) {
+											Alert.showMessage("密友圈名称不能为空");
+											return;
+										}
+										app.networkHandler
+												.connection(new CommonNetConnection() {
+
+													@Override
+													protected void settings(
+															Settings settings) {
+														settings.url = API.DOMAIN
+																+ API.CIRCLE_MODIFY;
+														Map<String, String> params = new HashMap<String, String>();
+														params.put(
+																"phone",
+																app.data.user.phone);
+														params.put(
+																"accessKey",
+																app.data.user.accessKey);
+														params.put(
+																"rid",
+																String.valueOf(
+																		circles.get(currentEditPosition))
+																		.substring(
+																				6));
+														params.put(
+																"name",
+																circleName
+																		.getText()
+																		.toString());
+														settings.params = params;
+													}
+
+													@Override
+													public void success(
+															JSONObject jData) {
+														System.out
+																.println(jData);
+
+													}
+												});
+										((TextView) views
+												.get(circles
+														.get(currentEditPosition))
+												.findViewById(R.id.panel_name))
+												.setText(circleName.getText());
+									}
+								}).setNegativeButton("取消", null).show();
 			}
 		});
 
@@ -591,6 +720,11 @@ public class CirclesFragment extends BaseFragment {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
+										if (circleName.getText().toString()
+												.equals("")) {
+											Alert.showMessage("密友圈名称不能为空");
+											return;
+										}
 										app.networkHandler
 												.connection(new CommonNetConnection() {
 
@@ -820,37 +954,39 @@ public class CirclesFragment extends BaseFragment {
 						CircleHolder circleHolder = circleHolders.get(circles
 								.get(currentEditPosition));
 
-						// change
-						circleHolder.friendHolders.remove(friendHolder);
+						if (!isCopy) {
+							// change
+							circleHolder.friendHolders.remove(friendHolder);
+
+							View circleView = views.get(circles
+									.get(currentEditPosition));
+							RelativeLayout friendContainer = (RelativeLayout) circleView
+									.findViewById(R.id.viewContainer);
+							// change
+							friendContainer.removeView(holderView);
+
+							int animationFromIndex = friendHolder.index;
+							int animationCount = 6 - animationFromIndex % 6;
+
+							for (int i = 0; i < animationCount; i++) {
+								int index = animationFromIndex + i;
+								if (index < circleHolder.friendHolders.size()) {
+									View view = circleHolder.friendHolders
+											.get(index).view;
+									if (index % 6 == 2) {
+										view.startAnimation(friendToPreLineAnimation);
+									} else {
+										view.startAnimation(friendToLeftAnimation);
+									}
+								}
+							}
+						}
 
 						tempFriendHolders.put(friend.phone, friendHolder);
-
-						View circleView = views.get(circles
-								.get(currentEditPosition));
-						RelativeLayout friendContainer = (RelativeLayout) circleView
-								.findViewById(R.id.viewContainer);
-						// change
-						friendContainer.removeView(holderView);
-
-						int animationFromIndex = friendHolder.index;
-						int animationCount = 6 - animationFromIndex % 6;
 
 						// change
 						resolveFriendsPositions(circleHolder);
 						setFriendsPositions(circleHolder);
-
-						for (int i = 0; i < animationCount; i++) {
-							int index = animationFromIndex + i;
-							if (index < circleHolder.friendHolders.size()) {
-								View view = circleHolder.friendHolders
-										.get(index).view;
-								if (index % 6 == 2) {
-									view.startAnimation(friendToPreLineAnimation);
-								} else {
-									view.startAnimation(friendToLeftAnimation);
-								}
-							}
-						}
 
 						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 								(int) dp2px(55f),
@@ -882,60 +1018,85 @@ public class CirclesFragment extends BaseFragment {
 
 								final FriendHolder friendHolder = tempFriendHolders
 										.get(friend.phone);
-								friendContainer.addView(friendHolder.view);
+								if (friendHolder.view.getParent() == null) {
+									friendContainer.addView(friendHolder.view);
 
-								friendHolder.view.setVisibility(View.INVISIBLE);
+									friendHolder.view
+											.setVisibility(View.INVISIBLE);
 
-								CircleHolder circleHolder = circleHolders
-										.get(circles.get(currentEditPosition));
-								circleHolder.friendHolders.add(0, friendHolder);
+									CircleHolder circleHolder = circleHolders
+											.get(circles
+													.get(currentEditPosition));
+									circleHolder.friendHolders.add(0,
+											friendHolder);
 
-								resolveFriendsPositions(circleHolder);
-								setFriendsPositions(circleHolder);
+									resolveFriendsPositions(circleHolder);
+									setFriendsPositions(circleHolder);
 
-								LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(
-										(int) dp2px(55f),
-										LinearLayout.LayoutParams.WRAP_CONTENT);
-								tempParams.leftMargin = (int) dp2px(20);
-								tempParams.rightMargin = (int) dp2px(75);
-								if (tempFriendsList.getChildCount() != 0) {
-									tempFriendsList
-											.getChildAt(
-													tempFriendsList
-															.getChildCount() - 1)
-											.setLayoutParams(tempParams);
-								}
-
-								for (int i = 1; i < circleHolder.friendHolders
-										.size(); i++) {
-									if (i > 6) {
-										break;
+									LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(
+											(int) dp2px(55f),
+											LinearLayout.LayoutParams.WRAP_CONTENT);
+									tempParams.leftMargin = (int) dp2px(20);
+									tempParams.rightMargin = (int) dp2px(75);
+									if (tempFriendsList.getChildCount() != 0) {
+										tempFriendsList
+												.getChildAt(
+														tempFriendsList
+																.getChildCount() - 1)
+												.setLayoutParams(tempParams);
 									}
-									View friendView = circleHolder.friendHolders
-											.get(i).view;
-									if (i == 3) {
-										friendView
-												.startAnimation(friendToNextLineAnimation);
-									} else if (i == 6) {
-										friendView
-												.startAnimation(lastFriendToRightAnimation);
-									} else {
-										friendView
-												.startAnimation(friendToRightAnimation);
+
+									for (int i = 1; i < circleHolder.friendHolders
+											.size(); i++) {
+										if (i > 6) {
+											break;
+										}
+										View friendView = circleHolder.friendHolders
+												.get(i).view;
+										if (i == 3) {
+											friendView
+													.startAnimation(friendToNextLineAnimation);
+										} else if (i == 6) {
+											friendView
+													.startAnimation(lastFriendToRightAnimation);
+										} else {
+											friendView
+													.startAnimation(friendToRightAnimation);
+										}
 									}
+
+									int[] location = new int[2];
+									view.getLocationOnScreen(location);
+
+									RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+											(int) dp2px(55f),
+											android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+									params.leftMargin = location[0];
+									params.topMargin = location[1] - 50;
+									animationView.setLayoutParams(params);
+
+									animationLayout.addView(animationView);
+
+									TranslateAnimation moveToCircleAnimation = new TranslateAnimation(
+											0, dp2px(46) - location[0], 0,
+											dp2px(75) - (location[1] - 50));
+									moveToCircleAnimation.setDuration(270);
+									moveToCircleAnimation
+											.setAnimationListener(new AnimationAdapter() {
+												@Override
+												public void onAnimationEnd(
+														Animation animation) {
+													animationLayout
+															.removeView(animationView);
+													friendHolder.view
+															.setVisibility(View.VISIBLE);
+												}
+											});
+									animationView
+											.startAnimation(moveToCircleAnimation);
+								} else {
+
 								}
-
-								int[] location = new int[2];
-								view.getLocationOnScreen(location);
-
-								RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-										(int) dp2px(55f),
-										android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-								params.leftMargin = location[0];
-								params.topMargin = location[1] - 50;
-								animationView.setLayoutParams(params);
-
-								animationLayout.addView(animationView);
 
 								int count = tempFriendsList.getChildCount();
 								int index = 0;
@@ -951,24 +1112,6 @@ public class CirclesFragment extends BaseFragment {
 									View v = tempFriendsList.getChildAt(i);
 									v.startAnimation(allTempFriendMoveToLeft);
 								}
-
-								TranslateAnimation moveToCircleAnimation = new TranslateAnimation(
-										0, dp2px(46) - location[0], 0,
-										dp2px(75) - (location[1] - 50));
-								moveToCircleAnimation.setDuration(270);
-								moveToCircleAnimation
-										.setAnimationListener(new AnimationAdapter() {
-											@Override
-											public void onAnimationEnd(
-													Animation animation) {
-												animationLayout
-														.removeView(animationView);
-												friendHolder.view
-														.setVisibility(View.VISIBLE);
-											}
-										});
-								animationView
-										.startAnimation(moveToCircleAnimation);
 							}
 						});
 

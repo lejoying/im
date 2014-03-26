@@ -448,6 +448,11 @@ public class GroupManagerFragment extends BaseFragment {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
+										if (groupName.getText().toString()
+												.equals("")) {
+											Alert.showMessage("群组名称不能为空");
+											return;
+										}
 										app.networkHandler
 												.connection(new CommonNetConnection() {
 
