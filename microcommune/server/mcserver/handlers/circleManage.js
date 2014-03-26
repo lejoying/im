@@ -57,16 +57,32 @@ circleManage.delete = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var rid = data.rid;
+    try {
+        rid = parseInt(rid);
+    } catch (e) {
+        response.write(JSON.stringify({
+            "提示消息": "删除成功",
+            "失败原因": "参数格式错误"
+        }));
+        response.end();
+        console.log(error);
+        return;
+    }
     var query = [
         'MATCH other-[r]-(circle:Circle)',
         'WHERE circle.rid={rid}',
         'DELETE r,circle'
     ].join('\n');
     var params = {
-        rid: parseInt(rid)
+        rid: rid
     };
     db.query(query, params, function (error, results) {
         if (error) {
+            response.write(JSON.stringify({
+                "提示消息": "删除成功",
+                "失败原因": "数据异常"
+            }));
+            response.end();
             console.log(error);
             return;
         } else {
