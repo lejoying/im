@@ -37,6 +37,8 @@ import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
@@ -44,9 +46,11 @@ import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
@@ -203,6 +207,8 @@ public class GroupManagerFragment extends BaseFragment {
 						final double latitude = center.getLatitudeE6() / 1E6;
 						final double longitude = center.getLongitudeE6() / 1E6;
 
+						final Group newGroup = new Group();
+
 						CommonNetConnection createGroup = new CommonNetConnection() {
 
 							@Override
@@ -231,6 +237,19 @@ public class GroupManagerFragment extends BaseFragment {
 							@Override
 							public void success(JSONObject jData) {
 								// TODO refresh UI
+								DataUtil.getGroups(new GetDataListener() {
+
+									@Override
+									public void getSuccess() {
+										if (mMainModeManager.mChatGroupFragment
+												.isAdded()) {
+											mMainModeManager.mChatGroupFragment.mAdapter
+													.notifyDataSetChanged();
+										}
+										mMainModeManager.mGroupFragment
+												.notifyView();
+									}
+								});
 							}
 						};
 						app.networkHandler.connection(createGroup);
@@ -271,29 +290,44 @@ public class GroupManagerFragment extends BaseFragment {
 
 						@Override
 						public void success(JSONObject jData) {
+							DataUtil.getGroups(new GetDataListener() {
+
+								@Override
+								public void getSuccess() {
+									if (mMainModeManager.mChatGroupFragment
+											.isAdded()) {
+										mMainModeManager.mChatGroupFragment.mAdapter
+												.notifyDataSetChanged();
+									}
+									mMainModeManager.mGroupFragment
+											.notifyView();
+								}
+							});
 							System.out.println(jData);
 						}
 					};
-					Alert.showDialog(isRemove?"确定要移除这些成员吗？":"确定要添加这些好友吗？", new DialogListener() {
-						
-						@Override
-						public void onCancel() {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public boolean confirm() {
-							app.networkHandler.connection(modifyMembers);
-							return true;
-						}
-						
-						@Override
-						public void cancel() {
-							// TODO Auto-generated method stub
-							
-						}
-					});
+					Alert.showDialog(isRemove ? "确定要移除这些成员吗？" : "确定要添加这些好友吗？",
+							new DialogListener() {
+
+								@Override
+								public void onCancel() {
+									// TODO Auto-generated method stub
+
+								}
+
+								@Override
+								public boolean confirm() {
+									app.networkHandler
+											.connection(modifyMembers);
+									return true;
+								}
+
+								@Override
+								public void cancel() {
+									// TODO Auto-generated method stub
+
+								}
+							});
 				}
 			}
 		});
@@ -391,22 +425,25 @@ public class GroupManagerFragment extends BaseFragment {
 															JSONObject jData) {
 														System.out
 																.println(jData);
-														app.UIHandler
-																.post(new Runnable() {
+														DataUtil.getGroups(new GetDataListener() {
 
-																	@Override
-																	public void run() {
-																		((TextView) views
-																				.get("group")
-																				.findViewById(
-																						R.id.panel_name))
-																				.setText(groupName
-																						.getText());
-																	}
-																});
+															@Override
+															public void getSuccess() {
+																if (mMainModeManager.mChatGroupFragment
+																		.isAdded()) {
+																	mMainModeManager.mChatGroupFragment.mAdapter
+																			.notifyDataSetChanged();
+																}
+																mMainModeManager.mGroupFragment
+																		.notifyView();
+															}
+														});
 
 													}
 												});
+										((TextView) views.get("group")
+												.findViewById(R.id.panel_name))
+												.setText(groupName.getText());
 									}
 								}).setNegativeButton("取消", null).show();
 			}
@@ -451,8 +488,23 @@ public class GroupManagerFragment extends BaseFragment {
 									}
 								};
 								app.networkHandler.connection(quitTheGroup);
-								mMainModeManager.clearBackStack(1);
-								mMainModeManager.back();
+								app.dataHandler.exclude(new Modification() {
+									@Override
+									public void modifyData(Data data) {
+										data.groups.remove(String
+												.valueOf(mCurrentManagerGroup.gid));
+										data.groupsMap.remove(String
+												.valueOf(mCurrentManagerGroup.gid));
+									}
+
+									@Override
+									public void modifyUI() {
+										mMainModeManager.mGroupFragment
+												.notifyView();
+										mMainModeManager.clearBackStack(1);
+										mMainModeManager.back();
+									}
+								});
 								return true;
 							}
 

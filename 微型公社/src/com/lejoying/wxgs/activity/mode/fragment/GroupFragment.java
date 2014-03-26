@@ -71,7 +71,7 @@ public class GroupFragment extends BaseFragment {
 		groupPanelHeight = (int) (dp2px(10 + 1 + 220 + 37) + sp2px(
 				getActivity(), 18));
 		groupScrollSpaceWidth = screenWidth - (int) dp2px(40);
-		groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(20);
+		groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(8);
 		headSize = (int) dp2px(22);
 		headMargin = (int) ((groupItemWidth - dp2px(10) - headSize * 5) / 6);
 
@@ -184,7 +184,9 @@ public class GroupFragment extends BaseFragment {
 
 	}
 
-	void notifyView() {
+	public void notifyView() {
+		groupViewContainer.removeAllViews();
+
 		int top = (int) dp2px(20);
 		groupViewContainer.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 
@@ -260,18 +262,18 @@ public class GroupFragment extends BaseFragment {
 	Position switchPosition(int i) {
 		Position position = new Position();
 		if ((i + 1) % 4 == 1) {
-			position.y = (int) dp2px(20);
+			position.y = (int) dp2px(8);
 			position.x = (int) dp2px(10) + i / 4 * groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 2) {
-			position.y = (int) dp2px(20);
-			position.x = groupItemWidth + (int) dp2px(30) + i / 4
+			position.y = (int) dp2px(8);
+			position.x = groupItemWidth + (int) dp2px(18) + i / 4
 					* groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 3) {
-			position.y = (int) dp2px(115);
+			position.y = (int) dp2px(103);
 			position.x = (int) dp2px(10) + i / 4 * groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 0) {
-			position.y = (int) dp2px(115);
-			position.x = groupItemWidth + (int) dp2px(30) + i / 4
+			position.y = (int) dp2px(103);
+			position.x = groupItemWidth + (int) dp2px(18) + i / 4
 					* groupScrollSpaceWidth;
 		}
 		return position;
@@ -300,6 +302,19 @@ public class GroupFragment extends BaseFragment {
 					.findViewById(R.id.groupName);
 			TextView memberCount = (TextView) groupItemView
 					.findViewById(R.id.memberCount);
+			TextView notReadMessagesCount = (TextView) groupItemView
+					.findViewById(R.id.tv_notread);
+			if (group.notReadMessagesCount != 0) {
+				notReadMessagesCount.setVisibility(View.VISIBLE);
+				if (group.notReadMessagesCount > 99) {
+					notReadMessagesCount.setText("99+");
+				} else {
+					notReadMessagesCount.setText(String
+							.valueOf(notReadMessagesCount));
+				}
+			} else {
+				notReadMessagesCount.setVisibility(View.GONE);
+			}
 			groupName.setText(group.name);
 			memberCount.setText("(" + String.valueOf(group.members.size())
 					+ ")");

@@ -45,6 +45,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -175,7 +176,14 @@ public class ChatGroupFragment extends BaseFragment {
 		super.onCreate(savedInstanceState);
 	}
 
-	@SuppressLint({ "HandlerLeak", "NewApi" })
+	View headView;
+
+	public float dp2px(float px) {
+		float dp = getActivity().getResources().getDisplayMetrics().density
+				* px + 0.5f;
+		return dp;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -185,6 +193,15 @@ public class ChatGroupFragment extends BaseFragment {
 
 		mContent = inflater.inflate(R.layout.f_chat, null);
 		chatContent = (ListView) mContent.findViewById(R.id.chatContent);
+
+		if (headView == null) {
+			AbsListView.LayoutParams params = new AbsListView.LayoutParams(
+					android.widget.AbsListView.LayoutParams.WRAP_CONTENT,
+					(int) dp2px(35));
+			headView = new View(getActivity());
+			headView.setLayoutParams(params);
+		}
+		chatContent.addHeaderView(headView);
 
 		iv_send = mContent.findViewById(R.id.iv_send);
 		iv_more = mContent.findViewById(R.id.iv_more);
@@ -885,6 +902,109 @@ public class ChatGroupFragment extends BaseFragment {
 	public class GroupChatAdapter extends BaseAdapter {
 
 		@Override
+		public void notifyDataSetChanged() {
+			textView_groupName.setText(mNowChatGroup.name);
+			textView_memberCount.setText("(" + mNowChatGroup.members.size()
+					+ "人)");
+			int topShowCount = mNowChatGroup.members.size() < 4 ? mNowChatGroup.members
+					.size() : 4;
+			linearlayout_members.removeAllViews();
+			for (int i = 0; i < topShowCount; i++) {
+				final ImageView iv_head = new ImageView(getActivity());
+				final String headFileName = app.data.groupFriends
+						.get(mNowChatGroup.members.get(i)).head;
+				app.fileHandler.getHeadImage(headFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+						40, 40);
+				if (i != 3)
+					params.setMargins(0, 0, 10, 0);
+				iv_head.setLayoutParams(params);
+				linearlayout_members.addView(iv_head);
+			}
+
+			textView_groupNameAndMemberCount.setText(mNowChatGroup.name + "("
+					+ mNowChatGroup.members.size() + "人)");
+			linearlayout.removeAllViews();
+			for (int i = 0; i < mNowChatGroup.members.size(); i++) {
+				final Friend friend = app.data.groupFriends
+						.get(mNowChatGroup.members.get(i));
+				View userView = mInflater.inflate(
+						R.layout.fragment_circles_gridpage_item, null);
+				final ImageView iv_head = (ImageView) userView
+						.findViewById(R.id.iv_head);
+				TextView tv_nickname = (TextView) userView
+						.findViewById(R.id.tv_nickname);
+				tv_nickname.setText(friend.nickName);
+				final String headFileName = friend.head;
+				app.fileHandler.getHeadImage(headFileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+						LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
+
+				params.setMargins(40, 0, 0, 0);
+
+				if (i == mNowChatGroup.members.size() - 1) {
+					params.setMargins(40, 0, 40, 0);
+				}
+				userView.setLayoutParams(params);
+
+				userView.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						if (app.data.friends.get(friend.phone) != null) {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						} else if (friend.phone.equals(app.data.user.phone)) {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						} else {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						}
+					}
+				});
+
+				linearlayout.addView(userView);
+			}
+
+			if (mNowChatGroup.notReadMessagesCount != 0) {
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						data.groupsMap.get(String.valueOf(mNowChatGroup.gid)).notReadMessagesCount = 0;
+					}
+
+					@Override
+					public void modifyUI() {
+						mMainModeManager.mGroupFragment.notifyView();
+					}
+				});
+			}
+
+			super.notifyDataSetChanged();
+		}
+
+		@Override
 		public int getCount() {
 			return mNowChatGroup.messages.size() - showFirstPosition;
 		}
@@ -1225,6 +1345,8 @@ public class ChatGroupFragment extends BaseFragment {
 			message.phone = mNowChatFriend.phone;
 		} else if (mStatus == CHAT_GROUP) {
 			message.sendType = "group";
+			message.gid = String.valueOf(mNowChatGroup.gid);
+			message.phone = app.data.user.phone;
 		}
 		message.content = content;
 		message.contentType = type;
@@ -1234,14 +1356,7 @@ public class ChatGroupFragment extends BaseFragment {
 		app.dataHandler.exclude(new Modification() {
 			@Override
 			public void modifyData(Data data) {
-				if (mStatus == CHAT_FRIEND) {
-					data.friends.get(mNowChatFriend.phone).messages
-							.add(message);
-					data.lastChatFriends.remove(mNowChatFriend.phone);
-					data.lastChatFriends.add(0, mNowChatFriend.phone);
-				} else {
-					mNowChatGroup.messages.add(message);
-				}
+				mNowChatGroup.messages.add(message);
 			}
 
 			@Override
@@ -1271,12 +1386,6 @@ public class ChatGroupFragment extends BaseFragment {
 					message.status = "sent";
 				} catch (JSONException e) {
 					message.status = "failed";
-				}
-				if (mStatus == CHAT_FRIEND) {
-					if (app.data.lastChatFriends.indexOf(mNowChatFriend.phone) != 0) {
-						app.data.lastChatFriends.remove(mNowChatFriend.phone);
-						app.data.lastChatFriends.add(0, mNowChatFriend.phone);
-					}
 				}
 			}
 

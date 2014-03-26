@@ -174,8 +174,7 @@ public class DataUtil {
 							data.groups.clear();
 							for (Group group : groupsAndFriends.groups) {
 								data.groups.add(String.valueOf(group.gid));
-								data.groupsMap.put(String.valueOf(group.gid),
-										group);
+								updateGroup(group, data);
 							}
 							data.groupFriends = groupsAndFriends.groupFriends;
 						} catch (JSONException e) {
@@ -210,6 +209,20 @@ public class DataUtil {
 			}
 		};
 		app.networkHandler.connection(netConnection);
+	}
+
+	public static void updateGroup(Group group, Data data) {
+		Group updateGroup = data.groupsMap.get(String.valueOf(group.gid));
+		if (updateGroup != null) {
+			if (updateGroup.name != null && !updateGroup.equals("")) {
+				updateGroup.name = group.name;
+			}
+			if (updateGroup.members != null) {
+				updateGroup.members = group.members;
+			}
+		} else {
+			data.groupsMap.put(String.valueOf(group.gid), group);
+		}
 	}
 
 	public static void getAskFriends(final GetDataListener listener) {
@@ -295,6 +308,7 @@ public class DataUtil {
 											&& !group.messages
 													.contains(message)) {
 										group.messages.add(message);
+										group.notReadMessagesCount++;
 									}
 								}
 							}

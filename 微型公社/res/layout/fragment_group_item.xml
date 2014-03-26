@@ -7,6 +7,8 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="75dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/group_frame"
         android:padding="5dp"
         tools:ignore="UselessParent" >
@@ -35,5 +37,21 @@
             android:orientation="horizontal" >
         </LinearLayout>
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_notread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/number_hint"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:singleLine="true"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
 </RelativeLayout>

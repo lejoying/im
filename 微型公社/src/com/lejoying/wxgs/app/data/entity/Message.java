@@ -23,6 +23,14 @@ public class Message implements Serializable {
 	public String nickName = "";
 
 	@Override
+	public String toString() {
+		return "Message [type=" + type + ", content=" + content + ", time="
+				+ time + ", sendType=" + sendType + ", gid=" + gid
+				+ ", contentType=" + contentType + ", status=" + status
+				+ ", phone=" + phone + ", nickName=" + nickName + "]";
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		boolean flag = false;
 		if (o != null) {

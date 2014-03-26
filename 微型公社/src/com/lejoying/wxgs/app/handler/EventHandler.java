@@ -28,18 +28,19 @@ public class EventHandler {
 							if (MainActivity.instance.mMainMode.mCirclesFragment
 									.isAdded()) {
 								// TODO refresh
-								// MainActivity.instance.mMainMode.mCirclesFragment.mAdapter
-								// .notifyDataSetChanged();
+							}
+							if (MainActivity.instance.mMainMode.mGroupFragment
+									.isAdded()) {
+								MainActivity.instance.mMainMode.mGroupFragment
+										.notifyView();
 							}
 							if (MainActivity.instance.mMainMode.mChatFragment
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mChatFragment.mAdapter
 										.notifyDataSetChanged();
 							}
-							System.out.println("success");
 							if (MainActivity.instance.mMainMode.mChatGroupFragment
 									.isAdded()) {
-								System.out.println("refresh");
 								MainActivity.instance.mMainMode.mChatGroupFragment.mAdapter
 										.notifyDataSetChanged();
 							}
