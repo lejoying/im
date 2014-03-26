@@ -511,11 +511,7 @@ accountManage.modify = function (data, response) {
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
             account = JSON.parse(accountStr);
-            if (account.nickName != undefined && account.nickName != null && account.nickName != "") {
-                checkAccountNickName(phone, account);
-            } else {
-                modifyAccountNode(phone, account);
-            }
+            checkAccountNickName(phone, account);
         } catch (e) {
             response.write(JSON.stringify({
                 "提示信息": "修改用户信息失败",
@@ -528,12 +524,11 @@ accountManage.modify = function (data, response) {
     function checkAccountNickName(phone, account) {
         var query = [
             'MATCH (account:Account)',
-            'WHERE account.phone={phone} AND account.nickName={nickName}',
+            'WHERE account.phone={phone}',
             'RETURN account'
         ].join('\n');
         var params = {
-            phone: phone,
-            nickName: account.nickName
+            phone: phone
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -545,13 +540,26 @@ accountManage.modify = function (data, response) {
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                modifyAccountNode(phone, account);
-            } else {
                 response.write(JSON.stringify({
                     "提示信息": "修改用户信息失败",
-                    "失败原因": "昵称已存在"
+                    "失败原因": "用户不存在"
                 }));
                 response.end();
+            } else {
+                var accountData = results.pop().account.data;
+                if (accountData.nickName == account.nickName) {
+                    if (accountData.phone == phone) {
+                        modifyAccountNode(phone, account);
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "修改用户信息失败",
+                            "失败原因": "昵称已存在"
+                        }));
+                        response.end();
+                    }
+                } else {
+                    modifyAccountNode(phone, account);
+                }
             }
         });
     }
