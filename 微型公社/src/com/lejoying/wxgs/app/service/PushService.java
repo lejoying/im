@@ -18,6 +18,7 @@ import android.os.IBinder;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -163,9 +164,8 @@ public class PushService extends Service {
 						httpURLConnection.disconnect();
 						if (jData != null) {
 							try {
-								System.out
-										.println(jData
-												.get(getString(R.string.network_failed)));
+								Alert.showMessage(jData
+										.getString(getString(R.string.network_failed)));
 
 								// disconnection long pull
 								stopLongPull();

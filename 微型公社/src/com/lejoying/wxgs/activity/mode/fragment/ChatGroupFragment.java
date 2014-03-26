@@ -259,86 +259,6 @@ public class ChatGroupFragment extends BaseFragment {
 			}
 		} else if (mStatus == CHAT_GROUP) {
 			groupTopBar.setVisibility(View.VISIBLE);
-			textView_groupName.setText(mNowChatGroup.name);
-			textView_memberCount.setText("(" + mNowChatGroup.members.size()
-					+ "人)");
-			int topShowCount = mNowChatGroup.members.size() < 4 ? mNowChatGroup.members
-					.size() : 4;
-			for (int i = 0; i < topShowCount; i++) {
-				final ImageView iv_head = new ImageView(getActivity());
-				final String headFileName = app.data.groupFriends
-						.get(mNowChatGroup.members.get(i)).head;
-				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@Override
-					public void onResult(String where) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
-				});
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						40, 40);
-				if (i != 3)
-					params.setMargins(0, 0, 10, 0);
-				iv_head.setLayoutParams(params);
-				linearlayout_members.addView(iv_head);
-			}
-
-			textView_groupNameAndMemberCount.setText(mNowChatGroup.name + "("
-					+ mNowChatGroup.members.size() + "人)");
-			for (int i = 0; i < mNowChatGroup.members.size(); i++) {
-				final Friend friend = app.data.groupFriends
-						.get(mNowChatGroup.members.get(i));
-				View userView = inflater.inflate(
-						R.layout.fragment_circles_gridpage_item, null);
-				final ImageView iv_head = (ImageView) userView
-						.findViewById(R.id.iv_head);
-				TextView tv_nickname = (TextView) userView
-						.findViewById(R.id.tv_nickname);
-				tv_nickname.setText(friend.nickName);
-				final String headFileName = friend.head;
-				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@Override
-					public void onResult(String where) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
-				});
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
-
-				params.setMargins(40, 0, 0, 0);
-
-				if (i == mNowChatGroup.members.size() - 1) {
-					params.setMargins(40, 0, 40, 0);
-				}
-				userView.setLayoutParams(params);
-
-				userView.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						if (app.data.friends.get(friend.phone) != null) {
-							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
-							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-							mMainModeManager
-									.showNext(mMainModeManager.mBusinessCardFragment);
-						} else if (friend.phone.equals(app.data.user.phone)) {
-							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-							mMainModeManager
-									.showNext(mMainModeManager.mBusinessCardFragment);
-						} else {
-							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
-							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-							mMainModeManager
-									.showNext(mMainModeManager.mBusinessCardFragment);
-						}
-					}
-				});
-
-				linearlayout.addView(userView);
-			}
 
 		}
 
@@ -853,6 +773,7 @@ public class ChatGroupFragment extends BaseFragment {
 			mAdapter = new GroupChatAdapter();
 		}
 		chatContent.setAdapter(mAdapter);
+		mAdapter.notifyDataSetChanged();
 
 		chatContent.setSelection(mAdapter.getCount() - 1);
 	}
@@ -950,8 +871,7 @@ public class ChatGroupFragment extends BaseFragment {
 					}
 				});
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
+						(int) dp2px(55), LinearLayout.LayoutParams.WRAP_CONTENT);
 
 				params.setMargins(40, 0, 0, 0);
 
@@ -1002,6 +922,8 @@ public class ChatGroupFragment extends BaseFragment {
 			}
 
 			super.notifyDataSetChanged();
+
+			chatContent.setSelection(mAdapter.getCount() - 1);
 		}
 
 		@Override
