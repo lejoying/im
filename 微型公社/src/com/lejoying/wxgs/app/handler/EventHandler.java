@@ -32,7 +32,7 @@ public class EventHandler {
 							if (MainActivity.instance.mMainMode.mGroupFragment
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mGroupFragment
-										.notifyView();
+										.notifyViews();
 							}
 							if (MainActivity.instance.mMainMode.mChatFragment
 									.isAdded()) {

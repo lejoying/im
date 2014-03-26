@@ -247,7 +247,7 @@ public class GroupManagerFragment extends BaseFragment {
 													.notifyDataSetChanged();
 										}
 										mMainModeManager.mGroupFragment
-												.notifyView();
+												.notifyViews();
 									}
 								});
 							}
@@ -300,7 +300,7 @@ public class GroupManagerFragment extends BaseFragment {
 												.notifyDataSetChanged();
 									}
 									mMainModeManager.mGroupFragment
-											.notifyView();
+											.notifyViews();
 								}
 							});
 							System.out.println(jData);
@@ -435,7 +435,7 @@ public class GroupManagerFragment extends BaseFragment {
 																			.notifyDataSetChanged();
 																}
 																mMainModeManager.mGroupFragment
-																		.notifyView();
+																		.notifyViews();
 															}
 														});
 
@@ -500,7 +500,7 @@ public class GroupManagerFragment extends BaseFragment {
 									@Override
 									public void modifyUI() {
 										mMainModeManager.mGroupFragment
-												.notifyView();
+												.notifyViews();
 										mMainModeManager.clearBackStack(1);
 										mMainModeManager.back();
 									}

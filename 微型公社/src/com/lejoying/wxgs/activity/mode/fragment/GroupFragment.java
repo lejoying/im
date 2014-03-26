@@ -81,7 +81,7 @@ public class GroupFragment extends BaseFragment {
 
 		initEvent();
 
-		notifyView();
+		notifyViews();
 
 		return mContentView;
 	}
@@ -184,7 +184,7 @@ public class GroupFragment extends BaseFragment {
 
 	}
 
-	public void notifyView() {
+	public void notifyViews() {
 		groupViewContainer.removeAllViews();
 
 		int top = (int) dp2px(20);

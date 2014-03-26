@@ -155,9 +155,9 @@ public class MainActivity extends BaseActivity {
 													@Override
 													public void getSuccess() {
 														// mAdapter.notifyDataSetChanged();
-														if (mMainMode.mCirclesFragment
+														if (mMainMode.mGroupFragment
 																.isAdded()) {
-															mMainMode.mCirclesFragment
+															mMainMode.mGroupFragment
 																	.notifyViews();
 														}
 														if (mMainMode.mChatFragment

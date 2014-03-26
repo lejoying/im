@@ -996,7 +996,7 @@ public class ChatGroupFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						mMainModeManager.mGroupFragment.notifyView();
+						mMainModeManager.mGroupFragment.notifyViews();
 					}
 				});
 			}
