@@ -284,10 +284,14 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
+							data.user.flag = jData.getString("flag");
+						} catch (JSONException e1) {
+						}
+						try {
 							List<Message> messages = JSONParser
 									.generateMessagesFromJSON(jData
 											.getJSONArray("messages"));
-							for (Message message : messages) {
+							for (final Message message : messages) {
 								if (message.sendType.equals("point")) {
 									Friend friend = data.friends
 											.get(message.phone);
@@ -302,18 +306,47 @@ public class DataUtil {
 										friend.notReadMessagesCount++;
 									}
 								} else if (message.sendType.equals("group")) {
-									Group group = data.groupsMap
-											.get(message.gid);
+									Group group = data.groupsMap.get(String
+											.valueOf(message.gid));
 									if (group != null
 											&& !group.messages
 													.contains(message)) {
 										group.messages.add(message);
 										group.notReadMessagesCount++;
+									} else {
+										getGroups(new GetDataListener() {
+											@Override
+											public void getSuccess() {
+												app.dataHandler
+														.exclude(new Modification() {
+
+															@Override
+															public void modifyData(
+																	Data data) {
+																Group group = data.groupsMap.get(String
+																		.valueOf(message.gid));
+																if (group != null
+																		&& !group.messages
+																				.contains(message)) {
+																	group.messages.add(message);
+																	group.notReadMessagesCount++;
+																} 
+															}
+
+															@Override
+															public void modifyUI() {
+																if (listener != null)
+																	listener.getSuccess();
+																super.modifyUI();
+															}
+														});
+											}
+
+										});
 									}
 								}
 							}
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}

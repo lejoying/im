@@ -73,7 +73,7 @@ public class GroupFragment extends BaseFragment {
 		groupScrollSpaceWidth = screenWidth - (int) dp2px(40);
 		groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(8);
 		headSize = (int) dp2px(22);
-		headMargin = (int) ((groupItemWidth - dp2px(10) - headSize * 5) / 6);
+		headMargin = (int) ((groupItemWidth - dp2px(22) - headSize * 5) / 6);
 
 		mContentView = inflater.inflate(R.layout.fragment_group, null);
 		groupViewContainer = (ScrollRelativeLayout) mContentView
@@ -310,7 +310,7 @@ public class GroupFragment extends BaseFragment {
 					notReadMessagesCount.setText("99+");
 				} else {
 					notReadMessagesCount.setText(String
-							.valueOf(notReadMessagesCount));
+							.valueOf(group.notReadMessagesCount));
 				}
 			} else {
 				notReadMessagesCount.setVisibility(View.GONE);

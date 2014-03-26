@@ -105,9 +105,7 @@ public class MainApplication extends Application {
 							MainApplication.this,
 							"请在 DemoApplication.java文件输入正确的授权Key,并检查您的网络连接是否正常！error: "
 									+ iError, Toast.LENGTH_LONG).show();
-					// DemoApplication.getInstance().m_bKeyRight = false;
 				} else {
-					// DemoApplication.getInstance().m_bKeyRight = true;
 					Toast.makeText(MainApplication.this, "key认证成功",
 							Toast.LENGTH_LONG).show();
 				}

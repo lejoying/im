@@ -110,7 +110,8 @@ public class MainActivity extends BaseActivity {
 				mode = MODE_MAIN;
 				mLoginMode.release();
 				mMainMode.initialize();
-				mMainMode.show(mMainMode.mGroupFragment);
+				mMainMode.show(mMainMode.mCirclesFragment);
+				PushService.startIMLongPull(this);
 
 				if (app.data.isClear) {
 					app.dataHandler.exclude(new Modification() {

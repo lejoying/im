@@ -36,6 +36,8 @@ import com.baidu.mapapi.map.SupportMapFragment;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment.CircleHolder;
+import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment.FriendHolder;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
@@ -303,7 +305,58 @@ public class GroupManagerFragment extends BaseFragment {
 											.notifyViews();
 								}
 							});
-							System.out.println(jData);
+
+							app.UIHandler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									selectFriend.setVisibility(View.GONE);
+									buttonList.setVisibility(View.VISIBLE);
+									nextBar.setVisibility(View.GONE);
+									RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+											.getLayoutParams();
+									params.height = (int) dp2px(80);
+									editControl.setLayoutParams(params);
+									if (isRemove) {
+										isRemove = false;
+									} else {
+
+										RelativeLayout viewContainer = (RelativeLayout) views
+												.get("group").findViewById(
+														R.id.viewContainer);
+										for (Friend friend : seleteFriendList) {
+											FriendHolder holder = new FriendHolder();
+											View friendView = generateFriendView(friend);
+											holder.view = friendView;
+											viewContainer.addView(friendView);
+											groupHolder.friendHolders
+													.add(holder);
+										}
+
+										resolveFriendsPositions(groupHolder);
+										setFriendsPositions(groupHolder);
+
+										circlesViewContenter.scrollTo(0, 0);
+										TranslateAnimation animation1 = new TranslateAnimation(
+												-screenWidth, 0, 0, 0);
+										animation1.setDuration(300);
+										TranslateAnimation animation2 = new TranslateAnimation(
+												-screenWidth
+														* (currentFriendIndex + 1),
+												-screenWidth
+														* (currentFriendIndex),
+												0, 0);
+										animation2.setDuration(300);
+										views.get("group").startAnimation(
+												animation1);
+										views.get(
+												circles.get(currentFriendIndex))
+												.startAnimation(animation2);
+										currentFriendIndex = 0;
+									}
+								}
+							});
+
 						}
 					};
 					Alert.showDialog(isRemove ? "确定要移除这些成员吗？" : "确定要添加这些好友吗？",
@@ -319,6 +372,7 @@ public class GroupManagerFragment extends BaseFragment {
 								public boolean confirm() {
 									app.networkHandler
 											.connection(modifyMembers);
+									tempFriendsList.removeAllViews();
 									return true;
 								}
 
@@ -394,6 +448,11 @@ public class GroupManagerFragment extends BaseFragment {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
+										if (groupName.getText().toString()
+												.equals("")) {
+											Alert.showMessage("群组名称不能为空");
+											return;
+										}
 										app.networkHandler
 												.connection(new CommonNetConnection() {
 
@@ -553,6 +612,8 @@ public class GroupManagerFragment extends BaseFragment {
 		super.onDestroyView();
 	}
 
+	CircleHolder groupHolder;
+
 	private void notifyViews() {
 
 		int marginTop = (int) dp2px(20);
@@ -560,7 +621,6 @@ public class GroupManagerFragment extends BaseFragment {
 		circlesViewContenter.removeAllViews();
 
 		Map<String, CircleHolder> circleHolders = new Hashtable<String, CircleHolder>();
-		CircleHolder groupHolder;
 
 		// generate and add group
 		groupHolder = new CircleHolder();
@@ -643,7 +703,8 @@ public class GroupManagerFragment extends BaseFragment {
 
 			if (i == 0) {
 				buttonPreviousGroup.setVisibility(View.GONE);
-			} else if (i == circles.size() - 1) {
+			}
+			if (i == circles.size() - 1) {
 				buttonNextGroup.setVisibility(View.GONE);
 			}
 		}
@@ -801,8 +862,11 @@ public class GroupManagerFragment extends BaseFragment {
 
 	boolean isRemove;
 
-	View generateGroup(CircleHolder circleHolder) {
-		View circleView = mInflater.inflate(R.layout.fragment_panel, null);
+	public Map<String, FriendHolder> tempFriendHolders = new Hashtable<String, FriendHolder>();
+
+	View generateGroup(final CircleHolder circleHolder) {
+		final View circleView = mInflater
+				.inflate(R.layout.fragment_panel, null);
 
 		if (mCurrentManagerGroup == null) {
 			return circleView;
@@ -844,17 +908,44 @@ public class GroupManagerFragment extends BaseFragment {
 						return;
 					}
 					seleteFriendList.add(friend);
-					final View tempFriend = generateFriendView(friend);
+					final View friendView = generateFriendView(friend);
 					final View animationView = generateFriendView(friend);
-
 					tempFriendScroll.smoothScrollTo(0, 0);
 					int[] location = new int[2];
 					holderView.getLocationInWindow(location);
 
+					// change
+					circleHolder.friendHolders.remove(friendHolder);
+
+					tempFriendHolders.put(friend.phone, friendHolder);
+
+					RelativeLayout friendContainer = (RelativeLayout) circleView
+							.findViewById(R.id.viewContainer);
+					// change
+					friendContainer.removeView(holderView);
+
+					int animationFromIndex = friendHolder.index;
+					int animationCount = 6 - animationFromIndex % 6;
+
+					// change
+					resolveFriendsPositions(circleHolder);
+					setFriendsPositions(circleHolder);
+
+					for (int i = 0; i < animationCount; i++) {
+						int index = animationFromIndex + i;
+						if (index < circleHolder.friendHolders.size()) {
+							View view = circleHolder.friendHolders.get(index).view;
+							if (index % 6 == 2) {
+								view.startAnimation(friendToPreLineAnimation);
+							} else {
+								view.startAnimation(friendToLeftAnimation);
+							}
+						}
+					}
+
 					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 							(int) dp2px(55f),
 							android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-
 					params.leftMargin = location[0];
 					params.topMargin = location[1] - 50;
 					animationView.setLayoutParams(params);
@@ -864,16 +955,72 @@ public class GroupManagerFragment extends BaseFragment {
 							(int) dp2px(55f),
 							LinearLayout.LayoutParams.WRAP_CONTENT);
 					tempParams.leftMargin = (int) dp2px(20);
-					tempFriend.setVisibility(View.INVISIBLE);
+					friendView.setVisibility(View.INVISIBLE);
 					if (tempFriendsList.getChildCount() == 0) {
 						tempParams.rightMargin = (int) dp2px(75);
 					}
-					tempFriendsList.addView(tempFriend, 0, tempParams);
+					tempFriendsList.addView(friendView, 0, tempParams);
 
-					tempFriend.setOnClickListener(new OnClickListener() {
+					friendView.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View view) {
 							seleteFriendList.remove(friend);
+							RelativeLayout friendContainer = (RelativeLayout) circleView
+									.findViewById(R.id.viewContainer);
+							friendContainer.scrollTo(0, 0);
+
+							final FriendHolder friendHolder = tempFriendHolders
+									.get(friend.phone);
+							friendContainer.addView(friendHolder.view);
+
+							friendHolder.view.setVisibility(View.INVISIBLE);
+							circleHolder.friendHolders.add(0, friendHolder);
+
+							resolveFriendsPositions(circleHolder);
+							setFriendsPositions(circleHolder);
+
+							LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(
+									(int) dp2px(55f),
+									LinearLayout.LayoutParams.WRAP_CONTENT);
+							tempParams.leftMargin = (int) dp2px(20);
+							tempParams.rightMargin = (int) dp2px(75);
+							if (tempFriendsList.getChildCount() != 0) {
+								tempFriendsList.getChildAt(
+										tempFriendsList.getChildCount() - 1)
+										.setLayoutParams(tempParams);
+							}
+
+							for (int i = 1; i < circleHolder.friendHolders
+									.size(); i++) {
+								if (i > 6) {
+									break;
+								}
+								View friendView = circleHolder.friendHolders
+										.get(i).view;
+								if (i == 3) {
+									friendView
+											.startAnimation(friendToNextLineAnimation);
+								} else if (i == 6) {
+									friendView
+											.startAnimation(lastFriendToRightAnimation);
+								} else {
+									friendView
+											.startAnimation(friendToRightAnimation);
+								}
+							}
+
+							int[] location = new int[2];
+							view.getLocationOnScreen(location);
+
+							RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+									(int) dp2px(55f),
+									android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+							params.leftMargin = location[0];
+							params.topMargin = location[1] - 50;
+							animationView.setLayoutParams(params);
+
+							animationLayout.addView(animationView);
+
 							int count = tempFriendsList.getChildCount();
 							int index = 0;
 							for (int i = 0; i < count; i++) {
@@ -888,6 +1035,23 @@ public class GroupManagerFragment extends BaseFragment {
 								View v = tempFriendsList.getChildAt(i);
 								v.startAnimation(allTempFriendMoveToLeft);
 							}
+
+							TranslateAnimation moveToCircleAnimation = new TranslateAnimation(
+									0, dp2px(46) - location[0], 0, dp2px(75)
+											- (location[1] - 50));
+							moveToCircleAnimation.setDuration(270);
+							moveToCircleAnimation
+									.setAnimationListener(new AnimationAdapter() {
+										@Override
+										public void onAnimationEnd(
+												Animation animation) {
+											animationLayout
+													.removeView(animationView);
+											friendHolder.view
+													.setVisibility(View.VISIBLE);
+										}
+									});
+							animationView.startAnimation(moveToCircleAnimation);
 						}
 					});
 
@@ -910,11 +1074,10 @@ public class GroupManagerFragment extends BaseFragment {
 								@Override
 								public void onAnimationEnd(Animation animation) {
 									animationLayout.removeView(animationView);
-									tempFriend.setVisibility(View.VISIBLE);
+									friendView.setVisibility(View.VISIBLE);
 								}
 							});
 					animationView.startAnimation(moveToTempListAnimation);
-
 				}
 			});
 
