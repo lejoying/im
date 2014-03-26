@@ -64,6 +64,7 @@ public class CirclesFragment extends BaseFragment {
 	ScrollRelativeLayout circlesViewContenter;
 	View editControl;
 	LinearLayout tempFriendsList;
+	View save;
 	View copy;
 	View modifyCircleName;
 	View deleteCircle;
@@ -99,6 +100,7 @@ public class CirclesFragment extends BaseFragment {
 				.findViewById(R.id.circlesViewContainer);
 		editControl = mContentView.findViewById(R.id.editControl);
 
+		save = mContentView.findViewById(R.id.save);
 		copy = mContentView.findViewById(R.id.copy);
 		modifyCircleName = mContentView.findViewById(R.id.modifyCircleName);
 		deleteCircle = mContentView.findViewById(R.id.deleteCircle);
@@ -162,13 +164,38 @@ public class CirclesFragment extends BaseFragment {
 	public int touchEvnetStatus = TouchEvnetStatus.STATIC;
 
 	boolean isCopy;
+	boolean isSaved;
+
+	void resetSaveStatus() {
+		if (isSaved) {
+			isSaved = false;
+			ImageView saveImage = (ImageView) save.findViewById(R.id.saveImage);
+			TextView saveText = (TextView) save.findViewById(R.id.saveText);
+			saveImage.setImageResource(R.drawable.save_up);
+			saveText.setText("保存");
+		}
+	}
 
 	void initEvent() {
+
+		save.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ImageView saveImage = (ImageView) save
+						.findViewById(R.id.saveImage);
+				TextView saveText = (TextView) save.findViewById(R.id.saveText);
+				if (!isSaved) {
+					isSaved = true;
+					saveImage.setImageResource(R.drawable.saved_down);
+					saveText.setText("已保存");
+				}
+			}
+		});
 		copy.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				ImageView copyStatus = (ImageView) copy
-						.findViewById(R.id.img_copy);
+						.findViewById(R.id.copyImage);
 				TextView copyStatusText = (TextView) copy
 						.findViewById(R.id.copyText);
 				if (!isCopy) {
@@ -242,6 +269,11 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				if (String.valueOf(circles.get(currentEditPosition))
+						.substring(6).equals("-1")) {
+					Alert.showMessage("默认分组不能修改名称");
+					return;
+				}
 				final EditText circleName;
 				new AlertDialog.Builder(getActivity())
 						.setTitle("请输入新的密友圈名称")
@@ -412,6 +444,7 @@ public class CirclesFragment extends BaseFragment {
 		} else {
 			return;
 		}
+		resetSaveStatus();
 		final int screenWidth = getScreenWidth();
 		int marginLeft = (screenWidth - view.getWidth()) / 2;
 		int cardWidth = view.getWidth();
@@ -498,6 +531,14 @@ public class CirclesFragment extends BaseFragment {
 					}
 				}
 			});
+
+			if (i == 0) {
+				buttonPreviousGroup.setVisibility(View.GONE);
+			}
+			if (i == circles.size() - 1) {
+				buttonNextGroup.setVisibility(View.GONE);
+			}
+
 			circlesViewContenter.addView(v);
 
 			if (v.equals(view)) {
@@ -720,6 +761,7 @@ public class CirclesFragment extends BaseFragment {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
+										CircleMenu.show();
 										if (circleName.getText().toString()
 												.equals("")) {
 											Alert.showMessage("密友圈名称不能为空");
@@ -874,7 +916,20 @@ public class CirclesFragment extends BaseFragment {
 	class FriendHolder {
 		Position position;
 		View view;
+		String phone = "";
 		int index;
+
+		@Override
+		public boolean equals(Object o) {
+			boolean flag = false;
+			if (o != null && o instanceof FriendHolder) {
+				FriendHolder h = (FriendHolder) o;
+				if (phone.equals(h.phone)) {
+					flag = true;
+				}
+			}
+			return flag;
+		}
 	}
 
 	class CircleHolder {
@@ -907,6 +962,8 @@ public class CirclesFragment extends BaseFragment {
 		}
 	}
 
+	Map<String, View> tempViewMap = new HashMap<String, View>();
+
 	View generateCircleView(Circle circle, CircleHolder circleHolder) {
 		final View circleView = mInflater
 				.inflate(R.layout.fragment_panel, null);
@@ -914,7 +971,7 @@ public class CirclesFragment extends BaseFragment {
 		TextView groupName = (TextView) circleView
 				.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
-		final RelativeLayout friendContainer = (RelativeLayout) circleView
+		final RelativeLayout container = (RelativeLayout) circleView
 				.findViewById(R.id.viewContainer);
 
 		List<String> phones = circle.phones;
@@ -929,6 +986,7 @@ public class CirclesFragment extends BaseFragment {
 
 			final FriendHolder friendHolder = new FriendHolder();
 			friendHolder.view = convertView;
+			friendHolder.phone = friend.phone;
 
 			circleHolder.friendHolders.add(friendHolder);
 
@@ -936,6 +994,7 @@ public class CirclesFragment extends BaseFragment {
 
 				@Override
 				public void onClick(final View holderView) {
+					System.out.println("click");
 					if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
 						return;
 					}
@@ -980,13 +1039,22 @@ public class CirclesFragment extends BaseFragment {
 									}
 								}
 							}
+							// change
+							resolveFriendsPositions(circleHolder);
+							setFriendsPositions(circleHolder);
+							tempFriendHolders.put(friend.phone, friendHolder);
+						} else {
+							FriendHolder newHolder = new FriendHolder();
+							newHolder.view = generateFriendView(friend);
+							newHolder.view.setOnClickListener(this);
+							newHolder.phone = friend.phone;
+							tempFriendHolders.put(friend.phone, newHolder);
 						}
 
-						tempFriendHolders.put(friend.phone, friendHolder);
-
-						// change
-						resolveFriendsPositions(circleHolder);
-						setFriendsPositions(circleHolder);
+						View tempFriendView;
+						if ((tempFriendView = tempViewMap.get(friend.phone)) != null) {
+							tempFriendsList.removeView(tempFriendView);
+						}
 
 						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 								(int) dp2px(55f),
@@ -1004,6 +1072,7 @@ public class CirclesFragment extends BaseFragment {
 						if (tempFriendsList.getChildCount() == 0) {
 							tempParams.rightMargin = (int) dp2px(75);
 						}
+						tempViewMap.put(friend.phone, friendView);
 						tempFriendsList.addView(friendView, 0, tempParams);
 
 						friendView.setOnClickListener(new OnClickListener() {
@@ -1018,85 +1087,89 @@ public class CirclesFragment extends BaseFragment {
 
 								final FriendHolder friendHolder = tempFriendHolders
 										.get(friend.phone);
-								if (friendHolder.view.getParent() == null) {
-									friendContainer.addView(friendHolder.view);
 
-									friendHolder.view
-											.setVisibility(View.INVISIBLE);
+								CircleHolder circleHolder = circleHolders
+										.get(circles.get(currentEditPosition));
 
-									CircleHolder circleHolder = circleHolders
-											.get(circles
-													.get(currentEditPosition));
-									circleHolder.friendHolders.add(0,
-											friendHolder);
-
-									resolveFriendsPositions(circleHolder);
-									setFriendsPositions(circleHolder);
-
-									LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(
-											(int) dp2px(55f),
-											LinearLayout.LayoutParams.WRAP_CONTENT);
-									tempParams.leftMargin = (int) dp2px(20);
-									tempParams.rightMargin = (int) dp2px(75);
-									if (tempFriendsList.getChildCount() != 0) {
-										tempFriendsList
-												.getChildAt(
-														tempFriendsList
-																.getChildCount() - 1)
-												.setLayoutParams(tempParams);
-									}
-
-									for (int i = 1; i < circleHolder.friendHolders
-											.size(); i++) {
-										if (i > 6) {
-											break;
-										}
-										View friendView = circleHolder.friendHolders
-												.get(i).view;
-										if (i == 3) {
-											friendView
-													.startAnimation(friendToNextLineAnimation);
-										} else if (i == 6) {
-											friendView
-													.startAnimation(lastFriendToRightAnimation);
-										} else {
-											friendView
-													.startAnimation(friendToRightAnimation);
-										}
-									}
-
-									int[] location = new int[2];
-									view.getLocationOnScreen(location);
-
-									RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-											(int) dp2px(55f),
-											android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-									params.leftMargin = location[0];
-									params.topMargin = location[1] - 50;
-									animationView.setLayoutParams(params);
-
-									animationLayout.addView(animationView);
-
-									TranslateAnimation moveToCircleAnimation = new TranslateAnimation(
-											0, dp2px(46) - location[0], 0,
-											dp2px(75) - (location[1] - 50));
-									moveToCircleAnimation.setDuration(270);
-									moveToCircleAnimation
-											.setAnimationListener(new AnimationAdapter() {
-												@Override
-												public void onAnimationEnd(
-														Animation animation) {
-													animationLayout
-															.removeView(animationView);
-													friendHolder.view
-															.setVisibility(View.VISIBLE);
-												}
-											});
-									animationView
-											.startAnimation(moveToCircleAnimation);
-								} else {
-
+								int friendIndex;
+								if ((friendIndex = circleHolder.friendHolders
+										.indexOf(friendHolder)) != -1) {
+									FriendHolder removeHolder = circleHolder.friendHolders
+											.remove(friendIndex);
+									friendContainer
+											.removeView(removeHolder.view);
 								}
+
+								friendContainer.addView(friendHolder.view);
+
+								circleHolder.friendHolders.add(0, friendHolder);
+
+								resolveFriendsPositions(circleHolder);
+								setFriendsPositions(circleHolder);
+
+								friendHolder.view.setVisibility(View.INVISIBLE);
+
+								LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(
+										(int) dp2px(55f),
+										LinearLayout.LayoutParams.WRAP_CONTENT);
+								tempParams.leftMargin = (int) dp2px(20);
+								tempParams.rightMargin = (int) dp2px(75);
+								if (tempFriendsList.getChildCount() != 0) {
+									tempFriendsList
+											.getChildAt(
+													tempFriendsList
+															.getChildCount() - 1)
+											.setLayoutParams(tempParams);
+								}
+
+								for (int i = 1; i < circleHolder.friendHolders
+										.size(); i++) {
+									if (i > 6) {
+										break;
+									}
+									View friendView = circleHolder.friendHolders
+											.get(i).view;
+									if (i == 3) {
+										friendView
+												.startAnimation(friendToNextLineAnimation);
+									} else if (i == 6) {
+										friendView
+												.startAnimation(lastFriendToRightAnimation);
+									} else {
+										friendView
+												.startAnimation(friendToRightAnimation);
+									}
+								}
+
+								int[] location = new int[2];
+								view.getLocationOnScreen(location);
+
+								RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+										(int) dp2px(55f),
+										android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+								params.leftMargin = location[0];
+								params.topMargin = location[1] - 50;
+								animationView.setLayoutParams(params);
+
+								animationLayout.addView(animationView);
+
+								TranslateAnimation moveToCircleAnimation = new TranslateAnimation(
+										0, dp2px(46) - location[0], 0,
+										dp2px(75) - (location[1] - 50));
+								moveToCircleAnimation.setDuration(270);
+								moveToCircleAnimation
+										.setAnimationListener(new AnimationAdapter() {
+											@Override
+											public void onAnimationEnd(
+													Animation animation) {
+												animationLayout
+														.removeView(animationView);
+												friendHolder.view
+														.setVisibility(View.VISIBLE);
+											}
+										});
+								animationView
+										.startAnimation(moveToCircleAnimation);
 
 								int count = tempFriendsList.getChildCount();
 								int index = 0;
@@ -1158,7 +1231,7 @@ public class CirclesFragment extends BaseFragment {
 			// }
 			// });
 
-			friendContainer.addView(convertView);
+			container.addView(convertView);
 		}
 
 		resolveFriendsPositions(circleHolder);
@@ -1189,14 +1262,14 @@ public class CirclesFragment extends BaseFragment {
 							float distanceX, float distanceY) {
 						dx = e2.getRawX() - x0;
 						if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
-							friendContainer.scrollBy(-(int) (dx), 0);
+							container.scrollBy(-(int) (dx), 0);
 							x0 = e2.getRawX();
 						}
 						return true;
 					}
 				});
 
-		friendContainer.setOnTouchListener(new OnTouchListener() {
+		container.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
