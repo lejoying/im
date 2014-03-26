@@ -791,7 +791,7 @@ groupManage.getgroupsandmembers = function (data, response) {
     getAccountGroups();
     function getAccountGroups() {
         var query = [
-            'MATCH (account:Account)-[HAS_MEMBER]-(group:Group)',
+            'MATCH (account:Account)<-[HAS_MEMBER]-(group:Group)',
             'WHERE account.phone={phone}',
             'RETURN group'
         ].join('\n');
