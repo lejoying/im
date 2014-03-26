@@ -486,10 +486,10 @@ api = {
     "circle_moveorout": {
         description: {
             id: 1000502,
-            url: "/api2/circle/delete"
+            url: "/api2/circle/moveorout"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", phoneto: "XXX", rid: "XXX", filter: ["REMOVE", "SHIFTIN"]}
+            typical: {phone: "XXX", accessKey: "XXX", phoneto: ["XXX", "XXX", "XXX"], rid: "XXX", filter: ["REMOVE", "SHIFTIN"]}
         },
         response: {
             success: {"提示信息": "移出成功" || "移入成功"},

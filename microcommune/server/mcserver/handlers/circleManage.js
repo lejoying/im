@@ -60,8 +60,7 @@ circleManage.delete = function (data, response) {
     var query = [
         'MATCH other-[r]-(circle:Circle)',
         'WHERE circle.rid={rid}',
-        'DELETE circle,r',
-        'RETURN circle,r'
+        'DELETE r,circle'
     ].join('\n');
     var params = {
         rid: parseInt(rid)
@@ -70,16 +69,10 @@ circleManage.delete = function (data, response) {
         if (error) {
             console.log(error);
             return;
-        } else if (results.length > 0) {
+        } else {
             console.log("删除密友圈成功---");
             response.write(JSON.stringify({
                 "提示信息": "删除成功"
-            }));
-            response.end();
-        } else {
-            response.write(JSON.stringify({
-                "提示信息": "删除失败",
-                "失败原因": "数据异常"
             }));
             response.end();
         }
@@ -98,55 +91,71 @@ circleManage.moveorout = function (data, response) {
     var query;
     var successMSG = "";
     var errorMSG = "";
-    if (filter == "REMOVE") {
-        query = [
-            'MATCH (circle:Circle)-[r:HAS_FRIEND]->(account:Account)',
-            'WHERE circle.rid={rid} AND account.phone={phoneTo}',
-            'DELETE r',
-            'RETURN circle'
-        ].join('\n');
-        successMSG = JSON.stringify({
-            "提示消息": "移出成功"
-        });
-        errorMSG = JSON.stringify({
-            "提示消息": "移出失败",
-            "失败原因": "数据异常"
-        });
-    } else if (filter == "SHIFTIN") {
-        query = [
-            'START circle=node({rid})',
-            'MATCH (account:Account)',
-            'WHERE account.phone={phoneTo}',
-            'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
-            'RETURN  r'
-        ].join('\n');
-        success = JSON.stringify({
-            "提示消息": "移入成功"
-        });
-        error = JSON.stringify({
+    try {
+        phoneTo = JSON.parse(phoneTo);
+        next(phoneTo);
+    } catch (e) {
+        response.write(JSON.stringify({
             "提示消息": "移入失败",
-            "失败原因": "数据异常"
+            "失败原因": "参数格式错误"
+        }));
+        response.end();
+        console.error(e);
+        return;
+    }
+    function next(phoneTo) {
+        if (filter == "REMOVE") {
+            query = [
+                'MATCH (circle:Circle)-[r:HAS_FRIEND]->(account:Account)',
+                'WHERE circle.rid={rid} AND account.phone IN {phoneTo}',
+                'DELETE r',
+                'RETURN circle'
+            ].join('\n');
+            successMSG = JSON.stringify({
+                "提示消息": "移出成功"
+            });
+            errorMSG = JSON.stringify({
+                "提示消息": "移出失败",
+                "失败原因": "数据异常"
+            });
+        } else if (filter == "SHIFTIN") {
+            query = [
+                'START circle=node({rid})',
+                'MATCH (account:Account)',
+                'WHERE account.phone IN {phoneTo}',
+                'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
+                'RETURN  r'
+            ].join('\n');
+            successMSG = JSON.stringify({
+                "提示消息": "移入成功"
+            });
+            errorMSG = JSON.stringify({
+                "提示消息": "移入失败",
+                "失败原因": "数据异常"
+            });
+        }
+        params = {
+            rid: parseInt(rid),
+            phoneTo: phoneTo
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(errorMSG);
+                response.end();
+                console.log(error);
+                return;
+            } else if (results.length > 0) {
+                response.write(successMSG);
+                response.end();
+
+            } else {
+                response.write(errorMSG);
+                response.end();
+            }
         });
     }
-    params = {
-        rid: parseInt(rid),
-        phoneTo: phoneTo
-    };
-    db.query(query, params, function (error, results) {
-        if (error) {
-            response.write(errorMSG);
-            response.end();
-            console.log(error);
-            return;
-        } else if (results.length > 0) {
-            response.write(successMSG);
-            response.end();
 
-        } else {
-            response.write(errorMSG);
-            response.end();
-        }
-    });
+
 }
 /***************************************
  *     URL：/api2/circle/moveout
