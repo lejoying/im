@@ -10,7 +10,6 @@ import android.view.KeyEvent;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.BaseActivity;
-import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 
 public abstract class BaseModeManager {
 
@@ -132,9 +131,9 @@ public abstract class BaseModeManager {
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return mKeyDownListener != null ? mKeyDownListener.onKeyDown(keyCode,
-				event) : true && keyCode == KeyEvent.KEYCODE_BACK ? !back()
-				: true;
+		return (mKeyDownListener != null ? mKeyDownListener.onKeyDown(keyCode,
+				event) : true)
+				&& (keyCode == KeyEvent.KEYCODE_BACK ? !back() : true);
 	}
 
 	public interface KeyDownListener {

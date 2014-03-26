@@ -217,8 +217,7 @@ public class BusinessCardFragment extends BaseFragment {
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					// mMCFragmentManager.replaceToContent(new ModifyFragment(),
-					// true);
+					mMainModeManager.showNext(mMainModeManager.mModifyFragment);
 				}
 			});
 
