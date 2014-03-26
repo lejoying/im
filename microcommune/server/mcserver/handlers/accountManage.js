@@ -546,7 +546,7 @@ accountManage.modify = function (data, response) {
                 }));
                 response.end();
             } else {
-                var accountData = results.account.data;
+                var accountData = results.pop().account.data;
                 if (accountData.nickName == account.nickName) {
                     if (accountData.phone == phone) {
                         modifyAccountNode(phone, account);
