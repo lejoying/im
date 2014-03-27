@@ -440,7 +440,7 @@ relationManage.getcirclesandfriends = function (data, response) {
     function getAccountsNode(circles, phone) {
         var query = [
             'MATCH (account:Account)-[r:FRIEND]-(account1:Account)',
-            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete","blacklist"]',//1,2,3  r不 等于phone
+            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete","blacklist","both"]',//1,2,3  r不 等于phone
             'RETURN r, account1'
         ].join('\n');
         var params = {
@@ -474,6 +474,9 @@ relationManage.getcirclesandfriends = function (data, response) {
                             nickName: accountData.nickName,
                             friendStatus: rData.friendStatus
                         };
+                        if (rData.friendStatus == "both") {
+                            account.friendStatus = "delete";
+                        }
                         accounts[accountData.phone] = account;
                     }
                 }
@@ -505,23 +508,25 @@ relationManage.getcirclesandfriends = function (data, response) {
                 } else if (results.length > 0) {
                     var circles2 = [];
                     var arr = {};
+                    var accounts_if = {};
                     for (var index in results) {
                         var circleData = results[index].circle.data;
                         var accountData = results[index].account2.data;
+                        console.error(circleData.rid + "----" + accountData.phone);
                         if (arr[circleData.rid] == null) {
                             var accounts2 = [];
                             accounts2.push(accounts[accountData.phone]);
-                            delete accounts[accountData.phone];
-//                        console.log(accounts[accountData.phone]+"--");
+                            accounts_if[accountData.phone] = "join";
+//                            delete accounts_bak[accountData.phone];
                             circleData.accounts = accounts2;
                             arr[circleData.rid] = circleData;
 //                            circles2.push(circleData);
                             circles2[circleOrder[circleData.rid + "order"]] = circleData;
-//                            console.log(circleOrder[circleData.rid + "order"])
                             delete circles[circleData.rid];
                         } else {
                             arr[circleData.rid].accounts.push(accounts[accountData.phone]);
-                            delete accounts[accountData.phone];
+                            accounts_if[accountData.phone] = "join";
+//                            delete accounts_bak[accountData.phone];
                         }
                     }
                     if (JSON.stringify(circles) != "{}") {
@@ -537,12 +542,17 @@ relationManage.getcirclesandfriends = function (data, response) {
                         name: "默认分组"
                     };
                     var accounts2 = [];
-                    if (JSON.stringify(accounts) != "{}") {
-                        for (var index in accounts) {
-                            var it = accounts[index];
-                            accounts2.push(it);
+                    for (var index in accounts) {
+                        if (!accounts_if[accounts[index].phone]) {
+                            accounts2.push(accounts[index]);
                         }
                     }
+                    /*if (JSON.stringify(accounts) != "{}") {
+                     for (var index in accounts) {
+                     var it = accounts[index];
+                     accounts2.push(it);
+                     }
+                     }*/
                     circle.accounts = accounts2;
                     circles2.push(circle);
                     response.write(JSON.stringify({
