@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
 
 		setContentView(R.layout.activity_main);
 		mBackground = (BackgroundView) findViewById(R.id.mainBackGround);
-		mBackground.setBackground(R.drawable.background);
+		mBackground.setBackground(R.drawable.background1);
 		mFragmentManager = getSupportFragmentManager();
 
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -165,10 +165,10 @@ public class MainActivity extends BaseActivity {
 															mMainMode.mGroupFragment
 																	.notifyViews();
 														}
-														if (mMainMode.mChatFragment
+														if (mMainMode.mCirclesFragment
 																.isAdded()) {
-															mMainMode.mChatFragment.mAdapter
-																	.notifyDataSetChanged();
+															mMainMode.mCirclesFragment
+																	.notifyViews();
 														}
 													}
 

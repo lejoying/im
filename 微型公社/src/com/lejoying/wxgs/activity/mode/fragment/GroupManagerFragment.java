@@ -636,7 +636,7 @@ public class GroupManagerFragment extends BaseFragment {
 
 		// generate circles
 		for (int i = 0; i < app.data.circles.size(); i++) {
-			Circle circle = app.data.circles.get(i);
+			Circle circle = app.data.circlesMap.get(app.data.circles.get(i));
 			if (views.get("group#" + circle.rid) == null) {
 				CircleHolder circleHolder = new CircleHolder();
 				circleHolders.put("group#" + circle.rid, circleHolder);

@@ -129,6 +129,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/newGroup"
                     android:layout_width="88dp"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
@@ -139,7 +140,27 @@
                         android:id="@+id/img_settings"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:clickable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/chat_emoji_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="新建分组"
+                        android:textColor="#fff"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp" >
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:padding="4dp"
                         android:src="@drawable/chat_emoji_normal" />
 

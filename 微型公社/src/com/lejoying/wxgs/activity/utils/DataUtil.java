@@ -15,6 +15,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
@@ -98,7 +99,12 @@ public class DataUtil {
 							CirclesAndFriends circlesAndFriends = JSONParser
 									.generateCirclesFromJSON(jData
 											.getJSONArray("circles"));
-							data.circles = circlesAndFriends.circles;
+							data.circles.clear();
+							for (Circle circle : circlesAndFriends.circles) {
+								data.circles.add(String.valueOf(circle.rid));
+								data.circlesMap.put(String.valueOf(circle.rid),
+										circle);
+							}
 							Map<String, Friend> friends = circlesAndFriends.circleFriends;
 							Set<String> phones = circlesAndFriends.circleFriends
 									.keySet();
@@ -323,14 +329,16 @@ public class DataUtil {
 															@Override
 															public void modifyData(
 																	Data data) {
-																Group group = data.groupsMap.get(String
-																		.valueOf(message.gid));
+																Group group = data.groupsMap
+																		.get(String
+																				.valueOf(message.gid));
 																if (group != null
 																		&& !group.messages
 																				.contains(message)) {
-																	group.messages.add(message);
+																	group.messages
+																			.add(message);
 																	group.notReadMessagesCount++;
-																} 
+																}
 															}
 
 															@Override
@@ -387,6 +395,7 @@ public class DataUtil {
 				Data saveData = new Data();
 				saveData.user = app.data.user;
 				saveData.circles = app.data.circles;
+				saveData.circlesMap = app.data.circlesMap;
 				saveData.friends = app.data.friends;
 				saveData.groups = app.data.groups;
 				saveData.groupsMap = app.data.groupsMap;

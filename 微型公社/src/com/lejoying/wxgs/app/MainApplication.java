@@ -137,6 +137,7 @@ public class MainApplication extends Application {
 						if (localData != null) {
 							data.user = localData.user;
 							data.circles = localData.circles;
+							data.circlesMap = localData.circlesMap;
 							data.friends = localData.friends;
 							data.groups = localData.groups;
 							data.groupsMap = localData.groupsMap;

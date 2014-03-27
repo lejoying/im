@@ -28,6 +28,8 @@ public class EventHandler {
 							if (MainActivity.instance.mMainMode.mCirclesFragment
 									.isAdded()) {
 								// TODO refresh
+								MainActivity.instance.mMainMode.mCirclesFragment
+										.notifyViews();
 							}
 							if (MainActivity.instance.mMainMode.mGroupFragment
 									.isAdded()) {
@@ -70,7 +72,8 @@ public class EventHandler {
 							if (MainActivity.instance.mMainMode.mCirclesFragment
 									.isAdded()) {
 								// TODO refresh
-								// MainActivity.instance.mMainMode.mCirclesFragment.mAdapter.notifyDataSetChanged();
+								MainActivity.instance.mMainMode.mCirclesFragment
+										.notifyViews();
 							}
 							if (MainActivity.instance.mMainMode.mNewFriendsFragment
 									.isAdded()) {

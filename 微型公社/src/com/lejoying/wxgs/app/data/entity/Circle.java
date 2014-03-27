@@ -17,14 +17,17 @@ public class Circle implements Serializable {
 	public boolean equals(Object o) {
 		boolean flag = false;
 		if (o != null) {
-			try {
+			if (o instanceof Circle) {
 				Circle c = (Circle) o;
 				if (rid == c.rid && name.equals(c.name)
 						&& phones.containsAll(c.phones)) {
 					flag = true;
 				}
-			} catch (Exception e) {
-
+			} else if (o instanceof String) {
+				String i = (String) o;
+				if (rid == Integer.valueOf(i).intValue()) {
+					flag = true;
+				}
 			}
 		}
 		return flag;

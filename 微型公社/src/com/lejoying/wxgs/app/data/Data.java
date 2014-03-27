@@ -20,7 +20,8 @@ public class Data implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public User user = new User();
-	public List<Circle> circles = new ArrayList<Circle>();
+	public List<String> circles = new ArrayList<String>();
+	public Map<String, Circle> circlesMap = new HashMap<String, Circle>();
 	public List<String> groups = new ArrayList<String>();
 	public Map<String, Group> groupsMap = new HashMap<String, Group>();
 

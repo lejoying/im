@@ -46,4 +46,10 @@ public class LoginModeManager extends BaseModeManager {
 		}
 	}
 
+	@Override
+	public void release() {
+		isInit = false;
+		super.release();
+	}
+
 }
