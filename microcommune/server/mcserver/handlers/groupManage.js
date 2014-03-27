@@ -785,7 +785,7 @@ var ajax = require('../../lbsserver/lib/ajax.js');
  ***************************************/
 groupManage.getgroupsandmembers = function (data, response) {
     response.asynchronous = 1;
-
+    console.log(data);
     var phone = data.phone;
     //(account1:Account)-[r:HAS_GROUP]->(group:Group)-[r1:HAS_MEMBER]->(account:Account)
     getAccountGroups();
@@ -824,6 +824,7 @@ groupManage.getgroupsandmembers = function (data, response) {
                     "提示信息": "获取群组成功",
                     groups: []
                 }));
+                response.end();
             }
         });
     }
