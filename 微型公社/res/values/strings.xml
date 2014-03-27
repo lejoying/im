@@ -36,6 +36,7 @@
     <!-- common textview -->
     <string name="text_sendto">我们已将短信发送到</string>
     <string name="text_picture">[图片]</string>
+    <string name="text_voice">[语音]</string>
     <string name="text_search">精确查找</string>
     <string name="text_verify">对方启用了朋友验证</string>
     <!-- panel text -->

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.array;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -31,6 +33,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -49,12 +54,14 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -131,6 +138,11 @@ public class ChatFriendFragment extends BaseFragment {
 	TextView tv_voice_timelength;
 	OnTouchListener mOnTouchListener;
 
+	RelativeLayout rl_face;
+	RelativeLayout rl_selectedface;
+	ViewPager chat_vPager;
+	int chat_vPager_now = 0;
+
 	View groupTopBar;
 	TextView textView_groupName;
 	TextView textView_memberCount;
@@ -206,6 +218,22 @@ public class ChatFriendFragment extends BaseFragment {
 		iv_voice_play = (ImageView) mContent.findViewById(R.id.iv_voice_play);
 		tv_voice_timelength = (TextView) mContent
 				.findViewById(R.id.tv_voice_timelength);
+		rl_face = (RelativeLayout) mContent.findViewById(R.id.rl_face);
+		rl_selectedface = (RelativeLayout) mContent
+				.findViewById(R.id.rl_selectedface);
+		chat_vPager = (ViewPager) mContent.findViewById(R.id.chat_vPager);
+
+		// ArrayList<HashMap<String, Object>> imagelist = new
+		// ArrayList<HashMap<String, Object>>();
+		// for (int i = 0; i < 8; i++) {
+		// HashMap<String, Object> map = new HashMap<String, Object>();
+		// map.put("image", R.drawable.voice_stop);
+		// imagelist.add(map);
+		// }
+		// chat_base_gv.setAdapter(new SimpleAdapter(getActivity(), imagelist,
+		// R.layout.f_chat_base_gridview_item, new String[] { "image" },
+		// new int[] { R.id.chat_base_iv }));
+		// chat_vPager.addView(chat_base_gv);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
 		textView_groupName = (TextView) mContent
@@ -332,7 +360,37 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	void initEvent() {
+		initBaseFaces();
+		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
+			@Override
+			public void onPageSelected(int arg0) {
+				chat_vPager_now = arg0;
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+
+			}
+		});
+		rl_selectedface.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				int show_status = rl_face.getVisibility();
+				if (show_status == View.VISIBLE) {
+					rl_face.setVisibility(View.GONE);
+				} else {
+					rl_face.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 		groupTopBar.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -1528,6 +1586,126 @@ public class ChatFriendFragment extends BaseFragment {
 				uploadImageOrVoice("voice", filename, base64);
 			}
 		});
+	}
+
+	void initBaseFaces() {
+		List<View> mListViews = new ArrayList<View>();
+		List<String> images1 = new ArrayList<String>();
+		for (int i = 0; i < 105; i++) {
+			images1.add("smiley_" + i + ".png");
+		}
+		for (int i = 0; i < 5; i++) {
+			View v = mInflater
+					.inflate(R.layout.f_chat_face_base_gridview, null);
+			GridView chat_base_gv = (GridView) v
+					.findViewById(R.id.chat_base_gv);
+			chat_base_gv.setAdapter(new myGridAdapter(images1));
+			mListViews.add(chat_base_gv);
+		}
+
+		// View v1 = mInflater.inflate(R.layout.f_chat_face_base_gridview,
+		// null);
+		// GridView chat_base_gv1 = (GridView)
+		// v1.findViewById(R.id.chat_base_gv);
+		// chat_base_gv1.setAdapter(new myGridAdapter(images));
+		// mListViews.add(chat_base_gv1);
+
+		chat_vPager.setAdapter(new myPageAdapter(mListViews));
+	}
+
+	class myGridAdapter extends BaseAdapter {
+		List<String> list;
+
+		public myGridAdapter(List<String> list) {
+			this.list = list;
+		}
+
+		@Override
+		public int getCount() {
+			return list.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return list.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			convertView = mInflater.inflate(R.layout.f_chat_base_gridview_item,
+					null);
+			ImageView iv = (ImageView) convertView
+					.findViewById(R.id.chat_base_iv);
+			// iv.setImageDrawable(getResources().getDrawable(list.get(position)));
+			try {
+				iv.setImageBitmap(BitmapFactory.decodeStream(getActivity()
+						.getAssets().open("images/" + list.get(position))));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			convertView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getActivity(), "face", Toast.LENGTH_SHORT)
+							.show();
+
+				}
+			});
+			return convertView;
+		}
+
+	}
+
+	class myPageAdapter extends PagerAdapter {
+		List<View> mListViews;
+
+		public myPageAdapter(List<View> mListViews) {
+			this.mListViews = mListViews;
+		}
+
+		@Override
+		public int getCount() {
+			return mListViews.size();
+		}
+
+		@Override
+		public boolean isViewFromObject(View arg0, Object arg1) {
+			return (arg0 == arg1);
+		}
+
+		@Override
+		public Object instantiateItem(View arg0, int arg1) {
+			try {
+				if (mListViews.get(arg1).getParent() == null)
+					((ViewPager) arg0).addView(mListViews.get(arg1), 0);
+				else {
+					// 很难理解新添加进来的view会自动绑定一个父类，由于一个儿子view不能与两个父类相关，所以得解绑
+					// 不这样做否则会产生 viewpager java.lang.IllegalStateException: The
+					// specified child already has a parent. You must call
+					// removeView() on the child's parent first.
+					// 还有一种方法是viewPager.setOffscreenPageLimit(3); 这种方法不用判断parent
+					// 是不是已经存在，但多余的listview不能被destroy
+					((ViewGroup) mListViews.get(arg1).getParent())
+							.removeView(mListViews.get(arg1));
+					((ViewPager) arg0).addView(mListViews.get(arg1), 0);
+				}
+			} catch (Exception e) {
+				Log.d("parent=", "" + mListViews.get(arg1).getParent());
+				e.printStackTrace();
+			}
+			return mListViews.get(arg1);
+		}
+
+		@Override
+		public void destroyItem(View arg0, int arg1, Object arg2) {
+			((ViewPager) arg0).removeView(mListViews.get(arg1));
+		}
 	}
 
 }
