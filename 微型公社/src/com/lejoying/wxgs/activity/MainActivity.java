@@ -91,8 +91,12 @@ public class MainActivity extends BaseActivity {
 	}
 
 	void initMode() {
-		mMainMode = new MainModeManager(this);
-		mLoginMode = new LoginModeManager(this);
+		if (mMainMode == null) {
+			mMainMode = new MainModeManager(this);
+		}
+		if (mLoginMode == null) {
+			mLoginMode = new LoginModeManager(this);
+		}
 	}
 
 	public void switchMode() {

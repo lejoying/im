@@ -962,6 +962,12 @@ public class CirclesFragment extends BaseFragment {
 		}
 	}
 
+	class ModifyFriend {
+		public String action = "moveout";// "moveout"||"moveto"
+		public String status = "move";// "move"||"copy"
+		public String phone;
+	}
+
 	Map<String, View> tempViewMap = new HashMap<String, View>();
 
 	View generateCircleView(Circle circle, CircleHolder circleHolder) {
@@ -1013,18 +1019,23 @@ public class CirclesFragment extends BaseFragment {
 						CircleHolder circleHolder = circleHolders.get(circles
 								.get(currentEditPosition));
 
+						FriendHolder clickHolder = circleHolder.friendHolders
+								.get(circleHolder.friendHolders
+										.indexOf(friendHolder));
+
 						if (!isCopy) {
 							// change
-							circleHolder.friendHolders.remove(friendHolder);
+							circleHolder.friendHolders.remove(clickHolder);
 
 							View circleView = views.get(circles
 									.get(currentEditPosition));
 							RelativeLayout friendContainer = (RelativeLayout) circleView
 									.findViewById(R.id.viewContainer);
+
 							// change
 							friendContainer.removeView(holderView);
 
-							int animationFromIndex = friendHolder.index;
+							int animationFromIndex = clickHolder.index;
 							int animationCount = 6 - animationFromIndex % 6;
 
 							for (int i = 0; i < animationCount; i++) {
@@ -1042,7 +1053,7 @@ public class CirclesFragment extends BaseFragment {
 							// change
 							resolveFriendsPositions(circleHolder);
 							setFriendsPositions(circleHolder);
-							tempFriendHolders.put(friend.phone, friendHolder);
+							tempFriendHolders.put(friend.phone, clickHolder);
 						} else {
 							FriendHolder newHolder = new FriendHolder();
 							newHolder.view = generateFriendView(friend);

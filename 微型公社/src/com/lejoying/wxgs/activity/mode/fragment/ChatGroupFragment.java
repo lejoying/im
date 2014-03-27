@@ -1061,7 +1061,7 @@ public class ChatGroupFragment extends BaseFragment {
 					fileName = app.data.user.head;
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					fileName = mNowChatFriend.head;
+					fileName = app.data.groupFriends.get(message.phone).head;
 					break;
 				default:
 					break;
