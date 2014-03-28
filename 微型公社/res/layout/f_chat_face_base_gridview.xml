@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:horizontalSpacing="10dp"
         android:numColumns="7"
-        android:paddingLeft="13dp"
+        android:paddingLeft="5dp"
         android:paddingTop="10dp"
         android:scrollbars="none"
         android:verticalSpacing="30dp" >

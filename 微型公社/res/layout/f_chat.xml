@@ -24,7 +24,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="70dp"
         android:background="@drawable/card_background_normal"
-        android:visibility="visible" >
+        android:visibility="gone" >
 
         <ImageView
             android:layout_width="fill_parent"
@@ -52,6 +52,7 @@
             android:background="#ffffff" />
 
         <LinearLayout
+            android:id="@+id/ll_facepanel"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
@@ -78,10 +79,11 @@
                 android:background="#ffffff" />
 
             <ImageView
-                android:layout_width="22dp"
+                android:id="@+id/iv_face_left"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/face_left" />
 
@@ -91,9 +93,13 @@
                 android:background="#ffffff" />
 
             <ImageView
-                android:layout_width="52dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/face_right" />
+                android:id="@+id/iv_face_right"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_right" />
 
             <ImageView
                 android:layout_width="1px"
@@ -101,9 +107,13 @@
                 android:background="#ffffff" />
 
             <ImageView
-                android:layout_width="52dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/face_delete" />
+                android:id="@+id/iv_face_delete"
+                android:layout_width="28dp"
+                android:layout_height="17dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_delete" />
         </LinearLayout>
     </RelativeLayout>
 

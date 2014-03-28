@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Movie;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -37,13 +36,11 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -142,10 +139,18 @@ public class ChatFriendFragment extends BaseFragment {
 	OnTouchListener mOnTouchListener;
 
 	RelativeLayout rl_face;
+	LinearLayout ll_facepanel;
 	LinearLayout ll_facemenu;
 	RelativeLayout rl_selectedface;
 	ViewPager chat_vPager;
 	int chat_vPager_now = 0;
+	ImageView iv_face_left;
+	ImageView iv_face_right;
+	ImageView iv_face_delete;
+	List<ImageView> faceMenuShowList;
+	List<List<String>> faceNameList;
+	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
+	String[] faceNames;
 
 	View groupTopBar;
 	TextView textView_groupName;
@@ -200,7 +205,7 @@ public class ChatFriendFragment extends BaseFragment {
 		mInflater = inflater;
 		// voice
 		voice_list = new ArrayList<String>();
-
+		faceMenuShowList = new ArrayList<ImageView>();
 		mContent = inflater.inflate(R.layout.f_chat, null);
 		chatContent = (ListView) mContent.findViewById(R.id.chatContent);
 
@@ -223,11 +228,14 @@ public class ChatFriendFragment extends BaseFragment {
 		tv_voice_timelength = (TextView) mContent
 				.findViewById(R.id.tv_voice_timelength);
 		rl_face = (RelativeLayout) mContent.findViewById(R.id.rl_face);
+		ll_facepanel = (LinearLayout) mContent.findViewById(R.id.ll_facepanel);
 		ll_facemenu = (LinearLayout) mContent.findViewById(R.id.ll_facemenu);
 		rl_selectedface = (RelativeLayout) mContent
 				.findViewById(R.id.rl_selectedface);
 		chat_vPager = (ViewPager) mContent.findViewById(R.id.chat_vPager);
-
+		iv_face_left = (ImageView) mContent.findViewById(R.id.iv_face_left);
+		iv_face_right = (ImageView) mContent.findViewById(R.id.iv_face_right);
+		iv_face_delete = (ImageView) mContent.findViewById(R.id.iv_face_delete);
 		// ArrayList<HashMap<String, Object>> imagelist = new
 		// ArrayList<HashMap<String, Object>>();
 		// for (int i = 0; i < 8; i++) {
@@ -359,31 +367,44 @@ public class ChatFriendFragment extends BaseFragment {
 		}
 
 		initEvent();
+		// initBaseFaces();
 		return mContent;
 	}
 
 	void initEvent() {
-		Drawable drawable = getResources().getDrawable(R.drawable.voice_start);
-		drawable.setBounds(0, 0, 50, 50);// drawable.getIntrinsicWidth(),
-		// drawable.getIntrinsicHeight()
-		SpannableString spannableString = new SpannableString(getText(
-				R.id.et_message).toString()
-				+ "[smile]");
-		ImageSpan imageSpan = new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE);
-		spannableString.setSpan(imageSpan, getText(R.id.et_message).length(),
-				getText(R.id.et_message).length() + "[smile]".length(),
-				Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+		// editText_message.setText("[f00]");
+		// expressionFaceMap.put("[f00]", "tusiji_1.gif");
+		// Log.v("index", expressionFaceMap.get("[f00]")
+		// + "-----expressionFaceMap");
+		// editText_message.insertGif(editText_message.getText().toString(),
+		// expressionFaceMap);
 
-		editText_message.setText(spannableString);
-		editText_message.setCompoundDrawablePadding(10);
+		// Drawable drawable =
+		// getResources().getDrawable(R.drawable.voice_start);
+		// drawable.setBounds(0, 0, 50, 50);// drawable.getIntrinsicWidth(),
+		// // drawable.getIntrinsicHeight()
+		// SpannableString spannableString = new SpannableString(getText(
+		// R.id.et_message).toString()
+		// + "[微笑]");
+		// ImageSpan imageSpan = new ImageSpan(drawable,
+		// ImageSpan.ALIGN_BASELINE);
+		// spannableString.setSpan(imageSpan, getText(R.id.et_message).length(),
+		// getText(R.id.et_message).length() + "[smile]".length(),
+		// Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+		//
+		// editText_message.setText(spannableString);
+		// editText_message.setCompoundDrawablePadding(10);
+
 		// editText_message.setCompoundDrawables(null, null, null, null);
 		// editText_message
-		initBaseFaces();
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
 			public void onPageSelected(int arg0) {
+				faceMenuShowList.get(chat_vPager_now).setBackground(null);
 				chat_vPager_now = arg0;
+				faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
+						Color.RED);
 			}
 
 			@Override
@@ -397,16 +418,44 @@ public class ChatFriendFragment extends BaseFragment {
 
 			}
 		});
+		ll_facepanel.setOnClickListener(null);
+		iv_face_left.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getActivity(), "face_left", Toast.LENGTH_SHORT)
+						.show();
+
+			}
+		});
+		iv_face_right.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getActivity(), "iv_face_right",
+						Toast.LENGTH_SHORT).show();
+
+			}
+		});
+		iv_face_delete.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getActivity(), "iv_face_delete",
+						Toast.LENGTH_SHORT).show();
+
+			}
+		});
 		rl_selectedface.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				int show_status = rl_face.getVisibility();
-				if (show_status == View.VISIBLE) {
-					rl_face.setVisibility(View.GONE);
-				} else {
-					rl_face.setVisibility(View.VISIBLE);
-				}
+				// int show_status = rl_face.getVisibility();
+				// if (show_status == View.VISIBLE) {
+				// rl_face.setVisibility(View.GONE);
+				// } else {
+				// rl_face.setVisibility(View.VISIBLE);
+				// }
 			}
 		});
 		groupTopBar.setOnClickListener(new OnClickListener() {
@@ -1110,6 +1159,11 @@ public class ChatFriendFragment extends BaseFragment {
 				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.voice.setVisibility(View.GONE);
 				messageHolder.tv_chat.setText(message.content);
+				/*
+				 * messageHolder.tv_chat.insertGif(message.content,
+				 * expressionFaceMap);
+				 */
+
 				String fileName = app.data.user.head;
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
@@ -1396,8 +1450,7 @@ public class ChatFriendFragment extends BaseFragment {
 				mAdapter.notifyDataSetChanged();
 				chatContent.setSelection(mAdapter.getCount() - 1);
 				if (mMainModeManager.mCirclesFragment.isAdded()) {
-					// mMainModeManager.mCirclesFragment.mAdapter
-					// .notifyDataSetChanged();
+					mMainModeManager.mCirclesFragment.notifyViews();
 				}
 			}
 		});
@@ -1605,9 +1658,22 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	void initBaseFaces() {
+		faceNames = new String[] { "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞",
+				"闭嘴", "睡", "大哭", "尴尬", "发怒", "调皮", "呲牙", "惊讶", "难过", "酷", "冷汗",
+				"抓狂", "吐", "偷笑", "可爱", "白眼", "傲慢", "饥饿", "困", "惊恐", "流汗", "憨笑",
+				"大兵", "奋斗", "咒骂", "疑问", "嘘", "晕", "折磨", "衰", "骷髅", "敲打", "再见",
+				"擦汗", "抠鼻", "鼓掌", "糗大了", "坏笑", "左哼哼", "右哼哼", "哈欠", "鄙视", "委屈",
+				"快哭了", "阴险", "亲亲", "吓", "可怜", "菜刀", "西瓜", "啤酒", "篮球", "乒乓",
+				"咖啡", "饭", "猪头", "玫瑰", "凋谢", "示爱", "爱心", "心碎", "蛋糕", "闪电",
+				"炸弹", "刀", "足球", "瓢虫", "便便", "月亮", "太阳", "礼物", "拥抱", "强", "弱",
+				"握手", "胜利", "抱拳", "勾引", "拳头", "差劲", "爱你", "NO", "OK", "爱情",
+				"飞吻", "跳跳", "发抖", "怄火", "转圈", "磕头", "回头", "跳绳", "挥手", "激动",
+				"街舞", "献吻", "左太极", "右太极" };
 		List<View> mListViews = new ArrayList<View>();
 		List<String> images1 = new ArrayList<String>();
 		for (int i = 0; i < 105; i++) {
+			expressionFaceMap.put("[" + faceNames[i] + "]", "smiley_" + i
+					+ ".png");
 			images1.add("smiley_" + i + ".png");
 		}
 		List<String> images2 = new ArrayList<String>();
@@ -1618,37 +1684,46 @@ public class ChatFriendFragment extends BaseFragment {
 		for (int i = 1; i < 17; i++) {
 			images3.add("tusiji_" + i + ".gif");
 		}
-		List<List<String>> list = new ArrayList<List<String>>();
-		list.add(images1);
-		list.add(images2);
-		list.add(images3);
-		try {
-			ImageView iv = new ImageView(getActivity());
-			iv.setImageBitmap(BitmapFactory.decodeStream(getActivity()
-					.getAssets().open("images/" + list.get(0).get(0))));
-			ll_facemenu.addView(iv);
-			ImageView iv_1 = new ImageView(getActivity());
-			iv_1.setBackgroundColor(Color.WHITE);
-			iv_1.setMinimumWidth(1);
-			iv_1.setMinimumHeight(80);
-			iv_1.setMaxWidth(1);
-			ll_facemenu.addView(iv_1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		faceNameList = new ArrayList<List<String>>();
+		faceNameList.add(images1);
+		faceNameList.add(images2);
+		faceNameList.add(images3);
+
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(100,
+				LayoutParams.MATCH_PARENT);
+		lp.gravity = Gravity.CENTER;
 		for (int i = 0; i < 3; i++) {
 			try {
 				ImageView iv = new ImageView(getActivity());
 				iv.setImageBitmap(BitmapFactory.decodeStream(getActivity()
-						.getAssets().open("images/" + list.get(i).get(0))));
-				iv.setMaxWidth(100);
-				ll_facemenu.addView(iv, 100, 80);
+						.getAssets().open(
+								"images/" + faceNameList.get(i).get(0))));
+				iv.setLayoutParams(lp);
+				if (i == 0) {
+					iv.setBackgroundColor(Color.RED);
+				}
+				iv.setTag(i);
+				ll_facemenu.addView(iv);
+				faceMenuShowList.add(iv);
 				ImageView iv_1 = new ImageView(getActivity());
 				iv_1.setBackgroundColor(Color.WHITE);
 				iv_1.setMinimumWidth(1);
 				iv_1.setMinimumHeight(80);
 				iv_1.setMaxWidth(1);
 				ll_facemenu.addView(iv_1);
+				iv.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						int position = (Integer) v.getTag();
+						faceMenuShowList.get(chat_vPager_now).setBackground(
+								null);
+						chat_vPager_now = position;
+						faceMenuShowList.get(chat_vPager_now)
+								.setBackgroundColor(Color.RED);
+						chat_vPager.setCurrentItem(chat_vPager_now);
+					}
+				});
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -1657,18 +1732,34 @@ public class ChatFriendFragment extends BaseFragment {
 						null);
 				GridView chat_base_gv = (GridView) v
 						.findViewById(R.id.chat_base_gv);
-				chat_base_gv.setAdapter(new myGridAdapter(list.get(i)));
+				chat_base_gv.setAdapter(new myGridAdapter(faceNameList.get(i)));
 				mListViews.add(chat_base_gv);
 			} else {
 				View v = mInflater.inflate(R.layout.f_chat_bigimg_gridview,
 						null);
 				GridView chat_base_gv = (GridView) v
 						.findViewById(R.id.chat_base_gv);
-				chat_base_gv.setAdapter(new myGridAdapter(list.get(i)));
+				chat_base_gv.setAdapter(new myGridAdapter(faceNameList.get(i)));
 				mListViews.add(chat_base_gv);
 				chat_vPager.setAdapter(new myPageAdapter(mListViews));
 			}
 		}
+		LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(100,
+				LayoutParams.WRAP_CONTENT);
+		lp1.gravity = Gravity.CENTER;
+		ImageView iv = new ImageView(getActivity());
+		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+				R.drawable.face_add);
+		iv.setImageBitmap(bitmap);
+		iv.setLayoutParams(lp1);
+		ll_facemenu.addView(iv);
+		ImageView iv_1 = new ImageView(getActivity());
+		iv_1.setBackgroundColor(Color.WHITE);
+		iv_1.setMinimumWidth(1);
+		iv_1.setMinimumHeight(80);
+		iv_1.setMaxWidth(1);
+		ll_facemenu.addView(iv_1);
+		faceMenuShowList.add(iv);
 	}
 
 	class myGridAdapter extends BaseAdapter {
@@ -1694,7 +1785,8 @@ public class ChatFriendFragment extends BaseFragment {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
 			convertView = mInflater.inflate(R.layout.f_chat_base_gridview_item,
 					null);
 			ImageView iv = (ImageView) convertView
@@ -1710,8 +1802,13 @@ public class ChatFriendFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(getActivity(), "face", Toast.LENGTH_SHORT)
-							.show();
+
+					// editText_message.insertGif("[" + faceNames[position] +
+					// "]",
+					// expressionFaceMap);
+					//
+					// Toast.makeText(getActivity(), faceNames[position],
+					// Toast.LENGTH_SHORT).show();
 
 				}
 			});
