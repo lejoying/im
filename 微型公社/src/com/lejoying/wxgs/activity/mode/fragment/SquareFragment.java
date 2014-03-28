@@ -76,6 +76,13 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 	}
 
 	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		mSqureMessageView.setSelection(mAdapter.getCount() - 1);
+		super.onActivityCreated(savedInstanceState);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mInflater = inflater;
@@ -129,7 +136,8 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 		}
 
 		@Override
-		public View getView(final int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
 			MessageHolder messageHolder;
 			if (convertView == null) {
 				convertView = mInflater.inflate(

@@ -306,16 +306,29 @@ public class BusinessCardFragment extends BaseFragment {
 																@Override
 																public void modifyData(
 																		Data data) {
-																	app.data.friends
+																	data.lastChatFriends
 																			.remove(mShowFriend.phone);
+																	data.newFriends
+																			.remove(mShowFriend);
+																	data.friends
+																			.remove(mShowFriend.phone);
+																	for (String rid : data.circles) {
+																		data.circlesMap
+																				.get(rid).phones
+																				.remove(mShowFriend);
+																	}
 																}
 
 																@Override
 																public void modifyUI() {
 																	// TODO
 																	// refresh
-																	// mMainModeManager.mCirclesFragment.mAdapter
-																	// .notifyDataSetChanged();
+																	if (mMainModeManager.mCirclesFragment
+																			.isAdded()) {
+																		mMainModeManager.mCirclesFragment
+																				.notifyViews();
+																	}
+
 																}
 															});
 												}
@@ -360,5 +373,4 @@ public class BusinessCardFragment extends BaseFragment {
 			}
 		});
 	}
-
 }

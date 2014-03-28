@@ -164,26 +164,42 @@ public class JSONParser {
 
 	private static Object[] generateGroupFromJSON(JSONObject jGroup) {
 		Object[] groupAndFriends = new Object[2];
+		Group group = new Group();
+		Map<String, Friend> friends = new HashMap<String, Friend>();
 		try {
-			Group group = new Group();
-			Map<String, Friend> friends = new HashMap<String, Friend>();
 			group.gid = jGroup.getInt("gid");
-			group.name = jGroup.getString("name");
-			List<Friend> groupFriends = generateFriendsFromJSON(jGroup
-					.getJSONArray("members"));
-			List<String> phones = new ArrayList<String>();
-			for (Friend friend : groupFriends) {
-				String phone = friend.phone;
-				phones.add(phone);
-				friends.put(phone, friend);
+			try {
+				group.name = jGroup.getString("name");
+			} catch (JSONException e) {
 			}
-			group.members = phones;
-			groupAndFriends[0] = group;
-			groupAndFriends[1] = friends;
-		} catch (JSONException e) {
-			groupAndFriends = null;
-		}
+			try {
+				List<Friend> groupFriends = generateFriendsFromJSON(jGroup
+						.getJSONArray("members"));
 
+				List<String> phones = new ArrayList<String>();
+				for (Friend friend : groupFriends) {
+					String phone = friend.phone;
+					phones.add(phone);
+					friends.put(phone, friend);
+				}
+				group.members = phones;
+			} catch (JSONException e) {
+			}
+
+			try {
+				group.distance = jGroup.getInt("distance");
+			} catch (JSONException e) {
+			}
+			try {
+				JSONObject jLocation = jGroup.getJSONObject("location");
+				group.latitude = jLocation.getString("latitude");
+				group.longitude = jLocation.getString("longitude");
+			} catch (JSONException e) {
+			}
+		} catch (JSONException e) {
+		}
+		groupAndFriends[0] = group;
+		groupAndFriends[1] = friends;
 		return groupAndFriends;
 	}
 

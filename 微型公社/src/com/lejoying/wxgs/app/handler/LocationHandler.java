@@ -1,14 +1,11 @@
 package com.lejoying.wxgs.app.handler;
 
-import android.widget.Toast;
-
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.MKGeneralListener;
-import com.baidu.mapapi.map.MKEvent;
 import com.lejoying.wxgs.app.MainApplication;
 
 public class LocationHandler {
@@ -75,26 +72,26 @@ public class LocationHandler {
 
 			@Override
 			public void onGetNetworkState(int iError) {
-				if (iError == MKEvent.ERROR_NETWORK_CONNECT) {
-					Toast.makeText(app, "您的网络出错啦！", Toast.LENGTH_LONG).show();
-				} else if (iError == MKEvent.ERROR_NETWORK_DATA) {
-					Toast.makeText(app, "输入正确的检索条件！", Toast.LENGTH_LONG).show();
-				}
+				// if (iError == MKEvent.ERROR_NETWORK_CONNECT) {
+				// Toast.makeText(app, "您的网络出错啦！", Toast.LENGTH_LONG).show();
+				// } else if (iError == MKEvent.ERROR_NETWORK_DATA) {
+				// Toast.makeText(app, "输入正确的检索条件！", Toast.LENGTH_LONG).show();
+				// }
 				// ...
 			}
 
 			@Override
 			public void onGetPermissionState(int iError) {
-				// 非零值表示key验证未通过
-				if (iError != 0) {
-					// 授权Key错误：
-					Toast.makeText(
-							app,
-							"请在 DemoApplication.java文件输入正确的授权Key,并检查您的网络连接是否正常！error: "
-									+ iError, Toast.LENGTH_LONG).show();
-				} else {
-					Toast.makeText(app, "key认证成功", Toast.LENGTH_LONG).show();
-				}
+				// // 非零值表示key验证未通过
+				// if (iError != 0) {
+				// // 授权Key错误：
+				// Toast.makeText(
+				// app,
+				// "请在 DemoApplication.java文件输入正确的授权Key,并检查您的网络连接是否正常！error: "
+				// + iError, Toast.LENGTH_LONG).show();
+				// } else {
+				// Toast.makeText(app, "key认证成功", Toast.LENGTH_LONG).show();
+				// }
 			}
 		});
 	}
@@ -108,28 +105,29 @@ public class LocationHandler {
 			if (locationListener != null) {
 				locationListener.onReceiveLocation(location);
 			}
-			StringBuffer sb = new StringBuffer(256);
-			sb.append("time : ");
-			sb.append(location.getTime());
-			sb.append("\nerror code : ");
-			sb.append(location.getLocType());
-			sb.append("\nlatitude : ");
-			sb.append(location.getLatitude());
-			sb.append("\nlontitude : ");
-			sb.append(location.getLongitude());
-			sb.append("\nradius : ");
-			sb.append(location.getRadius());
-			if (location.getLocType() == BDLocation.TypeGpsLocation) {
-				sb.append("\nspeed : ");
-				sb.append(location.getSpeed());
-				sb.append("\nsatellite : ");
-				sb.append(location.getSatelliteNumber());
-			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-				sb.append("\naddr : ");
-				sb.append(location.getAddrStr());
-			}
-
-			System.out.println(sb.toString());
+			// StringBuffer sb = new StringBuffer(256);
+			// sb.append("time : ");
+			// sb.append(location.getTime());
+			// sb.append("\nerror code : ");
+			// sb.append(location.getLocType());
+			// sb.append("\nlatitude : ");
+			// sb.append(location.getLatitude());
+			// sb.append("\nlontitude : ");
+			// sb.append(location.getLongitude());
+			// sb.append("\nradius : ");
+			// sb.append(location.getRadius());
+			// if (location.getLocType() == BDLocation.TypeGpsLocation) {
+			// sb.append("\nspeed : ");
+			// sb.append(location.getSpeed());
+			// sb.append("\nsatellite : ");
+			// sb.append(location.getSatelliteNumber());
+			// } else if (location.getLocType() ==
+			// BDLocation.TypeNetWorkLocation) {
+			// sb.append("\naddr : ");
+			// sb.append(location.getAddrStr());
+			// }
+			//
+			// System.out.println(sb.toString());
 		}
 
 		public void onReceivePoi(BDLocation poiLocation) {
@@ -139,28 +137,28 @@ public class LocationHandler {
 			if (pointListener != null) {
 				pointListener.onReceivePoi(poiLocation);
 			}
-			StringBuffer sb = new StringBuffer(256);
-			sb.append("Poi time : ");
-			sb.append(poiLocation.getTime());
-			sb.append("\nerror code : ");
-			sb.append(poiLocation.getLocType());
-			sb.append("\nlatitude : ");
-			sb.append(poiLocation.getLatitude());
-			sb.append("\nlontitude : ");
-			sb.append(poiLocation.getLongitude());
-			sb.append("\nradius : ");
-			sb.append(poiLocation.getRadius());
-			if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-				sb.append("\naddr : ");
-				sb.append(poiLocation.getAddrStr());
-			}
-			if (poiLocation.hasPoi()) {
-				sb.append("\nPoi:");
-				sb.append(poiLocation.getPoi());
-			} else {
-				sb.append("noPoi information");
-			}
-			System.out.println(sb.toString());
+			// StringBuffer sb = new StringBuffer(256);
+			// sb.append("Poi time : ");
+			// sb.append(poiLocation.getTime());
+			// sb.append("\nerror code : ");
+			// sb.append(poiLocation.getLocType());
+			// sb.append("\nlatitude : ");
+			// sb.append(poiLocation.getLatitude());
+			// sb.append("\nlontitude : ");
+			// sb.append(poiLocation.getLongitude());
+			// sb.append("\nradius : ");
+			// sb.append(poiLocation.getRadius());
+			// if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
+			// sb.append("\naddr : ");
+			// sb.append(poiLocation.getAddrStr());
+			// }
+			// if (poiLocation.hasPoi()) {
+			// sb.append("\nPoi:");
+			// sb.append(poiLocation.getPoi());
+			// } else {
+			// sb.append("noPoi information");
+			// }
+			// System.out.println(sb.toString());
 		}
 	}
 }

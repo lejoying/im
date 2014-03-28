@@ -30,11 +30,19 @@ public class ScrollRelativeLayout extends RelativeLayout {
 		listener = l;
 	}
 
+	boolean interecept;
+
+	public void interceptTouchEvent() {
+		interecept = true;
+	}
+
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		// System.out.println("intercept");
+		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+			interecept = false;
+		}
 		onTouchEvent(ev);
-		return false;
+		return interecept;
 	}
 
 }

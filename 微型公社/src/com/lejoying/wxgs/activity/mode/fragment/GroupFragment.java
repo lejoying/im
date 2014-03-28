@@ -1,7 +1,12 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.view.GestureDetector;
@@ -11,20 +16,30 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.LocationHandler.LocationListener;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
+import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 
 public class GroupFragment extends BaseFragment {
 
@@ -63,26 +78,27 @@ public class GroupFragment extends BaseFragment {
 	public View onCreateView(android.view.LayoutInflater inflater,
 			android.view.ViewGroup container,
 			android.os.Bundle savedInstanceState) {
-		mInflater = inflater;
-		density = getActivity().getResources().getDisplayMetrics().density;
-		screenHeight = getScreenHeight();
-		screenWidth = getScreenWidth();
-		groupPanelWidth = screenWidth - (int) dp2px(20);
-		groupPanelHeight = (int) (dp2px(10 + 1 + 220 + 37) + sp2px(
-				getActivity(), 18));
-		groupScrollSpaceWidth = screenWidth - (int) dp2px(40);
-		groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(8);
-		headSize = (int) dp2px(22);
-		headMargin = (int) ((groupItemWidth - dp2px(22) - headSize * 5) / 6);
+		if (mContentView == null) {
+			mInflater = inflater;
+			density = getActivity().getResources().getDisplayMetrics().density;
+			screenHeight = getScreenHeight();
+			screenWidth = getScreenWidth();
+			groupPanelWidth = screenWidth - (int) dp2px(20);
+			groupPanelHeight = (int) (dp2px(10 + 1 + 220 + 37) + sp2px(
+					getActivity(), 18));
+			groupScrollSpaceWidth = screenWidth - (int) dp2px(40);
+			groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(8);
+			headSize = (int) dp2px(22);
+			headMargin = (int) ((groupItemWidth - dp2px(22) - headSize * 5) / 6);
 
-		mContentView = inflater.inflate(R.layout.fragment_group, null);
-		groupViewContainer = (ScrollRelativeLayout) mContentView
-				.findViewById(R.id.groupViewContainer);
+			mContentView = inflater.inflate(R.layout.fragment_group, null);
+			groupViewContainer = (ScrollRelativeLayout) mContentView
+					.findViewById(R.id.groupViewContainer);
 
-		initEvent();
+			initEvent();
 
-		notifyViews();
-
+			notifyViews();
+		}
 		return mContentView;
 	}
 
@@ -134,6 +150,7 @@ public class GroupFragment extends BaseFragment {
 						if (dy * dy + dx * dx > 400) {
 							if (dy * dy > dx * dx) {
 								touchEvnetStatus = TouchEvnetStatus.MOVING_Y;
+								groupViewContainer.interceptTouchEvent();
 							} else {
 								touchEvnetStatus = TouchEvnetStatus.MOVING_X;
 							}
@@ -184,54 +201,89 @@ public class GroupFragment extends BaseFragment {
 
 	}
 
+	boolean added;
+
 	public void notifyViews() {
-		groupViewContainer.removeAllViews();
 
-		int top = (int) dp2px(20);
-		groupViewContainer.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+		generateViews();
 
-		View myGroup = generateMyGroup();
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.MATCH_PARENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params.topMargin = top;
-		params.bottomMargin = -Integer.MAX_VALUE;
-		myGroup.setLayoutParams(params);
-		groupViewContainer.addView(myGroup);
+		if (!added) {
+			added = true;
+			int top = (int) dp2px(20);
+			groupViewContainer.setGravity(Gravity.TOP
+					| Gravity.CENTER_HORIZONTAL);
 
-		top += (groupPanelHeight + (int) dp2px(25));
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.MATCH_PARENT,
+					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params.topMargin = top;
+			params.bottomMargin = -Integer.MAX_VALUE;
+			myGroup.setLayoutParams(params);
 
-		View attentionGroup = generateAttentionGroup();
-		RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.MATCH_PARENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params2.topMargin = top;
-		params2.bottomMargin = -Integer.MAX_VALUE;
-		attentionGroup.setLayoutParams(params2);
-		groupViewContainer.addView(attentionGroup);
+			groupViewContainer.addView(myGroup);
 
-		top += (groupPanelHeight + (int) dp2px(25));
+			top += (groupPanelHeight + (int) dp2px(25));
 
-		View nearByGroup = generateNearByGroup();
-		RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.MATCH_PARENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params3.topMargin = top;
-		params3.bottomMargin = -Integer.MAX_VALUE;
-		nearByGroup.setLayoutParams(params3);
-		groupViewContainer.addView(nearByGroup);
+			RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.MATCH_PARENT,
+					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params2.topMargin = top;
+			params2.bottomMargin = -Integer.MAX_VALUE;
+			attentionGroup.setLayoutParams(params2);
+			groupViewContainer.addView(attentionGroup);
 
-		top += (groupPanelHeight + (int) dp2px(25));
+			top += (groupPanelHeight + (int) dp2px(25));
 
-		View tempGroup = generateTempGroup();
-		RelativeLayout.LayoutParams params4 = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.MATCH_PARENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		params4.topMargin = top;
-		params4.bottomMargin = -Integer.MAX_VALUE;
-		tempGroup.setLayoutParams(params4);
-		groupViewContainer.addView(tempGroup);
+			RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.MATCH_PARENT,
+					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params3.topMargin = top;
+			params3.bottomMargin = -Integer.MAX_VALUE;
+			nearByGroup.setLayoutParams(params3);
+			groupViewContainer.addView(nearByGroup);
 
+			top += (groupPanelHeight + (int) dp2px(25));
+
+			RelativeLayout.LayoutParams params4 = new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.MATCH_PARENT,
+					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params4.topMargin = top;
+			params4.bottomMargin = -Integer.MAX_VALUE;
+			tempGroup.setLayoutParams(params4);
+			groupViewContainer.addView(tempGroup);
+		}
+	}
+
+	View myGroup;
+	View attentionGroup;
+	View nearByGroup;
+	View tempGroup;
+
+	void generateViews() {
+		if (myGroup == null) {
+			groupHoldersMap.put("myGroup", new ArrayList<GroupHolder>());
+			myGroup = generateMyGroup();
+		}
+		List<Group> myGroups = new ArrayList<Group>();
+		for (String gid : app.data.groups) {
+			myGroups.add(app.data.groupsMap.get(gid));
+		}
+		notifyGroups(myGroups, groupHoldersMap.get("myGroup"), myGroup);
+
+		if (attentionGroup == null) {
+			groupHoldersMap.put("attentionGroup", new ArrayList<GroupHolder>());
+			attentionGroup = generateAttentionGroup();
+		}
+
+		if (nearByGroup == null) {
+			groupHoldersMap.put("nearByGroup", new ArrayList<GroupHolder>());
+			nearByGroup = generateNearByGroup();
+		}
+
+		if (tempGroup == null) {
+			groupHoldersMap.put("tempGroup", new ArrayList<GroupHolder>());
+			tempGroup = generateTempGroup();
+		}
 	}
 
 	public int getScreenWidth() {
@@ -251,8 +303,6 @@ public class GroupFragment extends BaseFragment {
 		float dp = density * px + 0.5f;
 		return dp;
 	}
-
-	Map<String, View> groups = new HashMap<String, View>();
 
 	class Position {
 		int x = 0;
@@ -279,6 +329,36 @@ public class GroupFragment extends BaseFragment {
 		return position;
 	}
 
+	void notifyPosition(int index, GroupHolder groupHolder) {
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		Position position = switchPosition(index);
+		params.rightMargin = -Integer.MAX_VALUE;
+		params.leftMargin = position.x;
+		params.topMargin = position.y;
+		groupHolder.groupItemView.setLayoutParams(params);
+	}
+
+	class GroupHolder {
+		View groupItemView;
+		String gid;
+
+		@Override
+		public boolean equals(Object o) {
+			boolean flag = false;
+			if (o != null) {
+				if (o instanceof GroupHolder) {
+					if (gid.equals(((GroupHolder) o).gid)) {
+						flag = true;
+					}
+				}
+			}
+			return flag;
+		}
+	}
+
+	Map<String, List<GroupHolder>> groupHoldersMap = new HashMap<String, List<GroupHolder>>();
+
 	View generateMyGroup() {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
@@ -293,81 +373,6 @@ public class GroupFragment extends BaseFragment {
 				.findViewById(R.id.buttonNextGroup);
 		buttonManager.setText("群组设置");
 		bottomBar.setVisibility(View.VISIBLE);
-
-		for (int i = 0; i < app.data.groups.size(); i++) {
-			final Group group = app.data.groupsMap.get(app.data.groups.get(i));
-			View groupItemView = mInflater.inflate(
-					R.layout.fragment_group_item, null);
-			TextView groupName = (TextView) groupItemView
-					.findViewById(R.id.groupName);
-			TextView memberCount = (TextView) groupItemView
-					.findViewById(R.id.memberCount);
-			TextView notReadMessagesCount = (TextView) groupItemView
-					.findViewById(R.id.tv_notread);
-			if (group.notReadMessagesCount != 0) {
-				notReadMessagesCount.setVisibility(View.VISIBLE);
-				if (group.notReadMessagesCount > 99) {
-					notReadMessagesCount.setText("99+");
-				} else {
-					notReadMessagesCount.setText(String
-							.valueOf(group.notReadMessagesCount));
-				}
-			} else {
-				notReadMessagesCount.setVisibility(View.GONE);
-			}
-			groupName.setText(group.name);
-			memberCount.setText("(" + String.valueOf(group.members.size())
-					+ ")");
-
-			LinearLayout members = (LinearLayout) groupItemView
-					.findViewById(R.id.members);
-
-			for (int j = 0; j < group.members.size(); j++) {
-				if (j == 5) {
-					break;
-				}
-				Friend groupFriend = app.data.groupFriends.get(group.members
-						.get(j));
-				final ImageView head = new ImageView(getActivity());
-				android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-						headSize, headSize);
-				params.leftMargin = headMargin;
-				head.setLayoutParams(params);
-				final String fileName = groupFriend.head;
-				app.fileHandler.getHeadImage(fileName, new FileResult() {
-					@Override
-					public void onResult(String where) {
-						head.setImageBitmap(app.fileHandler.bitmaps
-								.get(fileName));
-					}
-				});
-				members.addView(head);
-			}
-
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-					groupItemWidth, RelativeLayout.LayoutParams.WRAP_CONTENT);
-			Position position = switchPosition(i);
-			params.rightMargin = -Integer.MAX_VALUE;
-			params.leftMargin = position.x;
-			params.topMargin = position.y;
-			groupItemView.setLayoutParams(params);
-
-			groupItemView.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
-						return;
-					}
-					mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-					mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
-					mMainModeManager
-							.showNext(mMainModeManager.mChatGroupFragment);
-				}
-			});
-
-			viewContainer.addView(groupItemView);
-		}
 
 		View groupItemView = mInflater.inflate(
 				R.layout.fragment_group_item_add, null);
@@ -392,14 +397,17 @@ public class GroupFragment extends BaseFragment {
 
 		viewContainer.addView(groupItemView);
 
+		GroupHolder holder = new GroupHolder();
+		holder.groupItemView = groupItemView;
+		groupHoldersMap.get("myGroup").add(holder);
+
 		final GestureDetector detector = new GestureDetector(getActivity(),
 				new SimpleOnGestureListener() {
-					float x0 = 0;
-					float dx = 0;
+					float lastX = 0;
 
 					@Override
 					public boolean onDown(MotionEvent e) {
-						x0 = e.getRawX();
+						lastX = e.getRawX();
 						return true;
 					}
 
@@ -410,10 +418,15 @@ public class GroupFragment extends BaseFragment {
 					@Override
 					public boolean onScroll(MotionEvent e1, MotionEvent e2,
 							float distanceX, float distanceY) {
-						dx = e2.getRawX() - x0;
+						float currentX = e2.getRawX();
 						if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
-							viewContainer.scrollBy(-(int) (dx), 0);
-							x0 = e2.getRawX();
+							if (lastX == 0) {
+								lastX = currentX;
+							}
+							viewContainer
+									.scrollBy(-(int) (currentX - lastX), 0);
+							lastX = currentX;
+							viewContainer.interceptTouchEvent();
 						}
 						return true;
 					}
@@ -428,6 +441,107 @@ public class GroupFragment extends BaseFragment {
 		});
 
 		return groupView;
+	}
+
+	void notifyGroups(List<Group> groups, List<GroupHolder> groupHolders,
+			View groupView) {
+
+		final ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) groupView
+				.findViewById(R.id.viewContainer);
+
+		for (int i = 0; i < groups.size(); i++) {
+			final Group group = groups.get(i);
+			GroupHolder groupHolder = new GroupHolder();
+			groupHolder.gid = String.valueOf(group.gid);
+			int index = groupHolders.indexOf(groupHolder);
+			if (index != -1) {
+				groupHolder = groupHolders.remove(index);
+			} else {
+				groupHolder.groupItemView = mInflater.inflate(
+						R.layout.fragment_group_item, null);
+				viewContainer.addView(groupHolder.groupItemView);
+				groupHolder.groupItemView
+						.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View arg0) {
+								if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
+									return;
+								}
+								mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+								mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
+								mMainModeManager
+										.showNext(mMainModeManager.mChatGroupFragment);
+							}
+						});
+
+				groupHolder.groupItemView
+						.setOnLongClickListener(new OnLongClickListener() {
+
+							@Override
+							public boolean onLongClick(View v) {
+								mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_MANAGER;
+								mMainModeManager.mGroupManagerFragment.mCurrentManagerGroup = group;
+								mMainModeManager
+										.showNext(mMainModeManager.mGroupManagerFragment);
+								return true;
+							}
+						});
+			}
+			groupHolders.add(i, groupHolder);
+
+			TextView groupName = (TextView) groupHolder.groupItemView
+					.findViewById(R.id.groupName);
+			TextView memberCount = (TextView) groupHolder.groupItemView
+					.findViewById(R.id.memberCount);
+			TextView notReadMessagesCount = (TextView) groupHolder.groupItemView
+					.findViewById(R.id.tv_notread);
+			if (group.notReadMessagesCount != 0) {
+				notReadMessagesCount.setVisibility(View.VISIBLE);
+				if (group.notReadMessagesCount > 99) {
+					notReadMessagesCount.setText("99+");
+				} else {
+					notReadMessagesCount.setText(String
+							.valueOf(group.notReadMessagesCount));
+				}
+			} else {
+				notReadMessagesCount.setVisibility(View.GONE);
+			}
+			groupName.setText(group.name);
+			memberCount.setText("(" + String.valueOf(group.members.size())
+					+ ")");
+
+			LinearLayout members = (LinearLayout) groupHolder.groupItemView
+					.findViewById(R.id.members);
+
+			members.removeAllViews();
+			for (int j = 0; j < group.members.size(); j++) {
+				if (j == 5) {
+					break;
+				}
+				Friend groupFriend = app.data.groupFriends.get(group.members
+						.get(j));
+				final ImageView head = new ImageView(getActivity());
+				android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
+						headSize, headSize);
+				params.leftMargin = headMargin;
+				head.setLayoutParams(params);
+				final String fileName = groupFriend.head;
+				app.fileHandler.getHeadImage(fileName, new FileResult() {
+					@Override
+					public void onResult(String where) {
+						head.setImageBitmap(app.fileHandler.bitmaps
+								.get(fileName));
+					}
+				});
+				members.addView(head);
+			}
+
+		}
+
+		for (int i = 0; i < groupHolders.size(); i++) {
+			notifyPosition(i, groupHolders.get(i));
+		}
 	}
 
 	View generateAttentionGroup() {
@@ -530,6 +644,50 @@ public class GroupFragment extends BaseFragment {
 	public void onResume() {
 		CircleMenu.show();
 		CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
+		app.locationHandler.requestLocation(new LocationListener() {
+			@Override
+			public void onReceiveLocation(BDLocation location) {
+				getNearByGroup(location.getLongitude(), location.getLatitude());
+			}
+		});
 		super.onResume();
+	}
+
+	void getNearByGroup(final double longitude, final double latitude) {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.LBS_NEARBYGROUPS;
+				settings.params = new HashMap<String, String>();
+				settings.params.put("phone", app.data.user.phone);
+				settings.params.put("accessKey", app.data.user.accessKey);
+				settings.params.put("area", "{\"longitude\":\"" + longitude
+						+ "\",\"latitude\":\"" + latitude + "\",\"radius\":\""
+						+ 2000 + "\"}");
+			}
+
+			@Override
+			public void success(final JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						try {
+							GroupsAndFriends groupsAndFriends = JSONParser
+									.generateGroupsFromJSON(jData
+											.getJSONArray("groups"));
+							System.out.println(groupsAndFriends.groups);
+							for (Group group : groupsAndFriends.groups) {
+
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
 	}
 }

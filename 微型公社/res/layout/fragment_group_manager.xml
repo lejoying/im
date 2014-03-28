@@ -45,12 +45,10 @@
                     android:paddingTop="5dp" >
 
                     <ImageView
-                        android:id="@+id/img_weixin"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:clickable="false"
                         android:padding="4dp"
-                        android:src="@drawable/chat_emoji_normal" />
+                        android:src="@drawable/button_addmembers" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -73,7 +71,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:padding="4dp"
-                        android:src="@drawable/chat_emoji_normal" />
+                        android:src="@drawable/button_removemembers" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -95,7 +93,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:padding="4dp"
-                        android:src="@drawable/chat_emoji_normal" />
+                        android:src="@drawable/button_quitegroup" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -117,7 +115,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:padding="6dp"
-                        android:src="@drawable/chat_emoji_normal" />
+                        android:src="@drawable/button_modifygroupname" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -132,7 +130,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:paddingTop="5dp" >
+                    android:paddingTop="5dp"
+                    android:visibility="gone" >
 
                     <ImageView
                         android:id="@+id/img_settings"
@@ -155,7 +154,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:paddingTop="5dp" >
+                    android:paddingTop="5dp"
+                    android:visibility="gone" >
 
                     <ImageView
                         android:id="@+id/img_settings"

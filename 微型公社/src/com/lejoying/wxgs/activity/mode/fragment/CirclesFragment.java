@@ -137,6 +137,7 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	public void notifyViews(boolean initShowMessageCount) {
+		circlesViewContenter.removeAllViews();
 		generateViews(initShowMessageCount);
 		if (mode.equals("normal")) {
 			int top = 25;
@@ -153,6 +154,7 @@ public class CirclesFragment extends BaseFragment {
 						&& v.equals(views.get(circles.get(currentEditPosition)))) {
 					scrollToY = top;
 					scrollToY -= dp2px(20);
+					circlesViewContenter.scrollTo(0, scrollToY);
 				}
 
 				top = top + height + 25;
@@ -161,7 +163,6 @@ public class CirclesFragment extends BaseFragment {
 					circlesViewContenter.addView(v, i);
 				}
 			}
-			circlesViewContenter.scrollTo(0, scrollToY);
 		} else if (mode.equals("edit")) {
 
 			final int screenWidth = getScreenWidth();
@@ -270,6 +271,7 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	void notifyFriendChanged() {
+
 		Set<String> moveOutKeys = modifyFriend.moveOut.keySet();
 		Set<String> moveInKeys = modifyFriend.moveIn.keySet();
 		for (final String key : moveOutKeys) {
@@ -285,6 +287,8 @@ public class CirclesFragment extends BaseFragment {
 					if (circle != null) {
 						circle.phones.removeAll(phones);
 					}
+					data.circlesMap.get("-1").phones
+							.addAll(checkFriends(phones));
 				}
 			});
 			StringBuffer buffer = new StringBuffer("[");
@@ -329,6 +333,30 @@ public class CirclesFragment extends BaseFragment {
 						circle.phones.addAll(0, phones);
 					}
 					data.circlesMap.get("-1").phones.removeAll(phones);
+
+				}
+
+				@Override
+				public void modifyUI() {
+					View defaultContent = views.get("group#-1");
+					CircleHolder circleHolder = circleHolders.get("group#-1");
+					if (defaultContent != null && circleHolder != null) {
+						ScrollRelativeLayout friendContainer = (ScrollRelativeLayout) defaultContent
+								.findViewById(R.id.viewContainer);
+						for (String phone : phones) {
+							FriendHolder holder = new FriendHolder();
+							holder.phone = phone;
+							int index = circleHolder.friendHolders
+									.indexOf(holder);
+							if (index != -1) {
+								holder = circleHolder.friendHolders
+										.remove(index);
+								if (holder != null && holder.view != null) {
+									friendContainer.removeView(holder.view);
+								}
+							}
+						}
+					}
 				}
 			});
 			StringBuffer buffer = new StringBuffer("[");
@@ -517,10 +545,8 @@ public class CirclesFragment extends BaseFragment {
 										Circle circle = data.circlesMap
 												.remove(rid);
 										if (circle != null) {
-											Map<String, List<String>> phones = checkFriends(circle.phones);
 											data.circlesMap.get("-1").phones
-													.addAll(phones
-															.get("default"));
+													.addAll(checkFriends(circle.phones));
 										}
 									}
 
@@ -734,25 +760,21 @@ public class CirclesFragment extends BaseFragment {
 		});
 	}
 
-	Map<String, List<String>> checkFriends(Collection<String> checkPhones) {
+	List<String> checkFriends(Collection<String> checkPhones) {
 		List<String> allInOtherCircleFriend = new ArrayList<String>();
-		List<String> resultHasCircle = new ArrayList<String>();
 		List<String> resultNoCircle = new ArrayList<String>();
-		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		for (String rid : app.data.circles) {
 			Circle circle = app.data.circlesMap.get(rid);
 			allInOtherCircleFriend.addAll(circle.phones);
 		}
 		for (String phone : checkPhones) {
+			System.out.print(phone + ":::");
 			if (!allInOtherCircleFriend.contains(phone)) {
 				resultNoCircle.add(phone);
-			} else {
-				resultHasCircle.add(phone);
+				System.out.println("noCircle");
 			}
 		}
-		result.put("have", resultHasCircle);
-		result.put("default", resultNoCircle);
-		return result;
+		return resultNoCircle;
 	}
 
 	int currentEditPosition = -1;
@@ -818,11 +840,6 @@ public class CirclesFragment extends BaseFragment {
 
 	public void swichToNormalMode() {
 		notifyFriendChanged();
-		if (mode.equals("edit")) {
-			mode = "normal";
-		} else {
-			return;
-		}
 		if (tempFriendsList.getChildCount() != 0) {
 			Alert.showDialog("未放入其它密友圈的好友将自动转移到默认分组中。", new DialogListener() {
 
@@ -839,9 +856,8 @@ public class CirclesFragment extends BaseFragment {
 						public void modifyData(Data data) {
 							Set<String> checkPhones = tempFriendHolders
 									.keySet();
-							Map<String, List<String>> result = checkFriends(checkPhones);
-							data.circlesMap.get("-1").phones.addAll(result
-									.get("default"));
+							data.circlesMap.get("-1").phones
+									.addAll(checkFriends(checkPhones));
 						}
 
 						@Override
@@ -868,6 +884,11 @@ public class CirclesFragment extends BaseFragment {
 
 	void normalMode() {
 		CircleMenu.show();
+		if (mode.equals("edit")) {
+			mode = "normal";
+		} else {
+			return;
+		}
 		mMainModeManager.setKeyDownListener(null);
 
 		TranslateAnimation editControlIn = new TranslateAnimation(0, 0, 0,
@@ -913,6 +934,7 @@ public class CirclesFragment extends BaseFragment {
 	Map<String, View> views = new HashMap<String, View>();
 	List<String> normalShow = new ArrayList<String>();
 	List<String> circles = new ArrayList<String>();
+	List<String> messages = new ArrayList<String>();
 
 	int lastChatFriendsSize;
 
@@ -941,8 +963,12 @@ public class CirclesFragment extends BaseFragment {
 		if (newFriendsCount != 0) {
 			notifyNewFriendButtonView(newFriendButtonView, newFriendsCount);
 			normalShow.add("button#newfriend");
+		} else if (newFriendButtonView.getParent() != null) {
+			((ViewGroup) newFriendButtonView.getParent())
+					.removeView(newFriendButtonView);
 		}
 
+		messages.clear();
 		for (int i = 0; i < lastChatFriendsSize; i++) {
 			String phone = app.data.lastChatFriends.get(i);
 			Friend friend = app.data.friends.get(phone);
@@ -955,17 +981,22 @@ public class CirclesFragment extends BaseFragment {
 				messageView.setTag(74);
 				views.put("message#" + phone, messageView);
 			}
-			notifyMessageView(messageView, friend);
+			messages.add("message#");
 			normalShow.add("message#" + phone);
+			notifyMessageView(messageView, friend);
 		}
 
-		if (views.get("button#moremessage") == null) {
-			View moreMessageButtonView = generateMoreMessageButtonView();
-			moreMessageButtonView.setTag(46);
-			views.put("button#moremessage", moreMessageButtonView);
+		View moremessageView = views.get("button#moremessage");
+		if (moremessageView == null) {
+			moremessageView = generateMoreMessageButtonView();
+			moremessageView.setTag(46);
+			views.put("button#moremessage", moremessageView);
 		}
 		if (lastChatFriendsSize != 0) {
 			normalShow.add("button#moremessage");
+		} else if (moremessageView.getParent() != null) {
+			((ViewGroup) moremessageView.getParent())
+					.removeView(moremessageView);
 		}
 
 		circles.clear();
@@ -1006,7 +1037,7 @@ public class CirclesFragment extends BaseFragment {
 
 	View generateNewFriendButtonView() {
 		View newFriendButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
+				R.layout.fragment_item_button, null);
 		return newFriendButtonView;
 	}
 
@@ -1031,7 +1062,7 @@ public class CirclesFragment extends BaseFragment {
 
 	View generateMoreMessageButtonView() {
 		View moreMessageButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
+				R.layout.fragment_item_button, null);
 		Button moreMessageButton = (Button) moreMessageButtonView
 				.findViewById(R.id.button);
 		moreMessageButton.setText("点击查看更多");
@@ -1051,7 +1082,7 @@ public class CirclesFragment extends BaseFragment {
 
 	View generateFindMoreFriendButtonView() {
 		View findMoreFriendButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
+				R.layout.fragment_item_button, null);
 		Button findMoreFriendButton = (Button) findMoreFriendButtonView
 				.findViewById(R.id.button);
 		findMoreFriendButton.setText("找到更多密友");
@@ -1072,7 +1103,7 @@ public class CirclesFragment extends BaseFragment {
 	View generateCreateGroupButtonView() {
 
 		View createGroupButtonView = mInflater.inflate(
-				R.layout.fragment_item_buttom, null);
+				R.layout.fragment_item_button, null);
 		Button createGroupButton = (Button) createGroupButtonView
 				.findViewById(R.id.button);
 		createGroupButton.setText("新建分组");
@@ -1322,12 +1353,26 @@ public class CirclesFragment extends BaseFragment {
 		return circleView;
 	}
 
+	boolean checkFriendHolderIsInOtherCircle(String phone) {
+		FriendHolder holder = new FriendHolder();
+		holder.phone = phone;
+		Set<String> keys = circleHolders.keySet();
+		for (String key : keys) {
+			if (!key.equals("group#-1")) {
+				if (circleHolders.get(key).friendHolders.contains(holder)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	void notifyCircleView(final View circleView, Circle circle,
 			CircleHolder circleHolder) {
 		TextView groupName = (TextView) circleView
 				.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
-		final RelativeLayout container = (RelativeLayout) circleView
+		final ScrollRelativeLayout container = (ScrollRelativeLayout) circleView
 				.findViewById(R.id.viewContainer);
 
 		List<String> phones = circle.phones;
@@ -1415,7 +1460,12 @@ public class CirclesFragment extends BaseFragment {
 												.put(fromRid,
 														(phones = new ArrayList<String>()));
 									}
-									phones.add(friend.phone);
+									if (modifyFriend.moveIn.get(fromRid) == null
+											|| !modifyFriend.moveIn
+													.get(fromRid).remove(
+															friend.phone)) {
+										phones.add(friend.phone);
+									}
 								}
 
 								resetSaveStatus();
@@ -1455,9 +1505,21 @@ public class CirclesFragment extends BaseFragment {
 									.setOnClickListener(new OnClickListener() {
 										@Override
 										public void onClick(View view) {
+
+											String circleKey = circles
+													.get(currentEditPosition);
+											String toRid = circleKey
+													.substring(6);
+
+											if (toRid.equals("-1")
+													&& checkFriendHolderIsInOtherCircle(friend.phone)) {
+												Alert.showMessage("该好友已存在于其它分组.");
+												return;
+											}
+
 											resetSaveStatus();
-											View circleView = views.get(circles
-													.get(currentEditPosition));
+											View circleView = views
+													.get(circleKey);
 											RelativeLayout friendContainer = (RelativeLayout) circleView
 													.findViewById(R.id.viewContainer);
 											friendContainer.scrollTo(0, 0);
@@ -1465,8 +1527,8 @@ public class CirclesFragment extends BaseFragment {
 											final FriendHolder friendHolder = tempFriendHolders
 													.remove(friend.phone);
 
-											CircleHolder circleHolder = circleHolders.get(circles
-													.get(currentEditPosition));
+											CircleHolder circleHolder = circleHolders
+													.get(circleKey);
 
 											int friendIndex;
 											if ((friendIndex = circleHolder.friendHolders
@@ -1476,9 +1538,7 @@ public class CirclesFragment extends BaseFragment {
 												friendContainer
 														.removeView(removeHolder.view);
 											} else {
-												String toRid = circles.get(
-														currentEditPosition)
-														.substring(6);
+
 												if (!toRid.equals("-1")) {
 													if (modifyFriend.moveOut
 															.get(toRid) == null
@@ -1666,6 +1726,7 @@ public class CirclesFragment extends BaseFragment {
 						if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
 							container.scrollBy(-(int) (dx), 0);
 							x0 = e2.getRawX();
+							container.interceptTouchEvent();
 						}
 						return true;
 					}

@@ -109,6 +109,8 @@ public class MainApplication extends Application {
 							data.circlesMap = localData.circlesMap;
 							data.friends = localData.friends;
 							data.groups = localData.groups;
+							data.squareFlags = localData.squareFlags;
+							data.squareMessages = localData.squareMessages;
 							data.groupsMap = localData.groupsMap;
 							data.groupFriends = localData.groupFriends;
 							data.lastChatFriends = localData.lastChatFriends;

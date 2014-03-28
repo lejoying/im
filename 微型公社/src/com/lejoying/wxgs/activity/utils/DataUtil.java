@@ -398,6 +398,8 @@ public class DataUtil {
 				saveData.circlesMap = app.data.circlesMap;
 				saveData.friends = app.data.friends;
 				saveData.groups = app.data.groups;
+				saveData.squareFlags = app.data.squareFlags;
+				saveData.squareMessages = app.data.squareMessages;
 				saveData.groupsMap = app.data.groupsMap;
 				saveData.groupFriends = app.data.groupFriends;
 				saveData.lastChatFriends = app.data.lastChatFriends;

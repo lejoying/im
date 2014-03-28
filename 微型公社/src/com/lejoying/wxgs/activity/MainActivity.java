@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
 
 		setContentView(R.layout.activity_main);
 		mBackground = (BackgroundView) findViewById(R.id.mainBackGround);
-		mBackground.setBackground(R.drawable.background1);
+		mBackground.setBackground(R.drawable.background2);
 		mFragmentManager = getSupportFragmentManager();
 
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity {
 				mode = MODE_MAIN;
 				mLoginMode.release();
 				mMainMode.initialize();
-				mMainMode.show(mMainMode.mCirclesFragment);
+				mMainMode.show(mMainMode.mSquareFragment);
 				PushService.startIMLongPull(this);
 
 				if (app.data.isClear) {

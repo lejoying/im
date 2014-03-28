@@ -14,6 +14,9 @@ public class Group implements Serializable {
 	public int notReadMessagesCount;
 	public List<String> members = new ArrayList<String>();
 	public List<Message> messages = new ArrayList<Message>();
+	public int distance;
+	public String longitude;
+	public String latitude;
 
 	@Override
 	public boolean equals(Object o) {

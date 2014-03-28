@@ -31,13 +31,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.baidu.location.BDLocation;
 import com.baidu.mapapi.map.MKMapStatus;
 import com.baidu.mapapi.map.SupportMapFragment;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment.CircleHolder;
-import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment.FriendHolder;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
@@ -54,6 +53,7 @@ import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.LocationHandler.LocationListener;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 public class GroupManagerFragment extends BaseFragment {
@@ -94,8 +94,8 @@ public class GroupManagerFragment extends BaseFragment {
 
 	List<Friend> seleteFriendList;
 
-	private static final GeoPoint GEO_BEIJING = new GeoPoint(
-			(int) (39.945 * 1E6), (int) (116.404 * 1E6));
+	private GeoPoint mCurrentGeo = new GeoPoint((int) (39.945 * 1E6),
+			(int) (116.404 * 1E6));
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -132,6 +132,15 @@ public class GroupManagerFragment extends BaseFragment {
 				.findViewById(R.id.animationLayout);
 		tempFriendScroll = (HorizontalScrollView) mContentView
 				.findViewById(R.id.tempFriendScroll);
+
+		app.locationHandler.requestLocation(new LocationListener() {
+
+			@Override
+			public void onReceiveLocation(BDLocation location) {
+				mCurrentGeo.setLatitudeE6((int) (location.getLatitude() * 1E6));
+				mCurrentGeo.setLongitudeE6((int) (location.getLongitude() * 1E6));
+			}
+		});
 
 		notifyViews();
 
@@ -187,7 +196,26 @@ public class GroupManagerFragment extends BaseFragment {
 								.getController()
 								.setMapStatus(
 										newMapStatusWithGeoPointAndZoom(
-												GEO_BEIJING, 15));
+												mCurrentGeo, 15));
+						app.locationHandler
+								.requestLocation(new LocationListener() {
+
+									@Override
+									public void onReceiveLocation(
+											BDLocation location) {
+										mCurrentGeo
+												.setLatitudeE6((int) (location
+														.getLatitude() * 1E6));
+										mCurrentGeo
+												.setLongitudeE6((int) (location
+														.getLongitude() * 1E6));
+										map.getMapView()
+												.getController()
+												.setMapStatus(
+														newMapStatusWithGeoPointAndZoom(
+																mCurrentGeo, 15));
+									}
+								});
 
 					} else if (newStatus.equals("map")) {
 						newStatus = "complete";

@@ -26,19 +26,16 @@ public class Friend implements Serializable {
 	public boolean equals(Object o) {
 		boolean flag = false;
 		if (o != null) {
-			try {
+			if (o instanceof Friend) {
 				Friend f = (Friend) o;
-				if (phone.equals(f.phone) && nickName.equals(f.nickName)
-						&& mainBusiness.equals(f.mainBusiness)
-						&& head.equals(f.head)
-						&& friendStatus.equals(f.friendStatus)
-						&& temp == f.temp
-						&& notReadMessagesCount == f.notReadMessagesCount
-						&& messages.containsAll(f.messages)) {
+				if (phone.equals(f.phone)) {
 					flag = true;
 				}
-			} catch (Exception e) {
-
+			} else if (o instanceof String) {
+				String s = (String) o;
+				if (phone.equals(s)) {
+					flag = true;
+				}
 			}
 		}
 		return flag;

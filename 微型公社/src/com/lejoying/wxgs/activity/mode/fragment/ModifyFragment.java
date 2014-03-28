@@ -482,6 +482,41 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		params.put("accessKey", app.data.user.accessKey);
 		params.put("account", account.toString());
 
+		app.dataHandler.exclude(new Modification() {
+
+			@Override
+			public void modifyData(Data data) {
+				if (user.head != null && !user.head.equals("")) {
+					data.user.head = user.head;
+				}
+				if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
+					data.user.mainBusiness = user.mainBusiness;
+				}
+				if (user.nickName != null && !user.mainBusiness.equals("")) {
+					data.user.nickName = user.nickName;
+				}
+			}
+
+			@Override
+			public void modifyUI() {
+				if (user.head != null && !user.head.equals("")) {
+					final String headFileName = app.data.user.head;
+					app.fileHandler.getHeadImage(headFileName,
+							new FileResult() {
+								@Override
+								public void onResult(String where) {
+									iv_head.setImageBitmap(app.fileHandler.bitmaps
+											.get(headFileName));
+								}
+							});
+
+				}
+				if (mMainModeManager.mBusinessCardFragment.isAdded()) {
+					mMainModeManager.mBusinessCardFragment.initData();
+				}
+			}
+		});
+
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -492,38 +527,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 
 			@Override
 			public void success(JSONObject jData) {
-				app.dataHandler.exclude(new Modification() {
-
-					@Override
-					public void modifyData(Data data) {
-						if (user.head != null && !user.head.equals("")) {
-							data.user.head = user.head;
-						}
-						if (user.mainBusiness != null
-								&& !user.mainBusiness.equals("")) {
-							data.user.mainBusiness = user.mainBusiness;
-						}
-						if (user.nickName != null
-								&& !user.mainBusiness.equals("")) {
-							data.user.nickName = user.nickName;
-						}
-					}
-
-					@Override
-					public void modifyUI() {
-						if (user.head != null && !user.head.equals("")) {
-							final String headFileName = app.data.user.head;
-							app.fileHandler.getHeadImage(headFileName,
-									new FileResult() {
-										@Override
-										public void onResult(String where) {
-											iv_head.setImageBitmap(app.fileHandler.bitmaps
-													.get(headFileName));
-										}
-									});
-						}
-					}
-				});
 			}
 		});
 	}

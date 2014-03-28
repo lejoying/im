@@ -86,7 +86,6 @@ import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
-@SuppressLint("NewApi")
 public class ChatFriendFragment extends BaseFragment {
 
 	MainApplication app = MainApplication.getMainApplication();
@@ -198,7 +197,14 @@ public class ChatFriendFragment extends BaseFragment {
 		super.onCreate(savedInstanceState);
 	}
 
-	@SuppressLint({ "HandlerLeak", "NewApi" })
+	View headView;
+
+	public float dp2px(float px) {
+		float dp = getActivity().getResources().getDisplayMetrics().density
+				* px + 0.5f;
+		return dp;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -208,6 +214,15 @@ public class ChatFriendFragment extends BaseFragment {
 		faceMenuShowList = new ArrayList<ImageView>();
 		mContent = inflater.inflate(R.layout.f_chat, null);
 		chatContent = (ListView) mContent.findViewById(R.id.chatContent);
+
+		if (headView == null) {
+			AbsListView.LayoutParams params = new AbsListView.LayoutParams(
+					android.widget.AbsListView.LayoutParams.WRAP_CONTENT,
+					(int) dp2px(35));
+			headView = new View(getActivity());
+			headView.setLayoutParams(params);
+		}
+		chatContent.addHeaderView(headView);
 
 		iv_send = mContent.findViewById(R.id.iv_send);
 		iv_more = mContent.findViewById(R.id.iv_more);
@@ -265,7 +280,28 @@ public class ChatFriendFragment extends BaseFragment {
 				.findViewById(R.id.linearlayout_members);
 
 		if (mStatus == CHAT_FRIEND) {
-			groupTopBar.setVisibility(View.GONE);
+			groupTopBar.setVisibility(View.VISIBLE);
+			textView_groupName.setText(mNowChatFriend.nickName);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.WRAP_CONTENT,
+					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+			textView_groupName.setLayoutParams(layoutParams);
+			textView_memberCount.setText("");
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					60, 60);
+			params.rightMargin = 20;
+			final ImageView iv_head = new ImageView(getActivity());
+			final String headFileName = mNowChatFriend.head;
+			app.fileHandler.getHeadImage(headFileName, new FileResult() {
+				@Override
+				public void onResult(String where) {
+					iv_head.setImageBitmap(app.fileHandler.bitmaps
+							.get(headFileName));
+				}
+			});
+			iv_head.setLayoutParams(params);
+			linearlayout_members.addView(iv_head);
 			initShowFirstPosition();
 			if (mNowChatFriend.notReadMessagesCount != 0) {
 				app.dataHandler.exclude(new Modification() {
@@ -401,7 +437,7 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onPageSelected(int arg0) {
-				faceMenuShowList.get(chat_vPager_now).setBackground(null);
+				// faceMenuShowList.get(chat_vPager_now).setBackground(null);
 				chat_vPager_now = arg0;
 				faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
 						Color.RED);
@@ -462,7 +498,10 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				groupCenterBar.setVisibility(View.VISIBLE);
+				mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+				mMainModeManager.mBusinessCardFragment.mShowFriend = mNowChatFriend;
+				mMainModeManager
+						.showNext(mMainModeManager.mBusinessCardFragment);
 			}
 		});
 
@@ -1030,6 +1069,10 @@ public class ChatFriendFragment extends BaseFragment {
 		rl_message.setVisibility(View.VISIBLE);
 		editText_message.requestFocus();
 		rl_message.startAnimation(inAnimation);
+		if (rl_audiopanel.getVisibility() == View.VISIBLE) {
+			rl_audiopanel.setVisibility(View.GONE);
+			tv_voice.setText("语音");
+		}
 	}
 
 	public class GroupChatAdapter extends BaseAdapter {
@@ -1716,8 +1759,8 @@ public class ChatFriendFragment extends BaseFragment {
 					@Override
 					public void onClick(View v) {
 						int position = (Integer) v.getTag();
-						faceMenuShowList.get(chat_vPager_now).setBackground(
-								null);
+						// faceMenuShowList.get(chat_vPager_now).setBackground(
+						// null);
 						chat_vPager_now = position;
 						faceMenuShowList.get(chat_vPager_now)
 								.setBackgroundColor(Color.RED);

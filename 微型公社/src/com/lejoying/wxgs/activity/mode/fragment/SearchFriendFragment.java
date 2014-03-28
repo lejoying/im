@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
@@ -49,11 +50,6 @@ public class SearchFriendFragment extends BaseFragment {
 	LayoutInflater mInflater;
 	MainModeManager mMainModeManager;
 
-	View mContent;
-
-	ScrollContent mScrollContent;
-	ScrollContentAdapter mAdapter;
-
 	boolean isReceiveLocation;
 
 	public static SearchFriendFragment instance;
@@ -68,15 +64,47 @@ public class SearchFriendFragment extends BaseFragment {
 		mMainModeManager = mainMode;
 	}
 
+	ScrollView mContent;
+	ScrollRelativeLayout viewContainer;
+	CircleHolder circleHolder;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		instance = this;
 		mInflater = inflater;
 
-		mContent = inflater.inflate(R.layout.f_vertical_scroll, null);
+		mContent = (ScrollView) inflater.inflate(R.layout.f_vertical_scroll,
+				null);
+		viewContainer = (ScrollRelativeLayout) mContent
+				.findViewById(R.id.viewContainer);
+		circleHolder = new CircleHolder();
+		notifyCircleView(viewContainer, app.data.nearByFriends, circleHolder);
 
-		mScrollContent = (ScrollContent) mContent.findViewById(R.id.content);
+		final EditText mView_phone = (EditText) mContent
+				.findViewById(R.id.et_phone);
+		View mView_search = mContent.findViewById(R.id.btn_search);
+		mView_search.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				final String phone = mView_phone.getText().toString();
+				if (phone == null || phone.equals("")) {
+					Alert.showMessage(getString(R.string.alert_text_phonenotnull));
+					return;
+				}
+				hideSoftInput();
+				search(phone);
+			}
+		});
+
+		View scanBusinessCard = mContent.findViewById(R.id.scanBusinessCard);
+		scanBusinessCard.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mMainModeManager.showNext(mMainModeManager.mScanQRCodeFragment);
+			}
+		});
 
 		app.locationHandler.requestLocation(new LocationListener() {
 
@@ -123,23 +151,12 @@ public class SearchFriendFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						mAdapter.notifyDataSetChanged();
+						notifyCircleView(viewContainer, app.data.nearByFriends,
+								circleHolder);
 					}
 				});
 			}
 		});
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		mAdapter = new SearchFriendAdapter(mScrollContent);
-		mScrollContent.setAdapter(mAdapter);
-	}
-
-	class ItemHolder {
-		ImageView iv_head;
-		TextView tv_nickname;
 	}
 
 	class SearchFriendAdapter extends ScrollContentAdapter {
@@ -202,7 +219,7 @@ public class SearchFriendFragment extends BaseFragment {
 
 				break;
 			case 2:
-				convertView = mInflater.inflate(R.layout.fragment_item_buttom,
+				convertView = mInflater.inflate(R.layout.fragment_item_button,
 						null);
 				Button button = (Button) convertView.findViewById(R.id.button);
 				button.setText(getString(R.string.button_scanbusinesscard));
@@ -392,10 +409,22 @@ public class SearchFriendFragment extends BaseFragment {
 				convertView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(final View holderView) {
-						mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-						mMainModeManager.mChatFragment.mNowChatFriend = friend;
-						mMainModeManager
-								.showNext(mMainModeManager.mChatFragment);
+						if (app.data.friends.get(friend.phone) != null) {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						} else if (friend.phone.equals(app.data.user.phone)) {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						} else {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						}
 					}
 				});
 				container.addView(convertView);
@@ -430,6 +459,7 @@ public class SearchFriendFragment extends BaseFragment {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				mContent.requestDisallowInterceptTouchEvent(true);
 				return detector.onTouchEvent(event);
 			}
 		});
