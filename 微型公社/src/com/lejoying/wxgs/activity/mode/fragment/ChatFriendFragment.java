@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R.array;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +24,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -37,7 +36,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -61,7 +63,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -360,6 +361,21 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	void initEvent() {
+		Drawable drawable = getResources().getDrawable(R.drawable.voice_start);
+		drawable.setBounds(0, 0, 50, 50);// drawable.getIntrinsicWidth(),
+		// drawable.getIntrinsicHeight()
+		SpannableString spannableString = new SpannableString(getText(
+				R.id.et_message).toString()
+				+ "[smile]");
+		ImageSpan imageSpan = new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE);
+		spannableString.setSpan(imageSpan, getText(R.id.et_message).length(),
+				getText(R.id.et_message).length() + "[smile]".length(),
+				Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+
+		editText_message.setText(spannableString);
+		editText_message.setCompoundDrawablePadding(10);
+		// editText_message.setCompoundDrawables(null, null, null, null);
+		// editText_message
 		initBaseFaces();
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
