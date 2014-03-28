@@ -12,18 +12,15 @@ import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Process;
-import android.widget.Toast;
 
-import com.baidu.mapapi.BMapManager;
-import com.baidu.mapapi.MKGeneralListener;
-import com.baidu.mapapi.map.MKEvent;
 import com.lejoying.wxgs.activity.BaseActivity;
 import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.EventHandler;
 import com.lejoying.wxgs.app.handler.FileHandler;
-import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.LocationHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.utils.SHA1;
@@ -42,6 +39,7 @@ public class MainApplication extends Application {
 	public NetworkHandler networkHandler;
 	public FileHandler fileHandler;
 	public EventHandler eventHandler;
+	public LocationHandler locationHandler;
 
 	public static String currentTAG;
 	public static BaseActivity currentActivity;
@@ -80,37 +78,8 @@ public class MainApplication extends Application {
 		fileHandler.initialize(this);
 		eventHandler = new EventHandler();
 		eventHandler.initialize(this);
-
-		BMapManager manager = new BMapManager(this);
-		manager.init("ceDtWxAk6GYKosK2ieQWGSrI", new MKGeneralListener() {
-
-			@Override
-			public void onGetNetworkState(int iError) {
-				if (iError == MKEvent.ERROR_NETWORK_CONNECT) {
-					Toast.makeText(MainApplication.this, "您的网络出错啦！",
-							Toast.LENGTH_LONG).show();
-				} else if (iError == MKEvent.ERROR_NETWORK_DATA) {
-					Toast.makeText(MainApplication.this, "输入正确的检索条件！",
-							Toast.LENGTH_LONG).show();
-				}
-				// ...
-			}
-
-			@Override
-			public void onGetPermissionState(int iError) {
-				// 非零值表示key验证未通过
-				if (iError != 0) {
-					// 授权Key错误：
-					Toast.makeText(
-							MainApplication.this,
-							"请在 DemoApplication.java文件输入正确的授权Key,并检查您的网络连接是否正常！error: "
-									+ iError, Toast.LENGTH_LONG).show();
-				} else {
-					Toast.makeText(MainApplication.this, "key认证成功",
-							Toast.LENGTH_LONG).show();
-				}
-			}
-		});
+		locationHandler = new LocationHandler();
+		locationHandler.initialize(this);
 
 		// initialize tool
 		mSHA1 = new SHA1();

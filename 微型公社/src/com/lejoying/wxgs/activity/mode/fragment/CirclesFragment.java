@@ -133,7 +133,11 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	public void notifyViews() {
-		generateViews();
+		notifyViews(true);
+	}
+
+	public void notifyViews(boolean initShowMessageCount) {
+		generateViews(initShowMessageCount);
 		if (mode.equals("normal")) {
 			int top = 25;
 			int scrollToY = 0;
@@ -510,7 +514,14 @@ public class CirclesFragment extends BaseFragment {
 									@Override
 									public void modifyData(Data data) {
 										data.circles.remove(rid);
-										data.circlesMap.remove(rid);
+										Circle circle = data.circlesMap
+												.remove(rid);
+										if (circle != null) {
+											Map<String, List<String>> phones = checkFriends(circle.phones);
+											data.circlesMap.get("-1").phones
+													.addAll(phones
+															.get("default"));
+										}
 									}
 
 									@Override
@@ -806,6 +817,7 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	public void swichToNormalMode() {
+		notifyFriendChanged();
 		if (mode.equals("edit")) {
 			mode = "normal";
 		} else {
@@ -822,7 +834,6 @@ public class CirclesFragment extends BaseFragment {
 
 				@Override
 				public boolean confirm() {
-					normalMode();
 					app.dataHandler.exclude(new Modification() {
 						@Override
 						public void modifyData(Data data) {
@@ -835,11 +846,10 @@ public class CirclesFragment extends BaseFragment {
 
 						@Override
 						public void modifyUI() {
-							notifyViews();
+							normalMode();
 						}
 					});
 					tempFriendsList.removeAllViews();
-					tempFriendScroll.scrollTo(0, 0);
 					tempViewMap.clear();
 					tempFriendHolders.clear();
 					return true;
@@ -904,11 +914,15 @@ public class CirclesFragment extends BaseFragment {
 	List<String> normalShow = new ArrayList<String>();
 	List<String> circles = new ArrayList<String>();
 
-	void generateViews() {
-		// generate message views;
-		int lastChatFriendsSize = app.data.lastChatFriends.size();
-		lastChatFriendsSize = lastChatFriendsSize < 5 ? lastChatFriendsSize : 5;
+	int lastChatFriendsSize;
 
+	void generateViews(boolean initShowMessageCount) {
+		// generate message views;
+		if (initShowMessageCount) {
+			lastChatFriendsSize = app.data.lastChatFriends.size();
+			lastChatFriendsSize = lastChatFriendsSize < 5 ? lastChatFriendsSize
+					: 5;
+		}
 		normalShow.clear();
 
 		View newFriendButtonView = views.get("button#newfriend");
@@ -917,18 +931,31 @@ public class CirclesFragment extends BaseFragment {
 			newFriendButtonView.setTag(46);
 			views.put("button#newfriend", newFriendButtonView);
 		}
-		notifyNewFriendButtonView(newFriendButtonView);
-		normalShow.add("button#newfriend");
+
+		int newFriendsCount = 0;
+		for (Friend friend : app.data.newFriends) {
+			if (app.data.friends.get(friend.phone) == null) {
+				newFriendsCount++;
+			}
+		}
+		if (newFriendsCount != 0) {
+			notifyNewFriendButtonView(newFriendButtonView, newFriendsCount);
+			normalShow.add("button#newfriend");
+		}
 
 		for (int i = 0; i < lastChatFriendsSize; i++) {
 			String phone = app.data.lastChatFriends.get(i);
+			Friend friend = app.data.friends.get(phone);
+			if (friend == null) {
+				continue;
+			}
 			View messageView = views.get("message#" + phone);
 			if (messageView == null) {
 				messageView = generateMessageView(phone);
 				messageView.setTag(74);
 				views.put("message#" + phone, messageView);
 			}
-			notifyMessageView(messageView, phone);
+			notifyMessageView(messageView, friend);
 			normalShow.add("message#" + phone);
 		}
 
@@ -937,7 +964,9 @@ public class CirclesFragment extends BaseFragment {
 			moreMessageButtonView.setTag(46);
 			views.put("button#moremessage", moreMessageButtonView);
 		}
-		normalShow.add("button#moremessage");
+		if (lastChatFriendsSize != 0) {
+			normalShow.add("button#moremessage");
+		}
 
 		circles.clear();
 		// generate circles
@@ -981,10 +1010,14 @@ public class CirclesFragment extends BaseFragment {
 		return newFriendButtonView;
 	}
 
-	void notifyNewFriendButtonView(View newFriendButtonView) {
+	void notifyNewFriendButtonView(View newFriendButtonView, int newFriendsCount) {
 		Button newFriendButton = (Button) newFriendButtonView
 				.findViewById(R.id.button);
-		newFriendButton.setText("新的好友");
+		if (newFriendsCount != 0) {
+			newFriendButton.setText("新的好友(" + newFriendsCount + ")");
+		} else {
+			newFriendButton.setText("新的好友");
+		}
 		newFriendButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1130,7 +1163,7 @@ public class CirclesFragment extends BaseFragment {
 		return messageView;
 	}
 
-	void notifyMessageView(View messageView, String lastChatFriendPhone) {
+	void notifyMessageView(View messageView, final Friend friend) {
 		final ImageView head = (ImageView) messageView
 				.findViewById(R.id.iv_head);
 		TextView nickName = (TextView) messageView
@@ -1139,7 +1172,6 @@ public class CirclesFragment extends BaseFragment {
 				.findViewById(R.id.tv_lastchat);
 		TextView notReadCount = (TextView) messageView
 				.findViewById(R.id.tv_notread);
-		final Friend friend = app.data.friends.get(lastChatFriendPhone);
 
 		nickName.setText(friend.nickName);
 		Message lastMessage = friend.messages.get(friend.messages.size() - 1);
@@ -1150,7 +1182,8 @@ public class CirclesFragment extends BaseFragment {
 			lastChatMessage.setText(getString(R.string.text_picture));
 		} else if (lastMessage.contentType.equals("voice")) {
 			// lastChatMessage.setText(getString(R.string.text_voice));
-			lastChatMessage.setText("[语音]");
+			lastChatMessage.setText(getActivity().getResources().getString(
+					R.string.text_voice));
 		}
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
@@ -1742,9 +1775,6 @@ public class CirclesFragment extends BaseFragment {
 				.findViewById(R.id.iv_head);
 		TextView nickname = (TextView) convertView
 				.findViewById(R.id.tv_nickname);
-		if (friend == null) {
-			return convertView;
-		}
 		nickname.setText(friend.nickName);
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {

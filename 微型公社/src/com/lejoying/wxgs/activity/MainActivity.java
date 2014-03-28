@@ -15,6 +15,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.LocationUtils;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -110,6 +111,7 @@ public class MainActivity extends BaseActivity {
 			}
 		} else if (!app.data.user.phone.equals("")
 				&& !app.data.user.accessKey.equals("")) {
+			LocationUtils.updateLocation();
 			if (!mode.equals(MODE_MAIN)) {
 				mode = MODE_MAIN;
 				mLoginMode.release();

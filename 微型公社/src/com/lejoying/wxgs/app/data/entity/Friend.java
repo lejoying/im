@@ -18,6 +18,8 @@ public class Friend implements Serializable {
 	public String addMessage = "";
 	public boolean temp;
 	public int notReadMessagesCount;
+	public String longitude;
+	public String latitude;
 	public List<Message> messages = new ArrayList<Message>();
 
 	@Override

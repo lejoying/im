@@ -269,9 +269,7 @@ public class ChatFriendFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						// mMainModeManager.mCirclesFragment.mAdapter
-						// .notifyDataSetChanged();
-						mMainModeManager.mCirclesFragment.generateViews();
+						mMainModeManager.mCirclesFragment.notifyViews();
 					}
 				});
 			}
@@ -1026,9 +1024,7 @@ public class ChatFriendFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						// mMainModeManager.mCirclesFragment.mAdapter
-						// .notifyDataSetChanged();
-						mMainModeManager.mCirclesFragment.generateViews();
+						mMainModeManager.mCirclesFragment.notifyViews();
 					}
 				});
 			}

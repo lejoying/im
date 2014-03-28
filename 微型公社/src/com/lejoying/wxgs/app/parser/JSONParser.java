@@ -46,32 +46,39 @@ public class JSONParser {
 		Friend friend = new Friend();
 		try {
 			friend.phone = jFriend.getString("phone");
+			try {
+				friend.head = jFriend.getString("head");
+			} catch (JSONException e) {
+			}
+			try {
+				friend.nickName = jFriend.getString("nickName");
+			} catch (JSONException e) {
+			}
+			try {
+				friend.mainBusiness = jFriend.getString("mainBusiness");
+			} catch (JSONException e) {
+			}
+			try {
+				friend.friendStatus = jFriend.getString("friendStatus");
+			} catch (JSONException e) {
+			}
+			try {
+				friend.addMessage = jFriend.getString("message");
+			} catch (JSONException e) {
+			}
+			try {
+				friend.distance = jFriend.getInt("distance");
+			} catch (JSONException e) {
+			}
+			try {
+				JSONObject jLocation = jFriend.getJSONObject("location");
+				friend.longitude = jLocation.getString("longitude");
+				friend.latitude = jLocation.getString("latitude");
+			} catch (JSONException e) {
+			}
 		} catch (JSONException e) {
 		}
-		try {
-			friend.head = jFriend.getString("head");
-		} catch (JSONException e) {
-		}
-		try {
-			friend.nickName = jFriend.getString("nickName");
-		} catch (JSONException e) {
-		}
-		try {
-			friend.mainBusiness = jFriend.getString("mainBusiness");
-		} catch (JSONException e) {
-		}
-		try {
-			friend.friendStatus = jFriend.getString("friendStatus");
-		} catch (JSONException e) {
-		}
-		try {
-			friend.addMessage = jFriend.getString("message");
-		} catch (JSONException e) {
-		}
-		try {
-			friend.distance = jFriend.getInt("distance");
-		} catch (JSONException e) {
-		}
+
 		return friend;
 	}
 
@@ -109,7 +116,8 @@ public class JSONParser {
 			Map<String, Friend> friends = new HashMap<String, Friend>();
 			circle.rid = rid;
 			circle.name = name;
-			List<Friend> circleFriends = generateFriendsFromJSON(jCircle.getJSONArray("accounts"));
+			List<Friend> circleFriends = generateFriendsFromJSON(jCircle
+					.getJSONArray("accounts"));
 			List<String> phones = new ArrayList<String>();
 			for (Friend friend : circleFriends) {
 				String phone = friend.phone;
@@ -141,7 +149,8 @@ public class JSONParser {
 				Object[] circleAndFriends = generateCircleFromJSON(jCircle);
 				if (circleAndFriends != null) {
 					circles.add((Circle) circleAndFriends[0]);
-					circlefriends.putAll((Map<String, Friend>) circleAndFriends[1]);
+					circlefriends
+							.putAll((Map<String, Friend>) circleAndFriends[1]);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -160,7 +169,8 @@ public class JSONParser {
 			Map<String, Friend> friends = new HashMap<String, Friend>();
 			group.gid = jGroup.getInt("gid");
 			group.name = jGroup.getString("name");
-			List<Friend> groupFriends = generateFriendsFromJSON(jGroup.getJSONArray("members"));
+			List<Friend> groupFriends = generateFriendsFromJSON(jGroup
+					.getJSONArray("members"));
 			List<String> phones = new ArrayList<String>();
 			for (Friend friend : groupFriends) {
 				String phone = friend.phone;
@@ -193,7 +203,8 @@ public class JSONParser {
 				Object[] groupAndFriends = generateGroupFromJSON(jGroup);
 				if (groupAndFriends != null) {
 					groups.add((Group) groupAndFriends[0]);
-					groupfriends.putAll((Map<String, Friend>) groupAndFriends[1]);
+					groupfriends
+							.putAll((Map<String, Friend>) groupAndFriends[1]);
 				}
 			} catch (JSONException e) {
 			}
@@ -209,7 +220,8 @@ public class JSONParser {
 			message.sendType = jMessage.getString("sendType");
 			if (message.sendType.equals("point")) {
 				String phoneSend = jMessage.getString("phone");
-				String phoneReceive = new JSONArray(jMessage.getString("phoneto")).getString(0);
+				String phoneReceive = new JSONArray(
+						jMessage.getString("phoneto")).getString(0);
 
 				String phone = phoneSend;
 
@@ -221,7 +233,8 @@ public class JSONParser {
 					phone = phoneSend;
 				}
 				message.phone = phone;
-			} else if (message.sendType.equals("group") || message.sendType.equals("tempGroup")) {
+			} else if (message.sendType.equals("group")
+					|| message.sendType.equals("tempGroup")) {
 				String phone = jMessage.getString("phone");
 				if (phone.equals(app.data.user.phone)) {
 					message.type = Message.MESSAGE_TYPE_SEND;
@@ -269,7 +282,8 @@ public class JSONParser {
 			event.event = jEvent.getString("event");
 			JSONObject jEventContent = jEvent.getJSONObject("event_content");
 			if (event.event.equals("message")) {
-				event.eventContent = generateMessagesFromJSON(jEventContent.getJSONArray("message"));
+				event.eventContent = generateMessagesFromJSON(jEventContent
+						.getJSONArray("message"));
 			} else if (event.event.equals("newfriend")) {
 				event.eventContent = null;
 			}

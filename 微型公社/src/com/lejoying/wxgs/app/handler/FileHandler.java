@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Base64;
-import android.util.Log;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
@@ -294,6 +293,7 @@ public class FileHandler {
 		final File voiceFile = new File(settings.folder, settings.fileName);
 		if (voiceFile.exists()) {
 			new Thread() {
+				@SuppressLint("DefaultLocale")
 				public void run() {
 					try {
 						FileInputStream fis = null;

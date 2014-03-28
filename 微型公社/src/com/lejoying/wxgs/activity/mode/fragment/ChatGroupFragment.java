@@ -251,9 +251,7 @@ public class ChatGroupFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						// mMainModeManager.mCirclesFragment.mAdapter
-						// .notifyDataSetChanged();
-						mMainModeManager.mCirclesFragment.generateViews();
+						mMainModeManager.mCirclesFragment.notifyViews();
 					}
 				});
 			}
@@ -1046,7 +1044,8 @@ public class ChatGroupFragment extends BaseFragment {
 				case Message.MESSAGE_TYPE_SEND:
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					messageHolder.tv_nickname.setText(mNowChatFriend.nickName);
+					messageHolder.tv_nickname.setText(app.data.groupFriends
+							.get(message.phone).nickName);
 					break;
 				default:
 					break;
