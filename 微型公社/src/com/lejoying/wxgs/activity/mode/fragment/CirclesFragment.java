@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -153,8 +154,6 @@ public class CirclesFragment extends BaseFragment {
 				top = top + height + 25;
 				v.setLayoutParams(layoutParams);
 				if (v.getParent() == null) {
-					int position = (i > circlesViewContenter.getChildCount() ? circlesViewContenter
-							.getChildCount() : i);
 					circlesViewContenter.addView(v, i);
 				}
 			}
@@ -226,11 +225,15 @@ public class CirclesFragment extends BaseFragment {
 					}
 				});
 
-				if (i == 0) {
-					buttonPreviousGroup.setVisibility(View.GONE);
-				}
-				if (i == circles.size() - 1) {
-					buttonNextGroup.setVisibility(View.GONE);
+				if (circles.size() == 1) {
+					v.findViewById(R.id.bottomBar).setVisibility(View.GONE);
+				} else {
+					if (i == 0) {
+						buttonPreviousGroup.setVisibility(View.GONE);
+					}
+					if (i == circles.size() - 1) {
+						buttonNextGroup.setVisibility(View.GONE);
+					}
 				}
 				if (v.getParent() == null) {
 					circlesViewContenter.addView(v, i);
@@ -321,6 +324,7 @@ public class CirclesFragment extends BaseFragment {
 					if (circle != null) {
 						circle.phones.addAll(0, phones);
 					}
+					data.circlesMap.get("-1").phones.removeAll(phones);
 				}
 			});
 			StringBuffer buffer = new StringBuffer("[");
@@ -719,6 +723,27 @@ public class CirclesFragment extends BaseFragment {
 		});
 	}
 
+	Map<String, List<String>> checkFriends(Collection<String> checkPhones) {
+		List<String> allInOtherCircleFriend = new ArrayList<String>();
+		List<String> resultHasCircle = new ArrayList<String>();
+		List<String> resultNoCircle = new ArrayList<String>();
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		for (String rid : app.data.circles) {
+			Circle circle = app.data.circlesMap.get(rid);
+			allInOtherCircleFriend.addAll(circle.phones);
+		}
+		for (String phone : checkPhones) {
+			if (!allInOtherCircleFriend.contains(phone)) {
+				resultNoCircle.add(phone);
+			} else {
+				resultHasCircle.add(phone);
+			}
+		}
+		result.put("have", resultHasCircle);
+		result.put("default", resultNoCircle);
+		return result;
+	}
+
 	int currentEditPosition = -1;
 
 	public void switchToEditMode(View view) {
@@ -786,6 +811,52 @@ public class CirclesFragment extends BaseFragment {
 		} else {
 			return;
 		}
+		if (tempFriendsList.getChildCount() != 0) {
+			Alert.showDialog("未放入其它密友圈的好友将自动转移到默认分组中。", new DialogListener() {
+
+				@Override
+				public void onCancel() {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public boolean confirm() {
+					normalMode();
+					app.dataHandler.exclude(new Modification() {
+						@Override
+						public void modifyData(Data data) {
+							Set<String> checkPhones = tempFriendHolders
+									.keySet();
+							Map<String, List<String>> result = checkFriends(checkPhones);
+							data.circlesMap.get("-1").phones.addAll(result
+									.get("default"));
+						}
+
+						@Override
+						public void modifyUI() {
+							notifyViews();
+						}
+					});
+					tempFriendsList.removeAllViews();
+					tempFriendScroll.scrollTo(0, 0);
+					tempViewMap.clear();
+					tempFriendHolders.clear();
+					return true;
+				}
+
+				@Override
+				public void cancel() {
+					// TODO Auto-generated method stub
+
+				}
+			});
+		} else {
+			normalMode();
+		}
+	}
+
+	void normalMode() {
 		CircleMenu.show();
 		mMainModeManager.setKeyDownListener(null);
 
@@ -1173,7 +1244,6 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	public Map<String, CircleHolder> circleHolders = new Hashtable<String, CircleHolder>();
-	public Map<String, FriendHolder> tempFriendHolders = new Hashtable<String, CirclesFragment.FriendHolder>();
 
 	public void resolveFriendsPositions(CircleHolder circleHolder) {
 		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
@@ -1211,6 +1281,7 @@ public class CirclesFragment extends BaseFragment {
 	ModifyFriend modifyFriend = new ModifyFriend();
 
 	Map<String, View> tempViewMap = new HashMap<String, View>();
+	public Map<String, FriendHolder> tempFriendHolders = new Hashtable<String, CirclesFragment.FriendHolder>();
 
 	View generateCircleView() {
 		final View circleView = mInflater
@@ -1231,7 +1302,6 @@ public class CirclesFragment extends BaseFragment {
 
 		for (int i = 0; i < phones.size(); i++) {
 			final Friend friend = friends.get(phones.get(i));
-
 			FriendHolder friendHolder = new FriendHolder();
 			friendHolder.phone = friend.phone;
 			int index = circleHolder.friendHolders.indexOf(friendHolder);
@@ -1239,6 +1309,9 @@ public class CirclesFragment extends BaseFragment {
 					.remove(index) : null);
 			View convertView;
 			if (friendHolder == null) {
+				if (tempFriendHolders.get(friend.phone) != null) {
+					return;
+				}
 				convertView = generateFriendView(friend);
 				friendHolder = new FriendHolder();
 				friendHolder.phone = friend.phone;
@@ -1357,7 +1430,7 @@ public class CirclesFragment extends BaseFragment {
 											friendContainer.scrollTo(0, 0);
 
 											final FriendHolder friendHolder = tempFriendHolders
-													.get(friend.phone);
+													.remove(friend.phone);
 
 											CircleHolder circleHolder = circleHolders.get(circles
 													.get(currentEditPosition));
@@ -1527,64 +1600,63 @@ public class CirclesFragment extends BaseFragment {
 
 				container.addView(convertView);
 
-				final GestureDetector detector = new GestureDetector(
-						getActivity(), new SimpleOnGestureListener() {
-							float x0 = 0;
-							float dx = 0;
-
-							@Override
-							public boolean onDown(MotionEvent e) {
-								x0 = e.getRawX();
-								return true;
-							}
-
-							@Override
-							public void onLongPress(MotionEvent e) {
-								if (touchEvnetStatus == TouchEvnetStatus.MOVING_X
-										|| touchEvnetStatus == TouchEvnetStatus.MOVING_Y) {
-									return;
-								}
-								switchToEditMode(circleView);
-							}
-
-							@Override
-							public boolean onScroll(MotionEvent e1,
-									MotionEvent e2, float distanceX,
-									float distanceY) {
-								dx = e2.getRawX() - x0;
-								if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
-									container.scrollBy(-(int) (dx), 0);
-									x0 = e2.getRawX();
-								}
-								return true;
-							}
-						});
-
-				container.setOnTouchListener(new OnTouchListener() {
-
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						return detector.onTouchEvent(event);
-					}
-				});
-
-				circleView.setOnLongClickListener(new OnLongClickListener() {
-
-					@Override
-					public boolean onLongClick(View v) {
-						if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
-							return false;
-						}
-						switchToEditMode(v);
-						return true;
-					}
-				});
 			}
 
 			circleHolder.friendHolders.add(i, friendHolder);
 
 		}
 
+		final GestureDetector detector = new GestureDetector(getActivity(),
+				new SimpleOnGestureListener() {
+					float x0 = 0;
+					float dx = 0;
+
+					@Override
+					public boolean onDown(MotionEvent e) {
+						x0 = e.getRawX();
+						return true;
+					}
+
+					@Override
+					public void onLongPress(MotionEvent e) {
+						if (touchEvnetStatus == TouchEvnetStatus.MOVING_X
+								|| touchEvnetStatus == TouchEvnetStatus.MOVING_Y) {
+							return;
+						}
+						switchToEditMode(circleView);
+					}
+
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						dx = e2.getRawX() - x0;
+						if (touchEvnetStatus == TouchEvnetStatus.MOVING_X) {
+							container.scrollBy(-(int) (dx), 0);
+							x0 = e2.getRawX();
+						}
+						return true;
+					}
+				});
+
+		container.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return detector.onTouchEvent(event);
+			}
+		});
+
+		circleView.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				if (touchEvnetStatus != TouchEvnetStatus.STATIC) {
+					return false;
+				}
+				switchToEditMode(v);
+				return true;
+			}
+		});
 		resolveFriendsPositions(circleHolder);
 		setFriendsPositions(circleHolder);
 
