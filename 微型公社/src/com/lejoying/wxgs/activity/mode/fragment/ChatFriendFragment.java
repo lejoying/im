@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Movie;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -88,6 +89,7 @@ import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
+@SuppressLint("NewApi")
 public class ChatFriendFragment extends BaseFragment {
 
 	MainApplication app = MainApplication.getMainApplication();
@@ -140,6 +142,7 @@ public class ChatFriendFragment extends BaseFragment {
 	OnTouchListener mOnTouchListener;
 
 	RelativeLayout rl_face;
+	LinearLayout ll_facemenu;
 	RelativeLayout rl_selectedface;
 	ViewPager chat_vPager;
 	int chat_vPager_now = 0;
@@ -220,6 +223,7 @@ public class ChatFriendFragment extends BaseFragment {
 		tv_voice_timelength = (TextView) mContent
 				.findViewById(R.id.tv_voice_timelength);
 		rl_face = (RelativeLayout) mContent.findViewById(R.id.rl_face);
+		ll_facemenu = (LinearLayout) mContent.findViewById(R.id.ll_facemenu);
 		rl_selectedface = (RelativeLayout) mContent
 				.findViewById(R.id.rl_selectedface);
 		chat_vPager = (ViewPager) mContent.findViewById(R.id.chat_vPager);
@@ -1610,23 +1614,65 @@ public class ChatFriendFragment extends BaseFragment {
 		for (int i = 0; i < 105; i++) {
 			images1.add("smiley_" + i + ".png");
 		}
-		for (int i = 0; i < 5; i++) {
-			View v = mInflater
-					.inflate(R.layout.f_chat_face_base_gridview, null);
-			GridView chat_base_gv = (GridView) v
-					.findViewById(R.id.chat_base_gv);
-			chat_base_gv.setAdapter(new myGridAdapter(images1));
-			mListViews.add(chat_base_gv);
+		List<String> images2 = new ArrayList<String>();
+		for (int i = 0; i < 51; i++) {
+			images2.add("emoji_" + i + ".png");
 		}
-
-		// View v1 = mInflater.inflate(R.layout.f_chat_face_base_gridview,
-		// null);
-		// GridView chat_base_gv1 = (GridView)
-		// v1.findViewById(R.id.chat_base_gv);
-		// chat_base_gv1.setAdapter(new myGridAdapter(images));
-		// mListViews.add(chat_base_gv1);
-
-		chat_vPager.setAdapter(new myPageAdapter(mListViews));
+		List<String> images3 = new ArrayList<String>();
+		for (int i = 1; i < 17; i++) {
+			images3.add("tusiji_" + i + ".gif");
+		}
+		List<List<String>> list = new ArrayList<List<String>>();
+		list.add(images1);
+		list.add(images2);
+		list.add(images3);
+		try {
+			ImageView iv = new ImageView(getActivity());
+			iv.setImageBitmap(BitmapFactory.decodeStream(getActivity()
+					.getAssets().open("images/" + list.get(0).get(0))));
+			ll_facemenu.addView(iv);
+			ImageView iv_1 = new ImageView(getActivity());
+			iv_1.setBackgroundColor(Color.WHITE);
+			iv_1.setMinimumWidth(1);
+			iv_1.setMinimumHeight(80);
+			iv_1.setMaxWidth(1);
+			ll_facemenu.addView(iv_1);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < 3; i++) {
+			try {
+				ImageView iv = new ImageView(getActivity());
+				iv.setImageBitmap(BitmapFactory.decodeStream(getActivity()
+						.getAssets().open("images/" + list.get(i).get(0))));
+				iv.setMaxWidth(100);
+				ll_facemenu.addView(iv, 100, 80);
+				ImageView iv_1 = new ImageView(getActivity());
+				iv_1.setBackgroundColor(Color.WHITE);
+				iv_1.setMinimumWidth(1);
+				iv_1.setMinimumHeight(80);
+				iv_1.setMaxWidth(1);
+				ll_facemenu.addView(iv_1);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (i != 2) {
+				View v = mInflater.inflate(R.layout.f_chat_face_base_gridview,
+						null);
+				GridView chat_base_gv = (GridView) v
+						.findViewById(R.id.chat_base_gv);
+				chat_base_gv.setAdapter(new myGridAdapter(list.get(i)));
+				mListViews.add(chat_base_gv);
+			} else {
+				View v = mInflater.inflate(R.layout.f_chat_bigimg_gridview,
+						null);
+				GridView chat_base_gv = (GridView) v
+						.findViewById(R.id.chat_base_gv);
+				chat_base_gv.setAdapter(new myGridAdapter(list.get(i)));
+				mListViews.add(chat_base_gv);
+				chat_vPager.setAdapter(new myPageAdapter(mListViews));
+			}
+		}
 	}
 
 	class myGridAdapter extends BaseAdapter {
