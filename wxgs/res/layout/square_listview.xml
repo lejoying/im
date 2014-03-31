@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <ImageView
+        android:id="@+id/person_pic"
+        
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/person" />
+
+    <TextView
+        android:id="@+id/person_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/person_pic"
+        android:singleLine="true"
+        android:textSize="25dp"
+        
+        android:textColor="@android:color/white"
+        android:text="1"
+        />
+
+    <TextView
+        android:id="@+id/person_time"
+        android:layout_width="wrap_content"
+       
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/person_speak"
+        android:layout_alignParentRight="true"
+        android:textSize="25dp"
+        android:textColor="@android:color/white"
+        android:singleLine="true"
+        android:text="3"
+        />
+
+    <TextView
+        android:id="@+id/person_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/person_speak"
+        android:layout_alignBottom="@+id/person_speak"
+        android:layout_alignParentRight="true"
+        android:textSize="25dp"
+        android:textColor="@android:color/white"
+        android:singleLine="true"
+        android:text="4"
+         />
+
+    <TextView
+        android:id="@+id/person_speak"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/person_name"
+        android:layout_below="@+id/person_name"
+        android:text="2"
+        android:textColor="@android:color/white"
+        android:singleLine="true"
+        android:textSize="25dp" />
+    
+</RelativeLayout>

@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".RegisterActivity" >
+
+    <TextView
+        android:id="@+id/loginpg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       	android:layout_alignRight="@+id/rgNumber1"
+        android:paddingTop="150dp"
+        android:layout_marginBottom="10dp"
+        android:text="登陆" />
+
+ <EditText
+        android:id="@+id/rgNumber1"
+        android:layout_below="@+id/loginpg"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="10dp"
+        android:ems="15"
+        android:singleLine="true"
+        android:hint="手机号："
+        android:inputType="number" 
+    />
+
+    <EditText
+        android:id="@+id/rgNumber2"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/rgNumber1"
+        android:layout_marginBottom="10dp"
+        android:ems="15"
+        android:singleLine="true"
+        android:hint="密码："
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/rgPasswd"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/rgNumber2"
+        android:layout_marginBottom="10dp"
+        android:ems="15"
+        android:singleLine="true"
+        android:hint="确认密码："
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/next"
+        android:layout_below="@+id/rgPasswd"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+		android:background="@drawable/login_bt"
+        android:text="下一步" />
+
+</RelativeLayout>

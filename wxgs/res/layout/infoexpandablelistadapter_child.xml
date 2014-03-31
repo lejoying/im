@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+   <ImageView  
+        android:id="@+id/infoexpandable_listview_child_avatar"  
+        android:layout_width="wrap_content"  
+        android:layout_height="wrap_content"  
+        android:layout_alignParentLeft="true"  
+        android:layout_alignParentTop="true"  
+        android:layout_marginLeft="10dp"  
+        android:src="@drawable/person" />  
+
+    <TextView
+        android:id="@+id/infoexpandable_listview_child_trends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_toRightOf="@+id/infoexpandable_listview_child_avatar"
+        android:text="该好友的动态"
+        android:textSize="25dp" />
+  
+</RelativeLayout>

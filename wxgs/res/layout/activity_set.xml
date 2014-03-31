@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="@drawable/login_bk">
+
+    <ImageView
+        android:id="@+id/set_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/back" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:text="设置"
+        android:textSize="25dp" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/set_back"
+        android:orientation="vertical" >
+
+        <Switch
+            android:id="@+id/set_switch1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="新消息提醒" />
+        <Switch
+        android:id="@+id/set_switch2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:text="声音" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/set_logout"
+        android:background="@drawable/login_bt"
+        android:layout_width="255dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp"
+        android:text="退出登录" />
+
+</RelativeLayout>

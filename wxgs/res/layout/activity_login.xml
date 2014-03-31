@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+     <TextView
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="150dp"
+        android:layout_alignRight="@+id/phoneNumber"
+        	android:text="注册" />
+
+    <EditText
+        android:id="@+id/phoneNumber"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/register"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="10dp"
+        android:ems="15"
+        android:singleLine="true"
+        android:hint="电话："
+        android:phoneNumber="true" />
+
+    <EditText
+        android:id="@+id/passWord"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/phoneNumber"
+       	android:layout_marginBottom="10dp"
+        android:ems="15"
+        android:hint="密码："
+        android:inputType="textPassword" />
+
+    <Button
+        android:layout_width="255dp"
+        android:id="@+id/submit"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/passWord"
+        android:background="@drawable/login_bt"
+        android:text="登陆" />
+
+   
+    
+</RelativeLayout>

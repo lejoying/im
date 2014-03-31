@@ -1,0 +1,94 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/login_bk"
+    tools:context=".ChatActivity" >
+
+    <ImageView
+        android:id="@+id/chat_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/back" />
+
+    <TextView
+        android:id="@+id/chat_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/chat_name"
+        android:layout_below="@+id/chat_name"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:text="在线" />
+
+    <ImageView
+        android:id="@+id/chat_information"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/person_information" />
+
+    <TextView
+        android:id="@+id/chat_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="25dp"
+        android:textColor="@android:color/white"
+        android:text="666"/>
+
+    <ListView
+        android:id="@+id/chat_listview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:background="@android:color/white"
+        android:layout_below="@+id/chat_state" 
+        android:layout_above="@+id/chat_linearlayout"
+        >
+
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/chat_linearlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_alignParentBottom="true" 
+        
+        >
+
+        <ImageView
+            android:id="@+id/chat_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/chat_pic" />
+
+        <EditText
+            android:id="@+id/chat_messsage"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+             />
+
+    	<ImageView 
+    	    android:id="@+id/chat_face"
+            android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:src="@drawable/chat_face"
+    	    />
+        <ImageView 
+    	    android:id="@+id/chat_send"
+            android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:src="@drawable/airing"
+    	    />
+    </LinearLayout>
+    
+    
+    
+</RelativeLayout>

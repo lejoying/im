@@ -1,0 +1,135 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/login_bk" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" >
+
+        <Button
+            android:id="@+id/squaremeg_add"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/login_bt"
+            android:textColor="@android:color/white"
+            android:text="用户信息" />
+
+        <ImageView
+            android:id="@+id/squaremeg_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/back" />
+        
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayout1" >
+
+        <ImageView
+            android:id="@+id/squaremsg_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/person_information" />
+
+        <TextView
+            android:id="@+id/squaremsg_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/textView2"
+            android:textSize="25dp"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:ems="10"
+            android:text="XXX" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="25dp"
+            android:layout_toRightOf="@+id/squaremsg_imageview"
+            android:textSize="25dp"
+            android:textColor="@android:color/white"
+            android:text="昵称：" />
+
+        
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/textView2"
+            android:layout_below="@+id/textView2"
+            android:textColor="@android:color/white"
+            android:text="微ID："
+            
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textView4"
+            android:textColor="@android:color/white"
+            android:text="签名："
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/squaremsg_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView6"
+            android:layout_alignBottom="@+id/textView6"
+            android:layout_alignLeft="@+id/textView4"
+            android:textColor="@android:color/white"
+            android:text="ABCDEFG"
+            android:singleLine="true"
+            android:ems="10"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/squaremsg_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/squaremsg_name"
+            android:layout_toRightOf="@+id/textView2"
+            android:textColor="@android:color/white"
+            android:text="123456"
+            
+            android:singleLine="true"
+            android:textSize="25dp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/squaremsg_msg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayout2"
+        android:layout_marginTop="72dp"
+        android:text="消息内容：
+        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        android:textColor="@android:color/white"
+        android:textSize="25dp" />
+
+
+
+</RelativeLayout>
