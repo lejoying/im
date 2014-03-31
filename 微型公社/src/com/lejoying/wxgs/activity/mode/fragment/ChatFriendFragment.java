@@ -13,6 +13,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -465,27 +467,127 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getActivity(), "face_left", Toast.LENGTH_SHORT)
-						.show();
-
+				int start = editText_message.getSelectionStart();
+				String content = editText_message.getText().toString();
+				if (start - 1 < 0)
+					return;
+				String faceEnd = content.substring(start - 1, start);
+				if ("]".equals(faceEnd)) {
+					String str = content.substring(0, start);
+					int index = str.lastIndexOf("[");
+					if (index != -1) {
+						String faceStr = content.substring(index, start);
+						Pattern patten = Pattern.compile(
+								"\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}",
+								Pattern.CASE_INSENSITIVE);
+						Matcher matcher = patten.matcher(faceStr);
+						if (matcher.find()) {
+							editText_message.setSelection(start
+									- faceStr.length());
+						} else {
+							if (start - 1 >= 0) {
+								editText_message.setSelection(start - 1);
+							}
+						}
+					}
+					Toast.makeText(getActivity(), "face_left--" + index,
+							Toast.LENGTH_SHORT).show();
+				} else {
+					if (start - 1 >= 0) {
+						editText_message.setSelection(start - 1);
+					}
+				}
 			}
 		});
 		iv_face_right.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getActivity(), "iv_face_right",
-						Toast.LENGTH_SHORT).show();
-
+				int start = editText_message.getSelectionStart();
+				String content = editText_message.getText().toString();
+				if (start + 1 > content.length())
+					return;
+				String faceEnd = content.substring(start, start + 1);
+				if ("[".equals(faceEnd)) {
+					String str = content.substring(start);
+					int index = str.indexOf("]");
+					if (index != -1) {
+						String faceStr = content.substring(start, index + start
+								+ 1);
+						Pattern patten = Pattern.compile(
+								"\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}",
+								Pattern.CASE_INSENSITIVE);
+						Matcher matcher = patten.matcher(faceStr);
+						if (matcher.find()) {
+							editText_message.setSelection(start
+									+ faceStr.length());
+						} else {
+							if (start + 1 <= content.length()) {
+								editText_message.setSelection(start + 1);
+							}
+						}
+					}
+				} else {
+					if (start + 1 <= content.length()) {
+						editText_message.setSelection(start + 1);
+					}
+				}
 			}
 		});
 		iv_face_delete.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getActivity(), "iv_face_delete",
-						Toast.LENGTH_SHORT).show();
-
+				String zhengze = "\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}";
+				int start = editText_message.getSelectionStart();
+				String content = editText_message.getText().toString();
+				if (start - 1 < 0)
+					return;
+				String faceEnd = content.substring(start - 1, start);
+				if ("]".equals(faceEnd)) {
+					String str = content.substring(0, start);
+					int index = str.lastIndexOf("[");
+					if (index != -1) {
+						String faceStr = content.substring(index, start);
+						Pattern patten = Pattern.compile(zhengze,
+								Pattern.CASE_INSENSITIVE);
+						Matcher matcher = patten.matcher(faceStr);
+						if (matcher.find()) {
+							SpannableString spannableString = ExpressionUtil
+									.getExpressionString(
+											getActivity(),
+											content.substring(0, start
+													- faceStr.length())
+													+ content.substring(start),
+											zhengze, expressionFaceMap);
+							editText_message.setText(spannableString);
+							// editText_message.setSelection(start
+							// - faceStr.length());
+						} else {
+							if (start - 1 >= 0) {
+								SpannableString spannableString = ExpressionUtil
+										.getExpressionString(
+												getActivity(),
+												content.substring(0, start - 1)
+														+ content
+																.substring(start),
+												zhengze, expressionFaceMap);
+								editText_message.setText(spannableString);
+								// editText_message.setSelection(start - 1);
+							}
+						}
+					}
+				} else {
+					if (start - 1 >= 0) {
+						SpannableString spannableString = ExpressionUtil
+								.getExpressionString(getActivity(),
+										content.substring(0, start - 1)
+												+ content.substring(start),
+										zhengze, expressionFaceMap);
+						editText_message.setText(spannableString);
+						// editText_message.setSelection(start - 1);
+					}
+				}
 			}
 		});
 		rl_selectedface.setOnClickListener(new OnClickListener() {
@@ -1880,7 +1982,14 @@ public class ChatFriendFragment extends BaseFragment {
 							faceStr);
 					spannableString.setSpan(imageSpan, 0, faceStr.length(),
 							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-					editText_message.append(spannableString);
+					editText_message.getText().insert(
+							editText_message.getSelectionStart(),
+							spannableString);
+					// editText_message.append(spannableString,
+					// editText_message.getSelectionStart(),
+					// editText_message.getSelectionStart()
+					// + spannableString.length());
+					// editText_message.append(spannableString);
 				}
 			});
 			return convertView;

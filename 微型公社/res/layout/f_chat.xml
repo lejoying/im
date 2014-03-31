@@ -24,7 +24,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="70dp"
         android:background="@drawable/card_background_normal"
-        android:visibility="visible" >
+        android:visibility="gone" >
 
         <ImageView
             android:layout_width="fill_parent"
