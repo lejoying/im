@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +37,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -67,6 +71,7 @@ import android.widget.Toast;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
@@ -403,7 +408,7 @@ public class ChatFriendFragment extends BaseFragment {
 		}
 
 		initEvent();
-		// initBaseFaces();
+		initBaseFaces();
 		return mContent;
 	}
 
@@ -437,7 +442,8 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onPageSelected(int arg0) {
-				// faceMenuShowList.get(chat_vPager_now).setBackground(null);
+				faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
+						Color.WHITE);
 				chat_vPager_now = arg0;
 				faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
 						Color.RED);
@@ -486,12 +492,12 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				// int show_status = rl_face.getVisibility();
-				// if (show_status == View.VISIBLE) {
-				// rl_face.setVisibility(View.GONE);
-				// } else {
-				// rl_face.setVisibility(View.VISIBLE);
-				// }
+				int show_status = rl_face.getVisibility();
+				if (show_status == View.VISIBLE) {
+					rl_face.setVisibility(View.GONE);
+				} else {
+					rl_face.setVisibility(View.VISIBLE);
+				}
 			}
 		});
 		groupTopBar.setOnClickListener(new OnClickListener() {
@@ -1201,11 +1207,13 @@ public class ChatFriendFragment extends BaseFragment {
 				messageHolder.text.setVisibility(View.VISIBLE);
 				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.voice.setVisibility(View.GONE);
-				messageHolder.tv_chat.setText(message.content);
-				/*
-				 * messageHolder.tv_chat.insertGif(message.content,
-				 * expressionFaceMap);
-				 */
+				// messageHolder.tv_chat.setText(message.content);
+				String content = message.content;
+				String zhengze = "\\[{1}[\u4E00-\u9FFF]{1,2}\\]{1}";
+				SpannableString spannableString = ExpressionUtil
+						.getExpressionString(getActivity(), content, zhengze,
+								expressionFaceMap);
+				messageHolder.tv_chat.setText(spannableString);
 
 				String fileName = app.data.user.head;
 				switch (type) {
@@ -1759,8 +1767,8 @@ public class ChatFriendFragment extends BaseFragment {
 					@Override
 					public void onClick(View v) {
 						int position = (Integer) v.getTag();
-						// faceMenuShowList.get(chat_vPager_now).setBackground(
-						// null);
+						faceMenuShowList.get(chat_vPager_now)
+								.setBackgroundColor(Color.WHITE);
 						chat_vPager_now = position;
 						faceMenuShowList.get(chat_vPager_now)
 								.setBackgroundColor(Color.RED);
@@ -1830,8 +1838,13 @@ public class ChatFriendFragment extends BaseFragment {
 		@Override
 		public View getView(final int position, View convertView,
 				ViewGroup parent) {
-			convertView = mInflater.inflate(R.layout.f_chat_base_gridview_item,
-					null);
+			if (getCount() < 30) {
+				convertView = mInflater.inflate(
+						R.layout.f_chat_bigimg_gridview_item, null);
+			} else {
+				convertView = mInflater.inflate(
+						R.layout.f_chat_base_gridview_item, null);
+			}
 			ImageView iv = (ImageView) convertView
 					.findViewById(R.id.chat_base_iv);
 			// iv.setImageDrawable(getResources().getDrawable(list.get(position)));
@@ -1845,19 +1858,33 @@ public class ChatFriendFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-
-					// editText_message.insertGif("[" + faceNames[position] +
-					// "]",
-					// expressionFaceMap);
-					//
-					// Toast.makeText(getActivity(), faceNames[position],
-					// Toast.LENGTH_SHORT).show();
-
+					String faceStr = "[" + faceNames[position] + "]";
+					InputStream is = null;
+					try {
+						is = getActivity()
+								.getResources()
+								.getAssets()
+								.open("images/"
+										+ expressionFaceMap.get(faceStr));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					Bitmap bitmap = BitmapFactory.decodeStream(is);
+					try {
+						is.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					ImageSpan imageSpan = new ImageSpan(getActivity(), bitmap);
+					SpannableString spannableString = new SpannableString(
+							faceStr);
+					spannableString.setSpan(imageSpan, 0, faceStr.length(),
+							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					editText_message.append(spannableString);
 				}
 			});
 			return convertView;
 		}
-
 	}
 
 	class myPageAdapter extends PagerAdapter {

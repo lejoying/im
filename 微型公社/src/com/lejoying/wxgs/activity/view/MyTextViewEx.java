@@ -9,7 +9,7 @@ import android.text.SpannableString;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.utils.ExpressionUtilgif;
 import com.lejoying.wxgs.activity.utils.GifDrawalbe;
 
 
@@ -43,7 +43,7 @@ public class MyTextViewEx extends TextView implements Runnable {
 	public void insertGif(String str,Map<String, String> expressionFaceMap) {
 		if (drawables.size() > 0)
 			drawables.clear();
-		SpannableString spannableString = ExpressionUtil.getExpressionString(
+		SpannableString spannableString = ExpressionUtilgif.getExpressionString(
 				context, str, cache, drawables,expressionFaceMap);
 		setText(spannableString);
 	}

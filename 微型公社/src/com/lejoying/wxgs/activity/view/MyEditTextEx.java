@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.utils.ExpressionUtilgif;
 import com.lejoying.wxgs.activity.utils.GifDrawalbe;
 
 public class MyEditTextEx extends EditText implements Runnable {
@@ -43,7 +43,7 @@ public class MyEditTextEx extends EditText implements Runnable {
 		editable.insert(index, str);
 		this.setSelection(index + str.length());
 		Log.v("index", index + "----" + context);
-		SpannableString spannableString = ExpressionUtil.getExpressionString(
+		SpannableString spannableString = ExpressionUtilgif.getExpressionString(
 				context, getText().toString(), cache, drawables,
 				expressionFaceMap);
 		// System.out.println(getText().toString());
