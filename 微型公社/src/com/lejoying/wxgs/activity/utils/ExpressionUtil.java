@@ -2,14 +2,16 @@ package com.lejoying.wxgs.activity.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.lejoying.wxgs.app.data.Configuration;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -56,6 +58,7 @@ public class ExpressionUtil {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				@SuppressWarnings("deprecation")
 				ImageSpan imageSpan = new ImageSpan(bitmap); // 通过图片资源id来得到bitmap，用一个ImageSpan来包装
 				int end = matcher.start() + key.length(); // 计算该图片名字的长度，也就是要替换的字符串的长度
 				spannableString.setSpan(imageSpan, matcher.start(), end,
