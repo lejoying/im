@@ -28,7 +28,6 @@ public class LoginModeManager extends BaseModeManager {
 		super(activity);
 		mFragmentManager = activity.getSupportFragmentManager();
 	}
-
 	@Override
 	public void initialize() {
 		if (!isInit) {

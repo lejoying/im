@@ -99,7 +99,7 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 		mAdapter = new SquareMessageAdapter();
 
 		mSqureMessageView.setAdapter(mAdapter);
-
+		
 		mButtonSend = mContentView.findViewById(R.id.button_send);
 		mButtonSend.setOnClickListener(this);
 		return mContentView;

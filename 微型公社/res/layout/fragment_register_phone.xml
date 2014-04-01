@@ -52,8 +52,6 @@
             android:textColor="#fff"
             android:textColorHint="#eee"
             tools:ignore="TextFields" >
-
-            <requestFocus />
         </EditText>
 
         <Button
