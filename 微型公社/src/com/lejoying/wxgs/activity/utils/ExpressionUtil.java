@@ -5,13 +5,9 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.lejoying.wxgs.app.data.Configuration;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -25,6 +21,7 @@ public class ExpressionUtil {
 	 * @param spannableString
 	 * @param patten
 	 * @param start
+	 * @param expressionFaceMap
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 * @throws NumberFormatException
@@ -44,7 +41,6 @@ public class ExpressionUtil {
 			}
 			String value = expressionFaceMap.get(key);
 			if (value != null) {
-				Log.v("Coolspan", key);
 				InputStream is = null;
 				try {
 					is = context.getResources().getAssets()
@@ -58,18 +54,16 @@ public class ExpressionUtil {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				@SuppressWarnings("deprecation")
-				ImageSpan imageSpan = new ImageSpan(bitmap); // 通过图片资源id来得到bitmap，用一个ImageSpan来包装
+				ImageSpan imageSpan = new ImageSpan(context, bitmap); // 通过图片资源id来得到bitmap，用一个ImageSpan来包装
 				int end = matcher.start() + key.length(); // 计算该图片名字的长度，也就是要替换的字符串的长度
 				spannableString.setSpan(imageSpan, matcher.start(), end,
-						Spannable.SPAN_INCLUSIVE_EXCLUSIVE); // 将该图片替换字符串中规定的位置中
+						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // 将该图片替换字符串中规定的位置中SPAN_INCLUSIVE_EXCLUSIVE
 				if (end < spannableString.length()) { // 如果整个字符串还未验证完，则继续。。
 					dealExpression(context, spannableString, patten, end,
 							expressionFaceMap);
 				}
 				break;
 			}
-			Log.v("Coolspan", key + "--");
 		}
 	}
 
@@ -78,6 +72,8 @@ public class ExpressionUtil {
 	 * 
 	 * @param context
 	 * @param str
+	 * @param zhengze
+	 * @param expressionFaceMap
 	 * @return
 	 */
 	public static SpannableString getExpressionString(Context context,

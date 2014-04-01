@@ -157,6 +157,7 @@ public class ChatFriendFragment extends BaseFragment {
 	List<List<String>> faceNameList;
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
 	String[] faceNames;
+	String faceRegx = "\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}";
 
 	View groupTopBar;
 	TextView textView_groupName;
@@ -477,8 +478,7 @@ public class ChatFriendFragment extends BaseFragment {
 					int index = str.lastIndexOf("[");
 					if (index != -1) {
 						String faceStr = content.substring(index, start);
-						Pattern patten = Pattern.compile(
-								"\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}",
+						Pattern patten = Pattern.compile(faceRegx,
 								Pattern.CASE_INSENSITIVE);
 						Matcher matcher = patten.matcher(faceStr);
 						if (matcher.find()) {
@@ -490,8 +490,6 @@ public class ChatFriendFragment extends BaseFragment {
 							}
 						}
 					}
-					Toast.makeText(getActivity(), "face_left--" + index,
-							Toast.LENGTH_SHORT).show();
 				} else {
 					if (start - 1 >= 0) {
 						editText_message.setSelection(start - 1);
@@ -514,8 +512,7 @@ public class ChatFriendFragment extends BaseFragment {
 					if (index != -1) {
 						String faceStr = content.substring(start, index + start
 								+ 1);
-						Pattern patten = Pattern.compile(
-								"\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}",
+						Pattern patten = Pattern.compile(faceRegx,
 								Pattern.CASE_INSENSITIVE);
 						Matcher matcher = patten.matcher(faceStr);
 						if (matcher.find()) {
@@ -538,7 +535,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				String zhengze = "\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}";
 				int start = editText_message.getSelectionStart();
 				String content = editText_message.getText().toString();
 				if (start - 1 < 0)
@@ -549,43 +545,29 @@ public class ChatFriendFragment extends BaseFragment {
 					int index = str.lastIndexOf("[");
 					if (index != -1) {
 						String faceStr = content.substring(index, start);
-						Pattern patten = Pattern.compile(zhengze,
+						Pattern patten = Pattern.compile(faceRegx,
 								Pattern.CASE_INSENSITIVE);
 						Matcher matcher = patten.matcher(faceStr);
 						if (matcher.find()) {
-							SpannableString spannableString = ExpressionUtil
-									.getExpressionString(
-											getActivity(),
-											content.substring(0, start
-													- faceStr.length())
-													+ content.substring(start),
-											zhengze, expressionFaceMap);
-							editText_message.setText(spannableString);
-							// editText_message.setSelection(start
-							// - faceStr.length());
+							editText_message.setText(content.substring(0, start
+									- faceStr.length())
+									+ content.substring(start));
+							editText_message.setSelection(start
+									- faceStr.length());
 						} else {
 							if (start - 1 >= 0) {
-								SpannableString spannableString = ExpressionUtil
-										.getExpressionString(
-												getActivity(),
-												content.substring(0, start - 1)
-														+ content
-																.substring(start),
-												zhengze, expressionFaceMap);
-								editText_message.setText(spannableString);
-								// editText_message.setSelection(start - 1);
+								editText_message.setText(content.substring(0,
+										start - 1) + content.substring(start));
+								editText_message.setSelection(start - 1);
 							}
 						}
 					}
 				} else {
 					if (start - 1 >= 0) {
-						SpannableString spannableString = ExpressionUtil
-								.getExpressionString(getActivity(),
-										content.substring(0, start - 1)
-												+ content.substring(start),
-										zhengze, expressionFaceMap);
-						editText_message.setText(spannableString);
-						// editText_message.setSelection(start - 1);
+						editText_message.setText(content
+								.substring(0, start - 1)
+								+ content.substring(start));
+						editText_message.setSelection(start - 1);
 					}
 				}
 			}
@@ -875,6 +857,7 @@ public class ChatFriendFragment extends BaseFragment {
 		});
 
 		editText_message.addTextChangedListener(new TextWatcher() {
+			String content = "";
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
@@ -923,14 +906,20 @@ public class ChatFriendFragment extends BaseFragment {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
-
+				content = s.toString();
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-
+				int selectionIndex = editText_message.getSelectionStart();
+				if (!(s.toString()).equals(content)) {
+					SpannableString spannableString = ExpressionUtil
+							.getExpressionString(getActivity(), s.toString(),
+									faceRegx, expressionFaceMap);
+					editText_message.setText(spannableString);
+					Log.v("Coolspan", selectionIndex + "");
+					editText_message.setSelection(selectionIndex);
+				}
 			}
 		});
 
@@ -1434,10 +1423,6 @@ public class ChatFriendFragment extends BaseFragment {
 												.ceil((double) (mpPlayer
 														.getDuration()) / 1000)
 												+ "\"");
-										// messageHolder.tv_voicetime.setText((int)
-										// Math
-										// .ceil(mpPlayer.getDuration() / 1000)
-										// + "\"");
 									}
 								});
 								messageHolder.sk_voice.setMax((int) Math
@@ -1811,26 +1796,39 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	void initBaseFaces() {
-		faceNames = new String[] { "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞",
-				"闭嘴", "睡", "大哭", "尴尬", "发怒", "调皮", "呲牙", "惊讶", "难过", "酷", "冷汗",
-				"抓狂", "吐", "偷笑", "可爱", "白眼", "傲慢", "饥饿", "困", "惊恐", "流汗", "憨笑",
-				"大兵", "奋斗", "咒骂", "疑问", "嘘", "晕", "折磨", "衰", "骷髅", "敲打", "再见",
-				"擦汗", "抠鼻", "鼓掌", "糗大了", "坏笑", "左哼哼", "右哼哼", "哈欠", "鄙视", "委屈",
-				"快哭了", "阴险", "亲亲", "吓", "可怜", "菜刀", "西瓜", "啤酒", "篮球", "乒乓",
-				"咖啡", "饭", "猪头", "玫瑰", "凋谢", "示爱", "爱心", "心碎", "蛋糕", "闪电",
-				"炸弹", "刀", "足球", "瓢虫", "便便", "月亮", "太阳", "礼物", "拥抱", "强", "弱",
-				"握手", "胜利", "抱拳", "勾引", "拳头", "差劲", "爱你", "NO", "OK", "爱情",
-				"飞吻", "跳跳", "发抖", "怄火", "转圈", "磕头", "回头", "跳绳", "挥手", "激动",
-				"街舞", "献吻", "左太极", "右太极" };
+		faceNames = new String[] { "[微笑]", "[撇嘴]", "[色]", "[发呆]", "[得意]",
+				"[流泪]", "[害羞]", "[闭嘴]", "[睡]", "[大哭]", "[尴尬]", "[发怒]", "[调皮]",
+				"[呲牙]", "[惊讶]", "[难过]", "[酷]", "[冷汗]", "[抓狂]", "[吐]", "[偷笑]",
+				"[可爱]", "[白眼]", "[傲慢]", "[饥饿]", "[困]", "[惊恐]", "[流汗", "[憨笑]",
+				"[大兵]", "[奋斗]", "[咒骂]", "[疑问]", "[嘘]", "[晕]", "折磨]", "[衰]",
+				"[骷髅]", "[敲打]", "[再见]", "[擦汗]", "[抠鼻]", "[鼓掌]", "[糗大了]",
+				"[坏笑]", "[左哼哼]", "[右哼哼]", "[哈欠]", "[鄙视]", "[委屈]", "[快哭了]",
+				"[阴险]", "[亲亲]", "[吓]", "[可怜]", "[菜刀]", "[西瓜]", "[啤酒]", "[篮球]",
+				"[乒乓]", "[咖啡]", "[饭]", "[猪头]", "[玫瑰]", "[凋谢]", "[示爱]", "[爱心]",
+				"[心碎]", "[蛋糕]", "[闪电]", "[炸弹]", "[刀]", "[足球]", "[瓢虫]", "[便便]",
+				"[月亮]", "[太阳]", "[礼物]", "[拥抱]", "[强", "[弱]", "[握手]", "[胜利]",
+				"[抱拳]", "[勾引]", "[拳头]", "[差劲]", "[爱你]", "[NO]", "[OK]", "[爱情]",
+				"[飞吻]", "[跳跳]", "[发抖]", "[怄火]", "[转圈]", "[磕头]", "[回头]", "[跳绳]",
+				"[挥手]", "[激动]", "[街舞]", "[献吻]", "[左太极]", "[右太极]" };
+		String[] faceNames2 = new String[] { "<笑脸>", "<开心>", "<大笑>", "<热情>",
+				"<眨眼>", "<色>", "<接吻>", "<亲吻>", "<脸红>", "<露齿笑>", "<满意>", "<戏弄>",
+				"<吐舌>", "<无语>", "<得意>", "<汗>", "<失望>", "<低落>", "<呸>", "<焦虑>",
+				"<担心>", "<震惊>", "<悔恨>", "<眼泪>", "<哭>", "<破涕为笑>", "<晕>", "<恐惧>",
+				"<心烦>", "<生气>", "<睡觉>", "<生病>", "<恶魔>", "<外星人>", "<心>", "<心碎>",
+				"<丘比特>", "<闪烁>", "<星星>", "<叹号>", "<问号>", "<睡着>", "<水滴>",
+				"<音乐>", "<火>", "<便便>", "<强>", "<弱>", "<拳头>", "<胜利>", "<上>",
+				"<下>", "<右>", "<左>", "<第一>", "<强壮>", "<吻>", "<热恋>", "<男孩>",
+				"<女孩>", "<女士>", "<男士>", "<天使>", "<骷髅>", "<红唇>", "<太阳>", "<下雨>",
+				"<多云>", "<雪人>", "<月亮>", "<闪电>", "<海浪>", "<猫>", "<小狗>", "<老鼠>",
+				"<仓鼠>", "<兔子>" };
 		List<View> mListViews = new ArrayList<View>();
 		List<String> images1 = new ArrayList<String>();
 		for (int i = 0; i < 105; i++) {
-			expressionFaceMap.put("[" + faceNames[i] + "]", "smiley_" + i
-					+ ".png");
+			expressionFaceMap.put(faceNames[i], "smiley_" + i + ".png");
 			images1.add("smiley_" + i + ".png");
 		}
 		List<String> images2 = new ArrayList<String>();
-		for (int i = 0; i < 51; i++) {
+		for (int i = 0; i < 77; i++) {
 			images2.add("emoji_" + i + ".png");
 		}
 		List<String> images3 = new ArrayList<String>();
@@ -1949,7 +1947,6 @@ public class ChatFriendFragment extends BaseFragment {
 			}
 			ImageView iv = (ImageView) convertView
 					.findViewById(R.id.chat_base_iv);
-			// iv.setImageDrawable(getResources().getDrawable(list.get(position)));
 			try {
 				iv.setImageBitmap(BitmapFactory.decodeStream(getActivity()
 						.getAssets().open("images/" + list.get(position))));
@@ -1960,36 +1957,9 @@ public class ChatFriendFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-					String faceStr = "[" + faceNames[position] + "]";
-					InputStream is = null;
-					try {
-						is = getActivity()
-								.getResources()
-								.getAssets()
-								.open("images/"
-										+ expressionFaceMap.get(faceStr));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					Bitmap bitmap = BitmapFactory.decodeStream(is);
-					try {
-						is.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					ImageSpan imageSpan = new ImageSpan(getActivity(), bitmap);
-					SpannableString spannableString = new SpannableString(
-							faceStr);
-					spannableString.setSpan(imageSpan, 0, faceStr.length(),
-							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 					editText_message.getText().insert(
 							editText_message.getSelectionStart(),
-							spannableString);
-					// editText_message.append(spannableString,
-					// editText_message.getSelectionStart(),
-					// editText_message.getSelectionStart()
-					// + spannableString.length());
-					// editText_message.append(spannableString);
+							faceNames[position]);
 				}
 			});
 			return convertView;
