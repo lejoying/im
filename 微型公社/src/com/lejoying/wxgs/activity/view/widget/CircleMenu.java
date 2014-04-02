@@ -147,7 +147,9 @@ public class CircleMenu {
 					cancelMenu();
 					break;
 				case 15:
-
+					addShowOperation(mBeforeLocation);
+					MainActivity.instance.mMainMode
+							.showNext(MainActivity.instance.mMainMode.mChatMessagesFragment);
 					break;
 				case 16:
 					addShowOperation(mBeforeLocation);

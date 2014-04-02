@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,10 +39,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -156,8 +154,8 @@ public class ChatFriendFragment extends BaseFragment {
 	List<ImageView> faceMenuShowList;
 	List<List<String>> faceNameList;
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
-	String[] faceNames;
-	String faceRegx = "\\[{1}[\u4E00-\u9FFF]{1,5}\\]{1}";
+	List<String[]> faceNamesList;
+	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 
 	View groupTopBar;
 	TextView textView_groupName;
@@ -220,6 +218,7 @@ public class ChatFriendFragment extends BaseFragment {
 		// voice
 		voice_list = new ArrayList<String>();
 		faceMenuShowList = new ArrayList<ImageView>();
+		faceNamesList = new ArrayList<String[]>();
 		mContent = inflater.inflate(R.layout.f_chat, null);
 		chatContent = (ListView) mContent.findViewById(R.id.chatContent);
 
@@ -1300,9 +1299,8 @@ public class ChatFriendFragment extends BaseFragment {
 				messageHolder.voice.setVisibility(View.GONE);
 				// messageHolder.tv_chat.setText(message.content);
 				String content = message.content;
-				String zhengze = "\\[{1}[\u4E00-\u9FFF]{1,2}\\]{1}";
 				SpannableString spannableString = ExpressionUtil
-						.getExpressionString(getActivity(), content, zhengze,
+						.getExpressionString(getActivity(), content, faceRegx,
 								expressionFaceMap);
 				messageHolder.tv_chat.setText(spannableString);
 
@@ -1324,6 +1322,23 @@ public class ChatFriendFragment extends BaseFragment {
 					public void onResult(String where) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
+					}
+				});
+				iv_head.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						if (app.data.friends.get(mNowChatFriend.phone) != null) {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = mNowChatFriend;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						} else if (mNowChatFriend.phone
+								.equals(app.data.user.phone)) {
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+						}
 					}
 				});
 			} else if (message.contentType.equals("image")) {
@@ -1796,12 +1811,12 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	void initBaseFaces() {
-		faceNames = new String[] { "[微笑]", "[撇嘴]", "[色]", "[发呆]", "[得意]",
-				"[流泪]", "[害羞]", "[闭嘴]", "[睡]", "[大哭]", "[尴尬]", "[发怒]", "[调皮]",
-				"[呲牙]", "[惊讶]", "[难过]", "[酷]", "[冷汗]", "[抓狂]", "[吐]", "[偷笑]",
-				"[可爱]", "[白眼]", "[傲慢]", "[饥饿]", "[困]", "[惊恐]", "[流汗", "[憨笑]",
-				"[大兵]", "[奋斗]", "[咒骂]", "[疑问]", "[嘘]", "[晕]", "折磨]", "[衰]",
-				"[骷髅]", "[敲打]", "[再见]", "[擦汗]", "[抠鼻]", "[鼓掌]", "[糗大了]",
+		String[] faceNames1 = new String[] { "[微笑]", "[撇嘴]", "[色]", "[发呆]",
+				"[得意]", "[流泪]", "[害羞]", "[闭嘴]", "[睡]", "[大哭]", "[尴尬]", "[发怒]",
+				"[调皮]", "[呲牙]", "[惊讶]", "[难过]", "[酷]", "[冷汗]", "[抓狂]", "[吐]",
+				"[偷笑]", "[可爱]", "[白眼]", "[傲慢]", "[饥饿]", "[困]", "[惊恐]", "[流汗",
+				"[憨笑]", "[大兵]", "[奋斗]", "[咒骂]", "[疑问]", "[嘘]", "[晕]", "折磨]",
+				"[衰]", "[骷髅]", "[敲打]", "[再见]", "[擦汗]", "[抠鼻]", "[鼓掌]", "[糗大了]",
 				"[坏笑]", "[左哼哼]", "[右哼哼]", "[哈欠]", "[鄙视]", "[委屈]", "[快哭了]",
 				"[阴险]", "[亲亲]", "[吓]", "[可怜]", "[菜刀]", "[西瓜]", "[啤酒]", "[篮球]",
 				"[乒乓]", "[咖啡]", "[饭]", "[猪头]", "[玫瑰]", "[凋谢]", "[示爱]", "[爱心]",
@@ -1821,14 +1836,19 @@ public class ChatFriendFragment extends BaseFragment {
 				"<女孩>", "<女士>", "<男士>", "<天使>", "<骷髅>", "<红唇>", "<太阳>", "<下雨>",
 				"<多云>", "<雪人>", "<月亮>", "<闪电>", "<海浪>", "<猫>", "<小狗>", "<老鼠>",
 				"<仓鼠>", "<兔子>" };
+		faceNamesList.add(faceNames1);
+		faceNamesList.add(faceNames2);
 		List<View> mListViews = new ArrayList<View>();
 		List<String> images1 = new ArrayList<String>();
 		for (int i = 0; i < 105; i++) {
-			expressionFaceMap.put(faceNames[i], "smiley_" + i + ".png");
+			expressionFaceMap.put(faceNamesList.get(0)[i], "smiley_" + i
+					+ ".png");
 			images1.add("smiley_" + i + ".png");
 		}
 		List<String> images2 = new ArrayList<String>();
 		for (int i = 0; i < 77; i++) {
+			expressionFaceMap.put(faceNamesList.get(1)[i], "emoji_" + i
+					+ ".png");
 			images2.add("emoji_" + i + ".png");
 		}
 		List<String> images3 = new ArrayList<String>();
@@ -1959,7 +1979,7 @@ public class ChatFriendFragment extends BaseFragment {
 				public void onClick(View v) {
 					editText_message.getText().insert(
 							editText_message.getSelectionStart(),
-							faceNames[position]);
+							faceNamesList.get(chat_vPager_now)[position]);
 				}
 			});
 			return convertView;
