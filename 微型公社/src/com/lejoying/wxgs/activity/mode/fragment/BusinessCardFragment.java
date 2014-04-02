@@ -53,7 +53,8 @@ public class BusinessCardFragment extends BaseFragment {
 	private static final int SCROLL = 0x51;
 
 	View mContent;
-
+	LayoutInflater mInflater;
+	
 	private TextView tv_spacing;
 	private TextView tv_spacing2;
 	private TextView tv_mainbusiness;
@@ -72,8 +73,9 @@ public class BusinessCardFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		mInflater = inflater;
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
-
+		
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -173,20 +175,37 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public void initData() {
 		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
+		View tv_group = mContent.findViewById(R.id.tv_group_layout);
+		View tv_msg=mContent.findViewById(R.id.tv_msg_layout);
 		final ImageView iv_head = (ImageView) mContent
 				.findViewById(R.id.iv_head);
+		
+		TextView tv_grouppanel_name=(TextView) mContent.findViewById(R.id.tv_grouppanel_name);
+		TextView tv_msgpanel_name=(TextView) mContent.findViewById(R.id.tv_msgpanel_name);
 		TextView tv_nickname = (TextView) mContent
 				.findViewById(R.id.tv_nickname);
 		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
 		TextView tv_mainbusiness = (TextView) mContent
 				.findViewById(R.id.tv_mainbusiness);
+		TextView tv_id= (TextView) mContent.findViewById(R.id.tv_id);
+		TextView tv_sex= (TextView) mContent.findViewById(R.id.tv_sex);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		Button button3 = (Button) mContent.findViewById(R.id.button3);
-		String fileName = "";
+		String fileName = "",phone="";
 		if (mStatus == SHOW_TEMPFRIEND) {
+			if(mShowFriend.sex.equals("男")){
+				tv_grouppanel_name.setText("他的群组");
+				tv_msgpanel_name.setText("他的广播");
+			}else{
+				tv_grouppanel_name.setText("她的群组");
+				tv_msgpanel_name.setText("她的广播");
+			}
+			tv_id.setText(String.valueOf(mShowFriend.id));
+			tv_sex.setText(mShowFriend.sex);
 			tv_nickname.setText(mShowFriend.nickName);
-			tv_phone.setText(mShowFriend.phone);
+			phone=mShowFriend.phone.substring(0, 2)+"****"+mShowFriend.phone.substring(7);
+			tv_phone.setText(phone);
 			fileName = mShowFriend.head;
 			tv_mainbusiness.setText(mShowFriend.mainBusiness);
 			group.removeView(button3);
@@ -209,11 +228,15 @@ public class BusinessCardFragment extends BaseFragment {
 		} else if (mStatus == SHOW_SELF) {
 			button1.setText("修改个人信息");
 			button2.setText("退出登录");
+			tv_id.setText(String.valueOf(app.data.user.id));
+			tv_sex.setText(app.data.user.sex);
 			tv_nickname.setText(app.data.user.nickName);
 			fileName = app.data.user.head;
 			tv_phone.setText(app.data.user.phone);
 			tv_mainbusiness.setText(app.data.user.mainBusiness);
 			group.removeView(button3);
+			group.removeView(tv_group);
+			group.removeView(tv_msg);
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -253,11 +276,22 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 
 		} else if (mStatus == SHOW_FRIEND) {
+			if(mShowFriend.sex.equals("男")){
+				tv_grouppanel_name.setText("他的群组");
+				tv_msgpanel_name.setText("他的广播");
+			}else{
+				tv_grouppanel_name.setText("她的群组");
+				tv_msgpanel_name.setText("她的广播");
+			}
 			button1.setText("发起聊天");
 			button2.setText("修改备注");
 			button3.setText("解除好友关系");
+			
+			tv_id.setText(String.valueOf(mShowFriend.id));
+			tv_sex.setText(mShowFriend.sex);
 			tv_nickname.setText(mShowFriend.nickName);
-			tv_phone.setText(mShowFriend.phone);
+			phone=mShowFriend.phone.substring(0, 3)+"****"+mShowFriend.phone.substring(7);
+			tv_phone.setText(phone);
 			fileName = mShowFriend.head;
 			tv_mainbusiness.setText(mShowFriend.mainBusiness);
 			button1.setOnClickListener(new OnClickListener() {
@@ -372,5 +406,7 @@ public class BusinessCardFragment extends BaseFragment {
 						.get(headFileName));
 			}
 		});
+		
+		
 	}
 }

@@ -24,6 +24,8 @@ public class JSONParser {
 	public static User generateUserFromJSON(JSONObject jUser) {
 		User user = new User();
 		try {
+			user.id=jUser.getInt("ID");
+			user.sex=jUser.getString("sex");
 			user.phone = jUser.getString("phone");
 		} catch (JSONException e) {
 		}
@@ -45,6 +47,8 @@ public class JSONParser {
 	public static Friend generateFriendFromJSON(JSONObject jFriend) {
 		Friend friend = new Friend();
 		try {
+			friend.id=jFriend.getInt("ID");
+			friend.sex = jFriend.getString("sex");
 			friend.phone = jFriend.getString("phone");
 			try {
 				friend.head = jFriend.getString("head");

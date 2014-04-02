@@ -9,6 +9,8 @@ public class Friend implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public int id;
+	public String sex="";
 	public String phone = "";
 	public int distance;
 	public String nickName = "";
