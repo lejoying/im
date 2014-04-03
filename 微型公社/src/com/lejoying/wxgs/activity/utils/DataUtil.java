@@ -52,6 +52,8 @@ public class DataUtil {
 							data.user.head = user.head;
 							data.user.nickName = user.nickName;
 							data.user.mainBusiness = user.mainBusiness;
+							data.user.id = user.id;
+							data.user.sex = user.sex;
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

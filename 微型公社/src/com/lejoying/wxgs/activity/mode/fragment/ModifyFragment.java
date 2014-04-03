@@ -62,12 +62,15 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	View mContent;
 	TextView tv_name;
 	EditText et_name;
+	TextView tv_sex;
 	TextView tv_yewu;
 	EditText et_yewu;
+
 	ImageView iv_head;
 	View rl_head;
 	View rl_yewu_edit;
 	View rl_name;
+	View rl_sex;
 	View rl_yewu;
 
 	TextView tv_phone;
@@ -131,12 +134,15 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
 		tv_name = (TextView) mContent.findViewById(R.id.tv_name);
 		et_name = (EditText) mContent.findViewById(R.id.et_name);
+		tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
+
 		tv_yewu = (TextView) mContent.findViewById(R.id.tv_yewu);
 		et_yewu = (EditText) mContent.findViewById(R.id.et_yewu);
 		tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
 		rl_yewu_edit = mContent.findViewById(R.id.rl_yewu_edit);
 		rl_name = mContent.findViewById(R.id.rl_name);
 		rl_yewu = mContent.findViewById(R.id.rl_yewu);
+		rl_sex = mContent.findViewById(R.id.rl_sex);
 		tv_random = mContent.findViewById(R.id.tv_random);
 
 		final String headFileName = app.data.user.head;
@@ -158,6 +164,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		rl_cancelselect.setOnClickListener(this);
 
 		rl_name.setOnClickListener(this);
+		rl_sex.setOnClickListener(this);
 		rl_yewu.setOnClickListener(this);
 		et_name.setOnFocusChangeListener(this);
 		et_yewu.setOnFocusChangeListener(this);
@@ -174,6 +181,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		rl_cancel.setOnClickListener(this);
 
 		tv_name.setText(app.data.user.nickName);
+		tv_sex.setText(app.data.user.sex);
 		tv_phone.setText(app.data.user.phone);
 		tv_yewu.setText(app.data.user.mainBusiness);
 
@@ -231,8 +239,10 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 				User user = new User();
 				user.nickName = et_name.getText().toString();
 				user.mainBusiness = et_yewu.getText().toString();
+				user.sex = tv_sex.getText().toString();
 				tv_name.setText(user.nickName);
 				tv_yewu.setText(user.mainBusiness);
+				tv_sex.setText(user.sex);
 				modify(user);
 			}
 			et_name.setVisibility(View.GONE);
@@ -242,6 +252,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			rl_editbar.setVisibility(View.GONE);
 			rl_name.setBackgroundColor(Color.argb(0, 255, 255, 255));
 			rl_yewu.setBackgroundColor(Color.argb(0, 255, 255, 255));
+			rl_sex.setBackgroundColor(Color.argb(0, 255, 255, 255));
 		}
 	}
 
@@ -282,6 +293,14 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			modifyMode(v);
 			requestFocus(et_yewu);
 			break;
+		case R.id.rl_sex:
+			modifyMode(v);
+			if(tv_sex.getText().equals("男")){
+				tv_sex.setText("女");
+			}else{
+				tv_sex.setText("男");
+			}
+			break;
 		case R.id.rl_save:
 			endModify(true);
 			break;
@@ -303,6 +322,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		case R.id.rl_cancelselect:
 			rl_edithead.setVisibility(View.GONE);
 			break;
+
 		default:
 			break;
 		}
@@ -334,6 +354,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	void changeSelectBackGround(View selectView) {
 		rl_name.setBackgroundColor(Color.argb(0, 0, 0, 0));
 		rl_yewu.setBackgroundColor(Color.argb(0, 0, 0, 0));
+		rl_sex.setBackgroundColor(Color.argb(0, 0, 0, 0));
 		selectView.setBackgroundColor(Color.argb(32, 255, 255, 255));
 	}
 
@@ -470,6 +491,9 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
 				account.put("mainBusiness", user.mainBusiness);
 			}
+			if (user.sex != null && !user.sex.equals("")) {
+				account.put("sex", user.sex);
+			}
 			if (user.nickName != null && !user.mainBusiness.equals("")) {
 				account.put("nickName", user.nickName);
 			}
@@ -491,6 +515,9 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 				}
 				if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
 					data.user.mainBusiness = user.mainBusiness;
+				}
+				if (user.sex != null && !user.sex.equals("")) {
+					data.user.sex = user.sex;
 				}
 				if (user.nickName != null && !user.mainBusiness.equals("")) {
 					data.user.nickName = user.nickName;

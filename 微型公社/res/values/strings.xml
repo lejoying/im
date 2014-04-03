@@ -68,8 +68,10 @@
     <string name="button_send">发送</string>
     <!-- temp -->
     <string name="tv_modifyuserinfo">修改个人信息</string>
+    <string name="tv_modifychangepwd">修改密码</string>
     <string name="tv_head">头像</string>
     <string name="tv_nickname">名字</string>
+    <string name="tv_sex">性别</string>
     <string name="tv_phone">手机</string>
     <string name="tv_mainbusiness">主要业务</string>
     <string name="tv_mainbusinesscount">0/240</string>
