@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -384,4 +385,54 @@ public class FileHandler {
 		public void onSuccess(String filename, String base64, Boolean flag);
 	}
 
+	@SuppressLint("DefaultLocale")
+	public void getBigFaceImgBASE64(final Context context,
+			final BigFaceImgInterface bigFaceImg) {
+		final BigFaceImgSettings settings = new BigFaceImgSettings();
+		bigFaceImg.setParams(settings);
+		final String assetsPath = settings.assetsPath;
+		if (assetsPath != "") {
+			new Thread() {
+				public void run() {
+					try {
+						InputStream is = context.getResources().getAssets()
+								.open(assetsPath + settings.fileName);
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+						byte[] buffer = new byte[1024];
+						int len = 0;
+						while ((len = is.read(buffer)) != -1) {
+							bos.write(buffer, 0, len);
+						}
+						bos.flush();
+						byte[] data = bos.toByteArray();
+						bos.close();
+						is.close();
+						String base64 = Base64.encodeToString(data,
+								Base64.DEFAULT);
+						base64 = base64.trim();
+						String sha1 = app.mSHA1.getDigestOfString(base64
+								.getBytes());
+						bigFaceImg.onSuccess(
+								(sha1 + settings.format).toLowerCase(), base64);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				};
+			}.start();
+		}
+	}
+
+	public class BigFaceImgSettings {
+		public String format;
+		public String fileName;
+		public String assetsPath;
+		public File folder = app.sdcardImageFolder;
+	}
+
+	public interface BigFaceImgInterface {
+		public void setParams(BigFaceImgSettings settings);
+
+		public void onSuccess(String fileName, String base64);
+	}
 }

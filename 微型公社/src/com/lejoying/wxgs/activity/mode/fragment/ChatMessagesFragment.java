@@ -1,18 +1,13 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import org.w3c.dom.Text;
-
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -26,6 +21,8 @@ public class ChatMessagesFragment extends BaseFragment {
 
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
+
+	MyMessagesAdapter messagesAdapter;
 
 	View mContentView;
 	ListView lv_messages;
@@ -52,8 +49,14 @@ public class ChatMessagesFragment extends BaseFragment {
 		headView.setHeight(10);
 		lv_messages.addHeaderView(headView);
 		lv_messages.addFooterView(headView);
-		lv_messages.setAdapter(new MyMessagesAdapter());
+		messagesAdapter = new MyMessagesAdapter();
+		lv_messages.setAdapter(messagesAdapter);
 		return mContentView;
+	}
+
+	public void notifyViews() {
+		if (messagesAdapter != null)
+			messagesAdapter.notifyDataSetChanged();
 	}
 
 	class MyMessagesAdapter extends BaseAdapter {

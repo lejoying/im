@@ -134,7 +134,7 @@ public class CircleMenu {
 				case 11:
 					MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
 					MainActivity.instance.mMainMode
-							.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
+							.show(MainActivity.instance.mMainMode.mBusinessCardFragment);
 					break;
 				case 12:
 					MainActivity.instance.mMainMode

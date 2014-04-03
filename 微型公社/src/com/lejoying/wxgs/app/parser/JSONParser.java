@@ -24,9 +24,15 @@ public class JSONParser {
 	public static User generateUserFromJSON(JSONObject jUser) {
 		User user = new User();
 		try {
-			user.id=jUser.getInt("ID");
-			user.sex=jUser.getString("sex");
 			user.phone = jUser.getString("phone");
+		} catch (JSONException e) {
+		}
+		try {
+			user.id = jUser.getInt("ID");
+		} catch (JSONException e) {
+		}
+		try {
+			user.sex = jUser.getString("sex");
 		} catch (JSONException e) {
 		}
 		try {
@@ -47,39 +53,45 @@ public class JSONParser {
 	public static Friend generateFriendFromJSON(JSONObject jFriend) {
 		Friend friend = new Friend();
 		try {
-			friend.id=jFriend.getInt("ID");
+			friend.id = jFriend.getInt("ID");
+		} catch (JSONException e) {
+		}
+		try {
 			friend.sex = jFriend.getString("sex");
+		} catch (JSONException e) {
+		}
+		try {
 			friend.phone = jFriend.getString("phone");
-			try {
-				friend.head = jFriend.getString("head");
-			} catch (JSONException e) {
-			}
-			try {
-				friend.nickName = jFriend.getString("nickName");
-			} catch (JSONException e) {
-			}
-			try {
-				friend.mainBusiness = jFriend.getString("mainBusiness");
-			} catch (JSONException e) {
-			}
-			try {
-				friend.friendStatus = jFriend.getString("friendStatus");
-			} catch (JSONException e) {
-			}
-			try {
-				friend.addMessage = jFriend.getString("message");
-			} catch (JSONException e) {
-			}
-			try {
-				friend.distance = jFriend.getInt("distance");
-			} catch (JSONException e) {
-			}
-			try {
-				JSONObject jLocation = jFriend.getJSONObject("location");
-				friend.longitude = jLocation.getString("longitude");
-				friend.latitude = jLocation.getString("latitude");
-			} catch (JSONException e) {
-			}
+		} catch (JSONException e) {
+		}
+		try {
+			friend.head = jFriend.getString("head");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.nickName = jFriend.getString("nickName");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.mainBusiness = jFriend.getString("mainBusiness");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.friendStatus = jFriend.getString("friendStatus");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.addMessage = jFriend.getString("message");
+		} catch (JSONException e) {
+		}
+		try {
+			friend.distance = jFriend.getInt("distance");
+		} catch (JSONException e) {
+		}
+		try {
+			JSONObject jLocation = jFriend.getJSONObject("location");
+			friend.longitude = jLocation.getString("longitude");
+			friend.latitude = jLocation.getString("latitude");
 		} catch (JSONException e) {
 		}
 
@@ -94,7 +106,6 @@ public class JSONParser {
 				Friend friend = generateFriendFromJSON(jFriend);
 				friends.add(friend);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

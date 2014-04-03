@@ -968,36 +968,36 @@ public class CirclesFragment extends BaseFragment {
 					.removeView(newFriendButtonView);
 		}
 
-		messages.clear();
-		for (int i = 0; i < lastChatFriendsSize; i++) {
-			String phone = app.data.lastChatFriends.get(i);
-			Friend friend = app.data.friends.get(phone);
-			if (friend == null) {
-				continue;
-			}
-			View messageView = views.get("message#" + phone);
-			if (messageView == null) {
-				messageView = generateMessageView(phone);
-				messageView.setTag(74);
-				views.put("message#" + phone, messageView);
-			}
-			messages.add("message#");
-			normalShow.add("message#" + phone);
-			notifyMessageView(messageView, friend);
-		}
-
-		View moremessageView = views.get("button#moremessage");
-		if (moremessageView == null) {
-			moremessageView = generateMoreMessageButtonView();
-			moremessageView.setTag(46);
-			views.put("button#moremessage", moremessageView);
-		}
-		if (lastChatFriendsSize != 0) {
-			normalShow.add("button#moremessage");
-		} else if (moremessageView.getParent() != null) {
-			((ViewGroup) moremessageView.getParent())
-					.removeView(moremessageView);
-		}
+		// messages.clear();
+		// for (int i = 0; i < lastChatFriendsSize; i++) {
+		// String phone = app.data.lastChatFriends.get(i);
+		// Friend friend = app.data.friends.get(phone);
+		// if (friend == null) {
+		// continue;
+		// }
+		// View messageView = views.get("message#" + phone);
+		// if (messageView == null) {
+		// messageView = generateMessageView(phone);
+		// messageView.setTag(74);
+		// views.put("message#" + phone, messageView);
+		// }
+		// messages.add("message#");
+		// normalShow.add("message#" + phone);
+		// notifyMessageView(messageView, friend);
+		// }
+		//
+		// View moremessageView = views.get("button#moremessage");
+		// if (moremessageView == null) {
+		// moremessageView = generateMoreMessageButtonView();
+		// moremessageView.setTag(46);
+		// views.put("button#moremessage", moremessageView);
+		// }
+		// if (lastChatFriendsSize != 0) {
+		// normalShow.add("button#moremessage");
+		// } else if (moremessageView.getParent() != null) {
+		// ((ViewGroup) moremessageView.getParent())
+		// .removeView(moremessageView);
+		// }
 
 		circles.clear();
 		// generate circles

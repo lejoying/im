@@ -130,12 +130,12 @@ public class SearchFriendFragment extends BaseFragment {
 				settings.params.put("accessKey", app.data.user.accessKey);
 				settings.params.put("area", "{\"longitude\":\"" + longitude
 						+ "\",\"latitude\":\"" + latitude + "\",\"radius\":\""
-						+ 2000 + "\"}");
+						+ 10000 + "\"}");
 			}
 
 			@Override
 			public void success(final JSONObject jData) {
-				System.out.println(jData);
+				System.out.println(jData + "----------------------");
 				app.dataHandler.exclude(new Modification() {
 					@Override
 					public void modifyData(Data data) {
@@ -267,6 +267,8 @@ public class SearchFriendFragment extends BaseFragment {
 								data.user.nickName = friend.nickName;
 								data.user.mainBusiness = friend.mainBusiness;
 								data.user.head = friend.head;
+								data.user.sex = friend.sex;
+								data.user.id = friend.id;
 							}
 						});
 					} else if (app.data.friends.get(phone) != null) {
@@ -397,6 +399,9 @@ public class SearchFriendFragment extends BaseFragment {
 			final Friend friend = friends.get(i);
 			FriendHolder friendHolder = new FriendHolder();
 			friendHolder.phone = friend.phone;
+			if (friend.phone.equals("")) {
+				continue;
+			}
 			int index = circleHolder.friendHolders.indexOf(friendHolder);
 			friendHolder = (index != -1 ? circleHolder.friendHolders
 					.remove(index) : null);

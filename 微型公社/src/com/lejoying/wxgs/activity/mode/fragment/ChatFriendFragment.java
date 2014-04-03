@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,6 +72,8 @@ import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
+import com.lejoying.wxgs.activity.view.MyGifView;
+import com.lejoying.wxgs.activity.view.TypegifView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
@@ -84,6 +85,8 @@ import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgInterface;
+import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgSettings;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
@@ -320,7 +323,8 @@ public class ChatFriendFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						mMainModeManager.mCirclesFragment.notifyViews();
+						// mMainModeManager.mCirclesFragment.notifyViews();
+						mMainModeManager.mChatMessagesFragment.notifyViews();
 					}
 				});
 			}
@@ -580,6 +584,7 @@ public class ChatFriendFragment extends BaseFragment {
 					rl_face.setVisibility(View.GONE);
 				} else {
 					rl_face.setVisibility(View.VISIBLE);
+					hideSelectTab();
 				}
 			}
 		});
@@ -854,7 +859,13 @@ public class ChatFriendFragment extends BaseFragment {
 				showSelectTab();
 			}
 		});
+		editText_message.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				rl_face.setVisibility(View.GONE);
+			}
+		});
 		editText_message.addTextChangedListener(new TextWatcher() {
 			String content = "";
 
@@ -930,6 +941,7 @@ public class ChatFriendFragment extends BaseFragment {
 				editText_message.setText("");
 				if (message != null && !message.equals("")) {
 					sendMessage("text", message);
+					rl_face.setVisibility(View.GONE);
 				}
 			}
 		});
@@ -1271,6 +1283,8 @@ public class ChatFriendFragment extends BaseFragment {
 						.findViewById(R.id.rl_chatleft_image);
 				messageHolder.iv_image = (ImageView) convertView
 						.findViewById(R.id.iv_image);
+				messageHolder.iv_image_gif = (TypegifView) convertView
+						.findViewById(R.id.iv_image_gif);
 				messageHolder.tv_nickname = (TextView) convertView
 						.findViewById(R.id.tv_nickname);
 				messageHolder.iv_head = (ImageView) convertView
@@ -1345,18 +1359,36 @@ public class ChatFriendFragment extends BaseFragment {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
 				messageHolder.voice.setVisibility(View.GONE);
+				String content = message.content;
+				final String imgLastName = content.substring(content
+						.lastIndexOf(".") + 1);
 				final String imageFileName = message.content;
 				final ImageView iv_image = messageHolder.iv_image;
 				app.fileHandler.getImage(imageFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						iv_image.setImageBitmap(app.fileHandler.bitmaps
-								.get(imageFileName));
-						Movie.decodeFile((new File(app.sdcardImageFolder,
-								imageFileName)).getAbsolutePath());
+						if ("gif".equals(imgLastName)) {
+							File file = new File(app.sdcardImageFolder,
+									imageFileName);
+							FileInputStream fis = null;
+							try {
+								fis = new FileInputStream(file);
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							}
+							messageHolder.iv_image_gif.setInputStream(fis);
+							messageHolder.iv_image_gif.setStart();
+						} else {
+							iv_image.setImageBitmap(app.fileHandler.bitmaps
+									.get(imageFileName));
+						}
+
+						// Movie.decodeFile((new File(app.sdcardImageFolder,
+						// imageFileName)).getAbsolutePath());
 						if (where == app.fileHandler.FROM_WEB) {
 							mAdapter.notifyDataSetChanged();
 						}
+
 					}
 				});
 				switch (type) {
@@ -1562,6 +1594,7 @@ public class ChatFriendFragment extends BaseFragment {
 		View image;
 		ImageView iv_image;
 		TextView tv_nickname;
+		TypegifView iv_image_gif;
 
 		View voice;
 		ImageView iv_voicehead;
@@ -1977,9 +2010,31 @@ public class ChatFriendFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-					editText_message.getText().insert(
-							editText_message.getSelectionStart(),
-							faceNamesList.get(chat_vPager_now)[position]);
+					if (chat_vPager_now < 2) {
+						editText_message.getText().insert(
+								editText_message.getSelectionStart(),
+								faceNamesList.get(chat_vPager_now)[position]);
+					} else {
+						app.fileHandler.getBigFaceImgBASE64(getActivity(),
+								new BigFaceImgInterface() {
+
+									@Override
+									public void setParams(
+											BigFaceImgSettings settings) {
+										settings.format = ".gif";
+										settings.assetsPath = "images/";
+										settings.fileName = "tusiji_"
+												+ (position + 1) + ".gif";
+									}
+
+									@Override
+									public void onSuccess(String fileName,
+											String base64) {
+										checkImage(fileName, base64);
+										hideSelectTab();
+									}
+								});
+					}
 				}
 			});
 			return convertView;

@@ -46,6 +46,12 @@ public class EventHandler {
 								MainActivity.instance.mMainMode.mChatGroupFragment.mAdapter
 										.notifyDataSetChanged();
 							}
+							if (MainActivity.instance.mMainMode.mChatMessagesFragment
+									.isAdded()) {
+								MainActivity.instance.mMainMode.mChatMessagesFragment
+										.notifyViews();
+							}
+
 						}
 					}
 

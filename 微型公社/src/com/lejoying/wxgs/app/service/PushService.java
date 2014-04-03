@@ -32,6 +32,7 @@ import com.lejoying.wxgs.app.handler.NetworkHandler.ResponseHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.StreamParser;
+import com.lejoying.wxgs.utils.NetworkUtils;
 
 public class PushService extends Service {
 
@@ -86,19 +87,29 @@ public class PushService extends Service {
 	}
 
 	public void stopLongPull() {
-		app.data.user.accessKey = "";
-		DataUtil.saveData(this);
-		isConnection = false;
-		if (mIMConnection != null) {
-			mIMConnection.disConnection();
-			mIMConnection = null;
-		}
-		if (mSquareConnection != null) {
-			mSquareConnection.disConnection();
-			mSquareConnection = null;
-		}
-		notifyWaitingForConnection();
-		sendBroadcast(new Intent(LONGPULL_FAILED));
+		app.dataHandler.exclude(new Modification() {
+
+			@Override
+			public void modifyData(Data data) {
+				data.user.accessKey = "";
+			}
+
+			@Override
+			public void modifyUI() {
+				DataUtil.saveData(PushService.this);
+				isConnection = false;
+				if (mIMConnection != null) {
+					mIMConnection.disConnection();
+					mIMConnection = null;
+				}
+				if (mSquareConnection != null) {
+					mSquareConnection.disConnection();
+					mSquareConnection = null;
+				}
+				notifyWaitingForConnection();
+				sendBroadcast(new Intent(LONGPULL_FAILED));
+			}
+		});
 	}
 
 	public static void startIMLongPull(Context context) {
@@ -188,16 +199,16 @@ public class PushService extends Service {
 				case FAILED_TIMEOUT:
 					break;
 				default:
-					// try {
-					// if (!NetworkUtils.hasNetwork(PushService.this)) {
-					// waitForConnection();
-					// } else {
-					// waitForConnection(5000);
-					// }
-					// } catch (InterruptedException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
+					try {
+						if (!NetworkUtils.hasNetwork(PushService.this)) {
+							waitForConnection();
+						} else {
+							waitForConnection(5000);
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				}
 			}
