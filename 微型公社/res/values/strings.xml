@@ -16,8 +16,8 @@
     <string name="circleitem2_2">扫一扫</string>
     <string name="circleitem2_3">我的Hot</string>
     <string name="circleitem2_4">返回</string>
-    <string name="circleitem2_5">我的账户</string>
-    <string name="circleitem2_6">密友圈</string>
+    <string name="circleitem2_5">消息列表</string>
+    <string name="circleitem2_6">密友分组</string>
     <string name="circlemenu_page_circles">密友圈</string>
     <string name="circlemenu_page_group">群组</string>
     <string name="circlemenu_page_square">广场</string>

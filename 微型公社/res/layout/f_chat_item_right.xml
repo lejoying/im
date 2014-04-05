@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="90dp" />
 
-        <com.lejoying.wxgs.activity.view.TypegifView
+        <RelativeLayout
             android:id="@+id/iv_image_gif"
             android:layout_width="match_parent"
             android:layout_height="90dp" />

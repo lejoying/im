@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Movie;
 import android.util.Base64;
 
 import com.lejoying.wxgs.R;
@@ -30,6 +31,7 @@ import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.StreamParser;
 
+@SuppressLint("DefaultLocale")
 public class FileHandler {
 	MainApplication app;
 
@@ -51,7 +53,7 @@ public class FileHandler {
 	public String FROM_MEMORY = "memory";
 	public String FROM_WEB = "web";
 	public String FROM_DEFAULT = "default";
-
+	public Map<String, GifMovie> gifs = new Hashtable<String, GifMovie>();
 	public Map<String, Bitmap> bitmaps = new Hashtable<String, Bitmap>();
 	// TODO to be managed by native code
 	public Bitmap defaultImage;
@@ -288,6 +290,7 @@ public class FileHandler {
 		public void onResult(String where);
 	}
 
+	@SuppressLint("DefaultLocale")
 	public void getVoice(final VoiceInterface getVoiceInterface) {
 		final VoiceSettings settings = new VoiceSettings();
 		getVoiceInterface.setParams(settings);
@@ -405,14 +408,28 @@ public class FileHandler {
 							bos.write(buffer, 0, len);
 						}
 						bos.flush();
-						byte[] data = bos.toByteArray();
 						bos.close();
 						is.close();
+						byte[] data = bos.toByteArray();
 						String base64 = Base64.encodeToString(data,
 								Base64.DEFAULT);
 						base64 = base64.trim();
 						String sha1 = app.mSHA1.getDigestOfString(base64
 								.getBytes());
+						File file = new File(settings.folder, sha1
+								+ settings.format);
+						if (!file.exists()) {
+							InputStream is1 = context.getResources()
+									.getAssets()
+									.open(assetsPath + settings.fileName);
+							FileOutputStream fos = new FileOutputStream(file);
+							while ((len = is1.read(buffer)) != -1) {
+								fos.write(buffer, 0, len);
+							}
+							fos.flush();
+							fos.close();
+							is.close();
+						}
 						bigFaceImg.onSuccess(
 								(sha1 + settings.format).toLowerCase(), base64);
 					} catch (IOException e) {
@@ -434,5 +451,89 @@ public class FileHandler {
 		public void setParams(BigFaceImgSettings settings);
 
 		public void onSuccess(String fileName, String base64);
+	}
+
+	public void getGifImgFromWebOrSdCard(final String imageFileName,
+			final FileResult gifFileResult) {
+		final File folder = app.sdcardImageFolder;
+		if (!folder.exists()) {
+			folder.mkdirs();
+		}
+		File file = new File(folder, imageFileName);
+		if (!file.exists()) {
+			app.networkHandler.connection(new NetConnection() {
+				@Override
+				protected void success(InputStream is,
+						HttpURLConnection httpURLConnection) {
+					try {
+						StreamParser.parseToFile(is, new FileOutputStream(
+								new File(folder, imageFileName)));
+						httpURLConnection.disconnect();
+						GifMovie gifMovie = new GifMovie();
+						gifMovie.movie = Movie.decodeStream(is);
+						gifMovie.bytes = streamToBytes(is);
+						gifs.put(imageFileName, gifMovie);
+						gifFileResult.onResult(FROM_WEB);
+						try {
+							is.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} catch (FileNotFoundException e) {
+					}
+				}
+
+				@Override
+				protected void failed(int failedType, int responseCode) {
+					super.failed(failedType, responseCode);
+				}
+
+				@Override
+				protected void settings(Settings settings) {
+					settings.url = API.DOMAIN_IMAGE + imageFileName;
+					settings.method = GET;
+				}
+			});
+		} else {
+			if (gifs.get(imageFileName) != null) {
+				gifFileResult.onResult(FROM_MEMORY);
+			} else {
+				try {
+					FileInputStream fileInputStream = new FileInputStream(file);
+					GifMovie gifMovie = new GifMovie();
+					gifMovie.movie = Movie.decodeStream(fileInputStream);
+					gifMovie.bytes = streamToBytes(fileInputStream);
+					gifs.put(imageFileName, gifMovie);
+					gifFileResult.onResult(FROM_SDCARD);
+					try {
+						fileInputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private byte[] streamToBytes(InputStream is) {
+		byte[] bytes = null;
+		try {
+			bytes = new byte[is.available()];
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			is.read(bytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bytes;
+	}
+
+	public class GifMovie {
+		public Movie movie;
+		public byte[] bytes;
 	}
 }
