@@ -448,7 +448,7 @@ public class ChatFriendFragment extends BaseFragment {
 			public void onPageSelected(int arg0) {
 				// faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
 				// Color.WHITE);
-				// chat_vPager_now = arg0;
+				chat_vPager_now = arg0;
 				// faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
 				// Color.RED);
 			}
@@ -1032,6 +1032,10 @@ public class ChatFriendFragment extends BaseFragment {
 		tv_voice.setText("取消");
 		tv_voice_start.setText("按住录音");
 		rl_audiopanel.setVisibility(View.VISIBLE);
+		int show_status = rl_face.getVisibility();
+		if (show_status == View.VISIBLE) {
+			rl_face.setVisibility(View.GONE);
+		}
 	}
 
 	void play(int i) {
@@ -1365,11 +1369,11 @@ public class ChatFriendFragment extends BaseFragment {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
 				messageHolder.voice.setVisibility(View.GONE);
+				final String imageFileName = message.content;
+				final ImageView iv_image = messageHolder.iv_image;
 				String content = message.content;
 				final String imgLastName = content.substring(content
 						.lastIndexOf(".") + 1);
-				final String imageFileName = message.content;
-				final ImageView iv_image = messageHolder.iv_image;
 				if ("gif".equals(imgLastName)) {
 					messageHolder.iv_image.setVisibility(View.GONE);
 					messageHolder.iv_image_gif.setVisibility(View.VISIBLE);
