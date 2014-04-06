@@ -202,8 +202,7 @@ public class BusinessCardFragment extends BaseFragment {
 			if (mShowFriend.sex.equals("男")) {
 				tv_grouppanel_name.setText("他的群组");
 				tv_msgpanel_name.setText("他的广播");
-				
-				
+
 			} else {
 				tv_grouppanel_name.setText("她的群组");
 				tv_msgpanel_name.setText("她的广播");
@@ -306,8 +305,12 @@ public class BusinessCardFragment extends BaseFragment {
 			tv_id.setText(String.valueOf(mShowFriend.id));
 			tv_sex.setText(mShowFriend.sex);
 			tv_nickname.setText(mShowFriend.nickName);
-			phone = mShowFriend.phone.substring(0, 3) + "****"
-					+ mShowFriend.phone.substring(7);
+			if (mShowFriend.phone.length() == 11) {
+				phone = mShowFriend.phone.substring(0, 3) + "****"
+						+ mShowFriend.phone.substring(7);
+			} else {
+				phone = mShowFriend.phone;
+			}
 			tv_phone.setText(phone);
 			fileName = mShowFriend.head;
 			tv_mainbusiness.setText(mShowFriend.mainBusiness);

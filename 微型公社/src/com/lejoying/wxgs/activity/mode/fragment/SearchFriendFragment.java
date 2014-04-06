@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -29,9 +28,8 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.LocationUtils;
-import com.lejoying.wxgs.activity.view.ScrollContent;
-import com.lejoying.wxgs.activity.view.ScrollContentAdapter;
-import com.lejoying.wxgs.activity.view.ScrollRelativeLayout;
+import com.lejoying.wxgs.activity.view.ScrollContainer;
+import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
@@ -65,7 +63,8 @@ public class SearchFriendFragment extends BaseFragment {
 	}
 
 	ScrollView mContent;
-	ScrollRelativeLayout viewContainer;
+	ScrollContainer mScrollContainer;
+	ViewContainer viewContainer;
 	CircleHolder circleHolder;
 
 	@Override
@@ -76,8 +75,10 @@ public class SearchFriendFragment extends BaseFragment {
 
 		mContent = (ScrollView) inflater.inflate(R.layout.f_vertical_scroll,
 				null);
-		viewContainer = (ScrollRelativeLayout) mContent
+		mScrollContainer = (ScrollContainer) mContent
 				.findViewById(R.id.viewContainer);
+		viewContainer = mScrollContainer.getViewContainer();
+
 		circleHolder = new CircleHolder();
 		notifyCircleView(viewContainer, app.data.nearByFriends, circleHolder);
 
@@ -135,7 +136,6 @@ public class SearchFriendFragment extends BaseFragment {
 
 			@Override
 			public void success(final JSONObject jData) {
-				System.out.println(jData + "----------------------");
 				app.dataHandler.exclude(new Modification() {
 					@Override
 					public void modifyData(Data data) {
@@ -157,86 +157,6 @@ public class SearchFriendFragment extends BaseFragment {
 				});
 			}
 		});
-	}
-
-	class SearchFriendAdapter extends ScrollContentAdapter {
-
-		public SearchFriendAdapter(ScrollContent scrollContent) {
-			super(scrollContent);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public int getCount() {
-			return 3;
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			switch (position) {
-			case 0:
-				convertView = mInflater.inflate(R.layout.fragment_panel, null);
-				TextView tv_groupname = (TextView) convertView
-						.findViewById(R.id.panel_name);
-				tv_groupname.setText("附近好友");
-
-				ScrollRelativeLayout viewContainer = (ScrollRelativeLayout) convertView
-						.findViewById(R.id.viewContainer);
-				CircleHolder circleHolder = new CircleHolder();
-				notifyCircleView(viewContainer, app.data.nearByFriends,
-						circleHolder);
-
-				break;
-			case 1:
-				convertView = mInflater.inflate(R.layout.f_searchfriend, null);
-				final EditText mView_phone = (EditText) convertView
-						.findViewById(R.id.et_phone);
-				View mView_search = convertView.findViewById(R.id.btn_search);
-				mView_search.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						final String phone = mView_phone.getText().toString();
-						if (phone == null || phone.equals("")) {
-							Alert.showMessage(getString(R.string.alert_text_phonenotnull));
-							return;
-						}
-						hideSoftInput();
-						search(phone);
-					}
-				});
-
-				break;
-			case 2:
-				convertView = mInflater.inflate(R.layout.fragment_item_button,
-						null);
-				Button button = (Button) convertView.findViewById(R.id.button);
-				button.setText(getString(R.string.button_scanbusinesscard));
-				button.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						mMainModeManager
-								.showNext(mMainModeManager.mScanQRCodeFragment);
-					}
-				});
-				break;
-
-			default:
-				break;
-			}
-			return convertView;
-		}
 	}
 
 	public void search(final String phone) {
@@ -393,8 +313,8 @@ public class SearchFriendFragment extends BaseFragment {
 		}
 	}
 
-	void notifyCircleView(final ScrollRelativeLayout container,
-			List<Friend> friends, CircleHolder circleHolder) {
+	void notifyCircleView(final ViewContainer container, List<Friend> friends,
+			CircleHolder circleHolder) {
 		for (int i = 0; i < friends.size(); i++) {
 			final Friend friend = friends.get(i);
 			FriendHolder friendHolder = new FriendHolder();

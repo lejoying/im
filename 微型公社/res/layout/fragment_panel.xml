@@ -46,11 +46,11 @@
             android:background="#9fff"
             tools:ignore="ContentDescription" />
 
-        <com.lejoying.wxgs.activity.view.ScrollRelativeLayout
+        <com.lejoying.wxgs.activity.view.ScrollContainer
             android:id="@+id/viewContainer"
             android:layout_width="match_parent"
             android:layout_height="220dp" >
-        </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
+        </com.lejoying.wxgs.activity.view.ScrollContainer>
 
         <TextView
             android:id="@+id/textContainer"

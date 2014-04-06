@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    >
+    android:layout_height="match_parent" >
 
     <ScrollView
         android:id="@+id/sv_content"
@@ -126,7 +125,6 @@
                     android:paddingLeft="70dp"
                     android:text="送水服务，多买多送!!!"
                     android:textColor="#fff" />
-
             </RelativeLayout>
 
             <TextView
@@ -138,9 +136,9 @@
                 android:id="@+id/tv_group_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
                 android:background="@drawable/card_background_normal"
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
@@ -168,19 +166,20 @@
                     android:background="#9fff"
                     tools:ignore="ContentDescription" />
 
-                <com.lejoying.wxgs.activity.view.ScrollRelativeLayout
+                <com.lejoying.wxgs.activity.view.ScrollContainer
                     android:id="@+id/viewContainer"
                     android:layout_width="match_parent"
                     android:layout_height="220dp" >
-                </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
+                </com.lejoying.wxgs.activity.view.ScrollContainer>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/tv_msg_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
                 android:background="@drawable/card_background_normal"
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
@@ -208,20 +207,20 @@
                     android:background="#9fff"
                     tools:ignore="ContentDescription" />
 
-                <com.lejoying.wxgs.activity.view.ScrollRelativeLayout
+                <com.lejoying.wxgs.activity.view.ScrollContainer
                     android:id="@+id/viewContainer"
                     android:layout_width="match_parent"
                     android:layout_height="110dp" >
-                </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
+                </com.lejoying.wxgs.activity.view.ScrollContainer>
             </LinearLayout>
-            
-             <LinearLayout
+
+            <LinearLayout
                 android:id="@+id/tv_square_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
                 android:background="@drawable/card_background_normal"
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
@@ -249,11 +248,11 @@
                     android:background="#9fff"
                     tools:ignore="ContentDescription" />
 
-                <com.lejoying.wxgs.activity.view.ScrollRelativeLayout
+                <com.lejoying.wxgs.activity.view.ScrollContainer
                     android:id="@+id/viewContainer"
                     android:layout_width="match_parent"
                     android:layout_height="110dp" >
-                </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
+                </com.lejoying.wxgs.activity.view.ScrollContainer>
             </LinearLayout>
 
             <RelativeLayout
@@ -261,7 +260,6 @@
                 android:layout_height="280dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                
                 android:background="@drawable/card_background"
                 android:padding="10dp"
                 android:paddingLeft="20dp"

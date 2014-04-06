@@ -41,11 +41,11 @@
                 android:layout_marginTop="8dp"
                 android:background="#9fff" />
 
-            <com.lejoying.wxgs.activity.view.ScrollRelativeLayout
+            <com.lejoying.wxgs.activity.view.ScrollContainer
                 android:id="@+id/viewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="220dp" >
-            </com.lejoying.wxgs.activity.view.ScrollRelativeLayout>
+            </com.lejoying.wxgs.activity.view.ScrollContainer>
         </LinearLayout>
 
         <RelativeLayout
