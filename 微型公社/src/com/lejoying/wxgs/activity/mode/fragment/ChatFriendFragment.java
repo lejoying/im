@@ -631,7 +631,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				int show_status = rl_audiopanel.getVisibility();
 				if (show_status == View.VISIBLE) {
 					if (voice_list.size() != 0) {
@@ -683,7 +682,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if (!VOICE_PLAYSTATUS) {
 					iv_voice_play.setImageBitmap(BitmapFactory.decodeResource(
 							getResources(), R.drawable.voice_stop));
@@ -765,7 +763,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
 				if (voice_length == 0) {
 					Toast.makeText(getActivity(), "尚未录制语音", Toast.LENGTH_SHORT)
 							.show();
@@ -1045,7 +1042,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 					@Override
 					public void onCompletion(MediaPlayer mp) {
-						// TODO Auto-generated method stub
 						mp.reset();
 						play_order++;
 						if (play_order < voice_list.size()) {
@@ -1192,19 +1188,16 @@ public class ChatFriendFragment extends BaseFragment {
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
 			return mNowChatGroup.messages.size();
 		}
 
 		@Override
 		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 
 		@Override
 		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
 			return arg0;
 		}
 
@@ -1383,8 +1376,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 								@Override
 								public void onResult(String where) {
-									Log.e("Coolspan", where
-											+ "_=-=-=-=-=-=-=-=");
 									try {
 										SampleView sampleView = new SampleView(
 												getActivity(),
@@ -1478,14 +1469,6 @@ public class ChatFriendFragment extends BaseFragment {
 														app.sdcardVoiceFolder,
 														voiceContent))
 														.getAbsolutePath()));
-								Log.v("Coolspan",
-										(new File(app.sdcardVoiceFolder,
-												voiceContent))
-												.getAbsolutePath()
-												+ "---"
-												+ mpPlayer
-												+ "---"
-												+ flag);
 								messageHolder.mpPlayer = mpPlayer;
 								app.UIHandler.post(new Runnable() {
 
@@ -1497,8 +1480,11 @@ public class ChatFriendFragment extends BaseFragment {
 												+ "\"");
 									}
 								});
-								messageHolder.sk_voice.setMax((int) Math
-										.ceil((double) (mpPlayer.getDuration()) / 1000));
+								messageHolder.sk_voice.setMax(mpPlayer
+										.getDuration());
+								// messageHolder.sk_voice.setMax((int) Math
+								// .ceil((double) (mpPlayer.getDuration()) /
+								// 1000));
 							} catch (SecurityException e) {
 								e.printStackTrace();
 							} catch (IllegalStateException e) {
@@ -1517,11 +1503,14 @@ public class ChatFriendFragment extends BaseFragment {
 
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
-								// TODO Auto-generated method stub
 								messageHolder.sk_voice.setProgress(seekBar
 										.getProgress());
 								messageHolder.mpPlayer.seekTo(seekBar
-										.getProgress() * 1000);
+										.getProgress());
+								if (!messageHolder.mpPlayer.isPlaying()) {
+									messageHolder.mpPlayer.start();
+									iv_head.performClick();
+								}
 							}
 
 							@Override
@@ -1538,6 +1527,7 @@ public class ChatFriendFragment extends BaseFragment {
 							}
 						});
 				iv_head.setOnClickListener(new OnClickListener() {
+					Thread thread = null;
 
 					@Override
 					public void onClick(View v) {
@@ -1548,29 +1538,30 @@ public class ChatFriendFragment extends BaseFragment {
 							bitmap = BitmapFactory.decodeResource(
 									getResources(), R.drawable.head_voice_stop);
 							iv_voicehead_status.setTag("stop");
-							int playTime = messageHolder.sk_voice.getProgress() * 1000;
-							if (mpPlayer.getDuration() - playTime > 1000) {
+							int playTime = messageHolder.sk_voice.getProgress();
+							if (mpPlayer.getDuration() - playTime > 10) {
 								mpPlayer.seekTo(playTime);
 							} else {
 								mpPlayer.seekTo(0);
 							}
 
 							mpPlayer.start();
-							new Thread() {
+							thread = new Thread() {
 								public void run() {
 									while (true) {
 										try {
-											Thread.sleep(500);
+											if (getActivity() == null) {
+												mpPlayer.stop();
+												mpPlayer.release();
+												thread.interrupt();
+												break;
+											}
+											Thread.sleep(50);
 											messageHolder.sk_voice.setProgress(mpPlayer
-													.getCurrentPosition() / 1000);
-											Log.v("Coolspan",
-													mpPlayer.getCurrentPosition()
-															+ "---"
-															+ mpPlayer
-																	.getDuration());
+													.getCurrentPosition());
 											if (mpPlayer.getDuration()
 													- mpPlayer
-															.getCurrentPosition() < 500) {
+															.getCurrentPosition() < 50) {
 												messageHolder.sk_voice
 														.setProgress(messageHolder.sk_voice
 																.getMax());
@@ -1583,12 +1574,17 @@ public class ChatFriendFragment extends BaseFragment {
 										}
 									}
 								};
-							}.start();
+							};
+							thread.start();
 
 							mpPlayer.setOnCompletionListener(new OnCompletionListener() {
 
 								@Override
 								public void onCompletion(MediaPlayer arg0) {
+									if (getActivity() == null) {
+										thread.interrupt();
+										return;
+									}
 									Bitmap bitmap = BitmapFactory
 											.decodeResource(getResources(),
 													R.drawable.head_voice_start);
@@ -1602,6 +1598,7 @@ public class ChatFriendFragment extends BaseFragment {
 											R.drawable.head_voice_start);
 							iv_voicehead_status.setTag("start");
 							mpPlayer.pause();
+							thread.interrupt();
 						}
 						iv_voicehead_status.setImageBitmap(bitmap);
 					}
