@@ -422,10 +422,24 @@ public class GroupManagerFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+						.getLayoutParams();
+				params.height = (int) dp2px(80);
+				editControl.setLayoutParams(params);
+				selectFriend.setVisibility(View.GONE);
+				buttonList.setVisibility(View.VISIBLE);
+				nextBar.setVisibility(View.GONE);
+				tempFriendsList.removeAllViews();
+				seleteFriendList.clear();
 				if (status.equals(MODE_MANAGER)) {
-
+					if (isRemove) {
+						isRemove = false;
+						notifyGroupFriends(views.get("group"), groupHolder);
+					} else {
+						mScrollContainer.smoothScrollTo(0, 0);
+					}
 				} else if (status.equals(MODE_NEWGROUP)) {
-
+					mMainModeManager.back();
 				}
 			}
 		});
@@ -470,11 +484,13 @@ public class GroupManagerFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				final EditText groupName;
+				final EditText groupName = new EditText(getActivity());
+				groupName.setText(mCurrentManagerGroup.name);
+				groupName.setSelection(mCurrentManagerGroup.name.length());
 				new AlertDialog.Builder(getActivity())
 						.setTitle("请输入新的群组名称")
 						.setIcon(android.R.drawable.ic_dialog_info)
-						.setView(groupName = new EditText(getActivity()))
+						.setView(groupName)
 						.setPositiveButton("确定",
 								new DialogInterface.OnClickListener() {
 									@Override
