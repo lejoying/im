@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/tv_grouppic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/face_man" />
+
+    <TextView
+        android:id="@+id/tv_groupname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_grouppic"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:singleLine="true"
+        android:text="TextView" />
+
+</RelativeLayout>

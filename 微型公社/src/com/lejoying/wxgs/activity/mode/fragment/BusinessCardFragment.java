@@ -1,8 +1,12 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
@@ -20,7 +24,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,20 +35,26 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.adapter.FriendGroupsGridViewAdapter;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
+import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 import com.lejoying.wxgs.app.service.PushService;
 
 public class BusinessCardFragment extends BaseFragment {
 
 	public int mStatus;
+	public int groupNum;
 	public Friend mShowFriend;
 	public static final int SHOW_SELF = 1;
 	public static final int SHOW_FRIEND = 2;
@@ -53,6 +65,9 @@ public class BusinessCardFragment extends BaseFragment {
 	private static final int SCROLL = 0x51;
 
 	View mContent;
+	View tv_group;
+	View tv_square;
+	View tv_msg;
 	LayoutInflater mInflater;
 
 	private TextView tv_spacing;
@@ -64,6 +79,8 @@ public class BusinessCardFragment extends BaseFragment {
 	// DEFINITION object
 	private Handler handler;
 	private boolean stopSend;
+
+	FriendGroupsGridViewAdapter adapter = null;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -175,9 +192,9 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public void initData() {
 		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
-		View tv_group = mContent.findViewById(R.id.tv_group_layout);
-		View tv_square = mContent.findViewById(R.id.tv_square_layout);
-		View tv_msg = mContent.findViewById(R.id.tv_msg_layout);
+		tv_group = generateFriendGroup();
+		tv_square = mContent.findViewById(R.id.tv_square_layout);
+		tv_msg = mContent.findViewById(R.id.tv_msg_layout);
 		final ImageView iv_head = (ImageView) mContent
 				.findViewById(R.id.iv_head);
 
@@ -198,6 +215,7 @@ public class BusinessCardFragment extends BaseFragment {
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		Button button3 = (Button) mContent.findViewById(R.id.button3);
 		String fileName = "", phone = "";
+
 		if (mStatus == SHOW_TEMPFRIEND) {
 			if (mShowFriend.sex.equals("男")) {
 				tv_grouppanel_name.setText("他的群组");
@@ -212,7 +230,7 @@ public class BusinessCardFragment extends BaseFragment {
 			tv_sex.setText(mShowFriend.sex);
 			tv_nickname.setText(mShowFriend.nickName);
 			if (mShowFriend.phone.length() == 11) {
-				phone = mShowFriend.phone.substring(0, 2) + "****"
+				phone = mShowFriend.phone.substring(0, 3) + "****"
 						+ mShowFriend.phone.substring(7);
 			} else {
 				phone = mShowFriend.phone;
@@ -311,6 +329,7 @@ public class BusinessCardFragment extends BaseFragment {
 			} else {
 				phone = mShowFriend.phone;
 			}
+
 			tv_phone.setText(phone);
 			fileName = mShowFriend.head;
 			tv_mainbusiness.setText(mShowFriend.mainBusiness);
@@ -428,4 +447,124 @@ public class BusinessCardFragment extends BaseFragment {
 		});
 
 	}
+
+	View generateFriendGroup() {
+		float density;
+		int listSize;
+		GridView gridView;
+		View groupView = mContent.findViewById(R.id.tv_group_layout);
+		gridView = (GridView) mContent.findViewById(R.id.tv_gridview);
+
+		// inflater = (LayoutInflater) this
+		// .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		List<Group> groups = getFriendGroups();
+		if(groupNum%6==0){
+			listSize=groupNum/2;
+		}else{
+			if(groupNum%6>3){
+				listSize=groupNum/6*3+3;
+			}else{
+				listSize=groupNum/6*3+groupNum%6;
+			}
+		}
+		System.out.println(groupNum);
+		System.out.println(listSize);
+		adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
+		if (mStatus != SHOW_SELF) {
+			gridView.setAdapter(adapter);
+			
+			DisplayMetrics outMetrics = new DisplayMetrics();  
+			getActivity().getWindowManager().getDefaultDisplay().getMetrics(outMetrics);  
+		    density = outMetrics.density; // 像素密度  
+		   
+		   
+		    ViewGroup.LayoutParams params = gridView.getLayoutParams();  
+		    int itemWidth = (int) (90 * density);  
+		    int spacingWidth = (int) (4*density);  
+		       
+		    params.width = itemWidth*listSize+(listSize-1)*spacingWidth;  
+		    gridView.setStretchMode(GridView.NO_STRETCH); // 设置为禁止拉伸模式  
+		    gridView.setNumColumns(listSize);  
+		    gridView.setHorizontalSpacing(spacingWidth);  
+		    gridView.setColumnWidth(itemWidth);  
+		    gridView.setLayoutParams(params);  
+			
+//			int size = groups.size();
+//			DisplayMetrics dm = new DisplayMetrics();
+//			getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+//
+//			float density = dm.density;
+//			int allWidth = (int) (110 * size * density);
+//			int itemWidth = (int) (100 * density);
+//			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//					allWidth, LinearLayout.LayoutParams.FILL_PARENT);
+//			gridView.setLayoutParams(params);
+//			gridView.setColumnWidth(itemWidth);
+//			gridView.setHorizontalSpacing(10);
+//			gridView.setStretchMode(GridView.NO_STRETCH);
+//			gridView.setNumColumns(size);
+		}
+
+		return groupView;
+	}
+
+	public List<Group> getFriendGroups() {
+		final List<Group> groups = new ArrayList<Group>();
+		NetConnection netConnection = new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.GROUP_GETUSERGROUPS;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("target", mShowFriend.phone);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(final JSONObject jData) {
+
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						try {
+							JSONArray jGroups = jData.getJSONArray("groups");
+							for (int i = 0; i < jGroups.length(); i++) {
+								try {
+									JSONObject jGroup = jGroups
+											.getJSONObject(i);
+									Group group = new Group();
+									group.gid = jGroup.getInt("gid");
+									group.name = jGroup.getString("name");
+									// Object[] groupAndFriends =
+									// generateGroupFromJSON(jGroup);
+									if (group != null) {
+										groups.add(group);
+									}
+								} catch (JSONException e) {
+								}
+							}
+							
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						groupNum=groups.size();
+						adapter.notifyDataSetChanged();
+					}
+				});
+
+			}
+		};
+		app.networkHandler.connection(netConnection);
+		
+		return groups;
+	}
+
 }
