@@ -45,7 +45,6 @@ import com.lejoying.wxgs.activity.view.ScrollContainer.onInterceptTouchDownListe
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation;
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation.AnimatingView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;

@@ -211,14 +211,14 @@ public class GroupFragment extends BaseFragment {
 			position.x = (int) dp2px(10) + i / 4 * groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 2) {
 			position.y = (int) dp2px(8);
-			position.x = groupItemWidth + (int) dp2px(18) + i / 4
+			position.x = groupItemWidth + (int) dp2px(16) + i / 4
 					* groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 3) {
 			position.y = (int) dp2px(103);
 			position.x = (int) dp2px(10) + i / 4 * groupScrollSpaceWidth;
 		} else if ((i + 1) % 4 == 0) {
 			position.y = (int) dp2px(103);
-			position.x = groupItemWidth + (int) dp2px(18) + i / 4
+			position.x = groupItemWidth + (int) dp2px(16) + i / 4
 					* groupScrollSpaceWidth;
 		}
 		return position;

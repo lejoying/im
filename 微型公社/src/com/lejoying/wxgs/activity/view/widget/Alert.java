@@ -1,16 +1,19 @@
 package com.lejoying.wxgs.activity.view.widget;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -29,8 +32,6 @@ public class Alert {
 	LayoutParams mDialogLayoutParams;
 	LayoutParams mKeyListenerLayoutParams;
 
-	View mDialog;
-	View mDialogKeyListener;
 	TextView mDialogText;
 	View mButtonConfirm;
 	View mButtonCancel;
@@ -45,7 +46,6 @@ public class Alert {
 	boolean isMessageShow;
 	Runnable mDelayToClearMessage;
 
-	DialogListener mDialogListener;
 	OnLoadingCancelListener mLoadingCancelListener;
 
 	boolean isHide;
@@ -65,10 +65,6 @@ public class Alert {
 	}
 
 	void initView() {
-		mDialog = mInflater.inflate(R.layout.widget_alert_dialog, null);
-		mDialogText = (TextView) mDialog.findViewById(R.id.dialog_text);
-		mButtonConfirm = mDialog.findViewById(R.id.dialog_confirm);
-		mButtonCancel = mDialog.findViewById(R.id.dialog_cancel);
 
 		mLoading = mInflater.inflate(R.layout.widget_alert_loading, null);
 
@@ -94,45 +90,11 @@ public class Alert {
 
 		mDialogLayoutParams.gravity = mKeyListenerLayoutParams.gravity = mCommonLayoutParams.gravity = Gravity.CENTER;
 
-		mDialogKeyListener = new View(mContext);
 		mLoadingKeyListener = new View(mContext);
 
 	}
 
 	void initEvent() {
-
-		mDialogKeyListener.setOnKeyListener(new OnKeyListener() {
-
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (event.getAction() == KeyEvent.ACTION_DOWN
-						&& keyCode == KeyEvent.KEYCODE_BACK) {
-					cancelDialog();
-				}
-				return true;
-			}
-		});
-
-		mButtonConfirm.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (mDialogListener != null && mDialogListener.confirm()) {
-					cancelDialog();
-				}
-			}
-		});
-
-		mButtonCancel.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				cancelDialog();
-				if (mDialogListener != null) {
-					mDialogListener.cancel();
-				}
-			}
-		});
 
 		mLoadingKeyListener.setOnKeyListener(new OnKeyListener() {
 
@@ -155,49 +117,6 @@ public class Alert {
 		if (mAlert == null) {
 			mAlert = new Alert(context);
 		}
-	}
-
-	public interface DialogListener {
-		public boolean confirm();
-
-		public void cancel();
-
-		public void onCancel();
-	}
-
-	public static void showDialog(String message, DialogListener listener) {
-		if (mAlert != null) {
-			mAlert.dialog(message, listener);
-		}
-	}
-
-	void dialog(final String message, final DialogListener listener) {
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (!isDialogShow && message != null) {
-					isDialogShow = true;
-					mDialogListener = listener;
-					mDialogText.setText(message);
-					mWindowManager.addView(mDialogKeyListener,
-							mKeyListenerLayoutParams);
-					mWindowManager.addView(mDialog, mDialogLayoutParams);
-				}
-			}
-		});
-	}
-
-	void cancelDialog() {
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (isDialogShow) {
-					isDialogShow = false;
-					mWindowManager.removeView(mDialogKeyListener);
-					mWindowManager.removeView(mDialog);
-				}
-			}
-		});
 	}
 
 	public interface OnLoadingCancelListener {
@@ -291,10 +210,8 @@ public class Alert {
 	public static void recover() {
 		if (mAlert != null && mAlert.isHide) {
 			mAlert.isHide = false;
-			mAlert.mDialog.setVisibility(View.VISIBLE);
 			mAlert.mMessage.setVisibility(View.VISIBLE);
 			mAlert.mLoading.setVisibility(View.VISIBLE);
-			mAlert.mDialogKeyListener.setVisibility(View.VISIBLE);
 			mAlert.mLoadingKeyListener.setVisibility(View.VISIBLE);
 		}
 	}
@@ -302,11 +219,125 @@ public class Alert {
 	public static void hide() {
 		if (mAlert != null && !mAlert.isHide) {
 			mAlert.isHide = true;
-			mAlert.mDialog.setVisibility(View.GONE);
 			mAlert.mMessage.setVisibility(View.GONE);
 			mAlert.mLoading.setVisibility(View.GONE);
-			mAlert.mDialogKeyListener.setVisibility(View.GONE);
 			mAlert.mLoadingKeyListener.setVisibility(View.GONE);
 		}
 	}
+
+	public static AlertInputDialog createInputDialog(Context context) {
+		AlertInputDialog dialog = new AlertInputDialog(context);
+		dialog.showInput();
+		return dialog;
+	}
+
+	public static AlertInputDialog createDialog(Context context) {
+		AlertInputDialog dialog = new AlertInputDialog(context);
+		dialog.hideInput();
+		return dialog;
+	}
+
+	public static class AlertInputDialog {
+
+		CommonDialog dialog;
+
+		public AlertInputDialog(Context context) {
+			dialog = new CommonDialog(context);
+		}
+
+		public AlertInputDialog setOnConfirmClickListener(OnClickListener l) {
+			dialog.confirmListener = l;
+			return this;
+		}
+
+		public AlertInputDialog setOnCancelClickListener(OnClickListener l) {
+			dialog.cancelListener = l;
+			return this;
+		}
+
+		public AlertInputDialog setOnCancelListener(OnCancelListener listener) {
+			dialog.setOnCancelListener(listener);
+			return this;
+		}
+
+		public AlertInputDialog show() {
+			dialog.show();
+			return this;
+		}
+
+		public AlertInputDialog setTitle(String text) {
+			dialog.title.setText(text);
+			return this;
+		}
+
+		public String getInputText() {
+			return dialog.input.getText().toString();
+		}
+
+		public void setInputText(String text) {
+			dialog.input.setText(text);
+		}
+
+		void hideInput() {
+			dialog.input.setVisibility(View.GONE);
+		}
+
+		void showInput() {
+			dialog.input.setVisibility(View.VISIBLE);
+		}
+
+		public interface OnClickListener {
+			public void onClick(AlertInputDialog dialog);
+		}
+
+		class CommonDialog extends Dialog {
+
+			AlertInputDialog.OnClickListener confirmListener, cancelListener;
+			TextView title;
+			EditText input;
+			View confirmView;
+			View cancelView;
+
+			public CommonDialog(Context context) {
+				super(context, R.style.AlertInputDialog);
+				LayoutInflater inflater = (LayoutInflater) context
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View content = inflater.inflate(R.layout.widget_alert_dialog,
+						null);
+				title = (TextView) content.findViewById(R.id.title);
+				input = (EditText) content.findViewById(R.id.input);
+				confirmView = content.findViewById(R.id.confirm);
+				cancelView = content.findViewById(R.id.cancel);
+
+				setContentView(content, new ViewGroup.LayoutParams(context
+						.getResources().getDisplayMetrics().widthPixels,
+						ViewGroup.LayoutParams.WRAP_CONTENT));
+
+				setCanceledOnTouchOutside(false);
+
+				confirmView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						cancel();
+						if (confirmListener != null) {
+							confirmListener.onClick(AlertInputDialog.this);
+						}
+					}
+				});
+
+				cancelView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						cancel();
+						if (cancelListener != null) {
+							cancelListener.onClick(AlertInputDialog.this);
+						}
+					}
+				});
+			}
+
+		}
+
+	}
+
 }
