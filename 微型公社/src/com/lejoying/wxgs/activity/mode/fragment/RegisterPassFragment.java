@@ -20,7 +20,8 @@ import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.Alert.OnLoadingCancelListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
@@ -54,29 +55,16 @@ public class RegisterPassFragment extends BaseFragment implements
 
 			@Override
 			public boolean onKeyDown(int keyCode, KeyEvent event) {
-				Alert.showDialog("确定要退出注册码？", new DialogListener() {
-
-					@Override
-					public void onCancel() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public boolean confirm() {
-						mLoginMode.clearBackStack(1);
-						mLoginMode.back();
-						RegisterCodeFragment.accessKey = null;
-						mLoginMode.setKeyDownListener(null);
-						return true;
-					}
-
-					@Override
-					public void cancel() {
-						// TODO Auto-generated method stub
-
-					}
-				});
+				Alert.createDialog(getActivity()).setTitle("确定要退出注册码？")
+						.setOnConfirmClickListener(new OnDialogClickListener() {
+							@Override
+							public void onClick(AlertInputDialog dialog) {
+								mLoginMode.clearBackStack(1);
+								mLoginMode.back();
+								RegisterCodeFragment.accessKey = null;
+								mLoginMode.setKeyDownListener(null);
+							}
+						}).show();
 
 				return false;
 			}

@@ -39,8 +39,9 @@ import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
@@ -333,87 +334,87 @@ public class GroupManagerFragment extends BaseFragment {
 
 						}
 					};
-					Alert.showDialog(isRemove ? "确定要移除这些成员吗？" : "确定要添加这些好友吗？",
-							new DialogListener() {
-
-								@Override
-								public void onCancel() {
-									// TODO Auto-generated method stub
-
-								}
-
-								@Override
-								public boolean confirm() {
-									app.dataHandler.exclude(new Modification() {
-										@Override
-										public void modifyData(Data data) {
-											Group group = data.groupsMap.get(String
-													.valueOf(mCurrentManagerGroup.gid));
-											for (Friend friend : seleteFriendList) {
-												if (isRemove) {
-													group.members
-															.remove(friend.phone);
-												} else {
-													group.members
-															.add(friend.phone);
-												}
-											}
-											seleteFriendList.clear();
-										}
+					Alert.createDialog(getActivity())
+							.setTitle(isRemove ? "确定要移除这些成员吗？" : "确定要添加这些好友吗？")
+							.setOnConfirmClickListener(
+									new OnDialogClickListener() {
 
 										@Override
-										public void modifyUI() {
-											selectFriend
-													.setVisibility(View.GONE);
-											buttonList
-													.setVisibility(View.VISIBLE);
-											nextBar.setVisibility(View.GONE);
-											RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
-													.getLayoutParams();
-											params.height = (int) dp2px(80);
-											editControl.setLayoutParams(params);
-											if (isRemove) {
-												isRemove = false;
-											} else {
-												notifyGroupFriends(
-														views.get("group"),
-														groupHolder);
+										public void onClick(
+												AlertInputDialog dialog) {
+											app.dataHandler
+													.exclude(new Modification() {
+														@Override
+														public void modifyData(
+																Data data) {
+															Group group = data.groupsMap.get(String
+																	.valueOf(mCurrentManagerGroup.gid));
+															for (Friend friend : seleteFriendList) {
+																if (isRemove) {
+																	group.members
+																			.remove(friend.phone);
+																} else {
+																	group.members
+																			.add(friend.phone);
+																}
+															}
+															seleteFriendList
+																	.clear();
+														}
 
-												circlesViewContenter.scrollTo(
-														0, 0);
-												TranslateAnimation animation1 = new TranslateAnimation(
-														-screenWidth, 0, 0, 0);
-												animation1.setDuration(300);
-												TranslateAnimation animation2 = new TranslateAnimation(
-														-screenWidth
-																* (currentFriendIndex + 1),
-														-screenWidth
-																* (currentFriendIndex),
-														0, 0);
-												animation2.setDuration(300);
-												views.get("group")
-														.startAnimation(
-																animation1);
-												views.get(
-														circles.get(currentFriendIndex))
-														.startAnimation(
-																animation2);
-												currentFriendIndex = 0;
-											}
+														@Override
+														public void modifyUI() {
+															selectFriend
+																	.setVisibility(View.GONE);
+															buttonList
+																	.setVisibility(View.VISIBLE);
+															nextBar.setVisibility(View.GONE);
+															RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) editControl
+																	.getLayoutParams();
+															params.height = (int) dp2px(80);
+															editControl
+																	.setLayoutParams(params);
+															if (isRemove) {
+																isRemove = false;
+															} else {
+																notifyGroupFriends(
+																		views.get("group"),
+																		groupHolder);
+
+																circlesViewContenter
+																		.scrollTo(
+																				0,
+																				0);
+																TranslateAnimation animation1 = new TranslateAnimation(
+																		-screenWidth,
+																		0, 0, 0);
+																animation1
+																		.setDuration(300);
+																TranslateAnimation animation2 = new TranslateAnimation(
+																		-screenWidth
+																				* (currentFriendIndex + 1),
+																		-screenWidth
+																				* (currentFriendIndex),
+																		0, 0);
+																animation2
+																		.setDuration(300);
+																views.get(
+																		"group")
+																		.startAnimation(
+																				animation1);
+																views.get(
+																		circles.get(currentFriendIndex))
+																		.startAnimation(
+																				animation2);
+																currentFriendIndex = 0;
+															}
+														}
+													});
+											app.networkHandler
+													.connection(modifyMembers);
+											tempFriendsList.removeAllViews();
 										}
-									});
-									app.networkHandler
-											.connection(modifyMembers);
-									tempFriendsList.removeAllViews();
-									return true;
-								}
-
-								@Override
-								public void cancel() {
-									// TODO Auto-generated method stub
-
-								}
-							});
+									}).show();
 				}
 			}
 		});
@@ -560,17 +561,12 @@ public class GroupManagerFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				Alert.showDialog("确定要退出" + mCurrentManagerGroup.name + "吗？",
-						new DialogListener() {
+				Alert.createDialog(getActivity())
+						.setTitle("确定要退出" + mCurrentManagerGroup.name + "吗？")
+						.setOnConfirmClickListener(new OnDialogClickListener() {
 
 							@Override
-							public void onCancel() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public boolean confirm() {
+							public void onClick(AlertInputDialog dialog) {
 								CommonNetConnection quitTheGroup = new CommonNetConnection() {
 
 									@Override
@@ -612,15 +608,8 @@ public class GroupManagerFragment extends BaseFragment {
 										mMainModeManager.back();
 									}
 								});
-								return true;
 							}
-
-							@Override
-							public void cancel() {
-								// TODO Auto-generated method stub
-
-							}
-						});
+						}).show();
 			}
 		});
 

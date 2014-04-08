@@ -45,7 +45,9 @@ import com.lejoying.wxgs.activity.view.ScrollContainer.onInterceptTouchDownListe
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation;
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation.AnimatingView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
@@ -532,17 +534,11 @@ public class CirclesFragment extends BaseFragment {
 					Alert.showMessage("默认分组不能删除");
 					return;
 				}
-				Alert.showDialog("确定要删除该组？删除该组后该组好友如果不在其它分组将被自动转移到默认分组中。",
-						new DialogListener() {
-
+				Alert.createDialog(getActivity())
+						.setTitle("确定要删除该组？删除该组后该组好友如果不在其它分组将被自动转移到默认分组中。")
+						.setOnConfirmClickListener(new OnDialogClickListener() {
 							@Override
-							public void onCancel() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public boolean confirm() {
+							public void onClick(AlertInputDialog dialog) {
 								circles.remove("group#" + rid);
 								View v = views.remove("group#" + rid);
 								if (v != null) {
@@ -590,15 +586,8 @@ public class CirclesFragment extends BaseFragment {
 									}
 								};
 								app.networkHandler.connection(deleteCirccle);
-								return true;
 							}
-
-							@Override
-							public void cancel() {
-								// TODO Auto-generated method stub
-
-							}
-						});
+						}).show();
 			}
 		});
 
@@ -755,42 +744,31 @@ public class CirclesFragment extends BaseFragment {
 	public void swichToNormalMode() {
 		notifyFriendChanged();
 		if (tempFriendsList.getChildCount() != 0) {
-			Alert.showDialog("未放入其它密友圈的好友将自动转移到默认分组中。", new DialogListener() {
-
-				@Override
-				public void onCancel() {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public boolean confirm() {
-					app.dataHandler.exclude(new Modification() {
-						@Override
-						public void modifyData(Data data) {
-							Set<String> checkPhones = tempFriendHolders
-									.keySet();
-							data.circlesMap.get("-1").phones
-									.addAll(checkFriends(checkPhones));
-						}
+			Alert.createDialog(getActivity())
+					.setTitle("未放入其它密友圈的好友将自动转移到默认分组中。")
+					.setOnConfirmClickListener(new OnDialogClickListener() {
 
 						@Override
-						public void modifyUI() {
-							normalMode();
+						public void onClick(AlertInputDialog dialog) {
+							app.dataHandler.exclude(new Modification() {
+								@Override
+								public void modifyData(Data data) {
+									Set<String> checkPhones = tempFriendHolders
+											.keySet();
+									data.circlesMap.get("-1").phones
+											.addAll(checkFriends(checkPhones));
+								}
+
+								@Override
+								public void modifyUI() {
+									normalMode();
+								}
+							});
+							tempFriendsList.removeAllViews();
+							tempViewMap.clear();
+							tempFriendHolders.clear();
 						}
 					});
-					tempFriendsList.removeAllViews();
-					tempViewMap.clear();
-					tempFriendHolders.clear();
-					return true;
-				}
-
-				@Override
-				public void cancel() {
-					// TODO Auto-generated method stub
-
-				}
-			});
 		} else {
 			normalMode();
 		}

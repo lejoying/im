@@ -245,12 +245,13 @@ public class Alert {
 			dialog = new CommonDialog(context);
 		}
 
-		public AlertInputDialog setOnConfirmClickListener(OnClickListener l) {
+		public AlertInputDialog setOnConfirmClickListener(
+				OnDialogClickListener l) {
 			dialog.confirmListener = l;
 			return this;
 		}
 
-		public AlertInputDialog setOnCancelClickListener(OnClickListener l) {
+		public AlertInputDialog setOnCancelClickListener(OnDialogClickListener l) {
 			dialog.cancelListener = l;
 			return this;
 		}
@@ -286,13 +287,14 @@ public class Alert {
 			dialog.input.setVisibility(View.VISIBLE);
 		}
 
-		public interface OnClickListener {
+		public interface OnDialogClickListener {
 			public void onClick(AlertInputDialog dialog);
 		}
 
 		class CommonDialog extends Dialog {
 
-			AlertInputDialog.OnClickListener confirmListener, cancelListener;
+			AlertInputDialog.OnDialogClickListener confirmListener,
+					cancelListener;
 			TextView title;
 			EditText input;
 			View confirmView;
