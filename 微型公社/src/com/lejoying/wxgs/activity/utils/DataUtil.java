@@ -176,7 +176,7 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
-							GroupsAndFriends groupsAndFriends = JSONParser
+							GroupsAndFriends groupsAndFriends =JSONParser
 									.generateGroupsFromJSON(jData
 											.getJSONArray("groups"));
 							data.groups.clear();
