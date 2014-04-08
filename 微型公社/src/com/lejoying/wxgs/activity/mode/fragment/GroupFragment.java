@@ -139,13 +139,14 @@ public class GroupFragment extends BaseFragment {
 
 			top += (groupPanelHeight + (int) dp2px(25));
 
-			RelativeLayout.LayoutParams params4 = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.MATCH_PARENT,
-					RelativeLayout.LayoutParams.WRAP_CONTENT);
-			params4.topMargin = top;
-			params4.bottomMargin = -Integer.MAX_VALUE;
-			tempGroup.setLayoutParams(params4);
-			groupViewContainer.addView(tempGroup);
+			// RelativeLayout.LayoutParams params4 = new
+			// RelativeLayout.LayoutParams(
+			// RelativeLayout.LayoutParams.MATCH_PARENT,
+			// RelativeLayout.LayoutParams.WRAP_CONTENT);
+			// params4.topMargin = top;
+			// params4.bottomMargin = -Integer.MAX_VALUE;
+			// tempGroup.setLayoutParams(params4);
+			// groupViewContainer.addView(tempGroup);
 		}
 	}
 
@@ -175,10 +176,10 @@ public class GroupFragment extends BaseFragment {
 			nearByGroup = generateNearByGroup();
 		}
 
-		if (tempGroup == null) {
-			groupHoldersMap.put("tempGroup", new ArrayList<GroupHolder>());
-			tempGroup = generateTempGroup();
-		}
+		// if (tempGroup == null) {
+		// groupHoldersMap.put("tempGroup", new ArrayList<GroupHolder>());
+		// tempGroup = generateTempGroup();
+		// }
 	}
 
 	public int getScreenWidth() {
@@ -526,12 +527,13 @@ public class GroupFragment extends BaseFragment {
 				settings.params.put("accessKey", app.data.user.accessKey);
 				settings.params.put("area", "{\"longitude\":\"" + longitude
 						+ "\",\"latitude\":\"" + latitude + "\",\"radius\":\""
-						+ 2000 + "\"}");
+						+ 10000 + "\"}");
 			}
 
 			@Override
 			public void success(final JSONObject jData) {
 				app.dataHandler.exclude(new Modification() {
+					List<Group> nearByGroups = new ArrayList<Group>();
 
 					@Override
 					public void modifyData(Data data) {
@@ -541,12 +543,20 @@ public class GroupFragment extends BaseFragment {
 											.getJSONArray("groups"));
 							System.out.println(groupsAndFriends.groups);
 							for (Group group : groupsAndFriends.groups) {
-
+								nearByGroups.add(group);
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+					}
+
+					@Override
+					public void modifyUI() {
+						// TODO Auto-generated method stub
+						notifyGroups(nearByGroups,
+								groupHoldersMap.get("nearByGroup"), nearByGroup);
+						super.modifyUI();
 					}
 				});
 			}

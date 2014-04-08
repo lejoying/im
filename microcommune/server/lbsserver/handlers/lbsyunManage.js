@@ -743,7 +743,9 @@ lbsManage.setgrouplocation = function (data, response) {
     var group = {};
     var location = {};
     try {
-        location = JSON.parse(locationStr);
+        if (location) {
+            location = JSON.parse(locationStr);
+        }
         group = JSON.parse(groupStr);
         /*response.write(JSON.stringify({
          "提示信息": "标记群组位置成功",
@@ -782,7 +784,28 @@ lbsManage.setgrouplocation = function (data, response) {
                         createGroupPoi(group);
                     } else if (poisObj.size == 1) {
                         var poiObj = contents[0];
-                        updateGroupPoi(poiObj.id);
+                        var Data = {};
+                        Data.geotable_id = 50513;
+                        Data.ak = serverSetting.LBS.LBS_AK;
+                        Data.id = poiObj.id;
+                        Data.coord_type = 3;
+                        if (location) {
+                            Data.latitude = location.latitude;
+                            Data.longitude = location.longitude;
+                        }
+                        if (group.gid) {
+                            Data.title = group.title;
+                        }
+                        if (group.icon) {
+                            Data.icon = group.icon;
+                        }
+                        if (group.name) {
+                            Data.name = group.name;
+                        }
+                        if (group.description) {
+                            Data.description = group.description;
+                        }
+                        updateGroupPoi(Data);
                     } else {
                         console.log(data);
                         response.write(JSON.stringify({
@@ -803,22 +826,12 @@ lbsManage.setgrouplocation = function (data, response) {
         });
     }
 
-    function updateGroupPoi(id) {
+    function updateGroupPoi(Data) {
         ajax.ajax({
             type: "POST",
             ajaxType: "FORM",
             url: serverSetting.LBS.POI_UPDATE,
-            data: {
-                geotable_id: 50513,
-                ak: serverSetting.LBS.LBS_AK,
-                id: id,
-                coord_type: 3,
-                latitude: location.latitude,
-                longitude: location.longitude,
-                name: group.name,
-                title: group.gid,
-                description: group.description
-            },
+            data: Data,
             success: function (data) {
                 var poiObj = JSON.parse(data);
                 if (poiObj.status == 0) {
@@ -853,6 +866,7 @@ lbsManage.setgrouplocation = function (data, response) {
                 title: group.gid,
                 gid: group.gid,
                 name: group.name,
+                icon: "",
                 description: group.description,
                 tags: "group",
                 gtype: "group",

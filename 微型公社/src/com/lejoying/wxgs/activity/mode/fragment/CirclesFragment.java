@@ -612,11 +612,15 @@ public class CirclesFragment extends BaseFragment {
 					Alert.showMessage("默认分组不能修改名称");
 					return;
 				}
-				final EditText circleName;
+				Circle circle = app.data.circlesMap.get(String.valueOf(
+						circles.get(currentEditPosition)).substring(6));
+				final EditText circleName = new EditText(getActivity());
+				circleName.setText(circle.name);
+				circleName.setSelection(circle.name.length());
 				new AlertDialog.Builder(getActivity())
 						.setTitle("请输入新的密友圈名称")
 						.setIcon(android.R.drawable.ic_dialog_info)
-						.setView(circleName = new EditText(getActivity()))
+						.setView(circleName)
 						.setPositiveButton("确定",
 								new DialogInterface.OnClickListener() {
 									@Override

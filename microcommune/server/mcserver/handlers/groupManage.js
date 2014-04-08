@@ -81,7 +81,8 @@ groupManage.create = function (data, response) {
 
     function createGroupNode() {
         var group = {
-            name: name
+            name: name,
+            icon: ""
         }
         if (data.description) {
             group.description = data.description;
@@ -126,9 +127,7 @@ groupManage.create = function (data, response) {
                         group: group
                     }))
                     response.end();
-                    if (location != undefined) {
-                        setGroupLBSLocation(phone, data.accessKey, location, group);
-                    }
+                    setGroupLBSLocation(phone, data.accessKey, location, group);
                 }
             } else {
                 response.write(JSON.stringify({
@@ -168,30 +167,36 @@ groupManage.create = function (data, response) {
                     group: group
                 }))
                 response.end();
-                if (location != undefined) {
-                    setGroupLBSLocation(phone, data.accessKey, location, group);
-                }
+                setGroupLBSLocation(phone, data.accessKey, location, group);
             }
         });
     }
 }
 function setGroupLBSLocation(phone, accessKey, location, group) {
+    var Data = {};
+    var Group = {};
+    if (group.gid) {
+        Group.gid = group.gid;
+    }
+    if (group.icon) {
+        Group.icon = group.icon;
+    }
+    if (group.name) {
+        Group.name = group.name;
+    }
+    if (group.description) {
+        Group.description = group.description;
+    }
+    if (group.location) {
+        Data.location = JSON.stringify(location);
+    }
+    Data.phone = phone;
+    Data.accessKey = accessKey;
+    Data.group = JSON.stringify(Group);
     ajax.ajax({
         url: "http://127.0.0.1:8076/lbs/setgrouplocation?",
         type: "POST",
-        data: {
-            phone: phone,
-            accessKey: accessKey,
-            location: JSON.stringify({
-                longitude: location.longitude,
-                latitude: location.latitude
-            }),
-            group: JSON.stringify({
-                gid: group.gid,
-                name: group.name,
-                description: group.description
-            })
-        },
+        data: Data,
         success: function (data) {
             data = JSON.parse(data);
             if (data["提示信息"] == "标记群组位置成功") {
@@ -507,11 +512,12 @@ groupManage.modify = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var gid = data.gid;
+    var icon = data.icon;
     var name = data.name;
     var description = data.description;
     var location = data.location;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
-    var list = [phone, gid, name];
+    var list = [phone, gid];
     if (verifyEmpty.verifyEmpty(data, list, response)) {
         try {
             gid = parseInt(gid);
@@ -601,9 +607,7 @@ groupManage.modify = function (data, response) {
                     group: groupNode.data
                 }));
                 response.end();
-                if (location) {
-                    setGroupLBSLocation(phone, accessKey, location, groupData);
-                }
+                setGroupLBSLocation(phone, accessKey, location, groupData);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息失败",
