@@ -150,11 +150,11 @@ squareManage.getsquaremessage = function (data, response) {
             response.end();
             console.error(err);
             return;
-        } else if (reply.length == 0) {
+        } else if (reply == 0) {
             next();
         } else {
-            if (reply.length - flag > 100) {
-                flag = reply.length - 100;
+            if (reply - flag > 100) {
+                flag = reply - 100;
             }
             client.lrange("square_" + gid, flag, -1, function (err, reply) {
                 if (err) {
@@ -228,82 +228,82 @@ squareManage.getonlinecount = function (data, response) {
     }
 
 }
-var count = 0;
-var zookeeper = require('node-zookeeper-client');
-var client = zookeeper.createClient('115.28.51.197:2181', { sessionTimeout: 10000 });
-var path = "115.28.51.197:2181";
-squareManage.zookeeper = function (data, response) {
-//    response.asynchronous = 1;
-    console.log("zookeeper-------------------");
-    client.connect();
-    connect();
-}
-function connect() {
-    /* client.once('connected', function () {
-     console.log('Connected to the server.');
+/*var count = 0;
+ var zookeeper = require('node-zookeeper-client');
+ var client = zookeeper.createClient('115.28.51.197:2181', { sessionTimeout: 10000 });
+ var path = "115.28.51.197:2181";
+ squareManage.zookeeper = function (data, response) {
+ //    response.asynchronous = 1;
+ console.log("zookeeper-------------------");
+ client.connect();
+ connect();
+ }
+ function connect() {
+ *//* client.once('connected', function () {
+ console.log('Connected to the server.');
 
-     });*/
-    client.getData(
-        '/coolspan',
-        function (event) {
-            console.log('Got event: %s.', event.type);
-            connect();
-        },
-        function (error, data, stat) {
-            if (error) {
-                console.log(error.stack);
-                return;
-            }
-            console.log('Got data: %s', data.toString('utf8'));
-        }
-    );
-}
-function setData() {
-    client.setData('/coolspan', new Buffer("小潘潘"), function (error, stat) {
-        if (error) {
-            console.log(error.stack);
-            return;
-        }
-        client.exists('/coolspan', function (error, stat) {
-            if (error) {
-                console.log(error.stack);
-                return;
-            }
-            if (stat) {
-                console.log('Node exists.');
-            } else {
-                console.log('Node does not exist.');
-            }
-        });
-        console.log('Data is set.');
-    });
-}
-function getData() {
-    client.getData(
-        '/coolspan',
-        function (event) {
-            console.log('Got event: %s.', event);
-        },
-        function (error, data, stat) {
-            if (error) {
-                console.log(error.stack);
-                return;
-            }
-            console.log('Got data: %s', data.toString('utf8'));
-        }
-    );
-}
-function exists() {
-    client.exists('/coolspan', function (error, stat) {
-        if (error) {
-            console.log(error.stack);
-            return;
-        }
-        if (stat) {
-            console.log('Node exists.');
-        } else {
-            console.log('Node does not exist.');
-        }
-    });
-}
+ });*//*
+ client.getData(
+ '/coolspan',
+ function (event) {
+ console.log('Got event: %s.', event.type);
+ connect();
+ },
+ function (error, data, stat) {
+ if (error) {
+ console.log(error.stack);
+ return;
+ }
+ console.log('Got data: %s', data.toString('utf8'));
+ }
+ );
+ }
+ function setData() {
+ client.setData('/coolspan', new Buffer("小潘潘"), function (error, stat) {
+ if (error) {
+ console.log(error.stack);
+ return;
+ }
+ client.exists('/coolspan', function (error, stat) {
+ if (error) {
+ console.log(error.stack);
+ return;
+ }
+ if (stat) {
+ console.log('Node exists.');
+ } else {
+ console.log('Node does not exist.');
+ }
+ });
+ console.log('Data is set.');
+ });
+ }
+ function getData() {
+ client.getData(
+ '/coolspan',
+ function (event) {
+ console.log('Got event: %s.', event);
+ },
+ function (error, data, stat) {
+ if (error) {
+ console.log(error.stack);
+ return;
+ }
+ console.log('Got data: %s', data.toString('utf8'));
+ }
+ );
+ }
+ function exists() {
+ client.exists('/coolspan', function (error, stat) {
+ if (error) {
+ console.log(error.stack);
+ return;
+ }
+ if (stat) {
+ console.log('Node exists.');
+ } else {
+ console.log('Node does not exist.');
+ }
+ });
+ }*/
 module.exports = squareManage;

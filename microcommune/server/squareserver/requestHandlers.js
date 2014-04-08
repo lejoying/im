@@ -4,7 +4,7 @@ var redis = require("redis");
 var client = redis.createClient("6379", "115.28.51.197");
 
 var squareManage = require('./handlers/squareManage.js');
-squareManage.zookeeper(null, null);
+//squareManage.zookeeper(null, null);
 requestHandlers.squareManage = function (request, response, pathObject, data) {
 
     if (data == null) {
