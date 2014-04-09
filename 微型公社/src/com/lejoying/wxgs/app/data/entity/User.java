@@ -7,6 +7,7 @@ public class User implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public String userBackground="";
 	public String sex="";
 	public int id;
 	public String phone = "";

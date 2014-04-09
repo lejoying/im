@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    >
 
     <ScrollView
         android:id="@+id/sv_content"
@@ -115,7 +116,7 @@
 
                 <TextView
                     android:id="@+id/tv_mainbusiness"
-                    android:layout_width="wrap_content"
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/tv_mainbusiness_title"
                     android:layout_alignBottom="@+id/tv_mainbusiness_title"
@@ -210,7 +211,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:textColor="#fff"
-                        android:textSize="18sp" />
+                        android:textSize="18sp" 
+                        android:text="我的广播"/>
                 </RelativeLayout>
 
                 <ImageView
