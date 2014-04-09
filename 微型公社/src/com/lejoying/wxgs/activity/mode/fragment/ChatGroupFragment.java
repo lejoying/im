@@ -456,7 +456,12 @@ public class ChatGroupFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				TranslateAnimation translateIn = new TranslateAnimation(0, 0,
+						-dp2px(255), 0);
+				translateIn.setDuration(150);
 				groupCenterBar.setVisibility(View.VISIBLE);
+				((ViewGroup) groupCenterBar).getChildAt(0).startAnimation(
+						translateIn);
 			}
 		});
 
