@@ -49,6 +49,7 @@ public class DataUtil {
 						try {
 							User user = JSONParser.generateUserFromJSON(jData
 									.getJSONArray("accounts").getJSONObject(0));
+							data.user.userBackground=user.userBackground;
 							data.user.head = user.head;
 							data.user.nickName = user.nickName;
 							data.user.mainBusiness = user.mainBusiness;

@@ -50,7 +50,9 @@ public class MainApplication extends Application {
 	public File sdcardImageFolder;
 	public File sdcardVoiceFolder;
 	public File sdcardHeadImageFolder;
-
+	public File sdcardBackgroundImageFolder;
+	
+	
 	public String sdcardStatus = "none";// "exist"
 	public String networkStatus = "none";// "WIFI"|"mobile"
 
@@ -151,6 +153,10 @@ public class MainApplication extends Application {
 			sdcardHeadImageFolder = new File(sdcardImageFolder, "head");
 			if (!sdcardHeadImageFolder.exists()) {
 				sdcardHeadImageFolder.mkdir();
+			}
+			sdcardBackgroundImageFolder = new File(sdcardImageFolder, "background");
+			if (!sdcardBackgroundImageFolder.exists()) {
+				sdcardBackgroundImageFolder.mkdir();
 			}
 		}
 	}

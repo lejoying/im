@@ -3,8 +3,11 @@ package com.lejoying.wxgs.app.adapter;
 import java.util.List;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.data.entity.Group;
 
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +56,7 @@ public class FriendGroupsGridViewAdapter extends BaseAdapter {
 				holder = (ViewHolder) convertView.getTag();
 			}
 		 holder. tv_groupname.setText(groups.get(position).name);
-		
+		 holder.tv_grouppic.setImageBitmap(MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(inflater.getContext().getResources(), R.drawable.face_man), true, 5, Color.WHITE));
 		return convertView;
 	}
 	private class ViewHolder {

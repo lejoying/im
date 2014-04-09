@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +11,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,7 +35,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -43,19 +51,22 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.data.entity.User;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
+import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
-import com.lejoying.wxgs.app.parser.JSONParser;
-import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 import com.lejoying.wxgs.app.service.PushService;
 
 public class BusinessCardFragment extends BaseFragment {
 
 	public int mStatus;
-	public int groupNum;
 	public Friend mShowFriend;
+	int RESULT_SELECTHEAD = 0x123;
+	int RESULT_TAKEPICTURE = 0xa3;
+	int RESULT_CATPICTURE = 0x3d;
 	public static final int SHOW_SELF = 1;
 	public static final int SHOW_FRIEND = 2;
 	public static final int SHOW_TEMPFRIEND = 3;
@@ -75,12 +86,13 @@ public class BusinessCardFragment extends BaseFragment {
 	private TextView tv_mainbusiness;
 	private RelativeLayout rl_show;
 	private ScrollView sv_content;
-
+	private GridView gridView;
 	// DEFINITION object
 	private Handler handler;
 	private boolean stopSend;
 
 	FriendGroupsGridViewAdapter adapter = null;
+	File tempFile;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -90,6 +102,7 @@ public class BusinessCardFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
 		mInflater = inflater;
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
 
@@ -257,6 +270,8 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		} else if (mStatus == SHOW_SELF) {
+			 mContent.setBackgroundDrawable(new
+			 BitmapDrawable(app.data.user.userBackground));
 			button1.setText("修改个人信息");
 			button2.setText("退出登录");
 			tv_id.setText(String.valueOf(app.data.user.id));
@@ -267,8 +282,68 @@ public class BusinessCardFragment extends BaseFragment {
 			tv_mainbusiness.setText(app.data.user.mainBusiness);
 			group.removeView(button3);
 			group.removeView(tv_group);
-			group.removeView(tv_msg);
 			group.removeView(tv_square);
+			tv_spacing.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					AlertDialog.Builder builder = new Builder(mInflater
+							.getContext());
+					builder.setMessage("更换封面");
+					builder.setTitle("");
+					builder.setPositiveButton("拍照",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+
+									tempFile = new File(
+											app.sdcardBackgroundImageFolder,
+											"userBackground");
+									int i = 1;
+									while (tempFile.exists()) {
+										tempFile = new File(
+												app.sdcardBackgroundImageFolder,
+												"userBackground" + (i++));
+									}
+									Uri uri = Uri.fromFile(tempFile);
+									Intent tackPicture = new Intent(
+											MediaStore.ACTION_IMAGE_CAPTURE);
+									tackPicture
+											.putExtra(
+													MediaStore.Images.Media.ORIENTATION,
+													0);
+									tackPicture.putExtra(
+											MediaStore.EXTRA_OUTPUT, uri);
+									startActivityForResult(tackPicture,
+											RESULT_TAKEPICTURE);
+
+									dialog.dismiss();
+
+								}
+							});
+					builder.setNegativeButton("相册",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+
+									Intent selectFromGallery = new Intent(
+											Intent.ACTION_PICK,
+											MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+									startActivityForResult(selectFromGallery,
+											RESULT_SELECTHEAD);
+
+									dialog.dismiss();
+								}
+							});
+					builder.create().show();
+				}
+			});
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
@@ -449,63 +524,48 @@ public class BusinessCardFragment extends BaseFragment {
 	}
 
 	View generateFriendGroup() {
-		float density;
-		int listSize;
-		GridView gridView;
 		View groupView = mContent.findViewById(R.id.tv_group_layout);
 		gridView = (GridView) mContent.findViewById(R.id.tv_gridview);
-
-		// inflater = (LayoutInflater) this
-		// .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		List<Group> groups = getFriendGroups();
-		if(groupNum%6==0){
-			listSize=groupNum/2;
-		}else{
-			if(groupNum%6>3){
-				listSize=groupNum/6*3+3;
-			}else{
-				listSize=groupNum/6*3+groupNum%6;
-			}
-		}
-		System.out.println(groupNum);
-		System.out.println(listSize);
-		adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
 		if (mStatus != SHOW_SELF) {
+			List<Group> groups = getFriendGroups();
+			adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
 			gridView.setAdapter(adapter);
-			
-			DisplayMetrics outMetrics = new DisplayMetrics();  
-			getActivity().getWindowManager().getDefaultDisplay().getMetrics(outMetrics);  
-		    density = outMetrics.density; // 像素密度  
-		   
-		   
-		    ViewGroup.LayoutParams params = gridView.getLayoutParams();  
-		    int itemWidth = (int) (90 * density);  
-		    int spacingWidth = (int) (4*density);  
-		       
-		    params.width = itemWidth*listSize+(listSize-1)*spacingWidth;  
-		    gridView.setStretchMode(GridView.NO_STRETCH); // 设置为禁止拉伸模式  
-		    gridView.setNumColumns(listSize);  
-		    gridView.setHorizontalSpacing(spacingWidth);  
-		    gridView.setColumnWidth(itemWidth);  
-		    gridView.setLayoutParams(params);  
-			
-//			int size = groups.size();
-//			DisplayMetrics dm = new DisplayMetrics();
-//			getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-//
-//			float density = dm.density;
-//			int allWidth = (int) (110 * size * density);
-//			int itemWidth = (int) (100 * density);
-//			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//					allWidth, LinearLayout.LayoutParams.FILL_PARENT);
-//			gridView.setLayoutParams(params);
-//			gridView.setColumnWidth(itemWidth);
-//			gridView.setHorizontalSpacing(10);
-//			gridView.setStretchMode(GridView.NO_STRETCH);
-//			gridView.setNumColumns(size);
+			setColumns(gridView, groups);
 		}
-
 		return groupView;
+	}
+
+	public void setColumns(GridView gridView, List<Group> groups) {
+		DisplayMetrics outMetrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay()
+				.getMetrics(outMetrics);
+		float density = outMetrics.density;
+		int itemWidth = (int) (85 * density);
+		int spacingWidth = (int) (10 * density);
+		int verticalSpacing = (int) (20 * density);
+
+		ViewGroup.LayoutParams params = gridView.getLayoutParams();
+		int listSize = getNumColumns(groups.size());
+		params.width = itemWidth * listSize + (listSize - 1) * spacingWidth;
+		gridView.setNumColumns(listSize);
+		gridView.setLayoutParams(params);
+
+		gridView.setStretchMode(GridView.NO_STRETCH);
+
+		gridView.setHorizontalSpacing(spacingWidth);
+		gridView.setVerticalSpacing(verticalSpacing);
+		gridView.setColumnWidth(itemWidth);
+
+	}
+
+	public int getNumColumns(int groupNum) {
+		int listSize;
+		if (groupNum % 2 == 0) {
+			listSize = groupNum / 2;
+		} else {
+			listSize = groupNum / 2 + 1;
+		}
+		return listSize;
 	}
 
 	public List<Group> getFriendGroups() {
@@ -546,7 +606,6 @@ public class BusinessCardFragment extends BaseFragment {
 								} catch (JSONException e) {
 								}
 							}
-							
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -555,16 +614,184 @@ public class BusinessCardFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						groupNum=groups.size();
 						adapter.notifyDataSetChanged();
+						setColumns(gridView, groups);
 					}
 				});
 
 			}
 		};
 		app.networkHandler.connection(netConnection);
-		
+
 		return groups;
 	}
 
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == RESULT_SELECTHEAD
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			Uri selectedImage = data.getData();
+			startPhotoZoom(selectedImage);
+		} else if (requestCode == RESULT_TAKEPICTURE
+				&& resultCode == Activity.RESULT_OK) {
+			Uri uri = Uri.fromFile(tempFile);
+			startPhotoZoom(uri);
+		} else if (requestCode == RESULT_CATPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			if (tempFile != null && tempFile.exists()) {
+				tempFile.delete();
+			}
+			final Bitmap userBackgroud = (Bitmap) data.getExtras().get("data");
+			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+				@Override
+				public void setParams(SaveSettings settings) {
+					settings.source = userBackgroud;
+					settings.compressFormat = settings.PNG;
+					settings.folder = app.sdcardBackgroundImageFolder;
+				}
+
+				@Override
+				public void onSuccess(String fileName, String base64) {
+					if (!fileName.equals(app.data.user.userBackground)) {
+						checkImage(fileName, base64);
+					}
+				}
+			});
+		}
+
+	}
+
+	public void startPhotoZoom(Uri uri) {
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		intent.putExtra("crop", "true");
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		intent.putExtra("outputX", 100);
+		intent.putExtra("outputY", 100);
+		intent.putExtra("return-data", true);
+		startActivityForResult(intent, RESULT_CATPICTURE);
+	}
+
+	public void checkImage(final String fileName, final String base64) {
+
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.IMAGE_CHECK;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("filename", fileName);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					if (jData.getBoolean("exists")) {
+						User user = new User();
+						user.userBackground = fileName;
+						modify(user);
+					} else {
+						uploadImage(fileName, base64);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
+
+	public void uploadImage(final String fileName, final String base64) {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("filename", fileName);
+				params.put("imagedata", base64);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				User user = new User();
+				user.userBackground = fileName;
+				modify(user);
+			}
+		});
+	}
+
+	public void modify(final User user) {
+		JSONObject account = new JSONObject();
+		try {
+			if (user.userBackground != null && !user.userBackground.equals("")) {
+				account.put("userBackground", user.userBackground);
+			}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		final Map<String, String> params = new HashMap<String, String>();
+		params.put("phone", app.data.user.phone);
+		params.put("accessKey", app.data.user.accessKey);
+		params.put("account", account.toString());
+
+		app.dataHandler.exclude(new Modification() {
+
+			@Override
+			public void modifyData(Data data) {
+				if (user.userBackground != null
+						&& !user.userBackground.equals("")) {
+					data.user.userBackground = user.userBackground;
+				}
+
+			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void modifyUI() {
+
+				if (user.userBackground != null
+						&& !user.userBackground.equals("")) {
+					final String headFileName = app.data.user.userBackground;
+					app.fileHandler.getHeadImage(headFileName,
+							new FileResult() {
+								@Override
+								public void onResult(String where) {
+//									mContent.setBackgroundDrawable(new BitmapDrawable(
+//											app.fileHandler.bitmaps
+//													.get(app.data.user.userBackground)));
+								}
+							});
+
+				}
+				if (mMainModeManager.mBusinessCardFragment.isAdded()) {
+					mMainModeManager.mBusinessCardFragment.initData();
+				}
+			}
+		});
+
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.ACCOUNT_MODIFY;
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+			}
+		});
+	}
 }

@@ -58,9 +58,11 @@ public class FileHandler {
 	// TODO to be managed by native code
 	public Bitmap defaultImage;
 	public Bitmap defaultHead;
+	public Bitmap defaultBack;
 
 	public final int TYPE_IMAGE_COMMON = 0x01;
 	public final int TYPE_IMAGE_HEAD = 0x02;
+	public final int TYPE_IMAGE_BACK = 0x03;
 
 	public void getImage(String imageFileName, FileResult fileResult) {
 		getImageFile(imageFileName, TYPE_IMAGE_COMMON, fileResult);
@@ -69,7 +71,9 @@ public class FileHandler {
 	public void getHeadImage(String imageFileName, FileResult fileResult) {
 		getImageFile(imageFileName, TYPE_IMAGE_HEAD, fileResult);
 	}
-
+	public void getBackgroudImage(String imageFileName, FileResult fileResult) {
+		getImageFile(imageFileName, TYPE_IMAGE_BACK, fileResult);
+	}
 	// TODO sd_card space checking
 	// TODO zip images in the sd_card
 	public void getImageFile(String imageFileName, int type,
@@ -90,9 +94,17 @@ public class FileHandler {
 					.decodeResource(app.getResources(), R.drawable.face_man),
 					true, 5, Color.WHITE);
 		}
+		if (defaultBack == null) {
+//			defaultBack = MCImageUtils.getCircleBitmap(BitmapFactory
+//					.decodeResource(app.getResources(), R.drawable.face_man),
+//					true, 5, Color.WHITE);
+		}
 		Bitmap dImage = defaultImage;
 		if (type == TYPE_IMAGE_HEAD) {
 			dImage = defaultHead;
+		}
+		if (type == TYPE_IMAGE_BACK) {
+			dImage = defaultBack;
 		}
 		String where = FROM_DEFAULT;
 		if (bitmaps.get(imageFileName) != null
@@ -108,6 +120,9 @@ public class FileHandler {
 				if (type == TYPE_IMAGE_HEAD) {
 					imageFile = new File(app.sdcardHeadImageFolder,
 							imageFileName);
+				}else if(type == TYPE_IMAGE_BACK) {
+					imageFile = new File(app.sdcardBackgroundImageFolder,
+							imageFileName);
 				}
 				if (imageFile.exists()) {
 					Bitmap image = BitmapFactory.decodeFile(imageFile
@@ -119,6 +134,8 @@ public class FileHandler {
 							bitmaps.put(imageFileName, MCImageUtils
 									.getCircleBitmap(image, true, 5,
 											Color.WHITE));
+						}else if(type == TYPE_IMAGE_BACK) {
+							bitmaps.put(imageFileName, image);
 						}
 						where = FROM_SDCARD;
 					} else {
@@ -159,6 +176,8 @@ public class FileHandler {
 		File folder = app.sdcardImageFolder;
 		if (type == TYPE_IMAGE_HEAD) {
 			folder = app.sdcardHeadImageFolder;
+		}else if(type == TYPE_IMAGE_BACK) {
+			folder = app.sdcardBackgroundImageFolder;
 		}
 		final File f = folder;
 		app.networkHandler.connection(new NetConnection() {
@@ -175,6 +194,8 @@ public class FileHandler {
 					if (type == TYPE_IMAGE_HEAD) {
 						bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5,
 								Color.WHITE);
+					}else if(type == TYPE_IMAGE_BACK) {
+						
 					}
 					bitmaps.put(imageFileName, bitmap);
 

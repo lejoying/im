@@ -46,6 +46,10 @@ public class JSONParser {
 		try {
 			user.mainBusiness = jUser.getString("mainBusiness");
 		} catch (JSONException e) {
+		}try {
+			user.userBackground = jUser.getString("userBackground");
+		} catch (JSONException e) {
+			// TODO: handle exception
 		}
 		return user;
 	}
