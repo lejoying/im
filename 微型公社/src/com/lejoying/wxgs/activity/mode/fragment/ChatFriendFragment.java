@@ -1644,8 +1644,9 @@ public class ChatFriendFragment extends BaseFragment {
 				if (mStatus == CHAT_FRIEND) {
 					data.friends.get(mNowChatFriend.phone).messages
 							.add(message);
-					data.lastChatFriends.remove(mNowChatFriend.phone);
-					data.lastChatFriends.add(0, mNowChatFriend.phone);
+					data.lastChatFriends.remove("f" + mNowChatFriend.phone);
+					data.lastChatFriends.add(0, "f" + mNowChatFriend.phone);
+					mMainModeManager.mChatMessagesFragment.notifyViews();
 				} else {
 					mNowChatGroup.messages.add(message);
 				}
@@ -1680,8 +1681,10 @@ public class ChatFriendFragment extends BaseFragment {
 				}
 				if (mStatus == CHAT_FRIEND) {
 					if (app.data.lastChatFriends.indexOf(mNowChatFriend.phone) != 0) {
-						app.data.lastChatFriends.remove(mNowChatFriend.phone);
-						app.data.lastChatFriends.add(0, mNowChatFriend.phone);
+						app.data.lastChatFriends.remove("f"
+								+ mNowChatFriend.phone);
+						app.data.lastChatFriends.add(0, "f"
+								+ mNowChatFriend.phone);
 					}
 				}
 			}

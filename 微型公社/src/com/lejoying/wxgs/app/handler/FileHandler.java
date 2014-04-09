@@ -414,10 +414,10 @@ public class FileHandler {
 						String base64 = Base64.encodeToString(data,
 								Base64.DEFAULT);
 						base64 = base64.trim();
-						String sha1 = app.mSHA1.getDigestOfString(base64
-								.getBytes());
-						File file = new File(settings.folder, sha1
-								+ settings.format);
+						String sha1 = app.mSHA1.getDigestOfString(
+								base64.getBytes()).toLowerCase();
+						File file = new File(settings.folder,
+								sha1.toLowerCase() + settings.format);
 						if (!file.exists()) {
 							InputStream is1 = context.getResources()
 									.getAssets()
@@ -453,13 +453,14 @@ public class FileHandler {
 		public void onSuccess(String fileName, String base64);
 	}
 
-	public void getGifImgFromWebOrSdCard(final String imageFileName,
+	public void getGifImgFromWebOrSdCard(final String imageFileNamed,
 			final FileResult gifFileResult) {
 		final File folder = app.sdcardImageFolder;
 		if (!folder.exists()) {
 			folder.mkdirs();
 		}
-		File file = new File(folder, imageFileName);
+		final String imageFileName = imageFileNamed.toLowerCase();
+		File file = new File(folder, imageFileName.toLowerCase());
 		if (!file.exists()) {
 			app.networkHandler.connection(new NetConnection() {
 				@Override

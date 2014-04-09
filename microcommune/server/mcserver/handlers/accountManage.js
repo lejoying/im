@@ -600,6 +600,9 @@ accountManage.modify = function (data, response) {
                 if (account.sex != undefined && account.sex != null && account.sex != "") {
                     accountData.sex = account.sex;
                 }
+                if (account.userBackground != undefined && account.userBackground != null && account.userBackground != "") {
+                    accountData.userBackground = account.userBackground;
+                }
                 if (account.password != undefined && account.password != null && account.password != "") {
                     accountData.password = account.password;
                     if (accountData.status == "init") {

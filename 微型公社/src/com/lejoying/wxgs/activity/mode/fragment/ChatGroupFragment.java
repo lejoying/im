@@ -1524,6 +1524,9 @@ public class ChatGroupFragment extends BaseFragment {
 			@Override
 			public void modifyData(Data data) {
 				mNowChatGroup.messages.add(message);
+				data.lastChatFriends.remove("g" + mNowChatGroup.gid);
+				data.lastChatFriends.add(0, "g" + mNowChatGroup.gid);
+				mMainModeManager.mChatMessagesFragment.notifyViews();
 			}
 
 			@Override
@@ -1551,6 +1554,14 @@ public class ChatGroupFragment extends BaseFragment {
 					String time = jData.getString("time");
 					message.time = time;
 					message.status = "sent";
+					if (app.data.lastChatFriends.indexOf("g"
+							+ mNowChatGroup.gid) != 0) {
+						app.data.lastChatFriends
+								.remove("g" + mNowChatGroup.gid);
+						app.data.lastChatFriends
+								.add(0, "g" + mNowChatGroup.gid);
+						mMainModeManager.mChatMessagesFragment.notifyViews();
+					}
 				} catch (JSONException e) {
 					message.status = "failed";
 				}

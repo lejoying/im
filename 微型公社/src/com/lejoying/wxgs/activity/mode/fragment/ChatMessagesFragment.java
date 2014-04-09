@@ -7,13 +7,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
@@ -27,6 +30,7 @@ public class ChatMessagesFragment extends BaseFragment {
 	View mContentView;
 	ListView lv_messages;
 	LayoutInflater mInflater;
+	LinearLayout ll_not_messages;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -45,12 +49,19 @@ public class ChatMessagesFragment extends BaseFragment {
 		mInflater = inflater;
 		mContentView = mInflater.inflate(R.layout.f_chat_messages_list, null);
 		lv_messages = (ListView) mContentView.findViewById(R.id.lv_messages);
+		ll_not_messages = (LinearLayout) mContentView
+				.findViewById(R.id.ll_not_messages);
 		TextView headView = new TextView(getActivity());
 		headView.setHeight(10);
 		lv_messages.addHeaderView(headView);
 		lv_messages.addFooterView(headView);
 		messagesAdapter = new MyMessagesAdapter();
 		lv_messages.setAdapter(messagesAdapter);
+		if (app.data.lastChatFriends.size() == 0) {
+			lv_messages.setVisibility(View.VISIBLE);
+		} else {
+			lv_messages.setVisibility(View.GONE);
+		}
 		return mContentView;
 	}
 
@@ -78,8 +89,10 @@ public class ChatMessagesFragment extends BaseFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			String phone = app.data.lastChatFriends.get(position);
-			final Friend friend = app.data.friends.get(phone);
+			long CHAT_TYPE_FRIEND = 0X0001;
+			long CHAT_TYPE_GROUP = 0X0002;
+			long chatType = CHAT_TYPE_FRIEND;
+			String chatItem = app.data.lastChatFriends.get(position);
 			View messageView = null;
 			if (convertView == null) {
 				messageView = mInflater.inflate(
@@ -87,39 +100,62 @@ public class ChatMessagesFragment extends BaseFragment {
 			} else {
 				messageView = convertView;
 			}
-			if (friend != null) {
-				final ImageView head = (ImageView) messageView
-						.findViewById(R.id.iv_head);
-				TextView nickName = (TextView) messageView
-						.findViewById(R.id.tv_nickname);
-				TextView lastChatMessage = (TextView) messageView
-						.findViewById(R.id.tv_lastchat);
-				TextView notReadCount = (TextView) messageView
-						.findViewById(R.id.tv_notread);
-
-				nickName.setText(friend.nickName);
-				Message lastMessage = friend.messages.get(friend.messages
-						.size() - 1);
+			final ImageView head = (ImageView) messageView
+					.findViewById(R.id.iv_head);
+			TextView nickName = (TextView) messageView
+					.findViewById(R.id.tv_nickname);
+			TextView lastChatMessage = (TextView) messageView
+					.findViewById(R.id.tv_lastchat);
+			TextView notReadCount = (TextView) messageView
+					.findViewById(R.id.tv_notread);
+			Friend friend = null;
+			Group group = null;
+			if ("f".equals(chatItem.substring(0, 1))) {
+				chatType = CHAT_TYPE_FRIEND;
+				friend = app.data.friends.get(chatItem.substring(1));
+			} else {
+				chatType = CHAT_TYPE_GROUP;
+				group = app.data.groupsMap.get(chatItem.substring(1));
+			}
+			if (friend != null || group != null) {
+				final Friend chatFriend = friend;
+				final Group chatGroup = group;
+				String chatName = "";
+				String chatHeadImgName = "";
+				Message lastMessage = null;
+				Integer notread;
+				if (chatType == CHAT_TYPE_FRIEND) {
+					chatName = chatFriend.nickName;
+					chatHeadImgName = chatFriend.head;
+					lastMessage = friend.messages
+							.get(friend.messages.size() - 1);
+					notread = chatFriend.notReadMessagesCount;
+				} else {
+					chatName = chatGroup.name + "(群组)";
+					chatHeadImgName = chatGroup.icon;
+					lastMessage = chatGroup.messages.get(chatGroup.messages
+							.size() - 1);
+					notread = chatGroup.notReadMessagesCount;
+				}
+				nickName.setText(chatName);
 				if (lastMessage.contentType.equals("text")) {
-					lastChatMessage.setText(friend.messages.get(friend.messages
-							.size() - 1).content);
+					lastChatMessage.setText(lastMessage.content);
 				} else if (lastMessage.contentType.equals("image")) {
 					lastChatMessage.setText(getString(R.string.text_picture));
 				} else if (lastMessage.contentType.equals("voice")) {
-					// lastChatMessage.setText(getString(R.string.text_voice));
 					lastChatMessage.setText(getActivity().getResources()
 							.getString(R.string.text_voice));
 				}
-				final String headFileName = friend.head;
+				final String headFileName = chatHeadImgName;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
+						System.out.println("Coolspan-------------------"
+								+ headFileName);
 						head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
 				});
-
-				Integer notread = friend.notReadMessagesCount;
 
 				if (notread != null) {
 					if (notread > 0) {
@@ -133,10 +169,17 @@ public class ChatMessagesFragment extends BaseFragment {
 				messageView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-						mMainModeManager.mChatFragment.mNowChatFriend = friend;
-						mMainModeManager
-								.showNext(mMainModeManager.mChatFragment);
+						if (chatFriend != null) {
+							mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
+							mMainModeManager.mChatFragment.mNowChatFriend = chatFriend;
+							mMainModeManager
+									.showNext(mMainModeManager.mChatFragment);
+						} else {
+							mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+							mMainModeManager.mChatGroupFragment.mNowChatGroup = chatGroup;
+							mMainModeManager
+									.showNext(mMainModeManager.mChatGroupFragment);
+						}
 					}
 				});
 			}
