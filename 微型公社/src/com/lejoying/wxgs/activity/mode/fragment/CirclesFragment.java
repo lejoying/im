@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
@@ -45,9 +44,9 @@ import com.lejoying.wxgs.activity.view.ScrollContainer.onInterceptTouchDownListe
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation;
 import com.lejoying.wxgs.activity.view.manager.FrictionAnimation.AnimatingView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
-import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
@@ -444,84 +443,47 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				final EditText circleName;
-				new AlertDialog.Builder(getActivity())
-						.setTitle("请输入分组名")
-						.setIcon(android.R.drawable.ic_dialog_info)
-						.setView(circleName = new EditText(getActivity()))
-						.setPositiveButton("确定",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										if (circleName.getText().toString()
-												.equals("")) {
-											Alert.showMessage("密友圈名称不能为空");
-											return;
-										}
-										app.networkHandler
-												.connection(new CommonNetConnection() {
+				Alert.createInputDialog(getActivity()).setTitle("请输入分组名")
+						.setOnConfirmClickListener(new OnDialogClickListener() {
 
+							@Override
+							public void onClick(final AlertInputDialog dialog) {
+								if (dialog.getInputText().equals("")) {
+									Alert.showMessage("密友圈名称不能为空");
+									return;
+								}
+								app.networkHandler
+										.connection(new CommonNetConnection() {
+
+											@Override
+											protected void settings(
+													Settings settings) {
+												settings.url = API.DOMAIN
+														+ API.CIRCLE_ADDCIRCLE;
+												Map<String, String> params = new HashMap<String, String>();
+												params.put("phone",
+														app.data.user.phone);
+												params.put("accessKey",
+														app.data.user.accessKey);
+												params.put("name",
+														dialog.getInputText());
+												settings.params = params;
+											}
+
+											@Override
+											public void success(JSONObject jData) {
+												DataUtil.getCircles(new GetDataListener() {
 													@Override
-													protected void settings(
-															Settings settings) {
-														settings.url = API.DOMAIN
-																+ API.CIRCLE_ADDCIRCLE;
-														Map<String, String> params = new HashMap<String, String>();
-														params.put(
-																"phone",
-																app.data.user.phone);
-														params.put(
-																"accessKey",
-																app.data.user.accessKey);
-														params.put(
-																"name",
-																circleName
-																		.getText()
-																		.toString());
-														settings.params = params;
-													}
-
-													@Override
-													public void success(
-															final JSONObject jData) {
-														app.dataHandler
-																.exclude(new Modification() {
-
-																	@Override
-																	public void modifyData(
-																			Data data) {
-																		Circle circle = new Circle();
-																		try {
-																			JSONObject jCircle = jData
-																					.getJSONObject("circle");
-																			circle.rid = jCircle
-																					.getInt("rid");
-																			circle.name = jCircle
-																					.getString("name");
-																			data.circles
-																					.add(data.circles
-																							.size() - 1,
-																							String.valueOf(circle.rid));
-																			data.circlesMap
-																					.put(String
-																							.valueOf(circle.rid),
-																							circle);
-																			currentEditPosition = circles
-																					.size() - 1;
-																		} catch (JSONException e) {
-																		}
-																	}
-
-																	@Override
-																	public void modifyUI() {
-																		notifyViews();
-																	}
-																});
+													public void getSuccess() {
+														// mAdapter.notifyDataSetChanged();
 													}
 												});
-									}
-								}).setNegativeButton("取消", null).show();
+
+											}
+										});
+							}
+
+						}).show();
 			}
 		});
 
@@ -602,66 +564,50 @@ public class CirclesFragment extends BaseFragment {
 				}
 				Circle circle = app.data.circlesMap.get(String.valueOf(
 						circles.get(currentEditPosition)).substring(6));
-				final EditText circleName = new EditText(getActivity());
-				circleName.setText(circle.name);
-				circleName.setSelection(circle.name.length());
-				new AlertDialog.Builder(getActivity())
-						.setTitle("请输入新的密友圈名称")
-						.setIcon(android.R.drawable.ic_dialog_info)
-						.setView(circleName)
-						.setPositiveButton("确定",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										if (circleName.getText().toString()
-												.equals("")) {
-											Alert.showMessage("密友圈名称不能为空");
-											return;
-										}
-										app.networkHandler
-												.connection(new CommonNetConnection() {
+				Alert.createInputDialog(getActivity()).setTitle("请输入新的密友圈名称")
+						.setOnConfirmClickListener(new OnDialogClickListener() {
 
-													@Override
-													protected void settings(
-															Settings settings) {
-														settings.url = API.DOMAIN
-																+ API.CIRCLE_MODIFY;
-														Map<String, String> params = new HashMap<String, String>();
-														params.put(
-																"phone",
-																app.data.user.phone);
-														params.put(
-																"accessKey",
-																app.data.user.accessKey);
-														params.put(
-																"rid",
-																String.valueOf(
-																		circles.get(currentEditPosition))
-																		.substring(
-																				6));
-														params.put(
-																"name",
-																circleName
-																		.getText()
-																		.toString());
-														settings.params = params;
-													}
+							@Override
+							public void onClick(AlertInputDialog dialog) {
+								final String circleName = dialog.getInputText();
+								if (circleName.equals("")) {
+									Alert.showMessage("密友圈名称不能为空");
+									return;
+								}
+								app.networkHandler
+										.connection(new CommonNetConnection() {
 
-													@Override
-													public void success(
-															JSONObject jData) {
-														System.out
-																.println(jData);
-													}
-												});
-										((TextView) views
-												.get(circles
-														.get(currentEditPosition))
-												.findViewById(R.id.panel_name))
-												.setText(circleName.getText());
-									}
-								}).setNegativeButton("取消", null).show();
+											@Override
+											protected void settings(
+													Settings settings) {
+												settings.url = API.DOMAIN
+														+ API.CIRCLE_MODIFY;
+												Map<String, String> params = new HashMap<String, String>();
+												params.put("phone",
+														app.data.user.phone);
+												params.put("accessKey",
+														app.data.user.accessKey);
+												params.put(
+														"rid",
+														String.valueOf(
+																circles.get(currentEditPosition))
+																.substring(6));
+												params.put("name", circleName);
+												settings.params = params;
+											}
+
+											@Override
+											public void success(JSONObject jData) {
+												System.out.println(jData);
+											}
+										});
+								((TextView) views.get(
+										circles.get(currentEditPosition))
+										.findViewById(R.id.panel_name))
+										.setText(circleName);
+							}
+						}).setInputText(circle.name).show();
+
 			}
 		});
 
@@ -981,6 +927,7 @@ public class CirclesFragment extends BaseFragment {
 		return findMoreFriendButtonView;
 	}
 
+	// unused
 	View generateCreateGroupButtonView() {
 
 		View createGroupButtonView = mInflater.inflate(

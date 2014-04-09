@@ -20,10 +20,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:layout_marginTop="12dp"
+        android:background="@drawable/line_0099cd"
         android:hint="请输入"
+        android:padding="4dp"
         android:textColor="#fff"
-        android:textColorHint="#ddd"
+        android:textColorHint="#ccc"
         android:textCursorDrawable="@null"
         android:textSize="17sp" />
 

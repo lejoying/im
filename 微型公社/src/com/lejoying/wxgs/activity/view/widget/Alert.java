@@ -275,8 +275,16 @@ public class Alert {
 			return dialog.input.getText().toString();
 		}
 
-		public void setInputText(String text) {
+		public AlertInputDialog setInputHint(String text) {
+			dialog.input.setHint(text);
+			return this;
+		}
+
+		public AlertInputDialog setInputText(String text) {
 			dialog.input.setText(text);
+			dialog.input.setSelection(dialog.input.getText().toString()
+					.length());
+			return this;
 		}
 
 		void hideInput() {

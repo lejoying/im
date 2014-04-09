@@ -485,75 +485,61 @@ public class GroupManagerFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				final EditText groupName = new EditText(getActivity());
-				groupName.setText(mCurrentManagerGroup.name);
-				groupName.setSelection(mCurrentManagerGroup.name.length());
-				new AlertDialog.Builder(getActivity())
-						.setTitle("请输入新的群组名称")
-						.setIcon(android.R.drawable.ic_dialog_info)
-						.setView(groupName)
-						.setPositiveButton("确定",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										if (groupName.getText().toString()
-												.equals("")) {
-											Alert.showMessage("群组名称不能为空");
-											return;
-										}
-										app.networkHandler
-												.connection(new CommonNetConnection() {
+				Alert.createInputDialog(getActivity()).setTitle("请输入新的群组名称")
+						.setInputText(mCurrentManagerGroup.name)
+						.setOnConfirmClickListener(new OnDialogClickListener() {
+							@Override
+							public void onClick(final AlertInputDialog dialog) {
+								if (dialog.getInputText().equals("")) {
+									Alert.showMessage("群组名称不能为空");
+									return;
+								}
+								app.networkHandler
+										.connection(new CommonNetConnection() {
+
+											@Override
+											protected void settings(
+													Settings settings) {
+												settings.url = API.DOMAIN
+														+ API.GROUP_MODIFY;
+												Map<String, String> params = new HashMap<String, String>();
+												params.put("phone",
+														app.data.user.phone);
+												params.put("accessKey",
+														app.data.user.accessKey);
+												params.put(
+														"gid",
+														String.valueOf(mCurrentManagerGroup.gid));
+												params.put("name",
+														dialog.getInputText());
+												settings.params = params;
+											}
+
+											@Override
+											public void success(JSONObject jData) {
+												System.out.println(jData);
+												DataUtil.getGroups(new GetDataListener() {
 
 													@Override
-													protected void settings(
-															Settings settings) {
-														settings.url = API.DOMAIN
-																+ API.GROUP_MODIFY;
-														Map<String, String> params = new HashMap<String, String>();
-														params.put(
-																"phone",
-																app.data.user.phone);
-														params.put(
-																"accessKey",
-																app.data.user.accessKey);
-														params.put(
-																"gid",
-																String.valueOf(mCurrentManagerGroup.gid));
-														params.put(
-																"name",
-																groupName
-																		.getText()
-																		.toString());
-														settings.params = params;
-													}
-
-													@Override
-													public void success(
-															JSONObject jData) {
-														System.out
-																.println(jData);
-														DataUtil.getGroups(new GetDataListener() {
-
-															@Override
-															public void getSuccess() {
-																if (mMainModeManager.mChatGroupFragment
-																		.isAdded()) {
-																	mMainModeManager.mChatGroupFragment.mAdapter
-																			.notifyDataSetChanged();
-																}
-																mMainModeManager.mGroupFragment
-																		.notifyViews();
-															}
-														});
-
+													public void getSuccess() {
+														if (mMainModeManager.mChatGroupFragment
+																.isAdded()) {
+															mMainModeManager.mChatGroupFragment.mAdapter
+																	.notifyDataSetChanged();
+														}
+														mMainModeManager.mGroupFragment
+																.notifyViews();
 													}
 												});
-										((TextView) views.get("group")
-												.findViewById(R.id.panel_name))
-												.setText(groupName.getText());
-									}
-								}).setNegativeButton("取消", null).show();
+
+											}
+										});
+								((TextView) views.get("group").findViewById(
+										R.id.panel_name)).setText(dialog
+										.getInputText());
+
+							}
+						}).show();
 			}
 		});
 
