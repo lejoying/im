@@ -449,7 +449,7 @@ public class FileHandler {
 							}
 							fos.flush();
 							fos.close();
-							is.close();
+							is1.close();
 						}
 						bigFaceImg.onSuccess(
 								(sha1 + settings.format).toLowerCase(), base64);
@@ -491,11 +491,16 @@ public class FileHandler {
 								new File(folder, imageFileName)));
 						httpURLConnection.disconnect();
 						GifMovie gifMovie = new GifMovie();
-						gifMovie.movie = Movie.decodeStream(is);
-						gifMovie.bytes = streamToBytes(is);
+						File file = new File(folder, imageFileName);
+						FileInputStream fileInputStream = new FileInputStream(
+								file);
+						gifMovie.bytes = streamToBytes(fileInputStream);
+						gifMovie.movie = Movie.decodeByteArray(gifMovie.bytes,
+								0, gifMovie.bytes.length);
 						gifs.put(imageFileName, gifMovie);
 						gifFileResult.onResult(FROM_WEB);
 						try {
+							// fileInputStream.close();
 							is.close();
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -522,8 +527,9 @@ public class FileHandler {
 				try {
 					FileInputStream fileInputStream = new FileInputStream(file);
 					GifMovie gifMovie = new GifMovie();
-					gifMovie.movie = Movie.decodeStream(fileInputStream);
 					gifMovie.bytes = streamToBytes(fileInputStream);
+					gifMovie.movie = Movie.decodeByteArray(gifMovie.bytes, 0,
+							gifMovie.bytes.length);
 					gifs.put(imageFileName, gifMovie);
 					gifFileResult.onResult(FROM_SDCARD);
 					try {
@@ -532,7 +538,6 @@ public class FileHandler {
 						e.printStackTrace();
 					}
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
 				}
 			}
 		}

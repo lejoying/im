@@ -72,8 +72,9 @@ import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.DialogListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
@@ -455,7 +456,12 @@ public class ChatGroupFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				TranslateAnimation translateIn = new TranslateAnimation(0, 0,
+						-dp2px(255), 0);
+				translateIn.setDuration(150);
 				groupCenterBar.setVisibility(View.VISIBLE);
+				((ViewGroup) groupCenterBar).getChildAt(0).startAnimation(
+						translateIn);
 			}
 		});
 
@@ -494,33 +500,26 @@ public class ChatGroupFragment extends BaseFragment {
 				int show_status = rl_audiopanel.getVisibility();
 				if (show_status == View.VISIBLE) {
 					if (voice_list.size() != 0) {
-						Alert.showDialog("语音尚未发送，是否取消？", new DialogListener() {
-
-							@Override
-							public boolean confirm() {
-								tv_voice.setText("语音");
-								rl_audiopanel.setVisibility(View.GONE);
-								for (int i = 0; i < voice_list.size(); i++) {
-									File file = new File(voice_list.get(i));
-									file.delete();
-								}
-								voice_list.clear();
-								voice_length = 0;
-								return true;
-							}
-
-							@Override
-							public void cancel() {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void onCancel() {
-								// TODO Auto-generated method stub
-
-							}
-						});
+						Alert.createDialog(getActivity())
+								.setTitle("语音尚未发送，是否取消？")
+								.setOnConfirmClickListener(
+										new OnDialogClickListener() {
+											@Override
+											public void onClick(
+													AlertInputDialog dialog) {
+												tv_voice.setText("语音");
+												rl_audiopanel
+														.setVisibility(View.GONE);
+												for (int i = 0; i < voice_list
+														.size(); i++) {
+													File file = new File(
+															voice_list.get(i));
+													file.delete();
+												}
+												voice_list.clear();
+												voice_length = 0;
+											}
+										}).show();
 					} else {
 						tv_voice.setText("语音");
 						rl_audiopanel.setVisibility(View.GONE);
@@ -1253,21 +1252,20 @@ public class ChatGroupFragment extends BaseFragment {
 							new FileResult() {
 
 								@Override
-								public void onResult(String where) {
-									Log.e("Coolspan", where
-											+ "_=-=-=-=-=-=-=-=");
-									try {
-										SampleView sampleView = new SampleView(
-												getActivity(),
-												app.fileHandler.gifs
-														.get(imageFileName));
-										messageHolder.iv_image_gif
-												.addView(sampleView);
-										if (where == app.fileHandler.FROM_WEB) {
-											mAdapter.notifyDataSetChanged();
+								public void onResult(final String where) {
+									app.UIHandler.post(new Runnable() {
+										public void run() {
+											SampleView sampleView = new SampleView(
+													getActivity(),
+													app.fileHandler.gifs
+															.get(imageFileName));
+											messageHolder.iv_image_gif
+													.addView(sampleView);
+											if (where == app.fileHandler.FROM_WEB) {
+												mAdapter.notifyDataSetChanged();
+											}
 										}
-									} catch (Exception e) {
-									}
+									});
 								}
 							});
 				} else {
@@ -1280,9 +1278,9 @@ public class ChatGroupFragment extends BaseFragment {
 									.get(imageFileName));
 							// Movie.decodeFile((new File(app.sdcardImageFolder,
 							// imageFileName)).getAbsolutePath());
-							if (where == app.fileHandler.FROM_WEB) {
-								mAdapter.notifyDataSetChanged();
-							}
+							// if (where == app.fileHandler.FROM_WEB) {
+							// mAdapter.notifyDataSetChanged();
+							// }
 						}
 					});
 				}
@@ -1486,7 +1484,6 @@ public class ChatGroupFragment extends BaseFragment {
 			}
 			return convertView;
 		}
-
 	}
 
 	class MessageHolder {

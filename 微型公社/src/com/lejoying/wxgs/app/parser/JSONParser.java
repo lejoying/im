@@ -188,6 +188,10 @@ public class JSONParser {
 		try {
 			group.gid = jGroup.getInt("gid");
 			try {
+				group.icon = jGroup.getString("icon");
+			} catch (JSONException e) {
+			}
+			try {
 				group.name = jGroup.getString("name");
 			} catch (JSONException e) {
 			}
