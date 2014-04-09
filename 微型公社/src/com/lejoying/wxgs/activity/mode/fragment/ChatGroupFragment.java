@@ -1247,21 +1247,20 @@ public class ChatGroupFragment extends BaseFragment {
 							new FileResult() {
 
 								@Override
-								public void onResult(String where) {
-									Log.e("Coolspan", where
-											+ "_=-=-=-=-=-=-=-=");
-									try {
-										SampleView sampleView = new SampleView(
-												getActivity(),
-												app.fileHandler.gifs
-														.get(imageFileName));
-										messageHolder.iv_image_gif
-												.addView(sampleView);
-										if (where == app.fileHandler.FROM_WEB) {
-											mAdapter.notifyDataSetChanged();
+								public void onResult(final String where) {
+									app.UIHandler.post(new Runnable() {
+										public void run() {
+											SampleView sampleView = new SampleView(
+													getActivity(),
+													app.fileHandler.gifs
+															.get(imageFileName));
+											messageHolder.iv_image_gif
+													.addView(sampleView);
+											if (where == app.fileHandler.FROM_WEB) {
+												mAdapter.notifyDataSetChanged();
+											}
 										}
-									} catch (Exception e) {
-									}
+									});
 								}
 							});
 				} else {
@@ -1274,9 +1273,9 @@ public class ChatGroupFragment extends BaseFragment {
 									.get(imageFileName));
 							// Movie.decodeFile((new File(app.sdcardImageFolder,
 							// imageFileName)).getAbsolutePath());
-							if (where == app.fileHandler.FROM_WEB) {
-								mAdapter.notifyDataSetChanged();
-							}
+							// if (where == app.fileHandler.FROM_WEB) {
+							// mAdapter.notifyDataSetChanged();
+							// }
 						}
 					});
 				}
@@ -1480,7 +1479,6 @@ public class ChatGroupFragment extends BaseFragment {
 			}
 			return convertView;
 		}
-
 	}
 
 	class MessageHolder {

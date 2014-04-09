@@ -356,6 +356,9 @@ public class GroupManagerFragment extends BaseFragment {
 																} else {
 																	group.members
 																			.add(friend.phone);
+																	data.groupFriends
+																			.put(friend.phone,
+																					friend);
 																}
 															}
 															seleteFriendList

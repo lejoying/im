@@ -37,6 +37,7 @@ public abstract class CommonNetConnection extends NetConnection {
 
 	@Override
 	protected void failed(int failedType, int responseCode) {
+		super.failed(failedType, responseCode);
 		if (!NetworkUtils.hasNetwork(app)) {
 			Alert.showMessage(app.getString(R.string.alert_text_nointernet));
 		} else if (failedType == FAILED_TIMEOUT) {

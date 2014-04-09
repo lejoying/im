@@ -78,7 +78,7 @@ public class NetworkHandler {
 				HttpURLConnection httpURLConnection);
 
 		protected void failed(int failedType, int responseCode) {
-			// TODO Auto-generated method stub
+			//System.out.println(settings.url);
 		}
 
 		protected void connectionCreated(HttpURLConnection httpURLConnection) {

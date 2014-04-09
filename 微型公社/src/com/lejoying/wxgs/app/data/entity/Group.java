@@ -10,6 +10,7 @@ public class Group implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public int gid;
+	public String icon = "";
 	public String name = "";
 	public int notReadMessagesCount;
 	public List<String> members = new ArrayList<String>();

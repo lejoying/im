@@ -1369,19 +1369,23 @@ public class ChatFriendFragment extends BaseFragment {
 							new FileResult() {
 
 								@Override
-								public void onResult(String where) {
-									try {
-										SampleView sampleView = new SampleView(
-												getActivity(),
-												app.fileHandler.gifs
-														.get(imageFileName));
-										messageHolder.iv_image_gif
-												.addView(sampleView);
-										if (where == app.fileHandler.FROM_WEB) {
-											mAdapter.notifyDataSetChanged();
+								public void onResult(final String where) {
+									app.UIHandler.post(new Runnable() {
+
+										@Override
+										public void run() {
+											SampleView sampleView = new SampleView(
+													getActivity(),
+													app.fileHandler.gifs
+															.get(imageFileName));
+											messageHolder.iv_image_gif
+													.addView(sampleView);
+											if (where == app.fileHandler.FROM_WEB) {
+												mAdapter.notifyDataSetChanged();
+											}
 										}
-									} catch (Exception e) {
-									}
+									});
+
 								}
 							});
 				} else {
@@ -1394,9 +1398,9 @@ public class ChatFriendFragment extends BaseFragment {
 									.get(imageFileName));
 							// Movie.decodeFile((new File(app.sdcardImageFolder,
 							// imageFileName)).getAbsolutePath());
-							if (where == app.fileHandler.FROM_WEB) {
-								mAdapter.notifyDataSetChanged();
-							}
+							// if (where == app.fileHandler.FROM_WEB) {
+							// mAdapter.notifyDataSetChanged();
+							// }
 
 						}
 					});
