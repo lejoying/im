@@ -644,7 +644,7 @@ accountManage.modify = function (data, response) {
         });
     }
 }
-sha1Pwd();
+//sha1Pwd();
 function sha1Pwd(){
     var query = [
         'MATCH (account:Account)',
