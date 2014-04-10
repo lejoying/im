@@ -64,7 +64,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public int mStatus;
 	public Friend mShowFriend;
-	int RESULT_SELECTHEAD = 0x123;
+	int RESULT_SELECTPICTURE = 0x123;
 	int RESULT_TAKEPICTURE = 0xa3;
 	int RESULT_CATPICTURE = 0x3d;
 	public static final int SHOW_SELF = 1;
@@ -270,8 +270,19 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		} else if (mStatus == SHOW_SELF) {
-			 mContent.setBackgroundDrawable(new
-			 BitmapDrawable(app.data.user.userBackground));
+
+			final String backgroudFileName = app.data.user.userBackground;
+			app.fileHandler.getBackgroudImage(backgroudFileName,
+					new FileResult() {
+						@SuppressWarnings("deprecation")
+						@Override
+						public void onResult(String where) {
+							mContent.setBackgroundDrawable(new BitmapDrawable(
+									backgroudFileName));
+
+						}
+					});
+
 			button1.setText("修改个人信息");
 			button2.setText("退出登录");
 			tv_id.setText(String.valueOf(app.data.user.id));
@@ -291,7 +302,6 @@ public class BusinessCardFragment extends BaseFragment {
 					AlertDialog.Builder builder = new Builder(mInflater
 							.getContext());
 					builder.setMessage("更换封面");
-					builder.setTitle("");
 					builder.setPositiveButton("拍照",
 							new DialogInterface.OnClickListener() {
 
@@ -336,7 +346,7 @@ public class BusinessCardFragment extends BaseFragment {
 											Intent.ACTION_PICK,
 											MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 									startActivityForResult(selectFromGallery,
-											RESULT_SELECTHEAD);
+											RESULT_SELECTPICTURE);
 
 									dialog.dismiss();
 								}
@@ -352,14 +362,12 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 
 			button2.setOnClickListener(new OnClickListener() {
-
 				@Override
 				public void onClick(View arg0) {
 					Alert.createDialog(getActivity())
 							.setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？")
 							.setOnConfirmClickListener(
 									new AlertInputDialog.OnDialogClickListener() {
-
 										@Override
 										public void onClick(
 												AlertInputDialog dialog) {
@@ -497,6 +505,14 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		}
+		iv_head.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				mMainModeManager.mBigHeadFragment.userHead=app.data.user.head;
+				mMainModeManager.showNext(mMainModeManager.mBigHeadFragment);
+			}
+		});
 		final String headFileName = fileName;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
@@ -512,13 +528,10 @@ public class BusinessCardFragment extends BaseFragment {
 		View groupView = mContent.findViewById(R.id.tv_group_layout);
 		gridView = (GridView) mContent.findViewById(R.id.tv_gridview);
 
-		// inflater = (LayoutInflater) this
-		// .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		List<Group> groups = getFriendGroups();
-		adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
-
 		if (mStatus != SHOW_SELF) {
-			
+			List<Group> groups = getFriendGroups();
+			adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
+
 			gridView.setAdapter(adapter);
 
 			setColumns(gridView, groups);
@@ -552,6 +565,9 @@ public class BusinessCardFragment extends BaseFragment {
 	public int getNumColumns(int groupNum) {
 		int listSize;
 		if (groupNum % 2 == 0) {
+			if (groupNum < 3) {
+				listSize = groupNum;
+			}
 			listSize = groupNum / 2;
 		} else {
 			listSize = groupNum / 2 + 1;
@@ -587,8 +603,7 @@ public class BusinessCardFragment extends BaseFragment {
 									Group group = new Group();
 									group.gid = jGroup.getInt("gid");
 									group.name = jGroup.getString("name");
-									// Object[] groupAndFriends =
-									// generateGroupFromJSON(jGroup);
+
 									if (group != null) {
 										groups.add(group);
 									}
@@ -603,7 +618,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						
+
 						adapter.notifyDataSetChanged();
 						setColumns(gridView, groups);
 					}
@@ -618,7 +633,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RESULT_SELECTHEAD
+		if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK && data != null) {
 			Uri selectedImage = data.getData();
 			startPhotoZoom(selectedImage);
@@ -753,14 +768,15 @@ public class BusinessCardFragment extends BaseFragment {
 
 				if (user.userBackground != null
 						&& !user.userBackground.equals("")) {
-					final String headFileName = app.data.user.userBackground;
-					app.fileHandler.getHeadImage(headFileName,
+					final String backgroudFileName = app.data.user.userBackground;
+					app.fileHandler.getBackgroudImage(backgroudFileName,
 							new FileResult() {
 								@Override
 								public void onResult(String where) {
-//									mContent.setBackgroundDrawable(new BitmapDrawable(
-//											app.fileHandler.bitmaps
-//													.get(app.data.user.userBackground)));
+									mContent.setBackgroundDrawable(new BitmapDrawable(
+											app.fileHandler.bitmaps
+													.get(app.data.user.userBackground)));
+
 								}
 							});
 

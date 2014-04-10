@@ -95,9 +95,8 @@ public class FileHandler {
 					true, 5, Color.WHITE);
 		}
 		if (defaultBack == null) {
-//			defaultBack = MCImageUtils.getCircleBitmap(BitmapFactory
-//					.decodeResource(app.getResources(), R.drawable.face_man),
-//					true, 5, Color.WHITE);
+			defaultBack = BitmapFactory
+					.decodeResource(app.getResources(), R.drawable.background);
 		}
 		Bitmap dImage = defaultImage;
 		if (type == TYPE_IMAGE_HEAD) {
@@ -114,6 +113,7 @@ public class FileHandler {
 		} else {
 			if (bitmaps.get(imageFileName) == null) {
 				bitmaps.put(imageFileName, dImage);
+				
 			}
 			if (!imageFileName.equals("")) {
 				File imageFile = new File(app.sdcardImageFolder, imageFileName);
@@ -194,8 +194,6 @@ public class FileHandler {
 					if (type == TYPE_IMAGE_HEAD) {
 						bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5,
 								Color.WHITE);
-					}else if(type == TYPE_IMAGE_BACK) {
-						
 					}
 					bitmaps.put(imageFileName, bitmap);
 
