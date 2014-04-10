@@ -57,7 +57,7 @@
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
-            android:visibility="gone" >
+            android:visibility="visible" >
 
             <HorizontalScrollView
                 android:id="@+id/horizontalScrollView1"

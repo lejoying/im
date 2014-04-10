@@ -9,7 +9,25 @@
         android:layout_width="38dp"
         android:layout_height="38dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/circlemenu_item1"
         tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_notread_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/menu_item_icon"
+        android:layout_marginRight="-3dp"
+        android:background="@drawable/number_hint"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:singleLine="true"
+        android:text="99"
+        android:textColor="#fff"
+        android:textSize="8sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/menu_item_text"
@@ -17,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/menu_item_icon"
         android:layout_centerHorizontal="true"
+        android:text="Coolspan"
         android:textColor="#fff" />
 
 </RelativeLayout>

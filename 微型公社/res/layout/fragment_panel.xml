@@ -91,6 +91,16 @@
                 android:text="@string/button_down"
                 android:textColor="#fff"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_pagination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="16sp" />
         </RelativeLayout>
     </LinearLayout>
 

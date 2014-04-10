@@ -415,6 +415,7 @@ public class GroupFragment extends BaseFragment {
 		View bottomBar = groupView.findViewById(R.id.bottomBar);
 		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(
 				View.GONE);
+		bottomBar.findViewById(R.id.tv_pagination).setVisibility(View.GONE);
 		TextView buttonManager = (TextView) bottomBar
 				.findViewById(R.id.buttonNextGroup);
 		buttonManager.setText("查看群组分享");

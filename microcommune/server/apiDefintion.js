@@ -965,3 +965,41 @@ api = {
         }
     }
 }
+api = {
+    /***************************************
+     *     URL：/api2/square/sendsquaremessage
+     ***************************************/
+    "square_sendsquaremessage": {
+        description: {
+            id: 1001200,
+            url: "/api2/square/sendsquaremessage"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", gid: "NNN", message: {messageType: "XX1" || "XX2", contentType: "text" || "image" || "voice", content: "XXX"}}
+        },
+        response: {
+            success: {"提示信息": "发布广播成功", time: "NNN", gid: "NNN"},
+            failed: {"提示信息": "发布广播失败", "失败原因": "数据异常" || "参数格式错误" || "用户权限不足"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/getsquaremessage
+     ***************************************/
+    "square_getsquaremessage": {
+        description: {
+            id: 1001201,
+            url: "/api2/square/getsquaremessage",
+            type: "long pull"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", flag: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取广播成功", messages: [
+                {mid: "NNN" +
+                    "", sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
+            ], flag: "NNN", onlinecount: "NNN"},
+            failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
+        }
+    }
+}

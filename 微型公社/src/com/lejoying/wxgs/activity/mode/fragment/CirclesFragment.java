@@ -190,7 +190,10 @@ public class CirclesFragment extends BaseFragment {
 				manager.setText("分组管理");
 				manager.setVisibility(View.VISIBLE);
 				v.findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
-
+				final TextView tv_pagination = (TextView) v
+						.findViewById(R.id.tv_pagination);
+				tv_pagination.setVisibility(View.VISIBLE);
+				tv_pagination.setText(i + 1 + "/" + circles.size());
 				View buttonPreviousGroup = v
 						.findViewById(R.id.buttonPreviousGroup);
 				buttonPreviousGroup.setOnClickListener(new OnClickListener() {
