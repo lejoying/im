@@ -244,7 +244,7 @@ public class GroupFragment extends BaseFragment {
 			boolean flag = false;
 			if (o != null) {
 				if (o instanceof GroupHolder) {
-					if (gid.equals(((GroupHolder) o).gid)) {
+					if (gid != null && gid.equals(((GroupHolder) o).gid)) {
 						flag = true;
 					}
 				}
@@ -308,6 +308,9 @@ public class GroupFragment extends BaseFragment {
 	void notifyGroups(List<Group> groups, List<GroupHolder> groupHolders,
 			View groupView) {
 
+		List<GroupHolder> tempHolders = new ArrayList<GroupFragment.GroupHolder>();
+		tempHolders.addAll(groupHolders);
+
 		ScrollContainer scrollContainer = (ScrollContainer) groupView
 				.findViewById(R.id.viewContainer);
 		final ViewContainer viewContainer = scrollContainer.getViewContainer();
@@ -319,13 +322,13 @@ public class GroupFragment extends BaseFragment {
 			int index = groupHolders.indexOf(groupHolder);
 			if (index != -1) {
 				groupHolder = groupHolders.remove(index);
+				tempHolders.remove(groupHolder);
 			} else {
 				groupHolder.groupItemView = mInflater.inflate(
 						R.layout.fragment_group_item, null);
 				viewContainer.addView(groupHolder.groupItemView);
 				groupHolder.groupItemView
 						.setOnClickListener(new OnClickListener() {
-
 							@Override
 							public void onClick(View arg0) {
 								mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
@@ -397,6 +400,13 @@ public class GroupFragment extends BaseFragment {
 				members.addView(head);
 			}
 
+		}
+
+		for (GroupHolder holder : tempHolders) {
+			if (holder.gid != null) {
+				viewContainer.removeView(holder.groupItemView);
+				groupHolders.remove(holder);
+			}
 		}
 
 		for (int i = 0; i < groupHolders.size(); i++) {
