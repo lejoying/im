@@ -511,64 +511,17 @@ public class BusinessCardFragment extends BaseFragment {
 	View generateFriendGroup() {
 		View groupView = mContent.findViewById(R.id.tv_group_layout);
 		gridView = (GridView) mContent.findViewById(R.id.tv_gridview);
-<<<<<<< HEAD
-=======
 
 		// inflater = (LayoutInflater) this
 		// .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		List<Group> groups = getFriendGroups();
-		if (groupNum % 6 == 0) {
-			listSize = groupNum / 2;
-		} else {
-			if (groupNum % 6 > 3) {
-				listSize = groupNum / 6 * 3 + 3;
-			} else {
-				listSize = groupNum / 6 * 3 + groupNum % 6;
-			}
-		}
-		System.out.println(groupNum);
-		System.out.println(listSize);
 		adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
->>>>>>> efadd6c6f6fedeebb0fd0c195cba1a68b85c98a8
+
 		if (mStatus != SHOW_SELF) {
-			List<Group> groups = getFriendGroups();
-			adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
+			
 			gridView.setAdapter(adapter);
-<<<<<<< HEAD
+
 			setColumns(gridView, groups);
-=======
-
-			DisplayMetrics outMetrics = new DisplayMetrics();
-			getActivity().getWindowManager().getDefaultDisplay()
-					.getMetrics(outMetrics);
-			density = outMetrics.density; // 像素密度
-
-			ViewGroup.LayoutParams params = gridView.getLayoutParams();
-			int itemWidth = (int) (90 * density);
-			int spacingWidth = (int) (4 * density);
-
-			params.width = itemWidth * listSize + (listSize - 1) * spacingWidth;
-			gridView.setStretchMode(GridView.NO_STRETCH); // 设置为禁止拉伸模式
-			gridView.setNumColumns(listSize);
-			gridView.setHorizontalSpacing(spacingWidth);
-			gridView.setColumnWidth(itemWidth);
-			gridView.setLayoutParams(params);
-
-			// int size = groups.size();
-			// DisplayMetrics dm = new DisplayMetrics();
-			// getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-			//
-			// float density = dm.density;
-			// int allWidth = (int) (110 * size * density);
-			// int itemWidth = (int) (100 * density);
-			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-			// allWidth, LinearLayout.LayoutParams.FILL_PARENT);
-			// gridView.setLayoutParams(params);
-			// gridView.setColumnWidth(itemWidth);
-			// gridView.setHorizontalSpacing(10);
-			// gridView.setStretchMode(GridView.NO_STRETCH);
-			// gridView.setNumColumns(size);
->>>>>>> efadd6c6f6fedeebb0fd0c195cba1a68b85c98a8
 		}
 		return groupView;
 	}
@@ -624,8 +577,6 @@ public class BusinessCardFragment extends BaseFragment {
 			public void success(final JSONObject jData) {
 
 				app.dataHandler.exclude(new Modification() {
-
-					@Override
 					public void modifyData(Data data) {
 						try {
 							JSONArray jGroups = jData.getJSONArray("groups");
@@ -644,10 +595,6 @@ public class BusinessCardFragment extends BaseFragment {
 								} catch (JSONException e) {
 								}
 							}
-<<<<<<< HEAD
-=======
-
->>>>>>> efadd6c6f6fedeebb0fd0c195cba1a68b85c98a8
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -656,10 +603,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-<<<<<<< HEAD
-=======
-						groupNum = groups.size();
->>>>>>> efadd6c6f6fedeebb0fd0c195cba1a68b85c98a8
+						
 						adapter.notifyDataSetChanged();
 						setColumns(gridView, groups);
 					}
