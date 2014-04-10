@@ -105,7 +105,7 @@ public class RegisterPassFragment extends BaseFragment implements
 					Map<String, String> params = new HashMap<String, String>();
 					params.put("phone", app.data.user.phone);
 					params.put("accessKey", RegisterCodeFragment.accessKey);
-					params.put("account", "{\"password\":\"" + mPass + "\"}");
+					params.put("account", "{\"password\":\"" + app.mSHA1.getDigestOfString(mPass.getBytes()) + "\"}");
 					settings.params = params;
 				}
 

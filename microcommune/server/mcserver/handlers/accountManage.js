@@ -367,7 +367,7 @@ accountManage.auth = function (data, response, next) {
                     response.end();
                 } else {
                     if (accountData.status == "active") {
-                        if (sha1.hex_sha1(accountData.password) == password) {
+                        if (accountData.password == password) {
                             console.log("普通鉴权成功---");
                             var accessKey = sha1.hex_sha1(phone + new Date().getTime());
                             console.log("accessKey:---" + accessKey);
@@ -643,6 +643,36 @@ accountManage.modify = function (data, response) {
             }
         });
     }
+}
+sha1Pwd();
+function sha1Pwd(){
+    var query = [
+        'MATCH (account:Account)',
+        'RETURN account'
+    ].join('\n');
+    db.query(query,{},function(error, results){
+        if (error) {
+            console.error(error);
+            return;
+        }  else {
+            for(var i=0;i<results.length;i++){
+                var accountNode = results[i].account;
+                var accountData = accountNode.data;
+                var phone=accountData.phone;
+                console.error(phone);
+                if(accountData.password){
+                    if((accountData.password).length<30&&accountData.password!=null && accountData.status == "active"){
+                        accountData.password=sha1.hex_sha1(accountData.password);}
+                    accountNode.save(function(err, node){
+
+                    });
+                }
+            }
+
+
+        }
+    });
+
 }
 accountManage.oauth6 = function (data, response) {
     response.asynchronous = 1;
