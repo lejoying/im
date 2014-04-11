@@ -3,8 +3,8 @@ package com.lejoying.wxgs.activity.mode.fragment;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,9 +31,18 @@ public class BigHeadFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		mInflater = inflater;
-		mContent = inflater.inflate(R.layout.f_businesscard, null);
+		mContent = inflater.inflate(R.layout.f_bighead, null);
 		bigHead = (ImageView) mContent.findViewById(R.id.iv_bighead);
-//		bigHead.setImageBitmap();
+		final String headFileName = app.data.user.head;
+		app.fileHandler.getImage(headFileName, new FileResult() {
+			@Override
+			public void onResult(String where) {
+				System.out.println(app.fileHandler.bitmaps.get(headFileName)
+						+ "------" + bigHead);
+//				bigHead.setImageBitmap(app.fileHandler.bitmaps
+//						.get(headFileName));
+			}
+		});
 		mContent.setOnClickListener(new OnClickListener() {
 
 			@Override

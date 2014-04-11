@@ -58,6 +58,8 @@ import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
+import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 import com.lejoying.wxgs.app.service.PushService;
 
 public class BusinessCardFragment extends BaseFragment {
@@ -93,7 +95,8 @@ public class BusinessCardFragment extends BaseFragment {
 
 	FriendGroupsGridViewAdapter adapter = null;
 	File tempFile;
-
+	
+	
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -205,9 +208,11 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public void initData() {
 		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
-		tv_group = generateFriendGroup();
+		tv_group = mContent.findViewById(R.id.tv_group_layout);
+		//generateFriendGroup();
 		tv_square = mContent.findViewById(R.id.tv_square_layout);
 		tv_msg = mContent.findViewById(R.id.tv_msg_layout);
+		
 		final ImageView iv_head = (ImageView) mContent
 				.findViewById(R.id.iv_head);
 
@@ -294,6 +299,7 @@ public class BusinessCardFragment extends BaseFragment {
 			group.removeView(button3);
 			group.removeView(tv_group);
 			group.removeView(tv_square);
+			
 			tv_spacing.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -330,9 +336,7 @@ public class BusinessCardFragment extends BaseFragment {
 											MediaStore.EXTRA_OUTPUT, uri);
 									startActivityForResult(tackPicture,
 											RESULT_TAKEPICTURE);
-
 									dialog.dismiss();
-
 								}
 							});
 					builder.setNegativeButton("相册",
@@ -452,7 +456,7 @@ public class BusinessCardFragment extends BaseFragment {
 																		public void modifyData(
 																				Data data) {
 																			data.lastChatFriends
-																					.remove(mShowFriend.phone);
+																					.remove("f"+mShowFriend.phone);
 																			data.newFriends
 																					.remove(mShowFriend);
 																			data.friends
@@ -505,14 +509,14 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		}
-		iv_head.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				mMainModeManager.mBigHeadFragment.userHead=app.data.user.head;
-				mMainModeManager.showNext(mMainModeManager.mBigHeadFragment);
-			}
-		});
+//		iv_head.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				mMainModeManager.mBigHeadFragment.userHead=app.data.user.head;
+//				mMainModeManager.showNext(mMainModeManager.mBigHeadFragment);
+//			}
+//		});
 		final String headFileName = fileName;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
@@ -521,7 +525,9 @@ public class BusinessCardFragment extends BaseFragment {
 						.get(headFileName));
 			}
 		});
-
+		group.removeView(tv_group);
+		group.removeView(tv_square);
+		group.removeView(tv_msg);
 	}
 
 	View generateFriendGroup() {
@@ -531,9 +537,7 @@ public class BusinessCardFragment extends BaseFragment {
 		if (mStatus != SHOW_SELF) {
 			List<Group> groups = getFriendGroups();
 			adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
-
 			gridView.setAdapter(adapter);
-
 			setColumns(gridView, groups);
 		}
 		return groupView;
@@ -564,19 +568,22 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public int getNumColumns(int groupNum) {
 		int listSize;
-		if (groupNum % 2 == 0) {
-			if (groupNum < 3) {
-				listSize = groupNum;
+		if(groupNum<=3){
+			listSize = groupNum;
+		}else if(groupNum>3&&groupNum<6){
+			listSize =3;
+		}else{
+			if (groupNum % 2 == 0) {
+				listSize = groupNum / 2;
+			} else {
+				listSize = groupNum / 2 + 1;
 			}
-			listSize = groupNum / 2;
-		} else {
-			listSize = groupNum / 2 + 1;
 		}
 		return listSize;
 	}
 
 	public List<Group> getFriendGroups() {
-		final List<Group> groups = new ArrayList<Group>();
+		final List<Group> friendGroups=new ArrayList<Group>();
 		NetConnection netConnection = new CommonNetConnection() {
 
 			@Override
@@ -596,19 +603,11 @@ public class BusinessCardFragment extends BaseFragment {
 					public void modifyData(Data data) {
 						try {
 							JSONArray jGroups = jData.getJSONArray("groups");
-							for (int i = 0; i < jGroups.length(); i++) {
-								try {
-									JSONObject jGroup = jGroups
-											.getJSONObject(i);
-									Group group = new Group();
-									group.gid = jGroup.getInt("gid");
-									group.name = jGroup.getString("name");
-
-									if (group != null) {
-										groups.add(group);
-									}
-								} catch (JSONException e) {
-								}
+							GroupsAndFriends groupsAndFriends=
+									JSONParser.generateGroupsFromJSON(jGroups);
+							if(groupsAndFriends.groups!=null){
+								friendGroups.addAll(groupsAndFriends.groups);
+	
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -620,15 +619,15 @@ public class BusinessCardFragment extends BaseFragment {
 					public void modifyUI() {
 
 						adapter.notifyDataSetChanged();
-						setColumns(gridView, groups);
+						setColumns(gridView, friendGroups);
 					}
 				});
 
 			}
 		};
 		app.networkHandler.connection(netConnection);
-
-		return groups;
+		
+		return friendGroups;
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

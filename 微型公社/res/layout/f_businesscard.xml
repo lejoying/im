@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
+   
     >
 
     <ScrollView
@@ -118,14 +119,15 @@
                     android:id="@+id/tv_mainbusiness"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/tv_mainbusiness_title"
-                    android:layout_alignBottom="@+id/tv_mainbusiness_title"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignLeft="@+id/tv_mainbusiness_title"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/tv_sex_title"
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:paddingLeft="70dp"
-                    android:text="送水服务，多买多送!!!"
+                    android:text="送水服务，多买多送!!!!!!!!!!!"
                     android:textColor="#fff" />
+
             </RelativeLayout>
 
             <TextView
@@ -169,7 +171,8 @@
 
                 <HorizontalScrollView
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="220dp"
+                    
                     android:scrollbars="none" >
 
                     <LinearLayout
@@ -180,7 +183,8 @@
                         <GridView
                             android:id="@+id/tv_gridview"
                             android:layout_width="fill_parent"
-                            android:layout_height="220dp"
+                            android:layout_height="wrap_content"
+                            
                             android:layout_gravity="center" >
                         </GridView>
                     </LinearLayout>
