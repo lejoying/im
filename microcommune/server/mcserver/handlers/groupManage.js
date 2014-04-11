@@ -682,6 +682,7 @@ groupManage.getusergroups = function (data, response) {
                 var groups = [];
                 for (var i = 0; i < results.length; i++) {
                     var group = results[i].group.data;
+                    group.members = [];
                     groups.push(group);
                 }
                 response.write(JSON.stringify({
