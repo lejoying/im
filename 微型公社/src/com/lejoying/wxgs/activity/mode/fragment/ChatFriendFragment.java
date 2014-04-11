@@ -20,7 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,6 +33,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -47,6 +51,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -1352,6 +1357,23 @@ public class ChatFriendFragment extends BaseFragment {
 						}
 					}
 				});
+				messageHolder.text
+						.setOnLongClickListener(new OnLongClickListener() {
+
+							@SuppressWarnings("deprecation")
+							@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+							@Override
+							public boolean onLongClick(View v) {
+								ClipboardManager clip = (ClipboardManager) getActivity()
+										.getSystemService(
+												Context.CLIPBOARD_SERVICE);
+								// clip.setPrimaryClip()
+								clip.setText(message.content);
+								Toast.makeText(getActivity(), "复制成功!",
+										Toast.LENGTH_SHORT).show();
+								return true;
+							}
+						});
 			} else if (message.contentType.equals("image")) {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
@@ -1646,6 +1668,8 @@ public class ChatFriendFragment extends BaseFragment {
 							.add(message);
 					data.lastChatFriends.remove("f" + mNowChatFriend.phone);
 					data.lastChatFriends.add(0, "f" + mNowChatFriend.phone);
+					Log.e("Coolspan", data.lastChatFriends.size()
+							+ "---------------chat length");
 					mMainModeManager.mChatMessagesFragment.notifyViews();
 				} else {
 					mNowChatGroup.messages.add(message);

@@ -8,9 +8,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,7 +17,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.EditText;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -37,6 +34,7 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
+import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
@@ -71,6 +69,8 @@ public class GroupManagerFragment extends BaseFragment {
 	View nextBar;
 	View buttonList;
 	View selectFriend;
+
+	LinearLayout ll_pagepoint;
 
 	View nextButton;
 	View backButton;
@@ -132,7 +132,6 @@ public class GroupManagerFragment extends BaseFragment {
 				.findViewById(R.id.animationLayout);
 		tempFriendScroll = (HorizontalScrollView) mContentView
 				.findViewById(R.id.tempFriendScroll);
-
 		app.locationHandler.requestLocation(new LocationListener() {
 
 			@Override
@@ -641,7 +640,6 @@ public class GroupManagerFragment extends BaseFragment {
 	CircleHolder groupHolder;
 
 	private void notifyViews() {
-
 		int marginTop = (int) dp2px(20);
 
 		circlesViewContenter.removeAllViews();
@@ -928,6 +926,24 @@ public class GroupManagerFragment extends BaseFragment {
 		if (mCurrentManagerGroup == null) {
 			return;
 		}
+		ll_pagepoint = (LinearLayout) circleView
+				.findViewById(R.id.ll_pagepoint);
+		ll_pagepoint.removeAllViews();
+		final int pageSize = (mCurrentManagerGroup.members.size() / 6) == 0 ? (mCurrentManagerGroup.members
+				.size() / 6) : (mCurrentManagerGroup.members.size() / 6) + 1;
+		final LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+		for (int i = 0; i < pageSize; i++) {
+			ImageView iv = new ImageView(getActivity());
+			if (i == 0) {
+				iv.setImageResource(R.drawable.point_white);
+			} else {
+				iv.setImageResource(R.drawable.point_blank);
+			}
+			iv.setLayoutParams(params1);
+			ll_pagepoint.addView(iv);
+		}
 		TextView groupName = (TextView) circleView
 				.findViewById(R.id.panel_name);
 		groupName.setText(mCurrentManagerGroup.name);
@@ -942,7 +958,23 @@ public class GroupManagerFragment extends BaseFragment {
 		scrollContainer.setScrollStatus(ScrollContainer.SCROLL_PAGING);
 		scrollContainer
 				.setScrollDirection(ScrollContainer.DIRECTION_HORIZONTAL);
+		scrollContainer.setOnPageChangedListener(new OnPageChangedListener() {
 
+			@Override
+			public void pageChanged(int currentPage) {
+				ll_pagepoint.removeAllViews();
+				for (int i = 0; i < pageSize; i++) {
+					ImageView iv = new ImageView(getActivity());
+					if (i == currentPage) {
+						iv.setImageResource(R.drawable.point_white);
+					} else {
+						iv.setImageResource(R.drawable.point_blank);
+					}
+					iv.setLayoutParams(params1);
+					ll_pagepoint.addView(iv);
+				}
+			}
+		});
 		List<String> phones = mCurrentManagerGroup.members;
 		Map<String, Friend> friends = app.data.groupFriends;
 		// int pagecount = phones.size() % 6 == 0 ? phones.size() / 6 :

@@ -1195,7 +1195,25 @@ public class CirclesFragment extends BaseFragment {
 		TextView groupName = (TextView) circleView
 				.findViewById(R.id.panel_name);
 		groupName.setText(circle.name);
-		ScrollContainer scrollContainer = (ScrollContainer) circleView
+		final LinearLayout ll_pagepoint = (LinearLayout) circleView
+				.findViewById(R.id.ll_pagepoint);
+		ll_pagepoint.removeAllViews();
+		final int pageSize = (circle.phones.size() / 6) == 0 ? (circle.phones
+				.size() / 6) : (circle.phones.size() / 6) + 1;
+		final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+		for (int i = 0; i < pageSize; i++) {
+			ImageView iv = new ImageView(getActivity());
+			if (i == 0) {
+				iv.setImageResource(R.drawable.point_white);
+			} else {
+				iv.setImageResource(R.drawable.point_blank);
+			}
+			iv.setLayoutParams(params);
+			ll_pagepoint.addView(iv);
+		}
+		final ScrollContainer scrollContainer = (ScrollContainer) circleView
 				.findViewById(R.id.viewContainer);
 		scrollContainer
 				.setScrollDirection(ScrollContainer.DIRECTION_HORIZONTAL);
@@ -1540,7 +1558,23 @@ public class CirclesFragment extends BaseFragment {
 
 		resolveFriendsPositions(circleHolder);
 		setFriendsPositions(circleHolder);
+		scrollContainer.setOnPageChangedListener(new OnPageChangedListener() {
 
+			@Override
+			public void pageChanged(int currentPage) {
+				ll_pagepoint.removeAllViews();
+				for (int i = 0; i < pageSize; i++) {
+					ImageView iv = new ImageView(getActivity());
+					if (i == currentPage) {
+						iv.setImageResource(R.drawable.point_white);
+					} else {
+						iv.setImageResource(R.drawable.point_blank);
+					}
+					iv.setLayoutParams(params);
+					ll_pagepoint.addView(iv);
+				}
+			}
+		});
 		scrollContainer
 				.setOnInterceptTouchDownListener(new onInterceptTouchDownListener() {
 

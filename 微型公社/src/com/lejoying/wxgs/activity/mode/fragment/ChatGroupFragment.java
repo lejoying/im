@@ -20,7 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,6 +33,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -47,6 +51,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -66,6 +71,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
@@ -290,7 +296,10 @@ public class ChatGroupFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						mMainModeManager.mCirclesFragment.notifyViews();
+						if (MainActivity.instance.mMainMode.mCirclesFragment
+								.isAdded()) {
+							mMainModeManager.mCirclesFragment.notifyViews();
+						}
 					}
 				});
 			}
@@ -1120,7 +1129,10 @@ public class ChatGroupFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						mMainModeManager.mGroupFragment.notifyViews();
+						if (MainActivity.instance.mMainMode.mGroupFragment
+								.isAdded()) {
+							mMainModeManager.mGroupFragment.notifyViews();
+						}
 					}
 				});
 			}
@@ -1158,7 +1170,7 @@ public class ChatGroupFragment extends BaseFragment {
 		@Override
 		public View getView(int position, View convertView, ViewGroup arg2) {
 			final MessageHolder messageHolder;
-			int type = getItemViewType(position);
+			final int type = getItemViewType(position);
 			if (convertView == null) {
 				messageHolder = new MessageHolder();
 				switch (type) {
@@ -1204,7 +1216,7 @@ public class ChatGroupFragment extends BaseFragment {
 			} else {
 				messageHolder = (MessageHolder) convertView.getTag();
 			}
-			Message message = (Message) getItem(position);
+			final Message message = (Message) getItem(position);
 			if (message.contentType.equals("text")) {
 				messageHolder.text.setVisibility(View.VISIBLE);
 				messageHolder.image.setVisibility(View.GONE);
@@ -1235,6 +1247,46 @@ public class ChatGroupFragment extends BaseFragment {
 								.get(headFileName));
 					}
 				});
+				iv_head.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						switch (type) {
+						case Message.MESSAGE_TYPE_SEND:
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+							break;
+						case Message.MESSAGE_TYPE_RECEIVE:
+							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+							mMainModeManager.mBusinessCardFragment.mShowFriend = app.data.groupFriends
+									.get(message.phone);
+							mMainModeManager
+									.showNext(mMainModeManager.mBusinessCardFragment);
+							break;
+
+						default:
+							break;
+						}
+					}
+				});
+				messageHolder.text
+						.setOnLongClickListener(new OnLongClickListener() {
+
+							@SuppressWarnings("deprecation")
+							@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+							@Override
+							public boolean onLongClick(View v) {
+								ClipboardManager clip = (ClipboardManager) getActivity()
+										.getSystemService(
+												Context.CLIPBOARD_SERVICE);
+								// clip.setPrimaryClip()
+								clip.setText(message.content);
+								Toast.makeText(getActivity(), "复制成功!",
+										Toast.LENGTH_SHORT).show();
+								return true;
+							}
+						});
 			} else if (message.contentType.equals("image")) {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
@@ -1526,6 +1578,8 @@ public class ChatGroupFragment extends BaseFragment {
 				mNowChatGroup.messages.add(message);
 				data.lastChatFriends.remove("g" + mNowChatGroup.gid);
 				data.lastChatFriends.add(0, "g" + mNowChatGroup.gid);
+				Log.e("Coolspan", data.lastChatFriends.size()
+						+ "---------------chat length");
 				mMainModeManager.mChatMessagesFragment.notifyViews();
 			}
 

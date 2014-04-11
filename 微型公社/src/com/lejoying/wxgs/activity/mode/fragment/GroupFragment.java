@@ -24,6 +24,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
+import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
@@ -310,11 +311,44 @@ public class GroupFragment extends BaseFragment {
 
 		List<GroupHolder> tempHolders = new ArrayList<GroupFragment.GroupHolder>();
 		tempHolders.addAll(groupHolders);
-
+		final LinearLayout ll_pagepoint = (LinearLayout) groupView
+				.findViewById(R.id.ll_pagepoint);
+		ll_pagepoint.removeAllViews();
+		final int pageSize = (groups.size() / 4) == 0 ? (groups.size() / 6)
+				: (groups.size() / 4) + 1;
+		final LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+		for (int i = 0; i < pageSize; i++) {
+			ImageView iv = new ImageView(getActivity());
+			if (i == 0) {
+				iv.setImageResource(R.drawable.point_white);
+			} else {
+				iv.setImageResource(R.drawable.point_blank);
+			}
+			iv.setLayoutParams(params1);
+			ll_pagepoint.addView(iv);
+		}
 		ScrollContainer scrollContainer = (ScrollContainer) groupView
 				.findViewById(R.id.viewContainer);
 		final ViewContainer viewContainer = scrollContainer.getViewContainer();
+		scrollContainer.setOnPageChangedListener(new OnPageChangedListener() {
 
+			@Override
+			public void pageChanged(int currentPage) {
+				ll_pagepoint.removeAllViews();
+				for (int i = 0; i < pageSize; i++) {
+					ImageView iv = new ImageView(getActivity());
+					if (i == currentPage) {
+						iv.setImageResource(R.drawable.point_white);
+					} else {
+						iv.setImageResource(R.drawable.point_blank);
+					}
+					iv.setLayoutParams(params1);
+					ll_pagepoint.addView(iv);
+				}
+			}
+		});
 		for (int i = 0; i < groups.size(); i++) {
 			final Group group = groups.get(i);
 			GroupHolder groupHolder = new GroupHolder();

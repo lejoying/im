@@ -58,9 +58,9 @@ public class ChatMessagesFragment extends BaseFragment {
 		messagesAdapter = new MyMessagesAdapter();
 		lv_messages.setAdapter(messagesAdapter);
 		if (app.data.lastChatFriends.size() == 0) {
-			lv_messages.setVisibility(View.VISIBLE);
+			ll_not_messages.setVisibility(View.VISIBLE);
 		} else {
-			lv_messages.setVisibility(View.GONE);
+			ll_not_messages.setVisibility(View.GONE);
 		}
 		return mContentView;
 	}
@@ -150,8 +150,6 @@ public class ChatMessagesFragment extends BaseFragment {
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
 					public void onResult(String where) {
-						System.out.println("Coolspan-------------------"
-								+ headFileName);
 						head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
@@ -174,11 +172,13 @@ public class ChatMessagesFragment extends BaseFragment {
 							mMainModeManager.mChatFragment.mNowChatFriend = chatFriend;
 							mMainModeManager
 									.showNext(mMainModeManager.mChatFragment);
+							notifyViews();
 						} else {
 							mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
 							mMainModeManager.mChatGroupFragment.mNowChatGroup = chatGroup;
 							mMainModeManager
 									.showNext(mMainModeManager.mChatGroupFragment);
+							notifyViews();
 						}
 					}
 				});

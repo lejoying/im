@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
+import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Configuration;
@@ -49,7 +50,7 @@ public class DataUtil {
 						try {
 							User user = JSONParser.generateUserFromJSON(jData
 									.getJSONArray("accounts").getJSONObject(0));
-							data.user.userBackground=user.userBackground;
+							data.user.userBackground = user.userBackground;
 							data.user.head = user.head;
 							data.user.nickName = user.nickName;
 							data.user.mainBusiness = user.mainBusiness;
@@ -177,7 +178,7 @@ public class DataUtil {
 					@Override
 					public void modifyData(Data data) {
 						try {
-							GroupsAndFriends groupsAndFriends =JSONParser
+							GroupsAndFriends groupsAndFriends = JSONParser
 									.generateGroupsFromJSON(jData
 											.getJSONArray("groups"));
 							data.groups.clear();
@@ -307,10 +308,10 @@ public class DataUtil {
 									if (friend != null
 											&& !friend.messages
 													.contains(message)) {
-										data.lastChatFriends
-												.remove(friend.phone);
-										data.lastChatFriends.add(0,
-												friend.phone);
+										data.lastChatFriends.remove("f"
+												+ friend.phone);
+										data.lastChatFriends.add(0, "f"
+												+ friend.phone);
 										friend.messages.add(message);
 										friend.notReadMessagesCount++;
 									}
@@ -320,6 +321,10 @@ public class DataUtil {
 									if (group != null
 											&& !group.messages
 													.contains(message)) {
+										data.lastChatFriends.remove("g"
+												+ group.gid);
+										data.lastChatFriends.add(0, "g"
+												+ group.gid);
 										group.messages.add(message);
 										group.notReadMessagesCount++;
 									} else {

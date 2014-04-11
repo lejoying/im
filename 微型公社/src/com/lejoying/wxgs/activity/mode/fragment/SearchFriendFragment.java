@@ -315,6 +315,7 @@ public class SearchFriendFragment extends BaseFragment {
 
 	void notifyCircleView(final ViewContainer container, List<Friend> friends,
 			CircleHolder circleHolder) {
+		int x = 0;
 		for (int i = 0; i < friends.size(); i++) {
 			final Friend friend = friends.get(i);
 			FriendHolder friendHolder = new FriendHolder();
@@ -354,8 +355,8 @@ public class SearchFriendFragment extends BaseFragment {
 				});
 				container.addView(convertView);
 			}
-
-			circleHolder.friendHolders.add(i, friendHolder);
+			circleHolder.friendHolders.add(x, friendHolder);
+			x++;
 
 		}
 
