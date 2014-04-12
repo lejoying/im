@@ -73,74 +73,75 @@ function oauth6(phone, accessKey, response, next) {
 
     function getAccessed(response) {
         console.log("正在查看" + phone + "accessKey");
-        if (accessKeyPool[phone + "_accessKey"]) {
-            if (accessKeyPool[phone + "_accessKey"][accessKey]) {
-                console.log("验证通过 zk mechanism...");
-                next();
-            } else {
-                response.write(JSON.stringify({
-                    "提示信息": "请求失败",
-                    "失败原因": "AccessKey Invalid"
-                }), function () {
-                    console.log(phone + "AccessKey Invalid...");
-                });
-                response.end();
-            }
-        } else {
-            response.write(JSON.stringify({
-                "提示信息": "请求失败",
-                "失败原因": "AccessKey Invalid"
-            }), function () {
-                console.log(phone + "AccessKey Invalid...");
-            });
-            response.end();
-        }
-//        client.lrange(phone + "_accessKey", 0, -1, function (err, reply) {
-//            if (err != null) {
+//        if (accessKeyPool[phone + "_accessKey"]) {
+//            if (accessKeyPool[phone + "_accessKey"][accessKey]) {
+//                console.log("验证通过 zk mechanism...");
+//                next();
+//            } else {
 //                response.write(JSON.stringify({
 //                    "提示信息": "请求失败",
-//                    "失败原因": "数据异常"
-//                }));
+//                    "失败原因": "AccessKey Invalid"
+//                }), function () {
+//                    console.log(phone + "AccessKey Invalid...");
+//                });
 //                response.end();
-//                console.log(err);
-//                return;
-//            } else {
-//                if (reply.length == 0) {
-//                    response.write(JSON.stringify({
-//                        "提示信息": "请求失败",
-//                        "失败原因": "AccessKey Invalid"
-//                    }), function () {
-//                        console.log(phone + "AccessKey Invalid...");
-//                    });
-//                    response.end();
-//                    return;
-//                } else {
-//                    var flag = false;
-//                    for (var i = 0; i < reply.length; i++) {
-//                        if (reply[i] == accessKey) {
-//                            flag = true;
-//                            break;
-//                        }
-//                    }
-//                    if (flag) {
-//                        accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
-//                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
-//                        console.log("验证通过DB...");
-//                        next();
-//                        return;
-//                    } else {
-//                        response.write(JSON.stringify({
-//                            "提示信息": "请求失败",
-//                            "失败原因": "AccessKey Invalid"
-//                        }), function () {
-//                            console.log(phone + ".AccessKey Invalid...");
-//                        });
-//                        response.end();
-//                        return;
-//                    }
-//                }
 //            }
-//        });
+//        } else {
+//            response.write(JSON.stringify({
+//                "提示信息": "请求失败",
+//                "失败原因": "AccessKey Invalid"
+//            }), function () {
+//                console.log(phone + "AccessKey Invalid...");
+//            });
+//            response.end();
+//        }
+        client.lrange(phone + "_accessKey", 0, -1, function (err, reply) {
+            if (err != null) {
+                response.write(JSON.stringify({
+                    "提示信息": "请求失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(err);
+                return;
+            } else {
+                if (reply.length == 0) {
+                    response.write(JSON.stringify({
+                        "提示信息": "请求失败",
+                        "失败原因": "AccessKey Invalid"
+                    }), function () {
+                        console.log(phone + "AccessKey Invalid...");
+                    });
+                    response.end();
+                    return;
+                } else {
+                    var flag = false;
+                    for (var i = 0; i < reply.length; i++) {
+                        if (reply[i] == accessKey) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
+                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+                        zookeeper.setData(accessKeyPool);
+                        console.log("验证通过DB...");
+                        next();
+                        return;
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "请求失败",
+                            "失败原因": "AccessKey Invalid"
+                        }), function () {
+                            console.log(phone + ".AccessKey Invalid...");
+                        });
+                        response.end();
+                        return;
+                    }
+                }
+            }
+        });
     }
 }
 module.exports = requestHandlers;
