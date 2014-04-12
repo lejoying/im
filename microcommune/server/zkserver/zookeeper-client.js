@@ -132,6 +132,7 @@ zk.create = function (accessKeyPool) {
     });
 }
 zk.start = function (ip, port, timeout, accessKeyPool, next) {
+    console.log(ip + ":" + port);
     ModifyAccessKeyPool = next;
     client = zookeeper.createClient(ip + ":" + port, { sessionTimeout: timeout });
     client.connect();

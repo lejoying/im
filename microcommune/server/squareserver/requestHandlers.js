@@ -54,7 +54,7 @@ function oauth6(phone, accessKey, response, next) {
             var accessKeys = accessKeyPool[phone + "_accessKey"];
             var flag0 = false;
             for (var index in accessKeys) {
-                if (index == accessKey) {
+                if (accessKeys[index] == accessKey) {
                     flag0 = true;
                     break;
                 }
@@ -124,7 +124,8 @@ function oauth6(phone, accessKey, response, next) {
                     }
                     if (flag) {
                         accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
-                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+//                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+                        accessKeyPool[phone + "_accessKey"].push(accessKey);
                         zookeeper.setData(accessKeyPool);
                         console.log("验证通过DB...");
                         next();
