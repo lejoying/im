@@ -4,7 +4,7 @@ var redis = require("redis");
 var client = redis.createClient("6379", "115.28.51.197");
 //squareManage.zookeeper(null, null);
 var zookeeper = require("./../zkserver/zookeeper-client.js");
-zookeeper.start("115.28.51.197", "2182", 100000, accessKeyPool, function (KeyPool) {
+zookeeper.start("115.28.212.79", "2182", 100000, accessKeyPool, function (KeyPool) {
     accessKeyPool = KeyPool;
     console.info("squareServer accessKeyPool update :  115.28.51.197:2182");
 });
