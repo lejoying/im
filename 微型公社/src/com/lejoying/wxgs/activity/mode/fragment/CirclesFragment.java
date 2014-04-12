@@ -1198,7 +1198,7 @@ public class CirclesFragment extends BaseFragment {
 		final LinearLayout ll_pagepoint = (LinearLayout) circleView
 				.findViewById(R.id.ll_pagepoint);
 		ll_pagepoint.removeAllViews();
-		final int pageSize = (circle.phones.size() / 6) == 0 ? (circle.phones
+		final int pageSize = (circle.phones.size() % 6) == 0 ? (circle.phones
 				.size() / 6) : (circle.phones.size() / 6) + 1;
 		final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,

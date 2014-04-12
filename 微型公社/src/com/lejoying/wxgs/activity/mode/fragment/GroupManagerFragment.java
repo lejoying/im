@@ -929,7 +929,7 @@ public class GroupManagerFragment extends BaseFragment {
 		ll_pagepoint = (LinearLayout) circleView
 				.findViewById(R.id.ll_pagepoint);
 		ll_pagepoint.removeAllViews();
-		final int pageSize = (mCurrentManagerGroup.members.size() / 6) == 0 ? (mCurrentManagerGroup.members
+		final int pageSize = (mCurrentManagerGroup.members.size() % 6) == 0 ? (mCurrentManagerGroup.members
 				.size() / 6) : (mCurrentManagerGroup.members.size() / 6) + 1;
 		final LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,

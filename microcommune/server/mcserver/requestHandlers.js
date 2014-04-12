@@ -5,7 +5,11 @@ var accessKeyPool = {};
 var serverSetting = root.globaldata.serverSetting;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
-
+var zookeeper = require("./../zkserver/zookeeper-client.js");
+zookeeper.start("115.28.51.197", "2181", 100000, accessKeyPool, function (KeyPool) {
+    accessKeyPool = KeyPool;
+    console.info("mcServer accessKeyPool update :  115.28.51.197:2181");
+});
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
     if (data == null) {
@@ -329,6 +333,7 @@ function oauth6(phone, accessKey, response, next) {
                     if (flag) {
                         accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
                         accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+                        zookeeper.setData(accessKeyPool);
                         console.log("验证通过DB...");
                         next();
                         return;

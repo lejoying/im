@@ -66,8 +66,14 @@ public class ChatMessagesFragment extends BaseFragment {
 	}
 
 	public void notifyViews() {
-		if (messagesAdapter != null)
+		if (messagesAdapter != null) {
 			messagesAdapter.notifyDataSetChanged();
+			if (app.data.lastChatFriends.size() == 0) {
+				ll_not_messages.setVisibility(View.VISIBLE);
+			} else {
+				ll_not_messages.setVisibility(View.GONE);
+			}
+		}
 	}
 
 	class MyMessagesAdapter extends BaseAdapter {

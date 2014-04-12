@@ -120,25 +120,25 @@ public class GroupFragment extends BaseFragment {
 
 			top += (groupPanelHeight + (int) dp2px(25));
 
-			RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.MATCH_PARENT,
-					RelativeLayout.LayoutParams.WRAP_CONTENT);
-			params2.topMargin = top;
-			params2.bottomMargin = -Integer.MAX_VALUE;
-			attentionGroup.setLayoutParams(params2);
-			groupViewContainer.addView(attentionGroup);
-
-			top += (groupPanelHeight + (int) dp2px(25));
-
-			RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.MATCH_PARENT,
-					RelativeLayout.LayoutParams.WRAP_CONTENT);
-			params3.topMargin = top;
-			params3.bottomMargin = -Integer.MAX_VALUE;
-			nearByGroup.setLayoutParams(params3);
-			groupViewContainer.addView(nearByGroup);
-
-			top += (groupPanelHeight + (int) dp2px(25));
+//			RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
+//					RelativeLayout.LayoutParams.MATCH_PARENT,
+//					RelativeLayout.LayoutParams.WRAP_CONTENT);
+//			params2.topMargin = top;
+//			params2.bottomMargin = -Integer.MAX_VALUE;
+//			attentionGroup.setLayoutParams(params2);
+//			groupViewContainer.addView(attentionGroup);
+//
+//			top += (groupPanelHeight + (int) dp2px(25));
+//
+//			RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
+//					RelativeLayout.LayoutParams.MATCH_PARENT,
+//					RelativeLayout.LayoutParams.WRAP_CONTENT);
+//			params3.topMargin = top;
+//			params3.bottomMargin = -Integer.MAX_VALUE;
+//			nearByGroup.setLayoutParams(params3);
+//			groupViewContainer.addView(nearByGroup);
+//
+//			top += (groupPanelHeight + (int) dp2px(25));
 
 			// RelativeLayout.LayoutParams params4 = new
 			// RelativeLayout.LayoutParams(
@@ -167,15 +167,15 @@ public class GroupFragment extends BaseFragment {
 		}
 		notifyGroups(myGroups, groupHoldersMap.get("myGroup"), myGroup);
 
-		if (attentionGroup == null) {
-			groupHoldersMap.put("attentionGroup", new ArrayList<GroupHolder>());
-			attentionGroup = generateAttentionGroup();
-		}
-
-		if (nearByGroup == null) {
-			groupHoldersMap.put("nearByGroup", new ArrayList<GroupHolder>());
-			nearByGroup = generateNearByGroup();
-		}
+		// if (attentionGroup == null) {
+		// groupHoldersMap.put("attentionGroup", new ArrayList<GroupHolder>());
+		// attentionGroup = generateAttentionGroup();
+		// }
+		//
+		// if (nearByGroup == null) {
+		// groupHoldersMap.put("nearByGroup", new ArrayList<GroupHolder>());
+		// nearByGroup = generateNearByGroup();
+		// }
 
 		// if (tempGroup == null) {
 		// groupHoldersMap.put("tempGroup", new ArrayList<GroupHolder>());
@@ -314,7 +314,7 @@ public class GroupFragment extends BaseFragment {
 		final LinearLayout ll_pagepoint = (LinearLayout) groupView
 				.findViewById(R.id.ll_pagepoint);
 		ll_pagepoint.removeAllViews();
-		final int pageSize = (groups.size() / 4) == 0 ? (groups.size() / 6)
+		final int pageSize = (groups.size() % 4) == 0 ? (groups.size() / 4)
 				: (groups.size() / 4) + 1;
 		final LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -555,7 +555,7 @@ public class GroupFragment extends BaseFragment {
 		app.locationHandler.requestLocation(new LocationListener() {
 			@Override
 			public void onReceiveLocation(BDLocation location) {
-				getNearByGroup(location.getLongitude(), location.getLatitude());
+//				getNearByGroup(location.getLongitude(), location.getLatitude());
 			}
 		});
 		super.onResume();
