@@ -47,7 +47,7 @@ zk.getData = function () {
                 return;
             }
             if (data) {
-                console.log('getData Got data: %s', data.toString('utf8'));
+//                console.log('getData Got data: %s', data.toString('utf8'));
                 var KeyPool;
                 try {
                     KeyPool = JSON.parse(data.toString('utf8'));

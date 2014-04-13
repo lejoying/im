@@ -6,7 +6,7 @@ var squareServer = serverSetting.zookeeper.squareServer;
 var redis = require("redis");
 var client = redis.createClient("6379", "115.28.51.197");
 //squareManage.zookeeper(null, null);
-var zookeeper = require("./../zkserver/zookeeper-client.js");
+var zookeeper = require("./lib/zookeeper-client.js");
 zookeeper.start(squareServer.ip, squareServer.port, squareServer.timeout, accessKeyPool, function (KeyPool) {
     accessKeyPool = KeyPool;
     console.info(squareServer.name + " accessKeyPool update :  " + squareServer.ip + ":" + squareServer.port + " " + squareServer.timeout);

@@ -5,7 +5,7 @@ var serverSetting = root.globaldata.serverSetting;
 var imageServer = serverSetting.zookeeper.imageServer;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
-var zookeeper = require("./../zkserver/zookeeper-client.js");
+var zookeeper = require("./lib/zookeeper-client.js");
 zookeeper.start(imageServer.ip, imageServer.port, imageServer.timeout, accessKeyPool, function (KeyPool) {
     accessKeyPool = KeyPool;
     console.info(imageServer.name + " accessKeyPool update :  " + imageServer.ip + ":" + imageServer.port + " " + imageServer.timeout);
