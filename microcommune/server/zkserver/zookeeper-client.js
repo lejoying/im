@@ -41,7 +41,9 @@ zk.getData = function () {
     client.getData(
         '/accessKeyPool',
         function (event) {
-//            zk.exists();
+            if (event.type == 3) {
+                zk.exists(null, false);
+            }
 //            console.log("getData event:" + event.type);
 //            if (event.type == 1) {
 //                console.error("getData event: 1");
@@ -77,11 +79,12 @@ zk.getData = function () {
                 }
             } else {
                 console.log('getData Got data: %s', "Illegal data");
+                zk.setData({});
             }
         }
     );
 }
-zk.exists = function (accessKeyPool) {
+zk.exists = function (accessKeyPool, flag) {
     client.exists('/accessKeyPool',
         function (event) {
             if (event.type == 1) {
@@ -106,8 +109,10 @@ zk.exists = function (accessKeyPool) {
                 return;
             }
             if (stat) {
-                console.log('Node exists.');
-                zk.getData();
+                console.log('Node exists. --status flag:'+flag);
+                if (flag) {
+                    zk.getData();
+                }
             } else {
                 console.log('Node does not exist.');
                 if (count == 0) {
@@ -119,6 +124,7 @@ zk.exists = function (accessKeyPool) {
         });
 }
 zk.create = function (accessKeyPool) {
+    count++;
     client.create("/accessKeyPool", function (error) {
         if (error) {
             console.log('Failed to create node: %s due to: %s.', path, error);
@@ -140,6 +146,6 @@ zk.start = function (ip, port, timeout, accessKeyPool, next) {
     client.once('connected', function () {
         console.log('Zookeeper Connected to the server.');
     });
-    zk.exists(accessKeyPool);
+    zk.exists(accessKeyPool, true);
 }
 module.exports = zk;
