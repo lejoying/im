@@ -107,7 +107,8 @@ function oauth6(phone, accessKey, response, next) {
                         accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
 //                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
                         accessKeyPool[phone + "_accessKey"].push(accessKey);
-                        console.log("验证通过DB...");
+                        console.log("验证通过DB..." + accessKey);
+                        zookeeper.setData(accessKeyPool);
                         next();
                         return;
                     } else {
