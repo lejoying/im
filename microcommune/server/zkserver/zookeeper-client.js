@@ -1,7 +1,7 @@
 var zk = {};
 var count = 0;
 var zookeeper = require('node-zookeeper-client');
-var path = "115.28.51.197:2181";
+var path = "";
 var client;
 var ModifyAccessKeyPool;
 function connect() {
@@ -66,7 +66,7 @@ zk.getData = function () {
                 return;
             }
             if (data) {
-                console.log('getData Got data: %s', data.toString('utf8'));
+//                console.log('getData Got data: %s', data.toString('utf8'));
                 var KeyPool;
                 try {
                     KeyPool = JSON.parse(data.toString('utf8'));
@@ -132,7 +132,8 @@ zk.create = function (accessKeyPool) {
     });
 }
 zk.start = function (ip, port, timeout, accessKeyPool, next) {
-    console.log(ip + ":" + port);
+    path = ip + ":" + port;
+    console.log(path);
     ModifyAccessKeyPool = next;
     client = zookeeper.createClient(ip + ":" + port, { sessionTimeout: timeout });
     client.connect();

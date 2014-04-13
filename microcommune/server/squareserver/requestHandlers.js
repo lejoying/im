@@ -1,12 +1,15 @@
 var requestHandlers = {};
 var accessKeyPool = {};
+var globaldata = root.globaldata;
+var serverSetting = root.globaldata.serverSetting;
+var squareServer = serverSetting.zookeeper.squareServer;
 var redis = require("redis");
 var client = redis.createClient("6379", "115.28.51.197");
 //squareManage.zookeeper(null, null);
 var zookeeper = require("./../zkserver/zookeeper-client.js");
-zookeeper.start("115.28.212.79", "2182", 100000, accessKeyPool, function (KeyPool) {
+zookeeper.start(squareServer.ip, squareServer.port, squareServer.timeout, accessKeyPool, function (KeyPool) {
     accessKeyPool = KeyPool;
-    console.info("squareServer accessKeyPool update :  115.28.51.197:2182");
+    console.info(squareServer.name + " accessKeyPool update :  " + squareServer.ip + ":" + squareServer.port + " " + squareServer.timeout);
 });
 var squareManage = require('./handlers/squareManage.js');
 

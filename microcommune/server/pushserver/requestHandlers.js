@@ -3,9 +3,14 @@ var requestHandlers = {};
 var globaldata = root.globaldata;
 var accessKeyPool = {};
 var serverSetting = root.globaldata.serverSetting;
+var pushServer = serverSetting.zookeeper.pushServer;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
-
+var zookeeper = require("./../zkserver/zookeeper-client.js");
+zookeeper.start(pushServer.ip, pushServer.port, pushServer.timeout, accessKeyPool, function (KeyPool) {
+    accessKeyPool = KeyPool;
+    console.info(pushServer.name + " accessKeyPool update :  " + pushServer.ip + ":" + pushServer.port + " " + pushServer.timeout);
+});
 var session = require('./handlers/session.js');
 requestHandlers.session = function (request, response, pathObject, data) {
     var operation = pathObject["operation"];
@@ -52,7 +57,7 @@ function oauth6(phone, accessKey, response, next) {
             var accessKeys = accessKeyPool[phone + "_accessKey"];
             var flag0 = false;
             for (var index in accessKeys) {
-                if (index == accessKey) {
+                if (accessKeys[index] == accessKey) {
                     flag0 = true;
                     break;
                 }
@@ -100,7 +105,8 @@ function oauth6(phone, accessKey, response, next) {
                     }
                     if (flag) {
                         accessKeyPool[phone + "_accessKey"] = accessKeyPool[phone + "_accessKey"] || [];
-                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+//                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
+                        accessKeyPool[phone + "_accessKey"].push(accessKey);
                         console.log("验证通过DB...");
                         next();
                         return;

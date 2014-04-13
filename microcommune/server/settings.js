@@ -12,6 +12,33 @@ serverSetting.LBS.POI_LIST = "http://api.map.baidu.com/geodata/v3/poi/list";
 serverSetting.LBS.POI_UPDATE = "http://api.map.baidu.com/geodata/v3/poi/update";
 serverSetting.LBS.POI_CREATE = "http://api.map.baidu.com/geodata/v3/poi/create";
 serverSetting.LBS.NEARBY = "http://api.map.baidu.com/geosearch/v3/nearby";
+var zookeeper = {};
+zookeeper.mcServer = {
+    ip: "115.28.51.197",
+    port: "2181",
+    timeout: "100000",
+    name: "mcServer"
+}
+zookeeper.squareServer = {
+    ip: "115.28.212.79",
+    port: "2182",
+    timeout: "100000",
+    name: "squareServer"
+}
+zookeeper.pushServer = {
+    ip: "115.28.51.197",
+    port: "2183",
+    timeout: "100000",
+    name: "pushServer"
+}
+zookeeper.imageServer = {
+    ip: "115.28.51.197",
+    port: "2184",
+    timeout: "100000",
+    name: "imageServer"
+}
+serverSetting.zookeeper = zookeeper;
+
 if (serverSetting.environment == "local") {
     serverSetting.imageFolder = "D://nginx//upload//images//";
     serverSetting.voiceFolder = "D://nginx//upload//voices//";

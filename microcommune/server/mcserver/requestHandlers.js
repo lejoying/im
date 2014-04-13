@@ -3,12 +3,13 @@ var requestHandlers = {};
 var globaldata = root.globaldata;
 var accessKeyPool = {};
 var serverSetting = root.globaldata.serverSetting;
+var mcServer = serverSetting.zookeeper.mcServer;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var zookeeper = require("./../zkserver/zookeeper-client.js");
-zookeeper.start("115.28.51.197", "2181", 100000, accessKeyPool, function (KeyPool) {
+zookeeper.start(mcServer.ip, mcServer.port, mcServer.timeout, accessKeyPool, function (KeyPool) {
     accessKeyPool = KeyPool;
-    console.info("mcServer accessKeyPool update :  115.28.51.197:2181");
+    console.info(mcServer.name + " accessKeyPool update :  " + mcServer.ip + ":" + mcServer.port + " " + mcServer.timeout);
 });
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
