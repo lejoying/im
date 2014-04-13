@@ -996,10 +996,105 @@ api = {
         },
         response: {
             success: {"提示信息": "获取广播成功", messages: [
-                {mid: "NNN" +
-                    "", sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
+                {sid: "NNN", messageType: "XXX", praisecount: "NNN", sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
             ], flag: "NNN", onlinecount: "NNN"},
             failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/addsquarepraise
+     ***************************************/
+    "square_addsquarepraise": {
+        description: {
+            id: 1001202,
+            url: "/api2/square/addsquarepraise"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN", operation: true || false}
+        },
+        response: {
+            success: {"提示信息": "点赞广播成功"},
+            failed: {"提示信息": "点赞广播失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/addsquarecollect
+     ***************************************/
+    "square_addsquarecollect": {
+        description: {
+            id: 1001203,
+            url: "/api2/square/addsquarecollect"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN", operation: true || false}
+        },
+        response: {
+            success: {"提示信息": "收藏广播成功"},
+            failed: {"提示信息": "收藏广播失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/addsquarecomment
+     ***************************************/
+    "square_addsquarecomment": {
+        description: {
+            id: 1001204,
+            url: "/api2/square/addsquarecomment"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN", comment: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "评论广播成功"},
+            failed: {"提示信息": "评论广播失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/getsquarecomments
+     ***************************************/
+    "square_getsquarecomments": {
+        description: {
+            id: 1001205,
+            url: "/api2/square/getsquarecomments"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取广播评论成功", comment: []},
+            failed: {"提示信息": "获取广播评论失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/getsquareusers
+     ***************************************/
+    "square_getsquareusers": {
+        description: {
+            id: 1001205,
+            url: "/api2/square/getsquareusers"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取广场在线用户成功", users: []},
+            failed: {"提示信息": "获取广场在线用户失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/getonlinecount
+     ***************************************/
+    "square_getonlinecount": {
+        description: {
+            id: 1001206,
+            url: "/api2/square/getonlinecount"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取广场在线用户数量成功", users: []},
+            failed: {"提示信息": "获取广场在线用户数量失败", "失败原因": "数据异常"}
         }
     }
 }
