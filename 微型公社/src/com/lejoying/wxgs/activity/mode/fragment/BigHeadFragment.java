@@ -2,9 +2,11 @@ package com.lejoying.wxgs.activity.mode.fragment;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,21 +28,22 @@ public class BigHeadFragment extends BaseFragment {
 		mMainModeManager = mainMode;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		mInflater = inflater;
 		mContent = inflater.inflate(R.layout.f_bighead, null);
+//		mContent.setBackgroundDrawable(new BitmapDrawable(
+//				app.fileHandler.bitmaps
+//						.get(app.data.user.userBackground)));
 		bigHead = (ImageView) mContent.findViewById(R.id.iv_bighead);
-		final String headFileName = app.data.user.head;
-		app.fileHandler.getImage(headFileName, new FileResult() {
+		app.fileHandler.getImage(userHead, new FileResult() {
 			@Override
 			public void onResult(String where) {
-				System.out.println(app.fileHandler.bitmaps.get(headFileName)
-						+ "------" + bigHead);
-//				bigHead.setImageBitmap(app.fileHandler.bitmaps
-//						.get(headFileName));
+//				System.out.println(app.fileHandler.bitmaps.get(userHead)
+//						+ "------" + bigHead);
+				bigHead.setImageBitmap(app.fileHandler.bitmaps.get(userHead));
 			}
 		});
 		mContent.setOnClickListener(new OnClickListener() {
@@ -51,13 +54,13 @@ public class BigHeadFragment extends BaseFragment {
 				mMainModeManager.back();
 			}
 		});
-		return super.onCreateView(inflater, container, savedInstanceState);
+		return mContent;
 
 	}
 
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
+		CircleMenu.showBack();
 		super.onResume();
 	}
 }

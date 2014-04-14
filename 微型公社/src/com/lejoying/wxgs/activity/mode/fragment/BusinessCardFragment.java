@@ -92,11 +92,11 @@ public class BusinessCardFragment extends BaseFragment {
 	// DEFINITION object
 	private Handler handler;
 	private boolean stopSend;
+	private int width, height;
 
 	FriendGroupsGridViewAdapter adapter = null;
 	File tempFile;
-	
-	
+	String backgroudFileName;
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -150,7 +150,8 @@ public class BusinessCardFragment extends BaseFragment {
 				DisplayMetrics dm = new DisplayMetrics();
 				getActivity().getWindowManager().getDefaultDisplay()
 						.getMetrics(dm);
-
+				height = dm.heightPixels;
+				width = dm.widthPixels;
 				Rect frame = new Rect();
 				getActivity().getWindow().getDecorView()
 						.getWindowVisibleDisplayFrame(frame);
@@ -208,11 +209,11 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public void initData() {
 		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
-		tv_group = mContent.findViewById(R.id.tv_group_layout);
-		//generateFriendGroup();
+		tv_group = // mContent.findViewById(R.id.tv_group_layout);
+		generateFriendGroup();
 		tv_square = mContent.findViewById(R.id.tv_square_layout);
 		tv_msg = mContent.findViewById(R.id.tv_msg_layout);
-		
+
 		final ImageView iv_head = (ImageView) mContent
 				.findViewById(R.id.iv_head);
 
@@ -276,17 +277,7 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 		} else if (mStatus == SHOW_SELF) {
 
-			final String backgroudFileName = app.data.user.userBackground;
-			app.fileHandler.getBackgroudImage(backgroudFileName,
-					new FileResult() {
-						@SuppressWarnings("deprecation")
-						@Override
-						public void onResult(String where) {
-							mContent.setBackgroundDrawable(new BitmapDrawable(
-									backgroudFileName));
-
-						}
-					});
+			
 
 			button1.setText("修改个人信息");
 			button2.setText("退出登录");
@@ -299,12 +290,11 @@ public class BusinessCardFragment extends BaseFragment {
 			group.removeView(button3);
 			group.removeView(tv_group);
 			group.removeView(tv_square);
-			
+
 			tv_spacing.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
 					AlertDialog.Builder builder = new Builder(mInflater
 							.getContext());
 					builder.setMessage("更换封面");
@@ -314,15 +304,12 @@ public class BusinessCardFragment extends BaseFragment {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									// TODO Auto-generated method stub
-
-									tempFile = new File(
-											app.sdcardBackgroundImageFolder,
+									tempFile = new File(app.sdcardImageFolder,
 											"userBackground");
 									int i = 1;
 									while (tempFile.exists()) {
 										tempFile = new File(
-												app.sdcardBackgroundImageFolder,
+												app.sdcardImageFolder,
 												"userBackground" + (i++));
 									}
 									Uri uri = Uri.fromFile(tempFile);
@@ -456,7 +443,8 @@ public class BusinessCardFragment extends BaseFragment {
 																		public void modifyData(
 																				Data data) {
 																			data.lastChatFriends
-																					.remove("f"+mShowFriend.phone);
+																					.remove("f"
+																							+ mShowFriend.phone);
 																			data.newFriends
 																					.remove(mShowFriend);
 																			data.friends
@@ -509,14 +497,37 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		}
-//		iv_head.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				mMainModeManager.mBigHeadFragment.userHead=app.data.user.head;
-//				mMainModeManager.showNext(mMainModeManager.mBigHeadFragment);
-//			}
-//		});
+		iv_head.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (mStatus == SHOW_SELF) {
+					mMainModeManager.mBigHeadFragment.userHead = app.data.user.head;
+				} else {
+					mMainModeManager.mBigHeadFragment.userHead = mShowFriend.head;
+				}
+
+				mMainModeManager.showNext(mMainModeManager.mBigHeadFragment);
+			}
+		});
+		if(mStatus == SHOW_SELF) {
+		backgroudFileName = app.data.user.userBackground;
+		
+		}else{
+		backgroudFileName = mShowFriend.userBackground;
+		}
+		System.out.println("----------------"+backgroudFileName);
+//		app.fileHandler.getBackgroudImage(backgroudFileName,
+//				new FileResult() {
+//					@SuppressWarnings("deprecation")
+//					@Override
+//					public void onResult(String where) {
+//						mContent.setBackgroundDrawable(new BitmapDrawable(
+//								app.fileHandler.bitmaps
+//										.get(backgroudFileName)));
+//
+//					}
+//				});
 		final String headFileName = fileName;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
@@ -525,7 +536,7 @@ public class BusinessCardFragment extends BaseFragment {
 						.get(headFileName));
 			}
 		});
-		group.removeView(tv_group);
+		// group.removeView(tv_group);
 		group.removeView(tv_square);
 		group.removeView(tv_msg);
 	}
@@ -568,11 +579,11 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public int getNumColumns(int groupNum) {
 		int listSize;
-		if(groupNum<=3){
+		if (groupNum <= 3) {
 			listSize = groupNum;
-		}else if(groupNum>3&&groupNum<6){
-			listSize =3;
-		}else{
+		} else if (groupNum > 3 && groupNum < 6) {
+			listSize = 3;
+		} else {
 			if (groupNum % 2 == 0) {
 				listSize = groupNum / 2;
 			} else {
@@ -583,7 +594,7 @@ public class BusinessCardFragment extends BaseFragment {
 	}
 
 	public List<Group> getFriendGroups() {
-		final List<Group> friendGroups=new ArrayList<Group>();
+		final List<Group> friendGroups = new ArrayList<Group>();
 		NetConnection netConnection = new CommonNetConnection() {
 
 			@Override
@@ -603,11 +614,11 @@ public class BusinessCardFragment extends BaseFragment {
 					public void modifyData(Data data) {
 						try {
 							JSONArray jGroups = jData.getJSONArray("groups");
-							GroupsAndFriends groupsAndFriends=
-									JSONParser.generateGroupsFromJSON(jGroups);
-							if(groupsAndFriends.groups!=null){
+							GroupsAndFriends groupsAndFriends = JSONParser
+									.generateGroupsFromJSON(jGroups);
+							if (groupsAndFriends.groups != null) {
 								friendGroups.addAll(groupsAndFriends.groups);
-	
+
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -626,7 +637,7 @@ public class BusinessCardFragment extends BaseFragment {
 			}
 		};
 		app.networkHandler.connection(netConnection);
-		
+
 		return friendGroups;
 	}
 
@@ -652,12 +663,13 @@ public class BusinessCardFragment extends BaseFragment {
 				public void setParams(SaveSettings settings) {
 					settings.source = userBackgroud;
 					settings.compressFormat = settings.PNG;
-					settings.folder = app.sdcardBackgroundImageFolder;
+					settings.folder = app.sdcardImageFolder;
 				}
 
 				@Override
 				public void onSuccess(String fileName, String base64) {
 					if (!fileName.equals(app.data.user.userBackground)) {
+
 						checkImage(fileName, base64);
 					}
 				}
@@ -670,10 +682,10 @@ public class BusinessCardFragment extends BaseFragment {
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");
 		intent.putExtra("crop", "true");
-		intent.putExtra("aspectX", 1);
-		intent.putExtra("aspectY", 1);
-		intent.putExtra("outputX", 100);
-		intent.putExtra("outputY", 100);
+		intent.putExtra("aspectX", width);
+		intent.putExtra("aspectY", height);
+		intent.putExtra("outputX", width/3*2);
+		intent.putExtra("outputY", height/3*2);
 		intent.putExtra("return-data", true);
 		startActivityForResult(intent, RESULT_CATPICTURE);
 	}
@@ -774,7 +786,7 @@ public class BusinessCardFragment extends BaseFragment {
 								public void onResult(String where) {
 									mContent.setBackgroundDrawable(new BitmapDrawable(
 											app.fileHandler.bitmaps
-													.get(app.data.user.userBackground)));
+													.get(backgroudFileName)));
 
 								}
 							});

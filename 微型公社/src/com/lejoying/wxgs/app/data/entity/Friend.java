@@ -22,6 +22,7 @@ public class Friend implements Serializable {
 	public int notReadMessagesCount;
 	public String longitude;
 	public String latitude;
+	public String userBackground="";
 	public List<Message> messages = new ArrayList<Message>();
 
 	@Override

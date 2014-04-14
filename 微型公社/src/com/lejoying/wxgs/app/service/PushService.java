@@ -239,7 +239,9 @@ public class PushService extends Service {
 				httpURLConnection.disconnect();
 				if (jData != null) {
 					try {
+						//System.out.println("push-------"+getString(R.string.network_failed));
 						jData.get(getString(R.string.network_failed));
+						
 						// disconnection long pull
 						if (mSquareConnection != null) {
 							mSquareConnection.disConnection();

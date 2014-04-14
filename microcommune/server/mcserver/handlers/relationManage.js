@@ -472,8 +472,10 @@ relationManage.getcirclesandfriends = function (data, response) {
                             head: accountData.head,
                             byPhone: accountData.byPhone,
                             nickName: accountData.nickName,
+                            userBackground:accountData.userBackground,
                             friendStatus: rData.friendStatus
                         };
+
                         if (rData.friendStatus == "both") {
                             account.friendStatus = "delete";
                         }

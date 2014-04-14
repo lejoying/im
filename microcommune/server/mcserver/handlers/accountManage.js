@@ -485,7 +485,8 @@ accountManage.get = function (data, response) {
                         mainBusiness: accountData.mainBusiness,
                         head: accountData.head,
                         sex: accountData.sex,
-                        byPhone: accountData.byPhone
+                        byPhone: accountData.byPhone,
+                        userBackground:accountData.userBackground
                     };
                     accounts.push(account);
                 }

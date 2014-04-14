@@ -81,6 +81,11 @@ public class JSONParser {
 		} catch (JSONException e) {
 		}
 		try {
+			friend.userBackground = jFriend.getString("userBackground");
+			System.out.println("json"+friend.userBackground);
+		} catch (JSONException e) {
+		}
+		try {
 			friend.friendStatus = jFriend.getString("friendStatus");
 		} catch (JSONException e) {
 		}

@@ -120,22 +120,17 @@ public class FileHandler {
 				if (type == TYPE_IMAGE_HEAD) {
 					imageFile = new File(app.sdcardHeadImageFolder,
 							imageFileName);
-				}else if(type == TYPE_IMAGE_BACK) {
-					imageFile = new File(app.sdcardBackgroundImageFolder,
-							imageFileName);
 				}
 				if (imageFile.exists()) {
 					Bitmap image = BitmapFactory.decodeFile(imageFile
 							.getAbsolutePath());
 					if (image != null) {
-						if (type == TYPE_IMAGE_COMMON) {
+						if (type == TYPE_IMAGE_COMMON||type == TYPE_IMAGE_BACK) {
 							bitmaps.put(imageFileName, image);
 						} else if (type == TYPE_IMAGE_HEAD) {
 							bitmaps.put(imageFileName, MCImageUtils
 									.getCircleBitmap(image, true, 5,
 											Color.WHITE));
-						}else if(type == TYPE_IMAGE_BACK) {
-							bitmaps.put(imageFileName, image);
 						}
 						where = FROM_SDCARD;
 					} else {
@@ -176,8 +171,6 @@ public class FileHandler {
 		File folder = app.sdcardImageFolder;
 		if (type == TYPE_IMAGE_HEAD) {
 			folder = app.sdcardHeadImageFolder;
-		}else if(type == TYPE_IMAGE_BACK) {
-			folder = app.sdcardBackgroundImageFolder;
 		}
 		final File f = folder;
 		app.networkHandler.connection(new NetConnection() {

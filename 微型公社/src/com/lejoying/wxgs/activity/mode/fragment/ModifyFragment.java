@@ -17,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -101,10 +102,14 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		mMainModeManager = mainMode;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mContent = inflater.inflate(R.layout.f_modifyinfo, null);
+		mContent.setBackgroundDrawable(new BitmapDrawable(
+				app.fileHandler.bitmaps
+						.get(app.data.user.userBackground)));
 		isEdit = false;
 		initData();
 		initView();
