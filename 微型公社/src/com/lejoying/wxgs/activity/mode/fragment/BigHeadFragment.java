@@ -7,6 +7,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
 import android.graphics.drawable.BitmapDrawable;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,11 +39,13 @@ public class BigHeadFragment extends BaseFragment {
 //				app.fileHandler.bitmaps
 //						.get(app.data.user.userBackground)));
 		bigHead = (ImageView) mContent.findViewById(R.id.iv_bighead);
+		//bigHead.setVisibility(View.INVISIBLE);
 		app.fileHandler.getImage(userHead, new FileResult() {
 			@Override
 			public void onResult(String where) {
-//				System.out.println(app.fileHandler.bitmaps.get(userHead)
-//						+ "------" + bigHead);
+//				mContent.setBackgroundDrawable(new BitmapDrawable(
+//						app.fileHandler.bitmaps
+//								.get(userHead)));
 				bigHead.setImageBitmap(app.fileHandler.bitmaps.get(userHead));
 			}
 		});

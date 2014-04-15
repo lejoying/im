@@ -337,6 +337,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
 				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(selectFromGallery, RESULT_SELECTHEAD);
+		CircleMenu.hide();
 	}
 
 	void takePicture() {
@@ -350,6 +351,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		tackPicture.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
 		tackPicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
+		CircleMenu.hide();
 	}
 
 	void modifyHead() {

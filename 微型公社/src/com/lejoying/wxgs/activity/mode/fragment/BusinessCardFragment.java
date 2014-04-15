@@ -66,9 +66,9 @@ public class BusinessCardFragment extends BaseFragment {
 
 	public int mStatus;
 	public Friend mShowFriend;
-	int RESULT_SELECTPICTURE = 0x123;
-	int RESULT_TAKEPICTURE = 0xa3;
-	int RESULT_CATPICTURE = 0x3d;
+	int RESULT_SELECTPICTURE = 0x34;
+	int RESULT_TAKEPICTURE = 0x54;
+	int RESULT_CATPICTURE = 0x23;
 	public static final int SHOW_SELF = 1;
 	public static final int SHOW_FRIEND = 2;
 	public static final int SHOW_TEMPFRIEND = 3;
@@ -81,6 +81,7 @@ public class BusinessCardFragment extends BaseFragment {
 	View tv_group;
 	View tv_square;
 	View tv_msg;
+	View rl_bighead;
 	LayoutInflater mInflater;
 
 	private TextView tv_spacing;
@@ -89,6 +90,7 @@ public class BusinessCardFragment extends BaseFragment {
 	private RelativeLayout rl_show;
 	private ScrollView sv_content;
 	private GridView gridView;
+
 	// DEFINITION object
 	private Handler handler;
 	private boolean stopSend;
@@ -97,6 +99,7 @@ public class BusinessCardFragment extends BaseFragment {
 	FriendGroupsGridViewAdapter adapter = null;
 	File tempFile;
 	String backgroudFileName;
+	String headname ;
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -208,15 +211,19 @@ public class BusinessCardFragment extends BaseFragment {
 	}
 
 	public void initData() {
-		ViewGroup group = (ViewGroup) mContent.findViewById(R.id.ll_content);
+		final ViewGroup group = (ViewGroup) mContent
+				.findViewById(R.id.ll_content);
 		tv_group = // mContent.findViewById(R.id.tv_group_layout);
 		generateFriendGroup();
 		tv_square = mContent.findViewById(R.id.tv_square_layout);
 		tv_msg = mContent.findViewById(R.id.tv_msg_layout);
+		rl_bighead = mContent.findViewById(R.id.rl_bighead);
+		rl_bighead.setVisibility(View.INVISIBLE);
 
 		final ImageView iv_head = (ImageView) mContent
 				.findViewById(R.id.iv_head);
-
+		final ImageView iv_bighead = (ImageView) mContent
+				.findViewById(R.id.iv_bighead);
 		TextView tv_squarepanel_name = (TextView) mContent
 				.findViewById(R.id.tv_squarepanel_name);
 		TextView tv_grouppanel_name = (TextView) mContent
@@ -277,8 +284,6 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 		} else if (mStatus == SHOW_SELF) {
 
-			
-
 			button1.setText("修改个人信息");
 			button2.setText("退出登录");
 			tv_id.setText(String.valueOf(app.data.user.id));
@@ -323,6 +328,7 @@ public class BusinessCardFragment extends BaseFragment {
 											MediaStore.EXTRA_OUTPUT, uri);
 									startActivityForResult(tackPicture,
 											RESULT_TAKEPICTURE);
+									CircleMenu.hide();
 									dialog.dismiss();
 								}
 							});
@@ -338,7 +344,7 @@ public class BusinessCardFragment extends BaseFragment {
 											MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 									startActivityForResult(selectFromGallery,
 											RESULT_SELECTPICTURE);
-
+									CircleMenu.hide();
 									dialog.dismiss();
 								}
 							});
@@ -497,37 +503,53 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		}
+		if (mStatus == SHOW_SELF) {
+			backgroudFileName = app.data.user.userBackground;
+			headname = app.data.user.head;
+		} else {
+			backgroudFileName = mShowFriend.userBackground;
+			headname = mShowFriend.head;
+		}
+		rl_bighead.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				System.out.println("-----");
+				rl_bighead.setVisibility(View.INVISIBLE);
+				group.setVisibility(View.VISIBLE);
+				CircleMenu.show();
+			}
+		});
+//		iv_head.setOnTouchListener(new OnTouchListener() {
+//			
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				// TODO Auto-generated method stub
+//				System.out.println("-----");
+//				return true;
+//			}
+//		});
 		iv_head.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (mStatus == SHOW_SELF) {
-					mMainModeManager.mBigHeadFragment.userHead = app.data.user.head;
-				} else {
-					mMainModeManager.mBigHeadFragment.userHead = mShowFriend.head;
-				}
-
-				mMainModeManager.showNext(mMainModeManager.mBigHeadFragment);
+				iv_bighead.setImageBitmap(app.fileHandler.bitmaps.get(headname));
+				group.setVisibility(View.INVISIBLE);
+				rl_bighead.setVisibility(View.VISIBLE);
+				CircleMenu.hide();
 			}
 		});
-		if(mStatus == SHOW_SELF) {
-		backgroudFileName = app.data.user.userBackground;
 		
-		}else{
-		backgroudFileName = mShowFriend.userBackground;
-		}
-		System.out.println("----------------"+backgroudFileName);
-//		app.fileHandler.getBackgroudImage(backgroudFileName,
-//				new FileResult() {
-//					@SuppressWarnings("deprecation")
-//					@Override
-//					public void onResult(String where) {
-//						mContent.setBackgroundDrawable(new BitmapDrawable(
-//								app.fileHandler.bitmaps
-//										.get(backgroudFileName)));
-//
-//					}
-//				});
+		app.fileHandler.getBackgroudImage(backgroudFileName, new FileResult() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onResult(String where) {
+				mContent.setBackgroundDrawable(new BitmapDrawable(
+						app.fileHandler.bitmaps.get(backgroudFileName)));
+
+			}
+		});
 		final String headFileName = fileName;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
@@ -656,6 +678,7 @@ public class BusinessCardFragment extends BaseFragment {
 			if (tempFile != null && tempFile.exists()) {
 				tempFile.delete();
 			}
+
 			final Bitmap userBackgroud = (Bitmap) data.getExtras().get("data");
 			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
 
@@ -684,8 +707,9 @@ public class BusinessCardFragment extends BaseFragment {
 		intent.putExtra("crop", "true");
 		intent.putExtra("aspectX", width);
 		intent.putExtra("aspectY", height);
-		intent.putExtra("outputX", width/3*2);
-		intent.putExtra("outputY", height/3*2);
+
+		intent.putExtra("outputX", width / 2);
+		intent.putExtra("outputY", height / 2);
 		intent.putExtra("return-data", true);
 		startActivityForResult(intent, RESULT_CATPICTURE);
 	}

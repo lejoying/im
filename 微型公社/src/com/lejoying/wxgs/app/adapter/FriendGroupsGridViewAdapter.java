@@ -64,12 +64,8 @@ public class FriendGroupsGridViewAdapter extends BaseAdapter {
 		final String headFileName = groups.get(position).icon;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {
-				
-				holder.tv_grouppic.setImageBitmap(MCImageUtils
-						.getCircleBitmap(app.fileHandler.bitmaps
-								.get(headFileName)));
-				
+			public void onResult(String where) {	
+				holder.tv_grouppic.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});
 		// app.fileHandler.getGroupHeadImage(headFileName, new FileResult() {

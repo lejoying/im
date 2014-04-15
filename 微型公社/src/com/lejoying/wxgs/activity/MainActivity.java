@@ -223,5 +223,5 @@ public class MainActivity extends BaseActivity {
 			switchMode();
 		}
 	}
-
+	
 }
