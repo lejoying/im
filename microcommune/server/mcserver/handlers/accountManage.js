@@ -62,7 +62,8 @@ accountManage.verifyphone = function (data, response) {
             byPhone: "checked",
             byScan: "checked",
             byScanNearBy: "allowed",
-            sex: time / 2 == 0 ? "男" : "女"
+            sex: time / 2 == 0 ? "男" : "女",
+            userBackground: "userBackground.jpg"
         };
         if (usage == "register") {
             checkPhone(phone);
@@ -486,7 +487,7 @@ accountManage.get = function (data, response) {
                         head: accountData.head,
                         sex: accountData.sex,
                         byPhone: accountData.byPhone,
-                        userBackground:accountData.userBackground
+                        userBackground: accountData.userBackground
                     };
                     accounts.push(account);
                 }
@@ -646,25 +647,26 @@ accountManage.modify = function (data, response) {
     }
 }
 //sha1Pwd();
-function sha1Pwd(){
+function sha1Pwd() {
     var query = [
         'MATCH (account:Account)',
         'RETURN account'
     ].join('\n');
-    db.query(query,{},function(error, results){
+    db.query(query, {}, function (error, results) {
         if (error) {
             console.error(error);
             return;
-        }  else {
-            for(var i=0;i<results.length;i++){
+        } else {
+            for (var i = 0; i < results.length; i++) {
                 var accountNode = results[i].account;
                 var accountData = accountNode.data;
-                var phone=accountData.phone;
+                var phone = accountData.phone;
                 console.error(phone);
-                if(accountData.password){
-                    if((accountData.password).length<30&&accountData.password!=null && accountData.status == "active"){
-                        accountData.password=sha1.hex_sha1(accountData.password);}
-                    accountNode.save(function(err, node){
+                if (accountData.password) {
+                    if ((accountData.password).length < 30 && accountData.password != null && accountData.status == "active") {
+                        accountData.password = sha1.hex_sha1(accountData.password);
+                    }
+                    accountNode.save(function (err, node) {
 
                     });
                 }

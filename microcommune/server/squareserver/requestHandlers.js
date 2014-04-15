@@ -34,6 +34,31 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
             squareManage.getonlinecount(data, response);
         });
     }
+    else if (operation == "addsquarepraise") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            squareManage.addsquarepraise(data, response);
+        });
+    }
+    else if (operation == "addsquarecollect") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            squareManage.addsquarecollect(data, response);
+        });
+    }
+    else if (operation == "addsquarecomment") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            squareManage.addsquarecomment(data, response);
+        });
+    }
+    else if (operation == "getsquarecomments") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            squareManage.getsquarecomments(data, response);
+        });
+    }
+    else if (operation == "getsquareusers") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            squareManage.getsquareusers(data, response);
+        });
+    }
     else if (operation == "zookeeper") {
         squareManage.zookeeper(data, response);
     }
