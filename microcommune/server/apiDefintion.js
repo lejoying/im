@@ -975,10 +975,10 @@ api = {
             url: "/api2/square/sendsquaremessage"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", gid: "NNN", message: {messageType: "XX1" || "XX2", contentType: "text" || "image" || "voice", content: "XXX"}}
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", gid: "NNN", message: {messageType: "精华" || "...", contentType: "text" || "image" || "voice", content: "XXX"}}
         },
         response: {
-            success: {"提示信息": "发布广播成功", time: "NNN", gid: "NNN"},
+            success: {"提示信息": "发布广播成功", time: "NNN", gmid: "NNN"},
             failed: {"提示信息": "发布广播失败", "失败原因": "数据异常" || "参数格式错误" || "用户权限不足"}
         }
     },
@@ -996,7 +996,7 @@ api = {
         },
         response: {
             success: {"提示信息": "获取广播成功", messages: [
-                {sid: "NNN", messageType: "XXX", praisecount: "NNN", sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
+                {gmid: "NNN", messageType: "XXX", praiseusers: [], sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
             ], flag: "NNN", onlinecount: "NNN"},
             failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
@@ -1010,7 +1010,7 @@ api = {
             url: "/api2/square/addsquarepraise"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN", operation: true || false}
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", gid: "XXX", gmid: "NNN", operation: true || false}
         },
         response: {
             success: {"提示信息": "点赞广播成功"},
@@ -1026,7 +1026,7 @@ api = {
             url: "/api2/square/addsquarecollect"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN", operation: true || false}
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", gmid: "NNN", operation: true || false}
         },
         response: {
             success: {"提示信息": "收藏广播成功"},
@@ -1042,10 +1042,10 @@ api = {
             url: "/api2/square/addsquarecomment"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN", comment: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", gid: "XXX", gmid: "NNN", contentType: "text" || "image" || "voice", content: "XXX"}
         },
         response: {
-            success: {"提示信息": "评论广播成功"},
+            success: {"提示信息": "评论广播成功", time: "NNN"},
             failed: {"提示信息": "评论广播失败", "失败原因": "数据异常"}
         }
     },
@@ -1058,10 +1058,12 @@ api = {
             url: "/api2/square/getsquarecomments"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", sid: "NNN"}
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", gmid: "NNN"}
         },
         response: {
-            success: {"提示信息": "获取广播评论成功", comment: []},
+            success: {"提示信息": "获取广播评论成功", gmid: "NNN", comments: [
+                {phone: "NNN", nickName: "XXX", contentType: "text" || "image" || "voice", content: "XXX", time: "NNN"}
+            ]},
             failed: {"提示信息": "获取广播评论失败", "失败原因": "数据异常"}
         }
     },
@@ -1077,7 +1079,9 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取广场在线用户成功", users: []},
+            success: {"提示信息": "获取广场在线用户成功", users: [
+                {phone: "NNN", nickName: "XXX", head: "XXX"}
+            ]},
             failed: {"提示信息": "获取广场在线用户失败", "失败原因": "数据异常"}
         }
     },
@@ -1093,8 +1097,28 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX"}
         },
         response: {
-            success: {"提示信息": "获取广场在线用户数量成功", users: []},
+            success: {"提示信息": "获取广场在线用户数量成功", onlinecount: "NNN"},
             failed: {"提示信息": "获取广场在线用户数量失败", "失败原因": "数据异常"}
         }
     }
+}
+message = {
+    gmid: "1",
+    messageType: "精华",
+    sendType: "square",
+    contentType: "text",
+    content: "大家好！欢迎加入微型公社！",
+    phone: "121",
+    nickName: "李建国",
+    time: "1380000000000",
+    praiseusers: [
+        {phone: "121", nickName: "李建国"}
+    ]
+}
+comment = {
+    phone: "121",
+    nickName: "李建国",
+    contentType: "text",
+    content: "好评！",
+    time: "138000000000"
 }
