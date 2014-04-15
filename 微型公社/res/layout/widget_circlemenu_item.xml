@@ -35,7 +35,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/menu_item_icon"
         android:layout_centerHorizontal="true"
-        android:text="Coolspan"
         android:textColor="#fff" />
 
 </RelativeLayout>

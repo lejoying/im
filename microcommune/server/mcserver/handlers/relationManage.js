@@ -84,7 +84,7 @@ relationManage.addfriend = function (data, response) {
 //                    rData.rid = rid;
                     rNode.save(function (error, node) {
                     });
-                    if (rid != "none") {
+                    if (rid != "none" && rid) {
                         addAccountCircleNode(rid, phoneTo);
                     } else {
                         response.write(JSON.stringify({
@@ -115,9 +115,8 @@ relationManage.addfriend = function (data, response) {
 
     function addAccountCircleNode(rid, phoneTo) {
         var query = [
-            'START circle=node({rid})',
-            'MATCH (account:Account)',
-            'WHERE account.phone={phoneTo}',
+            'MATCH (account:Account),(circle:Circle)',
+            'WHERE account.phone={phoneTo} AND circle.rid={rid}',
             'CREATE UNIQUE circle-[r:HAS_FRIEND]->account',
             'RETURN  r'
         ].join('\n');
@@ -472,7 +471,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                             head: accountData.head,
                             byPhone: accountData.byPhone,
                             nickName: accountData.nickName,
-                            userBackground:accountData.userBackground,
+                            userBackground: accountData.userBackground,
                             friendStatus: rData.friendStatus
                         };
 
