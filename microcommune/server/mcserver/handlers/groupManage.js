@@ -82,7 +82,8 @@ groupManage.create = function (data, response) {
     function createGroupNode() {
         var group = {
             name: name,
-            icon: ""
+            icon: "978b3e6986071e464fd6632e1fd864652c42ca27.png",
+            gtype: "group"
         }
         if (data.description) {
             group.description = data.description;

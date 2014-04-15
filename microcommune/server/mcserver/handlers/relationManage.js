@@ -463,7 +463,6 @@ relationManage.getcirclesandfriends = function (data, response) {
                     } else {
                         var accountData = results[index].account1.data;
                         var account = {
-                            uid: accountData.uid,
                             ID: accountData.ID,
                             sex: accountData.sex,
                             phone: accountData.phone,
