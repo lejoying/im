@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.fragment.AddFriendFragment;
-import com.lejoying.wxgs.activity.mode.fragment.BigHeadFragment;
 import com.lejoying.wxgs.activity.mode.fragment.BusinessCardFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatGroupFragment;
@@ -31,7 +30,6 @@ public class MainModeManager extends BaseModeManager {
 	public SquareFragment mSquareFragment;
 
 	//
-	public BigHeadFragment mBigHeadFragment;
 	public ScanQRCodeFragment mScanQRCodeFragment;
 	public SearchFriendFragment mSearchFriendFragment;
 	public BusinessCardFragment mBusinessCardFragment;
@@ -61,8 +59,6 @@ public class MainModeManager extends BaseModeManager {
 			mSquareFragment.setMode(this);
 
 			//
-			mBigHeadFragment=new BigHeadFragment();
-			mBigHeadFragment.setMode(this);
 			mScanQRCodeFragment = new ScanQRCodeFragment();
 			mScanQRCodeFragment.setMode(this);
 			mSearchFriendFragment = new SearchFriendFragment();

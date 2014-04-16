@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -26,6 +27,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +38,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -43,6 +46,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
@@ -99,7 +103,8 @@ public class BusinessCardFragment extends BaseFragment {
 	FriendGroupsGridViewAdapter adapter = null;
 	File tempFile;
 	String backgroudFileName;
-	String headname ;
+	String headname;
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -222,8 +227,8 @@ public class BusinessCardFragment extends BaseFragment {
 
 		final ImageView iv_head = (ImageView) mContent
 				.findViewById(R.id.iv_head);
-		final ImageView iv_bighead = (ImageView) mContent
-				.findViewById(R.id.iv_bighead);
+		final TextView tv_bighead = (TextView) mContent
+				.findViewById(R.id.tv_bighead);
 		TextView tv_squarepanel_name = (TextView) mContent
 				.findViewById(R.id.tv_squarepanel_name);
 		TextView tv_grouppanel_name = (TextView) mContent
@@ -300,55 +305,44 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-					AlertDialog.Builder builder = new Builder(mInflater
-							.getContext());
-					builder.setMessage("更换封面");
-					builder.setPositiveButton("拍照",
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									tempFile = new File(app.sdcardImageFolder,
-											"userBackground");
-									int i = 1;
-									while (tempFile.exists()) {
-										tempFile = new File(
-												app.sdcardImageFolder,
-												"userBackground" + (i++));
-									}
-									Uri uri = Uri.fromFile(tempFile);
-									Intent tackPicture = new Intent(
-											MediaStore.ACTION_IMAGE_CAPTURE);
-									tackPicture
-											.putExtra(
-													MediaStore.Images.Media.ORIENTATION,
-													0);
-									tackPicture.putExtra(
-											MediaStore.EXTRA_OUTPUT, uri);
-									startActivityForResult(tackPicture,
-											RESULT_TAKEPICTURE);
-									CircleMenu.hide();
-									dialog.dismiss();
-								}
-							});
-					builder.setNegativeButton("相册",
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-
-									Intent selectFromGallery = new Intent(
-											Intent.ACTION_PICK,
-											MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-									startActivityForResult(selectFromGallery,
-											RESULT_SELECTPICTURE);
-									CircleMenu.hide();
-									dialog.dismiss();
-								}
-							});
-					builder.create().show();
+					Alert.createDialog(getActivity()).setTitle("更换封面").setLeftButtonText("拍照").setRightButtonText("相册")
+					.setOnConfirmClickListener(new OnDialogClickListener() {
+						
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+							tempFile = new File(app.sdcardImageFolder,
+									"userBackground");
+							int i = 1;
+							while (tempFile.exists()) {
+								tempFile = new File(
+										app.sdcardImageFolder,
+										"userBackground" + (i++));
+							}
+							Uri uri = Uri.fromFile(tempFile);
+							Intent tackPicture = new Intent(
+									MediaStore.ACTION_IMAGE_CAPTURE);
+							tackPicture
+									.putExtra(
+											MediaStore.Images.Media.ORIENTATION,
+											0);
+							tackPicture.putExtra(
+									MediaStore.EXTRA_OUTPUT, uri);
+							startActivityForResult(tackPicture,
+									RESULT_TAKEPICTURE);
+							CircleMenu.hide();
+						}
+					}).setOnCancelClickListener(new OnDialogClickListener() {
+						
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+							Intent selectFromGallery = new Intent(
+									Intent.ACTION_PICK,
+									MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+							startActivityForResult(selectFromGallery,
+									RESULT_SELECTPICTURE);
+							CircleMenu.hide();
+						}
+					}).show();
 				}
 			});
 			button1.setOnClickListener(new OnClickListener() {
@@ -515,33 +509,28 @@ public class BusinessCardFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				System.out.println("-----");
-				rl_bighead.setVisibility(View.INVISIBLE);
+
+				rl_bighead.setVisibility(View.GONE);
 				group.setVisibility(View.VISIBLE);
-				CircleMenu.show();
+				CircleMenu.showBack();
 			}
 		});
-//		iv_head.setOnTouchListener(new OnTouchListener() {
-//			
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				// TODO Auto-generated method stub
-//				System.out.println("-----");
-//				return true;
-//			}
-//		});
 		iv_head.setOnClickListener(new OnClickListener() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				iv_bighead.setImageBitmap(app.fileHandler.bitmaps.get(headname));
-				group.setVisibility(View.INVISIBLE);
+//				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+//						LayoutParams.MATCH_PARENT, width);
+//				layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+//				tv_bighead.setLayoutParams(layoutParams);
+				tv_bighead.setBackgroundDrawable(new BitmapDrawable(
+						app.fileHandler.bitmaps.get(headname)));
+				group.setVisibility(View.GONE);
 				rl_bighead.setVisibility(View.VISIBLE);
 				CircleMenu.hide();
 			}
 		});
-		
-		app.fileHandler.getBackgroudImage(backgroudFileName, new FileResult() {
+		app.fileHandler.getBackgroundImage(backgroudFileName, new FileResult() {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onResult(String where) {
@@ -804,7 +793,7 @@ public class BusinessCardFragment extends BaseFragment {
 				if (user.userBackground != null
 						&& !user.userBackground.equals("")) {
 					final String backgroudFileName = app.data.user.userBackground;
-					app.fileHandler.getBackgroudImage(backgroudFileName,
+					app.fileHandler.getBackgroundImage(backgroudFileName,
 							new FileResult() {
 								@Override
 								public void onResult(String where) {

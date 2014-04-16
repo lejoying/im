@@ -13,6 +13,7 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -284,6 +285,16 @@ public class Alert {
 			dialog.input.setText(text);
 			dialog.input.setSelection(dialog.input.getText().toString()
 					.length());
+			return this;
+		}
+
+		public AlertInputDialog setLeftButtonText(String text) {
+			((Button) (dialog.confirmView)).setText(text);
+			return this;
+		}
+
+		public AlertInputDialog setRightButtonText(String text) {
+			((Button) (dialog.cancelView)).setText(text);
 			return this;
 		}
 

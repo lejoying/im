@@ -961,7 +961,7 @@ public class ChatGroupFragment extends BaseFragment {
 
 		recorder.start();
 		voice_list.add(fileName);
-		System.out.println("start------------------------------");
+		//System.out.println("start------------------------------");
 		// };
 		// }.start();
 	}
