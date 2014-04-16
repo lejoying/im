@@ -526,11 +526,11 @@ accountManage.modify = function (data, response) {
     function checkAccountNickName(phone, account) {
         var query = [
             'MATCH (account:Account)',
-            'WHERE account.phone={phone}',
+            'WHERE account.nickName={nickName}',
             'RETURN account'
         ].join('\n');
         var params = {
-            phone: phone
+            nickName: account.nickName
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -640,6 +640,7 @@ accountManage.modify = function (data, response) {
                             "提示信息": "修改用户信息成功"
                         }));
                         response.end();
+                        push.inform(phone, phone, accessKey, "*", {"提示信息": "成功", event: "userinformationchanged", event_content: {phone: phone}});
                     }
                 });
             }

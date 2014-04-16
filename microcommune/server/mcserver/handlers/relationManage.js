@@ -280,6 +280,7 @@ relationManage.deletefriend = function (data, response) {
                     "提示信息": "删除成功"
                 }));
                 response.end();
+                push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "friendstatuschanged", event_content: {phone: phone, operation: "delete"}});
             }
         });
     }
@@ -339,6 +340,9 @@ relationManage.blacklist = function (data, response) {
                     "提示信息": "添加黑名单成功"
                 }));
                 response.end();
+                for (var index in phoneTo) {
+                    push.inform(phone, phoneTo[index], accessKey, "*", {"提示信息": "成功", event: "friendstatuschanged", event_content: {phone: phone, operation: "blacklist"}});
+                }
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "添加黑名单失败",
