@@ -513,7 +513,11 @@ accountManage.modify = function (data, response) {
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
             account = JSON.parse(accountStr);
-            checkAccountNickName(phone, account);
+            if (account.nickName) {
+                checkAccountNickName(phone, account);
+            } else {
+                modifyAccountNode(phone, account);
+            }
         } catch (e) {
             response.write(JSON.stringify({
                 "提示信息": "修改用户信息失败",
@@ -542,25 +546,22 @@ accountManage.modify = function (data, response) {
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                response.write(JSON.stringify({
-                    "提示信息": "修改用户信息失败",
-                    "失败原因": "用户不存在"
-                }));
-                response.end();
+                modifyAccountNode(phone, account);
+//                response.write(JSON.stringify({
+//                    "提示信息": "修改用户信息失败",
+//                    "失败原因": "用户不存在"
+//                }));
+//                response.end();
             } else {
                 var accountData = results.pop().account.data;
-                if (accountData.nickName == account.nickName) {
-                    if (accountData.phone == phone) {
-                        modifyAccountNode(phone, account);
-                    } else {
-                        response.write(JSON.stringify({
-                            "提示信息": "修改用户信息失败",
-                            "失败原因": "昵称已存在"
-                        }));
-                        response.end();
-                    }
-                } else {
+                if (accountData.phone == phone) {
                     modifyAccountNode(phone, account);
+                } else {
+                    response.write(JSON.stringify({
+                        "提示信息": "修改用户信息失败",
+                        "失败原因": "昵称已存在"
+                    }));
+                    response.end();
                 }
             }
         });
