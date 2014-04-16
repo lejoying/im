@@ -1,6 +1,7 @@
 var serverSetting = root.globaldata.serverSetting;
 var groupManage = {};
 var verifyEmpty = require("./../lib/verifyParams.js");
+var push = require('../lib/push.js');
 var ajax = require("./../lib/ajax.js");
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
@@ -13,6 +14,7 @@ groupManage.create = function (data, response) {
     response.asynchronous = 1;
     console.log(data);
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var tempGid = data.tempGid;
     var type = data.type;//createTempGroup,createGroup,upgradeGroup
     var name = data.name;
@@ -85,11 +87,7 @@ groupManage.create = function (data, response) {
             icon: "978b3e6986071e464fd6632e1fd864652c42ca27.png",
             gtype: "group"
         }
-        if (data.description) {
-            group.description = data.description;
-        } else {
-            group.description = "";
-        }
+        group.description = data.description || "请输入群组描述信息";
         if (location) {
             group.location = JSON.stringify({
                 longitude: location.longitude,
@@ -166,8 +164,11 @@ groupManage.create = function (data, response) {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组成功",
                     group: group
-                }))
+                }));
                 response.end();
+                for (var index in members) {
+                    push.inform(phone, members[index], accessKey, "*", {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: group.gid, operation: true}});
+                }
                 setGroupLBSLocation(phone, data.accessKey, location, group);
             }
         });
@@ -179,18 +180,10 @@ function setGroupLBSLocation(phone, accessKey, location, group) {
     if (group.gid) {
         Group.gid = group.gid;
     }
-    if (group.icon) {
-        Group.icon = group.icon;
-    }
-    if (group.name) {
-        Group.name = group.name;
-    }
-    if (group.description) {
-        Group.description = group.description;
-    }
-    if (group.location) {
-        Data.location = JSON.stringify(location);
-    }
+    Group.icon = group.icon || "978b3e6986071e464fd6632e1fd864652c42ca27.png";
+    Group.name = group.name || "新建群组";
+    Group.description = group.description || "请输入群组描述信息";
+    Data.location = location || JSON.stringify({longitude: 116.422324, latitude: 39.906744});
     Data.phone = phone;
     Data.accessKey = accessKey;
     Data.group = JSON.stringify(Group);
@@ -216,6 +209,7 @@ function setGroupLBSLocation(phone, accessKey, location, group) {
 groupManage.addmembers = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var gid = data.gid;
     var members = data.members;
     console.log("phone:" + phone + "gid:" + gid + ",members:" + members);
@@ -240,9 +234,9 @@ groupManage.addmembers = function (data, response) {
 
     function checkGroupNode(gid) {
         var query = [
-            'MATCH (group:Group)',
+            'MATCH (group:Group)-[r:HAS_MEMBER]->(account:Account)',
             'WHERE group.gid={gid}',
-            'RETURN group'
+            'RETURN group,account'
         ].join('\n');
         var params = {
             gid: gid
@@ -257,7 +251,12 @@ groupManage.addmembers = function (data, response) {
                 console.log(error);
                 return;
             } else if (results.length > 0) {
-                addMembersToGroup(gid, members);
+                var accounts = {};
+                for (var index in results) {
+                    var accountData = results[index].account.data;
+                    accounts[accountData.phone] = accountData;
+                }
+                addMembersToGroup(gid, members, accounts);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "加入群组失败",
@@ -268,7 +267,7 @@ groupManage.addmembers = function (data, response) {
         });
     }
 
-    function addMembersToGroup(gid, members) {
+    function addMembersToGroup(gid, members, accounts) {
         var query = [
             'START group=node({gid})',
             'MATCH (account:Account)',
@@ -295,6 +294,12 @@ groupManage.addmembers = function (data, response) {
                     "提示信息": "加入群组成功"
                 }))
                 response.end();
+                for (var index in accounts) {
+                    push.inform(phone, index, accessKey, "*", {"提示信息": "成功", event: "groupmemberchanged", event_content: {gid: gid}});
+                }
+                for (var index in members) {
+                    push.inform(phone, members[index], accessKey, "*", {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: true}});
+                }
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "加入群组失败",
@@ -311,6 +316,7 @@ groupManage.addmembers = function (data, response) {
 groupManage.removemembers = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var gid = data.gid;
     var members = data.members;
     console.log("phone:" + phone + "gid:" + gid + ",members:" + members);
@@ -335,9 +341,9 @@ groupManage.removemembers = function (data, response) {
 
     function checkGroupNode(gid) {
         var query = [
-            'MATCH (group:Group)',
+            'MATCH (group:Group)-[r:HAS_MEMBER]->(account:Account)',
             'WHERE group.gid={gid}',
-            'RETURN group'
+            'RETURN group,account'
         ].join('\n');
         var params = {
             gid: gid
@@ -352,7 +358,12 @@ groupManage.removemembers = function (data, response) {
                 console.log("checkGroupNode" + error);
                 return;
             } else if (results.length > 0) {
-                removeMembersToGroup(gid, members);
+                var accounts = {};
+                for (var index in results) {
+                    var accountData = results[index].account.data;
+                    accounts[accountData.phone] = accountData;
+                }
+                removeMembersToGroup(gid, members, accounts);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "退出群组失败",
@@ -363,7 +374,7 @@ groupManage.removemembers = function (data, response) {
         });
     }
 
-    function removeMembersToGroup(gid, members) {
+    function removeMembersToGroup(gid, members, accounts) {
         var query = [
             'START group=node({gid})',
             'MATCH group-[r:HAS_MEMBER]->(account:Account)',
@@ -390,6 +401,17 @@ groupManage.removemembers = function (data, response) {
                     "提示信息": "退出群组成功"
                 }))
                 response.end();
+                var removeMembers = {};
+                for (var index in members) {
+                    var removePhone = members[index];
+                    removeMembers[removePhone] = removePhone;
+                    push.inform(phone, removePhone, accessKey, "*", {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: false}});
+                }
+                for (var index in accounts) {
+                    if (!removeMembers[index]) {
+                        push.inform(phone, index, accessKey, "*", {"提示信息": "成功", event: "groupmemberchanged", event_content: {gid: gid}});
+                    }
+                }
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "退出群组失败",
@@ -541,9 +563,9 @@ groupManage.modify = function (data, response) {
 
     function checkGroupNode(gid) {
         var query = [
-            'MATCH (group:Group)',
+            'MATCH (group:Group)-[r:HAS_MEMBER]->(account:Account)',
             'WHERE group.gid={gid}',
-            'RETURN group'
+            'RETURN group,account'
         ].join('\n');
         var params = {
             gid: gid
@@ -558,7 +580,12 @@ groupManage.modify = function (data, response) {
                 console.log("checkGroupNode" + error);
                 return;
             } else if (results.length > 0) {
-                modifyGroupNode(gid);
+                var accounts = {};
+                for (var index in results) {
+                    var accountData = results[index].account.data;
+                    accounts[accountData.phone] = accountData;
+                }
+                modifyGroupNode(results[0].group.data.gid, accounts);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息失败",
@@ -569,9 +596,10 @@ groupManage.modify = function (data, response) {
         });
     }
 
-    function modifyGroupNode(gid) {
+    function modifyGroupNode(gid, accounts) {
         var query = [
-            'START group=node({gid})',
+            'MATCH (group:Group)',
+            'WHERE group.gid={gid}',
             'RETURN group'
         ].join('\n');
         var params = {
@@ -589,17 +617,20 @@ groupManage.modify = function (data, response) {
             } else if (results.length > 0) {
                 var groupNode = results.pop().group;
                 var groupData = groupNode.data;
-                if (name) {
-                    groupData.name = name;
-                }
-                if (description) {
-                    groupData.description = description;
-                }
+                var groupLocation = groupData.location || JSON.stringify({longitude: 116.422324, latitude: 39.906744});
+                groupLocation = JSON.parse(groupLocation);
+                groupData.name = name || groupData.name;
+                groupData.description = description || groupData.description;
+                groupData.description = groupData.description || "";
+                var currentLocation = {};
                 if (location) {
-                    groupData.location = JSON.stringify({
-                        longitude: location.longitude,
-                        latitude: location.latitude
-                    });
+                    currentLocation.longitude = location.longitude || groupLocation.longitude;
+                    currentLocation.latitude = location.latitude || groupLocation.latitude;
+
+                    groupData.location = JSON.stringify(currentLocation);
+                } else {
+                    currentLocation.longitude = groupLocation.longitude;
+                    currentLocation.latitude = groupLocation.latitude;
                 }
                 groupNode.save(function (error) {
                 });
@@ -608,7 +639,10 @@ groupManage.modify = function (data, response) {
                     group: groupNode.data
                 }));
                 response.end();
-                setGroupLBSLocation(phone, accessKey, location, groupData);
+                for (var index in accounts) {
+                    push.inform(phone, index, accessKey, "*", {"提示信息": "成功", event: "groupinformationchanged", event_content: {gid: gid}});
+                }
+                setGroupLBSLocation(phone, accessKey, JSON.stringify(currentLocation), groupData);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息失败",

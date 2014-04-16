@@ -737,6 +737,7 @@ lbsManage.updatelocation = function (data, response) {
  ***************************************/
 lbsManage.setgrouplocation = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var locationStr = data.location;
     var groupStr = data.group;
@@ -776,10 +777,12 @@ lbsManage.setgrouplocation = function (data, response) {
                 gtype: "group"
             },
             success: function (data) {
+//                console.log(data);
                 var poisObj = JSON.parse(data);
 //                console.log(unescape(data.replace(/\\u/gi, '%u')));
                 if (poisObj.status == 0) {
                     var contents = poisObj.pois;
+//                    console.log(poisObj.size + "+++++++++++++++++++++++++" + JSON.stringify(group));
                     if (poisObj.size == 0) {
                         createGroupPoi(group);
                     } else if (poisObj.size == 1) {
@@ -793,9 +796,9 @@ lbsManage.setgrouplocation = function (data, response) {
                             Data.latitude = location.latitude;
                             Data.longitude = location.longitude;
                         }
-                        if (group.gid) {
-                            Data.title = group.title;
-                        }
+//                        if (group.gid) {
+//                            Data.title = group.gid;
+//                        }
                         if (group.icon) {
                             Data.icon = group.icon;
                         }
@@ -805,9 +808,10 @@ lbsManage.setgrouplocation = function (data, response) {
                         if (group.description) {
                             Data.description = group.description;
                         }
+//                        console.log(JSON.stringify(Data) + "------------------------------------------------");
                         updateGroupPoi(Data);
                     } else {
-                        console.log(data);
+                        console.error(data);
                         response.write(JSON.stringify({
                             "提示信息": "标记群组位置失败",
                             "失败原因": "数据异常"
@@ -815,7 +819,7 @@ lbsManage.setgrouplocation = function (data, response) {
                         response.end();
                     }
                 } else {
-                    console.log(data);
+                    console.error(data);
                     response.write(JSON.stringify({
                         "提示信息": "标记群组位置失败",
                         "失败原因": "数据异常"
@@ -841,7 +845,7 @@ lbsManage.setgrouplocation = function (data, response) {
                     }));
                     response.end();
                 } else {
-                    console.log(data);
+                    console.error(data);
                     response.write(JSON.stringify({
                         "提示信息": "标记群组位置失败",
                         "失败原因": "数据异常"
@@ -866,7 +870,7 @@ lbsManage.setgrouplocation = function (data, response) {
                 title: group.gid,
                 gid: group.gid,
                 name: group.name,
-                icon: "",
+                icon: group.icon,
                 description: group.description,
                 tags: "group",
                 gtype: "group",
@@ -881,7 +885,7 @@ lbsManage.setgrouplocation = function (data, response) {
                     }));
                     response.end();
                 } else {
-                    console.log(data);
+                    console.error(data);
                     response.write(JSON.stringify({
                         "提示信息": "标记群组位置失败",
                         "失败原因": "数据异常"
