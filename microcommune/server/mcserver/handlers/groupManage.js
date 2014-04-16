@@ -180,18 +180,10 @@ function setGroupLBSLocation(phone, accessKey, location, group) {
     if (group.gid) {
         Group.gid = group.gid;
     }
-    if (group.icon) {
-        Group.icon = group.icon || "978b3e6986071e464fd6632e1fd864652c42ca27.png";
-    }
-    if (group.name) {
-        Group.name = group.name || "新建群组";
-    }
-    if (group.description) {
-        Group.description = group.description || "请输入群组描述信息";
-    }
-    if (group.location) {
-        Data.location = JSON.stringify(location) || {longitude: 115, latitude: 40};
-    }
+    Group.icon = group.icon || "978b3e6986071e464fd6632e1fd864652c42ca27.png";
+    Group.name = group.name || "新建群组";
+    Group.description = group.description || "请输入群组描述信息";
+    Data.location = location || JSON.stringify({longitude: 116.422324, latitude: 39.906744});
     Data.phone = phone;
     Data.accessKey = accessKey;
     Data.group = JSON.stringify(Group);
@@ -625,19 +617,20 @@ groupManage.modify = function (data, response) {
             } else if (results.length > 0) {
                 var groupNode = results.pop().group;
                 var groupData = groupNode.data;
-                var groupLocation = JSON.parse(groupData.location);
-                if (name) {
-                    groupData.name = name || groupData.description;
-                }
-                if (description) {
-                    groupData.description = description || groupData.description;
-                }
+                var groupLocation = groupData.location || JSON.stringify({longitude: 116.422324, latitude: 39.906744});
+                groupLocation = JSON.parse(groupLocation);
+                groupData.name = name || groupData.name;
+                groupData.description = description || groupData.description;
+                groupData.description = groupData.description || "";
                 var currentLocation = {};
                 if (location) {
                     currentLocation.longitude = location.longitude || groupLocation.longitude;
                     currentLocation.latitude = location.latitude || groupLocation.latitude;
 
                     groupData.location = JSON.stringify(currentLocation);
+                } else {
+                    currentLocation.longitude = groupLocation.longitude;
+                    currentLocation.latitude = groupLocation.latitude;
                 }
                 groupNode.save(function (error) {
                 });
