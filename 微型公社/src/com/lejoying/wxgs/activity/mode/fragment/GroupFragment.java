@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
@@ -56,6 +57,8 @@ public class GroupFragment extends BaseFragment {
 
 	int headSize = 0;
 	int headMargin = 0;
+
+	long nearByGroupDistance = 1000;
 
 	View mContentView;
 	ScrollContainer mScrollContainer;
@@ -120,25 +123,26 @@ public class GroupFragment extends BaseFragment {
 
 			top += (groupPanelHeight + (int) dp2px(25));
 
-//			RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-//					RelativeLayout.LayoutParams.MATCH_PARENT,
-//					RelativeLayout.LayoutParams.WRAP_CONTENT);
-//			params2.topMargin = top;
-//			params2.bottomMargin = -Integer.MAX_VALUE;
-//			attentionGroup.setLayoutParams(params2);
-//			groupViewContainer.addView(attentionGroup);
-//
-//			top += (groupPanelHeight + (int) dp2px(25));
-//
-//			RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
-//					RelativeLayout.LayoutParams.MATCH_PARENT,
-//					RelativeLayout.LayoutParams.WRAP_CONTENT);
-//			params3.topMargin = top;
-//			params3.bottomMargin = -Integer.MAX_VALUE;
-//			nearByGroup.setLayoutParams(params3);
-//			groupViewContainer.addView(nearByGroup);
-//
-//			top += (groupPanelHeight + (int) dp2px(25));
+			// RelativeLayout.LayoutParams params2 = new
+			// RelativeLayout.LayoutParams(
+			// RelativeLayout.LayoutParams.MATCH_PARENT,
+			// RelativeLayout.LayoutParams.WRAP_CONTENT);
+			// params2.topMargin = top;
+			// params2.bottomMargin = -Integer.MAX_VALUE;
+			// attentionGroup.setLayoutParams(params2);
+			// groupViewContainer.addView(attentionGroup);
+			//
+			// top += (groupPanelHeight + (int) dp2px(25));
+			//
+			RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.MATCH_PARENT,
+					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			params3.topMargin = top;
+			params3.bottomMargin = -Integer.MAX_VALUE;
+			nearByGroup.setLayoutParams(params3);
+			groupViewContainer.addView(nearByGroup);
+
+			// top += (groupPanelHeight + (int) dp2px(25));
 
 			// RelativeLayout.LayoutParams params4 = new
 			// RelativeLayout.LayoutParams(
@@ -172,10 +176,10 @@ public class GroupFragment extends BaseFragment {
 		// attentionGroup = generateAttentionGroup();
 		// }
 		//
-		// if (nearByGroup == null) {
-		// groupHoldersMap.put("nearByGroup", new ArrayList<GroupHolder>());
-		// nearByGroup = generateNearByGroup();
-		// }
+		if (nearByGroup == null) {
+			groupHoldersMap.put("nearByGroup", new ArrayList<GroupHolder>());
+			nearByGroup = generateNearByGroup();
+		}
 
 		// if (tempGroup == null) {
 		// groupHoldersMap.put("tempGroup", new ArrayList<GroupHolder>());
@@ -314,8 +318,8 @@ public class GroupFragment extends BaseFragment {
 		final LinearLayout ll_pagepoint = (LinearLayout) groupView
 				.findViewById(R.id.ll_pagepoint);
 		ll_pagepoint.removeAllViews();
-		final int pageSize = (groups.size() % 4) == 0 ? (groups.size() / 4)
-				: (groups.size() / 4) + 1;
+		final int pageSize = ((groups.size() + 1) % 4) == 0 ? ((groups.size() + 1) / 4)
+				: ((groups.size() + 1) / 4) + 1;
 		final LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -489,6 +493,9 @@ public class GroupFragment extends BaseFragment {
 		ScrollContainer scrollContainer = (ScrollContainer) groupView
 				.findViewById(R.id.viewContainer);
 		final ViewContainer viewContainer = scrollContainer.getViewContainer();
+		scrollContainer.setScrollStatus(ScrollContainer.SCROLL_PAGING);
+		scrollContainer
+				.setScrollDirection(ScrollContainer.DIRECTION_HORIZONTAL);
 
 		View bottomBar = groupView.findViewById(R.id.bottomBar);
 		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(
@@ -510,8 +517,24 @@ public class GroupFragment extends BaseFragment {
 		TextView text = (TextView) groupItemView
 				.findViewById(R.id.newGroupText);
 		text.setText("找到更多群组");
-		viewContainer.addView(groupItemView);
+		groupItemView.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				nearByGroupDistance += 1000;
+				requestLocation();
+				Toast.makeText(getActivity(), "groupItemView",
+						Toast.LENGTH_SHORT).show();
+				// mMainModeManager.mGroupManagerFragment.status =
+				// GroupManagerFragment.MODE_NEWGROUP;
+				// mMainModeManager
+				// .showNext(mMainModeManager.mGroupManagerFragment);
+			}
+		});
+		viewContainer.addView(groupItemView);
+		GroupHolder holder = new GroupHolder();
+		holder.groupItemView = groupItemView;
+		groupHoldersMap.get("nearByGroup").add(holder);
 		return groupView;
 	}
 
@@ -552,13 +575,17 @@ public class GroupFragment extends BaseFragment {
 	public void onResume() {
 		CircleMenu.show();
 		CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
+		requestLocation();
+		super.onResume();
+	}
+
+	void requestLocation() {
 		app.locationHandler.requestLocation(new LocationListener() {
 			@Override
 			public void onReceiveLocation(BDLocation location) {
-//				getNearByGroup(location.getLongitude(), location.getLatitude());
+				getNearByGroup(location.getLongitude(), location.getLatitude());
 			}
 		});
-		super.onResume();
 	}
 
 	void getNearByGroup(final double longitude, final double latitude) {
@@ -572,7 +599,7 @@ public class GroupFragment extends BaseFragment {
 				settings.params.put("accessKey", app.data.user.accessKey);
 				settings.params.put("area", "{\"longitude\":\"" + longitude
 						+ "\",\"latitude\":\"" + latitude + "\",\"radius\":\""
-						+ 10000 + "\"}");
+						+ nearByGroupDistance + "\"}");
 			}
 
 			@Override
@@ -591,17 +618,14 @@ public class GroupFragment extends BaseFragment {
 								nearByGroups.add(group);
 							}
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 
 					@Override
 					public void modifyUI() {
-						// TODO Auto-generated method stub
 						notifyGroups(nearByGroups,
 								groupHoldersMap.get("nearByGroup"), nearByGroup);
-						super.modifyUI();
 					}
 				});
 			}

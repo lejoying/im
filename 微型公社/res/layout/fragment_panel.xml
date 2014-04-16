@@ -49,14 +49,15 @@
         <com.lejoying.wxgs.activity.view.ScrollContainer
             android:id="@+id/viewContainer"
             android:layout_width="match_parent"
-            android:layout_height="210dp" >
+            android:layout_height="220dp" >
         </com.lejoying.wxgs.activity.view.ScrollContainer>
 
         <LinearLayout
             android:id="@+id/ll_pagepoint"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:layout_marginTop="-20dp"
             android:layout_weight="0.44"
             android:gravity="center"
             android:orientation="horizontal"

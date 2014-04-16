@@ -148,6 +148,11 @@ public class CirclesFragment extends BaseFragment {
 			int scrollToY = 0;
 			for (int i = 0; i < normalShow.size(); i++) {
 				View v = views.get(normalShow.get(i));
+				if (v.getParent() == null) {
+					circlesViewContenter.addView(v, i);
+				}
+				// v.measure(ViewGroup.LayoutParams.MATCH_PARENT, -1);
+				// int height = v.getHeight();
 				int height = (int) dp2px(((Integer) v.getTag()).floatValue());
 				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -159,12 +164,10 @@ public class CirclesFragment extends BaseFragment {
 					scrollToY = top;
 					scrollToY -= dp2px(20);
 				}
-
+				// float px = 0.1f * px + 0.5f;
 				top = top + height + 25;
 				v.setLayoutParams(layoutParams);
-				if (v.getParent() == null) {
-					circlesViewContenter.addView(v, i);
-				}
+
 			}
 			if (currentEditPosition != -1) {
 				mScrollContainer.setAnticipatedHeight(scrollToY
@@ -849,7 +852,7 @@ public class CirclesFragment extends BaseFragment {
 				circleHolders.put("group#" + circle.rid, circleHolder);
 				circleView = generateCircleView();
 				views.put("group#" + circle.rid, circleView);
-				circleView.setTag(272);
+				circleView.setTag(262);
 			}
 			notifyCircleView(circleView, circle,
 					circleHolders.get("group#" + circle.rid));
