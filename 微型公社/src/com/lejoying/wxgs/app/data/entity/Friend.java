@@ -15,14 +15,14 @@ public class Friend implements Serializable {
 	public int distance;
 	public String nickName = "";
 	public String mainBusiness = "";
-	public String head = "";
+	public String head = "Head";
 	public String friendStatus = "";
 	public String addMessage = "";
 	public boolean temp;
 	public int notReadMessagesCount;
 	public String longitude;
 	public String latitude;
-	public String userBackground="";
+	public String userBackground="Back";
 	public List<Message> messages = new ArrayList<Message>();
 
 	@Override

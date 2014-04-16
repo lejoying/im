@@ -71,7 +71,7 @@ public class FileHandler {
 	public void getHeadImage(String imageFileName, FileResult fileResult) {
 		getImageFile(imageFileName, TYPE_IMAGE_HEAD, fileResult);
 	}
-	public void getBackgroudImage(String imageFileName, FileResult fileResult) {
+	public void getBackgroundImage(String imageFileName, FileResult fileResult) {
 		getImageFile(imageFileName, TYPE_IMAGE_BACK, fileResult);
 	}
 	// TODO sd_card space checking
@@ -96,7 +96,7 @@ public class FileHandler {
 		}
 		if (defaultBack == null) {
 			defaultBack = BitmapFactory
-					.decodeResource(app.getResources(), R.drawable.background);
+					.decodeResource(app.getResources(), R.drawable.background1);
 		}
 		Bitmap dImage = defaultImage;
 		if (type == TYPE_IMAGE_HEAD) {

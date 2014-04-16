@@ -901,7 +901,8 @@ groupManage.getgroupsandmembers = function (data, response) {
                         head: accountData.head,
                         sex: accountData.sex,
                         byPhone: accountData.byPhone,
-                        nickName: accountData.nickName
+                        nickName: accountData.nickName,
+                        userBackground:accountData.userBackground
                     };
                     if (groupZ[groupData.gid] == null) {
                         var accounts = [];

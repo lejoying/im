@@ -37,7 +37,10 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -266,26 +269,15 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		switch (v.getId()) {
 		case R.id.rl_head:
 			if (isEdit) {
-				new AlertDialog.Builder(getActivity())
-						.setTitle("保存修改")
-						.setMessage("是否保存修改?")
-						.setPositiveButton("保存", new Dialog.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								endModify(true);
-								modifyHead();
-							}
-						})
-						.setNegativeButton("取消", new Dialog.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.cancel();
-							}
-						}).create().show();
+				Alert.createDialog(getActivity()).setTitle("是否保存修改").setLeftButtonText("保存")
+				.setOnConfirmClickListener(new OnDialogClickListener() {
+					
+					@Override
+					public void onClick(AlertInputDialog dialog) {
+						endModify(true);
+						modifyHead();
+					}
+				}).show();
 			} else {
 				modifyHead();
 			}
@@ -492,7 +484,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	public void modify(final User user) {
 		JSONObject account = new JSONObject();
 		try {
-			if (user.head != null && !user.head.equals("")) {
+			if (user.head != null && !user.head.equals("Head")) {
 				account.put("head", user.head);
 			}
 			if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
@@ -517,7 +509,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 
 			@Override
 			public void modifyData(Data data) {
-				if (user.head != null && !user.head.equals("")) {
+				if (user.head != null && !user.head.equals("Head")) {
 					data.user.head = user.head;
 				}
 				if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
@@ -533,7 +525,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 
 			@Override
 			public void modifyUI() {
-				if (user.head != null && !user.head.equals("")) {
+				if (user.head != null && !user.head.equals("Head")) {
 					final String headFileName = app.data.user.head;
 					app.fileHandler.getHeadImage(headFileName,
 							new FileResult() {
