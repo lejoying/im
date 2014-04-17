@@ -413,7 +413,16 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					// TODO Auto-generated method stub
+					final AlertInputDialog alert=new AlertInputDialog(getActivity());
+					alert.setTitle("请输入好友的备注").setLeftButtonText("修改").setOnConfirmClickListener(new OnDialogClickListener() {
+						
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+							// TODO Auto-generated method stub
+							String note =alert.getInputText();
+							System.out.println(note);
+						}
+					}).show();
 
 				}
 			});

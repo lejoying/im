@@ -69,7 +69,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	TextView tv_sex;
 	TextView tv_yewu;
 	EditText et_yewu;
-
+	View tv_modifychangepwd;
+	
 	ImageView iv_head;
 	View rl_head;
 	View rl_yewu_edit;
@@ -143,7 +144,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		tv_name = (TextView) mContent.findViewById(R.id.tv_name);
 		et_name = (EditText) mContent.findViewById(R.id.et_name);
 		tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
-
+		tv_modifychangepwd=mContent.findViewById(R.id.tv_modifychangepwd);
+		
 		tv_yewu = (TextView) mContent.findViewById(R.id.tv_yewu);
 		et_yewu = (EditText) mContent.findViewById(R.id.et_yewu);
 		tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
@@ -166,11 +168,12 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		rl_fromgallery = mContent.findViewById(R.id.rl_fromgallery);
 		rl_takepicture = mContent.findViewById(R.id.rl_takepicture);
 		rl_cancelselect = mContent.findViewById(R.id.rl_cancelselect);
-
+		
+		tv_modifychangepwd.setOnClickListener(this);
 		rl_fromgallery.setOnClickListener(this);
 		rl_takepicture.setOnClickListener(this);
 		rl_cancelselect.setOnClickListener(this);
-
+		
 		rl_name.setOnClickListener(this);
 		rl_sex.setOnClickListener(this);
 		rl_yewu.setOnClickListener(this);
@@ -319,7 +322,11 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		case R.id.rl_cancelselect:
 			rl_edithead.setVisibility(View.GONE);
 			break;
-
+			
+		case R.id.tv_modifychangepwd:
+			mMainModeManager
+			.showNext(mMainModeManager.mChangePasswordFragment);
+			break;
 		default:
 			break;
 		}

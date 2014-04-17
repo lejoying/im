@@ -6,6 +6,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.fragment.AddFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.BusinessCardFragment;
+import com.lejoying.wxgs.activity.mode.fragment.ChangePasswordFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatGroupFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatMessagesFragment;
@@ -28,6 +29,7 @@ public class MainModeManager extends BaseModeManager {
 	public CirclesFragment mCirclesFragment;
 	public GroupFragment mGroupFragment;
 	public SquareFragment mSquareFragment;
+	public ChangePasswordFragment mChangePasswordFragment ;
 
 	//
 	public ScanQRCodeFragment mScanQRCodeFragment;
@@ -57,6 +59,8 @@ public class MainModeManager extends BaseModeManager {
 			mGroupFragment.setMode(this);
 			mSquareFragment = new SquareFragment();
 			mSquareFragment.setMode(this);
+			mChangePasswordFragment=new ChangePasswordFragment();
+			mChangePasswordFragment.setMode(this);
 
 			//
 			mScanQRCodeFragment = new ScanQRCodeFragment();

@@ -69,6 +69,8 @@
     <!-- temp -->
     <string name="tv_modifyuserinfo">修改个人信息</string>
     <string name="tv_modifychangepwd">修改密码</string>
+    <string name="tv_initialpwd">原密码</string>
+    <string name="tv_confirmpwd">确认密码</string>
     <string name="tv_head">头像</string>
     <string name="tv_nickname">名字</string>
     <string name="tv_sex">性别</string>
