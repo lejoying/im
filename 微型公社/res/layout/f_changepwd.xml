@@ -38,7 +38,6 @@
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/imageView1"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
@@ -47,7 +46,7 @@
                 tools:ignore="ContentDescription" />
 
             <RelativeLayout
-                android:id="@+id/rl_head"
+                android:id="@+id/cp_rl_initialpwd"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:clickable="true"
@@ -56,8 +55,25 @@
                 android:paddingRight="10dp"
                 android:paddingTop="6dp" >
 
+                
+
+                <EditText
+                    android:id="@+id/cp_et_initialpwd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="#0999"
+                    android:ems="10"
+                    android:gravity="right|center_vertical"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textColor="#fff"
+                    android:textSize="15sp"
+                    >
+                </EditText>
+
                 <TextView
-                    android:id="@+id/tv_title_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -66,28 +82,9 @@
                     android:textColor="#fff"
                     android:textSize="15sp" />
 
-                
-
-                <EditText
-                    android:id="@+id/et_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/tv_title_name"
-                    android:background="#0999"
-                    android:ems="10"
-                    android:gravity="right|center_vertical"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#fff"
-                    android:textSize="15sp"
-                    android:visibility="gone" >
-                </EditText>
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/imageView3"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -96,7 +93,7 @@
                 tools:ignore="ContentDescription" />
 
             <RelativeLayout
-                android:id="@+id/rl_name"
+                android:id="@+id/cp_rl_modifychangepwd"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:clickable="true"
@@ -106,7 +103,6 @@
                 android:paddingTop="6dp" >
 
                 <TextView
-                    android:id="@+id/tv_title_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -118,25 +114,23 @@
                 
 
                 <EditText
-                    android:id="@+id/et_name"
+                    android:id="@+id/cp_et_modifychangepwd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/tv_title_name"
                     android:background="#0999"
                     android:ems="10"
                     android:gravity="right|center_vertical"
-                    android:inputType="text"
+                    android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="#fff"
                     android:textSize="15sp"
-                    android:visibility="gone" >
+                    >
                 </EditText>
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/imageView4"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -145,7 +139,7 @@
                 tools:ignore="ContentDescription" />
 
             <RelativeLayout
-                android:id="@+id/rl_sex"
+                android:id="@+id/cp_rl_confirmpwd"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:clickable="true"
@@ -155,7 +149,6 @@
                 android:paddingTop="6dp" >
 
                 <TextView
-                    android:id="@+id/tv_title_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -167,33 +160,27 @@
                 
 
                 <EditText
-                    android:id="@+id/et_name"
+                    android:id="@+id/cp_et_confirmpwd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/tv_title_name"
                     android:background="#0999"
                     android:ems="10"
                     android:gravity="right|center_vertical"
-                    android:inputType="text"
+                    android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="#fff"
                     android:textSize="15sp"
-                    android:visibility="gone" >
+                    >
                 </EditText>
             </RelativeLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_spacing"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:visibility="gone" />
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_editbar"
+        android:id="@+id/cp_rl_editbar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
@@ -201,12 +188,11 @@
         >
 
         <RelativeLayout
-            android:id="@+id/rl_save"
+            android:id="@+id/cp_rl_save"
             android:layout_width="70dp"
             android:layout_height="60dp" >
 
             <TextView
-                android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -215,7 +201,6 @@
                 android:textColor="#fff" />
 
             <ImageView
-                android:id="@+id/imageView6"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentTop="true"
@@ -225,13 +210,12 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_cancel"
+            android:id="@+id/cp_rl_cancel"
             android:layout_width="70dp"
             android:layout_height="60dp"
             android:layout_alignParentRight="true" >
 
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -240,7 +224,6 @@
                 android:textColor="#fff" />
 
             <ImageView
-                android:id="@+id/imageView7"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentTop="true"
