@@ -341,36 +341,53 @@
         android:layout_alignParentTop="true"
         android:background="#9000"
         android:clickable="true"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <RelativeLayout
+            android:id="@+id/relativeLayout_back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="20dp" >
 
-            <TextView
-                android:id="@+id/textView_groupName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="2dp"
-                android:text="联谊会"
-                android:textColor="#fff"
-                android:textSize="17sp" />
+                android:layout_centerVertical="true"
+                android:src="@drawable/back" />
 
-            <TextView
-                android:id="@+id/textView_memberCount"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView_groupName"
-                android:layout_centerHorizontal="true"
-                android:text="(15人)"
-                android:textColor="#fff"
-                android:textSize="15sp" />
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textView_groupName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="2dp"
+                    android:text="联谊会"
+                    android:textColor="#fff"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/textView_memberCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView_groupName"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="55dp"
+                    android:text="(15人)"
+                    android:textColor="#fff"
+                    android:textSize="15sp" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout

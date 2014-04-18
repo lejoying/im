@@ -10,6 +10,11 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
@@ -50,6 +55,8 @@ public class MainActivity extends BaseActivity {
 
 	public LoginModeManager mLoginMode;
 	public MainModeManager mMainMode;
+
+	View currentMenuSelected;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +123,7 @@ public class MainActivity extends BaseActivity {
 				mode = MODE_MAIN;
 				mLoginMode.release();
 				mMainMode.initialize();
+				initEvent();
 				mMainMode.show(mMainMode.mCirclesFragment);
 				PushService.startIMLongPull(this);
 
@@ -190,6 +198,67 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
+	private void initEvent() {
+		RelativeLayout rl_square_menu = (RelativeLayout) findViewById(R.id.rl_square_menu);
+		final ImageView iv_square_menu = (ImageView) findViewById(R.id.iv_square_menu);
+		RelativeLayout rl_group_menu = (RelativeLayout) findViewById(R.id.rl_group_menu);
+		final ImageView iv_group_menu = (ImageView) findViewById(R.id.iv_group_menu);
+		RelativeLayout rl_me_menu = (RelativeLayout) findViewById(R.id.rl_me_menu);
+		final ImageView iv_me_menu = (ImageView) findViewById(R.id.iv_me_menu);
+		RelativeLayout rl_release_menu = (RelativeLayout) findViewById(R.id.rl_release_menu);
+		currentMenuSelected = iv_square_menu;
+		rl_square_menu.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentMenuSelected != iv_square_menu) {
+					mMainMode.show(mMainMode.mSquareFragment);
+					modifyMenuSelected(currentMenuSelected, iv_square_menu);
+				}
+			}
+		});
+		rl_group_menu.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentMenuSelected != iv_group_menu) {
+					mMainMode.show(mMainMode.mGroupFragment);
+					modifyMenuSelected(currentMenuSelected, iv_group_menu);
+				}
+			}
+		});
+		rl_me_menu.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentMenuSelected != iv_me_menu) {
+					mMainMode.show(mMainMode.mCirclesFragment);
+					modifyMenuSelected(currentMenuSelected, iv_me_menu);
+				}
+			}
+		});
+		rl_release_menu.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentMenuSelected == iv_me_menu) {
+					mMainMode.show(mMainMode.mChatMessagesFragment);
+					modifyMenuSelected(currentMenuSelected, iv_me_menu);
+				}
+			}
+		});
+	}
+
+	void modifyMenuSelected(View v1, View v2) {
+		if (v1 != null) {
+			v1.setVisibility(View.GONE);
+		}
+		if (v1 != null) {
+			v2.setVisibility(View.VISIBLE);
+			currentMenuSelected = v2;
+		}
+	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mode.equals(MODE_LOGIN)) {
@@ -223,5 +292,5 @@ public class MainActivity extends BaseActivity {
 			switchMode();
 		}
 	}
-	
+
 }

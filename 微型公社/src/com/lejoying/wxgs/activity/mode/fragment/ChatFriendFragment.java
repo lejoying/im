@@ -165,6 +165,7 @@ public class ChatFriendFragment extends BaseFragment {
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 
 	View groupTopBar;
+	View groupTopBar_back;
 	TextView textView_groupName;
 	TextView textView_memberCount;
 	LinearLayout linearlayout_members;
@@ -278,6 +279,7 @@ public class ChatFriendFragment extends BaseFragment {
 		// chat_vPager.addView(chat_base_gv);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
+		groupTopBar_back = mContent.findViewById(R.id.relativeLayout_back);
 		textView_groupName = (TextView) mContent
 				.findViewById(R.id.textView_groupName);
 		textView_memberCount = (TextView) mContent
@@ -603,6 +605,13 @@ public class ChatFriendFragment extends BaseFragment {
 				mMainModeManager.mBusinessCardFragment.mShowFriend = mNowChatFriend;
 				mMainModeManager
 						.showNext(mMainModeManager.mBusinessCardFragment);
+			}
+		});
+		groupTopBar_back.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
 			}
 		});
 
