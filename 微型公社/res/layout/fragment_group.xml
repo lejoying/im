@@ -8,12 +8,12 @@
         android:id="@+id/groupViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/linearLayout1"
+        android:layout_below="@+id/ll_group_menu"
         android:gravity="center_horizontal|top" >
     </com.lejoying.wxgs.activity.view.ScrollContainer>
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/ll_group_menu"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="#fff"
@@ -21,13 +21,13 @@
         tools:ignore="DisableBaselineAlignment" >
 
         <RelativeLayout
-            android:id="@+id/current_square"
+            android:id="@+id/current_me_group"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" >
 
             <TextView
-                android:id="@+id/tv_square"
+                android:id="@+id/tv_me_group"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -37,7 +37,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/current_square_noread"
+                android:id="@+id/current_me_group_noread"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentRight="true"
@@ -49,7 +49,7 @@
             </TextView>
 
             <ImageView
-                android:id="@+id/current_square_status"
+                android:id="@+id/current_me_group_status"
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
                 android:layout_alignParentBottom="true"
@@ -58,13 +58,13 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/current_square_essence"
+            android:id="@+id/current_group_local"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" >
 
             <TextView
-                android:id="@+id/tv_square_essence"
+                android:id="@+id/tv_group_local"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -74,7 +74,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/current_square_noread_essence"
+                android:id="@+id/current_group_local_noread"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentRight="true"
@@ -86,7 +86,7 @@
             </TextView>
 
             <ImageView
-                android:id="@+id/current_square_status_essence"
+                android:id="@+id/current_group_local_status"
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
                 android:layout_alignParentBottom="true"

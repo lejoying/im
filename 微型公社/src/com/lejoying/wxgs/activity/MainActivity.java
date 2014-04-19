@@ -13,8 +13,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
@@ -56,7 +56,8 @@ public class MainActivity extends BaseActivity {
 	public LoginModeManager mLoginMode;
 	public MainModeManager mMainMode;
 
-	View currentMenuSelected;
+	public View currentMenuSelected;
+	public LinearLayout ll_menu_app;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,9 @@ public class MainActivity extends BaseActivity {
 		mBackground = (BackgroundView) findViewById(R.id.mainBackGround);
 		mBackground.setBackground(R.drawable.background2);
 		mFragmentManager = getSupportFragmentManager();
+
+		ll_menu_app = (LinearLayout) findViewById(R.id.ll_menu_app);
+		ll_menu_app.setVisibility(View.VISIBLE);
 
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		// audioManager.setSpeakerphoneOn(false);
@@ -124,7 +128,7 @@ public class MainActivity extends BaseActivity {
 				mLoginMode.release();
 				mMainMode.initialize();
 				initEvent();
-				mMainMode.show(mMainMode.mCirclesFragment);
+				mMainMode.show(mMainMode.mSquareFragment);
 				PushService.startIMLongPull(this);
 
 				if (app.data.isClear) {

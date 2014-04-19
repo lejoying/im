@@ -28,6 +28,7 @@
         android:layout_height="50dp"
         android:background="#272B42"
         android:orientation="horizontal"
+        android:visibility="gone"
         tools:ignore="DisableBaselineAlignment" >
 
         <RelativeLayout

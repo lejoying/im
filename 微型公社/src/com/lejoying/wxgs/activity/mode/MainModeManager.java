@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity.mode;
 
 import android.support.v4.app.FragmentManager;
+import android.widget.LinearLayout;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
@@ -24,12 +25,14 @@ public class MainModeManager extends BaseModeManager {
 	boolean isInit;
 	FragmentManager mFragmentManager;
 
+	public LinearLayout ll_menu_app;
+
 	int mContentID = R.id.fragmentContent;
 	// main
 	public CirclesFragment mCirclesFragment;
 	public GroupFragment mGroupFragment;
 	public SquareFragment mSquareFragment;
-	public ChangePasswordFragment mChangePasswordFragment ;
+	public ChangePasswordFragment mChangePasswordFragment;
 
 	//
 	public ScanQRCodeFragment mScanQRCodeFragment;
@@ -46,6 +49,7 @@ public class MainModeManager extends BaseModeManager {
 	public MainModeManager(MainActivity activity) {
 		super(activity);
 		mFragmentManager = activity.getSupportFragmentManager();
+		ll_menu_app = activity.ll_menu_app;
 	}
 
 	@Override
@@ -59,7 +63,7 @@ public class MainModeManager extends BaseModeManager {
 			mGroupFragment.setMode(this);
 			mSquareFragment = new SquareFragment();
 			mSquareFragment.setMode(this);
-			mChangePasswordFragment=new ChangePasswordFragment();
+			mChangePasswordFragment = new ChangePasswordFragment();
 			mChangePasswordFragment.setMode(this);
 
 			//

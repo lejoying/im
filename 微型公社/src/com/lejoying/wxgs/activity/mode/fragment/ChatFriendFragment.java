@@ -203,6 +203,10 @@ public class ChatFriendFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		CircleMenu.showBack();
+		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
+		if (ll_menu_app.getVisibility() == View.VISIBLE) {
+			ll_menu_app.setVisibility(View.GONE);
+		}
 		super.onResume();
 	}
 
@@ -418,7 +422,10 @@ public class ChatFriendFragment extends BaseFragment {
 			}
 
 		}
-
+		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
+		if (ll_menu_app.getVisibility() == View.VISIBLE) {
+			ll_menu_app.setVisibility(View.GONE);
+		}
 		initEvent();
 		initBaseFaces();
 		return mContent;

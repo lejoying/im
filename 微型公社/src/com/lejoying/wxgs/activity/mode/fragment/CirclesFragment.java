@@ -90,6 +90,10 @@ public class CirclesFragment extends BaseFragment {
 	public void onResume() {
 		CircleMenu.show();
 		CircleMenu.setPageName(getString(R.string.circlemenu_page_circles));
+		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
+		if (ll_menu_app.getVisibility() == View.GONE) {
+			ll_menu_app.setVisibility(View.VISIBLE);
+		}
 		super.onResume();
 	}
 
@@ -123,6 +127,11 @@ public class CirclesFragment extends BaseFragment {
 		animatingView.view = circlesViewContenter;
 
 		density = getActivity().getResources().getDisplayMetrics().density;
+
+		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
+		if (ll_menu_app.getVisibility() == View.GONE) {
+			ll_menu_app.setVisibility(View.VISIBLE);
+		}
 
 		circleViewCommonAnimation();
 

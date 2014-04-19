@@ -30,8 +30,8 @@ public abstract class BaseModeManager {
 		if (!fragment.equals(mCurrentFragment) || !mCurrentFragment.isAdded()) {
 			FragmentTransaction transaction = mFragmentManager
 					.beginTransaction();
-			transaction.setCustomAnimations(R.anim.translate_new,
-					R.anim.translate_out);
+			// transaction.setCustomAnimations(R.anim.translate_new,
+			// R.anim.translate_out);
 			if (mCurrentFragment != null && mCurrentFragment.isAdded()) {
 				transaction.hide(mCurrentFragment);
 			}

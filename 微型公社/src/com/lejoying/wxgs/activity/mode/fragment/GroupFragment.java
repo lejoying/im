@@ -64,6 +64,9 @@ public class GroupFragment extends BaseFragment {
 	ScrollContainer mScrollContainer;
 	ViewContainer groupViewContainer;
 
+	RelativeLayout current_me_group;
+	RelativeLayout current_group_local;
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -89,6 +92,15 @@ public class GroupFragment extends BaseFragment {
 					.findViewById(R.id.groupViewContainer);
 			groupViewContainer = mScrollContainer.getViewContainer();
 
+			current_me_group = (RelativeLayout) mContentView
+					.findViewById(R.id.current_me_group);
+			current_group_local = (RelativeLayout) mContentView
+					.findViewById(R.id.current_group_local);
+			LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
+
+			if (ll_menu_app.getVisibility() == View.GONE) {
+				ll_menu_app.setVisibility(View.VISIBLE);
+			}
 			initEvent();
 
 			notifyViews();
@@ -97,7 +109,22 @@ public class GroupFragment extends BaseFragment {
 	}
 
 	void initEvent() {
+		current_me_group.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		current_group_local.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	boolean added;
@@ -575,6 +602,10 @@ public class GroupFragment extends BaseFragment {
 	public void onResume() {
 		CircleMenu.show();
 		CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
+		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
+		if (ll_menu_app.getVisibility() == View.GONE) {
+			ll_menu_app.setVisibility(View.VISIBLE);
+		}
 		requestLocation();
 		super.onResume();
 	}
@@ -624,6 +655,7 @@ public class GroupFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
+						nearByGroup.setVisibility(View.GONE);
 						notifyGroups(nearByGroups,
 								groupHoldersMap.get("nearByGroup"), nearByGroup);
 					}
