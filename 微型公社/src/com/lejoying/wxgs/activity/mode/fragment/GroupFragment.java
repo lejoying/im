@@ -58,7 +58,7 @@ public class GroupFragment extends BaseFragment {
 	int headSize = 0;
 	int headMargin = 0;
 
-	long nearByGroupDistance = 1000;
+	long nearByGroupDistance = 10000;
 
 	View mContentView;
 	ScrollContainer mScrollContainer;
@@ -66,6 +66,8 @@ public class GroupFragment extends BaseFragment {
 
 	RelativeLayout current_me_group;
 	RelativeLayout current_group_local;
+	ImageView current_me_group_status;
+	ImageView current_group_local_status;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -96,6 +98,10 @@ public class GroupFragment extends BaseFragment {
 					.findViewById(R.id.current_me_group);
 			current_group_local = (RelativeLayout) mContentView
 					.findViewById(R.id.current_group_local);
+			current_me_group_status = (ImageView) mContentView
+					.findViewById(R.id.current_me_group_status);
+			current_group_local_status = (ImageView) mContentView
+					.findViewById(R.id.current_group_local_status);
 			LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
 
 			if (ll_menu_app.getVisibility() == View.GONE) {
@@ -110,19 +116,28 @@ public class GroupFragment extends BaseFragment {
 
 	void initEvent() {
 		current_me_group.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
+				if (myGroup.getVisibility() == View.GONE) {
+					myGroup.setVisibility(View.VISIBLE);
+					nearByGroup.setVisibility(View.GONE);
+					current_me_group_status.setVisibility(View.VISIBLE);
+					current_group_local_status.setVisibility(View.GONE);
+				}
+
 			}
 		});
 		current_group_local.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
+				if (nearByGroup.getVisibility() == View.GONE) {
+					nearByGroup.setVisibility(View.VISIBLE);
+					myGroup.setVisibility(View.GONE);
+					current_me_group_status.setVisibility(View.GONE);
+					current_group_local_status.setVisibility(View.VISIBLE);
+				}
 			}
 		});
 	}
@@ -164,9 +179,11 @@ public class GroupFragment extends BaseFragment {
 			RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(
 					RelativeLayout.LayoutParams.MATCH_PARENT,
 					RelativeLayout.LayoutParams.WRAP_CONTENT);
-			params3.topMargin = top;
+			// params3.topMargin = top;
+			params3.topMargin = (int) dp2px(20);
 			params3.bottomMargin = -Integer.MAX_VALUE;
 			nearByGroup.setLayoutParams(params3);
+			nearByGroup.setVisibility(View.GONE);
 			groupViewContainer.addView(nearByGroup);
 
 			// top += (groupPanelHeight + (int) dp2px(25));
@@ -655,7 +672,6 @@ public class GroupFragment extends BaseFragment {
 
 					@Override
 					public void modifyUI() {
-						nearByGroup.setVisibility(View.GONE);
 						notifyGroups(nearByGroups,
 								groupHoldersMap.get("nearByGroup"), nearByGroup);
 					}

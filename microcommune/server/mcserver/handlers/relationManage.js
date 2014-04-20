@@ -877,5 +877,60 @@ relationManage.getaskfriends = function (data, response) {
         });
     }
 }
-
+/***************************************
+ *     URL：/api2/relation/modifyalias
+ ***************************************/
+relationManage.modifyalias = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var friend = data.friend;
+    var friendAlias = data.alias;
+    var arr = [phone, friend, friendAlias];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        modifyAlias();
+    }
+    function modifyAlias() {
+        var query = [
+            'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
+            'WHERE account1.phone={phone} AND account2.phone={friend}',
+            'RETURN r'
+        ].join('\n');
+        var params = {
+            phone: phone,
+            friend: friend
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改备注失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改备注失败",
+                    "失败原因": "好友不存在"
+                }));
+                response.end();
+            } else {
+                var rNode = results.pop().r;
+                var rData = rNode.data;
+                var alias = rData.alias || {};
+                alias[friend] = friendAlias;
+                rData.alias = alias;
+                rNode.save(function (error, node) {
+                    if (error) {
+                        console.error(error);
+                    }
+                });
+                response.write(JSON.stringify({
+                    "提示信息": "修改备注成功"
+                }));
+                response.end();
+            }
+        });
+    }
+}
 module.exports = relationManage;

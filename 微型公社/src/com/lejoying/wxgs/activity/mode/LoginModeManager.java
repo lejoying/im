@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity.mode;
 
 import android.support.v4.app.FragmentManager;
+import android.widget.LinearLayout;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
@@ -16,6 +17,8 @@ public class LoginModeManager extends BaseModeManager {
 
 	FragmentManager mFragmentManager;
 
+	public LinearLayout ll_menu_app;
+	
 	int mContentID = R.id.fragmentContent;
 
 	public LoginUsePassFragment mLoginUsePassFragment;
@@ -27,6 +30,7 @@ public class LoginModeManager extends BaseModeManager {
 	public LoginModeManager(MainActivity activity) {
 		super(activity);
 		mFragmentManager = activity.getSupportFragmentManager();
+		ll_menu_app = activity.ll_menu_app;
 	}
 	@Override
 	public void initialize() {

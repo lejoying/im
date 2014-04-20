@@ -331,6 +331,22 @@ api = {
             success: {"提示信息": "添加成功"},
             failed: {"提示信息": "添加失败", "失败原因": ["数据异常"]}
         }
+    },
+    /***************************************
+     *     URL：/api2/relation/modifyalias
+     ***************************************/
+    "relation_modifyalias": {
+        description: {
+            id: 1000307,
+            url: "/api2/relation/modifyalias"
+        },
+        request: {
+            typical: {"phone": "XXX", accessKey: "XXX", friend: "XXX", alias: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "修改备注成功"},
+            failed: {"提示信息": "修改备注失败", "失败原因": ["数据异常" || "好友不存在"]}
+        }
     }
 }
 /*************************************** ***************************************

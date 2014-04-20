@@ -122,6 +122,11 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
             relationManage.addfriendagree(data, response);
         });
     }
+    else if (operation == "modifyalias") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.modifyalias(data, response);
+        });
+    }
 }
 
 var circleManage = require("./handlers/circleManage.js");

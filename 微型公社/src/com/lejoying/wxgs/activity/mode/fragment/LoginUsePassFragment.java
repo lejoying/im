@@ -78,6 +78,9 @@ public class LoginUsePassFragment extends BaseFragment implements
 		mView_login.setOnClickListener(this);
 		mView_register.setOnClickListener(this);
 		mView_clogin.setOnClickListener(this);
+		if (mLoginMode.ll_menu_app.getVisibility() == View.VISIBLE) {
+			mLoginMode.ll_menu_app.setVisibility(View.GONE);
+		}
 
 		return mContentView;
 	}
