@@ -339,7 +339,7 @@ public class CirclesFragment extends BaseFragment {
 
 				@Override
 				public void success(JSONObject jData) {
-					System.out.println(jData);
+					//System.out.println(jData);
 				}
 			};
 			app.networkHandler.connection(netConnection);
@@ -410,7 +410,7 @@ public class CirclesFragment extends BaseFragment {
 
 				@Override
 				public void success(JSONObject jData) {
-					System.out.println(jData);
+					//System.out.println(jData);
 				}
 			};
 			app.networkHandler.connection(netConnection);

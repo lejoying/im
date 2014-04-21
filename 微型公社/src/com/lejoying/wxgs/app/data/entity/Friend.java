@@ -23,6 +23,7 @@ public class Friend implements Serializable {
 	public String longitude;
 	public String latitude;
 	public String userBackground="Back";
+	public String alias="";
 	public List<Message> messages = new ArrayList<Message>();
 
 	@Override

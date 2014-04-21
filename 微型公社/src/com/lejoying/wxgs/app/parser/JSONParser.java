@@ -97,6 +97,10 @@ public class JSONParser {
 		} catch (JSONException e) {
 		}
 		try {
+			friend.alias = jFriend.getString("alias");
+		} catch (JSONException e) {
+		}
+		try {
 			JSONObject jLocation = jFriend.getJSONObject("location");
 			friend.longitude = jLocation.getString("longitude");
 			friend.latitude = jLocation.getString("latitude");
@@ -197,6 +201,10 @@ public class JSONParser {
 			}
 			try {
 				group.name = jGroup.getString("name");
+			} catch (JSONException e) {
+			}
+			try {
+				group.description = jGroup.getString("description");
 			} catch (JSONException e) {
 			}
 			try {

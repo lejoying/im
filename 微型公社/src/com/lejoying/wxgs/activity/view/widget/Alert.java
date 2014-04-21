@@ -329,7 +329,6 @@ public class Alert {
 				input = (EditText) content.findViewById(R.id.input);
 				confirmView = content.findViewById(R.id.confirm);
 				cancelView = content.findViewById(R.id.cancel);
-
 				setContentView(content, new ViewGroup.LayoutParams(context
 						.getResources().getDisplayMetrics().widthPixels,
 						ViewGroup.LayoutParams.WRAP_CONTENT));

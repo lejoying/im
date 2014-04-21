@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    >
 
 
     <ScrollView
@@ -60,11 +61,19 @@
                     android:textColor="#fff" />
 
                 <TextView
-                    android:id="@+id/tv_phone_title"
+                    android:id="@+id/tv_alias_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/tv_id_title"
                     android:layout_below="@+id/tv_id_title"
+                    android:text="昵称:  "
+                    android:textColor="#fff" />
+                <TextView
+                    android:id="@+id/tv_phone_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/tv_alias_title"
+                    android:layout_below="@+id/tv_alias_title"
                     android:text="电话:  "
                     android:textColor="#fff" />
 
@@ -87,6 +96,16 @@
                     android:textColor="#fff" />
 
                 <TextView
+                    android:id="@+id/tv_alias"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_id"
+                    android:layout_toRightOf="@+id/tv_alias_title"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:text="alias"
+                    android:textColor="#fff" />
+                <TextView
                     android:id="@+id/tv_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -99,8 +118,9 @@
                     android:id="@+id/tv_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/tv_phone_title"
+                    android:layout_below="@+id/tv_nickname"
                     android:layout_toRightOf="@+id/tv_id_title"
+                     android:layout_marginTop="10dp"
                     android:text="123456789  "
                     android:textColor="#fff" />
 

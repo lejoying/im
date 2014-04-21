@@ -21,7 +21,7 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:background="@drawable/line_0099cd"
-        	android:hint="请输入"
+        android:hint="请输入"
         android:padding="4dp"
         android:textColor="#fff"
         android:textColorHint="#ccc"

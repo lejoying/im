@@ -34,6 +34,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -242,6 +244,9 @@ public class BusinessCardFragment extends BaseFragment {
 				.findViewById(R.id.tv_mainbusiness);
 		TextView tv_id = (TextView) mContent.findViewById(R.id.tv_id);
 		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
+		TextView tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
+		TextView tv_alias_title = (TextView) mContent
+				.findViewById(R.id.tv_alias_title);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		Button button3 = (Button) mContent.findViewById(R.id.button3);
@@ -260,6 +265,8 @@ public class BusinessCardFragment extends BaseFragment {
 			tv_id.setText(String.valueOf(mShowFriend.id));
 			tv_sex.setText(mShowFriend.sex);
 			tv_nickname.setText(mShowFriend.nickName);
+			tv_alias.setVisibility(View.GONE);
+			tv_alias_title.setVisibility(View.GONE);
 			if (mShowFriend.phone.length() == 11) {
 				phone = mShowFriend.phone.substring(0, 3) + "****"
 						+ mShowFriend.phone.substring(7);
@@ -288,7 +295,8 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		} else if (mStatus == SHOW_SELF) {
-
+			tv_alias.setVisibility(View.GONE);
+			tv_alias_title.setVisibility(View.GONE);
 			button1.setText("修改个人信息");
 			button2.setText("退出登录");
 			tv_id.setText(String.valueOf(app.data.user.id));
@@ -305,44 +313,56 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-					Alert.createDialog(getActivity()).setTitle("更换封面").setLeftButtonText("拍照").setRightButtonText("相册")
-					.setOnConfirmClickListener(new OnDialogClickListener() {
-						
-						@Override
-						public void onClick(AlertInputDialog dialog) {
-							tempFile = new File(app.sdcardImageFolder,
-									"userBackground");
-							int i = 1;
-							while (tempFile.exists()) {
-								tempFile = new File(
-										app.sdcardImageFolder,
-										"userBackground" + (i++));
-							}
-							Uri uri = Uri.fromFile(tempFile);
-							Intent tackPicture = new Intent(
-									MediaStore.ACTION_IMAGE_CAPTURE);
-							tackPicture
-									.putExtra(
-											MediaStore.Images.Media.ORIENTATION,
-											0);
-							tackPicture.putExtra(
-									MediaStore.EXTRA_OUTPUT, uri);
-							startActivityForResult(tackPicture,
-									RESULT_TAKEPICTURE);
-							CircleMenu.hide();
-						}
-					}).setOnCancelClickListener(new OnDialogClickListener() {
-						
-						@Override
-						public void onClick(AlertInputDialog dialog) {
-							Intent selectFromGallery = new Intent(
-									Intent.ACTION_PICK,
-									MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-							startActivityForResult(selectFromGallery,
-									RESULT_SELECTPICTURE);
-							CircleMenu.hide();
-						}
-					}).show();
+					Alert.createDialog(getActivity())
+							.setTitle("更换封面")
+							.setLeftButtonText("拍照")
+							.setRightButtonText("相册")
+							.setOnConfirmClickListener(
+									new OnDialogClickListener() {
+
+										@Override
+										public void onClick(
+												AlertInputDialog dialog) {
+											tempFile = new File(
+													app.sdcardImageFolder,
+													"userBackground");
+											int i = 1;
+											while (tempFile.exists()) {
+												tempFile = new File(
+														app.sdcardImageFolder,
+														"userBackground"
+																+ (i++));
+											}
+											Uri uri = Uri.fromFile(tempFile);
+											Intent tackPicture = new Intent(
+													MediaStore.ACTION_IMAGE_CAPTURE);
+											tackPicture
+													.putExtra(
+															MediaStore.Images.Media.ORIENTATION,
+															0);
+											tackPicture.putExtra(
+													MediaStore.EXTRA_OUTPUT,
+													uri);
+											startActivityForResult(tackPicture,
+													RESULT_TAKEPICTURE);
+											CircleMenu.hide();
+										}
+									})
+							.setOnCancelClickListener(
+									new OnDialogClickListener() {
+
+										@Override
+										public void onClick(
+												AlertInputDialog dialog) {
+											Intent selectFromGallery = new Intent(
+													Intent.ACTION_PICK,
+													MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+											startActivityForResult(
+													selectFromGallery,
+													RESULT_SELECTPICTURE);
+											CircleMenu.hide();
+										}
+									}).show();
 				}
 			});
 			button1.setOnClickListener(new OnClickListener() {
@@ -374,6 +394,12 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 
 		} else if (mStatus == SHOW_FRIEND) {
+			if (mShowFriend.alias == null || mShowFriend.alias.equals("")) {
+				tv_alias.setVisibility(View.GONE);
+				tv_alias_title.setVisibility(View.GONE);
+			} else {
+				tv_alias.setText(mShowFriend.alias);
+			}
 			if (mShowFriend.sex.equals("男")) {
 				tv_grouppanel_name.setText("他的群组");
 				tv_msgpanel_name.setText("他的广播");
@@ -385,7 +411,6 @@ public class BusinessCardFragment extends BaseFragment {
 			button1.setText("发起聊天");
 			button2.setText("修改备注");
 			button3.setText("解除好友关系");
-
 			tv_id.setText(String.valueOf(mShowFriend.id));
 			tv_sex.setText(mShowFriend.sex);
 			tv_nickname.setText(mShowFriend.nickName);
@@ -413,16 +438,69 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					final AlertInputDialog alert=new AlertInputDialog(getActivity());
-					alert.setTitle("请输入好友的备注").setLeftButtonText("修改").setOnConfirmClickListener(new OnDialogClickListener() {
-						
-						@Override
-						public void onClick(AlertInputDialog dialog) {
-							// TODO Auto-generated method stub
-							String note =alert.getInputText();
-							System.out.println(note);
-						}
-					}).show();
+					final AlertInputDialog alert = new AlertInputDialog(
+							getActivity());
+					if (mShowFriend.alias != null
+							&& !mShowFriend.alias.equals("")) {
+						alert.setInputText(mShowFriend.alias);
+					}
+					alert.setTitle("请输入好友的备注")
+							.setLeftButtonText("修改")
+							.setOnConfirmClickListener(
+									new OnDialogClickListener() {
+
+										@Override
+										public void onClick(
+												AlertInputDialog dialog) {
+											// TODO Auto-generated method
+											// stub
+											final String alias = alert
+													.getInputText();
+
+											app.networkHandler
+													.connection(new CommonNetConnection() {
+
+														@Override
+														public void success(
+																JSONObject jData) {
+															app.dataHandler
+																	.exclude(new Modification() {
+																		@Override
+																		public void modifyData(
+																				Data data) {
+
+																		}
+
+																		@Override
+																		public void modifyUI() {
+																			// TODO
+
+																		}
+																	});
+														}
+
+														@Override
+														protected void settings(
+																Settings settings) {
+															settings.url = API.DOMAIN
+																	+ API.RELATION_MODIFYALIAS;
+															Map<String, String> params = new HashMap<String, String>();
+															params.put(
+																	"phone",
+																	app.data.user.phone);
+															params.put(
+																	"accessKey",
+																	app.data.user.accessKey);
+															params.put(
+																	"friend",
+																	mShowFriend.phone);
+															params.put("alias",
+																	alias);
+															settings.params = params;
+														}
+													});
+										}
+									}).show();
 
 				}
 			});
@@ -528,10 +606,11 @@ public class BusinessCardFragment extends BaseFragment {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View v) {
-//				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-//						LayoutParams.MATCH_PARENT, width);
-//				layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-//				tv_bighead.setLayoutParams(layoutParams);
+				// RelativeLayout.LayoutParams layoutParams = new
+				// RelativeLayout.LayoutParams(
+				// LayoutParams.MATCH_PARENT, width);
+				// layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+				// tv_bighead.setLayoutParams(layoutParams);
 				tv_bighead.setBackgroundDrawable(new BitmapDrawable(
 						app.fileHandler.bitmaps.get(headname)));
 				group.setVisibility(View.GONE);
@@ -566,10 +645,21 @@ public class BusinessCardFragment extends BaseFragment {
 		gridView = (GridView) mContent.findViewById(R.id.tv_gridview);
 
 		if (mStatus != SHOW_SELF) {
-			List<Group> groups = getFriendGroups();
+			final List<Group> groups = getFriendGroups();
 			adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
 			gridView.setAdapter(adapter);
 			setColumns(gridView, groups);
+			gridView.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					// TODO Auto-generated method stub
+					mMainModeManager.mGroupBusinessCardFragment.mGroup=groups.get(position);
+					mMainModeManager
+							.showNext(mMainModeManager.mGroupBusinessCardFragment);
+				}
+			});
 		}
 		return groupView;
 	}

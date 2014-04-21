@@ -18,7 +18,8 @@ public class Group implements Serializable {
 	public int distance;
 	public String longitude;
 	public String latitude;
-
+	public String description;
+	
 	@Override
 	public boolean equals(Object o) {
 		boolean flag = false;

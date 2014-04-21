@@ -40,7 +40,8 @@ public class API {
 	public static final String RELATION_GETCIRCLESANDFRIENDS = "api2/relation/getcirclesandfriends";
 	public static final String RELATION_GETASKFRIENDS = "api2/relation/getaskfriends";
 	public static final String RELATION_ADDFRIENDAGREE = "api2/relation/addfriendagree";
-
+	public static final String RELATION_MODIFYALIAS = "api2/relation/modifyalias";
+	
 	public static final String SESSION = "session";
 	public static final String SESSION_EVENT = "api2/session/event";
 
