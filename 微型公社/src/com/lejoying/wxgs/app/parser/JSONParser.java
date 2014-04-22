@@ -339,6 +339,20 @@ public class JSONParser {
 						.getJSONArray("message"));
 			} else if (event.event.equals("newfriend")) {
 				event.eventContent = null;
+			} else if (event.event.equals("friendaccept")) {
+				event.eventContent = jEventContent.getString("phone");
+			} else if (event.event.equals("groupinformationchanged")) {
+				event.eventContent = jEventContent.getString("gid");
+			} else if (event.event.equals("groupmemberchanged")) {
+				event.eventContent = jEventContent.getString("gid");
+			} else if (event.event.equals("groupstatuschanged")) {
+				event.eventContent = jEventContent.getString("gid");
+				event.operation = jEventContent.getBoolean("operation");
+			} else if (event.event.equals("friendstatuschanged")) {
+				event.eventContent = jEventContent.getString("phone");
+				event.operation = jEventContent.getString("operation");
+			} else if (event.event.equals("userinformationchanged")) {
+				event.eventContent = jEventContent.getString("phone");
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();

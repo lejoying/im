@@ -18,7 +18,7 @@ public class SquareMessage implements Serializable {
 	public String head = "";
 	public long time;
 	public ArrayList<String> praiseusers = new ArrayList<String>();
-	public String style;// "1x1"|| "1x2" || "2x1"
+	public int style;// "11"|| "12" || "21"
 
 	public static Content obtainContent(String type, String details) {
 		return new Content(type, details);
