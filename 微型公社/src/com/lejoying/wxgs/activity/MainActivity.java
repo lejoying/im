@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity {
 		mFragmentManager = getSupportFragmentManager();
 
 		ll_menu_app = (LinearLayout) findViewById(R.id.ll_menu_app);
-//		ll_menu_app.setVisibility(View.VISIBLE);
+		// ll_menu_app.setVisibility(View.VISIBLE);
 
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		// audioManager.setSpeakerphoneOn(false);
@@ -129,7 +129,8 @@ public class MainActivity extends BaseActivity {
 				mMainMode.initialize();
 				initEvent();
 				ll_menu_app.setVisibility(View.VISIBLE);
-				mMainMode.show(mMainMode.mSquareFragment);
+				// mMainMode.show(mMainMode.mSquareFragment);
+				mMainMode.show(mMainMode.squareMessageInfoFragment);
 				PushService.startIMLongPull(this);
 
 				if (app.data.isClear) {

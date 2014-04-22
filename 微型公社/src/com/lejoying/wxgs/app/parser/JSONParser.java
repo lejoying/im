@@ -15,6 +15,7 @@ import com.lejoying.wxgs.app.data.entity.Event;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.User;
 
 public class JSONParser {
@@ -46,7 +47,8 @@ public class JSONParser {
 		try {
 			user.mainBusiness = jUser.getString("mainBusiness");
 		} catch (JSONException e) {
-		}try {
+		}
+		try {
 			user.userBackground = jUser.getString("userBackground");
 		} catch (JSONException e) {
 			// TODO: handle exception
@@ -345,4 +347,88 @@ public class JSONParser {
 		return event;
 	}
 
+	public static List<SquareMessage> generateSquareMessagesFromJSON(
+			JSONArray jMessages) {
+		List<SquareMessage> squareMessages = new ArrayList<SquareMessage>();
+		if (jMessages.length() != 0) {
+			for (int i = 0; i < jMessages.length(); i++) {
+				try {
+					JSONObject jMessage = new JSONObject(jMessages.getString(i));
+					squareMessages.add(generateSquareMessageFromJSON(jMessage));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return squareMessages;
+	}
+
+	private static SquareMessage generateSquareMessageFromJSON(
+			JSONObject jMessage) {
+		SquareMessage squareMessage = new SquareMessage();
+		try {
+			squareMessage.gmid = jMessage.getString("gmid");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			squareMessage.sendType = jMessage.getString("sendType");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			squareMessage.messageType = jMessage.getString("messageType");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			squareMessage.contentType = jMessage.getString("contentType");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			JSONArray contents = jMessage.getJSONArray("content");
+			for (int i = 0; i < contents.length(); i++) {
+				// Object content = contents.get(i);
+				JSONObject content = new JSONObject(contents.getString(i));
+				squareMessage.content
+						.add(SquareMessage.obtainContent(
+								content.getString("type"),
+								content.getString("details")));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			squareMessage.phone = jMessage.getString("phone");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			squareMessage.nickName = jMessage.getString("nickName");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			squareMessage.head = jMessage.getString("head");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			squareMessage.time = jMessage.getLong("time");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			ArrayList<String> users = new ArrayList<String>();
+			JSONArray praiseusers = jMessage.getJSONArray("praiseusers");
+			for (int i = 0; i < praiseusers.length(); i++) {
+				users.add(praiseusers.getString(i));
+			}
+			squareMessage.praiseusers = users;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return squareMessage;
+	}
 }

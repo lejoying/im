@@ -1127,9 +1127,7 @@ message = {
     phone: "121",
     nickName: "李建国",
     time: "1380000000000",
-    praiseusers: [
-        {phone: "121", nickName: "李建国"}
-    ]
+    praiseusers: ["121", "122"]
 }
 comment = {
     phone: "121",
