@@ -21,7 +21,6 @@ push.notifywebcodelogin = function (phone, accessKey, sessionID, next) {
     ajax.ajax({
         data: {
             phone: phone,
-            phoneTo: phoneTo,
             accessKey: accessKey,
             sessionID: sessionID
         },
