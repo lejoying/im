@@ -13,6 +13,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgSettings;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,6 +29,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -43,14 +49,18 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	int height, width, dip;
 	int chat_vPager_now = 0;
 	float density;
-
+	boolean isEditText = true, faceVisible = false;
 	List<String[]> faceNamesList;
 	List<List<String>> faceNameList;
 	List<ImageView> faceMenuShowList;
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
 
-	LinearLayout ll_facemenu;
 	RelativeLayout rl_face;
+	RelativeLayout rl_releasepic;
+	LinearLayout ll_facemenu;
+	LinearLayout ll_navigation;
+	LinearLayout ll_releasecamera;
+	LinearLayout ll_releaselocal;
 	ViewPager chat_vPager;
 	LayoutInflater mInflater;
 
@@ -64,14 +74,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
-		dip = (int) (45 * density + 0.5f);
+		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
 		width = dm.widthPixels;
-		initData();
 		initEvent();
+		initData();
 		super.onCreate(savedInstanceState);
 	}
-
+	
 	@Override
 	protected void onResume() {
 		CircleMenu.hide();
@@ -79,7 +89,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void initEvent() {
-		LinearLayout ll_navigation = (LinearLayout) findViewById(R.id.release_ll_navigation);
+		ll_navigation = (LinearLayout) findViewById(R.id.release_ll_navigation);
 		ImageView iv_selectpicture = (ImageView) findViewById(R.id.release_iv_selectpicture);
 		ImageView iv_emoji = (ImageView) findViewById(R.id.release_iv_emoji);
 		ImageView iv_voice = (ImageView) findViewById(R.id.release_iv_voice);
@@ -88,8 +98,12 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		et_release = (EditText) findViewById(R.id.release_et_release);
 
-		ll_facemenu = (LinearLayout)findViewById(R.id.release_ll_facemenu);
+		rl_releasepic = (RelativeLayout) findViewById(R.id.rl_releasepic);
+		ll_releasecamera = (LinearLayout) findViewById(R.id.ll_releasecamera);
+		ll_releaselocal = (LinearLayout) findViewById(R.id.ll_releaselocal);
+		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
+		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
 
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 				dip, dip);
@@ -102,13 +116,26 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		iv_voice.setLayoutParams(layoutParams);
 		tv_cancel.setLayoutParams(layoutParams);
 		tv_commit.setLayoutParams(layoutParams);
-
+		
+		RelativeLayout.LayoutParams relativeParams1 = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		relativeParams1.leftMargin=(width/2-154)/2;
+		RelativeLayout.LayoutParams relativeParams2 = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		relativeParams2.leftMargin=(width/2-154)/2+(width/2);
+		ll_releasecamera.setLayoutParams(relativeParams1);
+		ll_releaselocal.setLayoutParams(relativeParams2);
+		
+		
 		iv_selectpicture.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
 		iv_voice.setOnClickListener(this);
 		tv_cancel.setOnClickListener(this);
 		tv_commit.setOnClickListener(this);
-
+		et_release.setOnClickListener(this);
+		ll_releasecamera.setOnClickListener(this);
+		ll_releaselocal.setOnClickListener(this);
+		rl_releasepic.setOnClickListener(this);
 	}
 
 	public void initData() {
@@ -172,7 +199,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		lp.gravity = Gravity.CENTER;
 		for (int i = 0; i < 3; i++) {
 			try {
-				ImageView iv = new ImageView(getBaseContext());
+				ImageView iv = new ImageView(this);
 				iv.setImageBitmap(BitmapFactory.decodeStream(this.getAssets()
 						.open("images/" + faceNameList.get(i).get(0))));
 				iv.setLayoutParams(lp);
@@ -219,6 +246,26 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				chat_base_gv.setAdapter(new myGridAdapter(faceNameList.get(i)));
 				mListViews.add(chat_base_gv);
 				chat_vPager.setAdapter(new myPageAdapter(mListViews));
+				chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
+					
+					@Override
+					public void onPageSelected(int arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onPageScrolled(int arg0, float arg1, int arg2) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onPageScrollStateChanged(int arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
 			}
 		}
 		LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(100,
@@ -245,10 +292,20 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.release_iv_selectpicture:
-
+			if(faceVisible){
+				rl_face.setVisibility(View.GONE);
+				faceVisible=false;
+			}
+			rl_releasepic.setVisibility(View.VISIBLE);
+			et_release.setVisibility(View.GONE);
+			ll_navigation.setVisibility(View.GONE);
 			break;
 		case R.id.release_iv_emoji:
-
+			if (faceVisible) {
+				faceEndAnimation();
+			} else {
+				faceStartAnimation();
+			}
 			break;
 		case R.id.release_iv_voice:
 
@@ -259,9 +316,108 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		case R.id.release_tv_commit:
 
 			break;
+		case R.id.release_et_release:
+			if (!isEditText) {
+				if (faceVisible) {
+					rl_face.setVisibility(View.GONE);
+					faceVisible = false;
+				}
+				isEditText = true;
+			}
+			break;
+		case R.id.ll_releasecamera:
+			System.out.println("camera");
+			break;
+		case R.id.ll_releaselocal:
+			System.out.println("local");
+			break;
+		case R.id.rl_releasepic:
+			rl_releasepic.setVisibility(View.GONE);
+			et_release.setVisibility(View.VISIBLE);
+			ll_navigation.setVisibility(View.VISIBLE);
+			break;
 		default:
 			break;
 		}
+
+	}
+
+	public void faceStartAnimation() {
+		rl_face.setVisibility(View.VISIBLE);
+		Animation navigationanimation = new TranslateAnimation(0, 0, 0, -240
+				* density + 0.5f);
+		navigationanimation.setDuration(220);
+		navigationanimation.setAnimationListener(new AnimationListener() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				ll_navigation.clearAnimation();
+				ll_navigation.layout(
+						0,
+						(int) (ll_navigation.getTop() - 240 * density + 0.5f),
+						ll_navigation.getWidth(),
+						(int) (ll_navigation.getBottom() - 240 * density + 0.5f));
+				// rl_face.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+		});
+		Animation faceanimation = new TranslateAnimation(0, 0,
+				240 * density + 0.5f, 0);
+		faceanimation.setDuration(220);
+		rl_face.startAnimation(faceanimation);
+		ll_navigation.startAnimation(navigationanimation);
+		faceVisible = true;
+		isEditText = false;
+	}
+
+	public void faceEndAnimation() {
+		Animation navigationanimation = new TranslateAnimation(0, 0, 0,
+				240 * density + 0.5f);
+		navigationanimation.setDuration(220);
+		navigationanimation.setAnimationListener(new AnimationListener() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				ll_navigation.clearAnimation();
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+		});
+		Animation faceanimation = new TranslateAnimation(0, 0, 0,
+				240 * density + 0.5f);
+		faceanimation.setDuration(220);
+		faceanimation.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				rl_face.setVisibility(View.GONE);
+			}
+		});
+		rl_face.startAnimation(faceanimation);
+		ll_navigation.startAnimation(navigationanimation);
+		faceVisible = false;
+		isEditText = true;
 	}
 
 	class myGridAdapter extends BaseAdapter {
