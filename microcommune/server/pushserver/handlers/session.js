@@ -38,7 +38,7 @@ session.eventwebcodelogin = function (data, response) {
 session.notifywebcodelogin = notifywebcodelogin;
 function notifywebcodelogin(data, response) {
     response.asynchronous = 1;
-    var phone = data.phoneTo;
+    var phone = data.phone;
     var sessionID = data.sessionID;
     var sessionResponse = sessionPool[sessionID];
     if (sessionResponse != null && sessionResponse != undefined) {

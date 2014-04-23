@@ -17,7 +17,7 @@ push.inform = function (phone, phoneTo, accessKey, sessionID, event) {
         }
     });
 }
-push.notifywebcodelogin = function (phone, phoneTo, accessKey, sessionID, next) {
+push.notifywebcodelogin = function (phone, accessKey, sessionID, next) {
     ajax.ajax({
         data: {
             phone: phone,

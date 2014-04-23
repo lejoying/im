@@ -13,7 +13,7 @@ webcodeManage.webcodelogin = function (data, response) {
     var accessKey = data.accessKey;
     var sessionID = data.sessionID;
 
-    push.notifywebcodelogin(phone, sessionID, function (data) {
+    push.notifywebcodelogin(phone, accessKey, sessionID, function (data) {
         if (JSON.parse(data).information == "notifywebcodelogin success") {
             response.write(JSON.stringify({
                 "提示信息": "二维码登陆成功",
@@ -25,6 +25,7 @@ webcodeManage.webcodelogin = function (data, response) {
                 "提示信息": "二维码登陆失败",
                 "失败原因": "客户端连接不存在"
             }));
+            JSON.stringify()
             response.end();
         } else {
             response.write(JSON.stringify({
