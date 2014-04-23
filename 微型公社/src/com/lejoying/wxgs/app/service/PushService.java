@@ -23,7 +23,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Event;
-import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
@@ -239,9 +239,9 @@ public class PushService extends Service {
 				httpURLConnection.disconnect();
 				if (jData != null) {
 					try {
-						//System.out.println("push-------"+getString(R.string.network_failed));
+						// System.out.println("push-------"+getString(R.string.network_failed));
 						jData.get(getString(R.string.network_failed));
-						
+
 						// disconnection long pull
 						if (mSquareConnection != null) {
 							mSquareConnection.disConnection();
@@ -267,20 +267,33 @@ public class PushService extends Service {
 										.get(mCurrentConnectionGid) == null) {
 									data.squareMessages.put(
 											mCurrentConnectionGid,
-											new ArrayList<Message>());
+											new ArrayList<SquareMessage>());
 								}
 
 								data.squareFlags.put(mCurrentConnectionGid,
 										jData.getString("flag"));
 
-								List<Message> squareMessages = data.squareMessages
+								List<SquareMessage> squareMessages = data.squareMessages
 										.get(mCurrentConnectionGid);
-								List<Message> newMessages = JSONParser
-										.generateMessagesFromJSON(jData
+								Map<String, List<SquareMessage>> squareMessagesClassify = data.squareMessagesClassify
+										.get(mCurrentConnectionGid);
+								List<SquareMessage> newMessages = JSONParser
+										.generateSquareMessagesFromJSON(jData
 												.getJSONArray("messages"));
-								for (Message message : newMessages) {
+								for (SquareMessage message : newMessages) {
 									if (!squareMessages.contains(message)) {
 										squareMessages.add(message);
+									}
+									if (squareMessagesClassify
+											.get(message.messageType) == null) {
+										List<SquareMessage> list = new ArrayList<SquareMessage>();
+										list.add(message);
+										squareMessagesClassify.put(
+												message.messageType, list);
+									} else {
+										squareMessagesClassify.get(
+												message.messageType).add(
+												message);
 									}
 								}
 							} catch (JSONException e) {

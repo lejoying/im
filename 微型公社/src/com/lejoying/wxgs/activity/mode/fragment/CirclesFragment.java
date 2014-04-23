@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
@@ -77,6 +78,10 @@ public class CirclesFragment extends BaseFragment {
 	RelativeLayout animationLayout;
 	HorizontalScrollView tempFriendScroll;
 
+	RelativeLayout current_me_circles;
+	RelativeLayout current_me_message_list;
+	RelativeLayout current_me_infomation;
+
 	LayoutInflater mInflater;
 
 	public String copyStatus = "move";// "move"||"copy"
@@ -116,6 +121,13 @@ public class CirclesFragment extends BaseFragment {
 		newGroup = mContentView.findViewById(R.id.newGroup);
 		modifyCircleName = mContentView.findViewById(R.id.modifyCircleName);
 		deleteCircle = mContentView.findViewById(R.id.deleteCircle);
+
+		current_me_circles = (RelativeLayout) mContentView
+				.findViewById(R.id.current_me_circles);
+		current_me_message_list = (RelativeLayout) mContentView
+				.findViewById(R.id.current_me_message_list);
+		current_me_infomation = (RelativeLayout) mContentView
+				.findViewById(R.id.current_me_infomation);
 
 		tempFriendsList = (LinearLayout) mContentView
 				.findViewById(R.id.tempFriendsList);
@@ -339,7 +351,7 @@ public class CirclesFragment extends BaseFragment {
 
 				@Override
 				public void success(JSONObject jData) {
-					//System.out.println(jData);
+					// System.out.println(jData);
 				}
 			};
 			app.networkHandler.connection(netConnection);
@@ -410,7 +422,7 @@ public class CirclesFragment extends BaseFragment {
 
 				@Override
 				public void success(JSONObject jData) {
-					//System.out.println(jData);
+					// System.out.println(jData);
 				}
 			};
 			app.networkHandler.connection(netConnection);
@@ -420,7 +432,24 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	void initEvent() {
+		current_me_message_list.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				MainActivity.instance.mMainMode
+						.show(MainActivity.instance.mMainMode.mChatMessagesFragment);
+
+			}
+		});
+		current_me_infomation.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+				MainActivity.instance.mMainMode
+						.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
+			}
+		});
 		save.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

@@ -1,15 +1,11 @@
 package com.lejoying.wxgs.app.handler;
 
-import java.util.Map;
-
 import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Event;
-import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 
 public class EventHandler {

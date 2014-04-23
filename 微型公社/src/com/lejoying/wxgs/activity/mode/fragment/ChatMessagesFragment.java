@@ -9,9 +9,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
@@ -32,6 +34,10 @@ public class ChatMessagesFragment extends BaseFragment {
 	LayoutInflater mInflater;
 	LinearLayout ll_not_messages;
 
+	RelativeLayout current_me_circles;
+	RelativeLayout current_me_message_list;
+	RelativeLayout current_me_infomation;
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -51,6 +57,14 @@ public class ChatMessagesFragment extends BaseFragment {
 		lv_messages = (ListView) mContentView.findViewById(R.id.lv_messages);
 		ll_not_messages = (LinearLayout) mContentView
 				.findViewById(R.id.ll_not_messages);
+
+		current_me_circles = (RelativeLayout) mContentView
+				.findViewById(R.id.current_me_circles);
+		current_me_message_list = (RelativeLayout) mContentView
+				.findViewById(R.id.current_me_message_list);
+		current_me_infomation = (RelativeLayout) mContentView
+				.findViewById(R.id.current_me_infomation);
+
 		TextView headView = new TextView(getActivity());
 		headView.setHeight(10);
 		lv_messages.addHeaderView(headView);
@@ -62,7 +76,29 @@ public class ChatMessagesFragment extends BaseFragment {
 		} else {
 			ll_not_messages.setVisibility(View.GONE);
 		}
+		initEvent();
 		return mContentView;
+	}
+
+	private void initEvent() {
+		current_me_circles.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				MainActivity.instance.mMainMode
+						.show(MainActivity.instance.mMainMode.mCirclesFragment);
+			}
+		});
+		current_me_infomation.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+				MainActivity.instance.mMainMode
+						.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
+			}
+		});
+
 	}
 
 	public void notifyViews() {
