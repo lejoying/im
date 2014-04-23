@@ -1,5 +1,7 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.util.List;
+
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -196,20 +198,32 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		tv_phone_title.setVisibility(View.GONE);
 		tv_mainbusiness_title.setVisibility(View.GONE);
 		tv_sex_title.setVisibility(View.GONE);
-		group.removeView(button1);
+		
 		group.removeView(button2);
 		group.removeView(button3);
 		group.removeView(tv_group);
 		group.removeView(tv_square);
 		group.removeView(tv_msg);
-
+		
+//		List<String> myGroups=app.data.groups;
+//		for(int i=0;i<myGroups.size();i++){
+//			if(myGroups.get(i).equals(mGroup.members.get(i))){
+//				button1.setText("开始聊天");
+//				break;
+//			}else{
+//				button1.setText("加入群组");
+//			}
+//				
+//			//System.out.println(myGroups.get(i));
+//		}
+		button1.setText("加入群组");
 		tv_id_title.setText("群组ID：");
 		tv_alias_title.setText("群组描述：");
 
 		tv_nickname.setText(mGroup.name);
 		tv_id.setText(String.valueOf(mGroup.gid));
-		if (mGroup.description == null || mGroup.description.equals("")) {
-			tv_alias.setText("次群组暂无描述");
+		if (mGroup.description == null || mGroup.description.equals("")||mGroup.description.equals("请输入群组描述信息")) {
+			tv_alias.setText("此群组暂无描述");
 		} else {
 			tv_alias.setText(mGroup.description);
 		}

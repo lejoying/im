@@ -1,0 +1,177 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PostActivity" >
+
+    <EditText
+        android:id="@+id/release_et_release"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentRight="true"
+        android:background="#00000000"
+        android:gravity="top"
+        android:textColor="#fff"
+        android:textCursorDrawable="@drawable/cursor"
+        tools:ignore="TextFields" >
+
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+        android:id="@+id/release_ll_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/et_release"
+        android:background="#2fff"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/release_tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="取消"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/release_iv_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/chat_voice_normal"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/release_iv_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/chat_emoji_normal"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/release_iv_selectpicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/chat_picture_normal"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/release_tv_commit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="完成"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+
+       <RelativeLayout
+        android:id="@+id/release_rl_face"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/card_background_normal"
+         >
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#ffffff" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/release_chat_vPager"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:flipInterval="30" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dp"
+            android:background="#ffffff" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="#ffffff" />
+
+        <LinearLayout
+            android:id="@+id/release_ll_facepanel"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:visibility="visible" >
+
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.08"
+                android:scrollbars="none" >
+
+                <LinearLayout
+                    android:id="@+id/release_ll_facemenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" >
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <ImageView
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/release_iv_face_left"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_left" />
+
+            <ImageView
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/release_iv_face_right"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_right" />
+
+            <ImageView
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/release_iv_face_delete"
+                android:layout_width="28dp"
+                android:layout_height="17dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_delete" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

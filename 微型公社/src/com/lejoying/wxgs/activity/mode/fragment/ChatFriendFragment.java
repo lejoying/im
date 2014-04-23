@@ -2137,7 +2137,7 @@ public class ChatFriendFragment extends BaseFragment {
 					((ViewPager) arg0).addView(mListViews.get(arg1), 0);
 				}
 			} catch (Exception e) {
-				Log.d("parent=", "" + mListViews.get(arg1).getParent());
+				//Log.d("parent=", "" + mListViews.get(arg1).getParent());
 				e.printStackTrace();
 			}
 			return mListViews.get(arg1);
