@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
-import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Configuration;
@@ -226,6 +225,12 @@ public class DataUtil {
 		if (updateGroup != null) {
 			if (updateGroup.name != null && !updateGroup.equals("")) {
 				updateGroup.name = group.name;
+			}
+			if (updateGroup.icon != null && !updateGroup.equals("")) {
+				updateGroup.icon = group.icon;
+			}
+			if (updateGroup.description != null && !updateGroup.equals("")) {
+				updateGroup.description = group.description;
 			}
 			if (updateGroup.members != null) {
 				updateGroup.members = group.members;

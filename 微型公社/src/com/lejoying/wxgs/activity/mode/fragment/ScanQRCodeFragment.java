@@ -3,9 +3,18 @@ package com.lejoying.wxgs.activity.mode.fragment;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -29,12 +38,23 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScanView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class ScanQRCodeFragment extends BaseFragment implements
 		SurfaceHolder.Callback, PreviewCallback, AutoFocusCallback {
 
+	MainApplication app = MainApplication.getMainApplication();
+	MainModeManager mMainModeManager;
 	private View mContent;
 
 	private Camera camera;
@@ -43,6 +63,8 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	private final int OPERATE_DECODE_FAILED = 0x00002;
 	private final int OPERATE_AUTOFOCUS = 0x00003;
 	private final int OPERATE_SHOWSCAN = 0x0004;
+	private final int OPERATE_DECODE_SUCCESS_USERCARD = 0x00005;
+	private final int OPERATE_DECODE_SUCCESS_GROUPCARD = 0x00006;
 
 	private SurfaceView sfv_scanqrcode;
 
@@ -65,6 +87,8 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	private Rect framingRect;
 
 	private int count = 0;
+
+	private String ScanContent;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -312,52 +336,65 @@ public class ScanQRCodeFragment extends BaseFragment implements
 			int what = msg.what;
 			switch (what) {
 			case OPERATE_DECODE_SUCCESS_WEBLOGIN:
-				// destoryCamera();
-				// new AlertDialog.Builder(getActivity())
-				// .setTitle(getString(R.string.scan_weblogin))
-				// .setPositiveButton(getString(R.string.btn_confirm),
-				// new OnClickListener() {
-				//
-				// @Override
-				// public void onClick(DialogInterface dialog,
-				// int which) {
-				// getActivity()
-				// .getSupportFragmentManager()
-				// .popBackStack();
-				// }
-				// })
-				// .setNegativeButton(getString(R.string.btn_cancel),
-				// new OnClickListener() {
-				//
-				// @Override
-				// public void onClick(DialogInterface dialog,
-				// int which) {
-				// initCamera();
-				// }
-				// }).setOnCancelListener(new OnCancelListener() {
-				// @Override
-				// public void onCancel(DialogInterface dialog) {
-				// initCamera();
-				// }
-				// }).setCancelable(false).create().show();
+				destoryCamera();
+				new AlertDialog.Builder(getActivity()).setTitle("网页端登录")
+						.setPositiveButton("确定", new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								int index = ScanContent.indexOf(":", 3);
+								mMainModeManager.back();
+								destoryCamera();
+								webScanQRCodelogin(ScanContent
+										.substring(index + 1));
+								getActivity().getSupportFragmentManager()
+										.popBackStack();
+							}
+						}).setNegativeButton("取消", new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								initCamera();
+							}
+						}).setOnCancelListener(new OnCancelListener() {
+							@Override
+							public void onCancel(DialogInterface dialog) {
+								initCamera();
+							}
+						}).setCancelable(false).create().show();
+				break;
+			case OPERATE_DECODE_SUCCESS_USERCARD:
+				int index = ScanContent.indexOf(":", 3);
+				mMainModeManager.back();
+				scanUserCard(ScanContent.substring(index + 1));
+				destoryCamera();
+				break;
+			case OPERATE_DECODE_SUCCESS_GROUPCARD:
+				int indexg = ScanContent.indexOf(":", 3);
+				mMainModeManager.back();
+				scanGroupCard(ScanContent.substring(indexg + 1));
+				destoryCamera();
 				break;
 			case OPERATE_DECODE_FAILED:
-				// if (isTake) {
-				// if (msg.obj != null) {
-				// destoryCamera();
-				// new AlertDialog.Builder(getActivity())
-				// .setTitle(getString(R.string.scan_invalid))
-				// .setOnCancelListener(new OnCancelListener() {
-				// @Override
-				// public void onCancel(DialogInterface dialog) {
-				// initCamera();
-				// }
-				// }).setMessage(msg.obj.toString()).create()
-				// .show();
-				// } else {
-				// reDecode();
-				// }
-				// }
+				if (isTake) {
+					if (msg.obj != null) {
+						reDecode();
+						// destoryCamera();
+						// new AlertDialog.Builder(getActivity())
+						// .setTitle("aa")
+						// .setOnCancelListener(new OnCancelListener() {
+						// @Override
+						// public void onCancel(DialogInterface dialog) {
+						// initCamera();
+						// }
+						// }).setMessage(msg.obj.toString()).create()
+						// .show();
+					} else {
+						reDecode();
+					}
+				}
 				break;
 			case OPERATE_AUTOFOCUS:
 				if (camera != null) {
@@ -378,17 +415,143 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	private int processQRCode(Result rawResult) {
 		int what = OPERATE_DECODE_FAILED;
 		String str = rawResult.toString();
+		ScanContent = str;
 		if (str.substring(0, 2).equals("mc")) {
 			int index = str.indexOf(":", 3);
 			if (str.substring(3, index).equals("weblogin")) {
 				what = OPERATE_DECODE_SUCCESS_WEBLOGIN;
+			} else if (str.substring(3, index).equals("usercard")) {
+				what = OPERATE_DECODE_SUCCESS_USERCARD;
+			} else if (str.substring(3, index).equals("groupcard")) {
+				what = OPERATE_DECODE_SUCCESS_GROUPCARD;
 			}
 		}
 		return what;
 	}
 
 	public void setMode(MainModeManager mainMode) {
-
+		this.mMainModeManager = mainMode;
 	}
 
+	public void webScanQRCodelogin(final String sessionID) {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.WEBCODE_WEBCODELOGIN;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("sessionID", sessionID);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+			}
+		});
+	}
+
+	public void scanUserCard(final String phone) {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.ACCOUNT_GET;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("target", "[\"" + phone + "\"]");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				initCamera();
+				try {
+					final Friend friend = JSONParser
+							.generateFriendFromJSON(jData.getJSONArray(
+									"accounts").getJSONObject(0));
+
+					if (phone.equals(app.data.user.phone)) {
+						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+						app.dataHandler.exclude(new Modification() {
+							@Override
+							public void modifyData(Data data) {
+								data.user.nickName = friend.nickName;
+								data.user.mainBusiness = friend.mainBusiness;
+								data.user.head = friend.head;
+								data.user.sex = friend.sex;
+								data.user.id = friend.id;
+							}
+						});
+					} else if (app.data.friends.get(phone) != null) {
+						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+						app.dataHandler.exclude(new Modification() {
+
+							@Override
+							public void modifyData(Data data) {
+								friend.messages = data.friends.get(phone).messages;
+								data.friends.put(phone, friend);
+							}
+						});
+					} else {
+						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
+					}
+					mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
+					mMainModeManager
+							.showNext(mMainModeManager.mBusinessCardFragment);
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void scanGroupCard(final String gid) {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.GROUP_GET;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid",
+						(Long.valueOf("100000000000") - Long.valueOf(gid)) + "");
+				params.put("type", "group");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				initCamera();
+				JSONObject groupJSON = null;
+				try {
+					groupJSON = jData.getJSONObject("group");
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+				Group group = new Group();
+				try {
+					group.gid = groupJSON.getInt("gid");
+					try {
+						group.icon = groupJSON.getString("icon");
+					} catch (JSONException e) {
+					}
+					try {
+						group.name = groupJSON.getString("name");
+					} catch (JSONException e) {
+					}
+					try {
+						group.description = groupJSON.getString("description");
+					} catch (JSONException e) {
+					}
+				} catch (Exception e) {
+				}
+				mMainModeManager.mGroupBusinessCardFragment.mGroup = group;
+				mMainModeManager
+						.showNext(mMainModeManager.mGroupBusinessCardFragment);
+			}
+		});
+	}
 }

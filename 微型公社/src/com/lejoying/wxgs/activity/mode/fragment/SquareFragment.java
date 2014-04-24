@@ -29,6 +29,7 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
@@ -49,9 +50,9 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 	EditText mViewBroadcast;
 	View mButtonSend;
 
-	List<Message> mSquareMessages;
+	List<SquareMessage> mSquareMessages;
 
-	public String mCurrendSquareID = "91";
+	public String mCurrendSquareID = "98";
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -92,14 +93,16 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 		mSqureMessageView = (ListView) mContentView
 				.findViewById(R.id.squareMessages);
 
-		mSquareMessages = app.data.squareMessages.get(mCurrendSquareID);
+		// mSquareMessages =
+		// app.data.squareMessages.get(mCurrendSquareID);//TODO get square
+		// message
 		mSquareMessages = mSquareMessages != null ? mSquareMessages
-				: new ArrayList<Message>();
+				: new ArrayList<SquareMessage>();
 
 		mAdapter = new SquareMessageAdapter();
 
 		mSqureMessageView.setAdapter(mAdapter);
-		
+
 		mButtonSend = mContentView.findViewById(R.id.button_send);
 		mButtonSend.setOnClickListener(this);
 		return mContentView;
@@ -109,9 +112,10 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 
 		@Override
 		public void notifyDataSetChanged() {
-			mSquareMessages = app.data.squareMessages.get(mCurrendSquareID);
+			// mSquareMessages =
+			// app.data.squareMessages.get(mCurrendSquareID);//TODO get square
 			mSquareMessages = mSquareMessages != null ? mSquareMessages
-					: new ArrayList<Message>();
+					: new ArrayList<SquareMessage>();
 
 			super.notifyDataSetChanged();
 			mSqureMessageView.setSelection(mAdapter.getCount() - 1);
@@ -162,7 +166,8 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 				}
 			});
 			messageHolder.message
-					.setText(mSquareMessages.get(position).content);
+					.setText(mSquareMessages.get(position).contentType);// TODO
+																		// content
 
 			return convertView;
 		}

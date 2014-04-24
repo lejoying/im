@@ -23,7 +23,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Event;
-import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
@@ -239,9 +239,9 @@ public class PushService extends Service {
 				httpURLConnection.disconnect();
 				if (jData != null) {
 					try {
-						//System.out.println("push-------"+getString(R.string.network_failed));
+						// System.out.println("push-------"+getString(R.string.network_failed));
 						jData.get(getString(R.string.network_failed));
-						
+
 						// disconnection long pull
 						if (mSquareConnection != null) {
 							mSquareConnection.disConnection();
@@ -267,20 +267,43 @@ public class PushService extends Service {
 										.get(mCurrentConnectionGid) == null) {
 									data.squareMessages.put(
 											mCurrentConnectionGid,
-											new ArrayList<Message>());
+											new ArrayList<String>());
+									data.squareMessagesClassify
+											.put(mCurrentConnectionGid,
+													new HashMap<String, List<String>>());
+									data.squareMessagesMap
+											.put(mCurrentConnectionGid,
+													new HashMap<String, SquareMessage>());
 								}
 
 								data.squareFlags.put(mCurrentConnectionGid,
 										jData.getString("flag"));
 
-								List<Message> squareMessages = data.squareMessages
+								List<String> squareMessages = data.squareMessages
 										.get(mCurrentConnectionGid);
-								List<Message> newMessages = JSONParser
-										.generateMessagesFromJSON(jData
+								Map<String, List<String>> squareMessagesClassify = data.squareMessagesClassify
+										.get(mCurrentConnectionGid);
+								Map<String, SquareMessage> squareMessagesMap = data.squareMessagesMap
+										.get(mCurrentConnectionGid);
+								List<SquareMessage> newMessages = JSONParser
+										.generateSquareMessagesFromJSON(jData
 												.getJSONArray("messages"));
-								for (Message message : newMessages) {
+								for (SquareMessage message : newMessages) {
 									if (!squareMessages.contains(message)) {
-										squareMessages.add(message);
+										squareMessages.add(message.gmid);
+										squareMessagesMap.put(message.gmid,
+												message);
+									}
+									if (squareMessagesClassify
+											.get(message.messageType) == null) {
+										List<String> list = new ArrayList<String>();
+										list.add(message.gmid);
+										squareMessagesClassify.put(
+												message.messageType, list);
+									} else {
+										squareMessagesClassify.get(
+												message.messageType).add(
+												message.gmid);
 									}
 								}
 							} catch (JSONException e) {

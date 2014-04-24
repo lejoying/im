@@ -226,6 +226,8 @@ function request(sessionID) {
 
                 } else if (data["提示信息"] == "web端二维码登录成功") {
 //                    getAccountSelfMessage(data.phone, data.accessKey);
+                    RSA.setMaxDigits(38);
+                    var pbkey0 = RSA.RSAKey(data.PbKey);
                     var phone0 = RSA.decryptedString(pbkey0, data.phone);
                     var accessKey0 = RSA.decryptedString(pbkey0, data.accessKey)
                     getAccountSelfMessage(phone0, accessKey0, data.phone);

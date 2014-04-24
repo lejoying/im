@@ -9,7 +9,7 @@ import java.util.Map;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
-import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.User;
 
 public class Data implements Serializable {
@@ -28,7 +28,9 @@ public class Data implements Serializable {
 	public Map<String, Friend> groupFriends = new HashMap<String, Friend>();
 	public Map<String, Friend> friends = new HashMap<String, Friend>();
 
-	public Map<String, List<Message>> squareMessages = new HashMap<String, List<Message>>();
+	public Map<String, List<String>> squareMessages = new HashMap<String, List<String>>();
+	public Map<String, Map<String, SquareMessage>> squareMessagesMap = new HashMap<String, Map<String, SquareMessage>>();
+	public Map<String, Map<String, List<String>>> squareMessagesClassify = new HashMap<String, Map<String, List<String>>>();
 	public Map<String, String> squareFlags = new HashMap<String, String>();
 
 	// Last messages list

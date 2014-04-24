@@ -10,12 +10,135 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/linearLayout1"
         android:cacheColorHint="#0000"
         android:divider="#0000"
         android:dividerHeight="12dp"
         android:listSelector="#0000" >
+
     </ListView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#fff"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/current_me_circles"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/tv_me_circles"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="密友"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/current_me_circles_noread"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/noread_message"
+                android:padding="3dp"
+                android:text="99+"
+                android:textSize="8sp"
+                android:visibility="gone" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/current_me_circles_status"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentBottom="true"
+                android:background="#12B6EB"
+                android:visibility="gone" >
+            </ImageView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/current_me_message_list"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/tv_me_message_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="消息"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/current_me_message_list_noread"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/noread_message"
+                android:padding="3dp"
+                android:text="99+"
+                android:textSize="8sp"
+                android:visibility="gone" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/current_me_message_list_status"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentBottom="true"
+                android:background="#12B6EB"
+                android:visibility="visible" >
+            </ImageView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/current_me_infomation"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/tv_me_infomation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="名片"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/current_me_infomation_noread"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/noread_message"
+                android:padding="3dp"
+                android:text="99+"
+                android:textSize="8sp"
+                android:visibility="gone" >
+            </TextView>
+
+            <ImageView
+                android:id="@+id/current_me_infomation_status"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentBottom="true"
+                android:background="#12B6EB"
+                android:visibility="gone" >
+            </ImageView>
+        </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_not_messages"
