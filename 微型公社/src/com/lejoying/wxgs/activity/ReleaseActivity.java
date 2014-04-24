@@ -5,16 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgSettings;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -22,16 +21,17 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Editable;
+import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -46,7 +46,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	BackgroundView mBackground;
 	MainApplication app = MainApplication.getMainApplication();
 
-	int height, width, dip;
+	int height, width, dip,picwidth;
 	int chat_vPager_now = 0;
 	float density;
 	boolean isEditText = true, faceVisible = false;
@@ -57,15 +57,27 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	RelativeLayout rl_face;
 	RelativeLayout rl_releasepic;
+	LinearLayout ll_et_release;
 	LinearLayout ll_facemenu;
 	LinearLayout ll_navigation;
 	LinearLayout ll_releasecamera;
 	LinearLayout ll_releaselocal;
+	LinearLayout ll_release_picandvoice;
 	ViewPager chat_vPager;
 	LayoutInflater mInflater;
-
+	
+	
 	EditText et_release;
-
+	View release_iv_face_left;
+	View release_iv_face_right;
+	View release_iv_face_delete;
+	
+	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		
+		super.onWindowFocusChanged(hasFocus);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_post);
@@ -82,7 +94,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 	}
 	
-	@Override
 	protected void onResume() {
 		CircleMenu.hide();
 		super.onResume();
@@ -96,13 +107,18 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		TextView tv_cancel = (TextView) findViewById(R.id.release_tv_cancel);
 		TextView tv_commit = (TextView) findViewById(R.id.release_tv_commit);
 
+		release_iv_face_left=findViewById(R.id.release_iv_face_left);
+		release_iv_face_right=findViewById(R.id.release_iv_face_right);;
+		release_iv_face_delete=findViewById(R.id.release_iv_face_delete);;
 		et_release = (EditText) findViewById(R.id.release_et_release);
-
+		
+		ll_et_release=(LinearLayout) findViewById(R.id.ll_et_release);
 		rl_releasepic = (RelativeLayout) findViewById(R.id.rl_releasepic);
 		ll_releasecamera = (LinearLayout) findViewById(R.id.ll_releasecamera);
 		ll_releaselocal = (LinearLayout) findViewById(R.id.ll_releaselocal);
 		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
+		ll_release_picandvoice=(LinearLayout) findViewById(R.id.ll_release_picandvoice);
 		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
 
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -119,14 +135,20 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		
 		RelativeLayout.LayoutParams relativeParams1 = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		relativeParams1.leftMargin=(width/2-154)/2;
+		relativeParams1.width=width/2;
 		RelativeLayout.LayoutParams relativeParams2 = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		relativeParams2.leftMargin=(width/2-154)/2+(width/2);
+		relativeParams2.width=width/2;
+		relativeParams2.addRule(RelativeLayout.RIGHT_OF,R.id.ll_releasecamera);
 		ll_releasecamera.setLayoutParams(relativeParams1);
 		ll_releaselocal.setLayoutParams(relativeParams2);
 		
+		RelativeLayout.LayoutParams relativeParams3 = new RelativeLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		//TODO
+		ll_release_picandvoice.setLayoutParams(relativeParams3);
 		
+		relativeParams1.width=width/2;
 		iv_selectpicture.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
 		iv_voice.setOnClickListener(this);
@@ -136,10 +158,53 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		ll_releasecamera.setOnClickListener(this);
 		ll_releaselocal.setOnClickListener(this);
 		rl_releasepic.setOnClickListener(this);
+		release_iv_face_left.setOnClickListener(this);
+		release_iv_face_right.setOnClickListener(this);
+		release_iv_face_delete.setOnClickListener(this);
 	}
 
 	public void initData() {
 		initFace();
+		et_release.addTextChangedListener(new TextWatcher() {
+			String content = "";
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				content = s.toString();
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				int selectionIndex = et_release.getSelectionStart();
+				if (!(s.toString()).equals(content)) {
+					SpannableString spannableString = ExpressionUtil
+							.getExpressionString(getBaseContext(), s.toString(),
+									faceRegx, expressionFaceMap);
+					et_release.setText(spannableString);
+					et_release.setSelection(selectionIndex);
+				}
+			}
+		});
+		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
+			@Override
+			public void onPageSelected(int arg0) {
+				chat_vPager_now = arg0;
+			}
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+			}
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+
+			}
+		});
 	}
 
 	public void initFace() {
@@ -204,7 +269,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						.open("images/" + faceNameList.get(i).get(0))));
 				iv.setLayoutParams(lp);
 				if (i == 0) {
-					// iv.setBackgroundColor(Color.RED);
 				}
 				iv.setTag(i);
 				ll_facemenu.addView(iv);
@@ -220,11 +284,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					@Override
 					public void onClick(View v) {
 						int position = (Integer) v.getTag();
-						// faceMenuShowList.get(chat_vPager_now)
-						// .setBackgroundColor(Color.WHITE);
 						chat_vPager_now = position;
-						// faceMenuShowList.get(chat_vPager_now)
-						// .setBackgroundColor(Color.RED);
 						chat_vPager.setCurrentItem(chat_vPager_now);
 					}
 				});
@@ -246,26 +306,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				chat_base_gv.setAdapter(new myGridAdapter(faceNameList.get(i)));
 				mListViews.add(chat_base_gv);
 				chat_vPager.setAdapter(new myPageAdapter(mListViews));
-				chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
-					
-					@Override
-					public void onPageSelected(int arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void onPageScrolled(int arg0, float arg1, int arg2) {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void onPageScrollStateChanged(int arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-				});
 			}
 		}
 		LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(100,
@@ -318,8 +358,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			break;
 		case R.id.release_et_release:
 			if (!isEditText) {
-				if (faceVisible) {
+				if (faceVisible) { 
 					rl_face.setVisibility(View.GONE);
+					RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+							LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+					layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+					ll_navigation.setLayoutParams(layoutParams);
+					LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
+							LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+					et_release.setLayoutParams(layoutParams2);
 					faceVisible = false;
 				}
 				isEditText = true;
@@ -334,7 +381,115 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		case R.id.rl_releasepic:
 			rl_releasepic.setVisibility(View.GONE);
 			et_release.setVisibility(View.VISIBLE);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			ll_navigation.setLayoutParams(layoutParams);
 			ll_navigation.setVisibility(View.VISIBLE);
+			break;
+		case R.id.release_iv_face_left:
+			int start1 = et_release.getSelectionStart();
+			String content1 = et_release.getText().toString();
+			if (start1 - 1 < 0)
+				return;
+			String faceEnd1 = content1.substring(start1 - 1, start1);
+			if ("]".equals(faceEnd1) || ">".equals(faceEnd1)) {
+				String str = content1.substring(0, start1);
+				int index = "]".equals(faceEnd1) ? str.lastIndexOf("[")
+						: str.lastIndexOf("<");
+				if (index != -1) {
+					String faceStr = content1.substring(index, start1);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						et_release.setSelection(start1
+								- faceStr.length());
+					} else {
+						if (start1 - 1 >= 0) {
+							et_release.setSelection(start1 - 1);
+						}
+					}
+				}
+			} else {
+				if (start1 - 1 >= 0) {
+					et_release.setSelection(start1 - 1);
+				}
+			}
+		
+			break;
+		case R.id.release_iv_face_right:
+
+			int start2 = et_release.getSelectionStart();
+			String content2 = et_release.getText().toString();
+			if (start2 + 1 > content2.length())
+				return;
+			String faceEnd2 = content2.substring(start2, start2 + 1);
+			if ("[".equals(faceEnd2) || "<".equals(faceEnd2)) {
+				String str = content2.substring(start2);
+				int index = "[".equals(faceEnd2) ? str.indexOf("]") : str
+						.indexOf(">");
+				if (index != -1) {
+					String faceStr = content2.substring(start2, index + start2
+							+ 1);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						et_release.setSelection(start2
+								+ faceStr.length());
+					} else {
+						if (start2 + 1 <= content2.length()) {
+							et_release.setSelection(start2 + 1);
+						}
+					}
+				}
+			} else {
+				if (start2 + 1 <= content2.length()) {
+					et_release.setSelection(start2 + 1);
+				}
+			}
+		
+			break;
+		case R.id.release_iv_face_delete:
+
+			int start = et_release.getSelectionStart();
+			String content = et_release.getText().toString();
+			if (start - 1 < 0)
+				return;
+			String faceEnd = content.substring(start - 1, start);
+			if ("]".equals(faceEnd) || ">".equals(faceEnd)) {
+				String str = content.substring(0, start);
+				int index = "]".equals(faceEnd) ? str.lastIndexOf("[")
+						: str.lastIndexOf("<");
+				if (index != -1) {
+					String faceStr = content.substring(index, start);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						et_release.setText(content.substring(0, start
+								- faceStr.length())
+								+ content.substring(start));
+						et_release.setSelection(start
+								- faceStr.length());
+					} else {
+						if (start - 1 >= 0) {
+							et_release.setText(content.substring(0,
+									start - 1) + content.substring(start));
+							et_release.setSelection(start - 1);
+						}
+					}
+				}
+			} else {
+				if (start - 1 >= 0) {
+					et_release.setText(content
+							.substring(0, start - 1)
+							+ content.substring(start));
+					et_release.setSelection(start - 1);
+				}
+			}
+		
 			break;
 		default:
 			break;
@@ -351,12 +506,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				ll_navigation.clearAnimation();
-				ll_navigation.layout(
-						0,
-						(int) (ll_navigation.getTop() - 240 * density + 0.5f),
-						ll_navigation.getWidth(),
-						(int) (ll_navigation.getBottom() - 240 * density + 0.5f));
-				// rl_face.setVisibility(View.VISIBLE);
+				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				layoutParams.addRule(RelativeLayout.ABOVE,R.id.release_rl_face);
+				ll_navigation.setLayoutParams(layoutParams);
 			}
 
 			@Override
@@ -365,6 +518,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				layoutParams.height=(int) (height-ll_navigation.getHeight()-(240 * density + 0.5f)-40);
+				et_release.setLayoutParams(layoutParams);
 			}
 		});
 		Animation faceanimation = new TranslateAnimation(0, 0,
@@ -383,7 +540,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		navigationanimation.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
+				rl_face.setVisibility(View.GONE);
 				ll_navigation.clearAnimation();
+				RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+				ll_navigation.setLayoutParams(layoutParams1);
+				LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+				et_release.setLayoutParams(layoutParams2);
 			}
 
 			@Override
@@ -397,23 +562,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		Animation faceanimation = new TranslateAnimation(0, 0, 0,
 				240 * density + 0.5f);
 		faceanimation.setDuration(220);
-		faceanimation.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				rl_face.setVisibility(View.GONE);
-			}
-		});
 		rl_face.startAnimation(faceanimation);
 		ll_navigation.startAnimation(navigationanimation);
 		faceVisible = false;
@@ -468,28 +616,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						et_release.getText().insert(
 								et_release.getSelectionStart(),
 								faceNamesList.get(chat_vPager_now)[position]);
+					}else{
+						
 					}
-					// else {
-					// rl_face.setVisibility(View.GONE);
-					// app.fileHandler.getBigFaceImgBASE64(getActivity(),
-					// new BigFaceImgInterface() {
-					//
-					// @Override
-					// public void setParams(
-					// BigFaceImgSettings settings) {
-					// settings.format = ".gif";
-					// settings.assetsPath = "images/";
-					// settings.fileName = "tusiji_"
-					// + (position + 1) + ".gif";
-					// }
-					//
-					// @Override
-					// public void onSuccess(String fileName,
-					// String base64) {
-					// checkImage(fileName, base64);
-					// }
-					// });
-					// }
 				}
 			});
 			return convertView;

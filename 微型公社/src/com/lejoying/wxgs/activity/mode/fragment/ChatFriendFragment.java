@@ -1684,8 +1684,8 @@ public class ChatFriendFragment extends BaseFragment {
 							.add(message);
 					data.lastChatFriends.remove("f" + mNowChatFriend.phone);
 					data.lastChatFriends.add(0, "f" + mNowChatFriend.phone);
-					Log.e("Coolspan", data.lastChatFriends.size()
-							+ "---------------chat length");
+//					Log.e("Coolspan", data.lastChatFriends.size()
+//							+ "---------------chat length");
 					mMainModeManager.mChatMessagesFragment.notifyViews();
 				} else {
 					mNowChatGroup.messages.add(message);
