@@ -28,8 +28,9 @@ public class Data implements Serializable {
 	public Map<String, Friend> groupFriends = new HashMap<String, Friend>();
 	public Map<String, Friend> friends = new HashMap<String, Friend>();
 
-	public Map<String, List<SquareMessage>> squareMessages = new HashMap<String, List<SquareMessage>>();
-	public Map<String, Map<String, List<SquareMessage>>> squareMessagesClassify = new HashMap<String, Map<String, List<SquareMessage>>>();
+	public Map<String, List<String>> squareMessages = new HashMap<String, List<String>>();
+	public Map<String, Map<String, SquareMessage>> squareMessagesMap = new HashMap<String, Map<String, SquareMessage>>();
+	public Map<String, Map<String, List<String>>> squareMessagesClassify = new HashMap<String, Map<String, List<String>>>();
 	public Map<String, String> squareFlags = new HashMap<String, String>();
 
 	// Last messages list

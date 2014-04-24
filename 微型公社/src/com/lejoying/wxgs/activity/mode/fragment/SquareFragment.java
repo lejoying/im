@@ -93,7 +93,9 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 		mSqureMessageView = (ListView) mContentView
 				.findViewById(R.id.squareMessages);
 
-		mSquareMessages = app.data.squareMessages.get(mCurrendSquareID);
+		// mSquareMessages =
+		// app.data.squareMessages.get(mCurrendSquareID);//TODO get square
+		// message
 		mSquareMessages = mSquareMessages != null ? mSquareMessages
 				: new ArrayList<SquareMessage>();
 
@@ -110,7 +112,8 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 
 		@Override
 		public void notifyDataSetChanged() {
-			mSquareMessages = app.data.squareMessages.get(mCurrendSquareID);
+			// mSquareMessages =
+			// app.data.squareMessages.get(mCurrendSquareID);//TODO get square
 			mSquareMessages = mSquareMessages != null ? mSquareMessages
 					: new ArrayList<SquareMessage>();
 
@@ -163,7 +166,8 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 				}
 			});
 			messageHolder.message
-					.setText(mSquareMessages.get(position).contentType);// TODO content
+					.setText(mSquareMessages.get(position).contentType);// TODO
+																		// content
 
 			return convertView;
 		}

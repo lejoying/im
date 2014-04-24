@@ -405,10 +405,16 @@ public class JSONParser {
 			for (int i = 0; i < contents.length(); i++) {
 				// Object content = contents.get(i);
 				JSONObject content = new JSONObject(contents.getString(i));
-				squareMessage.content
-						.add(SquareMessage.obtainContent(
-								content.getString("type"),
-								content.getString("details")));
+				if (content.getString("type").equals("image")) {
+					squareMessage.content
+							.addImage(content.getString("details"));
+				} else if (content.getString("type").equals("voice")) {
+					squareMessage.content
+							.addImage(content.getString("details"));
+				} else {
+					squareMessage.content
+							.addImage(content.getString("details"));
+				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -267,33 +267,43 @@ public class PushService extends Service {
 										.get(mCurrentConnectionGid) == null) {
 									data.squareMessages.put(
 											mCurrentConnectionGid,
-											new ArrayList<SquareMessage>());
+											new ArrayList<String>());
+									data.squareMessagesClassify
+											.put(mCurrentConnectionGid,
+													new HashMap<String, List<String>>());
+									data.squareMessagesMap
+											.put(mCurrentConnectionGid,
+													new HashMap<String, SquareMessage>());
 								}
 
 								data.squareFlags.put(mCurrentConnectionGid,
 										jData.getString("flag"));
 
-								List<SquareMessage> squareMessages = data.squareMessages
+								List<String> squareMessages = data.squareMessages
 										.get(mCurrentConnectionGid);
-								Map<String, List<SquareMessage>> squareMessagesClassify = data.squareMessagesClassify
+								Map<String, List<String>> squareMessagesClassify = data.squareMessagesClassify
+										.get(mCurrentConnectionGid);
+								Map<String, SquareMessage> squareMessagesMap = data.squareMessagesMap
 										.get(mCurrentConnectionGid);
 								List<SquareMessage> newMessages = JSONParser
 										.generateSquareMessagesFromJSON(jData
 												.getJSONArray("messages"));
 								for (SquareMessage message : newMessages) {
 									if (!squareMessages.contains(message)) {
-										squareMessages.add(message);
+										squareMessages.add(message.gmid);
+										squareMessagesMap.put(message.gmid,
+												message);
 									}
 									if (squareMessagesClassify
 											.get(message.messageType) == null) {
-										List<SquareMessage> list = new ArrayList<SquareMessage>();
-										list.add(message);
+										List<String> list = new ArrayList<String>();
+										list.add(message.gmid);
 										squareMessagesClassify.put(
 												message.messageType, list);
 									} else {
 										squareMessagesClassify.get(
 												message.messageType).add(
-												message);
+												message.gmid);
 									}
 								}
 							} catch (JSONException e) {
