@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,31 +10,30 @@ import org.json.JSONObject;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
-import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.SqureContentView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
-import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.service.PushService;
 
-public class SquareFragment extends BaseFragment implements OnClickListener {
+public class SquareFragment extends BaseFragment {
 
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
@@ -45,7 +43,7 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 
 	ListView mSqureMessageView;
 
-	public SquareMessageAdapter mAdapter;
+	SqureContentView stv_squrecontentview;
 
 	EditText mViewBroadcast;
 	View mButtonSend;
@@ -79,7 +77,6 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		mSqureMessageView.setSelection(mAdapter.getCount() - 1);
 		super.onActivityCreated(savedInstanceState);
 	}
 
@@ -88,89 +85,17 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 			Bundle savedInstanceState) {
 		mInflater = inflater;
 		mContentView = inflater.inflate(R.layout.fragment_square, null);
-		mViewBroadcast = (EditText) mContentView
-				.findViewById(R.id.square_broadcast);
-		mSqureMessageView = (ListView) mContentView
-				.findViewById(R.id.squareMessages);
-
-		// mSquareMessages =
-		// app.data.squareMessages.get(mCurrendSquareID);//TODO get square
-		// message
-		mSquareMessages = mSquareMessages != null ? mSquareMessages
-				: new ArrayList<SquareMessage>();
-
-		mAdapter = new SquareMessageAdapter();
-
-		mSqureMessageView.setAdapter(mAdapter);
-
-		mButtonSend = mContentView.findViewById(R.id.button_send);
-		mButtonSend.setOnClickListener(this);
+		stv_squrecontentview = (SqureContentView) mContentView
+				.findViewById(R.id.stv_squrecontentview);
+		List<String> messages = app.data.squareMessages.get(mCurrentSquareID);
+		Map<String, SquareMessage> map = app.data.squareMessagesMap
+				.get(mCurrentSquareID);
+		stv_squrecontentview.setSquareMessageList(messages, map);
 		return mContentView;
 	}
 
-	public class SquareMessageAdapter extends BaseAdapter {
-
-		@Override
-		public void notifyDataSetChanged() {
-			// mSquareMessages =
-			// app.data.squareMessages.get(mCurrendSquareID);//TODO get square
-			mSquareMessages = mSquareMessages != null ? mSquareMessages
-					: new ArrayList<SquareMessage>();
-
-			super.notifyDataSetChanged();
-			mSqureMessageView.setSelection(mAdapter.getCount() - 1);
-		}
-
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return mSquareMessages.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public View getView(final int position, View convertView,
-				ViewGroup parent) {
-			MessageHolder messageHolder;
-			if (convertView == null) {
-				convertView = mInflater.inflate(
-						R.layout.fragment_square_message_item, null);
-				messageHolder = new MessageHolder();
-				messageHolder.nickName = (TextView) convertView
-						.findViewById(R.id.nickName);
-				messageHolder.message = (TextView) convertView
-						.findViewById(R.id.message);
-				convertView.setTag(messageHolder);
-			} else {
-				messageHolder = (MessageHolder) convertView.getTag();
-			}
-
-			messageHolder.nickName
-					.setText(mSquareMessages.get(position).nickName);
-
-			messageHolder.nickName.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					search(mSquareMessages.get(position).phone);
-				}
-			});
-			messageHolder.message
-					.setText(mSquareMessages.get(position).contentType);// TODO
-																		// content
-
-			return convertView;
-		}
+	public void notifyViews() {
+		stv_squrecontentview.notifyDataSetChanged();
 	}
 
 	public void search(final String phone) {
@@ -232,45 +157,6 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 	class MessageHolder {
 		TextView nickName;
 		TextView message;
-	}
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.button_send:
-			final String broadcast = mViewBroadcast.getText().toString();
-			if (broadcast == null || broadcast.equals("")) {
-				Alert.showMessage("广播内容不能为空");
-				return;
-			}
-			mViewBroadcast.setText("");
-			hideSoftInput();
-			app.networkHandler.connection(new CommonNetConnection() {
-
-				@Override
-				protected void settings(Settings settings) {
-					settings.url = API.DOMAIN + API.SQUARE_SENDSQUAREMESSAGE;
-					Map<String, String> params = new HashMap<String, String>();
-					params.put("phone", app.data.user.phone);
-					params.put("accessKey", app.data.user.accessKey);
-					params.put("nickName", app.data.user.nickName);
-					params.put("gid", mCurrentSquareID);
-					params.put("message",
-							"{\"contentType\":\"text\",\"content\":\""
-									+ broadcast + "\"}");
-					settings.params = params;
-				}
-
-				@Override
-				public void success(JSONObject jData) {
-
-				}
-			});
-			mSqureMessageView.setSelection(mAdapter.getCount() - 1);
-			break;
-		default:
-			break;
-		}
 	}
 
 }

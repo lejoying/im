@@ -201,116 +201,13 @@
         </HorizontalScrollView>
     </LinearLayout>
 
-    <RelativeLayout
+    <com.lejoying.wxgs.activity.view.SqureContentView
+        android:id="@+id/stv_squrecontentview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/linearLayout1"
         android:layout_margin="10dp"
         android:background="@drawable/card_background_normal" >
-
-        <TextView
-            android:id="@+id/tv_square_online"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|left"
-            android:clickable="true"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:singleLine="true"
-            android:text="广场(600人在线)"
-            android:textColor="#fff"
-            android:textSize="18sp" >
-        </TextView>
-
-        <TextView
-            android:id="@+id/tv_nowsquare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/tv_square_online"
-            android:clickable="true"
-            android:gravity="right|center"
-            android:paddingBottom="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:singleLine="true"
-            android:text="亦庄站(游客)"
-            android:textColor="#fff"
-            android:textSize="18sp" >
-        </TextView>
-
-        <ImageView
-            android:id="@+id/iv_line"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/tv_square_online"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="2dp"
-            android:background="#9fff"
-            tools:ignore="ContentDescription" />
-
-        <ListView
-            android:id="@+id/squareMessages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/bottom"
-            android:layout_below="@+id/iv_line"
-            android:cacheColorHint="#0000"
-            android:divider="#0000"
-            android:dividerHeight="5dp"
-            android:listSelector="#0000"
-            android:padding="10dp" />
-
-        <RelativeLayout
-            android:id="@+id/bottom"
-            android:layout_width="wrap_content"
-            android:layout_height="165dp"
-            android:layout_alignParentBottom="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" >
-
-            <ImageView
-                android:id="@+id/iv_line2"
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:background="#9fff"
-                tools:ignore="ContentDescription" />
-
-            <EditText
-                android:id="@+id/square_broadcast"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:layout_below="@+id/iv_line2"
-                android:layout_marginTop="10dp"
-                android:background="#0000"
-                android:ems="10"
-                android:gravity="top|left"
-                android:hint="可在此输入广播内容..."
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:textColor="#fff"
-                android:textColorHint="#ddd"
-                android:textCursorDrawable="@drawable/cursor"
-                tools:ignore="TextFields" >
-            </EditText>
-
-            <Button
-                android:id="@+id/button_send"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_alignLeft="@+id/square_broadcast"
-                android:layout_alignRight="@+id/square_broadcast"
-                android:layout_below="@+id/square_broadcast"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/button_background"
-                android:text="发布"
-                android:textColor="#fff"
-                android:textSize="19sp" />
-        </RelativeLayout>
-    </RelativeLayout>
+    </com.lejoying.wxgs.activity.view.SqureContentView>
 
 </RelativeLayout>

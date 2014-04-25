@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -17,12 +19,18 @@ import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Movie;
+import android.net.Uri;
 import android.util.Base64;
+import android.util.Log;
 
+import com.aliyun.android.oss.model.OSSObject;
+import com.aliyun.android.oss.task.GetObjectTask;
+import com.aliyun.android.oss.task.PutObjectTask;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
@@ -30,10 +38,14 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.StreamParser;
+import com.lejoying.wxgs.utils.SHA1;
 
 @SuppressLint("DefaultLocale")
-public class FileHandler {
+public class FilesHandler {
 	MainApplication app;
+	String ACCESSKEYID = "u39NioN3ulOE09Ux";
+	String ACCESSKEYSECRET = "9SO8xw6rsiYBF1HwLkHPgt3d48a3Aj";
+	String BUCKETNAME = "wxgs";
 
 	public void initialize(MainApplication app) {
 		this.app = app;
@@ -139,7 +151,7 @@ public class FileHandler {
 					} else {
 						if (getFromWebResults.get(imageFileName) == null) {
 							getFromWebResults.put(imageFileName,
-									new ArrayList<FileHandler.FileResult>());
+									new ArrayList<FilesHandler.FileResult>());
 						}
 						getFromWebResults.get(imageFileName).add(fileResult);
 						if (getImageFromWebStatus.get(imageFileName) == null
@@ -151,7 +163,7 @@ public class FileHandler {
 				} else {
 					if (getFromWebResults.get(imageFileName) == null) {
 						getFromWebResults.put(imageFileName,
-								new ArrayList<FileHandler.FileResult>());
+								new ArrayList<FilesHandler.FileResult>());
 					}
 					getFromWebResults.get(imageFileName).add(fileResult);
 					if (getImageFromWebStatus.get(imageFileName) == null
@@ -176,15 +188,18 @@ public class FileHandler {
 			folder = app.sdcardHeadImageFolder;
 		}
 		final File f = folder;
-		app.networkHandler.connection(new NetConnection() {
+		new Thread(new Runnable() {
 
 			@Override
-			protected void success(InputStream is,
-					HttpURLConnection httpURLConnection) {
+			public void run() {
 				try {
-					StreamParser.parseToFile(is, new FileOutputStream(new File(
-							f, imageFileName)));
-					httpURLConnection.disconnect();
+					GetObjectTask getObjectTask = new GetObjectTask(BUCKETNAME,
+							" images/" + imageFileName);
+					getObjectTask.initKey(ACCESSKEYID, ACCESSKEYSECRET);
+					OSSObject result = getObjectTask.getResult();
+					byte[] bytes = result.getData();
+					StreamParser.parseToFile(bytes, new FileOutputStream(
+							new File(f, imageFileName)));
 					Bitmap bitmap = BitmapFactory.decodeFile(new File(f,
 							imageFileName).getAbsolutePath());
 					if (type == TYPE_IMAGE_HEAD) {
@@ -192,17 +207,16 @@ public class FileHandler {
 								Color.WHITE);
 					}
 					bitmaps.put(imageFileName, bitmap);
-
-					for (final FileResult result : getFromWebResults
+					for (final FileResult resultq : getFromWebResults
 							.get(imageFileName)) {
 						app.UIHandler.post(new Runnable() {
 							@Override
 							public void run() {
-								result.onResult(FROM_WEB);
+								resultq.onResult(FROM_WEB);
 							}
 						});
 					}
-				} catch (FileNotFoundException e) {
+				} catch (Exception e) {
 					if (getImageFromWebStatus.get(imageFileName).equals(
 							"failed")) {
 						getImageFromWebStatus.put(imageFileName, "error");
@@ -210,26 +224,10 @@ public class FileHandler {
 					getImageFromWebStatus.put(imageFileName, "failed");
 				}
 			}
-
-			@Override
-			protected void failed(int failedType, int responseCode) {
-				if (getImageFromWebStatus.get(imageFileName).equals("failed")) {
-					getImageFromWebStatus.put(imageFileName, "error");
-				}
-				getImageFromWebStatus.put(imageFileName, "failed");
-				super.failed(failedType, responseCode);
-			}
-
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN_IMAGE + imageFileName;
-				settings.method = GET;
-			}
-		});
-
+		}).start();
 	}
 
-	public void saveBitmap(final com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface saveBitmapInterface) {
+	public void saveBitmap(final SaveBitmapInterface saveBitmapInterface) {
 		final SaveSettings settings = new SaveSettings();
 		saveBitmapInterface.setParams(settings);
 		final Bitmap source = settings.source;
@@ -250,6 +248,12 @@ public class FileHandler {
 								: ".jpg";
 						File localFile = new File(settings.folder, sha1
 								+ format);
+						PutObjectTask task = new PutObjectTask(BUCKETNAME,
+								"images/" + sha1 + format, "image/png");
+						task.initKey(ACCESSKEYID, ACCESSKEYSECRET);
+						task.setData(imageByteArray);
+						String result = task.getResult();
+						Log.e("Coolspan", result + "-------upload image file");
 						if (!localFile.exists()) {
 							FileOutputStream fileOutputStream = null;
 							try {
@@ -314,31 +318,15 @@ public class FileHandler {
 			new Thread() {
 				@SuppressLint("DefaultLocale")
 				public void run() {
-					try {
-						FileInputStream fis = null;
-						fis = new FileInputStream(voiceFile);
-						ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-						byte[] buffer = new byte[1024];
-						int len = 0;
-						while ((len = fis.read(buffer)) != -1) {
-							bos.write(buffer, 0, len);
-						}
-						bos.flush();
-						byte[] data = bos.toByteArray();
-						bos.close();
-						fis.close();
-						String base64 = Base64.encodeToString(data,
-								Base64.DEFAULT);
-						base64 = base64.trim();
-						String sha1 = app.mSHA1.getDigestOfString(base64
-								.getBytes());
-						getVoiceInterface.onSuccess(
-								(sha1 + settings.format).toLowerCase(), base64,
-								null);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					Md5AndSha1 md5AndSha1 = getFileMd5AndSha1(voiceFile);
+					String base64 = Base64.encodeToString(md5AndSha1.data,
+							Base64.DEFAULT);
+					base64 = base64.trim();
+					String sha1 = app.mSHA1
+							.getDigestOfString(base64.getBytes());
+					getVoiceInterface.onSuccess(
+							(sha1 + settings.format).toLowerCase(), base64,
+							null);
 				};
 			}.start();
 		}
@@ -352,40 +340,25 @@ public class FileHandler {
 		final File folder = settings.folder;
 		final String voiceFileName = (settings.fileName).toLowerCase();
 		if (!voiceFile.exists()) {
-			new Thread() {
+			new Thread(new Runnable() {
+
 				@Override
 				public void run() {
-					app.networkHandler.connection(new NetConnection() {
+					GetObjectTask getObjectTask = new GetObjectTask(BUCKETNAME,
+							"voices/" + voiceFileName);
+					getObjectTask.initKey(ACCESSKEYID, ACCESSKEYSECRET);
+					OSSObject result = getObjectTask.getResult();
+					byte[] bytes = result.getData();
+					try {
+						StreamParser.parseToFile(bytes, new FileOutputStream(
+								new File(folder, voiceFileName)));
+						saveVoiceInterface.onSuccess(null, null, true);
+					} catch (FileNotFoundException e) {
+						saveVoiceInterface.onSuccess(null, null, false);
+					}
 
-						@Override
-						protected void success(InputStream is,
-								HttpURLConnection httpURLConnection) {
-							try {
-								StreamParser.parseToFile(is,
-										new FileOutputStream(new File(folder,
-												voiceFileName)));
-								httpURLConnection.disconnect();
-								saveVoiceInterface.onSuccess(null, null, true);
-							} catch (FileNotFoundException e) {
-								saveVoiceInterface.onSuccess(null, null, false);
-								e.printStackTrace();
-							}
-						}
-
-						@Override
-						protected void failed(int failedType, int responseCode) {
-							saveVoiceInterface.onSuccess(null, null, false);
-							super.failed(failedType, responseCode);
-						}
-
-						@Override
-						protected void settings(Settings settings) {
-							settings.url = API.DOMAIN_IMAGE + voiceFileName;
-							settings.method = GET;
-						}
-					});
 				}
-			}.start();
+			}).start();
 		} else {
 			saveVoiceInterface.onSuccess(null, null, true);
 		}
@@ -538,6 +511,28 @@ public class FileHandler {
 		}
 	}
 
+	public Md5AndSha1 getFileSHA1(File folder, String fileName) {
+		File file = new File(folder, fileName);
+		Md5AndSha1 md5AndSha1 = null;
+		if (file.exists()) {
+			md5AndSha1 = getFileMd5AndSha1(file);
+		}
+		return md5AndSha1;
+	}
+
+	public void uploadImage(Cursor cursor, Md5AndSha1 md5AndSha1) {
+		/*
+		 * File file = new File(path); if (file.exists()) { String format =
+		 * path.substring(path.lastIndexOf(".")); PutObjectTask task = new
+		 * PutObjectTask(BUCKETNAME, "images/" + md5AndSha1.sha1 + format,
+		 * "image/png"); task.initKey(ACCESSKEYID, ACCESSKEYSECRET);
+		 * task.setData(md5AndSha1.data); String result =
+		 * task.getResult().toLowerCase();
+		 * 
+		 * }
+		 */
+	}
+
 	private byte[] streamToBytes(InputStream is) {
 		byte[] bytes = null;
 		try {
@@ -556,5 +551,53 @@ public class FileHandler {
 	public class GifMovie {
 		public Movie movie;
 		public byte[] bytes;
+	}
+
+	static class Md5AndSha1 {
+		public String md5 = "";
+		public String sha1 = "";
+		public byte[] data = null;
+
+		Md5AndSha1(String md5, String sha1, byte[] data) {
+			this.md5 = md5;
+			this.sha1 = sha1;
+			this.data = data;
+		}
+	}
+
+	@SuppressLint("DefaultLocale")
+	public static Md5AndSha1 getFileMd5AndSha1(File file) {
+		if (!file.isFile()) {
+			return null;
+		}
+		MessageDigest digest = null;
+		FileInputStream in = null;
+		byte buffer[] = new byte[1024];
+		int len;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		byte[] data;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+			in = new FileInputStream(file);
+			while ((len = in.read(buffer, 0, 1024)) != -1) {
+				digest.update(buffer, 0, len);
+				bos.write(buffer, 0, len);
+			}
+			bos.flush();
+			data = bos.toByteArray();
+			bos.close();
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+		base64 = base64.trim();
+		String sha1 = new SHA1().getDigestOfString(base64.getBytes())
+				.toLowerCase();
+		BigInteger bigInt = new BigInteger(1, digest.digest());
+		String md5 = bigInt.toString(16).toLowerCase();
+		Md5AndSha1 md5AndSha1 = new Md5AndSha1(md5, sha1, data);
+		return md5AndSha1;
 	}
 }

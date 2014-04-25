@@ -20,6 +20,7 @@ import com.lejoying.wxgs.app.handler.DataHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.EventHandler;
 import com.lejoying.wxgs.app.handler.FileHandler;
+import com.lejoying.wxgs.app.handler.FilesHandler;
 import com.lejoying.wxgs.app.handler.LocationHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.parser.StreamParser;
@@ -38,6 +39,7 @@ public class MainApplication extends Application {
 	public DataHandler dataHandler;
 	public NetworkHandler networkHandler;
 	public FileHandler fileHandler;
+	public FilesHandler filesHandler;
 	public EventHandler eventHandler;
 	public LocationHandler locationHandler;
 
@@ -50,8 +52,7 @@ public class MainApplication extends Application {
 	public File sdcardImageFolder;
 	public File sdcardVoiceFolder;
 	public File sdcardHeadImageFolder;
-	
-	
+
 	public String sdcardStatus = "none";// "exist"
 	public String networkStatus = "none";// "WIFI"|"mobile"
 
@@ -77,6 +78,8 @@ public class MainApplication extends Application {
 		networkHandler = new NetworkHandler(5);
 		fileHandler = new FileHandler();
 		fileHandler.initialize(this);
+		filesHandler = new FilesHandler();
+		filesHandler.initialize(this);
 		eventHandler = new EventHandler();
 		eventHandler.initialize(this);
 		locationHandler = new LocationHandler();
@@ -153,7 +156,7 @@ public class MainApplication extends Application {
 			if (!sdcardHeadImageFolder.exists()) {
 				sdcardHeadImageFolder.mkdir();
 			}
-			
+
 		}
 	}
 

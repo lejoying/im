@@ -15,7 +15,7 @@ public class SquareMessage implements Serializable {
 	public String phone = "";
 	public String nickName = "";
 	public String head = "";
-	public String cover = "voice";// voice|| "imageName"
+	public String cover = "none";// "none"|| "voice"|| "imageName"
 	public long time;
 	public ArrayList<String> praiseusers = new ArrayList<String>();
 	public ArrayList<String> comments = new ArrayList<String>();
