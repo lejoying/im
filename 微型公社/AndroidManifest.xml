@@ -41,11 +41,16 @@
         <activity
             android:name="com.lejoying.wxgs.activity.ReleaseActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" 
-            android:windowSoftInputMode="adjustPan">
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle" >
+        </activity>
+          <activity
+            android:name="com.lejoying.wxgs.activity.SendVoiceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>
@@ -70,7 +75,7 @@
             </intent-filter>
         </receiver>
 
-        
+      
     </application>
 
 </manifest>

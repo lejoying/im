@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SendVoiceActivity" >
+
+    <RelativeLayout
+        android:id="@+id/sendvoice_rl_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="#2000"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/sendvoice_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/holding"
+            android:textColor="#fff" />
+
+        <TextView
+            android:id="@+id/sendvoice_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="开始录音"
+            android:textSize="20sp"
+            android:textColor="#fff" />
+
+        <ImageView
+            android:id="@+id/sendvoice_iv_commit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/right"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/sendvoice_iv_del"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/wrong"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+</RelativeLayout>

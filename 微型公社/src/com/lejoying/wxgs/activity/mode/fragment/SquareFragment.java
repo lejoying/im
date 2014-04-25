@@ -52,7 +52,7 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 
 	List<SquareMessage> mSquareMessages;
 
-	public String mCurrendSquareID = "98";
+	public String mCurrentSquareID = "98";
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -62,9 +62,9 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		getActivity().getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		String flag = app.data.squareFlags.get(mCurrendSquareID);
+		String flag = app.data.squareFlags.get(mCurrentSquareID);
 		flag = flag == null ? "0" : flag;
-		PushService.startSquareLongPull(getActivity(), mCurrendSquareID, flag);
+		PushService.startSquareLongPull(getActivity(), mCurrentSquareID, flag);
 
 		super.onCreate(savedInstanceState);
 	}
@@ -254,7 +254,7 @@ public class SquareFragment extends BaseFragment implements OnClickListener {
 					params.put("phone", app.data.user.phone);
 					params.put("accessKey", app.data.user.accessKey);
 					params.put("nickName", app.data.user.nickName);
-					params.put("gid", mCurrendSquareID);
+					params.put("gid", mCurrentSquareID);
 					params.put("message",
 							"{\"contentType\":\"text\",\"content\":\""
 									+ broadcast + "\"}");

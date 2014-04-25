@@ -8,12 +8,21 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.view.BackgroundView;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -46,10 +55,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	BackgroundView mBackground;
 	MainApplication app = MainApplication.getMainApplication();
 
-	int height, width, dip,picwidth;
+	int height, width, dip, picwidth;
 	int chat_vPager_now = 0;
 	float density;
 	boolean isEditText = true, faceVisible = false;
+	String contentType = "vit";
+	List<String> voice;
+	List<String> image;
 	List<String[]> faceNamesList;
 	List<List<String>> faceNameList;
 	List<ImageView> faceMenuShowList;
@@ -65,19 +77,16 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	LinearLayout ll_release_picandvoice;
 	ViewPager chat_vPager;
 	LayoutInflater mInflater;
-	
-	
+
 	EditText et_release;
 	View release_iv_face_left;
 	View release_iv_face_right;
 	View release_iv_face_delete;
-	
+
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		
-		super.onWindowFocusChanged(hasFocus);
-	}
+
+	JSONArray jsonArray = new JSONArray();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_post);
@@ -93,10 +102,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		initData();
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	protected void onResume() {
 		CircleMenu.hide();
 		super.onResume();
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
 	}
 
 	public void initEvent() {
@@ -107,18 +121,20 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		TextView tv_cancel = (TextView) findViewById(R.id.release_tv_cancel);
 		TextView tv_commit = (TextView) findViewById(R.id.release_tv_commit);
 
-		release_iv_face_left=findViewById(R.id.release_iv_face_left);
-		release_iv_face_right=findViewById(R.id.release_iv_face_right);;
-		release_iv_face_delete=findViewById(R.id.release_iv_face_delete);;
+		release_iv_face_left = findViewById(R.id.release_iv_face_left);
+		release_iv_face_right = findViewById(R.id.release_iv_face_right);
+		;
+		release_iv_face_delete = findViewById(R.id.release_iv_face_delete);
+		;
 		et_release = (EditText) findViewById(R.id.release_et_release);
-		
-		ll_et_release=(LinearLayout) findViewById(R.id.ll_et_release);
+
+		ll_et_release = (LinearLayout) findViewById(R.id.ll_et_release);
 		rl_releasepic = (RelativeLayout) findViewById(R.id.rl_releasepic);
 		ll_releasecamera = (LinearLayout) findViewById(R.id.ll_releasecamera);
 		ll_releaselocal = (LinearLayout) findViewById(R.id.ll_releaselocal);
 		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
-		ll_release_picandvoice=(LinearLayout) findViewById(R.id.ll_release_picandvoice);
+		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
 
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -132,23 +148,23 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		iv_voice.setLayoutParams(layoutParams);
 		tv_cancel.setLayoutParams(layoutParams);
 		tv_commit.setLayoutParams(layoutParams);
-		
+
 		RelativeLayout.LayoutParams relativeParams1 = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		relativeParams1.width=width/2;
+		relativeParams1.width = width / 2;
 		RelativeLayout.LayoutParams relativeParams2 = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		relativeParams2.width=width/2;
-		relativeParams2.addRule(RelativeLayout.RIGHT_OF,R.id.ll_releasecamera);
+		relativeParams2.width = width / 2;
+		relativeParams2.addRule(RelativeLayout.RIGHT_OF, R.id.ll_releasecamera);
 		ll_releasecamera.setLayoutParams(relativeParams1);
 		ll_releaselocal.setLayoutParams(relativeParams2);
-		
+
 		RelativeLayout.LayoutParams relativeParams3 = new RelativeLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		//TODO
+		// TODO
 		ll_release_picandvoice.setLayoutParams(relativeParams3);
-		
-		relativeParams1.width=width/2;
+
+		relativeParams1.width = width / 2;
 		iv_selectpicture.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
 		iv_voice.setOnClickListener(this);
@@ -171,7 +187,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				
+
 			}
 
 			@Override
@@ -185,8 +201,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				int selectionIndex = et_release.getSelectionStart();
 				if (!(s.toString()).equals(content)) {
 					SpannableString spannableString = ExpressionUtil
-							.getExpressionString(getBaseContext(), s.toString(),
-									faceRegx, expressionFaceMap);
+							.getExpressionString(getBaseContext(),
+									s.toString(), faceRegx, expressionFaceMap);
 					et_release.setText(spannableString);
 					et_release.setSelection(selectionIndex);
 				}
@@ -197,9 +213,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void onPageSelected(int arg0) {
 				chat_vPager_now = arg0;
 			}
+
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
 			}
+
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
 
@@ -332,9 +350,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.release_iv_selectpicture:
-			if(faceVisible){
+			if (faceVisible) {
 				rl_face.setVisibility(View.GONE);
-				faceVisible=false;
+				faceVisible = false;
 			}
 			rl_releasepic.setVisibility(View.VISIBLE);
 			et_release.setVisibility(View.GONE);
@@ -348,24 +366,27 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 			break;
 		case R.id.release_iv_voice:
-
+			startActivity(new Intent(ReleaseActivity.this,
+					SendVoiceActivity.class));
 			break;
 		case R.id.release_tv_cancel:
 			finish();
 			break;
 		case R.id.release_tv_commit:
-
+			Send();
 			break;
 		case R.id.release_et_release:
 			if (!isEditText) {
-				if (faceVisible) { 
+				if (faceVisible) {
 					rl_face.setVisibility(View.GONE);
 					RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-							LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+							LayoutParams.MATCH_PARENT,
+							LayoutParams.WRAP_CONTENT);
 					layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 					ll_navigation.setLayoutParams(layoutParams);
 					LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
-							LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+							LayoutParams.MATCH_PARENT,
+							LayoutParams.MATCH_PARENT);
 					et_release.setLayoutParams(layoutParams2);
 					faceVisible = false;
 				}
@@ -373,10 +394,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 			break;
 		case R.id.ll_releasecamera:
-			System.out.println("camera");
+			addImageFromCamera();
 			break;
 		case R.id.ll_releaselocal:
-			System.out.println("local");
+			addImageFromLocal();
 			break;
 		case R.id.rl_releasepic:
 			rl_releasepic.setVisibility(View.GONE);
@@ -395,16 +416,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			String faceEnd1 = content1.substring(start1 - 1, start1);
 			if ("]".equals(faceEnd1) || ">".equals(faceEnd1)) {
 				String str = content1.substring(0, start1);
-				int index = "]".equals(faceEnd1) ? str.lastIndexOf("[")
-						: str.lastIndexOf("<");
+				int index = "]".equals(faceEnd1) ? str.lastIndexOf("[") : str
+						.lastIndexOf("<");
 				if (index != -1) {
 					String faceStr = content1.substring(index, start1);
 					Pattern patten = Pattern.compile(faceRegx,
 							Pattern.CASE_INSENSITIVE);
 					Matcher matcher = patten.matcher(faceStr);
 					if (matcher.find()) {
-						et_release.setSelection(start1
-								- faceStr.length());
+						et_release.setSelection(start1 - faceStr.length());
 					} else {
 						if (start1 - 1 >= 0) {
 							et_release.setSelection(start1 - 1);
@@ -416,7 +436,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					et_release.setSelection(start1 - 1);
 				}
 			}
-		
+
 			break;
 		case R.id.release_iv_face_right:
 
@@ -436,8 +456,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 							Pattern.CASE_INSENSITIVE);
 					Matcher matcher = patten.matcher(faceStr);
 					if (matcher.find()) {
-						et_release.setSelection(start2
-								+ faceStr.length());
+						et_release.setSelection(start2 + faceStr.length());
 					} else {
 						if (start2 + 1 <= content2.length()) {
 							et_release.setSelection(start2 + 1);
@@ -449,7 +468,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					et_release.setSelection(start2 + 1);
 				}
 			}
-		
+
 			break;
 		case R.id.release_iv_face_delete:
 
@@ -460,36 +479,34 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			String faceEnd = content.substring(start - 1, start);
 			if ("]".equals(faceEnd) || ">".equals(faceEnd)) {
 				String str = content.substring(0, start);
-				int index = "]".equals(faceEnd) ? str.lastIndexOf("[")
-						: str.lastIndexOf("<");
+				int index = "]".equals(faceEnd) ? str.lastIndexOf("[") : str
+						.lastIndexOf("<");
 				if (index != -1) {
 					String faceStr = content.substring(index, start);
 					Pattern patten = Pattern.compile(faceRegx,
 							Pattern.CASE_INSENSITIVE);
 					Matcher matcher = patten.matcher(faceStr);
 					if (matcher.find()) {
-						et_release.setText(content.substring(0, start
-								- faceStr.length())
+						et_release.setText(content.substring(0,
+								start - faceStr.length())
 								+ content.substring(start));
-						et_release.setSelection(start
-								- faceStr.length());
+						et_release.setSelection(start - faceStr.length());
 					} else {
 						if (start - 1 >= 0) {
-							et_release.setText(content.substring(0,
-									start - 1) + content.substring(start));
+							et_release.setText(content.substring(0, start - 1)
+									+ content.substring(start));
 							et_release.setSelection(start - 1);
 						}
 					}
 				}
 			} else {
 				if (start - 1 >= 0) {
-					et_release.setText(content
-							.substring(0, start - 1)
+					et_release.setText(content.substring(0, start - 1)
 							+ content.substring(start));
 					et_release.setSelection(start - 1);
 				}
 			}
-		
+
 			break;
 		default:
 			break;
@@ -508,7 +525,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				ll_navigation.clearAnimation();
 				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams.addRule(RelativeLayout.ABOVE,R.id.release_rl_face);
+				layoutParams
+						.addRule(RelativeLayout.ABOVE, R.id.release_rl_face);
 				ll_navigation.setLayoutParams(layoutParams);
 			}
 
@@ -520,7 +538,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void onAnimationStart(Animation animation) {
 				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams.height=(int) (height-ll_navigation.getHeight()-(240 * density + 0.5f)-40);
+				layoutParams.height = (int) (height - ll_navigation.getHeight()
+						- (240 * density + 0.5f) - 40);
 				et_release.setLayoutParams(layoutParams);
 			}
 		});
@@ -566,6 +585,113 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		ll_navigation.startAnimation(navigationanimation);
 		faceVisible = false;
 		isEditText = true;
+	}
+
+	public void Send() {
+		final String mCurrentSquareID = "98";
+		final String broadcast = et_release.getText().toString();
+		if ((broadcast == null || broadcast.equals("")) && image.size() == 0
+				&& voice.size() == 0) {
+			Alert.showMessage("发送内容不能为空");
+			return;
+		}
+		if (broadcast == null || broadcast.equals("")) {
+			if (image.size() == 0) {
+				addVoiceToJson();
+				contentType = "voice";
+			} else if (voice.size() == 0) {
+				addImageToJson();
+				contentType = "image";
+			} else {
+				addVoiceToJson();
+				addImageToJson();
+				contentType = "voiceandimage";
+			}
+		} else if (image.size() == 0) {
+			if (voice.size() == 0) {
+				addTextToJson(broadcast);
+				contentType = "text";
+			} else {
+				addVoiceToJson();
+				addTextToJson(broadcast);
+				contentType = "textandvoice";
+			}
+		} else if (voice.size() == 0) {
+			addTextToJson(broadcast);
+			addImageToJson();
+			contentType = "textandimage";
+
+		} else {
+			addTextToJson(broadcast);
+			addImageToJson();
+			addVoiceToJson();
+		}
+
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SQUARE_SENDSQUAREMESSAGE;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("nickName", app.data.user.nickName);
+				params.put("gid", mCurrentSquareID);
+				params.put("message", "{\"contentType\":\"" + contentType
+						+ "\",\"content\":\"" + jsonArray.toString() + "\"}");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				finish();
+			}
+		});
+	}
+
+	public void addTextToJson(String broadcast) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("tpye", "text");
+			jsonObject.put("details", broadcast);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		jsonArray.put(jsonObject);
+	}
+
+	public void addImageToJson() {
+		for (int i = 0; i < image.size(); i++) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("tpye", "image");
+				jsonObject.put("details", image.get(i));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			jsonArray.put(jsonObject);
+		}
+	}
+
+	public void addVoiceToJson() {
+		for (int i = 0; i < voice.size(); i++) {
+			JSONObject jsonObject = new JSONObject();
+			try {
+				jsonObject.put("tpye", "voice");
+				jsonObject.put("details", voice.get(i));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			jsonArray.put(jsonObject);
+		}
+	}
+
+	public void addImageFromLocal() {
+		// TODO
+	}
+
+	public void addImageFromCamera() {
+		// TODO
 	}
 
 	class myGridAdapter extends BaseAdapter {
@@ -616,8 +742,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						et_release.getText().insert(
 								et_release.getSelectionStart(),
 								faceNamesList.get(chat_vPager_now)[position]);
-					}else{
-						
+					} else {
+
 					}
 				}
 			});
