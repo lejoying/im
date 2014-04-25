@@ -212,7 +212,7 @@ public class MainActivity extends BaseActivity {
 		RelativeLayout rl_me_menu = (RelativeLayout) findViewById(R.id.rl_me_menu);
 		final ImageView iv_me_menu = (ImageView) findViewById(R.id.iv_me_menu);
 		RelativeLayout rl_release_menu = (RelativeLayout) findViewById(R.id.rl_release_menu);
-		
+
 		currentMenuSelected = iv_square_menu;
 		rl_square_menu.setOnClickListener(new OnClickListener() {
 
@@ -248,10 +248,11 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				if (currentMenuSelected == iv_me_menu) {
-					startActivity( new Intent(MainActivity.this,ReleaseActivity.class));  
-					modifyMenuSelected(currentMenuSelected, iv_me_menu);
-				}
+
+				startActivity(new Intent(MainActivity.this,
+						ReleaseActivity.class));
+				modifyMenuSelected(currentMenuSelected, iv_me_menu);
+
 			}
 		});
 	}

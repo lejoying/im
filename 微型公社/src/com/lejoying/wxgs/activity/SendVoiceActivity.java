@@ -124,7 +124,7 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 
 			break;
 		case R.id.sendvoice_rl_navigation:
-
+ 
 			break;
 		default:
 			break;

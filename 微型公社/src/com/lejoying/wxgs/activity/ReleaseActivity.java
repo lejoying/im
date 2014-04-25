@@ -17,7 +17,9 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
@@ -84,7 +86,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	View release_iv_face_delete;
 
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
-
+	String mCurrentSquareID = "";
+	String messageType = "";
+	String broadcast="";
 	JSONArray jsonArray = new JSONArray();
 
 	@Override
@@ -181,6 +185,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	public void initData() {
 		initFace();
+		image = new ArrayList<String>();
+		voice = new ArrayList<String>();
 		et_release.addTextChangedListener(new TextWatcher() {
 			String content = "";
 
@@ -370,7 +376,19 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					SendVoiceActivity.class));
 			break;
 		case R.id.release_tv_cancel:
-			finish();
+			String msg=et_release.getText().toString();
+			if(!msg.equals("")||voice.size()!=0||image.size()!=0){
+				Alert.createDialog(this).setTitle("您尚有编辑未提交,是否退出?").setOnConfirmClickListener(new OnDialogClickListener() {
+					@Override
+					public void onClick(AlertInputDialog dialog) {
+						finish();
+					}
+				}).show();
+			}else{
+				finish();
+			}
+			
+			
 			break;
 		case R.id.release_tv_commit:
 			Send();
@@ -588,8 +606,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void Send() {
-		final String mCurrentSquareID = "98";
-		final String broadcast = et_release.getText().toString();
+		mCurrentSquareID = "98";
+		messageType = "精华";
+		broadcast = et_release.getText().toString();
 		if ((broadcast == null || broadcast.equals("")) && image.size() == 0
 				&& voice.size() == 0) {
 			Alert.showMessage("发送内容不能为空");
@@ -628,16 +647,17 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		}
 
 		app.networkHandler.connection(new CommonNetConnection() {
-
 			@Override
 			protected void settings(Settings settings) {
 				settings.url = API.DOMAIN + API.SQUARE_SENDSQUAREMESSAGE;
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
+				params.put("head", app.data.user.head);
 				params.put("nickName", app.data.user.nickName);
 				params.put("gid", mCurrentSquareID);
-				params.put("message", "{\"contentType\":\"" + contentType
+				params.put("message", "{\"messageType\":\"" + messageType
+						+ "\",\"contentType\":\"" + contentType
 						+ "\",\"content\":\"" + jsonArray.toString() + "\"}");
 				settings.params = params;
 			}
