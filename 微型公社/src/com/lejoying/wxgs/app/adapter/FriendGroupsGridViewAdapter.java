@@ -2,20 +2,17 @@ package com.lejoying.wxgs.app.adapter;
 
 import java.util.List;
 
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
-import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.entity.Group;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
-
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
 public class FriendGroupsGridViewAdapter extends BaseAdapter {
 	private List<Group> groups;

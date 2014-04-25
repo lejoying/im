@@ -2,15 +2,16 @@ package com.lejoying.wxgs.activity.view;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.graphics.Paint;
-import android.view.Display;
 import android.view.View;
+
+import com.lejoying.wxgs.app.handler.FilesHandler.GifMovie;
 
 @SuppressLint("ViewConstructor")
 public class SampleView extends View {
@@ -35,7 +36,7 @@ public class SampleView extends View {
 	}
 
 	@SuppressWarnings("unused")
-	public SampleView(Context context, GifMovie gifMovie) {
+	public SampleView(Context context, com.lejoying.wxgs.app.handler.FileHandler.GifMovie gifMovie) {
 		super(context);
 		setFocusable(true);
 		// File file = new File(sdFile, fileName);

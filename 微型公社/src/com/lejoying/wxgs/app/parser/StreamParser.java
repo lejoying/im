@@ -164,4 +164,21 @@ public class StreamParser {
 		}
 	}
 
+	public static void parseToFile(byte[] bytes, FileOutputStream outputStream) {
+		try {
+			outputStream.write(bytes, 0, bytes.length);
+			outputStream.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 }

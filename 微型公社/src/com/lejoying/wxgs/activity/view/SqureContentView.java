@@ -2,6 +2,7 @@ package com.lejoying.wxgs.activity.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -16,10 +17,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
+import com.lejoying.wxgs.app.data.entity.SquareMessage.Content;
+import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
 public class SqureContentView extends HorizontalScrollView {
 
+	MainApplication app = MainApplication.getMainApplication();
 	static final int ITEM11 = 11;
 	static final int ITEM12 = 12;
 	static final int ITEM21 = 21;
@@ -40,7 +45,8 @@ public class SqureContentView extends HorizontalScrollView {
 	int itemBackgroundColor;
 
 	List<Item> items;
-	List<SquareMessage> messages;
+	List<String> messages;
+	Map<String, SquareMessage> SquareMessageMap;
 
 	long currentTime;
 
@@ -95,12 +101,14 @@ public class SqureContentView extends HorizontalScrollView {
 		super.onLayout(changed, l, t, r, b);
 	}
 
-	public void setSquareMessageList(List<SquareMessage> messages) {
+	public void setSquareMessageList(List<String> messages,
+			Map<String, SquareMessage> SquareMessageMap) {
 		if (messages == null) {
 			return;
 		}
 		this.messages = messages;
-		generateItems(messages);
+		this.SquareMessageMap = SquareMessageMap;
+		generateItems(messages, SquareMessageMap);
 		notifyItemPosition();
 	}
 
@@ -109,13 +117,13 @@ public class SqureContentView extends HorizontalScrollView {
 			return;
 		}
 		if (items == null) {
-			generateItems(messages);
+			generateItems(messages, SquareMessageMap);
 		} else {
 			int itemsSize = items.size();
 			int messagesSize = messages.size();
 			Item itemBefore = null;
 			for (int i = 0; i < messagesSize; i++) {
-				SquareMessage message = messages.get(i);
+				SquareMessage message = SquareMessageMap.get(messages.get(i));
 				Item item = null;
 				if (i < itemsSize) {
 					item = items.get(i);
@@ -229,15 +237,16 @@ public class SqureContentView extends HorizontalScrollView {
 		}
 	}
 
-	private void generateItems(List<SquareMessage> messages) {
+	private void generateItems(List<String> messages,
+			Map<String, SquareMessage> map) {
 		if (items == null) {
 			items = new ArrayList<Item>();
 		}
 		mViewContainer.removeAllViews();
 		items.clear();
 		Item itemBefore = null;
-		for (SquareMessage message : messages) {
-			Item item = generateItem(itemBefore, message);
+		for (String message : messages) {
+			Item item = generateItem(itemBefore, map.get(message));
 			itemBefore = item;
 			item.content.setTag(items.size());
 			items.add(item);
@@ -315,7 +324,7 @@ public class SqureContentView extends HorizontalScrollView {
 			this.message = message;
 			if (message.style != style) {
 				// TODO modify message show style
-
+				message.style = style;
 			}
 			content = new ItemContent(mContext, style, message);
 			content.setBackgroundColor(itemBackgroundColor);
@@ -435,12 +444,47 @@ public class SqureContentView extends HorizontalScrollView {
 			if (contentImage != null) {
 				// TODO set conver image to contentImage
 				// contentImage.setImageBitmap(bm);
+				if (!message.contentType.equals("text")) {
+					String cover = "none";
+					if (message.cover.equals("voice")) {
+						cover = "voice.png";
+					} else if (!message.cover.equals("none")) {
+						cover = message.cover;
+					} else {
+						Content content = message.content;
+						if (content.images.size() > 0) {
+							cover = content.images.get(0);
+						} else if (content.voices.size() > 0) {
+							cover = content.voices.get(0);
+						}
+					}
+					if (!cover.equals("none")) {
+						final String fileName = cover;
+						app.fileHandler.getImage(fileName, new FileResult() {
+
+							@Override
+							public void onResult(String where) {
+								contentImage
+										.setImageBitmap(app.fileHandler.bitmaps
+												.get(fileName));
+
+							}
+						});
+					}
+				}
 			}
 			contentText.setText(message.content.text);
 
 			// TODO set head image to headImage
 			// headImage.setImageBitmap(bm);
+			app.fileHandler.getHeadImage(message.head, new FileResult() {
 
+				@Override
+				public void onResult(String where) {
+					headImage.setImageBitmap(app.fileHandler.bitmaps
+							.get(message.head));
+				}
+			});
 			nickName.setText(message.nickName);
 			time.setText(convertTime(currentTime, message.time));
 
