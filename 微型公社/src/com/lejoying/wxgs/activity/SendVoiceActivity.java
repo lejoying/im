@@ -5,6 +5,7 @@ import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -35,7 +36,11 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		initEvent();
 		super.onCreate(savedInstanceState);
 	}
-
+	@Override
+	public void onBackPressed() {
+		finish();
+		overridePendingTransition(0,0); 
+	}
 	protected void onResume() {
 		CircleMenu.hide();
 		super.onResume();
@@ -118,10 +123,12 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.sendvoice_iv_commit:
-
+			finish();
+			overridePendingTransition(0,0);
 			break;
 		case R.id.sendvoice_iv_del:
-
+			finish();
+			overridePendingTransition(0,0);
 			break;
 		case R.id.sendvoice_rl_navigation:
  
