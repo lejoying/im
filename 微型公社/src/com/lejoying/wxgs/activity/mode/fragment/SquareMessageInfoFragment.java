@@ -1,13 +1,11 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -141,16 +139,12 @@ public class SquareMessageInfoFragment extends BaseFragment {
 						// Toast.LENGTH_SHORT).show();
 						// sc_square_message_info.setont
 					} else if (sc_square_message_info_all.getScrollY()
-							- scrollViewY < 2
-							&& sc_square_message_info_all.getScrollY() >= scrollViewY) {
+							- scrollViewY < 50
+							&& sc_square_message_info_all.getScrollY() + 10 >= scrollViewY) {
 						scrollStatus = SCROLL_BETWEEN;
 						sc_square_message_info
 								.requestDisallowInterceptTouchEvent(false);
-						Toast.makeText(
-								getActivity(),
-								"继续拖动有评论"
-										+ sc_square_message_info_all
-												.getScrollY(),
+						Toast.makeText(getActivity(), "继续拖动有评论",
 								Toast.LENGTH_SHORT).show();
 					} else {
 						scrollViewY = sc_square_message_info_all.getScrollY();

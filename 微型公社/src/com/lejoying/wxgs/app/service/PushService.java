@@ -14,6 +14,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
@@ -253,6 +254,7 @@ public class PushService extends Service {
 					}
 					try {
 						mCurrentFlag = jData.getString("flag");
+						Log.e("Coolspan", mCurrentFlag + "-=-=-=-=-=-=-=-=-=-=");
 					} catch (JSONException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -274,6 +276,21 @@ public class PushService extends Service {
 									data.squareMessagesMap
 											.put(mCurrentConnectionGid,
 													new HashMap<String, SquareMessage>());
+									if (MainActivity.instance != null
+											&& MainActivity.instance.mode
+													.equals(MainActivity.MODE_MAIN)) {
+										if (MainActivity.instance.mMainMode.mSquareFragment
+												.isAdded()) {
+											MainActivity.instance.mMainMode.mSquareFragment.stv_squrecontentview.justSetSquareMessageList(
+													data.squareMessages
+															.get(mCurrentConnectionGid),
+													data.squareMessagesMap
+															.get(mCurrentConnectionGid));
+											Log.e("Coolspan",
+													"justSetSquareMessageList----------");
+										}
+									}
+
 								}
 
 								data.squareFlags.put(mCurrentConnectionGid,
@@ -306,6 +323,13 @@ public class PushService extends Service {
 												message.gmid);
 									}
 								}
+								Log.e("Coolspan", "messages----------"
+										+ jData.getJSONArray("messages")
+												.length());
+								Log.e("Coolspan", "newMessages----------"
+										+ newMessages.size());
+								Log.e("Coolspan", "squareMessages----------"
+										+ squareMessages.size());
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -319,8 +343,13 @@ public class PushService extends Service {
 											.equals(MainActivity.MODE_MAIN)) {
 								if (MainActivity.instance.mMainMode.mSquareFragment
 										.isAdded()) {
-									MainActivity.instance.mMainMode.mSquareFragment.mAdapter
-											.notifyDataSetChanged();
+									Log.e("Coolspan",
+											"modifyUI----------"
+													+ app.data.squareMessages
+															.get(mCurrentConnectionGid)
+															.size());
+									MainActivity.instance.mMainMode.mSquareFragment
+											.notifyViews();
 								}
 							}
 						}

@@ -203,10 +203,7 @@ public class ChatFriendFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		CircleMenu.showBack();
-		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
-		if (ll_menu_app.getVisibility() == View.VISIBLE) {
-			ll_menu_app.setVisibility(View.GONE);
-		}
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 
@@ -305,6 +302,7 @@ public class ChatFriendFragment extends BaseFragment {
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 					RelativeLayout.LayoutParams.WRAP_CONTENT,
 					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			layoutParams.setMargins(45, 0, 0, 0);
 			layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
 			textView_groupName.setLayoutParams(layoutParams);
 			textView_memberCount.setText("");
@@ -422,10 +420,7 @@ public class ChatFriendFragment extends BaseFragment {
 			}
 
 		}
-		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
-		if (ll_menu_app.getVisibility() == View.VISIBLE) {
-			ll_menu_app.setVisibility(View.GONE);
-		}
+		mMainModeManager.handleMenu(false);
 		initEvent();
 		initBaseFaces();
 		return mContent;

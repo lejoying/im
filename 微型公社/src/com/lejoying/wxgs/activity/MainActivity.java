@@ -150,6 +150,10 @@ public class MainActivity extends BaseActivity {
 									data.groupFriends = localData.groupFriends;
 									data.lastChatFriends = localData.lastChatFriends;
 									data.newFriends = localData.newFriends;
+									data.squareFlags = localData.squareFlags;
+									data.squareMessages = localData.squareMessages;
+									data.squareMessagesClassify = localData.squareMessagesClassify;
+									data.squareMessagesMap = localData.squareMessagesMap;
 								}
 							} catch (FileNotFoundException e) {
 								// TODO Auto-generated catch block

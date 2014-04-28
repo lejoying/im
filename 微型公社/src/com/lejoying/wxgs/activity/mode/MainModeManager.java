@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity.mode;
 
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.lejoying.wxgs.R;
@@ -34,7 +35,6 @@ public class MainModeManager extends BaseModeManager {
 	public CirclesFragment mCirclesFragment;
 	public GroupFragment mGroupFragment;
 	public SquareFragment mSquareFragment;
-	
 
 	//
 	public ScanQRCodeFragment mScanQRCodeFragment;
@@ -106,4 +106,15 @@ public class MainModeManager extends BaseModeManager {
 		super.release();
 	}
 
+	public void handleMenu(boolean flag) {
+		if (flag) {
+			if (ll_menu_app.getVisibility() == View.GONE) {
+				ll_menu_app.setVisibility(View.VISIBLE);
+			}
+		} else {
+			if (ll_menu_app.getVisibility() == View.VISIBLE) {
+				ll_menu_app.setVisibility(View.GONE);
+			}
+		}
+	}
 }

@@ -35,7 +35,6 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -92,6 +91,10 @@ public class BusinessCardFragment extends BaseFragment {
 	private ScrollView sv_content;
 	private GridView gridView;
 
+	RelativeLayout rl_business_back;
+	ImageView iv_me_back;
+	TextView tv_back_show;
+
 	// DEFINITION object
 	private Handler handler;
 	private boolean stopSend;
@@ -113,7 +116,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 		mInflater = inflater;
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
-
+		mMainModeManager.handleMenu(false);
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -209,6 +212,7 @@ public class BusinessCardFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		CircleMenu.showBack();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 
@@ -221,6 +225,10 @@ public class BusinessCardFragment extends BaseFragment {
 		tv_msg = mContent.findViewById(R.id.tv_msg_layout);
 		rl_bighead = mContent.findViewById(R.id.rl_bighead);
 		rl_bighead.setVisibility(View.INVISIBLE);
+		rl_business_back = (RelativeLayout) mContent
+				.findViewById(R.id.rl_business_back);
+		iv_me_back = (ImageView) mContent.findViewById(R.id.iv_me_back);
+		tv_back_show = (TextView) mContent.findViewById(R.id.tv_back_show);
 
 		final ImageView iv_head = (ImageView) mContent
 				.findViewById(R.id.iv_head);
@@ -248,6 +256,7 @@ public class BusinessCardFragment extends BaseFragment {
 		String fileName = "", phone = "";
 
 		if (mStatus == SHOW_TEMPFRIEND) {
+			tv_back_show.setText("用户资料");
 			if (mShowFriend.sex.equals("男")) {
 				tv_grouppanel_name.setText("他的群组");
 				tv_msgpanel_name.setText("他的广播");
@@ -290,6 +299,7 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 			});
 		} else if (mStatus == SHOW_SELF) {
+			tv_back_show.setText("个人资料");
 			tv_alias.setVisibility(View.GONE);
 			tv_alias_title.setVisibility(View.GONE);
 			button1.setText("修改个人信息");
@@ -389,6 +399,7 @@ public class BusinessCardFragment extends BaseFragment {
 			});
 
 		} else if (mStatus == SHOW_FRIEND) {
+			tv_back_show.setText("好友资料");
 			if (mShowFriend.alias == null || mShowFriend.alias.equals("")) {
 				tv_alias.setVisibility(View.GONE);
 				tv_alias_title.setVisibility(View.GONE);
@@ -586,6 +597,20 @@ public class BusinessCardFragment extends BaseFragment {
 			backgroudFileName = mShowFriend.userBackground;
 			headname = mShowFriend.head;
 		}
+		rl_business_back.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+			}
+		});
+		iv_me_back.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
+			}
+		});
 		rl_bighead.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -650,7 +675,8 @@ public class BusinessCardFragment extends BaseFragment {
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 					// TODO Auto-generated method stub
-					mMainModeManager.mGroupBusinessCardFragment.mGroup=groups.get(position);
+					mMainModeManager.mGroupBusinessCardFragment.mGroup = groups
+							.get(position);
 					mMainModeManager
 							.showNext(mMainModeManager.mGroupBusinessCardFragment);
 				}

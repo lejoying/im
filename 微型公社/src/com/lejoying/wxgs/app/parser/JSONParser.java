@@ -410,10 +410,9 @@ public class JSONParser {
 							.addImage(content.getString("details"));
 				} else if (content.getString("type").equals("voice")) {
 					squareMessage.content
-							.addImage(content.getString("details"));
+							.addVoice(content.getString("details"));
 				} else {
-					squareMessage.content
-							.addImage(content.getString("details"));
+					squareMessage.content.text = content.getString("details");
 				}
 			}
 		} catch (JSONException e) {

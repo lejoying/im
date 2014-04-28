@@ -8,20 +8,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
-import com.lejoying.wxgs.activity.view.SqureContentView;
+import com.lejoying.wxgs.activity.view.SquareContentView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -43,7 +42,7 @@ public class SquareFragment extends BaseFragment {
 
 	ListView mSqureMessageView;
 
-	SqureContentView stv_squrecontentview;
+	public SquareContentView stv_squrecontentview;
 
 	EditText mViewBroadcast;
 	View mButtonSend;
@@ -62,8 +61,8 @@ public class SquareFragment extends BaseFragment {
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		String flag = app.data.squareFlags.get(mCurrentSquareID);
 		flag = flag == null ? "0" : flag;
+		Log.e("Coolspan", flag + "------flag message");
 		PushService.startSquareLongPull(getActivity(), mCurrentSquareID, flag);
-
 		super.onCreate(savedInstanceState);
 	}
 
@@ -85,12 +84,24 @@ public class SquareFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		mInflater = inflater;
 		mContentView = inflater.inflate(R.layout.fragment_square, null);
-		stv_squrecontentview = (SqureContentView) mContentView
+		stv_squrecontentview = (SquareContentView) mContentView
 				.findViewById(R.id.stv_squrecontentview);
-		List<String> messages = app.data.squareMessages.get(mCurrentSquareID);
-		Map<String, SquareMessage> map = app.data.squareMessagesMap
+		final List<String> messages = app.data.squareMessages
 				.get(mCurrentSquareID);
-		stv_squrecontentview.setSquareMessageList(messages, map);
+		final Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+				.get(mCurrentSquareID);
+		if (messages != null) {
+			Log.e("Coolspan", messages.size() + "-----messages size--");
+			app.UIHandler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					stv_squrecontentview.setSquareMessageList(messages,
+							squareMessageMap);
+					stv_squrecontentview.notifyDataSetChanged();
+				}
+			});
+		}
 		return mContentView;
 	}
 

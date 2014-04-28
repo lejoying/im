@@ -68,7 +68,7 @@
                         android:text="99+"
                         android:textColor="#fff"
                         android:textSize="8sp"
-                        android:visibility="visible" >
+                        android:visibility="gone" >
                     </TextView>
 
                     <ImageView
@@ -77,7 +77,7 @@
                         android:layout_height="3dp"
                         android:layout_alignParentBottom="true"
                         android:background="#12B6EB"
-                        android:visibility="visible" >
+                        android:visibility="gone" >
                     </ImageView>
                 </RelativeLayout>
 
@@ -116,7 +116,7 @@
                         android:layout_height="3dp"
                         android:layout_alignParentBottom="true"
                         android:background="#12B6EB"
-                        android:visibility="gone" >
+                        android:visibility="visible" >
                     </ImageView>
                 </RelativeLayout>
 
@@ -201,13 +201,13 @@
         </HorizontalScrollView>
     </LinearLayout>
 
-    <com.lejoying.wxgs.activity.view.SqureContentView
+    <com.lejoying.wxgs.activity.view.SquareContentView
         android:id="@+id/stv_squrecontentview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/linearLayout1"
         android:layout_margin="10dp"
         android:background="@drawable/card_background_normal" >
-    </com.lejoying.wxgs.activity.view.SqureContentView>
+    </com.lejoying.wxgs.activity.view.SquareContentView>
 
 </RelativeLayout>

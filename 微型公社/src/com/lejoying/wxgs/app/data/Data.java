@@ -54,6 +54,9 @@ public class Data implements Serializable {
 		groupFriends.clear();
 		friends.clear();
 		squareMessages.clear();
+		squareMessagesClassify.clear();
+		squareMessagesMap.clear();
+		squareFlags.clear();
 		lastChatFriends.clear();
 		newFriends.clear();
 		nearByFriends.clear();

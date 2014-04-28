@@ -9,13 +9,14 @@ var client = redis.createClient("6379", "115.28.212.79");
 var sessionPool = {};
 var notifySquareMessageList = [];
 var threadNotifyCount = 10;
+
 /***************************************
  *     URL：/api2/square/sendsquaremessage
  ***************************************/
-squareManage.sendsquaremessage = function (data, response) {
-    response.asynchronous = 1;
+squareManage.sendsquaremessageing = function (data, response) {
+//    response.asynchronous = 1;
     var phone = data.phone;
-    console.log(data);
+//    console.log(data);
     var accessKey = data.accessKey;
     var gid = data.gid;
     var nickName = data.nickName;
@@ -28,30 +29,32 @@ squareManage.sendsquaremessage = function (data, response) {
     }
     function sendMessage() {
         try {
+            console.info(messageStr);
             message = JSON.parse(messageStr);
-            sessionPool[gid] = sessionPool[gid] || [];
-            var session = sessionPool[gid][accessKey];
-            if (session) {
-                sendSquareMessage(message);
-            } else {
-                response.write(JSON.stringify({
-                    "提示消息": "发布广播失败",
-                    "失败原因": "用户权限不足"
-                }));
-                response.end();
-                return;
-            }
-            var gidNum = parseInt(gid);
-            if (gidNum < 0) {
-                throw "gidNum Not less than zero"
-            }
+            sendSquareMessage(message);
+//            sessionPool[gid] = sessionPool[gid] || [];
+//            var session = sessionPool[gid][accessKey];
+//            if (session) {
+//                sendSquareMessage(message);
+//            } else {
+//                response.write(JSON.stringify({
+//                    "提示消息": "发布广播失败",
+//                    "失败原因": "用户权限不足"
+//                }));
+//                response.end();
+//                return;
+//            }
+//            var gidNum = parseInt(gid);
+//            if (gidNum < 0) {
+//                throw "gidNum Not less than zero"
+//            }
         } catch (e) {
             response.write(JSON.stringify({
                 "提示信息": "发布广播失败",
                 "失败原因": "参数格式错误"
             }));
             response.end();
-            console.error(e + "-----");
+            console.error(e + "-----+++");
             return;
         }
 
@@ -66,7 +69,7 @@ squareManage.sendsquaremessage = function (data, response) {
                 nickName: nickName,
                 head: head,
                 gid: gid,
-                content: JSON.parse(content.content),
+                content: content.content,
                 praiseusers: [],
                 time: time
             }
@@ -80,8 +83,9 @@ squareManage.sendsquaremessage = function (data, response) {
                     console.error(err);
                     return;
                 } else {
+                    var squareMessage = JSON.stringify(message);
                     message.flag = reply;
-                    client.hset("square_" + gid + "_info", message.gmid, function (err, reply) {
+                    client.hset("square_" + gid + "_info", message.gmid, squareMessage, function (err, reply) {
                         if (err) {
                             response.write(JSON.stringify({
                                 "提示信息": "发布广播失败",
@@ -91,13 +95,13 @@ squareManage.sendsquaremessage = function (data, response) {
                             console.error(err);
                             return;
                         } else {
-                            notifySquareMessageList.push(message);
-                            response.write(JSON.stringify({
-                                "提示信息": "发布广播成功",
-                                time: message.time
-                            }));
-                            response.end();
-                            notifySquareMessage();
+//                            notifySquareMessageList.push(message);
+//                            response.write(JSON.stringify({
+//                                "提示信息": "发布广播成功",
+//                                time: message.time
+//                            }));
+//                            response.end();
+//                            notifySquareMessage();
                             /*while (true) {
                              }*/
                         }
@@ -137,6 +141,89 @@ function notifySquareMessage() {
                 }));
                 sessionResponse.end();
             }
+        }
+    }
+}
+//makeSqaureData();
+function makeSqaureData() {
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+
+    var path = "";
+    for (var i = 0; i < 100; i++) {
+        if (i % 5 == 0) {
+            path = "706937f57c1b68d8ed2631aaab1d3020aa88eb7d.jpg";
+            next();
+        } else if (i % 5 == 1) {
+            path = "3661c49b12a3e7a4a6ec4c6fb18379035cf8752a.jpg";
+            next2();
+        } else if (i % 5 == 2) {
+            path = "978b3e6986071e464fd6632e1fd864652c42ca27.png";
+            next();
+        } else if (i % 5 == 3) {
+            path = "210e8c8d649f7f9844ff102ec4153705e9c438dc.jpg";
+            next2();
+        } else if (i % 5 == 4) {
+            path = "d9fb7db5dc6e4b06046f0114b12d581ee84cec73.png";
+            next();
+        }
+        function next() {
+            var data = {};
+            data.phone = "121";
+            data.nickName = "李建国";
+            data.gid = "98";
+            data.accessKey = "lejoying";
+            data.head = "210e8c8d649f7f9844ff102ec4153705e9c438dc.jpg";
+            data.message = JSON.stringify({
+                contentType: "textandimage",
+                messageType: "精华",
+                content: [
+                    {
+                        type: "text",
+                        details: "微型公社"
+                    },
+                    {
+                        type: "image",
+                        details: path
+                    }
+                ]
+            });
+
+//        JSON.parse(data.message);
+            squareManage.sendsquaremessageing(data, null);
+//        console.error(i + "--" + ((JSON.parse(data.message)).content)[0].details);
+            sleep(100);
+        }
+
+        function next2() {
+            var data = {};
+            data.phone = "15210721344";
+            data.nickName = "Coolspan";
+            data.gid = "98";
+            data.accessKey = "lejoying";
+            data.head = "d9fb7db5dc6e4b06046f0114b12d581ee84cec73.png";
+            data.message = JSON.stringify({
+                contentType: "text",
+                messageType: "精华",
+                content: [
+                    {
+                        type: "text",
+                        details: "北京奇点无限科技有限公司"
+                    }
+                ]
+            });
+
+//        JSON.parse(data.message);
+            squareManage.sendsquaremessageing(data, null);
+//        console.error(i + "--" + ((JSON.parse(data.message)).content)[0].details);
+            sleep(100);
         }
     }
 }

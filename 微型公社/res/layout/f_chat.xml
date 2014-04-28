@@ -349,7 +349,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="20dp" >
+            android:layout_marginLeft="10dp" >
 
             <ImageView
                 android:id="@+id/iv_back"
@@ -362,6 +362,7 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_height="wrap_content" >
 
                 <TextView
@@ -384,7 +385,7 @@
                     android:layout_below="@+id/textView_groupName"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="55dp"
-                    android:text="(15人)"
+                    android:text=""
                     android:textColor="#fff"
                     android:textSize="15sp" />
             </RelativeLayout>
