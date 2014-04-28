@@ -102,11 +102,8 @@ public class GroupFragment extends BaseFragment {
 					.findViewById(R.id.current_me_group_status);
 			current_group_local_status = (ImageView) mContentView
 					.findViewById(R.id.current_group_local_status);
-			LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
 
-			if (ll_menu_app.getVisibility() == View.GONE) {
-				ll_menu_app.setVisibility(View.VISIBLE);
-			}
+			mMainModeManager.handleMenu(true);
 			initEvent();
 
 			notifyViews();
@@ -619,10 +616,7 @@ public class GroupFragment extends BaseFragment {
 	public void onResume() {
 		CircleMenu.show();
 		CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
-		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
-		if (ll_menu_app.getVisibility() == View.GONE) {
-			ll_menu_app.setVisibility(View.VISIBLE);
-		}
+		mMainModeManager.handleMenu(true);
 		requestLocation();
 		super.onResume();
 	}

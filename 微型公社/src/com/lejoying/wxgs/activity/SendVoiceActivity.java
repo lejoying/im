@@ -1,10 +1,17 @@
 package com.lejoying.wxgs.activity;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.view.BackgroundView;
+import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 
+import android.content.Intent;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -21,19 +28,25 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	MainApplication app = MainApplication.getMainApplication();
 	LayoutInflater mInflater;
 
+	RecordView recordView;
+
 	int height, width, dip;
 	float density;
 
 	RelativeLayout sendvoice_rl_navigation;
 
+	int RECORD_START = 0x001;
+	int RECORD_STOP = 0x002;
+	int recordStatus = RECORD_STOP;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_send_voice);
 		mInflater = getLayoutInflater();
 		getWindow().setBackgroundDrawableResource(R.drawable.square_background);
 		initData();
 		initEvent();
-		super.onCreate(savedInstanceState);
 	}
 
 	protected void onResume() {
@@ -53,6 +66,9 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 
 	public void initEvent() {
 		// TODO Auto-generated method stub
+		recordView = (RecordView) findViewById(R.id.recordView);
+		recordView.setMode(RecordView.MODE_TIMER);
+		// recordView.startProgress();
 		final TextView sendvoice_tv = (TextView) findViewById(R.id.sendvoice_tv);
 		View sendvoice_button = findViewById(R.id.sendvoice_button);
 		View sendvoice_iv_commit = findViewById(R.id.sendvoice_iv_commit);
@@ -75,17 +91,19 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 
 		RelativeLayout.LayoutParams commitrelativeParams = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		commitrelativeParams.addRule(RelativeLayout.LEFT_OF,
+		commitrelativeParams.addRule(RelativeLayout.RIGHT_OF,
 				R.id.sendvoice_button);
-		commitrelativeParams.rightMargin = width / 25;
+		// commitrelativeParams.rightMargin = width / 25;
+		commitrelativeParams.leftMargin = width / 25;
 		commitrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		sendvoice_iv_commit.setLayoutParams(commitrelativeParams);
 
 		RelativeLayout.LayoutParams delrelativeParams = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		delrelativeParams.addRule(RelativeLayout.RIGHT_OF,
-				R.id.sendvoice_button);
-		delrelativeParams.leftMargin = width / 25;
+		delrelativeParams
+				.addRule(RelativeLayout.LEFT_OF, R.id.sendvoice_button);
+		// delrelativeParams.leftMargin = width / 25;
+		commitrelativeParams.rightMargin = width / 25;
 		delrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		sendvoice_iv_del.setLayoutParams(delrelativeParams);
 
@@ -101,9 +119,16 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
 					sendvoice_tv.setText("放开停止");
+					recordView.startTimer();
+					recordStatus = RECORD_START;
 					break;
 				case MotionEvent.ACTION_UP:
 					sendvoice_tv.setText("开始录音");
+					recordView.stopTimer();
+					recordStatus = RECORD_STOP;
+					recordView.setProgressTime(40000);
+					recordView.setMode(RecordView.MODE_PROGRESS);
+					recordView.startProgress();
 					break;
 				default:
 					break;
@@ -116,19 +141,50 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
+		Intent intent = new Intent();
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		switch (v.getId()) {
 		case R.id.sendvoice_iv_commit:
-
+			intent.putExtra("path", "");
+			setResult(200, intent);
+			finish();
 			break;
 		case R.id.sendvoice_iv_del:
-
+			setResult(400, intent);
+			finish();
 			break;
 		case R.id.sendvoice_rl_navigation:
- 
+
 			break;
 		default:
 			break;
 		}
 	}
 
+	void startMediaRecord() {
+		String fileName = new Date().getTime() + ".aac";
+		// AudioRecord audioRecord = new AudioRecord(audioSource,
+		// sampleRateInHz, channelConfig, audioFormat,
+		// bufferSizeInBytes)
+		MediaRecorder recorder = new MediaRecorder();
+		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//
+		// recorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
+		// recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+		// recorder.setAudioSamplingRate(3000);
+		// recorder.setAudioEncodingBitRate(10000);
+		recorder.setOutputFile((new File(app.sdcardVoiceFolder, fileName))
+				.getAbsolutePath());
+		try {
+			recorder.prepare();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		recorder.start();
+		System.out.println("start------------------------------");
+		// };
+		// }.start();
+	}
 }

@@ -206,7 +206,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/linearLayout1"
-        android:layout_margin="10dp"
         android:background="@drawable/card_background_normal" >
     </com.lejoying.wxgs.activity.view.SquareContentView>
 

@@ -39,6 +39,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.lejoying.wxgs.activity.SendVoiceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle" >
+        </activity>
+        <activity
             android:name="com.lejoying.wxgs.activity.ReleaseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"
@@ -46,11 +51,6 @@
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" >
-        </activity>
-          <activity
-            android:name="com.lejoying.wxgs.activity.SendVoiceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>
@@ -74,8 +74,6 @@
                 <action android:name="com.lejoying.wxgs.app.parsingiscomplete" />
             </intent-filter>
         </receiver>
-
-      
     </application>
 
 </manifest>

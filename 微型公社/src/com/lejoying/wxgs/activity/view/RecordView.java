@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.os.Handler;
@@ -94,11 +95,19 @@ public class RecordView extends ViewGroup {
 
 	ProgressListener mProgressListener;
 
+	PlayButtonClickListener mButtonClickListener;
+
 	RefreshHandler refreshHandler;
 
 	TimerThread timerThread;
 
 	GestureDetector gestureDetector;
+
+	Path playPath;
+	RectF pauseRectfLeft;
+	RectF pauseRectfRight;
+
+	boolean isShowPlay;
 
 	public RecordView(Context context) {
 		super(context);
@@ -120,6 +129,10 @@ public class RecordView extends ViewGroup {
 		refreshHandler = new RefreshHandler(progressView);
 		mode = MODE_TIMER;
 
+		isShowPlay = true;
+
+		playPath = new Path();
+
 		timerTime = 60000;
 		deltaAngle = 260f / timerTime;
 
@@ -135,16 +148,18 @@ public class RecordView extends ViewGroup {
 				prevPercent = -1;
 				downX = e.getX();
 				downY = e.getY();
-				float distanceXToDragPointCenter = downX - dragPointCenterX;
-				float distanceYToDragPointCenter = downY - dragPointCenterY;
-				if (distanceXToDragPointCenter * distanceXToDragPointCenter
-						+ distanceYToDragPointCenter
-						* distanceYToDragPointCenter <= dragPointRadius
-						* dragPointRadius) {
-					isDrag = true;
-				} else {
-					drag(downX, downY);
-					isDrag = true;
+				if (isDragEnable) {
+					float distanceXToDragPointCenter = downX - dragPointCenterX;
+					float distanceYToDragPointCenter = downY - dragPointCenterY;
+					if (distanceXToDragPointCenter * distanceXToDragPointCenter
+							+ distanceYToDragPointCenter
+							* distanceYToDragPointCenter <= dragPointRadius
+							* dragPointRadius) {
+						isDrag = true;
+					} else {
+						drag(downX, downY);
+						isDrag = true;
+					}
 				}
 				return true;
 			}
@@ -154,6 +169,28 @@ public class RecordView extends ViewGroup {
 					float distanceX, float distanceY) {
 				if (isDrag) {
 					drag(e2.getX(), e2.getY());
+				}
+				return true;
+			}
+
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				float squareDistanceX = (float) Math.pow(downX - centerX, 2);
+				float squareDistanceY = (float) Math.pow(downY - centerY, 2);
+				if (mode == MODE_PROGRESS
+						&& (squareDistanceX + squareDistanceY < playButtonRadius
+								* playButtonRadius)) {
+					if (isShowPlay) {
+						startProgress();
+						if (mButtonClickListener != null) {
+							mButtonClickListener.onPlay();
+						}
+					} else {
+						pauseProgress();
+						if (mButtonClickListener != null) {
+							mButtonClickListener.onPause();
+						}
+					}
 				}
 				return true;
 			}
@@ -179,7 +216,7 @@ public class RecordView extends ViewGroup {
 						} else {
 							currentAngle = 220 - angle;
 						}
-						progressView.postInvalidate();
+						progressView.postInvalidate(200, 400, 700, 600);
 						float percent = currentAngle / 260f;
 						if (mProgressListener != null && percent != prevPercent) {
 							mProgressListener.onDrag(percent);
@@ -242,6 +279,28 @@ public class RecordView extends ViewGroup {
 					* playButtonBorderWidthScale;
 
 			dragSpace = outCircleRadius - innerCircleRadius;
+
+			playPath.reset();
+			float startX = centerX - playButtonRadius + playButtonRadius * 2
+					* 0.38288f;
+			playPath.moveTo(startX - 1.5f, centerY - playButtonRadius / 2f);
+			playPath.lineTo(startX - 1.5f, centerY + playButtonRadius / 2f);
+			playPath.lineTo(startX + 1.5f, centerY + playButtonRadius / 2f);
+			playPath.lineTo(centerX + playButtonRadius - playButtonRadius * 2f
+					* 0.27667f, centerY + 1.5f);
+			playPath.lineTo(centerX + playButtonRadius - playButtonRadius * 2f
+					* 0.27667f, centerY - 1.5f);
+			playPath.lineTo(startX + 1.5f, centerY - playButtonRadius / 2f);
+			playPath.close();
+
+			pauseRectfLeft = new RectF(centerX - playButtonRadius / 3f, centerY
+					- playButtonRadius / 2 + 3,
+					centerX - playButtonRadius / 8f, centerY + playButtonRadius
+							/ 2 - 3);
+			pauseRectfRight = new RectF(centerX + playButtonRadius / 8f,
+					centerY - playButtonRadius / 2 + 3, centerX
+							+ playButtonRadius / 3f, centerY + playButtonRadius
+							/ 2f - 3);
 		}
 	}
 
@@ -259,6 +318,18 @@ public class RecordView extends ViewGroup {
 
 	public void setMode(int mode) {
 		this.mode = mode;
+	}
+
+	public int getMode() {
+		return mode;
+	}
+
+	public boolean isStartProgress() {
+		return isStartProgress;
+	}
+
+	public boolean isShowPlay() {
+		return isShowPlay;
 	}
 
 	public void seekToTime(long time) {
@@ -345,6 +416,11 @@ public class RecordView extends ViewGroup {
 		}
 	}
 
+	public void setShowPlay(boolean showPlay) {
+		isShowPlay = showPlay;
+		staticView.postInvalidate();
+	}
+
 	public void startProgress() {
 		if (mode != MODE_PROGRESS) {
 			stopTimer();
@@ -362,6 +438,7 @@ public class RecordView extends ViewGroup {
 				timerThread = new TimerThread();
 				timerThread.start();
 			}
+			setShowPlay(false);
 		}
 	}
 
@@ -383,6 +460,7 @@ public class RecordView extends ViewGroup {
 		if (mode == MODE_PROGRESS && isStartProgress) {
 			isStartProgress = false;
 			isPause = true;
+			setShowPlay(true);
 		}
 	}
 
@@ -395,6 +473,7 @@ public class RecordView extends ViewGroup {
 			if (timerThread != null) {
 				timerThread.interrupt();
 			}
+			setShowPlay(true);
 		}
 	}
 
@@ -408,9 +487,7 @@ public class RecordView extends ViewGroup {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (this.isDragEnable) {
-			gestureDetector.onTouchEvent(event);
-		}
+		gestureDetector.onTouchEvent(event);
 		return true;
 	}
 
@@ -440,11 +517,20 @@ public class RecordView extends ViewGroup {
 
 		@Override
 		protected void onDraw(Canvas canvas) {
-			mPaint.setColor(Color.rgb(0, 35, 40));
-			mPaint.setStyle(Paint.Style.FILL);
-			canvas.drawCircle(centerX, centerY, playButtonRadius, mPaint);
+
+			canvas.drawARGB(38, 255, 255, 255);
 
 			mPaint.setColor(Color.WHITE);
+
+			mPaint.setStrokeWidth(0);
+			mPaint.setStyle(Paint.Style.FILL);
+
+			if (isShowPlay) {
+				canvas.drawPath(playPath, mPaint);
+			} else {
+				canvas.drawRoundRect(pauseRectfLeft, 0, 0, mPaint);
+				canvas.drawRoundRect(pauseRectfRight, 0, 0, mPaint);
+			}
 
 			mPaint.setStyle(Paint.Style.STROKE);
 
@@ -459,7 +545,6 @@ public class RecordView extends ViewGroup {
 
 			mPaint.setColor(innerCircleColor);
 			canvas.drawArc(innerRectF, 140, 260, false, mPaint);
-
 		}
 	}
 
@@ -467,10 +552,20 @@ public class RecordView extends ViewGroup {
 		this.mProgressListener = l;
 	}
 
+	public void setPlayButtonClickListener(PlayButtonClickListener l) {
+		this.mButtonClickListener = l;
+	}
+
 	public interface ProgressListener {
 		public void onDrag(float percent);
 
 		public void onProgressEnd();
+	}
+
+	public interface PlayButtonClickListener {
+		public void onPlay();
+
+		public void onPause();
 	}
 
 	private class TimerThread extends Thread {
@@ -554,6 +649,7 @@ public class RecordView extends ViewGroup {
 					refreshProgressViewDelay(drawDelay);
 				} else {
 					isStartProgress = false;
+					setShowPlay(true);
 					currentAngle = 260;
 					if (mProgressListener != null) {
 						mProgressListener.onProgressEnd();
