@@ -13,10 +13,10 @@ var threadNotifyCount = 10;
 /***************************************
  *     URL：/api2/square/sendsquaremessage
  ***************************************/
-squareManage.sendsquaremessageing = function (data, response) {
-//    response.asynchronous = 1;
+squareManage.sendsquaremessage = function (data, response) {
+    response.asynchronous = 1;
     var phone = data.phone;
-//    console.log(data);
+    console.log(data);
     var accessKey = data.accessKey;
     var gid = data.gid;
     var nickName = data.nickName;
@@ -31,30 +31,31 @@ squareManage.sendsquaremessageing = function (data, response) {
         try {
             console.info(messageStr);
             message = JSON.parse(messageStr);
-            sendSquareMessage(message);
-//            sessionPool[gid] = sessionPool[gid] || [];
-//            var session = sessionPool[gid][accessKey];
-//            if (session) {
-//                sendSquareMessage(message);
-//            } else {
-//                response.write(JSON.stringify({
-//                    "提示消息": "发布广播失败",
-//                    "失败原因": "用户权限不足"
-//                }));
-//                response.end();
-//                return;
-//            }
-//            var gidNum = parseInt(gid);
-//            if (gidNum < 0) {
-//                throw "gidNum Not less than zero"
-//            }
+            console.info(message + "---" + gid);
+            sessionPool[gid] = sessionPool[gid] || [];
+            var session = sessionPool[gid][accessKey];
+            console.info(session + "=====");
+            if (session) {
+                sendSquareMessage(message);
+            } else {
+                response.write(JSON.stringify({
+                    "提示消息": "发布广播失败",
+                    "失败原因": "用户权限不足"
+                }));
+                response.end();
+                return;
+            }
+            var gidNum = parseInt(gid);
+            if (gidNum < 0) {
+                throw "gidNum Not less than zero"
+            }
         } catch (e) {
             response.write(JSON.stringify({
                 "提示信息": "发布广播失败",
                 "失败原因": "参数格式错误"
             }));
             response.end();
-            console.error(e + "-----+++");
+            console.error(e + "-----+++参数格式错误");
             return;
         }
 
@@ -95,13 +96,13 @@ squareManage.sendsquaremessageing = function (data, response) {
                             console.error(err);
                             return;
                         } else {
-//                            notifySquareMessageList.push(message);
-//                            response.write(JSON.stringify({
-//                                "提示信息": "发布广播成功",
-//                                time: message.time
-//                            }));
-//                            response.end();
-//                            notifySquareMessage();
+                            notifySquareMessageList.push(message);
+                            response.write(JSON.stringify({
+                                "提示信息": "发布广播成功",
+                                time: message.time
+                            }));
+                            response.end();
+                            notifySquareMessage();
                             /*while (true) {
                              }*/
                         }
