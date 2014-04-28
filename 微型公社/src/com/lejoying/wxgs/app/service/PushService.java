@@ -266,7 +266,9 @@ public class PushService extends Service {
 						public void modifyData(Data data) {
 							try {
 								if (data.squareMessages
-										.get(mCurrentConnectionGid) == null) {
+										.get(mCurrentConnectionGid) == null
+										|| data.squareMessagesMap
+												.get(mCurrentConnectionGid) == null) {
 									data.squareMessages.put(
 											mCurrentConnectionGid,
 											new ArrayList<String>());

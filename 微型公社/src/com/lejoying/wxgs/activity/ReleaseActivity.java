@@ -24,6 +24,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -53,6 +54,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+@SuppressLint("NewApi")
 public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	BackgroundView mBackground;
 	MainApplication app = MainApplication.getMainApplication();
@@ -88,8 +90,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 	String mCurrentSquareID = "";
 	String messageType = "";
-	String broadcast="";
-	JSONArray jsonArray = new JSONArray();
+	String broadcast = "";
+	JSONArray jsonArray;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -372,23 +374,26 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 			break;
 		case R.id.release_iv_voice:
-			startActivity(new Intent(ReleaseActivity.this,
-					SendVoiceActivity.class));
+			Intent intent =new Intent(ReleaseActivity.this,
+					SendVoiceActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			startActivity(intent);
 			break;
 		case R.id.release_tv_cancel:
-			String msg=et_release.getText().toString();
-			if(!msg.equals("")||voice.size()!=0||image.size()!=0){
-				Alert.createDialog(this).setTitle("您尚有编辑未提交,是否退出?").setOnConfirmClickListener(new OnDialogClickListener() {
-					@Override
-					public void onClick(AlertInputDialog dialog) {
-						finish();
-					}
-				}).show();
-			}else{
+			//TODO
+			String msg = et_release.getText().toString();
+			if (!msg.equals("") || voice.size() != 0 || image.size() != 0) {
+				Alert.createDialog(this).setTitle("您尚有编辑未提交,是否退出?")
+						.setOnConfirmClickListener(new OnDialogClickListener() {
+							@Override
+							public void onClick(AlertInputDialog dialog) {
+								finish();
+							}
+						}).show();
+			} else {
 				finish();
 			}
-			
-			
+
 			break;
 		case R.id.release_tv_commit:
 			Send();
@@ -606,6 +611,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void Send() {
+		jsonArray = new JSONArray();
 		mCurrentSquareID = "98";
 		messageType = "精华";
 		broadcast = et_release.getText().toString();
@@ -656,9 +662,20 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				params.put("head", app.data.user.head);
 				params.put("nickName", app.data.user.nickName);
 				params.put("gid", mCurrentSquareID);
-				params.put("message", "{\"messageType\":\"" + messageType
-						+ "\",\"contentType\":\"" + contentType
-						+ "\",\"content\":\"" + jsonArray.toString() + "\"}");
+				try {
+					JSONObject messageJSONObject = new JSONObject();
+					messageJSONObject.put("messageType", messageType);
+					messageJSONObject.put("contentType", contentType);
+					messageJSONObject.put("content", jsonArray);
+					params.put("message", messageJSONObject.toString());
+					System.out.println(messageJSONObject.toString() + "-------");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+				// params.put("message", "{\"messageType\":\"" + messageType
+				// + "\",\"contentType\":\"" + contentType
+				// + "\",\"content\":\"" + jsonArray.toString() + "\"}");
 				settings.params = params;
 			}
 
@@ -672,7 +689,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void addTextToJson(String broadcast) {
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("tpye", "text");
+			jsonObject.put("type", "text");
 			jsonObject.put("details", broadcast);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -684,7 +701,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		for (int i = 0; i < image.size(); i++) {
 			JSONObject jsonObject = new JSONObject();
 			try {
-				jsonObject.put("tpye", "image");
+				jsonObject.put("type", "image");
 				jsonObject.put("details", image.get(i));
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -697,7 +714,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		for (int i = 0; i < voice.size(); i++) {
 			JSONObject jsonObject = new JSONObject();
 			try {
-				jsonObject.put("tpye", "voice");
+				jsonObject.put("type", "voice");
 				jsonObject.put("details", voice.get(i));
 			} catch (JSONException e) {
 				e.printStackTrace();
