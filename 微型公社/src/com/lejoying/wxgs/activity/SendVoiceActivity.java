@@ -3,13 +3,7 @@ package com.lejoying.wxgs.activity;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.view.BackgroundView;
-import com.lejoying.wxgs.activity.view.RecordView;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
-import com.lejoying.wxgs.app.MainApplication;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -19,9 +13,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.RelativeLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.view.BackgroundView;
+import com.lejoying.wxgs.activity.view.RecordView;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.app.MainApplication;
 
 public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	BackgroundView mBackground;
@@ -48,7 +47,11 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		initData();
 		initEvent();
 	}
-
+	@Override
+	public void onBackPressed() {
+		finish();
+		overridePendingTransition(0,0); 
+	}
 	protected void onResume() {
 		CircleMenu.hide();
 		super.onResume();
@@ -148,10 +151,12 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 			intent.putExtra("path", "");
 			setResult(200, intent);
 			finish();
+			overridePendingTransition(0,0);
 			break;
 		case R.id.sendvoice_iv_del:
 			setResult(400, intent);
 			finish();
+			overridePendingTransition(0,0);
 			break;
 		case R.id.sendvoice_rl_navigation:
 
@@ -161,6 +166,7 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		}
 	}
 
+	@SuppressLint("InlinedApi")
 	void startMediaRecord() {
 		String fileName = new Date().getTime() + ".aac";
 		// AudioRecord audioRecord = new AudioRecord(audioSource,

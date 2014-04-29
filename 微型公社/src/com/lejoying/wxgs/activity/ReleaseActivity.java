@@ -1,9 +1,11 @@
 package com.lejoying.wxgs.activity;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +17,7 @@ import org.json.JSONObject;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
@@ -22,14 +25,20 @@ import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
+import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -48,6 +57,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -61,15 +71,16 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	int height, width, dip, picwidth;
 	int chat_vPager_now = 0;
+	int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54;
 	float density;
-	boolean isEditText = true, faceVisible = false;
-	String contentType = "vit";
+	boolean isEditText = true, faceVisible = false, seletePic = false;
 	List<String> voice;
 	List<String> image;
 	List<String[]> faceNamesList;
 	List<List<String>> faceNameList;
 	List<ImageView> faceMenuShowList;
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
+	File tempFile;
 
 	RelativeLayout rl_face;
 	RelativeLayout rl_releasepic;
@@ -79,6 +90,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	LinearLayout ll_releasecamera;
 	LinearLayout ll_releaselocal;
 	LinearLayout ll_release_picandvoice;
+	HorizontalScrollView horizontalScrollView;
 	ViewPager chat_vPager;
 	LayoutInflater mInflater;
 
@@ -91,6 +103,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	String mCurrentSquareID = "";
 	String messageType = "";
 	String broadcast = "";
+	String contentType = "vit";
 	JSONArray jsonArray;
 
 	@Override
@@ -116,7 +129,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
+		if (!seletePic) {
+			checkBack();
+		}
 	}
 
 	public void initEvent() {
@@ -141,8 +156,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
+		//TODO
 		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
-
+		horizontalScrollView=(HorizontalScrollView) findViewById(R.id.horizontalScrollView);
+		
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 				dip, dip);
 		layoutParams.leftMargin = (width - (dip * 5)) / 10;
@@ -167,10 +184,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		RelativeLayout.LayoutParams relativeParams3 = new RelativeLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		// TODO
-		ll_release_picandvoice.setLayoutParams(relativeParams3);
+		relativeParams3.addRule(RelativeLayout.ABOVE, R.id.release_ll_navigation);
+		horizontalScrollView.setLayoutParams(relativeParams3);
 
-		relativeParams1.width = width / 2;
 		iv_selectpicture.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
 		iv_voice.setOnClickListener(this);
@@ -362,9 +378,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				rl_face.setVisibility(View.GONE);
 				faceVisible = false;
 			}
+			horizontalScrollView.setVisibility(View.GONE);
 			rl_releasepic.setVisibility(View.VISIBLE);
 			et_release.setVisibility(View.GONE);
 			ll_navigation.setVisibility(View.GONE);
+			seletePic = true;
 			break;
 		case R.id.release_iv_emoji:
 			if (faceVisible) {
@@ -374,26 +392,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 			break;
 		case R.id.release_iv_voice:
-			Intent intent =new Intent(ReleaseActivity.this,
+			Intent intent = new Intent(ReleaseActivity.this,
 					SendVoiceActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivity(intent);
 			break;
 		case R.id.release_tv_cancel:
-			//TODO
-			String msg = et_release.getText().toString();
-			if (!msg.equals("") || voice.size() != 0 || image.size() != 0) {
-				Alert.createDialog(this).setTitle("您尚有编辑未提交,是否退出?")
-						.setOnConfirmClickListener(new OnDialogClickListener() {
-							@Override
-							public void onClick(AlertInputDialog dialog) {
-								finish();
-							}
-						}).show();
-			} else {
-				finish();
-			}
-
+			checkBack();
 			break;
 		case R.id.release_tv_commit:
 			Send();
@@ -424,12 +429,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			break;
 		case R.id.rl_releasepic:
 			rl_releasepic.setVisibility(View.GONE);
+			horizontalScrollView.setVisibility(View.VISIBLE);
 			et_release.setVisibility(View.VISIBLE);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 			ll_navigation.setLayoutParams(layoutParams);
 			ll_navigation.setVisibility(View.VISIBLE);
+			seletePic = false;
 			break;
 		case R.id.release_iv_face_left:
 			int start1 = et_release.getSelectionStart();
@@ -546,6 +553,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				ll_navigation.clearAnimation();
+				horizontalScrollView.clearAnimation();
 				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				layoutParams
@@ -559,6 +567,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
+				//TODO
 				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				layoutParams.height = (int) (height - ll_navigation.getHeight()
@@ -571,6 +580,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		faceanimation.setDuration(220);
 		rl_face.startAnimation(faceanimation);
 		ll_navigation.startAnimation(navigationanimation);
+		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0, -240
+				* density + 0.5f);
+		navigationanimation.setDuration(220);
+		horizontalScrollView.startAnimation(ScrollViewanimation);
 		faceVisible = true;
 		isEditText = false;
 	}
@@ -584,6 +597,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void onAnimationEnd(Animation animation) {
 				rl_face.setVisibility(View.GONE);
 				ll_navigation.clearAnimation();
+				horizontalScrollView.clearAnimation();
 				RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -606,6 +620,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		faceanimation.setDuration(220);
 		rl_face.startAnimation(faceanimation);
 		ll_navigation.startAnimation(navigationanimation);
+		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0,
+				240 * density + 0.5f);
+		navigationanimation.setDuration(220);
+		horizontalScrollView.startAnimation(ScrollViewanimation);
 		faceVisible = false;
 		isEditText = true;
 	}
@@ -668,14 +686,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					messageJSONObject.put("contentType", contentType);
 					messageJSONObject.put("content", jsonArray);
 					params.put("message", messageJSONObject.toString());
-					System.out.println(messageJSONObject.toString() + "-------");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-
-				// params.put("message", "{\"messageType\":\"" + messageType
-				// + "\",\"contentType\":\"" + contentType
-				// + "\",\"content\":\"" + jsonArray.toString() + "\"}");
 				settings.params = params;
 			}
 
@@ -724,11 +737,134 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void addImageFromLocal() {
-		// TODO
+		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
+
 	}
 
 	public void addImageFromCamera() {
-		// TODO
+		tempFile = new File(app.sdcardImageFolder, "tempimage");
+		int i = 1;
+		while (tempFile.exists()) {
+			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++));
+		}
+		Uri uri = Uri.fromFile(tempFile);
+		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		tackPicture.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
+		tackPicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
+
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//TODO
+		if (//requestCode == RESULT_SELECTPICTURE&& 
+				resultCode == Activity.RESULT_OK && data != null) {
+			Uri selectedImage = data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			Cursor cursor = getContentResolver().query(selectedImage,
+					filePathColumn, null, null, null);
+			cursor.moveToFirst();
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			final String picturePath = cursor.getString(columnIndex)
+					.toLowerCase(Locale.getDefault());
+			final String format = picturePath.substring(picturePath
+					.lastIndexOf("."));
+			cursor.close();
+
+			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
+					picturePath), 960, 540);
+			if (bitmap != null) {
+				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+					@Override
+					public void setParams(SaveSettings settings) {
+						settings.compressFormat = format.equals(".jpg") ? settings.JPG
+								: settings.PNG;
+						settings.source = bitmap;
+					}
+
+					@Override
+					public void onSuccess(String fileName, String base64) {
+						checkImage(fileName, base64);
+					}
+				});
+			}
+		} else if (requestCode == RESULT_TAKEPICTURE
+				&& resultCode == Activity.RESULT_OK) {
+			
+		}
+	}
+
+	public void checkImage(final String fileName, final String base64) {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.IMAGE_CHECK;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("filename", fileName);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					if (jData.getBoolean("exists")) {
+						System.out.println(fileName);
+						//TODO
+						// sendMessage("image", fileName);
+					} else {
+						uploadImageOrVoice("image", fileName, base64);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
+	}
+
+	public void uploadImageOrVoice(final String type, final String fileName,
+			final String base64) {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("filename", fileName);
+				params.put("imagedata", base64);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				//TODO
+			}
+
+		});
+	}
+
+	public void checkBack() {
+		String msg = et_release.getText().toString();
+		if (!msg.equals("") || voice.size() != 0 || image.size() != 0) {
+			Alert.createDialog(this).setTitle("您尚有编辑未提交,是否退出?")
+					.setOnConfirmClickListener(new OnDialogClickListener() {
+						@Override
+						public void onClick(AlertInputDialog dialog) {
+							finish();
+						}
+					}).show();
+		} else {
+			finish();
+		}
 	}
 
 	class myGridAdapter extends BaseAdapter {
@@ -816,7 +952,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					((ViewPager) arg0).addView(mListViews.get(arg1), 0);
 				}
 			} catch (Exception e) {
-				// Log.d("parent=", "" + mListViews.get(arg1).getParent());
 				e.printStackTrace();
 			}
 			return mListViews.get(arg1);
