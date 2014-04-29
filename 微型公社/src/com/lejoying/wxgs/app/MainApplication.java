@@ -115,6 +115,8 @@ public class MainApplication extends Application {
 							data.groups = localData.groups;
 							data.squareFlags = localData.squareFlags;
 							data.squareMessages = localData.squareMessages;
+							data.squareMessagesClassify = localData.squareMessagesClassify;
+							data.squareMessagesMap = localData.squareMessagesMap;
 							data.groupsMap = localData.groupsMap;
 							data.groupFriends = localData.groupFriends;
 							data.lastChatFriends = localData.lastChatFriends;

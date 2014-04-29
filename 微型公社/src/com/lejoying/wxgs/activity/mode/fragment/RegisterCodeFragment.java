@@ -44,6 +44,8 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 	public static String accessKey;
 
+	private View backButton;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -58,6 +60,14 @@ public class RegisterCodeFragment extends BaseFragment implements
 		mView_sendcode.setOnClickListener(this);
 
 		mView_code.setText("");
+
+		backButton = mContentView.findViewById(R.id.backButton);
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mLoginMode.back();
+			}
+		});
 
 		mRemainListener = new RemainListener() {
 			@Override
@@ -90,7 +100,6 @@ public class RegisterCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
 		super.onResume();
 	}
 

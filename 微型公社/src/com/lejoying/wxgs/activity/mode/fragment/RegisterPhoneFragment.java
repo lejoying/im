@@ -39,6 +39,8 @@ public class RegisterPhoneFragment extends BaseFragment implements
 	private EditText mView_phone;
 	private Button mView_next;
 
+	private View backButton;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -46,12 +48,20 @@ public class RegisterPhoneFragment extends BaseFragment implements
 		mView_phone = (EditText) mContentView.findViewById(R.id.register_phone);
 		mView_next = (Button) mContentView.findViewById(R.id.button_next);
 		mView_next.setOnClickListener(this);
+
+		backButton = mContentView.findViewById(R.id.backButton);
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mLoginMode.back();
+			}
+		});
+
 		return mContentView;
 	}
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
 		if (app.data.user.phone != null) {
 			mView_phone.setText(app.data.user.phone);
 		}

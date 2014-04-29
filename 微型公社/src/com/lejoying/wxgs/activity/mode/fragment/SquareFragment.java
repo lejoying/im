@@ -57,13 +57,13 @@ public class SquareFragment extends BaseFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		getActivity().getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		String flag = app.data.squareFlags.get(mCurrentSquareID);
 		flag = flag == null ? "0" : flag;
 		Log.e("Coolspan", flag + "------flag message");
 		PushService.startSquareLongPull(getActivity(), mCurrentSquareID, flag);
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -91,7 +91,8 @@ public class SquareFragment extends BaseFragment {
 		final Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
 				.get(mCurrentSquareID);
 		if (messages != null) {
-			Log.e("Coolspan", messages.size() + "-----messages size--");
+			Log.e("Coolspan", messages.size() + "-----messages size--"
+					+ squareMessageMap);
 			app.UIHandler.post(new Runnable() {
 
 				@Override

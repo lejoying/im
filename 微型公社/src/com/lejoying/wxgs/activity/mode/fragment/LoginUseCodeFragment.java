@@ -48,6 +48,8 @@ public class LoginUseCodeFragment extends BaseFragment implements
 
 	boolean init;
 
+	private View backButton;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -59,6 +61,14 @@ public class LoginUseCodeFragment extends BaseFragment implements
 		mView_login = (Button) mContentView.findViewById(R.id.button_clogin);
 		mView_sendcode = (TextView) mContentView
 				.findViewById(R.id.button_sendcode);
+
+		backButton = mContentView.findViewById(R.id.backButton);
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mLoginMode.back();
+			}
+		});
 
 		mView_login.setOnClickListener(this);
 		mView_sendcode.setOnClickListener(this);
@@ -92,7 +102,6 @@ public class LoginUseCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
 		super.onResume();
 	}
 
