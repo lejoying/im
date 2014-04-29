@@ -51,7 +51,7 @@ public class SquareMessageInfoFragment extends BaseFragment {
 		rl_square_message_menu = (RelativeLayout) v
 				.findViewById(R.id.rl_square_message_menu_buttom);
 		rl_square_message_menu_buttom1 = (RelativeLayout) v
-				.findViewById(R.id.rl_square_message_menu_buttom1);
+				.findViewById(R.id.squareDetailBottomBar);
 		initEvent();
 		return v;
 	}

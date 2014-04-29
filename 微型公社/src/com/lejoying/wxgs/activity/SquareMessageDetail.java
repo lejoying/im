@@ -1,0 +1,521 @@
+package com.lejoying.wxgs.activity;
+
+import java.io.File;
+import java.util.List;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.view.RecordView;
+import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
+import com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.entity.SquareMessage;
+import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
+import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
+
+public class SquareMessageDetail extends Activity {
+	MainApplication app = MainApplication.getMainApplication();
+	LayoutInflater inflater;
+
+	SquareMessage message;
+	TextView textPanel;
+
+	SquareMessageInfoScrollView sc_square_message_info;
+	SquareMessageInfoScrollView sc_square_message_info_all;
+	RelativeLayout rl_square_message_menu;
+	RelativeLayout squareDetailBottomBar;
+	ImageView squareMessageDetailBack;
+	TextView squareMessageSendUserName;
+	LinearLayout detailContent;
+	int SCROLL_TOP = 0X01;
+	int SCROLL_BUTTOM = 0X02;
+	int SCROLL_BETWEEN = 0X03;
+	int scrollStatus = SCROLL_TOP;
+	int scrollViewY = 0;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Intent intent = getIntent();
+		String mCurrentSquareID = intent.getStringExtra("mCurrentSquareID");
+		String gmid = intent.getStringExtra("gmid");
+		this.message = app.data.squareMessagesMap.get(mCurrentSquareID).get(
+				gmid);
+		setContentView(R.layout.fragment_square_message_infoes);
+		sc_square_message_info = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info);
+		sc_square_message_info_all = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info_all);
+		rl_square_message_menu = (RelativeLayout) findViewById(R.id.rl_square_message_menu);
+		squareMessageDetailBack = (ImageView) findViewById(R.id.iv_squareMessageDetailBack);
+		squareMessageSendUserName = (TextView) findViewById(R.id.tv_squareMessageSendUserName);
+		detailContent = (LinearLayout) findViewById(R.id.detailContent);
+		addDetailBottomBarChildView();
+		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
+		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		sc_square_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		generateMessageContent();
+		initEvent();
+		CircleMenu.hide();
+	}
+
+	public void generateMessageContent() {
+		List<String> images = message.content.images;
+		List<String> voices = message.content.voices;
+		String textContent = message.content.text != "" ? message.content.text
+				: "哈哈";
+		squareMessageSendUserName.setText(message.nickName);
+		TextView textView = new TextView(this);
+		LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+		params1.topMargin = (int) dp2px(40);
+		detailContent.addView(textView, params1);
+		for (int i = 0; i < images.size(); i++) {
+			final ImageView imageView = new ImageView(this);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+			detailContent.addView(imageView, params);
+			final String fileName = images.get(i);
+			app.fileHandler.getImage(fileName, new FileResult() {
+
+				@Override
+				public void onResult(String where) {
+					imageView.setImageBitmap(app.fileHandler.bitmaps
+							.get(fileName));
+
+				}
+			});
+		}
+		for (int i = 0; i < voices.size(); i++) {
+			final RecordView recordView = new RecordView(
+					SquareMessageDetail.this);
+			// imageView.setImageResource(R.drawable.voice_start);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.WRAP_CONTENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+			detailContent.addView(recordView, params);
+
+			final String fileName = voices.get(i);
+			app.fileHandler.saveVoice(new VoiceInterface() {
+
+				@Override
+				public void setParams(VoiceSettings settings) {
+					settings.fileName = fileName;
+				}
+
+				@Override
+				public void onSuccess(String fileName, String base64,
+						Boolean flag) {
+					if (flag) {
+						// MediaPlayer mpPlayer = null;
+						try {
+							final MediaPlayer mpPlayer = MediaPlayer.create(
+									SquareMessageDetail.this, Uri
+											.parse((new File(
+													app.sdcardVoiceFolder,
+													fileName))
+													.getAbsolutePath()));
+							recordView.setProgressTime(mpPlayer.getDuration());
+							recordView
+									.setProgressListener(new ProgressListener() {
+
+										@Override
+										public void onProgressEnd() {
+											// TODO Auto-generated method stub
+
+										}
+
+										@Override
+										public void onDrag(float percent) {
+											// mpPlayer.seekTo((int) (mpPlayer
+											// .getDuration() * percent));
+
+										}
+									});
+						} catch (SecurityException e) {
+							e.printStackTrace();
+						} catch (IllegalStateException e) {
+							e.printStackTrace();
+						}
+					} else {
+						// to do loading voice failed
+					}
+				}
+			});
+		}
+		textPanel = new TextView(this);
+		textPanel.setTextColor(Color.WHITE);
+		textPanel.setText(textContent);
+		detailContent.addView(textPanel);
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		LinearLayout.LayoutParams paramsInfo = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				(int) (sc_square_message_info.getHeight() * 0.917f));
+		sc_square_message_info_all.setLayoutParams(paramsInfo);
+		LinearLayout.LayoutParams paramsDetailBottomBar = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				(int) (sc_square_message_info.getHeight() * 0.083f));
+		squareDetailBottomBar.setLayoutParams(paramsDetailBottomBar);
+
+		initSquareDetailBottomBar((int) (sc_square_message_info.getHeight() * 0.083f));
+
+		super.onWindowFocusChanged(hasFocus);
+	}
+
+	ImageView timeImage;
+	TextPanel timeText;
+	ImageView distanceImage;
+	TextPanel distanceText;
+	ImageView commentImage;
+	TextPanel commentText;
+	ImageView praiseImage;
+	TextPanel praiseText;
+	ImageView collectImage;
+	TextPanel collectText;
+
+	String convertTime(long currentTime, long targetTime) {
+		long time = currentTime - targetTime;
+		if (time > 0) {
+			time /= 1000;
+			if (time < 60) {
+				return time + "秒前";
+			}
+			time /= 60;
+			if (time < 60) {
+				return time + "分钟前";
+			}
+			time /= 60;
+			if (time < 24) {
+				return time + "小时前";
+			}
+			time /= 24;
+			if (time < 30) {
+				return time + "天前";
+			}
+			time /= 30;
+			if (time < 6) {
+				return time + "个月前";
+			} else if (time < 12) {
+				return "半年前";
+			}
+			time /= 12;
+			return time + "年前";
+		}
+		return "";
+	}
+
+	private void addDetailBottomBarChildView() {
+		// rl_square_message_menu
+
+		timeImage = new ImageView(this);
+		timeImage.setImageResource(R.drawable.time);
+		timeText = new TextPanel(this);
+		timeText.singleLine(true);
+		timeText.setTextColor(Color.WHITE);
+		timeText.setText(convertTime(System.currentTimeMillis(), message.time));
+		distanceImage = new ImageView(this);
+		distanceImage.setImageResource(R.drawable.distance);
+		distanceText = new TextPanel(this);
+		distanceText.singleLine(true);
+		distanceText.setTextColor(Color.WHITE);
+		distanceText.setText("000m");
+		commentImage = new ImageView(this);
+		commentImage.setImageResource(R.drawable.comment);
+		commentText = new TextPanel(this);
+		commentText.singleLine(true);
+		commentText.setTextColor(Color.WHITE);
+		commentText.setText("000");
+		praiseImage = new ImageView(this);
+		praiseImage.setImageResource(R.drawable.praise);
+		praiseText = new TextPanel(this);
+		praiseText.singleLine(true);
+		praiseText.setTextColor(Color.WHITE);
+		praiseText.setText(message.praiseusers.size() + "");
+		collectImage = new ImageView(this);
+		collectImage.setImageResource(R.drawable.collect);
+		collectText = new TextPanel(this);
+		collectText.singleLine(true);
+		collectText.setTextColor(Color.WHITE);
+		collectText.setText("000");
+
+		rl_square_message_menu.addView(timeImage);
+		rl_square_message_menu.addView(timeText);
+		rl_square_message_menu.addView(distanceImage);
+		rl_square_message_menu.addView(distanceText);
+		rl_square_message_menu.addView(commentImage);
+		rl_square_message_menu.addView(commentText);
+		rl_square_message_menu.addView(praiseImage);
+		rl_square_message_menu.addView(praiseText);
+		rl_square_message_menu.addView(collectImage);
+		rl_square_message_menu.addView(collectText);
+
+	}
+
+	private void initSquareDetailBottomBar(int height) {
+		int width = rl_square_message_menu.getWidth();
+		// int height = rl_square_message_menu.getHeight();
+		System.out.println(width + "::::" + height + ">>>>"
+				+ squareDetailBottomBar.getHeight());
+		int side = (int) (height * 0.35185f);
+		int top = (height - side) / 2;
+		float textSize = height * 0.234286f;
+		int textTop = (int) ((height - textSize) / 2);
+		int textLeftA = (int) (width * 0.01651917f);
+		timeImage.setLayoutParams(generateLayoutParams(side, side,
+				(int) (width * 0.03488f), top));
+
+		timeText.setTextSize(textSize);
+		timeText.setLayoutParams(generateLayoutParams((int) ((width * 0.2722f)
+				- (width * 0.03488f) - side), side, (int) (width * 0.03488f)
+				+ side + textLeftA, textTop));
+
+		distanceImage.setLayoutParams(generateLayoutParams(side, side,
+				(int) (width * 0.2722f), top));
+		distanceText.setTextSize(textSize);
+		distanceText.setLayoutParams(generateLayoutParams(
+				(int) ((width * 0.55917f) - (width * 0.2722f) - side), side,
+				(int) (width * 0.2722f) + side + textLeftA, textTop));
+		commentImage.setLayoutParams(generateLayoutParams(side, side,
+				(int) (width * 0.55917f), top));
+		commentText.setTextSize(textSize);
+		commentText.setLayoutParams(generateLayoutParams(
+				(int) ((width * 0.68935f) - (width * 0.55917f) - side), side,
+				(int) (width * 0.55917f) + side + textLeftA, textTop));
+		praiseImage.setLayoutParams(generateLayoutParams(side, side,
+				(int) (width * 0.68935f), top));
+		praiseText.setTextSize(textSize);
+		praiseText.setLayoutParams(generateLayoutParams(
+				(int) ((width * 0.8284f) - (width * 0.68935f) - side), side,
+				(int) (width * 0.68935f) + side + textLeftA, textTop));
+		collectImage.setLayoutParams(generateLayoutParams(side, side,
+				(int) (width * 0.8284f), top));
+		collectText.setTextSize(textSize);
+		collectText.setLayoutParams(generateLayoutParams((int) (width * 0.96f
+				- (width * 0.8284f) - side), side, (int) (width * 0.8284f)
+				+ side + textLeftA, textTop));
+
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		params.leftMargin = (int) (width * 0.03791469f);
+		params.rightMargin = (int) (width * 0.03791469f);
+		params.topMargin = 20;
+		params.bottomMargin = 20;
+		textPanel.setLayoutParams(params);
+		// setting sqaure message content font size
+		textPanel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.03513296f);
+	}
+
+	private RelativeLayout.LayoutParams generateLayoutParams(int w, int h,
+			int left, int top) {
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(w,
+				h);
+		params.leftMargin = left;
+		params.topMargin = top;
+		return params;
+	}
+
+	boolean isTouchOnContent;
+
+	private void initEvent() {
+		squareMessageDetailBack.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+		sc_square_message_info.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
+
+		sc_square_message_info_all.setOnTouchListener(new OnTouchListener() {
+
+			float lastY = 0;
+			boolean overflow;
+			boolean flag;
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				float currentY = event.getY();
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					lastY = 0;
+					overflow = detailContent.getHeight() > sc_square_message_info_all
+							.getHeight();
+					flag = true;
+				}
+				if (overflow) {
+					if (sc_square_message_info.getScrollY() != 0
+							|| (sc_square_message_info_all.getScrollY() == detailContent
+									.getHeight()
+									- sc_square_message_info_all.getHeight() && lastY
+									- currentY > 0)) {
+						flag = false;
+					}
+					lastY = currentY;
+					sc_square_message_info
+							.requestDisallowInterceptTouchEvent(flag);
+				}
+				return true;
+			}
+		});
+	}
+
+	private float dp2px(float dp) {
+		float px = getResources().getDisplayMetrics().density * dp + 0.5f;
+		return px;
+	}
+}
+
+class TextPanel extends View {
+
+	Paint mPaint;
+	String drawText;
+	float baseLineHeight;
+	float lineSpace;
+	boolean singleLine;
+
+	public TextPanel(Context context) {
+		super(context);
+		mPaint = new Paint();
+	}
+
+	public void setTextColor(int color) {
+		mPaint.setColor(color);
+	}
+
+	public void setText(String text) {
+		drawText = text;
+		postInvalidate();
+	}
+
+	public void setTextSize(float textSize) {
+		mPaint.setTextSize(textSize);
+		FontMetrics fm = mPaint.getFontMetrics();
+		float fFontHeight = fm.descent - fm.ascent;
+		baseLineHeight = textSize + textSize - fFontHeight;
+		postInvalidate();
+	}
+
+	public void setLineSpace(float lineSpace) {
+		this.lineSpace = lineSpace;
+		postInvalidate();
+	}
+
+	public void singleLine(boolean singleLine) {
+		this.singleLine = singleLine;
+		postInvalidate();
+	}
+
+	@Override
+	protected void onDraw(Canvas canvas) {
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		if (drawText != null) {
+			float y = 0;
+			y += baseLineHeight;
+			if (singleLine) {
+				String str = drawText;
+				float textWidth = mPaint.measureText(str);
+				if (textWidth > width) {
+					str = drawText.substring(0, 1);
+					int i = 1;
+					while (mPaint.measureText(str + "...", 0,
+							(str + "...").length()) < width) {
+						str = drawText.substring(0, ++i);
+					}
+					str += "...";
+				}
+				canvas.drawText(str, 0, y, mPaint);
+			} else {
+				String[] strLines = autoSplit(drawText, mPaint, width);
+				int i = 0;
+				float nextY = 0;
+				for (String str : strLines) {
+					if (str == null) {
+						continue;
+					}
+					if (i < strLines.length) {
+						nextY = y + baseLineHeight + lineSpace;
+					}
+					if (nextY > height) {
+						String strLast = str;
+						float textWidth = mPaint.measureText(str + "...");
+						// TODO can't show "..."
+						if (textWidth > width) {
+							strLast = str.substring(0, 1);
+							int j = 0;
+							while (mPaint.measureText(strLast + "...", 0,
+									(strLast + "...").length()) < width) {
+								strLast = drawText.substring(0, ++j);
+							}
+							strLast += "...";
+						}
+						canvas.drawText(strLast, 0, y, mPaint);
+						break;
+					} else {
+						canvas.drawText(str, 0, y, mPaint);
+					}
+					y = nextY;
+					i++;
+				}
+			}
+		}
+	}
+
+	private String[] autoSplit(String content, Paint p, float width) {
+		// TODO add '\n'
+		int length = content.length();
+		float textWidth = p.measureText(content);
+		if (textWidth <= width) {
+			return new String[] { content };
+		}
+
+		int start = 0, end = 1, i = 0;
+		int lines = (int) Math.ceil(textWidth / width);
+		lines += 1;
+		String[] lineTexts = new String[lines];
+		while (start < length) {
+			if (p.measureText(content, start, end) > width) {
+				end -= 1;
+				lineTexts[i++] = content.substring(start, end);
+				start = end;
+			}
+			if (end == length) {
+				lineTexts[i] = (String) content.substring(start, end);
+				break;
+			}
+			end += 1;
+		}
+		return lineTexts;
+	}
+}

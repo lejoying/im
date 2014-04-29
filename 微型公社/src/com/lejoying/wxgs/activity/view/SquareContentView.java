@@ -322,6 +322,16 @@ public class SquareContentView extends HorizontalScrollView {
 		return item;
 	}
 
+	public interface OnItemClickListener {
+		public void onItemClick(SquareMessage message);
+	}
+
+	private OnItemClickListener onItemClickListener;
+
+	public void setOnItemClickListener(OnItemClickListener l) {
+		this.onItemClickListener = l;
+	}
+
 	public class Item {
 		SquareMessage message;
 		int style;
@@ -329,7 +339,7 @@ public class SquareContentView extends HorizontalScrollView {
 		ItemContent content;
 		boolean isMakeSurePosition;
 
-		public Item(int style, SquareMessage message) {
+		public Item(int style, final SquareMessage message) {
 			this.style = style;
 			this.message = message;
 			if (message.style != style) {
@@ -341,6 +351,16 @@ public class SquareContentView extends HorizontalScrollView {
 			params = new RelativeLayout.LayoutParams(
 					RelativeLayout.LayoutParams.WRAP_CONTENT,
 					RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+			content.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (onItemClickListener != null) {
+						onItemClickListener.onItemClick(message);
+					}
+				}
+			});
 		}
 
 		public void addToContainer() {

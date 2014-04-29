@@ -10,335 +10,175 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/rl_square_message_menu_buttom"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
             <com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView
                 android:id="@+id/sc_square_message_info_all"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#26ffffff"
                 android:visibility="visible" >
 
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/detailContent"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="20dp" >
-
-                    <ImageView
-                        android:id="@+id/imageView1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:src="@drawable/temp" />
-
-                    <TextView
-                        android:id="@+id/tv_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_below="@+id/imageView1"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:text="我们一直在旅行，一直在等到某个人可以成为我们旅途的伴侣，陪我们走过一段别人无法替代的回忆。I Miss You... ... 曾走过的路，在脚下，路过的风景，在记忆中。我们一直在旅行，一直在等到某个人可以成为我们旅途的伴侣，陪我们走过一段别人无法替代的回忆。I Miss You... ... 曾走过的路，在脚下，路过的风景，在记忆中。我们一直在旅行，一直在等到某个人可以成为我们旅途的伴侣，陪我们走过一段别人无法替代的回忆。I Miss You... ... 曾走过的路，在脚下，路过的风景，在记忆中。"
-                        android:textColor="#fff"
-                        android:textSize="18sp" />
-                </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+                </LinearLayout>
             </com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView>
 
             <RelativeLayout
-                android:id="@+id/rl_square_message_menu_buttom1"
+                android:id="@+id/squareDetailBottomBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/sc_square_message_info_all"
-                android:visibility="visible" >
+                android:background="#26ffffff" >
 
                 <ImageView
                     android:id="@+id/imageView_line"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginBottom="10dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginTop="15dp"
-                    android:background="#38ffffff" />
+                    android:background="#26ffffff" />
 
                 <RelativeLayout
                     android:id="@+id/rl_square_message_menu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/imageView_line" >
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:orientation="horizontal" >
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="2.5"
-                            android:gravity="left" >
-
-                            <ImageView
-                                android:id="@+id/imageView11"
-                                android:layout_width="25dp"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/time" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_marginLeft="26dp"
-                                android:text="昨天 08:33"
-                                android:textColor="#fff"
-                                android:textSize="12sp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="2"
-                            android:gravity="left" >
-
-                            <ImageView
-                                android:id="@+id/imageView22"
-                                android:layout_width="25dp"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/distance" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_marginLeft="26dp"
-                                android:text="152m"
-                                android:textColor="#fff"
-                                android:textSize="13sp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center" >
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.5"
-                            android:gravity="center" >
-
-                            <ImageView
-                                android:id="@+id/imageView33"
-                                android:layout_width="25dp"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/comment" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_marginLeft="26dp"
-                                android:text="122"
-                                android:textColor="#fff"
-                                android:textSize="13sp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.5"
-                            android:gravity="center" >
-
-                            <ImageView
-                                android:id="@+id/imageView33"
-                                android:layout_width="25dp"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/praise" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_marginLeft="26dp"
-                                android:text="596"
-                                android:textColor="#fff"
-                                android:textSize="13sp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.5"
-                            android:gravity="center" >
-
-                            <ImageView
-                                android:id="@+id/imageView33"
-                                android:layout_width="25dp"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/collect" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_marginLeft="26dp"
-                                android:text="100"
-                                android:textColor="#fff"
-                                android:textSize="13sp" />
-                        </RelativeLayout>
-                    </LinearLayout>
                 </RelativeLayout>
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/rl_square_message_menu_buttom2"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rl_square_message_menu_buttom1"
-                android:layout_marginTop="10dp"
-                android:visibility="visible" >
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1.5"
+                    android:src="@drawable/temp" />
 
                 <LinearLayout
-                    android:id="@+id/ll_square_message_comments"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_weight="7"
                     android:orientation="vertical" >
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_height="25dp"
                         android:orientation="horizontal" >
 
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_weight="1.5"
-                            android:src="@drawable/temp" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="7"
-                            android:orientation="vertical" >
+                            android:layout_gravity="left"
+                            android:layout_weight="2"
+                            android:text="七个小矮人"
+                            android:textColor="#2BA8D4"
+                            android:textSize="18sp" />
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="25dp"
-                                android:orientation="horizontal" >
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="left"
-                                    android:layout_weight="2"
-                                    android:text="七个小矮人"
-                                    android:textColor="#2BA8D4"
-                                    android:textSize="18sp" />
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginRight="10dp"
-                                    android:layout_weight="1"
-                                    android:gravity="right"
-                                    android:text="今天08:33"
-                                    android:textColor="#fff"
-                                    android:textSize="18sp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal" >
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="真的很羡慕你可以到处旅行...嘿嘿，其实你也是可以的啊，如果愿意，我们可以一起啊....真的么？。。。。假的。。。哈哈"
-                                    android:textColor="#fff"
-                                    android:textSize="16sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout><LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal" >
-
-                        <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_weight="1.5"
-                            android:src="@drawable/temp" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="7"
-                            android:orientation="vertical" >
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="25dp"
-                                android:orientation="horizontal" >
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="left"
-                                    android:layout_weight="2"
-                                    android:text="七个小矮人"
-                                    android:textColor="#2BA8D4"
-                                    android:textSize="18sp" />
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginRight="10dp"
-                                    android:layout_weight="1"
-                                    android:gravity="right"
-                                    android:text="今天08:33"
-                                    android:textColor="#fff"
-                                    android:textSize="18sp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal" >
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="真的很羡慕你可以到处旅行...嘿嘿，其实你也是可以的啊，如果愿意，我们可以一起啊....真的么？。。。。假的。。。哈哈"
-                                    android:textColor="#fff"
-                                    android:textSize="16sp" />
-                            </LinearLayout>
-                        </LinearLayout>
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:text="今天08:33"
+                            android:textColor="#fff"
+                            android:textSize="18sp" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="真的很羡慕你可以到处旅行...嘿嘿，其实你也是可以的啊，如果愿意，我们可以一起啊....真的么？。。。。假的。。。哈哈"
+                            android:textColor="#fff"
+                            android:textSize="16sp" />
+                    </LinearLayout>
                 </LinearLayout>
-            </RelativeLayout>
-        </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1.5"
+                    android:src="@drawable/temp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="7"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:layout_weight="2"
+                            android:text="七个小矮人"
+                            android:textColor="#2BA8D4"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:text="今天08:33"
+                            android:textColor="#fff"
+                            android:textSize="18sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="真的很羡慕你可以到处旅行...嘿嘿，其实你也是可以的啊，如果愿意，我们可以一起啊....真的么？。。。。假的。。。哈哈"
+                            android:textColor="#fff"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
     </com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#51000000"
+        android:background="#38000000"
         android:visibility="visible" >
 
         <ImageView
+            android:id="@+id/iv_squareMessageDetailBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -346,6 +186,7 @@
             android:src="@drawable/back" />
 
         <TextView
+            android:id="@+id/tv_squareMessageSendUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

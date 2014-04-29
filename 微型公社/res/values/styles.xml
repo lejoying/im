@@ -17,7 +17,7 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-    <style name="NoAnimation">
+    <style name="NoAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@null</item>
         <item name="android:activityOpenExitAnimation">@null</item>
         <item name="android:activityCloseEnterAnimation">@null</item>
@@ -50,7 +50,7 @@
     </style>
 
     <style name="CommonStyle" parent="android:Theme.NoTitleBar">
-        <item name="android:windowAnimationStyle">@style/CommonAnimation</item>
+        <item name="android:windowAnimationStyle">@style/NoAnimation</item>
     </style>
 
     <style name="AlertInputDialog" parent="android:Theme.Dialog">

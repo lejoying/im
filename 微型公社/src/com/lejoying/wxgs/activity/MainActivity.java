@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity {
 				initEvent();
 				ll_menu_app.setVisibility(View.VISIBLE);
 				// mMainMode.show(mMainMode.mSquareFragment);
-				mMainMode.show(mMainMode.squareMessageInfoFragment);
+				mMainMode.show(mMainMode.mSquareFragment);
 				PushService.startIMLongPull(this);
 
 				if (app.data.isClear) {

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,9 +19,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.SquareMessageDetail;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.SquareContentView;
+import com.lejoying.wxgs.activity.view.SquareContentView.OnItemClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -62,7 +65,6 @@ public class SquareFragment extends BaseFragment {
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		String flag = app.data.squareFlags.get(mCurrentSquareID);
 		flag = flag == null ? "0" : flag;
-		Log.e("Coolspan", flag + "------flag message");
 		PushService.startSquareLongPull(getActivity(), mCurrentSquareID, flag);
 	}
 
@@ -91,8 +93,6 @@ public class SquareFragment extends BaseFragment {
 		final Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
 				.get(mCurrentSquareID);
 		if (messages != null) {
-			Log.e("Coolspan", messages.size() + "-----messages size--"
-					+ squareMessageMap);
 			app.UIHandler.post(new Runnable() {
 
 				@Override
@@ -103,6 +103,17 @@ public class SquareFragment extends BaseFragment {
 				}
 			});
 		}
+		stv_squrecontentview.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(SquareMessage message) {
+				Intent intent = new Intent(getActivity(),
+						SquareMessageDetail.class);
+				intent.putExtra("mCurrentSquareID", mCurrentSquareID);
+				intent.putExtra("gmid", message.gmid);
+				startActivity(intent);
+			}
+		});
 		return mContentView;
 	}
 
