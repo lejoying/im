@@ -9,10 +9,12 @@ public class SquareMessageInfoScrollView extends ScrollView {
 
 	private SizeChangedListener sizeChangedListener;
 	private onScrollChanged onScrollChanged;
+	boolean scrollEnable;
 
 	public SquareMessageInfoScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
+		scrollEnable = true;
 	}
 
 	@Override
@@ -21,7 +23,7 @@ public class SquareMessageInfoScrollView extends ScrollView {
 		if (sizeChangedListener != null) {
 			sizeChangedListener.sizeChanged(l, t, oldl, oldt);
 		}
-//		requestDisallowInterceptTouchEvent(disallowIntercept);
+		// requestDisallowInterceptTouchEvent(disallowIntercept);
 	}
 
 	@Override
@@ -30,6 +32,28 @@ public class SquareMessageInfoScrollView extends ScrollView {
 		if (sizeChangedListener != null) {
 			sizeChangedListener.sizeChanged(w, h, oldw, oldh);
 		}
+	}
+
+	OnTouchListener mOnTouchListener;
+
+	@Override
+	public void setOnTouchListener(OnTouchListener l) {
+		mOnTouchListener = l;
+	}
+
+	public void setScrollEnable(boolean enable) {
+		this.scrollEnable = enable;
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent ev) {
+		if (mOnTouchListener != null) {
+			mOnTouchListener.onTouch(this, ev);
+		}
+		if (scrollEnable) {
+			super.onTouchEvent(ev);
+		}
+		return true;
 	}
 
 	boolean isintercept;
