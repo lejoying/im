@@ -41,6 +41,8 @@ public class RegisterPassFragment extends BaseFragment implements
 
 	String mPass;
 
+	private View backButton;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -70,12 +72,28 @@ public class RegisterPassFragment extends BaseFragment implements
 			}
 		});
 
+		backButton = mContentView.findViewById(R.id.backButton);
+		backButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Alert.createDialog(getActivity()).setTitle("确定要退出注册码？")
+						.setOnConfirmClickListener(new OnDialogClickListener() {
+							@Override
+							public void onClick(AlertInputDialog dialog) {
+								mLoginMode.clearBackStack(1);
+								mLoginMode.back();
+								RegisterCodeFragment.accessKey = null;
+								mLoginMode.setKeyDownListener(null);
+							}
+						}).show();
+			}
+		});
+
 		return mContentView;
 	}
 
 	@Override
 	public void onResume() {
-		CircleMenu.hide();
 		super.onResume();
 	}
 
@@ -105,7 +123,11 @@ public class RegisterPassFragment extends BaseFragment implements
 					Map<String, String> params = new HashMap<String, String>();
 					params.put("phone", app.data.user.phone);
 					params.put("accessKey", RegisterCodeFragment.accessKey);
-					params.put("account", "{\"password\":\"" + app.mSHA1.getDigestOfString(mPass.getBytes()) + "\"}");
+					params.put(
+							"account",
+							"{\"password\":\""
+									+ app.mSHA1.getDigestOfString(mPass
+											.getBytes()) + "\"}");
 					settings.params = params;
 				}
 
