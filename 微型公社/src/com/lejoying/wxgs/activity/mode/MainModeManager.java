@@ -21,7 +21,6 @@ import com.lejoying.wxgs.activity.mode.fragment.NewFriendsFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SearchFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
-import com.lejoying.wxgs.activity.mode.fragment.SquareMessageInfoFragment;
 
 public class MainModeManager extends BaseModeManager {
 
@@ -49,7 +48,6 @@ public class MainModeManager extends BaseModeManager {
 	public ModifyFragment mModifyFragment;
 	public ChangePasswordFragment mChangePasswordFragment;
 	public GroupBusinessCardFragment mGroupBusinessCardFragment;
-	public SquareMessageInfoFragment squareMessageInfoFragment;
 
 	public MainModeManager(MainActivity activity) {
 		super(activity);
@@ -94,9 +92,6 @@ public class MainModeManager extends BaseModeManager {
 			mModifyFragment.setMode(this);
 			mGroupBusinessCardFragment = new GroupBusinessCardFragment();
 			mGroupBusinessCardFragment.setMode(this);
-			squareMessageInfoFragment = new SquareMessageInfoFragment();
-			squareMessageInfoFragment.setMode(this);
-
 		}
 	}
 

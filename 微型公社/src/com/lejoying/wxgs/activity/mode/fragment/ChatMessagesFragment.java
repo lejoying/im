@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
@@ -44,8 +43,9 @@ public class ChatMessagesFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.show();
-		CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
+		// CircleMenu.show();
+		// CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
+		mMainModeManager.handleMenu(true);
 		super.onResume();
 	}
 

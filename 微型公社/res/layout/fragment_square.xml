@@ -43,7 +43,7 @@
                 android:orientation="horizontal" >
 
                 <RelativeLayout
-                    android:id="@+id/current_square_essence"
+                    android:id="@+id/current_square_essence_message"
                     android:layout_width="90dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" >
@@ -82,7 +82,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/current_square_all"
+                    android:id="@+id/current_square_all_message"
                     android:layout_width="90dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" >
@@ -121,7 +121,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/current_square_activity"
+                    android:id="@+id/current_square_activity_message"
                     android:layout_width="90dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" >
@@ -160,7 +160,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/current_square_shits"
+                    android:id="@+id/current_square_shits_message"
                     android:layout_width="90dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" >

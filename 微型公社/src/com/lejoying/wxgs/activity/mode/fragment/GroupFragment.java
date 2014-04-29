@@ -27,7 +27,6 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -352,7 +351,7 @@ public class GroupFragment extends BaseFragment {
 	}
 
 	void notifyGroups(List<Group> groups, List<GroupHolder> groupHolders,
-			View groupView) {
+			final View groupView) {
 
 		List<GroupHolder> tempHolders = new ArrayList<GroupFragment.GroupHolder>();
 		tempHolders.addAll(groupHolders);
@@ -410,10 +409,16 @@ public class GroupFragment extends BaseFragment {
 						.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View arg0) {
-								mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-								mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
-								mMainModeManager
-										.showNext(mMainModeManager.mChatGroupFragment);
+								if (nearByGroup.equals(groupView)) {
+									mMainModeManager.mGroupBusinessCardFragment.mGroup = group;
+									mMainModeManager
+											.showNext(mMainModeManager.mGroupBusinessCardFragment);
+								} else {
+									mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+									mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
+									mMainModeManager
+											.showNext(mMainModeManager.mChatGroupFragment);
+								}
 							}
 						});
 
@@ -614,8 +619,8 @@ public class GroupFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.show();
-		CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
+		// CircleMenu.show();
+		// CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
 		mMainModeManager.handleMenu(true);
 		requestLocation();
 		super.onResume();

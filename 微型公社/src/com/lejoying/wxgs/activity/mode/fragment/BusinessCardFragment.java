@@ -43,7 +43,6 @@ import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.FriendGroupsGridViewAdapter;
@@ -207,8 +206,8 @@ public class BusinessCardFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
-		mMainModeManager.handleMenu(false);
+		// CircleMenu.showBack();
+		// mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 
@@ -290,7 +289,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					// 
+					//
 
 				}
 			});
@@ -346,7 +345,7 @@ public class BusinessCardFragment extends BaseFragment {
 													uri);
 											startActivityForResult(tackPicture,
 													RESULT_TAKEPICTURE);
-											CircleMenu.hide();
+											// CircleMenu.hide();
 										}
 									})
 							.setOnCancelClickListener(
@@ -361,7 +360,7 @@ public class BusinessCardFragment extends BaseFragment {
 											startActivityForResult(
 													selectFromGallery,
 													RESULT_SELECTPICTURE);
-											CircleMenu.hide();
+											// CircleMenu.hide();
 										}
 									}).show();
 				}
@@ -609,7 +608,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 				rl_bighead.setVisibility(View.GONE);
 				group.setVisibility(View.VISIBLE);
-				CircleMenu.showBack();
+				// CircleMenu.showBack();
 			}
 		});
 		iv_head.setOnClickListener(new OnClickListener() {
@@ -625,7 +624,7 @@ public class BusinessCardFragment extends BaseFragment {
 						app.fileHandler.bitmaps.get(headname)));
 				group.setVisibility(View.GONE);
 				rl_bighead.setVisibility(View.VISIBLE);
-				CircleMenu.hide();
+				// CircleMenu.hide();
 			}
 		});
 		app.fileHandler.getBackgroundImage(backgroudFileName, new FileResult() {
@@ -656,7 +655,8 @@ public class BusinessCardFragment extends BaseFragment {
 
 		if (mStatus != SHOW_SELF) {
 			final List<Group> groups = getFriendGroups();
-			adapter = new FriendGroupsGridViewAdapter(mInflater, groups,width,height);
+			adapter = new FriendGroupsGridViewAdapter(mInflater, groups, width,
+					height);
 			gridView.setAdapter(adapter);
 			setColumns(gridView, groups);
 			gridView.setOnItemClickListener(new OnItemClickListener() {
@@ -688,7 +688,7 @@ public class BusinessCardFragment extends BaseFragment {
 		params.width = itemWidth * listSize + (listSize - 1) * spacingWidth;
 		gridView.setNumColumns(listSize);
 		gridView.setLayoutParams(params);
-		
+
 		gridView.setStretchMode(GridView.NO_STRETCH);
 
 		gridView.setHorizontalSpacing(spacingWidth);

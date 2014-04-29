@@ -394,7 +394,7 @@ squareManage.addsquarepraise = function (data, response) {
                     message.praiseusers = message.praiseusers || [];
                     var praiseusers = message.praiseusers;
                     var users = [];
-                    if (operation || operation == "true") {
+                    if (operation == "true" || operation == true) {
                         message.praiseusers.push(phone);
                     } else {
                         for (var index in praiseusers) {

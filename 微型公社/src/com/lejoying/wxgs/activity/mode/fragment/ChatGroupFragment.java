@@ -78,7 +78,6 @@ import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.app.MainApplication;
@@ -201,11 +200,8 @@ public class ChatGroupFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
-		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
-		if (ll_menu_app.getVisibility() == View.VISIBLE) {
-			ll_menu_app.setVisibility(View.GONE);
-		}
+		// CircleMenu.showBack();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 
@@ -311,10 +307,7 @@ public class ChatGroupFragment extends BaseFragment {
 			groupTopBar.setVisibility(View.VISIBLE);
 
 		}
-		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
-		if (ll_menu_app.getVisibility() == View.VISIBLE) {
-			ll_menu_app.setVisibility(View.GONE);
-		}
+		mMainModeManager.handleMenu(false);
 		initEvent();
 		initBaseFaces();
 		return mContent;
@@ -1587,11 +1580,11 @@ public class ChatGroupFragment extends BaseFragment {
 				data.lastChatFriends.add(0, "g" + mNowChatGroup.gid);
 				Log.e("Coolspan", data.lastChatFriends.size()
 						+ "---------------chat length");
-				mMainModeManager.mChatMessagesFragment.notifyViews();
 			}
 
 			@Override
 			public void modifyUI() {
+				mMainModeManager.mChatMessagesFragment.notifyViews();
 				mAdapter.notifyDataSetChanged();
 				chatContent.setSelection(mAdapter.getCount() - 1);
 				if (mMainModeManager.mCirclesFragment.isAdded()) {

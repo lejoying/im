@@ -47,7 +47,6 @@ import com.lejoying.wxgs.activity.view.manager.FrictionAnimation.AnimatingView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
@@ -93,12 +92,9 @@ public class CirclesFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.show();
-		CircleMenu.setPageName(getString(R.string.circlemenu_page_circles));
-		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
-		if (ll_menu_app.getVisibility() == View.GONE) {
-			ll_menu_app.setVisibility(View.VISIBLE);
-		}
+		// CircleMenu.show();
+		// CircleMenu.setPageName(getString(R.string.circlemenu_page_circles));
+		mMainModeManager.handleMenu(true);
 		super.onResume();
 	}
 
@@ -140,10 +136,7 @@ public class CirclesFragment extends BaseFragment {
 
 		density = getActivity().getResources().getDisplayMetrics().density;
 
-		LinearLayout ll_menu_app = mMainModeManager.ll_menu_app;
-		if (ll_menu_app.getVisibility() == View.GONE) {
-			ll_menu_app.setVisibility(View.VISIBLE);
-		}
+		mMainModeManager.handleMenu(true);
 
 		circleViewCommonAnimation();
 
@@ -697,7 +690,7 @@ public class CirclesFragment extends BaseFragment {
 			}
 		});
 
-		CircleMenu.showBack();
+		// CircleMenu.showBack();
 
 		int[] location = new int[2];
 		view.getLocationOnScreen(location);
@@ -765,7 +758,7 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	void normalMode() {
-		CircleMenu.show();
+		// CircleMenu.show();
 		if (mode.equals("edit")) {
 			mode = "normal";
 		} else {
@@ -982,7 +975,7 @@ public class CirclesFragment extends BaseFragment {
 		createGroupButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				CircleMenu.showBack();
+				// CircleMenu.showBack();
 				final EditText circleName;
 				new AlertDialog.Builder(getActivity())
 						.setTitle("请输入分组名")
@@ -993,7 +986,7 @@ public class CirclesFragment extends BaseFragment {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-										CircleMenu.show();
+										// CircleMenu.show();
 										if (circleName.getText().toString()
 												.equals("")) {
 											Alert.showMessage("密友圈名称不能为空");
@@ -1041,13 +1034,13 @@ public class CirclesFragment extends BaseFragment {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-										CircleMenu.show();
+										// CircleMenu.show();
 									}
 								}).setOnCancelListener(new OnCancelListener() {
 
 							@Override
 							public void onCancel(DialogInterface dialog) {
-								CircleMenu.show();
+								// CircleMenu.show();
 							}
 						}).show();
 			}

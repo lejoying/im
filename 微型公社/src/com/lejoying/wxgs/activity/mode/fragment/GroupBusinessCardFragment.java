@@ -1,7 +1,9 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
+import org.json.JSONObject;
+import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -16,18 +18,21 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 public class GroupBusinessCardFragment extends BaseFragment implements
 		OnClickListener {
@@ -46,10 +51,13 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 	private Handler handler;
 	private static final int SCROLL = 0x51;
 	private boolean stopSend;
-	private int width, height;
+	// private int width, height;
 
 	View mContent;
 	LayoutInflater mInflater;
+
+	ImageView iv_me_back;
+	TextView tv_back_show;
 
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
@@ -58,10 +66,13 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		mMainModeManager = mainMode;
 	}
 
+	@SuppressLint("HandlerLeak")
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mInflater = inflater;
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
+		iv_me_back = (ImageView) mContent.findViewById(R.id.iv_me_back);
+		tv_back_show = (TextView) mContent.findViewById(R.id.tv_back_show);
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -100,8 +111,8 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 				DisplayMetrics dm = new DisplayMetrics();
 				getActivity().getWindowManager().getDefaultDisplay()
 						.getMetrics(dm);
-				height = dm.heightPixels;
-				width = dm.widthPixels;
+				// height = dm.heightPixels;
+				// width = dm.widthPixels;
 				Rect frame = new Rect();
 				getActivity().getWindow().getDecorView()
 						.getWindowVisibleDisplayFrame(frame);
@@ -149,15 +160,28 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		};
 		asyncTask.execute();
 		initData();
+		initEvent();
 		return mContent;
 	}
 
+	private void initEvent() {
+		iv_me_back.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
+			}
+		});
+	}
+
 	public void onResume() {
-		CircleMenu.showBack();
+		// CircleMenu.showBack();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 
 	public void initData() {
+		tv_back_show.setText("群组资料");
 		group = (ViewGroup) mContent.findViewById(R.id.ll_content);
 		View tv_group = mContent.findViewById(R.id.tv_group_layout);
 		View tv_square = mContent.findViewById(R.id.tv_square_layout);
@@ -198,31 +222,55 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		tv_phone_title.setVisibility(View.GONE);
 		tv_mainbusiness_title.setVisibility(View.GONE);
 		tv_sex_title.setVisibility(View.GONE);
-		
+
 		group.removeView(button2);
 		group.removeView(button3);
 		group.removeView(tv_group);
 		group.removeView(tv_square);
 		group.removeView(tv_msg);
-		
-//		List<String> myGroups=app.data.groups;
-//		for(int i=0;i<myGroups.size();i++){
-//			if(myGroups.get(i).equals(mGroup.members.get(i))){
-//				button1.setText("开始聊天");
-//				break;
-//			}else{
-//				button1.setText("加入群组");
-//			}
-//				
-//			//System.out.println(myGroups.get(i));
-//		}
-		button1.setText("加入群组");
+
+		// List<String> myGroups=app.data.groups;
+		// for(int i=0;i<myGroups.size();i++){
+		// if(myGroups.get(i).equals(mGroup.members.get(i))){
+		// button1.setText("开始聊天");
+		// break;
+		// }else{
+		// button1.setText("加入群组");
+		// }
+		//
+		// //System.out.println(myGroups.get(i));
+		// }
+		if (app.data.groupsMap.get(mGroup.gid) == null) {
+			button1.setText("加入群组");
+			button1.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					addMembersToGroup();
+				}
+			});
+		} else {
+			button1.setText("发起聊天");
+			button1.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					mMainModeManager.back();
+					mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+					mMainModeManager.mChatGroupFragment.mNowChatGroup = app.data.groupsMap
+							.get(mGroup.gid);
+					mMainModeManager
+							.showNext(mMainModeManager.mChatGroupFragment);
+				}
+			});
+		}
 		tv_id_title.setText("群组ID：");
 		tv_alias_title.setText("群组描述：");
 
 		tv_nickname.setText(mGroup.name);
 		tv_id.setText(String.valueOf(mGroup.gid));
-		if (mGroup.description == null || mGroup.description.equals("")||mGroup.description.equals("请输入群组描述信息")) {
+		if (mGroup.description == null || mGroup.description.equals("")
+				|| mGroup.description.equals("请输入群组描述信息")) {
 			tv_alias.setText("此群组暂无描述");
 		} else {
 			tv_alias.setText(mGroup.description);
@@ -247,17 +295,57 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		case R.id.rl_bighead:
 			rl_bighead.setVisibility(View.GONE);
 			group.setVisibility(View.VISIBLE);
-			CircleMenu.showBack();
+			// CircleMenu.showBack();
 			break;
 		case R.id.iv_head:
 			tv_bighead.setBackgroundDrawable(new BitmapDrawable(
 					app.fileHandler.bitmaps.get(mGroup.icon)));
 			group.setVisibility(View.GONE);
 			rl_bighead.setVisibility(View.VISIBLE);
-			CircleMenu.hide();
+			// CircleMenu.hide();
 			break;
 		default:
 			break;
 		}
+	}
+
+	public void addMembersToGroup() {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.GROUP_ADDMEMBERS;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", String.valueOf(mGroup.gid));
+
+				params.put("members", "[\"" + app.data.user.phone + "\"]");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				app.UIHandler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						initData();
+						DataUtil.getGroups(new GetDataListener() {
+
+							@Override
+							public void getSuccess() {
+								if (MainActivity.instance.mMainMode.mChatGroupFragment
+										.isAdded()) {
+									mMainModeManager.mChatGroupFragment.mAdapter
+											.notifyDataSetChanged();
+									mMainModeManager.mGroupFragment
+											.notifyViews();
+								}
+							}
+						});
+					}
+				});
+			}
+		});
 	}
 }

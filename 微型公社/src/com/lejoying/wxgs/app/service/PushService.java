@@ -14,7 +14,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
@@ -282,7 +281,7 @@ public class PushService extends Service {
 													.equals(MainActivity.MODE_MAIN)) {
 										if (MainActivity.instance.mMainMode.mSquareFragment
 												.isAdded()) {
-											MainActivity.instance.mMainMode.mSquareFragment.stv_squrecontentview.justSetSquareMessageList(
+											MainActivity.instance.mMainMode.mSquareFragment.squareContentView.justSetSquareMessageList(
 													data.squareMessages
 															.get(mCurrentConnectionGid),
 													data.squareMessagesMap

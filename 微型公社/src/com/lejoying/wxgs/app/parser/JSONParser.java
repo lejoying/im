@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Circle;
+import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.Event;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
@@ -449,5 +450,56 @@ public class JSONParser {
 			e.printStackTrace();
 		}
 		return squareMessage;
+	}
+
+	public static List<Comment> generateCommentsFromJSON(JSONArray jComments) {
+		List<Comment> comments = new ArrayList<Comment>();
+		for (int i = 0; i < jComments.length(); i++) {
+			try {
+				JSONObject jComment = new JSONObject(jComments.getString(i));
+				comments.add(generateCommentOnlyFromJSON(jComment));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return null;
+	}
+
+	public static Comment generateCommentOnlyFromJSON(JSONObject jsonObject) {
+
+		Comment comment = new Comment();
+		try {
+			comment.phone = jsonObject.getString("phone");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.nickName = jsonObject.getString("nickName");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.head = jsonObject.getString("head");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.contentType = jsonObject.getString("contentType");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.content = jsonObject.getString("content");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.time = jsonObject.getLong("time");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return comment;
 	}
 }

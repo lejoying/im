@@ -178,18 +178,22 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
-		
-//TODO	
-//		RelativeLayout.LayoutParams ll_et_releaseParams = new RelativeLayout.LayoutParams(
-//				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//		ll_et_releaseParams.addRule(RelativeLayout.ABOVE, R.id.horizontalScrollView);
-//		ll_et_release.setLayoutParams(ll_et_releaseParams);
-//		
-//		RelativeLayout.LayoutParams horizontalScrollViewrelativeParams = new RelativeLayout.LayoutParams(
-//				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//		horizontalScrollViewrelativeParams.addRule(RelativeLayout.ABOVE, R.id.release_ll_navigation);
-//		horizontalScrollView.setLayoutParams(horizontalScrollViewrelativeParams);
-		
+
+		// TODO
+		// RelativeLayout.LayoutParams ll_et_releaseParams = new
+		// RelativeLayout.LayoutParams(
+		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		// ll_et_releaseParams.addRule(RelativeLayout.ABOVE,
+		// R.id.horizontalScrollView);
+		// ll_et_release.setLayoutParams(ll_et_releaseParams);
+		//
+		// RelativeLayout.LayoutParams horizontalScrollViewrelativeParams = new
+		// RelativeLayout.LayoutParams(
+		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		// horizontalScrollViewrelativeParams.addRule(RelativeLayout.ABOVE,
+		// R.id.release_ll_navigation);
+		// horizontalScrollView.setLayoutParams(horizontalScrollViewrelativeParams);
+
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 				dip, dip);
 		layoutParams.leftMargin = (width - (dip * 5)) / 10;
@@ -201,7 +205,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		iv_voice.setLayoutParams(layoutParams);
 		tv_cancel.setLayoutParams(layoutParams);
 		tv_commit.setLayoutParams(layoutParams);
-		
+
 		RelativeLayout.LayoutParams relativeParams1 = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		relativeParams1.width = width / 2;
@@ -435,7 +439,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			Send();
 			break;
 		case R.id.release_et_release:
-			//TODO
+			// TODO
 			if (!isEditText) {
 				if (faceVisible) {
 					rl_face.setVisibility(View.GONE);
@@ -614,11 +618,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0, -240
 				* density + 0.5f);
 		ScrollViewanimation.setDuration(220);
-		
+
 		ll_navigation.startAnimation(navigationanimation);
 		rl_face.startAnimation(faceanimation);
 		horizontalScrollView.startAnimation(ScrollViewanimation);
-		
+
 		faceVisible = true;
 		isEditText = false;
 	}
@@ -656,15 +660,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		Animation faceanimation = new TranslateAnimation(0, 0, 0,
 				240 * density + 0.5f);
 		faceanimation.setDuration(220);
-		
+
 		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0,
 				240 * density + 0.5f);
 		ScrollViewanimation.setDuration(220);
-		
+
 		ll_navigation.startAnimation(navigationanimation);
 		rl_face.startAnimation(faceanimation);
 		horizontalScrollView.startAnimation(ScrollViewanimation);
-		
+
 		faceVisible = false;
 		isEditText = true;
 	}
@@ -745,29 +749,37 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		try {
 			jsonObject.put("type", "text");
 			jsonObject.put("details", broadcast);
+			jsonArray.put(jsonObject);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		jsonArray.put(jsonObject);
 	}
 
 	public void addImageToJson() {
 		for (int i = 0; i < image.size(); i++) {
-			checkImage((String) image.get(i).get("fileName"), (String) image
-					.get(i).get("base64"));
+			try {
+				String fileName = (String) image.get(i).get("fileName");
+				checkImage(fileName, (String) image.get(i).get("base64"));
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("type", "image");
+				jsonObject.put("details", fileName);
+				jsonArray.put(jsonObject);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public void addVoiceToJson() {
 		for (int i = 0; i < voice.size(); i++) {
-			JSONObject jsonObject = new JSONObject();
 			try {
+				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("type", "voice");
 				jsonObject.put("details", voice.get(i).get("fileName"));
+				jsonArray.put(jsonObject);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			jsonArray.put(jsonObject);
 		}
 	}
 

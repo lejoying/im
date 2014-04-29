@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -476,17 +475,21 @@ public class SquareContentView extends HorizontalScrollView {
 				// contentImage.setImageBitmap(bm);
 				if (!message.contentType.equals("text")) {
 					String cover = "none";
-					if (message.cover.equals("voice")) {
-						cover = "voice.png";
-					} else if (!message.cover.equals("none")) {
-						cover = message.cover;
-					} else {
-						Content content = message.content;
-						if (content.images.size() > 0) {
-							cover = content.images.get(0);
-						} else if (content.voices.size() > 0) {
-							cover = content.voices.get(0);
-						}
+					// if (message.cover.equals("voice")) {
+					// cover = "voice.png";
+					// } else if (!message.cover.equals("none")) {
+					// cover = message.cover;
+					// } else {
+					// Content content = message.content;
+					// if (content.images.size() > 0) {
+					// cover = content.images.get(0);
+					// } else if (content.voices.size() > 0) {
+					// cover = content.voices.get(0);
+					// }
+					// }
+					Content content = message.content;
+					if (content.images.size() > 0) {
+						cover = content.images.get(0);
 					}
 					if (!cover.equals("none")) {
 						final String fileName = cover;

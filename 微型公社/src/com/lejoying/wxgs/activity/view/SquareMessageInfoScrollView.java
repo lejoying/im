@@ -8,7 +8,6 @@ import android.widget.ScrollView;
 public class SquareMessageInfoScrollView extends ScrollView {
 
 	private SizeChangedListener sizeChangedListener;
-	private onScrollChanged onScrollChanged;
 	boolean scrollEnable;
 
 	public SquareMessageInfoScrollView(Context context, AttributeSet attrs) {
@@ -75,13 +74,4 @@ public class SquareMessageInfoScrollView extends ScrollView {
 	public interface SizeChangedListener {
 		public void sizeChanged(int w, int h, int oldw, int oldh);
 	}
-
-	public void onScrollChanged(onScrollChanged onScrollChanged) {
-		this.onScrollChanged = onScrollChanged;
-	}
-
-	public interface onScrollChanged {
-		public void ScrollChanged(int l, int t, int oldl, int oldt);
-	}
-
 }

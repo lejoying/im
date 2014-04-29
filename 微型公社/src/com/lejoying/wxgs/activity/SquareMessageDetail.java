@@ -1,7 +1,12 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +18,7 @@ import android.graphics.Paint.FontMetrics;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,22 +32,31 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class SquareMessageDetail extends Activity {
 	MainApplication app = MainApplication.getMainApplication();
 	LayoutInflater inflater;
 
 	SquareMessage message;
+	String mCurrentSquareID;
+	String gmid;
 	TextView textPanel;
+
+	boolean praiseStatus = false;
 
 	SquareMessageInfoScrollView sc_square_message_info;
 	SquareMessageInfoScrollView sc_square_message_info_all;
@@ -49,6 +64,7 @@ public class SquareMessageDetail extends Activity {
 	RelativeLayout squareDetailBottomBar;
 	ImageView squareMessageDetailBack;
 	TextView squareMessageSendUserName;
+	LinearLayout squareMessageDetailComments;
 	LinearLayout detailContent;
 	int SCROLL_TOP = 0X01;
 	int SCROLL_BUTTOM = 0X02;
@@ -60,22 +76,25 @@ public class SquareMessageDetail extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
-		String mCurrentSquareID = intent.getStringExtra("mCurrentSquareID");
-		String gmid = intent.getStringExtra("gmid");
+		mCurrentSquareID = intent.getStringExtra("mCurrentSquareID");
+		gmid = intent.getStringExtra("gmid");
 		this.message = app.data.squareMessagesMap.get(mCurrentSquareID).get(
 				gmid);
-		setContentView(R.layout.fragment_square_message_infoes);
+		inflater = this.getLayoutInflater();
+		setContentView(R.layout.fragment_square_message_detail);
 		sc_square_message_info = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info);
 		sc_square_message_info_all = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info_all);
 		rl_square_message_menu = (RelativeLayout) findViewById(R.id.rl_square_message_menu);
 		squareMessageDetailBack = (ImageView) findViewById(R.id.iv_squareMessageDetailBack);
 		squareMessageSendUserName = (TextView) findViewById(R.id.tv_squareMessageSendUserName);
+		squareMessageDetailComments = (LinearLayout) findViewById(R.id.ll_squareMessageDetailComments);
 		detailContent = (LinearLayout) findViewById(R.id.detailContent);
 		addDetailBottomBarChildView();
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
 		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		sc_square_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		generateMessageContent();
+		getSquareMessageComments();
 		initEvent();
 		CircleMenu.hide();
 	}
@@ -252,7 +271,17 @@ public class SquareMessageDetail extends Activity {
 		commentText.setTextColor(Color.WHITE);
 		commentText.setText("000");
 		praiseImage = new ImageView(this);
-		praiseImage.setImageResource(R.drawable.praise);
+		for (int i = 0; i < message.praiseusers.size(); i++) {
+			if (message.praiseusers.get(i).equals(app.data.user.phone)) {
+				praiseStatus = true;
+				break;
+			}
+		}
+		if (praiseStatus) {
+			praiseImage.setImageResource(R.drawable.praised);
+		} else {
+			praiseImage.setImageResource(R.drawable.praise);
+		}
 		praiseText = new TextPanel(this);
 		praiseText.singleLine(true);
 		praiseText.setTextColor(Color.WHITE);
@@ -343,6 +372,31 @@ public class SquareMessageDetail extends Activity {
 	boolean isTouchOnContent;
 
 	private void initEvent() {
+		praiseImage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (praiseStatus) {
+					praiseImage.setImageResource(R.drawable.praise);
+					for (int i = 0; i < message.praiseusers.size(); i++) {
+						if (message.praiseusers.get(i).equals(
+								app.data.user.phone)) {
+							message.praiseusers.remove(i);
+							break;
+						}
+					}
+					praiseText.setText(message.praiseusers.size() + "");
+					praiseStatus = false;
+					praiseSquareMessage(false);
+				} else {
+					praiseImage.setImageResource(R.drawable.praised);
+					message.praiseusers.add(app.data.user.phone);
+					praiseText.setText(message.praiseusers.size() + "");
+					praiseStatus = true;
+					praiseSquareMessage(true);
+				}
+			}
+		});
 		squareMessageDetailBack.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -388,6 +442,77 @@ public class SquareMessageDetail extends Activity {
 				return true;
 			}
 		});
+	}
+
+	public void praiseSquareMessage(final boolean flag) {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SQUARE_ADDSQUAREPRAISE;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentSquareID);
+				params.put("gmid", gmid);
+				params.put("operation", flag + "");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					String notice = jData.getString("提示信息");
+					Log.e("Coolspan", notice + "-" + flag + "------点赞提示消息");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void getSquareMessageComments() {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SQUARE_GETSQUARECOMMENTS;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentSquareID);
+				params.put("gmid", gmid);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					final List<Comment> comments = JSONParser
+							.generateCommentsFromJSON(jData
+									.getJSONArray("comments"));
+					// if (comments.size()) {
+					app.UIHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							generateCommentsViews(comments);
+						}
+					});
+					// }
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void generateCommentsViews(List<Comment> comments) {
+		for (int i = 0; i < Long.valueOf(gmid) % 3; i++) {
+			View mContent = inflater.inflate(
+					R.layout.fragment_square_message_comments, null);
+			squareMessageDetailComments.addView(mContent);
+		}
+
 	}
 
 	private float dp2px(float dp) {

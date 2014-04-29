@@ -24,7 +24,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Movie;
-import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 

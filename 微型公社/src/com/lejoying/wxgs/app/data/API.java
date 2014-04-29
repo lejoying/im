@@ -41,7 +41,7 @@ public class API {
 	public static final String RELATION_GETASKFRIENDS = "api2/relation/getaskfriends";
 	public static final String RELATION_ADDFRIENDAGREE = "api2/relation/addfriendagree";
 	public static final String RELATION_MODIFYALIAS = "api2/relation/modifyalias";
-	
+
 	public static final String SESSION = "session";
 	public static final String SESSION_EVENT = "api2/session/event";
 
@@ -71,5 +71,7 @@ public class API {
 	public static final String SQUARE = "square";
 	public static final String SQUARE_SENDSQUAREMESSAGE = "api2/square/sendsquaremessage";
 	public static final String SQUARE_GETSQUAREMESSAGE = "api2/square/getsquaremessage";
+	public static final String SQUARE_GETSQUARECOMMENTS = "api2/square/getsquarecomments";
+	public static final String SQUARE_ADDSQUAREPRAISE = "api2/square/addsquarepraise";
 
 }

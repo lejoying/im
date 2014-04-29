@@ -9,13 +9,15 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -24,7 +26,6 @@ import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.SquareContentView;
 import com.lejoying.wxgs.activity.view.SquareContentView.OnItemClickListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -45,7 +46,22 @@ public class SquareFragment extends BaseFragment {
 
 	ListView mSqureMessageView;
 
-	public SquareContentView stv_squrecontentview;
+	public SquareContentView squareContentView;
+
+	RelativeLayout currentSquareEssenceMessage;
+	RelativeLayout currentSquareAllMessage;
+	RelativeLayout currentSquareActivityMessage;
+	RelativeLayout currentSquareShitsMessage;
+	TextView currentSquareNoReadEssence;
+	TextView currentSquareNoReadAll;
+	TextView currentSquareNoReadActivity;
+	TextView currentSquareNoReadShits;
+	ImageView currentSquareStatusEssence;
+	ImageView currentSquareStatusAll;
+	ImageView currentSquareStatusActivity;
+	ImageView currentSquareStatusShits;
+
+	ImageView currentSquareMessageClassify;
 
 	EditText mViewBroadcast;
 	View mButtonSend;
@@ -70,8 +86,9 @@ public class SquareFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.show();
-		CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
+		// CircleMenu.show();
+		// CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
+		notifyViews();
 		super.onResume();
 	}
 
@@ -86,8 +103,33 @@ public class SquareFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		mInflater = inflater;
 		mContentView = inflater.inflate(R.layout.fragment_square, null);
-		stv_squrecontentview = (SquareContentView) mContentView
+		squareContentView = (SquareContentView) mContentView
 				.findViewById(R.id.stv_squrecontentview);
+		currentSquareEssenceMessage = (RelativeLayout) mContentView
+				.findViewById(R.id.current_square_essence_message);
+		currentSquareAllMessage = (RelativeLayout) mContentView
+				.findViewById(R.id.current_square_all_message);
+		currentSquareActivityMessage = (RelativeLayout) mContentView
+				.findViewById(R.id.current_square_activity_message);
+		currentSquareShitsMessage = (RelativeLayout) mContentView
+				.findViewById(R.id.current_square_shits_message);
+		currentSquareStatusEssence = (ImageView) mContentView
+				.findViewById(R.id.current_square_status_essence);
+		currentSquareStatusAll = (ImageView) mContentView
+				.findViewById(R.id.current_square_status_all);
+		currentSquareStatusActivity = (ImageView) mContentView
+				.findViewById(R.id.current_square_status_activity);
+		currentSquareStatusShits = (ImageView) mContentView
+				.findViewById(R.id.current_square_status_shits);
+		currentSquareNoReadEssence = (TextView) mContentView
+				.findViewById(R.id.current_square_noread_essence);
+		currentSquareNoReadAll = (TextView) mContentView
+				.findViewById(R.id.current_square_noread_all);
+		currentSquareNoReadActivity = (TextView) mContentView
+				.findViewById(R.id.current_square_noread_activity);
+		currentSquareNoReadShits = (TextView) mContentView
+				.findViewById(R.id.current_square_noread_shits);
+		currentSquareMessageClassify = currentSquareStatusAll;
 		final List<String> messages = app.data.squareMessages
 				.get(mCurrentSquareID);
 		final Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
@@ -97,13 +139,122 @@ public class SquareFragment extends BaseFragment {
 
 				@Override
 				public void run() {
-					stv_squrecontentview.setSquareMessageList(messages,
+					squareContentView.setSquareMessageList(messages,
 							squareMessageMap);
-					stv_squrecontentview.notifyDataSetChanged();
+					squareContentView.notifyDataSetChanged();
 				}
 			});
 		}
-		stv_squrecontentview.setOnItemClickListener(new OnItemClickListener() {
+		initEvent();
+		return mContentView;
+	}
+
+	private void initEvent() {
+		currentSquareShitsMessage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentSquareMessageClassify != currentSquareStatusShits) {
+					currentSquareMessageClassify.setVisibility(View.GONE);
+					currentSquareStatusShits.setVisibility(View.VISIBLE);
+					currentSquareMessageClassify = currentSquareStatusShits;
+					// squareContentView.removeAllViews();
+					List<String> ShitsMessageClassify = app.data.squareMessagesClassify
+							.get(mCurrentSquareID).get("吐槽");
+					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+							.get(mCurrentSquareID);
+					squareContentView.justSetSquareMessageList(
+							ShitsMessageClassify, squareMessageMap);
+					app.UIHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							squareContentView.notifyDataSetChanged();
+						}
+					});
+				}
+			}
+		});
+		currentSquareActivityMessage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentSquareMessageClassify != currentSquareStatusActivity) {
+					currentSquareMessageClassify.setVisibility(View.GONE);
+					currentSquareStatusActivity.setVisibility(View.VISIBLE);
+					currentSquareMessageClassify = currentSquareStatusActivity;
+					// squareContentView.removeAllViews();
+					List<String> ActivityMessageClassify = app.data.squareMessagesClassify
+							.get(mCurrentSquareID).get("活动");
+					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+							.get(mCurrentSquareID);
+					squareContentView.justSetSquareMessageList(
+							ActivityMessageClassify, squareMessageMap);
+					app.UIHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							squareContentView.notifyDataSetChanged();
+						}
+					});
+				}
+			}
+		});
+		currentSquareAllMessage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentSquareMessageClassify != currentSquareStatusAll) {
+					currentSquareMessageClassify.setVisibility(View.GONE);
+					currentSquareStatusAll.setVisibility(View.VISIBLE);
+					currentSquareMessageClassify = currentSquareStatusAll;
+					// squareContentView.removeAllViews();
+					List<String> AllMessages = app.data.squareMessages
+							.get(mCurrentSquareID);
+					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+							.get(mCurrentSquareID);
+					// squareContentView.setSquareMessageList(AllMessages,
+					// squareMessageMap);
+					squareContentView.justSetSquareMessageList(AllMessages,
+							squareMessageMap);
+					app.UIHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							squareContentView.notifyDataSetChanged();
+						}
+					});
+				}
+			}
+		});
+		currentSquareEssenceMessage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentSquareMessageClassify != currentSquareStatusEssence) {
+					currentSquareMessageClassify.setVisibility(View.GONE);
+					currentSquareStatusEssence.setVisibility(View.VISIBLE);
+					currentSquareMessageClassify = currentSquareStatusEssence;
+					// squareContentView.removeAllViews();
+					List<String> EssenceMessageClassify = app.data.squareMessagesClassify
+							.get(mCurrentSquareID).get("精华");
+					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+							.get(mCurrentSquareID);
+					// squareContentView.setSquareMessageList(
+					// EssenceMessageClassify, squareMessageMap);
+					squareContentView.justSetSquareMessageList(
+							EssenceMessageClassify, squareMessageMap);
+					app.UIHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							squareContentView.notifyDataSetChanged();
+						}
+					});
+				}
+			}
+		});
+		squareContentView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(SquareMessage message) {
@@ -114,11 +265,10 @@ public class SquareFragment extends BaseFragment {
 				startActivity(intent);
 			}
 		});
-		return mContentView;
 	}
 
 	public void notifyViews() {
-		stv_squrecontentview.notifyDataSetChanged();
+		squareContentView.notifyDataSetChanged();
 	}
 
 	public void search(final String phone) {

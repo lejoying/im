@@ -38,7 +38,6 @@ import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
@@ -621,7 +620,7 @@ public class GroupManagerFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
+		// CircleMenu.showBack();
 		super.onResume();
 	}
 

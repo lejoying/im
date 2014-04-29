@@ -80,7 +80,6 @@ import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
@@ -202,7 +201,7 @@ public class ChatFriendFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
+		// CircleMenu.showBack();
 		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
@@ -1679,9 +1678,8 @@ public class ChatFriendFragment extends BaseFragment {
 							.add(message);
 					data.lastChatFriends.remove("f" + mNowChatFriend.phone);
 					data.lastChatFriends.add(0, "f" + mNowChatFriend.phone);
-//					Log.e("Coolspan", data.lastChatFriends.size()
-//							+ "---------------chat length");
-					mMainModeManager.mChatMessagesFragment.notifyViews();
+					// Log.e("Coolspan", data.lastChatFriends.size()
+					// + "---------------chat length");
 				} else {
 					mNowChatGroup.messages.add(message);
 				}
@@ -1689,6 +1687,7 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void modifyUI() {
+				mMainModeManager.mChatMessagesFragment.notifyViews();
 				mAdapter.notifyDataSetChanged();
 				chatContent.setSelection(mAdapter.getCount() - 1);
 				if (mMainModeManager.mCirclesFragment.isAdded()) {
@@ -2132,7 +2131,7 @@ public class ChatFriendFragment extends BaseFragment {
 					((ViewPager) arg0).addView(mListViews.get(arg1), 0);
 				}
 			} catch (Exception e) {
-				//Log.d("parent=", "" + mListViews.get(arg1).getParent());
+				// Log.d("parent=", "" + mListViews.get(arg1).getParent());
 				e.printStackTrace();
 			}
 			return mListViews.get(arg1);

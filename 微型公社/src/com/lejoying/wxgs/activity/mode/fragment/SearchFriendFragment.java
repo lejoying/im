@@ -31,7 +31,6 @@ import com.lejoying.wxgs.activity.utils.LocationUtils;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -54,7 +53,8 @@ public class SearchFriendFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
+		// CircleMenu.showBack();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 

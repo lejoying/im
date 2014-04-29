@@ -40,7 +40,6 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScanView;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -112,7 +111,8 @@ public class ScanQRCodeFragment extends BaseFragment implements
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
+		// CircleMenu.showBack();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 
