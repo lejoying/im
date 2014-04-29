@@ -120,7 +120,6 @@ public class BusinessCardFragment extends BaseFragment {
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
-				// TODO Auto-generated method stub
 				int what = msg.what;
 				switch (what) {
 				case SCROLL:
@@ -175,19 +174,16 @@ public class BusinessCardFragment extends BaseFragment {
 
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
-						// TODO Auto-generated method stub
 						stopSend = true;
 						new Thread() {
 							@Override
 							public void run() {
-								// TODO Auto-generated method stub
 								while (stopSend) {
 									handler.sendEmptyMessage(SCROLL);
 									int start = sv_content.getScrollY();
 									try {
 										Thread.sleep(100);
 									} catch (InterruptedException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
 									int stop = sv_content.getScrollY();
@@ -294,7 +290,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					// TODO Auto-generated method stub
+					// 
 
 				}
 			});
@@ -458,8 +454,6 @@ public class BusinessCardFragment extends BaseFragment {
 										@Override
 										public void onClick(
 												AlertInputDialog dialog) {
-											// TODO Auto-generated method
-											// stub
 											final String alias = alert
 													.getInputText();
 
@@ -479,7 +473,6 @@ public class BusinessCardFragment extends BaseFragment {
 
 																		@Override
 																		public void modifyUI() {
-																			// TODO
 
 																		}
 																	});
@@ -551,8 +544,6 @@ public class BusinessCardFragment extends BaseFragment {
 
 																		@Override
 																		public void modifyUI() {
-																			// TODO
-																			// refresh
 																			if (mMainModeManager.mCirclesFragment
 																					.isAdded()) {
 																				mMainModeManager.mCirclesFragment
@@ -615,7 +606,6 @@ public class BusinessCardFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 
 				rl_bighead.setVisibility(View.GONE);
 				group.setVisibility(View.VISIBLE);
@@ -666,7 +656,7 @@ public class BusinessCardFragment extends BaseFragment {
 
 		if (mStatus != SHOW_SELF) {
 			final List<Group> groups = getFriendGroups();
-			adapter = new FriendGroupsGridViewAdapter(mInflater, groups);
+			adapter = new FriendGroupsGridViewAdapter(mInflater, groups,width,height);
 			gridView.setAdapter(adapter);
 			setColumns(gridView, groups);
 			gridView.setOnItemClickListener(new OnItemClickListener() {
@@ -674,7 +664,6 @@ public class BusinessCardFragment extends BaseFragment {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-					// TODO Auto-generated method stub
 					mMainModeManager.mGroupBusinessCardFragment.mGroup = groups
 							.get(position);
 					mMainModeManager
@@ -699,7 +688,7 @@ public class BusinessCardFragment extends BaseFragment {
 		params.width = itemWidth * listSize + (listSize - 1) * spacingWidth;
 		gridView.setNumColumns(listSize);
 		gridView.setLayoutParams(params);
-
+		
 		gridView.setStretchMode(GridView.NO_STRETCH);
 
 		gridView.setHorizontalSpacing(spacingWidth);
@@ -752,7 +741,6 @@ public class BusinessCardFragment extends BaseFragment {
 
 							}
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -848,7 +836,6 @@ public class BusinessCardFragment extends BaseFragment {
 						uploadImage(fileName, base64);
 					}
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -887,7 +874,6 @@ public class BusinessCardFragment extends BaseFragment {
 			}
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		final Map<String, String> params = new HashMap<String, String>();

@@ -38,6 +38,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -72,10 +74,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	int height, width, dip, picwidth;
 	int chat_vPager_now = 0;
 	int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54;
+	private static final int ADDVIEW = 0x1;
 	float density;
 	boolean isEditText = true, faceVisible = false, seletePic = false;
-	List<String> voice;
-	List<String> image;
+	List<Map<String, Object>> voice;
+	List<Map<String, Object>> image;
 	List<String[]> faceNamesList;
 	List<List<String>> faceNameList;
 	List<ImageView> faceMenuShowList;
@@ -98,6 +101,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	View release_iv_face_left;
 	View release_iv_face_right;
 	View release_iv_face_delete;
+	View addView;
 
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 	String mCurrentSquareID = "";
@@ -105,6 +109,22 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	String broadcast = "";
 	String contentType = "vit";
 	JSONArray jsonArray;
+
+	@SuppressLint("HandlerLeak")
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case ADDVIEW:
+				if (addView != null)
+					ll_release_picandvoice.addView(addView);
+				break;
+
+			default:
+				break;
+			}
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -155,10 +175,20 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		ll_releaselocal = (LinearLayout) findViewById(R.id.ll_releaselocal);
 		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
+		horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
-		//TODO
 		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
-		horizontalScrollView=(HorizontalScrollView) findViewById(R.id.horizontalScrollView);
+		
+//TODO	
+//		RelativeLayout.LayoutParams ll_et_releaseParams = new RelativeLayout.LayoutParams(
+//				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//		ll_et_releaseParams.addRule(RelativeLayout.ABOVE, R.id.horizontalScrollView);
+//		ll_et_release.setLayoutParams(ll_et_releaseParams);
+//		
+//		RelativeLayout.LayoutParams horizontalScrollViewrelativeParams = new RelativeLayout.LayoutParams(
+//				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//		horizontalScrollViewrelativeParams.addRule(RelativeLayout.ABOVE, R.id.release_ll_navigation);
+//		horizontalScrollView.setLayoutParams(horizontalScrollViewrelativeParams);
 		
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 				dip, dip);
@@ -171,7 +201,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		iv_voice.setLayoutParams(layoutParams);
 		tv_cancel.setLayoutParams(layoutParams);
 		tv_commit.setLayoutParams(layoutParams);
-
+		
 		RelativeLayout.LayoutParams relativeParams1 = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		relativeParams1.width = width / 2;
@@ -184,7 +214,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		RelativeLayout.LayoutParams relativeParams3 = new RelativeLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		relativeParams3.addRule(RelativeLayout.ABOVE, R.id.release_ll_navigation);
+		relativeParams3.addRule(RelativeLayout.ABOVE,
+				R.id.release_ll_navigation);
 		horizontalScrollView.setLayoutParams(relativeParams3);
 
 		iv_selectpicture.setOnClickListener(this);
@@ -203,8 +234,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	public void initData() {
 		initFace();
-		image = new ArrayList<String>();
-		voice = new ArrayList<String>();
+		image = new ArrayList<Map<String, Object>>();
+		voice = new ArrayList<Map<String, Object>>();
 		et_release.addTextChangedListener(new TextWatcher() {
 			String content = "";
 
@@ -404,6 +435,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			Send();
 			break;
 		case R.id.release_et_release:
+			//TODO
 			if (!isEditText) {
 				if (faceVisible) {
 					rl_face.setVisibility(View.GONE);
@@ -567,23 +599,26 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-				//TODO
+				// TODO
 				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				layoutParams.height = (int) (height - ll_navigation.getHeight()
-						- (240 * density + 0.5f) - 40);
+						- (240 * density + 0.5f) - 40
+						- ((width - (7 * 10)) / 6) - 10);
 				et_release.setLayoutParams(layoutParams);
 			}
 		});
 		Animation faceanimation = new TranslateAnimation(0, 0,
 				240 * density + 0.5f, 0);
 		faceanimation.setDuration(220);
-		rl_face.startAnimation(faceanimation);
-		ll_navigation.startAnimation(navigationanimation);
 		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0, -240
 				* density + 0.5f);
-		navigationanimation.setDuration(220);
+		ScrollViewanimation.setDuration(220);
+		
+		ll_navigation.startAnimation(navigationanimation);
+		rl_face.startAnimation(faceanimation);
 		horizontalScrollView.startAnimation(ScrollViewanimation);
+		
 		faceVisible = true;
 		isEditText = false;
 	}
@@ -603,7 +638,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 				ll_navigation.setLayoutParams(layoutParams1);
 				LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				layoutParams2.height = (int) (height
+						- ll_navigation.getHeight() - 40
+						- ((width - (7 * 10)) / 6) - 10);
 				et_release.setLayoutParams(layoutParams2);
 			}
 
@@ -618,12 +656,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		Animation faceanimation = new TranslateAnimation(0, 0, 0,
 				240 * density + 0.5f);
 		faceanimation.setDuration(220);
-		rl_face.startAnimation(faceanimation);
-		ll_navigation.startAnimation(navigationanimation);
+		
 		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0,
 				240 * density + 0.5f);
-		navigationanimation.setDuration(220);
+		ScrollViewanimation.setDuration(220);
+		
+		ll_navigation.startAnimation(navigationanimation);
+		rl_face.startAnimation(faceanimation);
 		horizontalScrollView.startAnimation(ScrollViewanimation);
+		
 		faceVisible = false;
 		isEditText = true;
 	}
@@ -712,14 +753,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	public void addImageToJson() {
 		for (int i = 0; i < image.size(); i++) {
-			JSONObject jsonObject = new JSONObject();
-			try {
-				jsonObject.put("type", "image");
-				jsonObject.put("details", image.get(i));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			jsonArray.put(jsonObject);
+			checkImage((String) image.get(i).get("fileName"), (String) image
+					.get(i).get("base64"));
 		}
 	}
 
@@ -728,7 +763,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			JSONObject jsonObject = new JSONObject();
 			try {
 				jsonObject.put("type", "voice");
-				jsonObject.put("details", voice.get(i));
+				jsonObject.put("details", voice.get(i).get("fileName"));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -757,44 +792,62 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(final int requestCode, int resultCode,
+			Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		//TODO
-		if (//requestCode == RESULT_SELECTPICTURE&& 
-				resultCode == Activity.RESULT_OK && data != null) {
+		String picturePath = "";
+		String format = "";
+		if (requestCode == RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_OK && data != null) {
 			Uri selectedImage = data.getData();
 			String[] filePathColumn = { MediaStore.Images.Media.DATA };
 			Cursor cursor = getContentResolver().query(selectedImage,
 					filePathColumn, null, null, null);
 			cursor.moveToFirst();
 			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			final String picturePath = cursor.getString(columnIndex)
-					.toLowerCase(Locale.getDefault());
-			final String format = picturePath.substring(picturePath
-					.lastIndexOf("."));
+			picturePath = cursor.getString(columnIndex).toLowerCase(
+					Locale.getDefault());
+			format = picturePath.substring(picturePath.lastIndexOf("."));
 			cursor.close();
 
-			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
-					picturePath), 960, 540);
-			if (bitmap != null) {
-				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
-
-					@Override
-					public void setParams(SaveSettings settings) {
-						settings.compressFormat = format.equals(".jpg") ? settings.JPG
-								: settings.PNG;
-						settings.source = bitmap;
-					}
-
-					@Override
-					public void onSuccess(String fileName, String base64) {
-						checkImage(fileName, base64);
-					}
-				});
-			}
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			
+			Uri uri = Uri.fromFile(tempFile);
+			picturePath = uri.getPath();
+			format = "";
+		}
+
+		final Map<String, Object> map = new HashMap<String, Object>();
+		final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
+				picturePath), 960, 540);
+		final String newformat = format;
+		final String newpicturePath = picturePath;
+		map.put("bitmap", bitmap);
+
+		if (bitmap != null) {
+			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+				@Override
+				public void setParams(SaveSettings settings) {
+					settings.compressFormat = newformat.equals(".jpg") ? settings.JPG
+							: settings.PNG;
+					settings.source = bitmap;
+				}
+
+				@Override
+				public void onSuccess(String fileName, String base64) {
+					map.put("fileName", fileName);
+					map.put("base64", base64);
+					image.add(map);
+					addView(bitmap);
+					if (requestCode == RESULT_TAKEPICTURE) {
+						File file = new File(newpicturePath);
+						if (file.isFile() && file.exists()) {
+							file.delete();
+						}
+					}
+				}
+			});
 		}
 	}
 
@@ -815,9 +868,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void success(JSONObject jData) {
 				try {
 					if (jData.getBoolean("exists")) {
-						System.out.println(fileName);
-						//TODO
-						// sendMessage("image", fileName);
+						JSONObject jsonObject = new JSONObject();
+						try {
+							jsonObject.put("type", "image");
+							jsonObject.put("details", fileName);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						jsonArray.put(jsonObject);
+
 					} else {
 						uploadImageOrVoice("image", fileName, base64);
 					}
@@ -846,10 +905,42 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void success(JSONObject jData) {
-				//TODO
+				JSONObject jsonObject = new JSONObject();
+				try {
+					jsonObject.put("type", "image");
+					jsonObject.put("details", fileName);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				jsonArray.put(jsonObject);
 			}
 
 		});
+	}
+
+	public void addView(Bitmap bitmap) {
+		// TODO
+		addView = mInflater.inflate(R.layout.release_child_navigation, null);
+		ImageView iv = (ImageView) addView.findViewById(R.id.iv_release_child);
+		LinearLayout.LayoutParams ivParems = new LinearLayout.LayoutParams(
+				(width - (7 * 10)) / 6, (width - (7 * 10)) / 6);
+		ivParems.bottomMargin = 10;
+		ivParems.leftMargin = 10;
+		iv.setLayoutParams(ivParems);
+		if (bitmap != null)
+			iv.setImageBitmap(bitmap);
+		iv.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				System.out.println("-----");
+			}
+		});
+		Message msg = new Message();
+		msg.what = ADDVIEW;
+		handler.sendMessage(msg);
+
 	}
 
 	public void checkBack() {

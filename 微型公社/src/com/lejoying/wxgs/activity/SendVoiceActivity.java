@@ -123,6 +123,7 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.sendvoice_iv_commit:
+			//setResult(resultCode, data);
 			finish();
 			overridePendingTransition(0,0);
 			break;

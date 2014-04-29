@@ -5,8 +5,10 @@ import java.util.List;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -16,6 +18,7 @@ import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
 public class FriendGroupsGridViewAdapter extends BaseAdapter {
 	private List<Group> groups;
+	private int width, height;
 	MainApplication app = MainApplication.getMainApplication();
 	ViewHolder holder = null;
 	LayoutInflater inflater;
@@ -25,7 +28,13 @@ public class FriendGroupsGridViewAdapter extends BaseAdapter {
 		this.inflater = inflater;
 		this.groups = groups;
 	}
-
+	public FriendGroupsGridViewAdapter(LayoutInflater inflater,
+			List<Group> groups,int width,int heigth) {
+		this.inflater = inflater;
+		this.groups = groups;
+		this.width=width;
+		this.height=heigth;
+	}
 	@Override
 	public int getCount() {
 		return groups.size();
@@ -57,12 +66,17 @@ public class FriendGroupsGridViewAdapter extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
+//		RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(
+//				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//		rl.leftMargin=width;
+//		convertView.setLayoutParams(rl);
 		holder.tv_groupname.setText(groups.get(position).name);
 		final String headFileName = groups.get(position).icon;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {	
-				holder.tv_grouppic.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
+			public void onResult(String where) {
+				holder.tv_grouppic.setImageBitmap(app.fileHandler.bitmaps
+						.get(headFileName));
 			}
 		});
 		// app.fileHandler.getGroupHeadImage(headFileName, new FileResult() {
