@@ -74,12 +74,12 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	int height, width, dip, picwidth;
 	int chat_vPager_now = 0;
-	static int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54,
-			RESULT_MAKEVOICE = 0x64;
+	int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54,
+			RESULT_MAKEVOICE = 0x64, RESULT_PICANDVOICE = 0x74;
 	float density;
 	boolean isEditText = true, faceVisible = false, seletePic = false;
-	List<Map<String, Object>> voice;
-	List<Map<String, Object>> image;
+	static List<Map<String, Object>> voice;
+	static List<Map<String, Object>> image;
 	List<String[]> faceNamesList;
 	List<List<String>> faceNameList;
 	List<ImageView> faceMenuShowList;
@@ -121,7 +121,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
 		width = dm.widthPixels;
-		initEvent();
+		initLayout();
 		initData();
 		super.onCreate(savedInstanceState);
 	}
@@ -138,7 +138,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		}
 	}
 
-	public void initEvent() {
+	public void initLayout() {
 		ll_navigation = (LinearLayout) findViewById(R.id.release_ll_navigation);
 		ImageView iv_selectpicture = (ImageView) findViewById(R.id.release_iv_selectpicture);
 		ImageView iv_emoji = (ImageView) findViewById(R.id.release_iv_emoji);
@@ -398,7 +398,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		case R.id.release_iv_voice:
 			Intent intent = new Intent(ReleaseActivity.this,
 					SendVoiceActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivityForResult(intent, RESULT_MAKEVOICE);
 			break;
 		case R.id.release_tv_cancel:
@@ -752,7 +751,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		}
 	}
 
-	public void addImageFromLocal(){
+	public void addImageFromLocal() {
 		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
 				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
@@ -803,6 +802,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				}
 			});
 
+		} else if (requestCode == RESULT_MAKEVOICE
+				&& resultCode == Activity.RESULT_OK) {
+			nodifyViews();
 		} else {
 			String picturePath = "";
 			String format = "";
@@ -947,7 +949,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		View addView = mInflater.inflate(R.layout.release_child_navigation,
 				null);
 		ImageView iv = (ImageView) addView.findViewById(R.id.iv_release_child);
-		LinearLayout.LayoutParams ivParems = new LinearLayout.LayoutParams(
+		RelativeLayout.LayoutParams ivParems = new RelativeLayout.LayoutParams(
 				(width - (7 * 10)) / 6, (width - (7 * 10)) / 6);
 		ivParems.bottomMargin = 10;
 		ivParems.leftMargin = 10;
@@ -960,8 +962,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void onClick(View arg0) {
 				Intent intent = new Intent(ReleaseActivity.this,
 						PicAndVoiceDetailActivity.class);
-				// intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-				startActivity(intent);
+				startActivityForResult(intent, RESULT_PICANDVOICE);
 			}
 		});
 		ll_release_picandvoice.addView(addView);
