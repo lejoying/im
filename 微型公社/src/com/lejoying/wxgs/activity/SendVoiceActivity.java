@@ -3,9 +3,13 @@ package com.lejoying.wxgs.activity;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -16,9 +20,12 @@ import android.view.View.OnTouchListener;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.RecordView;
+import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
+import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 
@@ -33,6 +40,12 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	float density;
 
 	RelativeLayout sendvoice_rl_navigation;
+
+	MediaRecorder recorder;
+	MediaPlayer player;
+	boolean isStop = true;
+	boolean isPlayEnd = true;
+	String voiceFileName = "";
 
 	int RECORD_START = 0x001;
 	int RECORD_STOP = 0x002;
@@ -123,22 +136,76 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 				// TODO Auto-generated method stub
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
+					initMediaRecord();
 					sendvoice_tv.setText("放开停止");
 					recordView.startTimer();
+					startMediaRecord();
 					recordStatus = RECORD_START;
 					break;
 				case MotionEvent.ACTION_UP:
 					sendvoice_tv.setText("开始录音");
 					recordView.stopTimer();
+					recorder.stop();
+					recorder.release();
+					recorder = null;
 					recordStatus = RECORD_STOP;
-					recordView.setProgressTime(40000);
+					recordView.setDragEnable(true);
+					initMediaPlay();
+					recordView.setProgressTime(player.getDuration());
 					recordView.setMode(RecordView.MODE_PROGRESS);
-					recordView.startProgress();
 					break;
 				default:
 					break;
 				}
 				return true;
+			}
+		});
+		recordView.setPlayButtonClickListener(new PlayButtonClickListener() {
+
+			@Override
+			public void onPlay() {
+				if (isPlayEnd) {
+					initMediaPlay();
+				}
+				if (!player.isPlaying()) {
+					player.start();
+				}
+				isStop = false;
+				isPlayEnd = false;
+			}
+
+			@Override
+			public void onPause() {
+				if (player.isPlaying()) {
+					player.pause();
+				}
+				isStop = true;
+			}
+		});
+		recordView.setProgressListener(new ProgressListener() {
+
+			@Override
+			public void onProgressEnd() {
+				player.stop();
+				isStop = false;
+				isPlayEnd = true;
+			}
+
+			@Override
+			public void onDrag(float percent) {
+				if (isPlayEnd) {
+					initMediaPlay();
+				}
+				player.seekTo((int) (player.getDuration() * percent));
+				recordView.seekTo(percent);
+				recordView.setProgressTime(player.getDuration());
+				recordView.setMode(RecordView.MODE_PROGRESS);
+				if (!player.isPlaying()) {
+					recordView.startProgress();
+					player.start();
+				}
+				isStop = false;
+				isPlayEnd = false;
 			}
 		});
 	}
@@ -150,12 +217,13 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		switch (v.getId()) {
 		case R.id.sendvoice_iv_commit:
-			intent.putExtra("path", "");
+			intent.putExtra("fileName", "");
 			setResult(200, intent);
 			finish();
 			overridePendingTransition(0, 0);
 			break;
 		case R.id.sendvoice_iv_del:
+			initMediaRecord();
 			setResult(400, intent);
 			finish();
 			overridePendingTransition(0, 0);
@@ -170,29 +238,53 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 
 	@SuppressLint("InlinedApi")
 	void startMediaRecord() {
-		String fileName = new Date().getTime() + ".aac";
-		// AudioRecord audioRecord = new AudioRecord(audioSource,
-		// sampleRateInHz, channelConfig, audioFormat,
-		// bufferSizeInBytes)
-		MediaRecorder recorder = new MediaRecorder();
-		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//
-		// recorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
-		// recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-		// recorder.setAudioSamplingRate(3000);
-		// recorder.setAudioEncodingBitRate(10000);
-		recorder.setOutputFile((new File(app.sdcardVoiceFolder, fileName))
-				.getAbsolutePath());
 		try {
+			voiceFileName = new Date().getTime() + ".aac";
+			recorder = new MediaRecorder();
+			recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+			recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+			recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+			recorder.setOutputFile((new File(app.sdcardVoiceFolder,
+					voiceFileName)).getAbsolutePath());
 			recorder.prepare();
+			recorder.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
-		recorder.start();
-		System.out.println("start------------------------------");
-		// };
-		// }.start();
+	public void initMediaPlay() {
+		player = MediaPlayer.create(SendVoiceActivity.this, Uri
+				.parse((new File(app.sdcardVoiceFolder, voiceFileName))
+						.getAbsolutePath()));
+		player.setOnCompletionListener(new OnCompletionListener() {
+
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				isStop = false;
+			}
+		});
+		try {
+			player.prepare();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void initMediaRecord() {
+		if (player != null) {
+			player.release();
+		}
+		recordView.setDragEnable(false);
+		recordView.setMode(RecordView.MODE_TIMER);
+		recordView.resetTimer();
+		if (voiceFileName != "") {
+			File file = new File(app.sdcardVoiceFolder, voiceFileName);
+			if (file.exists()) {
+				file.delete();
+			}
+		}
 	}
 }
