@@ -27,6 +27,8 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
+import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
+import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 import android.annotation.SuppressLint;
@@ -66,15 +68,14 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-@SuppressLint("NewApi")
 public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	BackgroundView mBackground;
 	MainApplication app = MainApplication.getMainApplication();
 
 	int height, width, dip, picwidth;
 	int chat_vPager_now = 0;
-	int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54;
-	private static final int ADDVIEW = 0x1;
+	static int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54,
+			RESULT_MAKEVOICE = 0x64;
 	float density;
 	boolean isEditText = true, faceVisible = false, seletePic = false;
 	List<Map<String, Object>> voice;
@@ -101,7 +102,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	View release_iv_face_left;
 	View release_iv_face_right;
 	View release_iv_face_delete;
-	View addView;
 
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 	String mCurrentSquareID = "";
@@ -109,22 +109,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	String broadcast = "";
 	String contentType = "vit";
 	JSONArray jsonArray;
-
-	@SuppressLint("HandlerLeak")
-	private Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case ADDVIEW:
-				if (addView != null)
-					ll_release_picandvoice.addView(addView);
-				break;
-
-			default:
-				break;
-			}
-		}
-	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -178,21 +162,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
-
-		// TODO
-		// RelativeLayout.LayoutParams ll_et_releaseParams = new
-		// RelativeLayout.LayoutParams(
-		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		// ll_et_releaseParams.addRule(RelativeLayout.ABOVE,
-		// R.id.horizontalScrollView);
-		// ll_et_release.setLayoutParams(ll_et_releaseParams);
-		//
-		// RelativeLayout.LayoutParams horizontalScrollViewrelativeParams = new
-		// RelativeLayout.LayoutParams(
-		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		// horizontalScrollViewrelativeParams.addRule(RelativeLayout.ABOVE,
-		// R.id.release_ll_navigation);
-		// horizontalScrollView.setLayoutParams(horizontalScrollViewrelativeParams);
 
 		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 				dip, dip);
@@ -430,7 +399,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			Intent intent = new Intent(ReleaseActivity.this,
 					SendVoiceActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			startActivity(intent);
+			startActivityForResult(intent, RESULT_MAKEVOICE);
 			break;
 		case R.id.release_tv_cancel:
 			checkBack();
@@ -439,7 +408,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			Send();
 			break;
 		case R.id.release_et_release:
-			// TODO
 			if (!isEditText) {
 				if (faceVisible) {
 					rl_face.setVisibility(View.GONE);
@@ -603,7 +571,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-				// TODO
 				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				layoutParams.height = (int) (height - ll_navigation.getHeight()
@@ -759,7 +726,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		for (int i = 0; i < image.size(); i++) {
 			try {
 				String fileName = (String) image.get(i).get("fileName");
-				checkImage(fileName, (String) image.get(i).get("base64"));
+				checkImageOrVoice(fileName, (String) image.get(i).get("base64"));
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("type", "image");
 				jsonObject.put("details", fileName);
@@ -773,6 +740,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void addVoiceToJson() {
 		for (int i = 0; i < voice.size(); i++) {
 			try {
+				String fileName = (String) voice.get(i).get("fileName");
+				checkImageOrVoice(fileName, (String) voice.get(i).get("base64"));
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("type", "voice");
 				jsonObject.put("details", voice.get(i).get("fileName"));
@@ -783,7 +752,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		}
 	}
 
-	public void addImageFromLocal() {
+	public void addImageFromLocal(){
 		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
 				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
@@ -807,63 +776,92 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void onActivityResult(final int requestCode, int resultCode,
 			Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		String picturePath = "";
-		String format = "";
-		if (requestCode == RESULT_SELECTPICTURE
-				&& resultCode == Activity.RESULT_OK && data != null) {
-			Uri selectedImage = data.getData();
-			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			Cursor cursor = getContentResolver().query(selectedImage,
-					filePathColumn, null, null, null);
-			cursor.moveToFirst();
-			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			picturePath = cursor.getString(columnIndex).toLowerCase(
-					Locale.getDefault());
-			format = picturePath.substring(picturePath.lastIndexOf("."));
-			cursor.close();
-
-		} else if (requestCode == RESULT_TAKEPICTURE
-				&& resultCode == Activity.RESULT_OK) {
-			Uri uri = Uri.fromFile(tempFile);
-			picturePath = uri.getPath();
-			format = "";
-		}
-
-		final Map<String, Object> map = new HashMap<String, Object>();
-		final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
-				picturePath), 960, 540);
-		final String newformat = format;
-		final String newpicturePath = picturePath;
-		map.put("bitmap", bitmap);
-
-		if (bitmap != null) {
-			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+		if (requestCode == RESULT_MAKEVOICE && resultCode == Activity.RESULT_OK
+				&& data != null) {
+			final String voiceName = data.getExtras().getString("fileName");
+			app.fileHandler.getVoice(new VoiceInterface() {
 
 				@Override
-				public void setParams(SaveSettings settings) {
-					settings.compressFormat = newformat.equals(".jpg") ? settings.JPG
-							: settings.PNG;
-					settings.source = bitmap;
+				public void setParams(VoiceSettings settings) {
+					settings.fileName = voiceName;
+					settings.format = ".aac";
 				}
 
 				@Override
-				public void onSuccess(String fileName, String base64) {
-					map.put("fileName", fileName);
+				public void onSuccess(String filename, String base64,
+						Boolean flag) {
+					final Map<String, Object> map = new HashMap<String, Object>();
+					map.put("fileName", filename);
 					map.put("base64", base64);
-					image.add(map);
-					addView(bitmap);
-					if (requestCode == RESULT_TAKEPICTURE) {
-						File file = new File(newpicturePath);
-						if (file.isFile() && file.exists()) {
-							file.delete();
-						}
+					File voiceFile = new File(app.sdcardVoiceFolder, voiceName);
+					if (voiceFile.exists()) {
+						voiceFile.renameTo(new File(app.sdcardVoiceFolder,
+								filename));
 					}
+					voice.add(map);
+					nodifyViews();
 				}
 			});
+
+		} else {
+			String picturePath = "";
+			String format = "";
+			if (requestCode == RESULT_SELECTPICTURE
+					&& resultCode == Activity.RESULT_OK && data != null) {
+				Uri selectedImage = data.getData();
+				String[] filePathColumn = { MediaStore.Images.Media.DATA };
+				Cursor cursor = getContentResolver().query(selectedImage,
+						filePathColumn, null, null, null);
+				cursor.moveToFirst();
+				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+				picturePath = cursor.getString(columnIndex).toLowerCase(
+						Locale.getDefault());
+				format = picturePath.substring(picturePath.lastIndexOf("."));
+				cursor.close();
+
+			} else if (requestCode == RESULT_TAKEPICTURE
+					&& resultCode == Activity.RESULT_OK) {
+				Uri uri = Uri.fromFile(tempFile);
+				picturePath = uri.getPath();
+				format = "";
+			}
+
+			final Map<String, Object> map = new HashMap<String, Object>();
+			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
+					picturePath), 960, 540);
+			final String newformat = format;
+			final String newpicturePath = picturePath;
+			map.put("bitmap", bitmap);
+
+			if (bitmap != null) {
+				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+					@Override
+					public void setParams(SaveSettings settings) {
+						settings.compressFormat = newformat.equals(".jpg") ? settings.JPG
+								: settings.PNG;
+						settings.source = bitmap;
+					}
+
+					@Override
+					public void onSuccess(String fileName, String base64) {
+						map.put("fileName", fileName);
+						map.put("base64", base64);
+						image.add(map);
+						nodifyViews();
+						if (requestCode == RESULT_TAKEPICTURE) {
+							File file = new File(newpicturePath);
+							if (file.isFile() && file.exists()) {
+								file.delete();
+							}
+						}
+					}
+				});
+			}
 		}
 	}
 
-	public void checkImage(final String fileName, final String base64) {
+	public void checkImageOrVoice(final String fileName, final String base64) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -880,14 +878,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void success(JSONObject jData) {
 				try {
 					if (jData.getBoolean("exists")) {
-						JSONObject jsonObject = new JSONObject();
-						try {
-							jsonObject.put("type", "image");
-							jsonObject.put("details", fileName);
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						jsonArray.put(jsonObject);
+						// JSONObject jsonObject = new JSONObject();
+						// try {
+						// jsonObject.put("type", type);
+						// jsonObject.put("details", fileName);
+						// } catch (JSONException e) {
+						// e.printStackTrace();
+						// }
+						// jsonArray.put(jsonObject);
 
 					} else {
 						uploadImageOrVoice("image", fileName, base64);
@@ -917,42 +915,56 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void success(JSONObject jData) {
-				JSONObject jsonObject = new JSONObject();
-				try {
-					jsonObject.put("type", "image");
-					jsonObject.put("details", fileName);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				jsonArray.put(jsonObject);
+				// JSONObject jsonObject = new JSONObject();
+				// try {
+				// jsonObject.put("type", type);
+				// jsonObject.put("details", fileName);
+				// } catch (JSONException e) {
+				// e.printStackTrace();
+				// }
+				// jsonArray.put(jsonObject);
 			}
 
 		});
 	}
 
-	public void addView(Bitmap bitmap) {
-		// TODO
-		addView = mInflater.inflate(R.layout.release_child_navigation, null);
+	private void nodifyViews() {
+		app.UIHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				ll_release_picandvoice.removeAllViews();
+				for (int i = 0; i < voice.size(); i++) {
+					addView(voice.get(i));
+				}
+				for (int i = 0; i < image.size(); i++) {
+					addView(image.get(i));
+				}
+			}
+		});
+	}
+
+	public void addView(Map<String, Object> map) {
+		View addView = mInflater.inflate(R.layout.release_child_navigation,
+				null);
 		ImageView iv = (ImageView) addView.findViewById(R.id.iv_release_child);
 		LinearLayout.LayoutParams ivParems = new LinearLayout.LayoutParams(
 				(width - (7 * 10)) / 6, (width - (7 * 10)) / 6);
 		ivParems.bottomMargin = 10;
 		ivParems.leftMargin = 10;
 		iv.setLayoutParams(ivParems);
-		if (bitmap != null)
-			iv.setImageBitmap(bitmap);
+		if (map.get("bitmap") != null)
+			iv.setImageBitmap((Bitmap) map.get("bitmap"));
 		iv.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				System.out.println("-----");
+				Intent intent = new Intent(ReleaseActivity.this,
+						PicAndVoiceDetailActivity.class);
+				// intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				startActivity(intent);
 			}
 		});
-		Message msg = new Message();
-		msg.what = ADDVIEW;
-		handler.sendMessage(msg);
-
+		ll_release_picandvoice.addView(addView);
 	}
 
 	public void checkBack() {

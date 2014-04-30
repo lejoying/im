@@ -79,6 +79,11 @@
                 <action android:name="com.lejoying.wxgs.app.parsingiscomplete" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name="com.lejoying.wxgs.activity.PicAndVoiceDetailActivity"
+            android:label="@string/title_activity_pic_and_voice_detail" >
+        </activity>
     </application>
 
 </manifest>

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -121,7 +122,7 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		delrelativeParams
 				.addRule(RelativeLayout.LEFT_OF, R.id.sendvoice_button);
 		// delrelativeParams.leftMargin = width / 25;
-		commitrelativeParams.rightMargin = width / 25;
+		delrelativeParams.rightMargin = width / 25;
 		delrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		sendvoice_iv_del.setLayoutParams(delrelativeParams);
 
@@ -214,19 +215,16 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		Intent intent = new Intent();
-		intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		switch (v.getId()) {
 		case R.id.sendvoice_iv_commit:
-			intent.putExtra("fileName", "");
-			setResult(200, intent);
+			intent.putExtra("fileName", voiceFileName);
+			setResult(Activity.RESULT_OK, intent);
 			finish();
-			overridePendingTransition(0, 0);
 			break;
 		case R.id.sendvoice_iv_del:
 			initMediaRecord();
 			setResult(400, intent);
 			finish();
-			overridePendingTransition(0, 0);
 			break;
 		case R.id.sendvoice_rl_navigation:
 

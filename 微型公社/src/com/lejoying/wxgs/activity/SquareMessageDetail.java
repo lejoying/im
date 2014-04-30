@@ -131,10 +131,12 @@ public class SquareMessageDetail extends Activity {
 		for (int i = 0; i < voices.size(); i++) {
 			final RecordView recordView = new RecordView(
 					SquareMessageDetail.this);
-			// imageView.setImageResource(R.drawable.voice_start);
+			recordView.setDragEnable(false);
+			recordView.setMode(RecordView.MODE_PROGRESS);
+			ImageView imageView = new ImageView(this);
+			imageView.setImageResource(R.drawable.voice_start);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LinearLayout.LayoutParams.WRAP_CONTENT,
-					LinearLayout.LayoutParams.WRAP_CONTENT);
+					LinearLayout.LayoutParams.MATCH_PARENT, 500);
 			detailContent.addView(recordView, params);
 
 			final String fileName = voices.get(i);
@@ -146,7 +148,7 @@ public class SquareMessageDetail extends Activity {
 				}
 
 				@Override
-				public void onSuccess(String fileName, String base64,
+				public void onSuccess(String filename, String base64,
 						Boolean flag) {
 					if (flag) {
 						// MediaPlayer mpPlayer = null;
@@ -158,6 +160,8 @@ public class SquareMessageDetail extends Activity {
 													fileName))
 													.getAbsolutePath()));
 							recordView.setProgressTime(mpPlayer.getDuration());
+							System.out.println("------------"
+									+ mpPlayer.getDuration());
 							recordView
 									.setProgressListener(new ProgressListener() {
 
