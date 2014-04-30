@@ -1,0 +1,20 @@
+package com.lejoying.wxgs.activity;
+
+import com.lejoying.wxgs.R;
+import android.os.Bundle;
+import android.app.Activity;
+
+public class PicAndVoiceDetailActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_picandvoicedetail);
+		getWindow().setBackgroundDrawableResource(R.drawable.square_background);
+	}
+	public void onBackPressed() {
+		finish();
+		overridePendingTransition(0, 0);
+	}
+
+}
