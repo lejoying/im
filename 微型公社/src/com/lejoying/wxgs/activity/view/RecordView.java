@@ -642,7 +642,13 @@ public class RecordView extends ViewGroup {
 					timeTextX = timeTextCenterX
 							- mPaint.measureText(showProgressTime) / 2;
 				}
-				canvas.drawText(showProgressTime, timeTextX, timeTextY, mPaint);
+				// System.out.println( + ">>>>>"
+				// + timeTextY);
+				canvas.drawText(showProgressTime,
+						(mWidth - mPaint.measureText(showProgressTime)) / 2,
+						timeTextY, mPaint);
+				// canvas.drawText(showProgressTime, timeTextX, timeTextY,
+				// mPaint);
 			}
 			if (isStartProgress) {
 				if (currentAngle < 260) {
@@ -657,7 +663,6 @@ public class RecordView extends ViewGroup {
 				}
 			}
 		}
-
 	}
 
 	private static final class RefreshHandler extends Handler {

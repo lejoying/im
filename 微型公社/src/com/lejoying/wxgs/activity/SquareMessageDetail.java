@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import android.graphics.Paint.FontMetrics;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.RecordView;
+import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
@@ -55,6 +58,10 @@ public class SquareMessageDetail extends Activity {
 	String mCurrentSquareID;
 	String gmid;
 	TextView textPanel;
+	List<MediaPlayer> players;
+
+	int height, width, dip;
+	float density;
 
 	boolean praiseStatus = false;
 
@@ -81,6 +88,7 @@ public class SquareMessageDetail extends Activity {
 		this.message = app.data.squareMessagesMap.get(mCurrentSquareID).get(
 				gmid);
 		inflater = this.getLayoutInflater();
+		players = new ArrayList<MediaPlayer>();
 		setContentView(R.layout.fragment_square_message_detail);
 		sc_square_message_info = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info);
 		sc_square_message_info_all = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info_all);
@@ -93,10 +101,33 @@ public class SquareMessageDetail extends Activity {
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
 		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		sc_square_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		initData();
 		generateMessageContent();
 		getSquareMessageComments();
 		initEvent();
 		CircleMenu.hide();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		for (int i = 0; i < players.size(); i++) {
+			MediaPlayer play = players.get(i);
+			if (play.isPlaying()) {
+				play.stop();
+			}
+			play.release();
+		}
+	}
+
+	public void initData() {
+		// TODO Auto-generated method stub
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		density = dm.density;
+		dip = (int) (40 * density + 0.5f);
+		height = dm.heightPixels;
+		width = dm.widthPixels;
 	}
 
 	public void generateMessageContent() {
@@ -133,10 +164,10 @@ public class SquareMessageDetail extends Activity {
 					SquareMessageDetail.this);
 			recordView.setDragEnable(false);
 			recordView.setMode(RecordView.MODE_PROGRESS);
-			ImageView imageView = new ImageView(this);
-			imageView.setImageResource(R.drawable.voice_start);
+			// ImageView imageView = new ImageView(this);
+			// imageView.setImageResource(R.drawable.voice_start);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LinearLayout.LayoutParams.MATCH_PARENT, 500);
+					width, (int) (height * 0.48080331f));
 			detailContent.addView(recordView, params);
 
 			final String fileName = voices.get(i);
@@ -151,24 +182,40 @@ public class SquareMessageDetail extends Activity {
 				public void onSuccess(String filename, String base64,
 						Boolean flag) {
 					if (flag) {
-						// MediaPlayer mpPlayer = null;
 						try {
-							final MediaPlayer mpPlayer = MediaPlayer.create(
+							final MediaPlayer player = MediaPlayer.create(
 									SquareMessageDetail.this, Uri
 											.parse((new File(
 													app.sdcardVoiceFolder,
 													fileName))
 													.getAbsolutePath()));
-							recordView.setProgressTime(mpPlayer.getDuration());
-							System.out.println("------------"
-									+ mpPlayer.getDuration());
+							players.add(player);
+							recordView.setProgressTime(player.getDuration());
+							recordView
+									.setPlayButtonClickListener(new PlayButtonClickListener() {
+
+										@Override
+										public void onPlay() {
+											if (!player.isPlaying()) {
+												player.start();
+											}
+										}
+
+										@Override
+										public void onPause() {
+											if (player.isPlaying()) {
+												player.pause();
+											}
+
+										}
+									});
 							recordView
 									.setProgressListener(new ProgressListener() {
 
 										@Override
 										public void onProgressEnd() {
-											// TODO Auto-generated method stub
-
+											player.stop();
+											// player.reset();
 										}
 
 										@Override

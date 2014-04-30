@@ -81,6 +81,8 @@ public class CirclesFragment extends BaseFragment {
 	RelativeLayout current_me_message_list;
 	RelativeLayout current_me_infomation;
 
+	LinearLayout llCirclesTopBar;
+
 	LayoutInflater mInflater;
 
 	public String copyStatus = "move";// "move"||"copy"
@@ -132,6 +134,9 @@ public class CirclesFragment extends BaseFragment {
 		tempFriendScroll = (HorizontalScrollView) mContentView
 				.findViewById(R.id.tempFriendScroll);
 
+		llCirclesTopBar = (LinearLayout) mContentView
+				.findViewById(R.id.llCirclesTopBar);
+
 		animatingView.view = circlesViewContenter;
 
 		density = getActivity().getResources().getDisplayMetrics().density;
@@ -155,6 +160,8 @@ public class CirclesFragment extends BaseFragment {
 		circlesViewContenter.removeAllViews();
 		generateViews(initShowMessageCount);
 		if (mode.equals("normal")) {
+			mMainModeManager.handleMenu(true);
+			llCirclesTopBar.setVisibility(View.VISIBLE);
 			mScrollContainer.setScrollStatus(ScrollContainer.SCROLL_SMOOTH);
 			mScrollContainer
 					.setScrollDirection(ScrollContainer.DIRECTION_VERTICALITY);
@@ -189,6 +196,8 @@ public class CirclesFragment extends BaseFragment {
 				circlesViewContenter.scrollTo(0, scrollToY);
 			}
 		} else if (mode.equals("edit")) {
+			mMainModeManager.handleMenu(false);
+			llCirclesTopBar.setVisibility(View.GONE);
 			mScrollContainer.setScrollStatus(ScrollContainer.SCROLL_PAGING);
 			mScrollContainer
 					.setScrollDirection(ScrollContainer.DIRECTION_HORIZONTAL);
@@ -672,6 +681,9 @@ public class CirclesFragment extends BaseFragment {
 
 		if (mode.equals("normal")) {
 			mode = "edit";
+//			mMainModeManager.handleMenu(false);
+//			// TODO
+//			llCirclesTopBar.setVisibility(View.GONE);
 		} else {
 			return;
 		}

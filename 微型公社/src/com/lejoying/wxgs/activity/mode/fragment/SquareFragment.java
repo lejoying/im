@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,7 +164,15 @@ public class SquareFragment extends BaseFragment {
 							.get(mCurrentSquareID).get("吐槽");
 					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
 							.get(mCurrentSquareID);
-					squareContentView.justSetSquareMessageList(
+					if (ShitsMessageClassify == null) {
+						ShitsMessageClassify = new ArrayList<String>();
+					}
+					if (squareMessageMap == null) {
+						squareMessageMap = new HashMap<String, SquareMessage>();
+					}
+					// squareContentView.justSetSquareMessageList(
+					// ShitsMessageClassify, squareMessageMap);
+					squareContentView.setSquareMessageList(
 							ShitsMessageClassify, squareMessageMap);
 					app.UIHandler.post(new Runnable() {
 
@@ -188,7 +197,15 @@ public class SquareFragment extends BaseFragment {
 							.get(mCurrentSquareID).get("活动");
 					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
 							.get(mCurrentSquareID);
-					squareContentView.justSetSquareMessageList(
+					if (ActivityMessageClassify == null) {
+						ActivityMessageClassify = new ArrayList<String>();
+					}
+					if (squareMessageMap == null) {
+						squareMessageMap = new HashMap<String, SquareMessage>();
+					}
+					// squareContentView.justSetSquareMessageList(
+					// ActivityMessageClassify, squareMessageMap);
+					squareContentView.setSquareMessageList(
 							ActivityMessageClassify, squareMessageMap);
 					app.UIHandler.post(new Runnable() {
 
@@ -213,10 +230,16 @@ public class SquareFragment extends BaseFragment {
 							.get(mCurrentSquareID);
 					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
 							.get(mCurrentSquareID);
-					// squareContentView.setSquareMessageList(AllMessages,
-					// squareMessageMap);
-					squareContentView.justSetSquareMessageList(AllMessages,
+					if (AllMessages == null) {
+						AllMessages = new ArrayList<String>();
+					}
+					if (squareMessageMap == null) {
+						squareMessageMap = new HashMap<String, SquareMessage>();
+					}
+					squareContentView.setSquareMessageList(AllMessages,
 							squareMessageMap);
+					// squareContentView.justSetSquareMessageList(AllMessages,
+					// squareMessageMap);
 					app.UIHandler.post(new Runnable() {
 
 						@Override
@@ -240,10 +263,16 @@ public class SquareFragment extends BaseFragment {
 							.get(mCurrentSquareID).get("精华");
 					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
 							.get(mCurrentSquareID);
-					// squareContentView.setSquareMessageList(
-					// EssenceMessageClassify, squareMessageMap);
-					squareContentView.justSetSquareMessageList(
+					if (EssenceMessageClassify == null) {
+						EssenceMessageClassify = new ArrayList<String>();
+					}
+					if (squareMessageMap == null) {
+						squareMessageMap = new HashMap<String, SquareMessage>();
+					}
+					squareContentView.setSquareMessageList(
 							EssenceMessageClassify, squareMessageMap);
+					// squareContentView.justSetSquareMessageList(
+					// EssenceMessageClassify, squareMessageMap);
 					app.UIHandler.post(new Runnable() {
 
 						@Override

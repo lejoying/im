@@ -229,7 +229,8 @@ public class FileHandler {
 
 	}
 
-	public void saveBitmap(final com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface saveBitmapInterface) {
+	public void saveBitmap(
+			final com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface saveBitmapInterface) {
 		final SaveSettings settings = new SaveSettings();
 		saveBitmapInterface.setParams(settings);
 		final Bitmap source = settings.source;
@@ -387,6 +388,7 @@ public class FileHandler {
 				}
 			}.start();
 		} else {
+			System.out.println("--------exists-in-sdcard--------");
 			saveVoiceInterface.onSuccess(null, null, true);
 		}
 	}

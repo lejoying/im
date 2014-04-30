@@ -1693,6 +1693,7 @@ public class ChatFriendFragment extends BaseFragment {
 				if (mMainModeManager.mCirclesFragment.isAdded()) {
 					mMainModeManager.mCirclesFragment.notifyViews();
 				}
+				mMainModeManager.handleMenu(false);
 			}
 		});
 

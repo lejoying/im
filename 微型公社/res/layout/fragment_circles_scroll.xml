@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -7,7 +8,7 @@
         android:id="@+id/circlesViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/linearLayout1" >
+        android:layout_below="@+id/llCirclesTopBar" >
     </com.lejoying.wxgs.activity.view.ScrollContainer>
 
     <RelativeLayout
@@ -228,11 +229,12 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/llCirclesTopBar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="#fff"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        tools:ignore="DisableBaselineAlignment" >
 
         <RelativeLayout
             android:id="@+id/current_me_circles"

@@ -621,6 +621,7 @@ public class GroupManagerFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		// CircleMenu.showBack();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 

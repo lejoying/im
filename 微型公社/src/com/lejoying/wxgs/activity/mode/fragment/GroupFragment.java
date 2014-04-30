@@ -427,10 +427,12 @@ public class GroupFragment extends BaseFragment {
 
 							@Override
 							public boolean onLongClick(View v) {
-								mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_MANAGER;
-								mMainModeManager.mGroupManagerFragment.mCurrentManagerGroup = group;
-								mMainModeManager
-										.showNext(mMainModeManager.mGroupManagerFragment);
+								if (!nearByGroup.equals(groupView)) {
+									mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_MANAGER;
+									mMainModeManager.mGroupManagerFragment.mCurrentManagerGroup = group;
+									mMainModeManager
+											.showNext(mMainModeManager.mGroupManagerFragment);
+								}
 								return true;
 							}
 						});
