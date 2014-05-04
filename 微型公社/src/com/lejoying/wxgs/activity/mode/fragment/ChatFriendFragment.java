@@ -161,7 +161,7 @@ public class ChatFriendFragment extends BaseFragment {
 	List<List<String>> faceNameList;
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
 	List<String[]> faceNamesList;
-	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
+	public static String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 
 	View groupTopBar;
 	View groupTopBar_back;

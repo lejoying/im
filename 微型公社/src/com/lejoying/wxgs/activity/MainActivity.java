@@ -252,11 +252,8 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-
 				startActivity(new Intent(MainActivity.this,
 						ReleaseActivity.class));
-				modifyMenuSelected(currentMenuSelected, iv_me_menu);
-
 			}
 		});
 	}

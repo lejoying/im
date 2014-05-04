@@ -681,10 +681,17 @@ public class GroupManagerFragment extends BaseFragment {
 			layoutParams3.setMargins((i + 1) * screenWidth, marginTop,
 					-Integer.MAX_VALUE, 0);
 			view.setLayoutParams(layoutParams3);
-			TextView manager = (TextView) view
+			ImageView manager = (ImageView) view
 					.findViewById(R.id.panel_right_button);
-			manager.setText("添加成员");
 			manager.setVisibility(View.VISIBLE);
+			manager.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					mMainModeManager.back();
+
+				}
+			});
 			view.findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
 			if (view.getParent() != null) {
 				((ViewGroup) view.getParent()).removeView(view);
@@ -947,10 +954,17 @@ public class GroupManagerFragment extends BaseFragment {
 		TextView groupName = (TextView) circleView
 				.findViewById(R.id.panel_name);
 		groupName.setText(mCurrentManagerGroup.name);
-		TextView rightGroupName = (TextView) circleView
+		ImageView rightGroupName = (ImageView) circleView
 				.findViewById(R.id.panel_right_button);
-		rightGroupName.setText("群组管理");
 		rightGroupName.setVisibility(View.VISIBLE);
+		rightGroupName.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
+
+			}
+		});
 		ScrollContainer scrollContainer = (ScrollContainer) circleView
 				.findViewById(R.id.viewContainer);
 		final ViewContainer friendContainer = scrollContainer

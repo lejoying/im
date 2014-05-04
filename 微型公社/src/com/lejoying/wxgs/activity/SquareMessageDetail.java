@@ -34,7 +34,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
+import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
@@ -238,7 +241,9 @@ public class SquareMessageDetail extends Activity {
 		}
 		textPanel = new TextView(this);
 		textPanel.setTextColor(Color.WHITE);
-		textPanel.setText(textContent);
+		textPanel.setText(ExpressionUtil.getExpressionString(
+				SquareMessageDetail.this, textContent,
+				ChatFriendFragment.faceRegx, SquareFragment.expressionFaceMap));
 		detailContent.addView(textPanel);
 	}
 
@@ -541,13 +546,14 @@ public class SquareMessageDetail extends Activity {
 							.generateCommentsFromJSON(jData
 									.getJSONArray("comments"));
 					// if (comments.size()) {
-					app.UIHandler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							generateCommentsViews(comments);
-						}
-					});
+					// TODO
+					// app.UIHandler.post(new Runnable() {
+					//
+					// @Override
+					// public void run() {
+					// // generateCommentsViews(comments);
+					// }
+					// });
 					// }
 
 				} catch (JSONException e) {

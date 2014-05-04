@@ -402,6 +402,11 @@ public class JSONParser {
 			e.printStackTrace();
 		}
 		try {
+			squareMessage.cover = jMessage.getString("cover");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
 			JSONArray contents = jMessage.getJSONArray("content");
 			for (int i = 0; i < contents.length(); i++) {
 				// Object content = contents.get(i);

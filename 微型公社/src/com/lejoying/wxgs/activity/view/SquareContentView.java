@@ -15,8 +15,12 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
+import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
+import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.SquareMessage.Content;
@@ -281,7 +285,17 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 			}
 		} else if (message.contentType.equals("voice")) {
-			style = ITEM11;
+			style = ITEM12;
+			if (itemBefore != null) {
+				if (itemBefore.style == ITEM11) {
+					style = ITEM21;
+				} else if (itemBefore.style == ITEM12) {
+					style = ITEM21;
+				} else if (itemBefore.style == ITEM21
+						&& itemBefore.params.topMargin == secondLayerTop) {
+					style = ITEM21;
+				}
+			}
 		} else if (message.contentType.equals("voiceandimage")) {
 
 		} else if (message.contentType.equals("textandimage")) {
@@ -297,7 +311,18 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 			}
 		} else if (message.contentType.equals("textandvoice")) {
-			style = ITEM11;
+			// style = ITEM11;
+			style = ITEM12;
+			if (itemBefore != null) {
+				if (itemBefore.style == ITEM11) {
+					style = ITEM21;
+				} else if (itemBefore.style == ITEM12) {
+					style = ITEM21;
+				} else if (itemBefore.style == ITEM21
+						&& itemBefore.params.topMargin == secondLayerTop) {
+					style = ITEM21;
+				}
+			}
 		} else if (message.contentType.equals("vit")) {
 			style = ITEM12;
 			if (itemBefore != null) {
@@ -405,7 +430,8 @@ public class SquareContentView extends HorizontalScrollView {
 	class ItemContent extends RelativeLayout {
 
 		ImageView contentImage;
-		TextPanel contentText;
+		// TextPanel contentText;
+		TextView contentText;
 		ImageView headImage;
 		TextPanel nickName;
 		TextPanel time;
@@ -426,7 +452,7 @@ public class SquareContentView extends HorizontalScrollView {
 		}
 
 		private void initialize(Context context) {
-			contentText = new TextPanel(context);
+			contentText = new TextView(context);
 			headImage = new ImageView(context);
 			nickName = new TextPanel(context);
 			time = new TextPanel(context);
@@ -473,23 +499,21 @@ public class SquareContentView extends HorizontalScrollView {
 			if (contentImage != null) {
 				// TODO set conver image to contentImage
 				// contentImage.setImageBitmap(bm);
-				if (!message.contentType.equals("text")) {
+				if ("voice".equals(message.contentType)
+						|| "textandvoice".equals(message.contentType)) {
+					contentImage.setImageResource(R.drawable.selected_voice);
+				} else if ("image".equals(message.contentType)
+						|| "textandimage".equals(message.contentType)
+						|| "voiceandimage".equals(message.contentType)
+						|| "vit".equals(message.contentType)) {
 					String cover = "none";
-					// if (message.cover.equals("voice")) {
-					// cover = "voice.png";
-					// } else if (!message.cover.equals("none")) {
-					// cover = message.cover;
-					// } else {
-					// Content content = message.content;
-					// if (content.images.size() > 0) {
-					// cover = content.images.get(0);
-					// } else if (content.voices.size() > 0) {
-					// cover = content.voices.get(0);
-					// }
-					// }
 					Content content = message.content;
 					if (content.images.size() > 0) {
 						cover = content.images.get(0);
+					}
+					if ("none".equals(message.cover)
+							&& "voice".equals(message.cover)) {
+						cover = message.cover;
 					}
 					if (!cover.equals("none")) {
 						final String fileName = cover;
@@ -500,14 +524,16 @@ public class SquareContentView extends HorizontalScrollView {
 								contentImage
 										.setImageBitmap(app.fileHandler.bitmaps
 												.get(fileName));
-
 							}
 						});
 					}
 				}
 			}
-			contentText.setText(message.content.text);
-
+			// TODO show face
+			contentText.setText(ExpressionUtil.getExpressionString(mContext,
+					message.content.text, ChatFriendFragment.faceRegx,
+					SquareFragment.expressionFaceMap));
+			// contentText.setText(message.content.text);
 			// TODO set head image to headImage
 			// headImage.setImageBitmap(bm);
 			app.fileHandler.getHeadImage(message.head, new FileResult() {
@@ -584,8 +610,8 @@ public class SquareContentView extends HorizontalScrollView {
 					+ unitSideLength - padding, top + unitSideLength
 					- userInfoHeight - 2 * padding);
 			float contentTextSize = contentText.getWidth() / 11;
-			contentText.setTextSize(contentTextSize);
-			contentText.setLineSpace(padding);
+			// contentText.setTextSize(contentTextSize);
+			// contentText.setLineSpace(padding);
 
 			headImage.layout(left + padding - 2, top + unitSideLength
 					- userInfoHeight - padding - 2, left + userInfoHeight

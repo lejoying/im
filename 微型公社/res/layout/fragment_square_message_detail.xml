@@ -8,7 +8,8 @@
     <com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView
         android:id="@+id/sc_square_message_info"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:scrollbars="none" >
 
         <LinearLayout
             android:id="@+id/rl_square_message_menu_buttom"

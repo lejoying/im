@@ -22,6 +22,7 @@ squareManage.sendsquaremessage = function (data, response) {
     var nickName = data.nickName;
     var head = data.head;
     var messageStr = data.message;
+    var cover = data.cover;
     var message = {};
     var arr = [gid, nickName, messageStr];
     if (verifyParams.verifyEmpty(data, arr, response)) {
@@ -66,6 +67,7 @@ squareManage.sendsquaremessage = function (data, response) {
                 sendType: "square",
                 messageType: content.messageType,
                 contentType: content.contentType,
+                cover: cover,
                 phone: phone,
                 nickName: nickName,
                 head: head,

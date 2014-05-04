@@ -211,10 +211,17 @@ public class CirclesFragment extends BaseFragment {
 				layoutParams.setMargins(i * screenWidth, (int) dp2px(20),
 						-Integer.MAX_VALUE, 0);
 				v.setLayoutParams(layoutParams);
-				TextView manager = (TextView) v
+				ImageView manager = (ImageView) v
 						.findViewById(R.id.panel_right_button);
-				manager.setText("分组管理");
 				manager.setVisibility(View.VISIBLE);
+				manager.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						swichToNormalMode();
+
+					}
+				});
 				v.findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
 				final TextView tv_pagination = (TextView) v
 						.findViewById(R.id.tv_pagination);
@@ -681,9 +688,9 @@ public class CirclesFragment extends BaseFragment {
 
 		if (mode.equals("normal")) {
 			mode = "edit";
-//			mMainModeManager.handleMenu(false);
-//			// TODO
-//			llCirclesTopBar.setVisibility(View.GONE);
+			// mMainModeManager.handleMenu(false);
+			// // TODO
+			// llCirclesTopBar.setVisibility(View.GONE);
 		} else {
 			return;
 		}
@@ -789,7 +796,7 @@ public class CirclesFragment extends BaseFragment {
 		for (int i = 0; i < circles.size(); i++) {
 			String group = circles.get(i);
 			View v = views.get(group);
-			TextView manager = (TextView) v
+			ImageView manager = (ImageView) v
 					.findViewById(R.id.panel_right_button);
 			manager.setVisibility(View.GONE);
 			v.findViewById(R.id.bottomBar).setVisibility(View.GONE);

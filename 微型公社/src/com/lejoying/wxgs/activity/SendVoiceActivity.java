@@ -36,6 +36,7 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	LayoutInflater mInflater;
 
 	RecordView recordView;
+	TextView sendvoice_tv;
 
 	int height, width, dip;
 	float density;
@@ -88,7 +89,7 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		recordView = (RecordView) findViewById(R.id.recordView);
 		recordView.setMode(RecordView.MODE_TIMER);
 		// recordView.startProgress();
-		final TextView sendvoice_tv = (TextView) findViewById(R.id.sendvoice_tv);
+		sendvoice_tv = (TextView) findViewById(R.id.sendvoice_tv);
 		View sendvoice_button = findViewById(R.id.sendvoice_button);
 		View sendvoice_iv_commit = findViewById(R.id.sendvoice_iv_commit);
 		View sendvoice_iv_del = findViewById(R.id.sendvoice_iv_del);
@@ -140,20 +141,12 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 					initMediaRecord();
 					sendvoice_tv.setText("放开停止");
 					recordView.startTimer();
+					recordView.setMode(RecordView.MODE_TIMER);
 					startMediaRecord();
 					recordStatus = RECORD_START;
 					break;
 				case MotionEvent.ACTION_UP:
-					sendvoice_tv.setText("开始录音");
-					recordView.stopTimer();
-					recorder.stop();
-					recorder.release();
-					recorder = null;
-					recordStatus = RECORD_STOP;
-					recordView.setDragEnable(true);
-					initMediaPlay();
-					recordView.setProgressTime(player.getDuration());
-					recordView.setMode(RecordView.MODE_PROGRESS);
+					initRecorder();
 					break;
 				default:
 					break;
@@ -187,9 +180,13 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void onProgressEnd() {
-				player.stop();
-				isStop = false;
-				isPlayEnd = true;
+				if (recordView.getMode() == RecordView.MODE_PROGRESS) {
+					player.stop();
+					isStop = false;
+					isPlayEnd = true;
+				} else {
+					initRecorder();
+				}
 			}
 
 			@Override
@@ -217,6 +214,9 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		Intent intent = new Intent();
 		switch (v.getId()) {
 		case R.id.sendvoice_iv_commit:
+			if (player != null) {
+				player.release();
+			}
 			intent.putExtra("fileName", voiceFileName);
 			setResult(Activity.RESULT_OK, intent);
 			finish();
@@ -248,6 +248,21 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 			recorder.start();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void initRecorder() {
+		if (recordView.getMode() == RecordView.MODE_TIMER) {
+			sendvoice_tv.setText("开始录音");
+			recordView.stopTimer();
+			recorder.stop();
+			recorder.release();
+			recorder = null;
+			recordStatus = RECORD_STOP;
+			recordView.setDragEnable(true);
+			initMediaPlay();
+			recordView.setProgressTime(player.getDuration());
+			recordView.setMode(RecordView.MODE_PROGRESS);
 		}
 	}
 
