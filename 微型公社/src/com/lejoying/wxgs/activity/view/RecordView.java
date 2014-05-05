@@ -518,7 +518,7 @@ public class RecordView extends ViewGroup {
 		@Override
 		protected void onDraw(Canvas canvas) {
 
-			canvas.drawARGB(38, 255, 255, 255);
+//			canvas.drawARGB(38, 255, 255, 255);
 
 			mPaint.setColor(Color.WHITE);
 

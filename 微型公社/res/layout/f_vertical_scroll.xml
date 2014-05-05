@@ -33,6 +33,18 @@
                     android:text="附近好友"
                     android:textColor="#fff"
                     android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/panel_right_button"
+                    android:layout_width="40sp"
+                    android:layout_height="30sp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="2dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="8dp"
+                    android:src="@drawable/card_back"
+                    android:visibility="visible" />
             </RelativeLayout>
 
             <ImageView

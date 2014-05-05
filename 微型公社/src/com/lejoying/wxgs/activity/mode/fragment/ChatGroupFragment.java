@@ -148,6 +148,8 @@ public class ChatGroupFragment extends BaseFragment {
 	TextView tv_voice_timelength;
 	OnTouchListener mOnTouchListener;
 
+	View groupTopBar_back;
+
 	RelativeLayout rl_face;
 	LinearLayout ll_facepanel;
 	LinearLayout ll_facemenu;
@@ -268,6 +270,7 @@ public class ChatGroupFragment extends BaseFragment {
 		iv_face_delete = (ImageView) mContent.findViewById(R.id.iv_face_delete);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
+		groupTopBar_back = mContent.findViewById(R.id.relativeLayout_back);
 		textView_groupName = (TextView) mContent
 				.findViewById(R.id.textView_groupName);
 		textView_memberCount = (TextView) mContent
@@ -314,6 +317,13 @@ public class ChatGroupFragment extends BaseFragment {
 	}
 
 	void initEvent() {
+		groupTopBar_back.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
+			}
+		});
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override

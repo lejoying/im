@@ -24,7 +24,7 @@ squareManage.sendsquaremessage = function (data, response) {
     var messageStr = data.message;
     var cover = data.cover;
     var message = {};
-    var arr = [gid, nickName, messageStr];
+    var arr = [gid, nickName, messageStr, cover];
     if (verifyParams.verifyEmpty(data, arr, response)) {
         sendMessage();
     }

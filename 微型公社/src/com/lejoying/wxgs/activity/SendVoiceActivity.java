@@ -27,6 +27,7 @@ import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 
@@ -261,8 +262,13 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 			recordStatus = RECORD_STOP;
 			recordView.setDragEnable(true);
 			initMediaPlay();
-			recordView.setProgressTime(player.getDuration());
-			recordView.setMode(RecordView.MODE_PROGRESS);
+			if (player.getDuration() >= 1000) {
+				recordView.setProgressTime(player.getDuration());
+				recordView.setMode(RecordView.MODE_PROGRESS);
+			} else {
+				initMediaRecord();
+				Alert.showMessage("录音时长不能少于1s");
+			}
 		}
 	}
 

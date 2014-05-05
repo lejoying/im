@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -258,12 +259,18 @@ public class SquareContentView extends HorizontalScrollView {
 		mViewContainer.removeAllViews();
 		items.clear();
 		Item itemBefore = null;
-		for (String message : messages) {
-			Item item = generateItem(itemBefore, map.get(message));
+		for (int i = 0; i < messages.size(); i++) {
+			Item item = generateItem(itemBefore, map.get(messages.get(i)));
 			itemBefore = item;
 			item.content.setTag(items.size());
 			items.add(item);
 		}
+		// for (String message : messages) {
+		// Item item = generateItem(itemBefore, map.get(message));
+		// itemBefore = item;
+		// item.content.setTag(items.size());
+		// items.add(item);
+		// }
 	}
 
 	private int makeSureItemStyle(Item itemBefore, SquareMessage message) {
@@ -297,7 +304,17 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 			}
 		} else if (message.contentType.equals("voiceandimage")) {
-
+			style = ITEM12;
+			if (itemBefore != null) {
+				if (itemBefore.style == ITEM11) {
+					style = ITEM21;
+				} else if (itemBefore.style == ITEM12) {
+					style = ITEM21;
+				} else if (itemBefore.style == ITEM21
+						&& itemBefore.params.topMargin == secondLayerTop) {
+					style = ITEM21;
+				}
+			}
 		} else if (message.contentType.equals("textandimage")) {
 			style = ITEM12;
 			if (itemBefore != null) {
@@ -511,9 +528,19 @@ public class SquareContentView extends HorizontalScrollView {
 					if (content.images.size() > 0) {
 						cover = content.images.get(0);
 					}
-					if ("none".equals(message.cover)
-							&& "voice".equals(message.cover)) {
-						cover = message.cover;
+					System.out.println(message.cover + "-----------"
+							+ message.gmid);
+					if (!"none".equals(message.cover)) {
+						if ("voice".equals(message.cover)) {
+							cover = "none";
+							contentImage.setImageBitmap(BitmapFactory
+									.decodeResource(mContext.getResources(),
+											R.drawable.selected_voice));
+							// contentImage
+							// .setImageResource(R.drawable.selected_voice);
+						} else {
+							cover = message.cover;
+						}
 					}
 					if (!cover.equals("none")) {
 						final String fileName = cover;
@@ -578,6 +605,8 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 				time /= 12;
 				return time + "年前";
+			} else if (time <= 0) {
+				return "刚刚";
 			}
 			return "";
 		}

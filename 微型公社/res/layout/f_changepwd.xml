@@ -35,6 +35,18 @@
                     android:text="@string/tv_modifychangepwd"
                     android:textColor="#fff"
                     android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/panel_right_button"
+                    android:layout_width="40sp"
+                    android:layout_height="30sp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="2dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="8dp"
+                    android:src="@drawable/card_back"
+                    android:visibility="visible" />
             </RelativeLayout>
 
             <ImageView
@@ -55,8 +67,6 @@
                 android:paddingRight="10dp"
                 android:paddingTop="6dp" >
 
-                
-
                 <EditText
                     android:id="@+id/cp_et_initialpwd"
                     android:layout_width="wrap_content"
@@ -65,12 +75,11 @@
                     android:layout_centerVertical="true"
                     android:background="#0999"
                     android:ems="10"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="#fff"
-                    android:textSize="15sp"
-                    >
+                    android:textSize="15sp" >
                 </EditText>
 
                 <TextView
@@ -81,7 +90,6 @@
                     android:text="@string/tv_initialpwd"
                     android:textColor="#fff"
                     android:textSize="15sp" />
-
             </RelativeLayout>
 
             <ImageView
@@ -111,8 +119,6 @@
                     android:textColor="#fff"
                     android:textSize="15sp" />
 
-                
-
                 <EditText
                     android:id="@+id/cp_et_modifychangepwd"
                     android:layout_width="wrap_content"
@@ -121,12 +127,11 @@
                     android:layout_centerVertical="true"
                     android:background="#0999"
                     android:ems="10"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="#fff"
-                    android:textSize="15sp"
-                    >
+                    android:textSize="15sp" >
                 </EditText>
             </RelativeLayout>
 
@@ -157,8 +162,6 @@
                     android:textColor="#fff"
                     android:textSize="15sp" />
 
-                
-
                 <EditText
                     android:id="@+id/cp_et_confirmpwd"
                     android:layout_width="wrap_content"
@@ -167,16 +170,14 @@
                     android:layout_centerVertical="true"
                     android:background="#0999"
                     android:ems="10"
-                    android:gravity="right|center_vertical"
+                    android:gravity="left|center_vertical"
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="#fff"
-                    android:textSize="15sp"
-                    >
+                    android:textSize="15sp" >
                 </EditText>
             </RelativeLayout>
         </LinearLayout>
-
     </LinearLayout>
 
     <RelativeLayout
@@ -184,8 +185,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/card_background_normal"
-        >
+        android:background="@drawable/card_background_normal" >
 
         <RelativeLayout
             android:id="@+id/cp_rl_save"

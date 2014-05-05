@@ -508,6 +508,7 @@ accountManage.modify = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var accountStr = data.account;
+    var oldPassWord = data.oldpassword;
     var arr = [phone, accessKey, accountStr];
     var account = {};
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
@@ -607,6 +608,16 @@ accountManage.modify = function (data, response) {
                     accountData.userBackground = account.userBackground;
                 }
                 if (account.password != undefined && account.password != null && account.password != "") {
+                    if (oldPassWord != null && oldPassWord != undefined && oldPassWord != "") {
+                        if (oldPassWord != accountData.password) {
+                            response.write(JSON.stringify({
+                                "提示信息": "修改用户信息失败",
+                                "失败原因": "原密码不正确"
+                            }));
+                            response.end();
+                            return;
+                        }
+                    }
                     accountData.password = account.password;
                     if (accountData.status == "init") {
                         accountData.ID = ++accountID;

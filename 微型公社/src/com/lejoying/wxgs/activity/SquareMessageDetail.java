@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ public class SquareMessageDetail extends Activity {
 	String gmid;
 	TextView textPanel;
 	List<MediaPlayer> players;
+	List<RecordView> recordViews;
 
 	int height, width, dip;
 	float density;
@@ -92,6 +94,7 @@ public class SquareMessageDetail extends Activity {
 				gmid);
 		inflater = this.getLayoutInflater();
 		players = new ArrayList<MediaPlayer>();
+		recordViews = new ArrayList<RecordView>();
 		setContentView(R.layout.fragment_square_message_detail);
 		sc_square_message_info = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info);
 		sc_square_message_info_all = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info_all);
@@ -116,11 +119,31 @@ public class SquareMessageDetail extends Activity {
 		super.onPause();
 		for (int i = 0; i < players.size(); i++) {
 			MediaPlayer play = players.get(i);
+			RecordView recordView = recordViews.get(i);
 			if (play.isPlaying()) {
+				recordView.pauseProgress();
+				play.pause();
+			}
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		for (int i = 0; i < players.size(); i++) {
+			MediaPlayer play = players.get(i);
+			RecordView recordView = recordViews.get(i);
+			if (play.isPlaying()) {
+				recordView.stopProgress();
 				play.stop();
 			}
 			play.release();
 		}
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
 	}
 
 	public void initData() {
@@ -193,6 +216,7 @@ public class SquareMessageDetail extends Activity {
 													fileName))
 													.getAbsolutePath()));
 							players.add(player);
+							recordViews.add(recordView);
 							recordView.setProgressTime(player.getDuration());
 							recordView
 									.setPlayButtonClickListener(new PlayButtonClickListener() {
@@ -217,7 +241,7 @@ public class SquareMessageDetail extends Activity {
 
 										@Override
 										public void onProgressEnd() {
-											player.stop();
+											player.pause();
 											// player.reset();
 										}
 

@@ -153,7 +153,7 @@ api = {
             url: "/api2/account/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", sex: "XXX", mainBusiness: "XXX", password: "XXX", head: "XXX", userBackground: "XXX"})}
+            typical: {phone: "XXX", accessKey: "XXX", oldpassword: "XXX", account: JSON.stringify({phone: "XXX", nickName: "XXX", sex: "XXX", mainBusiness: "XXX", password: "XXX", head: "XXX", userBackground: "XXX"})}
         },
         response: {
             success: {"提示信息": "修改用户信息成功"},

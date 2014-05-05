@@ -21,7 +21,6 @@ import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -208,7 +207,7 @@ public class NewFriendsFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		CircleMenu.showBack();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 

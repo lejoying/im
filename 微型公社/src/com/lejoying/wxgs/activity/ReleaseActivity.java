@@ -9,9 +9,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
@@ -29,6 +31,7 @@ import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -46,6 +49,7 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -639,10 +643,18 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		isEditText = true;
 	}
 
+	@SuppressLint("DefaultLocale")
 	public void Send() {
 		jsonArray = new JSONArray();
 		mCurrentSquareID = SquareFragment.mCurrentSquareID;
-		messageType = "精华";
+		long time = System.currentTimeMillis();
+		if (time % 3 == 0) {
+			messageType = "精华";
+		} else if (time % 3 == 1) {
+			messageType = "活动";
+		} else if (time % 3 == 2) {
+			messageType = "吐槽";
+		}
 		broadcast = et_release.getText().toString();
 		if ((broadcast == null || broadcast.equals("")) && images.size() == 0
 				&& voices.size() == 0) {
@@ -692,6 +704,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				params.put("head", app.data.user.head);
 				params.put("nickName", app.data.user.nickName);
 				params.put("gid", mCurrentSquareID);
+				Log.e("Coolspan", cover + "------" + currentCoverIndex);
 				if (currentCoverIndex != -1) {
 					String lastName = cover.substring(
 							cover.lastIndexOf(".") + 1).toLowerCase();
@@ -703,6 +716,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				} else {
 					params.put("cover", "none");
 				}
+				currentCoverIndex = -1;
+				cover = "";
 				try {
 					JSONObject messageJSONObject = new JSONObject();
 					messageJSONObject.put("messageType", messageType);

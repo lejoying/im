@@ -55,7 +55,6 @@
                         android:text="@string/tv_modifychangepwd"
                         android:textColor="#fff"
                         android:textSize="15sp" />
-
                 </RelativeLayout>
 
                 <ImageView
@@ -162,7 +161,8 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/barometer"
                     tools:ignore="ContentDescription" />
-<RelativeLayout
+
+                <RelativeLayout
                     android:id="@+id/rl_sex"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -202,6 +202,7 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/barometer"
                     tools:ignore="ContentDescription" />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

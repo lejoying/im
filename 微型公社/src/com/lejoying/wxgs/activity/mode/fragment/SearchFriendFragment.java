@@ -67,6 +67,8 @@ public class SearchFriendFragment extends BaseFragment {
 	ViewContainer viewContainer;
 	CircleHolder circleHolder;
 
+	ImageView backCardView;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -117,6 +119,15 @@ public class SearchFriendFragment extends BaseFragment {
 			}
 		});
 
+		backCardView = (ImageView) mContent
+				.findViewById(R.id.panel_right_button);
+		backCardView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
+			}
+		});
 		return mContent;
 	}
 
