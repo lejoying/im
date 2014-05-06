@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.util.AttributeSet;
@@ -33,6 +35,7 @@ public class SquareContentView extends HorizontalScrollView {
 	static final int ITEM11 = 11;
 	static final int ITEM12 = 12;
 	static final int ITEM21 = 21;
+	static final int ITEM22 = 22;
 
 	int height;
 	int unitSideLength, unitSideLength2;
@@ -292,17 +295,7 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 			}
 		} else if (message.contentType.equals("voice")) {
-			style = ITEM12;
-			if (itemBefore != null) {
-				if (itemBefore.style == ITEM11) {
-					style = ITEM21;
-				} else if (itemBefore.style == ITEM12) {
-					style = ITEM21;
-				} else if (itemBefore.style == ITEM21
-						&& itemBefore.params.topMargin == secondLayerTop) {
-					style = ITEM21;
-				}
-			}
+			style = ITEM11;
 		} else if (message.contentType.equals("voiceandimage")) {
 			style = ITEM12;
 			if (itemBefore != null) {
@@ -341,17 +334,7 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 			}
 		} else if (message.contentType.equals("vit")) {
-			style = ITEM12;
-			if (itemBefore != null) {
-				if (itemBefore.style == ITEM11) {
-					style = ITEM21;
-				} else if (itemBefore.style == ITEM12) {
-					style = ITEM21;
-				} else if (itemBefore.style == ITEM21
-						&& itemBefore.params.topMargin == secondLayerTop) {
-					style = ITEM21;
-				}
-			}
+			style = ITEM22;
 		}
 		return style;
 	}
@@ -447,15 +430,13 @@ public class SquareContentView extends HorizontalScrollView {
 	class ItemContent extends RelativeLayout {
 
 		ImageView contentImage;
+		ImageView contentVoice;
+		TextPanel voiceLength;
 		// TextPanel contentText;
 		TextView contentText;
 		ImageView headImage;
 		TextPanel nickName;
 		TextPanel time;
-		ImageView commentImage;
-		TextPanel commentNum;
-		ImageView praiseImage;
-		TextPanel praiseNum;
 
 		int style;
 		SquareMessage message;
@@ -473,40 +454,32 @@ public class SquareContentView extends HorizontalScrollView {
 			headImage = new ImageView(context);
 			nickName = new TextPanel(context);
 			time = new TextPanel(context);
-			commentImage = new ImageView(context);
-			commentNum = new TextPanel(context);
-			praiseImage = new ImageView(context);
-			praiseNum = new TextPanel(context);
 
 			contentText.setTextColor(Color.WHITE);
 			nickName.setTextColor(Color.WHITE);
 			nickName.singleLine(true);
 			time.setTextColor(Color.WHITE);
 			time.singleLine(true);
-			commentNum.setTextColor(Color.WHITE);
-			commentNum.singleLine(true);
-			praiseNum.setTextColor(Color.WHITE);
-			praiseNum.singleLine(true);
 
 			this.addView(contentText);
 			this.addView(headImage);
 			this.addView(nickName);
 			this.addView(time);
-			this.addView(commentImage);
-			this.addView(commentNum);
-			this.addView(praiseImage);
-			this.addView(praiseNum);
 
 			switch (style) {
+			case 22:
 			case 12:
 			case 21:
 				contentImage = new ImageView(context);
 				this.addView(contentImage);
+				contentVoice = new ImageView(context);
+				this.addView(contentVoice);
+				voiceLength = new TextPanel(context);
+				voiceLength.singleLine(true);
+				voiceLength.setTextColor(Color.WHITE);
+				this.addView(voiceLength);
 				break;
 			}
-
-			commentImage.setImageResource(R.drawable.comment);
-			praiseImage.setImageResource(R.drawable.praise);
 
 			notifyData();
 		}
@@ -516,43 +489,31 @@ public class SquareContentView extends HorizontalScrollView {
 			if (contentImage != null) {
 				// TODO set conver image to contentImage
 				// contentImage.setImageBitmap(bm);
-				if ("voice".equals(message.contentType)
-						|| "textandvoice".equals(message.contentType)) {
-					contentImage.setImageResource(R.drawable.selected_voice);
-				} else if ("image".equals(message.contentType)
-						|| "textandimage".equals(message.contentType)
-						|| "voiceandimage".equals(message.contentType)
-						|| "vit".equals(message.contentType)) {
-					String cover = "none";
-					Content content = message.content;
-					if (content.images.size() > 0) {
-						cover = content.images.get(0);
-					}
-					System.out.println(message.cover + "-----------"
-							+ message.gmid);
-					if (!"none".equals(message.cover)) {
-						if ("voice".equals(message.cover)) {
-							cover = "none";
-							contentImage.setImageBitmap(BitmapFactory
-									.decodeResource(mContext.getResources(),
-											R.drawable.selected_voice));
-							// contentImage
-							// .setImageResource(R.drawable.selected_voice);
-						} else {
-							cover = message.cover;
-						}
-					}
-					if (!cover.equals("none")) {
-						final String fileName = cover;
-						app.fileHandler.getImage(fileName, new FileResult() {
+				String cover = "none";
+				Content content = message.content;
+				if (content.images.size() > 0) {
+					cover = content.images.get(0);
+				}
+				if (!cover.equals("none")) {
+					final String fileName = cover;
+					app.fileHandler.getImage(fileName, new FileResult() {
 
-							@Override
-							public void onResult(String where) {
-								contentImage
-										.setImageBitmap(app.fileHandler.bitmaps
-												.get(fileName));
-							}
-						});
+						@Override
+						public void onResult(String where) {
+							contentImage.setImageBitmap(app.fileHandler.bitmaps
+									.get(fileName));
+						}
+					});
+				}
+				if (content.voices.size() > 0) {
+					if (content.images.size() > 0) {
+						contentVoice.setImageBitmap(BitmapFactory
+								.decodeResource(mContext.getResources(),
+										R.drawable.selected_voice));
+					} else {
+						contentImage.setImageBitmap(BitmapFactory
+								.decodeResource(mContext.getResources(),
+										R.drawable.selected_voice));
 					}
 				}
 			}
@@ -567,15 +528,16 @@ public class SquareContentView extends HorizontalScrollView {
 
 				@Override
 				public void onResult(String where) {
-					headImage.setImageBitmap(app.fileHandler.bitmaps
-							.get(message.head));
+					Bitmap bitmap = app.fileHandler.bitmaps.get(message.head);
+					// Matrix matrix = new Matrix();
+					// matrix.postScale(2, 2);
+					// bitmap = Bitmap.createBitmap(bitmap, 0, 0,
+					// bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+					headImage.setImageBitmap(bitmap);
 				}
 			});
 			nickName.setText(message.nickName);
 			time.setText(convertTime(currentTime, message.time));
-
-			commentNum.setText(String.valueOf(message.comments.size()));
-			praiseNum.setText(String.valueOf(message.praiseusers.size()));
 		}
 
 		String convertTime(long currentTime, long targetTime) {
@@ -626,10 +588,33 @@ public class SquareContentView extends HorizontalScrollView {
 			case ITEM12:
 				setContentTextAndUserInfoPosition(0, unitSideLength + padding);
 				contentImage.layout(0, 0, unitSideLength, unitSideLength);
+				contentVoice.layout(unitSideLength / 4,
+						(int) (unitSideLength * 0.12876f),
+						(unitSideLength / 4) * 3,
+						(int) (unitSideLength * 0.61337f));
 				break;
 			case ITEM21:
 				setContentTextAndUserInfoPosition(unitSideLength + padding, 0);
+				if (message.contentType.equals("imageandvoice")) {
+					contentImage.layout(0, 0, unitSideLength * 2,
+							unitSideLength - unitSideLength / 4);
+					contentVoice.layout(unitSideLength / 4,
+							(int) (unitSideLength * 0.12876f),
+							(unitSideLength / 4) * 3,
+							(int) (unitSideLength * 0.61337f));
+				} else {
+					contentImage.layout(0, 0, unitSideLength, unitSideLength);
+					contentVoice.layout(unitSideLength / 4,
+							(int) (unitSideLength * 0.12876f),
+							(unitSideLength / 4) * 3,
+							(int) (unitSideLength * 0.61337f));
+				}
+				break;
+			case ITEM22:
+				setContentTextAndUserInfoPosition(0, unitSideLength + padding);
 				contentImage.layout(0, 0, unitSideLength, unitSideLength);
+				contentVoice.layout(unitSideLength / 4, unitSideLength / 4,
+						unitSideLength / 4, unitSideLength / 2);
 				break;
 			}
 		}
@@ -657,37 +642,42 @@ public class SquareContentView extends HorizontalScrollView {
 			time.layout(left + userInfoHeight + 2 * padding, (int) (top
 					+ unitSideLength - timeHeight - padding), left
 					+ unitSideLength - padding, top + unitSideLength - padding);
+			// time.layout(
+			// (int) (left + userInfoHeight + 2 * padding + timeWidth),
+			// (int) (top + unitSideLength - timeHeight - padding),
+			// (int) (top + unitSideLength - timeHeight - padding), top
+			// + unitSideLength - padding);
 			time.setTextSize(timeHeight);
 
-			commentImage
-					.layout((int) (left + userInfoHeight + 2 * padding + timeWidth),
-							(int) (top + unitSideLength - timeHeight - padding),
-							(int) (left + userInfoHeight + 2 * padding
-									+ timeWidth + userInfoHeight / 2), top
-									+ unitSideLength - padding);
-
-			commentNum.layout((int) (left + userInfoHeight + 2 * padding
-					+ padding / 3 + timeWidth + userInfoHeight / 2), (int) (top
-					+ unitSideLength - timeHeight - padding), (int) (left
-					+ userInfoHeight + 2 * padding + padding / 3 + timeWidth
-					+ userInfoHeight / 2 + 2 * timeHeight), top
-					+ unitSideLength - padding);
-			commentNum.setTextSize(timeHeight);
-
-			praiseImage.layout(
-					(int) (left + userInfoHeight + 2 * padding + padding / 3
-							+ timeWidth + userInfoHeight / 2 + 2 * timeHeight),
-					(int) (top + unitSideLength - timeHeight - padding),
-					(int) (left + userInfoHeight + 2 * padding + padding / 3
-							+ timeWidth + userInfoHeight + 2 * timeHeight), top
-							+ unitSideLength - padding);
-
-			praiseNum.layout(
-					(int) (left + userInfoHeight + 2 * padding + padding / 3
-							* 2 + timeWidth + userInfoHeight + 2 * timeHeight),
-					(int) (top + unitSideLength - timeHeight - padding), left
-							+ unitSideLength, top + unitSideLength - padding);
-			praiseNum.setTextSize(timeHeight);
+			// commentImage
+			// .layout((int) (left + userInfoHeight + 2 * padding + timeWidth),
+			// (int) (top + unitSideLength - timeHeight - padding),
+			// (int) (left + userInfoHeight + 2 * padding
+			// + timeWidth + userInfoHeight / 2), top
+			// + unitSideLength - padding);
+			//
+			// commentNum.layout((int) (left + userInfoHeight + 2 * padding
+			// + padding / 3 + timeWidth + userInfoHeight / 2), (int) (top
+			// + unitSideLength - timeHeight - padding), (int) (left
+			// + userInfoHeight + 2 * padding + padding / 3 + timeWidth
+			// + userInfoHeight / 2 + 2 * timeHeight), top
+			// + unitSideLength - padding);
+			// commentNum.setTextSize(timeHeight);
+			//
+			// praiseImage.layout(
+			// (int) (left + userInfoHeight + 2 * padding + padding / 3
+			// + timeWidth + userInfoHeight / 2 + 2 * timeHeight),
+			// (int) (top + unitSideLength - timeHeight - padding),
+			// (int) (left + userInfoHeight + 2 * padding + padding / 3
+			// + timeWidth + userInfoHeight + 2 * timeHeight), top
+			// + unitSideLength - padding);
+			//
+			// praiseNum.layout(
+			// (int) (left + userInfoHeight + 2 * padding + padding / 3
+			// * 2 + timeWidth + userInfoHeight + 2 * timeHeight),
+			// (int) (top + unitSideLength - timeHeight - padding), left
+			// + unitSideLength, top + unitSideLength - padding);
+			// praiseNum.setTextSize(timeHeight);
 
 		}
 	}

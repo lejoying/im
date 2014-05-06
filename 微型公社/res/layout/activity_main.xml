@@ -28,98 +28,134 @@
         android:layout_height="50dp"
         android:background="#272B42"
         android:orientation="horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:ignore="DisableBaselineAlignment" >
 
         <RelativeLayout
-            android:id="@+id/rl_square_menu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" >
 
-            <TextView
-                android:id="@+id/tv_square_menu"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="广场"
-                android:textAlignment="center"
-                android:textColor="#fff"
-                android:textSize="18sp" />
+                android:orientation="horizontal" >
 
-            <ImageView
-                android:id="@+id/iv_square_menu"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/menu_selected" />
+                <RelativeLayout
+                    android:id="@+id/rl_release_menu"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" >
+
+                    <ImageView
+                        android:id="@+id/iv_release_menu"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:src="@drawable/square_release" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_communityName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="2" >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/iv_release_menu1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="亦庄总部站"
+                            android:textColor="#fff"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:id="@+id/iv_release_menu2"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:src="@drawable/square_release" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_group_menu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" >
 
-            <TextView
-                android:id="@+id/tv_group_menu"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="群组"
-                android:textAlignment="center"
-                android:textColor="#fff"
-                android:textSize="18sp" />
+                android:orientation="horizontal" >
 
-            <ImageView
-                android:id="@+id/iv_group_menu"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/menu_selected"
-                android:visibility="gone" />
-        </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" >
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/rl_me_menu"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" >
+                <RelativeLayout
+                    android:id="@+id/rl_square_menu"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" >
 
-            <TextView
-                android:id="@+id/tv_me_menu"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="我"
-                android:textAlignment="center"
-                android:textColor="#fff"
-                android:textSize="18sp" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:src="@drawable/square_release" />
+                </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/iv_me_menu"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/menu_selected"
-                android:visibility="gone" />
-        </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/rl_group_menu"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" >
 
-        <RelativeLayout
-            android:id="@+id/rl_release_menu"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:src="@drawable/square_release" />
+                </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/iv_release_menu"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:gravity="center"
-                android:padding="13dp"
-                android:src="@drawable/square_release" />
+                <RelativeLayout
+                    android:id="@+id/rl_me_menu"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" >
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:src="@drawable/square_release" />
+                </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
 

@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/tv_modifychangepwd"
+                    android:text="@string/tv_newpwd"
                     android:textColor="#fff"
                     android:textSize="15sp" />
 

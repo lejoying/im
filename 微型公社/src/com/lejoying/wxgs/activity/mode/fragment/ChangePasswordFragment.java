@@ -89,8 +89,10 @@ public class ChangePasswordFragment extends BaseFragment implements
 					&& !"".equals(confirmpwd)) {
 				if (changepwd.equals(confirmpwd)) {
 					modifyPassword(
-							app.mSHA1.getDigestOfString(initialpwd.getBytes()),
-							app.mSHA1.getDigestOfString(confirmpwd.getBytes()));
+							app.mSHA1.getDigestOfString(initialpwd.getBytes())
+									.toLowerCase(), app.mSHA1
+									.getDigestOfString(confirmpwd.getBytes())
+									.toLowerCase());
 				} else {
 					Alert.showMessage("输入2次密码不一致");
 				}
