@@ -89,7 +89,6 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		recordView = (RecordView) findViewById(R.id.recordView);
 		recordView.setMode(RecordView.MODE_TIMER);
-		// recordView.startProgress();
 		sendvoice_tv = (TextView) findViewById(R.id.sendvoice_tv);
 		View sendvoice_button = findViewById(R.id.sendvoice_button);
 		View sendvoice_iv_commit = findViewById(R.id.sendvoice_iv_commit);
@@ -99,7 +98,6 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		RelativeLayout.LayoutParams buttonrelativeParams = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		buttonrelativeParams.width = width / 3 * 2;
-		// buttonrelativeParams.height=60;
 		buttonrelativeParams.topMargin = 20;
 		buttonrelativeParams.bottomMargin = 20;
 		buttonrelativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -114,7 +112,6 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		commitrelativeParams.addRule(RelativeLayout.RIGHT_OF,
 				R.id.sendvoice_button);
-		// commitrelativeParams.rightMargin = width / 25;
 		commitrelativeParams.leftMargin = width / 25;
 		commitrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		sendvoice_iv_commit.setLayoutParams(commitrelativeParams);
@@ -123,7 +120,6 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		delrelativeParams
 				.addRule(RelativeLayout.LEFT_OF, R.id.sendvoice_button);
-		// delrelativeParams.leftMargin = width / 25;
 		delrelativeParams.rightMargin = width / 25;
 		delrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		sendvoice_iv_del.setLayoutParams(delrelativeParams);

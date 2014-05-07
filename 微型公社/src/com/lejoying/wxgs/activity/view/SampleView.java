@@ -11,6 +11,8 @@ import android.graphics.Movie;
 import android.graphics.Paint;
 import android.view.View;
 
+import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
+
 @SuppressLint("ViewConstructor")
 public class SampleView extends View {
 
@@ -35,7 +37,7 @@ public class SampleView extends View {
 
 	@SuppressWarnings("unused")
 	public SampleView(Context context,
-			com.lejoying.wxgs.app.handler.FileHandler.GifMovie gifMovie) {
+			GifMovie gifMovie) {
 		super(context);
 		setFocusable(true);
 		// File file = new File(sdFile, fileName);

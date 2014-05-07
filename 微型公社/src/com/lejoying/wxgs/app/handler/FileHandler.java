@@ -555,7 +555,7 @@ public class FileHandler {
 		return bytes;
 	}
 
-	public class GifMovie {
+	public static class GifMovie {
 		public Movie movie;
 		public byte[] bytes;
 	}

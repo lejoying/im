@@ -2,6 +2,7 @@ package com.lejoying.wxgs.activity;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +21,16 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
+import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgInterface;
+import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgSettings;
+import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
 import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
@@ -39,6 +44,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Movie;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -1101,14 +1107,67 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 								et_release.getSelectionStart(),
 								faceNamesList.get(chat_vPager_now)[position]);
 					} else {
-
+						//TODO
+						addGif(position);
 					}
 				}
 			});
 			return convertView;
 		}
 	}
+	public void addGif(final int position){
+		InputStream is=null;
+		try {
+			is=getResources().getAssets().open("images/" + faceNameList.get(2).get(position));
+			final GifMovie gifMovie =new GifMovie();
+			gifMovie.bytes = streamToBytes(is);
+			gifMovie.movie = Movie.decodeByteArray(gifMovie.bytes, 0,
+					gifMovie.bytes.length);
+			final Map<String, Object> map = new HashMap<String, Object>();
+			Bitmap bitmap=BitmapFactory.decodeStream(is);
+			map.put("bitmap", bitmap);
+			app.fileHandler.getBigFaceImgBASE64(this,
+					new BigFaceImgInterface() {
 
+						@Override
+						public void setParams(
+								BigFaceImgSettings settings) {
+							settings.format = ".gif";
+							settings.assetsPath = "images/";
+							settings.fileName = faceNameList.get(2).get(position);
+						}
+
+						@Override
+						public void onSuccess(String fileName,
+								String base64) {
+							map.put("fileName", fileName);
+							map.put("base64", base64);
+							map.put("gifMovie", gifMovie);
+							images.add(map);
+							nodifyViews();
+						}
+					});
+			
+			is.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	private byte[] streamToBytes(InputStream is) {
+		byte[] bytes = null;
+		try {
+			bytes = new byte[is.available()];
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			is.read(bytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bytes;
+	}
 	class MyPageAdapter extends PagerAdapter {
 		List<View> mListViews;
 

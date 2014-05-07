@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
+import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -24,6 +27,8 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.app.Activity;
 import android.content.Intent;
@@ -80,8 +85,11 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				if (currentCoverIndex == currentPageSize) {
+					iscover = false;
 					ReleaseActivity.cover = "";
 					currentCoverIndex = -1;
+					selectedCoverView
+							.setImageResource(R.drawable.picandvoice_cancel);
 				}
 				if (currentPageSize <= ReleaseActivity.voices.size()) {
 					ReleaseActivity.voices.remove(currentPageSize - 1);
@@ -114,6 +122,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			@Override
 			public void onPageSelected(int arg0) {
 				currentPageSize = arg0 + 1;
+				iscover = false;
 				mediaTotalView.setText(currentPageSize + "/" + mediaTotal);
 				if (currentPlayVoice != null) {
 					if (currentPlayVoice.isPlaying()) {
@@ -121,6 +130,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					}
 				}
 				if (currentCoverIndex == currentPageSize) {
+					iscover = true;
 					selectedCoverView
 							.setImageResource(R.drawable.picandvoice_affirm);
 				} else if (currentCoverIndex > 0) {
@@ -245,8 +255,22 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					null);
 			ImageView iv = (ImageView) addView
 					.findViewById(R.id.iv_release_child);
-			iv.setImageBitmap((Bitmap) ReleaseActivity.images.get(i).get(
-					"bitmap"));
+			Map<String, Object> map = ReleaseActivity.images.get(i);
+			if (map.get("gifMovie") != null) {
+				GifMovie gifMovie = (GifMovie) map.get("gifMovie");
+				SampleView sampleview = new SampleView(this, gifMovie);
+				RelativeLayout.LayoutParams sampleParams = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				sampleParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+				sampleParams.addRule(RelativeLayout.CENTER_VERTICAL);
+				sampleview.setLayoutParams(sampleParams);
+				((ViewGroup)addView).addView(sampleview);
+				iv.setVisibility(View.GONE);
+			} else {
+
+				iv.setImageBitmap((Bitmap) ReleaseActivity.images.get(i).get(
+						"bitmap"));
+			}
 			mainListViews.add(addView);
 		}
 		mediaTotalView.setText(1 + "/" + mediaTotal);
