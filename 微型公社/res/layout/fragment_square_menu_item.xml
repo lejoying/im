@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="horizontal"
+    tools:ignore="UseCompoundDrawables" >
+
+    <TextView
+        android:id="@+id/tv_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="asasa"
+        android:textColor="#fff"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_noread"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:background="@drawable/noread_message"
+        android:padding="2dp"
+        android:text="99+"
+        android:textColor="#fff"
+        android:textSize="8sp"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+</LinearLayout>

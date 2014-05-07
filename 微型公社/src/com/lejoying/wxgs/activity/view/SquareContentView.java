@@ -6,12 +6,16 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -193,6 +197,10 @@ public class SquareContentView extends HorizontalScrollView {
 					itemWidth = unitSideLength2;
 					itemTop = threadLayerTop;
 					break;
+				case ITEM22:
+					itemWidth = unitSideLength2;
+					itemTop = threadLayerTop;
+					break;
 				}
 			} else {
 				switch (item.style) {
@@ -225,6 +233,16 @@ public class SquareContentView extends HorizontalScrollView {
 						setLeftOffset(unitSideLength + padding);
 					} else {
 						itemTop = threadLayerTop;
+						setLeftOffset(unitSideLength2 + padding);
+					}
+					break;
+				case ITEM22:
+					itemWidth = unitSideLength2;
+					itemHeight = unitSideLength2;
+					if (itemBefore.params.topMargin >= unitSideLength2) {
+						itemTop = firstLayerTop;
+					} else {
+						itemTop = secondLayerTop;
 						setLeftOffset(unitSideLength2 + padding);
 					}
 					break;
@@ -480,6 +498,16 @@ public class SquareContentView extends HorizontalScrollView {
 				this.addView(voiceLength);
 				break;
 			}
+			if (message.contentType.equals("voice")) {
+				contentImage = new ImageView(context);
+				this.addView(contentImage);
+				contentVoice = new ImageView(context);
+				this.addView(contentVoice);
+				voiceLength = new TextPanel(context);
+				voiceLength.singleLine(true);
+				voiceLength.setTextColor(Color.WHITE);
+				this.addView(voiceLength);
+			}
 
 			notifyData();
 		}
@@ -536,7 +564,9 @@ public class SquareContentView extends HorizontalScrollView {
 					headImage.setImageBitmap(bitmap);
 				}
 			});
-			nickName.setText(message.nickName);
+			String nickNames = message.nickName.length() > 4 ? message.nickName
+					.substring(0, 4) + "..." : message.nickName;
+			nickName.setText(nickNames);
 			time.setText(convertTime(currentTime, message.time));
 		}
 
@@ -583,43 +613,50 @@ public class SquareContentView extends HorizontalScrollView {
 
 			switch (style) {
 			case ITEM11:
-				setContentTextAndUserInfoPosition(0, 0);
+				setInfoPosition(0, 0);
 				break;
 			case ITEM12:
-				setContentTextAndUserInfoPosition(0, unitSideLength + padding);
-				contentImage.layout(0, 0, unitSideLength, unitSideLength);
+				setInfoPosition(0, unitSideLength + padding);
+				// contentImage.setBackgroundColor(Color.BLUE);
+				if (!"".equals(message.content.text)) {
+					contentImage.layout(0, 0, unitSideLength, unitSideLength);
+				} else {
+					contentImage.layout(0, 0, unitSideLength,
+							((unitSideLength * 2) / 10) * 9);
+				}
+
 				contentVoice.layout(unitSideLength / 4,
 						(int) (unitSideLength * 0.12876f),
 						(unitSideLength / 4) * 3,
 						(int) (unitSideLength * 0.61337f));
 				break;
 			case ITEM21:
-				setContentTextAndUserInfoPosition(unitSideLength + padding, 0);
-				if (message.contentType.equals("imageandvoice")) {
+				setInfoPosition(padding, 0);
+				// contentImage.setBackgroundColor(Color.BLUE);
+				if (!"".equals(message.content.text)) {
 					contentImage.layout(0, 0, unitSideLength * 2,
 							unitSideLength - unitSideLength / 4);
-					contentVoice.layout(unitSideLength / 4,
-							(int) (unitSideLength * 0.12876f),
-							(unitSideLength / 4) * 3,
-							(int) (unitSideLength * 0.61337f));
 				} else {
-					contentImage.layout(0, 0, unitSideLength, unitSideLength);
-					contentVoice.layout(unitSideLength / 4,
-							(int) (unitSideLength * 0.12876f),
-							(unitSideLength / 4) * 3,
-							(int) (unitSideLength * 0.61337f));
+					contentImage.layout(0, 0, unitSideLength * 2,
+							(unitSideLength / 10) * 8);
 				}
+
+				contentVoice.layout((unitSideLength * 2) / 4,
+						(int) (unitSideLength * 0.12876f),
+						((unitSideLength * 2) / 4) * 3,
+						(int) (unitSideLength * 0.61337f));
 				break;
 			case ITEM22:
-				setContentTextAndUserInfoPosition(0, unitSideLength + padding);
-				contentImage.layout(0, 0, unitSideLength, unitSideLength);
-				contentVoice.layout(unitSideLength / 4, unitSideLength / 4,
-						unitSideLength / 4, unitSideLength / 2);
+				setInfoPosition(0, unitSideLength + padding);
+				contentImage.layout(0, 0, unitSideLength * 2,
+						unitSideLength * 2);
+				// contentVoice.layout(unitSideLength / 4, unitSideLength / 4,
+				// unitSideLength / 4, unitSideLength / 2);
 				break;
 			}
 		}
 
-		private void setContentTextAndUserInfoPosition(int left, int top) {
+		private void setInfoPosition(int left, int top) {
 			contentText.layout(left + padding, top + padding, left
 					+ unitSideLength - padding, top + unitSideLength
 					- userInfoHeight - 2 * padding);
@@ -631,17 +668,26 @@ public class SquareContentView extends HorizontalScrollView {
 					- userInfoHeight - padding - 2, left + userInfoHeight
 					+ padding, top + unitSideLength - padding);
 
-			nickName.layout(left + userInfoHeight + 2 * padding, top
-					+ unitSideLength - userInfoHeight - padding, left
-					+ unitSideLength - padding, top + unitSideLength - padding
-					- userInfoHeight / 2);
+			// nickName.layout(left + userInfoHeight + 2 * padding, top
+			// + unitSideLength - userInfoHeight - padding, left
+			// + unitSideLength - padding, top + unitSideLength - padding
+			// - userInfoHeight / 2);
+			nickName.layout(left + userInfoHeight + 2 * padding, (int) (top
+					+ unitSideLength - userInfoHeight / 2 - padding), left
+					+ unitSideLength - padding, top + unitSideLength - padding);
 			nickName.setTextSize(userInfoHeight / 2);
 
 			float timeHeight = (float) (userInfoHeight / 2 * 0.8);
 			float timeWidth = 4 * timeHeight + padding;
-			time.layout(left + userInfoHeight + 2 * padding, (int) (top
-					+ unitSideLength - timeHeight - padding), left
-					+ unitSideLength - padding, top + unitSideLength - padding);
+			// time.layout(left + userInfoHeight + 2 * padding, (int) (top
+			// + unitSideLength - timeHeight - padding), left
+			// + unitSideLength - padding, top + unitSideLength - padding);
+			time.layout(
+					(int) (left + userInfoHeight + padding + timeWidth + userInfoHeight / 2),
+					(int) (top + unitSideLength - timeHeight - padding),
+					(int) (left + userInfoHeight + 2 * padding + padding / 3
+							+ timeWidth + userInfoHeight + 2 * timeHeight), top
+							+ unitSideLength - padding);
 			// time.layout(
 			// (int) (left + userInfoHeight + 2 * padding + timeWidth),
 			// (int) (top + unitSideLength - timeHeight - padding),
@@ -695,6 +741,11 @@ class TextPanel extends View {
 	public TextPanel(Context context) {
 		super(context);
 		mPaint = new Paint();
+	}
+
+	public void layout(float f, float g, float h, int b) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public void setTextColor(int color) {
