@@ -26,7 +26,7 @@
         android:id="@+id/ll_menu_app"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#272B42"
+        android:background="#51000000"
         android:orientation="horizontal"
         android:visibility="visible"
         tools:ignore="DisableBaselineAlignment" >
@@ -81,12 +81,12 @@
 
                         <ImageView
                             android:id="@+id/iv_release_menu2"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="5dp"
                             android:layout_marginTop="5dp"
-                            android:src="@drawable/square_release" />
+                            android:src="@drawable/selected_comment_icon" />
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
@@ -121,7 +121,7 @@
                         android:layout_centerVertical="true"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:src="@drawable/square_release" />
+                        android:src="@drawable/square_icon" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -137,7 +137,7 @@
                         android:layout_centerVertical="true"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:src="@drawable/square_release" />
+                        android:src="@drawable/group_icon" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -153,7 +153,7 @@
                         android:layout_centerVertical="true"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:src="@drawable/square_release" />
+                        android:src="@drawable/person_icon" />
                 </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>

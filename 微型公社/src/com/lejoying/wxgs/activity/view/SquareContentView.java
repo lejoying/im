@@ -617,7 +617,7 @@ public class SquareContentView extends HorizontalScrollView {
 				break;
 			case ITEM12:
 				setInfoPosition(0, unitSideLength + padding);
-				// contentImage.setBackgroundColor(Color.BLUE);
+				contentImage.setBackgroundColor(Color.BLUE);// TODO delete
 				if (!"".equals(message.content.text)) {
 					contentImage.layout(0, 0, unitSideLength, unitSideLength);
 				} else {
@@ -632,7 +632,7 @@ public class SquareContentView extends HorizontalScrollView {
 				break;
 			case ITEM21:
 				setInfoPosition(padding, 0);
-				// contentImage.setBackgroundColor(Color.BLUE);
+				contentImage.setBackgroundColor(Color.BLUE);// TODO delete
 				if (!"".equals(message.content.text)) {
 					contentImage.layout(0, 0, unitSideLength * 2,
 							unitSideLength - unitSideLength / 4);
@@ -648,8 +648,7 @@ public class SquareContentView extends HorizontalScrollView {
 				break;
 			case ITEM22:
 				setInfoPosition(0, unitSideLength + padding);
-				contentImage.layout(0, 0, unitSideLength * 2,
-						unitSideLength * 2);
+				contentImage.layout(0, 0, unitSideLength, unitSideLength * 2);
 				// contentVoice.layout(unitSideLength / 4, unitSideLength / 4,
 				// unitSideLength / 4, unitSideLength / 2);
 				break;

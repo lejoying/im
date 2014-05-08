@@ -9,10 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -183,145 +181,138 @@ public class SquareFragment extends BaseFragment {
 	}
 
 	private void initEvent() {
-		// currentSquareShitsMessage.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusShits) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusShits.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusShits;
-		// // squareContentView.removeAllViews();
-		// List<String> ShitsMessageClassify = app.data.squareMessagesClassify
-		// .get(mCurrentSquareID).get("吐槽");
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (ShitsMessageClassify == null) {
-		// ShitsMessageClassify = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// // squareContentView.justSetSquareMessageList(
-		// // ShitsMessageClassify, squareMessageMap);
-		// squareContentView.setSquareMessageList(
-		// ShitsMessageClassify, squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
-		// currentSquareActivityMessage.setOnClickListener(new OnClickListener()
-		// {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusActivity) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusActivity.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusActivity;
-		// // squareContentView.removeAllViews();
-		// List<String> ActivityMessageClassify =
-		// app.data.squareMessagesClassify
-		// .get(mCurrentSquareID).get("活动");
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (ActivityMessageClassify == null) {
-		// ActivityMessageClassify = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// // squareContentView.justSetSquareMessageList(
-		// // ActivityMessageClassify, squareMessageMap);
-		// squareContentView.setSquareMessageList(
-		// ActivityMessageClassify, squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
-		// currentSquareAllMessage.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusAll) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusAll.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusAll;
-		// // squareContentView.removeAllViews();
-		// List<String> AllMessages = app.data.squareMessages
-		// .get(mCurrentSquareID);
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (AllMessages == null) {
-		// AllMessages = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// squareContentView.setSquareMessageList(AllMessages,
-		// squareMessageMap);
-		// // squareContentView.justSetSquareMessageList(AllMessages,
-		// // squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
-		// currentSquareEssenceMessage.setOnClickListener(new OnClickListener()
-		// {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusEssence) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusEssence.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusEssence;
-		// // squareContentView.removeAllViews();
-		// List<String> EssenceMessageClassify = app.data.squareMessagesClassify
-		// .get(mCurrentSquareID).get("精华");
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (EssenceMessageClassify == null) {
-		// EssenceMessageClassify = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// squareContentView.setSquareMessageList(
-		// EssenceMessageClassify, squareMessageMap);
-		// // squareContentView.justSetSquareMessageList(
-		// // EssenceMessageClassify, squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
+//		currentSquareShitsMessage.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				if (currentSquareMessageClassify != currentSquareStatusShits) {
+//					currentSquareMessageClassify.setVisibility(View.GONE);
+//					currentSquareStatusShits.setVisibility(View.VISIBLE);
+//					currentSquareMessageClassify = currentSquareStatusShits;
+//					// squareContentView.removeAllViews();
+//					List<String> ShitsMessageClassify = app.data.squareMessagesClassify
+//							.get(mCurrentSquareID).get("吐槽");
+//					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+//							.get(mCurrentSquareID);
+//					if (ShitsMessageClassify == null) {
+//						ShitsMessageClassify = new ArrayList<String>();
+//					}
+//					if (squareMessageMap == null) {
+//						squareMessageMap = new HashMap<String, SquareMessage>();
+//					}
+//					// squareContentView.justSetSquareMessageList(
+//					// ShitsMessageClassify, squareMessageMap);
+//					squareContentView.setSquareMessageList(
+//							ShitsMessageClassify, squareMessageMap);
+//					app.UIHandler.post(new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							squareContentView.notifyDataSetChanged();
+//						}
+//					});
+//				}
+//			}
+//		});
+//		currentSquareActivityMessage.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				if (currentSquareMessageClassify != currentSquareStatusActivity) {
+//					currentSquareMessageClassify.setVisibility(View.GONE);
+//					currentSquareStatusActivity.setVisibility(View.VISIBLE);
+//					currentSquareMessageClassify = currentSquareStatusActivity;
+//					// squareContentView.removeAllViews();
+//					List<String> ActivityMessageClassify = app.data.squareMessagesClassify
+//							.get(mCurrentSquareID).get("活动");
+//					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+//							.get(mCurrentSquareID);
+//					if (ActivityMessageClassify == null) {
+//						ActivityMessageClassify = new ArrayList<String>();
+//					}
+//					if (squareMessageMap == null) {
+//						squareMessageMap = new HashMap<String, SquareMessage>();
+//					}
+//					// squareContentView.justSetSquareMessageList(
+//					// ActivityMessageClassify, squareMessageMap);
+//					squareContentView.setSquareMessageList(
+//							ActivityMessageClassify, squareMessageMap);
+//					app.UIHandler.post(new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							squareContentView.notifyDataSetChanged();
+//						}
+//					});
+//				}
+//			}
+//		});
+//		currentSquareAllMessage.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				if (currentSquareMessageClassify != currentSquareStatusAll) {
+//					currentSquareMessageClassify.setVisibility(View.GONE);
+//					currentSquareStatusAll.setVisibility(View.VISIBLE);
+//					currentSquareMessageClassify = currentSquareStatusAll;
+//					// squareContentView.removeAllViews();
+//					List<String> AllMessages = app.data.squareMessages
+//							.get(mCurrentSquareID);
+//					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+//							.get(mCurrentSquareID);
+//					if (AllMessages == null) {
+//						AllMessages = new ArrayList<String>();
+//					}
+//					if (squareMessageMap == null) {
+//						squareMessageMap = new HashMap<String, SquareMessage>();
+//					}
+//					squareContentView.setSquareMessageList(AllMessages,
+//							squareMessageMap);
+//					// squareContentView.justSetSquareMessageList(AllMessages,
+//					// squareMessageMap);
+//					app.UIHandler.post(new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							squareContentView.notifyDataSetChanged();
+//						}
+//					});
+//				}
+//			}
+//		});
+//		currentSquareEssenceMessage.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				if (currentSquareMessageClassify != currentSquareStatusEssence) {
+//					currentSquareMessageClassify.setVisibility(View.GONE);
+//					currentSquareStatusEssence.setVisibility(View.VISIBLE);
+//					currentSquareMessageClassify = currentSquareStatusEssence;
+//					// squareContentView.removeAllViews();
+//					List<String> EssenceMessageClassify = app.data.squareMessagesClassify
+//							.get(mCurrentSquareID).get("精华");
+//					Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+//							.get(mCurrentSquareID);
+//					if (EssenceMessageClassify == null) {
+//						EssenceMessageClassify = new ArrayList<String>();
+//					}
+//					if (squareMessageMap == null) {
+//						squareMessageMap = new HashMap<String, SquareMessage>();
+//					}
+//					squareContentView.setSquareMessageList(
+//							EssenceMessageClassify, squareMessageMap);
+//					// squareContentView.justSetSquareMessageList(
+//					// EssenceMessageClassify, squareMessageMap);
+//					app.UIHandler.post(new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							squareContentView.notifyDataSetChanged();
+//						}
+//					});
+//				}
+//			}
+//		});
 		squareContentView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

@@ -8,7 +8,6 @@
         android:id="@+id/horizontalScrollViewMenu"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#000"
         android:scrollbars="none" >
 
         <LinearLayout

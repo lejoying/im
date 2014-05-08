@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity {
 
 		setContentView(R.layout.activity_main);
 		mBackground = (BackgroundView) findViewById(R.id.mainBackGround);
-		mBackground.setBackground(R.drawable.background2);
+		mBackground.setBackground(R.drawable.background3);
 		mFragmentManager = getSupportFragmentManager();
 
 		ll_menu_app = (LinearLayout) findViewById(R.id.ll_menu_app);
