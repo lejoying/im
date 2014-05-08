@@ -34,7 +34,6 @@ public class SampleView extends View {
 		}
 		return os.toByteArray();
 	}
-
 	@SuppressWarnings("unused")
 	public SampleView(Context context,
 			GifMovie gifMovie) {
