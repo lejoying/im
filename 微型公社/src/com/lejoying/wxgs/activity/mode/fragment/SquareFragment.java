@@ -14,7 +14,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -69,6 +68,11 @@ public class SquareFragment extends BaseFragment {
 
 	ImageView currentSquareMessageClassify;
 
+	int currentSquareClassifyTextView = -1;
+
+	List<TextView> classifyTextViews1 = new ArrayList<TextView>();
+	List<TextView> classifyTextViews2 = new ArrayList<TextView>();
+
 	EditText mViewBroadcast;
 	View mButtonSend;
 
@@ -77,7 +81,7 @@ public class SquareFragment extends BaseFragment {
 	public static String mCurrentSquareID = "98";
 
 	private HorizontalScrollView horizontalScrollView;
-	private LinearLayout linearLayout;
+	private LinearLayout squareMessageClassifyBar;
 	// 滚动条的宽度
 	private int hsv_width;
 	// 总共有多少个view
@@ -87,8 +91,8 @@ public class SquareFragment extends BaseFragment {
 	// 预计显示在屏幕上的view的个数
 	private int child_show_count;
 	// 一开始居中选中的view
-	private int child_start;
-	
+	// private int child_start;
+
 	int height, width, dip;
 	float density;
 
@@ -110,6 +114,7 @@ public class SquareFragment extends BaseFragment {
 	public void onResume() {
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
+		mMainModeManager.handleMenu(true);
 		notifyViews();
 		super.onResume();
 	}
@@ -180,145 +185,6 @@ public class SquareFragment extends BaseFragment {
 	}
 
 	private void initEvent() {
-		// currentSquareShitsMessage.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusShits) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusShits.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusShits;
-		// // squareContentView.removeAllViews();
-		// List<String> ShitsMessageClassify = app.data.squareMessagesClassify
-		// .get(mCurrentSquareID).get("吐槽");
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (ShitsMessageClassify == null) {
-		// ShitsMessageClassify = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// // squareContentView.justSetSquareMessageList(
-		// // ShitsMessageClassify, squareMessageMap);
-		// squareContentView.setSquareMessageList(
-		// ShitsMessageClassify, squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
-		// currentSquareActivityMessage.setOnClickListener(new OnClickListener()
-		// {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusActivity) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusActivity.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusActivity;
-		// // squareContentView.removeAllViews();
-		// List<String> ActivityMessageClassify =
-		// app.data.squareMessagesClassify
-		// .get(mCurrentSquareID).get("活动");
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (ActivityMessageClassify == null) {
-		// ActivityMessageClassify = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// // squareContentView.justSetSquareMessageList(
-		// // ActivityMessageClassify, squareMessageMap);
-		// squareContentView.setSquareMessageList(
-		// ActivityMessageClassify, squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
-		// currentSquareAllMessage.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusAll) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusAll.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusAll;
-		// // squareContentView.removeAllViews();
-		// List<String> AllMessages = app.data.squareMessages
-		// .get(mCurrentSquareID);
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (AllMessages == null) {
-		// AllMessages = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// squareContentView.setSquareMessageList(AllMessages,
-		// squareMessageMap);
-		// // squareContentView.justSetSquareMessageList(AllMessages,
-		// // squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
-		// currentSquareEssenceMessage.setOnClickListener(new OnClickListener()
-		// {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (currentSquareMessageClassify != currentSquareStatusEssence) {
-		// currentSquareMessageClassify.setVisibility(View.GONE);
-		// currentSquareStatusEssence.setVisibility(View.VISIBLE);
-		// currentSquareMessageClassify = currentSquareStatusEssence;
-		// // squareContentView.removeAllViews();
-		// List<String> EssenceMessageClassify = app.data.squareMessagesClassify
-		// .get(mCurrentSquareID).get("精华");
-		// Map<String, SquareMessage> squareMessageMap =
-		// app.data.squareMessagesMap
-		// .get(mCurrentSquareID);
-		// if (EssenceMessageClassify == null) {
-		// EssenceMessageClassify = new ArrayList<String>();
-		// }
-		// if (squareMessageMap == null) {
-		// squareMessageMap = new HashMap<String, SquareMessage>();
-		// }
-		// squareContentView.setSquareMessageList(
-		// EssenceMessageClassify, squareMessageMap);
-		// // squareContentView.justSetSquareMessageList(
-		// // EssenceMessageClassify, squareMessageMap);
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// squareContentView.notifyDataSetChanged();
-		// }
-		// });
-		// }
-		// }
-		// });
 		squareContentView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -378,11 +244,11 @@ public class SquareFragment extends BaseFragment {
 	private void init() {
 		horizontalScrollView = (HorizontalScrollView) mContentView
 				.findViewById(R.id.horizontalScrollViewMenu);
-		linearLayout = (LinearLayout) mContentView
+		squareMessageClassifyBar = (LinearLayout) mContentView
 				.findViewById(R.id.ll_horizontalScrollViewMenu);
 		child_count = 10;
 		child_show_count = 5;
-		child_start = 2;
+		// child_start = 2;
 		DisplayMetrics dm = new DisplayMetrics();
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
@@ -398,7 +264,6 @@ public class SquareFragment extends BaseFragment {
 		child_width = child_width_temp;
 		initData();
 		initHsvTouch();
-		// initStart();
 	}
 
 	public int currentClassify = 2;
@@ -407,79 +272,72 @@ public class SquareFragment extends BaseFragment {
 	 * 给滚动控件添加view，只有重复两个列表才能实现循环滚动
 	 */
 	private void initData() {
-		String[] strs = { "吐槽", "精选", "全部", "活动", "服务", "吐槽", "精选", "全部", "活动",
-				"服务" };
-		for (int i = 0; i < child_count; i++) {
-			View v = mInflater
-					.inflate(R.layout.fragment_square_menu_item, null);
-			TextView tv = (TextView) v.findViewById(R.id.tv_menu);
-			TextView noread = (TextView) v.findViewById(R.id.tv_noread);
-			// TextView textView = new TextView(getActivity());
-			v.setLayoutParams(new ViewGroup.LayoutParams(child_width,
-					ViewGroup.LayoutParams.MATCH_PARENT));
-			tv.setText(strs[i]);
-			tv.setTextSize(16);
-			v.setTag(i % 5);
-			// v.setGravity(Gravity.CENTER);
-			linearLayout.addView(v);
-			v.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					int distance = 0;
-//					Toast.makeText(getActivity(), "" + v.getTag(),
-//							Toast.LENGTH_LONG).show();
-					int id = (Integer) (v.getTag());
-					changeSquare(id);
-					if (currentClassify != id) {
-						if (currentClassify > id) {
-							distance = (id + 3) * child_width;
-						} else {
-							distance = (id - 2) * child_width;
-						}
-					}
-					horizontalScrollView.smoothScrollTo(distance,
-							horizontalScrollView.getScrollY());
-					// Toast.makeText(getActivity(),
-					// "" + (current_item % child_count),
-					// Toast.LENGTH_LONG).show();
+		final String[] strs = { "吐槽", "精选", "全部", "活动", "服务", "吐槽", "精选", "全部",
+				"活动", "服务" };
+		for (int j = 0; j < 2; j++) {
+			for (int i = 0; i < child_count; i++) {
+				View v = mInflater.inflate(R.layout.fragment_square_menu_item,
+						null);
+				final TextView tv = (TextView) v.findViewById(R.id.tv_menu);
+				if (j == 0) {
+					classifyTextViews1.add(tv);
+				} else {
+					classifyTextViews2.add(tv);
 				}
-			});
-		}
-		for (int i = 0; i < child_count; i++) {
-			View v = mInflater
-					.inflate(R.layout.fragment_square_menu_item, null);
-			TextView tv = (TextView) v.findViewById(R.id.tv_menu);
-			TextView noread = (TextView) v.findViewById(R.id.tv_noread);
-			// TextView textView = new TextView(getActivity());
-			v.setLayoutParams(new ViewGroup.LayoutParams(child_width,
-					ViewGroup.LayoutParams.MATCH_PARENT));
-			tv.setText(strs[i]);
-			tv.setTextSize(16);
-			v.setTag(i % 5);
-			// tv.setGravity(Gravity.CENTER);
-			linearLayout.addView(v);
-			v.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					int distance = 0;
-//					Toast.makeText(getActivity(), "" + v.getTag(),
-//							Toast.LENGTH_LONG).show();
-					int id = (Integer) (v.getTag());
-					changeSquare(id);
-					if (currentClassify != id) {
-						if (currentClassify > id) {
-							distance = (id + 3) * child_width;
-						} else {
-							distance = (id - 2) * child_width;
-						}
-					}
-					horizontalScrollView.smoothScrollTo(distance,
-							horizontalScrollView.getScrollY());
+				// TextView noread = (TextView) v.findViewById(R.id.tv_noread);
+				v.setLayoutParams(new ViewGroup.LayoutParams(child_width,
+						ViewGroup.LayoutParams.MATCH_PARENT));
+				tv.setText(strs[i]);
+				tv.setTextSize(16);
+				v.setTag(i % 5);
+				if (i == 2 || i == 7) {
+					tv.setTextSize(22);
+					currentSquareClassifyTextView = i % 5;
 				}
-			});
+				// v.setGravity(Gravity.CENTER);
+				squareMessageClassifyBar.addView(v);
+				v.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						int distance = 0;
+						int id = (Integer) (v.getTag());
+						TextView tv1 = classifyTextViews1.get(id);
+						TextView tv2 = classifyTextViews1.get(id + 5);
+						TextView tv3 = classifyTextViews2.get(id);
+						TextView tv4 = classifyTextViews2.get(id + 5);
+						if (currentSquareClassifyTextView != -1) {
+							TextView oldTv1 = classifyTextViews1
+									.get(currentSquareClassifyTextView);
+							TextView oldTv2 = classifyTextViews1
+									.get(currentSquareClassifyTextView + 5);
+							TextView oldTv3 = classifyTextViews2
+									.get(currentSquareClassifyTextView);
+							TextView oldTv4 = classifyTextViews2
+									.get(currentSquareClassifyTextView + 5);
+							oldTv1.setTextSize(16);
+							oldTv2.setTextSize(16);
+							oldTv3.setTextSize(16);
+							oldTv4.setTextSize(16);
+						}
+						tv1.setTextSize(22);
+						tv2.setTextSize(22);
+						tv3.setTextSize(22);
+						tv4.setTextSize(22);
+						currentSquareClassifyTextView = id;
+						changeSquare(id);
+						if (currentClassify != id) {
+							if (currentClassify > id) {
+								distance = (id + 3) * child_width;
+							} else {
+								distance = (id - 2) * child_width;
+							}
+						}
+						horizontalScrollView.smoothScrollTo(distance,
+								horizontalScrollView.getScrollY());
+					}
+				});
+			}
 		}
 	}
 
@@ -628,55 +486,8 @@ public class SquareFragment extends BaseFragment {
 							horizontalScrollView.getScrollY());
 					break;
 				}
-				if (pre_item == 0) {
-					isChecked(current_item, true);
-				} else if (pre_item != current_item) {
-					isChecked(pre_item, false);
-					isChecked(current_item, true);
-				}
 				pre_item = current_item;
 				return flag;
-			}
-		});
-	}
-
-	/**
-	 * 设置指定位置的状态
-	 * 
-	 * @param item
-	 * @param isChecked
-	 */
-	private void isChecked(int item, boolean isChecked) {
-		LinearLayout ll = (LinearLayout) linearLayout.getChildAt(item - 1);
-		TextView textView = (TextView) ll.findViewById(R.id.tv_menu);
-		if (isChecked) {
-			textView.setTextSize(22);
-		} else {
-			textView.setTextSize(16);
-		}
-	}
-
-	/**
-	 * 刚开始进入界面时的初始选中项的处理
-	 */
-	private void initStart() {
-		final ViewTreeObserver observer = horizontalScrollView
-				.getViewTreeObserver();
-		observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-
-			@Override
-			public boolean onPreDraw() {
-				// TODO Auto-generated method stub
-				observer.removeOnPreDrawListener(this);
-				int child_start_item = child_start;
-				if ((child_start * child_width - child_width / 2 - hsv_width / 2) <= child_width) {
-					child_start_item += child_count;
-				}
-				horizontalScrollView.scrollTo(child_width * child_start_item
-						- child_width / 2 - hsv_width / 2,
-						horizontalScrollView.getScrollY());
-				isChecked(child_start_item, true);
-				return false;
 			}
 		});
 	}
@@ -729,7 +540,6 @@ public class SquareFragment extends BaseFragment {
 							.showNext(mMainModeManager.mBusinessCardFragment);
 
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -741,5 +551,4 @@ public class SquareFragment extends BaseFragment {
 		TextView nickName;
 		TextView message;
 	}
-
 }
