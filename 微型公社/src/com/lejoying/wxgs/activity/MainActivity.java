@@ -213,18 +213,19 @@ public class MainActivity extends BaseActivity {
 		RelativeLayout rl_group_menu = (RelativeLayout) findViewById(R.id.rl_group_menu);
 		RelativeLayout rl_me_menu = (RelativeLayout) findViewById(R.id.rl_me_menu);
 		RelativeLayout rl_release_menu = (RelativeLayout) findViewById(R.id.rl_release_menu);
-		
-		final ImageView iv_square_menu=(ImageView)findViewById(R.id.iv_square_menu);
-		final ImageView iv_group_menu=(ImageView)findViewById(R.id.iv_group_menu);
-		final ImageView iv_me_menu=(ImageView)findViewById(R.id.iv_me_menu);
-		
+
+		final ImageView iv_square_menu = (ImageView) findViewById(R.id.iv_square_menu);
+		final ImageView iv_group_menu = (ImageView) findViewById(R.id.iv_group_menu);
+		final ImageView iv_me_menu = (ImageView) findViewById(R.id.iv_me_menu);
+
 		iv_square_menu.setImageResource(R.drawable.square_icon_selected);
 		rl_square_menu.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				mMainMode.show(mMainMode.mSquareFragment);
-				iv_square_menu.setImageResource(R.drawable.square_icon_selected);
+				iv_square_menu
+						.setImageResource(R.drawable.square_icon_selected);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
 			}

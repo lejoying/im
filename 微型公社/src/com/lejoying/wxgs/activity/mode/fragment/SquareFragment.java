@@ -132,31 +132,6 @@ public class SquareFragment extends BaseFragment {
 		mContentView = inflater.inflate(R.layout.fragment_square, null);
 		squareContentView = (SquareContentView) mContentView
 				.findViewById(R.id.stv_squrecontentview);
-		// currentSquareEssenceMessage = (RelativeLayout) mContentView
-		// .findViewById(R.id.current_square_essence_message);
-		// currentSquareAllMessage = (RelativeLayout) mContentView
-		// .findViewById(R.id.current_square_all_message);
-		// currentSquareActivityMessage = (RelativeLayout) mContentView
-		// .findViewById(R.id.current_square_activity_message);
-		// currentSquareShitsMessage = (RelativeLayout) mContentView
-		// .findViewById(R.id.current_square_shits_message);
-		// currentSquareStatusEssence = (ImageView) mContentView
-		// .findViewById(R.id.current_square_status_essence);
-		// currentSquareStatusAll = (ImageView) mContentView
-		// .findViewById(R.id.current_square_status_all);
-		// currentSquareStatusActivity = (ImageView) mContentView
-		// .findViewById(R.id.current_square_status_activity);
-		// currentSquareStatusShits = (ImageView) mContentView
-		// .findViewById(R.id.current_square_status_shits);
-		// currentSquareNoReadEssence = (TextView) mContentView
-		// .findViewById(R.id.current_square_noread_essence);
-		// currentSquareNoReadAll = (TextView) mContentView
-		// .findViewById(R.id.current_square_noread_all);
-		// currentSquareNoReadActivity = (TextView) mContentView
-		// .findViewById(R.id.current_square_noread_activity);
-		// currentSquareNoReadShits = (TextView) mContentView
-		// .findViewById(R.id.current_square_noread_shits);
-		// currentSquareMessageClassify = currentSquareStatusAll;
 		final List<String> messages = app.data.squareMessages
 				.get(mCurrentSquareID);
 		final Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
