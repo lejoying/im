@@ -111,4 +111,18 @@ public final class MCImageUtils {
 		}
 		return bitmap;
 	}
+
+	public Bitmap getCutBitmap(Bitmap bitmap, int width, int height) {
+		int btwidth = bitmap.getWidth();
+		int btheight = bitmap.getHeight();
+		if (width > btwidth) {
+			width = btwidth;
+		}
+		if (height > btheight) {
+			height = btheight;
+		}
+		Bitmap cutBitmap = Bitmap.createBitmap(bitmap, (btwidth - width) / 2,
+				(btheight - height) / 2, width, height);
+		return cutBitmap;
+	}
 }
