@@ -23,6 +23,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.SquareMessage.Content;
@@ -506,7 +507,6 @@ public class SquareContentView extends HorizontalScrollView {
 				voiceLength.setTextColor(Color.WHITE);
 				this.addView(voiceLength);
 			}
-
 			notifyData();
 		}
 
@@ -523,11 +523,55 @@ public class SquareContentView extends HorizontalScrollView {
 				if (!cover.equals("none")) {
 					final String fileName = cover;
 					app.fileHandler.getImage(fileName, new FileResult() {
-
 						@Override
 						public void onResult(String where) {
-							contentImage.setImageBitmap(app.fileHandler.bitmaps
-									.get(fileName));
+							if (unitSideLength != 0 || unitSideLength2 != 0) {
+								switch (style) {
+								case ITEM12:
+									if (!"".equals(message.content.text)) {
+										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
+												app.fileHandler.bitmaps
+														.get(fileName),
+												unitSideLength, unitSideLength
+														- unitSideLength / 4));
+									} else {
+										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
+												app.fileHandler.bitmaps
+														.get(fileName),
+												unitSideLength,
+												((unitSideLength * 2) / 10) * 9));
+									}
+									break;
+								case ITEM21:
+									if (!"".equals(message.content.text)) {
+										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
+												app.fileHandler.bitmaps
+														.get(fileName),
+												unitSideLength,
+												(int) (unitSideLength * 0.781499f)));
+									} else {
+										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
+												app.fileHandler.bitmaps
+														.get(fileName),
+												unitSideLength2,
+												(int) (unitSideLength * 0.781499f)));
+									}
+									break;
+								case ITEM22:
+									contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
+											app.fileHandler.bitmaps
+													.get(fileName),
+											unitSideLength,
+											((unitSideLength * 2) / 10) * 9));
+									break;
+								default:
+									break;
+								}
+							} else {
+								contentImage
+										.setImageBitmap(app.fileHandler.bitmaps
+												.get(fileName));
+							}
 						}
 					});
 				}
@@ -613,9 +657,13 @@ public class SquareContentView extends HorizontalScrollView {
 			case ITEM12:
 				setInfoPosition(0, unitSideLength + padding);
 				// contentImage.setBackgroundColor(Color.BLUE);// TODO delete
-				contentImage.layout(0, 0, unitSideLength,
-						((unitSideLength * 2) / 10) * 9);
-
+				if (!"".equals(message.content.text)) {
+					contentImage.layout(0, 0, unitSideLength, unitSideLength
+							- unitSideLength / 4);
+				} else {
+					contentImage.layout(0, 0, unitSideLength,
+							((unitSideLength * 2) / 10) * 9);
+				}
 				contentVoice.layout((int) (unitSideLength * 0.232506f),
 						(int) (unitSideLength * 0.2595935f),
 						(int) (unitSideLength * 0.7494357f),
@@ -641,13 +689,14 @@ public class SquareContentView extends HorizontalScrollView {
 				setInfoPosition(unitSideLength + padding, unitSideLength
 						+ padding);
 				contentImage.layout(0, 0, unitSideLength,
-						(int) (unitSideLength2 * 0.781499f));
+						((unitSideLength * 2) / 10) * 9);
 				contentVoice.layout((int) (unitSideLength * 0.232506f),
 						(int) (unitSideLength * 0.2595935f),
 						(int) (unitSideLength * 0.7494357f),
 						(int) (unitSideLength * 0.77878f));
 				break;
 			}
+			notifyData();
 		}
 
 		private void setInfoPosition(int left, int top) {
