@@ -35,7 +35,7 @@ public class SquareContentView extends HorizontalScrollView {
 	static final int ITEM12 = 12;
 	static final int ITEM21 = 21;
 	static final int ITEM22 = 22;
-    byte aa[];
+	byte aa[];
 	int height;
 	int unitSideLength, unitSideLength2;
 	int userInfoWidth, userInfoHeight;
@@ -552,8 +552,8 @@ public class SquareContentView extends HorizontalScrollView {
 					headImage.setImageBitmap(bitmap);
 				}
 			});
-			String nickNames = message.nickName.length() > 4 ? message.nickName
-					.substring(0, 4) + "..." : message.nickName;
+			String nickNames = message.nickName.length() > 6 ? message.nickName
+					.substring(0, 6) + "..." : message.nickName;
 			nickName.setText(nickNames);
 			time.setText(convertTime(currentTime, message.time));
 		}

@@ -1,13 +1,11 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -21,7 +19,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -52,7 +49,6 @@ import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
-import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class SquareMessageDetail extends Activity {
 	MainApplication app = MainApplication.getMainApplication();
@@ -540,12 +536,12 @@ public class SquareMessageDetail extends Activity {
 
 			@Override
 			public void success(JSONObject jData) {
-				try {
-					String notice = jData.getString("提示信息");
-					Log.e("Coolspan", notice + "-" + flag + "------点赞提示消息");
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				// try {
+				// // String notice = jData.getString("提示信息");
+				// // Log.e("Coolspan", notice + "-" + flag + "------点赞提示消息");
+				// } catch (JSONException e) {
+				// e.printStackTrace();
+				// }
 			}
 		});
 	}
@@ -565,24 +561,24 @@ public class SquareMessageDetail extends Activity {
 
 			@Override
 			public void success(JSONObject jData) {
-				try {
-					final List<Comment> comments = JSONParser
-							.generateCommentsFromJSON(jData
-									.getJSONArray("comments"));
-					// if (comments.size()) {
-					// TODO
-					// app.UIHandler.post(new Runnable() {
-					//
-					// @Override
-					// public void run() {
-					// // generateCommentsViews(comments);
-					// }
-					// });
-					// }
+				// try {
+				// final List<Comment> comments = JSONParser
+				// .generateCommentsFromJSON(jData
+				// .getJSONArray("comments"));
+				// if (comments.size()) {
+				// TODO
+				// app.UIHandler.post(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// // generateCommentsViews(comments);
+				// }
+				// });
+				// }
 
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				// } catch (JSONException e) {
+				// e.printStackTrace();
+				// }
 			}
 		});
 	}
