@@ -156,7 +156,7 @@ public class SquareMessageDetail extends Activity {
 		List<String> images = message.content.images;
 		List<String> voices = message.content.voices;
 		String textContent = message.content.text != "" ? message.content.text
-				: "哈哈";
+				:"";
 		squareMessageSendUserName.setText(message.nickName);
 		TextView textView = new TextView(this);
 		LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
