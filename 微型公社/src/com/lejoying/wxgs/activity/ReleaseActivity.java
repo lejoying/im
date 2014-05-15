@@ -894,6 +894,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					}
 				});
 			}
+			rl_releasepic.setVisibility(View.GONE);
+			horizontalScrollView.setVisibility(View.VISIBLE);
+			et_release.setVisibility(View.VISIBLE);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			ll_navigation.setLayoutParams(layoutParams);
+			ll_navigation.setVisibility(View.VISIBLE);
+			seletePic = false;
 		}
 	}
 

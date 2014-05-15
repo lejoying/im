@@ -533,7 +533,7 @@ public class SquareContentView extends HorizontalScrollView {
 												app.fileHandler.bitmaps
 														.get(fileName),
 												unitSideLength, unitSideLength
-														- unitSideLength / 4));
+														));
 									} else {
 										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
 												app.fileHandler.bitmaps
@@ -659,7 +659,7 @@ public class SquareContentView extends HorizontalScrollView {
 				// contentImage.setBackgroundColor(Color.BLUE);// TODO delete
 				if (!"".equals(message.content.text)) {
 					contentImage.layout(0, 0, unitSideLength, unitSideLength
-							- unitSideLength / 4);
+							);
 				} else {
 					contentImage.layout(0, 0, unitSideLength,
 							((unitSideLength * 2) / 10) * 9);

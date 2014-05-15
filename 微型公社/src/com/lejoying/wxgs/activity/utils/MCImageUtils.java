@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 
 public final class MCImageUtils {
 
@@ -116,32 +117,34 @@ public final class MCImageUtils {
 	public static Bitmap getCutBitmap(Bitmap bitmap, int width, int height) {
 		int btwidth = bitmap.getWidth();
 		int btheight = bitmap.getHeight();
-		float ratio=btwidth/btheight;
-		if(width > btwidth){
-			width = btwidth;
+		float scaleWidth = ((float) width) / btwidth;
+		float scaleHeight = ((float) height) / btheight;
+		if (width > btwidth || height > btheight) {
+			if (scaleWidth > scaleHeight) {
+				bitmap = Bitmap.createScaledBitmap(bitmap, width,
+						(int) (((float) width) / btwidth * btheight), true);
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0,
+						width, height);
+				return bitmap;
+			} else {
+				bitmap = Bitmap.createScaledBitmap(bitmap,
+						(int) (((float) height) / btheight * btwidth), height,
+						true);
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0,
+						width, height);
+				return bitmap;
+			}
 		}
-		if(height > btheight){
-			height = btheight;
-		}
-//		if (width > btwidth) {
-//			bitmap = Bitmap.createScaledBitmap(bitmap, width, (int) (width/ratio), true);
-//			btwidth=width;
-//		} else if (height > btheight) {
-//			bitmap = Bitmap.createScaledBitmap(bitmap, (int) (ratio* height), height, true);
-//			btheight=height;
-//		} else if (width > btwidth && height > btheight) {
-//			bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-//		}
-		bitmap = Bitmap.createBitmap(compressImage(bitmap),
+		bitmap = Bitmap.createBitmap(bitmap,
 				(btwidth - width) / 2, (btheight - height) / 2, width, height);
 		return bitmap;
 	}
 
-	public static Bitmap compressImage(Bitmap bitmap) {
+	public static Bitmap compressImage(Bitmap bitmap,int size) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
 		int options = 100;
-		while (baos.toByteArray().length / 1024 > 40) { // 循环判断如果压缩后图片是否大于100kb,大于继续压缩
+		while (baos.toByteArray().length / 1024 > size) { // 循环判断如果压缩后图片是否大于100kb,大于继续压缩
 			baos.reset();// 重置baos即清空baos
 			bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);// 这里压缩options%，把压缩后的数据存放到baos中
 			options -= 10;// 每次都减少10
