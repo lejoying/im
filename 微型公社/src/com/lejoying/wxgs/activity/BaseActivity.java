@@ -33,9 +33,9 @@ public abstract class BaseActivity extends FragmentActivity {
 
 	@Override
 	protected void onPause() {
-		if (isLeave()) {
-			onLeave();
-		}
+		// if (isLeave()) {
+		// onLeave();
+		// }
 		super.onPause();
 	}
 

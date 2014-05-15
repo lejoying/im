@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#bf000000"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_width="290dp"
+        android:layout_height="440dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        tools:ignore="UselessParent" >
+
+        <LinearLayout
+            android:id="@+id/ll_dialog"
+            android:layout_width="250dp"
+            android:layout_height="400dp"
+            android:layout_centerHorizontal="true"
+            android:background="#fff"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/ll_top"
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:orientation="horizontal" >
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lv_squares"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:cacheColorHint="#0000"
+                android:divider="#0000"
+                android:listSelector="#0000" >
+            </ListView>
+
+            <LinearLayout
+                android:id="@+id/ll_searchsquare"
+                android:layout_width="213dp"
+                android:layout_height="30dp"
+                android:background="#13b6eb"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/dialog_search" />
+
+                <TextView
+                    android:id="@+id/tv_mach"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:text=" 更多站......"
+                    android:textColor="#fff" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/dialog_close" />
+    </RelativeLayout>
+
+</RelativeLayout>

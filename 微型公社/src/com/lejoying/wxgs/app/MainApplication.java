@@ -2,6 +2,8 @@ package com.lejoying.wxgs.app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -26,7 +28,8 @@ import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.utils.SHA1;
 
-public class MainApplication extends Application {
+public class MainApplication extends Application implements
+		Thread.UncaughtExceptionHandler {
 
 	public static final String APP_DATA_PARSINGISCOMPLETE = "com.lejoying.wxgs.app.parsingiscomplete";
 
@@ -185,4 +188,23 @@ public class MainApplication extends Application {
 		return false;
 	}
 
+	@Override
+	public void uncaughtException(Thread arg0, Throwable arg1) {
+		File sdFile = Environment.getExternalStorageDirectory();
+		File file = new File(sdFile, "wxgsbugs.txt");
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			FileOutputStream fileOutputStream = new FileOutputStream(file);
+			arg1.getStackTrace();
+			// fileOutputStream.write(buffer, byteOffset, byteCount)
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 }
