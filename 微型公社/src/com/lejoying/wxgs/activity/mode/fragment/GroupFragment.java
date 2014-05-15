@@ -102,7 +102,9 @@ public class GroupFragment extends BaseFragment {
 			current_group_local_status = (ImageView) mContentView
 					.findViewById(R.id.current_group_local_status);
 
-			mMainModeManager.handleMenu(true);
+			if (mMainModeManager != null) {
+				mMainModeManager.handleMenu(true);
+			}
 			initEvent();
 
 			notifyViews();

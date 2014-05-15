@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/ll_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="10dp" >
+
+        <ImageView
+            android:id="@+id/iv_square"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/temp"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_square"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:text="亦庄文化园站"
+            android:textColor="#000" />
+
+        <ImageView
+            android:id="@+id/iv_mony"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/dialog_mach" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_selected_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/dialog_selected" />
+
+    <ImageView
+        android:id="@+id/iv_line"
+        android:layout_width="150dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#878585" />
+
+</LinearLayout>

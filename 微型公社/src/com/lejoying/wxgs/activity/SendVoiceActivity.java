@@ -54,6 +54,8 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	int RECORD_STOP = 0x002;
 	int recordStatus = RECORD_STOP;
 
+	Boolean backStatus = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,8 +73,19 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	}
 
 	protected void onResume() {
-		CircleMenu.hide();
+		// CircleMenu.hide();
 		super.onResume();
+	}
+
+	@Override
+	public void finish() {
+		if (player != null) {
+			player.release();
+		}
+		if (!backStatus) {
+			initMediaRecord();
+		}
+		super.finish();
 	}
 
 	public void initData() {
@@ -216,11 +229,12 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 			}
 			intent.putExtra("fileName", voiceFileName);
 			setResult(Activity.RESULT_OK, intent);
+			backStatus = true;
 			finish();
 			break;
 		case R.id.sendvoice_iv_del:
-			initMediaRecord();
 			setResult(400, intent);
+			backStatus = false;
 			finish();
 			break;
 		case R.id.sendvoice_rl_navigation:
@@ -291,6 +305,7 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 	public void initMediaRecord() {
 		if (player != null) {
 			player.release();
+			player = null;
 		}
 		recordView.setDragEnable(false);
 		recordView.setMode(RecordView.MODE_TIMER);

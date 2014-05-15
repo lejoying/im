@@ -19,6 +19,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,7 +41,6 @@ import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.Comment;
@@ -107,7 +107,7 @@ public class SquareMessageDetail extends Activity {
 		generateMessageContent();
 		getSquareMessageComments();
 		initEvent();
-		CircleMenu.hide();
+		// CircleMenu.hide();
 	}
 
 	@Override
@@ -204,54 +204,61 @@ public class SquareMessageDetail extends Activity {
 				public void onSuccess(String filename, String base64,
 						Boolean flag) {
 					if (flag) {
-						try {
-							final MediaPlayer player = MediaPlayer.create(
-									SquareMessageDetail.this, Uri
-											.parse((new File(
-													app.sdcardVoiceFolder,
-													fileName))
-													.getAbsolutePath()));
-							players.add(player);
-							recordViews.add(recordView);
-							recordView.setProgressTime(player.getDuration());
-							recordView
-									.setPlayButtonClickListener(new PlayButtonClickListener() {
+						File file = new File(app.sdcardVoiceFolder, fileName);
+						if (file.exists()) {
+							try {
+								final MediaPlayer player = MediaPlayer.create(
+										SquareMessageDetail.this,
+										Uri.parse(file.getAbsolutePath()));
+								if (player == null) {
+									Log.e("Coolspan", fileName);
+									return;
+								}
+								players.add(player);
+								recordViews.add(recordView);
+								recordView.setProgressTime(player.getDuration());
+								recordView
+										.setPlayButtonClickListener(new PlayButtonClickListener() {
 
-										@Override
-										public void onPlay() {
-											if (!player.isPlaying()) {
-												player.start();
+											@Override
+											public void onPlay() {
+												if (!player.isPlaying()) {
+													player.start();
+												}
 											}
-										}
 
-										@Override
-										public void onPause() {
-											if (player.isPlaying()) {
+											@Override
+											public void onPause() {
+												if (player.isPlaying()) {
+													player.pause();
+												}
+
+											}
+										});
+								recordView
+										.setProgressListener(new ProgressListener() {
+
+											@Override
+											public void onProgressEnd() {
 												player.pause();
+												// player.reset();
 											}
 
-										}
-									});
-							recordView
-									.setProgressListener(new ProgressListener() {
+											@Override
+											public void onDrag(float percent) {
+												// mpPlayer.seekTo((int)
+												// (mpPlayer
+												// .getDuration() * percent));
 
-										@Override
-										public void onProgressEnd() {
-											player.pause();
-											// player.reset();
-										}
-
-										@Override
-										public void onDrag(float percent) {
-											// mpPlayer.seekTo((int) (mpPlayer
-											// .getDuration() * percent));
-
-										}
-									});
-						} catch (SecurityException e) {
-							e.printStackTrace();
-						} catch (IllegalStateException e) {
-							e.printStackTrace();
+											}
+										});
+							} catch (SecurityException e) {
+								e.printStackTrace();
+							} catch (IllegalStateException e) {
+								e.printStackTrace();
+							}
+						} else {
+							// to do loading voice failed
 						}
 					} else {
 						// to do loading voice failed
