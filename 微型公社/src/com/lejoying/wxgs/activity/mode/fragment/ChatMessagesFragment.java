@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -191,7 +192,7 @@ public class ChatMessagesFragment extends BaseFragment {
 				final String headFileName = chatHeadImgName;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where) {
+					public void onResult(String where,Bitmap bitmap) {
 						head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}

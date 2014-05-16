@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONObject;
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -278,7 +279,7 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		final String headFileName = mGroup.icon;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {
+			public void onResult(String where,Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
 						.get(headFileName));
 			}

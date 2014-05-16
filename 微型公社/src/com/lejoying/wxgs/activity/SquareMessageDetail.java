@@ -170,7 +170,7 @@ public class SquareMessageDetail extends Activity {
 			app.fileHandler.getImage(fileName, new FileResult() {
 
 				@Override
-				public void onResult(String where) {
+				public void onResult(String where,Bitmap bitmap0) {
 					Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
 					int height = (int) ((int) bitmap.getHeight() * (width / bitmap
 							.getWidth()));

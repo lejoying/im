@@ -1,5 +1,9 @@
 package com.lejoying.wxgs.activity.view;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +15,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +32,7 @@ import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.SquareMessage.Content;
+import com.lejoying.wxgs.app.handler.FileHandler;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 
 public class SquareContentView extends HorizontalScrollView {
@@ -507,11 +513,9 @@ public class SquareContentView extends HorizontalScrollView {
 				voiceLength.setTextColor(Color.WHITE);
 				this.addView(voiceLength);
 			}
-			// notifyData();
 		}
 
 		void notifyData() {
-
 			if (contentImage != null) {
 				// TODO set conver image to contentImage
 				// contentImage.setImageBitmap(bm);
@@ -522,56 +526,105 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 				if (!cover.equals("none")) {
 					final String fileName = cover;
-					app.fileHandler.getImage(fileName, new FileResult() {
+					app.fileHandler.getThumbnail(fileName, new FileResult() {
 						@Override
-						public void onResult(String where) {
+						public void onResult(String where, Bitmap bitmap) {
 							if (unitSideLength != 0 || unitSideLength2 != 0) {
 								switch (style) {
 								case ITEM12:
 									if (!"".equals(message.content.text)) {
-										contentImage.setImageBitmap(MCImageUtils
-												.getCutBitmap(
-														app.fileHandler.bitmaps
-																.get(fileName),
-														unitSideLength,
-														unitSideLength));
+										if (where == FileHandler.FROM_SDCARD) {
+											contentImage.setImageBitmap(bitmap);
+										} else {
+											bitmap = MCImageUtils.getCutBitmap(
+													bitmap, unitSideLength,
+													unitSideLength);
+											contentImage.setImageBitmap(bitmap);
+											saveThumbnailToLocal(bitmap,fileName);
+										}
+										// contentImage.setImageBitmap(MCImageUtils
+										// .getCutBitmap(bitmap,
+										// unitSideLength,
+										// unitSideLength));
 									} else {
-										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
-												app.fileHandler.bitmaps
-														.get(fileName),
-												unitSideLength,
-												((unitSideLength * 2) / 10) * 9));
+										if (where == FileHandler.FROM_SDCARD) {
+											contentImage.setImageBitmap(bitmap);
+										} else {
+											bitmap = MCImageUtils
+													.getCutBitmap(
+															bitmap,
+															unitSideLength,
+															((unitSideLength * 2) / 10) * 9);
+											contentImage.setImageBitmap(bitmap);
+											saveThumbnailToLocal(bitmap,fileName);
+										}
+										// contentImage.setImageBitmap(MCImageUtils
+										// .getCutBitmap(
+										// bitmap,
+										// unitSideLength,
+										// ((unitSideLength * 2) / 10) * 9));
 									}
 									break;
 								case ITEM21:
 									if (!"".equals(message.content.text)) {
-										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
-												app.fileHandler.bitmaps
-														.get(fileName),
-												unitSideLength,
-												(int) (unitSideLength * 0.781499f)));
+										if (where == FileHandler.FROM_SDCARD) {
+											contentImage.setImageBitmap(bitmap);
+										} else {
+											bitmap = MCImageUtils
+													.getCutBitmap(
+															bitmap,
+															unitSideLength,
+															(int) (unitSideLength * 0.781499f));
+											contentImage.setImageBitmap(bitmap);
+											saveThumbnailToLocal(bitmap,fileName);
+										}
+										// contentImage.setImageBitmap(MCImageUtils
+										// .getCutBitmap(
+										// bitmap,
+										// unitSideLength,
+										// (int) (unitSideLength * 0.781499f)));
 									} else {
-										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
-												app.fileHandler.bitmaps
-														.get(fileName),
-												unitSideLength2,
-												(int) (unitSideLength * 0.781499f)));
+										if (where == FileHandler.FROM_SDCARD) {
+											contentImage.setImageBitmap(bitmap);
+										} else {
+											bitmap = MCImageUtils
+													.getCutBitmap(
+															bitmap,
+															unitSideLength2,
+															(int) (unitSideLength * 0.781499f));
+											contentImage.setImageBitmap(bitmap);
+											saveThumbnailToLocal(bitmap,fileName);
+										}
+										// contentImage.setImageBitmap(MCImageUtils
+										// .getCutBitmap(
+										// bitmap,
+										// unitSideLength2,
+										// (int) (unitSideLength * 0.781499f)));
 									}
 									break;
 								case ITEM22:
-									contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
-											app.fileHandler.bitmaps
-													.get(fileName),
-											unitSideLength,
-											((unitSideLength * 2) / 10) * 9));
+									if (where == FileHandler.FROM_SDCARD) {
+										contentImage.setImageBitmap(bitmap);
+									} else {
+										bitmap = MCImageUtils
+												.getCutBitmap(
+														bitmap,
+														unitSideLength,
+														((unitSideLength * 2) / 10) * 9);
+										contentImage.setImageBitmap(bitmap);
+										saveThumbnailToLocal(bitmap,fileName);
+									}
+									// contentImage.setImageBitmap(MCImageUtils
+									// .getCutBitmap(
+									// bitmap,
+									// unitSideLength,
+									// ((unitSideLength * 2) / 10) * 9));
 									break;
 								default:
 									break;
 								}
 							} else {
-								contentImage
-										.setImageBitmap(app.fileHandler.bitmaps
-												.get(fileName));
+								contentImage.setImageBitmap(bitmap);
 							}
 						}
 					});
@@ -588,19 +641,38 @@ public class SquareContentView extends HorizontalScrollView {
 			app.fileHandler.getHeadImage(message.head, new FileResult() {
 
 				@Override
-				public void onResult(String where) {
-					Bitmap bitmap = app.fileHandler.bitmaps.get(message.head);
+				public void onResult(String where, Bitmap bitmap) {
+					Bitmap newBitmap = app.fileHandler.bitmaps
+							.get(message.head);
 					// Matrix matrix = new Matrix();
 					// matrix.postScale(2, 2);
 					// bitmap = Bitmap.createBitmap(bitmap, 0, 0,
 					// bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-					headImage.setImageBitmap(bitmap);
+					headImage.setImageBitmap(newBitmap);
 				}
 			});
 			String nickNames = message.nickName.length() > 6 ? message.nickName
 					.substring(0, 6) + "..." : message.nickName;
 			nickName.setText(nickNames);
 			time.setText(convertTime(currentTime, message.time));
+		}
+
+		void saveThumbnailToLocal(Bitmap bitmap, String filename) {
+			File thumbnailFile = new File(app.sdcardThumbnailFolder, filename);
+			FileOutputStream fOut = null;
+			try {
+				thumbnailFile.createNewFile();
+				fOut = new FileOutputStream(thumbnailFile);
+				if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut)) {
+					fOut.flush();
+					fOut.close();
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		String convertTime(long currentTime, long targetTime) {
@@ -675,15 +747,18 @@ public class SquareContentView extends HorizontalScrollView {
 				if (!"".equals(message.content.text)) {
 					contentImage.layout(0, 0, unitSideLength, unitSideLength
 							- unitSideLength / 4);
+					contentVoice.layout((int) (unitSideLength * 0.22265625f),
+							(int) (unitSideLength * 0.10546875f),
+							(int) (unitSideLength * 0.755859375f),
+							(int) (unitSideLength * 0.70703125f));
 				} else {
 					contentImage.layout(0, 0, unitSideLength2,
 							(int) (unitSideLength * 0.781499f));
+					contentVoice.layout((int) (unitSideLength2 * 0.3786794f),
+							(int) (unitSideLength * 0.1802233f),
+							(int) (unitSideLength2 * 0.641209f),
+							(int) (unitSideLength * 0.7033493f));
 				}
-
-				contentVoice.layout((int) (unitSideLength2 * 0.3786794f),
-						(int) (unitSideLength * 0.1802233f),
-						(int) (unitSideLength2 * 0.641209f),
-						(int) (unitSideLength * 0.7033493f));
 				break;
 			case ITEM22:
 				setInfoPosition(unitSideLength + padding, unitSideLength

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -480,7 +481,7 @@ public class GroupFragment extends BaseFragment {
 				final String fileName = groupFriend.head;
 				app.fileHandler.getHeadImage(fileName, new FileResult() {
 					@Override
-					public void onResult(String where) {
+					public void onResult(String where,Bitmap bitmap) {
 						head.setImageBitmap(app.fileHandler.bitmaps
 								.get(fileName));
 					}

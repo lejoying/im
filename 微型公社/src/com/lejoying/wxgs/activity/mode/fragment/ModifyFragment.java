@@ -154,7 +154,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		final String headFileName = app.data.user.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {
+			public void onResult(String where,Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
 						.get(headFileName));
 			}
@@ -533,7 +533,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 					app.fileHandler.getHeadImage(headFileName,
 							new FileResult() {
 								@Override
-								public void onResult(String where) {
+								public void onResult(String where,Bitmap bitmap) {
 									iv_head.setImageBitmap(app.fileHandler.bitmaps
 											.get(headFileName));
 								}

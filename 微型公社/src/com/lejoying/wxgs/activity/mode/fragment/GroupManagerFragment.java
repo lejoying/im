@@ -9,6 +9,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1407,7 +1408,7 @@ public class GroupManagerFragment extends BaseFragment {
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {
+			public void onResult(String where,Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});

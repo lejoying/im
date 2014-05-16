@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -417,7 +418,7 @@ public class SearchFriendFragment extends BaseFragment {
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {
+			public void onResult(String where,Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});

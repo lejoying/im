@@ -55,7 +55,8 @@ public class MainApplication extends Application implements
 	public File sdcardImageFolder;
 	public File sdcardVoiceFolder;
 	public File sdcardHeadImageFolder;
-
+	public File sdcardThumbnailFolder;
+	
 	public String sdcardStatus = "none";// "exist"
 	public String networkStatus = "none";// "WIFI"|"mobile"
 
@@ -119,6 +120,7 @@ public class MainApplication extends Application implements
 							data.squareFlags = localData.squareFlags;
 							data.squareMessages = localData.squareMessages;
 							data.squareMessagesClassify = localData.squareMessagesClassify;
+							data.squareCollects = localData.squareCollects;
 							data.squareMessagesMap = localData.squareMessagesMap;
 							data.groupsMap = localData.groupsMap;
 							data.groupFriends = localData.groupFriends;
@@ -161,7 +163,10 @@ public class MainApplication extends Application implements
 			if (!sdcardHeadImageFolder.exists()) {
 				sdcardHeadImageFolder.mkdir();
 			}
-
+			sdcardThumbnailFolder=new File(sdcardImageFolder,"thumbnail");
+			if(!sdcardThumbnailFolder.exists()){
+				sdcardThumbnailFolder.mkdir();
+			}
 		}
 	}
 

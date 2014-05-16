@@ -312,7 +312,7 @@ public class ChatFriendFragment extends BaseFragment {
 			final String headFileName = mNowChatFriend.head;
 			app.fileHandler.getHeadImage(headFileName, new FileResult() {
 				@Override
-				public void onResult(String where) {
+				public void onResult(String where,Bitmap bitmap) {
 					iv_head.setImageBitmap(app.fileHandler.bitmaps
 							.get(headFileName));
 				}
@@ -348,7 +348,7 @@ public class ChatFriendFragment extends BaseFragment {
 						.get(mNowChatGroup.members.get(i)).head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where) {
+					public void onResult(String where,Bitmap bitmap) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
@@ -376,7 +376,7 @@ public class ChatFriendFragment extends BaseFragment {
 				final String headFileName = friend.head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where) {
+					public void onResult(String where,Bitmap bitmap) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
@@ -1340,7 +1340,7 @@ public class ChatFriendFragment extends BaseFragment {
 				final ImageView iv_head = messageHolder.iv_head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where) {
+					public void onResult(String where,Bitmap bitmap) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
@@ -1401,7 +1401,7 @@ public class ChatFriendFragment extends BaseFragment {
 							new FileResult() {
 
 								@Override
-								public void onResult(final String where) {
+								public void onResult(final String where,Bitmap bitmap) {
 									app.UIHandler.post(new Runnable() {
 
 										@Override
@@ -1423,7 +1423,7 @@ public class ChatFriendFragment extends BaseFragment {
 				} else {
 					app.fileHandler.getImage(imageFileName, new FileResult() {
 						@Override
-						public void onResult(String where) {
+						public void onResult(String where,Bitmap bitmap) {
 							messageHolder.iv_image_gif.setVisibility(View.GONE);
 							messageHolder.iv_image.setVisibility(View.VISIBLE);
 							iv_image.setImageBitmap(app.fileHandler.bitmaps
@@ -1467,15 +1467,15 @@ public class ChatFriendFragment extends BaseFragment {
 				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where) {
+					public void onResult(String where,Bitmap bitmap) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 						// iv_head.setBackgroundDrawable(new BitmapDrawable(
 						// app.fileHandler.bitmaps.get(headFileName)));
-						Bitmap bitmap = BitmapFactory.decodeResource(
+						Bitmap newBitmap = BitmapFactory.decodeResource(
 								getResources(), R.drawable.head_voice_start);
 
-						iv_voicehead_status.setImageBitmap(bitmap);
+						iv_voicehead_status.setImageBitmap(newBitmap);
 						iv_voicehead_status.setTag("start");
 					}
 				});

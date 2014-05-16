@@ -49,7 +49,8 @@ public class FileHandler {
 
 	}
 
-	public String FROM_SDCARD = "sdcard";
+	public String FROM_IMAGEFILE = "imagefile";
+	public static String FROM_SDCARD = "sdcard";
 	public String FROM_MEMORY = "memory";
 	public String FROM_WEB = "web";
 	public String FROM_DEFAULT = "default";
@@ -63,6 +64,7 @@ public class FileHandler {
 	public final int TYPE_IMAGE_COMMON = 0x01;
 	public final int TYPE_IMAGE_HEAD = 0x02;
 	public final int TYPE_IMAGE_BACK = 0x03;
+	public final int TYPE_IMAGE_THUMBNAIL = 0x04;
 
 	public void getImage(String imageFileName, FileResult fileResult) {
 		getImageFile(imageFileName, TYPE_IMAGE_COMMON, fileResult);
@@ -74,6 +76,11 @@ public class FileHandler {
 
 	public void getBackgroundImage(String imageFileName, FileResult fileResult) {
 		getImageFile(imageFileName, TYPE_IMAGE_BACK, fileResult);
+	}
+
+	public void getThumbnail(String imageFileName, FileResult fileResult) {
+		getImageFile(imageFileName, TYPE_IMAGE_THUMBNAIL, fileResult);
+
 	}
 
 	// TODO sd_card space checking
@@ -107,35 +114,33 @@ public class FileHandler {
 		if (type == TYPE_IMAGE_BACK) {
 			dImage = defaultBack;
 		}
+		if (type == TYPE_IMAGE_THUMBNAIL) {
+			dImage = defaultImage;
+		}
 		String where = FROM_DEFAULT;
-		if (bitmaps.get(imageFileName) != null
-				&& !bitmaps.get(imageFileName).equals(defaultImage)) {
-			// todo return bitmaps.get(imageFileName) ;
-			where = FROM_MEMORY;
-		} else {
-			if (bitmaps.get(imageFileName) == null) {
-				bitmaps.put(imageFileName, dImage);
-
-			}
+		if (type == TYPE_IMAGE_THUMBNAIL) {
 			if (!imageFileName.equals("")) {
-				File imageFile = new File(app.sdcardImageFolder, imageFileName);
-				if (type == TYPE_IMAGE_HEAD) {
-					imageFile = new File(app.sdcardHeadImageFolder,
-							imageFileName);
-				}
-				if (imageFile.exists()) {
-					Bitmap image = BitmapFactory.decodeFile(imageFile
+				File thumbnailFile = new File(app.sdcardThumbnailFolder,
+						imageFileName);
+				if (thumbnailFile.exists()) {
+					dImage = BitmapFactory.decodeFile(thumbnailFile
 							.getAbsolutePath());
-					if (image != null) {
-						if (type == TYPE_IMAGE_COMMON
-								|| type == TYPE_IMAGE_BACK) {
-							bitmaps.put(imageFileName, image);
-						} else if (type == TYPE_IMAGE_HEAD) {
-							bitmaps.put(imageFileName, MCImageUtils
-									.getCircleBitmap(image, true, 5,
-											Color.WHITE));
+					where = FROM_SDCARD;
+					fileResult.onResult(where, dImage);
+				} else {
+					File imageFile = new File(app.sdcardImageFolder, imageFileName);
+					if (imageFile.exists()
+							&& getImageFromWebStatus.get(imageFileName) != null) {
+						if (getImageFromWebStatus.get(imageFileName).equals(
+								"success")) {
+							dImage = BitmapFactory.decodeFile(imageFile
+									.getAbsolutePath());
+							where = FROM_IMAGEFILE;
+							fileResult.onResult(where, dImage);
+						} else {
+							where = FROM_SDCARD;
+							fileResult.onResult(where, dImage);
 						}
-						where = FROM_SDCARD;
 					} else {
 						if (getFromWebResults.get(imageFileName) == null) {
 							getFromWebResults.put(imageFileName,
@@ -148,21 +153,68 @@ public class FileHandler {
 							getImageFileFromWeb(imageFileName, type);
 						}
 					}
-				} else {
-					if (getFromWebResults.get(imageFileName) == null) {
-						getFromWebResults.put(imageFileName,
-								new ArrayList<FileHandler.FileResult>());
+				}
+			}
+		} else {
+			if (bitmaps.get(imageFileName) != null
+					&& !bitmaps.get(imageFileName).equals(defaultImage)) {
+				// todo return bitmaps.get(imageFileName) ;
+				where = FROM_MEMORY;
+			} else {
+				if (bitmaps.get(imageFileName) == null) {
+					bitmaps.put(imageFileName, dImage);
+
+				}
+				if (!imageFileName.equals("")) {
+					File imageFile = new File(app.sdcardImageFolder,
+							imageFileName);
+					if (type == TYPE_IMAGE_HEAD) {
+						imageFile = new File(app.sdcardHeadImageFolder,
+								imageFileName);
 					}
-					getFromWebResults.get(imageFileName).add(fileResult);
-					if (getImageFromWebStatus.get(imageFileName) == null
-							|| getImageFromWebStatus.get(imageFileName).equals(
-									"failed")) {
-						getImageFileFromWeb(imageFileName, type);
+					if (imageFile.exists()) {
+						Bitmap image = BitmapFactory.decodeFile(imageFile
+								.getAbsolutePath());
+						if (image != null) {
+							if (type == TYPE_IMAGE_COMMON
+									|| type == TYPE_IMAGE_BACK) {
+								bitmaps.put(imageFileName, image);
+							} else if (type == TYPE_IMAGE_HEAD) {
+								bitmaps.put(imageFileName, MCImageUtils
+										.getCircleBitmap(image, true, 5,
+												Color.WHITE));
+							}
+							where = FROM_SDCARD;
+						} else {
+							if (getFromWebResults.get(imageFileName) == null) {
+								getFromWebResults
+										.put(imageFileName,
+												new ArrayList<FileHandler.FileResult>());
+							}
+							getFromWebResults.get(imageFileName)
+									.add(fileResult);
+							if (getImageFromWebStatus.get(imageFileName) == null
+									|| getImageFromWebStatus.get(imageFileName)
+											.equals("failed")) {
+								getImageFileFromWeb(imageFileName, type);
+							}
+						}
+					} else {
+						if (getFromWebResults.get(imageFileName) == null) {
+							getFromWebResults.put(imageFileName,
+									new ArrayList<FileHandler.FileResult>());
+						}
+						getFromWebResults.get(imageFileName).add(fileResult);
+						if (getImageFromWebStatus.get(imageFileName) == null
+								|| getImageFromWebStatus.get(imageFileName)
+										.equals("failed")) {
+							getImageFileFromWeb(imageFileName, type);
+						}
 					}
 				}
 			}
+			fileResult.onResult(where, null);
 		}
-		fileResult.onResult(where);
 	}
 
 	// key:imageFilename value:"loading"|"success"|"failed"|"error"
@@ -184,21 +236,26 @@ public class FileHandler {
 				try {
 					StreamParser.parseToFile(is, new FileOutputStream(new File(
 							f, imageFileName)));
+					getImageFromWebStatus.put(imageFileName, "success");
 					httpURLConnection.disconnect();
-					Bitmap bitmap = BitmapFactory.decodeFile(new File(f,
-							imageFileName).getAbsolutePath());
-					if (type == TYPE_IMAGE_HEAD) {
-						bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5,
-								Color.WHITE);
+					final Bitmap bitmap = BitmapFactory
+							.decodeFile(new File(f, imageFileName)
+									.getAbsolutePath());
+					if (type != TYPE_IMAGE_THUMBNAIL) {
+						if (type == TYPE_IMAGE_HEAD) {
+							Bitmap mBitmap = MCImageUtils.getCircleBitmap(bitmap, true,
+									5, Color.WHITE);
+							bitmaps.put(imageFileName, mBitmap);
+						} else {
+							bitmaps.put(imageFileName, bitmap);
+						}
 					}
-					bitmaps.put(imageFileName, bitmap);
-
 					for (final FileResult result : getFromWebResults
 							.get(imageFileName)) {
 						app.UIHandler.post(new Runnable() {
 							@Override
 							public void run() {
-								result.onResult(FROM_WEB);
+								result.onResult(FROM_WEB, bitmap);
 							}
 						});
 					}
@@ -303,7 +360,7 @@ public class FileHandler {
 	}
 
 	public interface FileResult {
-		public void onResult(String where);
+		public void onResult(String where, Bitmap bitmap);
 	}
 
 	@SuppressLint("DefaultLocale")
@@ -495,7 +552,7 @@ public class FileHandler {
 						gifMovie.movie = Movie.decodeByteArray(gifMovie.bytes,
 								0, gifMovie.bytes.length);
 						gifs.put(imageFileName, gifMovie);
-						gifFileResult.onResult(FROM_WEB);
+						gifFileResult.onResult(FROM_WEB, null);
 						try {
 							// fileInputStream.close();
 							is.close();
@@ -519,7 +576,7 @@ public class FileHandler {
 			});
 		} else {
 			if (gifs.get(imageFileName) != null) {
-				gifFileResult.onResult(FROM_MEMORY);
+				gifFileResult.onResult(FROM_MEMORY, null);
 			} else {
 				try {
 					FileInputStream fileInputStream = new FileInputStream(file);
@@ -528,7 +585,7 @@ public class FileHandler {
 					gifMovie.movie = Movie.decodeByteArray(gifMovie.bytes, 0,
 							gifMovie.bytes.length);
 					gifs.put(imageFileName, gifMovie);
-					gifFileResult.onResult(FROM_SDCARD);
+					gifFileResult.onResult(FROM_SDCARD, null);
 					try {
 						fileInputStream.close();
 					} catch (IOException e) {

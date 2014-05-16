@@ -2,6 +2,7 @@ package com.lejoying.wxgs.app.adapter;
 
 import java.util.List;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,9 +75,11 @@ public class FriendGroupsGridViewAdapter extends BaseAdapter {
 		final String headFileName = groups.get(position).icon;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {
+			public void onResult(String where, Bitmap bitmap) {
+				// TODO Auto-generated method stub
 				holder.tv_grouppic.setImageBitmap(app.fileHandler.bitmaps
 						.get(headFileName));
+				
 			}
 		});
 		// app.fileHandler.getGroupHeadImage(headFileName, new FileResult() {

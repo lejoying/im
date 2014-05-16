@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,7 +111,7 @@ public class NewFriendsFragment extends BaseFragment {
 			final ImageView iv_head = newFriendsHolder.iv_head;
 			app.fileHandler.getHeadImage(headFileName, new FileResult() {
 				@Override
-				public void onResult(String where) {
+				public void onResult(String where,Bitmap bitmap) {
 					iv_head.setImageBitmap(app.fileHandler.bitmaps
 							.get(headFileName));
 				}

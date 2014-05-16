@@ -630,7 +630,7 @@ public class BusinessCardFragment extends BaseFragment {
 		app.fileHandler.getBackgroundImage(backgroudFileName, new FileResult() {
 			@SuppressWarnings("deprecation")
 			@Override
-			public void onResult(String where) {
+			public void onResult(String where,Bitmap bitmap) {
 				mContent.setBackgroundDrawable(new BitmapDrawable(
 						app.fileHandler.bitmaps.get(backgroudFileName)));
 
@@ -639,7 +639,7 @@ public class BusinessCardFragment extends BaseFragment {
 		final String headFileName = fileName;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where) {
+			public void onResult(String where,Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
 						.get(headFileName));
 			}
@@ -902,7 +902,7 @@ public class BusinessCardFragment extends BaseFragment {
 					app.fileHandler.getBackgroundImage(backgroudFileName,
 							new FileResult() {
 								@Override
-								public void onResult(String where) {
+								public void onResult(String where,Bitmap bitmap) {
 									mContent.setBackgroundDrawable(new BitmapDrawable(
 											app.fileHandler.bitmaps
 													.get(backgroudFileName)));
