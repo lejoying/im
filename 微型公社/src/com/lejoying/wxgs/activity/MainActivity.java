@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -175,11 +174,13 @@ public class MainActivity extends BaseActivity {
 									data.groups = localData.groups;
 									data.groupFriends = localData.groupFriends;
 									data.lastChatFriends = localData.lastChatFriends;
+									data.currentSquare = localData.currentSquare;
 									data.newFriends = localData.newFriends;
 									data.squareFlags = localData.squareFlags;
 									data.squareMessages = localData.squareMessages;
 									data.squareMessagesClassify = localData.squareMessagesClassify;
 									data.squareMessagesMap = localData.squareMessagesMap;
+									data.squareCollects = localData.squareCollects;
 								}
 							} catch (FileNotFoundException e) {
 								// TODO Auto-generated catch block
@@ -339,7 +340,7 @@ public class MainActivity extends BaseActivity {
 		list.add("天通苑站");
 		list.add("回龙观站");
 		list.add("亦庄文化园站");
-		list.add("宋家庄站");
+		// list.add("宋家庄站");
 		// list.add("北京西站");
 		// list.add("天通苑站");
 		// list.add("回龙观站");
@@ -366,7 +367,7 @@ public class MainActivity extends BaseActivity {
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		RelativeLayout content = (RelativeLayout) vPopWindow
 				.findViewById(R.id.rl_content);
-		content.setBackgroundColor(Color.GREEN);
+		// content.setBackgroundColor(Color.GREEN);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 				content.getLayoutParams());
 		params.width = (int) (width * 0.82941176f);

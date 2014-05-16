@@ -32,6 +32,8 @@ public class Data implements Serializable {
 	public Map<String, Map<String, SquareMessage>> squareMessagesMap = new HashMap<String, Map<String, SquareMessage>>();
 	public Map<String, Map<String, List<String>>> squareMessagesClassify = new HashMap<String, Map<String, List<String>>>();
 	public Map<String, String> squareFlags = new HashMap<String, String>();
+	public Map<String, List<String>> squareCollects = new HashMap<String, List<String>>();
+	public String currentSquare = "";
 
 	// Last messages list
 	public List<String> lastChatFriends = new ArrayList<String>();
@@ -61,5 +63,7 @@ public class Data implements Serializable {
 		newFriends.clear();
 		nearByFriends.clear();
 		nearByGroups.clear();
+		squareCollects.clear();
+		currentSquare = "";
 	}
 }

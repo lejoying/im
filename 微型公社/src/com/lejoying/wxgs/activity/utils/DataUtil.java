@@ -415,6 +415,8 @@ public class DataUtil {
 				saveData.squareMessages = app.data.squareMessages;
 				saveData.squareMessagesClassify = app.data.squareMessagesClassify;
 				saveData.squareMessagesMap = app.data.squareMessagesMap;
+				saveData.squareCollects = app.data.squareCollects;
+				saveData.currentSquare = app.data.currentSquare;
 				saveData.groupsMap = app.data.groupsMap;
 				saveData.groupFriends = app.data.groupFriends;
 				saveData.lastChatFriends = app.data.lastChatFriends;

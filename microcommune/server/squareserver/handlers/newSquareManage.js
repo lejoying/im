@@ -514,6 +514,10 @@ squareManage.addsquarecomment = function (data, response) {
     var gmid = data.gmid;
     var contentType = data.contentType;
     var content = data.content;
+    var phoneTo = data.phoneTo;
+    var nickNameTo = data.nickNameTo;
+    var head = data.head;
+    var headTo = data.headTo;
     client.hget("square_" + gid + "_comment", gmid, function (err, reply) {
         if (err) {
             response.write(JSON.stringify({
@@ -527,8 +531,12 @@ squareManage.addsquarecomment = function (data, response) {
             var comment = {
                 contentType: contentType,
                 content: content,
+                head: head,
                 phone: phone,
                 nickName: nickName,
+                headTo: headTo,
+                phoneTo: phoneTo,
+                nickNameTo: nickNameTo,
                 time: new Date().getTime()
             };
             var comments;

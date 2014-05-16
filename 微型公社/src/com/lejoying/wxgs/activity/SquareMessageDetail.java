@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -19,7 +21,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,6 +50,7 @@ import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class SquareMessageDetail extends Activity {
 	MainApplication app = MainApplication.getMainApplication();
@@ -61,7 +63,7 @@ public class SquareMessageDetail extends Activity {
 	List<MediaPlayer> players;
 	List<RecordView> recordViews;
 
-	int height, width, dip;
+	float height, width, dip;
 	float density;
 
 	boolean praiseStatus = false;
@@ -74,6 +76,7 @@ public class SquareMessageDetail extends Activity {
 	TextView squareMessageSendUserName;
 	LinearLayout squareMessageDetailComments;
 	LinearLayout detailContent;
+
 	int SCROLL_TOP = 0X01;
 	int SCROLL_BUTTOM = 0X02;
 	int SCROLL_BETWEEN = 0X03;
@@ -156,40 +159,47 @@ public class SquareMessageDetail extends Activity {
 		List<String> images = message.content.images;
 		List<String> voices = message.content.voices;
 		String textContent = message.content.text != "" ? message.content.text
-				:"";
+				: "";
 		squareMessageSendUserName.setText(message.nickName);
-		TextView textView = new TextView(this);
-		LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT);
-		params1.topMargin = (int) dp2px(40);
-		detailContent.addView(textView, params1);
 		for (int i = 0; i < images.size(); i++) {
 			final ImageView imageView = new ImageView(this);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					LinearLayout.LayoutParams.MATCH_PARENT,
-					LinearLayout.LayoutParams.WRAP_CONTENT);
-			detailContent.addView(imageView, params);
+			imageView.setBackgroundColor(Color.RED);
+
+			detailContent.addView(imageView);
 			final String fileName = images.get(i);
 			app.fileHandler.getImage(fileName, new FileResult() {
 
 				@Override
 				public void onResult(String where) {
-					imageView.setImageBitmap(app.fileHandler.bitmaps
-							.get(fileName));
+					Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
+					int height = (int) ((int) bitmap.getHeight() * (width / bitmap
+							.getWidth()));
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+							(int) width, height);
+					imageView.setLayoutParams(params);
+					bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
+							height, true);
+					imageView.setImageBitmap(bitmap);
 
 				}
 			});
+
+		}
+		if (images.size() == 0 && voices.size() != 0) {
+			TextView textView = new TextView(this);
+			LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+			params1.topMargin = (int) dp2px(40);
+			detailContent.addView(textView, params1);
 		}
 		for (int i = 0; i < voices.size(); i++) {
 			final RecordView recordView = new RecordView(
 					SquareMessageDetail.this);
 			recordView.setDragEnable(false);
 			recordView.setMode(RecordView.MODE_PROGRESS);
-			// ImageView imageView = new ImageView(this);
-			// imageView.setImageResource(R.drawable.voice_start);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					width, (int) (height * 0.48080331f));
+					(int) width, (int) (height * 0.48080331f));
 			detailContent.addView(recordView, params);
 
 			final String fileName = voices.get(i);
@@ -211,7 +221,7 @@ public class SquareMessageDetail extends Activity {
 										SquareMessageDetail.this,
 										Uri.parse(file.getAbsolutePath()));
 								if (player == null) {
-									Log.e("Coolspan", fileName);
+									// Log.e("Coolspan", fileName);
 									return;
 								}
 								players.add(player);
@@ -271,6 +281,14 @@ public class SquareMessageDetail extends Activity {
 		textPanel.setText(ExpressionUtil.getExpressionString(
 				SquareMessageDetail.this, textContent,
 				ChatFriendFragment.faceRegx, SquareFragment.expressionFaceMap));
+		if (images.size() == 0 && voices.size() == 0) {
+			TextView textView = new TextView(this);
+			LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+			params1.topMargin = (int) dp2px(40);
+			detailContent.addView(textView, params1);
+		}
 		detailContent.addView(textPanel);
 	}
 
@@ -284,6 +302,13 @@ public class SquareMessageDetail extends Activity {
 				LinearLayout.LayoutParams.MATCH_PARENT,
 				(int) (sc_square_message_info.getHeight() * 0.083f));
 		squareDetailBottomBar.setLayoutParams(paramsDetailBottomBar);
+
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				squareMessageDetailBack.getLayoutParams());
+		params.width = (int) (height * 0.046f);
+		params.leftMargin = (int) (width * 0.051302298f);
+		params.addRule(RelativeLayout.CENTER_VERTICAL);
+		squareMessageDetailBack.setLayoutParams(params);
 
 		initSquareDetailBottomBar((int) (sc_square_message_info.getHeight() * 0.083f));
 
@@ -568,6 +593,56 @@ public class SquareMessageDetail extends Activity {
 
 			@Override
 			public void success(JSONObject jData) {
+				try {
+					final List<Comment> comments = JSONParser
+							.generateCommentsFromJSON(jData
+									.getJSONArray("comments"));
+					// if (comments.size() > 0) {
+					// TODO
+					app.UIHandler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							generateCommentsViews(comments);
+						}
+					});
+					// }
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void addSquareMessageComments(final JSONObject jsonObject) {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SQUARE_ADDSQUARECOMMENT;
+				Map<String, String> params = new HashMap<String, String>();
+				try {
+					params.put("phone", app.data.user.phone);
+					params.put("accessKey", app.data.user.accessKey);
+					params.put("gid", mCurrentSquareID);
+					params.put("gmid", gmid);
+					params.put("nickName", app.data.user.nickName);
+					params.put("head", app.data.user.head);
+					params.put("phoneTo", jsonObject.getString("phoneTo"));
+					params.put("nickNameTo", jsonObject.getString("nickNameTo"));
+					params.put("headTo", jsonObject.getString("headTo"));
+					params.put("content", jsonObject.getString("content"));
+					params.put("contentType",
+							jsonObject.getString("contentType"));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
 				// try {
 				// final List<Comment> comments = JSONParser
 				// .generateCommentsFromJSON(jData
@@ -594,6 +669,9 @@ public class SquareMessageDetail extends Activity {
 		for (int i = 0; i < Long.valueOf(gmid) % 3; i++) {
 			View mContent = inflater.inflate(
 					R.layout.fragment_square_message_comments, null);
+			// ImageView mHead = (ImageView)
+			// mContent.findViewById(R.id.iv_head);
+			// mHead.setImageBitmap(app.fileHandler.bitmaps.get(app.data.user.head));
 			squareMessageDetailComments.addView(mContent);
 		}
 

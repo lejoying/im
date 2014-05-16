@@ -50,7 +50,7 @@
                     <ImageView
                         android:id="@+id/iv_release_menu"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
@@ -117,7 +117,7 @@
                     <ImageView
                         android:id="@+id/iv_square_menu"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="33dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
@@ -134,7 +134,7 @@
                     <ImageView
                         android:id="@+id/iv_group_menu"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="33dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
@@ -151,7 +151,7 @@
                     <ImageView
                         android:id="@+id/iv_me_menu"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="33dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"

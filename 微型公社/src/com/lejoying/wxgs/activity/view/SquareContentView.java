@@ -507,7 +507,7 @@ public class SquareContentView extends HorizontalScrollView {
 				voiceLength.setTextColor(Color.WHITE);
 				this.addView(voiceLength);
 			}
-			notifyData();
+			// notifyData();
 		}
 
 		void notifyData() {
@@ -529,11 +529,12 @@ public class SquareContentView extends HorizontalScrollView {
 								switch (style) {
 								case ITEM12:
 									if (!"".equals(message.content.text)) {
-										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
-												app.fileHandler.bitmaps
-														.get(fileName),
-												unitSideLength, unitSideLength
-														));
+										contentImage.setImageBitmap(MCImageUtils
+												.getCutBitmap(
+														app.fileHandler.bitmaps
+																.get(fileName),
+														unitSideLength,
+														unitSideLength));
 									} else {
 										contentImage.setImageBitmap(MCImageUtils.getCutBitmap(
 												app.fileHandler.bitmaps
@@ -658,8 +659,7 @@ public class SquareContentView extends HorizontalScrollView {
 				setInfoPosition(0, unitSideLength + padding);
 				// contentImage.setBackgroundColor(Color.BLUE);// TODO delete
 				if (!"".equals(message.content.text)) {
-					contentImage.layout(0, 0, unitSideLength, unitSideLength
-							);
+					contentImage.layout(0, 0, unitSideLength, unitSideLength);
 				} else {
 					contentImage.layout(0, 0, unitSideLength,
 							((unitSideLength * 2) / 10) * 9);
