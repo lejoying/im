@@ -2,6 +2,7 @@ package com.lejoying.wxgs.activity.mode.fragment;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,6 +87,7 @@ public class ChatMessagesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				Log.e("Coolspan", MainActivity.instance + "---==--");
 				MainActivity.instance.mMainMode
 						.show(MainActivity.instance.mMainMode.mCirclesFragment);
 			}
@@ -192,7 +194,7 @@ public class ChatMessagesFragment extends BaseFragment {
 				final String headFileName = chatHeadImgName;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where,Bitmap bitmap) {
+					public void onResult(String where, Bitmap bitmap) {
 						head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}

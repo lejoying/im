@@ -142,6 +142,10 @@ public final class NotificationUtils {
 			contentTitle = groupName;
 		}
 		Intent intent = new Intent(context, MainActivity.class);
+		intent.putExtra("page", "chat");
+		intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+		// intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+		// | Intent.FLAG_ACTIVITY_NEW_TASK);
 		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.icon,
 				sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS
 						| DEFAULT_SOUND, Notification.FLAG_NO_CLEAR, intent);

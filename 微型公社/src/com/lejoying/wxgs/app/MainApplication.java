@@ -56,7 +56,7 @@ public class MainApplication extends Application implements
 	public File sdcardVoiceFolder;
 	public File sdcardHeadImageFolder;
 	public File sdcardThumbnailFolder;
-	
+
 	public String sdcardStatus = "none";// "exist"
 	public String networkStatus = "none";// "WIFI"|"mobile"
 
@@ -163,8 +163,8 @@ public class MainApplication extends Application implements
 			if (!sdcardHeadImageFolder.exists()) {
 				sdcardHeadImageFolder.mkdir();
 			}
-			sdcardThumbnailFolder=new File(sdcardImageFolder,"thumbnail");
-			if(!sdcardThumbnailFolder.exists()){
+			sdcardThumbnailFolder = new File(sdcardImageFolder, "thumbnail");
+			if (!sdcardThumbnailFolder.exists()) {
 				sdcardThumbnailFolder.mkdir();
 			}
 		}
@@ -206,8 +206,23 @@ public class MainApplication extends Application implements
 		}
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(file);
-			arg1.getStackTrace();
-			// fileOutputStream.write(buffer, byteOffset, byteCount)
+			String ex = arg1.getStackTrace().toString();
+			byte[] buffer = ex.getBytes();
+			try {
+				fileOutputStream.write(buffer, 0, buffer.length);
+			} catch (IOException e) {
+				// e.printStackTrace();
+			} finally {
+				try {
+					fileOutputStream.flush();
+				} catch (IOException e) {
+				}
+				try {
+					fileOutputStream.close();
+				} catch (IOException e) {
+				}
+
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

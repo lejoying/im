@@ -1,11 +1,15 @@
 package com.lejoying.wxgs.app.handler;
 
+import java.util.List;
+
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
+import com.lejoying.wxgs.activity.utils.NotificationUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Event;
+import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 
 public class EventHandler {
@@ -27,6 +31,8 @@ public class EventHandler {
 						if (MainActivity.instance != null
 								&& MainActivity.instance.mode
 										.equals(MainActivity.MODE_MAIN)) {
+							List<Message> messages = (List<Message>) (event.eventContent);
+							Message message = messages.get(0);
 							if (MainActivity.instance.mMainMode.mCirclesFragment
 									.isAdded()) {
 								// TODO refresh
@@ -42,11 +48,41 @@ public class EventHandler {
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mChatFragment.mAdapter
 										.notifyDataSetChanged();
+								NotificationUtils.vibrate(app.getBaseContext(),
+										1000);
+							} else {
+								if ("point".equals(message.sendType)) {
+									if (!message.phone
+											.equals(MainActivity.instance.mMainMode.mChatFragment.mNowChatFriend)) {
+										NotificationUtils
+												.showMessageNotification(
+														app.getBaseContext(),
+														message);
+									} else {
+										NotificationUtils.vibrate(
+												app.getBaseContext(), 100);
+									}
+								}
 							}
 							if (MainActivity.instance.mMainMode.mChatGroupFragment
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mChatGroupFragment.mAdapter
 										.notifyDataSetChanged();
+								NotificationUtils.vibrate(app.getBaseContext(),
+										1000);
+							} else {
+								if ("group".equals(message.sendType)) {
+									if (!message.gid
+											.equals(MainActivity.instance.mMainMode.mChatGroupFragment.mNowChatGroup)) {
+										NotificationUtils
+												.showMessageNotification(
+														app.getBaseContext(),
+														message);
+									} else {
+										NotificationUtils.vibrate(
+												app.getBaseContext(), 100);
+									}
+								}
 							}
 							if (MainActivity.instance.mMainMode.mChatMessagesFragment
 									.isAdded()) {

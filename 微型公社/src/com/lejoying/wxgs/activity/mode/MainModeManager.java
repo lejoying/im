@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity.mode;
 
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -51,12 +52,15 @@ public class MainModeManager extends BaseModeManager {
 
 	public MainModeManager(MainActivity activity) {
 		super(activity);
+		isInit = false;
 		mFragmentManager = activity.getSupportFragmentManager();
 		ll_menu_app = activity.ll_menu_app;
 	}
 
 	@Override
 	public void initialize() {
+		Log.e("Coolspan", "initialize-----------+++++------" + isInit
+				+ "---+_+_+" + MainActivity.instance);
 		if (!isInit) {
 			isInit = true;
 			// main

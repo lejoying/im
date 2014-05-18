@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -74,11 +75,20 @@ public class MainActivity extends BaseActivity {
 
 	int height, width, dip, picwidth;
 	float density;
+	String showFragment = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		showFragment = "";
+		Intent intent = getIntent();
+		if (intent != null) {
+			String page = intent.getStringExtra("page");
+			if (page != null) {
+				showFragment = page;
+			}
+		}
 
 		// getWindow().setSoftInputMode(
 		// WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -122,16 +132,22 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(mReceiver);
-		instance = null;
-		super.onDestroy();
+		if ("".equals(showFragment)) {
+			Log.e("Coolspan", "-----------onDestroy---===" + showFragment
+					+ "===-----------onDestroy---");
+			unregisterReceiver(mReceiver);
+			instance = null;
+			super.onDestroy();
+		}
 	}
 
 	void initMode() {
-		if (mMainMode == null) {
+		if (mMainMode == null || "chat".equals(showFragment)) {
 			mMainMode = new MainModeManager(this);
+			Log.e("Coolspan", showFragment + "init-----------+++++--------init"
+					+ MainActivity.instance);
 		}
-		if (mLoginMode == null) {
+		if (mLoginMode == null || "chat".equals(showFragment)) {
 			mLoginMode = new LoginModeManager(this);
 		}
 	}
@@ -155,7 +171,11 @@ public class MainActivity extends BaseActivity {
 				initEvent();
 				ll_menu_app.setVisibility(View.VISIBLE);
 				// mMainMode.show(mMainMode.mSquareFragment);
-				mMainMode.show(mMainMode.mSquareFragment);
+				if ("".equals(showFragment)) {
+					mMainMode.show(mMainMode.mSquareFragment);
+				} else if ("chat".equals(showFragment)) {
+					mMainMode.show(mMainMode.mChatMessagesFragment);
+				}
 				PushService.startIMLongPull(this);
 
 				if (app.data.isClear) {

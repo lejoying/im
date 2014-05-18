@@ -1287,13 +1287,14 @@ public class ChatGroupFragment extends BaseFragment {
 							@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 							@Override
 							public boolean onLongClick(View v) {
-								ClipboardManager clip = (ClipboardManager) getActivity()
-										.getSystemService(
-												Context.CLIPBOARD_SERVICE);
-								// clip.setPrimaryClip()
-								clip.setText(message.content);
-								Toast.makeText(getActivity(), "复制成功!",
-										Toast.LENGTH_SHORT).show();
+								// ClipboardManager clip = (ClipboardManager)
+								// getActivity()
+								// .getSystemService(
+								// Context.CLIPBOARD_SERVICE);
+								// // clip.setPrimaryClip()
+								// clip.setText(message.content);
+								// Toast.makeText(getActivity(), "复制成功!",
+								// Toast.LENGTH_SHORT).show();
 								return true;
 							}
 						});
