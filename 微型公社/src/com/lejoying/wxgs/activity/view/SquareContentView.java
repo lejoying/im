@@ -525,109 +525,219 @@ public class SquareContentView extends HorizontalScrollView {
 					cover = content.images.get(0);
 				}
 				if (!cover.equals("none")) {
+					String size = "";
+					switch (style) {
+					case ITEM12:
+						size = "_12.";
+						break;
+					case ITEM21:
+						size = "_21.";
+						break;
+					case ITEM22:
+						size = "_22.";
+						break;
+					default:
+						break;
+					}
 					final String fileName = cover;
-					app.fileHandler.getThumbnail(fileName, new FileResult() {
-						@Override
-						public void onResult(String where, Bitmap bitmap) {
-							if (unitSideLength != 0 || unitSideLength2 != 0) {
-								switch (style) {
-								case ITEM12:
-									if (!"".equals(message.content.text)) {
-										if (where == FileHandler.FROM_SDCARD) {
-											contentImage.setImageBitmap(bitmap);
-										} else {
-											bitmap = MCImageUtils.getCutBitmap(
-													bitmap, unitSideLength,
-													unitSideLength);
-											contentImage.setImageBitmap(bitmap);
-											saveThumbnailToLocal(bitmap,fileName);
+					final String newFileName[] = fileName
+							.split("\\.");
+					app.fileHandler.getThumbnail(fileName, size,
+							new FileResult() {
+								@Override
+								public void onResult(String where,
+										final Bitmap bitmap) {
+									if (unitSideLength != 0
+											|| unitSideLength2 != 0) {
+										switch (style) {
+										case ITEM12:
+											if (!"".equals(message.content.text)) {
+												if (where == FileHandler.FROM_SDCARD) {
+													contentImage
+															.setImageBitmap(bitmap);
+												} else {
+													new Thread() {
+														@Override
+														public void run() {
+															final Bitmap newBitmap = MCImageUtils
+																	.getCutBitmap(
+																			bitmap,
+																			unitSideLength,
+																			unitSideLength);
+															app.UIHandler
+																	.post(new Runnable() {
+																		@Override
+																		public void run() {
+																			contentImage
+																					.setImageBitmap(newBitmap);
+																		}
+																	});
+															saveThumbnailToLocal(
+																	newBitmap,
+																	newFileName[0]+"_12."+newFileName[1]);
+															bitmap.recycle();
+															super.run();
+														}
+													}.start();
+												}
+												// contentImage.setImageBitmap(MCImageUtils
+												// .getCutBitmap(bitmap,
+												// unitSideLength,
+												// unitSideLength));
+											} else {
+												if (where == FileHandler.FROM_SDCARD) {
+													contentImage
+															.setImageBitmap(bitmap);
+												} else {
+													new Thread() {
+														@Override
+														public void run() {
+															final Bitmap newBitmap = MCImageUtils
+																	.getCutBitmap(
+																			bitmap,
+																			unitSideLength,
+																			((unitSideLength * 2) / 10) * 9);
+															app.UIHandler
+																	.post(new Runnable() {
+																		@Override
+																		public void run() {
+																			contentImage
+																					.setImageBitmap(newBitmap);
+																		}
+																	});
+															saveThumbnailToLocal(
+																	newBitmap,
+																	newFileName[0]+"_12."+newFileName[1]);
+															bitmap.recycle();
+															super.run();
+														}
+													}.start();
+												}
+												// contentImage.setImageBitmap(MCImageUtils
+												// .getCutBitmap(
+												// bitmap,
+												// unitSideLength,
+												// ((unitSideLength * 2) / 10) *
+												// 9));
+											}
+											break;
+										case ITEM21:
+											if (!"".equals(message.content.text)) {
+												if (where == FileHandler.FROM_SDCARD) {
+													contentImage
+															.setImageBitmap(bitmap);
+												} else {
+													new Thread() {
+														@Override
+														public void run() {
+															final Bitmap newBitmap = MCImageUtils
+																	.getCutBitmap(
+																			bitmap,
+																			unitSideLength,
+																			(int) (unitSideLength * 0.781499f));
+															app.UIHandler
+																	.post(new Runnable() {
+																		@Override
+																		public void run() {
+																			contentImage
+																					.setImageBitmap(newBitmap);
+																		}
+																	});
+															saveThumbnailToLocal(
+																	newBitmap,
+																	newFileName[0]+"_21."+newFileName[1]);
+															bitmap.recycle();
+															super.run();
+														}
+													}.start();
+												}
+												// contentImage.setImageBitmap(MCImageUtils
+												// .getCutBitmap(
+												// bitmap,
+												// unitSideLength,
+												// (int) (unitSideLength *
+												// 0.781499f)));
+											} else {
+												if (where == FileHandler.FROM_SDCARD) {
+													contentImage
+															.setImageBitmap(bitmap);
+												} else {
+													new Thread() {
+														@Override
+														public void run() {
+															final Bitmap newBitmap = MCImageUtils
+																	.getCutBitmap(
+																			bitmap,
+																			unitSideLength2,
+																			(int) (unitSideLength * 0.781499f));
+															app.UIHandler
+																	.post(new Runnable() {
+																		@Override
+																		public void run() {
+																			contentImage
+																					.setImageBitmap(newBitmap);
+																		}
+																	});
+															saveThumbnailToLocal(
+																	newBitmap,
+																	newFileName[0]+"_21."+newFileName[1]);
+															bitmap.recycle();
+															super.run();
+														}
+													}.start();
+												}
+												// contentImage.setImageBitmap(MCImageUtils
+												// .getCutBitmap(
+												// bitmap,
+												// unitSideLength2,
+												// (int) (unitSideLength *
+												// 0.781499f)));
+											}
+											break;
+										case ITEM22:
+											if (where == FileHandler.FROM_SDCARD) {
+												contentImage
+														.setImageBitmap(bitmap);
+											} else {
+												new Thread() {
+													@Override
+													public void run() {
+														final Bitmap newBitmap = MCImageUtils
+																.getCutBitmap(
+																		bitmap,
+																		unitSideLength,
+																		((unitSideLength * 2) / 10) * 9);
+														app.UIHandler
+																.post(new Runnable() {
+																	@Override
+																	public void run() {
+																		contentImage
+																				.setImageBitmap(newBitmap);
+																	}
+																});
+														saveThumbnailToLocal(
+																newBitmap,
+																newFileName[0]+"_22."+newFileName[1]);
+														bitmap.recycle();
+														super.run();
+													}
+												}.start();
+											}
+											// contentImage.setImageBitmap(MCImageUtils
+											// .getCutBitmap(
+											// bitmap,
+											// unitSideLength,
+											// ((unitSideLength * 2) / 10) *
+											// 9));
+											break;
+										default:
+											break;
 										}
-										// contentImage.setImageBitmap(MCImageUtils
-										// .getCutBitmap(bitmap,
-										// unitSideLength,
-										// unitSideLength));
 									} else {
-										if (where == FileHandler.FROM_SDCARD) {
-											contentImage.setImageBitmap(bitmap);
-										} else {
-											bitmap = MCImageUtils
-													.getCutBitmap(
-															bitmap,
-															unitSideLength,
-															((unitSideLength * 2) / 10) * 9);
-											contentImage.setImageBitmap(bitmap);
-											saveThumbnailToLocal(bitmap,fileName);
-										}
-										// contentImage.setImageBitmap(MCImageUtils
-										// .getCutBitmap(
-										// bitmap,
-										// unitSideLength,
-										// ((unitSideLength * 2) / 10) * 9));
-									}
-									break;
-								case ITEM21:
-									if (!"".equals(message.content.text)) {
-										if (where == FileHandler.FROM_SDCARD) {
-											contentImage.setImageBitmap(bitmap);
-										} else {
-											bitmap = MCImageUtils
-													.getCutBitmap(
-															bitmap,
-															unitSideLength,
-															(int) (unitSideLength * 0.781499f));
-											contentImage.setImageBitmap(bitmap);
-											saveThumbnailToLocal(bitmap,fileName);
-										}
-										// contentImage.setImageBitmap(MCImageUtils
-										// .getCutBitmap(
-										// bitmap,
-										// unitSideLength,
-										// (int) (unitSideLength * 0.781499f)));
-									} else {
-										if (where == FileHandler.FROM_SDCARD) {
-											contentImage.setImageBitmap(bitmap);
-										} else {
-											bitmap = MCImageUtils
-													.getCutBitmap(
-															bitmap,
-															unitSideLength2,
-															(int) (unitSideLength * 0.781499f));
-											contentImage.setImageBitmap(bitmap);
-											saveThumbnailToLocal(bitmap,fileName);
-										}
-										// contentImage.setImageBitmap(MCImageUtils
-										// .getCutBitmap(
-										// bitmap,
-										// unitSideLength2,
-										// (int) (unitSideLength * 0.781499f)));
-									}
-									break;
-								case ITEM22:
-									if (where == FileHandler.FROM_SDCARD) {
 										contentImage.setImageBitmap(bitmap);
-									} else {
-										bitmap = MCImageUtils
-												.getCutBitmap(
-														bitmap,
-														unitSideLength,
-														((unitSideLength * 2) / 10) * 9);
-										contentImage.setImageBitmap(bitmap);
-										saveThumbnailToLocal(bitmap,fileName);
 									}
-									// contentImage.setImageBitmap(MCImageUtils
-									// .getCutBitmap(
-									// bitmap,
-									// unitSideLength,
-									// ((unitSideLength * 2) / 10) * 9));
-									break;
-								default:
-									break;
 								}
-							} else {
-								contentImage.setImageBitmap(bitmap);
-							}
-						}
-					});
+							});
 				}
 				if (content.voices.size() > 0) {
 					contentVoice.setImageBitmap(BitmapFactory.decodeResource(
@@ -657,7 +767,8 @@ public class SquareContentView extends HorizontalScrollView {
 			time.setText(convertTime(currentTime, message.time));
 		}
 
-		void saveThumbnailToLocal(Bitmap bitmap, String filename) {
+		void saveThumbnailToLocal(final Bitmap bitmap, final String filename) {
+
 			File thumbnailFile = new File(app.sdcardThumbnailFolder, filename);
 			FileOutputStream fOut = null;
 			try {
