@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.app.MainApplication;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -11,7 +14,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 
 public final class MCImageUtils {
-
+	static MainApplication app ;
 	public static Bitmap getCircleBitmap(Bitmap source) {
 		return getCircleBitmap(source, false, null, null);
 	}
@@ -115,6 +118,10 @@ public final class MCImageUtils {
 	}
 
 	public static Bitmap getCutBitmap(Bitmap bitmap, int width, int height) {
+		if(bitmap==null){
+			bitmap=BitmapFactory.decodeResource(app.getResources(),
+					R.drawable.defaultimage);
+		}
 		int btwidth = bitmap.getWidth();
 		int btheight = bitmap.getHeight();
 		float scaleWidth = ((float) width) / btwidth;

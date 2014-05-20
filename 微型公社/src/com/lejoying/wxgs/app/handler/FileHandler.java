@@ -67,25 +67,26 @@ public class FileHandler {
 	public final int TYPE_IMAGE_THUMBNAIL = 0x04;
 
 	public void getImage(String imageFileName, FileResult fileResult) {
-		getImageFile(imageFileName, TYPE_IMAGE_COMMON, fileResult);
+		getImageFile(imageFileName,"",TYPE_IMAGE_COMMON, fileResult);
 	}
 
 	public void getHeadImage(String imageFileName, FileResult fileResult) {
-		getImageFile(imageFileName, TYPE_IMAGE_HEAD, fileResult);
+		getImageFile(imageFileName,"", TYPE_IMAGE_HEAD, fileResult);
 	}
 
 	public void getBackgroundImage(String imageFileName, FileResult fileResult) {
-		getImageFile(imageFileName, TYPE_IMAGE_BACK, fileResult);
+		getImageFile(imageFileName,"", TYPE_IMAGE_BACK, fileResult);
 	}
 
-	public void getThumbnail(String imageFileName, FileResult fileResult) {
-		getImageFile(imageFileName, TYPE_IMAGE_THUMBNAIL, fileResult);
-
+	public void getThumbnail(String imageFileName,String size, FileResult fileResult) {
+		String newName[]=imageFileName.split("\\.");
+		String thumbnailName=newName[0]+size+newName[1];
+		getImageFile(imageFileName,thumbnailName, TYPE_IMAGE_THUMBNAIL, fileResult);
 	}
 
 	// TODO sd_card space checking
 	// TODO zip images in the sd_card
-	public void getImageFile(String imageFileName, int type,
+	public void getImageFile(String imageFileName,String thumbnailName,int type,
 			FileResult fileResult) {
 		// get from mem directly
 		// get from sdcard
@@ -119,9 +120,11 @@ public class FileHandler {
 		}
 		String where = FROM_DEFAULT;
 		if (type == TYPE_IMAGE_THUMBNAIL) {
-			if (!imageFileName.equals("")) {
+			where=FROM_SDCARD;
+			fileResult.onResult(where, dImage);
+			if (!imageFileName.equals("")&&!thumbnailName.equals("")) {
 				File thumbnailFile = new File(app.sdcardThumbnailFolder,
-						imageFileName);
+						thumbnailName);
 				if (thumbnailFile.exists()) {
 					dImage = BitmapFactory.decodeFile(thumbnailFile
 							.getAbsolutePath());
