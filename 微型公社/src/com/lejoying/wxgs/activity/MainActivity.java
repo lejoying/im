@@ -12,7 +12,6 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -32,9 +31,11 @@ import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.utils.LocationUtils;
+import com.lejoying.wxgs.activity.utils.NotificationUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
@@ -75,20 +76,12 @@ public class MainActivity extends BaseActivity {
 
 	int height, width, dip, picwidth;
 	float density;
-	String showFragment = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+
 		super.onCreate(savedInstanceState);
-		showFragment = "";
-		Intent intent = getIntent();
-		if (intent != null) {
-			String page = intent.getStringExtra("page");
-			if (page != null) {
-				showFragment = page;
-			}
-		}
 
 		// getWindow().setSoftInputMode(
 		// WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -104,7 +97,6 @@ public class MainActivity extends BaseActivity {
 
 		ll_menu_app = (LinearLayout) findViewById(R.id.ll_menu_app);
 		// ll_menu_app.setVisibility(View.VISIBLE);
-
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		// audioManager.setSpeakerphoneOn(false);
 		setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
@@ -128,26 +120,35 @@ public class MainActivity extends BaseActivity {
 		initMode();
 
 		switchMode();
+
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		if ("chatFriend".equals(NotificationUtils.showFragment)) {
+			mMainMode.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
+			mMainMode.mChatFragment.mNowChatFriend = app.data.friends
+					.get(NotificationUtils.message.phone);
+			mMainMode.showNext(mMainMode.mChatFragment);
+		}
+		NotificationUtils.cancelNotification(MainActivity.this);
+		super.onWindowFocusChanged(hasFocus);
 	}
 
 	@Override
 	protected void onDestroy() {
-		if ("".equals(showFragment)) {
-			Log.e("Coolspan", "-----------onDestroy---===" + showFragment
-					+ "===-----------onDestroy---");
-			unregisterReceiver(mReceiver);
-			instance = null;
-			super.onDestroy();
-		}
+		unregisterReceiver(mReceiver);
+		System.out.println("destroy");
+		instance = null;
+		super.onDestroy();
 	}
 
 	void initMode() {
-		if (mMainMode == null || "chat".equals(showFragment)) {
+		System.out.println(mMainMode == null);
+		if (mMainMode == null) {
 			mMainMode = new MainModeManager(this);
-			Log.e("Coolspan", showFragment + "init-----------+++++--------init"
-					+ MainActivity.instance);
 		}
-		if (mLoginMode == null || "chat".equals(showFragment)) {
+		if (mLoginMode == null) {
 			mLoginMode = new LoginModeManager(this);
 		}
 	}
@@ -171,11 +172,7 @@ public class MainActivity extends BaseActivity {
 				initEvent();
 				ll_menu_app.setVisibility(View.VISIBLE);
 				// mMainMode.show(mMainMode.mSquareFragment);
-				if ("".equals(showFragment)) {
-					mMainMode.show(mMainMode.mSquareFragment);
-				} else if ("chat".equals(showFragment)) {
-					mMainMode.show(mMainMode.mChatMessagesFragment);
-				}
+				mMainMode.show(mMainMode.mSquareFragment);
 				PushService.startIMLongPull(this);
 
 				if (app.data.isClear) {
@@ -313,14 +310,17 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(MainActivity.this,
-						ReleaseActivity.class));
+				System.out.println("release");
+				Intent intent = new Intent(MainActivity.this,
+						ReleaseActivity.class);
+				startActivity(intent);
 			}
 		});
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		System.out.println("KeyDown");
 		if (mode.equals(MODE_LOGIN)) {
 			return mLoginMode.onKeyDown(keyCode, event)
 					&& super.onKeyDown(keyCode, event);
@@ -338,12 +338,6 @@ public class MainActivity extends BaseActivity {
 			DataUtil.saveData(this);
 		}
 		super.onPause();
-	}
-
-	@Override
-	public void finish() {
-		// CircleMenu.hideImmediately(false);
-		super.finish();
 	}
 
 	class LongConnectionReceiver extends BroadcastReceiver {

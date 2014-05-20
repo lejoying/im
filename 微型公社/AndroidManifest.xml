@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name="com.lejoying.wxgs.app.MainApplication"
@@ -40,6 +40,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.lejoying.wxgs.activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle" >
+        </activity>
+        <activity
             android:name="com.lejoying.wxgs.activity.SquareMessageDetail"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
@@ -51,12 +57,6 @@
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.ReleaseActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle"
-             >
-        </activity>
-        <activity
-            android:name="com.lejoying.wxgs.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>

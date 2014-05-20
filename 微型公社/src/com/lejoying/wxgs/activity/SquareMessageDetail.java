@@ -9,7 +9,6 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -52,7 +51,7 @@ import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
-public class SquareMessageDetail extends Activity {
+public class SquareMessageDetail extends BaseActivity {
 	MainApplication app = MainApplication.getMainApplication();
 	LayoutInflater inflater;
 

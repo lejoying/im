@@ -59,8 +59,6 @@ public class MainModeManager extends BaseModeManager {
 
 	@Override
 	public void initialize() {
-		Log.e("Coolspan", "initialize-----------+++++------" + isInit
-				+ "---+_+_+" + MainActivity.instance);
 		if (!isInit) {
 			isInit = true;
 			// main

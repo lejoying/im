@@ -28,11 +28,17 @@ public class EventHandler {
 				DataUtil.getMessages(new GetDataListener() {
 					@Override
 					public void getSuccess() {
+						List<Message> messages = (List<Message>) (event.eventContent);
+						Message message = messages.get(0);
+						if (NotificationUtils.isLeave(app)) {
+							NotificationUtils.showMessageNotification(
+									app.getBaseContext(), message);
+						} else {
+							NotificationUtils.commonVibrate(app);
+						}
 						if (MainActivity.instance != null
 								&& MainActivity.instance.mode
 										.equals(MainActivity.MODE_MAIN)) {
-							List<Message> messages = (List<Message>) (event.eventContent);
-							Message message = messages.get(0);
 							if (MainActivity.instance.mMainMode.mCirclesFragment
 									.isAdded()) {
 								// TODO refresh
@@ -48,41 +54,11 @@ public class EventHandler {
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mChatFragment.mAdapter
 										.notifyDataSetChanged();
-								NotificationUtils.vibrate(app.getBaseContext(),
-										1000);
-							} else {
-								if ("point".equals(message.sendType)) {
-									if (!message.phone
-											.equals(MainActivity.instance.mMainMode.mChatFragment.mNowChatFriend)) {
-										NotificationUtils
-												.showMessageNotification(
-														app.getBaseContext(),
-														message);
-									} else {
-										NotificationUtils.vibrate(
-												app.getBaseContext(), 100);
-									}
-								}
 							}
 							if (MainActivity.instance.mMainMode.mChatGroupFragment
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mChatGroupFragment.mAdapter
 										.notifyDataSetChanged();
-								NotificationUtils.vibrate(app.getBaseContext(),
-										1000);
-							} else {
-								if ("group".equals(message.sendType)) {
-									if (!message.gid
-											.equals(MainActivity.instance.mMainMode.mChatGroupFragment.mNowChatGroup)) {
-										NotificationUtils
-												.showMessageNotification(
-														app.getBaseContext(),
-														message);
-									} else {
-										NotificationUtils.vibrate(
-												app.getBaseContext(), 100);
-									}
-								}
 							}
 							if (MainActivity.instance.mMainMode.mChatMessagesFragment
 									.isAdded()) {

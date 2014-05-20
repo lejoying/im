@@ -38,6 +38,7 @@ public class DataUtil {
 		public void getFailed() {
 		};
 	}
+	
 
 	public static void getUser(final GetDataListener listener) {
 		NetConnection netConnection = new CommonNetConnection() {

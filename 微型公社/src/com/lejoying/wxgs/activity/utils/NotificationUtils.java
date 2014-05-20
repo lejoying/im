@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -30,6 +31,13 @@ public final class NotificationUtils {
 	private static Vibrator mVibrator;
 	private static MainApplication mApp;
 	private static ActivityManager mActivityManager;
+
+	private static List<Message> showMessages = new ArrayList<Message>();
+	private static int friendCount;
+	private static int messageCount;
+
+	public static String showFragment = "";
+	public static Message message;
 
 	private static Vibrator getVibrator(Context context) {
 		if (mVibrator == null) {
@@ -87,7 +95,7 @@ public final class NotificationUtils {
 		notification.defaults = notificationDefaults;
 		notification.flags = flags;
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				intent, 0);
+				intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		notification.setLatestEventInfo(context, contentTitle, contentText,
 				contentIntent);
 		getNotificationManager(context).notify(notificationId, notification);
@@ -95,10 +103,21 @@ public final class NotificationUtils {
 
 	public static void cancelNotification(Context context, int notification) {
 		getNotificationManager(context).cancel(notification);
+
+		showMessages.clear();
+		friendCount = 0;
+		messageCount = 0;
 	}
 
 	public static void cancelNotification(Context context) {
 		getNotificationManager(context).cancelAll();
+
+		showMessages.clear();
+		friendCount = 0;
+		messageCount = 0;
+
+		showFragment = "";
+		message = null;
 	}
 
 	public static boolean isLeave(Context context) {
@@ -117,7 +136,30 @@ public final class NotificationUtils {
 
 	public static final int NOTIFICATION_NEWMESSAGE = 1;
 
+	private static void recordCount(Message message) {
+		messageCount++;
+		if (message.sendType.equals("point")) {
+			for (Message msg : showMessages) {
+				if (msg.sendType.equals(message.sendType)
+						&& msg.phone.equals(message.phone)) {
+					return;
+				}
+			}
+		} else if (message.sendType.equals("group")
+				|| message.sendType.equals("tempGroup")) {
+			for (Message msg : showMessages) {
+				if (msg.sendType.equals(message.sendType)
+						&& msg.gid.equals(message.gid)) {
+					return;
+				}
+			}
+		}
+		friendCount++;
+	}
+
 	public static void showMessageNotification(Context context, Message message) {
+		recordCount(message);
+		showMessages.add(message);
 		Uri sound = Uri.parse("android.resource://"
 				+ context.getApplicationContext().getPackageName() + "/"
 				+ R.raw.message);
@@ -142,13 +184,26 @@ public final class NotificationUtils {
 			contentTitle = groupName;
 		}
 		Intent intent = new Intent(context, MainActivity.class);
-		intent.putExtra("page", "chat");
-		intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-		// intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-		// | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+		if (friendCount == 1 && messageCount == 1) {
+			if (message.sendType.equals("point")) {
+				showFragment = "chatFriend";
+			} else if (message.sendType.equals("group")
+					|| message.sendType.equals("tempGroup")) {
+				showFragment = "chatGroup";
+			}
+		} else if (friendCount == 1 && messageCount > 1) {
+			contentText = "给您发来了" + messageCount + "条消息。";
+		} else if (friendCount > 1 && messageCount > 1) {
+			showFragment = "chatList";
+			contentTitle = "微型公社";
+			contentText = "有" + friendCount + "个好友给您发来了" + messageCount
+					+ "条消息。";
+		}
+		NotificationUtils.message = message;
 		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.icon,
-				sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS
-						| DEFAULT_SOUND, Notification.FLAG_NO_CLEAR, intent);
+				sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS,
+				Notification.FLAG_NO_CLEAR, intent);
 		commonVibrate(context);
 	}
 

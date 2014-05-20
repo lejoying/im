@@ -137,25 +137,11 @@ public class SquareFragment extends BaseFragment {
 		final Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
 				.get(mCurrentSquareID);
 		if (messages != null) {
-			app.UIHandler.post(new Runnable() {
-
-				@Override
-				public void run() {
-					squareContentView.setSquareMessageList(messages,
-							squareMessageMap);
-					squareContentView.notifyDataSetChanged();
-				}
-			});
+			squareContentView.setSquareMessageList(messages, squareMessageMap);
 		}
 		initEvent();
 		initFaceMap();
-		app.UIHandler.post(new Runnable() {
-
-			@Override
-			public void run() {
-				init();
-			}
-		});
+		init();
 		return mContentView;
 	}
 
