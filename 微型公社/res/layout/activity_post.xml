@@ -23,7 +23,7 @@
                 android:id="@+id/release_et_release"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/black"
+                android:background="#0000"
                 android:gravity="top"
                 android:scrollbars="none"
                 android:textColor="#fff" />
@@ -209,13 +209,14 @@
             android:orientation="vertical" >
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/ll_releasecamera_imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/release_camera" />
 
             <TextView
+                android:id="@+id/ll_releasecamera_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -231,13 +232,14 @@
             android:orientation="vertical" >
 
             <ImageView
-                android:id="@+id/imageView1"
+                android:id="@+id/ll_releaselocal_imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/release_local" />
 
             <TextView
+                android:id="@+id/ll_releaselocal_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"

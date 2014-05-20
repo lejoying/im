@@ -156,8 +156,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			checkBack();
 		} else {
 			rl_releasepic.setVisibility(View.GONE);
-			if(voices.size()!=0||images.size()!=0){
-				horizontalScrollView.setVisibility(View.VISIBLE);	
+			if (voices.size() != 0 || images.size() != 0) {
+				horizontalScrollView.setVisibility(View.VISIBLE);
 			}
 			et_release.setVisibility(View.VISIBLE);
 			ll_navigation.setVisibility(View.VISIBLE);
@@ -179,6 +179,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		rl_releasepic = (RelativeLayout) findViewById(R.id.rl_releasepic);
 		ll_releasecamera = (LinearLayout) findViewById(R.id.ll_releasecamera);
 		ll_releaselocal = (LinearLayout) findViewById(R.id.ll_releaselocal);
+		ImageView ll_releasecamera_imageView = (ImageView) findViewById(R.id.ll_releasecamera_imageView);
+		ImageView ll_releaselocal_imageView = (ImageView) findViewById(R.id.ll_releaselocal_imageView);
+		TextView ll_releasecamera_textView = (TextView) findViewById(R.id.ll_releasecamera_textView);
+		TextView ll_releaselocal_textView = (TextView) findViewById(R.id.ll_releaselocal_textView);
 
 		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
@@ -194,7 +198,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_commit.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-
+		ll_releasecamera_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		ll_releaselocal_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		
 		LinearLayout.LayoutParams et_releaseLayoutParams = new LinearLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		et_releaseLayoutParams.leftMargin = 40;
@@ -232,6 +238,32 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		navigationLayoutParams5.topMargin = (int) (height * 0.01953125f);
 		tv_commit.setLayoutParams(navigationLayoutParams5);
 
+		RelativeLayout.LayoutParams ll_releasecameraLayoutParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		ll_releasecameraLayoutParams.leftMargin=(int) (width * 0.2222222f);
+		ll_releasecameraLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+		ll_releasecamera.setLayoutParams(ll_releasecameraLayoutParams);
+
+		RelativeLayout.LayoutParams ll_releaselocalLayoutParams = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		ll_releaselocalLayoutParams.leftMargin=(int) (width * 0.56944444f);
+		ll_releaselocalLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+		ll_releaselocal.setLayoutParams(ll_releaselocalLayoutParams);
+		
+		LinearLayout.LayoutParams ll_release_imageView = new LinearLayout.LayoutParams(
+				(int)(width*0.21527778f), (int)(height*0.12109375f));
+		ll_release_imageView.gravity=LinearLayout.VERTICAL;
+		ll_releasecamera_imageView.setLayoutParams(ll_release_imageView);
+		ll_releaselocal_imageView.setLayoutParams(ll_release_imageView);
+
+		LinearLayout.LayoutParams ll_release_textView = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		ll_release_textView.topMargin=(int) (height*0.01953125);
+		ll_release_textView.gravity=LinearLayout.VERTICAL;
+		ll_releasecamera_textView.setLayoutParams(ll_release_textView);
+		ll_releaselocal_textView.setLayoutParams(ll_release_textView);
+
+		
 		// LinearLayout.LayoutParams et_releaseLayoutParams = new
 		// LinearLayout.LayoutParams(
 		// LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -510,11 +542,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			addImageFromLocal();
 			break;
 		case R.id.rl_releasepic:
-//			rl_releasepic.setVisibility(View.GONE);
-//			horizontalScrollView.setVisibility(View.VISIBLE);
-//			et_release.setVisibility(View.VISIBLE);
-//			ll_navigation.setVisibility(View.VISIBLE);
-//			seletePic = false;
+			// rl_releasepic.setVisibility(View.GONE);
+			// horizontalScrollView.setVisibility(View.VISIBLE);
+			// et_release.setVisibility(View.VISIBLE);
+			// ll_navigation.setVisibility(View.VISIBLE);
+			// seletePic = false;
 			break;
 		case R.id.release_iv_face_left:
 			int start1 = et_release.getSelectionStart();
