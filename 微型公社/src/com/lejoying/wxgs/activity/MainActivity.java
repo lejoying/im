@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -348,6 +349,8 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void showPopWindow(Context context, View parent) {
+		// Toast.makeText(MainActivity.this, mBackground.getHeight() + "---",
+		// Toast.LENGTH_LONG).show();
 		final View vPopWindow = inflater.inflate(R.layout.square_dialog, null,
 				false);
 		List<String> list = new ArrayList<String>();
@@ -385,7 +388,9 @@ public class MainActivity extends BaseActivity {
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 				content.getLayoutParams());
 		params.width = (int) (width * 0.82941176f);
-		params.addRule(RelativeLayout.CENTER_IN_PARENT);
+		params.topMargin = ((int) (height - contentHeight) / 2)
+				- (height - mBackground.getHeight());
+		params.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		params.height = (int) (contentHeight);
 		content.setLayoutParams(params);
 		LinearLayout layout = (LinearLayout) vPopWindow

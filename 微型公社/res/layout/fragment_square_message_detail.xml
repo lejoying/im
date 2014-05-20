@@ -89,10 +89,10 @@
     </RelativeLayout>
 
     <ImageView
+        android:id="@+id/iv_messageUserHead"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:src="@drawable/voice_start" />
+        android:layout_marginTop="25dp" />
 
 </RelativeLayout>
