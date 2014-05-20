@@ -53,7 +53,7 @@
             android:name="com.lejoying.wxgs.activity.ReleaseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"
-            android:windowSoftInputMode="adjustPan" >
+             >
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.MainActivity"

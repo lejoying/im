@@ -3,6 +3,7 @@ package com.lejoying.wxgs.activity;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,12 +39,14 @@ import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Movie;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -55,6 +58,7 @@ import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +67,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -71,14 +76,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 @SuppressLint("DefaultLocale")
 public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	BackgroundView mBackground;
 	MainApplication app = MainApplication.getMainApplication();
+	InputMethodManager imm;
 
-	int height, width, dip, picwidth;
+	int height, width, dip, picwidth, statusBarHeight;
 	int chat_vPager_now = 0;
 	int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54,
 			RESULT_MAKEVOICE = 0x64, RESULT_PICANDVOICE = 0x74;
@@ -94,6 +101,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	RelativeLayout rl_face;
 	RelativeLayout rl_releasepic;
+	ScrollView sl_et_release;
 	LinearLayout ll_et_release;
 	LinearLayout ll_facemenu;
 	LinearLayout ll_navigation;
@@ -123,6 +131,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_post);
 		mInflater = getLayoutInflater();
+		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		getWindow().setBackgroundDrawableResource(R.drawable.square_background);
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -130,6 +139,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
 		width = dm.widthPixels;
+		statusBarHeight = getStatusBarHeight(this);
 		initLayout();
 		initData();
 		super.onCreate(savedInstanceState);
@@ -144,6 +154,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void onBackPressed() {
 		if (!seletePic) {
 			checkBack();
+		} else {
+			rl_releasepic.setVisibility(View.GONE);
+			if(voices.size()!=0||images.size()!=0){
+				horizontalScrollView.setVisibility(View.VISIBLE);	
+			}
+			et_release.setVisibility(View.VISIBLE);
+			ll_navigation.setVisibility(View.VISIBLE);
+			seletePic = false;
 		}
 	}
 
@@ -155,50 +173,98 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		TextView tv_cancel = (TextView) findViewById(R.id.release_tv_cancel);
 		TextView tv_commit = (TextView) findViewById(R.id.release_tv_commit);
 
-		release_iv_face_left = findViewById(R.id.release_iv_face_left);
-		release_iv_face_right = findViewById(R.id.release_iv_face_right);
-		;
-		release_iv_face_delete = findViewById(R.id.release_iv_face_delete);
-		;
 		et_release = (EditText) findViewById(R.id.release_et_release);
+		sl_et_release = (ScrollView) findViewById(R.id.sl_et_release);
 
-		ll_et_release = (LinearLayout) findViewById(R.id.ll_et_release);
 		rl_releasepic = (RelativeLayout) findViewById(R.id.rl_releasepic);
 		ll_releasecamera = (LinearLayout) findViewById(R.id.ll_releasecamera);
 		ll_releaselocal = (LinearLayout) findViewById(R.id.ll_releaselocal);
+
 		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
 		horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
-		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
+		release_iv_face_left = findViewById(R.id.release_iv_face_left);
+		release_iv_face_right = findViewById(R.id.release_iv_face_right);
+		release_iv_face_delete = findViewById(R.id.release_iv_face_delete);
 
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-				dip, dip);
-		layoutParams.leftMargin = (width - (dip * 5)) / 10;
-		layoutParams.rightMargin = (width - (dip * 5)) / 10;
-		layoutParams.bottomMargin = 20;
-		layoutParams.topMargin = 20;
-		iv_selectpicture.setLayoutParams(layoutParams);
-		iv_emoji.setLayoutParams(layoutParams);
-		iv_voice.setLayoutParams(layoutParams);
-		tv_cancel.setLayoutParams(layoutParams);
-		tv_commit.setLayoutParams(layoutParams);
+		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 
-		RelativeLayout.LayoutParams relativeParams1 = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		relativeParams1.width = width / 2;
-		RelativeLayout.LayoutParams relativeParams2 = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		relativeParams2.width = width / 2;
-		relativeParams2.addRule(RelativeLayout.RIGHT_OF, R.id.ll_releasecamera);
-		ll_releasecamera.setLayoutParams(relativeParams1);
-		ll_releaselocal.setLayoutParams(relativeParams2);
+		et_release.setHeight(height - 120 - statusBarHeight);
+		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		tv_commit.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 
-		RelativeLayout.LayoutParams relativeParams3 = new RelativeLayout.LayoutParams(
+		LinearLayout.LayoutParams et_releaseLayoutParams = new LinearLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		relativeParams3.addRule(RelativeLayout.ABOVE,
-				R.id.release_ll_navigation);
-		horizontalScrollView.setLayoutParams(relativeParams3);
+		et_releaseLayoutParams.leftMargin = 40;
+		et_releaseLayoutParams.rightMargin = 40;
+		et_releaseLayoutParams.topMargin = 20;
+		sl_et_release.setLayoutParams(et_releaseLayoutParams);
+
+		LinearLayout.LayoutParams navigationLayoutParams1 = new LinearLayout.LayoutParams(
+				(int) (width * 0.08333333f), (int) (height * 0.03515625f));
+		navigationLayoutParams1.leftMargin = (int) (width * 0.11805556f);
+		navigationLayoutParams1.topMargin = (int) (height * 0.0234375f);
+		iv_selectpicture.setLayoutParams(navigationLayoutParams1);
+
+		LinearLayout.LayoutParams navigationLayoutParams2 = new LinearLayout.LayoutParams(
+				(int) (width * 0.06944444f), (int) (height * 0.0390625f));
+		navigationLayoutParams2.leftMargin = (int) (width * 0.125f);
+		navigationLayoutParams2.topMargin = (int) (height * 0.01953125f);
+		iv_emoji.setLayoutParams(navigationLayoutParams2);
+
+		LinearLayout.LayoutParams navigationLayoutParams3 = new LinearLayout.LayoutParams(
+				(int) (width * 0.06944444f), (int) (height * 0.0625f));
+		navigationLayoutParams3.leftMargin = (int) (width * 0.10416667f);
+		navigationLayoutParams3.topMargin = (int) (height * 0.01171875f);
+		iv_voice.setLayoutParams(navigationLayoutParams3);
+
+		LinearLayout.LayoutParams navigationLayoutParams4 = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		navigationLayoutParams4.leftMargin = (int) (width * 0.0555555556f);
+		navigationLayoutParams4.topMargin = (int) (height * 0.01953125f);
+		tv_cancel.setLayoutParams(navigationLayoutParams4);
+
+		LinearLayout.LayoutParams navigationLayoutParams5 = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		navigationLayoutParams5.leftMargin = (int) (width * 0.11805556f);
+		navigationLayoutParams5.topMargin = (int) (height * 0.01953125f);
+		tv_commit.setLayoutParams(navigationLayoutParams5);
+
+		// LinearLayout.LayoutParams et_releaseLayoutParams = new
+		// LinearLayout.LayoutParams(
+		// LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		// et_releaseLayoutParams.height = height-100-statusBarHeight;
+		// et_release.setLayoutParams(et_releaseLayoutParams);
+
+		// RelativeLayout.LayoutParams ll_navigationRelativeParams = new
+		// RelativeLayout.LayoutParams(
+		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		// ll_navigationRelativeParams.height = 100;
+		// //
+		// ll_navigationRelativeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		// ll_navigation.setLayoutParams(ll_navigationRelativeParams);
+
+		// RelativeLayout.LayoutParams relativeParams1 = new
+		// RelativeLayout.LayoutParams(
+		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		// relativeParams1.width = width / 2;
+		// RelativeLayout.LayoutParams relativeParams2 = new
+		// RelativeLayout.LayoutParams(
+		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		// relativeParams2.width = width / 2;
+		// relativeParams2.addRule(RelativeLayout.RIGHT_OF,
+		// R.id.ll_releasecamera);
+		// ll_releasecamera.setLayoutParams(relativeParams1);
+		// ll_releaselocal.setLayoutParams(relativeParams2);
+
+		// RelativeLayout.LayoutParams relativeParams3 = new
+		// RelativeLayout.LayoutParams(
+		// LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		// relativeParams3.addRule(RelativeLayout.ABOVE,
+		// R.id.release_ll_navigation);
+		// horizontalScrollView.setLayoutParams(relativeParams3);
 
 		iv_selectpicture.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
@@ -391,17 +457,30 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				rl_face.setVisibility(View.GONE);
 				faceVisible = false;
 			}
+			if (imm.isActive()) {
+				imm.hideSoftInputFromWindow(et_release.getWindowToken(),
+						InputMethodManager.HIDE_NOT_ALWAYS);
+			}
 			horizontalScrollView.setVisibility(View.GONE);
-			rl_releasepic.setVisibility(View.VISIBLE);
 			et_release.setVisibility(View.GONE);
 			ll_navigation.setVisibility(View.GONE);
+			rl_releasepic.setVisibility(View.VISIBLE);
 			seletePic = true;
 			break;
 		case R.id.release_iv_emoji:
-			if (faceVisible) {
-				faceEndAnimation();
-			} else {
+			if (isEditText) {
+				if (imm.isActive()) {
+					imm.hideSoftInputFromWindow(et_release.getWindowToken(),
+							InputMethodManager.HIDE_NOT_ALWAYS);
+				}
 				faceStartAnimation();
+				isEditText = false;
+			} else {
+				if (faceVisible) {
+					faceEndAnimation();
+				} else {
+					faceStartAnimation();
+				}
 			}
 			break;
 		case R.id.release_iv_voice:
@@ -418,16 +497,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		case R.id.release_et_release:
 			if (!isEditText) {
 				if (faceVisible) {
-					rl_face.setVisibility(View.GONE);
-					RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-							LayoutParams.MATCH_PARENT,
-							LayoutParams.WRAP_CONTENT);
-					layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-					ll_navigation.setLayoutParams(layoutParams);
-					LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
-							LayoutParams.MATCH_PARENT,
-							LayoutParams.MATCH_PARENT);
-					et_release.setLayoutParams(layoutParams2);
+					faceEndAnimation();
 					faceVisible = false;
 				}
 				isEditText = true;
@@ -440,15 +510,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			addImageFromLocal();
 			break;
 		case R.id.rl_releasepic:
-			rl_releasepic.setVisibility(View.GONE);
-			horizontalScrollView.setVisibility(View.VISIBLE);
-			et_release.setVisibility(View.VISIBLE);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			ll_navigation.setLayoutParams(layoutParams);
-			ll_navigation.setVisibility(View.VISIBLE);
-			seletePic = false;
+//			rl_releasepic.setVisibility(View.GONE);
+//			horizontalScrollView.setVisibility(View.VISIBLE);
+//			et_release.setVisibility(View.VISIBLE);
+//			ll_navigation.setVisibility(View.VISIBLE);
+//			seletePic = false;
 			break;
 		case R.id.release_iv_face_left:
 			int start1 = et_release.getSelectionStart();
@@ -558,19 +624,19 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	public void faceStartAnimation() {
 		rl_face.setVisibility(View.VISIBLE);
-		Animation navigationanimation = new TranslateAnimation(0, 0, 0, -240
-				* density + 0.5f);
+		Animation faceanimation = new TranslateAnimation(0, 0,
+				240 * density + 0.5f, 0);
+		faceanimation.setDuration(220);
+
+		Animation navigationanimation = new TranslateAnimation(0, 0,
+				240 * density + 0.5f, 0);
 		navigationanimation.setDuration(220);
 		navigationanimation.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				ll_navigation.clearAnimation();
 				horizontalScrollView.clearAnimation();
-				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams
-						.addRule(RelativeLayout.ABOVE, R.id.release_rl_face);
-				ll_navigation.setLayoutParams(layoutParams);
+				rl_face.clearAnimation();
 			}
 
 			@Override
@@ -579,24 +645,16 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams.height = (int) (height - ll_navigation.getHeight()
-						- (240 * density + 0.5f) - 40
-						- ((width - (7 * 10)) / 6) - 10);
-				et_release.setLayoutParams(layoutParams);
 			}
 		});
-		Animation faceanimation = new TranslateAnimation(0, 0,
-				240 * density + 0.5f, 0);
-		faceanimation.setDuration(220);
+
 		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0, -240
 				* density + 0.5f);
 		ScrollViewanimation.setDuration(220);
 
 		ll_navigation.startAnimation(navigationanimation);
-		rl_face.startAnimation(faceanimation);
 		horizontalScrollView.startAnimation(ScrollViewanimation);
+		rl_face.startAnimation(faceanimation);
 
 		faceVisible = true;
 		isEditText = false;
@@ -610,18 +668,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				rl_face.setVisibility(View.GONE);
+				rl_face.clearAnimation();
 				ll_navigation.clearAnimation();
 				horizontalScrollView.clearAnimation();
-				RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				ll_navigation.setLayoutParams(layoutParams1);
-				LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams2.height = (int) (height
-						- ll_navigation.getHeight() - 40
-						- ((width - (7 * 10)) / 6) - 10);
-				et_release.setLayoutParams(layoutParams2);
 			}
 
 			@Override
@@ -709,7 +758,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				params.put("head", app.data.user.head);
 				params.put("nickName", app.data.user.nickName);
 				params.put("gid", mCurrentSquareID);
-				Log.e("Coolspan", cover + "------" + currentCoverIndex);
+				// Log.e("Coolspan", cover + "------" + currentCoverIndex);
 				if (currentCoverIndex != -1) {
 					String lastName = cover.substring(
 							cover.lastIndexOf(".") + 1).toLowerCase();
@@ -897,10 +946,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			rl_releasepic.setVisibility(View.GONE);
 			horizontalScrollView.setVisibility(View.VISIBLE);
 			et_release.setVisibility(View.VISIBLE);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			ll_navigation.setLayoutParams(layoutParams);
 			ll_navigation.setVisibility(View.VISIBLE);
 			seletePic = false;
 		}
@@ -1036,18 +1081,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				}
 			});
 			ll_release_picandvoice.addView(addView);
-			// RecordView recordView = new RecordView(ReleaseActivity.this);
-			// recordView.setLayoutParams(params);
-			// recordView.setOnClickListener(new OnClickListener() {
-			//
-			// @Override
-			// public void onClick(View arg0) {
-			// Intent intent = new Intent(ReleaseActivity.this,
-			// PicAndVoiceDetailActivity.class);
-			// startActivityForResult(intent, RESULT_PICANDVOICE);
-			// }
-			// });
-			// ll_release_picandvoice.addView(recordView);
 		}
 	}
 
@@ -1064,6 +1097,23 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		} else {
 			finish();
 		}
+	}
+
+	public static int getStatusBarHeight(Context context) {
+		Class<?> c = null;
+		Object obj = null;
+		Field field = null;
+		int x = 0, statusBarHeight = 0;
+		try {
+			c = Class.forName("com.android.internal.R$dimen");
+			obj = c.newInstance();
+			field = c.getField("status_bar_height");
+			x = Integer.parseInt(field.get(obj).toString());
+			statusBarHeight = context.getResources().getDimensionPixelSize(x);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		return statusBarHeight;
 	}
 
 	class MyGridAdapter extends BaseAdapter {
@@ -1115,7 +1165,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 								et_release.getSelectionStart(),
 								faceNamesList.get(chat_vPager_now)[position]);
 					} else {
-						//TODO
+						// TODO
 						addGif(position);
 					}
 				}
@@ -1123,31 +1173,32 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			return convertView;
 		}
 	}
-	public void addGif(final int position){
-		InputStream is=null;
+
+	public void addGif(final int position) {
+		InputStream is = null;
 		try {
-			is=getResources().getAssets().open("images/" + faceNameList.get(2).get(position));
-			final GifMovie gifMovie =new GifMovie();
+			is = getResources().getAssets().open(
+					"images/" + faceNameList.get(2).get(position));
+			final GifMovie gifMovie = new GifMovie();
 			gifMovie.bytes = streamToBytes(is);
 			gifMovie.movie = Movie.decodeByteArray(gifMovie.bytes, 0,
 					gifMovie.bytes.length);
 			final Map<String, Object> map = new HashMap<String, Object>();
-			Bitmap bitmap=BitmapFactory.decodeStream(is);
+			Bitmap bitmap = BitmapFactory.decodeStream(is);
 			map.put("bitmap", bitmap);
 			app.fileHandler.getBigFaceImgBASE64(this,
 					new BigFaceImgInterface() {
 
 						@Override
-						public void setParams(
-								BigFaceImgSettings settings) {
+						public void setParams(BigFaceImgSettings settings) {
 							settings.format = ".gif";
 							settings.assetsPath = "images/";
-							settings.fileName = faceNameList.get(2).get(position);
+							settings.fileName = faceNameList.get(2).get(
+									position);
 						}
 
 						@Override
-						public void onSuccess(String fileName,
-								String base64) {
+						public void onSuccess(String fileName, String base64) {
 							map.put("fileName", fileName);
 							map.put("base64", base64);
 							map.put("gifMovie", gifMovie);
@@ -1155,13 +1206,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 							nodifyViews();
 						}
 					});
-			
+
 			is.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
+
 	private byte[] streamToBytes(InputStream is) {
 		byte[] bytes = null;
 		try {
@@ -1176,6 +1228,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		}
 		return bytes;
 	}
+
 	class MyPageAdapter extends PagerAdapter {
 		List<View> mListViews;
 

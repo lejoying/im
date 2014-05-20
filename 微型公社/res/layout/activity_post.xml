@@ -1,15 +1,105 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".PostActivity" >
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="bottom"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:orientation="vertical" >
+
+        <ScrollView
+            android:id="@+id/sl_et_release"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:orientation="vertical"
+            android:scrollbars="vertical" >
+
+            <EditText
+                android:id="@+id/release_et_release"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/black"
+                android:gravity="top"
+                android:scrollbars="none"
+                android:textColor="#fff" />
+        </ScrollView>
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="100px"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15px"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/ll_release_picandvoice"
+            android:layout_width="wrap_content"
+            android:layout_height="100px"
+            android:orientation="horizontal" >
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:id="@+id/release_ll_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="#2000"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/release_tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="取消"
+            android:textColor="#fff"
+             />
+
+        <ImageView
+            android:id="@+id/release_iv_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/release_voice" />
+
+        <ImageView
+            android:id="@+id/release_iv_emoji"
+            android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/release_face" />
+
+        <ImageView
+            android:id="@+id/release_iv_selectpicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/release_pic" />
+
+        <TextView
+            android:id="@+id/release_tv_commit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="完成"
+            android:textColor="#fff"
+             />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/release_rl_face"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:background="@drawable/card_background_normal"
         android:visibility="gone" >
 
@@ -105,98 +195,6 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_et_release"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/release_ll_navigation"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
-
-        <EditText
-            android:id="@+id/release_et_release"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#00000000"
-            android:gravity="top"
-            android:textColor="#fff"
-            android:textCursorDrawable="@drawable/cursor"
-            tools:ignore="TextFields" />
-    </LinearLayout>
-
-    <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:scrollbars="none" >
-
-        <LinearLayout
-            android:id="@+id/ll_release_picandvoice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-        </LinearLayout>
-
-        
-    </HorizontalScrollView>
-
-    <LinearLayout
-        android:id="@+id/release_ll_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:background="#2000"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/release_tv_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="取消"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/release_iv_voice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:src="@drawable/release_voice"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/release_iv_emoji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:src="@drawable/release_face"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/release_iv_selectpicture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:src="@drawable/release_pic"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/release_tv_commit"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="完成"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            tools:ignore="ContentDescription" />
-    </LinearLayout>
-
     <RelativeLayout
         android:id="@+id/rl_releasepic"
         android:layout_width="match_parent"
@@ -204,58 +202,49 @@
         android:background="#2fff"
         android:visibility="gone" >
 
-        <RelativeLayout
-            android:id="@+id/relativeLayout1"
+        <LinearLayout
+            android:id="@+id/ll_releasecamera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" >
+            android:orientation="vertical" >
 
-            <LinearLayout
-                android:id="@+id/ll_releasecamera"
+            <ImageView
+                android:id="@+id/imageView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_gravity="center"
+                android:src="@drawable/release_camera" />
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/release_camera" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="拍照"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="拍照"
-                    android:textColor="#fff"
-                    android:textSize="20sp" />
-            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_releaselocal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-            <LinearLayout
-                android:id="@+id/ll_releaselocal"
+            <ImageView
+                android:id="@+id/imageView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_gravity="center"
+                android:src="@drawable/release_local" />
 
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/release_local" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="本地照片"
-                    android:textColor="#fff"
-                    android:textSize="20sp" />
-            </LinearLayout>
-        </RelativeLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="本地照片"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+        </LinearLayout>
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>
