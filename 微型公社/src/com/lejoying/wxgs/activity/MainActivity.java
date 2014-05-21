@@ -8,7 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +33,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
+import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.utils.LocationUtils;
@@ -42,6 +43,7 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.app.service.PushService;
 
@@ -77,6 +79,10 @@ public class MainActivity extends BaseActivity {
 
 	int height, width, dip, picwidth;
 	float density;
+
+	TextView communityNameTV;
+	View vPopWindow;
+	PopupWindow popWindow;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +178,6 @@ public class MainActivity extends BaseActivity {
 				mMainMode.initialize();
 				initEvent();
 				ll_menu_app.setVisibility(View.VISIBLE);
-				// mMainMode.show(mMainMode.mSquareFragment);
 				mMainMode.show(mMainMode.mSquareFragment);
 				PushService.startIMLongPull(this);
 
@@ -256,7 +261,7 @@ public class MainActivity extends BaseActivity {
 	private void initEvent() {
 
 		RelativeLayout selectCommunity = (RelativeLayout) findViewById(R.id.rl_communityName);
-
+		communityNameTV = (TextView) findViewById(R.id.iv_release_menu1);
 		RelativeLayout rl_square_menu = (RelativeLayout) findViewById(R.id.rl_square_menu);
 		RelativeLayout rl_group_menu = (RelativeLayout) findViewById(R.id.rl_group_menu);
 		RelativeLayout rl_me_menu = (RelativeLayout) findViewById(R.id.rl_me_menu);
@@ -349,21 +354,11 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void showPopWindow(Context context, View parent) {
-		// Toast.makeText(MainActivity.this, mBackground.getHeight() + "---",
-		// Toast.LENGTH_LONG).show();
-		final View vPopWindow = inflater.inflate(R.layout.square_dialog, null,
-				false);
+		vPopWindow = inflater.inflate(R.layout.square_dialog, null, false);
 		List<String> list = new ArrayList<String>();
+		list.add("亦庄站");
+		list.add("中关村站");
 		list.add("天通苑站");
-		list.add("回龙观站");
-		list.add("亦庄文化园站");
-		// list.add("宋家庄站");
-		// list.add("北京西站");
-		// list.add("天通苑站");
-		// list.add("回龙观站");
-		// list.add("亦庄文化园站");
-		// list.add("宋家庄站");
-		// list.add("北京西站");
 		float contentHeight = height * 0.721393f;
 		LinearLayout llTop = (LinearLayout) vPopWindow
 				.findViewById(R.id.ll_top);
@@ -375,21 +370,19 @@ public class MainActivity extends BaseActivity {
 		ListView squares = (ListView) vPopWindow.findViewById(R.id.lv_squares);
 		LinearLayout.LayoutParams sParams = new LinearLayout.LayoutParams(
 				squares.getLayoutParams());
-		sParams.height = (int) (contentHeight * 0.7733050847457627f);// //0.578936170212766
-		// sParams.height = (int) (height * 0.548936170212766f);
-		squares.setLayoutParams(sParams);// 0.7733050847457627
+		sParams.height = (int) (contentHeight * 0.7733050847457627f);
+		squares.setLayoutParams(sParams);
 		squares.setAdapter(new MyAdapter(list));
 
-		final PopupWindow popWindow = new PopupWindow(vPopWindow,
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		popWindow = new PopupWindow(vPopWindow, LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT, true);
 		RelativeLayout content = (RelativeLayout) vPopWindow
 				.findViewById(R.id.rl_content);
-		// content.setBackgroundColor(Color.GREEN);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 				content.getLayoutParams());
 		params.width = (int) (width * 0.82941176f);
-		params.topMargin = ((int) (height - contentHeight) / 2)
-				- (height - mBackground.getHeight());
+		params.topMargin = (int) (((int) (height - contentHeight) / 2) - (height - mBackground
+				.getHeight()) * 1.5);
 		params.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		params.height = (int) (contentHeight);
 		content.setLayoutParams(params);
@@ -413,30 +406,35 @@ public class MainActivity extends BaseActivity {
 
 		LinearLayout searchSquare = (LinearLayout) vPopWindow
 				.findViewById(R.id.ll_searchsquare);
-		// searchSquare.setBackgroundColor(Color.RED);
 		LinearLayout.LayoutParams searchSquareParams = new LinearLayout.LayoutParams(
 				btClose.getLayoutParams());
 		searchSquareParams.width = (int) (width * 0.6404028436018957f);
 		searchSquareParams.height = (int) (height * 0.0520520520520521f);
-		searchSquareParams.topMargin = (int) (contentHeight * 0.0637204522096608f);// 0.0677966101694915
-		// 0.0478723404255319
+		searchSquareParams.topMargin = (int) (contentHeight * 0.0447204522096608f);
 		searchSquareParams.gravity = Gravity.CENTER;
 		searchSquare.setLayoutParams(searchSquareParams);
 		TextView machTv = (TextView) vPopWindow.findViewById(R.id.tv_mach);
 		machTv.setTextSize(TypedValue.COMPLEX_UNIT_PX,
 				width * 0.0443951165371809f);
+		btClose.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				popWindow.dismiss();
+			}
+		});
 		vPopWindow.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				popWindow.dismiss();
+				// popWindow.dismiss();
 			}
 		});
 		content.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				popWindow.dismiss();
+				// popWindow.dismiss();
 			}
 		});
 		popWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
@@ -466,7 +464,7 @@ public class MainActivity extends BaseActivity {
 		}
 
 		@Override
-		public View getView(int arg0, View arg1, ViewGroup arg2) {
+		public View getView(final int arg0, View arg1, ViewGroup arg2) {
 			View v = inflater.inflate(R.layout.square_dialog_item, null);
 			float textSize = (float) (width * 0.03657817109f);
 			TextView tv = (TextView) v.findViewById(R.id.tv_square);
@@ -477,7 +475,15 @@ public class MainActivity extends BaseActivity {
 					tv.getLayoutParams());
 			tvParams.width = (int) (width * 0.4872856298048492f);
 			tv.setLayoutParams(tvParams);
-			ImageView iv = (ImageView) v.findViewById(R.id.iv_square);
+			final ImageView iv = (ImageView) v.findViewById(R.id.iv_square);
+			app.fileHandler.getHeadImage(app.data.user.head, new FileResult() {
+
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					iv.setImageBitmap(app.fileHandler.bitmaps
+							.get(app.data.user.head));
+				}
+			});
 			// iv.setBackgroundColor(Color.RED);
 			LinearLayout.LayoutParams ivpParams = new LinearLayout.LayoutParams(
 					iv.getLayoutParams());
@@ -492,11 +498,11 @@ public class MainActivity extends BaseActivity {
 					.findViewById(R.id.iv_selected_status);
 			LinearLayout.LayoutParams selectedParams = new LinearLayout.LayoutParams(
 					ivSelected.getLayoutParams());
-			selectedParams.width = (int) (width * 0.0372560615020698f);
-			selectedParams.height = (int) (height * 0.013013013013013f);
-			selectedParams.topMargin = -10;
+			selectedParams.width = (int) (width * 0.0392560615020698f);
+			selectedParams.height = (int) (height * 0.019013013013013f);
+			selectedParams.topMargin = -15;
 			selectedParams.gravity = Gravity.CENTER_HORIZONTAL;
-			ivSelected.setLayoutParams(selectedParams);
+			// ivSelected.setLayoutParams(selectedParams);
 			if (arg0 != 0) {
 				ivSelected.setVisibility(View.GONE);
 			}
@@ -510,6 +516,58 @@ public class MainActivity extends BaseActivity {
 			} else {
 				line.setVisibility(View.GONE);
 			}
+			v.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (arg0 == 0
+							&& !"98".equals(SquareFragment.mCurrentSquareID)) {
+						SquareFragment.mCurrentSquareID = "98";
+						communityNameTV.setText(list.get(arg0));
+						popWindow.dismiss();
+						PushService.mCurrentConnectionGid = SquareFragment.mCurrentSquareID;
+						String flag = app.data.squareFlags
+								.get(SquareFragment.mCurrentSquareID);
+						flag = flag == null ? "0" : flag;
+						PushService.mCurrentFlag = flag;
+						PushService.mSquareConnection.disConnection();
+						PushService.startSquareLongPull(app,
+								SquareFragment.mCurrentSquareID, flag);
+						MainActivity.instance.mMainMode.mSquareFragment
+								.changeSquareData();
+					} else if (arg0 == 1
+							&& !"99".equals(SquareFragment.mCurrentSquareID)) {
+						SquareFragment.mCurrentSquareID = "99";
+						communityNameTV.setText(list.get(arg0));
+						popWindow.dismiss();
+						PushService.mCurrentConnectionGid = SquareFragment.mCurrentSquareID;
+						String flag = app.data.squareFlags
+								.get(SquareFragment.mCurrentSquareID);
+						flag = flag == null ? "0" : flag;
+						PushService.mCurrentFlag = flag;
+						PushService.mSquareConnection.disConnection();
+						PushService.startSquareLongPull(app,
+								SquareFragment.mCurrentSquareID, flag);
+						MainActivity.instance.mMainMode.mSquareFragment
+								.changeSquareData();
+					} else if (arg0 == 2
+							&& !"100".equals(SquareFragment.mCurrentSquareID)) {
+						SquareFragment.mCurrentSquareID = "100";
+						communityNameTV.setText(list.get(arg0));
+						popWindow.dismiss();
+						PushService.mCurrentConnectionGid = SquareFragment.mCurrentSquareID;
+						String flag = app.data.squareFlags
+								.get(SquareFragment.mCurrentSquareID);
+						flag = flag == null ? "0" : flag;
+						PushService.mCurrentFlag = flag;
+						PushService.mSquareConnection.disConnection();
+						PushService.startSquareLongPull(app,
+								SquareFragment.mCurrentSquareID, flag);
+						MainActivity.instance.mMainMode.mSquareFragment
+								.changeSquareData();
+					}
+				}
+			});
 			return v;
 		}
 	}
