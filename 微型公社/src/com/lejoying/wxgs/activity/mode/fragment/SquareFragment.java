@@ -139,6 +139,9 @@ public class SquareFragment extends BaseFragment {
 				.get(mCurrentSquareID);
 		if (messages != null) {
 			squareContentView.setSquareMessageList(messages, squareMessageMap);
+		} else {
+			squareContentView.setSquareMessageList(new ArrayList<String>(),
+					new HashMap<String, SquareMessage>());
 		}
 		initEvent();
 		initFaceMap();
@@ -153,11 +156,15 @@ public class SquareFragment extends BaseFragment {
 		if (messages != null) {
 			squareContentView.setSquareMessageList(messages, squareMessageMap);
 		} else {
+			squareContentView.setSquareMessageList(new ArrayList<String>(),
+					new HashMap<String, SquareMessage>());
 			if (squareContentView.getChildCount() != 0) {
-				squareContentView.removeAllViews();
+				// squareContentView.removeAllViews();
 			}
 		}
-		init();
+		currentClassify = 2;
+		initData();
+		initHsvTouch();
 	}
 
 	private void initEvent() {
@@ -248,6 +255,11 @@ public class SquareFragment extends BaseFragment {
 	 * 给滚动控件添加view，只有重复两个列表才能实现循环滚动
 	 */
 	private void initData() {
+		horizontalScrollView.smoothScrollTo(0,
+				horizontalScrollView.getScrollY());
+		squareContentView.removeAllViews();
+		classifyTextViews1.clear();
+		classifyTextViews2.clear();
 		final String[] strs = { "吐槽", "精选", "全部", "活动", "服务", "吐槽", "精选", "全部",
 				"活动", "服务" };
 		for (int j = 0; j < 2; j++) {
