@@ -8,31 +8,50 @@
     android:paddingRight="10dp" >
 
     <ImageView
-        android:id="@+id/iv_head"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight="1.5"
+        android:id="@+id/iv_commentHead"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="5dp"
         android:src="@drawable/temp" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
         android:layout_weight="7"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingTop="2dp" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="16dp"
             android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="Coolspan"
+                android:textColor="#2BA8D4"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="回复"
+                android:textColor="#fff"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:layout_weight="2"
-                android:text="七个小矮人"
+                android:layout_weight="1"
+                android:text="乔晓松"
                 android:textColor="#2BA8D4"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -42,7 +61,7 @@
                 android:gravity="right"
                 android:text="今天08:33"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:text="真的很羡慕你可以到处旅行...嘿嘿，其实你也是可以的啊，如果愿意，我们可以一起啊....真的么？。。。。假的。。。哈哈"
                 android:textColor="#fff"
-                android:textSize="16sp" />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 

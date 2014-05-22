@@ -75,6 +75,7 @@ public class SquareMessageDetail extends BaseActivity {
 	TextView squareMessageSendUserName;
 	LinearLayout squareMessageDetailComments;
 	LinearLayout detailContent;
+	ImageView messageContentHead;
 
 	int SCROLL_TOP = 0X01;
 	int SCROLL_BUTTOM = 0X02;
@@ -101,6 +102,7 @@ public class SquareMessageDetail extends BaseActivity {
 		squareMessageSendUserName = (TextView) findViewById(R.id.tv_squareMessageSendUserName);
 		squareMessageDetailComments = (LinearLayout) findViewById(R.id.ll_squareMessageDetailComments);
 		detailContent = (LinearLayout) findViewById(R.id.detailContent);
+		messageContentHead = (ImageView) findViewById(R.id.iv_messageUserHead);
 		addDetailBottomBarChildView();
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
 		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -155,6 +157,14 @@ public class SquareMessageDetail extends BaseActivity {
 	}
 
 	public void generateMessageContent() {
+		app.fileHandler.getHeadImage(message.head, new FileResult() {
+
+			@Override
+			public void onResult(String where, Bitmap bitmap) {
+				messageContentHead.setImageBitmap(app.fileHandler.bitmaps
+						.get(message.head));
+			}
+		});
 		List<String> images = message.content.images;
 		List<String> voices = message.content.voices;
 		String textContent = message.content.text != "" ? message.content.text
@@ -169,7 +179,7 @@ public class SquareMessageDetail extends BaseActivity {
 			app.fileHandler.getImage(fileName, new FileResult() {
 
 				@Override
-				public void onResult(String where,Bitmap bitmap0) {
+				public void onResult(String where, Bitmap bitmap0) {
 					Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
 					int height = (int) ((int) bitmap.getHeight() * (width / bitmap
 							.getWidth()));
@@ -668,8 +678,16 @@ public class SquareMessageDetail extends BaseActivity {
 		for (int i = 0; i < Long.valueOf(gmid) % 3; i++) {
 			View mContent = inflater.inflate(
 					R.layout.fragment_square_message_comments, null);
-			// ImageView mHead = (ImageView)
-			// mContent.findViewById(R.id.iv_head);
+			final ImageView mHead = (ImageView) mContent
+					.findViewById(R.id.iv_commentHead);
+			app.fileHandler.getHeadImage(message.head, new FileResult() {
+
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					mHead.setImageBitmap(app.fileHandler.bitmaps
+							.get(message.head));
+				}
+			});
 			// mHead.setImageBitmap(app.fileHandler.bitmaps.get(app.data.user.head));
 			squareMessageDetailComments.addView(mContent);
 		}
