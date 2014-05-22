@@ -456,6 +456,7 @@ public class SquareFragment extends BaseFragment {
 	 * 实现滚动的循环处理，及停止触摸时的处理
 	 */
 	private void initHsvTouch() {
+		
 		horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
 
 			private int pre_item;
