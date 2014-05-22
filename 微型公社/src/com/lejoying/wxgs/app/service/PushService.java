@@ -252,6 +252,8 @@ public class PushService extends Service {
 					}
 					try {
 						mCurrentFlag = jData.getString("flag");
+						app.data.squareFlags.put(mCurrentConnectionGid,
+								mCurrentFlag);
 					} catch (JSONException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

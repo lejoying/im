@@ -11,10 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 
 public final class MCImageUtils {
-	static MainApplication app ;
+	static MainApplication app;
+
 	public static Bitmap getCircleBitmap(Bitmap source) {
 		return getCircleBitmap(source, false, null, null);
 	}
@@ -117,9 +117,10 @@ public final class MCImageUtils {
 		return bitmap;
 	}
 
-	public static Bitmap getCutBitmap(Bitmap bitmap, int width, int height) {
-		if(bitmap==null){
-			bitmap=BitmapFactory.decodeResource(app.getResources(),
+	public static Bitmap getCutBitmap(Bitmap bitmap, int width, int height,
+			int style) {
+		if (bitmap == null) {
+			bitmap = BitmapFactory.decodeResource(app.getResources(),
 					R.drawable.defaultimage);
 		}
 		int btwidth = bitmap.getWidth();
@@ -130,24 +131,24 @@ public final class MCImageUtils {
 			if (scaleWidth > scaleHeight) {
 				bitmap = Bitmap.createScaledBitmap(bitmap, width,
 						(int) (((float) width) / btwidth * btheight), true);
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0,
-						width, height);
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
 				return bitmap;
 			} else {
 				bitmap = Bitmap.createScaledBitmap(bitmap,
 						(int) (((float) height) / btheight * btwidth), height,
 						true);
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0,
-						width, height);
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
 				return bitmap;
 			}
 		}
-		bitmap = Bitmap.createBitmap(bitmap,
-				(btwidth - width) / 2, (btheight - height) / 2, width, height);
+		bitmap = Bitmap.createBitmap(bitmap, (btwidth - width) / 2,
+				(btheight - height) / 2, width, height);
+		// bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
+		// ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
 		return bitmap;
 	}
 
-	public static Bitmap compressImage(Bitmap bitmap,int size) {
+	public static Bitmap compressImage(Bitmap bitmap, int size) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
 		int options = 100;

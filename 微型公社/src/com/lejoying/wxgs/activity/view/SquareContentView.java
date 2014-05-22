@@ -15,7 +15,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,7 +144,8 @@ public class SquareContentView extends HorizontalScrollView {
 			int itemsSize = items.size();
 			int messagesSize = messages.size();
 			Item itemBefore = null;
-			for (int i = 0; i < messagesSize; i++) {
+			int startSize = messagesSize > 20 ? messagesSize - 20 : 0;
+			for (int i = startSize; i < messagesSize; i++) {
 				SquareMessage message = SquareMessageMap.get(messages.get(i));
 				Item item = null;
 				if (i < itemsSize) {
@@ -178,7 +178,8 @@ public class SquareContentView extends HorizontalScrollView {
 			return;
 		}
 		Item itemBefore = null;
-		for (int i = 0; i < items.size(); i++) {
+		int startSize = items.size() > 20 ? items.size() - 20 : 0;
+		for (int i = startSize; i < items.size(); i++) {
 			Item item = items.get(i);
 			if (item.isMakeSurePosition) {
 				itemBefore = item;
@@ -285,18 +286,14 @@ public class SquareContentView extends HorizontalScrollView {
 		mViewContainer.removeAllViews();
 		items.clear();
 		Item itemBefore = null;
-		for (int i = 0; i < messages.size(); i++) {
+		// TODO 2014.05.22 setting square images count to 20.
+		int messageSize = messages.size() > 20 ? messages.size() - 20 : 0;
+		for (int i = messageSize; i < messages.size(); i++) {
 			Item item = generateItem(itemBefore, map.get(messages.get(i)));
 			itemBefore = item;
 			item.content.setTag(items.size());
 			items.add(item);
 		}
-		// for (String message : messages) {
-		// Item item = generateItem(itemBefore, map.get(message));
-		// itemBefore = item;
-		// item.content.setTag(items.size());
-		// items.add(item);
-		// }
 	}
 
 	private int makeSureItemStyle(Item itemBefore, SquareMessage message) {
@@ -562,7 +559,8 @@ public class SquareContentView extends HorizontalScrollView {
 																	.getCutBitmap(
 																			bitmap,
 																			unitSideLength,
-																			unitSideLength);
+																			unitSideLength,
+																			style);
 															app.UIHandler
 																	.post(new Runnable() {
 																		@Override
@@ -576,7 +574,12 @@ public class SquareContentView extends HorizontalScrollView {
 																	newFileName[0]
 																			+ "_12."
 																			+ newFileName[1]);
-															bitmap.recycle();
+															// if (bitmap !=
+															// null
+															// && !bitmap
+															// .isRecycled()) {
+															// bitmap.recycle();
+															// }
 															super.run();
 														}
 													}.start();
@@ -597,7 +600,8 @@ public class SquareContentView extends HorizontalScrollView {
 																	.getCutBitmap(
 																			bitmap,
 																			unitSideLength,
-																			((unitSideLength * 2) / 10) * 9);
+																			((unitSideLength * 2) / 10) * 9,
+																			style);
 															app.UIHandler
 																	.post(new Runnable() {
 																		@Override
@@ -637,7 +641,8 @@ public class SquareContentView extends HorizontalScrollView {
 																	.getCutBitmap(
 																			bitmap,
 																			unitSideLength,
-																			(int) (unitSideLength * 0.781499f));
+																			(int) (unitSideLength * 0.781499f),
+																			style);
 															app.UIHandler
 																	.post(new Runnable() {
 																		@Override
@@ -674,7 +679,8 @@ public class SquareContentView extends HorizontalScrollView {
 																	.getCutBitmap(
 																			bitmap,
 																			unitSideLength2,
-																			(int) (unitSideLength * 0.781499f));
+																			(int) (unitSideLength * 0.781499f),
+																			style);
 															app.UIHandler
 																	.post(new Runnable() {
 																		@Override
@@ -713,7 +719,8 @@ public class SquareContentView extends HorizontalScrollView {
 																.getCutBitmap(
 																		bitmap,
 																		unitSideLength,
-																		((unitSideLength * 2) / 10) * 9);
+																		((unitSideLength * 2) / 10) * 9,
+																		style);
 														app.UIHandler
 																.post(new Runnable() {
 																	@Override
@@ -913,21 +920,24 @@ public class SquareContentView extends HorizontalScrollView {
 			// contentText.setTextSize(contentTextSize);
 			// contentText.setLineSpace(padding);
 
-			headImage.layout(padding - 2, top + unitSideLength - userInfoHeight
-					- padding - 2, userInfoHeight + padding, top
-					+ unitSideLength - padding);
+			headImage.layout(padding + 2, top + unitSideLength - userInfoHeight
+					- padding - 2, userInfoHeight + padding / 2, top
+					+ unitSideLength - padding);// right and + padding
 
-			nickName.layout(userInfoHeight + 2 * padding, (int) (top
-					+ unitSideLength - userInfoHeight / 2 - padding),
-					unitSideLength - padding, top + unitSideLength - padding);
+			nickName.layout(
+					userInfoHeight + 2 * padding,
+					(int) (top + unitSideLength - userInfoHeight / 2 - padding - userInfoHeight / 4),
+					unitSideLength - padding, top + unitSideLength - padding
+							- userInfoHeight / 4);
 			nickName.setTextSize(userInfoHeight / 2);
 
 			float timeHeight = (float) (userInfoHeight / 2 * 0.8);
 			float timeWidth = 4 * timeHeight + padding;
-			time.layout((int) (left + unitSideLength - padding - timeWidth),
-					(int) (top + unitSideLength - timeHeight - padding),
+			time.layout(
+					(int) (left + unitSideLength - padding - timeWidth),
+					(int) (top + unitSideLength - timeHeight - padding - userInfoHeight / 4),
 					(int) (left + unitSideLength - padding), top
-							+ unitSideLength - padding);
+							+ unitSideLength - padding - userInfoHeight / 4);
 			time.setTextSize(timeHeight);
 		}
 	}

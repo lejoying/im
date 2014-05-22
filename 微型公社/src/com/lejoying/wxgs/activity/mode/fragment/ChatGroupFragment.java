@@ -832,8 +832,6 @@ public class ChatGroupFragment extends BaseFragment {
 							.getExpressionString(getActivity(), s.toString(),
 									faceRegx, expressionFaceMap);
 					editText_message.setText(spannableString);
-					Log.v("Coolspan", selectionIndex + "");
-					editText_message.setSelection(selectionIndex);
 				}
 			}
 		});

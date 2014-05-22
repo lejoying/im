@@ -22,7 +22,6 @@ import com.lejoying.wxgs.app.handler.DataHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.EventHandler;
 import com.lejoying.wxgs.app.handler.FileHandler;
-import com.lejoying.wxgs.app.handler.FilesHandler;
 import com.lejoying.wxgs.app.handler.LocationHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
 import com.lejoying.wxgs.app.parser.StreamParser;
@@ -42,7 +41,6 @@ public class MainApplication extends Application implements
 	public DataHandler dataHandler;
 	public NetworkHandler networkHandler;
 	public FileHandler fileHandler;
-	public FilesHandler filesHandler;
 	public EventHandler eventHandler;
 	public LocationHandler locationHandler;
 
@@ -82,8 +80,6 @@ public class MainApplication extends Application implements
 		networkHandler = new NetworkHandler(5);
 		fileHandler = new FileHandler();
 		fileHandler.initialize(this);
-		filesHandler = new FilesHandler();
-		filesHandler.initialize(this);
 		eventHandler = new EventHandler();
 		eventHandler.initialize(this);
 		locationHandler = new LocationHandler();
@@ -117,6 +113,7 @@ public class MainApplication extends Application implements
 							data.circlesMap = localData.circlesMap;
 							data.friends = localData.friends;
 							data.groups = localData.groups;
+							data.currentSquare = localData.currentSquare;
 							data.squareFlags = localData.squareFlags;
 							data.squareMessages = localData.squareMessages;
 							data.squareMessagesClassify = localData.squareMessagesClassify;

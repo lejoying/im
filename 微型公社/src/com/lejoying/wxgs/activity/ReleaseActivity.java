@@ -193,7 +193,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		release_iv_face_delete = findViewById(R.id.release_iv_face_delete);
 
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
-		
+
 		et_release.setHeight(height - 120 - statusBarHeight);
 		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
@@ -268,7 +268,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		LinearLayout.LayoutParams horizontalScrollViewLayoutParams = new LinearLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		horizontalScrollViewLayoutParams.leftMargin = (int) (width * 0.020833333f);
-		horizontalScrollViewLayoutParams.bottomMargin=(int)(height*0.01171875f);
+		horizontalScrollViewLayoutParams.bottomMargin = (int) (height * 0.01171875f);
 		horizontalScrollView.setLayoutParams(horizontalScrollViewLayoutParams);
 
 		// LinearLayout.LayoutParams et_releaseLayoutParams = new
@@ -687,8 +687,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 		});
 
-		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 240
-				* density + 0.5f, 0);
+		Animation ScrollViewanimation = new TranslateAnimation(0, 0,
+				240 * density + 0.5f, 0);
 		ScrollViewanimation.setDuration(220);
 
 		ll_navigation.startAnimation(navigationanimation);
@@ -1061,10 +1061,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		app.UIHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				if(images.size()==0&&voices.size()==0){
+				if (images.size() == 0 && voices.size() == 0) {
 					et_release.setHeight(height - 120 - statusBarHeight);
-				}else{
-					et_release.setHeight(height - 120 - statusBarHeight-(int)(height*0.08984375f));
+				} else {
+					et_release.setHeight(height - 120 - statusBarHeight
+							- (int) (height * 0.08984375f));
 				}
 				int index = 0;
 				ll_release_picandvoice.removeAllViews();
@@ -1079,7 +1080,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 		});
 	}
-//TODO
+
+	// TODO
 	public void generateView(Map<String, Object> map, String type,
 			final int index) {
 		View addView = mInflater.inflate(R.layout.release_child_navigation,
@@ -1097,7 +1099,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				iv.setImageBitmap(MCImageUtils.getCutBitmap(
 						(Bitmap) map.get("bitmap"),
 						(int) (width * 0.138888889f),
-						(int) (height * 0.078125f)));
+						(int) (height * 0.078125f), 0));
 			iv.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -1118,7 +1120,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				iv.setImageBitmap(MCImageUtils.getCutBitmap(
 						(Bitmap) map.get("bitmap"),
 						(int) (width * 0.138888889f),
-						(int) (height * 0.078125f)));
+						(int) (height * 0.078125f), 0));
 			iv.setOnClickListener(new OnClickListener() {
 
 				@Override

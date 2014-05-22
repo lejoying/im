@@ -26,19 +26,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.SquareMessageDetail;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.SquareContentView;
 import com.lejoying.wxgs.activity.view.SquareContentView.OnItemClickListener;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.API;
-import com.lejoying.wxgs.app.data.Data;
-import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
-import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
-import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.service.PushService;
 
 public class SquareFragment extends BaseFragment {
@@ -105,18 +99,17 @@ public class SquareFragment extends BaseFragment {
 		super.onCreate(savedInstanceState);
 		getActivity().getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		mCurrentSquareID = "".equals(app.data.currentSquare) ? mCurrentSquareID
-				: app.data.currentSquare;
+		String cSquare = app.data.currentSquare;
+		mCurrentSquareID = "".equals(cSquare) ? mCurrentSquareID : cSquare;
 		String flag = app.data.squareFlags.get(mCurrentSquareID);
 		flag = flag == null ? "0" : flag;
-		System.out.println(mCurrentSquareID + "-=-=-=" + flag);
 		PushService.startSquareLongPull(getActivity(), mCurrentSquareID, flag);
 	}
 
 	@Override
 	public void onResume() {
 		mMainModeManager.handleMenu(true);
-		notifyViews();
+		// notifyViews();
 		super.onResume();
 	}
 
@@ -139,10 +132,16 @@ public class SquareFragment extends BaseFragment {
 		if (messages != null) {
 			squareContentView.setSquareMessageList(messages, squareMessageMap);
 		}
-		// else {
-		// squareContentView.setSquareMessageList(new ArrayList<String>(),
-		// new HashMap<String, SquareMessage>());
-		// }
+		if ("98".equals(mCurrentSquareID)) {
+			MainActivity.communityNameTV.setText(MainActivity.communityList
+					.get(0));
+		} else if ("99".equals(mCurrentSquareID)) {
+			MainActivity.communityNameTV.setText(MainActivity.communityList
+					.get(1));
+		} else if ("100".equals(mCurrentSquareID)) {
+			MainActivity.communityNameTV.setText(MainActivity.communityList
+					.get(2));
+		}
 		initEvent();
 		initFaceMap();
 		init();
@@ -159,10 +158,8 @@ public class SquareFragment extends BaseFragment {
 			squareContentView.setSquareMessageList(new ArrayList<String>(),
 					new HashMap<String, SquareMessage>());
 		}
+		app.data.currentSquare = mCurrentSquareID;
 		selectSquareMessageClassify(2);
-		// currentClassify = 2;
-		// initData();
-		// initHsvTouch();
 	}
 
 	private void initEvent() {
@@ -249,13 +246,9 @@ public class SquareFragment extends BaseFragment {
 
 	public int currentClassify = 2;
 
-	/**
-	 * 给滚动控件添加view，只有重复两个列表才能实现循环滚动
-	 */
 	private void initData() {
 		horizontalScrollView.smoothScrollTo(0,
 				horizontalScrollView.getScrollY());
-		// squareContentView.removeAllViews();
 		classifyTextViews1.clear();
 		classifyTextViews2.clear();
 		final String[] strs = { "吐槽", "精选", "全部", "活动", "服务", "吐槽", "精选", "全部",
@@ -331,120 +324,57 @@ public class SquareFragment extends BaseFragment {
 				horizontalScrollView.getScrollY());
 	}
 
+	void changeSquareMessagesClassify(String classify) {
+		List<String> ClassifyMessages;
+		if ("全部".equals(classify)) {
+			ClassifyMessages = app.data.squareMessages.get(mCurrentSquareID);
+		} else {
+			ClassifyMessages = app.data.squareMessagesClassify.get(
+					mCurrentSquareID).get(classify);
+		}
+		Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
+				.get(mCurrentSquareID);
+		if (ClassifyMessages == null) {
+			ClassifyMessages = new ArrayList<String>();
+		}
+		if (squareMessageMap == null) {
+			squareMessageMap = new HashMap<String, SquareMessage>();
+		}
+		squareContentView.setSquareMessageList(ClassifyMessages,
+				squareMessageMap);
+		app.UIHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				notifyViews();
+			}
+		});
+	}
+
 	private void changeSquare(int id) {
 		switch (id) {
-		case 0:// "吐槽"
+		case 0:
 			if (app.data.squareMessagesClassify.get(mCurrentSquareID) != null) {
-				List<String> ShitsMessageClassify = app.data.squareMessagesClassify
-						.get(mCurrentSquareID).get("吐槽");
-				Map<String, SquareMessage> shitesSquareMessageMap = app.data.squareMessagesMap
-						.get(mCurrentSquareID);
-				if (ShitsMessageClassify == null) {
-					ShitsMessageClassify = new ArrayList<String>();
-				}
-				if (shitesSquareMessageMap == null) {
-					shitesSquareMessageMap = new HashMap<String, SquareMessage>();
-				}
-				squareContentView.setSquareMessageList(ShitsMessageClassify,
-						shitesSquareMessageMap);
-				app.UIHandler.post(new Runnable() {
-					@Override
-					public void run() {
-						notifyViews();
-					}
-				});
+				changeSquareMessagesClassify("吐槽");
 			}
 			break;
-		case 1:// "精选"
+		case 1:
 			if (app.data.squareMessagesClassify.get(mCurrentSquareID) != null) {
-				List<String> EssenceMessageClassify = app.data.squareMessagesClassify
-						.get(mCurrentSquareID).get("精华");
-				Map<String, SquareMessage> essenceSquareMessageMap = app.data.squareMessagesMap
-						.get(mCurrentSquareID);
-				if (EssenceMessageClassify == null) {
-					EssenceMessageClassify = new ArrayList<String>();
-				}
-				if (essenceSquareMessageMap == null) {
-					essenceSquareMessageMap = new HashMap<String, SquareMessage>();
-				}
-				squareContentView.setSquareMessageList(EssenceMessageClassify,
-						essenceSquareMessageMap);
-				app.UIHandler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						squareContentView.notifyDataSetChanged();
-					}
-				});
+				changeSquareMessagesClassify("精华");
 			}
 			break;
-		case 2:// "全部"
+		case 2:
 			if (app.data.squareMessagesClassify.get(mCurrentSquareID) != null) {
-				List<String> AllMessages = app.data.squareMessages
-						.get(mCurrentSquareID);
-				Map<String, SquareMessage> allSquareMessageMap = app.data.squareMessagesMap
-						.get(mCurrentSquareID);
-				if (AllMessages == null) {
-					AllMessages = new ArrayList<String>();
-				}
-				if (allSquareMessageMap == null) {
-					allSquareMessageMap = new HashMap<String, SquareMessage>();
-				}
-				squareContentView.setSquareMessageList(AllMessages,
-						allSquareMessageMap);
-				app.UIHandler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						notifyViews();
-					}
-				});
+				changeSquareMessagesClassify("全部");
 			}
 			break;
-		case 3:// "活动"
+		case 3:
 			if (app.data.squareMessagesClassify.get(mCurrentSquareID) != null) {
-				List<String> ActivityMessageClassify = app.data.squareMessagesClassify
-						.get(mCurrentSquareID).get("活动");
-				Map<String, SquareMessage> activitySquareMessageMap = app.data.squareMessagesMap
-						.get(mCurrentSquareID);
-				if (ActivityMessageClassify == null) {
-					ActivityMessageClassify = new ArrayList<String>();
-				}
-				if (activitySquareMessageMap == null) {
-					activitySquareMessageMap = new HashMap<String, SquareMessage>();
-				}
-				squareContentView.setSquareMessageList(ActivityMessageClassify,
-						activitySquareMessageMap);
-				app.UIHandler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						squareContentView.notifyDataSetChanged();
-					}
-				});
+				changeSquareMessagesClassify("活动");
 			}
 			break;
-		case 4:// "服务"
+		case 4:
 			if (app.data.squareMessagesClassify.get(mCurrentSquareID) != null) {
-				List<String> ServiceMessageClassify = app.data.squareMessagesClassify
-						.get(mCurrentSquareID).get("服务");
-				Map<String, SquareMessage> serviceSquareMessageMap = app.data.squareMessagesMap
-						.get(mCurrentSquareID);
-				if (ServiceMessageClassify == null) {
-					ServiceMessageClassify = new ArrayList<String>();
-				}
-				if (serviceSquareMessageMap == null) {
-					serviceSquareMessageMap = new HashMap<String, SquareMessage>();
-				}
-				squareContentView.setSquareMessageList(ServiceMessageClassify,
-						serviceSquareMessageMap);
-				app.UIHandler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						squareContentView.notifyDataSetChanged();
-					}
-				});
+				changeSquareMessagesClassify("服务");
 			}
 			break;
 		default:
@@ -452,11 +382,7 @@ public class SquareFragment extends BaseFragment {
 		}
 	}
 
-	/**
-	 * 实现滚动的循环处理，及停止触摸时的处理
-	 */
 	private void initHsvTouch() {
-		
 		horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
 
 			private int pre_item;
@@ -491,65 +417,5 @@ public class SquareFragment extends BaseFragment {
 				return flag;
 			}
 		});
-	}
-
-	public void search(final String phone) {
-
-		app.networkHandler.connection(new CommonNetConnection() {
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.ACCOUNT_GET;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("target", "[\"" + phone + "\"]");
-				settings.params = params;
-			}
-
-			@Override
-			public void success(JSONObject jData) {
-				try {
-					final Friend friend = JSONParser
-							.generateFriendFromJSON(jData.getJSONArray(
-									"accounts").getJSONObject(0));
-
-					if (phone.equals(app.data.user.phone)) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-						app.dataHandler.exclude(new Modification() {
-							@Override
-							public void modifyData(Data data) {
-								data.user.nickName = friend.nickName;
-								data.user.mainBusiness = friend.mainBusiness;
-								data.user.head = friend.head;
-							}
-						});
-					} else if (app.data.friends.get(phone) != null) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
-						app.dataHandler.exclude(new Modification() {
-
-							@Override
-							public void modifyData(Data data) {
-								friend.messages = data.friends.get(phone).messages;
-								data.friends.put(phone, friend);
-							}
-						});
-					} else {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
-					}
-					mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-					mMainModeManager
-							.showNext(mMainModeManager.mBusinessCardFragment);
-
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
-	}
-
-	class MessageHolder {
-		TextView nickName;
-		TextView message;
 	}
 }

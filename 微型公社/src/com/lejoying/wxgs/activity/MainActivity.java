@@ -80,7 +80,10 @@ public class MainActivity extends BaseActivity {
 	int height, width, dip, picwidth;
 	float density;
 
-	TextView communityNameTV;
+	public static List<String> communityList;
+
+	public static TextView communityNameTV;
+
 	View vPopWindow;
 	PopupWindow popWindow;
 
@@ -123,7 +126,10 @@ public class MainActivity extends BaseActivity {
 		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
 		width = dm.widthPixels;
-
+		communityList = new ArrayList<String>();
+		communityList.add("亦庄站");
+		communityList.add("中关村站");
+		communityList.add("天通苑站");
 		initMode();
 
 		switchMode();
@@ -137,6 +143,13 @@ public class MainActivity extends BaseActivity {
 			mMainMode.mChatFragment.mNowChatFriend = app.data.friends
 					.get(NotificationUtils.message.phone);
 			mMainMode.showNext(mMainMode.mChatFragment);
+		} else if ("chatGroup".equals(NotificationUtils.showFragment)) {
+			mMainMode.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+			mMainMode.mChatFragment.mNowChatGroup = app.data.groupsMap
+					.get(NotificationUtils.message.gid);
+			mMainMode.show(mMainMode.mChatGroupFragment);
+		} else if ("chatList".equals(NotificationUtils.showFragment)) {
+			mMainMode.show(mMainMode.mChatMessagesFragment);
 		}
 		NotificationUtils.cancelNotification(MainActivity.this);
 		super.onWindowFocusChanged(hasFocus);
@@ -197,8 +210,8 @@ public class MainActivity extends BaseActivity {
 									data.groups = localData.groups;
 									data.groupFriends = localData.groupFriends;
 									data.lastChatFriends = localData.lastChatFriends;
-									data.currentSquare = localData.currentSquare;
 									data.newFriends = localData.newFriends;
+									data.currentSquare = localData.currentSquare;
 									data.squareFlags = localData.squareFlags;
 									data.squareMessages = localData.squareMessages;
 									data.squareMessagesClassify = localData.squareMessagesClassify;
@@ -316,6 +329,7 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
+				System.out.println("release");
 				Intent intent = new Intent(MainActivity.this,
 						ReleaseActivity.class);
 				startActivity(intent);
@@ -354,10 +368,6 @@ public class MainActivity extends BaseActivity {
 
 	private void showPopWindow(Context context, View parent) {
 		vPopWindow = inflater.inflate(R.layout.square_dialog, null, false);
-		List<String> list = new ArrayList<String>();
-		list.add("亦庄站");
-		list.add("中关村站");
-		list.add("天通苑站");
 		float contentHeight = height * 0.721393f;
 		LinearLayout llTop = (LinearLayout) vPopWindow
 				.findViewById(R.id.ll_top);
@@ -371,7 +381,7 @@ public class MainActivity extends BaseActivity {
 				squares.getLayoutParams());
 		sParams.height = (int) (contentHeight * 0.7733050847457627f);
 		squares.setLayoutParams(sParams);
-		squares.setAdapter(new MyAdapter(list));
+		squares.setAdapter(new MyAdapter(communityList));
 
 		popWindow = new PopupWindow(vPopWindow, LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT, true);
@@ -415,6 +425,13 @@ public class MainActivity extends BaseActivity {
 		TextView machTv = (TextView) vPopWindow.findViewById(R.id.tv_mach);
 		machTv.setTextSize(TypedValue.COMPLEX_UNIT_PX,
 				width * 0.0443951165371809f);
+		searchSquare.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Alert.showMessage("更多社区站尚未开放，敬请期待！");
+			}
+		});
 		btClose.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -426,7 +443,7 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				// popWindow.dismiss();
+				popWindow.dismiss();
 			}
 		});
 		content.setOnClickListener(new OnClickListener() {
@@ -464,6 +481,14 @@ public class MainActivity extends BaseActivity {
 
 		@Override
 		public View getView(final int arg0, View arg1, ViewGroup arg2) {
+			int selectId = 0;
+			if ("98".equals(SquareFragment.mCurrentSquareID)) {
+				selectId = 0;
+			} else if ("99".equals(SquareFragment.mCurrentSquareID)) {
+				selectId = 1;
+			} else if ("100".equals(SquareFragment.mCurrentSquareID)) {
+				selectId = 2;
+			}
 			View v = inflater.inflate(R.layout.square_dialog_item, null);
 			float textSize = (float) (width * 0.03657817109f);
 			TextView tv = (TextView) v.findViewById(R.id.tv_square);
@@ -502,28 +527,28 @@ public class MainActivity extends BaseActivity {
 			selectedParams.topMargin = -15;
 			selectedParams.gravity = Gravity.CENTER_HORIZONTAL;
 			// ivSelected.setLayoutParams(selectedParams);
-			if (arg0 != 0) {
+			if (arg0 != selectId) {
 				ivSelected.setVisibility(View.GONE);
 			}
 			ImageView line = (ImageView) v.findViewById(R.id.iv_line);
-			if (arg0 != getCount() - 1) {
-				LinearLayout.LayoutParams linepParams = new LinearLayout.LayoutParams(
-						line.getLayoutParams());
-				linepParams.width = (int) (width * 0.6410408042578356f);
-				linepParams.gravity = Gravity.CENTER_HORIZONTAL;
-				line.setLayoutParams(linepParams);
-			} else {
-				line.setVisibility(View.GONE);
-			}
+			// if (arg0 != getCount() - 1) {
+			LinearLayout.LayoutParams linepParams = new LinearLayout.LayoutParams(
+					line.getLayoutParams());
+			linepParams.width = (int) (width * 0.6410408042578356f);
+			linepParams.gravity = Gravity.CENTER_HORIZONTAL;
+			line.setLayoutParams(linepParams);
+			// } else {
+			// line.setVisibility(View.GONE);
+			// }
 			v.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
+					app.data.isChanged = true;
 					if (arg0 == 0
 							&& !"98".equals(SquareFragment.mCurrentSquareID)) {
 						SquareFragment.mCurrentSquareID = "98";
 						communityNameTV.setText(list.get(arg0));
-						popWindow.dismiss();
 						String flag = app.data.squareFlags
 								.get(SquareFragment.mCurrentSquareID);
 						flag = flag == null ? "0" : flag;
@@ -535,7 +560,6 @@ public class MainActivity extends BaseActivity {
 							&& !"99".equals(SquareFragment.mCurrentSquareID)) {
 						SquareFragment.mCurrentSquareID = "99";
 						communityNameTV.setText(list.get(arg0));
-						popWindow.dismiss();
 						String flag = app.data.squareFlags
 								.get(SquareFragment.mCurrentSquareID);
 						flag = flag == null ? "0" : flag;
@@ -547,7 +571,6 @@ public class MainActivity extends BaseActivity {
 							&& !"100".equals(SquareFragment.mCurrentSquareID)) {
 						SquareFragment.mCurrentSquareID = "100";
 						communityNameTV.setText(list.get(arg0));
-						popWindow.dismiss();
 						String flag = app.data.squareFlags
 								.get(SquareFragment.mCurrentSquareID);
 						flag = flag == null ? "0" : flag;
@@ -556,6 +579,7 @@ public class MainActivity extends BaseActivity {
 						MainActivity.instance.mMainMode.mSquareFragment
 								.changeSquareData();
 					}
+					popWindow.dismiss();
 				}
 			});
 			return v;

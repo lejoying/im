@@ -194,6 +194,7 @@ public final class NotificationUtils {
 			}
 		} else if (friendCount == 1 && messageCount > 1) {
 			contentText = "给您发来了" + messageCount + "条消息。";
+			showFragment = "chatFriend";
 		} else if (friendCount > 1 && messageCount > 1) {
 			showFragment = "chatList";
 			contentTitle = "微型公社";
