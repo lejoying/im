@@ -174,20 +174,6 @@ public class SquareContentView extends HorizontalScrollView {
 		if (items == null || items.size() == 0) {
 			return;
 		}
-		height = getHeight();
-		if (height != 0) {
-			padding = (int) (height * (scalePadding / (3 + 4 * scalePadding)));
-
-			unitSideLength = (height - 4 * padding) / 3;
-			unitSideLength2 = unitSideLength * 2 + padding;
-
-			userInfoWidth = unitSideLength - 2 * padding;
-			userInfoHeight = (int) (unitSideLength * scaleUserInfoHeitht);
-
-			firstLayerTop = padding;
-			secondLayerTop = unitSideLength + padding * 2;
-			threadLayerTop = unitSideLength2 + padding * 2;
-		}
 		if (height == 0) {
 			return;
 		}

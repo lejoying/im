@@ -109,13 +109,12 @@ public class SquareFragment extends BaseFragment {
 				: app.data.currentSquare;
 		String flag = app.data.squareFlags.get(mCurrentSquareID);
 		flag = flag == null ? "0" : flag;
+		System.out.println(mCurrentSquareID + "-=-=-=" + flag);
 		PushService.startSquareLongPull(getActivity(), mCurrentSquareID, flag);
 	}
 
 	@Override
 	public void onResume() {
-		// CircleMenu.show();
-		// CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
 		mMainModeManager.handleMenu(true);
 		notifyViews();
 		super.onResume();
@@ -139,10 +138,11 @@ public class SquareFragment extends BaseFragment {
 				.get(mCurrentSquareID);
 		if (messages != null) {
 			squareContentView.setSquareMessageList(messages, squareMessageMap);
-		} else {
-			squareContentView.setSquareMessageList(new ArrayList<String>(),
-					new HashMap<String, SquareMessage>());
 		}
+		// else {
+		// squareContentView.setSquareMessageList(new ArrayList<String>(),
+		// new HashMap<String, SquareMessage>());
+		// }
 		initEvent();
 		initFaceMap();
 		init();
@@ -158,13 +158,11 @@ public class SquareFragment extends BaseFragment {
 		} else {
 			squareContentView.setSquareMessageList(new ArrayList<String>(),
 					new HashMap<String, SquareMessage>());
-			if (squareContentView.getChildCount() != 0) {
-				// squareContentView.removeAllViews();
-			}
 		}
-		currentClassify = 2;
-		initData();
-		initHsvTouch();
+		selectSquareMessageClassify(2);
+		// currentClassify = 2;
+		// initData();
+		// initHsvTouch();
 	}
 
 	private void initEvent() {
@@ -257,7 +255,7 @@ public class SquareFragment extends BaseFragment {
 	private void initData() {
 		horizontalScrollView.smoothScrollTo(0,
 				horizontalScrollView.getScrollY());
-		squareContentView.removeAllViews();
+		// squareContentView.removeAllViews();
 		classifyTextViews1.clear();
 		classifyTextViews2.clear();
 		final String[] strs = { "吐槽", "精选", "全部", "活动", "服务", "吐槽", "精选", "全部",
@@ -288,45 +286,49 @@ public class SquareFragment extends BaseFragment {
 
 					@Override
 					public void onClick(View v) {
-						int distance = 0;
 						int id = (Integer) (v.getTag());
-						TextView tv1 = classifyTextViews1.get(id);
-						TextView tv2 = classifyTextViews1.get(id + 5);
-						TextView tv3 = classifyTextViews2.get(id);
-						TextView tv4 = classifyTextViews2.get(id + 5);
-						if (currentSquareClassifyTextView != -1) {
-							TextView oldTv1 = classifyTextViews1
-									.get(currentSquareClassifyTextView);
-							TextView oldTv2 = classifyTextViews1
-									.get(currentSquareClassifyTextView + 5);
-							TextView oldTv3 = classifyTextViews2
-									.get(currentSquareClassifyTextView);
-							TextView oldTv4 = classifyTextViews2
-									.get(currentSquareClassifyTextView + 5);
-							oldTv1.setTextSize(16);
-							oldTv2.setTextSize(16);
-							oldTv3.setTextSize(16);
-							oldTv4.setTextSize(16);
-						}
-						tv1.setTextSize(22);
-						tv2.setTextSize(22);
-						tv3.setTextSize(22);
-						tv4.setTextSize(22);
-						currentSquareClassifyTextView = id;
-						changeSquare(id);
-						if (currentClassify != id) {
-							if (currentClassify > id) {
-								distance = (id + 3) * child_width;
-							} else {
-								distance = (id - 2) * child_width;
-							}
-						}
-						horizontalScrollView.smoothScrollTo(distance,
-								horizontalScrollView.getScrollY());
+						selectSquareMessageClassify(id);
 					}
 				});
 			}
 		}
+	}
+
+	void selectSquareMessageClassify(int id) {
+		int distance = 0;
+		TextView tv1 = classifyTextViews1.get(id);
+		TextView tv2 = classifyTextViews1.get(id + 5);
+		TextView tv3 = classifyTextViews2.get(id);
+		TextView tv4 = classifyTextViews2.get(id + 5);
+		if (currentSquareClassifyTextView != -1) {
+			TextView oldTv1 = classifyTextViews1
+					.get(currentSquareClassifyTextView);
+			TextView oldTv2 = classifyTextViews1
+					.get(currentSquareClassifyTextView + 5);
+			TextView oldTv3 = classifyTextViews2
+					.get(currentSquareClassifyTextView);
+			TextView oldTv4 = classifyTextViews2
+					.get(currentSquareClassifyTextView + 5);
+			oldTv1.setTextSize(16);
+			oldTv2.setTextSize(16);
+			oldTv3.setTextSize(16);
+			oldTv4.setTextSize(16);
+		}
+		tv1.setTextSize(22);
+		tv2.setTextSize(22);
+		tv3.setTextSize(22);
+		tv4.setTextSize(22);
+		currentSquareClassifyTextView = id;
+		changeSquare(id);
+		if (currentClassify != id) {
+			if (currentClassify > id) {
+				distance = (id + 3) * child_width;
+			} else {
+				distance = (id - 2) * child_width;
+			}
+		}
+		horizontalScrollView.smoothScrollTo(distance,
+				horizontalScrollView.getScrollY());
 	}
 
 	private void changeSquare(int id) {

@@ -43,8 +43,8 @@ public class PushService extends Service {
 	NetworkHandler mPushHandler;
 	ResponseHandler mResponseHandler;
 
-	public static String mCurrentConnectionGid = "";
-	public static String mCurrentFlag = "0";
+	String mCurrentConnectionGid = "";
+	String mCurrentFlag = "0";
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -127,7 +127,7 @@ public class PushService extends Service {
 	}
 
 	NetConnection mIMConnection;
-	public static NetConnection mSquareConnection;
+	NetConnection mSquareConnection;
 	boolean isConnection;
 
 	void startIMConnection() {

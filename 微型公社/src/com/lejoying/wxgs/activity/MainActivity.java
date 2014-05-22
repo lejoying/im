@@ -525,12 +525,9 @@ public class MainActivity extends BaseActivity {
 						SquareFragment.mCurrentSquareID = "98";
 						communityNameTV.setText(list.get(arg0));
 						popWindow.dismiss();
-						PushService.mCurrentConnectionGid = SquareFragment.mCurrentSquareID;
 						String flag = app.data.squareFlags
 								.get(SquareFragment.mCurrentSquareID);
 						flag = flag == null ? "0" : flag;
-						PushService.mCurrentFlag = flag;
-						PushService.mSquareConnection.disConnection();
 						PushService.startSquareLongPull(app,
 								SquareFragment.mCurrentSquareID, flag);
 						MainActivity.instance.mMainMode.mSquareFragment
@@ -540,12 +537,9 @@ public class MainActivity extends BaseActivity {
 						SquareFragment.mCurrentSquareID = "99";
 						communityNameTV.setText(list.get(arg0));
 						popWindow.dismiss();
-						PushService.mCurrentConnectionGid = SquareFragment.mCurrentSquareID;
 						String flag = app.data.squareFlags
 								.get(SquareFragment.mCurrentSquareID);
 						flag = flag == null ? "0" : flag;
-						PushService.mCurrentFlag = flag;
-						PushService.mSquareConnection.disConnection();
 						PushService.startSquareLongPull(app,
 								SquareFragment.mCurrentSquareID, flag);
 						MainActivity.instance.mMainMode.mSquareFragment
@@ -555,12 +549,9 @@ public class MainActivity extends BaseActivity {
 						SquareFragment.mCurrentSquareID = "100";
 						communityNameTV.setText(list.get(arg0));
 						popWindow.dismiss();
-						PushService.mCurrentConnectionGid = SquareFragment.mCurrentSquareID;
 						String flag = app.data.squareFlags
 								.get(SquareFragment.mCurrentSquareID);
 						flag = flag == null ? "0" : flag;
-						PushService.mCurrentFlag = flag;
-						PushService.mSquareConnection.disConnection();
 						PushService.startSquareLongPull(app,
 								SquareFragment.mCurrentSquareID, flag);
 						MainActivity.instance.mMainMode.mSquareFragment
