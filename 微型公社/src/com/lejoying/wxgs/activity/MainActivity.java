@@ -316,7 +316,6 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				System.out.println("release");
 				Intent intent = new Intent(MainActivity.this,
 						ReleaseActivity.class);
 				startActivity(intent);

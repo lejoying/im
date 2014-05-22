@@ -1,13 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_above="@+id/rl_chatbottom"
-    android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true"
-    android:cacheColorHint="#0000"
-    android:divider="#0000"
-    android:dividerHeight="20dp"
-    android:listSelector="#0000" >
+    android:layout_height="match_parent" >
 
-</ListView>
+    <ListView
+        android:id="@+id/contentList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:cacheColorHint="#0000"
+        android:divider="#0000"
+        android:dividerHeight="20dp"
+        android:listSelector="#0000" >
+    </ListView>
+
+    <RelativeLayout
+        android:id="@+id/rl_business_back"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#51000000" >
+
+        <RelativeLayout
+            android:id="@+id/backview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="20dp" >
+
+            <ImageView
+                android:id="@+id/iv_me_back"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:clickable="false"
+                android:src="@drawable/back" />
+
+            <TextView
+                android:id="@+id/tv_back_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="3dp"
+                android:layout_toRightOf="@+id/iv_me_back"
+                android:clickable="false"
+                android:singleLine="true"
+                android:text="新的好友"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

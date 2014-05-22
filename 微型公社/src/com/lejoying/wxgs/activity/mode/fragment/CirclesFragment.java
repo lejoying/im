@@ -154,14 +154,18 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	public void notifyViews() {
-		notifyViews(true);
+		if (mode.equals("normal")) {
+			notifyViews(true, true);
+		} else if (mode.equals("edit")) {
+			notifyViews(true, false);
+		}
 	}
 
-	public void notifyViews(boolean initShowMessageCount) {
+	public void notifyViews(boolean initShowMessageCount, boolean showMenu) {
 		circlesViewContenter.removeAllViews();
 		generateViews(initShowMessageCount);
 		if (mode.equals("normal")) {
-			mMainModeManager.handleMenu(true);
+			mMainModeManager.handleMenu(showMenu);
 			llCirclesTopBar.setVisibility(View.VISIBLE);
 			mScrollContainer.setScrollStatus(ScrollContainer.SCROLL_SMOOTH);
 			mScrollContainer
@@ -197,7 +201,7 @@ public class CirclesFragment extends BaseFragment {
 				circlesViewContenter.scrollTo(0, scrollToY);
 			}
 		} else if (mode.equals("edit")) {
-			mMainModeManager.handleMenu(false);
+			mMainModeManager.handleMenu(showMenu);
 			llCirclesTopBar.setVisibility(View.GONE);
 			mScrollContainer.setScrollStatus(ScrollContainer.SCROLL_PAGING);
 			mScrollContainer
@@ -1101,7 +1105,7 @@ public class CirclesFragment extends BaseFragment {
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});
@@ -1722,7 +1726,7 @@ public class CirclesFragment extends BaseFragment {
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});

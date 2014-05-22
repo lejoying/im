@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -93,6 +95,7 @@ public class BusinessCardFragment extends BaseFragment {
 	RelativeLayout rl_business_back;
 	ImageView iv_me_back;
 	TextView tv_back_show;
+	View backView;
 
 	// DEFINITION object
 	private Handler handler;
@@ -223,6 +226,7 @@ public class BusinessCardFragment extends BaseFragment {
 		rl_business_back = (RelativeLayout) mContent
 				.findViewById(R.id.rl_business_back);
 		iv_me_back = (ImageView) mContent.findViewById(R.id.iv_me_back);
+		backView = mContent.findViewById(R.id.backview);
 		tv_back_show = (TextView) mContent.findViewById(R.id.tv_back_show);
 
 		final ImageView iv_head = (ImageView) mContent
@@ -594,11 +598,42 @@ public class BusinessCardFragment extends BaseFragment {
 				// TODO Auto-generated method stub
 			}
 		});
+
+		final GestureDetector backViewDetector = new GestureDetector(
+				getActivity(), new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDown(MotionEvent e) {
+						// TODO Auto-generated method stub
+						return true;
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						mMainModeManager.back();
+						return true;
+					}
+				});
+		backView.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					backView.setBackgroundColor(Color.argb(143, 0, 0, 0));
+					break;
+				case MotionEvent.ACTION_UP:
+					backView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+					break;
+				}
+				backViewDetector.onTouchEvent(event);
+				return true;
+			}
+		});
+
 		iv_me_back.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				mMainModeManager.back();
 			}
 		});
 		rl_bighead.setOnClickListener(new OnClickListener() {
@@ -630,7 +665,7 @@ public class BusinessCardFragment extends BaseFragment {
 		app.fileHandler.getBackgroundImage(backgroudFileName, new FileResult() {
 			@SuppressWarnings("deprecation")
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				mContent.setBackgroundDrawable(new BitmapDrawable(
 						app.fileHandler.bitmaps.get(backgroudFileName)));
 
@@ -639,7 +674,7 @@ public class BusinessCardFragment extends BaseFragment {
 		final String headFileName = fileName;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
 						.get(headFileName));
 			}
@@ -902,7 +937,7 @@ public class BusinessCardFragment extends BaseFragment {
 					app.fileHandler.getBackgroundImage(backgroudFileName,
 							new FileResult() {
 								@Override
-								public void onResult(String where,Bitmap bitmap) {
+								public void onResult(String where, Bitmap bitmap) {
 									mContent.setBackgroundDrawable(new BitmapDrawable(
 											app.fileHandler.bitmaps
 													.get(backgroudFileName)));

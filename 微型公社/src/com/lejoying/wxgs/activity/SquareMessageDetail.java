@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,6 +73,7 @@ public class SquareMessageDetail extends BaseActivity {
 	RelativeLayout rl_square_message_menu;
 	RelativeLayout squareDetailBottomBar;
 	ImageView squareMessageDetailBack;
+	View backView;
 	TextView squareMessageSendUserName;
 	LinearLayout squareMessageDetailComments;
 	LinearLayout detailContent;
@@ -99,6 +101,7 @@ public class SquareMessageDetail extends BaseActivity {
 		sc_square_message_info_all = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info_all);
 		rl_square_message_menu = (RelativeLayout) findViewById(R.id.rl_square_message_menu);
 		squareMessageDetailBack = (ImageView) findViewById(R.id.iv_squareMessageDetailBack);
+		backView = findViewById(R.id.backview);
 		squareMessageSendUserName = (TextView) findViewById(R.id.tv_squareMessageSendUserName);
 		squareMessageDetailComments = (LinearLayout) findViewById(R.id.ll_squareMessageDetailComments);
 		detailContent = (LinearLayout) findViewById(R.id.detailContent);
@@ -312,12 +315,12 @@ public class SquareMessageDetail extends BaseActivity {
 				(int) (sc_square_message_info.getHeight() * 0.083f));
 		squareDetailBottomBar.setLayoutParams(paramsDetailBottomBar);
 
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				squareMessageDetailBack.getLayoutParams());
-		params.width = (int) (height * 0.046f);
-		params.leftMargin = (int) (width * 0.051302298f);
-		params.addRule(RelativeLayout.CENTER_VERTICAL);
-		squareMessageDetailBack.setLayoutParams(params);
+		// RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+		// squareMessageDetailBack.getLayoutParams());
+		// params.width = (int) (height * 0.046f);
+		// params.leftMargin = (int) (width * 0.051302298f);
+		// params.addRule(RelativeLayout.CENTER_VERTICAL);
+		// squareMessageDetailBack.setLayoutParams(params);
 
 		initSquareDetailBottomBar((int) (sc_square_message_info.getHeight() * 0.083f));
 
@@ -514,13 +517,39 @@ public class SquareMessageDetail extends BaseActivity {
 				}
 			}
 		});
-		squareMessageDetailBack.setOnClickListener(new OnClickListener() {
+
+		final GestureDetector backViewDetector = new GestureDetector(
+				SquareMessageDetail.this,
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDown(MotionEvent e) {
+						// TODO Auto-generated method stub
+						return true;
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						finish();
+						return true;
+					}
+				});
+		backView.setOnTouchListener(new OnTouchListener() {
 
 			@Override
-			public void onClick(View v) {
-				finish();
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					backView.setBackgroundColor(Color.argb(143, 0, 0, 0));
+					break;
+				case MotionEvent.ACTION_UP:
+					backView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+					break;
+				}
+				backViewDetector.onTouchEvent(event);
+				return true;
 			}
 		});
+
 		sc_square_message_info.setOnTouchListener(new OnTouchListener() {
 
 			@Override

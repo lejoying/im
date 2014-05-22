@@ -22,8 +22,6 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -275,7 +273,7 @@ public class ChatGroupFragment extends BaseFragment {
 		iv_face_delete = (ImageView) mContent.findViewById(R.id.iv_face_delete);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
-		groupTopBar_back = mContent.findViewById(R.id.relativeLayout_back);
+		groupTopBar_back = mContent.findViewById(R.id.backview);
 		textView_groupName = (TextView) mContent
 				.findViewById(R.id.textView_groupName);
 		textView_memberCount = (TextView) mContent
@@ -322,11 +320,35 @@ public class ChatGroupFragment extends BaseFragment {
 	}
 
 	void initEvent() {
-		groupTopBar_back.setOnClickListener(new OnClickListener() {
+		final GestureDetector backViewDetector = new GestureDetector(
+				getActivity(), new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDown(MotionEvent e) {
+						// TODO Auto-generated method stub
+						return true;
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						mMainModeManager.back();
+						return true;
+					}
+				});
+		groupTopBar_back.setOnTouchListener(new OnTouchListener() {
 
 			@Override
-			public void onClick(View v) {
-				mMainModeManager.back();
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					groupTopBar_back.setBackgroundColor(Color
+							.argb(143, 0, 0, 0));
+					break;
+				case MotionEvent.ACTION_UP:
+					groupTopBar_back.setBackgroundColor(Color.argb(0, 0, 0, 0));
+					break;
+				}
+				backViewDetector.onTouchEvent(event);
+				return true;
 			}
 		});
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
@@ -1064,7 +1086,7 @@ public class ChatGroupFragment extends BaseFragment {
 						.get(mNowChatGroup.members.get(i)).head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where,Bitmap bitmap) {
+					public void onResult(String where, Bitmap bitmap) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
@@ -1093,7 +1115,7 @@ public class ChatGroupFragment extends BaseFragment {
 				final String headFileName = friend.head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where,Bitmap bitmap) {
+					public void onResult(String where, Bitmap bitmap) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
@@ -1257,7 +1279,7 @@ public class ChatGroupFragment extends BaseFragment {
 				final ImageView iv_head = messageHolder.iv_head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where,Bitmap bitmaps) {
+					public void onResult(String where, Bitmap bitmaps) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 					}
@@ -1320,7 +1342,8 @@ public class ChatGroupFragment extends BaseFragment {
 							new FileResult() {
 
 								@Override
-								public void onResult(final String where,Bitmap bitmap) {
+								public void onResult(final String where,
+										Bitmap bitmap) {
 									app.UIHandler.post(new Runnable() {
 										public void run() {
 											SampleView sampleView = new SampleView(
@@ -1339,7 +1362,7 @@ public class ChatGroupFragment extends BaseFragment {
 				} else {
 					app.fileHandler.getImage(imageFileName, new FileResult() {
 						@Override
-						public void onResult(String where,Bitmap bitmap) {
+						public void onResult(String where, Bitmap bitmap) {
 							messageHolder.iv_image_gif.setVisibility(View.GONE);
 							messageHolder.iv_image.setVisibility(View.VISIBLE);
 							iv_image.setImageBitmap(app.fileHandler.bitmaps
@@ -1383,7 +1406,7 @@ public class ChatGroupFragment extends BaseFragment {
 				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override
-					public void onResult(String where,Bitmap bitmap) {
+					public void onResult(String where, Bitmap bitmap) {
 						iv_head.setImageBitmap(app.fileHandler.bitmaps
 								.get(headFileName));
 						// iv_head.setBackgroundDrawable(new BitmapDrawable(
