@@ -6,11 +6,16 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -35,11 +40,14 @@ public class NewFriendsFragment extends BaseFragment {
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
 
-	ListView mContent;
+	View mContent;
+	ListView mContentList;
 
 	LayoutInflater mInflater;
 
 	public NewFriendsAdapter mAdapter;
+
+	View backview;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -48,17 +56,66 @@ public class NewFriendsFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mContent = (ListView) inflater.inflate(R.layout.f_newfriends, null);
+		mContent = inflater.inflate(R.layout.f_newfriends, null);
+		mContentList = (ListView) mContent.findViewById(R.id.contentList);
+		backview = mContent.findViewById(R.id.backview);
 		mInflater = inflater;
+
+		final GestureDetector backViewDetector = new GestureDetector(
+				getActivity(), new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDown(MotionEvent e) {
+						// TODO Auto-generated method stub
+						return true;
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						mMainModeManager.back();
+						return true;
+					}
+				});
+		backview.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					backview.setBackgroundColor(Color.argb(143, 0, 0, 0));
+					break;
+				case MotionEvent.ACTION_UP:
+					backview.setBackgroundColor(Color.argb(0, 0, 0, 0));
+					break;
+				}
+				backViewDetector.onTouchEvent(event);
+				return true;
+			}
+		});
+
 		return mContent;
+	}
+
+	public float dp2px(float px) {
+		float dp = getActivity().getResources().getDisplayMetrics().density
+				* px + 0.5f;
+		return dp;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
+		View head = new View(getActivity());
+		View foot = new View(getActivity());
+		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
+				android.widget.AbsListView.LayoutParams.WRAP_CONTENT,
+				(int) dp2px(35));
+		head.setLayoutParams(params);
+		mContentList.addHeaderView(head);
+		mContentList.addFooterView(foot);
+
 		mAdapter = new NewFriendsAdapter();
-		mContent.setAdapter(mAdapter);
+		mContentList.setAdapter(mAdapter);
 	}
 
 	public class NewFriendsAdapter extends BaseAdapter {
@@ -111,7 +168,7 @@ public class NewFriendsFragment extends BaseFragment {
 			final ImageView iv_head = newFriendsHolder.iv_head;
 			app.fileHandler.getHeadImage(headFileName, new FileResult() {
 				@Override
-				public void onResult(String where,Bitmap bitmap) {
+				public void onResult(String where, Bitmap bitmap) {
 					iv_head.setImageBitmap(app.fileHandler.bitmaps
 							.get(headFileName));
 				}
@@ -164,7 +221,8 @@ public class NewFriendsFragment extends BaseFragment {
 					public void getSuccess() {
 						mAdapter.notifyDataSetChanged();
 						// TODO refresh
-						mMainModeManager.mCirclesFragment.notifyViews();
+						mMainModeManager.mCirclesFragment.notifyViews(true,
+								false);
 					}
 
 					@Override
@@ -191,7 +249,7 @@ public class NewFriendsFragment extends BaseFragment {
 			public void modifyUI() {
 				mAdapter.notifyDataSetChanged();
 				// TODO refresh
-				mMainModeManager.mCirclesFragment.notifyViews();
+				mMainModeManager.mCirclesFragment.notifyViews(true, false);
 			}
 		});
 	}

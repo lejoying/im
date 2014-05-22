@@ -67,15 +67,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#38000000"
+        android:background="#51000000"
         android:visibility="visible" >
 
-        <ImageView
-            android:id="@+id/iv_squareMessageDetailBack"
+        <RelativeLayout
+            android:id="@+id/backview"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/back" />
+            android:layout_height="match_parent"
+            android:paddingRight="20dp" >
+
+            <ImageView
+                android:id="@+id/iv_squareMessageDetailBack"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/back" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tv_squareMessageSendUserName"

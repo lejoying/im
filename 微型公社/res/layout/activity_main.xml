@@ -54,6 +54,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
+                        android:clickable="false"
                         android:padding="10dp"
                         android:src="@drawable/square_release" />
                 </RelativeLayout>
@@ -120,8 +121,8 @@
                         android:layout_height="33dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:gravity="center"
                         android:clickable="false"
+                        android:gravity="center"
                         android:padding="5dp"
                         android:src="@drawable/square_icon" />
                 </RelativeLayout>
@@ -138,8 +139,8 @@
                         android:layout_height="33dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:gravity="center"
                         android:clickable="false"
+                        android:gravity="center"
                         android:padding="5dp"
                         android:src="@drawable/group_icon" />
                 </RelativeLayout>
@@ -156,8 +157,8 @@
                         android:layout_height="33dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:gravity="center"
                         android:clickable="false"
+                        android:gravity="center"
                         android:padding="5dp"
                         android:src="@drawable/person_icon" />
                 </RelativeLayout>

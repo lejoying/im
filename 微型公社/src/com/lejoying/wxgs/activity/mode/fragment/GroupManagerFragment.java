@@ -452,6 +452,7 @@ public class GroupManagerFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				circlesViewContenter.scrollTo(screenWidth, 0);
+
 				TranslateAnimation animation = new TranslateAnimation(
 						screenWidth, 0, 0, 0);
 				currentFriendIndex = 0;
@@ -1408,7 +1409,7 @@ public class GroupManagerFragment extends BaseFragment {
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});

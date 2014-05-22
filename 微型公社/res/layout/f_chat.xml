@@ -340,31 +340,31 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
-        android:background="#2000"
+        android:background="#51000000"
         android:clickable="true"
         android:visibility="visible" >
 
         <RelativeLayout
-            android:id="@+id/relativeLayout_back"
+            android:id="@+id/backview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp" >
+            android:paddingRight="20dp" >
 
             <ImageView
                 android:id="@+id/iv_back"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
                 android:src="@drawable/back" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp" >
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_toRightOf="@+id/iv_back" >
 
                 <TextView
                     android:id="@+id/textView_groupName"
@@ -373,7 +373,6 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="25dp"
                     android:layout_marginTop="2dp"
                     android:text="联谊会"
                     android:textColor="#fff"
@@ -385,10 +384,10 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textView_groupName"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="55dp"
                     android:text=""
+                    android:layout_marginTop="-1dp"
                     android:textColor="#fff"
-                    android:textSize="15sp" />
+                    android:textSize="14sp" />
             </RelativeLayout>
         </RelativeLayout>
 

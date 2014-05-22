@@ -4,99 +4,104 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
-    android:layout_alignParentTop="true"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:background="@drawable/card_background"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="7dp" >
+    android:layout_alignParentTop="true" >
 
     <RelativeLayout
-        android:id="@+id/rl_right"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" >
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/card_background"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="7dp" >
 
-        <Button
-            android:id="@+id/btn_agreeadd"
-            android:layout_width="80dp"
-            android:layout_height="32dp"
-            android:background="@drawable/button_background"
-            android:text="同意"
-            android:textColor="#fff"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/tv_added"
-            android:layout_width="80dp"
-            android:layout_height="32dp"
-            android:gravity="center"
-            android:text="已填加"
-            android:textColor="#fff"
-            android:textSize="15sp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tv_waitagree"
+        <RelativeLayout
+            android:id="@+id/rl_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="等待对方确认"
-            android:textColor="#fff"
-            android:textSize="15sp"
-            android:visibility="gone" />
-    </RelativeLayout>
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" >
 
-    <RelativeLayout
-        android:id="@+id/rl_content"
-        android:layout_width="fill_parent"
-        android:layout_height="37dp"
-        android:layout_below="@+id/rl_top"
-        android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@+id/rl_right" >
+            <Button
+                android:id="@+id/btn_agreeadd"
+                android:layout_width="80dp"
+                android:layout_height="32dp"
+                android:background="@drawable/button_background"
+                android:text="同意"
+                android:textColor="#fff"
+                android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/tv_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:text="在吗啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊 啊 啊？"
-            android:textColor="#fff"
-            android:textSize="14sp" />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_added"
+                android:layout_width="80dp"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:text="已填加"
+                android:textColor="#fff"
+                android:textSize="15sp"
+                android:visibility="gone" />
 
-    <RelativeLayout
-        android:id="@+id/rl_top"
-        android:layout_width="fill_parent"
-        android:layout_height="37dp"
-        android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@+id/rl_right" >
+            <TextView
+                android:id="@+id/tv_waitagree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="等待对方确认"
+                android:textColor="#fff"
+                android:textSize="15sp"
+                android:visibility="gone" />
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_nickname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/iv_head"
-            android:text="小王"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+        <RelativeLayout
+            android:id="@+id/rl_content"
+            android:layout_width="fill_parent"
+            android:layout_height="37dp"
+            android:layout_below="@+id/rl_top"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/rl_right" >
 
-        <ImageView
-            android:id="@+id/iv_head"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/face_man"
-            tools:ignore="ContentDescription" />
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="在吗啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊 啊 啊？"
+                android:textColor="#fff"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_top"
+            android:layout_width="fill_parent"
+            android:layout_height="37dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/rl_right" >
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/iv_head"
+                android:text="小王"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/iv_head"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/face_man"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>

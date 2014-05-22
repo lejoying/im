@@ -404,22 +404,35 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#51000000" >
-        <ImageView
-            android:id="@+id/iv_me_back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/back" />
-        <TextView
-            android:id="@+id/tv_back_show"
+
+        <RelativeLayout
+            android:id="@+id/backview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="个人资料"
-            android:layout_marginLeft="50dp"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            android:layout_height="match_parent"
+            android:paddingRight="20dp" >
+
+            <ImageView
+                android:id="@+id/iv_me_back"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:clickable="false"
+                android:src="@drawable/back" />
+
+            <TextView
+                android:id="@+id/tv_back_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/iv_me_back"
+                android:clickable="false"
+                android:singleLine="true"
+                android:text="个人资料"
+                android:textColor="#fff"
+                android:layout_marginLeft="3dp"
+                android:textSize="18sp" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>
