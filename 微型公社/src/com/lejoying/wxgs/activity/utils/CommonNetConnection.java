@@ -11,7 +11,6 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.parser.StreamParser;
-import com.lejoying.wxgs.utils.NetworkUtils;
 
 public abstract class CommonNetConnection extends NetConnection {
 
@@ -38,13 +37,13 @@ public abstract class CommonNetConnection extends NetConnection {
 	@Override
 	protected void failed(int failedType, int responseCode) {
 		super.failed(failedType, responseCode);
-		if (!NetworkUtils.hasNetwork(app)) {
-			Alert.showMessage(app.getString(R.string.alert_text_nointernet));
-		} else if (failedType == FAILED_TIMEOUT) {
-			Alert.showMessage(app.getString(R.string.alert_text_nettimeout));
-		} else {
-			Alert.showMessage(app.getString(R.string.alert_text_neterror));
-		}
+		// if (!NetworkUtils.hasNetwork(app)) {
+		// Alert.showMessage(app.getString(R.string.alert_text_nointernet));
+		// } else if (failedType == FAILED_TIMEOUT) {
+		// Alert.showMessage(app.getString(R.string.alert_text_nettimeout));
+		// } else {
+		// Alert.showMessage(app.getString(R.string.alert_text_neterror));
+		// }
 		failed(failedType);
 	}
 
@@ -55,8 +54,9 @@ public abstract class CommonNetConnection extends NetConnection {
 
 	protected void unSuccess(JSONObject jData) {
 		try {
-			Alert.showMessage(jData.getString(app
-					.getString(R.string.network_failed)));
+			jData.getString(app.getString(R.string.network_failed));
+			// Alert.showMessage(jData.getString(app
+			// .getString(R.string.network_failed)));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
