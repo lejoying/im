@@ -32,16 +32,15 @@
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
-        android:layout_width="100px"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15px"
         android:scrollbars="none"
         android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/ll_release_picandvoice"
             android:layout_width="wrap_content"
-            android:layout_height="100px"
+            android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
         </LinearLayout>

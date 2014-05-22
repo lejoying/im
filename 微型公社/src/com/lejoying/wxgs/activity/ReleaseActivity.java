@@ -193,14 +193,16 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		release_iv_face_delete = findViewById(R.id.release_iv_face_delete);
 
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
-
+		
 		et_release.setHeight(height - 120 - statusBarHeight);
 		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_commit.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		ll_releasecamera_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		ll_releaselocal_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		
+		ll_releasecamera_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+				width * 0.04861111f);
+		ll_releaselocal_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+				width * 0.04861111f);
+
 		LinearLayout.LayoutParams et_releaseLayoutParams = new LinearLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		et_releaseLayoutParams.leftMargin = 40;
@@ -240,30 +242,35 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		RelativeLayout.LayoutParams ll_releasecameraLayoutParams = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		ll_releasecameraLayoutParams.leftMargin=(int) (width * 0.2222222f);
+		ll_releasecameraLayoutParams.leftMargin = (int) (width * 0.2222222f);
 		ll_releasecameraLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		ll_releasecamera.setLayoutParams(ll_releasecameraLayoutParams);
 
 		RelativeLayout.LayoutParams ll_releaselocalLayoutParams = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		ll_releaselocalLayoutParams.leftMargin=(int) (width * 0.56944444f);
+		ll_releaselocalLayoutParams.leftMargin = (int) (width * 0.56944444f);
 		ll_releaselocalLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		ll_releaselocal.setLayoutParams(ll_releaselocalLayoutParams);
-		
+
 		LinearLayout.LayoutParams ll_release_imageView = new LinearLayout.LayoutParams(
-				(int)(width*0.21527778f), (int)(height*0.12109375f));
-		ll_release_imageView.gravity=LinearLayout.VERTICAL;
+				(int) (width * 0.21527778f), (int) (height * 0.12109375f));
+		ll_release_imageView.gravity = LinearLayout.VERTICAL;
 		ll_releasecamera_imageView.setLayoutParams(ll_release_imageView);
 		ll_releaselocal_imageView.setLayoutParams(ll_release_imageView);
 
 		LinearLayout.LayoutParams ll_release_textView = new LinearLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		ll_release_textView.topMargin=(int) (height*0.01953125);
-		ll_release_textView.gravity=LinearLayout.VERTICAL;
+		ll_release_textView.topMargin = (int) (height * 0.01953125f);
+		ll_release_textView.gravity = LinearLayout.VERTICAL;
 		ll_releasecamera_textView.setLayoutParams(ll_release_textView);
 		ll_releaselocal_textView.setLayoutParams(ll_release_textView);
 
-		
+		LinearLayout.LayoutParams horizontalScrollViewLayoutParams = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		horizontalScrollViewLayoutParams.leftMargin = (int) (width * 0.020833333f);
+		horizontalScrollViewLayoutParams.bottomMargin=(int)(height*0.01171875f);
+		horizontalScrollView.setLayoutParams(horizontalScrollViewLayoutParams);
+
 		// LinearLayout.LayoutParams et_releaseLayoutParams = new
 		// LinearLayout.LayoutParams(
 		// LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -680,8 +687,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 		});
 
-		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 0, -240
-				* density + 0.5f);
+		Animation ScrollViewanimation = new TranslateAnimation(0, 0, 240
+				* density + 0.5f, 0);
 		ScrollViewanimation.setDuration(220);
 
 		ll_navigation.startAnimation(navigationanimation);
@@ -1054,6 +1061,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		app.UIHandler.post(new Runnable() {
 			@Override
 			public void run() {
+				if(images.size()==0&&voices.size()==0){
+					et_release.setHeight(height - 120 - statusBarHeight);
+				}else{
+					et_release.setHeight(height - 120 - statusBarHeight-(int)(height*0.08984375f));
+				}
 				int index = 0;
 				ll_release_picandvoice.removeAllViews();
 				for (int i = 0; i < voices.size(); i++) {
@@ -1067,15 +1079,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			}
 		});
 	}
-
+//TODO
 	public void generateView(Map<String, Object> map, String type,
 			final int index) {
 		View addView = mInflater.inflate(R.layout.release_child_navigation,
 				null);
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				(width - (7 * 10)) / 6, (width - (7 * 10)) / 6);
-		params.bottomMargin = 10;
-		params.leftMargin = 10;
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				(int) (width * 0.138888889f), (int) (height * 0.078125f));
+		params.rightMargin = (int) (width * 0.01388889f);
 
 		if ("image".equals(type)) {
 			ImageView iv = (ImageView) addView
@@ -1083,7 +1094,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			iv.setLayoutParams(params);
 			if (map.get("bitmap") != null)
-				iv.setImageBitmap((Bitmap) map.get("bitmap"));
+				iv.setImageBitmap(MCImageUtils.getCutBitmap(
+						(Bitmap) map.get("bitmap"),
+						(int) (width * 0.138888889f),
+						(int) (height * 0.078125f)));
 			iv.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -1101,7 +1115,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			iv.setLayoutParams(params);
 			if (map.get("bitmap") != null)
-				iv.setImageBitmap((Bitmap) map.get("bitmap"));
+				iv.setImageBitmap(MCImageUtils.getCutBitmap(
+						(Bitmap) map.get("bitmap"),
+						(int) (width * 0.138888889f),
+						(int) (height * 0.078125f)));
 			iv.setOnClickListener(new OnClickListener() {
 
 				@Override
