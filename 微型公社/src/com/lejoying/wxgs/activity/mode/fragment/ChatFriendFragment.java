@@ -897,7 +897,24 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				//TODO
 				rl_face.setVisibility(View.GONE);
+				new Thread(){
+					public void run() {
+						try {
+							sleep(50);
+							app.UIHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									chatContent.setSelection(chatContent.getBottom());
+								}
+							});
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					};
+				}.start();
+				
 			}
 		});
 		editText_message.addTextChangedListener(new TextWatcher() {
