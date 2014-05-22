@@ -213,6 +213,7 @@ public class ChatGroupFragment extends BaseFragment {
 	}
 
 	View headView;
+	View footerView;
 
 	public float dp2px(float px) {
 		float dp = getActivity().getResources().getDisplayMetrics().density
@@ -238,7 +239,11 @@ public class ChatGroupFragment extends BaseFragment {
 			headView = new View(getActivity());
 			headView.setLayoutParams(params);
 		}
+		if (footerView == null) {
+			footerView = new View(getActivity());
+		}
 		chatContent.addHeaderView(headView);
+		chatContent.addFooterView(footerView);
 
 		iv_send = mContent.findViewById(R.id.iv_send);
 		iv_more = mContent.findViewById(R.id.iv_more);

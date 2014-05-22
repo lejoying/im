@@ -121,6 +121,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
+                        android:clickable="false"
                         android:padding="5dp"
                         android:src="@drawable/square_icon" />
                 </RelativeLayout>
@@ -138,6 +139,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
+                        android:clickable="false"
                         android:padding="5dp"
                         android:src="@drawable/group_icon" />
                 </RelativeLayout>
@@ -155,6 +157,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
+                        android:clickable="false"
                         android:padding="5dp"
                         android:src="@drawable/person_icon" />
                 </RelativeLayout>

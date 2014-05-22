@@ -337,9 +337,9 @@
     <RelativeLayout
         android:id="@+id/relativeLayout_topbar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="50dp"
         android:layout_alignParentTop="true"
-        android:background="#9000"
+        android:background="#2000"
         android:clickable="true"
         android:visibility="visible" >
 
@@ -362,8 +362,8 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp" >
 
                 <TextView
                     android:id="@+id/textView_groupName"
