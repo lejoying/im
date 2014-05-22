@@ -320,9 +320,17 @@ public class GroupFragment extends BaseFragment {
 				View.GONE);
 		TextView buttonManager = (TextView) bottomBar
 				.findViewById(R.id.buttonNextGroup);
-		buttonManager.setText("群组设置");
+		buttonManager.setText("创建群组");
 		bottomBar.setVisibility(View.VISIBLE);
-
+		buttonManager.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_NEWGROUP;
+				mMainModeManager
+						.showNext(mMainModeManager.mGroupManagerFragment);
+			}
+		});
 		View groupItemView = mInflater.inflate(
 				R.layout.fragment_group_item_add, null);
 

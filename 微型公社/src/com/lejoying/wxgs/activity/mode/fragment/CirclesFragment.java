@@ -1101,7 +1101,7 @@ public class CirclesFragment extends BaseFragment {
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});
@@ -1722,7 +1722,7 @@ public class CirclesFragment extends BaseFragment {
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
 			}
 		});

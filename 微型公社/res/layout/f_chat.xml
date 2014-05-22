@@ -13,7 +13,8 @@
         android:cacheColorHint="#0000"
         android:divider="#0000"
         android:dividerHeight="20dp"
-        android:listSelector="#0000" >
+        android:listSelector="#0000" 
+        >
     </ListView>
 
     <RelativeLayout
