@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@drawable/holding"
-            android:textColor="#fff" />
+             />
 
         <TextView
             android:id="@+id/sendvoice_tv"
@@ -35,7 +35,7 @@
             android:layout_centerInParent="true"
             android:text="开始录音"
             android:textColor="#fff"
-            android:textSize="20sp" />
+            />
 
         <ImageView
             android:id="@+id/sendvoice_iv_commit"
