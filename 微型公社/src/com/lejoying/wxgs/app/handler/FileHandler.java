@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +56,21 @@ public class FileHandler {
 	public String FROM_WEB = "web";
 	public String FROM_DEFAULT = "default";
 	public Map<String, GifMovie> gifs = new Hashtable<String, GifMovie>();
-	public Map<String, Bitmap> bitmaps = new Hashtable<String, Bitmap>();
+
+	public class Bitmaps {
+		public Map<String, SoftReference<Bitmap>> bitmaps = new Hashtable<String, SoftReference<Bitmap>>();
+
+		public void put(String key, Bitmap bitmap) {
+			bitmaps.put(key, new SoftReference<Bitmap>(bitmap));
+		}
+
+		public Bitmap get(String key) {
+
+			return bitmaps.get(key).get();
+		}
+	}
+
+	public Bitmaps bitmaps = new Bitmaps();
 	// TODO to be managed by native code
 	public Bitmap defaultImage;
 	public Bitmap defaultHead;
@@ -67,27 +82,29 @@ public class FileHandler {
 	public final int TYPE_IMAGE_THUMBNAIL = 0x04;
 
 	public void getImage(String imageFileName, FileResult fileResult) {
-		getImageFile(imageFileName,"",TYPE_IMAGE_COMMON, fileResult);
+		getImageFile(imageFileName, "", TYPE_IMAGE_COMMON, fileResult);
 	}
 
 	public void getHeadImage(String imageFileName, FileResult fileResult) {
-		getImageFile(imageFileName,"", TYPE_IMAGE_HEAD, fileResult);
+		getImageFile(imageFileName, "", TYPE_IMAGE_HEAD, fileResult);
 	}
 
 	public void getBackgroundImage(String imageFileName, FileResult fileResult) {
-		getImageFile(imageFileName,"", TYPE_IMAGE_BACK, fileResult);
+		getImageFile(imageFileName, "", TYPE_IMAGE_BACK, fileResult);
 	}
 
-	public void getThumbnail(String imageFileName,String size, FileResult fileResult) {
-		String newName[]=imageFileName.split("\\.");
-		String thumbnailName=newName[0]+size+newName[1];
-		getImageFile(imageFileName,thumbnailName, TYPE_IMAGE_THUMBNAIL, fileResult);
+	public void getThumbnail(String imageFileName, String size,
+			FileResult fileResult) {
+		String newName[] = imageFileName.split("\\.");
+		String thumbnailName = newName[0] + size + newName[1];
+		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,
+				fileResult);
 	}
 
 	// TODO sd_card space checking
 	// TODO zip images in the sd_card
-	public void getImageFile(String imageFileName,String thumbnailName,int type,
-			FileResult fileResult) {
+	public void getImageFile(String imageFileName, String thumbnailName,
+			int type, FileResult fileResult) {
 		// get from mem directly
 		// get from sdcard
 
@@ -120,9 +137,9 @@ public class FileHandler {
 		}
 		String where = FROM_DEFAULT;
 		if (type == TYPE_IMAGE_THUMBNAIL) {
-			where=FROM_SDCARD;
+			where = FROM_SDCARD;
 			fileResult.onResult(where, dImage);
-			if (!imageFileName.equals("")&&!thumbnailName.equals("")) {
+			if (!imageFileName.equals("") && !thumbnailName.equals("")) {
 				File thumbnailFile = new File(app.sdcardThumbnailFolder,
 						thumbnailName);
 				if (thumbnailFile.exists()) {
@@ -131,7 +148,8 @@ public class FileHandler {
 					where = FROM_SDCARD;
 					fileResult.onResult(where, dImage);
 				} else {
-					File imageFile = new File(app.sdcardImageFolder, imageFileName);
+					File imageFile = new File(app.sdcardImageFolder,
+							imageFileName);
 					if (imageFile.exists()
 							&& getImageFromWebStatus.get(imageFileName) != null) {
 						if (getImageFromWebStatus.get(imageFileName).equals(
@@ -241,13 +259,12 @@ public class FileHandler {
 							f, imageFileName)));
 					getImageFromWebStatus.put(imageFileName, "success");
 					httpURLConnection.disconnect();
-					final Bitmap bitmap = BitmapFactory
-							.decodeFile(new File(f, imageFileName)
-									.getAbsolutePath());
+					final Bitmap bitmap = BitmapFactory.decodeFile(new File(f,
+							imageFileName).getAbsolutePath());
 					if (type != TYPE_IMAGE_THUMBNAIL) {
 						if (type == TYPE_IMAGE_HEAD) {
-							Bitmap mBitmap = MCImageUtils.getCircleBitmap(bitmap, true,
-									5, Color.WHITE);
+							Bitmap mBitmap = MCImageUtils.getCircleBitmap(
+									bitmap, true, 5, Color.WHITE);
 							bitmaps.put(imageFileName, mBitmap);
 						} else {
 							bitmaps.put(imageFileName, bitmap);
