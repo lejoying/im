@@ -251,19 +251,15 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		}
 		for (int i = 0; i < ReleaseActivity.images.size(); i++) {
 			mediaTotal++;
-			RelativeLayout superView = (RelativeLayout) mInflater.inflate(
+			LinearLayout superView = (LinearLayout) mInflater.inflate(
 					R.layout.release_child_navigation, null);
 			ImageView iv = (ImageView) superView
 					.findViewById(R.id.iv_release_child);
 			Map<String, Object> map = ReleaseActivity.images.get(i);
 			if (map.get("gifMovie") != null) {
 				GifMovie gifMovie = (GifMovie) map.get("gifMovie");
-				SampleView sampleview = new SampleView(this, gifMovie,width,height);
-//				RelativeLayout.LayoutParams sampleParams = new RelativeLayout.LayoutParams(
-//						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//				sampleParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-//				sampleview.setLayoutParams(sampleParams);
-//				sampleview.layout(100, 100, 100, 100);
+				SampleView sampleview = new SampleView(this, gifMovie, width,
+						height);
 				superView.addView(sampleview);
 				iv.setVisibility(View.GONE);
 			} else {
