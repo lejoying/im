@@ -328,13 +328,13 @@ public class SquareMessageDetail extends BaseActivity {
 	}
 
 	ImageView timeImage;
-	TextPanel timeText;
-	ImageView distanceImage;
-	TextPanel distanceText;
-	ImageView commentImage;
-	TextPanel commentText;
-	ImageView praiseImage;
-	TextPanel praiseText;
+	TextView timeText;
+	// ImageView distanceImage;
+	// TextPanel distanceText;
+	// ImageView commentImage;
+	// TextPanel commentText;
+	// ImageView praiseImage;
+	// TextPanel praiseText;
 	ImageView collectImage;
 	TextPanel collectText;
 
@@ -373,41 +373,41 @@ public class SquareMessageDetail extends BaseActivity {
 		// rl_square_message_menu
 
 		timeImage = new ImageView(this);
-		timeImage.setImageResource(R.drawable.time);
-		timeText = new TextPanel(this);
-		timeText.singleLine(true);
+		timeImage.setImageResource(R.drawable.praise);
+		timeText = new TextView(this);
+		timeText.setSingleLine(true);
 		timeText.setTextColor(Color.WHITE);
-		timeText.setText(convertTime(System.currentTimeMillis(), message.time));
-		distanceImage = new ImageView(this);
-		distanceImage.setImageResource(R.drawable.distance);
-		distanceText = new TextPanel(this);
-		distanceText.singleLine(true);
-		distanceText.setTextColor(Color.WHITE);
-		distanceText.setText("000m");
-		commentImage = new ImageView(this);
-		commentImage.setImageResource(R.drawable.comment);
-		commentText = new TextPanel(this);
-		commentText.singleLine(true);
-		commentText.setTextColor(Color.WHITE);
-		commentText.setText("000");
-		praiseImage = new ImageView(this);
-		for (int i = 0; i < message.praiseusers.size(); i++) {
-			if (message.praiseusers.get(i).equals(app.data.user.phone)) {
-				praiseStatus = true;
-				break;
-			}
-		}
-		if (praiseStatus) {
-			praiseImage.setImageResource(R.drawable.praised);
-		} else {
-			praiseImage.setImageResource(R.drawable.praise);
-		}
-		praiseText = new TextPanel(this);
-		praiseText.singleLine(true);
-		praiseText.setTextColor(Color.WHITE);
-		praiseText.setText(message.praiseusers.size() + "");
+		timeText.setText("共获得96个赞");
+		// distanceImage = new ImageView(this);
+		// distanceImage.setImageResource(R.drawable.distance);
+		// distanceText = new TextPanel(this);
+		// distanceText.singleLine(true);
+		// distanceText.setTextColor(Color.WHITE);
+		// distanceText.setText("000m");
+		// commentImage = new ImageView(this);
+		// commentImage.setImageResource(R.drawable.comment);
+		// commentText = new TextPanel(this);
+		// commentText.singleLine(true);
+		// commentText.setTextColor(Color.WHITE);
+		// commentText.setText("000");
+		// praiseImage = new ImageView(this);
+		// for (int i = 0; i < message.praiseusers.size(); i++) {
+		// if (message.praiseusers.get(i).equals(app.data.user.phone)) {
+		// praiseStatus = true;
+		// break;
+		// }
+		// }
+		// if (praiseStatus) {
+		// praiseImage.setImageResource(R.drawable.praised);
+		// } else {
+		// praiseImage.setImageResource(R.drawable.praise);
+		// }
+		// praiseText = new TextPanel(this);
+		// praiseText.singleLine(true);
+		// praiseText.setTextColor(Color.WHITE);
+		// praiseText.setText(message.praiseusers.size() + "");
 		collectImage = new ImageView(this);
-		collectImage.setImageResource(R.drawable.collect);
+		collectImage.setImageResource(R.drawable.comment);
 		collectText = new TextPanel(this);
 		collectText.singleLine(true);
 		collectText.setTextColor(Color.WHITE);
@@ -415,12 +415,12 @@ public class SquareMessageDetail extends BaseActivity {
 
 		rl_square_message_menu.addView(timeImage);
 		rl_square_message_menu.addView(timeText);
-		rl_square_message_menu.addView(distanceImage);
-		rl_square_message_menu.addView(distanceText);
-		rl_square_message_menu.addView(commentImage);
-		rl_square_message_menu.addView(commentText);
-		rl_square_message_menu.addView(praiseImage);
-		rl_square_message_menu.addView(praiseText);
+		// rl_square_message_menu.addView(distanceImage);
+		// rl_square_message_menu.addView(distanceText);
+		// rl_square_message_menu.addView(commentImage);
+		// rl_square_message_menu.addView(commentText);
+		// rl_square_message_menu.addView(praiseImage);
+		// rl_square_message_menu.addView(praiseText);
 		rl_square_message_menu.addView(collectImage);
 		rl_square_message_menu.addView(collectText);
 
@@ -429,8 +429,8 @@ public class SquareMessageDetail extends BaseActivity {
 	private void initSquareDetailBottomBar(int height) {
 		int width = rl_square_message_menu.getWidth();
 		// int height = rl_square_message_menu.getHeight();
-		System.out.println(width + "::::" + height + ">>>>"
-				+ squareDetailBottomBar.getHeight());
+		// System.out.println(width + "::::" + height + ">>>>"
+		// + squareDetailBottomBar.getHeight());
 		int side = (int) (height * 0.35185f);
 		int top = (height - side) / 2;
 		float textSize = height * 0.234286f;
@@ -439,29 +439,29 @@ public class SquareMessageDetail extends BaseActivity {
 		timeImage.setLayoutParams(generateLayoutParams(side, side,
 				(int) (width * 0.03488f), top));
 
-		timeText.setTextSize(textSize);
+		timeText.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 		timeText.setLayoutParams(generateLayoutParams((int) ((width * 0.2722f)
-				- (width * 0.03488f) - side), side, (int) (width * 0.03488f)
-				+ side + textLeftA, textTop));
+				- (width * 0.03488f) - side) * 5, side,
+				(int) (width * 0.03488f) + side + textLeftA, textTop));
 
-		distanceImage.setLayoutParams(generateLayoutParams(side, side,
-				(int) (width * 0.2722f), top));
-		distanceText.setTextSize(textSize);
-		distanceText.setLayoutParams(generateLayoutParams(
-				(int) ((width * 0.55917f) - (width * 0.2722f) - side), side,
-				(int) (width * 0.2722f) + side + textLeftA, textTop));
-		commentImage.setLayoutParams(generateLayoutParams(side, side,
-				(int) (width * 0.55917f), top));
-		commentText.setTextSize(textSize);
-		commentText.setLayoutParams(generateLayoutParams(
-				(int) ((width * 0.68935f) - (width * 0.55917f) - side), side,
-				(int) (width * 0.55917f) + side + textLeftA, textTop));
-		praiseImage.setLayoutParams(generateLayoutParams(side, side,
-				(int) (width * 0.68935f), top));
-		praiseText.setTextSize(textSize);
-		praiseText.setLayoutParams(generateLayoutParams(
-				(int) ((width * 0.8284f) - (width * 0.68935f) - side), side,
-				(int) (width * 0.68935f) + side + textLeftA, textTop));
+		// distanceImage.setLayoutParams(generateLayoutParams(side, side,
+		// (int) (width * 0.2722f), top));
+		// distanceText.setTextSize(textSize);
+		// distanceText.setLayoutParams(generateLayoutParams(
+		// (int) ((width * 0.55917f) - (width * 0.2722f) - side), side,
+		// (int) (width * 0.2722f) + side + textLeftA, textTop));
+		// commentImage.setLayoutParams(generateLayoutParams(side, side,
+		// (int) (width * 0.55917f), top));
+		// commentText.setTextSize(textSize);
+		// commentText.setLayoutParams(generateLayoutParams(
+		// (int) ((width * 0.68935f) - (width * 0.55917f) - side), side,
+		// (int) (width * 0.55917f) + side + textLeftA, textTop));
+		// praiseImage.setLayoutParams(generateLayoutParams(side, side,
+		// (int) (width * 0.68935f), top));
+		// praiseText.setTextSize(textSize);
+		// praiseText.setLayoutParams(generateLayoutParams(
+		// (int) ((width * 0.8284f) - (width * 0.68935f) - side), side,
+		// (int) (width * 0.68935f) + side + textLeftA, textTop));
 		collectImage.setLayoutParams(generateLayoutParams(side, side,
 				(int) (width * 0.8284f), top));
 		collectText.setTextSize(textSize);
@@ -492,31 +492,31 @@ public class SquareMessageDetail extends BaseActivity {
 	boolean isTouchOnContent;
 
 	private void initEvent() {
-		praiseImage.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (praiseStatus) {
-					praiseImage.setImageResource(R.drawable.praise);
-					for (int i = 0; i < message.praiseusers.size(); i++) {
-						if (message.praiseusers.get(i).equals(
-								app.data.user.phone)) {
-							message.praiseusers.remove(i);
-							break;
-						}
-					}
-					praiseText.setText(message.praiseusers.size() + "");
-					praiseStatus = false;
-					praiseSquareMessage(false);
-				} else {
-					praiseImage.setImageResource(R.drawable.praised);
-					message.praiseusers.add(app.data.user.phone);
-					praiseText.setText(message.praiseusers.size() + "");
-					praiseStatus = true;
-					praiseSquareMessage(true);
-				}
-			}
-		});
+		// praiseImage.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// if (praiseStatus) {
+		// praiseImage.setImageResource(R.drawable.praise);
+		// for (int i = 0; i < message.praiseusers.size(); i++) {
+		// if (message.praiseusers.get(i).equals(
+		// app.data.user.phone)) {
+		// message.praiseusers.remove(i);
+		// break;
+		// }
+		// }
+		// praiseText.setText(message.praiseusers.size() + "");
+		// praiseStatus = false;
+		// praiseSquareMessage(false);
+		// } else {
+		// praiseImage.setImageResource(R.drawable.praised);
+		// message.praiseusers.add(app.data.user.phone);
+		// praiseText.setText(message.praiseusers.size() + "");
+		// praiseStatus = true;
+		// praiseSquareMessage(true);
+		// }
+		// }
+		// });
 
 		final GestureDetector backViewDetector = new GestureDetector(
 				SquareMessageDetail.this,

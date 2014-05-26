@@ -41,15 +41,14 @@
         android:layout_height="match_parent"
         android:background="#fff" >
 
-        <GridView
+        <ListView
             android:id="@+id/gv_imagesContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:horizontalSpacing="2dp"
             android:numColumns="3" >
-        </GridView>
+        </ListView>
     </RelativeLayout>
 
     <RelativeLayout
