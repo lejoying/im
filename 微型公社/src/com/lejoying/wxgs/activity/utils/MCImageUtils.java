@@ -113,6 +113,7 @@ public final class MCImageUtils {
 			boptions.inSampleSize = scale;
 			bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(),
 					boptions);
+			
 		}
 		return bitmap;
 	}

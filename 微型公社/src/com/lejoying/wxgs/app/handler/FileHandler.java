@@ -58,15 +58,17 @@ public class FileHandler {
 	public Map<String, GifMovie> gifs = new Hashtable<String, GifMovie>();
 
 	public class Bitmaps {
-		public Map<String, SoftReference<Bitmap>> bitmaps = new Hashtable<String, SoftReference<Bitmap>>();
+		public Map<String, SoftReference<Bitmap>> softBitmaps = new Hashtable<String, SoftReference<Bitmap>>();
 
 		public void put(String key, Bitmap bitmap) {
-			bitmaps.put(key, new SoftReference<Bitmap>(bitmap));
+			softBitmaps.put(key, new SoftReference<Bitmap>(bitmap));
 		}
 
 		public Bitmap get(String key) {
-
-			return bitmaps.get(key).get();
+			if (softBitmaps.get(key) == null) {
+				return null;
+			}
+			return softBitmaps.get(key).get();
 		}
 	}
 
@@ -99,6 +101,11 @@ public class FileHandler {
 		String thumbnailName = newName[0] + size + newName[1];
 		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,
 				fileResult);
+	}
+
+	public void getSquareDetailImage(String imageFileName, float width,
+			FileResult fileResult) {
+
 	}
 
 	// TODO sd_card space checking

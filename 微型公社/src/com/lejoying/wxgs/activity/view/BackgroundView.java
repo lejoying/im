@@ -45,6 +45,7 @@ public class BackgroundView extends View {
 
 	public void setBackground(int id) {
 		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inSampleSize = 4;
 		mBackgroundBitmap = BitmapFactory.decodeResource(getResources(), id,
 				options);
 		mSrc.set(0, 0, mBackgroundBitmap.getWidth(),

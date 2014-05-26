@@ -179,12 +179,20 @@ public class SquareMessageDetail extends BaseActivity {
 
 			detailContent.addView(imageView);
 			final String fileName = images.get(i);
+//			app.fileHandler.getSquareDetailImage(fileName, width, new FileResult() {
+//				
+//				@Override
+//				public void onResult(String where, Bitmap bitmap) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
 			app.fileHandler.getImage(fileName, new FileResult() {
 
 				@Override
 				public void onResult(String where, Bitmap bitmap0) {
 					Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
-					int height = (int) ((int) bitmap.getHeight() * (width / bitmap
+					int height = (int) (bitmap.getHeight() * (width / bitmap
 							.getWidth()));
 					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 							(int) width, height);
@@ -192,7 +200,6 @@ public class SquareMessageDetail extends BaseActivity {
 					bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
 							height, true);
 					imageView.setImageBitmap(bitmap);
-
 				}
 			});
 
