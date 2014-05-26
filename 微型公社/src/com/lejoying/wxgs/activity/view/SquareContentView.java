@@ -144,8 +144,9 @@ public class SquareContentView extends HorizontalScrollView {
 			int itemsSize = items.size();
 			int messagesSize = messages.size();
 			Item itemBefore = null;
-			int startSize = messagesSize > 20 ? messagesSize - 20 : 0;
-			for (int i = startSize; i < messagesSize; i++) {
+			
+//			TODO int startSize = messagesSize > 20 ? messagesSize - 20 : 0;
+			for (int i = 0; i < messagesSize; i++) {
 				SquareMessage message = SquareMessageMap.get(messages.get(i));
 				Item item = null;
 				if (i < itemsSize) {
@@ -178,8 +179,8 @@ public class SquareContentView extends HorizontalScrollView {
 			return;
 		}
 		Item itemBefore = null;
-		int startSize = items.size() > 20 ? items.size() - 20 : 0;
-		for (int i = startSize; i < items.size(); i++) {
+//		int startSize = items.size() > 20 ? items.size() - 20 : 0;
+		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
 			if (item.isMakeSurePosition) {
 				itemBefore = item;
@@ -287,8 +288,8 @@ public class SquareContentView extends HorizontalScrollView {
 		items.clear();
 		Item itemBefore = null;
 		// TODO 2014.05.22 setting square images count to 20.
-		int messageSize = messages.size() > 20 ? messages.size() - 20 : 0;
-		for (int i = messageSize; i < messages.size(); i++) {
+//		int messageSize = messages.size() > 20 ? messages.size() - 20 : 0;
+		for (int i = 0; i < messages.size(); i++) {
 			Item item = generateItem(itemBefore, map.get(messages.get(i)));
 			itemBefore = item;
 			item.content.setTag(items.size());

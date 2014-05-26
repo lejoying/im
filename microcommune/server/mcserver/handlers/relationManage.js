@@ -443,7 +443,7 @@ relationManage.getcirclesandfriends = function (data, response) {
     function getAccountsNode(circles, phone) {
         var query = [
             'MATCH (account:Account)-[r:FRIEND]-(account1:Account)',
-            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete","blacklist","both"]',//1,2,3  r不 等于phone
+            'WHERE account.phone={phone} AND r.friendStatus IN ["success","delete"]',//1,2,3  r不 等于phone
             'RETURN r, account1'
         ].join('\n');
         var params = {
@@ -462,7 +462,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                 var accounts = {};
                 for (var index in results) {
                     var rData = results[index].r.data;
-                    if ((rData.friendStatus == "delete" || rData.friendStatus == "both") && rData.phone == phone) {
+                    if (rData.friendStatus == "delete" && rData.phone == phone) {
                         continue;
                     } else {
                         var accountData = results[index].account1.data;
@@ -478,8 +478,11 @@ relationManage.getcirclesandfriends = function (data, response) {
                             friendStatus: rData.friendStatus
                         };
 
-                        if (rData.friendStatus == "both") {
-                            account.friendStatus = "delete";
+                        if(rData.alias!=null){
+                            var alias = JSON.parse(rData.alias);
+                            if(alias[account.phone]!=null){
+                                account.alias = alias[account.phone];
+                            }
                         }
                         accounts[accountData.phone] = account;
                     }
@@ -516,7 +519,7 @@ relationManage.getcirclesandfriends = function (data, response) {
                     for (var index in results) {
                         var circleData = results[index].circle.data;
                         var accountData = results[index].account2.data;
-                        console.error(circleData.rid + "----" + accountData.phone);
+//                        console.error(circleData.rid + "----" + accountData.phone);
                         if (arr[circleData.rid] == null) {
                             var accounts2 = [];
                             accounts2.push(accounts[accountData.phone]);
@@ -882,10 +885,16 @@ relationManage.getaskfriends = function (data, response) {
  ***************************************/
 relationManage.modifyalias = function (data, response) {
     response.asynchronous = 1;
+    console.info(data);
     var phone = data.phone;
     var friend = data.friend;
     var friendAlias = data.alias;
-    var arr = [phone, friend, friendAlias];
+    var arr;
+    if(friendAlias==""){
+        arr = [phone, friend];
+    }else{
+        arr = [phone, friend, friendAlias];
+    }
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         modifyAlias();
     }
@@ -906,7 +915,7 @@ relationManage.modifyalias = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.error(error);
+                console.error(error+"modifyAlias");
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
@@ -917,12 +926,21 @@ relationManage.modifyalias = function (data, response) {
             } else {
                 var rNode = results.pop().r;
                 var rData = rNode.data;
-                var alias = rData.alias || {};
-                alias[friend] = friendAlias;
-                rData.alias = alias;
+                var alias = {};
+                if(rData.alias!=null){
+                    alias = JSON.parse(rData.alias);
+                }
+                if(friendAlias == ""){
+                    if(alias[friend]!=null){
+                        delete alias[friend];
+                    }
+                }else{
+                    alias[friend] = friendAlias;
+                }
+                rData.alias = JSON.stringify(alias);
                 rNode.save(function (error, node) {
                     if (error) {
-                        console.error(error);
+                        console.error(error+"save");
                     }
                 });
                 response.write(JSON.stringify({

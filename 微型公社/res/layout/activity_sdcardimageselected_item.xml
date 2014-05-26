@@ -8,21 +8,18 @@
         android:id="@+id/iv_imageContent1"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_weight="1"
-        android:src="@drawable/temp" />
+        android:layout_weight="1" />
 
     <ImageView
         android:id="@+id/iv_imageContent2"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_weight="1"
-        android:src="@drawable/temp" />
+        android:layout_weight="1" />
 
     <ImageView
         android:id="@+id/iv_imageContent3"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_weight="1"
-        android:src="@drawable/temp" />
+        android:layout_weight="1" />
 
 </LinearLayout>
