@@ -1109,7 +1109,16 @@ public class ChatGroupFragment extends BaseFragment {
 						.findViewById(R.id.iv_head);
 				TextView tv_nickname = (TextView) userView
 						.findViewById(R.id.tv_nickname);
-				tv_nickname.setText(friend.nickName);
+				String alias="";
+				if(app.data.friends.get(friend.phone)!=null){
+					alias=app.data.friends.get(friend.phone).alias;
+					friend.alias=alias;
+				}
+				if(!alias.equals("")){
+					tv_nickname.setText(alias);
+				}else{
+					tv_nickname.setText(friend.nickName);
+				}
 				final String headFileName = friend.head;
 				app.fileHandler.getHeadImage(headFileName, new FileResult() {
 					@Override

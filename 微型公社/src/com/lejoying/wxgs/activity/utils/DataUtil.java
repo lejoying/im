@@ -164,6 +164,8 @@ public class DataUtil {
 			}
 			if (friend.friendStatus != null && !friend.friendStatus.equals("")) {
 				updateFriend.friendStatus = friend.friendStatus;
+			}if (friend.alias != null && !friend.alias.equals("")) {
+				updateFriend.alias = friend.alias;
 			}
 		} else {
 			data.friends.put(friend.phone, friend);

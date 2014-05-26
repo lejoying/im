@@ -1405,7 +1405,11 @@ public class GroupManagerFragment extends BaseFragment {
 				.findViewById(R.id.iv_head);
 		TextView nickname = (TextView) convertView
 				.findViewById(R.id.tv_nickname);
-		nickname.setText(friend.nickName);
+		if(friend.alias!=null&&!friend.alias.equals("")){
+			nickname.setText(friend.alias);
+		}else{
+			nickname.setText(friend.nickName);
+		}
 		final String headFileName = friend.head;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override

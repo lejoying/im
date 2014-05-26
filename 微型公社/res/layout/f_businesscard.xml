@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/tv_id_title"
                     android:layout_below="@+id/tv_id_title"
-                    android:text="昵称:  "
+                    android:text="好友备注:  "
                     android:textColor="#fff" />
 
                 <TextView

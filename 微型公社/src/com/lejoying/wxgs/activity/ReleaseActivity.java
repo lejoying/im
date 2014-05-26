@@ -1074,13 +1074,17 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		app.UIHandler.post(new Runnable() {
 			@Override
 			public void run() {
+				if (horizontalScrollView.getVisibility() != View.VISIBLE
+						&& (images.size() != 0 || voices.size() != 0)) {
+					horizontalScrollView.setVisibility(View.VISIBLE);
+				}
 				if (images.size() == 0 && voices.size() == 0) {
-					et_release.setHeight(height - 40
-							- (int) (height * 0.078125f) - statusBarHeight);
+					et_release.setHeight(height - 40 - (int) (height * 0.078125f)
+							- statusBarHeight);
+					horizontalScrollView.setVisibility(View.GONE);
 				} else {
-					et_release.setHeight(height - 40
-							- (int) (height * 0.078125f) - statusBarHeight
-							- (int) (height * 0.08984375f));
+					et_release.setHeight(height - 40 - (int) (height * 0.078125f)
+							- statusBarHeight - (int) (height * 0.08984375f));
 				}
 				int index = 0;
 				ll_release_picandvoice.removeAllViews();

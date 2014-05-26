@@ -300,7 +300,11 @@ public class ChatFriendFragment extends BaseFragment {
 
 		if (mStatus == CHAT_FRIEND) {
 			groupTopBar.setVisibility(View.VISIBLE);
-			textView_groupName.setText(mNowChatFriend.nickName);
+			if(!mNowChatFriend.alias.equals("")&&mNowChatFriend.alias!=null){
+				textView_groupName.setText(mNowChatFriend.alias);
+			}else{
+				textView_groupName.setText(mNowChatFriend.nickName);
+			}
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 					RelativeLayout.LayoutParams.WRAP_CONTENT,
 					RelativeLayout.LayoutParams.WRAP_CONTENT);

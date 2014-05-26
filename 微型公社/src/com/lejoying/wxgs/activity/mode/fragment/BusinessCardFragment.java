@@ -95,6 +95,8 @@ public class BusinessCardFragment extends BaseFragment {
 	RelativeLayout rl_business_back;
 	ImageView iv_me_back;
 	TextView tv_back_show;
+	TextView tv_alias;
+	TextView tv_alias_title;
 	View backView;
 
 	// DEFINITION object
@@ -246,9 +248,8 @@ public class BusinessCardFragment extends BaseFragment {
 				.findViewById(R.id.tv_mainbusiness);
 		TextView tv_id = (TextView) mContent.findViewById(R.id.tv_id);
 		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
-		TextView tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
-		TextView tv_alias_title = (TextView) mContent
-				.findViewById(R.id.tv_alias_title);
+		tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
+		tv_alias_title = (TextView) mContent.findViewById(R.id.tv_alias_title);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		Button button3 = (Button) mContent.findViewById(R.id.button3);
@@ -453,7 +454,6 @@ public class BusinessCardFragment extends BaseFragment {
 							.setLeftButtonText("修改")
 							.setOnConfirmClickListener(
 									new OnDialogClickListener() {
-
 										@Override
 										public void onClick(
 												AlertInputDialog dialog) {
@@ -471,12 +471,35 @@ public class BusinessCardFragment extends BaseFragment {
 																		@Override
 																		public void modifyData(
 																				Data data) {
-
+																			data.friends
+																					.get(mShowFriend.phone).alias = alias;
+																			mShowFriend.alias=alias;
 																		}
 
 																		@Override
 																		public void modifyUI() {
-
+																			if (mShowFriend.alias != null
+																					&& !mShowFriend.alias
+																							.equals("")) {
+																				if (tv_alias
+																						.getVisibility() == View.GONE
+																						|| tv_alias
+																								.getVisibility() == View.INVISIBLE) {
+																					tv_alias.setVisibility(View.VISIBLE);
+																				}
+																				if (tv_alias_title
+																						.getVisibility() == View.GONE
+																						|| tv_alias_title
+																								.getVisibility() == View.INVISIBLE) {
+																					tv_alias_title
+																							.setVisibility(View.VISIBLE);
+																				}
+																				tv_alias.setText(mShowFriend.alias);
+																			} else {
+																				tv_alias.setVisibility(View.GONE);
+																				tv_alias_title
+																						.setVisibility(View.GONE);
+																			}
 																		}
 																	});
 														}
