@@ -132,7 +132,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		setContentView(R.layout.activity_post);
 		mInflater = getLayoutInflater();
 		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		getWindow().setBackgroundDrawableResource(R.drawable.square_background);
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;

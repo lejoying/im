@@ -103,9 +103,123 @@ public class FileHandler {
 				fileResult);
 	}
 
-	public void getSquareDetailImage(String imageFileName, float width,
-			FileResult fileResult) {
+	Bitmap defaultSquareDetailImage = null;
 
+	// key:imageFilename value:"loading"|"success"|"failed"|"error"
+	Map<String, String> getSquareImageFromWebStatus = new Hashtable<String, String>();
+	Map<String, List<FileResult>> getSquareImageFromWebResults = new HashMap<String, List<FileResult>>();
+
+	public void getSquareDetailImage(final String imageFileName, float width,
+			FileResult fileResult) {
+		String where = null;
+		if (defaultSquareDetailImage == null) {
+			defaultSquareDetailImage = BitmapFactory.decodeResource(
+					app.getResources(), R.drawable.defaultimage);
+			int height = (int) (defaultSquareDetailImage.getHeight() * (width / defaultSquareDetailImage
+					.getWidth()));
+			defaultSquareDetailImage = Bitmap.createScaledBitmap(
+					defaultSquareDetailImage, (int) (width), height, true);
+		}
+		Bitmap result = defaultSquareDetailImage;
+		if (bitmaps.get(imageFileName) != null
+				&& !bitmaps.get(imageFileName).equals(defaultSquareDetailImage)) {
+			// todo return bitmaps.get(imageFileName) ;
+			result = bitmaps.get(imageFileName);
+			where = FROM_MEMORY;
+		} else {
+			if (!imageFileName.equals("")) {
+				File imageFile = new File(app.sdcardImageFolder, imageFileName);
+				if (imageFile.exists()) {
+					Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(
+							imageFile, (int) width, 0);
+					if (bitmap != null) {
+						int height = (int) (bitmap.getHeight() * (width / bitmap
+								.getWidth()));
+						bitmaps.put(imageFileName, result = bitmap);
+						// bitmaps.put(
+						// imageFileName,
+						// result = Bitmap.createScaledBitmap(bitmap,
+						// (int) (width), height, true));
+						where = FROM_SDCARD;
+					} else {
+						getSquareImageFromWeb(imageFileName, width, fileResult);
+					}
+				} else {
+					getSquareImageFromWeb(imageFileName, width, fileResult);
+				}
+			}
+		}
+
+		fileResult.onResult(where, result);
+	}
+
+	private void getSquareImageFromWeb(final String imageFileName,
+			final float width, FileResult fileResult) {
+		if (getSquareImageFromWebResults.get(imageFileName) == null) {
+			getSquareImageFromWebResults.put(imageFileName,
+					new ArrayList<FileHandler.FileResult>());
+		}
+		getSquareImageFromWebResults.get(imageFileName).add(fileResult);
+		if (getSquareImageFromWebStatus.get(imageFileName) == null
+				|| getSquareImageFromWebStatus.get(imageFileName).equals(
+						"failed")) {
+			getSquareImageFromWebStatus.put(imageFileName, "loading");
+			final File f = app.sdcardImageFolder;
+			app.networkHandler.connection(new NetConnection() {
+				@Override
+				protected void success(InputStream is,
+						HttpURLConnection httpURLConnection) {
+					try {
+						File tempFile = null;
+						StreamParser.parseToFile(is,
+								new FileOutputStream(tempFile = new File(f,
+										"temp_" + imageFileName)));
+
+						tempFile.renameTo(new File(f, imageFileName));
+
+						getSquareImageFromWebStatus.put(imageFileName,
+								"success");
+						httpURLConnection.disconnect();
+						List<FileResult> results = getSquareImageFromWebResults
+								.get(imageFileName);
+						for (final FileResult result : results) {
+							app.UIHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									getSquareDetailImage(imageFileName, width,
+											result);
+								}
+							});
+						}
+						getSquareImageFromWebResults.remove(imageFileName);
+					} catch (FileNotFoundException e) {
+						if (getSquareImageFromWebStatus.get(imageFileName)
+								.equals("failed")) {
+							getSquareImageFromWebStatus.put(imageFileName,
+									"error");
+						}
+						getSquareImageFromWebStatus
+								.put(imageFileName, "failed");
+					}
+				}
+
+				@Override
+				protected void failed(int failedType, int responseCode) {
+					if (getSquareImageFromWebStatus.get(imageFileName).equals(
+							"failed")) {
+						getSquareImageFromWebStatus.put(imageFileName, "error");
+					}
+					getSquareImageFromWebStatus.put(imageFileName, "failed");
+					super.failed(failedType, responseCode);
+				}
+
+				@Override
+				protected void settings(Settings settings) {
+					settings.url = API.DOMAIN_IMAGE + imageFileName;
+					settings.method = GET;
+				}
+			});
+		}
 	}
 
 	// TODO sd_card space checking
@@ -277,6 +391,8 @@ public class FileHandler {
 							bitmaps.put(imageFileName, bitmap);
 						}
 					}
+					List<FileResult> results = getFromWebResults
+							.get(imageFileName);
 					for (final FileResult result : getFromWebResults
 							.get(imageFileName)) {
 						app.UIHandler.post(new Runnable() {
@@ -286,6 +402,7 @@ public class FileHandler {
 							}
 						});
 					}
+					getFromWebResults.remove(imageFileName);
 				} catch (FileNotFoundException e) {
 					if (getImageFromWebStatus.get(imageFileName).equals(
 							"failed")) {

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/square_background"
     android:gravity="bottom"
     android:orientation="vertical" >
 
@@ -25,9 +26,9 @@
                 android:layout_height="wrap_content"
                 android:background="#0000"
                 android:gravity="top"
-                android:textCursorDrawable="@drawable/cursor"
                 android:scrollbars="none"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textCursorDrawable="@drawable/cursor" />
         </ScrollView>
     </LinearLayout>
 
@@ -36,14 +37,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:visibility="gone">
+        android:visibility="gone" >
 
         <LinearLayout
             android:id="@+id/ll_release_picandvoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
-
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -61,8 +61,7 @@
             android:gravity="center"
             android:singleLine="true"
             android:text="取消"
-            android:textColor="#fff"
-             />
+            android:textColor="#fff" />
 
         <ImageView
             android:id="@+id/release_iv_voice"
@@ -74,7 +73,7 @@
         <ImageView
             android:id="@+id/release_iv_emoji"
             android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:src="@drawable/release_face" />
 
@@ -92,8 +91,7 @@
             android:gravity="center"
             android:singleLine="true"
             android:text="完成"
-            android:textColor="#fff"
-             />
+            android:textColor="#fff" />
     </LinearLayout>
 
     <RelativeLayout

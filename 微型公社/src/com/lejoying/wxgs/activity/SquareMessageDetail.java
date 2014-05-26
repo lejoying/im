@@ -175,33 +175,37 @@ public class SquareMessageDetail extends BaseActivity {
 		squareMessageSendUserName.setText(message.nickName);
 		for (int i = 0; i < images.size(); i++) {
 			final ImageView imageView = new ImageView(this);
-			imageView.setBackgroundColor(Color.RED);
 
 			detailContent.addView(imageView);
 			final String fileName = images.get(i);
-//			app.fileHandler.getSquareDetailImage(fileName, width, new FileResult() {
-//				
-//				@Override
-//				public void onResult(String where, Bitmap bitmap) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//			});
-			app.fileHandler.getImage(fileName, new FileResult() {
+			app.fileHandler.getSquareDetailImage(fileName, width,
+					new FileResult() {
 
-				@Override
-				public void onResult(String where, Bitmap bitmap0) {
-					Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
-					int height = (int) (bitmap.getHeight() * (width / bitmap
-							.getWidth()));
-					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-							(int) width, height);
-					imageView.setLayoutParams(params);
-					bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
-							height, true);
-					imageView.setImageBitmap(bitmap);
-				}
-			});
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							int height = (int) (bitmap.getHeight() * (width / bitmap
+									.getWidth()));
+							LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+									(int) width, height);
+							imageView.setLayoutParams(params);
+							imageView.setImageBitmap(bitmap);
+						}
+					});
+			// app.fileHandler.getImage(fileName, new FileResult() {
+			//
+			// @Override
+			// public void onResult(String where, Bitmap bitmap0) {
+			// Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
+			// int height = (int) (bitmap.getHeight() * (width / bitmap
+			// .getWidth()));
+			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+			// (int) width, height);
+			// imageView.setLayoutParams(params);
+			// bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
+			// height, true);
+			// imageView.setImageBitmap(bitmap);
+			// }
+			// });
 
 		}
 		if (images.size() == 0 && voices.size() != 0) {

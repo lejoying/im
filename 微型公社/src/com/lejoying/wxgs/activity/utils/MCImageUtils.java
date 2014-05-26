@@ -93,10 +93,10 @@ public final class MCImageUtils {
 		int height = boptions.outHeight;
 
 		if (maxWidth == null || maxWidth <= 0) {
-			maxWidth = width;
+			maxWidth = Integer.valueOf(width);
 		}
-		if (maxHeight == null || maxWidth <= 0) {
-			maxHeight = height;
+		if (maxHeight == null || maxHeight <= 0) {
+			maxHeight = Integer.valueOf(height);
 		}
 		if (maxWidth > width && maxHeight > height) {
 			bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
@@ -113,7 +113,7 @@ public final class MCImageUtils {
 			boptions.inSampleSize = scale;
 			bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(),
 					boptions);
-			
+
 		}
 		return bitmap;
 	}
