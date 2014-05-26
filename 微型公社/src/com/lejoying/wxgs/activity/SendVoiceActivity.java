@@ -13,6 +13,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -108,11 +109,17 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		View sendvoice_iv_del = findViewById(R.id.sendvoice_iv_del);
 		sendvoice_rl_navigation = (RelativeLayout) findViewById(R.id.sendvoice_rl_navigation);
 
+		RelativeLayout.LayoutParams navigationLayoutParam = new RelativeLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, (int)(height*0.078125f));
+		navigationLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		sendvoice_rl_navigation.setLayoutParams(navigationLayoutParam);
+		
 		RelativeLayout.LayoutParams buttonrelativeParams = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		buttonrelativeParams.width = width / 3 * 2;
-		buttonrelativeParams.topMargin = 20;
-		buttonrelativeParams.bottomMargin = 20;
+		buttonrelativeParams.height=(int)(height*0.046875f);
+		buttonrelativeParams.width = (int)(width  *0.61111111f);
+		buttonrelativeParams.topMargin = (int)(height*0.0078125f);
+		buttonrelativeParams.bottomMargin = (int)(height*0.0078125f);
 		buttonrelativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		sendvoice_button.setLayoutParams(buttonrelativeParams);
 
@@ -120,20 +127,21 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		tvrelativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		sendvoice_tv.setLayoutParams(tvrelativeParams);
-
+		sendvoice_tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		
 		RelativeLayout.LayoutParams commitrelativeParams = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				(int)(width*0.0833333f), (int)(height*0.046875f));
 		commitrelativeParams.addRule(RelativeLayout.RIGHT_OF,
 				R.id.sendvoice_button);
-		commitrelativeParams.leftMargin = width / 25;
+		commitrelativeParams.leftMargin = (int)(width*0.02777778f);
 		commitrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		sendvoice_iv_commit.setLayoutParams(commitrelativeParams);
 
 		RelativeLayout.LayoutParams delrelativeParams = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				(int)(width*0.0833333f), (int)(height*0.046875f));
 		delrelativeParams
 				.addRule(RelativeLayout.LEFT_OF, R.id.sendvoice_button);
-		delrelativeParams.rightMargin = width / 25;
+		delrelativeParams.rightMargin = (int)(width*0.02777778f);
 		delrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		sendvoice_iv_del.setLayoutParams(delrelativeParams);
 

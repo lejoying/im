@@ -194,7 +194,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 
-		et_release.setHeight(height - 40-(int)(height*0.078125f) - statusBarHeight);
+		et_release.setHeight(height - 40 - (int) (height * 0.078125f)
+				- statusBarHeight);
 		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_commit.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
@@ -209,9 +210,9 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		et_releaseLayoutParams.rightMargin = 40;
 		et_releaseLayoutParams.topMargin = 40;
 		sl_et_release.setLayoutParams(et_releaseLayoutParams);
-		
+
 		LinearLayout.LayoutParams ll_navigationLayoutParams = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, (int)(height*0.078125f));
+				LayoutParams.MATCH_PARENT, (int) (height * 0.078125f));
 		ll_navigation.setLayoutParams(ll_navigationLayoutParams);
 
 		LinearLayout.LayoutParams navigationLayoutParams1 = new LinearLayout.LayoutParams(
@@ -928,6 +929,15 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				}
 			});
 
+		} else if (requestCode == RESULT_MAKEVOICE
+				&& resultCode != Activity.RESULT_OK) {
+			if (images.size() == 0 && voices.size() == 0) {
+				et_release.setHeight(height - 40 - (int) (height * 0.078125f)
+						- statusBarHeight);
+			} else {
+				et_release.setHeight(height - 40 - (int) (height * 0.078125f)
+						- statusBarHeight - (int) (height * 0.08984375f));
+			}
 		} else if ((requestCode == RESULT_MAKEVOICE || requestCode == RESULT_PICANDVOICE)
 				&& resultCode == Activity.RESULT_OK) {
 			nodifyViews();
@@ -1066,9 +1076,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			@Override
 			public void run() {
 				if (images.size() == 0 && voices.size() == 0) {
-					et_release.setHeight(height - (int)(height*0.078125f)-40 - statusBarHeight);
+					et_release.setHeight(height - 40
+							- (int) (height * 0.078125f) - statusBarHeight);
 				} else {
-					et_release.setHeight(height - (int)(height*0.078125f)-40  - statusBarHeight
+					et_release.setHeight(height - 40
+							- (int) (height * 0.078125f) - statusBarHeight
 							- (int) (height * 0.08984375f));
 				}
 				int index = 0;
