@@ -832,6 +832,7 @@ public class ChatGroupFragment extends BaseFragment {
 							.getExpressionString(getActivity(), s.toString(),
 									faceRegx, expressionFaceMap);
 					editText_message.setText(spannableString);
+					editText_message.setSelection(selectionIndex);
 				}
 			}
 		});
