@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 
 public class SDCardImagesDirectoryActivity extends Activity {
@@ -109,7 +111,9 @@ public class SDCardImagesDirectoryActivity extends Activity {
 
 				@Override
 				public void run() {
-					Bitmap bitmap0 = BitmapFactory.decodeFile(path);
+					// Bitmap bitmap0 = BitmapFactory.decodeFile(path);
+					final Bitmap bitmap0 = MCImageUtils.getZoomBitmapFromFile(
+							new File(path), 100, 100);
 					final Bitmap bitmap = ThumbnailUtils.extractThumbnail(
 							bitmap0, 60, 60,
 							ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
@@ -126,14 +130,14 @@ public class SDCardImagesDirectoryActivity extends Activity {
 				}
 			}).start();
 			imagesHolder.directoryName.setText(directorys.get(position)
-					.substring(0, 4));
+					.substring(directorys.get(position).lastIndexOf("/") + 1));
 			convertView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(
 							SDCardImagesDirectoryActivity.this,
-							SDCardImagesSelected.class);
+							SDCardImagesSelectedActivity.class);
 					currentShowDirectory = directorys.get(position);
 					startActivity(intent);
 				}

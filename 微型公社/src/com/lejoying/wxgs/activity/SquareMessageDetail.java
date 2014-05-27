@@ -20,6 +20,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -79,6 +80,8 @@ public class SquareMessageDetail extends BaseActivity {
 	LinearLayout detailContent;
 	ImageView messageContentHead;
 
+	TextView messageTime;
+
 	int SCROLL_TOP = 0X01;
 	int SCROLL_BUTTOM = 0X02;
 	int SCROLL_BETWEEN = 0X03;
@@ -106,6 +109,7 @@ public class SquareMessageDetail extends BaseActivity {
 		squareMessageDetailComments = (LinearLayout) findViewById(R.id.ll_squareMessageDetailComments);
 		detailContent = (LinearLayout) findViewById(R.id.detailContent);
 		messageContentHead = (ImageView) findViewById(R.id.iv_messageUserHead);
+		messageTime = (TextView) findViewById(R.id.tv_messageTime);
 		addDetailBottomBarChildView();
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
 		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -173,6 +177,8 @@ public class SquareMessageDetail extends BaseActivity {
 		String textContent = message.content.text != "" ? message.content.text
 				: "";
 		squareMessageSendUserName.setText(message.nickName);
+		messageTime.setText(convertTime(System.currentTimeMillis(),
+				message.time));
 		for (int i = 0; i < images.size(); i++) {
 			final ImageView imageView = new ImageView(this);
 
@@ -388,7 +394,8 @@ public class SquareMessageDetail extends BaseActivity {
 		timeText = new TextView(this);
 		timeText.setSingleLine(true);
 		timeText.setTextColor(Color.WHITE);
-		timeText.setText("共获得96个赞");
+		timeText.setTextScaleX(1.2f);
+		timeText.setText("共获得0" + message.praiseusers.size() + "个赞");
 		// distanceImage = new ImageView(this);
 		// distanceImage.setImageResource(R.drawable.distance);
 		// distanceText = new TextPanel(this);
@@ -447,13 +454,15 @@ public class SquareMessageDetail extends BaseActivity {
 		float textSize = height * 0.234286f;
 		int textTop = (int) ((height - textSize) / 2);
 		int textLeftA = (int) (width * 0.01651917f);
-		timeImage.setLayoutParams(generateLayoutParams(side, side,
-				(int) (width * 0.03488f), top));
+		timeImage.setLayoutParams(generateLayoutParams((int) (side * 1.4f),
+				(int) (side * 1.4f), (int) (width * 0.04488f),
+				(int) ((height - side * 1.4f) / 2)));
 
 		timeText.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 		timeText.setLayoutParams(generateLayoutParams((int) ((width * 0.2722f)
 				- (width * 0.03488f) - side) * 5, side,
-				(int) (width * 0.03488f) + side + textLeftA, textTop));
+				(int) ((int) (width * 0.03488f) + side * 1.4f + textLeftA),
+				textTop));
 
 		// distanceImage.setLayoutParams(generateLayoutParams(side, side,
 		// (int) (width * 0.2722f), top));
@@ -473,12 +482,14 @@ public class SquareMessageDetail extends BaseActivity {
 		// praiseText.setLayoutParams(generateLayoutParams(
 		// (int) ((width * 0.8284f) - (width * 0.68935f) - side), side,
 		// (int) (width * 0.68935f) + side + textLeftA, textTop));
-		collectImage.setLayoutParams(generateLayoutParams(side, side,
-				(int) (width * 0.8284f), top));
+		collectImage.setLayoutParams(generateLayoutParams((int) (side * 1.4f),
+				(int) (side * 1.4f), (int) (width * 0.8184f),
+				(int) ((height - side * 1.4f) / 2)));
 		collectText.setTextSize(textSize);
 		collectText.setLayoutParams(generateLayoutParams((int) (width * 0.96f
-				- (width * 0.8284f) - side), side, (int) (width * 0.8284f)
-				+ side + textLeftA, textTop));
+				- (width * 0.8284f) - side * 1.4f), (int) (side * 1.4f),
+				(int) ((int) (width * 0.8284f) + side * 1.4f + textLeftA),
+				textTop));
 
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -503,31 +514,17 @@ public class SquareMessageDetail extends BaseActivity {
 	boolean isTouchOnContent;
 
 	private void initEvent() {
-		// praiseImage.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// if (praiseStatus) {
-		// praiseImage.setImageResource(R.drawable.praise);
-		// for (int i = 0; i < message.praiseusers.size(); i++) {
-		// if (message.praiseusers.get(i).equals(
-		// app.data.user.phone)) {
-		// message.praiseusers.remove(i);
-		// break;
-		// }
-		// }
-		// praiseText.setText(message.praiseusers.size() + "");
-		// praiseStatus = false;
-		// praiseSquareMessage(false);
-		// } else {
-		// praiseImage.setImageResource(R.drawable.praised);
-		// message.praiseusers.add(app.data.user.phone);
-		// praiseText.setText(message.praiseusers.size() + "");
-		// praiseStatus = true;
-		// praiseSquareMessage(true);
-		// }
-		// }
-		// });
+		timeImage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (praiseStatus) {
+					praiseSquareMessage(false);
+				} else {
+					praiseSquareMessage(true);
+				}
+			}
+		});
 
 		final GestureDetector backViewDetector = new GestureDetector(
 				SquareMessageDetail.this,
@@ -617,12 +614,47 @@ public class SquareMessageDetail extends BaseActivity {
 
 			@Override
 			public void success(JSONObject jData) {
-				// try {
-				// // String notice = jData.getString("提示信息");
-				// // Log.e("Coolspan", notice + "-" + flag + "------点赞提示消息");
-				// } catch (JSONException e) {
-				// e.printStackTrace();
-				// }
+				try {
+					String notice = jData.getString("提示信息");
+					if ("点赞广播成功".equals(notice)) {
+						if (flag) {
+							message.praiseusers.add(app.data.user.phone);
+							praiseStatus = true;
+							app.UIHandler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									timeImage
+											.setImageResource(R.drawable.praised);
+									timeText.setText("共获得"
+											+ message.praiseusers.size() + "个赞");
+								}
+							});
+						} else {
+							for (int i = 0; i < message.praiseusers.size(); i++) {
+								if (message.praiseusers.get(i).equals(
+										app.data.user.phone)) {
+									message.praiseusers.remove(i);
+									break;
+								}
+							}
+							praiseStatus = false;
+							app.UIHandler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									timeImage
+											.setImageResource(R.drawable.praise);
+									timeText.setText("共获得"
+											+ message.praiseusers.size() + "个赞");
+								}
+							});
+						}
+					}
+					Log.e("Coolspan", notice + "-" + flag + "------点赞提示消息");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}

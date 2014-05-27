@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="7dp"
-            android:text="樱桃小丸子"
+            android:text=""
             android:textColor="#fff"
             android:textSize="13sp" />
 
@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp" >
+            android:layout_marginRight="15dp" >
 
             <ImageView
                 android:layout_width="20dp"
@@ -108,11 +108,14 @@
                 android:src="@drawable/time" />
 
             <TextView
+                android:id="@+id/tv_messageTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="2dp"
-                android:text="昨天20:33" />
+                android:layout_marginLeft="5dp"
+                android:lineSpacingMultiplier="1.2"
+                android:text="昨天20:33"
+                android:textColor="#fff" />
         </LinearLayout>
     </RelativeLayout>
 

@@ -300,9 +300,10 @@ public class ChatFriendFragment extends BaseFragment {
 
 		if (mStatus == CHAT_FRIEND) {
 			groupTopBar.setVisibility(View.VISIBLE);
-			if(!mNowChatFriend.alias.equals("")&&mNowChatFriend.alias!=null){
+			if (!mNowChatFriend.alias.equals("")
+					&& mNowChatFriend.alias != null) {
 				textView_groupName.setText(mNowChatFriend.alias);
-			}else{
+			} else {
 				textView_groupName.setText(mNowChatFriend.nickName);
 			}
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -901,16 +902,17 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				//TODO
+				// TODO
 				rl_face.setVisibility(View.GONE);
-				new Thread(){
+				new Thread() {
 					public void run() {
 						try {
 							sleep(50);
 							app.UIHandler.post(new Runnable() {
 								@Override
 								public void run() {
-									chatContent.setSelection(chatContent.getBottom());
+									chatContent.setSelection(chatContent
+											.getBottom());
 								}
 							});
 						} catch (InterruptedException e) {
@@ -918,7 +920,7 @@ public class ChatFriendFragment extends BaseFragment {
 						}
 					};
 				}.start();
-				
+
 			}
 		});
 		editText_message.addTextChangedListener(new TextWatcher() {
@@ -982,6 +984,7 @@ public class ChatFriendFragment extends BaseFragment {
 							.getExpressionString(getActivity(), s.toString(),
 									faceRegx, expressionFaceMap);
 					editText_message.setText(spannableString);
+					editText_message.setSelection(selectionIndex);
 				}
 			}
 		});
