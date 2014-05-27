@@ -4,47 +4,46 @@
     android:layout_height="match_parent"
     tools:context=".PicAndVoiceDetailActivity" >
 
-	<android.support.v4.view.ViewPager
-	    android:id="@+id/picandvoice_Pager"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:layout_alignParentLeft="true"
-	    android:layout_gravity="center"
-	    android:flipInterval="30" />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/picandvoice_Pager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="center"
+        android:flipInterval="30" />
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/ll_picandvoice_navigation"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="#38000000"
-        android:visibility="visible" >
+        android:gravity="center"
+        android:visibility="visible"
+        >
 
         <ImageView
             android:id="@+id/PicAndVoiceDetailBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
+            android:clickable="false"
+            
             android:src="@drawable/back" />
-
-        <TextView
-            android:id="@+id/tv_setcover"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="设为封面"
-            android:textColor="#fff"
-            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tv_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@+id/PicAndVoiceDetailBack"
             android:text="6/6"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_setcover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设为封面"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -52,19 +51,14 @@
             android:id="@+id/iv_picandvoice_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/tv_setcover"
             android:src="@drawable/picandvoice_cancel" />
 
         <ImageView
             android:id="@+id/iv_picandvoice_del"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/iv_picandvoice_cancel"
             android:layout_marginRight="20dp"
             android:src="@drawable/picandvoice_del" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

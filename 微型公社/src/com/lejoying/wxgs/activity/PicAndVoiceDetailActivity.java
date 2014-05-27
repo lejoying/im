@@ -21,14 +21,15 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.app.Activity;
 import android.content.Intent;
@@ -38,7 +39,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
-
+	LinearLayout ll_picandvoice_navigation;
 	TextView tv_setcover, mediaTotalView;
 	ImageView PicAndVoiceDetailBack, deleteMediaView, selectedCoverView;
 	ViewPager picandvoice_Pager;
@@ -66,6 +67,12 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		mInflater = getLayoutInflater();
 		setContentView(R.layout.activity_picandvoicedetail);
 		getWindow().setBackgroundDrawableResource(R.drawable.square_background);
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		density = dm.density;
+		dip = (int) (40 * density + 0.5f);
+		height = dm.heightPixels;
+		width = dm.widthPixels;
 		initLayout();
 		initData();
 		initEvent();
@@ -159,13 +166,47 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	}
 
 	void initLayout() {
+		ll_picandvoice_navigation=(LinearLayout) findViewById(R.id.ll_picandvoice_navigation);
 		tv_setcover = (TextView) findViewById(R.id.tv_setcover);
 		mediaTotalView = (TextView) findViewById(R.id.tv_number);
 		PicAndVoiceDetailBack = (ImageView) findViewById(R.id.PicAndVoiceDetailBack);
 		deleteMediaView = (ImageView) findViewById(R.id.iv_picandvoice_del);
 		selectedCoverView = (ImageView) findViewById(R.id.iv_picandvoice_cancel);
 		picandvoice_Pager = (ViewPager) findViewById(R.id.picandvoice_Pager);
-
+		
+		tv_setcover.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		mediaTotalView.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		
+		RelativeLayout.LayoutParams navigationLayoutParam = new RelativeLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, (int)(height*0.078125f));
+		navigationLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		ll_picandvoice_navigation.setLayoutParams(navigationLayoutParam);
+		
+		LinearLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, (int)(25*density+0.5f));
+		PicAndVoiceDetailBackLayoutParam.leftMargin=(int)(width*0.06944444f);
+		PicAndVoiceDetailBack.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
+		
+		LinearLayout.LayoutParams mediaTotalViewLayoutParam = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		mediaTotalViewLayoutParam.leftMargin=(int)(width*0.02777778f);
+		mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
+		
+		LinearLayout.LayoutParams tv_setcoverLayoutParam = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		tv_setcoverLayoutParam.leftMargin=(int)(width*0.125f);
+		tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
+		
+		LinearLayout.LayoutParams selectedCoverViewLayoutParam = new LinearLayout.LayoutParams(
+				(int)(width*0.06944444f),(int)(height*0.0390625f));
+		selectedCoverViewLayoutParam.leftMargin=(int)(width*0.03472222f);
+		selectedCoverView.setLayoutParams(selectedCoverViewLayoutParam);
+		
+		LinearLayout.LayoutParams deleteMediaViewLayoutParam = new LinearLayout.LayoutParams(
+				(int)(width*0.06944444f),(int)(height*0.0390625f));
+		deleteMediaViewLayoutParam.leftMargin=(int)(width*0.208333333f);
+		deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
+		
 		tv_setcover.setOnClickListener(this);
 		PicAndVoiceDetailBack.setOnClickListener(this);
 		deleteMediaView.setOnClickListener(this);
@@ -174,12 +215,6 @@ public class PicAndVoiceDetailActivity extends Activity implements
 
 	void initData() {
 		mediaTotal = 0;
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		density = dm.density;
-		dip = (int) (40 * density + 0.5f);
-		height = dm.heightPixels;
-		width = dm.widthPixels;
 		mainListViews = new ArrayList<View>();
 		for (int i = 0; i < ReleaseActivity.voices.size(); i++) {
 			mediaTotal++;

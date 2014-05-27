@@ -28,6 +28,7 @@ import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.FileHandler;
 import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgSettings;
 import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
@@ -143,7 +144,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		initData();
 		super.onCreate(savedInstanceState);
 	}
-
+	
 	protected void onResume() {
 		CircleMenu.hide();
 		super.onResume();
@@ -757,6 +758,26 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				&& voices.size() == 0) {
 			Alert.showMessage("发送内容不能为空");
 			return;
+		}
+		if(images.size()!=0){
+			for(int i=0;i<images.size();i++){
+				if(images.get(i).get("bitmap")!=null){
+					final int j=i;
+					app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+						@Override
+						public void setParams(SaveSettings settings) {
+							settings.source = (Bitmap)images.get(j).get("bitmap");
+							settings.compressFormat = settings.PNG;
+							settings.folder = app.sdcardImageFolder;
+						}
+						
+						@Override
+						public void onSuccess(String fileName, String base64) {
+							
+						}
+					});
+				}
+			}
 		}
 		if (broadcast == null || broadcast.equals("")) {
 			if (images.size() == 0) {

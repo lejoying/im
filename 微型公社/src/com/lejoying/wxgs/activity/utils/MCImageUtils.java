@@ -121,31 +121,30 @@ public final class MCImageUtils {
 	public static Bitmap getCutBitmap(Bitmap bitmap, int width, int height,
 			int style) {
 		if (bitmap == null) {
-			bitmap = BitmapFactory.decodeResource(app.getResources(),
+			bitmap =BitmapFactory.decodeResource(app.getResources(),
 					R.drawable.defaultimage);
-		}
-		int btwidth = bitmap.getWidth();
-		int btheight = bitmap.getHeight();
-		float scaleWidth = ((float) width) / btwidth;
-		float scaleHeight = ((float) height) / btheight;
-		if (width > btwidth || height > btheight) {
-			if (scaleWidth > scaleHeight) {
-				bitmap = Bitmap.createScaledBitmap(bitmap, width,
-						(int) (((float) width) / btwidth * btheight), true);
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
-				return bitmap;
-			} else {
-				bitmap = Bitmap.createScaledBitmap(bitmap,
-						(int) (((float) height) / btheight * btwidth), height,
-						true);
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
-				return bitmap;
+		}else{
+			int btwidth = bitmap.getWidth();
+			int btheight = bitmap.getHeight();
+			float scaleWidth = ((float) width) / btwidth;
+			float scaleHeight = ((float) height) / btheight;
+			if (width > btwidth || height > btheight) {
+				if (scaleWidth > scaleHeight) {
+					bitmap = Bitmap.createScaledBitmap(bitmap, width,
+							(int) (((float) width) / btwidth * btheight), true);
+					bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+					return bitmap;
+				} else {
+					bitmap = Bitmap.createScaledBitmap(bitmap,
+							(int) (((float) height) / btheight * btwidth), height,
+							true);
+					bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+					return bitmap;
+				}
 			}
+			bitmap = Bitmap.createBitmap(bitmap, (btwidth - width) / 2,
+					(btheight - height) / 2, width, height);
 		}
-		bitmap = Bitmap.createBitmap(bitmap, (btwidth - width) / 2,
-				(btheight - height) / 2, width, height);
-		// bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
-		// ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
 		return bitmap;
 	}
 
