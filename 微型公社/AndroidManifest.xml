@@ -30,7 +30,7 @@
         android:persistent="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.lejoying.wxgs.activity.LaunchActivity"
+            android:name="com.lejoying.wxgs.activity.SDCardImagesDirectoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
             <intent-filter>

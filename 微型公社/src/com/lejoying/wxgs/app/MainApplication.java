@@ -20,6 +20,7 @@ import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.AsyncHandler;
 import com.lejoying.wxgs.app.handler.EventHandler;
 import com.lejoying.wxgs.app.handler.FileHandler;
 import com.lejoying.wxgs.app.handler.LocationHandler;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements
 	public FileHandler fileHandler;
 	public EventHandler eventHandler;
 	public LocationHandler locationHandler;
+	public AsyncHandler asyncHandler;
 
 	public static String currentTAG;
 	public static BaseActivity currentActivity;
@@ -84,6 +86,8 @@ public class MainApplication extends Application implements
 		eventHandler.initialize(this);
 		locationHandler = new LocationHandler();
 		locationHandler.initialize(this);
+		asyncHandler = new AsyncHandler();
+		asyncHandler.initialized(10, UIHandler);
 
 		// initialize tool
 		mSHA1 = new SHA1();

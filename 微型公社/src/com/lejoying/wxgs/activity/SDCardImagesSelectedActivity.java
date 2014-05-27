@@ -2,10 +2,13 @@ package com.lejoying.wxgs.activity;
 
 import java.io.File;
 import java.lang.ref.SoftReference;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +26,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.MyImageView;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.handler.AsyncHandler.Execution;
 
 public class SDCardImagesSelectedActivity extends Activity {
 
@@ -37,10 +41,15 @@ public class SDCardImagesSelectedActivity extends Activity {
 
 	List<String> mImages;
 
+	Map<String, SoftReference<Bitmap>> bitmaps;
+
+	int listStatus;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
 		inflater = this.getLayoutInflater();
 		setContentView(R.layout.activity_sdcardimageselected);
 		mImagesContent = (ListView) findViewById(R.id.gv_imagesContent);
@@ -54,12 +63,18 @@ public class SDCardImagesSelectedActivity extends Activity {
 
 			@Override
 			public void onScrollStateChanged(AbsListView arg0, int arg1) {
+				listStatus = arg1;
+				if (arg1 == SCROLL_STATE_IDLE) {
+					myAdapter.notifyDataSetChanged();
+				}
 			}
 
 			@Override
 			public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3) {
 			}
 		});
+		defaultImage = BitmapFactory.decodeResource(getResources(),
+				R.drawable.defaultimage);
 		initData();
 		initEvent();
 
@@ -81,6 +96,8 @@ public class SDCardImagesSelectedActivity extends Activity {
 		directoryName.setText(directory);
 	}
 
+	Bitmap defaultImage;
+
 	class MyAdapter extends BaseAdapter {
 
 		@Override
@@ -91,12 +108,12 @@ public class SDCardImagesSelectedActivity extends Activity {
 
 		@Override
 		public Object getItem(int arg0) {
-			return mImages.get(arg0 % 3 == 0 ? arg0 / 3 : arg0 + 1);
+			return arg0;
 		}
 
 		@Override
 		public long getItemId(int arg0) {
-			return arg0 % 3 == 0 ? arg0 / 3 : arg0 + 1;
+			return arg0;
 		}
 
 		@Override
@@ -121,72 +138,23 @@ public class SDCardImagesSelectedActivity extends Activity {
 			final MessageHolder messageHolder0 = messageHolder;
 			if (position * 3 < mImages.size()) {
 				messageHolder0.iv1.setVisibility(View.VISIBLE);
-				messageHolder0.iv1.setImageDrawable(getResources().getDrawable(
-						R.drawable.defaultimage));
 				final String path = mImages.get(position * 3);
-				// Uri uri = Uri.parse(path);
-				// mImageView.setImageURI(uri);
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						final Bitmap bitmapZoom = MCImageUtils
-								.getZoomBitmapFromFile(new File(path), 200, 200);
-						// Bitmap bitmap0 = BitmapFactory.decodeFile(path);
-						final Bitmap bitmap = ThumbnailUtils.extractThumbnail(
-								bitmapZoom, 100, 100,
-								ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-						final SoftReference<Bitmap> bitmap0 = new SoftReference<Bitmap>(
-								bitmap);
-						if (!bitmapZoom.isRecycled()) {
-							bitmapZoom.recycle();
-						}
-						app.UIHandler.post(new Runnable() {
-
-							@Override
-							public void run() {
-								messageHolder0.iv1.setImageBitmap(bitmap0.get());
-								if (!bitmap.isRecycled()) {
-									// bitmap.recycle();
-								}
-							}
-						});
-					}
-				}).start();
+				SoftReference<Bitmap> softBitmap = bitmaps.get(path);
+				if (softBitmap == null || softBitmap.get() == null) {
+					loadImage(path);
+					softBitmap = new SoftReference<Bitmap>(defaultImage);
+				}
+				messageHolder0.iv1.setImageBitmap(softBitmap.get());
 			}
 			if (position * 3 + 1 < mImages.size()) {
 				messageHolder0.iv2.setVisibility(View.VISIBLE);
-				messageHolder0.iv2.setImageDrawable(getResources().getDrawable(
-						R.drawable.defaultimage));
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						String path1 = mImages.get(position * 3 + 1);
-						final Bitmap bitmapZoom = MCImageUtils
-								.getZoomBitmapFromFile(new File(path1), 200,
-										200);
-						// Bitmap bitmap01 = BitmapFactory.decodeFile(path1);
-						final Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(
-								bitmapZoom, 100, 100,
-								ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-						final SoftReference<Bitmap> bitmap0 = new SoftReference<Bitmap>(
-								bitmap1);
-						if (!bitmapZoom.isRecycled()) {
-							bitmapZoom.recycle();
-						}
-						app.UIHandler.post(new Runnable() {
-
-							@Override
-							public void run() {
-								messageHolder0.iv2.setImageBitmap(bitmap0.get());
-								if (!bitmap1.isRecycled()) {
-									// bitmap1.recycle();
-								}
-							}
-						});
-					}
-				}).start();
+				final String path = mImages.get(position * 3 + 1);
+				SoftReference<Bitmap> softBitmap = bitmaps.get(path);
+				if (softBitmap == null || softBitmap.get() == null) {
+					loadImage(path);
+					softBitmap = new SoftReference<Bitmap>(defaultImage);
+				}
+				messageHolder0.iv2.setImageBitmap(softBitmap.get());
 			} else {
 				messageHolder0.iv2.setVisibility(View.GONE);
 			}
@@ -194,41 +162,47 @@ public class SDCardImagesSelectedActivity extends Activity {
 				messageHolder0.iv3.setVisibility(View.VISIBLE);
 				messageHolder0.iv3.setImageDrawable(getResources().getDrawable(
 						R.drawable.defaultimage));
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						String path1 = mImages.get(position * 3 + 2);
-						final Bitmap bitmapZoom = MCImageUtils
-								.getZoomBitmapFromFile(new File(path1), 200,
-										200);
-						// Bitmap bitmap01 = BitmapFactory.decodeFile(path1);
-						final Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(
-								bitmapZoom, 100, 100,
-								ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-						final SoftReference<Bitmap> bitmap0 = new SoftReference<Bitmap>(
-								bitmap1);
-						if (!bitmapZoom.isRecycled()) {
-							bitmapZoom.recycle();
-						}
-						app.UIHandler.post(new Runnable() {
-
-							@Override
-							public void run() {
-								messageHolder0.iv3.setImageBitmap(bitmap0.get());
-								if (!bitmap1.isRecycled()) {
-									// bitmap1.recycle();
-								}
-							}
-						});
-					}
-				}).start();
+				final String path = mImages.get(position * 3 + 2);
+				SoftReference<Bitmap> softBitmap = bitmaps.get(path);
+				if (softBitmap == null || softBitmap.get() == null) {
+					loadImage(path);
+					softBitmap = new SoftReference<Bitmap>(defaultImage);
+				}
+				messageHolder0.iv3.setImageBitmap(softBitmap.get());
 			} else {
 				messageHolder0.iv3.setVisibility(View.GONE);
 			}
 
 			return view;
 		}
+	}
+
+	private void loadImage(final String path) {
+		if (listStatus == OnScrollListener.SCROLL_STATE_FLING) {
+			return;
+		}
+		bitmaps.put(path, new SoftReference<Bitmap>(defaultImage));
+		app.asyncHandler.execute(new Execution<Bitmap>() {
+			@Override
+			protected void onResult(Bitmap t) {
+				myAdapter.notifyDataSetChanged();
+			}
+
+			@Override
+			protected Bitmap asyncExecute() {
+				Bitmap bitmapZoom = MCImageUtils.getZoomBitmapFromFile(
+						new File(path), 200, 200);
+				// Bitmap bitmap0 = BitmapFactory.decodeFile(path);
+				Bitmap bitmap = ThumbnailUtils.extractThumbnail(bitmapZoom,
+						100, 100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+				SoftReference<Bitmap> bitmap0 = new SoftReference<Bitmap>(
+						bitmap);
+				bitmaps.put(path, bitmap0);
+				return bitmap;
+			}
+
+		});
+
 	}
 
 	class MessageHolder {

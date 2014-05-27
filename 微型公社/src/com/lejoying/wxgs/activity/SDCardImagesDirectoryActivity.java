@@ -114,6 +114,9 @@ public class SDCardImagesDirectoryActivity extends Activity {
 					// Bitmap bitmap0 = BitmapFactory.decodeFile(path);
 					final Bitmap bitmap0 = MCImageUtils.getZoomBitmapFromFile(
 							new File(path), 100, 100);
+					if (bitmap0 == null) {
+						return;
+					}
 					final Bitmap bitmap = ThumbnailUtils.extractThumbnail(
 							bitmap0, 60, 60,
 							ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
