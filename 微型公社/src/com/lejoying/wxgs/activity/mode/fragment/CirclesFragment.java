@@ -154,10 +154,15 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	public void notifyViews() {
-		if (mode.equals("normal")) {
-			notifyViews(true, true);
-		} else if (mode.equals("edit")) {
+		if (MainActivity.instance.mMainMode.mChatFragment.isAdded()
+				|| MainActivity.instance.mMainMode.mChatGroupFragment.isAdded()) {
 			notifyViews(true, false);
+		} else {
+			if (mode.equals("normal")) {
+				notifyViews(true, true);
+			} else if (mode.equals("edit")) {
+				notifyViews(true, false);
+			}
 		}
 	}
 
@@ -1722,9 +1727,9 @@ public class CirclesFragment extends BaseFragment {
 				.findViewById(R.id.iv_head);
 		TextView nickname = (TextView) convertView
 				.findViewById(R.id.tv_nickname);
-		if(!friend.alias.equals("")&&friend.alias!=null){
+		if (!friend.alias.equals("") && friend.alias != null) {
 			nickname.setText(friend.alias);
-		}else{
+		} else {
 			nickname.setText(friend.nickName);
 		}
 		final String headFileName = friend.head;

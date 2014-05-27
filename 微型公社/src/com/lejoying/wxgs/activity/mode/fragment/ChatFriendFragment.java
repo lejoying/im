@@ -1281,6 +1281,7 @@ public class ChatFriendFragment extends BaseFragment {
 					@Override
 					public void modifyUI() {
 						mMainModeManager.mCirclesFragment.notifyViews();
+//						mMainModeManager.handleMenu(false);
 					}
 				});
 			}
