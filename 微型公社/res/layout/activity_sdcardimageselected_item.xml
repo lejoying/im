@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:layout_height="match_parent" >
 
-    <ImageView
+    <com.lejoying.wxgs.activity.view.MyImageView
         android:id="@+id/iv_imageContent1"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_weight="1" />
+        android:layout_width="113dp"
+        android:layout_height="113dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/temp" />
 
-    <ImageView
+    <com.lejoying.wxgs.activity.view.MyImageView
         android:id="@+id/iv_imageContent2"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_weight="1" />
+        android:layout_width="113dp"
+        android:layout_height="113dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/temp" />
 
-    <ImageView
+    <com.lejoying.wxgs.activity.view.MyImageView
         android:id="@+id/iv_imageContent3"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_weight="1" />
+        android:layout_width="113dp"
+        android:layout_height="113dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/temp" />
 
-</LinearLayout>
+</RelativeLayout>
