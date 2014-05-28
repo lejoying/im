@@ -11,12 +11,31 @@
         android:layout_marginLeft="5dp"
         android:src="@drawable/temp" />
 
+    <ImageView
+        android:id="@+id/iv_imageContentStatus1"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="87dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/seleted_status"
+        android:visibility="gone" />
+
     <com.lejoying.wxgs.activity.view.MyImageView
         android:id="@+id/iv_imageContent2"
         android:layout_width="113dp"
         android:layout_height="113dp"
         android:layout_centerHorizontal="true"
         android:src="@drawable/temp" />
+
+    <ImageView
+        android:id="@+id/iv_imageContentStatus2"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginLeft="205dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/seleted_status"
+        android:visibility="gone" />
 
     <com.lejoying.wxgs.activity.view.MyImageView
         android:id="@+id/iv_imageContent3"
@@ -25,5 +44,15 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="5dp"
         android:src="@drawable/temp" />
+
+    <ImageView
+        android:id="@+id/iv_imageContentStatus3"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="11dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/seleted_status"
+        android:visibility="gone" />
 
 </RelativeLayout>

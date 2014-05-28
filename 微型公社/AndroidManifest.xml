@@ -30,7 +30,7 @@
         android:persistent="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.lejoying.wxgs.activity.LaunchActivity"
+            android:name="com.lejoying.wxgs.activity.MapStorageDirectoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
             <intent-filter>
@@ -66,7 +66,7 @@
             android:theme="@style/CommonStyle" >
         </activity>
         <activity
-            android:name="com.lejoying.wxgs.activity.SDCardImagesSelectedActivity"
+            android:name="com.lejoying.wxgs.activity.MapStorageImagesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>

@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,16 +22,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AbsListView.OnScrollListener;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.handler.AsyncHandler.Execution;
 
-public class SDCardImagesDirectoryActivity extends Activity {
+public class MapStorageDirectoryActivity extends Activity {
 
 	MainApplication app = MainApplication.getMainApplication();
 	LayoutInflater inflater;
@@ -39,29 +43,55 @@ public class SDCardImagesDirectoryActivity extends Activity {
 	public static Map<String, List<String>> directoryToImages = new HashMap<String, List<String>>();
 
 	public static String currentShowDirectory = "";
+	MapStorageDirectoryAdapter mapStorageDirectoryAdapter;
 
 	ListView imagesDirectory;
 	TextView cancleSelect;
+	Bitmap defaultImage;
+	int listStatus;
+	Map<String, SoftReference<Bitmap>> bitmaps;
+
+	public static List<String> selectedImages = new ArrayList<String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.activity_selectimagedirectory);
+		setContentView(R.layout.activity_mapstoragedirectory);
 		imagesDirectory = (ListView) findViewById(R.id.gv_imagesDirectory);
 		cancleSelect = (TextView) findViewById(R.id.tv_cancle);
 		inflater = this.getLayoutInflater();
-		getSDImages();// count 35
-		MyImageDirectoryAdapter myImageDirectoryAdapter = new MyImageDirectoryAdapter();
-		imagesDirectory.setAdapter(myImageDirectoryAdapter);
+		mapStorageDirectoryAdapter = new MapStorageDirectoryAdapter();
+		imagesDirectory.setAdapter(mapStorageDirectoryAdapter);
+		defaultImage = ThumbnailUtils.extractThumbnail(BitmapFactory
+				.decodeResource(getResources(), R.drawable.defaultimage), 60,
+				60, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
+		directorys = new ArrayList<String>();
+		directoryToImages = new HashMap<String, List<String>>();
+		getSDImages();
 		initEvent();
 		super.onCreate(savedInstanceState);
 	}
 
 	private void initEvent() {
+		imagesDirectory.setOnScrollListener(new OnScrollListener() {
+
+			@Override
+			public void onScrollStateChanged(AbsListView arg0, int arg1) {
+				listStatus = arg1;
+				if (arg1 == SCROLL_STATE_IDLE) {
+					mapStorageDirectoryAdapter.notifyDataSetChanged();
+				}
+			}
+
+			@Override
+			public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3) {
+			}
+		});
 		cancleSelect.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(SDCardImagesDirectoryActivity.this,
+				Intent intent = new Intent(MapStorageDirectoryActivity.this,
 						MainActivity.class);
 				startActivity(intent);
 
@@ -69,7 +99,7 @@ public class SDCardImagesDirectoryActivity extends Activity {
 		});
 	}
 
-	class MyImageDirectoryAdapter extends BaseAdapter {
+	class MapStorageDirectoryAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
@@ -93,7 +123,7 @@ public class SDCardImagesDirectoryActivity extends Activity {
 			if (convertView == null) {
 				imagesHolder = new ImagesHolder();
 				convertView = inflater.inflate(
-						R.layout.activity_sdcardimagedirectory_item, null);
+						R.layout.activity_mapstoragedirectory_item, null);
 				imagesHolder.directoryImage = (ImageView) convertView
 						.findViewById(R.id.iv_directoryImage);
 				imagesHolder.directoryName = (TextView) convertView
@@ -106,38 +136,24 @@ public class SDCardImagesDirectoryActivity extends Activity {
 			}
 			final String path = directoryToImages.get(directorys.get(position))
 					.get(0);
-			final ImageView image = imagesHolder.directoryImage;
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					// Bitmap bitmap0 = BitmapFactory.decodeFile(path);
-					final Bitmap bitmap0 = MCImageUtils.getZoomBitmapFromFile(
-							new File(path), 100, 100);
-					final Bitmap bitmap = ThumbnailUtils.extractThumbnail(
-							bitmap0, 60, 60,
-							ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-					if (!bitmap0.isRecycled()) {
-						bitmap0.recycle();
-					}
-					app.UIHandler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							image.setImageBitmap(bitmap);
-						}
-					});
-				}
-			}).start();
+			SoftReference<Bitmap> softBitmap = bitmaps.get(path);
+			if (softBitmap == null || softBitmap.get() == null) {
+				loadImage(path);
+				softBitmap = new SoftReference<Bitmap>(defaultImage);
+			}
+			imagesHolder.directoryImage.setImageBitmap(softBitmap.get());
 			imagesHolder.directoryName.setText(directorys.get(position)
-					.substring(directorys.get(position).lastIndexOf("/") + 1));
+					.substring(directorys.get(position).lastIndexOf("/") + 1)
+					+ "("
+					+ directoryToImages.get(directorys.get(position)).size()
+					+ ")");
 			convertView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(
-							SDCardImagesDirectoryActivity.this,
-							SDCardImagesSelectedActivity.class);
+							MapStorageDirectoryActivity.this,
+							MapStorageImagesActivity.class);
 					currentShowDirectory = directorys.get(position);
 					startActivity(intent);
 				}
@@ -152,12 +168,39 @@ public class SDCardImagesDirectoryActivity extends Activity {
 		ImageView directoryOff;
 	}
 
+	private void loadImage(final String path) {
+		if (listStatus == OnScrollListener.SCROLL_STATE_FLING) {
+			return;
+		}
+		bitmaps.put(path, new SoftReference<Bitmap>(defaultImage));
+		app.asyncHandler.execute(new Execution<Bitmap>() {
+			@Override
+			protected void onResult(Bitmap t) {
+				mapStorageDirectoryAdapter.notifyDataSetChanged();
+			}
+
+			@Override
+			protected Bitmap asyncExecute() {
+				Bitmap bitmapZoom = MCImageUtils.getZoomBitmapFromFile(
+						new File(path), 100, 100);
+				Bitmap bitmap = ThumbnailUtils.extractThumbnail(bitmapZoom, 60,
+						60, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+				SoftReference<Bitmap> bitmap0 = new SoftReference<Bitmap>(
+						bitmap);
+				bitmaps.put(path, bitmap0);
+				return bitmap;
+			}
+
+		});
+
+	}
+
 	public void getSDImages() {
 		sendBroadcast(new Intent(
 				Intent.ACTION_MEDIA_MOUNTED,
 				Uri.parse("file://" + Environment.getExternalStorageDirectory())));
 		Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-		ContentResolver contentResolver = SDCardImagesDirectoryActivity.this
+		ContentResolver contentResolver = MapStorageDirectoryActivity.this
 				.getContentResolver();
 		String[] projection = { MediaStore.Images.Media._ID,
 				MediaStore.Images.Media.DISPLAY_NAME,
@@ -171,6 +214,7 @@ public class SDCardImagesDirectoryActivity extends Activity {
 		if (cursor != null) {
 			HashMap<String, String> imageMap = null;
 			cursor.moveToFirst();
+			int index = 0;
 			while (cursor.moveToNext()) {
 				imageMap = new HashMap<String, String>();
 				imageMap.put("imageID", cursor.getString(cursor
@@ -188,6 +232,18 @@ public class SDCardImagesDirectoryActivity extends Activity {
 				imageMap.put("data", path);
 				imageList.add(imageMap);
 				String directory = path.substring(0, path.lastIndexOf("/"));
+				if (directorys.size() == 0) {
+					List<String> imagesList = new ArrayList<String>();
+					imagesList.add(path);
+					directoryToImages.put("/最近照片", imagesList);
+					directorys.add("/最近照片");
+					index++;
+				} else {
+					if (index < 50) {
+						directoryToImages.get("/最近照片").add(path);
+						index++;
+					}
+				}
 				if (directoryToImages.get(directory) == null) {
 					List<String> imagesList = new ArrayList<String>();
 					imagesList.add(path);

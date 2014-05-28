@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_gravity="center_vertical"
@@ -13,7 +14,8 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:padding="3dp"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/tv_directoryName"
@@ -26,12 +28,16 @@
 
     <ImageView
         android:id="@+id/iv_directoryOff"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="30dp"
+        android:layout_height="25dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="12dp"
-        android:background="#999999"
-        android:src="@drawable/back" />
+        android:paddingBottom="5dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="5dp"
+        android:src="@drawable/mapdirectory_go"
+        tools:ignore="ContentDescription" />
 
 </RelativeLayout>
