@@ -44,6 +44,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	ImageView PicAndVoiceDetailBack, deleteMediaView, selectedCoverView;
 	ViewPager picandvoice_Pager;
 	LayoutInflater mInflater;
+	String activity;
 
 	int mediaTotal = 0;
 	int currentCoverIndex = -1;
@@ -64,6 +65,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		int currentIndex = getIntent().getExtras().getInt("currentIndex");
+		activity = getIntent().getExtras().getString("Activity");
 		mInflater = getLayoutInflater();
 		setContentView(R.layout.activity_picandvoicedetail);
 		getWindow().setBackgroundDrawableResource(R.drawable.square_background);
@@ -76,7 +78,12 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		initLayout();
 		initData();
 		initEvent();
-		currentCoverIndex = ReleaseActivity.currentCoverIndex;
+		if (activity.equals("ReleaseActivity")) {
+			currentCoverIndex = ReleaseActivity.currentCoverIndex;
+		} else {
+			
+		}
+
 		if (currentCoverIndex == 1) {
 			selectedCoverView.setImageResource(R.drawable.picandvoice_affirm);
 		}
@@ -91,36 +98,43 @@ public class PicAndVoiceDetailActivity extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-				if (currentCoverIndex == currentPageSize) {
-					iscover = false;
-					ReleaseActivity.cover = "";
-					currentCoverIndex = -1;
-					selectedCoverView
-							.setImageResource(R.drawable.picandvoice_cancel);
-				}
-				if (currentPageSize <= ReleaseActivity.voices.size()) {
-					ReleaseActivity.voices.remove(currentPageSize - 1);
-				} else {
-					ReleaseActivity.images.remove(currentPageSize
-							- ReleaseActivity.voices.size() - 1);
-				}
-				if (ReleaseActivity.voices.size()
-						+ ReleaseActivity.images.size() == 0) {
-					mFinish();
-				} else {
-					initData();
-					myPageAdapter = new MyPageAdapter(mainListViews);
-					picandvoice_Pager.setAdapter(myPageAdapter);
-				}
-				if (ReleaseActivity.voices.size()
-						+ ReleaseActivity.images.size() > currentPageSize) {
-					picandvoice_Pager.setCurrentItem(currentPageSize - 1);
-					mediaTotalView.setText(currentPageSize + "/" + mediaTotal);
-				} else {
-					currentPageSize = ReleaseActivity.voices.size()
-							+ ReleaseActivity.images.size();
-					picandvoice_Pager.setCurrentItem(currentPageSize - 1);
-					mediaTotalView.setText(currentPageSize + "/" + mediaTotal);
+				if(activity.equals("ReleaseActivity")){
+					if (currentCoverIndex == currentPageSize) {
+						iscover = false;
+						ReleaseActivity.cover = "";
+						currentCoverIndex = -1;
+						selectedCoverView
+								.setImageResource(R.drawable.picandvoice_cancel);
+					}
+					if (currentPageSize <= ReleaseActivity.voices.size()) {
+						ReleaseActivity.voices.remove(currentPageSize - 1);
+					} else {
+						ReleaseActivity.images.remove(currentPageSize
+								- ReleaseActivity.voices.size() - 1);
+					}
+					if (ReleaseActivity.voices.size()
+							+ ReleaseActivity.images.size() == 0) {
+						mFinish();
+					} else {
+						initData();
+						myPageAdapter = new MyPageAdapter(mainListViews);
+						picandvoice_Pager.setAdapter(myPageAdapter);
+					}
+					if (ReleaseActivity.voices.size()
+							+ ReleaseActivity.images.size() > currentPageSize) {
+						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
+						mediaTotalView.setText(currentPageSize + "/" + mediaTotal);
+					} else {
+						currentPageSize = ReleaseActivity.voices.size()
+								+ ReleaseActivity.images.size();
+						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
+						mediaTotalView.setText(currentPageSize + "/" + mediaTotal);
+					}
+				
+				}else if(activity=="todo"){
+					
+				}else{
+					
 				}
 			}
 		});
@@ -166,46 +180,55 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	}
 
 	void initLayout() {
-		ll_picandvoice_navigation=(LinearLayout) findViewById(R.id.ll_picandvoice_navigation);
+		ll_picandvoice_navigation = (LinearLayout) findViewById(R.id.ll_picandvoice_navigation);
 		tv_setcover = (TextView) findViewById(R.id.tv_setcover);
 		mediaTotalView = (TextView) findViewById(R.id.tv_number);
 		PicAndVoiceDetailBack = (ImageView) findViewById(R.id.PicAndVoiceDetailBack);
 		deleteMediaView = (ImageView) findViewById(R.id.iv_picandvoice_del);
 		selectedCoverView = (ImageView) findViewById(R.id.iv_picandvoice_cancel);
 		picandvoice_Pager = (ViewPager) findViewById(R.id.picandvoice_Pager);
-		
-		tv_setcover.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		mediaTotalView.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		
+
+		tv_setcover
+				.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
+		mediaTotalView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+				width * 0.04861111f);
+
 		RelativeLayout.LayoutParams navigationLayoutParam = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, (int)(height*0.078125f));
+				LayoutParams.MATCH_PARENT, (int) (height * 0.078125f));
 		navigationLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		ll_picandvoice_navigation.setLayoutParams(navigationLayoutParam);
-		
+
 		LinearLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, (int)(25*density+0.5f));
-		PicAndVoiceDetailBackLayoutParam.leftMargin=(int)(width*0.06944444f);
+				LayoutParams.WRAP_CONTENT, (int) (25 * density + 0.5f));
+		PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.06944444f);
 		PicAndVoiceDetailBack.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
-		
+
 		LinearLayout.LayoutParams mediaTotalViewLayoutParam = new LinearLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		mediaTotalViewLayoutParam.leftMargin=(int)(width*0.02777778f);
+		mediaTotalViewLayoutParam.leftMargin = (int) (width * 0.02777778f);
 		mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
-		
+
 		LinearLayout.LayoutParams tv_setcoverLayoutParam = new LinearLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		tv_setcoverLayoutParam.leftMargin=(int)(width*0.125f);
+		tv_setcoverLayoutParam.leftMargin = (int) (width * 0.125f);
 		tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
-		
+
 		LinearLayout.LayoutParams selectedCoverViewLayoutParam = new LinearLayout.LayoutParams(
-				(int)(width*0.06944444f),(int)(height*0.0390625f));
-		selectedCoverViewLayoutParam.leftMargin=(int)(width*0.03472222f);
+				(int) (width * 0.06944444f), (int) (height * 0.0390625f));
+		selectedCoverViewLayoutParam.leftMargin = (int) (width * 0.03472222f);
 		selectedCoverView.setLayoutParams(selectedCoverViewLayoutParam);
-		
+
 		LinearLayout.LayoutParams deleteMediaViewLayoutParam = new LinearLayout.LayoutParams(
-				(int)(width*0.06944444f),(int)(height*0.0390625f));
-		deleteMediaViewLayoutParam.leftMargin=(int)(width*0.208333333f);
+				(int) (width * 0.06944444f), (int) (height * 0.0390625f));
+		deleteMediaViewLayoutParam.leftMargin = (int) (width * 0.208333333f);
 		deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
+		
+		if(activity.equals("1")){
+			selectedCoverView.setVisibility(View.GONE);
+		}else if(activity.equals("2")){
+			selectedCoverView.setVisibility(View.GONE);
+			deleteMediaView.setVisibility(View.GONE);
+		}
 		
 		tv_setcover.setOnClickListener(this);
 		PicAndVoiceDetailBack.setOnClickListener(this);
@@ -216,92 +239,96 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	void initData() {
 		mediaTotal = 0;
 		mainListViews = new ArrayList<View>();
-		for (int i = 0; i < ReleaseActivity.voices.size(); i++) {
-			mediaTotal++;
-			// View addView =
-			// mInflater.inflate(R.layout.release_child_navigation,
-			// null);
-			final RecordView recordView = new RecordView(
-					PicAndVoiceDetailActivity.this);
-			recordView.setMode(RecordView.MODE_PROGRESS);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					width, height);
-			recordView.setLayoutParams(params);
-			String voiceFileName = (String) ReleaseActivity.voices.get(i).get(
-					"fileName");
-			File voiceFile = new File(app.sdcardVoiceFolder, voiceFileName);
-			if (voiceFile.exists()) {
-				final MediaPlayer player = MediaPlayer.create(
-						PicAndVoiceDetailActivity.this,
-						Uri.parse(voiceFile.getAbsolutePath()));
-				try {
-					player.prepare();
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				players.add(player);
-				recordView.setProgressTime(player.getDuration());
-				recordView
-						.setPlayButtonClickListener(new PlayButtonClickListener() {
+		if(activity.equals("ReleaseActivity")){
+			for (int i = 0; i < ReleaseActivity.voices.size(); i++) {
+				mediaTotal++;
+				// View addView =
+				// mInflater.inflate(R.layout.release_child_navigation,
+				// null);
+				final RecordView recordView = new RecordView(
+						PicAndVoiceDetailActivity.this);
+				recordView.setMode(RecordView.MODE_PROGRESS);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+						width, height);
+				recordView.setLayoutParams(params);
+				String voiceFileName = (String) ReleaseActivity.voices.get(i)
+						.get("fileName");
+				File voiceFile = new File(app.sdcardVoiceFolder, voiceFileName);
+				if (voiceFile.exists()) {
+					final MediaPlayer player = MediaPlayer.create(
+							PicAndVoiceDetailActivity.this,
+							Uri.parse(voiceFile.getAbsolutePath()));
+					try {
+						player.prepare();
+					} catch (IllegalStateException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					players.add(player);
+					recordView.setProgressTime(player.getDuration());
+					recordView
+							.setPlayButtonClickListener(new PlayButtonClickListener() {
 
-							@Override
-							public void onPlay() {
-								if (!player.isPlaying()) {
-									currentPlayVoice = player;
-									player.start();
-									recordView.startProgress();
+								@Override
+								public void onPlay() {
+									if (!player.isPlaying()) {
+										currentPlayVoice = player;
+										player.start();
+										recordView.startProgress();
+									}
+
 								}
 
-							}
-
-							@Override
-							public void onPause() {
-								if (player.isPlaying()) {
-									player.pause();
-									recordView.stopProgress();
+								@Override
+								public void onPause() {
+									if (player.isPlaying()) {
+										player.pause();
+										recordView.stopProgress();
+									}
 								}
-							}
-						});
-				recordView.setProgressListener(new ProgressListener() {
+							});
+					recordView.setProgressListener(new ProgressListener() {
 
-					@Override
-					public void onProgressEnd() {
-						if (player.isPlaying()) {
-							player.stop();
-							recordView.stopProgress();
+						@Override
+						public void onProgressEnd() {
+							if (player.isPlaying()) {
+								player.stop();
+								recordView.stopProgress();
+							}
+
 						}
 
-					}
+						@Override
+						public void onDrag(float percent) {
+							player.seekTo((int) (player.getDuration() * percent));
 
-					@Override
-					public void onDrag(float percent) {
-						player.seekTo((int) (player.getDuration() * percent));
-
-					}
-				});
+						}
+					});
+				}
+				mainListViews.add(recordView);
 			}
-			mainListViews.add(recordView);
-		}
-		for (int i = 0; i < ReleaseActivity.images.size(); i++) {
-			mediaTotal++;
-			LinearLayout superView = (LinearLayout) mInflater.inflate(
-					R.layout.release_child_navigation, null);
-			ImageView iv = (ImageView) superView
-					.findViewById(R.id.iv_release_child);
-			Map<String, Object> map = ReleaseActivity.images.get(i);
-			if (map.get("gifMovie") != null) {
-				GifMovie gifMovie = (GifMovie) map.get("gifMovie");
-				SampleView sampleview = new SampleView(this, gifMovie, width,
-						height);
-				superView.addView(sampleview);
-				iv.setVisibility(View.GONE);
-			} else {
-				iv.setImageBitmap((Bitmap) ReleaseActivity.images.get(i).get(
-						"bitmap"));
+			for (int i = 0; i < ReleaseActivity.images.size(); i++) {
+				mediaTotal++;
+				LinearLayout superView = (LinearLayout) mInflater.inflate(
+						R.layout.release_child_navigation, null);
+				ImageView iv = (ImageView) superView
+						.findViewById(R.id.iv_release_child);
+				Map<String, Object> map = ReleaseActivity.images.get(i);
+				if (map.get("gifMovie") != null) {
+					GifMovie gifMovie = (GifMovie) map.get("gifMovie");
+					SampleView sampleview = new SampleView(this, gifMovie,
+							width, height);
+					superView.addView(sampleview);
+					iv.setVisibility(View.GONE);
+				} else {
+					iv.setImageBitmap((Bitmap) ReleaseActivity.images.get(i)
+							.get("bitmap"));
+				}
+				mainListViews.add(superView);
 			}
-			mainListViews.add(superView);
+		}else{
+			
 		}
 		mediaTotalView.setText(1 + "/" + mediaTotal);
 	}
@@ -343,14 +370,19 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	}
 
 	public void mFinish() {
-		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i) != null) {
-				players.get(i).release();
+		if (activity.equals("ReleaseActivity")) {
+			for (int i = 0; i < players.size(); i++) {
+				if (players.get(i) != null) {
+					players.get(i).release();
+				}
 			}
+			ReleaseActivity.currentCoverIndex = currentCoverIndex;
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_OK, intent);
+		}else{
+			
 		}
-		ReleaseActivity.currentCoverIndex = currentCoverIndex;
-		Intent intent = new Intent();
-		setResult(Activity.RESULT_OK, intent);
+
 		finish();
 	}
 }

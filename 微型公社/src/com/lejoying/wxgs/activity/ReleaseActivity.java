@@ -50,6 +50,7 @@ import android.graphics.Movie;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -530,6 +531,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		case R.id.release_iv_voice:
 			Intent intent = new Intent(ReleaseActivity.this,
 					SendVoiceActivity.class);
+			//intent.putParcelableArrayListExtra("images", (ArrayList<? extends Parcelable>) images);
 			startActivityForResult(intent, RESULT_MAKEVOICE);
 			break;
 		case R.id.release_tv_cancel:
@@ -1147,6 +1149,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					Intent intent = new Intent(ReleaseActivity.this,
 							PicAndVoiceDetailActivity.class);
 					intent.putExtra("currentIndex", index);
+					intent.putExtra("Activity", "ReleaseActivity");
 					startActivityForResult(intent, RESULT_PICANDVOICE);
 				}
 			});
@@ -1168,6 +1171,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					Intent intent = new Intent(ReleaseActivity.this,
 							PicAndVoiceDetailActivity.class);
 					intent.putExtra("currentIndex", index);
+					intent.putExtra("Activity", "ReleaseActivity");
 					startActivityForResult(intent, RESULT_PICANDVOICE);
 				}
 			});
