@@ -12,6 +12,12 @@
         android:layout_centerHorizontal="true"
         tools:ignore="ContentDescription" />
 
+    <ImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="40dp"
+        android:src="@drawable/noread_message" />
+
     <TextView
         android:id="@+id/tv_nickname"
         android:layout_width="wrap_content"
