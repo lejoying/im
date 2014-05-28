@@ -407,10 +407,13 @@ public class SquareFragment extends BaseFragment {
 					}
 					break;
 				case MotionEvent.ACTION_UP:
-					flag = true;
+					flag = false;
 					horizontalScrollView.smoothScrollTo(child_width
 							* current_item - child_width / 2 - hsv_width / 2,
 							horizontalScrollView.getScrollY());
+					break;
+				case MotionEvent.ACTION_SCROLL:
+					
 					break;
 				}
 				pre_item = current_item;

@@ -4,8 +4,8 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var verifyParams = require('./../../mcserver/lib/verifyParams');
 var redis = require("redis");
-//var client = redis.createClient("6379", "127.0.0.1");
-var client = redis.createClient("6379", "115.28.212.79");
+var client = redis.createClient("6379", "127.0.0.1");
+//var client = redis.createClient("6379", "115.28.212.79");
 var sessionPool = {};
 var notifySquareMessageList = [];
 var threadNotifyCount = 10;
@@ -583,7 +583,7 @@ squareManage.getsquarecomments = function (data, response) {
             console.error(err);
             return;
         } else {
-            if (reply) {
+            if (reply != null) {
                 response.write(JSON.stringify({
                     "提示信息": "获取广播评论成功",
                     gmid: gmid,
@@ -664,6 +664,113 @@ squareManage.getsquareusers = function (data, response) {
         }
     });
 }
+/***************************************
+ *     URL：/api2/square/modifymessagetype
+ ***************************************/
+squareManage.modifymessagetype = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var gid = data.gid;
+    var gmid = data.gmid;
+    var messageType = data.messageType;
+    var operation = data.operation;
+
+    client.hget("square_" + gid + "_info", gmid, function (err, reply) {
+            if (err) {
+                response.write(JSON.stringify({
+                    "提示信息": "点赞广播失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(err);
+                return;
+            } else {
+                if (reply) {
+                    var message = JSON.parse(reply);
+                    message.messageType = message.messageType || [];
+                    var messageTypes = message.messageType;
+                    var types = [];
+                    if (operation == "true" || operation == true) {
+                        message.messageType.push(messageType);
+                    } else {
+                        for (var index in messageTypes) {
+                            if (messageTypes[index] != messageType) {
+                                types.push(messageTypes[index]);
+                            }
+                        }
+                        message.messageType = types;
+                    }
+                    client.hset("square_" + gid + "_info", gmid, JSON.stringify(message), function (err, reply) {
+                        if (err) {
+                            response.write(JSON.stringify({
+                                "提示信息": messageType+"广播失败",
+                                "失败原因": "数据异常"
+                            }));
+                            response.end();
+                            console.error(err);
+                            return;
+                        } else {
+                            response.write(JSON.stringify({
+                                "提示信息": messageType+"广播成功"
+                            }));
+                            response.end();
+                        }
+                    });
+                } else {
+                    response.write(JSON.stringify({
+                        "提示信息":  messageType+"广播失败",
+                        "失败原因": "广播不存在"
+                    }));
+                    response.end();
+                }
+            }
+        }
+    )
+    ;
+}
+/***************************************
+ *     URL：/api2/square/deletesquaremessage
+ ***************************************/
+squareManage.deletesquaremessage = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var gid = data.gid;
+    var gmid = data.gmid;
+    client.hdel("square_"+gid+"_info",gmid,function(err,reply){
+        if(err){
+            response.write(JSON.stringify({
+                "提示信息": "删除广播失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.error(err+"---deletequaremessage");
+            return;
+        }else{
+            client.
+        }
+    });
+}
+//getRedisData();
+function getRedisData(){
+    client.hmget("a",[1,2,4,3],function(err,reply){
+        if(err){
+            console.error(err);
+            return;
+        }else{
+            console.info(reply);
+            for(var index in reply){
+                if(reply[index] != null){
+                    console.log(reply[index]);
+                }else{
+                    console.log("null---------");
+                }
+
+            }
+        }
+    });
+}
+
+
 //modifyRedisData();
 function modifyRedisData() {
     client.lrange("square_91", 0, -1, function (err, reply) {

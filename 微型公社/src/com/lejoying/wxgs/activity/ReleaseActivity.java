@@ -145,7 +145,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		initData();
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	protected void onResume() {
 		CircleMenu.hide();
 		super.onResume();
@@ -531,7 +531,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		case R.id.release_iv_voice:
 			Intent intent = new Intent(ReleaseActivity.this,
 					SendVoiceActivity.class);
-			//intent.putParcelableArrayListExtra("images", (ArrayList<? extends Parcelable>) images);
+			// intent.putParcelableArrayListExtra("images", (ArrayList<? extends
+			// Parcelable>) images);
 			startActivityForResult(intent, RESULT_MAKEVOICE);
 			break;
 		case R.id.release_tv_cancel:
@@ -748,34 +749,36 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		jsonArray = new JSONArray();
 		mCurrentSquareID = SquareFragment.mCurrentSquareID;
 		long time = System.currentTimeMillis();
-		if (time % 3 == 0) {
-			messageType = "精华";
-		} else if (time % 3 == 1) {
-			messageType = "活动";
-		} else if (time % 3 == 2) {
-			messageType = "吐槽";
-		}
+		// if (time % 3 == 0) {
+		// messageType = "精华";
+		// } else if (time % 3 == 1) {
+		// messageType = "活动";
+		// } else if (time % 3 == 2) {
+		// messageType = "吐槽";
+		// }
+		messageType = new JSONArray().toString();
 		broadcast = et_release.getText().toString();
 		if ((broadcast == null || broadcast.equals("")) && images.size() == 0
 				&& voices.size() == 0) {
 			Alert.showMessage("发送内容不能为空");
 			return;
 		}
-		if(images.size()!=0){
-			for(int i=0;i<images.size();i++){
-				if(images.get(i).get("bitmap")!=null){
-					final int j=i;
+		if (images.size() != 0) {
+			for (int i = 0; i < images.size(); i++) {
+				if (images.get(i).get("bitmap") != null) {
+					final int j = i;
 					app.fileHandler.saveBitmap(new SaveBitmapInterface() {
 						@Override
 						public void setParams(SaveSettings settings) {
-							settings.source = (Bitmap)images.get(j).get("bitmap");
+							settings.source = (Bitmap) images.get(j).get(
+									"bitmap");
 							settings.compressFormat = settings.PNG;
 							settings.folder = app.sdcardImageFolder;
 						}
-						
+
 						@Override
 						public void onSuccess(String fileName, String base64) {
-							
+
 						}
 					});
 				}
@@ -1102,12 +1105,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					horizontalScrollView.setVisibility(View.VISIBLE);
 				}
 				if (images.size() == 0 && voices.size() == 0) {
-					et_release.setHeight(height - 40 - (int) (height * 0.078125f)
-							- statusBarHeight);
+					et_release.setHeight(height - 40
+							- (int) (height * 0.078125f) - statusBarHeight);
 					horizontalScrollView.setVisibility(View.GONE);
 				} else {
-					et_release.setHeight(height - 40 - (int) (height * 0.078125f)
-							- statusBarHeight - (int) (height * 0.08984375f));
+					et_release.setHeight(height - 40
+							- (int) (height * 0.078125f) - statusBarHeight
+							- (int) (height * 0.08984375f));
 				}
 				int index = 0;
 				ll_release_picandvoice.removeAllViews();
