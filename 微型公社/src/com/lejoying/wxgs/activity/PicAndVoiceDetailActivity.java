@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
@@ -80,10 +81,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		initEvent();
 		if (activity.equals("ReleaseActivity")) {
 			currentCoverIndex = ReleaseActivity.currentCoverIndex;
-		} else {
-			
 		}
-
 		if (currentCoverIndex == 1) {
 			selectedCoverView.setImageResource(R.drawable.picandvoice_affirm);
 		}
@@ -98,7 +96,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 
 			@Override
 			public void onClick(View v) {
-				if(activity.equals("ReleaseActivity")){
+				if (activity.equals("ReleaseActivity")) {
 					if (currentCoverIndex == currentPageSize) {
 						iscover = false;
 						ReleaseActivity.cover = "";
@@ -123,18 +121,39 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					if (ReleaseActivity.voices.size()
 							+ ReleaseActivity.images.size() > currentPageSize) {
 						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
-						mediaTotalView.setText(currentPageSize + "/" + mediaTotal);
+						mediaTotalView.setText(currentPageSize + "/"
+								+ mediaTotal);
 					} else {
 						currentPageSize = ReleaseActivity.voices.size()
 								+ ReleaseActivity.images.size();
 						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
-						mediaTotalView.setText(currentPageSize + "/" + mediaTotal);
+						mediaTotalView.setText(currentPageSize + "/"
+								+ mediaTotal);
 					}
-				
-				}else if(activity=="todo"){
-					
-				}else{
-					
+
+				} else if (activity.equals("MapStrage")) {
+					MapStorageDirectoryActivity.selectedImages
+							.remove(currentPageSize - 1);
+					if (MapStorageDirectoryActivity.selectedImages.size() == 0) {
+						mFinish();
+					} else {
+						initData();
+						myPageAdapter = new MyPageAdapter(mainListViews);
+						picandvoice_Pager.setAdapter(myPageAdapter);
+					}
+					if (MapStorageDirectoryActivity.selectedImages.size() > currentPageSize) {
+						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
+						mediaTotalView.setText(currentPageSize + "/"
+								+ mediaTotal);
+					} else {
+						currentPageSize = MapStorageDirectoryActivity.selectedImages
+								.size();
+						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
+						mediaTotalView.setText(currentPageSize + "/"
+								+ mediaTotal);
+					}
+				} else {
+
 				}
 			}
 		});
@@ -198,38 +217,61 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		navigationLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		ll_picandvoice_navigation.setLayoutParams(navigationLayoutParam);
 
-		LinearLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, (int) (25 * density + 0.5f));
-		PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.06944444f);
-		PicAndVoiceDetailBack.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
+		if (activity.equals("ReleaseActivity")) {
+			LinearLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, (int) (25 * density + 0.5f));
+			PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.06944444f);
+			PicAndVoiceDetailBack.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
+			
+			LinearLayout.LayoutParams mediaTotalViewLayoutParam = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			mediaTotalViewLayoutParam.leftMargin = (int) (width * 0.02777778f);
+			mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
+			
+			LinearLayout.LayoutParams tv_setcoverLayoutParam = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			tv_setcoverLayoutParam.leftMargin = (int) (width * 0.125f);
+			tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
+			
+			LinearLayout.LayoutParams selectedCoverViewLayoutParam = new LinearLayout.LayoutParams(
+					(int) (width * 0.06944444f), (int) (height * 0.0390625f));
+			selectedCoverViewLayoutParam.leftMargin = (int) (width * 0.03472222f);
+			selectedCoverView.setLayoutParams(selectedCoverViewLayoutParam);
 
-		LinearLayout.LayoutParams mediaTotalViewLayoutParam = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		mediaTotalViewLayoutParam.leftMargin = (int) (width * 0.02777778f);
-		mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
+			LinearLayout.LayoutParams deleteMediaViewLayoutParam = new LinearLayout.LayoutParams(
+					(int) (width * 0.06944444f), (int) (height * 0.0390625f));
+			deleteMediaViewLayoutParam.leftMargin = (int) (width * 0.208333333f);
+			deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
 
-		LinearLayout.LayoutParams tv_setcoverLayoutParam = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		tv_setcoverLayoutParam.leftMargin = (int) (width * 0.125f);
-		tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
-
-		LinearLayout.LayoutParams selectedCoverViewLayoutParam = new LinearLayout.LayoutParams(
-				(int) (width * 0.06944444f), (int) (height * 0.0390625f));
-		selectedCoverViewLayoutParam.leftMargin = (int) (width * 0.03472222f);
-		selectedCoverView.setLayoutParams(selectedCoverViewLayoutParam);
-
-		LinearLayout.LayoutParams deleteMediaViewLayoutParam = new LinearLayout.LayoutParams(
-				(int) (width * 0.06944444f), (int) (height * 0.0390625f));
-		deleteMediaViewLayoutParam.leftMargin = (int) (width * 0.208333333f);
-		deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
-		
-		if(activity.equals("1")){
+		} else if (activity.equals("MapStrage")) {
+			tv_setcover.setText("预览");
 			selectedCoverView.setVisibility(View.GONE);
-		}else if(activity.equals("2")){
+			
+			LinearLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, (int) (25 * density + 0.5f));
+			PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.0625f);
+			PicAndVoiceDetailBack.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
+			
+			LinearLayout.LayoutParams mediaTotalViewLayoutParam = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			mediaTotalViewLayoutParam.leftMargin = (int) (width * 0.02777778f);
+			mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
+			
+			LinearLayout.LayoutParams tv_setcoverLayoutParam = new LinearLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			tv_setcoverLayoutParam.leftMargin = (int) (width * 0.19444444f);
+			tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
+			
+			LinearLayout.LayoutParams deleteMediaViewLayoutParam = new LinearLayout.LayoutParams(
+					(int) (width * 0.06944444f), (int) (height * 0.0390625f));
+			deleteMediaViewLayoutParam.leftMargin = (int) (width * 0.34027778f);
+			deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
+			
+		} else if (activity.equals("2")) {
 			selectedCoverView.setVisibility(View.GONE);
 			deleteMediaView.setVisibility(View.GONE);
 		}
-		
+
 		tv_setcover.setOnClickListener(this);
 		PicAndVoiceDetailBack.setOnClickListener(this);
 		deleteMediaView.setOnClickListener(this);
@@ -239,7 +281,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	void initData() {
 		mediaTotal = 0;
 		mainListViews = new ArrayList<View>();
-		if(activity.equals("ReleaseActivity")){
+		if (activity.equals("ReleaseActivity")) {
 			for (int i = 0; i < ReleaseActivity.voices.size(); i++) {
 				mediaTotal++;
 				// View addView =
@@ -327,8 +369,20 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				}
 				mainListViews.add(superView);
 			}
-		}else{
-			
+		} else if (activity.equals("MapStrage")) {
+			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
+					.size(); i++) {
+				mediaTotal++;
+				LinearLayout superView = (LinearLayout) mInflater.inflate(
+						R.layout.release_child_navigation, null);
+				ImageView iv = (ImageView) superView
+						.findViewById(R.id.iv_release_child);
+				Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
+						MapStorageDirectoryActivity.selectedImages.get(i)),
+						width, height);
+				iv.setImageBitmap(bm);
+				mainListViews.add(superView);
+			}
 		}
 		mediaTotalView.setText(1 + "/" + mediaTotal);
 	}
@@ -341,6 +395,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			break;
 		case R.id.tv_setcover:
 		case R.id.iv_picandvoice_cancel:
+			if(activity.equals("ReleaseActivity")){
 			if (iscover) {
 				selectedCoverView
 						.setImageResource(R.drawable.picandvoice_cancel);
@@ -361,7 +416,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 									- ReleaseActivity.voices.size() - 1).get(
 									"fileName");
 				}
-			}
+			}}
 			break;
 		default:
 			break;
@@ -379,10 +434,10 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			ReleaseActivity.currentCoverIndex = currentCoverIndex;
 			Intent intent = new Intent();
 			setResult(Activity.RESULT_OK, intent);
-		}else{
-			
+		} else if (activity.equals("MapStrage")) {
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_OK, intent);
 		}
-
 		finish();
 	}
 }

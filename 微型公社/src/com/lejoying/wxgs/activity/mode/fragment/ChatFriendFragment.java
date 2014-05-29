@@ -70,6 +70,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MapStorageDirectoryActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
@@ -1859,8 +1860,8 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	void selectPicture() {
-		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		Intent selectFromGallery = new Intent(getActivity(),
+				MapStorageDirectoryActivity.class);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
 	}
 

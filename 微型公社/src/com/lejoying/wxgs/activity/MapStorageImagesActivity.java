@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
@@ -21,14 +22,11 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
-import com.lejoying.wxgs.activity.view.MyImageView;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.AsyncHandler.Execution;
 
@@ -52,6 +50,8 @@ public class MapStorageImagesActivity extends Activity {
 	float height, width, dip;
 	float density;
 	int columnSide;
+
+	int RESULT_PICANDVOICE = 0x15;
 
 	Map<String, SoftReference<Bitmap>> bitmaps;
 
@@ -97,6 +97,17 @@ public class MapStorageImagesActivity extends Activity {
 		initEvent();
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == RESULT_PICANDVOICE
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			mapStorageImagesAdapter.notifyDataSetChanged();
+			modifyConfirmStyle();
+		}
+	}
+
 	private void initEvent() {
 		mConfirm.setOnClickListener(new OnClickListener() {
 
@@ -111,7 +122,10 @@ public class MapStorageImagesActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-
+				Intent intent = new Intent(MapStorageImagesActivity.this,
+						PicAndVoiceDetailActivity.class);
+				intent.putExtra("Activity", "MapStrage");
+				startActivityForResult(intent, RESULT_PICANDVOICE);
 			}
 		});
 		mCancel.setOnClickListener(new OnClickListener() {
@@ -172,7 +186,8 @@ public class MapStorageImagesActivity extends Activity {
 		public View getView(int arg0, View arg1, ViewGroup arg2) {
 			ImagesHolder imagesHolder = null;
 			if (arg1 == null) {
-				arg1 = inflater.inflate(R.layout.activity_mapstorageimages_item, null);
+				arg1 = inflater.inflate(
+						R.layout.activity_mapstorageimages_item, null);
 				ImageView iv = (ImageView) arg1.findViewById(R.id.iv_image);
 				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 						columnSide, columnSide);
