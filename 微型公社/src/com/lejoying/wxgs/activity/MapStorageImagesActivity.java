@@ -2,17 +2,16 @@ package com.lejoying.wxgs.activity;
 
 import java.io.File;
 import java.lang.ref.SoftReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,8 +19,11 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -34,7 +36,7 @@ public class MapStorageImagesActivity extends Activity {
 
 	MainApplication app = MainApplication.getMainApplication();
 
-	ListView mImagesContent;
+	GridView mImagesContent;
 	ImageView mBack;
 	TextView mCancel;
 	TextView directoryName;
@@ -42,9 +44,14 @@ public class MapStorageImagesActivity extends Activity {
 	TextView mConfirm;
 
 	LayoutInflater inflater;
+
 	MapStorageImagesAdapter mapStorageImagesAdapter;
 
 	List<String> mImages;
+
+	float height, width, dip;
+	float density;
+	int columnSide;
 
 	Map<String, SoftReference<Bitmap>> bitmaps;
 
@@ -56,7 +63,7 @@ public class MapStorageImagesActivity extends Activity {
 		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
 		inflater = this.getLayoutInflater();
 		setContentView(R.layout.activity_mapstorageimages);
-		mImagesContent = (ListView) findViewById(R.id.gv_imagesContent);
+		mImagesContent = (GridView) findViewById(R.id.gv_imagesContent);
 		mBack = (ImageView) findViewById(R.id.iv_back);
 		mCancel = (TextView) findViewById(R.id.tv_cancel);
 		directoryName = (TextView) findViewById(R.id.tv_directoryName);
@@ -64,8 +71,11 @@ public class MapStorageImagesActivity extends Activity {
 		mConfirm = (TextView) findViewById(R.id.tv_confirm);
 		mImages = MapStorageDirectoryActivity.directoryToImages
 				.get(MapStorageDirectoryActivity.currentShowDirectory);
+
+		initData();
 		mapStorageImagesAdapter = new MapStorageImagesAdapter();
 		mImagesContent.setAdapter(mapStorageImagesAdapter);
+
 		mImagesContent.setOnScrollListener(new OnScrollListener() {
 
 			@Override
@@ -84,7 +94,6 @@ public class MapStorageImagesActivity extends Activity {
 				.decodeResource(getResources(), R.drawable.defaultimage), 100,
 				100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
 		modifyConfirmStyle();
-		initData();
 		initEvent();
 	}
 
@@ -125,6 +134,19 @@ public class MapStorageImagesActivity extends Activity {
 		String directory = MapStorageDirectoryActivity.currentShowDirectory;
 		directory = directory.substring(directory.lastIndexOf("/") + 1);
 		directoryName.setText(directory);
+
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		density = dm.density;
+		dip = (int) (40 * density + 0.5f);
+		height = dm.heightPixels;
+		width = dm.widthPixels;
+		columnSide = (int) ((width - dp2px(20)) / 3);
+	}
+
+	public float dp2px(float px) {
+		float dp = density * px + 0.5f;
+		return dp;
 	}
 
 	Bitmap defaultImage;
@@ -133,8 +155,7 @@ public class MapStorageImagesActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return mImages.size() % 3 == 0 ? mImages.size() / 3 : mImages
-					.size() / 3 + 1;
+			return mImages.size();
 		}
 
 		@Override
@@ -148,146 +169,65 @@ public class MapStorageImagesActivity extends Activity {
 		}
 
 		@Override
-		public View getView(final int position, View view, ViewGroup parent) {
-			MessageHolder messageHolder;
-			if (view == null) {
-				messageHolder = new MessageHolder();
-				view = inflater.inflate(
-						R.layout.activity_mapstorageimages_item, null);
-				messageHolder.iv1 = (MyImageView) view
-						.findViewById(R.id.iv_imageContent1);
-				messageHolder.ivStatus1 = (ImageView) view
-						.findViewById(R.id.iv_imageContentStatus1);
-				messageHolder.iv2 = (MyImageView) view
-						.findViewById(R.id.iv_imageContent2);
-				messageHolder.ivStatus2 = (ImageView) view
-						.findViewById(R.id.iv_imageContentStatus2);
-				messageHolder.iv3 = (MyImageView) view
-						.findViewById(R.id.iv_imageContent3);
-				messageHolder.ivStatus3 = (ImageView) view
-						.findViewById(R.id.iv_imageContentStatus3);
-				view.setTag(messageHolder);
-
+		public View getView(int arg0, View arg1, ViewGroup arg2) {
+			ImagesHolder imagesHolder = null;
+			if (arg1 == null) {
+				arg1 = inflater.inflate(R.layout.activity_mapstorageimages_item, null);
+				ImageView iv = (ImageView) arg1.findViewById(R.id.iv_image);
+				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+						columnSide, columnSide);
+				iv.setLayoutParams(layoutParams);
+				ImageView ivStatus = (ImageView) arg1
+						.findViewById(R.id.iv_imageContentStatus);
+				RelativeLayout.LayoutParams ivStatusParams = new RelativeLayout.LayoutParams(
+						ivStatus.getLayoutParams());
+				ivStatusParams.leftMargin = (int) (columnSide * 0.75f) - 4;
+				ivStatusParams.topMargin = (int) (columnSide * 0.04f) + 3;
+				ivStatus.setLayoutParams(ivStatusParams);
+				imagesHolder = new ImagesHolder();
+				imagesHolder.iv = iv;
+				imagesHolder.ivStatus = ivStatus;
+				arg1.setTag(imagesHolder);
 			} else {
-				messageHolder = (MessageHolder) view.getTag();
+				imagesHolder = (ImagesHolder) arg1.getTag();
 			}
-			final MessageHolder messageHolder0 = messageHolder;
-			if (position * 3 < mImages.size()) {
-				messageHolder0.iv1.setVisibility(View.VISIBLE);
-				final String path = mImages.get(position * 3);
-				boolean flag = MapStorageDirectoryActivity.selectedImages
-						.contains(path);
-				if (flag) {
-					messageHolder0.ivStatus1.setVisibility(View.VISIBLE);
-				} else {
-					messageHolder0.ivStatus1.setVisibility(View.GONE);
-				}
-				SoftReference<Bitmap> softBitmap = bitmaps.get(path);
-				if (softBitmap == null || softBitmap.get() == null) {
-					loadImage(path);
-					softBitmap = new SoftReference<Bitmap>(defaultImage);
-				}
-				messageHolder0.iv1.setImageBitmap(softBitmap.get());
-				messageHolder0.iv1.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View arg0) {
-						if (messageHolder0.ivStatus1.getVisibility() == View.VISIBLE) {
-							messageHolder0.ivStatus1.setVisibility(View.GONE);
-							MapStorageDirectoryActivity.selectedImages
-									.remove(path);
-							modifyConfirmStyle();
-						} else {
-							messageHolder0.ivStatus1
-									.setVisibility(View.VISIBLE);
-							MapStorageDirectoryActivity.selectedImages
-									.add(path);
-							modifyConfirmStyle();
-						}
-					}
-				});
-			}
-			if (position * 3 + 1 < mImages.size()) {
-				messageHolder0.iv2.setVisibility(View.VISIBLE);
-				final String path = mImages.get(position * 3 + 1);
-				boolean flag = MapStorageDirectoryActivity.selectedImages
-						.contains(path);
-				if (flag) {
-					messageHolder0.ivStatus2.setVisibility(View.VISIBLE);
-				} else {
-					messageHolder0.ivStatus2.setVisibility(View.GONE);
-				}
-				SoftReference<Bitmap> softBitmap = bitmaps.get(path);
-				if (softBitmap == null || softBitmap.get() == null) {
-					loadImage(path);
-					softBitmap = new SoftReference<Bitmap>(defaultImage);
-				}
-				messageHolder0.iv2.setImageBitmap(softBitmap.get());
-				messageHolder0.iv2.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View arg0) {
-						if (messageHolder0.ivStatus2.getVisibility() == View.VISIBLE) {
-							messageHolder0.ivStatus2.setVisibility(View.GONE);
-							MapStorageDirectoryActivity.selectedImages
-									.remove(path);
-							modifyConfirmStyle();
-						} else {
-							messageHolder0.ivStatus2
-									.setVisibility(View.VISIBLE);
-							MapStorageDirectoryActivity.selectedImages
-									.add(path);
-							modifyConfirmStyle();
-						}
-					}
-				});
+			final String path = mImages.get(arg0);
+			boolean flag = MapStorageDirectoryActivity.selectedImages
+					.contains(path);
+			if (flag) {
+				imagesHolder.ivStatus.setVisibility(View.VISIBLE);
 			} else {
-				messageHolder0.iv2.setVisibility(View.GONE);
-				messageHolder0.ivStatus1.setVisibility(View.GONE);
+				imagesHolder.ivStatus.setVisibility(View.GONE);
 			}
-			if (position * 3 + 2 < mImages.size()) {
-				messageHolder0.iv3.setVisibility(View.VISIBLE);
-				messageHolder0.iv3.setImageDrawable(getResources().getDrawable(
-						R.drawable.defaultimage));
-				final String path = mImages.get(position * 3 + 2);
-				boolean flag = MapStorageDirectoryActivity.selectedImages
-						.contains(path);
-				if (flag) {
-					messageHolder0.ivStatus3.setVisibility(View.VISIBLE);
-				} else {
-					messageHolder0.ivStatus3.setVisibility(View.GONE);
-				}
-				SoftReference<Bitmap> softBitmap = bitmaps.get(path);
-				if (softBitmap == null || softBitmap.get() == null) {
-					loadImage(path);
-					softBitmap = new SoftReference<Bitmap>(defaultImage);
-				}
-				messageHolder0.iv3.setImageBitmap(softBitmap.get());
-				messageHolder0.iv3.setOnClickListener(new OnClickListener() {
+			SoftReference<Bitmap> softBitmap = bitmaps.get(path);
+			if (softBitmap == null || softBitmap.get() == null) {
+				loadImage(path);
+				softBitmap = new SoftReference<Bitmap>(defaultImage);
+			}
+			imagesHolder.iv.setImageBitmap(softBitmap.get());
+			final ImagesHolder imagesHolder0 = imagesHolder;
+			imagesHolder.iv.setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(View arg0) {
-						if (messageHolder0.ivStatus3.getVisibility() == View.VISIBLE) {
-							messageHolder0.ivStatus3.setVisibility(View.GONE);
-							MapStorageDirectoryActivity.selectedImages
-									.remove(path);
-							modifyConfirmStyle();
-						} else {
-							messageHolder0.ivStatus3
-									.setVisibility(View.VISIBLE);
-							MapStorageDirectoryActivity.selectedImages
-									.add(path);
-							modifyConfirmStyle();
-						}
+				@Override
+				public void onClick(View arg0) {
+					if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
+						imagesHolder0.ivStatus.setVisibility(View.GONE);
+						MapStorageDirectoryActivity.selectedImages.remove(path);
+						modifyConfirmStyle();
+					} else {
+						imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
+						MapStorageDirectoryActivity.selectedImages.add(path);
+						modifyConfirmStyle();
 					}
-				});
-			} else {
-				messageHolder0.iv3.setVisibility(View.GONE);
-				messageHolder0.ivStatus1.setVisibility(View.GONE);
-			}
-
-			return view;
+				}
+			});
+			return arg1;
 		}
+	}
+
+	class ImagesHolder {
+		ImageView iv;
+		ImageView ivStatus;
 	}
 
 	void modifyConfirmStyle() {
@@ -330,12 +270,4 @@ public class MapStorageImagesActivity extends Activity {
 
 	}
 
-	class MessageHolder {
-		MyImageView iv1;
-		ImageView ivStatus1;
-		MyImageView iv2;
-		ImageView ivStatus2;
-		MyImageView iv3;
-		ImageView ivStatus3;
-	}
 }

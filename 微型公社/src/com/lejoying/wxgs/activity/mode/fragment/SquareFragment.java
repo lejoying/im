@@ -413,7 +413,7 @@ public class SquareFragment extends BaseFragment {
 							horizontalScrollView.getScrollY());
 					break;
 				case MotionEvent.ACTION_SCROLL:
-					
+//					horizontalScrollView.gets
 					break;
 				}
 				pre_item = current_item;
