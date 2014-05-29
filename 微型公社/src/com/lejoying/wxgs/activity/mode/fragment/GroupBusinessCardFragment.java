@@ -2,7 +2,9 @@ package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -23,11 +25,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
+
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -59,9 +64,12 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 
 	ImageView iv_me_back;
 	TextView tv_back_show;
+	ImageView QRcodeImage;
 
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
+
+	String GROUPCARDTYPE = "groupcard";
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -74,6 +82,7 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		mContent = inflater.inflate(R.layout.f_businesscard, null);
 		iv_me_back = (ImageView) mContent.findViewById(R.id.iv_me_back);
 		tv_back_show = (TextView) mContent.findViewById(R.id.tv_back_show);
+		QRcodeImage = (ImageView) mContent.findViewById(R.id.iv_tdcode);
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -182,6 +191,9 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 	}
 
 	public void initData() {
+		QRcodeImage.setImageBitmap(MCImageUtils.createQEcodeImage(
+				GROUPCARDTYPE, mGroup.gid + ""));
+		QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
 		tv_back_show.setText("群组资料");
 		group = (ViewGroup) mContent.findViewById(R.id.ll_content);
 		View tv_group = mContent.findViewById(R.id.tv_group_layout);
@@ -279,7 +291,7 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		final String headFileName = mGroup.icon;
 		app.fileHandler.getHeadImage(headFileName, new FileResult() {
 			@Override
-			public void onResult(String where,Bitmap bitmap) {
+			public void onResult(String where, Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
 						.get(headFileName));
 			}

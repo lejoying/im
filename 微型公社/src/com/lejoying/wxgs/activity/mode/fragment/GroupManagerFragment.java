@@ -93,6 +93,11 @@ public class GroupManagerFragment extends BaseFragment {
 
 	List<Friend> seleteFriendList;
 
+	static int MANAGE_ADD = 0x001;
+	static int MANAGE_SUBTRACT = 0x002;
+	static int MANAGE_NONE = 0x003;
+	static int MANAGE_NONETO = 0x004;
+
 	private GeoPoint mCurrentGeo = new GeoPoint((int) (39.945 * 1E6),
 			(int) (116.404 * 1E6));
 
@@ -381,7 +386,8 @@ public class GroupManagerFragment extends BaseFragment {
 															} else {
 																notifyGroupFriends(
 																		views.get("group"),
-																		groupHolder);
+																		groupHolder,
+																		MANAGE_NONE);
 
 																circlesViewContenter
 																		.scrollTo(
@@ -437,7 +443,8 @@ public class GroupManagerFragment extends BaseFragment {
 				if (status.equals(MODE_MANAGER)) {
 					if (isRemove) {
 						isRemove = false;
-						notifyGroupFriends(views.get("group"), groupHolder);
+						notifyGroupFriends(views.get("group"), groupHolder,
+								MANAGE_NONETO);
 					} else {
 						mScrollContainer.smoothScrollTo(0, 0);
 					}
@@ -473,6 +480,8 @@ public class GroupManagerFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				notifyGroupFriends(views.get("group"), groupHolder,
+						MANAGE_SUBTRACT);
 				selectFriend.setVisibility(View.VISIBLE);
 				buttonList.setVisibility(View.GONE);
 				nextBar.setVisibility(View.VISIBLE);
@@ -926,12 +935,13 @@ public class GroupManagerFragment extends BaseFragment {
 
 	View generateGroup(final CircleHolder circleHolder) {
 		View circleView = mInflater.inflate(R.layout.fragment_panel, null);
-		notifyGroupFriends(circleView, circleHolder);
+		notifyGroupFriends(circleView, circleHolder, MANAGE_NONE);
 		return circleView;
 	}
 
 	void notifyGroupFriends(final View circleView,
-			final CircleHolder circleHolder) {
+			final CircleHolder circleHolder, final int status) {
+		System.out.println(status + "+++++++++++++++");
 		if (mCurrentManagerGroup == null) {
 			return;
 		}
@@ -1001,13 +1011,21 @@ public class GroupManagerFragment extends BaseFragment {
 			FriendHolder holder = new FriendHolder();
 			holder.phone = friend.phone;
 			int index = circleHolder.friendHolders.indexOf(holder);
+			if (status == MANAGE_SUBTRACT || status == MANAGE_NONETO) {
+				if (circleHolder.friendHolders.size() > index) {
+					holder = circleHolder.friendHolders.remove(index);
+					ViewGroup p = (ViewGroup) holder.view.getParent();
+					p.removeView(holder.view);
+				}
+				index = -1;
+			}
 			if (index != -1) {
 				holder = circleHolder.friendHolders.remove(index);
 				ViewGroup p = (ViewGroup) holder.view.getParent();
 				p.removeView(holder.view);
 				friendContainer.addView(holder.view);
 			} else {
-				View convertView = generateFriendView(friend);
+				View convertView = generateFriendView(friend, status);
 				holder.view = convertView;
 				final FriendHolder friendHolder = holder;
 				convertView.setOnClickListener(new OnClickListener() {
@@ -1032,8 +1050,10 @@ public class GroupManagerFragment extends BaseFragment {
 							return;
 						}
 						seleteFriendList.add(friend);
-						final View friendView = generateFriendView(friend);
-						final View animationView = generateFriendView(friend);
+						final View friendView = generateFriendView(friend,
+								status);
+						final View animationView = generateFriendView(friend,
+								status);
 						tempFriendScroll.smoothScrollTo(0, 0);
 						int[] location = new int[2];
 						holderView.getLocationInWindow(location);
@@ -1243,7 +1263,7 @@ public class GroupManagerFragment extends BaseFragment {
 		for (int i = 0; i < phones.size(); i++) {
 			final Friend friend = friends.get(phones.get(i));
 
-			View convertView = generateFriendView(friend);
+			View convertView = generateFriendView(friend, MANAGE_ADD);
 
 			final FriendHolder friendHolder = new FriendHolder();
 			friendHolder.view = convertView;
@@ -1265,8 +1285,10 @@ public class GroupManagerFragment extends BaseFragment {
 						return;
 					}
 					seleteFriendList.add(friend);
-					final View tempFriend = generateFriendView(friend);
-					final View animationView = generateFriendView(friend);
+					final View tempFriend = generateFriendView(friend,
+							MANAGE_ADD);
+					final View animationView = generateFriendView(friend,
+							MANAGE_ADD);
 
 					tempFriendScroll.smoothScrollTo(0, 0);
 					int[] location = new int[2];
@@ -1398,16 +1420,24 @@ public class GroupManagerFragment extends BaseFragment {
 		allTempFriendMoveToRight.setDuration(120);
 	}
 
-	View generateFriendView(Friend friend) {
+	View generateFriendView(Friend friend, int status) {
+		System.out.println(status + "<<<<<<<<<<<<<<<<<<<<<<<<");
 		View convertView = mInflater.inflate(
 				R.layout.fragment_circles_gridpage_item, null);
 		final ImageView head = (ImageView) convertView
 				.findViewById(R.id.iv_head);
 		TextView nickname = (TextView) convertView
 				.findViewById(R.id.tv_nickname);
-		if(friend.alias!=null&&!friend.alias.equals("")){
+		ImageView statusImage = (ImageView) convertView
+				.findViewById(R.id.iv_status);
+		if (status == MANAGE_ADD) {
+			statusImage.setImageResource(R.drawable.black_add);
+		} else if (status == MANAGE_SUBTRACT) {
+			statusImage.setImageResource(R.drawable.black_subtract);
+		}
+		if (friend.alias != null && !friend.alias.equals("")) {
 			nickname.setText(friend.alias);
-		}else{
+		} else {
 			nickname.setText(friend.nickName);
 		}
 		final String headFileName = friend.head;

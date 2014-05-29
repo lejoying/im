@@ -56,6 +56,7 @@ public class MainApplication extends Application implements
 	public File sdcardVoiceFolder;
 	public File sdcardHeadImageFolder;
 	public File sdcardThumbnailFolder;
+	public File sdcardQRcodeFolder;
 
 	public String sdcardStatus = "none";// "exist"
 	public String networkStatus = "none";// "WIFI"|"mobile"
@@ -167,6 +168,10 @@ public class MainApplication extends Application implements
 			sdcardThumbnailFolder = new File(sdcardImageFolder, "thumbnail");
 			if (!sdcardThumbnailFolder.exists()) {
 				sdcardThumbnailFolder.mkdir();
+			}
+			sdcardQRcodeFolder = new File(sdcardImageFolder, "qrcode");
+			if (!sdcardQRcodeFolder.exists()) {
+				sdcardQRcodeFolder.mkdir();
 			}
 		}
 	}

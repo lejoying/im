@@ -3,17 +3,26 @@ package com.lejoying.wxgs.activity.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.app.MainApplication;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Hashtable;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.app.MainApplication;
+
 public final class MCImageUtils {
-	static MainApplication app;
+	static MainApplication app = MainApplication.getMainApplication();
 
 	public static Bitmap getCircleBitmap(Bitmap source) {
 		return getCircleBitmap(source, false, null, null);
@@ -121,9 +130,9 @@ public final class MCImageUtils {
 	public static Bitmap getCutBitmap(Bitmap bitmap, int width, int height,
 			int style) {
 		if (bitmap == null) {
-			bitmap =BitmapFactory.decodeResource(app.getResources(),
+			bitmap = BitmapFactory.decodeResource(app.getResources(),
 					R.drawable.defaultimage);
-		}else{
+		} else {
 			int btwidth = bitmap.getWidth();
 			int btheight = bitmap.getHeight();
 			float scaleWidth = ((float) width) / btwidth;
@@ -136,8 +145,8 @@ public final class MCImageUtils {
 					return bitmap;
 				} else {
 					bitmap = Bitmap.createScaledBitmap(bitmap,
-							(int) (((float) height) / btheight * btwidth), height,
-							true);
+							(int) (((float) height) / btheight * btwidth),
+							height, true);
 					bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
 					return bitmap;
 				}
@@ -160,5 +169,67 @@ public final class MCImageUtils {
 		ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());// 把压缩后的数据baos存放到ByteArrayInputStream中
 		Bitmap newBitmap = BitmapFactory.decodeStream(isBm, null, null);// 把ByteArrayInputStream数据生成图片
 		return newBitmap;
+	}
+
+	public static Bitmap createQEcodeImage(String type, String message) {
+		System.out.println(type + "<><><><><><" + message);
+
+		File file = new File(app.sdcardQRcodeFolder, type + "_" + message
+				+ ".png");
+		if (file.exists()) {
+			return BitmapFactory.decodeFile(file.getAbsolutePath());
+		}
+		int width = 200;
+		int height = 200;
+		try {
+			QRCodeWriter writer = new QRCodeWriter();
+			String text = "mc:" + type + ":" + message;
+			if (text == null || "".equals(text) || text.length() < 1) {
+				return null;
+			}
+
+			Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
+			hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+			hints.put(EncodeHintType.MARGIN, 1);
+			BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE,
+					width, height, hints);
+			int[] pixels = new int[width * height];
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					if (bitMatrix.get(x, y)) {
+						pixels[y * width + x] = 0xff000000;
+					} else {
+						pixels[y * width + x] = 0xffffffff;
+					}
+				}
+			}
+
+			Bitmap bitmap = Bitmap.createBitmap(width, height,
+					Bitmap.Config.ARGB_8888);
+
+			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+			try {
+				File imageFile = new File(app.sdcardQRcodeFolder, type + "_"
+						+ message + ".png");
+				if (imageFile.exists()) {
+					imageFile.delete();
+				}
+				FileOutputStream fileOutputStream = new FileOutputStream(
+						imageFile);
+				bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+						fileOutputStream);
+				fileOutputStream.flush();
+				fileOutputStream.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return bitmap;
+
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

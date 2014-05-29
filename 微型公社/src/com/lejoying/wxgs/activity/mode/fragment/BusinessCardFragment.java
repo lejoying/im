@@ -3,7 +3,6 @@ package com.lejoying.wxgs.activity.mode.fragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -38,19 +36,15 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.baidu.platform.comapi.map.w;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
@@ -117,6 +111,8 @@ public class BusinessCardFragment extends BaseFragment {
 	File tempFile;
 	String backgroudFileName;
 	String headname;
+
+	String USERCARDTYPE = "usercard";
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -216,7 +212,6 @@ public class BusinessCardFragment extends BaseFragment {
 			}
 		};
 		asyncTask.execute();
-		createImage();
 		return mContent;
 	}
 
@@ -228,6 +223,15 @@ public class BusinessCardFragment extends BaseFragment {
 	}
 
 	public void initData() {
+		String cardPhone = "";
+		if (mStatus == SHOW_SELF) {
+			cardPhone = app.data.user.phone;
+		} else {
+			cardPhone = mShowFriend.phone;
+		}
+		QRcodeImage.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE,
+				cardPhone));
+		QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
 		final ViewGroup group = (ViewGroup) mContent
 				.findViewById(R.id.ll_content);
 		tv_group = // mContent.findViewById(R.id.tv_group_layout);
@@ -998,52 +1002,5 @@ public class BusinessCardFragment extends BaseFragment {
 			public void success(JSONObject jData) {
 			}
 		});
-	}
-
-	private void createImage() {
-		int width = 200;
-		int height = 200;
-		try {
-			// 需要引入core包
-			QRCodeWriter writer = new QRCodeWriter();
-
-			String text = app.data.user.phone;
-
-			if (text == null || "".equals(text) || text.length() < 1) {
-				return;
-			}
-
-			// 把输入的文本转为二维码
-			BitMatrix martix = writer.encode(text, BarcodeFormat.QR_CODE,
-					width, height);
-
-			System.out.println("w:" + martix.getWidth() + "h:"
-					+ martix.getHeight());
-
-			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
-			hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
-			BitMatrix bitMatrix = new QRCodeWriter().encode(text,
-					BarcodeFormat.QR_CODE, width, height, hints);
-			int[] pixels = new int[width * height];
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					if (bitMatrix.get(x, y)) {
-						pixels[y * width + x] = 0xff000000;
-					} else {
-						pixels[y * width + x] = 0xffffffff;
-					}
-
-				}
-			}
-
-			Bitmap bitmap = Bitmap.createBitmap(width, height,
-					Bitmap.Config.ARGB_8888);
-
-			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-			QRcodeImage.setImageBitmap(bitmap);
-
-		} catch (WriterException e) {
-			e.printStackTrace();
-		}
 	}
 }
