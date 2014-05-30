@@ -6,7 +6,8 @@
     android:gravity="bottom"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <com.lejoying.wxgs.activity.view.EditTextLayout
+        android:id="@+id/edittextlayout"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
@@ -30,7 +31,7 @@
                 android:textColor="#fff"
                 android:textCursorDrawable="@drawable/cursor" />
         </ScrollView>
-    </LinearLayout>
+    </com.lejoying.wxgs.activity.view.EditTextLayout>
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"

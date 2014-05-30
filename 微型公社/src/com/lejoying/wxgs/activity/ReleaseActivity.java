@@ -22,6 +22,8 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
+import com.lejoying.wxgs.activity.view.EditTextLayout;
+import com.lejoying.wxgs.activity.view.EditTextLayout.onEditTextChangeListener;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
@@ -55,6 +57,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -106,6 +109,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	LinearLayout ll_releasecamera;
 	LinearLayout ll_releaselocal;
 	LinearLayout ll_release_picandvoice;
+	EditTextLayout editTextLayout;
 	HorizontalScrollView horizontalScrollView;
 	ViewPager chat_vPager;
 	LayoutInflater mInflater;
@@ -163,6 +167,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void initLayout() {
+		editTextLayout = (EditTextLayout) findViewById(R.id.edittextlayout);
 		ll_navigation = (LinearLayout) findViewById(R.id.release_ll_navigation);
 		ImageView iv_selectpicture = (ImageView) findViewById(R.id.release_iv_selectpicture);
 		ImageView iv_emoji = (ImageView) findViewById(R.id.release_iv_emoji);
@@ -193,6 +198,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		et_release.setHeight(height - 40 - (int) (height * 0.078125f)
 				- statusBarHeight);
+		//et_release.setLineSpacing(height*0.01953125f, 0.5f);//行间距
 		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_commit.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
@@ -319,6 +325,49 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		release_iv_face_left.setOnClickListener(this);
 		release_iv_face_right.setOnClickListener(this);
 		release_iv_face_delete.setOnClickListener(this);
+
+		editTextLayout
+				.setonEditTextChangeListener(new onEditTextChangeListener() {
+
+					@Override
+					public void onKeyBoardStateChange(int state) {
+						switch (state) {
+						case EditTextLayout.KEYBOARD_STATE_HIDE:
+							app.UIHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									et_release.setHeight(height - 40 - (int) (height * 0.078125f)
+											- statusBarHeight);
+								}
+							});
+							
+							break;
+						case EditTextLayout.KEYBOARD_STATE_SHOW:
+							new Thread(){
+								public void run() {
+									try {
+										sleep(50);
+										app.UIHandler.post(new Runnable() {
+											@Override
+											public void run() {
+												et_release.setHeight(ll_navigation.getTop() - 40
+														- statusBarHeight);
+											}
+										});
+									} catch (InterruptedException e) {
+										e.printStackTrace();
+									}
+								};
+							}.start();
+							
+							break;
+						default:
+							break;
+						}
+
+					}
+				});
+
 	}
 
 	public void initData() {

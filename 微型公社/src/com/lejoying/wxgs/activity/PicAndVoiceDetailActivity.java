@@ -2,6 +2,7 @@ package com.lejoying.wxgs.activity;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
-	LinearLayout ll_picandvoice_navigation;
+	RelativeLayout ll_picandvoice_navigation;
 	TextView tv_setcover, mediaTotalView;
 	ImageView PicAndVoiceDetailBack, deleteMediaView, selectedCoverView;
 	ViewPager picandvoice_Pager;
@@ -199,7 +200,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	}
 
 	void initLayout() {
-		ll_picandvoice_navigation = (LinearLayout) findViewById(R.id.ll_picandvoice_navigation);
+		ll_picandvoice_navigation = (RelativeLayout) findViewById(R.id.rl_picandvoice_navigation);
 		tv_setcover = (TextView) findViewById(R.id.tv_setcover);
 		mediaTotalView = (TextView) findViewById(R.id.tv_number);
 		PicAndVoiceDetailBack = (ImageView) findViewById(R.id.PicAndVoiceDetailBack);
@@ -218,55 +219,79 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		ll_picandvoice_navigation.setLayoutParams(navigationLayoutParam);
 
 		if (activity.equals("ReleaseActivity")) {
-			LinearLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new LinearLayout.LayoutParams(
+			RelativeLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new RelativeLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, (int) (25 * density + 0.5f));
+			PicAndVoiceDetailBackLayoutParam
+					.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.06944444f);
-			PicAndVoiceDetailBack.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
-			
-			LinearLayout.LayoutParams mediaTotalViewLayoutParam = new LinearLayout.LayoutParams(
+			PicAndVoiceDetailBack
+					.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
+
+			RelativeLayout.LayoutParams mediaTotalViewLayoutParam = new RelativeLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			mediaTotalViewLayoutParam.addRule(RelativeLayout.ALIGN_LEFT);
+			mediaTotalViewLayoutParam.addRule(RelativeLayout.RIGHT_OF,
+					R.id.PicAndVoiceDetailBack);
 			mediaTotalViewLayoutParam.leftMargin = (int) (width * 0.02777778f);
 			mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
-			
-			LinearLayout.LayoutParams tv_setcoverLayoutParam = new LinearLayout.LayoutParams(
+
+			RelativeLayout.LayoutParams tv_setcoverLayoutParam = new RelativeLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			tv_setcoverLayoutParam.leftMargin = (int) (width * 0.125f);
+			tv_setcoverLayoutParam.addRule(RelativeLayout.ALIGN_RIGHT);
+			tv_setcoverLayoutParam.addRule(RelativeLayout.LEFT_OF,
+					R.id.iv_picandvoice_cancel);
+			tv_setcoverLayoutParam.rightMargin = (int) (width * 0.013888889f);
 			tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
-			
-			LinearLayout.LayoutParams selectedCoverViewLayoutParam = new LinearLayout.LayoutParams(
+
+			RelativeLayout.LayoutParams selectedCoverViewLayoutParam = new RelativeLayout.LayoutParams(
 					(int) (width * 0.06944444f), (int) (height * 0.0390625f));
-			selectedCoverViewLayoutParam.leftMargin = (int) (width * 0.03472222f);
+			selectedCoverViewLayoutParam.addRule(RelativeLayout.ALIGN_RIGHT);
+			selectedCoverViewLayoutParam.addRule(RelativeLayout.LEFT_OF,
+					R.id.iv_picandvoice_del);
+			selectedCoverViewLayoutParam.rightMargin = (int) (width * 0.20138889f);
 			selectedCoverView.setLayoutParams(selectedCoverViewLayoutParam);
 
-			LinearLayout.LayoutParams deleteMediaViewLayoutParam = new LinearLayout.LayoutParams(
+			RelativeLayout.LayoutParams deleteMediaViewLayoutParam = new RelativeLayout.LayoutParams(
 					(int) (width * 0.06944444f), (int) (height * 0.0390625f));
-			deleteMediaViewLayoutParam.leftMargin = (int) (width * 0.208333333f);
+			deleteMediaViewLayoutParam
+					.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			deleteMediaViewLayoutParam.rightMargin = (int) (width * 0.0833333f);
 			deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
 
 		} else if (activity.equals("MapStrage")) {
 			tv_setcover.setText("预览");
 			selectedCoverView.setVisibility(View.GONE);
-			
-			LinearLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new LinearLayout.LayoutParams(
+
+			RelativeLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new RelativeLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, (int) (25 * density + 0.5f));
-			PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.0625f);
-			PicAndVoiceDetailBack.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
-			
-			LinearLayout.LayoutParams mediaTotalViewLayoutParam = new LinearLayout.LayoutParams(
+			PicAndVoiceDetailBackLayoutParam
+					.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+			PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.06944444f);
+			PicAndVoiceDetailBack
+					.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
+
+			RelativeLayout.LayoutParams mediaTotalViewLayoutParam = new RelativeLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			mediaTotalViewLayoutParam.addRule(RelativeLayout.ALIGN_LEFT);
+			mediaTotalViewLayoutParam.addRule(RelativeLayout.RIGHT_OF,
+					R.id.PicAndVoiceDetailBack);
 			mediaTotalViewLayoutParam.leftMargin = (int) (width * 0.02777778f);
 			mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
-			
-			LinearLayout.LayoutParams tv_setcoverLayoutParam = new LinearLayout.LayoutParams(
+
+			RelativeLayout.LayoutParams tv_setcoverLayoutParam = new RelativeLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			tv_setcoverLayoutParam.leftMargin = (int) (width * 0.19444444f);
+			tv_setcoverLayoutParam.addRule(RelativeLayout.LEFT_OF,
+					R.id.iv_picandvoice_del);
+			tv_setcoverLayoutParam.rightMargin = (int) (width * 0.326388889f);
 			tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
-			
-			LinearLayout.LayoutParams deleteMediaViewLayoutParam = new LinearLayout.LayoutParams(
+
+			RelativeLayout.LayoutParams deleteMediaViewLayoutParam = new RelativeLayout.LayoutParams(
 					(int) (width * 0.06944444f), (int) (height * 0.0390625f));
-			deleteMediaViewLayoutParam.leftMargin = (int) (width * 0.34027778f);
+			deleteMediaViewLayoutParam
+					.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			deleteMediaViewLayoutParam.rightMargin = (int) (width * 0.0833333f);
 			deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
-			
+
 		} else if (activity.equals("2")) {
 			selectedCoverView.setVisibility(View.GONE);
 			deleteMediaView.setVisibility(View.GONE);
@@ -284,9 +309,6 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		if (activity.equals("ReleaseActivity")) {
 			for (int i = 0; i < ReleaseActivity.voices.size(); i++) {
 				mediaTotal++;
-				// View addView =
-				// mInflater.inflate(R.layout.release_child_navigation,
-				// null);
 				final RecordView recordView = new RecordView(
 						PicAndVoiceDetailActivity.this);
 				recordView.setMode(RecordView.MODE_PROGRESS);
@@ -364,8 +386,9 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					superView.addView(sampleview);
 					iv.setVisibility(View.GONE);
 				} else {
-					iv.setImageBitmap((Bitmap) ReleaseActivity.images.get(i)
-							.get("bitmap"));
+					iv.setImageBitmap(new SoftReference<Bitmap>(
+							(Bitmap) ReleaseActivity.images.get(i)
+									.get("bitmap")).get());
 				}
 				mainListViews.add(superView);
 			}
@@ -377,10 +400,17 @@ public class PicAndVoiceDetailActivity extends Activity implements
 						R.layout.release_child_navigation, null);
 				ImageView iv = (ImageView) superView
 						.findViewById(R.id.iv_release_child);
-				Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
-						MapStorageDirectoryActivity.selectedImages.get(i)),
-						width, height);
-				iv.setImageBitmap(bm);
+				// Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
+				// MapStorageDirectoryActivity.selectedImages.get(i)),
+				// width, height);
+				// iv.setImageBitmap(bm);
+				SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
+						MCImageUtils
+								.getZoomBitmapFromFile(
+										new File(
+												MapStorageDirectoryActivity.selectedImages
+														.get(i)), width, height));
+				iv.setImageBitmap(bm.get());
 				mainListViews.add(superView);
 			}
 		}
@@ -395,28 +425,29 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			break;
 		case R.id.tv_setcover:
 		case R.id.iv_picandvoice_cancel:
-			if(activity.equals("ReleaseActivity")){
-			if (iscover) {
-				selectedCoverView
-						.setImageResource(R.drawable.picandvoice_cancel);
-				iscover = false;
-				ReleaseActivity.cover = "";
-				currentCoverIndex = -1;
-			} else {
-				selectedCoverView
-						.setImageResource(R.drawable.picandvoice_affirm);
-				iscover = true;
-				currentCoverIndex = currentPageSize;
-				if (currentPageSize <= ReleaseActivity.voices.size()) {
-					ReleaseActivity.cover = (String) ReleaseActivity.voices
-							.get(currentPageSize - 1).get("fileName");
+			if (activity.equals("ReleaseActivity")) {
+				if (iscover) {
+					selectedCoverView
+							.setImageResource(R.drawable.picandvoice_cancel);
+					iscover = false;
+					ReleaseActivity.cover = "";
+					currentCoverIndex = -1;
 				} else {
-					ReleaseActivity.cover = (String) ReleaseActivity.images
-							.get(currentPageSize
-									- ReleaseActivity.voices.size() - 1).get(
-									"fileName");
+					selectedCoverView
+							.setImageResource(R.drawable.picandvoice_affirm);
+					iscover = true;
+					currentCoverIndex = currentPageSize;
+					if (currentPageSize <= ReleaseActivity.voices.size()) {
+						ReleaseActivity.cover = (String) ReleaseActivity.voices
+								.get(currentPageSize - 1).get("fileName");
+					} else {
+						ReleaseActivity.cover = (String) ReleaseActivity.images
+								.get(currentPageSize
+										- ReleaseActivity.voices.size() - 1)
+								.get("fileName");
+					}
 				}
-			}}
+			}
 			break;
 		default:
 			break;
