@@ -60,6 +60,8 @@ public class MainActivity extends BaseActivity {
 
 	BackgroundView mBackground;
 
+	public static int statusBarHeight;
+
 	public static final String MODE_LOGIN = "login";
 	public static final String MODE_MAIN = "main";
 
@@ -152,6 +154,7 @@ public class MainActivity extends BaseActivity {
 			mMainMode.show(mMainMode.mChatMessagesFragment);
 		}
 		NotificationUtils.cancelNotification(MainActivity.this);
+		statusBarHeight = height - mBackground.getHeight();
 		super.onWindowFocusChanged(hasFocus);
 	}
 

@@ -60,11 +60,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 tools:ignore="UselessLeaf" >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#fff" />
             </LinearLayout>
         </LinearLayout>
     </com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView>
 
     <RelativeLayout
+        android:id="@+id/rl_topMenuBar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#51000000"
@@ -96,15 +102,17 @@
             android:textSize="13sp" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/ll_rightTime"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp" >
+            android:paddingRight="15dp" >
 
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:layout_gravity="center_vertical|left"
                 android:src="@drawable/time" />
 
             <TextView

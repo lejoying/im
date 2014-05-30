@@ -397,7 +397,13 @@ squareManage.addsquarepraise = function (data, response) {
                     var praiseusers = message.praiseusers;
                     var users = [];
                     if (operation == "true" || operation == true) {
-                        message.praiseusers.push(phone);
+                        for (var index in praiseusers) {
+                            if (praiseusers[index] != phone) {
+                                users.push(praiseusers[index]);
+                            }
+                        }
+                        users.push(phone);
+                        message.praiseusers = users;
                     } else {
                         for (var index in praiseusers) {
                             if (praiseusers[index] != phone) {
@@ -746,7 +752,34 @@ squareManage.deletesquaremessage = function (data, response) {
             console.error(err+"---deletequaremessage");
             return;
         }else{
-            client.
+            client.hdel("square_"+gid+"_comment",gmid,function(err,reply){
+               if(err){
+                   response.write(JSON.stringify({
+                       "提示信息": "删除广播失败",
+                       "失败原因": "数据异常"
+                   }));
+                   response.end();
+                   console.error(err+"---deletequaremessage");
+                   return;
+               }else{
+                   client.lrem("square_"+gid,gmid,function(err,reply){
+                       if(err){
+                           response.write(JSON.stringify({
+                               "提示信息": "删除广播失败",
+                               "失败原因": "数据异常"
+                           }));
+                           response.end();
+                           console.error(err+"---deletequaremessage");
+                           return;
+                       }else{
+                           response.write(JSON.stringify({
+                               "提示信息": "删除广播成功"
+                           }));
+                           response.end();
+                       }
+                   });
+               }
+            });
         }
     });
 }

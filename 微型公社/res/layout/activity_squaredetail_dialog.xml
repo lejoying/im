@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/ll_menuContent"
+        android:layout_width="146dp"
+        android:layout_height="94dp"
+        android:layout_gravity="right"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/ll_rightMenu"
+            android:layout_width="146dp"
+            android:layout_height="94dp"
+            android:layout_gravity="right"
+            android:background="#999999"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/rl_stick"
+                android:layout_width="146dp"
+                android:layout_height="47dp"
+                android:background="#b2000000" >
+
+                <ImageView
+                    android:id="@+id/iv_stick"
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="30dp"
+                    android:src="@drawable/confirm_stick" />
+
+                <TextView
+                    android:id="@+id/tv_stick"
+                    android:layout_width="116dp"
+                    android:layout_height="47dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center"
+                    android:text="置顶"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#000" />
+
+            <RelativeLayout
+                android:id="@+id/rl_delete"
+                android:layout_width="146dp"
+                android:layout_height="47dp"
+                android:background="#b2000000" >
+
+                <ImageView
+                    android:id="@+id/iv_delete"
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="30dp"
+                    android:src="@drawable/delete_message" />
+
+                <TextView
+                    android:id="@+id/tv_delete"
+                    android:layout_width="116dp"
+                    android:layout_height="47dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center"
+                    android:text="删除"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

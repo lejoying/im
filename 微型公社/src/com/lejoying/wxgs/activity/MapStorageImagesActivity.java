@@ -280,9 +280,7 @@ public class MapStorageImagesActivity extends Activity {
 				bitmaps.put(path, bitmap0);
 				return bitmap;
 			}
-
 		});
-
 	}
 
 }

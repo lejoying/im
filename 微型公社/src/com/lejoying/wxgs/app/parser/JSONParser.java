@@ -392,9 +392,25 @@ public class JSONParser {
 			e.printStackTrace();
 		}
 		try {
-			squareMessage.messageType = jMessage.getString("messageType");
+			JSONArray typeJsonArray = jMessage.getJSONArray("messageType");
+			ArrayList<String> messageTypes = new ArrayList<String>();
+			for (int i = 0; i < typeJsonArray.length(); i++) {
+				String messageType = typeJsonArray.getString(i);
+				if (!"".equals(messageType)) {
+					messageTypes.add(messageType);
+				}
+			}
+			squareMessage.messageTypes = messageTypes;
 		} catch (JSONException e) {
-			e.printStackTrace();
+			try {
+				ArrayList<String> messageTypes = new ArrayList<String>();
+				String messageType = jMessage.getString("messageType");
+				messageTypes.add(messageType);
+				squareMessage.messageTypes = messageTypes;
+			} catch (JSONException e1) {
+				e.printStackTrace();
+				e1.printStackTrace();
+			}
 		}
 		try {
 			squareMessage.contentType = jMessage.getString("contentType");

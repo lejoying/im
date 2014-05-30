@@ -310,16 +310,21 @@ public class PushService extends Service {
 										squareMessagesMap.put(message.gmid,
 												message);
 									}
-									if (squareMessagesClassify
-											.get(message.messageType) == null) {
-										List<String> list = new ArrayList<String>();
-										list.add(message.gmid);
-										squareMessagesClassify.put(
-												message.messageType, list);
-									} else {
-										squareMessagesClassify.get(
-												message.messageType).add(
-												message.gmid);
+									for (int i = 0; i < message.messageTypes
+											.size(); i++) {
+										String messageType = message.messageTypes
+												.get(i);
+										if (squareMessagesClassify
+												.get(messageType) == null) {
+											List<String> list = new ArrayList<String>();
+											list.add(message.gmid);
+											squareMessagesClassify.put(
+													messageType, list);
+										} else {
+											squareMessagesClassify.get(
+													messageType).add(
+													message.gmid);
+										}
 									}
 								}
 							} catch (JSONException e) {

@@ -2,6 +2,7 @@ package com.lejoying.wxgs.app.data.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SquareMessage implements Serializable {
 	/**
@@ -10,7 +11,7 @@ public class SquareMessage implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public String gmid = "";
 	public String sendType = "";// "square"||"group"||"point"
-	public String messageType = "";// "精华"||"活动"||"吐槽"
+	public List<String> messageTypes = new ArrayList<String>();;// "精华"||"活动"||"吐槽"
 	public String contentType = "";// "text"||"image"||"voice"||"voiceandimage"||"textandimage"||"textandvoice"||"vit"
 	public String phone = "";
 	public String nickName = "";

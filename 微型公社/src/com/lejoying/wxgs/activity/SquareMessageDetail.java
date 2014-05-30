@@ -16,6 +16,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,14 +24,19 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -79,6 +85,8 @@ public class SquareMessageDetail extends BaseActivity {
 	LinearLayout squareMessageDetailComments;
 	LinearLayout detailContent;
 	ImageView messageContentHead;
+	LinearLayout timeContent;
+	RelativeLayout topMenuBar;
 
 	TextView messageTime;
 
@@ -87,6 +95,9 @@ public class SquareMessageDetail extends BaseActivity {
 	int SCROLL_BETWEEN = 0X03;
 	int scrollStatus = SCROLL_TOP;
 	int scrollViewY = 0;
+
+	View vPopWindow;
+	PopupWindow popWindow;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +121,8 @@ public class SquareMessageDetail extends BaseActivity {
 		detailContent = (LinearLayout) findViewById(R.id.detailContent);
 		messageContentHead = (ImageView) findViewById(R.id.iv_messageUserHead);
 		messageTime = (TextView) findViewById(R.id.tv_messageTime);
+		timeContent = (LinearLayout) findViewById(R.id.ll_rightTime);
+		topMenuBar = (RelativeLayout) findViewById(R.id.rl_topMenuBar);
 		addDetailBottomBarChildView();
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
 		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -390,12 +403,22 @@ public class SquareMessageDetail extends BaseActivity {
 		// rl_square_message_menu
 
 		timeImage = new ImageView(this);
-		timeImage.setImageResource(R.drawable.praise);
+		for (int i = 0; i < message.praiseusers.size(); i++) {
+			if (message.praiseusers.get(i).equals(app.data.user.phone)) {
+				praiseStatus = true;
+				break;
+			}
+		}
+		if (praiseStatus) {
+			timeImage.setImageResource(R.drawable.praised);
+		} else {
+			timeImage.setImageResource(R.drawable.praise);
+		}
 		timeText = new TextView(this);
 		timeText.setSingleLine(true);
 		timeText.setTextColor(Color.WHITE);
 		timeText.setTextScaleX(1.2f);
-		timeText.setText("共获得0" + message.praiseusers.size() + "个赞");
+		timeText.setText("共获得" + message.praiseusers.size() + "个赞");
 		// distanceImage = new ImageView(this);
 		// distanceImage.setImageResource(R.drawable.distance);
 		// distanceText = new TextPanel(this);
@@ -514,6 +537,13 @@ public class SquareMessageDetail extends BaseActivity {
 	boolean isTouchOnContent;
 
 	private void initEvent() {
+		timeContent.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				showPopWindow(SquareMessageDetail.this, detailContent);
+			}
+		});
 		timeImage.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -651,7 +681,7 @@ public class SquareMessageDetail extends BaseActivity {
 							});
 						}
 					}
-					Log.e("Coolspan", notice + "-" + flag + "------点赞提示消息");
+					// Log.e("Coolspan", notice + "-" + flag + "------点赞提示消息");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -769,6 +799,77 @@ public class SquareMessageDetail extends BaseActivity {
 	private float dp2px(float dp) {
 		float px = getResources().getDisplayMetrics().density * dp + 0.5f;
 		return px;
+	}
+
+	private void showPopWindow(Context context, View parent) {
+		vPopWindow = inflater.inflate(R.layout.activity_squaredetail_dialog,
+				null, false);
+		popWindow = new PopupWindow(vPopWindow, LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT, true);
+		LinearLayout menuContent = (LinearLayout) vPopWindow
+				.findViewById(R.id.ll_menuContent);
+
+		LinearLayout rightMenuContent = (LinearLayout) vPopWindow
+				.findViewById(R.id.ll_rightMenu);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				menuContent.getLayoutParams());
+		params.topMargin = (int) (MainActivity.statusBarHeight + topMenuBar
+				.getHeight());
+		params.gravity = Gravity.RIGHT;
+		params.rightMargin = 7;
+		menuContent.setLayoutParams(params);
+
+		TranslateAnimation animation = new TranslateAnimation(
+				vPopWindow.getLeft() + dp2px(94), vPopWindow.getLeft(),
+				vPopWindow.getTop() - dp2px(146), vPopWindow.getTop());
+		animation.setDuration(300);
+		rightMenuContent.setAnimation(animation);
+
+		final RelativeLayout stickMenuAll = (RelativeLayout) vPopWindow
+				.findViewById(R.id.rl_stick);
+		final ImageView stickMenuImage = (ImageView) vPopWindow
+				.findViewById(R.id.iv_stick);
+		final TextView stickMenu = (TextView) vPopWindow
+				.findViewById(R.id.tv_stick);
+		final RelativeLayout deleteMenuAll = (RelativeLayout) vPopWindow
+				.findViewById(R.id.rl_delete);
+		final TextView deleteMenu = (TextView) vPopWindow
+				.findViewById(R.id.tv_delete);
+
+		stickMenuAll.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				stickMenuAll.setBackgroundColor(Color.argb(204, 0, 0, 0));
+				stickMenuImage.setImageResource(R.drawable.cancle_stick);
+				stickMenu.setText("取消置顶");
+			}
+		});
+		deleteMenuAll.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				deleteMenuAll.setBackgroundColor(Color.argb(204, 0, 0, 0));
+			}
+		});
+		rightMenuContent.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		vPopWindow.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (popWindow != null && popWindow.isShowing()) {
+					popWindow.dismiss();
+				}
+			}
+		});
+		popWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
 	}
 }
 
