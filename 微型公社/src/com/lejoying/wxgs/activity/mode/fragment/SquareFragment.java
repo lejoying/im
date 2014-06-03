@@ -248,7 +248,7 @@ public class SquareFragment extends BaseFragment {
 				horizontalScrollView.getScrollY());
 		classifyTextViews1.clear();
 		classifyTextViews2.clear();
-		final String[] strs = { "吐槽", "精选", "全部", "活动", "服务", "吐槽", "精选", "全部",
+		final String[] strs = { "吐槽", "精华", "全部", "活动", "服务", "吐槽", "精华", "全部",
 				"活动", "服务" };
 		for (int j = 0; j < 2; j++) {
 			for (int i = 0; i < child_count; i++) {

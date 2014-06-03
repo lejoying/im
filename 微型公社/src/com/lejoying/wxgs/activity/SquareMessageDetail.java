@@ -16,9 +16,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -29,6 +32,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.TranslateAnimation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -45,10 +49,13 @@ import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
 import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
@@ -83,6 +90,8 @@ public class SquareMessageDetail extends BaseActivity {
 	ImageView messageContentHead;
 	LinearLayout timeContent;
 	RelativeLayout topMenuBar;
+	EditText et_comment;
+	TextView releaseComment;
 
 	TextView messageTime;
 
@@ -98,6 +107,8 @@ public class SquareMessageDetail extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// getWindow().setSoftInputMode(
+		// WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		Intent intent = getIntent();
 		mCurrentSquareID = intent.getStringExtra("mCurrentSquareID");
 		gmid = intent.getStringExtra("gmid");
@@ -119,6 +130,8 @@ public class SquareMessageDetail extends BaseActivity {
 		messageTime = (TextView) findViewById(R.id.tv_messageTime);
 		timeContent = (LinearLayout) findViewById(R.id.ll_rightTime);
 		topMenuBar = (RelativeLayout) findViewById(R.id.rl_topMenuBar);
+		et_comment = (EditText) findViewById(R.id.et_comment);
+		releaseComment = (TextView) findViewById(R.id.tv_confirm_release_comment);
 		addDetailBottomBarChildView();
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
 		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -533,6 +546,36 @@ public class SquareMessageDetail extends BaseActivity {
 	boolean isTouchOnContent;
 
 	private void initEvent() {
+		releaseComment.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Alert.showMessage(et_comment.getText().toString());
+			}
+		});
+		et_comment.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				String content = arg0.toString();
+				if ("".equals(content)) {
+				}
+			}
+		});
 		timeContent.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -802,6 +845,9 @@ public class SquareMessageDetail extends BaseActivity {
 				null, false);
 		popWindow = new PopupWindow(vPopWindow, LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT, true);
+		popWindow.setBackgroundDrawable(new BitmapDrawable());
+		vPopWindow.setFocusable(true);
+		vPopWindow.setFocusableInTouchMode(true);
 		LinearLayout menuContent = (LinearLayout) vPopWindow
 				.findViewById(R.id.ll_menuContent);
 
@@ -827,7 +873,7 @@ public class SquareMessageDetail extends BaseActivity {
 				.findViewById(R.id.iv_stick);
 		final TextView stickMenu = (TextView) vPopWindow
 				.findViewById(R.id.tv_stick);
-		boolean messageTypeFlag = message.messageTypes.contains("置顶");
+		boolean messageTypeFlag = message.messageTypes.contains("精华");
 		if (messageTypeFlag) {
 			stickMenuImage.setImageResource(R.drawable.cancle_stick);
 			stickMenu.setText("取消置顶");
@@ -848,9 +894,15 @@ public class SquareMessageDetail extends BaseActivity {
 				if ("置顶".equals(stickMenu.getText().toString())) {
 					stickMenuImage.setImageResource(R.drawable.cancle_stick);
 					stickMenu.setText("取消置顶");
+					addSquareMessageType("精华", true);
+
 				} else {
 					stickMenuImage.setImageResource(R.drawable.confirm_stick);
 					stickMenu.setText("置顶");
+					addSquareMessageType("精华", false);
+				}
+				if (popWindow != null && popWindow.isShowing()) {
+					popWindow.dismiss();
 				}
 			}
 		});
@@ -859,6 +911,10 @@ public class SquareMessageDetail extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				deleteMenuAll.setBackgroundColor(Color.argb(204, 0, 0, 0));
+				deleteSquareMessage();
+				if (popWindow != null && popWindow.isShowing()) {
+					popWindow.dismiss();
+				}
 			}
 		});
 		rightMenuContent.setOnClickListener(new OnClickListener() {
@@ -881,44 +937,112 @@ public class SquareMessageDetail extends BaseActivity {
 		popWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
 	}
 
-	public void addSquareMessageType(final JSONObject jsonObject) {
+	public void addSquareMessageType(final String messageType,
+			final boolean operation) {
 		app.networkHandler.connection(new CommonNetConnection() {
 			@Override
 			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.SQUARE_ADDSQUARECOMMENT;
+				settings.url = API.DOMAIN + API.SQUARE_MODIFYMESSAGETYPE;
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
 				params.put("gid", mCurrentSquareID);
 				params.put("gmid", gmid);
-
+				params.put("messageType", messageType);
+				params.put("operation", operation + "");
 				settings.params = params;
 			}
 
 			@Override
 			public void success(JSONObject jData) {
-				// try {
-				// final List<Comment> comments = JSONParser
-				// .generateCommentsFromJSON(jData
-				// .getJSONArray("comments"));
-				// if (comments.size()) {
-				// TODO
-				// app.UIHandler.post(new Runnable() {
-				//
-				// @Override
-				// public void run() {
-				// // generateCommentsViews(comments);
-				// }
-				// });
-				// }
+				if (operation) {
+					message.messageTypes.add(messageType);
+				} else {
+					message.messageTypes.remove(messageType);
+				}
+				app.dataHandler.exclude(new Modification() {
 
-				// } catch (JSONException e) {
-				// e.printStackTrace();
-				// }
+					@Override
+					public void modifyData(Data data) {
+						List<String> classify = data.squareMessagesClassify
+								.get(mCurrentSquareID).get("精华");
+						if (classify == null) {
+							List<String> messages = new ArrayList<String>();
+							data.squareMessagesClassify.get(mCurrentSquareID)
+									.put("精华", messages);
+						}
+						if (operation) {
+							data.squareMessagesClassify.get(mCurrentSquareID)
+									.get("精华").add(message.gmid);
+						} else {
+							data.squareMessagesClassify.get(mCurrentSquareID)
+									.get("精华").remove(message.gmid);
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (MainActivity.instance.mMainMode.mSquareFragment
+								.isAdded()) {
+							MainActivity.instance.mMainMode.mSquareFragment
+									.notifyViews();
+						}
+						super.modifyUI();
+					}
+				});
 			}
 		});
 	}
 
+	public void deleteSquareMessage() {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SQUARE_DELETESQUAREMESSAGE;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentSquareID);
+				params.put("gmid", gmid);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						List<String> types = message.messageTypes;
+						System.out.println("squareMessage---->"
+								+ data.squareMessages.get(mCurrentSquareID)
+										.size());
+						data.squareMessages.get(mCurrentSquareID).remove(gmid);
+						System.out.println("squareMessage---->>"
+								+ data.squareMessages.get(mCurrentSquareID)
+										.size());
+						for (int i = 0; i < types.size(); i++) {
+							String type = types.get(i);
+							data.squareMessagesClassify.get(mCurrentSquareID)
+									.get(type).remove(gmid);
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (MainActivity.instance.mMainMode.mSquareFragment
+								.isAdded()) {
+							MainActivity.instance.mMainMode.mSquareFragment
+									.notifyViews();
+						}
+						super.modifyUI();
+					}
+				});
+
+				finish();
+			}
+		});
+	}
 }
 
 class TextPanel extends View {

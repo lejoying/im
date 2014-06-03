@@ -65,7 +65,7 @@ squareManage.sendsquaremessage = function (data, response) {
             var message = {
                 gmid: time + "",
                 sendType: "square",
-                messageType: content.messageType,
+                messageType: JSON.parse(content.messageType),
                 contentType: content.contentType,
                 cover: cover,
                 phone: phone,
@@ -675,6 +675,7 @@ squareManage.getsquareusers = function (data, response) {
  ***************************************/
 squareManage.modifymessagetype = function (data, response) {
     response.asynchronous = 1;
+    console.info(data);
     var phone = data.phone;
     var gid = data.gid;
     var gmid = data.gmid;
@@ -693,11 +694,18 @@ squareManage.modifymessagetype = function (data, response) {
             } else {
                 if (reply) {
                     var message = JSON.parse(reply);
-                    message.messageType = message.messageType || [];
+//                    message.messageType = JSON.parse(message.messageType);
+//                    console.error(message.messageType.length);
                     var messageTypes = message.messageType;
                     var types = [];
                     if (operation == "true" || operation == true) {
+                        for (var index in messageTypes) {
+                            if (messageTypes[index] != messageType) {
+                                types.push(messageTypes[index]);
+                            }
+                        }
                         message.messageType.push(messageType);
+                        message.messageType = types;
                     } else {
                         for (var index in messageTypes) {
                             if (messageTypes[index] != messageType) {
@@ -739,6 +747,7 @@ squareManage.modifymessagetype = function (data, response) {
  ***************************************/
 squareManage.deletesquaremessage = function (data, response) {
     response.asynchronous = 1;
+    console.info(data);
     var phone = data.phone;
     var gid = data.gid;
     var gmid = data.gmid;
@@ -762,7 +771,7 @@ squareManage.deletesquaremessage = function (data, response) {
                    console.error(err+"---deletequaremessage");
                    return;
                }else{
-                   client.lrem("square_"+gid,gmid,function(err,reply){
+                   client.lrem("square_"+gid,-1,gmid,function(err,reply){
                        if(err){
                            response.write(JSON.stringify({
                                "提示信息": "删除广播失败",

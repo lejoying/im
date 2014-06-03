@@ -74,5 +74,7 @@ public class API {
 	public static final String SQUARE_GETSQUARECOMMENTS = "api2/square/getsquarecomments";
 	public static final String SQUARE_ADDSQUAREPRAISE = "api2/square/addsquarepraise";
 	public static final String SQUARE_ADDSQUARECOMMENT = "api2/square/addsquarecomment";
+	public static final String SQUARE_MODIFYMESSAGETYPE = "api2/square/modifymessagetype";
+	public static final String SQUARE_DELETESQUAREMESSAGE = "api2/square/deletesquaremessage";
 
 }

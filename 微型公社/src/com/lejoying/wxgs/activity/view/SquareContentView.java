@@ -143,9 +143,14 @@ public class SquareContentView extends HorizontalScrollView {
 		} else {
 			int itemsSize = items.size();
 			int messagesSize = messages.size();
+			// delete message generate all views
+			if (messagesSize < itemsSize) {
+				mViewContainer.removeAllViews();
+				items.clear();
+				itemsSize = 0;
+			}
 			Item itemBefore = null;
-			
-//			TODO int startSize = messagesSize > 20 ? messagesSize - 20 : 0;
+			// TODO int startSize = messagesSize > 20 ? messagesSize - 20 : 0;
 			for (int i = 0; i < messagesSize; i++) {
 				SquareMessage message = SquareMessageMap.get(messages.get(i));
 				Item item = null;
@@ -179,7 +184,7 @@ public class SquareContentView extends HorizontalScrollView {
 			return;
 		}
 		Item itemBefore = null;
-//		int startSize = items.size() > 20 ? items.size() - 20 : 0;
+		// int startSize = items.size() > 20 ? items.size() - 20 : 0;
 		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
 			if (item.isMakeSurePosition) {
@@ -288,7 +293,7 @@ public class SquareContentView extends HorizontalScrollView {
 		items.clear();
 		Item itemBefore = null;
 		// TODO 2014.05.22 setting square images count to 20.
-//		int messageSize = messages.size() > 20 ? messages.size() - 20 : 0;
+		// int messageSize = messages.size() > 20 ? messages.size() - 20 : 0;
 		for (int i = 0; i < messages.size(); i++) {
 			Item item = generateItem(itemBefore, map.get(messages.get(i)));
 			itemBefore = item;
@@ -616,7 +621,12 @@ public class SquareContentView extends HorizontalScrollView {
 																	newFileName[0]
 																			+ "_12."
 																			+ newFileName[1]);
-															bitmap.recycle();
+															if (bitmap != null) {
+																if (!bitmap
+																		.isRecycled()) {
+																	bitmap.recycle();
+																}
+															}
 															super.run();
 														}
 													}.start();
@@ -657,7 +667,12 @@ public class SquareContentView extends HorizontalScrollView {
 																	newFileName[0]
 																			+ "_21."
 																			+ newFileName[1]);
-															bitmap.recycle();
+															if (bitmap != null) {
+																if (!bitmap
+																		.isRecycled()) {
+																	bitmap.recycle();
+																}
+															}
 															super.run();
 														}
 													}.start();
@@ -695,7 +710,12 @@ public class SquareContentView extends HorizontalScrollView {
 																	newFileName[0]
 																			+ "_21."
 																			+ newFileName[1]);
-															bitmap.recycle();
+															if (bitmap != null) {
+																if (!bitmap
+																		.isRecycled()) {
+																	bitmap.recycle();
+																}
+															}
 															super.run();
 														}
 													}.start();
@@ -735,7 +755,12 @@ public class SquareContentView extends HorizontalScrollView {
 																newFileName[0]
 																		+ "_22."
 																		+ newFileName[1]);
-														bitmap.recycle();
+														if (bitmap != null) {
+															if (!bitmap
+																	.isRecycled()) {
+																bitmap.recycle();
+															}
+														}
 														super.run();
 													}
 												}.start();

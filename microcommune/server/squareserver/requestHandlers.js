@@ -22,14 +22,14 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
     }
     var operation = pathObject["operation"];
     if (operation == "sendsquaremessage") {
-        oauth6(data.phone, data.accessKey, response, function () {
+//        oauth6(data.phone, data.accessKey, response, function () {
             squareManage.sendsquaremessage(data, response);
-        });
+//        });
     }
     else if (operation == "getsquaremessage") {
-        oauth6(data.phone, data.accessKey, response, function () {
+//        oauth6(data.phone, data.accessKey, response, function () {
             squareManage.getsquaremessage(data, response);
-        });
+//        });
     }
     else if (operation == "getonlinecount") {
         oauth6(data.phone, data.accessKey, response, function () {

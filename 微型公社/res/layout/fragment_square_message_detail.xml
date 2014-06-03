@@ -15,6 +15,8 @@
             android:id="@+id/rl_square_message_menu_buttom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical" >
 
             <com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView
@@ -60,12 +62,50 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 tools:ignore="UselessLeaf" >
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#fff" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
                 <EditText
+                    android:id="@+id/et_comment"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:background="#fff" />
-            </LinearLayout>
+                    android:background="#26ffffff"
+                    android:ems="10"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:textColor="#fff"
+                    android:textCursorDrawable="@drawable/cursor"
+                    tools:ignore="TextFields" />
+
+                <TextView
+                    android:id="@+id/tv_confirm_release_comment"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/squaredetail_comment_notselected"
+                    android:gravity="center"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="2dp"
+                    android:text="确定"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="-1dp"
+                android:background="#fff" />
         </LinearLayout>
     </com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView>
 
