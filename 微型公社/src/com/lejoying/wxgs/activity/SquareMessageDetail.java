@@ -16,12 +16,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -30,8 +28,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -831,6 +827,14 @@ public class SquareMessageDetail extends BaseActivity {
 				.findViewById(R.id.iv_stick);
 		final TextView stickMenu = (TextView) vPopWindow
 				.findViewById(R.id.tv_stick);
+		boolean messageTypeFlag = message.messageTypes.contains("置顶");
+		if (messageTypeFlag) {
+			stickMenuImage.setImageResource(R.drawable.cancle_stick);
+			stickMenu.setText("取消置顶");
+		} else {
+			stickMenuImage.setImageResource(R.drawable.confirm_stick);
+			stickMenu.setText("置顶");
+		}
 		final RelativeLayout deleteMenuAll = (RelativeLayout) vPopWindow
 				.findViewById(R.id.rl_delete);
 		final TextView deleteMenu = (TextView) vPopWindow
@@ -841,8 +845,13 @@ public class SquareMessageDetail extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				stickMenuAll.setBackgroundColor(Color.argb(204, 0, 0, 0));
-				stickMenuImage.setImageResource(R.drawable.cancle_stick);
-				stickMenu.setText("取消置顶");
+				if ("置顶".equals(stickMenu.getText().toString())) {
+					stickMenuImage.setImageResource(R.drawable.cancle_stick);
+					stickMenu.setText("取消置顶");
+				} else {
+					stickMenuImage.setImageResource(R.drawable.confirm_stick);
+					stickMenu.setText("置顶");
+				}
 			}
 		});
 		deleteMenuAll.setOnClickListener(new OnClickListener() {
@@ -871,6 +880,45 @@ public class SquareMessageDetail extends BaseActivity {
 		});
 		popWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
 	}
+
+	public void addSquareMessageType(final JSONObject jsonObject) {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SQUARE_ADDSQUARECOMMENT;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentSquareID);
+				params.put("gmid", gmid);
+
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				// try {
+				// final List<Comment> comments = JSONParser
+				// .generateCommentsFromJSON(jData
+				// .getJSONArray("comments"));
+				// if (comments.size()) {
+				// TODO
+				// app.UIHandler.post(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// // generateCommentsViews(comments);
+				// }
+				// });
+				// }
+
+				// } catch (JSONException e) {
+				// e.printStackTrace();
+				// }
+			}
+		});
+	}
+
 }
 
 class TextPanel extends View {

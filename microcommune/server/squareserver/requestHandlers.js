@@ -61,6 +61,16 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
             squareManage.getsquareusers(data, response);
         });
     }
+    else if (operation == "modifymessagetype") {
+//        oauth6(data.phone, data.accessKey, response, function () {
+        squareManage.modifymessagetype(data, response);
+//        });
+    }
+    else if (operation == "deletesquaremessage") {
+//        oauth6(data.phone, data.accessKey, response, function () {
+        squareManage.deletesquaremessage(data, response);
+//        });
+    }
     else if (operation == "zookeeper") {
         squareManage.zookeeper(data, response);
     }
