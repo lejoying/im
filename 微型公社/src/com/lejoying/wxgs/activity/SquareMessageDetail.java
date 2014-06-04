@@ -20,6 +20,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -135,12 +137,12 @@ public class SquareMessageDetail extends BaseActivity {
 		topMenuBar = (RelativeLayout) findViewById(R.id.rl_topMenuBar);
 		et_comment = (EditText) findViewById(R.id.et_comment);
 		releaseComment = (TextView) findViewById(R.id.tv_confirm_release_comment);
-		addDetailBottomBarChildView();
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
 		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		sc_square_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		initData();
 		generateMessageContent();
+		addDetailBottomBarChildView();
 		getSquareMessageComments();
 		initEvent();
 		// CircleMenu.hide();
@@ -348,23 +350,26 @@ public class SquareMessageDetail extends BaseActivity {
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-		LinearLayout.LayoutParams paramsInfo = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				(int) (sc_square_message_info.getHeight() * 0.917f));
-		sc_square_message_info_all.setLayoutParams(paramsInfo);
-		LinearLayout.LayoutParams paramsDetailBottomBar = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				(int) (sc_square_message_info.getHeight() * 0.083f));
-		squareDetailBottomBar.setLayoutParams(paramsDetailBottomBar);
+		// TODO not delete after code
+		// LinearLayout.LayoutParams paramsInfo = new LinearLayout.LayoutParams(
+		// LinearLayout.LayoutParams.MATCH_PARENT,
+		// (int) ((height - MainActivity.statusBarHeight) * 0.917f));
+		// sc_square_message_info_all.setLayoutParams(paramsInfo);
+		// LinearLayout.LayoutParams paramsDetailBottomBar = new
+		// LinearLayout.LayoutParams(
+		// LinearLayout.LayoutParams.MATCH_PARENT,
+		// (int) ((height - MainActivity.statusBarHeight) * 0.083f));
+		// squareDetailBottomBar.setLayoutParams(paramsDetailBottomBar);
+		// initSquareDetailBottomBar((int) ((height -
+		// MainActivity.statusBarHeight) * 0.083f));
 
+		
 		// RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 		// squareMessageDetailBack.getLayoutParams());
 		// params.width = (int) (height * 0.046f);
 		// params.leftMargin = (int) (width * 0.051302298f);
 		// params.addRule(RelativeLayout.CENTER_VERTICAL);
 		// squareMessageDetailBack.setLayoutParams(params);
-
-		initSquareDetailBottomBar((int) (sc_square_message_info.getHeight() * 0.083f));
 
 		super.onWindowFocusChanged(hasFocus);
 	}
@@ -477,10 +482,20 @@ public class SquareMessageDetail extends BaseActivity {
 		rl_square_message_menu.addView(collectImage);
 		rl_square_message_menu.addView(collectText);
 
+		LinearLayout.LayoutParams paramsInfo = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				(int) ((height - MainActivity.statusBarHeight) * 0.917f));
+		sc_square_message_info_all.setLayoutParams(paramsInfo);
+		LinearLayout.LayoutParams paramsDetailBottomBar = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				(int) ((height - MainActivity.statusBarHeight) * 0.083f));
+		squareDetailBottomBar.setLayoutParams(paramsDetailBottomBar);
+		initSquareDetailBottomBar((int) ((height - MainActivity.statusBarHeight) * 0.083f));
 	}
 
 	private void initSquareDetailBottomBar(int height) {
-		int width = rl_square_message_menu.getWidth();
+//		 int width = rl_square_message_menu.getWidth();
+		System.out.println(width + "++++++++++++++");
 		// int height = rl_square_message_menu.getHeight();
 		// System.out.println(width + "::::" + height + ">>>>"
 		// + squareDetailBottomBar.getHeight());
@@ -551,6 +566,37 @@ public class SquareMessageDetail extends BaseActivity {
 	Friend currentCommentUser;
 
 	private void initEvent() {
+		et_comment.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				String content = arg0.toString();
+				if ("".equals(content)) {
+					releaseComment
+							.setBackgroundResource(R.drawable.squaredetail_comment_notselected);
+					releaseComment.setTextColor(Color.WHITE);
+				} else {
+					releaseComment
+							.setBackgroundResource(R.drawable.squaredetail_comment_selected);
+					releaseComment.setTextColor(Color.BLACK);
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
 		messageContentHead.setOnClickListener(new OnClickListener() {
 
 			@Override

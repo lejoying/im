@@ -488,7 +488,7 @@ public class JSONParser {
 			}
 		}
 
-		return null;
+		return comments;
 	}
 
 	public static Comment generateCommentOnlyFromJSON(JSONObject jsonObject) {
