@@ -11,6 +11,9 @@ public class Comment implements Serializable {
 	public String phone;
 	public String nickName;
 	public String head;
+	public String phoneTo;
+	public String nickNameTo;
+	public String headTo;
 	public String contentType = "";// text||image||voice
 	public String content;
 	public long time;

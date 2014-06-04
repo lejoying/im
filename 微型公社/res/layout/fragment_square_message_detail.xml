@@ -78,9 +78,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="#26ffffff"
-                    android:ems="10"
+                    android:hint=" 添加评论 ... ..."
                     android:paddingBottom="15dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="80dp"
                     android:paddingTop="15dp"
+                    android:singleLine="true"
                     android:textColor="#fff"
                     android:textCursorDrawable="@drawable/cursor"
                     tools:ignore="TextFields" />

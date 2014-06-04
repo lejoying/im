@@ -20,8 +20,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -32,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,6 +53,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Comment;
+import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
@@ -104,6 +104,8 @@ public class SquareMessageDetail extends BaseActivity {
 	View vPopWindow;
 	PopupWindow popWindow;
 
+	InputMethodManager inputMethodManager;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -115,6 +117,7 @@ public class SquareMessageDetail extends BaseActivity {
 		this.message = app.data.squareMessagesMap.get(mCurrentSquareID).get(
 				gmid);
 		inflater = this.getLayoutInflater();
+		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		players = new ArrayList<MediaPlayer>();
 		recordViews = new ArrayList<RecordView>();
 		setContentView(R.layout.fragment_square_message_detail);
@@ -545,34 +548,52 @@ public class SquareMessageDetail extends BaseActivity {
 
 	boolean isTouchOnContent;
 
+	Friend currentCommentUser;
+
 	private void initEvent() {
+		messageContentHead.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				currentCommentUser = null;
+				et_comment.setHint(" 添加评论 ... ...");
+			}
+		});
 		releaseComment.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				Alert.showMessage(et_comment.getText().toString());
-			}
-		});
-		et_comment.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-					int arg2, int arg3) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void afterTextChanged(Editable arg0) {
-				String content = arg0.toString();
-				if ("".equals(content)) {
+				if (inputMethodManager.isActive()) {
+					inputMethodManager.hideSoftInputFromWindow(
+							SquareMessageDetail.this.getCurrentFocus()
+									.getWindowToken(),
+							InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+				String commentContent = et_comment.getText().toString().trim();
+				if ("".equals(commentContent)) {
+					Alert.showMessage("评论内容不能为空");
+					return;
+				}
+				et_comment.setHint(" 添加评论 ... ...");
+				et_comment.setText("");
+				JSONObject object = new JSONObject();
+				try {
+					if (currentCommentUser == null) {
+						object.put("phoneTo", "");
+						object.put("nickNameTo", "");
+						object.put("headTo", "");
+					} else {
+						object.put("phoneTo", currentCommentUser.phone);
+						object.put("nickNameTo", currentCommentUser.nickName);
+						object.put("headTo", currentCommentUser.head);
+					}
+					object.put("content", commentContent);
+					object.put("contentType", "text");
+					addSquareMessageComments(object);
+					// sc_square_message_info.scrollTo(0,
+					// (int) sc_square_message_info.getScrollY());
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -747,8 +768,6 @@ public class SquareMessageDetail extends BaseActivity {
 					final List<Comment> comments = JSONParser
 							.generateCommentsFromJSON(jData
 									.getJSONArray("comments"));
-					// if (comments.size() > 0) {
-					// TODO
 					app.UIHandler.post(new Runnable() {
 
 						@Override
@@ -756,8 +775,6 @@ public class SquareMessageDetail extends BaseActivity {
 							generateCommentsViews(comments);
 						}
 					});
-					// }
-
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -793,46 +810,74 @@ public class SquareMessageDetail extends BaseActivity {
 
 			@Override
 			public void success(JSONObject jData) {
-				// try {
-				// final List<Comment> comments = JSONParser
-				// .generateCommentsFromJSON(jData
-				// .getJSONArray("comments"));
-				// if (comments.size()) {
-				// TODO
-				// app.UIHandler.post(new Runnable() {
-				//
-				// @Override
-				// public void run() {
-				// // generateCommentsViews(comments);
-				// }
-				// });
-				// }
-
-				// } catch (JSONException e) {
-				// e.printStackTrace();
-				// }
+				// System.out.println("评论成功" + jData);
+				getSquareMessageComments();
 			}
 		});
 	}
 
 	public void generateCommentsViews(List<Comment> comments) {
-		for (int i = 0; i < Long.valueOf(gmid) % 3; i++) {
+		squareMessageDetailComments.removeAllViews();
+		for (int i = 0; i < comments.size(); i++) {
+			final Comment comment = comments.get(i);
 			View mContent = inflater.inflate(
 					R.layout.fragment_square_message_comments, null);
 			final ImageView mHead = (ImageView) mContent
 					.findViewById(R.id.iv_commentHead);
-			app.fileHandler.getHeadImage(message.head, new FileResult() {
+			TextView sInitnative = (TextView) mContent
+					.findViewById(R.id.tv_initiative);
+			TextView sReply = (TextView) mContent.findViewById(R.id.tv_reply);
+			TextView sPassivity = (TextView) mContent
+					.findViewById(R.id.tv_passivity);
+			TextView sCommentContent = (TextView) mContent
+					.findViewById(R.id.tv_comment_content);
+			sInitnative.setText(comment.nickName);
+			sCommentContent.setText(comment.content);
+			if (comment.phoneTo != null) {
+				if (!"".equals(comment.phoneTo)) {
+					sReply.setVisibility(View.VISIBLE);
+					sPassivity.setVisibility(View.VISIBLE);
+					sPassivity.setText(comment.nickNameTo);
+				}
+			}
+			app.fileHandler.getHeadImage(comment.head, new FileResult() {
 
 				@Override
 				public void onResult(String where, Bitmap bitmap) {
 					mHead.setImageBitmap(app.fileHandler.bitmaps
-							.get(message.head));
+							.get(comment.head));
+				}
+			});
+			mContent.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					if (app.data.user.phone.equals(comment.phone)) {
+						currentCommentUser = null;
+						et_comment.setHint(" 添加评论 ... ...");
+						et_comment.setText("");
+						Alert.showMessage("不能评论自己");
+					} else {
+						Friend currentUser = new Friend();
+						currentUser.phone = comment.phone;
+						currentUser.nickName = comment.nickName;
+						currentUser.head = comment.head;
+						currentCommentUser = currentUser;
+						et_comment.setHint(" 回复:" + comment.nickName);
+						// inputMethodManager.showSoftInput(et_comment,
+						// InputMethodManager.SHOW_FORCED);
+						et_comment.requestFocus();
+						inputMethodManager.showSoftInput(et_comment, 0);
+						// inputMethodManager.showSoftInputFromInputMethod(
+						// SquareMessageDetail.this.getCurrentFocus()
+						// .getWindowToken(),
+						// InputMethodManager.SHOW_FORCED);
+					}
 				}
 			});
 			// mHead.setImageBitmap(app.fileHandler.bitmaps.get(app.data.user.head));
 			squareMessageDetailComments.addView(mContent);
 		}
-
 	}
 
 	private float dp2px(float dp) {
@@ -1014,13 +1059,7 @@ public class SquareMessageDetail extends BaseActivity {
 					@Override
 					public void modifyData(Data data) {
 						List<String> types = message.messageTypes;
-						System.out.println("squareMessage---->"
-								+ data.squareMessages.get(mCurrentSquareID)
-										.size());
 						data.squareMessages.get(mCurrentSquareID).remove(gmid);
-						System.out.println("squareMessage---->>"
-								+ data.squareMessages.get(mCurrentSquareID)
-										.size());
 						for (int i = 0; i < types.size(); i++) {
 							String type = types.get(i);
 							data.squareMessagesClassify.get(mCurrentSquareID)

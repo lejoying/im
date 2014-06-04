@@ -29,6 +29,7 @@
             android:orientation="horizontal" >
 
             <TextView
+                android:id="@+id/tv_initiative"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -37,21 +38,25 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tv_reply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:text="回复"
                 android:textColor="#fff"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:visibility="gone" />
 
             <TextView
+                android:id="@+id/tv_passivity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_weight="1"
                 android:text="乔晓松"
                 android:textColor="#2BA8D4"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="0dp"
@@ -61,7 +66,8 @@
                 android:gravity="right"
                 android:text="今天08:33"
                 android:textColor="#fff"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -70,6 +76,7 @@
             android:orientation="horizontal" >
 
             <TextView
+                android:id="@+id/tv_comment_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="真的很羡慕你可以到处旅行...嘿嘿，其实你也是可以的啊，如果愿意，我们可以一起啊....真的么？。。。。假的。。。哈哈"

@@ -22,14 +22,14 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
     }
     var operation = pathObject["operation"];
     if (operation == "sendsquaremessage") {
-//        oauth6(data.phone, data.accessKey, response, function () {
+        oauth6(data.phone, data.accessKey, response, function () {
             squareManage.sendsquaremessage(data, response);
-//        });
+        });
     }
     else if (operation == "getsquaremessage") {
-//        oauth6(data.phone, data.accessKey, response, function () {
+        oauth6(data.phone, data.accessKey, response, function () {
             squareManage.getsquaremessage(data, response);
-//        });
+        });
     }
     else if (operation == "getonlinecount") {
         oauth6(data.phone, data.accessKey, response, function () {
@@ -62,14 +62,14 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
         });
     }
     else if (operation == "modifymessagetype") {
-//        oauth6(data.phone, data.accessKey, response, function () {
+        oauth6(data.phone, data.accessKey, response, function () {
         squareManage.modifymessagetype(data, response);
-//        });
+        });
     }
     else if (operation == "deletesquaremessage") {
-//        oauth6(data.phone, data.accessKey, response, function () {
+        oauth6(data.phone, data.accessKey, response, function () {
         squareManage.deletesquaremessage(data, response);
-//        });
+        });
     }
     else if (operation == "zookeeper") {
         squareManage.zookeeper(data, response);

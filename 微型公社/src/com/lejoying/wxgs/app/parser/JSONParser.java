@@ -305,8 +305,8 @@ public class JSONParser {
 
 			message.time = jMessage.getString("time");
 			message.contentType = jMessage.getString("contentType");
-			List<String> content=new ArrayList<String>();
-			for(int i=0;i<jMessage.getJSONArray("content").length();i++){
+			List<String> content = new ArrayList<String>();
+			for (int i = 0; i < jMessage.getJSONArray("content").length(); i++) {
 				content.add(jMessage.getJSONArray("content").get(i).toString());
 			}
 			message.content = content;
@@ -481,7 +481,7 @@ public class JSONParser {
 		List<Comment> comments = new ArrayList<Comment>();
 		for (int i = 0; i < jComments.length(); i++) {
 			try {
-				JSONObject jComment = new JSONObject(jComments.getString(i));
+				JSONObject jComment = jComments.getJSONObject(i);
 				comments.add(generateCommentOnlyFromJSON(jComment));
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -506,6 +506,21 @@ public class JSONParser {
 		}
 		try {
 			comment.head = jsonObject.getString("head");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.phoneTo = jsonObject.getString("phoneTo");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.nickNameTo = jsonObject.getString("nickNameTo");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			comment.headTo = jsonObject.getString("headTo");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
