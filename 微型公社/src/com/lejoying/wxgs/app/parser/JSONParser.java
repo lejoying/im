@@ -310,7 +310,6 @@ public class JSONParser {
 				content.add(jMessage.getJSONArray("content").get(i).toString());
 			}
 			message.content = content;
-
 			message.status = "sent";
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
