@@ -123,8 +123,8 @@ public class ChatFriendFragment extends BaseFragment {
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
 	int RESULT_CATPICTURE = 0x3d;
-	int messageNum=0;
-	
+	int messageNum = 1;
+
 	boolean VOICE_PLAYSTATUS = false;
 	boolean VOICE_SAVESTATUS = false;
 
@@ -132,7 +132,7 @@ public class ChatFriendFragment extends BaseFragment {
 
 	Map<String, Bitmap> tempImages = new Hashtable<String, Bitmap>();
 	List<String> messages = new ArrayList<String>();
-	
+
 	View iv_send;
 	View iv_more;
 	View iv_more_select;
@@ -180,7 +180,7 @@ public class ChatFriendFragment extends BaseFragment {
 	int beforeLineHeight;
 
 	String imageFileName;
-	
+
 	final int MAXTYPE_COUNT = 3;
 
 	public int showFirstPosition;
@@ -1344,7 +1344,7 @@ public class ChatFriendFragment extends BaseFragment {
 				default:
 					break;
 				}
-				messageHolder.image = (RelativeLayout)convertView
+				messageHolder.image = (RelativeLayout) convertView
 						.findViewById(R.id.rl_chatleft_image);
 				messageHolder.iv_image = (ImageView) convertView
 						.findViewById(R.id.iv_image);
@@ -1452,17 +1452,18 @@ public class ChatFriendFragment extends BaseFragment {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
 				messageHolder.voice.setVisibility(View.GONE);
-				for(int i=0;i<message.content.size();i++){
-					String content,mImageFileName;
+				for (int i = 0; i < message.content.size(); i++) {
+					String content, mImageFileName;
 					try {
 						content = message.content.get(i);
-						mImageFileName= message.content.get(i);
+						// System.out.println(content);
+						mImageFileName = message.content.get(i);
 					} catch (Exception e) {
 						content = message.content.toString();
-						mImageFileName= message.content.toString();
+						mImageFileName = message.content.toString();
 					}
-					 imageFileName=mImageFileName;
-					 String imgLastName = content.substring(content
+					imageFileName = mImageFileName;
+					String imgLastName = content.substring(content
 							.lastIndexOf(".") + 1);
 					if ("gif".equals(imgLastName)) {
 						messageHolder.iv_image.setVisibility(View.GONE);
@@ -1492,26 +1493,35 @@ public class ChatFriendFragment extends BaseFragment {
 
 									}
 								});
-					} else {
-						app.fileHandler.getImage(imageFileName, new FileResult() {
-							@Override
-							public void onResult(String where, Bitmap bitmap) {
-								messageHolder.iv_image_gif.setVisibility(View.GONE);
-								messageHolder.iv_image.setVisibility(View.VISIBLE);
-								View addView=new View(getActivity()); 
-										mInflater.inflate(R.layout.imageview_chat, null);
-								ImageView iv_image=(ImageView) addView.findViewById(R.id.iv_image);
-								iv_image.setImageBitmap(app.fileHandler.bitmaps
-										.get(imageFileName));
-								messageHolder.image.addView(addView);
-								// Movie.decodeFile((new File(app.sdcardImageFolder,
-								// imageFileName)).getAbsolutePath());
-								// if (where == app.fileHandler.FROM_WEB) {
-								// mAdapter.notifyDataSetChanged();
-								// }
 
-							}
-						});
+					} else {
+						app.fileHandler.getImage(imageFileName,
+								new FileResult() {
+									@Override
+									public void onResult(String where,
+											Bitmap bitmap) {
+										messageHolder.iv_image_gif
+												.setVisibility(View.GONE);
+										messageHolder.iv_image
+												.setVisibility(View.GONE);
+										View addView = new View(getActivity());
+										addView=mInflater.inflate(
+												R.layout.imageview_chat, null);
+										ImageView iv_image = (ImageView) addView
+												.findViewById(R.id.iv_image);
+										iv_image.setImageBitmap(app.fileHandler.bitmaps
+												.get(imageFileName));
+										messageHolder.image.addView(addView);
+										// Movie.decodeFile((new
+										// File(app.sdcardImageFolder,
+										// imageFileName)).getAbsolutePath());
+										// if (where ==
+										// app.fileHandler.FROM_WEB) {
+										// mAdapter.notifyDataSetChanged();
+										// }
+
+									}
+								});
 					}
 				}
 				switch (type) {
@@ -1544,7 +1554,7 @@ public class ChatFriendFragment extends BaseFragment {
 				} catch (Exception e) {
 					mVoiceContent = message.content.toString();
 				}
-				final String voiceContent=mVoiceContent;
+				final String voiceContent = mVoiceContent;
 				final String headFileName = fileName;
 				final ImageView iv_head = messageHolder.iv_voicehead;
 				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
@@ -1835,10 +1845,10 @@ public class ChatFriendFragment extends BaseFragment {
 			params.put("phoneto", jFriends.toString());
 		}
 		JSONObject jMessage = new JSONObject();
-		JSONArray jContent=new JSONArray();
+		JSONArray jContent = new JSONArray();
 		try {
 			jMessage.put("contentType", type);
-			for(String fileName:content){
+			for (String fileName : content) {
 				jContent.put(fileName);
 			}
 			jMessage.put("content", jContent);
@@ -1889,7 +1899,6 @@ public class ChatFriendFragment extends BaseFragment {
 					});
 				}
 			}
-			MapStorageDirectoryActivity.selectedImages.clear();
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
@@ -1939,13 +1948,15 @@ public class ChatFriendFragment extends BaseFragment {
 				try {
 					if (jData.getBoolean("exists")) {
 						messages.add(fileName);
-						if(messageNum==MapStorageDirectoryActivity.selectedImages.size()){
+						if (messageNum == MapStorageDirectoryActivity.selectedImages
+								.size()) {
 							sendMessage("image", messages);
-							messageNum=0;
-						}else{
+							MapStorageDirectoryActivity.selectedImages.clear();
+							messageNum = 1;
+						} else {
 							messageNum++;
 						}
-						
+
 					} else {
 						uploadImageOrVoice("image", fileName, base64);
 					}
@@ -1974,14 +1985,18 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void success(JSONObject jData) {
+				System.out.println(messageNum + ":"
+						+ MapStorageDirectoryActivity.selectedImages.size());
 				messages.add(fileName);
-				if(messageNum==MapStorageDirectoryActivity.selectedImages.size()){
+				if (messageNum == MapStorageDirectoryActivity.selectedImages
+						.size()) {
 					sendMessage(type, messages);
-					messageNum=0;
-				}else{
+					MapStorageDirectoryActivity.selectedImages.clear();
+					messageNum = 1;
+				} else {
 					messageNum++;
 				}
-				
+
 			}
 
 		});
