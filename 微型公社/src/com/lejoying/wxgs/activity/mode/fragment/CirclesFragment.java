@@ -1098,8 +1098,14 @@ public class CirclesFragment extends BaseFragment {
 		nickName.setText(friend.nickName);
 		Message lastMessage = friend.messages.get(friend.messages.size() - 1);
 		if (lastMessage.contentType.equals("text")) {
+			String mLastChatMessage;
+			try {
+				mLastChatMessage=friend.messages.get(friend.messages.size() - 1).content.get(0);
+			} catch (Exception e) {
+				mLastChatMessage=friend.messages.get(friend.messages.size() - 1).content.toString();
+			}
 			lastChatMessage
-					.setText(friend.messages.get(friend.messages.size() - 1).content);
+					.setText(mLastChatMessage);
 		} else if (lastMessage.contentType.equals("image")) {
 			lastChatMessage.setText(getString(R.string.text_picture));
 		} else if (lastMessage.contentType.equals("voice")) {

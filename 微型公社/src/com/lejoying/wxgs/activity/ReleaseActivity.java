@@ -198,7 +198,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		et_release.setHeight(height - 40 - (int) (height * 0.078125f)
 				- statusBarHeight);
-		//et_release.setLineSpacing(height*0.01953125f, 0.5f);//行间距
+		// et_release.setLineSpacing(height*0.01953125f, 0.5f);//行间距
 		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
 		tv_commit.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
@@ -336,21 +336,24 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 							app.UIHandler.post(new Runnable() {
 								@Override
 								public void run() {
-									et_release.setHeight(height - 40 - (int) (height * 0.078125f)
+									et_release.setHeight(height - 40
+											- (int) (height * 0.078125f)
 											- statusBarHeight);
 								}
 							});
-							
+
 							break;
 						case EditTextLayout.KEYBOARD_STATE_SHOW:
-							new Thread(){
+							new Thread() {
 								public void run() {
 									try {
 										sleep(50);
 										app.UIHandler.post(new Runnable() {
 											@Override
 											public void run() {
-												et_release.setHeight(ll_navigation.getTop() - 40
+												et_release.setHeight(ll_navigation
+														.getTop()
+														- 40
 														- statusBarHeight);
 											}
 										});
@@ -359,7 +362,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 									}
 								};
 							}.start();
-							
+
 							break;
 						default:
 							break;
@@ -949,8 +952,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void addImageFromLocal() {
-		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		Intent selectFromGallery = new Intent(ReleaseActivity.this,
+				MapStorageDirectoryActivity.class);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
 
 	}
@@ -1011,29 +1014,68 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		} else if ((requestCode == RESULT_MAKEVOICE || requestCode == RESULT_PICANDVOICE)
 				&& resultCode == Activity.RESULT_OK) {
 			nodifyViews();
-		} else {
+		} else if (requestCode == RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_OK) {
 			String picturePath = "";
 			String format = "";
-			if (requestCode == RESULT_SELECTPICTURE
-					&& resultCode == Activity.RESULT_OK && data != null) {
-				Uri selectedImage = data.getData();
-				String[] filePathColumn = { MediaStore.Images.Media.DATA };
-				Cursor cursor = getContentResolver().query(selectedImage,
-						filePathColumn, null, null, null);
-				cursor.moveToFirst();
-				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-				picturePath = cursor.getString(columnIndex).toLowerCase(
-						Locale.getDefault());
-				format = picturePath.substring(picturePath.lastIndexOf("."));
-				cursor.close();
+			// Uri selectedImage = data.getData();
+			// String[] filePathColumn = { MediaStore.Images.Media.DATA };
+			// Cursor cursor = getContentResolver().query(selectedImage,
+			// filePathColumn, null, null, null);
+			// cursor.moveToFirst();
+			// int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			// picturePath = cursor.getString(columnIndex).toLowerCase(
+			// Locale.getDefault());
+			// format = picturePath.substring(picturePath.lastIndexOf("."));
+			// cursor.close();
+			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
+					.size(); i++) {
+				String filePath = MapStorageDirectoryActivity.selectedImages
+						.get(i);
+				format = filePath.substring(filePath.lastIndexOf("."));
+				final Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
+						filePath), 960, 540);
 
-			} else if (requestCode == RESULT_TAKEPICTURE
-					&& resultCode == Activity.RESULT_OK) {
-				Uri uri = Uri.fromFile(tempFile);
-				picturePath = uri.getPath();
-				format = "";
+				final Map<String, Object> map = new HashMap<String, Object>();
+				final String newformat = format;
+				final String newpicturePath = filePath;
+				map.put("bitmap", bm);
+
+				if (bm != null) {
+					app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+
+						@Override
+						public void setParams(SaveSettings settings) {
+							settings.compressFormat = newformat.equals(".jpg") ? settings.JPG
+									: settings.PNG;
+							settings.source = bm;
+						}
+
+						@Override
+						public void onSuccess(String fileName, String base64) {
+							map.put("fileName", fileName);
+							map.put("base64", base64);
+							images.add(map);
+							nodifyViews();
+							if (requestCode == RESULT_TAKEPICTURE) {
+								File file = new File(newpicturePath);
+								if (file.isFile() && file.exists()) {
+									file.delete();
+								}
+							}
+						}
+					});
+				}
 			}
+			MapStorageDirectoryActivity.selectedImages.clear();
 
+		} else if (requestCode == RESULT_TAKEPICTURE
+				&& resultCode == Activity.RESULT_OK) {
+			String picturePath = "";
+			String format = "";
+			Uri uri = Uri.fromFile(tempFile);
+			picturePath = uri.getPath();
+			format = "";
 			final Map<String, Object> map = new HashMap<String, Object>();
 			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
 					picturePath), 960, 540);
@@ -1066,12 +1108,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					}
 				});
 			}
-			rl_releasepic.setVisibility(View.GONE);
-			horizontalScrollView.setVisibility(View.VISIBLE);
-			et_release.setVisibility(View.VISIBLE);
-			ll_navigation.setVisibility(View.VISIBLE);
-			seletePic = false;
 		}
+		rl_releasepic.setVisibility(View.GONE);
+		horizontalScrollView.setVisibility(View.VISIBLE);
+		et_release.setVisibility(View.VISIBLE);
+		ll_navigation.setVisibility(View.VISIBLE);
+		seletePic = false;
+
 	}
 
 	public void checkImageOrVoice(final String fileName, final String base64) {

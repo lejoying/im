@@ -1,6 +1,8 @@
 package com.lejoying.wxgs.app.data.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Message implements Serializable {
 	/**
@@ -13,7 +15,8 @@ public class Message implements Serializable {
 
 	// type is receive or send
 	public int type;
-	public String content = "";
+	//public String content="";
+	public List<String> content = new ArrayList<String>();
 	public String time = "";
 	public String sendType = "";
 	public String gid = "";

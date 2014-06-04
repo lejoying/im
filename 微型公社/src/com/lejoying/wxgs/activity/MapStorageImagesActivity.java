@@ -113,8 +113,10 @@ public class MapStorageImagesActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				MapStorageDirectoryActivity.selectedImages.clear();
-
+				//MapStorageDirectoryActivity.selectedImages.clear();
+				Intent intent = new Intent();
+				setResult(Activity.RESULT_OK, intent);
+				finish();
 			}
 		});
 		mPreview.setOnClickListener(new OnClickListener() {

@@ -400,16 +400,14 @@ public class PicAndVoiceDetailActivity extends Activity implements
 						R.layout.release_child_navigation, null);
 				ImageView iv = (ImageView) superView
 						.findViewById(R.id.iv_release_child);
-				// Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
-				// MapStorageDirectoryActivity.selectedImages.get(i)),
-				// width, height);
-				// iv.setImageBitmap(bm);
 				SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
 						MCImageUtils
 								.getZoomBitmapFromFile(
 										new File(
 												MapStorageDirectoryActivity.selectedImages
 														.get(i)), width, height));
+				System.out.println(MapStorageDirectoryActivity.selectedImages
+						.get(i));
 				iv.setImageBitmap(bm.get());
 				mainListViews.add(superView);
 			}

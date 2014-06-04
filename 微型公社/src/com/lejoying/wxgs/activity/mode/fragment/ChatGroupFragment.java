@@ -70,6 +70,7 @@ import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
+import com.lejoying.wxgs.activity.MapStorageDirectoryActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
@@ -121,14 +122,16 @@ public class ChatGroupFragment extends BaseFragment {
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
 	int RESULT_CATPICTURE = 0x3d;
-
+	int messageNum=0;
+	
 	boolean VOICE_PLAYSTATUS = false;
 	boolean VOICE_SAVESTATUS = false;
 
 	LayoutInflater mInflater;
 
 	Map<String, Bitmap> tempImages = new Hashtable<String, Bitmap>();
-
+	List<String> messages = new ArrayList<String>();
+	
 	View iv_send;
 	View iv_more;
 	View iv_more_select;
@@ -842,9 +845,11 @@ public class ChatGroupFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				final String message = editText_message.getText().toString();
+				List<String> messages = new ArrayList<String>();
+				messages.add(message);
 				editText_message.setText("");
 				if (message != null && !message.equals("")) {
-					sendMessage("text", message);
+					sendMessage("text", messages);
 					rl_face.setVisibility(View.GONE);
 				}
 			}
@@ -1110,14 +1115,14 @@ public class ChatGroupFragment extends BaseFragment {
 						.findViewById(R.id.iv_head);
 				TextView tv_nickname = (TextView) userView
 						.findViewById(R.id.tv_nickname);
-				String alias="";
-				if(app.data.friends.get(friend.phone)!=null){
-					alias=app.data.friends.get(friend.phone).alias;
-					friend.alias=alias;
+				String alias = "";
+				if (app.data.friends.get(friend.phone) != null) {
+					alias = app.data.friends.get(friend.phone).alias;
+					friend.alias = alias;
 				}
-				if(!alias.equals("")){
+				if (!alias.equals("")) {
 					tv_nickname.setText(alias);
-				}else{
+				} else {
 					tv_nickname.setText(friend.nickName);
 				}
 				final String headFileName = friend.head;
@@ -1267,7 +1272,13 @@ public class ChatGroupFragment extends BaseFragment {
 				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.voice.setVisibility(View.GONE);
 				// messageHolder.tv_chat.setText(message.content);
-				String content = message.content;
+				//String content = message.content.get(0);
+				String content;
+				try {
+					content = message.content.get(0);
+				} catch (Exception e) {
+					content = message.content.toString();
+				}
 				SpannableString spannableString = ExpressionUtil
 						.getExpressionString(getActivity(), content, faceRegx,
 								expressionFaceMap);
@@ -1337,9 +1348,17 @@ public class ChatGroupFragment extends BaseFragment {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
 				messageHolder.voice.setVisibility(View.GONE);
-				final String imageFileName = message.content;
+				String content,mImageFileName;
+				try {
+					content = message.content.get(0);
+					mImageFileName= message.content.get(0);
+				} catch (Exception e) {
+					content = message.content.toString();
+					mImageFileName= message.content.toString();
+				}
+				final String imageFileName = mImageFileName;
 				final ImageView iv_image = messageHolder.iv_image;
-				String content = message.content;
+				//String content = message.content.get(0);
 				final String imgLastName = content.substring(content
 						.lastIndexOf(".") + 1);
 				if ("gif".equals(imgLastName)) {
@@ -1408,7 +1427,13 @@ public class ChatGroupFragment extends BaseFragment {
 				default:
 					break;
 				}
-				final String voiceContent = message.content;
+				String mVoiceContent;
+				try {
+					mVoiceContent = message.content.get(0);
+				} catch (Exception e) {
+					mVoiceContent = message.content.toString();
+				}
+				final String voiceContent = mVoiceContent;
 				final String headFileName = fileName;
 				final ImageView iv_head = messageHolder.iv_voicehead;
 				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
@@ -1603,7 +1628,7 @@ public class ChatGroupFragment extends BaseFragment {
 		MediaPlayer mpPlayer;
 	}
 
-	public void sendMessage(final String type, final String content) {
+	public void sendMessage(final String type, final List<String> content) {
 		final Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
 		if (mStatus == CHAT_FRIEND) {
@@ -1677,7 +1702,8 @@ public class ChatGroupFragment extends BaseFragment {
 
 	}
 
-	public Map<String, String> generateMessageParams(String type, String content) {
+	public Map<String, String> generateMessageParams(String type,
+			List<String> content) {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("phone", app.data.user.phone);
 		params.put("accessKey", app.data.user.accessKey);
@@ -1695,9 +1721,13 @@ public class ChatGroupFragment extends BaseFragment {
 			params.put("phoneto", jFriends.toString());
 		}
 		JSONObject jMessage = new JSONObject();
+		JSONArray jContent=new JSONArray();
 		try {
 			jMessage.put("contentType", type);
-			jMessage.put("content", content);
+			for(String fileName:content){
+				jContent.put(fileName);
+			}
+			jMessage.put("content", jContent);
 			params.put("message", jMessage.toString());
 		} catch (JSONException e) {
 		}
@@ -1709,37 +1739,33 @@ public class ChatGroupFragment extends BaseFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTPICTURE
-				&& resultCode == Activity.RESULT_OK && data != null) {
-			Uri selectedImage = data.getData();
-			String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			Cursor cursor = getActivity().getContentResolver().query(
-					selectedImage, filePathColumn, null, null, null);
-			cursor.moveToFirst();
-			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			final String picturePath = cursor.getString(columnIndex)
-					.toLowerCase(Locale.getDefault());
-			final String format = picturePath.substring(picturePath
-					.lastIndexOf("."));
-			cursor.close();
+				&& resultCode == Activity.RESULT_OK) {
+			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
+					.size(); i++) {
+				String filePath = MapStorageDirectoryActivity.selectedImages
+						.get(i);
+				final String format = filePath.substring(filePath
+						.lastIndexOf("."));
+				final Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
+						filePath), 960, 540);
+				if (bm != null) {
+					app.fileHandler.saveBitmap(new SaveBitmapInterface() {
 
-			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
-					picturePath), 960, 540);
-			if (bitmap != null) {
-				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+						@Override
+						public void setParams(SaveSettings settings) {
+							settings.compressFormat = format.equals(".jpg") ? settings.JPG
+									: settings.PNG;
+							settings.source = bm;
+						}
 
-					@Override
-					public void setParams(SaveSettings settings) {
-						settings.compressFormat = format.equals(".jpg") ? settings.JPG
-								: settings.PNG;
-						settings.source = bitmap;
-					}
-
-					@Override
-					public void onSuccess(String fileName, String base64) {
-						checkImage(fileName, base64);
-					}
-				});
+						@Override
+						public void onSuccess(String fileName, String base64) {
+							checkImage(fileName, base64);
+						}
+					});
+				}
 			}
+			MapStorageDirectoryActivity.selectedImages.clear();
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
@@ -1751,8 +1777,8 @@ public class ChatGroupFragment extends BaseFragment {
 	}
 
 	void selectPicture() {
-		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		Intent selectFromGallery = new Intent(getActivity(),
+				MapStorageDirectoryActivity.class);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
 	}
 
@@ -1788,7 +1814,13 @@ public class ChatGroupFragment extends BaseFragment {
 			public void success(JSONObject jData) {
 				try {
 					if (jData.getBoolean("exists")) {
-						sendMessage("image", fileName);
+						messages.add(fileName);
+						if(messageNum==MapStorageDirectoryActivity.selectedImages.size()){
+							sendMessage("image", messages);
+							messageNum=0;
+						}else{
+							messageNum++;
+						}
 					} else {
 						uploadImageOrVoice("image", fileName, base64);
 					}
@@ -1818,7 +1850,13 @@ public class ChatGroupFragment extends BaseFragment {
 
 			@Override
 			public void success(JSONObject jData) {
-				sendMessage(type, fileName);
+				messages.add(fileName);
+				if(messageNum==MapStorageDirectoryActivity.selectedImages.size()){
+					sendMessage("image", messages);
+					messageNum=0;
+				}else{
+					messageNum++;
+				}
 			}
 
 		});

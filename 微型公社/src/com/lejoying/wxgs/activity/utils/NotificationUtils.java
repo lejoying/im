@@ -165,7 +165,12 @@ public final class NotificationUtils {
 				+ R.raw.message);
 		String tickerText = "";
 		String contentTitle = "";
-		String contentText = message.content;
+		String contentText ;
+		try {
+			contentText = message.content.get(0);
+		} catch (Exception e) {
+			contentText = message.content.toString();
+		}
 		if (message.contentType.equals("image")) {
 			contentText = "[图片]";
 		} else if (message.contentType.equals("voice")) {

@@ -49,6 +49,7 @@ public class MapStorageDirectoryActivity extends Activity {
 	TextView cancleSelect;
 	Bitmap defaultImage;
 	int listStatus;
+	int RESULT_SELECTPIC=0x1;
 	Map<String, SoftReference<Bitmap>> bitmaps;
 
 	public static List<String> selectedImages = new ArrayList<String>();
@@ -70,6 +71,14 @@ public class MapStorageDirectoryActivity extends Activity {
 		getSDImages();
 		initEvent();
 		super.onCreate(savedInstanceState);
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode==RESULT_SELECTPIC&&resultCode==Activity.RESULT_OK){
+			setResult(Activity.RESULT_OK);
+			finish();
+		}
 	}
 
 	private void initEvent() {
@@ -93,7 +102,7 @@ public class MapStorageDirectoryActivity extends Activity {
 			public void onClick(View arg0) {
 				Intent intent = new Intent(MapStorageDirectoryActivity.this,
 						MainActivity.class);
-				startActivity(intent);
+				startActivityForResult(intent, RESULT_SELECTPIC);
 
 			}
 		});
@@ -155,7 +164,7 @@ public class MapStorageDirectoryActivity extends Activity {
 							MapStorageDirectoryActivity.this,
 							MapStorageImagesActivity.class);
 					currentShowDirectory = directorys.get(position);
-					startActivity(intent);
+					startActivityForResult(intent, RESULT_SELECTPIC);
 				}
 			});
 			return convertView;

@@ -184,7 +184,13 @@ public class ChatMessagesFragment extends BaseFragment {
 				}
 				nickName.setText(chatName);
 				if (lastMessage.contentType.equals("text")) {
-					lastChatMessage.setText(lastMessage.content);
+					String mLasastChatMessage;
+					try {
+						mLasastChatMessage=lastMessage.content.get(0);
+					} catch (Exception e) {
+						mLasastChatMessage=lastMessage.content.toString();
+					}
+					lastChatMessage.setText(mLasastChatMessage);
 				} else if (lastMessage.contentType.equals("image")) {
 					lastChatMessage.setText(getString(R.string.text_picture));
 				} else if (lastMessage.contentType.equals("voice")) {
