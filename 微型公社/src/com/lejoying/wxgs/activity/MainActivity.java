@@ -3,7 +3,6 @@ package com.lejoying.wxgs.activity;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +27,6 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -288,6 +286,8 @@ public class MainActivity extends BaseActivity {
 		final ImageView iv_me_menu = (ImageView) findViewById(R.id.iv_me_menu);
 
 		iv_square_menu.setImageResource(R.drawable.square_icon_selected);
+		iv_group_menu.setImageResource(R.drawable.group_icon);
+		iv_me_menu.setImageResource(R.drawable.person_icon);
 
 		selectCommunity.setOnClickListener(new OnClickListener() {
 
@@ -384,7 +384,7 @@ public class MainActivity extends BaseActivity {
 				squares.getLayoutParams());
 		sParams.height = (int) (contentHeight * 0.7733050847457627f);
 		squares.setLayoutParams(sParams);
-		squares.setAdapter(new MyAdapter(communityList));
+		squares.setAdapter(new SquaresAdapter(communityList));
 
 		popWindow = new PopupWindow(vPopWindow, LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT, true);
@@ -459,11 +459,11 @@ public class MainActivity extends BaseActivity {
 		popWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
 	}
 
-	class MyAdapter extends BaseAdapter {
+	class SquaresAdapter extends BaseAdapter {
 
 		List<String> list;
 
-		public MyAdapter(List<String> list) {
+		public SquaresAdapter(List<String> list) {
 			this.list = list;
 		}
 
@@ -543,6 +543,28 @@ public class MainActivity extends BaseActivity {
 			// } else {
 			// line.setVisibility(View.GONE);
 			// }
+
+			ImageView ivMony = (ImageView) v.findViewById(R.id.iv_mony);
+			ivMony.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(MainActivity.this,
+							SquareOnLineUserActivity.class);
+					String mSquareId = "98";
+					if (arg0 == 0) {
+						mSquareId = "98";
+					} else if (arg0 == 1) {
+						mSquareId = "99";
+					} else {
+						mSquareId = "100";
+					}
+					intent.putExtra("mSquareID", mSquareId);
+					startActivity(intent);
+					popWindow.dismiss();
+				}
+			});
+
 			v.setOnClickListener(new OnClickListener() {
 
 				@Override

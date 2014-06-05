@@ -28,6 +28,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.StreamParser;
@@ -78,6 +79,8 @@ public class FileHandler {
 	public Bitmap defaultHead;
 	public Bitmap defaultBack;
 
+	public int borderWidth = 5;
+
 	public final int TYPE_IMAGE_COMMON = 0x01;
 	public final int TYPE_IMAGE_HEAD = 0x02;
 	public final int TYPE_IMAGE_BACK = 0x03;
@@ -87,7 +90,14 @@ public class FileHandler {
 		getImageFile(imageFileName, "", TYPE_IMAGE_COMMON, fileResult);
 	}
 
+	public void getSquareOnLineHeadImage(String imageFileName,
+			FileResult fileResult) {
+		borderWidth = 5;
+		getImageFile(imageFileName, "", TYPE_IMAGE_HEAD, fileResult);
+	}
+
 	public void getHeadImage(String imageFileName, FileResult fileResult) {
+		borderWidth = 5;
 		getImageFile(imageFileName, "", TYPE_IMAGE_HEAD, fileResult);
 	}
 
@@ -240,7 +250,7 @@ public class FileHandler {
 		if (defaultHead == null) {
 			defaultHead = MCImageUtils.getCircleBitmap(BitmapFactory
 					.decodeResource(app.getResources(), R.drawable.face_man),
-					true, 5, Color.WHITE);
+					true, borderWidth, Color.WHITE);
 		}
 		if (defaultBack == null) {
 			defaultBack = BitmapFactory.decodeResource(app.getResources(),
@@ -323,8 +333,8 @@ public class FileHandler {
 								bitmaps.put(imageFileName, image);
 							} else if (type == TYPE_IMAGE_HEAD) {
 								bitmaps.put(imageFileName, MCImageUtils
-										.getCircleBitmap(image, true, 5,
-												Color.WHITE));
+										.getCircleBitmap(image, true,
+												borderWidth, Color.WHITE));
 							}
 							where = FROM_SDCARD;
 						} else {
@@ -385,7 +395,7 @@ public class FileHandler {
 					if (type != TYPE_IMAGE_THUMBNAIL) {
 						if (type == TYPE_IMAGE_HEAD) {
 							Bitmap mBitmap = MCImageUtils.getCircleBitmap(
-									bitmap, true, 5, Color.WHITE);
+									bitmap, true, borderWidth, Color.WHITE);
 							bitmaps.put(imageFileName, mBitmap);
 						} else {
 							bitmaps.put(imageFileName, bitmap);

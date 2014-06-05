@@ -32,8 +32,11 @@
 
         <ImageView
             android:id="@+id/iv_mony"
-            android:layout_width="10dp"
-            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_height="40dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
             android:src="@drawable/dialog_mach" />
     </LinearLayout>
 
