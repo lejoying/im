@@ -54,12 +54,8 @@
         android:layout_marginRight="10dp"
         android:background="@drawable/card_background"
         android:minHeight="90dp"
+        android:orientation="vertical"
         android:visibility="gone" >
-
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="match_parent"
-            android:layout_height="90dp" />
 
         <RelativeLayout
             android:id="@+id/iv_image_gif"
@@ -129,5 +125,13 @@
                 android:thumb="@drawable/thumb" />
         </LinearLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/iv_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone" >
+    </LinearLayout>
 
 </RelativeLayout>

@@ -39,7 +39,7 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/rl_chatleft_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,10 +53,6 @@
         android:visibility="visible" 
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="match_parent"
-            android:layout_height="90dp" />
 
         <RelativeLayout
             android:id="@+id/iv_image_gif"
@@ -76,7 +72,7 @@
             android:textColor="#fff"
             android:textSize="18sp"
             android:textStyle="bold" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_chatleft_voice"
@@ -135,5 +131,12 @@
                 android:text="20&quot;" />
         </LinearLayout>
     </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/iv_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone" >
+    </LinearLayout>
 
 </RelativeLayout>
