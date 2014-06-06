@@ -1,17 +1,24 @@
 package com.lejoying.wxgs.activity.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
+import com.lejoying.wxgs.R;
 
 public class ScanView extends View {
 
 	private final Paint paint;
 	private Rect framingRect;
+
+	static int SPEEN_DISTANCE = 8;
+	int slideTop;
+	boolean isFirst = false;
 
 	public ScanView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -23,10 +30,15 @@ public class ScanView extends View {
 		this.framingRect = framingRect;
 	}
 
+	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onDraw(Canvas canvas) {
 		if (framingRect == null) {
 			return;
+		}
+		if (!isFirst) {
+			isFirst = true;
+			slideTop = framingRect.top;
 		}
 		int width = canvas.getWidth() > canvas.getHeight() ? canvas.getHeight()
 				: canvas.getWidth();
@@ -49,8 +61,8 @@ public class ScanView extends View {
 		float textSize = (framingRectSide + 2 * cornerHeight) / 15f;
 		paint.setTextSize(textSize);
 		paint.setColor(Color.rgb(210, 210, 210));
-		canvas.drawText("", framingRect.left - cornerHeight,
-				framingRect.top - (int) (1.5 * textSize), paint);
+		canvas.drawText("", framingRect.left - cornerHeight, framingRect.top
+				- (int) (1.5 * textSize), paint);
 
 		paint.setColor(Color.rgb(255, 255, 255));
 		canvas.drawRect(framingRect.left - cornerHeight, framingRect.top
@@ -77,6 +89,24 @@ public class ScanView extends View {
 		canvas.drawRect(framingRect.right, framingRect.bottom - cornerWidth
 				+ cornerHeight, framingRect.right + cornerHeight,
 				framingRect.bottom + cornerHeight, paint);
+		slideTop += SPEEN_DISTANCE;
+		if (slideTop >= framingRect.bottom) {
+			slideTop = framingRect.top;
+		}
 
+		// canvas.drawRect(framingRect.left + 2, slideTop, framingRect.right
+		// + cornerHeight, slideTop + 2, paint);
+
+		Rect lineRect = new Rect();
+		lineRect.left = framingRect.left;
+		lineRect.right = framingRect.right + cornerHeight;
+		lineRect.top = slideTop;
+		lineRect.bottom = slideTop + 10;
+		canvas.drawBitmap(((BitmapDrawable) (getResources()
+				.getDrawable(R.drawable.qrcode_scan_line))).getBitmap(), null,
+				lineRect, paint);
+
+		postInvalidateDelayed(1L, framingRect.left, framingRect.top,
+				framingRect.right, framingRect.bottom + cornerHeight);
 	}
 }

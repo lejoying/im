@@ -673,7 +673,7 @@ public class GroupFragment extends BaseFragment {
 							GroupsAndFriends groupsAndFriends = JSONParser
 									.generateGroupsFromJSON(jData
 											.getJSONArray("groups"));
-							System.out.println(groupsAndFriends.groups);
+//							System.out.println(groupsAndFriends.groups);
 							for (Group group : groupsAndFriends.groups) {
 								nearByGroups.add(group);
 							}

@@ -495,7 +495,7 @@ public class SquareMessageDetail extends BaseActivity {
 
 	private void initSquareDetailBottomBar(int height) {
 //		 int width = rl_square_message_menu.getWidth();
-		System.out.println(width + "++++++++++++++");
+//		System.out.println(width + "++++++++++++++");
 		// int height = rl_square_message_menu.getHeight();
 		// System.out.println(width + "::::" + height + ">>>>"
 		// + squareDetailBottomBar.getHeight());
