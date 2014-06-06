@@ -305,7 +305,7 @@ public class JSONParser {
 
 			message.time = jMessage.getString("time");
 			message.contentType = jMessage.getString("contentType");
-			List<String> content = new ArrayList<String>();
+			ArrayList<String> content = new ArrayList<String>();
 			for (int i = 0; i < jMessage.getJSONArray("content").length(); i++) {
 				content.add(jMessage.getJSONArray("content").get(i).toString());
 			}

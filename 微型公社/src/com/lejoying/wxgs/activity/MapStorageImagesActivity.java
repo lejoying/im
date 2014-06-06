@@ -113,7 +113,7 @@ public class MapStorageImagesActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				//MapStorageDirectoryActivity.selectedImages.clear();
+				// MapStorageDirectoryActivity.selectedImages.clear();
 				Intent intent = new Intent();
 				setResult(Activity.RESULT_OK, intent);
 				finish();
@@ -123,11 +123,12 @@ public class MapStorageImagesActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(MapStorageImagesActivity.this,
-						PicAndVoiceDetailActivity.class);
-				intent.putExtra("Activity", "MapStrage");
-				startActivityForResult(intent, RESULT_PICANDVOICE);
+				if (MapStorageDirectoryActivity.selectedImages.size() != 0) {
+					Intent intent = new Intent(MapStorageImagesActivity.this,
+							PicAndVoiceDetailActivity.class);
+					intent.putExtra("Activity", "MapStrage");
+					startActivityForResult(intent, RESULT_PICANDVOICE);
+				}
 			}
 		});
 		mCancel.setOnClickListener(new OnClickListener() {

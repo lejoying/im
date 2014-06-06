@@ -47,6 +47,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	ViewPager picandvoice_Pager;
 	LayoutInflater mInflater;
 	String activity;
+	ArrayList<String> content;
 
 	int mediaTotal = 0;
 	int currentCoverIndex = -1;
@@ -68,6 +69,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		int currentIndex = getIntent().getExtras().getInt("currentIndex");
 		activity = getIntent().getExtras().getString("Activity");
+		content = getIntent().getStringArrayListExtra("content");
 		mInflater = getLayoutInflater();
 		setContentView(R.layout.activity_picandvoicedetail);
 		getWindow().setBackgroundDrawableResource(R.drawable.square_background);
@@ -89,7 +91,12 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		currentPageSize = 1;
 		myPageAdapter = new MyPageAdapter(mainListViews);
 		picandvoice_Pager.setAdapter(myPageAdapter);
-		picandvoice_Pager.setCurrentItem(currentIndex - 1, true);
+		if(activity.equals("Browse")){
+			picandvoice_Pager.setCurrentItem(currentIndex, true);
+		}else{
+			picandvoice_Pager.setCurrentItem(currentIndex - 1, true);
+		}
+		
 	}
 
 	private void initEvent() {
@@ -292,9 +299,33 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			deleteMediaViewLayoutParam.rightMargin = (int) (width * 0.0833333f);
 			deleteMediaView.setLayoutParams(deleteMediaViewLayoutParam);
 
-		} else if (activity.equals("2")) {
+		} else if (activity.equals("Browse")) {
+			tv_setcover.setText("预览");
 			selectedCoverView.setVisibility(View.GONE);
 			deleteMediaView.setVisibility(View.GONE);
+
+			RelativeLayout.LayoutParams PicAndVoiceDetailBackLayoutParam = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, (int) (25 * density + 0.5f));
+			PicAndVoiceDetailBackLayoutParam
+					.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+			PicAndVoiceDetailBackLayoutParam.leftMargin = (int) (width * 0.06944444f);
+			PicAndVoiceDetailBack
+					.setLayoutParams(PicAndVoiceDetailBackLayoutParam);
+
+			RelativeLayout.LayoutParams mediaTotalViewLayoutParam = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			mediaTotalViewLayoutParam.addRule(RelativeLayout.ALIGN_LEFT);
+			mediaTotalViewLayoutParam.addRule(RelativeLayout.RIGHT_OF,
+					R.id.PicAndVoiceDetailBack);
+			mediaTotalViewLayoutParam.leftMargin = (int) (width * 0.02777778f);
+			mediaTotalView.setLayoutParams(mediaTotalViewLayoutParam);
+
+			RelativeLayout.LayoutParams tv_setcoverLayoutParam = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			tv_setcoverLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			tv_setcoverLayoutParam.rightMargin = (int) (width * 0.47916667f);
+			tv_setcover.setLayoutParams(tv_setcoverLayoutParam);
+
 		}
 
 		tv_setcover.setOnClickListener(this);
@@ -406,8 +437,18 @@ public class PicAndVoiceDetailActivity extends Activity implements
 										new File(
 												MapStorageDirectoryActivity.selectedImages
 														.get(i)), width, height));
-				System.out.println(MapStorageDirectoryActivity.selectedImages
-						.get(i));
+				iv.setImageBitmap(bm.get());
+				mainListViews.add(superView);
+			}
+		} else if (activity.equals("Browse")) {
+			for (int i = 0; i < content.size(); i++) {
+				mediaTotal++;
+				LinearLayout superView = (LinearLayout) mInflater.inflate(
+						R.layout.release_child_navigation, null);
+				ImageView iv = (ImageView) superView
+						.findViewById(R.id.iv_release_child);
+				SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
+						app.fileHandler.bitmaps.get(content.get(i)));
 				iv.setImageBitmap(bm.get());
 				mainListViews.add(superView);
 			}

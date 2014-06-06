@@ -38,9 +38,11 @@ import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -71,10 +73,12 @@ import android.widget.Toast;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.MapStorageDirectoryActivity;
+import com.lejoying.wxgs.activity.PicAndVoiceDetailActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
+import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
@@ -122,16 +126,18 @@ public class ChatGroupFragment extends BaseFragment {
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
 	int RESULT_CATPICTURE = 0x3d;
-	int messageNum=0;
-	
+	int messageNum = 0;
+	int height, width, dip;
+	float density;
+
 	boolean VOICE_PLAYSTATUS = false;
 	boolean VOICE_SAVESTATUS = false;
+	boolean isSELECTPICTURE = false;
 
 	LayoutInflater mInflater;
 
 	Map<String, Bitmap> tempImages = new Hashtable<String, Bitmap>();
-	List<String> messages = new ArrayList<String>();
-	
+
 	View iv_send;
 	View iv_more;
 	View iv_more_select;
@@ -231,6 +237,12 @@ public class ChatGroupFragment extends BaseFragment {
 		faceMenuShowList = new ArrayList<ImageView>();
 		faceNamesList = new ArrayList<String[]>();
 		mContent = inflater.inflate(R.layout.f_chat, null);
+		DisplayMetrics dm = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		density = dm.density;
+		dip = (int) (40 * density + 0.5f);
+		height = dm.heightPixels;
+		width = dm.widthPixels;
 		chatContent = (ListView) mContent.findViewById(R.id.chatContent);
 
 		if (headView == null) {
@@ -845,7 +857,7 @@ public class ChatGroupFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				final String message = editText_message.getText().toString();
-				List<String> messages = new ArrayList<String>();
+				ArrayList<String> messages = new ArrayList<String>();
 				messages.add(message);
 				editText_message.setText("");
 				if (message != null && !message.equals("")) {
@@ -1239,10 +1251,16 @@ public class ChatGroupFragment extends BaseFragment {
 				default:
 					break;
 				}
-				messageHolder.image = convertView
+				messageHolder.tv_time = (TextView) convertView
+						.findViewById(R.id.tv_time);
+				messageHolder.iv_sendhead = (ImageView) convertView
+						.findViewById(R.id.iv_sendhead);
+				messageHolder.rl_image = (RelativeLayout) convertView
+						.findViewById(R.id.rl_image);
+				messageHolder.ll_image = (LinearLayout) convertView
+						.findViewById(R.id.ll_image);
+				messageHolder.image = (RelativeLayout) convertView
 						.findViewById(R.id.rl_chatleft_image);
-				messageHolder.iv_image = (ImageView) convertView
-						.findViewById(R.id.iv_image);
 				messageHolder.iv_image_gif = (RelativeLayout) convertView
 						.findViewById(R.id.iv_image_gif);
 				messageHolder.tv_nickname = (TextView) convertView
@@ -1267,12 +1285,14 @@ public class ChatGroupFragment extends BaseFragment {
 				messageHolder = (MessageHolder) convertView.getTag();
 			}
 			final Message message = (Message) getItem(position);
+			messageHolder.tv_time.setText(TimeUtils.getTime(Long
+					.valueOf(message.time)));
 			if (message.contentType.equals("text")) {
 				messageHolder.text.setVisibility(View.VISIBLE);
 				messageHolder.image.setVisibility(View.GONE);
 				messageHolder.voice.setVisibility(View.GONE);
 				// messageHolder.tv_chat.setText(message.content);
-				//String content = message.content.get(0);
+				// String content = message.content.get(0);
 				String content;
 				try {
 					content = message.content.get(0);
@@ -1333,14 +1353,19 @@ public class ChatGroupFragment extends BaseFragment {
 							@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 							@Override
 							public boolean onLongClick(View v) {
+								@SuppressWarnings("static-access")
+								ClipboardManager clipboard = (ClipboardManager) getActivity()
+										.getSystemService(
+												getActivity().CLIPBOARD_SERVICE);
+								clipboard.setText(message.content.get(0));
 								// ClipboardManager clip = (ClipboardManager)
 								// getActivity()
 								// .getSystemService(
 								// Context.CLIPBOARD_SERVICE);
 								// // clip.setPrimaryClip()
 								// clip.setText(message.content);
-								// Toast.makeText(getActivity(), "复制成功!",
-								// Toast.LENGTH_SHORT).show();
+								Toast.makeText(getActivity(), "复制成功!",
+										Toast.LENGTH_SHORT).show();
 								return true;
 							}
 						});
@@ -1348,21 +1373,13 @@ public class ChatGroupFragment extends BaseFragment {
 				messageHolder.text.setVisibility(View.GONE);
 				messageHolder.image.setVisibility(View.VISIBLE);
 				messageHolder.voice.setVisibility(View.GONE);
-				String content,mImageFileName;
-				try {
-					content = message.content.get(0);
-					mImageFileName= message.content.get(0);
-				} catch (Exception e) {
-					content = message.content.toString();
-					mImageFileName= message.content.toString();
-				}
-				final String imageFileName = mImageFileName;
-				final ImageView iv_image = messageHolder.iv_image;
-				//String content = message.content.get(0);
+				final String imageFileName = message.content.get(0);
+				String content = message.content.get(0);
 				final String imgLastName = content.substring(content
 						.lastIndexOf(".") + 1);
 				if ("gif".equals(imgLastName)) {
-					messageHolder.iv_image.setVisibility(View.GONE);
+					messageHolder.image.setVisibility(View.VISIBLE);
+					messageHolder.rl_image.setVisibility(View.GONE);
 					messageHolder.iv_image_gif.setVisibility(View.VISIBLE);
 					messageHolder.iv_image_gif.removeAllViews();
 					app.fileHandler.getGifImgFromWebOrSdCard(imageFileName,
@@ -1387,27 +1404,96 @@ public class ChatGroupFragment extends BaseFragment {
 								}
 							});
 				} else {
-					app.fileHandler.getImage(imageFileName, new FileResult() {
-						@Override
-						public void onResult(String where, Bitmap bitmap) {
-							messageHolder.iv_image_gif.setVisibility(View.GONE);
-							messageHolder.iv_image.setVisibility(View.VISIBLE);
-							iv_image.setImageBitmap(app.fileHandler.bitmaps
-									.get(imageFileName));
-							// Movie.decodeFile((new File(app.sdcardImageFolder,
-							// imageFileName)).getAbsolutePath());
-							// if (where == app.fileHandler.FROM_WEB) {
-							// mAdapter.notifyDataSetChanged();
-							// }
+					messageHolder.image.setVisibility(View.GONE);
+					messageHolder.rl_image.setVisibility(View.VISIBLE);
+					messageHolder.ll_image.removeAllViews();
+					final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+							(int) (width * 0.493055556f),
+							(int) (height * 0.1640625f));
+					params.topMargin = (int) ((height * 0.01171875f) / 2);
+					params.leftMargin = (int) (width * 0.01388889f);
+					params.rightMargin = (int) (width * 0.01388889f);
+					params.bottomMargin = (int) ((height * 0.01171875f) / 2);
+					for (int i = 0; i < message.content.size(); i++) {
+						String mImageFileName;
+						final int index = i;
+						try {
+							mImageFileName = message.content.get(i);
+						} catch (Exception e) {
+							mImageFileName = message.content.toString();
 						}
-					});
+						final String imageFilename = mImageFileName;
+						View addView = mInflater.inflate(
+								R.layout.imageview_chat, null);
+						final ImageView iv_image = (ImageView) addView
+								.findViewById(R.id.iv_image);
+						addView.setLayoutParams(params);
+						iv_image.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								Intent intent = new Intent(getActivity(),
+										PicAndVoiceDetailActivity.class);
+								intent.putExtra("Activity", "Browse");
+								intent.putExtra("currentIndex", index);
+								intent.putStringArrayListExtra("content",
+										message.content);
+								startActivity(intent);
+							}
+						});
+						messageHolder.ll_image.addView(addView);
+						app.fileHandler.getImage(mImageFileName,
+								new FileResult() {
+									@Override
+									public void onResult(String where,
+											Bitmap bitmap) {
+										iv_image.setImageBitmap(app.fileHandler.bitmaps
+												.get(imageFilename));
+									}
+
+									// Movie.decodeFile((new
+									// File(app.sdcardImageFolder,
+									// imageFileName)).getAbsolutePath());
+									// if (where ==
+									// app.fileHandler.FROM_WEB) {
+									// mAdapter.notifyDataSetChanged();
+									// }
+
+								});
+					}
+
 				}
+				final ImageView iv_sendhead = messageHolder.iv_sendhead;
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
+					iv_sendhead.setVisibility(View.GONE);
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
 					messageHolder.tv_nickname.setText(app.data.groupFriends
 							.get(message.phone).nickName);
+					final String headFileName = app.data.groupFriends
+							.get(message.phone).head;
+					iv_sendhead.setVisibility(View.VISIBLE);
+					app.fileHandler.getHeadImage(headFileName,
+							new FileResult() {
+								@Override
+								public void onResult(String where, Bitmap bitmap) {
+									iv_sendhead
+											.setImageBitmap(app.fileHandler.bitmaps
+													.get(headFileName));
+									iv_sendhead
+											.setOnClickListener(new OnClickListener() {
+												@Override
+												public void onClick(View v) {
+													mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+													mMainModeManager.mBusinessCardFragment.mShowFriend = mNowChatFriend;
+													mMainModeManager
+															.showNext(mMainModeManager.mBusinessCardFragment);
+												}
+											});
+								}
+							});
 					break;
 				default:
 					break;
@@ -1614,9 +1700,12 @@ public class ChatGroupFragment extends BaseFragment {
 		View text;
 		ImageView iv_head;
 		TextView tv_chat;
+		TextView tv_time;
+		ImageView iv_sendhead;
 
-		View image;
-		ImageView iv_image;
+		RelativeLayout rl_image;
+		RelativeLayout image;
+		LinearLayout ll_image;
 		TextView tv_nickname;
 		RelativeLayout iv_image_gif;
 
@@ -1628,7 +1717,7 @@ public class ChatGroupFragment extends BaseFragment {
 		MediaPlayer mpPlayer;
 	}
 
-	public void sendMessage(final String type, final List<String> content) {
+	public void sendMessage(final String type, final ArrayList<String> content) {
 		final Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
 		if (mStatus == CHAT_FRIEND) {
@@ -1721,10 +1810,10 @@ public class ChatGroupFragment extends BaseFragment {
 			params.put("phoneto", jFriends.toString());
 		}
 		JSONObject jMessage = new JSONObject();
-		JSONArray jContent=new JSONArray();
+		JSONArray jContent = new JSONArray();
 		try {
 			jMessage.put("contentType", type);
-			for(String fileName:content){
+			for (String fileName : content) {
 				jContent.put(fileName);
 			}
 			jMessage.put("content", jContent);
@@ -1740,6 +1829,9 @@ public class ChatGroupFragment extends BaseFragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK) {
+			final ArrayList<String> messages = new ArrayList<String>();
+			isSELECTPICTURE = true;
+			messageNum = 1;
 			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
 					.size(); i++) {
 				String filePath = MapStorageDirectoryActivity.selectedImages
@@ -1760,12 +1852,11 @@ public class ChatGroupFragment extends BaseFragment {
 
 						@Override
 						public void onSuccess(String fileName, String base64) {
-							checkImage(fileName, base64);
+							checkImage(fileName, base64, messages);
 						}
 					});
 				}
 			}
-			MapStorageDirectoryActivity.selectedImages.clear();
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
@@ -1777,6 +1868,7 @@ public class ChatGroupFragment extends BaseFragment {
 	}
 
 	void selectPicture() {
+		MapStorageDirectoryActivity.selectedImages.clear();
 		Intent selectFromGallery = new Intent(getActivity(),
 				MapStorageDirectoryActivity.class);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
@@ -1797,7 +1889,8 @@ public class ChatGroupFragment extends BaseFragment {
 		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
 	}
 
-	public void checkImage(final String fileName, final String base64) {
+	public void checkImage(final String fileName, final String base64,
+			final ArrayList<String> messages) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -1815,14 +1908,19 @@ public class ChatGroupFragment extends BaseFragment {
 				try {
 					if (jData.getBoolean("exists")) {
 						messages.add(fileName);
-						if(messageNum==MapStorageDirectoryActivity.selectedImages.size()){
+						if (isSELECTPICTURE) {
+							if (messageNum == MapStorageDirectoryActivity.selectedImages
+									.size()) {
+								sendMessage("image", messages);
+								isSELECTPICTURE = false;
+							} else {
+								messageNum++;
+							}
+						} else {
 							sendMessage("image", messages);
-							messageNum=0;
-						}else{
-							messageNum++;
 						}
 					} else {
-						uploadImageOrVoice("image", fileName, base64);
+						uploadImageOrVoice("image", fileName, base64, messages);
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -1834,7 +1932,7 @@ public class ChatGroupFragment extends BaseFragment {
 	}
 
 	public void uploadImageOrVoice(final String type, final String fileName,
-			final String base64) {
+			final String base64, final ArrayList<String> messages) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -1851,10 +1949,15 @@ public class ChatGroupFragment extends BaseFragment {
 			@Override
 			public void success(JSONObject jData) {
 				messages.add(fileName);
-				if(messageNum==MapStorageDirectoryActivity.selectedImages.size()){
-					sendMessage("image", messages);
-					messageNum=0;
-				}else{
+				if (isSELECTPICTURE) {
+					if (messageNum == MapStorageDirectoryActivity.selectedImages
+							.size()) {
+						sendMessage(type, messages);
+						isSELECTPICTURE = false;
+					} else {
+						messageNum++;
+					}
+				} else {
 					messageNum++;
 				}
 			}
@@ -1878,7 +1981,8 @@ public class ChatGroupFragment extends BaseFragment {
 				from.renameTo(to);
 				voice_list.clear();
 				voice_length = 0;
-				uploadImageOrVoice("voice", filename, base64);
+				uploadImageOrVoice("voice", filename, base64,
+						new ArrayList<String>());
 			}
 		});
 	}
@@ -2071,7 +2175,8 @@ public class ChatGroupFragment extends BaseFragment {
 									@Override
 									public void onSuccess(String fileName,
 											String base64) {
-										checkImage(fileName, base64);
+										checkImage(fileName, base64,
+												new ArrayList<String>());
 									}
 								});
 					}

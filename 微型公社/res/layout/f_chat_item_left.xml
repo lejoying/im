@@ -4,6 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="" />
+
     <RelativeLayout
         android:id="@+id/rl_chatleft"
         android:layout_width="match_parent"
@@ -13,6 +20,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/card_background"
         android:minHeight="90dp"
         android:padding="10dp"
@@ -48,17 +56,21 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/card_background"
         android:minHeight="90dp"
-        android:visibility="visible" 
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:visibility="visible" >
 
         <RelativeLayout
             android:id="@+id/iv_image_gif"
             android:layout_width="match_parent"
-            android:layout_height="90dp" />
+            android:layout_height="90dp" >
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tv_nickname"
@@ -82,6 +94,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/card_background"
         android:minHeight="90dp"
         android:visibility="gone" >
@@ -131,13 +144,36 @@
                 android:text="20&quot;" />
         </LinearLayout>
     </RelativeLayout>
-    <LinearLayout
-        android:id="@+id/ll_image"
-        android:layout_width="match_parent"
+
+    <RelativeLayout
+        android:id="@+id/rl_image"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:background="@drawable/card_background"
-        android:orientation="vertical"
-        android:visibility="gone" >
-    </LinearLayout>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+         >
+
+        <LinearLayout
+            android:id="@+id/ll_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            >
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/iv_sendhead"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:visibility="gone" />
+    </RelativeLayout>
 
 </RelativeLayout>
