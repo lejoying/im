@@ -83,8 +83,8 @@ public class SampleView extends View {
 		if (true) {
 			mMovie = gifMovie.movie;
 		} else {
-			byte[] array = gifMovie.bytes;
-			mMovie = Movie.decodeByteArray(array, 0, array.length);
+//			byte[] array = gifMovie.bytes;
+//			mMovie = Movie.decodeByteArray(array, 0, array.length);
 		}
 		int w = mMovie.width();
 		int h = mMovie.height();
