@@ -2,7 +2,7 @@ root.globaldata = {};
 
 var serverSetting = {};
 globaldata.serverSetting = serverSetting;
-serverSetting.environment = "local";//local or server
+serverSetting.environment = "server";//local or server
 //serverSetting.debug = true;
 serverSetting.EARTH_RADIUS = 6378137.0;
 var LBS = {};
@@ -50,7 +50,7 @@ if (serverSetting.environment == "local") {
 else if (serverSetting.environment == "server") {
     serverSetting.imageFolder = "/alidata/upload/images/";
     serverSetting.voicesFolder = "/alidata/upload/voices/";
-    serverSetting.neo4jUrl = "http://127.0.0.1:7474/";
+    serverSetting.neo4jUrl = "http://115.28.51.197:7474/";
     serverSetting.redisIP = "127.0.0.1";
     serverSetting.redisPort = "6379";
 }

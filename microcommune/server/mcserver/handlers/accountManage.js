@@ -23,7 +23,7 @@ var sms_power = true;
 //sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
 var accountID = -1;
 var redis = require("redis");
-var client = redis.createClient("6379", "115.28.51.197");
+var client = redis.createClient("6379", "127.0.0.1");
 client.get("ID", function (err, reply) {
     if (err != null) {
         console.error(err);

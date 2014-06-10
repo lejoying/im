@@ -92,6 +92,12 @@ public class OSSFileHandler {
 		getImageFile(imageFileName, "", TYPE_IMAGE_BACK, fileResult, null, 0);
 	}
 
+	public void getSquareDetailImage(String imageFileName, int width,
+			FileResult fileResult) {
+		getImageFile(imageFileName, "", TYPE_IMAGE_SQUAREIMAGE, fileResult,
+				null, width);
+	}
+
 	public void getThumbnail(String imageFileName, String size, int width,
 			int height, FileResult fileResult) {
 		String newName[] = imageFileName.split("\\.");

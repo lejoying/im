@@ -7,10 +7,10 @@ var pushServer = serverSetting.zookeeper.pushServer;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var zookeeper = require("./lib/zookeeper-client.js");
-zookeeper.start(pushServer.ip, pushServer.port, pushServer.timeout, accessKeyPool, function (KeyPool) {
-    accessKeyPool = KeyPool;
-    console.info(pushServer.name + " accessKeyPool update :  " + pushServer.ip + ":" + pushServer.port + " " + pushServer.timeout);
-});
+//zookeeper.start(pushServer.ip, pushServer.port, pushServer.timeout, accessKeyPool, function (KeyPool) {
+//    accessKeyPool = KeyPool;
+//    console.info(pushServer.name + " accessKeyPool update :  " + pushServer.ip + ":" + pushServer.port + " " + pushServer.timeout);
+//});
 var session = require('./handlers/session.js');
 requestHandlers.session = function (request, response, pathObject, data) {
     var operation = pathObject["operation"];
