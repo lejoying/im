@@ -59,7 +59,9 @@ import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class SquareMessageDetail extends BaseActivity {
@@ -209,7 +211,7 @@ public class SquareMessageDetail extends BaseActivity {
 
 			detailContent.addView(imageView);
 			final String fileName = images.get(i);
-			app.fileHandler.getSquareDetailImage(fileName, width,
+			app.fileHandler.getSquareDetailImage(fileName, (int) width,
 					new FileResult() {
 						@Override
 						public void onResult(String where, Bitmap bitmap) {
@@ -256,16 +258,16 @@ public class SquareMessageDetail extends BaseActivity {
 			detailContent.addView(recordView, params);
 
 			final String fileName = voices.get(i);
-			app.fileHandler.saveVoice(new VoiceInterface() {
+			app.fileHandler.getFile(new FileInterface() {
 
 				@Override
-				public void setParams(VoiceSettings settings) {
+				public void setParams(FileSettings settings) {
 					settings.fileName = fileName;
+					settings.folder = app.sdcardVoiceFolder;
 				}
 
 				@Override
-				public void onSuccess(String filename, String base64,
-						Boolean flag) {
+				public void onSuccess(Boolean flag, String fileName) {
 					if (flag) {
 						File file = new File(app.sdcardVoiceFolder, fileName);
 						if (file.exists()) {
@@ -326,6 +328,7 @@ public class SquareMessageDetail extends BaseActivity {
 					} else {
 						// to do loading voice failed
 					}
+
 				}
 			});
 		}
@@ -496,7 +499,7 @@ public class SquareMessageDetail extends BaseActivity {
 		// System.out.println(width + "::::" + height + ">>>>"
 		// + squareDetailBottomBar.getHeight());
 		int side = (int) (height * 0.35185f);
-		int top = (height - side) / 2;
+		// int top = (height - side) / 2;
 		float textSize = height * 0.234286f;
 		int textTop = (int) ((height - textSize) / 2);
 		int textLeftA = (int) (width * 0.01651917f);
@@ -882,7 +885,7 @@ public class SquareMessageDetail extends BaseActivity {
 					sPassivity.setText(comment.nickNameTo);
 				}
 			}
-			app.fileHandler.getHeadImage(comment.head, new FileResult() {
+			app.fileHandler.getHeadImage(comment.head, "男", new FileResult() {
 
 				@Override
 				public void onResult(String where, Bitmap bitmap) {
@@ -927,6 +930,7 @@ public class SquareMessageDetail extends BaseActivity {
 		return px;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void showPopWindow(Context context, View parent) {
 		vPopWindow = inflater.inflate(R.layout.activity_squaredetail_dialog,
 				null, false);
@@ -970,8 +974,8 @@ public class SquareMessageDetail extends BaseActivity {
 		}
 		final RelativeLayout deleteMenuAll = (RelativeLayout) vPopWindow
 				.findViewById(R.id.rl_delete);
-		final TextView deleteMenu = (TextView) vPopWindow
-				.findViewById(R.id.tv_delete);
+		// final TextView deleteMenu = (TextView) vPopWindow
+		// .findViewById(R.id.tv_delete);
 
 		stickMenuAll.setOnClickListener(new OnClickListener() {
 

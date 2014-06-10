@@ -6,10 +6,10 @@ var imageServer = serverSetting.zookeeper.imageServer;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var zookeeper = require("./lib/zookeeper-client.js");
-zookeeper.start(imageServer.ip, imageServer.port, imageServer.timeout, accessKeyPool, function (KeyPool) {
-    accessKeyPool = KeyPool;
-    console.info(imageServer.name + " accessKeyPool update :  " + imageServer.ip + ":" + imageServer.port + " " + imageServer.timeout);
-});
+//zookeeper.start(imageServer.ip, imageServer.port, imageServer.timeout, accessKeyPool, function (KeyPool) {
+//    accessKeyPool = KeyPool;
+//    console.info(imageServer.name + " accessKeyPool update :  " + imageServer.ip + ":" + imageServer.port + " " + imageServer.timeout);
+//});
 var imagesManage = require('./handlers/imagesManage.js');
 requestHandlers.imagesManage = function (request, response, pathObject, data) {
     if (data == null) {
@@ -108,7 +108,7 @@ function oauth6(phone, accessKey, response, next) {
 //                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
                         accessKeyPool[phone + "_accessKey"].push(accessKey);
                         console.log("验证通过DB..." + accessKey);
-                        zookeeper.setData(accessKeyPool);
+//                        zookeeper.setData(accessKeyPool);
                         next();
                         return;
                     } else {

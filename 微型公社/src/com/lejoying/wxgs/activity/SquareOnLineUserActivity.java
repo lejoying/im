@@ -26,8 +26,8 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.Friend;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class SquareOnLineUserActivity extends Activity {
@@ -123,16 +123,14 @@ public class SquareOnLineUserActivity extends Activity {
 			}
 			final SquareOnLineUserHolder userHolder0 = userHolder;
 			final Friend friend = users.get(position);
-			app.fileHandler.getSquareOnLineHeadImage(friend.head,
-					new FileResult() {
+			app.fileHandler.getHeadImage(friend.head, "男", new FileResult() {
 
-						@Override
-						public void onResult(String where, Bitmap bitmap) {
-							userHolder0.uHead
-									.setImageBitmap(app.fileHandler.bitmaps
-											.get(friend.head));
-						}
-					});
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					userHolder0.uHead.setImageBitmap(app.fileHandler.bitmaps
+							.get(friend.head));
+				}
+			});
 			userHolder0.uNickName.setText(friend.nickName);
 			if ("男".equals(friend.sex)) {
 				userHolder0.uSex.setImageResource(R.drawable.sex_box);

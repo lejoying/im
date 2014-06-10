@@ -4,14 +4,14 @@ var globaldata = root.globaldata;
 var serverSetting = root.globaldata.serverSetting;
 var squareServer = serverSetting.zookeeper.squareServer;
 var redis = require("redis");
-var client = redis.createClient("6379", "115.28.51.197");
+var client = redis.createClient("6379", "112.126.71.180");
 //var client = redis.createClient("6379", "127.0.0.1");
 //squareManage.zookeeper(null, null);
 var zookeeper = require("./lib/zookeeper-client.js");
-zookeeper.start(squareServer.ip, squareServer.port, squareServer.timeout, accessKeyPool, function (KeyPool) {
-    accessKeyPool = KeyPool;
-    console.info(squareServer.name + " accessKeyPool update :  " + squareServer.ip + ":" + squareServer.port + " " + squareServer.timeout);
-});
+//zookeeper.start(squareServer.ip, squareServer.port, squareServer.timeout, accessKeyPool, function (KeyPool) {
+//    accessKeyPool = KeyPool;
+//    console.info(squareServer.name + " accessKeyPool update :  " + squareServer.ip + ":" + squareServer.port + " " + squareServer.timeout);
+//});
 //var squareManage = require('./handlers/squareManage.js');
 var squareManage = require('./handlers/newSquareManage.js');
 
@@ -167,7 +167,7 @@ function oauth6(phone, accessKey, response, next) {
 //                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
                         accessKeyPool[phone + "_accessKey"].push(accessKey);
                         console.log("验证通过DB..." + accessKey);
-                        zookeeper.setData(accessKeyPool);
+//                        zookeeper.setData(accessKeyPool);
                         next();
                         return;
                     } else {

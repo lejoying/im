@@ -7,10 +7,10 @@ var mcServer = serverSetting.zookeeper.mcServer;
 var redis = require("redis");
 var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 var zookeeper = require("./lib/zookeeper-client.js");
-zookeeper.start(mcServer.ip, mcServer.port, mcServer.timeout, accessKeyPool, function (KeyPool) {
-    accessKeyPool = KeyPool;
-    console.info(mcServer.name + " accessKeyPool update :  " + mcServer.ip + ":" + mcServer.port + " " + mcServer.timeout);
-});
+//zookeeper.start(mcServer.ip, mcServer.port, mcServer.timeout, accessKeyPool, function (KeyPool) {
+//    accessKeyPool = KeyPool;
+//    console.info(mcServer.name + " accessKeyPool update :  " + mcServer.ip + ":" + mcServer.port + " " + mcServer.timeout);
+//});
 var accountManage = require("./handlers/accountManage.js");
 requestHandlers.accountManage = function (request, response, pathObject, data) {
     if (data == null) {
@@ -341,7 +341,7 @@ function oauth6(phone, accessKey, response, next) {
 //                        accessKeyPool[phone + "_accessKey"][accessKey] = accessKey;
                         accessKeyPool[phone + "_accessKey"].push(accessKey);
                         console.log("验证通过DB..." + accessKey);
-                        zookeeper.setData(accessKeyPool);
+//                        zookeeper.setData(accessKeyPool);
                         next();
                         return;
                     } else {
