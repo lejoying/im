@@ -213,7 +213,6 @@ public class SquareMessageDetail extends BaseActivity {
 			final String fileName = images.get(i);
 			app.fileHandler.getSquareDetailImage(fileName, width,
 					new FileResult() {
-
 						@Override
 						public void onResult(String where, Bitmap bitmap) {
 							int height = (int) (bitmap.getHeight() * (width / bitmap
@@ -363,7 +362,6 @@ public class SquareMessageDetail extends BaseActivity {
 		// initSquareDetailBottomBar((int) ((height -
 		// MainActivity.statusBarHeight) * 0.083f));
 
-		
 		// RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 		// squareMessageDetailBack.getLayoutParams());
 		// params.width = (int) (height * 0.046f);
@@ -494,8 +492,8 @@ public class SquareMessageDetail extends BaseActivity {
 	}
 
 	private void initSquareDetailBottomBar(int height) {
-//		 int width = rl_square_message_menu.getWidth();
-//		System.out.println(width + "++++++++++++++");
+		// int width = rl_square_message_menu.getWidth();
+		// System.out.println(width + "++++++++++++++");
 		// int height = rl_square_message_menu.getHeight();
 		// System.out.println(width + "::::" + height + ">>>>"
 		// + squareDetailBottomBar.getHeight());

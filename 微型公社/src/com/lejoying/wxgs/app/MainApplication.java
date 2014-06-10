@@ -55,6 +55,7 @@ public class MainApplication extends Application implements
 	public File sdcardImageFolder;
 	public File sdcardVoiceFolder;
 	public File sdcardHeadImageFolder;
+	public File sdcardBackImageFolder;
 	public File sdcardThumbnailFolder;
 	public File sdcardQRcodeFolder;
 
@@ -164,6 +165,10 @@ public class MainApplication extends Application implements
 			sdcardHeadImageFolder = new File(sdcardImageFolder, "head");
 			if (!sdcardHeadImageFolder.exists()) {
 				sdcardHeadImageFolder.mkdir();
+			}
+			sdcardBackImageFolder = new File(sdcardImageFolder, "background");
+			if (!sdcardBackImageFolder.exists()) {
+				sdcardBackImageFolder.mkdir();
 			}
 			sdcardThumbnailFolder = new File(sdcardImageFolder, "thumbnail");
 			if (!sdcardThumbnailFolder.exists()) {

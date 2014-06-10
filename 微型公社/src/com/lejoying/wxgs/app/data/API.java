@@ -5,6 +5,13 @@ public class API {
 	public static final String DOMAIN = "http://im.lejoying.com/";
 	public static final String DOMAIN_IMAGE = "http://images1.lejoying.com/";
 
+	public static final String DOMAIN_COMMONIMAGE = "http://images2.we-links.com/";
+	public static final String DOMAIN_HANDLEIMAGE = "http://images3.we-links.com/";
+
+	public static final String ACCESS_ID = "u39NioN3ulOE09Ux";
+	public static final String ACCESS_KEY = "9SO8xw6rsiYBF1HwLkHPgt3d48a3Aj";
+	public static final String BUCKETNAME = "wxgs-data";
+
 	public static final String ACCOUNT = "account";
 	public static final String ACCOUNT_VERIFYPHONE = "api2/account/verifyphone";
 	public static final String ACCOUNT_VERIFYCODE = "api2/account/verifycode";
