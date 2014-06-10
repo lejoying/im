@@ -32,8 +32,8 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class NewFriendsFragment extends BaseFragment {
 
@@ -166,7 +166,7 @@ public class NewFriendsFragment extends BaseFragment {
 					.get(position).addMessage);
 			final String headFileName = app.data.newFriends.get(position).head;
 			final ImageView iv_head = newFriendsHolder.iv_head;
-			app.fileHandler.getHeadImage(headFileName, new FileResult() {
+			app.fileHandler.getHeadImage(headFileName,app.data.newFriends.get(position).sex,new FileResult() {
 				@Override
 				public void onResult(String where, Bitmap bitmap) {
 					iv_head.setImageBitmap(app.fileHandler.bitmaps

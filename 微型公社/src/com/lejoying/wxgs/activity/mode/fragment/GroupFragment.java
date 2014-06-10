@@ -34,9 +34,9 @@ import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.LocationHandler.LocationListener;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 
@@ -323,7 +323,7 @@ public class GroupFragment extends BaseFragment {
 		buttonManager.setText("创建群组");
 		bottomBar.setVisibility(View.VISIBLE);
 		buttonManager.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				mMainModeManager.mGroupManagerFragment.status = GroupManagerFragment.MODE_NEWGROUP;
@@ -487,13 +487,14 @@ public class GroupFragment extends BaseFragment {
 				params.leftMargin = headMargin;
 				head.setLayoutParams(params);
 				final String fileName = groupFriend.head;
-				app.fileHandler.getHeadImage(fileName, new FileResult() {
-					@Override
-					public void onResult(String where,Bitmap bitmap) {
-						head.setImageBitmap(app.fileHandler.bitmaps
-								.get(fileName));
-					}
-				});
+				app.fileHandler.getHeadImage(fileName, groupFriend.sex,
+						new FileResult() {
+							@Override
+							public void onResult(String where, Bitmap bitmap) {
+								head.setImageBitmap(app.fileHandler.bitmaps
+										.get(fileName));
+							}
+						});
 				members.addView(head);
 			}
 
@@ -673,7 +674,7 @@ public class GroupFragment extends BaseFragment {
 							GroupsAndFriends groupsAndFriends = JSONParser
 									.generateGroupsFromJSON(jData
 											.getJSONArray("groups"));
-//							System.out.println(groupsAndFriends.groups);
+							// System.out.println(groupsAndFriends.groups);
 							for (Group group : groupsAndFriends.groups) {
 								nearByGroups.add(group);
 							}

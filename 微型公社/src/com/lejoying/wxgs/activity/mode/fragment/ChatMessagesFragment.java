@@ -21,7 +21,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class ChatMessagesFragment extends BaseFragment {
 
@@ -167,11 +167,13 @@ public class ChatMessagesFragment extends BaseFragment {
 				final Group chatGroup = group;
 				String chatName = "";
 				String chatHeadImgName = "";
+				String sex = "男";
 				Message lastMessage = null;
 				Integer notread;
 				if (chatType == CHAT_TYPE_FRIEND) {
 					chatName = chatFriend.nickName;
 					chatHeadImgName = chatFriend.head;
+					sex = chatFriend.sex;
 					lastMessage = friend.messages
 							.get(friend.messages.size() - 1);
 					notread = chatFriend.notReadMessagesCount;
@@ -186,9 +188,9 @@ public class ChatMessagesFragment extends BaseFragment {
 				if (lastMessage.contentType.equals("text")) {
 					String mLasastChatMessage;
 					try {
-						mLasastChatMessage=lastMessage.content.get(0);
+						mLasastChatMessage = lastMessage.content.get(0);
 					} catch (Exception e) {
-						mLasastChatMessage=lastMessage.content.toString();
+						mLasastChatMessage = lastMessage.content.toString();
 					}
 					lastChatMessage.setText(mLasastChatMessage);
 				} else if (lastMessage.contentType.equals("image")) {
@@ -198,13 +200,14 @@ public class ChatMessagesFragment extends BaseFragment {
 							.getString(R.string.text_voice));
 				}
 				final String headFileName = chatHeadImgName;
-				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@Override
-					public void onResult(String where, Bitmap bitmap) {
-						head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
-				});
+				app.fileHandler.getHeadImage(headFileName, sex,
+						new FileResult() {
+							@Override
+							public void onResult(String where, Bitmap bitmap) {
+								head.setImageBitmap(app.fileHandler.bitmaps
+										.get(headFileName));
+							}
+						});
 
 				if (notread != null) {
 					if (notread > 0) {

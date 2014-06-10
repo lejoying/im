@@ -35,18 +35,18 @@ import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.User;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
 
 public class ModifyFragment extends BaseFragment implements OnClickListener,
 		OnFocusChangeListener {
@@ -152,7 +152,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		tv_random = mContent.findViewById(R.id.tv_random);
 
 		final String headFileName = app.data.user.head;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
+		app.fileHandler.getHeadImage(headFileName,app.data.user.sex, new FileResult() {
 			@Override
 			public void onResult(String where,Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
@@ -530,7 +530,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			public void modifyUI() {
 				if (user.head != null && !user.head.equals("Head")) {
 					final String headFileName = app.data.user.head;
-					app.fileHandler.getHeadImage(headFileName,
+					app.fileHandler.getHeadImage(headFileName,app.data.user.sex,
 							new FileResult() {
 								@Override
 								public void onResult(String where,Bitmap bitmap) {

@@ -5,6 +5,7 @@ public class API {
 	public static final String DOMAIN = "http://im.lejoying.com/";
 	public static final String DOMAIN_IMAGE = "http://images1.lejoying.com/";
 
+	public static final String DOMAIN_CHECKIMAGE = "http://images1.we-links.com/";
 	public static final String DOMAIN_COMMONIMAGE = "http://images2.we-links.com/";
 	public static final String DOMAIN_HANDLEIMAGE = "http://images3.we-links.com/";
 

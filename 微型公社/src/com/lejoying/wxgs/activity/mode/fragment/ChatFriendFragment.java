@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,14 +90,19 @@ import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgSettings;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
-import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
+import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
 
 public class ChatFriendFragment extends BaseFragment {
 
@@ -329,13 +336,14 @@ public class ChatFriendFragment extends BaseFragment {
 			params.rightMargin = 20;
 			final ImageView iv_head = new ImageView(getActivity());
 			final String headFileName = mNowChatFriend.head;
-			app.fileHandler.getHeadImage(headFileName, new FileResult() {
-				@Override
-				public void onResult(String where, Bitmap bitmap) {
-					iv_head.setImageBitmap(app.fileHandler.bitmaps
-							.get(headFileName));
-				}
-			});
+			app.fileHandler.getHeadImage(headFileName, mNowChatFriend.sex,
+					new FileResult() {
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							iv_head.setImageBitmap(app.fileHandler.bitmaps
+									.get(headFileName));
+						}
+					});
 			iv_head.setLayoutParams(params);
 			linearlayout_members.addView(iv_head);
 			initShowFirstPosition();
@@ -365,13 +373,17 @@ public class ChatFriendFragment extends BaseFragment {
 				final ImageView iv_head = new ImageView(getActivity());
 				final String headFileName = app.data.groupFriends
 						.get(mNowChatGroup.members.get(i)).head;
-				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@Override
-					public void onResult(String where, Bitmap bitmap) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
-				});
+				app.fileHandler
+						.getHeadImage(headFileName, app.data.groupFriends
+								.get(mNowChatGroup.members.get(i)).sex,
+								new FileResult() {
+									@Override
+									public void onResult(String where,
+											Bitmap bitmap) {
+										iv_head.setImageBitmap(app.fileHandler.bitmaps
+												.get(headFileName));
+									}
+								});
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 						40, 40);
 				if (i != 3)
@@ -393,13 +405,14 @@ public class ChatFriendFragment extends BaseFragment {
 						.findViewById(R.id.tv_nickname);
 				tv_nickname.setText(friend.nickName);
 				final String headFileName = friend.head;
-				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@Override
-					public void onResult(String where, Bitmap bitmap) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
-				});
+				app.fileHandler.getHeadImage(headFileName, friend.sex,
+						new FileResult() {
+							@Override
+							public void onResult(String where, Bitmap bitmap) {
+								iv_head.setImageBitmap(app.fileHandler.bitmaps
+										.get(headFileName));
+							}
+						});
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 						LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -1416,13 +1429,14 @@ public class ChatFriendFragment extends BaseFragment {
 				}
 				final String headFileName = fileName;
 				final ImageView iv_head = messageHolder.iv_head;
-				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@Override
-					public void onResult(String where, Bitmap bitmap) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
-				});
+				app.fileHandler.getHeadImage(headFileName, app.data.user.sex,
+						new FileResult() {
+							@Override
+							public void onResult(String where, Bitmap bitmap) {
+								iv_head.setImageBitmap(app.fileHandler.bitmaps
+										.get(headFileName));
+							}
+						});
 				iv_head.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -1480,29 +1494,59 @@ public class ChatFriendFragment extends BaseFragment {
 					messageHolder.rl_image.setVisibility(View.GONE);
 					messageHolder.iv_image_gif.setVisibility(View.VISIBLE);
 					messageHolder.iv_image_gif.removeAllViews();
-					app.fileHandler.getGifImgFromWebOrSdCard(imageFileName,
-							new FileResult() {
+					app.fileHandler.getFile(new FileInterface() {
+
+						@Override
+						public void setParams(FileSettings settings) {
+							settings.fileName = imageFileName;
+							settings.folder = app.sdcardImageFolder;
+						}
+
+						@Override
+						public void onSuccess(Boolean flag, String fileName) {
+
+							app.UIHandler.post(new Runnable() {
+
 								@Override
-								public void onResult(final String where,
-										Bitmap bitmap) {
-									app.UIHandler.post(new Runnable() {
-
-										@Override
-										public void run() {
-											SampleView sampleView = new SampleView(
-													getActivity(),
-													app.fileHandler.gifs
-															.get(imageFileName));
-											messageHolder.iv_image_gif
-													.addView(sampleView);
-											if (where == app.fileHandler.FROM_WEB) {
-												mAdapter.notifyDataSetChanged();
-											}
-										}
-									});
-
+								public void run() {
+									SampleView sampleView = new SampleView(
+											getActivity(),
+											app.fileHandler.getFileBytes(
+													app.sdcardImageFolder,
+													imageFileName));
+									messageHolder.iv_image_gif
+											.addView(sampleView);
+									// if (where == app.fileHandler.FROM_WEB) {
+									// mAdapter.notifyDataSetChanged();
+									// }
 								}
 							});
+
+						}
+					});
+					// app.fileHandler.getGifImgFromWebOrSdCard(imageFileName,
+					// new FileResult() {
+					// @Override
+					// public void onResult(final String where,
+					// Bitmap bitmap) {
+					// app.UIHandler.post(new Runnable() {
+					//
+					// @Override
+					// public void run() {
+					// SampleView sampleView = new SampleView(
+					// getActivity(),
+					// app.fileHandler.getFileBytes(folder, imageFileName)
+					// );
+					// messageHolder.iv_image_gif
+					// .addView(sampleView);
+					// // if (where == app.fileHandler.FROM_WEB) {
+					// // mAdapter.notifyDataSetChanged();
+					// // }
+					// }
+					// });
+					//
+					// }
+					// });
 
 				} else {
 					messageHolder.image.setVisibility(View.GONE);
@@ -1575,7 +1619,7 @@ public class ChatFriendFragment extends BaseFragment {
 					final String headFileName = mNowChatFriend.head;
 					iv_sendhead.setVisibility(View.VISIBLE);
 					app.fileHandler.getHeadImage(headFileName,
-							new FileResult() {
+							mNowChatFriend.sex, new FileResult() {
 								@Override
 								public void onResult(String where, Bitmap bitmap) {
 									iv_sendhead
@@ -1604,12 +1648,15 @@ public class ChatFriendFragment extends BaseFragment {
 				messageHolder.rl_image.setVisibility(View.GONE);
 				messageHolder.voice.setVisibility(View.VISIBLE);
 				String fileName = app.data.user.head;
+				String sex = "男";
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
 					fileName = app.data.user.head;
+					sex = app.data.user.sex;
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
 					fileName = mNowChatFriend.head;
+					sex = mNowChatFriend.sex;
 					break;
 				default:
 					break;
@@ -1624,33 +1671,35 @@ public class ChatFriendFragment extends BaseFragment {
 				final String headFileName = fileName;
 				final ImageView iv_head = messageHolder.iv_voicehead;
 				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
-				app.fileHandler.getHeadImage(headFileName, new FileResult() {
-					@Override
-					public void onResult(String where, Bitmap bitmap) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-						// iv_head.setBackgroundDrawable(new BitmapDrawable(
-						// app.fileHandler.bitmaps.get(headFileName)));
-						Bitmap newBitmap = BitmapFactory.decodeResource(
-								getResources(), R.drawable.head_voice_start);
+				app.fileHandler.getHeadImage(headFileName, sex,
+						new FileResult() {
+							@Override
+							public void onResult(String where, Bitmap bitmap) {
+								iv_head.setImageBitmap(app.fileHandler.bitmaps
+										.get(headFileName));
+								// iv_head.setBackgroundDrawable(new
+								// BitmapDrawable(
+								// app.fileHandler.bitmaps.get(headFileName)));
+								Bitmap newBitmap = BitmapFactory
+										.decodeResource(getResources(),
+												R.drawable.head_voice_start);
 
-						iv_voicehead_status.setImageBitmap(newBitmap);
-						iv_voicehead_status.setTag("start");
-					}
-				});
-				app.fileHandler.saveVoice(new VoiceInterface() {
+								iv_voicehead_status.setImageBitmap(newBitmap);
+								iv_voicehead_status.setTag("start");
+							}
+						});
+				app.fileHandler.getFile(new FileInterface() {
 
 					@Override
-					public void setParams(VoiceSettings settings) {
+					public void setParams(FileSettings settings) {
 						settings.fileName = voiceContent;
+						settings.folder = app.sdcardVoiceFolder;
 					}
 
 					@Override
-					public void onSuccess(String filename, String base64,
-							Boolean flag) {
+					public void onSuccess(Boolean flag, String fileName) {
 						VOICE_SAVESTATUS = flag;
 						if (flag) {
-							// MediaPlayer mpPlayer = null;
 							try {
 								final MediaPlayer mpPlayer = MediaPlayer
 										.create(getActivity(), Uri
@@ -1685,6 +1734,53 @@ public class ChatFriendFragment extends BaseFragment {
 
 					}
 				});
+				// app.fileHandler.saveVoice(new VoiceInterface() {
+				//
+				// @Override
+				// public void setParams(VoiceSettings settings) {
+				// settings.fileName = voiceContent;
+				// }
+				//
+				// @Override
+				// public void onSuccess(String filename, String base64,
+				// Boolean flag) {
+				// VOICE_SAVESTATUS = flag;
+				// if (flag) {
+				// // MediaPlayer mpPlayer = null;
+				// try {
+				// final MediaPlayer mpPlayer = MediaPlayer
+				// .create(getActivity(), Uri
+				// .parse((new File(
+				// app.sdcardVoiceFolder,
+				// voiceContent))
+				// .getAbsolutePath()));
+				// messageHolder.mpPlayer = mpPlayer;
+				// app.UIHandler.post(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// messageHolder.tv_voicetime.setText((int) Math
+				// .ceil((double) (mpPlayer
+				// .getDuration()) / 1000)
+				// + "\"");
+				// }
+				// });
+				// messageHolder.sk_voice.setMax(mpPlayer
+				// .getDuration());
+				// // messageHolder.sk_voice.setMax((int) Math
+				// // .ceil((double) (mpPlayer.getDuration()) /
+				// // 1000));
+				// } catch (SecurityException e) {
+				// e.printStackTrace();
+				// } catch (IllegalStateException e) {
+				// e.printStackTrace();
+				// }
+				// } else {
+				// // to do loading voice failed
+				// }
+				//
+				// }
+				// });
 
 				messageHolder.sk_voice.setProgress(0);
 				messageHolder.sk_voice
@@ -2082,25 +2178,61 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	public void getRecordVoice() {
-		app.fileHandler.getVoice(new VoiceInterface() {
+		app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
 
 			@Override
-			public void setParams(VoiceSettings settings) {
-				settings.format = ".aac";
+			public void setParams(FileMessageInfoSettings settings) {
 				settings.fileName = voice_list.get(0);
+				settings.folder = app.sdcardVoiceFolder;
+				settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDVOICE;
 			}
 
 			@Override
-			public void onSuccess(String filename, String base64, Boolean flag) {
-				File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
-				File to = new File(app.sdcardVoiceFolder, filename);
-				from.renameTo(to);
-				voice_list.clear();
-				voice_length = 0;
-				uploadImageOrVoice("voice", filename, base64,
-						new ArrayList<String>());
+			public void onSuccess(final ImageMessageInfo imageMessageInfo) {
+				OSSFileHandler.uploadFile(new UploadFileInterface() {
+
+					@Override
+					public void setParams(UploadFileSettings settings) {
+						settings.fileName = imageMessageInfo.fileName;
+						settings.imageMessageInfo = imageMessageInfo;
+						settings.contentType="audio/x-mei-aac";
+
+					}
+
+					@Override
+					public void onSuccess(Boolean flag, String fileName) {
+						File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
+						File to = new File(app.sdcardVoiceFolder, imageMessageInfo.fileName);
+						from.renameTo(to);
+						voice_list.clear();
+						voice_length = 0;
+						ArrayList<String> messages= new ArrayList<String>();
+						messages.add(fileName);
+						sendMessage("voice", messages);
+					}
+				});
+
 			}
 		});
+//		app.fileHandler.getVoice(new VoiceInterface() {
+//
+//			@Override
+//			public void setParams(VoiceSettings settings) {
+//				settings.format = ".aac";
+//				settings.fileName = voice_list.get(0);
+//			}
+//
+//			@Override
+//			public void onSuccess(String filename, String base64, Boolean flag) {
+//				File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
+//				File to = new File(app.sdcardVoiceFolder, filename);
+//				from.renameTo(to);
+//				voice_list.clear();
+//				voice_length = 0;
+//				uploadImageOrVoice("voice", filename, base64,
+//						new ArrayList<String>());
+//			}
+//		});
 	}
 
 	void initBaseFaces() {
@@ -2276,25 +2408,87 @@ public class ChatFriendFragment extends BaseFragment {
 								faceNamesList.get(chat_vPager_now)[position]);
 					} else {
 						rl_face.setVisibility(View.GONE);
-						app.fileHandler.getBigFaceImgBASE64(getActivity(),
-								new BigFaceImgInterface() {
-
+						app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
+							
+							@Override
+							public void setParams(FileMessageInfoSettings settings) {
+								settings.fileName = "tusiji_"
+										+ (position + 1) + ".gif";
+								settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDIMAGE;
+								settings.folder=app.sdcardImageFolder;
+								//settings.assetsPath="images/";
+							}
+							
+							@Override
+							public void onSuccess(final ImageMessageInfo imageMessageInfo) {
+								app.networkHandler.connection(new CommonNetConnection() {
+									
+									
 									@Override
-									public void setParams(
-											BigFaceImgSettings settings) {
-										settings.format = ".gif";
-										settings.assetsPath = "images/";
-										settings.fileName = "tusiji_"
-												+ (position + 1) + ".gif";
+									protected void settings(Settings settings) {
+										settings.url = API.DOMAIN_CHECKIMAGE;
+										Map<String, String> params = new HashMap<String, String>();
+										params.put("phone", app.data.user.phone);
+										params.put("accessKey", app.data.user.accessKey);
+										params.put("filename", imageMessageInfo.fileName);
+										settings.params = params;
 									}
 
 									@Override
-									public void onSuccess(String fileName,
-											String base64) {
-										checkImage(fileName, base64,
-												new ArrayList<String>());
+									public void success(JSONObject jData) {
+										try {
+											if (jData.getBoolean("exists")) {
+												ArrayList<String> messages= new ArrayList<String>();
+												messages.add(imageMessageInfo.fileName);
+												sendMessage("image", messages);
+											}else{
+												OSSFileHandler.uploadFile(new UploadFileInterface() {
+													
+													@Override
+													public void setParams(UploadFileSettings settings) {
+														settings.fileName = imageMessageInfo.fileName;
+														settings.imageMessageInfo = imageMessageInfo;
+														settings.contentType="image/gif";
+													}
+													
+													@Override
+													public void onSuccess(Boolean flag, String fileName) {
+														ArrayList<String> messages= new ArrayList<String>();
+														messages.add(fileName);
+														sendMessage("image", messages);
+													}
+												});
+											}
+										} catch (JSONException e) {
+											e.printStackTrace();
+										}
+										
+										
 									}
 								});
+								
+								
+							}
+						});
+//						app.fileHandler.getBigFaceImgBASE64(getActivity(),
+//								new BigFaceImgInterface() {
+//
+//									@Override
+//									public void setParams(
+//											BigFaceImgSettings settings) {
+//										settings.format = ".gif";
+//										settings.assetsPath = "images/";
+//										settings.fileName = "tusiji_"
+//												+ (position + 1) + ".gif";
+//									}
+//
+//									@Override
+//									public void onSuccess(String fileName,
+//											String base64) {
+//										checkImage(fileName, base64,
+//												new ArrayList<String>());
+//									}
+//								});
 					}
 				}
 			});

@@ -18,27 +18,27 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.Group;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class GroupBusinessCardFragment extends BaseFragment implements
 		OnClickListener {
@@ -289,7 +289,7 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 			tv_alias.setText(mGroup.description);
 		}
 		final String headFileName = mGroup.icon;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
+		app.fileHandler.getHeadImage(headFileName,"男", new FileResult() {
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps

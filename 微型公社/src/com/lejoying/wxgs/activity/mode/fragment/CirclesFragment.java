@@ -56,8 +56,8 @@ import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class CirclesFragment extends BaseFragment {
 
@@ -1100,12 +1100,13 @@ public class CirclesFragment extends BaseFragment {
 		if (lastMessage.contentType.equals("text")) {
 			String mLastChatMessage;
 			try {
-				mLastChatMessage=friend.messages.get(friend.messages.size() - 1).content.get(0);
+				mLastChatMessage = friend.messages
+						.get(friend.messages.size() - 1).content.get(0);
 			} catch (Exception e) {
-				mLastChatMessage=friend.messages.get(friend.messages.size() - 1).content.toString();
+				mLastChatMessage = friend.messages
+						.get(friend.messages.size() - 1).content.toString();
 			}
-			lastChatMessage
-					.setText(mLastChatMessage);
+			lastChatMessage.setText(mLastChatMessage);
 		} else if (lastMessage.contentType.equals("image")) {
 			lastChatMessage.setText(getString(R.string.text_picture));
 		} else if (lastMessage.contentType.equals("voice")) {
@@ -1114,12 +1115,14 @@ public class CirclesFragment extends BaseFragment {
 					R.string.text_voice));
 		}
 		final String headFileName = friend.head;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
-			@Override
-			public void onResult(String where, Bitmap bitmap) {
-				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
-			}
-		});
+		app.fileHandler.getHeadImage(headFileName, friend.sex,
+				new FileResult() {
+					@Override
+					public void onResult(String where, Bitmap bitmap) {
+						head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
 
 		Integer notread = friend.notReadMessagesCount;
 
@@ -1739,12 +1742,14 @@ public class CirclesFragment extends BaseFragment {
 			nickname.setText(friend.nickName);
 		}
 		final String headFileName = friend.head;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
-			@Override
-			public void onResult(String where, Bitmap bitmap) {
-				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
-			}
-		});
+		app.fileHandler.getHeadImage(headFileName,friend.sex,
+				new FileResult() {
+					@Override
+					public void onResult(String where, Bitmap bitmap) {
+						head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
 		return convertView;
 	}
 }

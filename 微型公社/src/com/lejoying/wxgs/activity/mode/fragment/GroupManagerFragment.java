@@ -38,8 +38,8 @@ import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.adapter.AnimationAdapter;
 import com.lejoying.wxgs.app.data.API;
@@ -48,9 +48,9 @@ import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.LocationHandler.LocationListener;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class GroupManagerFragment extends BaseFragment {
 
@@ -1441,7 +1441,7 @@ public class GroupManagerFragment extends BaseFragment {
 			nickname.setText(friend.nickName);
 		}
 		final String headFileName = friend.head;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
+		app.fileHandler.getHeadImage(headFileName,friend.sex,new FileResult() {
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));

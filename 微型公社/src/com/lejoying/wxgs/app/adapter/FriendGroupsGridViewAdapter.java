@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Group;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class FriendGroupsGridViewAdapter extends BaseAdapter {
 	private List<Group> groups;
@@ -73,7 +73,7 @@ public class FriendGroupsGridViewAdapter extends BaseAdapter {
 		// convertView.setLayoutParams(rl);
 		holder.tv_groupname.setText(groups.get(position).name);
 		final String headFileName = groups.get(position).icon;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
+		app.fileHandler.getHeadImage(headFileName,"男", new FileResult() {
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
 				// TODO Auto-generated method stub

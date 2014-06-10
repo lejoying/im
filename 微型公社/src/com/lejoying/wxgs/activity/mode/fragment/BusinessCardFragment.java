@@ -56,11 +56,11 @@ import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.User;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 import com.lejoying.wxgs.app.service.PushService;
@@ -710,7 +710,13 @@ public class BusinessCardFragment extends BaseFragment {
 			}
 		});
 		final String headFileName = fileName;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
+		String sex;
+		if (mStatus == SHOW_SELF) {
+			sex = app.data.user.sex;
+		} else {
+			sex = mShowFriend.sex;
+		}
+		app.fileHandler.getHeadImage(headFileName,sex,new FileResult() {
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps

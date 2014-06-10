@@ -37,9 +37,9 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.LocationHandler.LocationListener;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class SearchFriendFragment extends BaseFragment {
@@ -416,7 +416,7 @@ public class SearchFriendFragment extends BaseFragment {
 				.findViewById(R.id.tv_nickname);
 		nickname.setText(friend.nickName);
 		final String headFileName = friend.head;
-		app.fileHandler.getHeadImage(headFileName, new FileResult() {
+		app.fileHandler.getHeadImage(headFileName,friend.sex,new FileResult() {
 			@Override
 			public void onResult(String where,Bitmap bitmap) {
 				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
