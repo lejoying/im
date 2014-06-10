@@ -22,9 +22,9 @@ import com.lejoying.wxgs.app.handler.DataHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.AsyncHandler;
 import com.lejoying.wxgs.app.handler.EventHandler;
-import com.lejoying.wxgs.app.handler.FileHandler;
 import com.lejoying.wxgs.app.handler.LocationHandler;
 import com.lejoying.wxgs.app.handler.NetworkHandler;
+import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.utils.SHA1;
 
@@ -41,7 +41,7 @@ public class MainApplication extends Application implements
 	public Handler UIHandler;
 	public DataHandler dataHandler;
 	public NetworkHandler networkHandler;
-	public FileHandler fileHandler;
+	public OSSFileHandler fileHandler;
 	public EventHandler eventHandler;
 	public LocationHandler locationHandler;
 	public AsyncHandler asyncHandler;
@@ -82,7 +82,7 @@ public class MainApplication extends Application implements
 		dataHandler = new DataHandler();
 		dataHandler.initialize(this);
 		networkHandler = new NetworkHandler(5);
-		fileHandler = new FileHandler();
+		fileHandler = new OSSFileHandler();
 		fileHandler.initialize(this);
 		eventHandler = new EventHandler();
 		eventHandler.initialize(this);

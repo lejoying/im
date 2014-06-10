@@ -3,6 +3,7 @@ package com.lejoying.wxgs.activity;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -41,7 +43,7 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.app.service.PushService;
 
@@ -503,14 +505,16 @@ public class MainActivity extends BaseActivity {
 			tvParams.width = (int) (width * 0.4872856298048492f);
 			tv.setLayoutParams(tvParams);
 			final ImageView iv = (ImageView) v.findViewById(R.id.iv_square);
-			app.fileHandler.getHeadImage(app.data.user.head, new FileResult() {
+			// TODO modify square headimage
+			app.fileHandler.getHeadImage(app.data.user.head, app.data.user.sex,
+					new FileResult() {
 
-				@Override
-				public void onResult(String where, Bitmap bitmap) {
-					iv.setImageBitmap(app.fileHandler.bitmaps
-							.get(app.data.user.head));
-				}
-			});
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							iv.setImageBitmap(app.fileHandler.bitmaps
+									.get(app.data.user.head));
+						}
+					});
 			// iv.setBackgroundColor(Color.RED);
 			LinearLayout.LayoutParams ivpParams = new LinearLayout.LayoutParams(
 					iv.getLayoutParams());

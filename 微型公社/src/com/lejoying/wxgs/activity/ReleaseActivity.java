@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,34 +15,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
-import com.lejoying.wxgs.activity.utils.CommonNetConnection;
-import com.lejoying.wxgs.activity.utils.ExpressionUtil;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
-import com.lejoying.wxgs.activity.view.BackgroundView;
-import com.lejoying.wxgs.activity.view.EditTextLayout;
-import com.lejoying.wxgs.activity.view.EditTextLayout.onEditTextChangeListener;
-import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
-import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
-import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.API;
-import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.BigFaceImgSettings;
-import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveBitmapInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.SaveSettings;
-import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
-import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -57,14 +32,13 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
@@ -79,6 +53,28 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
+import com.lejoying.wxgs.activity.view.BackgroundView;
+import com.lejoying.wxgs.activity.view.EditTextLayout;
+import com.lejoying.wxgs.activity.view.EditTextLayout.onEditTextChangeListener;
+import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
+import com.lejoying.wxgs.activity.view.widget.CircleMenu;
+import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
 
 @SuppressLint("DefaultLocale")
 public class ReleaseActivity extends BaseActivity implements OnClickListener {
@@ -978,6 +974,21 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		if (requestCode == RESULT_MAKEVOICE && resultCode == Activity.RESULT_OK
 				&& data != null) {
 			final String voiceName = data.getExtras().getString("fileName");
+			app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
+
+				@Override
+				public void setParams(FileMessageInfoSettings settings) {
+					settings.fileName = voiceName;
+					settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDVOICE;
+				}
+
+				@Override
+				public void onSuccess(ImageMessageInfo imageMessageInfo) {
+					// TODO Auto-generated method stub
+
+				}
+
+			});
 			app.fileHandler.getVoice(new VoiceInterface() {
 
 				@Override

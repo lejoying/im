@@ -14,7 +14,6 @@ import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -91,12 +90,12 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		currentPageSize = 1;
 		myPageAdapter = new MyPageAdapter(mainListViews);
 		picandvoice_Pager.setAdapter(myPageAdapter);
-		if(activity.equals("Browse")){
+		if (activity.equals("Browse")) {
 			picandvoice_Pager.setCurrentItem(currentIndex, true);
-		}else{
+		} else {
 			picandvoice_Pager.setCurrentItem(currentIndex - 1, true);
 		}
-		
+
 	}
 
 	private void initEvent() {
