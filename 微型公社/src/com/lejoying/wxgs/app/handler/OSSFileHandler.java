@@ -73,20 +73,21 @@ public class OSSFileHandler {
 		getImageFile(imageFileName, "", TYPE_IMAGE_COMMON, fileResult);
 	}
 
-	public void getHeadImage(String imageFileName, FileResult fileResult) {
+	public void getHeadImage(String imageFileName, String sex,FileResult fileResult) {
 		borderWidth = 5;
-		getImageFile(imageFileName, "sex", TYPE_IMAGE_HEAD, fileResult);
+		getImageFile(imageFileName,sex,TYPE_IMAGE_HEAD, fileResult);
 	}
 
 	public void getBackgroundImage(String imageFileName, FileResult fileResult) {
 		getImageFile(imageFileName, "", TYPE_IMAGE_BACK, fileResult);
 	}
 
-	public void getThumbnail(String imageFileName, String size, int width,
+	public void getThumbnail(String imageFileName,String size, int width,
 			int height, FileResult fileResult) {
 		String newName[] = imageFileName.split("\\.");
 		String thumbnailName = newName[0] + size + newName[1];
-		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,
+		String paramFormat="@"+width+"w_"+height+"h_1c_1i_50q";
+		getImageFile(thumbnailName,paramFormat,TYPE_IMAGE_THUMBNAIL,
 				fileResult);
 	}
 
@@ -131,6 +132,7 @@ public class OSSFileHandler {
 		if (!"".equals(imageFileName)) {
 			if (bitmaps.get(imageFileName) != null
 					&& !bitmaps.get(imageFileName).equals(dImage)) {
+				fileResult.onResult(where, bitmaps.get(imageFileName));
 				where = FROM_MEMORY;
 			} else {
 				bitmaps.put(imageFileName, dImage);
@@ -148,7 +150,7 @@ public class OSSFileHandler {
 				}
 				if (type == TYPE_IMAGE_THUMBNAIL) {
 					imageFile = new File(app.sdcardThumbnailFolder,
-							mediationParam);
+							imageFileName);
 				}
 				if (imageFile.exists()) {
 					Bitmap imageFileBitmap = BitmapFactory.decodeFile(imageFile
@@ -156,18 +158,20 @@ public class OSSFileHandler {
 					if (imageFileBitmap != null) {
 						if (type == TYPE_IMAGE_COMMON
 								|| type == TYPE_IMAGE_BACK) {
-							bitmaps.put(imageFileName, imageFileBitmap);
+							where = FROM_SDCARD;
+							fileResult.onResult(where,imageFileBitmap);
 						} else if (type == TYPE_IMAGE_HEAD) {
 							bitmaps.put(imageFileName, MCImageUtils
 									.getCircleBitmap(imageFileBitmap, true,
 											borderWidth, Color.WHITE));
+							where = FROM_SDCARD;
+							fileResult.onResult(where, bitmaps.get(imageFileName));
 						} else if (type == TYPE_IMAGE_THUMBNAIL) {
 							bitmaps.put(imageFileName, imageFileBitmap);
+							where = FROM_SDCARD;
+							fileResult.onResult(where, bitmaps.get(imageFileName));
 						}
-						where = FROM_SDCARD;
-						fileResult.onResult(where, bitmaps.get(imageFileName));
 					} else {
-						// imageFile.delete();
 						if (fromWebResults.get(imageFileName) == null) {
 							fromWebResults.put(imageFileName,
 									new ArrayList<FileHandler.FileResult>());
@@ -222,10 +226,8 @@ public class OSSFileHandler {
 							.parseToFile(is, new FileOutputStream(tempFile));
 					imageFromWebStatus.put(imageFileName, "success");
 					httpURLConnection.disconnect();
+					
 					String fileName = imageFileName;
-					if (type == TYPE_IMAGE_THUMBNAIL) {
-						fileName = mediationParam;
-					}
 					File imageFile = new File(f, fileName);
 					tempFile.renameTo(imageFile);
 
@@ -269,8 +271,13 @@ public class OSSFileHandler {
 
 			@Override
 			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN_IMAGE + imageFileName;
-				settings.method = GET;
+				if(type==TYPE_IMAGE_THUMBNAIL){
+					settings.url = API.DOMAIN_HANDLEIMAGE + imageFileName+mediationParam;
+					settings.method = GET;
+				}else{
+					settings.url = API.DOMAIN_COMMONIMAGE + imageFileName;
+					settings.method = GET;
+				}
 			}
 		});
 	}
