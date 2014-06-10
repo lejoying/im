@@ -479,9 +479,9 @@ public class OSSFileHandler {
 	}
 
 	public static class ImageMessageInfo {
-		String fileName;
-		String md5;
-		byte[] data;
+		public String fileName;
+		public String md5;
+		public byte[] data;
 
 		ImageMessageInfo(String fileName, String md5, byte[] data) {
 			this.fileName = fileName;

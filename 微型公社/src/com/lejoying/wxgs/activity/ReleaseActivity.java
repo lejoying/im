@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Movie;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -539,7 +538,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.release_iv_selectpicture:
 			if (faceVisible) {
@@ -792,7 +790,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void Send() {
 		jsonArray = new JSONArray();
 		mCurrentSquareID = SquareFragment.mCurrentSquareID;
-		long time = System.currentTimeMillis();
+		// long time = System.currentTimeMillis();
 		// if (time % 3 == 0) {
 		// messageType = "精华";
 		// } else if (time % 3 == 1) {
@@ -984,33 +982,18 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 				@Override
 				public void onSuccess(ImageMessageInfo imageMessageInfo) {
-					// TODO Auto-generated method stub
-
-				}
-
-			});
-			app.fileHandler.getVoice(new VoiceInterface() {
-
-				@Override
-				public void setParams(VoiceSettings settings) {
-					settings.fileName = voiceName;
-					settings.format = ".aac";
-				}
-
-				@Override
-				public void onSuccess(String filename, String base64,
-						Boolean flag) {
 					final Map<String, Object> map = new HashMap<String, Object>();
-					map.put("fileName", filename);
-					map.put("base64", base64);
+					map.put("fileName", imageMessageInfo.fileName);
+					map.put("data", imageMessageInfo.data);
 					File voiceFile = new File(app.sdcardVoiceFolder, voiceName);
 					if (voiceFile.exists()) {
 						voiceFile.renameTo(new File(app.sdcardVoiceFolder,
-								filename));
+								imageMessageInfo.fileName));
 					}
 					voices.add(map);
 					nodifyViews();
 				}
+
 			});
 
 		} else if (requestCode == RESULT_MAKEVOICE
@@ -1027,7 +1010,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			nodifyViews();
 		} else if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			String picturePath = "";
+			// String picturePath = "";
 			String format = "";
 			// Uri selectedImage = data.getData();
 			// String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -1377,54 +1360,33 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		try {
 			is = getResources().getAssets().open(
 					"images/" + faceNameList.get(2).get(position));
-			final GifMovie gifMovie = new GifMovie();
-			gifMovie.bytes = streamToBytes(is);
-			gifMovie.movie = Movie.decodeByteArray(gifMovie.bytes, 0,
-					gifMovie.bytes.length);
 			final Map<String, Object> map = new HashMap<String, Object>();
 			Bitmap bitmap = BitmapFactory.decodeStream(is);
 			map.put("bitmap", bitmap);
-			app.fileHandler.getBigFaceImgBASE64(this,
-					new BigFaceImgInterface() {
+			map.put("type", "gif");
 
-						@Override
-						public void setParams(BigFaceImgSettings settings) {
-							settings.format = ".gif";
-							settings.assetsPath = "images/";
-							settings.fileName = faceNameList.get(2).get(
-									position);
-						}
+			app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
 
-						@Override
-						public void onSuccess(String fileName, String base64) {
-							map.put("fileName", fileName);
-							map.put("base64", base64);
-							map.put("gifMovie", gifMovie);
-							images.add(map);
-							nodifyViews();
-						}
-					});
+				@Override
+				public void setParams(FileMessageInfoSettings settings) {
+					settings.assetsPath = "images/";
+					settings.fileName = faceNameList.get(2).get(position);
+				}
+
+				@Override
+				public void onSuccess(ImageMessageInfo imageMessageInfo) {
+					map.put("fileName", imageMessageInfo.fileName);
+					map.put("data", imageMessageInfo.data);
+					images.add(map);
+					nodifyViews();
+				}
+			});
 
 			is.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-	}
-
-	private byte[] streamToBytes(InputStream is) {
-		byte[] bytes = null;
-		try {
-			bytes = new byte[is.available()];
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			is.read(bytes);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return bytes;
 	}
 
 	class MyPageAdapter extends PagerAdapter {

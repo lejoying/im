@@ -409,10 +409,9 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				ImageView iv = (ImageView) superView
 						.findViewById(R.id.iv_release_child);
 				Map<String, Object> map = ReleaseActivity.images.get(i);
-				if (map.get("gifMovie") != null) {
-					GifMovie gifMovie = (GifMovie) map.get("gifMovie");
-					SampleView sampleview = new SampleView(this, gifMovie,
-							width, height);
+				if (map.get("type") != null) {
+					SampleView sampleview = new SampleView(this,
+							(byte[]) map.get("data"), width, height);
 					superView.addView(sampleview);
 					iv.setVisibility(View.GONE);
 				} else {

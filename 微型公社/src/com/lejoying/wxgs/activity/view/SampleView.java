@@ -1,18 +1,12 @@
 package com.lejoying.wxgs.activity.view;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.graphics.Paint;
-import android.util.AttributeSet;
 import android.view.View;
-
-import com.lejoying.wxgs.app.handler.FileHandler.GifMovie;
 
 @SuppressLint("ViewConstructor")
 public class SampleView extends View {
@@ -21,33 +15,20 @@ public class SampleView extends View {
 	private Bitmap mBitmap;
 	private Canvas mCanvas;
 	private long mMovieStart;
-	private int height=0, width=0;
-	@SuppressWarnings("unused")
-	private byte[] streamToBytes(InputStream is) {
-		ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
-		byte[] buffer = new byte[1024];
-		int len;
-		try {
-			while ((len = is.read(buffer)) >= 0) {
-				os.write(buffer, 0, len);
-			}
-		} catch (java.io.IOException e) {
-		}
-		return os.toByteArray();
+	private int height = 0, width = 0;
+
+	public SampleView(Context context, byte[] bytes, int height, int width) {
+		super(context);
+		setFocusable(true);
+		this.height = height;
+		this.width = width;
+		initData(bytes);
 	}
-	public SampleView(Context context,
-			GifMovie gifMovie,int height,int  width) {
+
+	public SampleView(Context context, byte[] bytes) {
 		super(context);
 		setFocusable(true);
-		this.height=height;
-		this.width=width;
-		initData(gifMovie);
-		}
-	public SampleView(Context context,
-			GifMovie gifMovie) {
-		super(context);
-		setFocusable(true);
-		initData(gifMovie);
+		initData(bytes);
 		// File file = new File(sdFile, fileName);
 		// try {
 		// is = new FileInputStream(file);
@@ -55,42 +36,44 @@ public class SampleView extends View {
 		// e.printStackTrace();
 		// }
 		// is = context.getResources().openRawResource(R.drawable.tusiji_1);
-//		if (true) {
-//			// mMovie = Movie.decodeStream(is);
-//			mMovie = gifMovie.movie;
-//		} else {
-//			// byte[] bytes;
-//			// try {
-//			// bytes = new byte[is.available()];
-//			// } catch (IOException e) {
-//			// e.printStackTrace();
-//			// }
-//			// try {
-//			// is.read(bytes);
-//			// } catch (IOException e) {
-//			// e.printStackTrace();
-//			// }
-//			byte[] array = gifMovie.bytes;
-//			mMovie = Movie.decodeByteArray(array, 0, array.length);
-//		}
-//		int w = mMovie.width();
-//		int h = mMovie.height();
-//		// int[] pixels = new int[w*h];
-//		mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-//		mCanvas = new Canvas(mBitmap);
+		// if (true) {
+		// // mMovie = Movie.decodeStream(is);
+		// mMovie = gifMovie.movie;
+		// } else {
+		// // byte[] bytes;
+		// // try {
+		// // bytes = new byte[is.available()];
+		// // } catch (IOException e) {
+		// // e.printStackTrace();
+		// // }
+		// // try {
+		// // is.read(bytes);
+		// // } catch (IOException e) {
+		// // e.printStackTrace();
+		// // }
+		// byte[] array = gifMovie.bytes;
+		// mMovie = Movie.decodeByteArray(array, 0, array.length);
+		// }
+		// int w = mMovie.width();
+		// int h = mMovie.height();
+		// // int[] pixels = new int[w*h];
+		// mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+		// mCanvas = new Canvas(mBitmap);
 	}
-	void initData(GifMovie gifMovie){
-		if (true) {
-			mMovie = gifMovie.movie;
-		} else {
-//			byte[] array = gifMovie.bytes;
-//			mMovie = Movie.decodeByteArray(array, 0, array.length);
-		}
+
+	void initData(byte[] bytes) {
+		// if (false) {
+		// mMovie = gifMovie.movie;
+		// } else {
+		byte[] array = bytes;
+		mMovie = Movie.decodeByteArray(array, 0, array.length);
+		// }
 		int w = mMovie.width();
 		int h = mMovie.height();
 		mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		mCanvas = new Canvas(mBitmap);
 	}
+
 	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -114,10 +97,11 @@ public class SampleView extends View {
 			int h = mMovie.height();
 			mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 			mCanvas = new Canvas(mBitmap);
-			if(height==0&&width==0){
+			if (height == 0 && width == 0) {
 				canvas.drawBitmap(bitmap, 230, 0, null);
-			}else{
-				canvas.drawBitmap(bitmap, (height-h)/2, (width-w)/2, null);
+			} else {
+				canvas.drawBitmap(bitmap, (height - h) / 2, (width - w) / 2,
+						null);
 			}
 			invalidate();
 		}

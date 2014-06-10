@@ -58,10 +58,8 @@ import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.FileHandler.FileResult;
-import com.lejoying.wxgs.app.handler.FileHandler.VoiceInterface;
-import com.lejoying.wxgs.app.handler.FileHandler.VoiceSettings;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class SquareMessageDetail extends BaseActivity {
@@ -191,7 +189,7 @@ public class SquareMessageDetail extends BaseActivity {
 	}
 
 	public void generateMessageContent() {
-		app.fileHandler.getHeadImage(message.head, new FileResult() {
+		app.fileHandler.getHeadImage(message.head, "男", new FileResult() {
 
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
