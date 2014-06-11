@@ -74,6 +74,8 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
 
 @SuppressLint("DefaultLocale")
 public class ReleaseActivity extends BaseActivity implements OnClickListener {
@@ -809,20 +811,20 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			for (int i = 0; i < images.size(); i++) {
 				if (images.get(i).get("bitmap") != null) {
 					final int j = i;
-					app.fileHandler.saveBitmap(new SaveBitmapInterface() {
-						@Override
-						public void setParams(SaveSettings settings) {
-							settings.source = (Bitmap) images.get(j).get(
-									"bitmap");
-							settings.compressFormat = settings.PNG;
-							settings.folder = app.sdcardImageFolder;
-						}
-
-						@Override
-						public void onSuccess(String fileName, String base64) {
-
-						}
-					});
+					// app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+					// @Override
+					// public void setParams(SaveSettings settings) {
+					// settings.source = (Bitmap) images.get(j).get(
+					// "bitmap");
+					// settings.compressFormat = settings.PNG;
+					// settings.folder = app.sdcardImageFolder;
+					// }
+					//
+					// @Override
+					// public void onSuccess(String fileName, String base64) {
+					//
+					// }
+					// });
 				}
 			}
 		}
@@ -916,12 +918,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void addImageToJson() {
 		for (int i = 0; i < images.size(); i++) {
 			try {
-				String fileName = (String) images.get(i).get("fileName");
-				checkImageOrVoice(fileName, (String) images.get(i)
-						.get("base64"));
+				ImageMessageInfo imageMessageInfo = (ImageMessageInfo) images
+						.get(i).get("file");
+				checkImageOrVoice(imageMessageInfo,
+						(String) images.get(i).get("contentType"),
+						(String) images.get(i).get("path"));
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("type", "image");
-				jsonObject.put("details", fileName);
+				jsonObject.put("details", imageMessageInfo.fileName);
 				jsonArray.put(jsonObject);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -932,12 +936,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void addVoiceToJson() {
 		for (int i = 0; i < voices.size(); i++) {
 			try {
-				String fileName = (String) voices.get(i).get("fileName");
-				checkImageOrVoice(fileName, (String) voices.get(i)
-						.get("base64"));
+				ImageMessageInfo imageMessageInfo = (ImageMessageInfo) voices
+						.get(i).get("file");
+				checkImageOrVoice(imageMessageInfo,
+						(String) voices.get(i).get("contentType"),
+						(String) voices.get(i).get("path"));
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("type", "voice");
-				jsonObject.put("details", voices.get(i).get("fileName"));
+				jsonObject.put("details", imageMessageInfo.fileName);
 				jsonArray.put(jsonObject);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -977,14 +983,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				@Override
 				public void setParams(FileMessageInfoSettings settings) {
 					settings.fileName = voiceName;
+					settings.folder = app.sdcardVoiceFolder;
 					settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDVOICE;
 				}
 
 				@Override
 				public void onSuccess(ImageMessageInfo imageMessageInfo) {
 					final Map<String, Object> map = new HashMap<String, Object>();
-					map.put("fileName", imageMessageInfo.fileName);
-					map.put("data", imageMessageInfo.data);
+					map.put("ImageMessageInfo", imageMessageInfo);
 					File voiceFile = new File(app.sdcardVoiceFolder, voiceName);
 					if (voiceFile.exists()) {
 						voiceFile.renameTo(new File(app.sdcardVoiceFolder,
@@ -1022,44 +1028,73 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			// Locale.getDefault());
 			// format = picturePath.substring(picturePath.lastIndexOf("."));
 			// cursor.close();
+			System.out.println(MapStorageDirectoryActivity.selectedImages
+					.size() + "...||||||||||||||||||||||");
 			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
 					.size(); i++) {
-				String filePath = MapStorageDirectoryActivity.selectedImages
+				final String filePath = MapStorageDirectoryActivity.selectedImages
 						.get(i);
 				format = filePath.substring(filePath.lastIndexOf("."));
 				final Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
 						filePath), 960, 540);
 
-				final Map<String, Object> map = new HashMap<String, Object>();
-				final String newformat = format;
-				final String newpicturePath = filePath;
-				map.put("bitmap", bm);
-
-				if (bm != null) {
-					app.fileHandler.saveBitmap(new SaveBitmapInterface() {
-
-						@Override
-						public void setParams(SaveSettings settings) {
-							settings.compressFormat = newformat.equals(".jpg") ? settings.JPG
-									: settings.PNG;
-							settings.source = bm;
-						}
-
-						@Override
-						public void onSuccess(String fileName, String base64) {
-							map.put("fileName", fileName);
-							map.put("base64", base64);
-							images.add(map);
-							nodifyViews();
-							if (requestCode == RESULT_TAKEPICTURE) {
-								File file = new File(newpicturePath);
-								if (file.isFile() && file.exists()) {
-									file.delete();
-								}
-							}
-						}
-					});
+				Map<String, Object> map = MapStorageDirectoryActivity.selectedImagesMap
+						.get(filePath);
+				if (map == null) {
+					map = new HashMap<String, Object>();
 				}
+				// final String newformat = format;
+				// final String newpicturePath = filePath;
+				if (bm != null) {
+					map.put("bitmap", bm);
+				}
+				final Map<String, Object> map0 = map;
+				app.fileHandler
+						.getFileMessageInfo(new FileMessageInfoInterface() {
+
+							@Override
+							public void setParams(
+									FileMessageInfoSettings settings) {
+								settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+								settings.path = filePath;
+								settings.fileName = filePath.substring(filePath
+										.lastIndexOf("/"));
+							}
+
+							@Override
+							public void onSuccess(
+									ImageMessageInfo imageMessageInfo) {
+								map0.put("file", imageMessageInfo);
+								map0.put("path", filePath);
+								images.add(map0);
+								System.out.println();
+								nodifyViews();
+							}
+						});
+				// app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+				//
+				// @Override
+				// public void setParams(SaveSettings settings) {
+				// settings.compressFormat = newformat.equals(".jpg") ?
+				// settings.JPG
+				// : settings.PNG;
+				// settings.source = bm;
+				// }
+				//
+				// @Override
+				// public void onSuccess(String fileName, String base64) {
+				// map.put("fileName", fileName);
+				// map.put("data", base64);
+				// images.add(map);
+				// nodifyViews();
+				// if (requestCode == RESULT_TAKEPICTURE) {
+				// File file = new File(newpicturePath);
+				// if (file.isFile() && file.exists()) {
+				// file.delete();
+				// }
+				// }
+				// }
+				// });
 			}
 			MapStorageDirectoryActivity.selectedImages.clear();
 
@@ -1111,7 +1146,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	}
 
-	public void checkImageOrVoice(final String fileName, final String base64) {
+	public void checkImageOrVoice(final ImageMessageInfo imageMessageInfo,
+			final String contentType, final String path) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -1120,12 +1156,14 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
-				params.put("filename", fileName);
+				params.put("filename", imageMessageInfo.fileName);
 				settings.params = params;
 			}
 
 			@Override
 			public void success(JSONObject jData) {
+				System.out.println(jData
+						+ "+++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>");
 				try {
 					if (jData.getBoolean("exists")) {
 						// JSONObject jsonObject = new JSONObject();
@@ -1138,7 +1176,22 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						// jsonArray.put(jsonObject);
 
 					} else {
-						uploadImageOrVoice("image", fileName, base64);
+						app.fileHandler.uploadFile(new UploadFileInterface() {
+
+							@Override
+							public void setParams(UploadFileSettings settings) {
+								settings.imageMessageInfo = imageMessageInfo;
+								settings.contentType = contentType;
+								settings.fileName = imageMessageInfo.fileName;
+								settings.path = path;
+							}
+
+							@Override
+							public void onSuccess(Boolean flag, String fileName) {
+								System.out.println(flag + "-+-" + fileName);
+							}
+						});
+						// uploadImageOrVoice("image", fileName, base64);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -1370,6 +1423,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				@Override
 				public void setParams(FileMessageInfoSettings settings) {
 					settings.assetsPath = "images/";
+					settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_ASSETS;
 					settings.fileName = faceNameList.get(2).get(position);
 				}
 

@@ -2189,24 +2189,26 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onSuccess(final ImageMessageInfo imageMessageInfo) {
-				OSSFileHandler.uploadFile(new UploadFileInterface() {
+				app.fileHandler.uploadFile(new UploadFileInterface() {
 
 					@Override
 					public void setParams(UploadFileSettings settings) {
 						settings.fileName = imageMessageInfo.fileName;
 						settings.imageMessageInfo = imageMessageInfo;
-						settings.contentType="audio/x-mei-aac";
+						settings.contentType = "audio/x-mei-aac";
 
 					}
 
 					@Override
 					public void onSuccess(Boolean flag, String fileName) {
-						File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
-						File to = new File(app.sdcardVoiceFolder, imageMessageInfo.fileName);
+						File from = new File(app.sdcardVoiceFolder, voice_list
+								.get(0));
+						File to = new File(app.sdcardVoiceFolder,
+								imageMessageInfo.fileName);
 						from.renameTo(to);
 						voice_list.clear();
 						voice_length = 0;
-						ArrayList<String> messages= new ArrayList<String>();
+						ArrayList<String> messages = new ArrayList<String>();
 						messages.add(fileName);
 						sendMessage("voice", messages);
 					}
@@ -2214,25 +2216,25 @@ public class ChatFriendFragment extends BaseFragment {
 
 			}
 		});
-//		app.fileHandler.getVoice(new VoiceInterface() {
-//
-//			@Override
-//			public void setParams(VoiceSettings settings) {
-//				settings.format = ".aac";
-//				settings.fileName = voice_list.get(0);
-//			}
-//
-//			@Override
-//			public void onSuccess(String filename, String base64, Boolean flag) {
-//				File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
-//				File to = new File(app.sdcardVoiceFolder, filename);
-//				from.renameTo(to);
-//				voice_list.clear();
-//				voice_length = 0;
-//				uploadImageOrVoice("voice", filename, base64,
-//						new ArrayList<String>());
-//			}
-//		});
+		// app.fileHandler.getVoice(new VoiceInterface() {
+		//
+		// @Override
+		// public void setParams(VoiceSettings settings) {
+		// settings.format = ".aac";
+		// settings.fileName = voice_list.get(0);
+		// }
+		//
+		// @Override
+		// public void onSuccess(String filename, String base64, Boolean flag) {
+		// File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
+		// File to = new File(app.sdcardVoiceFolder, filename);
+		// from.renameTo(to);
+		// voice_list.clear();
+		// voice_length = 0;
+		// uploadImageOrVoice("voice", filename, base64,
+		// new ArrayList<String>());
+		// }
+		// });
 	}
 
 	void initBaseFaces() {
@@ -2408,87 +2410,105 @@ public class ChatFriendFragment extends BaseFragment {
 								faceNamesList.get(chat_vPager_now)[position]);
 					} else {
 						rl_face.setVisibility(View.GONE);
-						app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
-							
-							@Override
-							public void setParams(FileMessageInfoSettings settings) {
-								settings.fileName = "tusiji_"
-										+ (position + 1) + ".gif";
-								settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDIMAGE;
-								settings.folder=app.sdcardImageFolder;
-								//settings.assetsPath="images/";
-							}
-							
-							@Override
-							public void onSuccess(final ImageMessageInfo imageMessageInfo) {
-								app.networkHandler.connection(new CommonNetConnection() {
-									
-									
+						app.fileHandler
+								.getFileMessageInfo(new FileMessageInfoInterface() {
+
 									@Override
-									protected void settings(Settings settings) {
-										settings.url = API.DOMAIN_CHECKIMAGE;
-										Map<String, String> params = new HashMap<String, String>();
-										params.put("phone", app.data.user.phone);
-										params.put("accessKey", app.data.user.accessKey);
-										params.put("filename", imageMessageInfo.fileName);
-										settings.params = params;
+									public void setParams(
+											FileMessageInfoSettings settings) {
+										settings.fileName = "tusiji_"
+												+ (position + 1) + ".gif";
+										settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDIMAGE;
+										settings.folder = app.sdcardImageFolder;
+										// settings.assetsPath="images/";
 									}
 
 									@Override
-									public void success(JSONObject jData) {
-										try {
-											if (jData.getBoolean("exists")) {
-												ArrayList<String> messages= new ArrayList<String>();
-												messages.add(imageMessageInfo.fileName);
-												sendMessage("image", messages);
-											}else{
-												OSSFileHandler.uploadFile(new UploadFileInterface() {
-													
+									public void onSuccess(
+											final ImageMessageInfo imageMessageInfo) {
+										app.networkHandler
+												.connection(new CommonNetConnection() {
+
 													@Override
-													public void setParams(UploadFileSettings settings) {
-														settings.fileName = imageMessageInfo.fileName;
-														settings.imageMessageInfo = imageMessageInfo;
-														settings.contentType="image/gif";
+													protected void settings(
+															Settings settings) {
+														settings.url = API.DOMAIN_CHECKIMAGE;
+														Map<String, String> params = new HashMap<String, String>();
+														params.put(
+																"phone",
+																app.data.user.phone);
+														params.put(
+																"accessKey",
+																app.data.user.accessKey);
+														params.put(
+																"filename",
+																imageMessageInfo.fileName);
+														settings.params = params;
 													}
-													
+
 													@Override
-													public void onSuccess(Boolean flag, String fileName) {
-														ArrayList<String> messages= new ArrayList<String>();
-														messages.add(fileName);
-														sendMessage("image", messages);
+													public void success(
+															JSONObject jData) {
+														try {
+															if (jData
+																	.getBoolean("exists")) {
+																ArrayList<String> messages = new ArrayList<String>();
+																messages.add(imageMessageInfo.fileName);
+																sendMessage(
+																		"image",
+																		messages);
+															} else {
+																app.fileHandler
+																		.uploadFile(new UploadFileInterface() {
+
+																			@Override
+																			public void setParams(
+																					UploadFileSettings settings) {
+																				settings.fileName = imageMessageInfo.fileName;
+																				settings.imageMessageInfo = imageMessageInfo;
+																				settings.contentType = "image/gif";
+																			}
+
+																			@Override
+																			public void onSuccess(
+																					Boolean flag,
+																					String fileName) {
+																				ArrayList<String> messages = new ArrayList<String>();
+																				messages.add(fileName);
+																				sendMessage(
+																						"image",
+																						messages);
+																			}
+																		});
+															}
+														} catch (JSONException e) {
+															e.printStackTrace();
+														}
+
 													}
 												});
-											}
-										} catch (JSONException e) {
-											e.printStackTrace();
-										}
-										
-										
+
 									}
 								});
-								
-								
-							}
-						});
-//						app.fileHandler.getBigFaceImgBASE64(getActivity(),
-//								new BigFaceImgInterface() {
-//
-//									@Override
-//									public void setParams(
-//											BigFaceImgSettings settings) {
-//										settings.format = ".gif";
-//										settings.assetsPath = "images/";
-//										settings.fileName = "tusiji_"
-//												+ (position + 1) + ".gif";
-//									}
-//
-//									@Override
-//									public void onSuccess(String fileName,
-//											String base64) {
-//										checkImage(fileName, base64,
-//												new ArrayList<String>());
-//									}
-//								});
+						// app.fileHandler.getBigFaceImgBASE64(getActivity(),
+						// new BigFaceImgInterface() {
+						//
+						// @Override
+						// public void setParams(
+						// BigFaceImgSettings settings) {
+						// settings.format = ".gif";
+						// settings.assetsPath = "images/";
+						// settings.fileName = "tusiji_"
+						// + (position + 1) + ".gif";
+						// }
+						//
+						// @Override
+						// public void onSuccess(String fileName,
+						// String base64) {
+						// checkImage(fileName, base64,
+						// new ArrayList<String>());
+						// }
+						// });
 					}
 				}
 			});

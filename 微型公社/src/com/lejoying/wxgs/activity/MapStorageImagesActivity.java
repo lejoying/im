@@ -45,7 +45,7 @@ public class MapStorageImagesActivity extends Activity {
 
 	MapStorageImagesAdapter mapStorageImagesAdapter;
 
-	List<String> mImages;
+	List<Map<String, Object>> mImages;
 
 	float height, width, dip;
 	float density;
@@ -186,7 +186,7 @@ public class MapStorageImagesActivity extends Activity {
 		}
 
 		@Override
-		public View getView(int arg0, View arg1, ViewGroup arg2) {
+		public View getView(final int arg0, View arg1, ViewGroup arg2) {
 			ImagesHolder imagesHolder = null;
 			if (arg1 == null) {
 				arg1 = inflater.inflate(
@@ -209,7 +209,7 @@ public class MapStorageImagesActivity extends Activity {
 			} else {
 				imagesHolder = (ImagesHolder) arg1.getTag();
 			}
-			final String path = mImages.get(arg0);
+			final String path = (String) mImages.get(arg0).get("path");
 			boolean flag = MapStorageDirectoryActivity.selectedImages
 					.contains(path);
 			if (flag) {
@@ -227,14 +227,18 @@ public class MapStorageImagesActivity extends Activity {
 			imagesHolder.iv.setOnClickListener(new OnClickListener() {
 
 				@Override
-				public void onClick(View arg0) {
+				public void onClick(View arg) {
 					if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
 						imagesHolder0.ivStatus.setVisibility(View.GONE);
 						MapStorageDirectoryActivity.selectedImages.remove(path);
+						MapStorageDirectoryActivity.selectedImagesMap
+								.remove(mImages.get(arg0));
 						modifyConfirmStyle();
 					} else {
 						imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
 						MapStorageDirectoryActivity.selectedImages.add(path);
+						MapStorageDirectoryActivity.selectedImagesMap.put(path,
+								mImages.get(arg0));
 						modifyConfirmStyle();
 					}
 				}

@@ -40,7 +40,7 @@ public class MapStorageDirectoryActivity extends Activity {
 	LayoutInflater inflater;
 
 	public static List<String> directorys = new ArrayList<String>();
-	public static Map<String, List<String>> directoryToImages = new HashMap<String, List<String>>();
+	public static Map<String, List<Map<String, Object>>> directoryToImages = new HashMap<String, List<Map<String, Object>>>();
 
 	public static String currentShowDirectory = "";
 	MapStorageDirectoryAdapter mapStorageDirectoryAdapter;
@@ -49,10 +49,11 @@ public class MapStorageDirectoryActivity extends Activity {
 	TextView cancleSelect;
 	Bitmap defaultImage;
 	int listStatus;
-	int RESULT_SELECTPIC=0x1;
+	int RESULT_SELECTPIC = 0x1;
 	Map<String, SoftReference<Bitmap>> bitmaps;
 
 	public static List<String> selectedImages = new ArrayList<String>();
+	public static Map<String, Map<String, Object>> selectedImagesMap = new HashMap<String, Map<String, Object>>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +61,23 @@ public class MapStorageDirectoryActivity extends Activity {
 		imagesDirectory = (ListView) findViewById(R.id.gv_imagesDirectory);
 		cancleSelect = (TextView) findViewById(R.id.tv_cancle);
 		inflater = this.getLayoutInflater();
+		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
+		directorys = new ArrayList<String>();
+		directoryToImages = new HashMap<String, List<Map<String, Object>>>();
+		getSDImages();
 		mapStorageDirectoryAdapter = new MapStorageDirectoryAdapter();
 		imagesDirectory.setAdapter(mapStorageDirectoryAdapter);
 		defaultImage = ThumbnailUtils.extractThumbnail(BitmapFactory
 				.decodeResource(getResources(), R.drawable.defaultimage), 60,
 				60, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
-		directorys = new ArrayList<String>();
-		directoryToImages = new HashMap<String, List<String>>();
-		getSDImages();
 		initEvent();
 		super.onCreate(savedInstanceState);
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode==RESULT_SELECTPIC&&resultCode==Activity.RESULT_OK){
+		if (requestCode == RESULT_SELECTPIC && resultCode == Activity.RESULT_OK) {
 			setResult(Activity.RESULT_OK);
 			finish();
 		}
@@ -143,8 +145,9 @@ public class MapStorageDirectoryActivity extends Activity {
 			} else {
 				imagesHolder = (ImagesHolder) convertView.getTag();
 			}
-			final String path = directoryToImages.get(directorys.get(position))
-					.get(0);
+
+			final String path = (String) directoryToImages
+					.get(directorys.get(position)).get(0).get("path");
 			SoftReference<Bitmap> softBitmap = bitmaps.get(path);
 			if (softBitmap == null || softBitmap.get() == null) {
 				loadImage(path);
@@ -213,53 +216,59 @@ public class MapStorageDirectoryActivity extends Activity {
 				.getContentResolver();
 		String[] projection = { MediaStore.Images.Media._ID,
 				MediaStore.Images.Media.DISPLAY_NAME,
+				MediaStore.Images.Media.MIME_TYPE,
 				MediaStore.Images.Media.DATA, MediaStore.Images.Media.SIZE };
-		String selection = MediaStore.Images.Media.MIME_TYPE + "=?";
-		String[] selectionArgs = { "image/jpeg" };
+		String selection = MediaStore.Images.Media.MIME_TYPE + " = ?";
+		// + MediaStore.Images.Media.MIME_TYPE + " = ? ";
+		// + MediaStore.Images.Media.MIME_TYPE + " = ?";
+		String[] selectionArgs = { "image/jpeg" };// , "image/gif",, "image/png"
 		String sortOrder = MediaStore.Images.Media.DATE_MODIFIED + " desc";
 		Cursor cursor = contentResolver.query(uri, projection, selection,
 				selectionArgs, sortOrder);
-		List<HashMap<String, String>> imageList = new ArrayList<HashMap<String, String>>();
+		List<Map<String, Object>> imageList = new ArrayList<Map<String, Object>>();
 		if (cursor != null) {
-			HashMap<String, String> imageMap = null;
+			Map<String, Object> imageMap = null;
 			cursor.moveToFirst();
 			int index = 0;
 			while (cursor.moveToNext()) {
-				imageMap = new HashMap<String, String>();
-				imageMap.put("imageID", cursor.getString(cursor
+				imageMap = new HashMap<String, Object>();
+				imageMap.put("ID", cursor.getString(cursor
 						.getColumnIndex(MediaStore.Images.Media._ID)));
-				imageMap.put("imageName", cursor.getString(cursor
+				imageMap.put("fileName", cursor.getString(cursor
 						.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)));
+				imageMap.put("contentType", cursor.getString(cursor
+						.getColumnIndex(MediaStore.Images.Media.MIME_TYPE)));
+				// System.out.println(imageMap.get("contentType"));
 				imageMap.put(
-						"imageInfo",
+						"fileSize",
 						""
 								+ cursor.getLong(cursor
 										.getColumnIndex(MediaStore.Images.Media.SIZE) / 1024)
 								+ "kb");
 				String path = cursor.getString(cursor
 						.getColumnIndex(MediaStore.Images.Media.DATA));
-				imageMap.put("data", path);
+				imageMap.put("path", path);
 				imageList.add(imageMap);
 				String directory = path.substring(0, path.lastIndexOf("/"));
 				if (directorys.size() == 0) {
-					List<String> imagesList = new ArrayList<String>();
-					imagesList.add(path);
+					List<Map<String, Object>> imagesList = new ArrayList<Map<String, Object>>();
+					imagesList.add(imageMap);
 					directoryToImages.put("/最近照片", imagesList);
 					directorys.add("/最近照片");
 					index++;
 				} else {
 					if (index < 50) {
-						directoryToImages.get("/最近照片").add(path);
+						directoryToImages.get("/最近照片").add(imageMap);
 						index++;
 					}
 				}
 				if (directoryToImages.get(directory) == null) {
-					List<String> imagesList = new ArrayList<String>();
-					imagesList.add(path);
+					List<Map<String, Object>> imagesList = new ArrayList<Map<String, Object>>();
+					imagesList.add(imageMap);
 					directoryToImages.put(directory, imagesList);
 					directorys.add(directory);
 				} else {
-					directoryToImages.get(directory).add(path);
+					directoryToImages.get(directory).add(imageMap);
 				}
 			}
 			cursor.close();

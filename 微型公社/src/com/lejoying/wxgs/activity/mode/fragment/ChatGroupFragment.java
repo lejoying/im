@@ -2067,7 +2067,7 @@ public class ChatGroupFragment extends BaseFragment {
 
 			@Override
 			public void onSuccess(final ImageMessageInfo imageMessageInfo) {
-				OSSFileHandler.uploadFile(new UploadFileInterface() {
+				app.fileHandler.uploadFile(new UploadFileInterface() {
 
 					@Override
 					public void setParams(UploadFileSettings settings) {
@@ -2335,7 +2335,7 @@ public class ChatGroupFragment extends BaseFragment {
 																		"image",
 																		messages);
 															} else {
-																OSSFileHandler
+																app.fileHandler
 																		.uploadFile(new UploadFileInterface() {
 
 																			@Override

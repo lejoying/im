@@ -7,23 +7,28 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Base64;
 
-import com.aliyun.android.oss.task.PutObjectTask;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
@@ -31,6 +36,8 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.StreamParser;
+import com.lejoying.wxgs.utils.HMACSHA1;
+import com.lejoying.wxgs.utils.SHA1;
 
 public class OSSFileHandler {
 
@@ -139,6 +146,8 @@ public class OSSFileHandler {
 			} else if ("女".equals(mediationParam)) {
 				dImage = defaultHeadBoy;
 			}
+			bitmaps.put(imageFileName, dImage);
+			fileResult.onResult(FROM_DEFAULT, dImage);
 		}
 		if (type == TYPE_IMAGE_BACK) {
 			dImage = defaultBack;
@@ -160,9 +169,10 @@ public class OSSFileHandler {
 		String where = FROM_DEFAULT;
 		if (!"".equals(imageFileName)) {
 			if (bitmaps.get(imageFileName) != null
-					&& !bitmaps.get(imageFileName).equals(dImage)) {
-				fileResult.onResult(where, bitmaps.get(imageFileName));
+					&& !bitmaps.get(imageFileName).equals(dImage)
+					&& type != TYPE_IMAGE_SQUAREIMAGE) {
 				where = FROM_MEMORY;
+				fileResult.onResult(where, bitmaps.get(imageFileName));
 			} else {
 				bitmaps.put(imageFileName, dImage);
 				File imageFile = null;
@@ -239,7 +249,9 @@ public class OSSFileHandler {
 				}
 			}
 		} else {
-			fileResult.onResult(where, dImage);
+			if (type != TYPE_IMAGE_HEAD) {
+				fileResult.onResult(where, dImage);
+			}
 		}
 	}
 
@@ -250,7 +262,6 @@ public class OSSFileHandler {
 	private void getImageFileFromWeb(final String imageFileName,
 			final String mediationParam, final int type, final String style,
 			final int width) {
-		imageFromWebStatus.put(imageFileName, "loading");
 		File folder = app.sdcardImageFolder;
 		if (type == TYPE_IMAGE_HEAD) {
 			folder = app.sdcardHeadImageFolder;
@@ -265,6 +276,7 @@ public class OSSFileHandler {
 			fileName = mediationParam;
 		}
 		final String fileName0 = fileName;
+		imageFromWebStatus.put(fileName0, "loading");
 		app.networkHandler.connection(new NetConnection() {
 			@Override
 			protected void success(InputStream is,
@@ -499,13 +511,15 @@ public class OSSFileHandler {
 	public static final int FILE_TYPE_SDIMAGE = 0x001;
 	public static final int FILE_TYPE_ASSETS = 0x002;
 	public static final int FILE_TYPE_SDVOICE = 0x003;
+	public static final int FILE_TYPE_SDSELECTIMAGE = 0x004;
 
 	public void getFileMessageInfo(
 			final FileMessageInfoInterface fileMessageInfoInterface) {
 		final FileMessageInfoSettings settings = new FileMessageInfoSettings();
 		fileMessageInfoInterface.setParams(settings);
 		File tempFile = null;
-		if (settings.FILE_TYPE != FILE_TYPE_ASSETS) {
+		if (settings.FILE_TYPE != FILE_TYPE_ASSETS
+				&& settings.FILE_TYPE != FILE_TYPE_SDSELECTIMAGE) {
 			tempFile = new File(settings.folder, settings.fileName);
 			if (!tempFile.isFile()) {
 				return;
@@ -513,6 +527,9 @@ public class OSSFileHandler {
 			if (!tempFile.exists()) {
 				return;
 			}
+		}
+		if (settings.FILE_TYPE == FILE_TYPE_SDSELECTIMAGE) {
+			tempFile = new File(settings.path);
 		}
 		final File file = tempFile;
 		new Thread(new Runnable() {
@@ -572,6 +589,7 @@ public class OSSFileHandler {
 		public String fileName;
 		public File folder;
 		public String assetsPath;
+		public String path;
 	}
 
 	public interface FileMessageInfoInterface {
@@ -585,6 +603,7 @@ public class OSSFileHandler {
 		public String fileName;
 		public ImageMessageInfo imageMessageInfo;
 		public String contentType;
+		public String path;
 	}
 
 	public interface UploadFileInterface {
@@ -593,28 +612,113 @@ public class OSSFileHandler {
 		public void onSuccess(Boolean flag, String fileName);
 	}
 
-	public static void uploadFile(final UploadFileInterface uploadFileInterface) {
+	public void uploadFile(final UploadFileInterface uploadFileInterface) {
 		final UploadFileSettings settings = new UploadFileSettings();
 		uploadFileInterface.setParams(settings);
 		final String fileName = settings.fileName;
 		final ImageMessageInfo imageMessageInfo = settings.imageMessageInfo;
-		new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				PutObjectTask task = new PutObjectTask(API.BUCKETNAME,
-						fileName, settings.contentType);
-				task.initKey(API.ACCESS_ID, API.ACCESS_KEY);
-				task.setData(imageMessageInfo.data);
-				String result = task.getResult().toLowerCase(
-						Locale.getDefault());
-				if (result.equals(imageMessageInfo.md5)) {
-					uploadFileInterface.onSuccess(true, fileName);
-				} else {
-					uploadFileInterface.onSuccess(false, fileName);
-				}
-			}
-		}).start();
+		test(API.ACCESS_ID, API.ACCESS_KEY, imageMessageInfo.md5,
+				settings.contentType, imageMessageInfo.data, fileName);
+
+		// PutObjectTask task = new PutObjectTask(API.BUCKETNAME, fileName,
+		// settings.contentType);
+		// task.initKey(API.ACCESS_ID, API.ACCESS_KEY);
+		// task.setData(imageMessageInfo.data);
+		// String result = task.getResult().toLowerCase(Locale.getDefault());
+		// if (result.equals(imageMessageInfo.md5)) {
+		// app.UIHandler.post(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// uploadFileInterface.onSuccess(true, fileName);
+		// }
+		// });
+		// } else {
+		// uploadFileInterface.onSuccess(false, fileName);
+		// }
 	}
 
+	@SuppressLint("DefaultLocale")
+	public void test(String ID, String secret, String contentMd5,
+			String contentType, byte[] bytes, String fileName) {
+		@SuppressWarnings("deprecation")
+		String time = new Date().toGMTString();
+		String dealString = "PUT" + "\n" + contentMd5 + "\n" + contentType
+				+ "\n" + time + "\n" + "" + "\n" + "/" + API.BUCKETNAME + "/"
+				+ fileName + "\n";
+		String authorization = "";
+		try {
+			authorization = HMACSHA1.getSignature(dealString, secret);
+			System.out.println(authorization
+					+ "--------+++--------coolspan--------+++--------------");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		String base64 = Base64.encodeToString(authorization.getBytes(),
+				Base64.DEFAULT);
+		authorization = base64.trim();
+		System.out.println(authorization
+				+ "----------------coolspan----------------------");
+
+		String demo = "PUT\nc8fdb181845a4ca6b8fec737b3581d76\ntext/html\nThu, 17 Nov 2005 18:49:58 "
+				+ "GMT\nx-oss-magic:abracadabra\nx-oss-meta-author:foo@bar.com\n/oss-example/nelson";
+		try {
+			// SHA1 sha1 = new SHA1();
+			// demo = sha1.getDigestOfString(demo.getBytes());
+			demo = HMACSHA1.getSignature(demo,
+					"OtxrzxIsfpFjA7SwPzILwy8Bw21TLhquhboDYROV");
+			demo = Base64.encodeToString(demo.getBytes(), Base64.DEFAULT);
+			demo = demo.trim();
+			System.out.println(demo + "==========coolspan================");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			URL connectionURL = new URL(API.DOMAIN_COMMONIMAGE + "/"
+					+ API.BUCKETNAME + "/" + fileName);
+			HttpURLConnection httpURLConnection = (HttpURLConnection) connectionURL
+					.openConnection();
+			httpURLConnection.setRequestMethod("PUT");
+			httpURLConnection.setRequestProperty("Content-Length", bytes.length
+					+ "");
+			httpURLConnection.setRequestProperty("Content-Type", contentType);
+			httpURLConnection.setRequestProperty("Host",
+					"wxgs.oss-cn-qingdao.aliyuncs.com");
+			// wxgs.oss-cn-qingdao.aliyuncs.com
+			// http://images2.we-links.com
+			httpURLConnection.setRequestProperty("Date", time);
+			httpURLConnection.setRequestProperty("Authorization", "OSS" + ID
+					+ ":" + authorization);
+			httpURLConnection.setReadTimeout(5000);
+			httpURLConnection.setConnectTimeout(5000);
+			httpURLConnection.setDoOutput(true);
+			OutputStream outputStream = httpURLConnection.getOutputStream();
+			outputStream.write(bytes);
+			outputStream.flush();
+			outputStream.close();
+			int requestCode = httpURLConnection.getResponseCode();
+			if (requestCode == HttpURLConnection.HTTP_OK) {
+				System.out
+						.println("success"
+								+ ":>>>>>>>>>>>>>>>>>>>>>coolspan>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+								+ requestCode);
+			} else {
+				System.out
+						.println("failed"
+								+ ":>>>>>>>>>>>>>>>>>>>>>>>>coolspan>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+								+ requestCode);
+				if (httpURLConnection != null) {
+					httpURLConnection.disconnect();
+				}
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
