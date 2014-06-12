@@ -52,7 +52,7 @@ public class MainModeManager extends BaseModeManager {
 	public ChangePasswordFragment mChangePasswordFragment;
 	public GroupBusinessCardFragment mGroupBusinessCardFragment;
 
-	public List<String[]> faceNamesList;
+	public static List<String[]> faceNamesList;
 
 	public MainModeManager(MainActivity activity) {
 		super(activity);
