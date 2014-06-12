@@ -52,6 +52,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
@@ -922,7 +923,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						.get(i).get("file");
 				checkImageOrVoice(imageMessageInfo,
 						(String) images.get(i).get("contentType"),
-						(String) images.get(i).get("path"));
+						(String) images.get(i).get("path"), "image");
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("type", "image");
 				jsonObject.put("details", imageMessageInfo.fileName);
@@ -938,9 +939,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			try {
 				ImageMessageInfo imageMessageInfo = (ImageMessageInfo) voices
 						.get(i).get("file");
-				checkImageOrVoice(imageMessageInfo,
-						(String) voices.get(i).get("contentType"),
-						(String) voices.get(i).get("path"));
+				checkImageOrVoice(imageMessageInfo, "audio/x-mei-aac",
+						(String) voices.get(i).get("path"), "voice");
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("type", "voice");
 				jsonObject.put("details", imageMessageInfo.fileName);
@@ -959,10 +959,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void addImageFromCamera() {
-		tempFile = new File(app.sdcardImageFolder, "tempimage");
+		tempFile = new File(app.sdcardImageFolder, "tempimage.jpg");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++));
+			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++)
+					+ ".jpg");
 		}
 		Uri uri = Uri.fromFile(tempFile);
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -990,11 +991,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				@Override
 				public void onSuccess(ImageMessageInfo imageMessageInfo) {
 					final Map<String, Object> map = new HashMap<String, Object>();
-					map.put("ImageMessageInfo", imageMessageInfo);
+					map.put("file", imageMessageInfo);
 					File voiceFile = new File(app.sdcardVoiceFolder, voiceName);
+					File toFile = new File(app.sdcardVoiceFolder,
+							imageMessageInfo.fileName);
 					if (voiceFile.exists()) {
-						voiceFile.renameTo(new File(app.sdcardVoiceFolder,
-								imageMessageInfo.fileName));
+						voiceFile.renameTo(toFile);
+						map.put("path", toFile.getAbsolutePath());
 					}
 					voices.add(map);
 					nodifyViews();
@@ -1035,8 +1038,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				final String filePath = MapStorageDirectoryActivity.selectedImages
 						.get(i);
 				format = filePath.substring(filePath.lastIndexOf("."));
-				final Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
-						filePath), 960, 540);
+				final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(
+						new File(filePath), 960, 540);
 
 				Map<String, Object> map = MapStorageDirectoryActivity.selectedImagesMap
 						.get(filePath);
@@ -1045,8 +1048,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				}
 				// final String newformat = format;
 				// final String newpicturePath = filePath;
-				if (bm != null) {
-					map.put("bitmap", bm);
+				if (bitmap != null) {
+					map.put("bitmap", bitmap);
 				}
 				final Map<String, Object> map0 = map;
 				app.fileHandler
@@ -1067,76 +1070,54 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 								map0.put("file", imageMessageInfo);
 								map0.put("path", filePath);
 								images.add(map0);
-								System.out.println();
 								nodifyViews();
 							}
 						});
-				// app.fileHandler.saveBitmap(new SaveBitmapInterface() {
-				//
-				// @Override
-				// public void setParams(SaveSettings settings) {
-				// settings.compressFormat = newformat.equals(".jpg") ?
-				// settings.JPG
-				// : settings.PNG;
-				// settings.source = bm;
-				// }
-				//
-				// @Override
-				// public void onSuccess(String fileName, String base64) {
-				// map.put("fileName", fileName);
-				// map.put("data", base64);
-				// images.add(map);
-				// nodifyViews();
-				// if (requestCode == RESULT_TAKEPICTURE) {
-				// File file = new File(newpicturePath);
-				// if (file.isFile() && file.exists()) {
-				// file.delete();
-				// }
-				// }
-				// }
-				// });
 			}
 			MapStorageDirectoryActivity.selectedImages.clear();
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			String picturePath = "";
 			String format = "";
 			Uri uri = Uri.fromFile(tempFile);
-			picturePath = uri.getPath();
+			final String picturePath = uri.getPath();
 			format = "";
-			final Map<String, Object> map = new HashMap<String, Object>();
 			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
 					picturePath), 960, 540);
-			final String newformat = format;
-			final String newpicturePath = picturePath;
-			map.put("bitmap", bitmap);
-
-			if (bitmap != null) {
-				app.fileHandler.saveBitmap(new SaveBitmapInterface() {
-
-					@Override
-					public void setParams(SaveSettings settings) {
-						settings.compressFormat = newformat.equals(".jpg") ? settings.JPG
-								: settings.PNG;
-						settings.source = bitmap;
-					}
-
-					@Override
-					public void onSuccess(String fileName, String base64) {
-						map.put("fileName", fileName);
-						map.put("base64", base64);
-						images.add(map);
-						nodifyViews();
-						if (requestCode == RESULT_TAKEPICTURE) {
-							File file = new File(newpicturePath);
-							if (file.isFile() && file.exists()) {
-								file.delete();
-							}
-						}
-					}
-				});
+			Map<String, Object> map = null;
+			if (map == null) {
+				map = new HashMap<String, Object>();
 			}
+			// final String newformat = format;
+			// final String newpicturePath = filePath;
+			if (bitmap != null) {
+				map.put("bitmap", bitmap);
+			}
+			// Toast.makeText(ReleaseActivity.this, picturePath + "--",
+			// Toast.LENGTH_LONG).show();
+			final Map<String, Object> map0 = map;
+			app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
+
+				@Override
+				public void setParams(FileMessageInfoSettings settings) {
+					settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+					settings.path = picturePath;
+					settings.fileName = picturePath.substring(picturePath
+							.lastIndexOf("/"));
+				}
+
+				@Override
+				public void onSuccess(ImageMessageInfo imageMessageInfo) {
+					map0.put("file", imageMessageInfo);
+					map0.put("path", picturePath);
+					map0.put("contentType", "image/jpeg");
+					File toFile = new File(app.sdcardImageFolder,
+							imageMessageInfo.fileName);
+					tempFile.renameTo(toFile);
+					images.add(map0);
+					nodifyViews();
+				}
+			});
 		}
 		rl_releasepic.setVisibility(View.GONE);
 		horizontalScrollView.setVisibility(View.VISIBLE);
@@ -1147,7 +1128,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	public void checkImageOrVoice(final ImageMessageInfo imageMessageInfo,
-			final String contentType, final String path) {
+			final String contentType, final String path, final String fileType) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -1162,8 +1143,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void success(JSONObject jData) {
-				System.out.println(jData
-						+ "+++++++++++++++++++++++++++++++++>>>>>>>>>>>>>>");
 				try {
 					if (jData.getBoolean("exists")) {
 						// JSONObject jsonObject = new JSONObject();
@@ -1184,6 +1163,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 								settings.contentType = contentType;
 								settings.fileName = imageMessageInfo.fileName;
 								settings.path = path;
+								if ("image".equals(fileType)) {
+									settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_IMAGES;
+								} else if ("voice".equals(fileType)) {
+									settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_VOICES;
+								}
 							}
 
 							@Override

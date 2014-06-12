@@ -55,12 +55,18 @@ import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.User;
+import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 import com.lejoying.wxgs.app.service.PushService;
@@ -704,8 +710,7 @@ public class BusinessCardFragment extends BaseFragment {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
-				mContent.setBackgroundDrawable(new BitmapDrawable(
-						app.fileHandler.bitmaps.get(backgroudFileName)));
+				mContent.setBackgroundDrawable(new BitmapDrawable(bitmap));
 
 			}
 		});
@@ -716,7 +721,7 @@ public class BusinessCardFragment extends BaseFragment {
 		} else {
 			sex = mShowFriend.sex;
 		}
-		app.fileHandler.getHeadImage(headFileName,sex,new FileResult() {
+		app.fileHandler.getHeadImage(headFileName, sex, new FileResult() {
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
@@ -866,10 +871,29 @@ public class BusinessCardFragment extends BaseFragment {
 				}
 
 				@Override
-				public void onSuccess(String fileName, String base64) {
+				public void onSuccess(final String fileName, String base64) {
 					if (!fileName.equals(app.data.user.userBackground)) {
+						final String path = new File(app.sdcardImageFolder,
+								fileName).getAbsolutePath();
+						app.fileHandler
+								.getFileMessageInfo(new FileMessageInfoInterface() {
 
-						checkImage(fileName, base64);
+									@Override
+									public void setParams(
+											FileMessageInfoSettings settings) {
+										settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+										settings.path = path;
+										settings.fileName = fileName;
+									}
+
+									@Override
+									public void onSuccess(
+											ImageMessageInfo imageMessageInfo) {
+										checkImage(imageMessageInfo,
+												"image/png", path);
+									}
+								});
+
 					}
 				}
 			});
@@ -890,7 +914,8 @@ public class BusinessCardFragment extends BaseFragment {
 		startActivityForResult(intent, RESULT_CATPICTURE);
 	}
 
-	public void checkImage(final String fileName, final String base64) {
+	public void checkImage(final ImageMessageInfo imageMessageInfo,
+			final String contentType, final String path) {
 
 		app.networkHandler.connection(new CommonNetConnection() {
 
@@ -900,7 +925,7 @@ public class BusinessCardFragment extends BaseFragment {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
-				params.put("filename", fileName);
+				params.put("filename", imageMessageInfo.fileName);
 				settings.params = params;
 			}
 
@@ -909,10 +934,27 @@ public class BusinessCardFragment extends BaseFragment {
 				try {
 					if (jData.getBoolean("exists")) {
 						User user = new User();
-						user.userBackground = fileName;
+						user.userBackground = imageMessageInfo.fileName;
 						modify(user);
 					} else {
-						uploadImage(fileName, base64);
+						app.fileHandler.uploadFile(new UploadFileInterface() {
+
+							@Override
+							public void setParams(UploadFileSettings settings) {
+								settings.imageMessageInfo = imageMessageInfo;
+								settings.contentType = contentType;
+								settings.fileName = imageMessageInfo.fileName;
+								settings.path = path;
+								settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_BACKGROUNDS;
+							}
+
+							@Override
+							public void onSuccess(Boolean flag, String fileName) {
+								User user = new User();
+								user.userBackground = fileName;
+								modify(user);
+							}
+						});
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -983,8 +1025,7 @@ public class BusinessCardFragment extends BaseFragment {
 								@Override
 								public void onResult(String where, Bitmap bitmap) {
 									mContent.setBackgroundDrawable(new BitmapDrawable(
-											app.fileHandler.bitmaps
-													.get(backgroudFileName)));
+											bitmap));
 
 								}
 							});

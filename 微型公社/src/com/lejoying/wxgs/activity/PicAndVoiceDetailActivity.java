@@ -7,14 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
-import com.lejoying.wxgs.activity.view.RecordView;
-import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
-import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
-import com.lejoying.wxgs.activity.view.SampleView;
-import com.lejoying.wxgs.app.MainApplication;
-
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,16 +20,22 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
+
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
+import com.lejoying.wxgs.activity.view.RecordView;
+import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
+import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
+import com.lejoying.wxgs.activity.view.SampleView;
+import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class PicAndVoiceDetailActivity extends Activity implements
 		OnClickListener {
@@ -443,11 +444,19 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				mediaTotal++;
 				LinearLayout superView = (LinearLayout) mInflater.inflate(
 						R.layout.release_child_navigation, null);
-				ImageView iv = (ImageView) superView
+				final ImageView iv = (ImageView) superView
 						.findViewById(R.id.iv_release_child);
-				SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
-						app.fileHandler.bitmaps.get(content.get(i)));
-				iv.setImageBitmap(bm.get());
+				// SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
+				// app.fileHandler.bitmaps.get(content.get(i)));
+				// iv.setImageBitmap(bm.get());
+				app.fileHandler.getImage(content.get(i), new FileResult() {
+
+					@Override
+					public void onResult(String where, Bitmap bitmap) {
+						iv.setImageBitmap(bitmap);
+
+					}
+				});
 				mainListViews.add(superView);
 			}
 		}

@@ -7,28 +7,23 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Base64;
 
+import com.aliyun.android.oss.task.PutObjectTask;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
@@ -36,8 +31,6 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.StreamParser;
-import com.lejoying.wxgs.utils.HMACSHA1;
-import com.lejoying.wxgs.utils.SHA1;
 
 public class OSSFileHandler {
 
@@ -109,7 +102,7 @@ public class OSSFileHandler {
 			int height, FileResult fileResult) {
 		String newName[] = imageFileName.split("\\.");
 		String thumbnailName = newName[0] + size + newName[1];
-		String paramFormat = "@" + width / 10 + "w_" + height / 10
+		String paramFormat = "@" + width / 2 + "w_" + height / 2
 				+ "h_1c_1i_50q";
 		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,
 				fileResult, paramFormat, 0);
@@ -128,9 +121,9 @@ public class OSSFileHandler {
 								R.drawable.face_man), true, borderWidth,
 						Color.WHITE);
 			} else if ("女".equals(mediationParam)) {
-				defaultHeadGirl = MCImageUtils.getCircleBitmap(
-						BitmapFactory.decodeResource(app.getResources(),
-								R.drawable.face_man), true, borderWidth,
+				defaultHeadGirl = MCImageUtils.getCircleBitmap(BitmapFactory
+						.decodeResource(app.getResources(),
+								R.drawable.face_woman), true, borderWidth,
 						Color.WHITE);
 			}
 		}
@@ -144,16 +137,22 @@ public class OSSFileHandler {
 			if ("男".equals(mediationParam)) {
 				dImage = defaultHeadBoy;
 			} else if ("女".equals(mediationParam)) {
+				dImage = defaultHeadGirl;
+			} else {
 				dImage = defaultHeadBoy;
 			}
-			bitmaps.put(imageFileName, dImage);
+			if (bitmaps.get(imageFileName) == null) {
+				bitmaps.put(imageFileName, dImage);
+			}
 			fileResult.onResult(FROM_DEFAULT, dImage);
 		}
 		if (type == TYPE_IMAGE_BACK) {
 			dImage = defaultBack;
 		}
+		String currentFileImage = imageFileName;
 		if (type == TYPE_IMAGE_THUMBNAIL) {
 			dImage = defaultImage;
+			currentFileImage = mediationParam;
 		}
 		if (type == TYPE_IMAGE_SQUAREIMAGE) {
 			if (defaultSquareDetailImage == null) {
@@ -168,31 +167,33 @@ public class OSSFileHandler {
 		}
 		String where = FROM_DEFAULT;
 		if (!"".equals(imageFileName)) {
-			if (bitmaps.get(imageFileName) != null
-					&& !bitmaps.get(imageFileName).equals(dImage)
+			if (bitmaps.get(currentFileImage) != null
+					&& !bitmaps.get(currentFileImage).equals(dImage)
 					&& type != TYPE_IMAGE_SQUAREIMAGE) {
 				where = FROM_MEMORY;
-				fileResult.onResult(where, bitmaps.get(imageFileName));
+				fileResult.onResult(where, bitmaps.get(currentFileImage));
 			} else {
-				bitmaps.put(imageFileName, dImage);
+				bitmaps.put(currentFileImage, dImage);
 				File imageFile = null;
 				if (type == TYPE_IMAGE_COMMON) {
-					imageFile = new File(app.sdcardImageFolder, imageFileName);
+					imageFile = new File(app.sdcardImageFolder,
+							currentFileImage);
 				}
 				if (type == TYPE_IMAGE_HEAD) {
 					imageFile = new File(app.sdcardHeadImageFolder,
-							imageFileName);
+							currentFileImage);
 				}
 				if (type == TYPE_IMAGE_BACK) {
 					imageFile = new File(app.sdcardBackImageFolder,
-							imageFileName);
+							currentFileImage);
 				}
 				if (type == TYPE_IMAGE_THUMBNAIL) {
 					imageFile = new File(app.sdcardThumbnailFolder,
-							mediationParam);
+							currentFileImage);
 				}
 				if (type == TYPE_IMAGE_SQUAREIMAGE) {
-					imageFile = new File(app.sdcardImageFolder, imageFileName);
+					imageFile = new File(app.sdcardImageFolder,
+							currentFileImage);
 				}
 				if (imageFile.exists()) {
 					Bitmap imageFileBitmap;
@@ -210,38 +211,39 @@ public class OSSFileHandler {
 								|| type == TYPE_IMAGE_SQUAREIMAGE) {
 							fileResult.onResult(where, imageFileBitmap);
 						} else if (type == TYPE_IMAGE_HEAD) {
-							bitmaps.put(imageFileName, MCImageUtils
+							bitmaps.put(currentFileImage, MCImageUtils
 									.getCircleBitmap(imageFileBitmap, true,
 											borderWidth, Color.WHITE));
 							fileResult.onResult(where,
-									bitmaps.get(imageFileName));
+									bitmaps.get(currentFileImage));
 						} else if (type == TYPE_IMAGE_THUMBNAIL) {
-							bitmaps.put(imageFileName, imageFileBitmap);
+							bitmaps.put(currentFileImage, imageFileBitmap);
 							fileResult.onResult(where,
-									bitmaps.get(imageFileName));
+									bitmaps.get(currentFileImage));
 						}
 					} else {
-						if (fromWebResults.get(imageFileName) == null) {
-							fromWebResults.put(imageFileName,
+						if (fromWebResults.get(currentFileImage) == null) {
+							fromWebResults.put(currentFileImage,
 									new ArrayList<FileResult>());
 						}
 
-						fromWebResults.get(imageFileName).add(fileResult);
-						if (imageFromWebStatus.get(imageFileName) == null
-								|| imageFromWebStatus.get(imageFileName)
+						fromWebResults.get(currentFileImage).add(fileResult);
+						if (imageFromWebStatus.get(currentFileImage) == null
+								|| imageFromWebStatus.get(currentFileImage)
 										.equals("failed")) {
 							getImageFileFromWeb(imageFileName, mediationParam,
 									type, style, width);
 						}
 					}
 				} else {
-					if (fromWebResults.get(imageFileName) == null) {
-						fromWebResults.put(imageFileName,
+					if (fromWebResults.get(currentFileImage) == null) {
+						fromWebResults.put(currentFileImage,
 								new ArrayList<FileResult>());
 					}
-					fromWebResults.get(imageFileName).add(fileResult);
-					if (imageFromWebStatus.get(imageFileName) == null
-							|| imageFromWebStatus.get(imageFileName).equals(
+
+					fromWebResults.get(currentFileImage).add(fileResult);
+					if (imageFromWebStatus.get(currentFileImage) == null
+							|| imageFromWebStatus.get(currentFileImage).equals(
 									"failed")) {
 						getImageFileFromWeb(imageFileName, mediationParam,
 								type, style, width);
@@ -333,12 +335,22 @@ public class OSSFileHandler {
 
 			@Override
 			protected void settings(Settings settings) {
+				String directory = "images/";
+				if (type == TYPE_IMAGE_HEAD) {
+					directory = "heads/";
+				} else if (type == TYPE_IMAGE_BACK) {
+					directory = "backgrounds/";
+				} else {
+					directory = "images/";
+				}
+
 				if (type == TYPE_IMAGE_THUMBNAIL) {
-					settings.url = API.DOMAIN_HANDLEIMAGE + imageFileName
-							+ style;
+					settings.url = API.DOMAIN_HANDLEIMAGE + directory
+							+ imageFileName + style;
 					settings.method = GET;
 				} else {
-					settings.url = API.DOMAIN_COMMONIMAGE + imageFileName;
+					settings.url = API.DOMAIN_COMMONIMAGE + directory
+							+ imageFileName;
 					settings.method = GET;
 				}
 			}
@@ -512,6 +524,7 @@ public class OSSFileHandler {
 	public static final int FILE_TYPE_ASSETS = 0x002;
 	public static final int FILE_TYPE_SDVOICE = 0x003;
 	public static final int FILE_TYPE_SDSELECTIMAGE = 0x004;
+	public static final int FILE_TYPE_CATETAIMAGE = 0x005;
 
 	public void getFileMessageInfo(
 			final FileMessageInfoInterface fileMessageInfoInterface) {
@@ -553,6 +566,8 @@ public class OSSFileHandler {
 						in = app.getResources().getAssets()
 								.open(settings.assetsPath + settings.fileName);
 					}
+					if (in == null)
+						return;
 					while ((len = in.read(buffer, 0, 1024)) != -1) {
 						digest.update(buffer, 0, len);
 						bos.write(buffer, 0, len);
@@ -564,6 +579,8 @@ public class OSSFileHandler {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				if (data == null)
+					return;
 				String sha1 = new com.lejoying.wxgs.utils.SHA1()
 						.getDigestOfString(data).toLowerCase(
 								Locale.getDefault())
@@ -571,15 +588,25 @@ public class OSSFileHandler {
 				BigInteger bigInt = new BigInteger(1, digest.digest());
 				String md5 = bigInt.toString(16).toLowerCase(
 						Locale.getDefault());
+				if (settings.FILE_TYPE == FILE_TYPE_ASSETS) {
+					File file = new File(app.sdcardImageFolder, sha1);
+					if (!file.exists()) {
+						try {
+							FileOutputStream fileOutputStream = new FileOutputStream(
+									file);
+							fileOutputStream.write(data, 0, data.length);
+							fileOutputStream.flush();
+							fileOutputStream.close();
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 				final ImageMessageInfo imageMessageInfo = new ImageMessageInfo(
 						sha1, md5, data);
-				app.UIHandler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						fileMessageInfoInterface.onSuccess(imageMessageInfo);
-					}
-				});
+				fileMessageInfoInterface.onSuccess(imageMessageInfo);
 			}
 		}).start();
 	}
@@ -604,6 +631,7 @@ public class OSSFileHandler {
 		public ImageMessageInfo imageMessageInfo;
 		public String contentType;
 		public String path;
+		public int uploadFileType;
 	}
 
 	public interface UploadFileInterface {
@@ -612,113 +640,48 @@ public class OSSFileHandler {
 		public void onSuccess(Boolean flag, String fileName);
 	}
 
+	public static final int UPLOAD_FILE_TYPE_HEADS = 0x101;
+	public static final int UPLOAD_FILE_TYPE_IMAGES = 0x102;
+	public static final int UPLOAD_FILE_TYPE_VOICES = 0x103;
+	public static final int UPLOAD_FILE_TYPE_BACKGROUNDS = 0x104;
+
 	public void uploadFile(final UploadFileInterface uploadFileInterface) {
 		final UploadFileSettings settings = new UploadFileSettings();
 		uploadFileInterface.setParams(settings);
 		final String fileName = settings.fileName;
 		final ImageMessageInfo imageMessageInfo = settings.imageMessageInfo;
 
-		test(API.ACCESS_ID, API.ACCESS_KEY, imageMessageInfo.md5,
-				settings.contentType, imageMessageInfo.data, fileName);
+		// test(API.ACCESS_ID, API.ACCESS_KEY, imageMessageInfo.md5,
+		// settings.contentType, imageMessageInfo.data, fileName);
 
-		// PutObjectTask task = new PutObjectTask(API.BUCKETNAME, fileName,
-		// settings.contentType);
-		// task.initKey(API.ACCESS_ID, API.ACCESS_KEY);
-		// task.setData(imageMessageInfo.data);
-		// String result = task.getResult().toLowerCase(Locale.getDefault());
-		// if (result.equals(imageMessageInfo.md5)) {
-		// app.UIHandler.post(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// uploadFileInterface.onSuccess(true, fileName);
-		// }
-		// });
-		// } else {
-		// uploadFileInterface.onSuccess(false, fileName);
-		// }
-	}
+		String directory = "";
 
-	@SuppressLint("DefaultLocale")
-	public void test(String ID, String secret, String contentMd5,
-			String contentType, byte[] bytes, String fileName) {
-		@SuppressWarnings("deprecation")
-		String time = new Date().toGMTString();
-		String dealString = "PUT" + "\n" + contentMd5 + "\n" + contentType
-				+ "\n" + time + "\n" + "" + "\n" + "/" + API.BUCKETNAME + "/"
-				+ fileName + "\n";
-		String authorization = "";
-		try {
-			authorization = HMACSHA1.getSignature(dealString, secret);
-			System.out.println(authorization
-					+ "--------+++--------coolspan--------+++--------------");
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		int uploadFileType = settings.uploadFileType;
+		if (uploadFileType == UPLOAD_FILE_TYPE_HEADS) {
+			directory = "heads/";
+		} else if (uploadFileType == UPLOAD_FILE_TYPE_IMAGES) {
+			directory = "images/";
+		} else if (uploadFileType == UPLOAD_FILE_TYPE_VOICES) {
+			directory = "voices/";
+		} else if (uploadFileType == UPLOAD_FILE_TYPE_BACKGROUNDS) {
+			directory = "backgrounds/";
 		}
-		String base64 = Base64.encodeToString(authorization.getBytes(),
-				Base64.DEFAULT);
-		authorization = base64.trim();
-		System.out.println(authorization
-				+ "----------------coolspan----------------------");
 
-		String demo = "PUT\nc8fdb181845a4ca6b8fec737b3581d76\ntext/html\nThu, 17 Nov 2005 18:49:58 "
-				+ "GMT\nx-oss-magic:abracadabra\nx-oss-meta-author:foo@bar.com\n/oss-example/nelson";
-		try {
-			// SHA1 sha1 = new SHA1();
-			// demo = sha1.getDigestOfString(demo.getBytes());
-			demo = HMACSHA1.getSignature(demo,
-					"OtxrzxIsfpFjA7SwPzILwy8Bw21TLhquhboDYROV");
-			demo = Base64.encodeToString(demo.getBytes(), Base64.DEFAULT);
-			demo = demo.trim();
-			System.out.println(demo + "==========coolspan================");
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			URL connectionURL = new URL(API.DOMAIN_COMMONIMAGE + "/"
-					+ API.BUCKETNAME + "/" + fileName);
-			HttpURLConnection httpURLConnection = (HttpURLConnection) connectionURL
-					.openConnection();
-			httpURLConnection.setRequestMethod("PUT");
-			httpURLConnection.setRequestProperty("Content-Length", bytes.length
-					+ "");
-			httpURLConnection.setRequestProperty("Content-Type", contentType);
-			httpURLConnection.setRequestProperty("Host",
-					"wxgs.oss-cn-qingdao.aliyuncs.com");
-			// wxgs.oss-cn-qingdao.aliyuncs.com
-			// http://images2.we-links.com
-			httpURLConnection.setRequestProperty("Date", time);
-			httpURLConnection.setRequestProperty("Authorization", "OSS" + ID
-					+ ":" + authorization);
-			httpURLConnection.setReadTimeout(5000);
-			httpURLConnection.setConnectTimeout(5000);
-			httpURLConnection.setDoOutput(true);
-			OutputStream outputStream = httpURLConnection.getOutputStream();
-			outputStream.write(bytes);
-			outputStream.flush();
-			outputStream.close();
-			int requestCode = httpURLConnection.getResponseCode();
-			if (requestCode == HttpURLConnection.HTTP_OK) {
-				System.out
-						.println("success"
-								+ ":>>>>>>>>>>>>>>>>>>>>>coolspan>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-								+ requestCode);
-			} else {
-				System.out
-						.println("failed"
-								+ ":>>>>>>>>>>>>>>>>>>>>>>>>coolspan>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-								+ requestCode);
-				if (httpURLConnection != null) {
-					httpURLConnection.disconnect();
+		PutObjectTask task = new PutObjectTask(API.BUCKETNAME, directory
+				+ fileName, settings.contentType);
+		task.initKey(API.ACCESS_ID, API.ACCESS_KEY);
+		task.setData(imageMessageInfo.data);
+		String result = task.getResult().toLowerCase(Locale.getDefault());
+		if (result.equals(imageMessageInfo.md5)) {
+			app.UIHandler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					uploadFileInterface.onSuccess(true, fileName);
 				}
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			});
+		} else {
+			uploadFileInterface.onSuccess(false, fileName);
 		}
 	}
 }

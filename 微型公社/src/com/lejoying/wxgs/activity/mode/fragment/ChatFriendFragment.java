@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,7 +74,6 @@ import com.lejoying.wxgs.activity.PicAndVoiceDetailActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -90,7 +87,6 @@ import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
@@ -99,8 +95,6 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
 
@@ -211,7 +205,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		// CircleMenu.showBack();
 		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
@@ -287,17 +280,6 @@ public class ChatFriendFragment extends BaseFragment {
 		iv_face_left = (ImageView) mContent.findViewById(R.id.iv_face_left);
 		iv_face_right = (ImageView) mContent.findViewById(R.id.iv_face_right);
 		iv_face_delete = (ImageView) mContent.findViewById(R.id.iv_face_delete);
-		// ArrayList<HashMap<String, Object>> imagelist = new
-		// ArrayList<HashMap<String, Object>>();
-		// for (int i = 0; i < 8; i++) {
-		// HashMap<String, Object> map = new HashMap<String, Object>();
-		// map.put("image", R.drawable.voice_stop);
-		// imagelist.add(map);
-		// }
-		// chat_base_gv.setAdapter(new SimpleAdapter(getActivity(), imagelist,
-		// R.layout.f_chat_base_gridview_item, new String[] { "image" },
-		// new int[] { R.id.chat_base_iv }));
-		// chat_vPager.addView(chat_base_gv);
 
 		groupTopBar = mContent.findViewById(R.id.relativeLayout_topbar);
 		groupTopBar_back = mContent.findViewById(R.id.backview);
@@ -458,40 +440,11 @@ public class ChatFriendFragment extends BaseFragment {
 	}
 
 	void initEvent() {
-		// editText_message.setText("[f00]");
-		// expressionFaceMap.put("[f00]", "tusiji_1.gif");
-		// Log.v("index", expressionFaceMap.get("[f00]")
-		// + "-----expressionFaceMap");
-		// editText_message.insertGif(editText_message.getText().toString(),
-		// expressionFaceMap);
-
-		// Drawable drawable =
-		// getResources().getDrawable(R.drawable.voice_start);
-		// drawable.setBounds(0, 0, 50, 50);// drawable.getIntrinsicWidth(),
-		// // drawable.getIntrinsicHeight()
-		// SpannableString spannableString = new SpannableString(getText(
-		// R.id.et_message).toString()
-		// + "[微笑]");
-		// ImageSpan imageSpan = new ImageSpan(drawable,
-		// ImageSpan.ALIGN_BASELINE);
-		// spannableString.setSpan(imageSpan, getText(R.id.et_message).length(),
-		// getText(R.id.et_message).length() + "[smile]".length(),
-		// Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-		//
-		// editText_message.setText(spannableString);
-		// editText_message.setCompoundDrawablePadding(10);
-
-		// editText_message.setCompoundDrawables(null, null, null, null);
-		// editText_message
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
 			public void onPageSelected(int arg0) {
-				// faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
-				// Color.WHITE);
 				chat_vPager_now = arg0;
-				// faceMenuShowList.get(chat_vPager_now).setBackgroundColor(
-				// Color.RED);
 			}
 
 			@Override
@@ -1051,19 +1004,6 @@ public class ChatFriendFragment extends BaseFragment {
 			if (file.exists()) {
 				try {
 					FileInputStream fis = new FileInputStream(file);
-					// byte[] buffer = new byte[1024];
-					// int len = 0;
-					// if (i == 0) {
-					// while ((len = fis.read(buffer)) > 0) {
-					// mergerAACFos.write(buffer, 0, len);
-					// }
-					// }
-					//
-					// else {
-					// while ((len = fis.read(buffer)) > 0) {
-					// mergerAACFos.write(buffer, 0, len);
-					// }
-					// }
 					byte[] myByte = new byte[fis.available()];
 					int length = myByte.length;
 
@@ -1524,29 +1464,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 						}
 					});
-					// app.fileHandler.getGifImgFromWebOrSdCard(imageFileName,
-					// new FileResult() {
-					// @Override
-					// public void onResult(final String where,
-					// Bitmap bitmap) {
-					// app.UIHandler.post(new Runnable() {
-					//
-					// @Override
-					// public void run() {
-					// SampleView sampleView = new SampleView(
-					// getActivity(),
-					// app.fileHandler.getFileBytes(folder, imageFileName)
-					// );
-					// messageHolder.iv_image_gif
-					// .addView(sampleView);
-					// // if (where == app.fileHandler.FROM_WEB) {
-					// // mAdapter.notifyDataSetChanged();
-					// // }
-					// }
-					// });
-					//
-					// }
-					// });
 
 				} else {
 					messageHolder.image.setVisibility(View.GONE);
@@ -1593,18 +1510,8 @@ public class ChatFriendFragment extends BaseFragment {
 									@Override
 									public void onResult(String where,
 											Bitmap bitmap) {
-										iv_image.setImageBitmap(app.fileHandler.bitmaps
-												.get(imageFilename));
+										iv_image.setImageBitmap(bitmap);
 									}
-
-									// Movie.decodeFile((new
-									// File(app.sdcardImageFolder,
-									// imageFileName)).getAbsolutePath());
-									// if (where ==
-									// app.fileHandler.FROM_WEB) {
-									// mAdapter.notifyDataSetChanged();
-									// }
-
 								});
 					}
 
@@ -1734,53 +1641,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 					}
 				});
-				// app.fileHandler.saveVoice(new VoiceInterface() {
-				//
-				// @Override
-				// public void setParams(VoiceSettings settings) {
-				// settings.fileName = voiceContent;
-				// }
-				//
-				// @Override
-				// public void onSuccess(String filename, String base64,
-				// Boolean flag) {
-				// VOICE_SAVESTATUS = flag;
-				// if (flag) {
-				// // MediaPlayer mpPlayer = null;
-				// try {
-				// final MediaPlayer mpPlayer = MediaPlayer
-				// .create(getActivity(), Uri
-				// .parse((new File(
-				// app.sdcardVoiceFolder,
-				// voiceContent))
-				// .getAbsolutePath()));
-				// messageHolder.mpPlayer = mpPlayer;
-				// app.UIHandler.post(new Runnable() {
-				//
-				// @Override
-				// public void run() {
-				// messageHolder.tv_voicetime.setText((int) Math
-				// .ceil((double) (mpPlayer
-				// .getDuration()) / 1000)
-				// + "\"");
-				// }
-				// });
-				// messageHolder.sk_voice.setMax(mpPlayer
-				// .getDuration());
-				// // messageHolder.sk_voice.setMax((int) Math
-				// // .ceil((double) (mpPlayer.getDuration()) /
-				// // 1000));
-				// } catch (SecurityException e) {
-				// e.printStackTrace();
-				// } catch (IllegalStateException e) {
-				// e.printStackTrace();
-				// }
-				// } else {
-				// // to do loading voice failed
-				// }
-				//
-				// }
-				// });
 
 				messageHolder.sk_voice.setProgress(0);
 				messageHolder.sk_voice
@@ -1819,6 +1679,8 @@ public class ChatFriendFragment extends BaseFragment {
 						Bitmap bitmap = null;
 
 						final MediaPlayer mpPlayer = messageHolder.mpPlayer;
+						if (mpPlayer == null)
+							return;
 						if (iv_voicehead_status.getTag() == "start") {
 							bitmap = BitmapFactory.decodeResource(
 									getResources(), R.drawable.head_voice_stop);
@@ -2029,43 +1891,35 @@ public class ChatFriendFragment extends BaseFragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			// Uri selectedImage = data.getData();
-			// String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			// Cursor cursor = getActivity().getContentResolver().query(
-			// selectedImage, filePathColumn, null, null, null);
-			// cursor.moveToFirst();
-			// int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			// final String picturePath = cursor.getString(columnIndex)
-			// .toLowerCase(Locale.getDefault());
-			//
-			// cursor.close();
 			final ArrayList<String> messages = new ArrayList<String>();
 			isSELECTPICTURE = true;
 			messageNum = 1;
 			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
 					.size(); i++) {
-				String filePath = MapStorageDirectoryActivity.selectedImages
+				final String filePath = MapStorageDirectoryActivity.selectedImages
 						.get(i);
-				final String format = filePath.substring(filePath
-						.lastIndexOf("."));
-				final Bitmap bm = MCImageUtils.getZoomBitmapFromFile(new File(
-						filePath), 960, 540);
-				if (bm != null) {
-					app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+				app.fileHandler
+						.getFileMessageInfo(new FileMessageInfoInterface() {
 
-						@Override
-						public void setParams(SaveSettings settings) {
-							settings.compressFormat = format.equals(".jpg") ? settings.JPG
-									: settings.PNG;
-							settings.source = bm;
-						}
+							@Override
+							public void setParams(
+									FileMessageInfoSettings settings) {
+								settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+								settings.path = filePath;
+								settings.fileName = filePath.substring(filePath
+										.lastIndexOf("/"));
+							}
 
-						@Override
-						public void onSuccess(String fileName, String base64) {
-							checkImage(fileName, base64, messages);
-						}
-					});
-				}
+							@Override
+							public void onSuccess(
+									ImageMessageInfo imageMessageInfo) {
+								String contentType = (String) MapStorageDirectoryActivity.selectedImagesMap
+										.get(filePath).get("contentType");
+								// checkImage(fileName, base64, messages);
+								checkImage(imageMessageInfo, contentType,
+										filePath, "image", messages);
+							}
+						});
 			}
 
 		} else if (requestCode == RESULT_TAKEPICTURE
@@ -2099,7 +1953,8 @@ public class ChatFriendFragment extends BaseFragment {
 		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
 	}
 
-	public void checkImage(final String fileName, final String base64,
+	public void checkImage(final ImageMessageInfo imageMessageInfo,
+			final String contentType, final String path, final String fileType,
 			final ArrayList<String> messages) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
@@ -2109,7 +1964,7 @@ public class ChatFriendFragment extends BaseFragment {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
-				params.put("filename", fileName);
+				params.put("filename", imageMessageInfo.fileName);
 				settings.params = params;
 			}
 
@@ -2117,22 +1972,59 @@ public class ChatFriendFragment extends BaseFragment {
 			public void success(JSONObject jData) {
 				try {
 					if (jData.getBoolean("exists")) {
-						messages.add(fileName);
-						if (isSELECTPICTURE) {
-							if (messageNum == MapStorageDirectoryActivity.selectedImages
-									.size()) {
-								sendMessage("image", messages);
-								isSELECTPICTURE = false;
+						if ("image".equals(fileType)) {
+							messages.add(imageMessageInfo.fileName);
+							if (isSELECTPICTURE) {
+								if (messageNum == MapStorageDirectoryActivity.selectedImages
+										.size()) {
+									sendMessage(fileType, messages);
+									isSELECTPICTURE = false;
+								} else {
+									messageNum++;
+								}
 							} else {
-								messageNum++;
+								sendMessage(fileType, messages);
 							}
 						} else {
-							sendMessage("image", messages);
-
+							sendMessage(fileType, messages);
 						}
 
 					} else {
-						uploadImageOrVoice("image", fileName, base64, messages);
+						app.fileHandler.uploadFile(new UploadFileInterface() {
+
+							@Override
+							public void setParams(UploadFileSettings settings) {
+								settings.imageMessageInfo = imageMessageInfo;
+								settings.contentType = contentType;
+								settings.fileName = imageMessageInfo.fileName;
+								settings.path = path;
+								if ("image".equals(fileType)) {
+									settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_IMAGES;
+								} else if ("voice".equals(fileType)) {
+									settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_VOICES;
+								}
+							}
+
+							@Override
+							public void onSuccess(Boolean flag, String fileName) {
+								if ("image".equals(fileType)) {
+									messages.add(fileName);
+									if (isSELECTPICTURE) {
+										if (messageNum == MapStorageDirectoryActivity.selectedImages
+												.size()) {
+											sendMessage(fileType, messages);
+											isSELECTPICTURE = false;
+										} else {
+											messageNum++;
+										}
+									} else {
+										sendMessage(fileType, messages);
+									}
+								} else {
+									sendMessage(fileType, messages);
+								}
+							}
+						});
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -2189,6 +2081,7 @@ public class ChatFriendFragment extends BaseFragment {
 
 			@Override
 			public void onSuccess(final ImageMessageInfo imageMessageInfo) {
+
 				app.fileHandler.uploadFile(new UploadFileInterface() {
 
 					@Override
@@ -2196,16 +2089,16 @@ public class ChatFriendFragment extends BaseFragment {
 						settings.fileName = imageMessageInfo.fileName;
 						settings.imageMessageInfo = imageMessageInfo;
 						settings.contentType = "audio/x-mei-aac";
-
+						settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_VOICES;
 					}
 
 					@Override
 					public void onSuccess(Boolean flag, String fileName) {
-						File from = new File(app.sdcardVoiceFolder, voice_list
-								.get(0));
-						File to = new File(app.sdcardVoiceFolder,
+						File fromFile = new File(app.sdcardVoiceFolder,
+								voice_list.get(0));
+						File toFile = new File(app.sdcardVoiceFolder,
 								imageMessageInfo.fileName);
-						from.renameTo(to);
+						fromFile.renameTo(toFile);
 						voice_list.clear();
 						voice_length = 0;
 						ArrayList<String> messages = new ArrayList<String>();
@@ -2216,25 +2109,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 			}
 		});
-		// app.fileHandler.getVoice(new VoiceInterface() {
-		//
-		// @Override
-		// public void setParams(VoiceSettings settings) {
-		// settings.format = ".aac";
-		// settings.fileName = voice_list.get(0);
-		// }
-		//
-		// @Override
-		// public void onSuccess(String filename, String base64, Boolean flag) {
-		// File from = new File(app.sdcardVoiceFolder, voice_list.get(0));
-		// File to = new File(app.sdcardVoiceFolder, filename);
-		// from.renameTo(to);
-		// voice_list.clear();
-		// voice_length = 0;
-		// uploadImageOrVoice("voice", filename, base64,
-		// new ArrayList<String>());
-		// }
-		// });
 	}
 
 	void initBaseFaces() {
@@ -2418,9 +2292,8 @@ public class ChatFriendFragment extends BaseFragment {
 											FileMessageInfoSettings settings) {
 										settings.fileName = "tusiji_"
 												+ (position + 1) + ".gif";
-										settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDIMAGE;
-										settings.folder = app.sdcardImageFolder;
-										// settings.assetsPath="images/";
+										settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_ASSETS;
+										settings.assetsPath = "images/";
 									}
 
 									@Override
@@ -2432,7 +2305,8 @@ public class ChatFriendFragment extends BaseFragment {
 													@Override
 													protected void settings(
 															Settings settings) {
-														settings.url = API.DOMAIN_CHECKIMAGE;
+														settings.url = API.DOMAIN
+																+ API.IMAGE_CHECK;
 														Map<String, String> params = new HashMap<String, String>();
 														params.put(
 																"phone",
@@ -2467,6 +2341,7 @@ public class ChatFriendFragment extends BaseFragment {
 																				settings.fileName = imageMessageInfo.fileName;
 																				settings.imageMessageInfo = imageMessageInfo;
 																				settings.contentType = "image/gif";
+																				settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_IMAGES;
 																			}
 
 																			@Override
@@ -2490,25 +2365,6 @@ public class ChatFriendFragment extends BaseFragment {
 
 									}
 								});
-						// app.fileHandler.getBigFaceImgBASE64(getActivity(),
-						// new BigFaceImgInterface() {
-						//
-						// @Override
-						// public void setParams(
-						// BigFaceImgSettings settings) {
-						// settings.format = ".gif";
-						// settings.assetsPath = "images/";
-						// settings.fileName = "tusiji_"
-						// + (position + 1) + ".gif";
-						// }
-						//
-						// @Override
-						// public void onSuccess(String fileName,
-						// String base64) {
-						// checkImage(fileName, base64,
-						// new ArrayList<String>());
-						// }
-						// });
 					}
 				}
 			});

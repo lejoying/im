@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.FileHandler;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,11 +27,9 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.SquareMessage.Content;
-import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class SquareContentView extends HorizontalScrollView {
@@ -530,207 +527,47 @@ public class SquareContentView extends HorizontalScrollView {
 				}
 				if (!cover.equals("none")) {
 					final String fileName = cover;
-					final String newFileName[] = fileName.split("\\.");
-					// if (unitSideLength != 0 || unitSideLength2 != 0) {
-					String size = "";
+					int width = 0;
+					int height = 0;
+					String _style = "";
 					switch (style) {
 					case ITEM12:
-						size = "_12.";
 						if (!"".equals(message.content.text)) {
-							app.fileHandler.getThumbnail(fileName, size,
-									unitSideLength, unitSideLength,
-									new FileResult() {
-
-										@Override
-										public void onResult(String where,
-												Bitmap bitmap) {
-											contentImage.setImageBitmap(bitmap);
-
-										}
-									});
+							width = unitSideLength;
+							height = unitSideLength;
 						} else {
-							app.fileHandler.getThumbnail(fileName, size,
-									unitSideLength,
-									((unitSideLength * 2) / 10) * 9,
-									new FileResult() {
-
-										@Override
-										public void onResult(String where,
-												Bitmap bitmap) {
-											contentImage.setImageBitmap(bitmap);
-
-										}
-									});
-							// contentImage.setImageBitmap(MCImageUtils
-							// .getCutBitmap(
-							// bitmap,
-							// unitSideLength,
-							// ((unitSideLength * 2) / 10) *
-							// 9));
+							width = unitSideLength;
+							height = ((unitSideLength * 2) / 10) * 9;
 						}
+						_style = "_12.";
 						break;
 					case ITEM21:
-						size = "_21.";
 						if (!"".equals(message.content.text)) {
-							app.fileHandler.getThumbnail(fileName, size,
-									unitSideLength,
-									(int) (unitSideLength * 0.781499f),
-									new FileResult() {
-
-										@Override
-										public void onResult(String where,
-												Bitmap bitmap) {
-											contentImage.setImageBitmap(bitmap);
-
-										}
-									});
-							// if (where == OSSFileHandler.FROM_SDCARD) {
-							// contentImage.setImageBitmap(bitmap);
-							// } else {
-							// new Thread() {
-							// @Override
-							// public void run() {
-							// final Bitmap newBitmap = MCImageUtils
-							// .getCutBitmap(
-							// bitmap,
-							// unitSideLength,
-							// (int) (unitSideLength * 0.781499f),
-							// style);
-							// app.UIHandler.post(new Runnable() {
-							// @Override
-							// public void run() {
-							// contentImage
-							// .setImageBitmap(newBitmap);
-							// }
-							// });
-							// saveThumbnailToLocal(newBitmap,
-							// newFileName[0] + "_21."
-							// + newFileName[1]);
-							// if (bitmap != null) {
-							// if (!bitmap.isRecycled()) {
-							// bitmap.recycle();
-							// }
-							// }
-							// super.run();
-							// }
-							// }.start();
-							// }
-							// contentImage.setImageBitmap(MCImageUtils
-							// .getCutBitmap(
-							// bitmap,
-							// unitSideLength,
-							// (int) (unitSideLength *
-							// 0.781499f)));
+							width = unitSideLength;
+							height = (int) (unitSideLength * 0.781499f);
 						} else {
-							app.fileHandler.getThumbnail(fileName, size,
-									unitSideLength2,
-									(int) (unitSideLength * 0.781499f),
-									new FileResult() {
-
-										@Override
-										public void onResult(String where,
-												Bitmap bitmap) {
-											contentImage.setImageBitmap(bitmap);
-
-										}
-									});
-							// if (where == OSSFileHandler.FROM_SDCARD) {
-							// contentImage.setImageBitmap(bitmap);
-							// } else {
-							// new Thread() {
-							// @Override
-							// public void run() {
-							// final Bitmap newBitmap = MCImageUtils
-							// .getCutBitmap(
-							// bitmap,
-							// unitSideLength2,
-							// (int) (unitSideLength * 0.781499f),
-							// style);
-							// app.UIHandler.post(new Runnable() {
-							// @Override
-							// public void run() {
-							// contentImage
-							// .setImageBitmap(newBitmap);
-							// }
-							// });
-							// saveThumbnailToLocal(newBitmap,
-							// newFileName[0] + "_21."
-							// + newFileName[1]);
-							// if (bitmap != null) {
-							// if (!bitmap.isRecycled()) {
-							// bitmap.recycle();
-							// }
-							// }
-							// super.run();
-							// }
-							// }.start();
-							// }
-							// contentImage.setImageBitmap(MCImageUtils
-							// .getCutBitmap(
-							// bitmap,
-							// unitSideLength2,
-							// (int) (unitSideLength *
-							// 0.781499f)));
+							width = unitSideLength2;
+							height = (int) (unitSideLength * 0.781499f);
 						}
+						_style = "_21.";
 						break;
 					case ITEM22:
-						size = "_22.";
-						app.fileHandler.getThumbnail(fileName, size,
-								unitSideLength,
-								((unitSideLength * 2) / 10) * 9,
-								new FileResult() {
-
-									@Override
-									public void onResult(String where,
-											Bitmap bitmap) {
-										contentImage.setImageBitmap(bitmap);
-
-									}
-								});
-						// if (where == OSSFileHandler.FROM_SDCARD) {
-						// contentImage.setImageBitmap(bitmap);
-						// } else {
-						// new Thread() {
-						// @Override
-						// public void run() {
-						// final Bitmap newBitmap = MCImageUtils
-						// .getCutBitmap(
-						// bitmap,
-						// unitSideLength,
-						// ((unitSideLength * 2) / 10) * 9,
-						// style);
-						// app.UIHandler.post(new Runnable() {
-						// @Override
-						// public void run() {
-						// contentImage
-						// .setImageBitmap(newBitmap);
-						// }
-						// });
-						// saveThumbnailToLocal(newBitmap,
-						// newFileName[0] + "_22."
-						// + newFileName[1]);
-						// if (bitmap != null) {
-						// if (!bitmap.isRecycled()) {
-						// bitmap.recycle();
-						// }
-						// }
-						// super.run();
-						// }
-						// }.start();
-						// }
-						// contentImage.setImageBitmap(MCImageUtils
-						// .getCutBitmap(
-						// bitmap,
-						// unitSideLength,
-						// ((unitSideLength * 2) / 10) *
-						// 9));
+						width = unitSideLength;
+						height = ((unitSideLength * 2) / 10) * 9;
+						_style = "_22.";
 						break;
 					default:
 						break;
 					}
-					// } else {
-					// contentImage.setImageBitmap(bitmap);
-					// }
+					app.fileHandler.getThumbnail(fileName, _style, width,
+							height, new FileResult() {
+
+								@Override
+								public void onResult(String where, Bitmap bitmap) {
+									contentImage.setImageBitmap(bitmap);
+
+								}
+							});
 				}
 				if (content.voices.size() > 0) {
 					contentVoice.setImageBitmap(BitmapFactory.decodeResource(

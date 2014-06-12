@@ -108,8 +108,16 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mContent = inflater.inflate(R.layout.f_modifyinfo, null);
-		mContent.setBackgroundDrawable(new BitmapDrawable(
-				app.fileHandler.bitmaps.get(app.data.user.userBackground)));
+		app.fileHandler.getBackgroundImage(app.data.user.userBackground,
+				new FileResult() {
+					@Override
+					public void onResult(String where, Bitmap bitmap) {
+						mContent.setBackgroundDrawable(new BitmapDrawable(
+								bitmap));
+
+					}
+				});
+
 		isEdit = false;
 		initData();
 		initView();
@@ -152,13 +160,14 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		tv_random = mContent.findViewById(R.id.tv_random);
 
 		final String headFileName = app.data.user.head;
-		app.fileHandler.getHeadImage(headFileName,app.data.user.sex, new FileResult() {
-			@Override
-			public void onResult(String where,Bitmap bitmap) {
-				iv_head.setImageBitmap(app.fileHandler.bitmaps
-						.get(headFileName));
-			}
-		});
+		app.fileHandler.getHeadImage(headFileName, app.data.user.sex,
+				new FileResult() {
+					@Override
+					public void onResult(String where, Bitmap bitmap) {
+						iv_head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
 
 		rl_edithead = mContent.findViewById(R.id.rl_edithead);
 		rl_fromgallery = mContent.findViewById(R.id.rl_fromgallery);
@@ -530,10 +539,10 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 			public void modifyUI() {
 				if (user.head != null && !user.head.equals("Head")) {
 					final String headFileName = app.data.user.head;
-					app.fileHandler.getHeadImage(headFileName,app.data.user.sex,
-							new FileResult() {
+					app.fileHandler.getHeadImage(headFileName,
+							app.data.user.sex, new FileResult() {
 								@Override
-								public void onResult(String where,Bitmap bitmap) {
+								public void onResult(String where, Bitmap bitmap) {
 									iv_head.setImageBitmap(app.fileHandler.bitmaps
 											.get(headFileName));
 								}
