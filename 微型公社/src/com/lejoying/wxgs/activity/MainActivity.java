@@ -167,7 +167,7 @@ public class MainActivity extends BaseActivity {
 	}
 
 	void initMode() {
-		System.out.println(mMainMode == null);
+		//System.out.println(mMainMode == null);
 		if (mMainMode == null) {
 			mMainMode = new MainModeManager(this);
 		}
@@ -334,10 +334,11 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				System.out.println("release");
+				//System.out.println("release");
 				Intent intent = new Intent(MainActivity.this,
 						ReleaseActivity.class);
 				startActivity(intent);
+//				mMainMode.show(mMainMode.mGroupShareFragment);
 			}
 		});
 	}

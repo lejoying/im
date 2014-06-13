@@ -1003,8 +1003,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			// Locale.getDefault());
 			// format = picturePath.substring(picturePath.lastIndexOf("."));
 			// cursor.close();
-			System.out.println(MapStorageDirectoryActivity.selectedImages
-					.size() + "...||||||||||||||||||||||");
+//			System.out.println(MapStorageDirectoryActivity.selectedImages
+//					.size() + "...||||||||||||||||||||||");
 			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
 					.size(); i++) {
 				final String filePath = MapStorageDirectoryActivity.selectedImages
