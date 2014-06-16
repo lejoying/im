@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MapStorageDirectoryActivity;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
@@ -42,11 +43,17 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.User;
+import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveBitmapInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
 
 public class ModifyFragment extends BaseFragment implements OnClickListener,
 		OnFocusChangeListener {
@@ -338,10 +345,10 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	}
 
 	void selectPicture() {
-		Intent selectFromGallery = new Intent(Intent.ACTION_PICK,
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		Intent selectFromGallery = new Intent(getActivity(),
+				MapStorageDirectoryActivity.class);
+		MapStorageDirectoryActivity.max = 1;
 		startActivityForResult(selectFromGallery, RESULT_SELECTHEAD);
-		CircleMenu.hide();
 	}
 
 	void takePicture() {
@@ -355,7 +362,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		tackPicture.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
 		tackPicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
-		CircleMenu.hide();
 	}
 
 	void modifyHead() {
@@ -404,8 +410,9 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTHEAD
-				&& resultCode == Activity.RESULT_OK && data != null) {
-			Uri selectedImage = data.getData();
+				&& resultCode == Activity.RESULT_OK) {
+			Uri selectedImage = Uri.parse("file://"
+					+ MapStorageDirectoryActivity.selectedImages.get(0));
 			startPhotoZoom(selectedImage);
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
@@ -427,9 +434,29 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 				}
 
 				@Override
-				public void onSuccess(String fileName, String base64) {
+				public void onSuccess(final String fileName, String base64) {
 					if (!fileName.equals(app.data.user.head)) {
-						checkImage(fileName, base64);
+						final String path = new File(app.sdcardHeadImageFolder,
+								fileName).getAbsolutePath();
+						app.fileHandler
+								.getFileMessageInfo(new FileMessageInfoInterface() {
+
+									@Override
+									public void setParams(
+											FileMessageInfoSettings settings) {
+										settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+										settings.path = path;
+										settings.fileName = fileName;
+									}
+
+									@Override
+									public void onSuccess(
+											ImageMessageInfo imageMessageInfo) {
+										checkImage(imageMessageInfo,
+												"image/png", path);
+									}
+								});
+
 					}
 				}
 			});
@@ -437,7 +464,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 
 	}
 
-	public void checkImage(final String fileName, final String base64) {
+	public void checkImage(final ImageMessageInfo imageMessageInfo,
+			final String contentType, final String path) {
 
 		app.networkHandler.connection(new CommonNetConnection() {
 
@@ -447,7 +475,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
-				params.put("filename", fileName);
+				params.put("filename", imageMessageInfo.fileName);
 				settings.params = params;
 			}
 
@@ -456,10 +484,29 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 				try {
 					if (jData.getBoolean("exists")) {
 						User user = new User();
-						user.head = fileName;
+						user.head = imageMessageInfo.fileName;
 						modify(user);
 					} else {
-						uploadImage(fileName, base64);
+
+						app.fileHandler.uploadFile(new UploadFileInterface() {
+
+							@Override
+							public void setParams(UploadFileSettings settings) {
+								settings.imageMessageInfo = imageMessageInfo;
+								settings.contentType = contentType;
+								settings.fileName = imageMessageInfo.fileName;
+								settings.path = path;
+								settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_HEADS;
+							}
+
+							@Override
+							public void onSuccess(Boolean flag, String fileName) {
+								User user = new User();
+								user.head = fileName;
+								modify(user);
+							}
+						});
+					
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -470,28 +517,28 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 
 	}
 
-	public void uploadImage(final String fileName, final String base64) {
-		app.networkHandler.connection(new CommonNetConnection() {
-
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("filename", fileName);
-				params.put("imagedata", base64);
-				settings.params = params;
-			}
-
-			@Override
-			public void success(JSONObject jData) {
-				User user = new User();
-				user.head = fileName;
-				modify(user);
-			}
-		});
-	}
+//	public void uploadImage(final String fileName, final String base64) {
+//		app.networkHandler.connection(new CommonNetConnection() {
+//
+//			@Override
+//			protected void settings(Settings settings) {
+//				settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
+//				Map<String, String> params = new HashMap<String, String>();
+//				params.put("phone", app.data.user.phone);
+//				params.put("accessKey", app.data.user.accessKey);
+//				params.put("filename", fileName);
+//				params.put("imagedata", base64);
+//				settings.params = params;
+//			}
+//
+//			@Override
+//			public void success(JSONObject jData) {
+//				User user = new User();
+//				user.head = fileName;
+//				modify(user);
+//			}
+//		});
+//	}
 
 	public void modify(final User user) {
 		JSONObject account = new JSONObject();

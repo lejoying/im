@@ -42,6 +42,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MapStorageDirectoryActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
@@ -220,10 +221,8 @@ public class BusinessCardFragment extends BaseFragment {
 		asyncTask.execute();
 		return mContent;
 	}
-
 	@Override
 	public void onResume() {
-		// CircleMenu.showBack();
 		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
@@ -371,7 +370,6 @@ public class BusinessCardFragment extends BaseFragment {
 													uri);
 											startActivityForResult(tackPicture,
 													RESULT_TAKEPICTURE);
-											// CircleMenu.hide();
 										}
 									})
 							.setOnCancelClickListener(
@@ -381,12 +379,12 @@ public class BusinessCardFragment extends BaseFragment {
 										public void onClick(
 												AlertInputDialog dialog) {
 											Intent selectFromGallery = new Intent(
-													Intent.ACTION_PICK,
-													MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+													getActivity(),
+													MapStorageDirectoryActivity.class);
+											MapStorageDirectoryActivity.max = 1;
 											startActivityForResult(
 													selectFromGallery,
 													RESULT_SELECTPICTURE);
-											// CircleMenu.hide();
 										}
 									}).show();
 				}
@@ -840,15 +838,15 @@ public class BusinessCardFragment extends BaseFragment {
 			}
 		};
 		app.networkHandler.connection(netConnection);
-
 		return friendGroups;
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTPICTURE
-				&& resultCode == Activity.RESULT_OK && data != null) {
-			Uri selectedImage = data.getData();
+				&& resultCode == Activity.RESULT_OK) {
+			Uri selectedImage = Uri.parse("file://"
+					+ MapStorageDirectoryActivity.selectedImages.get(0));
 			startPhotoZoom(selectedImage);
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {

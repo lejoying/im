@@ -1486,9 +1486,9 @@ public class ChatFriendFragment extends BaseFragment {
 						}
 						final String imageFilename = mImageFileName;
 						View addView = mInflater.inflate(
-								R.layout.imageview_chat, null);
+								R.layout.view_child, null);
 						final ImageView iv_image = (ImageView) addView
-								.findViewById(R.id.iv_image);
+								.findViewById(R.id.iv_child);
 						addView.setLayoutParams(params);
 						messageHolder.ll_image.addView(addView);
 						iv_image.setOnClickListener(new OnClickListener() {

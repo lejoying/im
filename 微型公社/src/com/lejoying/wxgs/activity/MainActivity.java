@@ -334,7 +334,6 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				//System.out.println("release");
 				Intent intent = new Intent(MainActivity.this,
 						ReleaseActivity.class);
 				startActivity(intent);
@@ -345,7 +344,6 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		System.out.println("KeyDown");
 		if (mode.equals(MODE_LOGIN)) {
 			return mLoginMode.onKeyDown(keyCode, event)
 					&& super.onKeyDown(keyCode, event);

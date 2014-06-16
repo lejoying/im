@@ -199,7 +199,7 @@ public class SquareMessageDetail extends BaseActivity {
 						.get(message.head));
 			}
 		});
-		List<String> images = message.content.images;
+		final List<String> images = message.content.images;
 		List<String> voices = message.content.voices;
 		String textContent = message.content.text != "" ? message.content.text
 				: "";
@@ -208,7 +208,7 @@ public class SquareMessageDetail extends BaseActivity {
 				message.time));
 		for (int i = 0; i < images.size(); i++) {
 			final ImageView imageView = new ImageView(this);
-
+			final int index = i;
 			detailContent.addView(imageView);
 			final String fileName = images.get(i);
 			app.fileHandler.getSquareDetailImage(fileName, (int) width,
@@ -223,6 +223,18 @@ public class SquareMessageDetail extends BaseActivity {
 							imageView.setImageBitmap(bitmap);
 						}
 					});
+			imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(SquareMessageDetail.this,
+							PicAndVoiceDetailActivity.class);
+					intent.putExtra("currentIndex", index);
+					intent.putExtra("Activity", "Browse");
+					intent.putStringArrayListExtra("content", (ArrayList<String>) images);
+					startActivity(intent);
+				}
+			});
 			// app.fileHandler.getImage(fileName, new FileResult() {
 			//
 			// @Override

@@ -406,9 +406,9 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			for (int i = 0; i < ReleaseActivity.images.size(); i++) {
 				mediaTotal++;
 				LinearLayout superView = (LinearLayout) mInflater.inflate(
-						R.layout.release_child_navigation, null);
+						R.layout.view_child, null);
 				ImageView iv = (ImageView) superView
-						.findViewById(R.id.iv_release_child);
+						.findViewById(R.id.iv_child);
 				Map<String, Object> map = ReleaseActivity.images.get(i);
 				if (map.get("type") != null) {
 					SampleView sampleview = new SampleView(this,
@@ -427,9 +427,9 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					.size(); i++) {
 				mediaTotal++;
 				LinearLayout superView = (LinearLayout) mInflater.inflate(
-						R.layout.release_child_navigation, null);
+						R.layout.view_child, null);
 				ImageView iv = (ImageView) superView
-						.findViewById(R.id.iv_release_child);
+						.findViewById(R.id.iv_child);
 				SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
 						MCImageUtils
 								.getZoomBitmapFromFile(
@@ -443,9 +443,9 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			for (int i = 0; i < content.size(); i++) {
 				mediaTotal++;
 				LinearLayout superView = (LinearLayout) mInflater.inflate(
-						R.layout.release_child_navigation, null);
+						R.layout.view_child, null);
 				final ImageView iv = (ImageView) superView
-						.findViewById(R.id.iv_release_child);
+						.findViewById(R.id.iv_child);
 				// SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
 				// app.fileHandler.bitmaps.get(content.get(i)));
 				// iv.setImageBitmap(bm.get());

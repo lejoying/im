@@ -43,6 +43,7 @@ public class MapStorageDirectoryActivity extends Activity {
 	public static Map<String, List<Map<String, Object>>> directoryToImages = new HashMap<String, List<Map<String, Object>>>();
 
 	public static String currentShowDirectory = "";
+	public static int max=0;
 	MapStorageDirectoryAdapter mapStorageDirectoryAdapter;
 
 	ListView imagesDirectory;
@@ -64,6 +65,7 @@ public class MapStorageDirectoryActivity extends Activity {
 		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
 		directorys = new ArrayList<String>();
 		directoryToImages = new HashMap<String, List<Map<String, Object>>>();
+		selectedImages.clear();
 		getSDImages();
 		mapStorageDirectoryAdapter = new MapStorageDirectoryAdapter();
 		imagesDirectory.setAdapter(mapStorageDirectoryAdapter);
@@ -73,12 +75,17 @@ public class MapStorageDirectoryActivity extends Activity {
 		initEvent();
 		super.onCreate(savedInstanceState);
 	}
-
+	@Override
+	public void onBackPressed() {
+		max=0;
+		finish();
+	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTPIC && resultCode == Activity.RESULT_OK) {
 			setResult(Activity.RESULT_OK);
+			max=0;
 			finish();
 		}
 	}

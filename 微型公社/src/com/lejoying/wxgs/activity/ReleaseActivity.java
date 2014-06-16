@@ -1003,8 +1003,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			// Locale.getDefault());
 			// format = picturePath.substring(picturePath.lastIndexOf("."));
 			// cursor.close();
-//			System.out.println(MapStorageDirectoryActivity.selectedImages
-//					.size() + "...||||||||||||||||||||||");
+			// System.out.println(MapStorageDirectoryActivity.selectedImages
+			// .size() + "...||||||||||||||||||||||");
 			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
 					.size(); i++) {
 				final String filePath = MapStorageDirectoryActivity.selectedImages
@@ -1221,15 +1221,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	// TODO
 	public void generateView(Map<String, Object> map, String type,
 			final int index) {
-		View addView = mInflater.inflate(R.layout.release_child_navigation,
-				null);
+		View addView = mInflater.inflate(R.layout.view_child, null);
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				(int) (width * 0.138888889f), (int) (height * 0.078125f));
 		params.rightMargin = (int) (width * 0.01388889f);
 
 		if ("image".equals(type)) {
-			ImageView iv = (ImageView) addView
-					.findViewById(R.id.iv_release_child);
+			ImageView iv = (ImageView) addView.findViewById(R.id.iv_child);
 
 			iv.setLayoutParams(params);
 			if (map.get("bitmap") != null)
@@ -1237,6 +1235,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						(Bitmap) map.get("bitmap"),
 						(int) (width * 0.138888889f),
 						(int) (height * 0.078125f), 0));
+
 			iv.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -1250,15 +1249,12 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			});
 			ll_release_picandvoice.addView(addView);
 		} else if ("voice".equals(type)) {
-			ImageView iv = (ImageView) addView
-					.findViewById(R.id.iv_release_child);
+			ImageView iv = (ImageView) addView.findViewById(R.id.iv_child);
 
 			iv.setLayoutParams(params);
-			if (map.get("bitmap") != null)
-				iv.setImageBitmap(MCImageUtils.getCutBitmap(
-						(Bitmap) map.get("bitmap"),
-						(int) (width * 0.138888889f),
-						(int) (height * 0.078125f), 0));
+			if (map.get("bitmap") == null)
+				iv.setImageResource(R.drawable.selected_voice);
+			
 			iv.setOnClickListener(new OnClickListener() {
 
 				@Override

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.AsyncHandler.Execution;
 
@@ -228,18 +230,47 @@ public class MapStorageImagesActivity extends Activity {
 
 				@Override
 				public void onClick(View arg) {
-					if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
-						imagesHolder0.ivStatus.setVisibility(View.GONE);
-						MapStorageDirectoryActivity.selectedImages.remove(path);
-						MapStorageDirectoryActivity.selectedImagesMap
-								.remove(mImages.get(arg0));
-						modifyConfirmStyle();
-					} else {
-						imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
-						MapStorageDirectoryActivity.selectedImages.add(path);
-						MapStorageDirectoryActivity.selectedImagesMap.put(path,
-								mImages.get(arg0));
-						modifyConfirmStyle();
+					if(MapStorageDirectoryActivity.max==0){
+						if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
+							imagesHolder0.ivStatus.setVisibility(View.GONE);
+							MapStorageDirectoryActivity.selectedImages.remove(path);
+							MapStorageDirectoryActivity.selectedImagesMap
+									.remove(mImages.get(arg0));
+							modifyConfirmStyle();
+						} else {
+							imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
+							MapStorageDirectoryActivity.selectedImages.add(path);
+							MapStorageDirectoryActivity.selectedImagesMap.put(path,
+									mImages.get(arg0));
+							modifyConfirmStyle();
+						}
+					}else{
+						if(MapStorageDirectoryActivity.selectedImages.size()<MapStorageDirectoryActivity.max){
+							if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
+								imagesHolder0.ivStatus.setVisibility(View.GONE);
+								MapStorageDirectoryActivity.selectedImages.remove(path);
+								MapStorageDirectoryActivity.selectedImagesMap
+										.remove(mImages.get(arg0));
+								modifyConfirmStyle();
+							} else {
+								imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
+								MapStorageDirectoryActivity.selectedImages.add(path);
+								MapStorageDirectoryActivity.selectedImagesMap.put(path,
+										mImages.get(arg0));
+								modifyConfirmStyle();
+							}
+						}else{
+							if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
+								imagesHolder0.ivStatus.setVisibility(View.GONE);
+								MapStorageDirectoryActivity.selectedImages.remove(path);
+								MapStorageDirectoryActivity.selectedImagesMap
+										.remove(mImages.get(arg0));
+								modifyConfirmStyle();
+							} else {
+								Alert.showMessage("您最多能选择"+MapStorageDirectoryActivity.max+"张图片。"); 
+							}
+							
+						}
 					}
 				}
 			});
