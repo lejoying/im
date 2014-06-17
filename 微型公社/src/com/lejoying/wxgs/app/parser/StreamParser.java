@@ -11,6 +11,8 @@ import java.io.OptionalDataException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lejoying.wxgs.app.data.Data;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -69,12 +71,13 @@ public class StreamParser {
 		return bitmap;
 	}
 
-	public static Object parseToObject(InputStream is) {
-		Object obj = null;
+	@SuppressWarnings("unchecked")
+	public static <T> T parseToObject(InputStream is) {
+		T t = null;
 		ObjectInputStream objectInputStream = null;
 		try {
 			objectInputStream = new ObjectInputStream(is);
-			obj = objectInputStream.readObject();
+			t = (T) objectInputStream.readObject();
 		} catch (OptionalDataException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,6 +87,8 @@ public class StreamParser {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO: handle exception
 		} finally {
 			if (objectInputStream != null) {
 				try {
@@ -102,7 +107,7 @@ public class StreamParser {
 				}
 			}
 		}
-		return obj;
+		return t;
 	}
 
 	public static void parseToObjectFile(FileOutputStream outputStream,
