@@ -15,4 +15,6 @@ public class Configuration implements Serializable {
 
 	public String lastLoginPhone = "";
 
+	public boolean isNeedToShowWelcome = false;
+
 }
