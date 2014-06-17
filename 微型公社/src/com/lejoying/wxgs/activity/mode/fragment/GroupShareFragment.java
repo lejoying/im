@@ -1,6 +1,8 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -31,6 +33,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	LayoutInflater mInflater;
 	private View mContent;
 	HorizontalScrollView gshare_scroll;
+	LinearLayout gshare_scroll_ll;
 	RelativeLayout gshare_send;
 	ListView gshare_lv;
 
@@ -45,7 +48,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mInflater = inflater;
-		mContent = inflater.inflate(R.layout.f_groupshare, null);
+		mContent = mInflater.inflate(R.layout.f_groupshare, null);
 		DisplayMetrics dm = new DisplayMetrics();
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
@@ -60,21 +63,39 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	void initLayout() {
 		gshare_scroll = (HorizontalScrollView) mContent
 				.findViewById(R.id.gshare_scroll);
+		gshare_scroll_ll = (LinearLayout)mContent
+				.findViewById(R.id.gshare_scroll_ll);
 		gshare_send = (RelativeLayout) mContent
 				.findViewById(R.id.rl_gshare_send);
 		gshare_lv = (ListView) mContent.findViewById(R.id.gshare_lv);
 
 		LayoutParams scrollParams = gshare_scroll.getLayoutParams();
-
 		LayoutParams lvlParams = gshare_lv.getLayoutParams();
 
 		gshare_scroll.setLayoutParams(scrollParams);
-
 		gshare_lv.setLayoutParams(lvlParams);
+
 		gshare_send.setOnClickListener(this);
 	}
 
 	void initData() {
+		for (int i = 0; i < 10; i++) {
+			View child = mInflater.inflate(R.layout.view_child, null);
+			final ImageView iv = (ImageView) child.findViewById(R.id.iv_child);
+			app.fileHandler.getHeadImage(app.data.user.head, app.data.user.sex,
+					new FileResult() {
+						public void onResult(String where, Bitmap bitmap) {
+							iv.setImageBitmap(bitmap);
+						}
+					});
+			LinearLayout.LayoutParams headParams = (android.widget.LinearLayout.LayoutParams) iv
+					.getLayoutParams();
+			headParams.height = (int) (height * 0.05078125f);
+			headParams.width = (int) (width * 0.09027778f);
+			headParams.leftMargin = (int) (width * 0.027777778f);
+			iv.setLayoutParams(headParams);
+			gshare_scroll_ll.addView(child);
+		}
 		GroupShareAdapter = new GroupShareAdapter();
 		gshare_lv.setAdapter(GroupShareAdapter);
 	}
@@ -167,7 +188,11 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.gshare_date_tv.setText("3000.13.32");
 			} else {
 				groupShareHolder.gshare_bigpic
-						.setImageResource(R.drawable.background);
+						.setImageBitmap(ThumbnailUtils.extractThumbnail(
+								BitmapFactory.decodeResource(mInflater
+										.getContext().getResources(),
+										R.drawable.background1),width-(int)(22*density+0.5f),
+										410));
 				groupShareHolder.gshare_name.setText(app.data.user.nickName);
 				groupShareHolder.gshare_time_tv.setText("00:00");
 				groupShareHolder.gshare_praise.setText("10");

@@ -61,9 +61,10 @@
 
         <ImageView
             android:id="@+id/gshare_bigpic"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
+            android:layout_margin="1dp"
+            />
 
         <TextView
             android:id="@+id/gshare_content"
