@@ -346,7 +346,8 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				if(nowFragment==IS_GROUPS){
-					mMainMode.show(mMainMode.mGroupFragment);
+					mMainMode
+					.showNext(mMainMode.mGroupFragment);
 				}else{
 					Intent intent = new Intent(MainActivity.this,
 							ReleaseActivity.class);

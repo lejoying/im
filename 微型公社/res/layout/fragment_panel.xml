@@ -5,6 +5,7 @@
     android:layout_height="match_parent" >
 
     <LinearLayout
+        android:id="@+id/panel_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
@@ -103,7 +104,6 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:gravity="center"
-                android:text="@string/button_down"
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
@@ -117,6 +117,29 @@
                 android:textColor="#fff"
                 android:textSize="16sp" />
         </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/group_bottom_ll"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/panel_ll"
+        android:layout_margin="10dp"
+        android:background="@drawable/group_bt_sel"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/bottom_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="创建群组"
+            android:textAlignment="center"
+            android:textSize="18sp" />
     </LinearLayout>
 
 </RelativeLayout>

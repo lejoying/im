@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
@@ -66,8 +67,10 @@ public class GroupFragment extends BaseFragment {
 
 	RelativeLayout current_me_group;
 	RelativeLayout current_group_local;
+	LinearLayout ll_navigation;
 	ImageView current_me_group_status;
-	ImageView current_group_local_status;
+	ImageView current_group_local_status, iv_image, iv_back;
+	TextView tv_me_group, tv_group_local;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -89,6 +92,8 @@ public class GroupFragment extends BaseFragment {
 			headSize = (int) dp2px(22);
 			headMargin = (int) ((groupItemWidth - dp2px(22) - headSize * 5) / 6);
 
+			mMainModeManager.handleMenu(false);
+
 			mContentView = inflater.inflate(R.layout.fragment_group, null);
 			mScrollContainer = (ScrollContainer) mContentView
 					.findViewById(R.id.groupViewContainer);
@@ -102,9 +107,15 @@ public class GroupFragment extends BaseFragment {
 					.findViewById(R.id.current_me_group_status);
 			current_group_local_status = (ImageView) mContentView
 					.findViewById(R.id.current_group_local_status);
-
+			tv_me_group = (TextView) mContentView
+					.findViewById(R.id.tv_me_group);
+			tv_group_local = (TextView) mContentView
+					.findViewById(R.id.tv_group_local);
+			iv_image = (ImageView) mContentView.findViewById(R.id.iv_image);
+			iv_back = (ImageView) mContentView.findViewById(R.id.iv_back);
+			ll_navigation=(LinearLayout) mContentView.findViewById(R.id.ll_navigation);
 			if (mMainModeManager != null) {
-				mMainModeManager.handleMenu(true);
+				mMainModeManager.handleMenu(false);
 			}
 			initEvent();
 
@@ -123,6 +134,9 @@ public class GroupFragment extends BaseFragment {
 					nearByGroup.setVisibility(View.GONE);
 					current_me_group_status.setVisibility(View.VISIBLE);
 					current_group_local_status.setVisibility(View.GONE);
+					tv_me_group.setBackgroundResource(R.drawable.group_bt_sel);
+					tv_group_local
+							.setBackgroundResource(R.drawable.group_bt_def);
 				}
 
 			}
@@ -136,7 +150,16 @@ public class GroupFragment extends BaseFragment {
 					myGroup.setVisibility(View.GONE);
 					current_me_group_status.setVisibility(View.GONE);
 					current_group_local_status.setVisibility(View.VISIBLE);
+					tv_me_group.setBackgroundResource(R.drawable.group_bt_def);
+					tv_group_local
+							.setBackgroundResource(R.drawable.group_bt_sel);
 				}
+			}
+		});
+		ll_navigation.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.back();
 			}
 		});
 	}
@@ -318,11 +341,13 @@ public class GroupFragment extends BaseFragment {
 		View bottomBar = groupView.findViewById(R.id.bottomBar);
 		bottomBar.findViewById(R.id.buttonPreviousGroup).setVisibility(
 				View.GONE);
-		TextView buttonManager = (TextView) bottomBar
-				.findViewById(R.id.buttonNextGroup);
-		buttonManager.setText("创建群组");
+		LinearLayout ll_bottom = (LinearLayout) groupView
+				.findViewById(R.id.group_bottom_ll);
+		TextView bottom_tv=(TextView) ll_bottom.findViewById(R.id.bottom_tv);
+//		buttonManager.setText("创建群组");
+		ll_bottom.setVisibility(View.VISIBLE);
 		bottomBar.setVisibility(View.VISIBLE);
-		buttonManager.setOnClickListener(new OnClickListener() {
+		ll_bottom.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -577,6 +602,11 @@ public class GroupFragment extends BaseFragment {
 		TextView text = (TextView) groupItemView
 				.findViewById(R.id.newGroupText);
 		text.setText("找到更多群组");
+		LinearLayout ll_bottom = (LinearLayout) groupView
+				.findViewById(R.id.group_bottom_ll);
+		TextView bottom_tv=(TextView) ll_bottom.findViewById(R.id.bottom_tv);
+		bottom_tv.setText("搜索更多群组");
+		ll_bottom.setVisibility(View.VISIBLE);
 		groupItemView.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -635,7 +665,7 @@ public class GroupFragment extends BaseFragment {
 	public void onResume() {
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
-		mMainModeManager.handleMenu(true);
+		mMainModeManager.handleMenu(false);
 		requestLocation();
 		super.onResume();
 	}

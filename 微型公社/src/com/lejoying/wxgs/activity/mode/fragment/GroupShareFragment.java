@@ -40,30 +40,40 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	int height, width, dip;
 	float density;
 
+	Bitmap bm;
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
 
 	@Override
+	public void onResume() {
+		mMainModeManager.handleMenu(true);
+		super.onResume();
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mInflater = inflater;
-		mContent = mInflater.inflate(R.layout.f_groupshare, null);
-		DisplayMetrics dm = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-		density = dm.density;
-		dip = (int) (40 * density + 0.5f);
-		height = dm.heightPixels;
-		width = dm.widthPixels;
-		initLayout();
-		initData();
+		if (mContent == null) {
+			mInflater = inflater;
+			mContent = mInflater.inflate(R.layout.f_groupshare, null);
+			DisplayMetrics dm = new DisplayMetrics();
+			getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+			density = dm.density;
+			dip = (int) (40 * density + 0.5f);
+			height = dm.heightPixels;
+			width = dm.widthPixels;
+			initLayout();
+			initData();
+		}
 		return mContent;
 	}
 
 	void initLayout() {
 		gshare_scroll = (HorizontalScrollView) mContent
 				.findViewById(R.id.gshare_scroll);
-		gshare_scroll_ll = (LinearLayout)mContent
+		gshare_scroll_ll = (LinearLayout) mContent
 				.findViewById(R.id.gshare_scroll_ll);
 		gshare_send = (RelativeLayout) mContent
 				.findViewById(R.id.rl_gshare_send);
@@ -96,6 +106,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			iv.setLayoutParams(headParams);
 			gshare_scroll_ll.addView(child);
 		}
+		bm = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(
+				mInflater.getContext().getResources(), R.drawable.background1),
+				width - (int) (22 * density + 0.5f), 410);
 		GroupShareAdapter = new GroupShareAdapter();
 		gshare_lv.setAdapter(GroupShareAdapter);
 	}
@@ -179,7 +192,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			} else {
 				groupShareHolder = (GroupShareHolder) convertView.getTag();
 			}
-			if (position == 4) {
+			if (false) {
 				groupShareHolder.gshare_ll.setVisibility(View.GONE);
 				groupShareHolder.gshare_date_tv.setVisibility(View.VISIBLE);
 				LayoutParams params = groupShareHolder.gshare_date_tv
@@ -187,21 +200,12 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.gshare_date_tv.setLayoutParams(params);
 				groupShareHolder.gshare_date_tv.setText("3000.13.32");
 			} else {
-				groupShareHolder.gshare_bigpic
-						.setImageBitmap(ThumbnailUtils.extractThumbnail(
-								BitmapFactory.decodeResource(mInflater
-										.getContext().getResources(),
-										R.drawable.background1),width-(int)(22*density+0.5f),
-										410));
+				groupShareHolder.gshare_bigpic.setImageBitmap(bm);
 				groupShareHolder.gshare_name.setText(app.data.user.nickName);
 				groupShareHolder.gshare_time_tv.setText("00:00");
 				groupShareHolder.gshare_praise.setText("10");
 				groupShareHolder.gshare_comment.setText("10");
-				String str = "";
-				for (int i = 0; i < 100; i++) {
-					str += i;
-				}
-				groupShareHolder.gshare_content.setText(str);
+				groupShareHolder.gshare_content.setText("123456");
 				app.fileHandler.getHeadImage(app.data.user.head,
 						app.data.user.sex, new FileResult() {
 

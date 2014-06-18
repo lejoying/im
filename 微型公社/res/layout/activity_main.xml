@@ -19,7 +19,7 @@
         android:id="@+id/fragmentContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ll_menu_app" >
+        android:layout_below="@+id/ll_menu_app">
     </FrameLayout>
 
     <LinearLayout
