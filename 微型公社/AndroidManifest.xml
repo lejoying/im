@@ -33,18 +33,17 @@
             android:name="com.lejoying.wxgs.activity.LaunchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
-        </activity>
-        <activity
-            android:name="com.lejoying.wxgs.activity.LoginActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle"
-            android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.lejoying.wxgs.activity.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.MainActivity"

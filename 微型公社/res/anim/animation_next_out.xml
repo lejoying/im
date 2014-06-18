@@ -2,15 +2,15 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <translate
-        android:duration="260"
+        android:duration="240"
         android:fromXDelta="0"
-        android:fromYDelta="10%"
+        android:fromYDelta="0"
         android:toXDelta="0"
-        android:toYDelta="0" />
+        android:toYDelta="10%" />
 
     <alpha
-        android:duration="260"
-        android:fromAlpha="0"
-        android:toAlpha="1" />
+        android:duration="240"
+        android:fromAlpha="1"
+        android:toAlpha="0" />
 
 </set>
