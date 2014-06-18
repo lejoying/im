@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -23,6 +24,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	TextView tv_nowsending;
 	TextView tv_list;
 	TextView tv_send;
+
+	EditText ip;
+	EditText port;
 
 	StatusReceiver mReceiver;
 
@@ -64,6 +68,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		btn_stopSend.setOnClickListener(this);
 		btn_clearqueue.setOnClickListener(this);
 
+		ip = (EditText) findViewById(R.id.ip);
+		port = (EditText) findViewById(R.id.port);
 	}
 
 	@Override
@@ -72,6 +78,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.btn_start:
 			Intent serviceStart = new Intent(this, SMSService.class);
 			serviceStart.putExtra("operation", "start");
+			serviceStart.putExtra("ip", ip.getText().toString());
+			serviceStart.putExtra("port", port.getText().toString());
 			startService(serviceStart);
 			start();
 			break;
@@ -153,15 +161,17 @@ public class MainActivity extends Activity implements OnClickListener {
 			String nowSending = intent.getStringExtra("nowSending");
 
 			if (nowSending != null) {
-				tv_nowsending.setText("æ­£åœ¨å‘é€åˆ°ï¼š" + nowSending);
+				tv_nowsending.setText("ÕıÔÚ·¢ËÍµ½£º" + nowSending);
 			}
 
 			int queueCount = intent.getIntExtra("queueSize", 0);
-			tv_list.setText("é˜Ÿåˆ—ä¸­æ¡æ•°ï¼š" + String.valueOf(queueCount));
+			tv_list.setText("¶ÓÁĞÖĞµÄÌõÊı£º" + String.valueOf(queueCount));
 
 			int successCount = intent.getIntExtra("successCount", 0);
-			tv_send.setText("å·²å‘é€æ¡æ•°ï¼š" + String.valueOf(successCount));
+			tv_send.setText("ÒÑ·¢ËÍÌõÊı£º" + String.valueOf(successCount));
 
+			ip.setText(intent.getStringExtra("ip"));
+			port.setText(intent.getStringExtra("port"));
 		}
 	}
 

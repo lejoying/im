@@ -47,6 +47,9 @@ public class SMSService extends Service {
 
 	Status status;
 
+	String ip = "112.126.71.180";
+	String port = "8074";
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -127,6 +130,8 @@ public class SMSService extends Service {
 						resetConnection();
 						networkHandler.connection(netConnection);
 					}
+					ip = intent.getStringExtra("ip");
+					port = intent.getStringExtra("port");
 					status.isConnection = true;
 					sendStatusChanged();
 				} else if (operation.equals("stop")) {
@@ -201,7 +206,7 @@ public class SMSService extends Service {
 
 			@Override
 			protected void settings(Settings settings) {
-				settings.url = "http://115.28.51.197:8074/api2/sms/event";
+				settings.url = "http://" + ip + ":" + port + "/api2/sms/event";
 				settings.timeout = 30000;
 				String sessionID = String.valueOf(new Date().getTime());
 				Map<String, String> params = new HashMap<String, String>();
@@ -219,6 +224,8 @@ public class SMSService extends Service {
 		broadcast.putExtra("queueSize", status.queueSize);
 		broadcast.putExtra("nowSending", status.nowSending);
 		broadcast.putExtra("successCount", status.successCount);
+		broadcast.putExtra("ip", ip);
+		broadcast.putExtra("port", port);
 		sendBroadcast(broadcast);
 	}
 
