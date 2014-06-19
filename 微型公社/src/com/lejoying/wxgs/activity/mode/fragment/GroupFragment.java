@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,7 +114,8 @@ public class GroupFragment extends BaseFragment {
 					.findViewById(R.id.tv_group_local);
 			iv_image = (ImageView) mContentView.findViewById(R.id.iv_image);
 			iv_back = (ImageView) mContentView.findViewById(R.id.iv_back);
-			ll_navigation=(LinearLayout) mContentView.findViewById(R.id.ll_navigation);
+			ll_navigation = (LinearLayout) mContentView
+					.findViewById(R.id.ll_navigation);
 			if (mMainModeManager != null) {
 				mMainModeManager.handleMenu(false);
 			}
@@ -134,9 +136,10 @@ public class GroupFragment extends BaseFragment {
 					nearByGroup.setVisibility(View.GONE);
 					current_me_group_status.setVisibility(View.VISIBLE);
 					current_group_local_status.setVisibility(View.GONE);
-					tv_me_group.setBackgroundResource(R.drawable.group_bt_sel);
-					tv_group_local
-							.setBackgroundResource(R.drawable.group_bt_def);
+					tv_me_group.setBackgroundColor(Color
+							.parseColor("#40FFFFFF"));
+					tv_group_local.setBackgroundColor(Color
+							.parseColor("#33FFFFFF"));
 				}
 
 			}
@@ -150,16 +153,17 @@ public class GroupFragment extends BaseFragment {
 					myGroup.setVisibility(View.GONE);
 					current_me_group_status.setVisibility(View.GONE);
 					current_group_local_status.setVisibility(View.VISIBLE);
-					tv_me_group.setBackgroundResource(R.drawable.group_bt_def);
-					tv_group_local
-							.setBackgroundResource(R.drawable.group_bt_sel);
+					tv_me_group.setBackgroundColor(Color
+							.parseColor("#33FFFFFF"));
+					tv_group_local.setBackgroundColor(Color
+							.parseColor("#40FFFFFF"));
 				}
 			}
 		});
 		ll_navigation.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mMainModeManager.back();
+				mMainModeManager.show(mMainModeManager.mGroupShareFragment);
 			}
 		});
 	}
@@ -328,6 +332,8 @@ public class GroupFragment extends BaseFragment {
 
 	View generateMyGroup() {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
+		View bgView=groupView.findViewById(R.id.panel_ll);
+		bgView.setBackgroundColor(Color.parseColor("#33FFFFFF"));
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("我加入的群组");
 		ScrollContainer scrollContainer = (ScrollContainer) groupView
@@ -343,8 +349,10 @@ public class GroupFragment extends BaseFragment {
 				View.GONE);
 		LinearLayout ll_bottom = (LinearLayout) groupView
 				.findViewById(R.id.group_bottom_ll);
-		TextView bottom_tv=(TextView) ll_bottom.findViewById(R.id.bottom_tv);
-//		buttonManager.setText("创建群组");
+		TextView bottom_tv = (TextView) ll_bottom.findViewById(R.id.bottom_tv);
+		ImageView bottom_iv=(ImageView) ll_bottom.findViewById(R.id.bottom_iv);
+		bottom_iv.setVisibility(View.GONE);
+		// buttonManager.setText("创建群组");
 		ll_bottom.setVisibility(View.VISIBLE);
 		bottomBar.setVisibility(View.VISIBLE);
 		ll_bottom.setOnClickListener(new OnClickListener() {
@@ -573,6 +581,8 @@ public class GroupFragment extends BaseFragment {
 
 	View generateNearByGroup() {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
+		View bgView=groupView.findViewById(R.id.panel_ll);
+		bgView.setBackgroundColor(Color.parseColor("#33FFFFFF"));
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("附近活跃群组");
 		ScrollContainer scrollContainer = (ScrollContainer) groupView
@@ -604,8 +614,10 @@ public class GroupFragment extends BaseFragment {
 		text.setText("找到更多群组");
 		LinearLayout ll_bottom = (LinearLayout) groupView
 				.findViewById(R.id.group_bottom_ll);
-		TextView bottom_tv=(TextView) ll_bottom.findViewById(R.id.bottom_tv);
+		TextView bottom_tv = (TextView) ll_bottom.findViewById(R.id.bottom_tv);
 		bottom_tv.setText("搜索更多群组");
+		ImageView bottom_iv=(ImageView) ll_bottom.findViewById(R.id.bottom_iv);
+		bottom_iv.setVisibility(View.VISIBLE);
 		ll_bottom.setVisibility(View.VISIBLE);
 		groupItemView.setOnClickListener(new OnClickListener() {
 

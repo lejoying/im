@@ -1,0 +1,229 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2000000"
+    tools:context=".ReleaseOptionActivity" >
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:clickable="false"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:clickable="false"
+            android:orientation="horizontal" >
+
+            <RelativeLayout
+                android:id="@+id/reloption_rl_imageandtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_margin="22dp"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/rl_imageandtext"
+                    android:layout_width="59dp"
+                    android:layout_height="59dp"
+                    android:clickable="false"
+                    android:background="@drawable/reloption_bk_nor" >
+
+                    <ImageView
+                        android:layout_width="31dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                         android:src="@drawable/reloption_camer"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_imageandtext"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="图文"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/reloption_rl_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="22dp"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/rl_voice"
+                    android:layout_width="59dp"
+                    android:layout_height="59dp"
+                    android:clickable="false"
+                    android:background="@drawable/reloption_bk_nor" >
+
+                    <ImageView
+                        android:layout_width="23dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                         android:src="@drawable/reloption_voice"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_voice"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="语音"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/reloption_rl_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="22dp"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/rl_vote"
+                    android:layout_width="59dp"
+                    android:layout_height="59dp"
+                    android:clickable="false"
+                    android:background="@drawable/reloption_bk_nor" >
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                         android:src="@drawable/reloption_vote"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_vote"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="投票"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:clickable="false"
+            android:orientation="horizontal" >
+            <RelativeLayout
+                android:id="@+id/reloption_rl_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="22dp"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/rl_activity"
+                    android:layout_width="59dp"
+                    android:layout_height="59dp"
+                    android:clickable="false"
+                    android:background="@drawable/reloption_bk_nor" >
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                         android:src="@drawable/reloption_activity"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_activity"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="活动"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/reloption_rl_commodity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="22dp"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/rl_commodity"
+                    android:layout_width="59dp"
+                    android:layout_height="59dp"
+                    android:clickable="false"
+                    android:background="@drawable/reloption_bk_nor" >
+
+                    <ImageView
+                        android:layout_width="23dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                         android:src="@drawable/reloption_commodity"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_commodity"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="商品"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/reloption_rl_service"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="22dp"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/rl_service"
+                    android:layout_width="59dp"
+                    android:layout_height="59dp"
+                    android:clickable="false"
+                    android:background="@drawable/reloption_bk_nor" >
+
+                    <ImageView
+                        android:layout_width="21dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:clickable="false"
+                         android:src="@drawable/reloption_service"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rl_service"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="服务"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

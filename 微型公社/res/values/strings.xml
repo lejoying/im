@@ -88,5 +88,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_send_voice">SendVoiceActivity</string>
     <string name="title_activity_pic_and_voice_detail">PicAndVoiceDetailActivity</string>
+    <string name="title_activity_release_option">ReleaseOptionActivity</string>
 
 </resources>

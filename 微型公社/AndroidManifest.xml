@@ -92,6 +92,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>
+	<activity
+            android:name="com.lejoying.wxgs.activity.ReleaseOptionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"  >
+        </activity>
 
         <service android:name="com.lejoying.wxgs.app.service.PushService" >
         </service>

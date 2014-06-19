@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.activity;
+﻿package com.lejoying.wxgs.activity;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -354,7 +354,7 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				if (nowFragment == IS_GROUPS) {
-					mMainMode.showNext(mMainMode.mGroupFragment);
+					mMainMode.show(mMainMode.mGroupFragment);
 				} else {
 					Intent intent = new Intent(MainActivity.this,
 							ReleaseActivity.class);

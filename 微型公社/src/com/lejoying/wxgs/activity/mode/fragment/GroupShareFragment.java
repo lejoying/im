@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.ReleaseOptionActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
@@ -102,7 +104,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 					.getLayoutParams();
 			headParams.height = (int) (height * 0.05078125f);
 			headParams.width = (int) (width * 0.09027778f);
-			headParams.leftMargin = (int) (width * 0.027777778f);
+			headParams.rightMargin = (int) (width * 0.027777778f);
 			iv.setLayoutParams(headParams);
 			gshare_scroll_ll.addView(child);
 		}
@@ -117,7 +119,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.rl_gshare_send:
-
+			startActivity(new Intent(getActivity(), ReleaseOptionActivity.class));
 			break;
 
 		default:

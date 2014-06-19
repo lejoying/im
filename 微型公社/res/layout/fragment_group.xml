@@ -2,16 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    >
+    android:layout_height="match_parent" >
 
     <LinearLayout
         android:id="@+id/ll_navigation"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#51000000"
-        android:padding="10dp"
         android:orientation="horizontal"
+        android:padding="10dp"
         android:visibility="visible"
         tools:ignore="DisableBaselineAlignment" >
 
@@ -20,9 +19,9 @@
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_gravity="center"
-            android:clickable="false"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/back"/>
+            android:clickable="false"
+            android:src="@drawable/back" />
 
         <ImageView
             android:id="@+id/iv_image"
@@ -66,7 +65,7 @@
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp" 
-                android:background="@drawable/group_bt_sel"/>
+                android:background="#40ffffff"/>
 
             <TextView
                 android:id="@+id/current_me_group_noread"
@@ -105,7 +104,7 @@
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp"
-                android:background="@drawable/group_bt_def" />
+                android:background="#33ffffff" />
 
             <TextView
                 android:id="@+id/current_group_local_noread"
