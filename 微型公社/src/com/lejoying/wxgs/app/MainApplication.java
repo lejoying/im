@@ -105,41 +105,47 @@ public class MainApplication extends Application implements
 		if (config == null) {
 			config = new Configuration();
 		}
-		data = new Data();
-		if (!config.lastLoginPhone.equals("")) {
-			dataHandler.exclude(new Modification() {
-				@Override
-				public void modifyData(Data data) {
-					try {
-						Data localData = (Data) StreamParser
-								.parseToObject(openFileInput(config.lastLoginPhone));
-						if (localData != null) {
-							data.user = localData.user;
-							data.circles = localData.circles;
-							data.circlesMap = localData.circlesMap;
-							data.friends = localData.friends;
-							data.groups = localData.groups;
-							data.currentSquare = localData.currentSquare;
-							data.squareFlags = localData.squareFlags;
-							data.squareMessages = localData.squareMessages;
-							data.squareMessagesClassify = localData.squareMessagesClassify;
-							data.squareCollects = localData.squareCollects;
-							data.squareMessagesMap = localData.squareMessagesMap;
-							data.groupsMap = localData.groupsMap;
-							data.groupFriends = localData.groupFriends;
-							data.lastChatFriends = localData.lastChatFriends;
-							data.newFriends = localData.newFriends;
-						}
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
-				}
-			});
-		} else {
-			sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
+		if (data == null) {
+			data = new Data();
 		}
+		// if (config == null) {
+		// config = new Configuration();
+		// }
+		// data = new Data();
+		// if (!config.lastLoginPhone.equals("")) {
+		// dataHandler.exclude(new Modification() {
+		// @Override
+		// public void modifyData(Data data) {
+		// try {
+		// Data localData = (Data) StreamParser
+		// .parseToObject(openFileInput(config.lastLoginPhone));
+		// if (localData != null) {
+		// data.user = localData.user;
+		// data.circles = localData.circles;
+		// data.circlesMap = localData.circlesMap;
+		// data.friends = localData.friends;
+		// data.groups = localData.groups;
+		// data.currentSquare = localData.currentSquare;
+		// data.squareFlags = localData.squareFlags;
+		// data.squareMessages = localData.squareMessages;
+		// data.squareMessagesClassify = localData.squareMessagesClassify;
+		// data.squareCollects = localData.squareCollects;
+		// data.squareMessagesMap = localData.squareMessagesMap;
+		// data.groupsMap = localData.groupsMap;
+		// data.groupFriends = localData.groupFriends;
+		// data.lastChatFriends = localData.lastChatFriends;
+		// data.newFriends = localData.newFriends;
+		// }
+		// } catch (FileNotFoundException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
+		// }
+		// });
+		// } else {
+		// sendBroadcast(new Intent(APP_DATA_PARSINGISCOMPLETE));
+		// }
 
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {

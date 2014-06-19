@@ -88,9 +88,10 @@ public class MainActivity extends BaseActivity {
 
 	View vPopWindow;
 	PopupWindow popWindow;
-	
-	int IS_SQUARE=0x1,IS_GROUPS=0x2,IS_CIRCLES=0x3;
-	int nowFragment=IS_SQUARE;
+
+	int IS_SQUARE = 0x1, IS_GROUPS = 0x2, IS_CIRCLES = 0x3;
+	int nowFragment = IS_SQUARE;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -179,12 +180,19 @@ public class MainActivity extends BaseActivity {
 	public void switchMode() {
 		if (app.data.user.phone.equals("")
 				|| app.data.user.accessKey.equals("")) {
-			if (!mode.equals(MODE_LOGIN)) {
-				mode = MODE_LOGIN;
-				mMainMode.release();
-				mLoginMode.initialize();
-				mLoginMode.show(mLoginMode.mLoginUsePassFragment);
-			}
+			// if (!mode.equals(MODE_LOGIN)) {
+			// mode = MODE_LOGIN;
+			// mMainMode.release();
+			// mLoginMode.initialize();
+			// mLoginMode.show(mLoginMode.mLoginUsePassFragment);
+			// }
+
+			mMainMode.release();
+			mode = MODE_LOGIN;
+			Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+			intent.putExtra("operation", "ReLogin");
+			startActivity(intent);
+			finish();
 		} else if (!app.data.user.phone.equals("")
 				&& !app.data.user.accessKey.equals("")) {
 			LocationUtils.updateLocation();
@@ -309,10 +317,10 @@ public class MainActivity extends BaseActivity {
 						.setImageResource(R.drawable.square_icon_selected);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
-				if(nowFragment==IS_GROUPS){
+				if (nowFragment == IS_GROUPS) {
 					iv_release_menu.setImageResource(R.drawable.square_release);
 				}
-				nowFragment=IS_SQUARE;
+				nowFragment = IS_SQUARE;
 			}
 		});
 		rl_group_menu.setOnClickListener(new OnClickListener() {
@@ -324,7 +332,7 @@ public class MainActivity extends BaseActivity {
 				iv_group_menu.setImageResource(R.drawable.group_icon_selected);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
 				iv_release_menu.setImageResource(R.drawable.gshare_group);
-				nowFragment=IS_GROUPS;
+				nowFragment = IS_GROUPS;
 			}
 		});
 		rl_me_menu.setOnClickListener(new OnClickListener() {
@@ -335,20 +343,19 @@ public class MainActivity extends BaseActivity {
 				iv_square_menu.setImageResource(R.drawable.square_icon);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon_selected);
-				if(nowFragment==IS_GROUPS){
+				if (nowFragment == IS_GROUPS) {
 					iv_release_menu.setImageResource(R.drawable.square_release);
 				}
-				nowFragment=IS_CIRCLES;
+				nowFragment = IS_CIRCLES;
 			}
 		});
 		rl_release_menu.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				if(nowFragment==IS_GROUPS){
-					mMainMode
-					.showNext(mMainMode.mGroupFragment);
-				}else{
+				if (nowFragment == IS_GROUPS) {
+					mMainMode.showNext(mMainMode.mGroupFragment);
+				} else {
 					Intent intent = new Intent(MainActivity.this,
 							ReleaseActivity.class);
 					startActivity(intent);

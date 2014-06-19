@@ -38,7 +38,6 @@ public class DataUtil {
 		public void getFailed() {
 		};
 	}
-	
 
 	public static void getUser(final GetDataListener listener) {
 		NetConnection netConnection = new CommonNetConnection() {
@@ -164,7 +163,8 @@ public class DataUtil {
 			}
 			if (friend.friendStatus != null && !friend.friendStatus.equals("")) {
 				updateFriend.friendStatus = friend.friendStatus;
-			}if (friend.alias != null && !friend.alias.equals("")) {
+			}
+			if (friend.alias != null && !friend.alias.equals("")) {
 				updateFriend.alias = friend.alias;
 			}
 		} else {
@@ -427,11 +427,10 @@ public class DataUtil {
 				StreamParser.parseToObjectFile(context.openFileOutput(
 						app.data.user.phone, Context.MODE_PRIVATE), saveData);
 
-				Configuration config = new Configuration();
-				config.lastLoginPhone = app.data.user.phone;
+				app.config.lastLoginPhone = app.data.user.phone;
 				StreamParser.parseToObjectFile(
 						context.openFileOutput("config", Context.MODE_PRIVATE),
-						config);
+						app.config);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

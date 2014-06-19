@@ -1,9 +1,8 @@
 package com.lejoying.wxgs.activity;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +37,7 @@ import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.utils.NetworkUtils;
 import com.lejoying.wxgs.utils.RSAUtils;
 
@@ -84,9 +84,110 @@ public class LoginActivity extends Activity implements OnClickListener,
 			status = Status.start;
 		}
 
-		handler = new Handler();
+		setContentView(R.layout.activity_login);
 
+		handler = new Handler();
 		Alert.initialize(this);
+
+		Intent intent = getIntent();
+		if (intent != null
+				&& "ReLogin".equals(intent.getStringExtra("operation"))) {
+			initView();
+			initEvent();
+			status = Status.loginUsePassword;
+			setCardContent(status);
+			loginOrRegister.setVisibility(View.INVISIBLE);
+			loginOrRegisterButton.setVisibility(View.VISIBLE);
+			card.setVisibility(View.VISIBLE);
+			showSoftInputDelay(input2, 400);
+		} else {
+			if (app.config.lastLoginPhone != null
+					&& !app.config.lastLoginPhone.equals("")) {
+				final long start = System.currentTimeMillis();
+				app.dataHandler.exclude(new Modification() {
+					@Override
+					public void modifyData(Data data) {
+						readLocalData(app.config.lastLoginPhone, data);
+						long end = System.currentTimeMillis();
+						if (end - start < 800) {
+							try {
+								Thread.sleep(800 - (end - start));
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						switchToShow();
+					}
+				});
+			} else {
+				switchToShow();
+			}
+		}
+		super.onCreate(savedInstanceState);
+	}
+
+	private void readLocalData(String phone, Data data) {
+		try {
+			Data localData = (Data) StreamParser
+					.parseToObject(openFileInput(phone));
+			if (localData != null) {
+				data.user = localData.user;
+				data.circles = localData.circles;
+				data.circlesMap = localData.circlesMap;
+				data.friends = localData.friends;
+				data.groups = localData.groups;
+				data.currentSquare = localData.currentSquare;
+				data.squareFlags = localData.squareFlags;
+				data.squareMessages = localData.squareMessages;
+				data.squareMessagesClassify = localData.squareMessagesClassify;
+				data.squareCollects = localData.squareCollects;
+				data.squareMessagesMap = localData.squareMessagesMap;
+				data.groupsMap = localData.groupsMap;
+				data.groupFriends = localData.groupFriends;
+				data.lastChatFriends = localData.lastChatFriends;
+				data.newFriends = localData.newFriends;
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void switchToShow() {
+		if (app.data.user.phone != null && !app.data.user.phone.equals("")
+				&& app.data.user.accessKey != null
+				&& !app.data.user.accessKey.equals("")) {
+			handler.postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					startActivity(new Intent(LoginActivity.this,
+							MainActivity.class));
+					LoginActivity.this.finish();
+				}
+			}, 1500);
+		} else {
+
+			initView();
+			initEvent();
+
+			status = Status.loginOrRegister;
+			handler.postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					backAnimation(status, loginOrRegisterButton, null);
+				}
+			}, 500);
+		}
+	}
+
+	private void initView() {
 
 		animationNextOut = AnimationUtils.loadAnimation(LoginActivity.this,
 				R.anim.animation_next_out);
@@ -97,19 +198,6 @@ public class LoginActivity extends Activity implements OnClickListener,
 		animationBackIn = AnimationUtils.loadAnimation(LoginActivity.this,
 				R.anim.animation_back_in);
 
-		setContentView(R.layout.activity_login);
-
-		initView();
-
-		initEvent();
-
-		status = Status.loginOrRegister;
-		loginOrRegisterButton.setVisibility(View.VISIBLE);
-
-		super.onCreate(savedInstanceState);
-	}
-
-	private void initView() {
 		loginOrRegister = findViewById(R.id.loginOrRegister);
 		loginOrRegisterButton = findViewById(R.id.loginOrRegisterButton);
 		loginButton = findViewById(R.id.loginButton);
@@ -181,6 +269,8 @@ public class LoginActivity extends Activity implements OnClickListener,
 		input1.setOnFocusChangeListener(this);
 		input2.setOnFocusChangeListener(this);
 
+		input1.setOnClickListener(this);
+		input2.setOnClickListener(this);
 		loginButton.setOnClickListener(this);
 		registerButton.setOnClickListener(this);
 		rightTopTextButton.setOnClickListener(this);
@@ -206,6 +296,9 @@ public class LoginActivity extends Activity implements OnClickListener,
 			rightBottomTextButton.setVisibility(View.VISIBLE);
 			rightBottomTextButton.setText("验证码登录");
 			input1.setText("");
+			if (!app.config.lastLoginPhone.equals("")) {
+				input1.setText(app.config.lastLoginPhone);
+			}
 			input2.setText("");
 			input1.setInputType(InputType.TYPE_CLASS_NUMBER);
 			input2.setInputType(InputType.TYPE_CLASS_TEXT
@@ -221,13 +314,31 @@ public class LoginActivity extends Activity implements OnClickListener,
 			mainButton.setText("登陆");
 			leftBottomTextButton.setVisibility(View.INVISIBLE);
 			rightBottomTextButton.setVisibility(View.VISIBLE);
-			rightBottomTextButton.setText("发送验证码");
-			input1.setText("");
+			if (remainLogin != 0) {
+				rightBottomTextButton.setText("重新发送(" + remainLogin + ")");
+			} else {
+				rightBottomTextButton.setText("发送验证码");
+			}
+			if (loginPhone != null && !loginPhone.equals("")) {
+				input1.setText(loginPhone);
+			} else {
+				input1.setText("");
+			}
 			input2.setText("");
 			input1.setInputType(InputType.TYPE_CLASS_NUMBER);
 			input2.setInputType(InputType.TYPE_CLASS_NUMBER);
 			break;
 		case verifyPhoneForRegister:
+			if (remainRegister != 0) {
+				rightBottomTextButton.setText("重新发送(" + remainRegister + ")");
+			} else {
+				rightBottomTextButton.setText("发送验证码");
+			}
+			if (registerPhone != null && !registerPhone.equals("")) {
+				input1.setText(registerPhone);
+			} else {
+				input1.setText("");
+			}
 		case verifyPhoneForResetPassword:
 			leftTopText.setVisibility(View.VISIBLE);
 			leftTopText.setText("验证手机号");
@@ -238,8 +349,20 @@ public class LoginActivity extends Activity implements OnClickListener,
 			mainButton.setText("下一步");
 			leftBottomTextButton.setVisibility(View.INVISIBLE);
 			rightBottomTextButton.setVisibility(View.VISIBLE);
-			rightBottomTextButton.setText("发送验证码");
-			input1.setText("");
+			if (status == Status.verifyPhoneForResetPassword) {
+				if (remainResetPassword != 0) {
+					rightBottomTextButton.setText("重新发送(" + remainResetPassword
+							+ ")");
+				} else {
+					rightBottomTextButton.setText("发送验证码");
+				}
+				if (resetPasswordPhone != null
+						&& !resetPasswordPhone.equals("")) {
+					input1.setText(resetPasswordPhone);
+				} else {
+					input1.setText("");
+				}
+			}
 			input2.setText("");
 			input1.setInputType(InputType.TYPE_CLASS_NUMBER);
 			input2.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -373,26 +496,57 @@ public class LoginActivity extends Activity implements OnClickListener,
 	int remainRegister;
 	int remainResetPassword;
 	int remainLogin;
+	String registerPhone = "";
+	String resetPasswordPhone = "";
+	String loginPhone = "";
 
 	public void cancelRemain(Status status) {
 		switch (status) {
 		case verifyPhoneForLogin:
 			if (remainLoginRunnable != null) {
 				handler.removeCallbacks(remainLoginRunnable);
-				remainLogin = 0;
 			}
+			remainLogin = 0;
+			handler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					if (LoginActivity.this.status == Status.verifyPhoneForLogin) {
+						rightBottomTextButton.setText("发送验证码");
+					}
+				}
+			});
 			break;
 		case verifyPhoneForRegister:
 			if (remainRegisterRunnable != null) {
 				handler.removeCallbacks(remainRegisterRunnable);
-				remainRegister = 0;
 			}
+			remainRegister = 0;
+			handler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					if (LoginActivity.this.status == Status.verifyPhoneForRegister) {
+						rightBottomTextButton.setText("发送验证码");
+					}
+				}
+			});
+
 			break;
 		case verifyPhoneForResetPassword:
 			if (remainResetPasswordRunnable != null) {
 				handler.removeCallbacks(remainResetPasswordRunnable);
-				remainResetPassword = 0;
 			}
+			remainResetPassword = 0;
+			handler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					if (LoginActivity.this.status == Status.verifyPhoneForResetPassword) {
+						rightBottomTextButton.setText("发送验证码");
+					}
+				}
+			});
 			break;
 
 		default:
@@ -400,16 +554,18 @@ public class LoginActivity extends Activity implements OnClickListener,
 		}
 	}
 
-	public void startRemain(Status status) {
+	public void startRemain(final Status status) {
 		switch (status) {
 		case verifyPhoneForLogin:
-			handler.postDelayed(remainLoginRunnable = new Runnable() {
+			if (remainLogin != 0) {
+				return;
+			}
+			remainLogin = 60;
+			handler.post(remainLoginRunnable = new Runnable() {
 				@Override
 				public void run() {
 					if (remainLogin-- <= 0) {
-						if (LoginActivity.this.status == Status.verifyPhoneForLogin) {
-							rightBottomTextButton.setText("发送验证码");
-						}
+						cancelRemain(status);
 					} else {
 						if (LoginActivity.this.status == Status.verifyPhoneForLogin) {
 							rightBottomTextButton.setText("重新发送(" + remainLogin
@@ -418,16 +574,18 @@ public class LoginActivity extends Activity implements OnClickListener,
 						handler.postDelayed(this, 1000);
 					}
 				}
-			}, 1000);
+			});
 			break;
 		case verifyPhoneForRegister:
-			handler.postDelayed(remainRegisterRunnable = new Runnable() {
+			if (remainRegister != 0) {
+				return;
+			}
+			remainRegister = 60;
+			handler.post(remainRegisterRunnable = new Runnable() {
 				@Override
 				public void run() {
 					if (remainRegister-- <= 0) {
-						if (LoginActivity.this.status == Status.verifyPhoneForRegister) {
-							rightBottomTextButton.setText("发送验证码");
-						}
+						cancelRemain(status);
 					} else {
 						if (LoginActivity.this.status == Status.verifyPhoneForRegister) {
 							rightBottomTextButton.setText("重新发送("
@@ -436,16 +594,18 @@ public class LoginActivity extends Activity implements OnClickListener,
 						handler.postDelayed(this, 1000);
 					}
 				}
-			}, 1000);
+			});
 			break;
 		case verifyPhoneForResetPassword:
-			handler.postDelayed(remainResetPasswordRunnable = new Runnable() {
+			if (remainResetPassword != 0) {
+				return;
+			}
+			remainResetPassword = 60;
+			handler.post(remainResetPasswordRunnable = new Runnable() {
 				@Override
 				public void run() {
 					if (remainResetPassword-- <= 0) {
-						if (LoginActivity.this.status == Status.verifyPhoneForResetPassword) {
-							rightBottomTextButton.setText("发送验证码");
-						}
+						cancelRemain(status);
 					} else {
 						if (LoginActivity.this.status == Status.verifyPhoneForResetPassword) {
 							rightBottomTextButton.setText("重新发送("
@@ -454,12 +614,18 @@ public class LoginActivity extends Activity implements OnClickListener,
 						handler.postDelayed(this, 1000);
 					}
 				}
-			}, 1000);
+			});
 			break;
 
 		default:
 			break;
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		hideSoftInput();
+		super.onPause();
 	}
 
 	@Override
@@ -472,18 +638,38 @@ public class LoginActivity extends Activity implements OnClickListener,
 				break;
 			case verifyPhoneForLogin:
 				backAnimation(Status.loginUsePassword, card, card);
+				if (app.config.lastLoginPhone != null
+						&& !app.config.lastLoginPhone.equals("")) {
+					showSoftInputDelay(input2, animationBackIn.getDuration()
+							+ animationBackOut.getDuration());
+				} else {
+					showSoftInputDelay(input1, animationBackIn.getDuration()
+							+ animationBackOut.getDuration());
+				}
 				break;
 			case verifyPhoneForRegister:
 				backAnimation(Status.loginOrRegister, loginOrRegister, card);
 				break;
 			case verifyPhoneForResetPassword:
 				backAnimation(Status.loginUsePassword, card, card);
+				if (app.config.lastLoginPhone != null
+						&& !app.config.lastLoginPhone.equals("")) {
+					showSoftInputDelay(input2, animationBackIn.getDuration()
+							+ animationBackOut.getDuration());
+				} else {
+					showSoftInputDelay(input1, animationBackIn.getDuration()
+							+ animationBackOut.getDuration());
+				}
 				break;
 			case setPassword:
 				backAnimation(Status.verifyPhoneForRegister, card, card);
+				showSoftInputDelay(input1, animationBackIn.getDuration()
+						+ animationBackOut.getDuration());
 				break;
 			case resetPassword:
 				backAnimation(Status.verifyPhoneForResetPassword, card, card);
+				showSoftInputDelay(input1, animationBackIn.getDuration()
+						+ animationBackOut.getDuration());
 				break;
 			case welcome:
 			case start:
@@ -502,12 +688,23 @@ public class LoginActivity extends Activity implements OnClickListener,
 	public void onClick(View v) {
 		if (v.equals(loginButton)) {
 			nextAnimation(Status.loginUsePassword, card, loginOrRegister);
-			showSoftInputDelay(input1, animationNextIn.getDuration()
-					+ animationNextOut.getDuration());
+			if (app.config.lastLoginPhone != null
+					&& !app.config.lastLoginPhone.equals("")) {
+				showSoftInputDelay(input2, animationBackIn.getDuration()
+						+ animationBackOut.getDuration());
+			} else {
+				showSoftInputDelay(input1, animationBackIn.getDuration()
+						+ animationBackOut.getDuration());
+			}
 		} else if (v.equals(registerButton)) {
 			nextAnimation(Status.verifyPhoneForRegister, card, loginOrRegister);
-			showSoftInputDelay(input1, animationNextIn.getDuration()
-					+ animationNextOut.getDuration());
+			if (remainRegister == 0) {
+				showSoftInputDelay(input1, animationNextIn.getDuration()
+						+ animationNextOut.getDuration());
+			} else {
+				showSoftInputDelay(input2, animationNextIn.getDuration()
+						+ animationNextOut.getDuration());
+			}
 		} else if (v.equals(clearInput1)) {
 			input1.setText("");
 		} else if (v.equals(clearInput2)) {
@@ -522,10 +719,6 @@ public class LoginActivity extends Activity implements OnClickListener,
 					final String loginPass = input2.getText().toString();
 					if (loginPhone.equals("")) {
 						Alert.showMessage(getString(R.string.alert_text_phonenotnull));
-						View mCurrentFocus = getCurrentFocus();
-						if (mCurrentFocus != null) {
-							mCurrentFocus.clearFocus();
-						}
 						showSoftInput(input1);
 						return;
 					} else if (loginPass.equals("")) {
@@ -559,6 +752,7 @@ public class LoginActivity extends Activity implements OnClickListener,
 									public void modifyData(Data data) {
 										data.user.phone = loginPhone;
 										data.user.accessKey = accessKey;
+										app.config.lastLoginPhone = loginPhone;
 									}
 
 									@Override
@@ -607,7 +801,6 @@ public class LoginActivity extends Activity implements OnClickListener,
 							mLoginConnection.disConnection();
 						}
 					});
-
 					app.networkHandler.connection(mLoginConnection);
 				} else if (v.equals(leftBottomTextButton)) {
 					nextAnimation(Status.verifyPhoneForResetPassword, card,
@@ -616,17 +809,129 @@ public class LoginActivity extends Activity implements OnClickListener,
 							+ animationNextOut.getDuration());
 				} else if (v.equals(rightBottomTextButton)) {
 					nextAnimation(Status.verifyPhoneForLogin, card, card);
-					showSoftInputDelay(input1, animationNextIn.getDuration()
-							+ animationNextOut.getDuration());
+					if (remainLogin == 0) {
+						showSoftInputDelay(input1,
+								animationNextIn.getDuration()
+										+ animationNextOut.getDuration());
+					} else {
+						showSoftInputDelay(input2,
+								animationNextIn.getDuration()
+										+ animationNextOut.getDuration());
+					}
 				}
 				break;
 			case verifyPhoneForLogin:
 				if (v.equals(rightTopTextButton)) {
 					backAnimation(Status.loginUsePassword, card, card);
-					showSoftInputDelay(input1, animationBackIn.getDuration()
-							+ animationBackOut.getDuration());
+					if (app.config.lastLoginPhone != null
+							&& !app.config.lastLoginPhone.equals("")) {
+						showSoftInputDelay(input2,
+								animationBackIn.getDuration()
+										+ animationBackOut.getDuration());
+					} else {
+						showSoftInputDelay(input1,
+								animationBackIn.getDuration()
+										+ animationBackOut.getDuration());
+					}
+
 				} else if (v.equals(mainButton)) {
-					System.out.println("点击登陆了");
+					final String phone = input1.getText().toString();
+					final String code = input2.getText().toString();
+					Pattern p = Pattern
+							.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+					Matcher m = p.matcher(phone);
+					if (phone.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_phonenotnull));
+						showSoftInput(input1);
+						return;
+					} else if (!m.matches()) {
+						Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
+						showSoftInput(input1);
+						return;
+					} else if (code.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_codenotnull));
+						showSoftInput(input2);
+						return;
+					} else {
+						hideSoftInput();
+					}
+
+					final NetConnection mLoginConnection = new CommonNetConnection() {
+
+						@Override
+						protected void settings(Settings settings) {
+							settings.url = API.DOMAIN + API.ACCOUNT_VERIFYCODE;
+							Map<String, String> params = new HashMap<String, String>();
+							params.put("phone", phone);
+							params.put("code", code);
+							settings.params = params;
+						}
+
+						@Override
+						public void success(JSONObject jData) {
+							try {
+								final String accessKey = RSAUtils.decrypt(
+										app.config.pbKey0,
+										jData.getString("accessKey"));
+								app.dataHandler.exclude(new Modification() {
+									@Override
+									public void modifyData(Data data) {
+										data.user.phone = phone;
+										data.user.accessKey = accessKey;
+										app.config.lastLoginPhone = phone;
+									}
+
+									@Override
+									public void modifyUI() {
+										cancelRemain(Status.verifyPhoneForLogin);
+										Alert.removeLoading();
+										startActivity(new Intent(
+												LoginActivity.this,
+												MainActivity.class));
+										finish();
+									}
+								});
+							} catch (Exception e) {
+								Alert.removeLoading();
+							}
+						}
+
+						@Override
+						public void unSuccess(JSONObject jData) {
+							Alert.removeLoading();
+							try {
+								jData.getString(app
+										.getString(R.string.network_failed));
+								Alert.showMessage(jData
+										.getString(getString(R.string.network_failed)));
+							} catch (JSONException e) {
+							}
+							super.unSuccess(jData);
+						}
+
+						@Override
+						public void failed(int failedType) {
+							Alert.removeLoading();
+							if (!NetworkUtils.hasNetwork(app)) {
+								Alert.showMessage(getString(R.string.alert_text_nointernet));
+							} else if (failedType == FAILED_TIMEOUT) {
+								Alert.showMessage(getString(R.string.alert_text_nettimeout));
+							} else {
+								Alert.showMessage(getString(R.string.alert_text_neterror));
+							}
+							super.failed(failedType);
+						}
+					};
+
+					Alert.showLoading(new OnLoadingCancelListener() {
+
+						@Override
+						public void loadingCancel() {
+							mLoginConnection.disConnection();
+						}
+					});
+					app.networkHandler.connection(mLoginConnection);
+
 				} else if (v.equals(rightBottomTextButton)) {
 					final String phone = input1.getText().toString();
 					if (remainLogin != 0) {
@@ -641,13 +946,13 @@ public class LoginActivity extends Activity implements OnClickListener,
 						return;
 					} else if (!m.matches()) {
 						Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
-						input1.setText("");
 						showSoftInput(input1);
 						return;
 					} else {
 						hideSoftInput();
 					}
-					NetConnection mSendCodeConnection = new CommonNetConnection() {
+					loginPhone = phone;
+					final NetConnection mSendCodeConnection = new CommonNetConnection() {
 
 						@Override
 						protected void settings(Settings settings) {
@@ -661,47 +966,430 @@ public class LoginActivity extends Activity implements OnClickListener,
 						@Override
 						public void success(JSONObject jData) {
 							startRemain(Status.verifyPhoneForLogin);
+							Alert.removeLoading();
+							handler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									input2.requestFocus();
+								}
+							});
 						}
 
 						@Override
 						public void unSuccess(JSONObject jData) {
 							cancelRemain(Status.verifyPhoneForLogin);
+							try {
+								jData.getString(app
+										.getString(R.string.network_failed));
+								Alert.showMessage(jData
+										.getString(getString(R.string.network_failed)));
+							} catch (JSONException e) {
+							}
+							Alert.removeLoading();
 							super.unSuccess(jData);
 						}
 
 						@Override
 						public void failed(int failedType) {
 							cancelRemain(Status.verifyPhoneForLogin);
+							if (!NetworkUtils.hasNetwork(app)) {
+								Alert.showMessage(getString(R.string.alert_text_nointernet));
+							} else if (failedType == FAILED_TIMEOUT) {
+								Alert.showMessage(getString(R.string.alert_text_nettimeout));
+							} else {
+								Alert.showMessage(getString(R.string.alert_text_neterror));
+							}
+							Alert.removeLoading();
 							super.failed(failedType);
 						}
 					};
-
+					Alert.showLoading(new OnLoadingCancelListener() {
+						@Override
+						public void loadingCancel() {
+							mSendCodeConnection.disConnection();
+							cancelRemain(Status.verifyPhoneForLogin);
+						}
+					});
 					app.networkHandler.connection(mSendCodeConnection);
-					System.out.println("发送验证码++++++");
 				}
 				break;
 			case verifyPhoneForRegister:
 				if (v.equals(rightTopTextButton)) {
 					backAnimation(Status.loginOrRegister, loginOrRegister, card);
 				} else if (v.equals(mainButton)) {
-					nextAnimation(Status.setPassword, card, card);
-					showSoftInputDelay(input1, animationNextIn.getDuration()
-							+ animationNextOut.getDuration());
+					final String phone = input1.getText().toString();
+					final String code = input2.getText().toString();
+					Pattern p = Pattern
+							.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+					Matcher m = p.matcher(phone);
+					if (phone.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_phonenotnull));
+						showSoftInput(input1);
+						return;
+					} else if (!m.matches()) {
+						Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
+						showSoftInput(input1);
+						return;
+					} else if (code.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_codenotnull));
+						showSoftInput(input2);
+						return;
+					} else {
+						hideSoftInput();
+					}
+
+					final NetConnection registerConnection = new CommonNetConnection() {
+
+						@Override
+						protected void settings(Settings settings) {
+							settings.url = API.DOMAIN + API.ACCOUNT_VERIFYCODE;
+							Map<String, String> params = new HashMap<String, String>();
+							params.put("phone", phone);
+							params.put("code", code);
+							settings.params = params;
+						}
+
+						@Override
+						public void success(JSONObject jData) {
+							try {
+								final String accessKey = RSAUtils.decrypt(
+										app.config.pbKey0,
+										jData.getString("accessKey"));
+								app.dataHandler.exclude(new Modification() {
+									@Override
+									public void modifyData(Data data) {
+										data.user.phone = phone;
+										data.user.accessKey = accessKey;
+									}
+
+									@Override
+									public void modifyUI() {
+										cancelRemain(Status.verifyPhoneForRegister);
+										Alert.removeLoading();
+										nextAnimation(Status.setPassword, card,
+												card);
+										showSoftInputDelay(
+												input1,
+												animationNextIn.getDuration()
+														+ animationNextOut
+																.getDuration());
+									}
+								});
+							} catch (Exception e) {
+								Alert.removeLoading();
+							}
+						}
+
+						@Override
+						public void unSuccess(JSONObject jData) {
+							Alert.removeLoading();
+							try {
+								jData.getString(app
+										.getString(R.string.network_failed));
+								Alert.showMessage(jData
+										.getString(getString(R.string.network_failed)));
+							} catch (JSONException e) {
+							}
+							super.unSuccess(jData);
+						}
+
+						@Override
+						public void failed(int failedType) {
+							Alert.removeLoading();
+							if (!NetworkUtils.hasNetwork(app)) {
+								Alert.showMessage(getString(R.string.alert_text_nointernet));
+							} else if (failedType == FAILED_TIMEOUT) {
+								Alert.showMessage(getString(R.string.alert_text_nettimeout));
+							} else {
+								Alert.showMessage(getString(R.string.alert_text_neterror));
+							}
+							super.failed(failedType);
+						}
+					};
+
+					Alert.showLoading(new OnLoadingCancelListener() {
+
+						@Override
+						public void loadingCancel() {
+							registerConnection.disConnection();
+						}
+					});
+					app.networkHandler.connection(registerConnection);
 				} else if (v.equals(rightBottomTextButton)) {
-					System.out.println("发送验证码");
+					final String phone = input1.getText().toString();
+					if (remainRegister != 0) {
+						return;
+					}
+					Pattern p = Pattern
+							.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+					Matcher m = p.matcher(phone);
+					if (phone.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_phonenotnull));
+						showSoftInput(input1);
+						return;
+					} else if (!m.matches()) {
+						Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
+						showSoftInput(input1);
+						return;
+					} else {
+						hideSoftInput();
+					}
+					registerPhone = phone;
+					final NetConnection mSendCodeConnection = new CommonNetConnection() {
+
+						@Override
+						protected void settings(Settings settings) {
+							settings.url = API.DOMAIN + API.ACCOUNT_VERIFYPHONE;
+							Map<String, String> params = new HashMap<String, String>();
+							params.put("phone", phone);
+							params.put("usage", "register");
+							settings.params = params;
+						}
+
+						@Override
+						public void success(JSONObject jData) {
+							startRemain(Status.verifyPhoneForRegister);
+							Alert.removeLoading();
+							handler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									input2.requestFocus();
+								}
+							});
+						}
+
+						@Override
+						public void unSuccess(JSONObject jData) {
+							cancelRemain(Status.verifyPhoneForRegister);
+							try {
+								jData.getString(app
+										.getString(R.string.network_failed));
+								Alert.showMessage(jData
+										.getString(getString(R.string.network_failed)));
+							} catch (JSONException e) {
+							}
+							Alert.removeLoading();
+							super.unSuccess(jData);
+						}
+
+						@Override
+						public void failed(int failedType) {
+							cancelRemain(Status.verifyPhoneForRegister);
+							if (!NetworkUtils.hasNetwork(app)) {
+								Alert.showMessage(getString(R.string.alert_text_nointernet));
+							} else if (failedType == FAILED_TIMEOUT) {
+								Alert.showMessage(getString(R.string.alert_text_nettimeout));
+							} else {
+								Alert.showMessage(getString(R.string.alert_text_neterror));
+							}
+							Alert.removeLoading();
+							super.failed(failedType);
+						}
+					};
+					Alert.showLoading(new OnLoadingCancelListener() {
+						@Override
+						public void loadingCancel() {
+							mSendCodeConnection.disConnection();
+							cancelRemain(Status.verifyPhoneForRegister);
+						}
+					});
+					app.networkHandler.connection(mSendCodeConnection);
 				}
 				break;
 			case verifyPhoneForResetPassword:
 				if (v.equals(rightTopTextButton)) {
 					backAnimation(Status.loginUsePassword, card, card);
-					showSoftInputDelay(input1, animationBackIn.getDuration()
-							+ animationBackOut.getDuration());
+					if (app.config.lastLoginPhone != null
+							&& !app.config.lastLoginPhone.equals("")) {
+						showSoftInputDelay(input2,
+								animationBackIn.getDuration()
+										+ animationBackOut.getDuration());
+					} else {
+						showSoftInputDelay(input1,
+								animationBackIn.getDuration()
+										+ animationBackOut.getDuration());
+					}
 				} else if (v.equals(mainButton)) {
-					nextAnimation(Status.resetPassword, card, card);
-					showSoftInputDelay(input1, animationNextIn.getDuration()
-							+ animationNextOut.getDuration());
+					final String phone = input1.getText().toString();
+					final String code = input2.getText().toString();
+					Pattern p = Pattern
+							.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+					Matcher m = p.matcher(phone);
+					if (phone.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_phonenotnull));
+						showSoftInput(input1);
+						return;
+					} else if (!m.matches()) {
+						Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
+						showSoftInput(input1);
+						return;
+					} else if (code.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_codenotnull));
+						showSoftInput(input2);
+						return;
+					} else {
+						hideSoftInput();
+					}
+
+					final NetConnection resetPasswordConnection = new CommonNetConnection() {
+
+						@Override
+						protected void settings(Settings settings) {
+							settings.url = API.DOMAIN + API.ACCOUNT_VERIFYCODE;
+							Map<String, String> params = new HashMap<String, String>();
+							params.put("phone", phone);
+							params.put("code", code);
+							settings.params = params;
+						}
+
+						@Override
+						public void success(JSONObject jData) {
+							try {
+								final String accessKey = RSAUtils.decrypt(
+										app.config.pbKey0,
+										jData.getString("accessKey"));
+								app.dataHandler.exclude(new Modification() {
+									@Override
+									public void modifyData(Data data) {
+										data.user.phone = phone;
+										data.user.accessKey = accessKey;
+									}
+
+									@Override
+									public void modifyUI() {
+										cancelRemain(Status.verifyPhoneForResetPassword);
+										Alert.removeLoading();
+										nextAnimation(Status.resetPassword,
+												card, card);
+										showSoftInputDelay(
+												input1,
+												animationNextIn.getDuration()
+														+ animationNextOut
+																.getDuration());
+									}
+								});
+							} catch (Exception e) {
+								Alert.removeLoading();
+							}
+						}
+
+						@Override
+						public void unSuccess(JSONObject jData) {
+							Alert.removeLoading();
+							try {
+								jData.getString(app
+										.getString(R.string.network_failed));
+								Alert.showMessage(jData
+										.getString(getString(R.string.network_failed)));
+							} catch (JSONException e) {
+							}
+							super.unSuccess(jData);
+						}
+
+						@Override
+						public void failed(int failedType) {
+							Alert.removeLoading();
+							if (!NetworkUtils.hasNetwork(app)) {
+								Alert.showMessage(getString(R.string.alert_text_nointernet));
+							} else if (failedType == FAILED_TIMEOUT) {
+								Alert.showMessage(getString(R.string.alert_text_nettimeout));
+							} else {
+								Alert.showMessage(getString(R.string.alert_text_neterror));
+							}
+							super.failed(failedType);
+						}
+					};
+
+					Alert.showLoading(new OnLoadingCancelListener() {
+
+						@Override
+						public void loadingCancel() {
+							resetPasswordConnection.disConnection();
+						}
+					});
+					app.networkHandler.connection(resetPasswordConnection);
 				} else if (v.equals(rightBottomTextButton)) {
-					System.out.println("发送验证码");
+					final String phone = input1.getText().toString();
+					if (remainResetPassword != 0) {
+						return;
+					}
+					Pattern p = Pattern
+							.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
+					Matcher m = p.matcher(phone);
+					if (phone.equals("")) {
+						Alert.showMessage(getString(R.string.alert_text_phonenotnull));
+						showSoftInput(input1);
+						return;
+					} else if (!m.matches()) {
+						Alert.showMessage(getString(R.string.alert_text_phoneformaterror));
+						showSoftInput(input1);
+						return;
+					} else {
+						hideSoftInput();
+					}
+					resetPasswordPhone = phone;
+					final NetConnection mSendCodeConnection = new CommonNetConnection() {
+
+						@Override
+						protected void settings(Settings settings) {
+							settings.url = API.DOMAIN + API.ACCOUNT_VERIFYPHONE;
+							Map<String, String> params = new HashMap<String, String>();
+							params.put("phone", phone);
+							params.put("usage", "login");
+							settings.params = params;
+						}
+
+						@Override
+						public void success(JSONObject jData) {
+							startRemain(Status.verifyPhoneForResetPassword);
+							Alert.removeLoading();
+							handler.post(new Runnable() {
+
+								@Override
+								public void run() {
+									input2.requestFocus();
+								}
+							});
+						}
+
+						@Override
+						public void unSuccess(JSONObject jData) {
+							cancelRemain(Status.verifyPhoneForResetPassword);
+							try {
+								jData.getString(app
+										.getString(R.string.network_failed));
+								Alert.showMessage(jData
+										.getString(getString(R.string.network_failed)));
+							} catch (JSONException e) {
+							}
+							Alert.removeLoading();
+							super.unSuccess(jData);
+						}
+
+						@Override
+						public void failed(int failedType) {
+							cancelRemain(Status.verifyPhoneForResetPassword);
+							if (!NetworkUtils.hasNetwork(app)) {
+								Alert.showMessage(getString(R.string.alert_text_nointernet));
+							} else if (failedType == FAILED_TIMEOUT) {
+								Alert.showMessage(getString(R.string.alert_text_nettimeout));
+							} else {
+								Alert.showMessage(getString(R.string.alert_text_neterror));
+							}
+							Alert.removeLoading();
+							super.failed(failedType);
+						}
+					};
+					Alert.showLoading(new OnLoadingCancelListener() {
+						@Override
+						public void loadingCancel() {
+							mSendCodeConnection.disConnection();
+							cancelRemain(Status.verifyPhoneForResetPassword);
+						}
+					});
+					app.networkHandler.connection(mSendCodeConnection);
 				}
 				break;
 			case setPassword:
@@ -710,7 +1398,24 @@ public class LoginActivity extends Activity implements OnClickListener,
 					showSoftInputDelay(input1, animationBackIn.getDuration()
 							+ animationBackOut.getDuration());
 				} else if (v.equals(mainButton)) {
-					System.out.println("点击完成了");
+					String password = input1.getText().toString();
+					String password2 = input2.getText().toString();
+					if (password.equals("")) {
+						Alert.showMessage("请输入密码");
+						showSoftInput(input1);
+					} else if (password.length() < 6) {
+						Alert.showMessage(getString(R.string.alert_text_passlength));
+						showSoftInput(input1);
+					} else if (password2.equals("")) {
+						Alert.showMessage("请确认密码");
+						showSoftInput(input2);
+					} else if (!password.equals(password2)) {
+						Alert.showMessage("两次输入的密码不一致");
+						showSoftInput(input1);
+					} else {
+						hideSoftInput();
+
+					}
 				}
 				break;
 			case resetPassword:
@@ -720,7 +1425,24 @@ public class LoginActivity extends Activity implements OnClickListener,
 					showSoftInputDelay(input1, animationBackIn.getDuration()
 							+ animationBackOut.getDuration());
 				} else if (v.equals(mainButton)) {
-					System.out.println("点击完成了");
+					String password = input1.getText().toString();
+					String password2 = input2.getText().toString();
+					if (password.equals("")) {
+						Alert.showMessage("请输入密码");
+						showSoftInput(input1);
+					} else if (password.length() < 6) {
+						Alert.showMessage(getString(R.string.alert_text_passlength));
+						showSoftInput(input1);
+					} else if (password2.equals("")) {
+						Alert.showMessage("请确认密码");
+						showSoftInput(input2);
+					} else if (!password.equals(password2)) {
+						Alert.showMessage("两次输入的密码不一致");
+						showSoftInput(input1);
+					} else {
+						hideSoftInput();
+
+					}
 				}
 				break;
 			default:
