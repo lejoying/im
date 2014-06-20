@@ -80,7 +80,6 @@ public class GroupFragment extends BaseFragment {
 	public View onCreateView(android.view.LayoutInflater inflater,
 			android.view.ViewGroup container,
 			android.os.Bundle savedInstanceState) {
-		if (mContentView == null) {
 			mInflater = inflater;
 			density = getActivity().getResources().getDisplayMetrics().density;
 			screenHeight = getScreenHeight();
@@ -122,7 +121,6 @@ public class GroupFragment extends BaseFragment {
 			initEvent();
 
 			notifyViews();
-		}
 		return mContentView;
 	}
 

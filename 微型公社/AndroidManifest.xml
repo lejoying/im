@@ -49,7 +49,8 @@
             android:name="com.lejoying.wxgs.activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" >
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.GroupInformationActivity"
@@ -94,11 +95,6 @@
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.MapStorageDirectoryActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" >
-        </activity>
-        <activity
-            android:name="com.lejoying.wxgs.activity.ReleaseOptionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>

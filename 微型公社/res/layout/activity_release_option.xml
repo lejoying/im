@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#F2000000"
     tools:context=".ReleaseOptionActivity" >
-    
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-             android:clickable="false"
+            android:clickable="false"
             android:orientation="horizontal" >
 
             <RelativeLayout
@@ -23,22 +23,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:layout_margin="22dp"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="22dp" >
 
                 <RelativeLayout
                     android:id="@+id/rl_imageandtext"
                     android:layout_width="59dp"
                     android:layout_height="59dp"
-                    android:clickable="false"
-                    android:background="@drawable/reloption_bk_nor" >
+                    android:background="@drawable/reloption_bk_nor"
+                    android:clickable="false" >
 
                     <ImageView
                         android:layout_width="31dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:clickable="false"
-                         android:src="@drawable/reloption_camer"/>
+                        android:src="@drawable/reloption_camer" />
                 </RelativeLayout>
 
                 <TextView
@@ -51,27 +51,28 @@
                     android:textColor="#fff"
                     android:textSize="16sp" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/reloption_rl_voice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="22dp"
                 android:clickable="true"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="22dp" >
 
                 <RelativeLayout
                     android:id="@+id/rl_voice"
                     android:layout_width="59dp"
                     android:layout_height="59dp"
-                    android:clickable="false"
-                    android:background="@drawable/reloption_bk_nor" >
+                    android:background="@drawable/reloption_bk_nor"
+                    android:clickable="false" >
 
                     <ImageView
                         android:layout_width="23dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:clickable="false"
-                         android:src="@drawable/reloption_voice"/>
+                        android:src="@drawable/reloption_voice" />
                 </RelativeLayout>
 
                 <TextView
@@ -84,27 +85,28 @@
                     android:textColor="#fff"
                     android:textSize="16sp" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/reloption_rl_vote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="22dp"
                 android:clickable="true"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="22dp" >
 
                 <RelativeLayout
                     android:id="@+id/rl_vote"
                     android:layout_width="59dp"
                     android:layout_height="59dp"
-                    android:clickable="false"
-                    android:background="@drawable/reloption_bk_nor" >
+                    android:background="@drawable/reloption_bk_nor"
+                    android:clickable="false" >
 
                     <ImageView
                         android:layout_width="26dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:clickable="false"
-                         android:src="@drawable/reloption_vote"/>
+                        android:src="@drawable/reloption_vote" />
                 </RelativeLayout>
 
                 <TextView
@@ -122,29 +124,30 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-             android:clickable="false"
+            android:clickable="false"
             android:orientation="horizontal" >
+
             <RelativeLayout
                 android:id="@+id/reloption_rl_activity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="22dp"
                 android:clickable="true"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="22dp" >
 
                 <RelativeLayout
                     android:id="@+id/rl_activity"
                     android:layout_width="59dp"
                     android:layout_height="59dp"
-                    android:clickable="false"
-                    android:background="@drawable/reloption_bk_nor" >
+                    android:background="@drawable/reloption_bk_nor"
+                    android:clickable="false" >
 
                     <ImageView
                         android:layout_width="26dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:clickable="false"
-                         android:src="@drawable/reloption_activity"/>
+                        android:src="@drawable/reloption_activity" />
                 </RelativeLayout>
 
                 <TextView
@@ -157,27 +160,28 @@
                     android:textColor="#fff"
                     android:textSize="16sp" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/reloption_rl_commodity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="22dp"
                 android:clickable="true"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="22dp" >
 
                 <RelativeLayout
                     android:id="@+id/rl_commodity"
                     android:layout_width="59dp"
                     android:layout_height="59dp"
-                    android:clickable="false"
-                    android:background="@drawable/reloption_bk_nor" >
+                    android:background="@drawable/reloption_bk_nor"
+                    android:clickable="false" >
 
                     <ImageView
                         android:layout_width="23dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:clickable="false"
-                         android:src="@drawable/reloption_commodity"/>
+                        android:src="@drawable/reloption_commodity" />
                 </RelativeLayout>
 
                 <TextView
@@ -190,27 +194,28 @@
                     android:textColor="#fff"
                     android:textSize="16sp" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/reloption_rl_service"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="22dp"
                 android:clickable="true"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="22dp" >
 
                 <RelativeLayout
                     android:id="@+id/rl_service"
                     android:layout_width="59dp"
                     android:layout_height="59dp"
-                    android:clickable="false"
-                    android:background="@drawable/reloption_bk_nor" >
+                    android:background="@drawable/reloption_bk_nor"
+                    android:clickable="false" >
 
                     <ImageView
                         android:layout_width="21dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:clickable="false"
-                         android:src="@drawable/reloption_service"/>
+                        android:src="@drawable/reloption_service" />
                 </RelativeLayout>
 
                 <TextView

@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:fillViewport="true"
             android:orientation="vertical"
-            android:scrollbars="vertical" >
+            android:scrollbars="none" >
 
             <EditText
                 android:id="@+id/release_et_release"

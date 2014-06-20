@@ -4,7 +4,6 @@ package com.lejoying.wxgs.activity.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.LinearLayout;
 
 @SuppressLint("NewApi")

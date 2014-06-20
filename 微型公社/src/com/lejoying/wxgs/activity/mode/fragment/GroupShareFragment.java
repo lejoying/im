@@ -22,7 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.ReleaseOptionActivity;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
@@ -119,7 +119,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.rl_gshare_send:
-			startActivity(new Intent(getActivity(), ReleaseOptionActivity.class));
+			mMainModeManager.showNext(mMainModeManager.mReleaseOptionFragment);
 			break;
 
 		default:
