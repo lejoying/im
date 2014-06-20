@@ -195,14 +195,6 @@ public class NetworkHandler {
 			if (!connection.isDisconnected) {
 				connection.connectionCreated(httpURLConnection);
 				connection.httpURLConnection = httpURLConnection;
-				// if (connection.settings.url.equals(API.DOMAIN +
-				// API.SESSION_EVENT)) {
-				// System.out.println("im con");
-				// }
-				// if (connection.settings.url.equals(API.DOMAIN
-				// + API.SQUARE_GETSQUAREMESSAGE)) {
-				// System.out.println("square con");
-				// }
 				int requestCode = httpURLConnection.getResponseCode();
 				if (requestCode == HttpURLConnection.HTTP_OK) {
 					InputStream is = httpURLConnection.getInputStream();
@@ -232,13 +224,6 @@ public class NetworkHandler {
 				}
 			}
 		}
-		// if (connection.settings.url.equals(API.DOMAIN + API.SESSION_EVENT)) {
-		// System.out.println("im ++");
-		// }
-		// if (connection.settings.url.equals(API.DOMAIN
-		// + API.SQUARE_GETSQUAREMESSAGE)) {
-		// System.out.println("square ++");
-		// }
 		return connection.isCirculating;
 	}
 
@@ -264,34 +249,8 @@ public class NetworkHandler {
 						netConnection.isCirculating = netConnection.settings.circulating;
 						if (netConnection.settings.url != null
 								&& !netConnection.settings.url.equals("")) {
-							// if (netConnection.settings.url.equals(API.DOMAIN
-							// + API.SESSION_EVENT)) {
-							// System.out.println("im start");
-							// }
-							// if (netConnection.settings.url.equals(API.DOMAIN
-							// + API.SQUARE_GETSQUAREMESSAGE)) {
-							// System.out.println("square start");
-							// }
-							while (startConnection(netConnection)) {
-								// if (netConnection.settings.url
-								// .equals(API.DOMAIN + API.SESSION_EVENT)) {
-								// System.out.println("im c");
-								// }
-								// if (netConnection.settings.url
-								// .equals(API.DOMAIN
-								// + API.SQUARE_GETSQUAREMESSAGE)) {
-								// System.out.println("square c");
-								// }
-							}
+							while (startConnection(netConnection)) 
 							;
-							// if (netConnection.settings.url.equals(API.DOMAIN
-							// + API.SESSION_EVENT)) {
-							// System.out.println("im end");
-							// }
-							// if (netConnection.settings.url.equals(API.DOMAIN
-							// + API.SQUARE_GETSQUAREMESSAGE)) {
-							// System.out.println("square end");
-							// }
 						}
 					}
 				} catch (InterruptedException e) {
