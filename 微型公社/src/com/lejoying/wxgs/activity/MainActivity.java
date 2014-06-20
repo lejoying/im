@@ -1,6 +1,5 @@
 ﻿package com.lejoying.wxgs.activity;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +40,7 @@ import com.lejoying.wxgs.activity.utils.NotificationUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.Data;
-import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
-import com.lejoying.wxgs.app.parser.StreamParser;
 import com.lejoying.wxgs.app.service.PushService;
 
 public class MainActivity extends BaseActivity {
@@ -172,9 +168,9 @@ public class MainActivity extends BaseActivity {
 		if (mMainMode == null) {
 			mMainMode = new MainModeManager(this);
 		}
-		if (mLoginMode == null) {
-			mLoginMode = new LoginModeManager(this);
-		}
+		// if (mLoginMode == null) {
+		// mLoginMode = new LoginModeManager(this);
+		// }
 	}
 
 	public void switchMode() {
@@ -198,45 +194,11 @@ public class MainActivity extends BaseActivity {
 			LocationUtils.updateLocation();
 			if (!mode.equals(MODE_MAIN)) {
 				mode = MODE_MAIN;
-				mLoginMode.release();
 				mMainMode.initialize();
 				initEvent();
 				ll_menu_app.setVisibility(View.VISIBLE);
 				mMainMode.show(mMainMode.mSquareFragment);
 				PushService.startIMLongPull(this);
-
-				if (app.data.isClear) {
-					app.dataHandler.exclude(new Modification() {
-						@Override
-						public void modifyData(Data data) {
-							try {
-								Data localData = (Data) StreamParser
-										.parseToObject(openFileInput(data.user.phone));
-								if (localData != null) {
-									data.user.head = localData.user.head;
-									data.user.nickName = localData.user.nickName;
-									data.user.mainBusiness = localData.user.mainBusiness;
-									data.circles = localData.circles;
-									data.friends = localData.friends;
-									data.groups = localData.groups;
-									data.groupFriends = localData.groupFriends;
-									data.lastChatFriends = localData.lastChatFriends;
-									data.newFriends = localData.newFriends;
-									data.currentSquare = localData.currentSquare;
-									data.squareFlags = localData.squareFlags;
-									data.squareMessages = localData.squareMessages;
-									data.squareMessagesClassify = localData.squareMessagesClassify;
-									data.squareMessagesMap = localData.squareMessagesMap;
-									data.squareCollects = localData.squareCollects;
-								}
-							} catch (FileNotFoundException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-
-					});
-				}
 
 				DataUtil.getUser(new GetDataListener() {
 					@Override

@@ -43,7 +43,7 @@
         <item name="android:taskCloseExitAnimation">@anim/translate_finish</item>
     </style>
 
-    <style name="LoginActivityAnimation" parent="@android:style/Animation.Activity">
+    <style name="CommonAnimation2" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/new_translate_new</item>
         <item name="android:activityOpenExitAnimation">@anim/new_translate_out</item>
         <item name="android:activityCloseEnterAnimation">@anim/new_translate_back</item>
@@ -61,11 +61,7 @@
     </style>
 
     <style name="CommonStyle" parent="android:Theme.NoTitleBar">
-        <item name="android:windowAnimationStyle">@style/CommonAnimation</item>
-    </style>
-
-    <style name="LoginActivityStyle" parent="android:Theme.NoTitleBar">
-        <item name="android:windowAnimationStyle">@style/LoginActivityAnimation</item>
+        <item name="android:windowAnimationStyle">@style/CommonAnimation2</item>
     </style>
 
     <style name="AlertInputDialog" parent="android:Theme.Dialog">

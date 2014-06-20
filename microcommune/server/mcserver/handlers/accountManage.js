@@ -1,4 +1,4 @@
-var serverSetting = root.globaldata.serverSetting;
+﻿var serverSetting = root.globaldata.serverSetting;
 var accountManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
@@ -619,7 +619,7 @@ accountManage.modify = function (data, response) {
                             return;
                         }
                     }
-                    accountData.password = account.password;
+                    accountData.password = account.password.toLowerCase();
                     if (accountData.status == "init") {
                         accountData.ID = ++accountID;
                         accountData.status = "active";

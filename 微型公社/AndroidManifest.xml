@@ -33,7 +33,6 @@
             android:name="com.lejoying.wxgs.activity.LaunchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
-            
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.LoginActivity"
@@ -48,6 +47,12 @@
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle" >
+        </activity>
+        <activity
+            android:name="com.lejoying.wxgs.activity.GroupInformationActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
@@ -92,10 +97,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>
-	<activity
+        <activity
             android:name="com.lejoying.wxgs.activity.ReleaseOptionActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle"  >
+            android:theme="@style/CommonStyle" >
         </activity>
 
         <service android:name="com.lejoying.wxgs.app.service.PushService" >

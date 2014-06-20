@@ -94,6 +94,14 @@ public class LoginActivity extends Activity implements OnClickListener,
 		Intent intent = getIntent();
 		if (intent != null
 				&& "ReLogin".equals(intent.getStringExtra("operation"))) {
+			app.dataHandler.exclude(new Modification() {
+
+				@Override
+				public void modifyData(Data data) {
+					data.clear();
+					data.isClear = false;
+				}
+			});
 			initView();
 			initEvent();
 			status = Status.loginUsePassword;
@@ -688,7 +696,8 @@ public class LoginActivity extends Activity implements OnClickListener,
 												input1,
 												animationBackIn.getDuration()
 														+ animationBackOut
-																.getDuration() + 20);
+																.getDuration()
+														+ 20);
 									}
 								});
 							}
@@ -719,14 +728,16 @@ public class LoginActivity extends Activity implements OnClickListener,
 													animationBackIn
 															.getDuration()
 															+ animationBackOut
-																	.getDuration() + 20);
+																	.getDuration()
+															+ 20);
 										} else {
 											showSoftInputDelay(
 													input1,
 													animationBackIn
 															.getDuration()
 															+ animationBackOut
-																	.getDuration() + 20);
+																	.getDuration()
+															+ 20);
 										}
 									}
 								});
@@ -799,9 +810,11 @@ public class LoginActivity extends Activity implements OnClickListener,
 							settings.url = API.DOMAIN + API.ACCOUNT_AUTH;
 							Map<String, String> params = new HashMap<String, String>();
 							params.put("phone", loginPhone);
-							params.put("password", app.mSHA1
-									.getDigestOfString(loginPass.getBytes()));
+							String passwd = app.mSHA1
+									.getDigestOfString(loginPass.getBytes());
+							params.put("password", passwd);
 							settings.params = params;
+							System.out.println(passwd);
 						}
 
 						@Override
@@ -1140,7 +1153,8 @@ public class LoginActivity extends Activity implements OnClickListener,
 												input1,
 												animationNextIn.getDuration()
 														+ animationNextOut
-																.getDuration() + 20);
+																.getDuration()
+														+ 20);
 									}
 								});
 							} catch (Exception e) {
@@ -1335,7 +1349,8 @@ public class LoginActivity extends Activity implements OnClickListener,
 												input1,
 												animationNextIn.getDuration()
 														+ animationNextOut
-																.getDuration() + 20);
+																.getDuration()
+														+ 20);
 									}
 								});
 							} catch (Exception e) {
@@ -1490,7 +1505,8 @@ public class LoginActivity extends Activity implements OnClickListener,
 																	animationBackIn
 																			.getDuration()
 																			+ animationBackOut
-																					.getDuration() + 20);
+																					.getDuration()
+																			+ 20);
 														}
 													});
 										}
@@ -1509,7 +1525,7 @@ public class LoginActivity extends Activity implements OnClickListener,
 						showSoftInput(input2);
 					} else if (!password.equals(password2)) {
 						Alert.showMessage("两次输入的密码不一致");
-						showSoftInput(input1);
+						showSoftInput(input2);
 					} else {
 						hideSoftInput();
 						final NetConnection mSetPass = new CommonNetConnection() {
@@ -1604,14 +1620,16 @@ public class LoginActivity extends Activity implements OnClickListener,
 																		animationBackIn
 																				.getDuration()
 																				+ animationBackOut
-																						.getDuration() + 20);
+																						.getDuration()
+																				+ 20);
 															} else {
 																showSoftInputDelay(
 																		input1,
 																		animationBackIn
 																				.getDuration()
 																				+ animationBackOut
-																						.getDuration() + 20);
+																						.getDuration()
+																				+ 20);
 															}
 														}
 													});
@@ -1631,7 +1649,7 @@ public class LoginActivity extends Activity implements OnClickListener,
 						showSoftInput(input2);
 					} else if (!password.equals(password2)) {
 						Alert.showMessage("两次输入的密码不一致");
-						showSoftInput(input1);
+						showSoftInput(input2);
 					} else {
 						hideSoftInput();
 
@@ -1643,18 +1661,17 @@ public class LoginActivity extends Activity implements OnClickListener,
 								Map<String, String> params = new HashMap<String, String>();
 								params.put("phone", app.data.user.phone);
 								params.put("accessKey", app.data.user.accessKey);
-								params.put(
-										"account",
-										"{\"password\":\""
-												+ app.mSHA1
-														.getDigestOfString(password
-																.getBytes())
-												+ "\"}");
+								String passwd = app.mSHA1
+										.getDigestOfString(password.getBytes());
+								params.put("account", "{\"password\":\""
+										+ passwd + "\"}");
 								settings.params = params;
+								System.out.println(passwd);
 							}
 
 							@Override
 							public void success(JSONObject jData) {
+								System.out.println(jData);
 								app.dataHandler.exclude(new Modification() {
 									@Override
 									public void modifyData(Data data) {
