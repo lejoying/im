@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/back" />
         </RelativeLayout>
 
@@ -42,6 +42,38 @@
                 android:textSize="18sp" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/sl_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/release_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="#0000"
+            android:hint="输入标题... ..."
+            android:textColor="#fff"
+            android:textSize="16sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:id="@+id/release_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/bottom_bar"
@@ -74,6 +106,7 @@
             android:background="#51000000" >
 
             <RelativeLayout
+                android:id="@+id/rl_sync"
                 android:layout_width="103dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

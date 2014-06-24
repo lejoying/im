@@ -24,6 +24,7 @@ import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.mode.fragment.NewFriendsFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ReleaseImageAndTextFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ReleaseOptionFragment;
+import com.lejoying.wxgs.activity.mode.fragment.ReleaseSelectImageFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ReleaseVoiceFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ReleaseVoteFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
@@ -61,6 +62,7 @@ public class MainModeManager extends BaseModeManager {
 	public ReleaseImageAndTextFragment mReleaseImageAndTextFragment;
 	public ReleaseVoiceFragment mReleaseVoiceFragment;
 	public ReleaseVoteFragment mReleaseVoteFragment;
+	public ReleaseSelectImageFragment mReleaseSelectImageFragment;
 
 	public static List<String[]> faceNamesList;
 
@@ -118,6 +120,8 @@ public class MainModeManager extends BaseModeManager {
 			mReleaseVoiceFragment.setMode(this);
 			mReleaseVoteFragment = new ReleaseVoteFragment();
 			mReleaseVoteFragment.setMode(this);
+			mReleaseSelectImageFragment=new ReleaseSelectImageFragment();
+			mReleaseSelectImageFragment.setMode(this);
 			initFace();
 		}
 	}

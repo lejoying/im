@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
@@ -22,7 +21,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
