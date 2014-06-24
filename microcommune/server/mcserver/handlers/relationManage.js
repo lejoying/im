@@ -478,9 +478,9 @@ relationManage.getcirclesandfriends = function (data, response) {
                             friendStatus: rData.friendStatus
                         };
 
-                        if(rData.alias!=null){
+                        if (rData.alias != null) {
                             var alias = JSON.parse(rData.alias);
-                            if(alias[account.phone]!=null){
+                            if (alias[account.phone] != null) {
                                 account.alias = alias[account.phone];
                             }
                         }
@@ -774,6 +774,11 @@ relationManage.addfriendagree = function (data, response) {
             };
             db.query(query, params, function (error, results) {
                 if (error) {
+                    response.write(JSON.stringify({
+                        "提示信息": "拒绝失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
                     console.log(error);
                     return;
                 } else if (results.length == 0) {
@@ -801,6 +806,11 @@ relationManage.addfriendagree = function (data, response) {
             };
             db.query(query, params, function (error, results) {
                 if (error) {
+                    response.write(JSON.stringify({
+                        "提示信息": "拒绝失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
                     console.log(error);
                     return;
                 } else if (results.length == 0) {
@@ -890,9 +900,9 @@ relationManage.modifyalias = function (data, response) {
     var friend = data.friend;
     var friendAlias = data.alias;
     var arr;
-    if(friendAlias==""){
+    if (friendAlias == "") {
         arr = [phone, friend];
-    }else{
+    } else {
         arr = [phone, friend, friendAlias];
     }
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
@@ -915,7 +925,7 @@ relationManage.modifyalias = function (data, response) {
                     "失败原因": "数据异常"
                 }));
                 response.end();
-                console.error(error+"modifyAlias");
+                console.error(error + "modifyAlias");
                 return;
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
@@ -927,20 +937,20 @@ relationManage.modifyalias = function (data, response) {
                 var rNode = results.pop().r;
                 var rData = rNode.data;
                 var alias = {};
-                if(rData.alias!=null){
+                if (rData.alias != null) {
                     alias = JSON.parse(rData.alias);
                 }
-                if(friendAlias == ""){
-                    if(alias[friend]!=null){
+                if (friendAlias == "") {
+                    if (alias[friend] != null) {
                         delete alias[friend];
                     }
-                }else{
+                } else {
                     alias[friend] = friendAlias;
                 }
                 rData.alias = JSON.stringify(alias);
                 rNode.save(function (error, node) {
                     if (error) {
-                        console.error(error+"save");
+                        console.error(error + "save");
                     }
                 });
                 response.write(JSON.stringify({

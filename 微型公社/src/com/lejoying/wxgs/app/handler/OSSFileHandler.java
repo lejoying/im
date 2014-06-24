@@ -103,7 +103,7 @@ public class OSSFileHandler {
 		String newName[] = imageFileName.split("\\.");
 		String thumbnailName = newName[0] + size + newName[1];
 		String paramFormat = "@" + width / 2 + "w_" + height / 2
-				+ "h_1c_1i_50q";
+				+ "h_1c_1e_50q";
 		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,
 				fileResult, paramFormat, 0);
 	}

@@ -991,7 +991,25 @@ api = {
             url: "/api2/square/sendsquaremessage"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", head: "XXX", nickName: "XXX", gid: "NNN", message: {messageType: "精华" || "...", contentType: "text" || "image" || "voice", content: "XXX"}}
+            typical: {phone: "XXX", accessKey: "XXX", head: "XXX", nickName: "XXX", cover: "XXX", gid: "NNN", message: {messageType: "精华" || "...", contentType: "text" || "image" || "voice", content: "XXX"}}
+        },
+        response: {
+            success: {"提示信息": "发布广播成功", time: "NNN", gmid: "NNN"},
+            failed: {"提示信息": "发布广播失败", "失败原因": "数据异常" || "参数格式错误" || "用户权限不足"}
+        }
+    },
+    "square_sendsquaremessage": {
+        description: {
+            id: 1001200,
+            url: "/api2/square/sendsquaremessage"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", head: "XXX", nickName: "XXX", cover: "XXX", gid: "NNN",
+                message: {messageType: [], contentType: "text" || "image" || "voice" || "voiceandimage" || "textandimage" || "textandvoice" || "vit", content: [
+                    {type: "text" || "image" || "voice", details: "XXX"},
+                    {},
+                    {}
+                ]}}
         },
         response: {
             success: {"提示信息": "发布广播成功", time: "NNN", gmid: "NNN"},
@@ -1114,7 +1132,88 @@ api = {
         },
         response: {
             success: {"提示信息": "获取广场在线用户数量成功", onlinecount: "NNN"},
-            failed: {"提示信息": "获取广场在线用户数量失败", "失败原因": "数据异常"}
+            failed: { "提示信息": "获取广场在线用户数量失败", "失败原因": "数据异常" }
+        }
+    }
+}
+/*************************************** ***************************************
+ * *    Class：GROUP SHARE
+ *************************************** ***************************************/
+api = {
+    /***************************************
+     *     URL：/api2/share/sendshare
+     ***************************************/
+    "share_sendshare": {
+        description: {
+            id: 1001300,
+            url: "/api2/share/sendshare"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", message: {type: "imagetext" || "voicetext" || "vote", content: JSON.stringify([
+                {type: "text" || "image" || "voice", detail: "XXX"},
+                {},
+                {}
+            ]) || JSON.stringify({title: "XXX", options: ["XXX", "XXX", "XXX"]})}}
+        },
+        response: {
+            success: {"提示信息": "发布群分享成功", time: "XXX"},
+            failed: { "提示信息": "发布群分享失败", "失败原因": "数据异常" }
+        }
+    },
+    /***************************************
+     *     URL：/api2/share/getshares
+     ***************************************/
+    "share_getshares": {
+        description: {
+            id: 1001301,
+            url: "/api2/share/getshares"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", nowpage: "NNN", pagesize: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取群分享成功", shares: [
+                {phone: "NNN", nickName: "XXX", head: "XXX", sex: "XXX", type: "XXX", content: "XXX", praise: JSON.stringify(["XXX", "XXX", "XXX"]), comment: JSON.stringify([
+                    {phone: "NNN", nickName: "XXX", head: "XXX", content: "XXX"},
+                    {},
+                    {}
+                ]), collect: "XXX"},
+                {},
+                {}
+            ]},
+            failed: { "提示信息": "获取群分享失败", "失败原因": "数据异常" }
+        }
+    },
+    /***************************************
+     *     URL：/api2/share/addpraise
+     ***************************************/
+    "share_addpraise": {
+        description: {
+            id: 1001302,
+            url: "/api2/share/addpraise"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", gsid: "NNN", option: "true" || "false"}
+        },
+        response: {
+            success: {"提示信息": "点赞群分享成功"},
+            failed: { "提示信息": "点赞群分享失败", "失败原因": "数据异常" || "消息不存在" }
+        }
+    },
+    /***************************************
+     *     URL：/api2/share/addcomment
+     ***************************************/
+    "share_addcomment": {
+        description: {
+            id: 1001303,
+            url: "/api2/share/addcomment"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", head: "XXX", gid: "XXX", gsid: "NNN", contentType: "text", content: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "评论群分享成功"},
+            failed: { "提示信息": "评论群分享失败", "失败原因": "数据异常" || "消息不存在" }
         }
     }
 }
