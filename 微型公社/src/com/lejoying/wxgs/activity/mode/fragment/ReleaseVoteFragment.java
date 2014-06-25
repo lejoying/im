@@ -38,12 +38,11 @@ public class ReleaseVoteFragment extends BaseFragment implements
 	View sl_content, rl_back, rl_send, rl_sync;
 	LinearLayout release_ll;
 	EditText release_et;
-	int voteCount;
 	List<String> voteList;
 	Map<Integer, String> voteMap;
 	MyListViewAdapter myAdapter = null;
 
-	private List<String> subVoteList;
+	private List<Map<String,Object>> subVoteList;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -74,12 +73,11 @@ public class ReleaseVoteFragment extends BaseFragment implements
 	}
 
 	void initData() {
-		voteCount = 3;
 		voteList = new ArrayList<String>();
 		voteList.add(0, "");
 		voteList.add(1, "");
 		voteList.add(2, "");
-		subVoteList = new ArrayList<String>();
+		subVoteList = new ArrayList<Map<String,Object>>();
 		// voteMap = new HashMap<Integer, String>();
 		// voteMap.put(1, "");
 		// voteMap.put(2, "");
@@ -94,13 +92,17 @@ public class ReleaseVoteFragment extends BaseFragment implements
 
 	private void initVoteList() {
 		subVoteList.clear();
-		release_ll.removeAllViews();
 		for (int i = 0; i < voteList.size(); i++) {
 			if (voteList.get(i) != null) {
-				subVoteList.add(voteList.get(i));
+				Map<String,Object> map=new HashMap<String, Object>();
+				map.put("location", i);
+				map.put("content", voteList.get(i));
+				subVoteList.add(map);
 			}
 		}
-		for (int i = 0; i < voteCount; i++) {
+		
+		release_ll.removeAllViews();
+		for (int i = 0; i < subVoteList.size(); i++) {
 			release_ll.addView(getVoteView(i,subVoteList.get(i)));
 		}
 		release_ll.addView(getFooterView());
@@ -134,7 +136,7 @@ public class ReleaseVoteFragment extends BaseFragment implements
 
 	}
 
-	private View getVoteView(final int num, String content) {
+	private View getVoteView(final int order, final Map<String,Object> map) {
 
 		View view = mInflater.inflate(R.layout.release_vote_child, null);
 
@@ -145,10 +147,10 @@ public class ReleaseVoteFragment extends BaseFragment implements
 				.findViewById(R.id.release_vote_num);
 		final EditText release_vote_et = (EditText) view
 				.findViewById(R.id.release_vote_et);
-		release_vote_num.setText(num + 1 + ".");
+		release_vote_num.setText(order + 1 + ".");
 
-		if (!content.equals("")) {
-			release_vote_et.setText(content);
+		if (!map.get("content").equals("")) {
+			release_vote_et.setText((String)map.get("content"));
 		}
 
 		release_vote_et.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -161,9 +163,9 @@ public class ReleaseVoteFragment extends BaseFragment implements
 							.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									voteCount--;
-									voteList.set(num, null);
-									release_ll.removeViewAt(num);
+									//TODO
+									voteList.set((Integer)(map.get("location")), null);
+									release_ll.removeViewAt(order);
 									initVoteList();
 								}
 							});
@@ -172,7 +174,7 @@ public class ReleaseVoteFragment extends BaseFragment implements
 							.parseColor("#00000000"));
 					release_vote_clear.setVisibility(View.GONE);
 					if (!release_vote_et.getText().toString().equals("")) {
-						voteList.set(num, release_vote_et.getText().toString());
+						voteList.set((Integer)(map.get("location")), release_vote_et.getText().toString());
 					}
 				}
 
@@ -197,7 +199,6 @@ public class ReleaseVoteFragment extends BaseFragment implements
 		view.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				voteCount++;
 				voteList.add(voteList.size(), "");
 				initVoteList();
 			}

@@ -38,6 +38,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
@@ -60,8 +61,6 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
-import com.lejoying.wxgs.activity.view.EditTextLayout;
-import com.lejoying.wxgs.activity.view.EditTextLayout.onEditTextChangeListener;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
@@ -105,7 +104,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	LinearLayout ll_releasecamera;
 	LinearLayout ll_releaselocal;
 	LinearLayout ll_release_picandvoice;
-	EditTextLayout editTextLayout;
 	HorizontalScrollView horizontalScrollView;
 	ViewPager chat_vPager;
 	LayoutInflater mInflater;
@@ -156,14 +154,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			if (voices.size() != 0 || images.size() != 0) {
 				horizontalScrollView.setVisibility(View.VISIBLE);
 			}
-			et_release.setVisibility(View.VISIBLE);
+			sl_et_release.setVisibility(View.VISIBLE);
 			ll_navigation.setVisibility(View.VISIBLE);
 			seletePic = false;
 		}
 	}
 
 	public void initLayout() {
-		editTextLayout = (EditTextLayout) findViewById(R.id.edittextlayout);
 		ll_navigation = (LinearLayout) findViewById(R.id.release_ll_navigation);
 		ImageView iv_selectpicture = (ImageView) findViewById(R.id.release_iv_selectpicture);
 		ImageView iv_emoji = (ImageView) findViewById(R.id.release_iv_emoji);
@@ -177,10 +174,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		rl_releasepic = (RelativeLayout) findViewById(R.id.rl_releasepic);
 		ll_releasecamera = (LinearLayout) findViewById(R.id.ll_releasecamera);
 		ll_releaselocal = (LinearLayout) findViewById(R.id.ll_releaselocal);
-		ImageView ll_releasecamera_imageView = (ImageView) findViewById(R.id.ll_releasecamera_imageView);
-		ImageView ll_releaselocal_imageView = (ImageView) findViewById(R.id.ll_releaselocal_imageView);
-		TextView ll_releasecamera_textView = (TextView) findViewById(R.id.ll_releasecamera_textView);
-		TextView ll_releaselocal_textView = (TextView) findViewById(R.id.ll_releaselocal_textView);
 
 		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
 		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
@@ -192,122 +185,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 
-		et_release.setHeight(height - 40 - (int) (height * 0.078125f)
-				- statusBarHeight);
-		// et_release.setLineSpacing(height*0.01953125f, 0.5f);//行间距
-		et_release.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		tv_cancel.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		tv_commit.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		ll_releasecamera_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-				width * 0.04861111f);
-		ll_releaselocal_textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-				width * 0.04861111f);
-
-		LinearLayout.LayoutParams et_releaseLayoutParams = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		et_releaseLayoutParams.leftMargin = 40;
-		et_releaseLayoutParams.rightMargin = 40;
-		et_releaseLayoutParams.topMargin = 40;
-		sl_et_release.setLayoutParams(et_releaseLayoutParams);
-
-		LinearLayout.LayoutParams ll_navigationLayoutParams = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, (int) (height * 0.078125f));
-		ll_navigation.setLayoutParams(ll_navigationLayoutParams);
-
-		LinearLayout.LayoutParams navigationLayoutParams1 = new LinearLayout.LayoutParams(
-				(int) (width * 0.08333333f), (int) (height * 0.03515625f));
-		navigationLayoutParams1.leftMargin = (int) (width * 0.11805556f);
-		navigationLayoutParams1.topMargin = (int) (height * 0.0234375f);
-		iv_selectpicture.setLayoutParams(navigationLayoutParams1);
-
-		LinearLayout.LayoutParams navigationLayoutParams2 = new LinearLayout.LayoutParams(
-				(int) (width * 0.06944444f), (int) (height * 0.0390625f));
-		navigationLayoutParams2.leftMargin = (int) (width * 0.125f);
-		navigationLayoutParams2.topMargin = (int) (height * 0.01953125f);
-		iv_emoji.setLayoutParams(navigationLayoutParams2);
-
-		LinearLayout.LayoutParams navigationLayoutParams3 = new LinearLayout.LayoutParams(
-				(int) (width * 0.06944444f), (int) (height * 0.0625f));
-		navigationLayoutParams3.leftMargin = (int) (width * 0.10416667f);
-		navigationLayoutParams3.topMargin = (int) (height * 0.01171875f);
-		iv_voice.setLayoutParams(navigationLayoutParams3);
-
-		LinearLayout.LayoutParams navigationLayoutParams4 = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		navigationLayoutParams4.leftMargin = (int) (width * 0.0555555556f);
-		navigationLayoutParams4.topMargin = (int) (height * 0.01953125f);
-		tv_cancel.setLayoutParams(navigationLayoutParams4);
-
-		LinearLayout.LayoutParams navigationLayoutParams5 = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		navigationLayoutParams5.leftMargin = (int) (width * 0.11805556f);
-		navigationLayoutParams5.topMargin = (int) (height * 0.01953125f);
-		tv_commit.setLayoutParams(navigationLayoutParams5);
-
-		RelativeLayout.LayoutParams ll_releasecameraLayoutParams = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		ll_releasecameraLayoutParams.leftMargin = (int) (width * 0.2222222f);
-		ll_releasecameraLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-		ll_releasecamera.setLayoutParams(ll_releasecameraLayoutParams);
-
-		RelativeLayout.LayoutParams ll_releaselocalLayoutParams = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		ll_releaselocalLayoutParams.leftMargin = (int) (width * 0.56944444f);
-		ll_releaselocalLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-		ll_releaselocal.setLayoutParams(ll_releaselocalLayoutParams);
-
-		LinearLayout.LayoutParams ll_release_imageView = new LinearLayout.LayoutParams(
-				(int) (width * 0.21527778f), (int) (height * 0.12109375f));
-		ll_release_imageView.gravity = LinearLayout.VERTICAL;
-		ll_releasecamera_imageView.setLayoutParams(ll_release_imageView);
-		ll_releaselocal_imageView.setLayoutParams(ll_release_imageView);
-
-		LinearLayout.LayoutParams ll_release_textView = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		ll_release_textView.topMargin = (int) (height * 0.01953125f);
-		ll_release_textView.gravity = LinearLayout.VERTICAL;
-		ll_releasecamera_textView.setLayoutParams(ll_release_textView);
-		ll_releaselocal_textView.setLayoutParams(ll_release_textView);
-
-		LinearLayout.LayoutParams horizontalScrollViewLayoutParams = new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		horizontalScrollViewLayoutParams.leftMargin = (int) (width * 0.020833333f);
-		horizontalScrollViewLayoutParams.bottomMargin = (int) (height * 0.01171875f);
-		horizontalScrollView.setLayoutParams(horizontalScrollViewLayoutParams);
-
-		// LinearLayout.LayoutParams et_releaseLayoutParams = new
-		// LinearLayout.LayoutParams(
-		// LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		// et_releaseLayoutParams.height = height-100-statusBarHeight;
-		// et_release.setLayoutParams(et_releaseLayoutParams);
-
-		// RelativeLayout.LayoutParams ll_navigationRelativeParams = new
-		// RelativeLayout.LayoutParams(
-		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		// ll_navigationRelativeParams.height = 100;
-		// //
-		// ll_navigationRelativeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		// ll_navigation.setLayoutParams(ll_navigationRelativeParams);
-
-		// RelativeLayout.LayoutParams relativeParams1 = new
-		// RelativeLayout.LayoutParams(
-		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		// relativeParams1.width = width / 2;
-		// RelativeLayout.LayoutParams relativeParams2 = new
-		// RelativeLayout.LayoutParams(
-		// LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		// relativeParams2.width = width / 2;
-		// relativeParams2.addRule(RelativeLayout.RIGHT_OF,
-		// R.id.ll_releasecamera);
-		// ll_releasecamera.setLayoutParams(relativeParams1);
-		// ll_releaselocal.setLayoutParams(relativeParams2);
-
-		// RelativeLayout.LayoutParams relativeParams3 = new
-		// RelativeLayout.LayoutParams(
-		// LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		// relativeParams3.addRule(RelativeLayout.ABOVE,
-		// R.id.release_ll_navigation);
-		// horizontalScrollView.setLayoutParams(relativeParams3);
+//		et_release
+//				.setHeight((int) (height - (71 * density + 0.5f) - statusBarHeight));
 
 		iv_selectpicture.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
@@ -321,51 +200,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		release_iv_face_left.setOnClickListener(this);
 		release_iv_face_right.setOnClickListener(this);
 		release_iv_face_delete.setOnClickListener(this);
-
-		editTextLayout
-				.setonEditTextChangeListener(new onEditTextChangeListener() {
-
-					@Override
-					public void onKeyBoardStateChange(int state) {
-						switch (state) {
-						case EditTextLayout.KEYBOARD_STATE_HIDE:
-							app.UIHandler.post(new Runnable() {
-								@Override
-								public void run() {
-									et_release.setHeight(height - 40
-											- (int) (height * 0.078125f)
-											- statusBarHeight);
-								}
-							});
-
-							break;
-						case EditTextLayout.KEYBOARD_STATE_SHOW:
-							new Thread() {
-								public void run() {
-									try {
-										sleep(50);
-										app.UIHandler.post(new Runnable() {
-											@Override
-											public void run() {
-												et_release.setHeight(ll_navigation
-														.getTop()
-														- 40
-														- statusBarHeight);
-											}
-										});
-									} catch (InterruptedException e) {
-										e.printStackTrace();
-									}
-								};
-							}.start();
-
-							break;
-						default:
-							break;
-						}
-
-					}
-				});
 
 	}
 
@@ -524,8 +358,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						InputMethodManager.HIDE_NOT_ALWAYS);
 			}
 			horizontalScrollView.setVisibility(View.GONE);
-			et_release.setVisibility(View.GONE);
-			ll_navigation.setVisibility(View.INVISIBLE);
+			sl_et_release.setVisibility(View.GONE);
+			ll_navigation.setVisibility(View.GONE);
 			rl_releasepic.setVisibility(View.VISIBLE);
 			seletePic = true;
 			break;
@@ -548,8 +382,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		case R.id.release_iv_voice:
 			Intent intent = new Intent(ReleaseActivity.this,
 					SendVoiceActivity.class);
-			// intent.putParcelableArrayListExtra("images", (ArrayList<? extends
-			// Parcelable>) images);
 			startActivityForResult(intent, RESULT_MAKEVOICE);
 			break;
 		case R.id.release_tv_cancel:
@@ -977,16 +809,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			});
 
-		} else if (requestCode == RESULT_MAKEVOICE
-				&& resultCode != Activity.RESULT_OK) {
-			if (images.size() == 0 && voices.size() == 0) {
-				et_release.setHeight(height - 40 - (int) (height * 0.078125f)
-						- statusBarHeight);
-			} else {
-				et_release.setHeight(height - 40 - (int) (height * 0.078125f)
-						- statusBarHeight - (int) (height * 0.08984375f));
-			}
-		} else if ((requestCode == RESULT_MAKEVOICE || requestCode == RESULT_PICANDVOICE)
+		} else if (requestCode == RESULT_PICANDVOICE
 				&& resultCode == Activity.RESULT_OK) {
 			nodifyViews();
 		} else if (requestCode == RESULT_SELECTPICTURE
@@ -1092,8 +915,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			});
 		}
 		rl_releasepic.setVisibility(View.GONE);
-		horizontalScrollView.setVisibility(View.VISIBLE);
-		et_release.setVisibility(View.VISIBLE);
+		sl_et_release.setVisibility(View.VISIBLE);
 		ll_navigation.setVisibility(View.VISIBLE);
 		seletePic = false;
 
@@ -1147,7 +969,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 								System.out.println(flag + "-+-" + fileName);
 							}
 						});
-						// uploadImageOrVoice("image", fileName, base64);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -1191,18 +1012,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		app.UIHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				if (horizontalScrollView.getVisibility() != View.VISIBLE
-						&& (images.size() != 0 || voices.size() != 0)) {
+				if (images.size() != 0 || voices.size() != 0) {
 					horizontalScrollView.setVisibility(View.VISIBLE);
-				}
-				if (images.size() == 0 && voices.size() == 0) {
-					et_release.setHeight(height - 40
-							- (int) (height * 0.078125f) - statusBarHeight);
+				}else{
 					horizontalScrollView.setVisibility(View.GONE);
-				} else {
-					et_release.setHeight(height - 40
-							- (int) (height * 0.078125f) - statusBarHeight
-							- (int) (height * 0.08984375f));
 				}
 				int index = 0;
 				ll_release_picandvoice.removeAllViews();
@@ -1218,7 +1031,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		});
 	}
 
-	// TODO
 	public void generateView(Map<String, Object> map, String type,
 			final int index) {
 		View addView = mInflater.inflate(R.layout.view_child, null);
@@ -1254,7 +1066,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			iv.setLayoutParams(params);
 			if (map.get("bitmap") == null)
 				iv.setImageResource(R.drawable.selected_voice);
-			
+
 			iv.setOnClickListener(new OnClickListener() {
 
 				@Override
