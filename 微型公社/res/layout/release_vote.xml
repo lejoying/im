@@ -50,7 +50,7 @@
         android:layout_margin="10dp"
         android:orientation="vertical" >
 
-        <EditText
+        <com.lejoying.wxgs.activity.view.ReleaseEditText
             android:id="@+id/release_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

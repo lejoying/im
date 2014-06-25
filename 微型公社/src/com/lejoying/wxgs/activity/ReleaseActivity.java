@@ -64,6 +64,7 @@ import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
+import com.lejoying.wxgs.activity.view.widget.Alert.OnLoadingCancelListener;
 import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -83,6 +84,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 	int height, width, dip, picwidth, statusBarHeight;
 	int chat_vPager_now = 0;
+	int processing = 1;
 	int RESULT_SELECTPICTURE = 0x34, RESULT_TAKEPICTURE = 0x54,
 			RESULT_MAKEVOICE = 0x64, RESULT_PICANDVOICE = 0x74;
 	float density;
@@ -185,8 +187,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		ll_release_picandvoice = (LinearLayout) findViewById(R.id.ll_release_picandvoice);
 
-//		et_release
-//				.setHeight((int) (height - (71 * density + 0.5f) - statusBarHeight));
+		// et_release
+		// .setHeight((int) (height - (71 * density + 0.5f) - statusBarHeight));
 
 		iv_selectpicture.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
@@ -633,6 +635,12 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				}
 			}
 		}
+		Alert.showLoading(new OnLoadingCancelListener() {
+			@Override
+			public void loadingCancel() {
+				System.out.println("in LoadingCancelListener");
+			}
+		});
 		if (broadcast == null || broadcast.equals("")) {
 			if (images.size() == 0) {
 				addVoiceToJson();
@@ -676,7 +684,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 				params.put("head", app.data.user.head);
 				params.put("nickName", app.data.user.nickName);
 				params.put("gid", mCurrentSquareID);
-				// Log.e("Coolspan", cover + "------" + currentCoverIndex);
 				if (currentCoverIndex != -1) {
 					String lastName = cover.substring(
 							cover.lastIndexOf(".") + 1).toLowerCase();
@@ -704,7 +711,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void success(JSONObject jData) {
-				finish();
+				// finish();
 			}
 		});
 	}
@@ -939,14 +946,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void success(JSONObject jData) {
 				try {
 					if (jData.getBoolean("exists")) {
-						// JSONObject jsonObject = new JSONObject();
-						// try {
-						// jsonObject.put("type", type);
-						// jsonObject.put("details", fileName);
-						// } catch (JSONException e) {
-						// e.printStackTrace();
-						// }
-						// jsonArray.put(jsonObject);
+						if (processing == (images.size() + voices.size())) {
+							Alert.removeLoading();
+						} else {
+							processing++;
+						}
 
 					} else {
 						app.fileHandler.uploadFile(new UploadFileInterface() {
@@ -966,7 +970,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 							@Override
 							public void onSuccess(Boolean flag, String fileName) {
-								System.out.println(flag + "-+-" + fileName);
+								if (processing == (images.size() + voices
+										.size())) {
+									Alert.removeLoading();
+									finish();
+								} else {
+									processing++;
+								}
 							}
 						});
 					}
@@ -1014,7 +1024,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			public void run() {
 				if (images.size() != 0 || voices.size() != 0) {
 					horizontalScrollView.setVisibility(View.VISIBLE);
-				}else{
+				} else {
 					horizontalScrollView.setVisibility(View.GONE);
 				}
 				int index = 0;

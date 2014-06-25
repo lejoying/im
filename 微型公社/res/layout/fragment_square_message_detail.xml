@@ -85,7 +85,7 @@
                     android:paddingTop="15dp"
                     android:singleLine="true"
                     android:textColor="#fff"
-                    android:textCursorDrawable="@drawable/cursor"
+                    android:textCursorDrawable="@drawable/edit_cursor"
                     tools:ignore="TextFields" />
 
                 <TextView

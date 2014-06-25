@@ -10,7 +10,7 @@
         android:id="@+id/sl_et_release"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:layout_weight="1.0"
         android:fillViewport="true"
         android:orientation="vertical"
@@ -19,12 +19,13 @@
             <EditText
                 android:id="@+id/release_et_release"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="#0000"
                 android:gravity="top"
                 android:scrollbars="none"
                 android:textColor="#fff"
-                android:textCursorDrawable="@drawable/cursor"
+                android:lineSpacingExtra="13dp"
+                android:textCursorDrawable="@drawable/edit_cursor"
                 android:textSize="20sp" />
     </ScrollView>
 

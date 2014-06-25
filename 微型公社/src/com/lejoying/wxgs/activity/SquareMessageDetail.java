@@ -221,20 +221,32 @@ public class SquareMessageDetail extends BaseActivity {
 									(int) width, height);
 							imageView.setLayoutParams(params);
 							imageView.setImageBitmap(bitmap);
+							imageView.setOnClickListener(new OnClickListener() {
+
+								@Override
+								public void onClick(View v) {
+									Intent intent = new Intent(SquareMessageDetail.this,
+											PicAndVoiceDetailActivity.class);
+									intent.putExtra("currentIndex", index);
+									intent.putExtra("Activity", "Browse");
+									intent.putStringArrayListExtra("content", (ArrayList<String>) images);
+									startActivity(intent);
+								}
+							});
 						}
 					});
-			imageView.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(SquareMessageDetail.this,
-							PicAndVoiceDetailActivity.class);
-					intent.putExtra("currentIndex", index);
-					intent.putExtra("Activity", "Browse");
-					intent.putStringArrayListExtra("content", (ArrayList<String>) images);
-					startActivity(intent);
-				}
-			});
+//			imageView.setOnClickListener(new OnClickListener() {
+//
+//				@Override
+//				public void onClick(View v) {
+//					Intent intent = new Intent(SquareMessageDetail.this,
+//							PicAndVoiceDetailActivity.class);
+//					intent.putExtra("currentIndex", index);
+//					intent.putExtra("Activity", "Browse");
+//					intent.putStringArrayListExtra("content", (ArrayList<String>) images);
+//					startActivity(intent);
+//				}
+//			});
 			// app.fileHandler.getImage(fileName, new FileResult() {
 			//
 			// @Override

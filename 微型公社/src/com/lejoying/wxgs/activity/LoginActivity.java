@@ -814,7 +814,6 @@ public class LoginActivity extends Activity implements OnClickListener,
 									.getDigestOfString(loginPass.getBytes());
 							params.put("password", passwd);
 							settings.params = params;
-							System.out.println(passwd);
 						}
 
 						@Override

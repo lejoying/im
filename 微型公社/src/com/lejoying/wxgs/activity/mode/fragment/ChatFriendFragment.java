@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1510,7 +1511,9 @@ public class ChatFriendFragment extends BaseFragment {
 									@Override
 									public void onResult(String where,
 											Bitmap bitmap) {
-										iv_image.setImageBitmap(bitmap);
+										SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
+												bitmap);
+										iv_image.setImageBitmap(bm.get());
 									}
 								});
 					}

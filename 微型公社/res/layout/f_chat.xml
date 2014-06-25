@@ -223,7 +223,7 @@
                 android:paddingBottom="2dp"
                 android:paddingTop="2dp"
                 android:textColor="#fff"
-                android:textCursorDrawable="@drawable/cursor"
+                android:textCursorDrawable="@drawable/edit_cursor"
                 tools:ignore="TextFields" >
 
                 <requestFocus />
