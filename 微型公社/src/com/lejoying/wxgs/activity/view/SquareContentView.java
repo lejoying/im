@@ -525,6 +525,9 @@ public class SquareContentView extends HorizontalScrollView {
 				if (content.images.size() > 0) {
 					cover = content.images.get(0);
 				}
+				if (!"none".equals(message.cover)) {
+					cover = message.cover;
+				}
 				if (!cover.equals("none")) {
 					final String fileName = cover;
 					int width = 0;

@@ -107,7 +107,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				if (activity.equals("ReleaseActivity")) {
 					if (currentCoverIndex == currentPageSize) {
 						iscover = false;
-						ReleaseActivity.cover = "";
+//						ReleaseActivity.cover = "";
 						currentCoverIndex = -1;
 						selectedCoverView
 								.setImageResource(R.drawable.picandvoice_cancel);
@@ -376,22 +376,22 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					selectedCoverView
 							.setImageResource(R.drawable.picandvoice_cancel);
 					iscover = false;
-					ReleaseActivity.cover = "";
+//					ReleaseActivity.cover = "";
 					currentCoverIndex = -1;
 				} else {
 					selectedCoverView
 							.setImageResource(R.drawable.picandvoice_affirm);
 					iscover = true;
 					currentCoverIndex = currentPageSize;
-					if (currentPageSize <= ReleaseActivity.voices.size()) {
-						ReleaseActivity.cover = (String) ReleaseActivity.voices
-								.get(currentPageSize - 1).get("fileName");
-					} else {
-						ReleaseActivity.cover = (String) ReleaseActivity.images
-								.get(currentPageSize
-										- ReleaseActivity.voices.size() - 1)
-								.get("fileName");
-					}
+//					if (currentPageSize <= ReleaseActivity.voices.size()) {
+//						ReleaseActivity.cover = (String) ReleaseActivity.voices
+//								.get(currentPageSize - 1).get("fileName");
+//					} else {
+//						ReleaseActivity.cover = (String) ReleaseActivity.images
+//								.get(currentPageSize
+//										- ReleaseActivity.voices.size() - 1)
+//								.get("fileName");
+//					}
 				}
 			}
 			break;

@@ -94,6 +94,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	List<String[]> faceNamesList;
 	List<List<String>> faceNameList;
 	List<ImageView> faceMenuShowList;
+	List<String> coverList;
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
 	File tempFile;
 
@@ -119,10 +120,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	String mCurrentSquareID = "";
 	String messageType = "";
 	String broadcast = "";
-	String contentType = "vit";
+	String squareContentType = "vit";
 	JSONArray jsonArray;
 
-	public static String cover = "";
+	String cover = "";
 	public static int currentCoverIndex = -1;
 
 	@Override
@@ -608,33 +609,34 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		// messageType = "吐槽";
 		// }
 		messageType = new JSONArray().toString();
+		coverList = new ArrayList<String>();
 		broadcast = et_release.getText().toString();
 		if ((broadcast == null || broadcast.equals("")) && images.size() == 0
 				&& voices.size() == 0) {
 			Alert.showMessage("发送内容不能为空");
 			return;
 		}
-		if (images.size() != 0) {
-			for (int i = 0; i < images.size(); i++) {
-				if (images.get(i).get("bitmap") != null) {
-					final int j = i;
-					// app.fileHandler.saveBitmap(new SaveBitmapInterface() {
-					// @Override
-					// public void setParams(SaveSettings settings) {
-					// settings.source = (Bitmap) images.get(j).get(
-					// "bitmap");
-					// settings.compressFormat = settings.PNG;
-					// settings.folder = app.sdcardImageFolder;
-					// }
-					//
-					// @Override
-					// public void onSuccess(String fileName, String base64) {
-					//
-					// }
-					// });
-				}
-			}
-		}
+		// if (images.size() != 0) {
+		// for (int i = 0; i < images.size(); i++) {
+		// if (images.get(i).get("bitmap") != null) {
+		// final int j = i;
+		// // app.fileHandler.saveBitmap(new SaveBitmapInterface() {
+		// // @Override
+		// // public void setParams(SaveSettings settings) {
+		// // settings.source = (Bitmap) images.get(j).get(
+		// // "bitmap");
+		// // settings.compressFormat = settings.PNG;
+		// // settings.folder = app.sdcardImageFolder;
+		// // }
+		// //
+		// // @Override
+		// // public void onSuccess(String fileName, String base64) {
+		// //
+		// // }
+		// // });
+		// }
+		// }
+		// }
 		Alert.showLoading(new OnLoadingCancelListener() {
 			@Override
 			public void loadingCancel() {
@@ -644,28 +646,60 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		if (broadcast == null || broadcast.equals("")) {
 			if (images.size() == 0) {
 				addVoiceToJson();
-				contentType = "voice";
+				squareContentType = "voice";
 			} else if (voices.size() == 0) {
 				addImageToJson();
-				contentType = "image";
+				squareContentType = "image";
 			} else {
-				addVoiceToJson();
 				addImageToJson();
-				contentType = "voiceandimage";
+				addVoiceToJson();
+				squareContentType = "voiceandimage";
 			}
 		} else if (images.size() == 0) {
 			if (voices.size() == 0) {
 				addTextToJson(broadcast);
-				contentType = "text";
+				squareContentType = "text";
+				app.networkHandler.connection(new CommonNetConnection() {
+					@SuppressLint("DefaultLocale")
+					@Override
+					protected void settings(Settings settings) {
+						settings.url = API.DOMAIN
+								+ API.SQUARE_SENDSQUAREMESSAGE;
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("phone", app.data.user.phone);
+						params.put("accessKey", app.data.user.accessKey);
+						params.put("head", app.data.user.head);
+						params.put("nickName", app.data.user.nickName);
+						params.put("gid", mCurrentSquareID);
+						params.put("cover", "none");
+						try {
+							JSONObject messageJSONObject = new JSONObject();
+							messageJSONObject.put("messageType", messageType);
+							messageJSONObject.put("contentType",
+									squareContentType);
+							messageJSONObject.put("content", jsonArray);
+							params.put("message", messageJSONObject.toString());
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						settings.params = params;
+					}
+
+					@Override
+					public void success(JSONObject jData) {
+						Alert.removeLoading();
+						finish();
+					}
+				});
 			} else {
 				addVoiceToJson();
 				addTextToJson(broadcast);
-				contentType = "textandvoice";
+				squareContentType = "textandvoice";
 			}
 		} else if (voices.size() == 0) {
 			addTextToJson(broadcast);
 			addImageToJson();
-			contentType = "textandimage";
+			squareContentType = "textandimage";
 
 		} else {
 			addTextToJson(broadcast);
@@ -673,47 +707,6 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			addVoiceToJson();
 		}
 
-		app.networkHandler.connection(new CommonNetConnection() {
-			@SuppressLint("DefaultLocale")
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.SQUARE_SENDSQUAREMESSAGE;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("head", app.data.user.head);
-				params.put("nickName", app.data.user.nickName);
-				params.put("gid", mCurrentSquareID);
-				if (currentCoverIndex != -1) {
-					String lastName = cover.substring(
-							cover.lastIndexOf(".") + 1).toLowerCase();
-					if ("aac".equals(lastName)) {
-						params.put("cover", "voice");
-					} else {
-						params.put("cover", cover);
-					}
-				} else {
-					params.put("cover", "none");
-				}
-				currentCoverIndex = -1;
-				cover = "";
-				try {
-					JSONObject messageJSONObject = new JSONObject();
-					messageJSONObject.put("messageType", messageType);
-					messageJSONObject.put("contentType", contentType);
-					messageJSONObject.put("content", jsonArray);
-					params.put("message", messageJSONObject.toString());
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				settings.params = params;
-			}
-
-			@Override
-			public void success(JSONObject jData) {
-				// finish();
-			}
-		});
 	}
 
 	public void addTextToJson(String broadcast) {
@@ -944,6 +937,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void success(JSONObject jData) {
+				coverList.add(imageMessageInfo.fileName);
 				try {
 					if (jData.getBoolean("exists")) {
 						if (processing == (images.size() + voices.size())) {
@@ -972,8 +966,77 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 							public void onSuccess(Boolean flag, String fileName) {
 								if (processing == (images.size() + voices
 										.size())) {
-									Alert.removeLoading();
-									finish();
+									app.networkHandler
+											.connection(new CommonNetConnection() {
+												@SuppressLint("DefaultLocale")
+												@Override
+												protected void settings(
+														Settings settings) {
+													settings.url = API.DOMAIN
+															+ API.SQUARE_SENDSQUAREMESSAGE;
+													Map<String, String> params = new HashMap<String, String>();
+													params.put("phone",
+															app.data.user.phone);
+													params.put(
+															"accessKey",
+															app.data.user.accessKey);
+													params.put("head",
+															app.data.user.head);
+													params.put(
+															"nickName",
+															app.data.user.nickName);
+													params.put("gid",
+															mCurrentSquareID);
+													if (currentCoverIndex != -1) {
+														cover = coverList
+																.get(currentCoverIndex - 1);
+														String lastName = cover
+																.substring(
+																		cover.lastIndexOf(".") + 1)
+																.toLowerCase();
+														if ("aac"
+																.equals(lastName)) {
+															params.put("cover",
+																	"voice");
+														} else {
+															params.put("cover",
+																	cover);
+														}
+													} else {
+														params.put("cover",
+																"none");
+													}
+													currentCoverIndex = -1;
+													cover = "";
+													try {
+														JSONObject messageJSONObject = new JSONObject();
+														messageJSONObject.put(
+																"messageType",
+																messageType);
+														messageJSONObject
+																.put("contentType",
+																		squareContentType);
+														messageJSONObject.put(
+																"content",
+																jsonArray);
+														params.put(
+																"message",
+																messageJSONObject
+																		.toString());
+													} catch (JSONException e) {
+														e.printStackTrace();
+													}
+													settings.params = params;
+												}
+
+												@Override
+												public void success(
+														JSONObject jData) {
+													Alert.removeLoading();
+													finish();
+												}
+											});
+
 								} else {
 									processing++;
 								}

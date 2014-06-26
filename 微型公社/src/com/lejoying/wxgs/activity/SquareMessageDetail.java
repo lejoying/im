@@ -221,47 +221,76 @@ public class SquareMessageDetail extends BaseActivity {
 									(int) width, height);
 							imageView.setLayoutParams(params);
 							imageView.setImageBitmap(bitmap);
-							imageView.setOnClickListener(new OnClickListener() {
-
-								@Override
-								public void onClick(View v) {
-									Intent intent = new Intent(SquareMessageDetail.this,
-											PicAndVoiceDetailActivity.class);
-									intent.putExtra("currentIndex", index);
-									intent.putExtra("Activity", "Browse");
-									intent.putStringArrayListExtra("content", (ArrayList<String>) images);
-									startActivity(intent);
-								}
-							});
+//							imageView.setOnClickListener(new OnClickListener() {
+//
+//								@Override
+//								public void onClick(View v) {
+//									Intent intent = new Intent(
+//											SquareMessageDetail.this,
+//											PicAndVoiceDetailActivity.class);
+//									intent.putExtra("currentIndex", index);
+//									intent.putExtra("Activity", "Browse");
+//									intent.putStringArrayListExtra("content",
+//											(ArrayList<String>) images);
+//									startActivity(intent);
+//								}
+//							});
 						}
 					});
-//			imageView.setOnClickListener(new OnClickListener() {
+			imageView.setOnTouchListener(new OnTouchListener() {
+
+				boolean flag = false;
+				int count = 0;
+
+				@Override
+				public boolean onTouch(View arg0,
+						MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						flag = false;
+						count = 0;
+					}
+					if (event.getAction() == MotionEvent.ACTION_MOVE) {
+						count++;
+						flag = true;
+						sc_square_message_info
+								.requestDisallowInterceptTouchEvent(flag);
+						// sc_square_message_info.onTouchEvent(event);
+					}
+					if (count < 15) {
+						flag = false;
+					}
+					return flag;
+				}
+			});
+
+			imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(SquareMessageDetail.this,
+							PicAndVoiceDetailActivity.class);
+					intent.putExtra("currentIndex", index);
+					intent.putExtra("Activity", "Browse");
+					intent.putStringArrayListExtra("content",
+							(ArrayList<String>) images);
+					startActivity(intent);
+				}
+			});
+//			app.fileHandler.getImage(fileName, new FileResult() {
 //
 //				@Override
-//				public void onClick(View v) {
-//					Intent intent = new Intent(SquareMessageDetail.this,
-//							PicAndVoiceDetailActivity.class);
-//					intent.putExtra("currentIndex", index);
-//					intent.putExtra("Activity", "Browse");
-//					intent.putStringArrayListExtra("content", (ArrayList<String>) images);
-//					startActivity(intent);
+//				public void onResult(String where, Bitmap bitmap0) {
+//					Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
+//					int height = (int) (bitmap.getHeight() * (width / bitmap
+//							.getWidth()));
+//					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//							(int) width, height);
+//					imageView.setLayoutParams(params);
+//					bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
+//							height, true);
+//					imageView.setImageBitmap(bitmap);
 //				}
 //			});
-			// app.fileHandler.getImage(fileName, new FileResult() {
-			//
-			// @Override
-			// public void onResult(String where, Bitmap bitmap0) {
-			// Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
-			// int height = (int) (bitmap.getHeight() * (width / bitmap
-			// .getWidth()));
-			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-			// (int) width, height);
-			// imageView.setLayoutParams(params);
-			// bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
-			// height, true);
-			// imageView.setImageBitmap(bitmap);
-			// }
-			// });
 
 		}
 		if (images.size() == 0 && voices.size() != 0) {

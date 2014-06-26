@@ -80,47 +80,47 @@ public class GroupFragment extends BaseFragment {
 	public View onCreateView(android.view.LayoutInflater inflater,
 			android.view.ViewGroup container,
 			android.os.Bundle savedInstanceState) {
-			mInflater = inflater;
-			density = getActivity().getResources().getDisplayMetrics().density;
-			screenHeight = getScreenHeight();
-			screenWidth = getScreenWidth();
-			groupPanelWidth = screenWidth - (int) dp2px(20);
-			groupPanelHeight = (int) (dp2px(10 + 1 + 220 + 37) + sp2px(
-					getActivity(), 18));
-			groupScrollSpaceWidth = screenWidth - (int) dp2px(40);
-			groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(8);
-			headSize = (int) dp2px(22);
-			headMargin = (int) ((groupItemWidth - dp2px(22) - headSize * 5) / 6);
+		mInflater = inflater;
+		density = getActivity().getResources().getDisplayMetrics().density;
+		screenHeight = getScreenHeight();
+		screenWidth = getScreenWidth();
+		groupPanelWidth = screenWidth - (int) dp2px(20);
+		groupPanelHeight = (int) (dp2px(10 + 1 + 220 + 37) + sp2px(
+				getActivity(), 18));
+		groupScrollSpaceWidth = screenWidth - (int) dp2px(40);
+		groupItemWidth = groupScrollSpaceWidth / 2 - (int) dp2px(8);
+		headSize = (int) dp2px(22);
+		headMargin = (int) ((groupItemWidth - dp2px(22) - headSize * 5) / 6);
 
-			mMainModeManager.handleMenu(false);
+		mMainModeManager.handleMenu(false);
 
-			mContentView = inflater.inflate(R.layout.fragment_group, null);
-			mScrollContainer = (ScrollContainer) mContentView
-					.findViewById(R.id.groupViewContainer);
-			groupViewContainer = mScrollContainer.getViewContainer();
+		mContentView = inflater.inflate(R.layout.fragment_group, null);
+		mScrollContainer = (ScrollContainer) mContentView
+				.findViewById(R.id.groupViewContainer);
+		groupViewContainer = mScrollContainer.getViewContainer();
 
-			current_me_group = (RelativeLayout) mContentView
-					.findViewById(R.id.current_me_group);
-			current_group_local = (RelativeLayout) mContentView
-					.findViewById(R.id.current_group_local);
-			current_me_group_status = (ImageView) mContentView
-					.findViewById(R.id.current_me_group_status);
-			current_group_local_status = (ImageView) mContentView
-					.findViewById(R.id.current_group_local_status);
-			tv_me_group = (TextView) mContentView
-					.findViewById(R.id.tv_me_group);
-			tv_group_local = (TextView) mContentView
-					.findViewById(R.id.tv_group_local);
-			iv_image = (ImageView) mContentView.findViewById(R.id.iv_image);
-			iv_back = (ImageView) mContentView.findViewById(R.id.iv_back);
-			ll_navigation = (LinearLayout) mContentView
-					.findViewById(R.id.ll_navigation);
-			if (mMainModeManager != null) {
-				mMainModeManager.handleMenu(false);
-			}
-			initEvent();
+		current_me_group = (RelativeLayout) mContentView
+				.findViewById(R.id.current_me_group);
+		current_group_local = (RelativeLayout) mContentView
+				.findViewById(R.id.current_group_local);
+		current_me_group_status = (ImageView) mContentView
+				.findViewById(R.id.current_me_group_status);
+		current_group_local_status = (ImageView) mContentView
+				.findViewById(R.id.current_group_local_status);
+		tv_me_group = (TextView) mContentView.findViewById(R.id.tv_me_group);
+		tv_group_local = (TextView) mContentView
+				.findViewById(R.id.tv_group_local);
+		iv_image = (ImageView) mContentView.findViewById(R.id.iv_image);
+		iv_back = (ImageView) mContentView.findViewById(R.id.iv_back);
+		ll_navigation = (LinearLayout) mContentView
+				.findViewById(R.id.ll_navigation);
+		ll_navigation.setVisibility(View.GONE);
+		if (mMainModeManager != null) {
+			mMainModeManager.handleMenu(true);
+		}
+		initEvent();
 
-			notifyViews();
+		notifyViews();
 		return mContentView;
 	}
 
@@ -158,7 +158,13 @@ public class GroupFragment extends BaseFragment {
 				}
 			}
 		});
-		ll_navigation.setOnClickListener(new OnClickListener() {
+		iv_image.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mMainModeManager.show(mMainModeManager.mGroupShareFragment);
+			}
+		});
+		iv_back.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mMainModeManager.show(mMainModeManager.mGroupShareFragment);
@@ -174,7 +180,7 @@ public class GroupFragment extends BaseFragment {
 
 		if (!added) {
 			added = true;
-			int top = (int) dp2px(20);
+			int top = (int) dp2px(10);
 			groupViewContainer.setGravity(Gravity.TOP
 					| Gravity.CENTER_HORIZONTAL);
 
@@ -204,7 +210,7 @@ public class GroupFragment extends BaseFragment {
 					RelativeLayout.LayoutParams.MATCH_PARENT,
 					RelativeLayout.LayoutParams.WRAP_CONTENT);
 			// params3.topMargin = top;
-			params3.topMargin = (int) dp2px(20);
+			params3.topMargin = (int) dp2px(10);
 			params3.bottomMargin = -Integer.MAX_VALUE;
 			nearByGroup.setLayoutParams(params3);
 			nearByGroup.setVisibility(View.GONE);
@@ -330,7 +336,7 @@ public class GroupFragment extends BaseFragment {
 
 	View generateMyGroup() {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
-		View bgView=groupView.findViewById(R.id.panel_ll);
+		View bgView = groupView.findViewById(R.id.panel_ll);
 		bgView.setBackgroundColor(Color.parseColor("#33FFFFFF"));
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("我加入的群组");
@@ -348,7 +354,8 @@ public class GroupFragment extends BaseFragment {
 		LinearLayout ll_bottom = (LinearLayout) groupView
 				.findViewById(R.id.group_bottom_ll);
 		TextView bottom_tv = (TextView) ll_bottom.findViewById(R.id.bottom_tv);
-		ImageView bottom_iv=(ImageView) ll_bottom.findViewById(R.id.bottom_iv);
+		ImageView bottom_iv = (ImageView) ll_bottom
+				.findViewById(R.id.bottom_iv);
 		bottom_iv.setVisibility(View.GONE);
 		// buttonManager.setText("创建群组");
 		ll_bottom.setVisibility(View.VISIBLE);
@@ -579,7 +586,7 @@ public class GroupFragment extends BaseFragment {
 
 	View generateNearByGroup() {
 		View groupView = mInflater.inflate(R.layout.fragment_panel, null);
-		View bgView=groupView.findViewById(R.id.panel_ll);
+		View bgView = groupView.findViewById(R.id.panel_ll);
 		bgView.setBackgroundColor(Color.parseColor("#33FFFFFF"));
 		TextView panelName = (TextView) groupView.findViewById(R.id.panel_name);
 		panelName.setText("附近活跃群组");
@@ -614,7 +621,8 @@ public class GroupFragment extends BaseFragment {
 				.findViewById(R.id.group_bottom_ll);
 		TextView bottom_tv = (TextView) ll_bottom.findViewById(R.id.bottom_tv);
 		bottom_tv.setText("搜索更多群组");
-		ImageView bottom_iv=(ImageView) ll_bottom.findViewById(R.id.bottom_iv);
+		ImageView bottom_iv = (ImageView) ll_bottom
+				.findViewById(R.id.bottom_iv);
 		bottom_iv.setVisibility(View.VISIBLE);
 		ll_bottom.setVisibility(View.VISIBLE);
 		groupItemView.setOnClickListener(new OnClickListener() {
@@ -675,7 +683,7 @@ public class GroupFragment extends BaseFragment {
 	public void onResume() {
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
-		mMainModeManager.handleMenu(false);
+		mMainModeManager.handleMenu(true);
 		requestLocation();
 		super.onResume();
 	}
