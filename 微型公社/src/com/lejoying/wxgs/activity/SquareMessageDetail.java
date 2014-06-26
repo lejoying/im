@@ -192,6 +192,7 @@ public class SquareMessageDetail extends BaseActivity {
 	}
 
 	public void generateMessageContent() {
+		detailContent.removeAllViews();
 		app.fileHandler.getHeadImage(message.head, "男", new FileResult() {
 
 			@Override
@@ -207,7 +208,6 @@ public class SquareMessageDetail extends BaseActivity {
 		squareMessageSendUserName.setText(message.nickName);
 		messageTime.setText(convertTime(System.currentTimeMillis(),
 				message.time));
-		detailContent.removeAllViews();
 		for (int i = 0; i < images.size(); i++) {
 			final ImageView imageView = new ImageView(this);
 			final int index = i;
@@ -1241,7 +1241,22 @@ public class SquareMessageDetail extends BaseActivity {
 
 						@Override
 						public void modifyUI() {
-							generateMessageContent();
+							// generateMessageContent();
+							for (int i = 0; i < squareMessage.praiseusers
+									.size(); i++) {
+								if (squareMessage.praiseusers.get(i).equals(
+										app.data.user.phone)) {
+									praiseStatus = true;
+									break;
+								}
+							}
+							if (praiseStatus) {
+								timeImage.setImageResource(R.drawable.praised);
+							} else {
+								timeImage.setImageResource(R.drawable.praise);
+							}
+							timeText.setText("共获得"
+									+ squareMessage.praiseusers.size() + "个赞");
 						}
 					});
 				}
