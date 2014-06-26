@@ -142,6 +142,7 @@ public class SquareMessageDetail extends BaseActivity {
 		sc_square_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		initData();
 		generateMessageContent();
+		getSquareMessageDetail(message.phone, message.gmid);
 		addDetailBottomBarChildView();
 		getSquareMessageComments();
 		initEvent();
@@ -206,6 +207,7 @@ public class SquareMessageDetail extends BaseActivity {
 		squareMessageSendUserName.setText(message.nickName);
 		messageTime.setText(convertTime(System.currentTimeMillis(),
 				message.time));
+		detailContent.removeAllViews();
 		for (int i = 0; i < images.size(); i++) {
 			final ImageView imageView = new ImageView(this);
 			final int index = i;
@@ -221,20 +223,21 @@ public class SquareMessageDetail extends BaseActivity {
 									(int) width, height);
 							imageView.setLayoutParams(params);
 							imageView.setImageBitmap(bitmap);
-//							imageView.setOnClickListener(new OnClickListener() {
-//
-//								@Override
-//								public void onClick(View v) {
-//									Intent intent = new Intent(
-//											SquareMessageDetail.this,
-//											PicAndVoiceDetailActivity.class);
-//									intent.putExtra("currentIndex", index);
-//									intent.putExtra("Activity", "Browse");
-//									intent.putStringArrayListExtra("content",
-//											(ArrayList<String>) images);
-//									startActivity(intent);
-//								}
-//							});
+							// imageView.setOnClickListener(new
+							// OnClickListener() {
+							//
+							// @Override
+							// public void onClick(View v) {
+							// Intent intent = new Intent(
+							// SquareMessageDetail.this,
+							// PicAndVoiceDetailActivity.class);
+							// intent.putExtra("currentIndex", index);
+							// intent.putExtra("Activity", "Browse");
+							// intent.putStringArrayListExtra("content",
+							// (ArrayList<String>) images);
+							// startActivity(intent);
+							// }
+							// });
 						}
 					});
 			imageView.setOnTouchListener(new OnTouchListener() {
@@ -243,8 +246,7 @@ public class SquareMessageDetail extends BaseActivity {
 				int count = 0;
 
 				@Override
-				public boolean onTouch(View arg0,
-						MotionEvent event) {
+				public boolean onTouch(View arg0, MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 						flag = false;
 						count = 0;
@@ -276,21 +278,21 @@ public class SquareMessageDetail extends BaseActivity {
 					startActivity(intent);
 				}
 			});
-//			app.fileHandler.getImage(fileName, new FileResult() {
-//
-//				@Override
-//				public void onResult(String where, Bitmap bitmap0) {
-//					Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
-//					int height = (int) (bitmap.getHeight() * (width / bitmap
-//							.getWidth()));
-//					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//							(int) width, height);
-//					imageView.setLayoutParams(params);
-//					bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
-//							height, true);
-//					imageView.setImageBitmap(bitmap);
-//				}
-//			});
+			// app.fileHandler.getImage(fileName, new FileResult() {
+			//
+			// @Override
+			// public void onResult(String where, Bitmap bitmap0) {
+			// Bitmap bitmap = app.fileHandler.bitmaps.get(fileName);
+			// int height = (int) (bitmap.getHeight() * (width / bitmap
+			// .getWidth()));
+			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+			// (int) width, height);
+			// imageView.setLayoutParams(params);
+			// bitmap = Bitmap.createScaledBitmap(bitmap, (int) (width),
+			// height, true);
+			// imageView.setImageBitmap(bitmap);
+			// }
+			// });
 
 		}
 		if (images.size() == 0 && voices.size() != 0) {
@@ -806,12 +808,21 @@ public class SquareMessageDetail extends BaseActivity {
 					String notice = jData.getString("提示信息");
 					if ("点赞广播成功".equals(notice)) {
 						if (flag) {
-							message.praiseusers.add(app.data.user.phone);
 							praiseStatus = true;
-							app.UIHandler.post(new Runnable() {
+							app.dataHandler.exclude(new Modification() {
 
 								@Override
-								public void run() {
+								public void modifyData(Data data) {
+									SquareMessage squareMessage = data.squareMessagesMap
+											.get(SquareFragment.mCurrentSquareID)
+											.get(message.gmid);
+									squareMessage.praiseusers
+											.add(app.data.user.phone);
+									message = squareMessage;
+								}
+
+								@Override
+								public void modifyUI() {
 									timeImage
 											.setImageResource(R.drawable.praised);
 									timeText.setText("共获得"
@@ -819,18 +830,26 @@ public class SquareMessageDetail extends BaseActivity {
 								}
 							});
 						} else {
-							for (int i = 0; i < message.praiseusers.size(); i++) {
-								if (message.praiseusers.get(i).equals(
-										app.data.user.phone)) {
-									message.praiseusers.remove(i);
-									break;
-								}
-							}
 							praiseStatus = false;
-							app.UIHandler.post(new Runnable() {
+							app.dataHandler.exclude(new Modification() {
+								@Override
+								public void modifyData(Data data) {
+									SquareMessage squareMessage = data.squareMessagesMap
+											.get(SquareFragment.mCurrentSquareID)
+											.get(message.gmid);
+									for (int i = 0; i < squareMessage.praiseusers
+											.size(); i++) {
+										if (squareMessage.praiseusers.get(i)
+												.equals(app.data.user.phone)) {
+											squareMessage.praiseusers.remove(i);
+											break;
+										}
+									}
+									message = squareMessage;
+								}
 
 								@Override
-								public void run() {
+								public void modifyUI() {
 									timeImage
 											.setImageResource(R.drawable.praise);
 									timeText.setText("共获得"
@@ -1178,6 +1197,55 @@ public class SquareMessageDetail extends BaseActivity {
 				});
 
 				finish();
+			}
+		});
+	}
+
+	public void getSquareMessageDetail(final String detailPhone,
+			final String gmid) {
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SQUARE_GETSQUAREIDMESSAGE;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("detailphone", detailPhone);
+				params.put("gid", mCurrentSquareID);
+				params.put("gmid", gmid);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				List<SquareMessage> nowMessages = null;
+				try {
+					nowMessages = JSONParser
+							.generateSquareMessagesFromJSON(jData
+									.getJSONArray("messages"));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (nowMessages != null) {
+					final SquareMessage squareMessage = nowMessages.get(0);
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							Map<String, SquareMessage> squareMessageMap = data.squareMessagesMap
+									.get(mCurrentSquareID);
+							squareMessageMap.put(squareMessage.gmid,
+									squareMessage);
+							message = squareMessage;
+						}
+
+						@Override
+						public void modifyUI() {
+							generateMessageContent();
+						}
+					});
+				}
+
 			}
 		});
 	}

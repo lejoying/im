@@ -71,6 +71,11 @@ requestHandlers.squareManage = function (request, response, pathObject, data) {
         squareManage.deletesquaremessage(data, response);
         });
     }
+    else if (operation == "getsquareidmessage") {
+        oauth6(data.phone, data.accessKey, response, function () {
+        squareManage.getsquareidmessage(data, response);
+        });
+    }
     else if (operation == "zookeeper") {
         squareManage.zookeeper(data, response);
     }

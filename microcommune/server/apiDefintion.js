@@ -1030,7 +1030,7 @@ api = {
         },
         response: {
             success: {"提示信息": "获取广播成功", messages: [
-                {gmid: "NNN", messageType: "XXX", praiseusers: [], sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", gid: "NNN", content: "XXX", time: new Date().getTime()}
+                {gmid: "NNN", messageType: "XXX", praiseusers: [], sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", nickName: "XXX", head: "XXX", gid: "NNN", content: "XXX", time: new Date().getTime()}
             ], flag: "NNN", onlinecount: "NNN"},
             failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
@@ -1106,7 +1106,7 @@ api = {
      ***************************************/
     "square_getsquareusers": {
         description: {
-            id: 1001205,
+            id: 1001206,
             url: "/api2/square/getsquareusers"
         },
         request: {
@@ -1124,7 +1124,7 @@ api = {
      ***************************************/
     "square_getonlinecount": {
         description: {
-            id: 1001206,
+            id: 1001207,
             url: "/api2/square/getonlinecount"
         },
         request: {
@@ -1133,6 +1133,24 @@ api = {
         response: {
             success: {"提示信息": "获取广场在线用户数量成功", onlinecount: "NNN"},
             failed: { "提示信息": "获取广场在线用户数量失败", "失败原因": "数据异常" }
+        }
+    },
+    /***************************************
+     *     URL：/api2/square/getsquareidmessage
+     ***************************************/
+    "square_getsquareidmessage": {
+        description: {
+            id: 1001208,
+            url: "/api2/square/getsquareidmessage"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", detailphone: "XXX", gid: "NNN", gmid: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取广播成功", messages: [
+                {gmid: "NNN", messageType: "XXX", praiseusers: [], sendType: "square", contentType: "text" || "image" || "voice", phone: "NNN", nickName: "XXX", head: "XXX", gid: "NNN", content: "XXX", time: new Date().getTime()}
+            ], flag: "NNN", onlinecount: "NNN"},
+            failed: {"提示信息": "获取广播失败", "失败原因": "数据异常"}
         }
     }
 }
