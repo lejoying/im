@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -12,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLayoutChangeListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -144,7 +147,6 @@ public class SquareFragment extends BaseFragment {
 		init();
 		return mContentView;
 	}
-
 	public void changeSquareData() {
 		List<String> messages = app.data.squareMessages.get(mCurrentSquareID);
 		Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
@@ -217,7 +219,9 @@ public class SquareFragment extends BaseFragment {
 
 	public int currentClassify = 2;
 
+	@SuppressLint("NewApi")
 	private void initData() {
+
 		horizontalScrollView.smoothScrollTo(0,
 				horizontalScrollView.getScrollY());
 		classifyTextViews1.clear();
@@ -254,10 +258,30 @@ public class SquareFragment extends BaseFragment {
 						selectSquareMessageClassify(id);
 					}
 				});
+				// horizontalScrollView
+				// .setOnScrollListener(new OnScrollListener() {
+				//
+				// @Override
+				// public void onScroll(int scrollX) {
+				// // TODO Auto-generated method stub
+				// System.out.println(horizontalScrollView.get);
+				// System.out.println(scrollX);
+				// }
+				// });
+				// v.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+				//
+				// @Override
+				// public void onLayoutChange(View v, int left, int top, int
+				// right,
+				// int bottom, int oldLeft, int oldTop, int oldRight, int
+				// oldBottom) {
+				// System.out.println("Changed");
+				//
+				// }
+				// });
 			}
 		}
 	}
-
 	void selectSquareMessageClassify(int id) {
 		int distance = 0;
 		TextView tv1 = classifyTextViews1.get(id);

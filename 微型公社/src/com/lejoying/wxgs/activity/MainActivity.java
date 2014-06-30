@@ -279,9 +279,9 @@ public class MainActivity extends BaseActivity {
 						.setImageResource(R.drawable.square_icon_selected);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
-//				if (nowFragment == IS_GROUPS) {
-//					iv_release_menu.setImageResource(R.drawable.square_release);
-//				}
+				if (nowFragment == IS_GROUPS) {
+					iv_release_menu.setImageResource(R.drawable.square_release);
+				}
 				nowFragment = IS_SQUARE;
 			}
 		});
@@ -289,11 +289,11 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				mMainMode.show(mMainMode.mGroupFragment);
+				mMainMode.show(mMainMode.mGroupShareFragment);
 				iv_square_menu.setImageResource(R.drawable.square_icon);
 				iv_group_menu.setImageResource(R.drawable.group_icon_selected);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
-//				iv_release_menu.setImageResource(R.drawable.gshare_group);
+				iv_release_menu.setImageResource(R.drawable.gshare_group);
 				nowFragment = IS_GROUPS;
 			}
 		});
@@ -305,9 +305,9 @@ public class MainActivity extends BaseActivity {
 				iv_square_menu.setImageResource(R.drawable.square_icon);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon_selected);
-//				if (nowFragment == IS_GROUPS) {
-//					iv_release_menu.setImageResource(R.drawable.square_release);
-//				}
+				if (nowFragment == IS_GROUPS) {
+					iv_release_menu.setImageResource(R.drawable.square_release);
+				}
 				nowFragment = IS_CIRCLES;
 			}
 		});
@@ -315,13 +315,13 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-//				if (nowFragment == IS_GROUPS) {
-//					mMainMode.show(mMainMode.mGroupFragment);
-//				} else {
+				if (nowFragment == IS_GROUPS) {
+					mMainMode.show(mMainMode.mGroupFragment);
+				} else {
 					Intent intent = new Intent(MainActivity.this,
 							ReleaseActivity.class);
 					startActivity(intent);
-//				}
+				}
 			}
 		});
 	}

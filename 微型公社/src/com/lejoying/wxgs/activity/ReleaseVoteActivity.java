@@ -1,36 +1,31 @@
-package com.lejoying.wxgs.activity.mode.fragment;
+package com.lejoying.wxgs.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
+import com.lejoying.wxgs.R;
+
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.activity.mode.MainModeManager;
+public class ReleaseVoteActivity extends Activity implements OnClickListener{
 
-public class ReleaseVoteFragment extends BaseFragment implements
-		OnClickListener {
-	MainModeManager mMainModeManager;
 	LayoutInflater mInflater;
-	private View mContent;
 
 	int height, width, dip;
 	float density;
@@ -44,23 +39,15 @@ public class ReleaseVoteFragment extends BaseFragment implements
 
 	private List<Map<String,Object>> subVoteList;
 
-	public void setMode(MainModeManager mainMode) {
-		mMainModeManager = mainMode;
-	}
 
 	@Override
-	public void onResume() {
-		mMainModeManager.handleMenu(false);
-		super.onResume();
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		mInflater = inflater;
-		mContent = mInflater.inflate(R.layout.release_vote, null);
-		DisplayMetrics dm = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.release_vote);
+		mInflater =(LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
 		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
@@ -68,10 +55,8 @@ public class ReleaseVoteFragment extends BaseFragment implements
 		initLayout();
 		initData();
 		initEvent();
-
-		return mContent;
 	}
-
+	
 	void initData() {
 		voteList = new ArrayList<String>();
 		voteList.add(0, "");
@@ -110,16 +95,16 @@ public class ReleaseVoteFragment extends BaseFragment implements
 	}
 
 	void initLayout() {
-		rl_back = mContent.findViewById(R.id.rl_back);
-		rl_send = mContent.findViewById(R.id.rl_send);
-		rl_sync = mContent.findViewById(R.id.rl_sync);
-		release_ll = (LinearLayout) mContent.findViewById(R.id.release_ll);
-		release_et = (EditText) mContent.findViewById(R.id.release_et);
-		sl_content = mContent.findViewById(R.id.sl_content);
-		LayoutParams params = sl_content.getLayoutParams();
-		params.height = height - MainActivity.statusBarHeight
-				- (int) (157 * density + 0.5f);
-		sl_content.setLayoutParams(params);
+		rl_back = findViewById(R.id.rl_back);
+		rl_send = findViewById(R.id.rl_send);
+		rl_sync = findViewById(R.id.rl_sync);
+		release_ll = (LinearLayout) findViewById(R.id.release_ll);
+		release_et = (EditText) findViewById(R.id.release_et);
+		sl_content = findViewById(R.id.sl_content);
+//		LayoutParams params = sl_content.getLayoutParams();
+//		params.height = height - MainActivity.statusBarHeight
+//				- (int) (157 * density + 0.5f);
+//		sl_content.setLayoutParams(params);
 	}
 
 	void initEvent() {
@@ -315,7 +300,7 @@ public class ReleaseVoteFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.rl_back:
-			mMainModeManager.back();
+			finish();
 			break;
 		case R.id.rl_send:
 			Send();
@@ -329,4 +314,5 @@ public class ReleaseVoteFragment extends BaseFragment implements
 		}
 
 	}
+
 }

@@ -114,9 +114,8 @@ public class GroupFragment extends BaseFragment {
 		iv_back = (ImageView) mContentView.findViewById(R.id.iv_back);
 		ll_navigation = (LinearLayout) mContentView
 				.findViewById(R.id.ll_navigation);
-		ll_navigation.setVisibility(View.GONE);
 		if (mMainModeManager != null) {
-			mMainModeManager.handleMenu(true);
+			mMainModeManager.handleMenu(false);
 		}
 		initEvent();
 
@@ -683,7 +682,7 @@ public class GroupFragment extends BaseFragment {
 	public void onResume() {
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
-		mMainModeManager.handleMenu(true);
+		mMainModeManager.handleMenu(false);
 		requestLocation();
 		super.onResume();
 	}

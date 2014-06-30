@@ -13,13 +13,11 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,7 +27,6 @@ import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 
 public class SendVoiceActivity extends BaseActivity implements OnClickListener {
@@ -108,42 +105,6 @@ public class SendVoiceActivity extends BaseActivity implements OnClickListener {
 		View sendvoice_iv_commit = findViewById(R.id.sendvoice_iv_commit);
 		View sendvoice_iv_del = findViewById(R.id.sendvoice_iv_del);
 		sendvoice_rl_navigation = (RelativeLayout) findViewById(R.id.sendvoice_rl_navigation);
-
-		RelativeLayout.LayoutParams navigationLayoutParam = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, (int)(height*0.078125f));
-		navigationLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		sendvoice_rl_navigation.setLayoutParams(navigationLayoutParam);
-		
-		RelativeLayout.LayoutParams buttonrelativeParams = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		buttonrelativeParams.height=(int)(height*0.046875f);
-		buttonrelativeParams.width = (int)(width  *0.61111111f);
-		buttonrelativeParams.topMargin = (int)(height*0.0078125f);
-		buttonrelativeParams.bottomMargin = (int)(height*0.0078125f);
-		buttonrelativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		sendvoice_button.setLayoutParams(buttonrelativeParams);
-
-		RelativeLayout.LayoutParams tvrelativeParams = new RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		tvrelativeParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-		sendvoice_tv.setLayoutParams(tvrelativeParams);
-		sendvoice_tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, width * 0.04861111f);
-		
-		RelativeLayout.LayoutParams commitrelativeParams = new RelativeLayout.LayoutParams(
-				(int)(width*0.0833333f), (int)(height*0.046875f));
-		commitrelativeParams.addRule(RelativeLayout.RIGHT_OF,
-				R.id.sendvoice_button);
-		commitrelativeParams.leftMargin = (int)(width*0.02777778f);
-		commitrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
-		sendvoice_iv_commit.setLayoutParams(commitrelativeParams);
-
-		RelativeLayout.LayoutParams delrelativeParams = new RelativeLayout.LayoutParams(
-				(int)(width*0.0833333f), (int)(height*0.046875f));
-		delrelativeParams
-				.addRule(RelativeLayout.LEFT_OF, R.id.sendvoice_button);
-		delrelativeParams.rightMargin = (int)(width*0.02777778f);
-		delrelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
-		sendvoice_iv_del.setLayoutParams(delrelativeParams);
 
 		sendvoice_iv_commit.setOnClickListener(this);
 		sendvoice_iv_del.setOnClickListener(this);

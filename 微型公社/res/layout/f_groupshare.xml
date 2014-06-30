@@ -47,18 +47,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <ListView
-            android:id="@+id/gshare_lv"
+        <com.lejoying.wxgs.activity.view.RefreshableView
+            android:id="@+id/refreshable_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:cacheColorHint="#0000"
-            android:divider="#0000"
-            android:dividerHeight="20dp"
-            android:listSelector="#0000"
-            android:scrollbars="none" >
-        </ListView>
+            android:layout_height="match_parent" >
+
+            <ListView
+                android:id="@+id/gshare_lv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:cacheColorHint="#0000"
+                android:divider="#0000"
+                android:dividerHeight="20dp"
+                android:listSelector="#0000"
+                android:scrollbars="none" >
+            </ListView>
+        </com.lejoying.wxgs.activity.view.RefreshableView>
     </RelativeLayout>
 
 </LinearLayout>

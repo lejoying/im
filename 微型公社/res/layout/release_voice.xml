@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/back" />
         </RelativeLayout>
 
@@ -43,6 +43,16 @@
         </RelativeLayout>
     </RelativeLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1.0"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        android:scrollbars="none" >
+    </ScrollView>
+
     <RelativeLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
@@ -61,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="2dp"
                 android:text="同步到广场"
                 android:textColor="#fff"
                 android:textSize="16sp" />
@@ -74,6 +84,7 @@
             android:background="#51000000" >
 
             <RelativeLayout
+                android:id="@+id/rl_sync"
                 android:layout_width="103dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

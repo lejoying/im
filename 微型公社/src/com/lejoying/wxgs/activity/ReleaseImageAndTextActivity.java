@@ -1,50 +1,42 @@
-package com.lejoying.wxgs.activity.mode.fragment;
+package com.lejoying.wxgs.activity;
 
+
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.MainModeManager;
+
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.activity.mode.MainModeManager;
-
-public class ReleaseImageAndTextFragment extends BaseFragment implements
+public class ReleaseImageAndTextActivity extends Activity implements
 		OnClickListener {
 	MainModeManager mMainModeManager;
 	LayoutInflater mInflater;
 	GridView gridView;
-	private View mContent;
 
 	int height, width, dip;
 	float density;
 	View sl_content, bottom_bar, rl_back, rl_send, rl_sync;
 	EditText release_et;
 
-	public void setMode(MainModeManager mainMode) {
-		mMainModeManager = mainMode;
-	}
-
 	@Override
-	public void onResume() {
-		mMainModeManager.handleMenu(false);
-		super.onResume();
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		mInflater = inflater;
-		mContent = mInflater.inflate(R.layout.release_imageandtext, null);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.release_imageandtext);
+		mInflater = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		DisplayMetrics dm = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
 		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
@@ -52,8 +44,6 @@ public class ReleaseImageAndTextFragment extends BaseFragment implements
 		initLayout();
 		initData();
 		initEvent();
-
-		return mContent;
 	}
 
 	void initData() {
@@ -62,16 +52,16 @@ public class ReleaseImageAndTextFragment extends BaseFragment implements
 	}
 
 	void initLayout() {
-		rl_back = mContent.findViewById(R.id.rl_back);
-		rl_send = mContent.findViewById(R.id.rl_send);
-		rl_sync = mContent.findViewById(R.id.rl_sync);
-		release_et = (EditText) mContent.findViewById(R.id.release_et);
-		gridView = (GridView) mContent.findViewById(R.id.release_gv);
-		sl_content = mContent.findViewById(R.id.sl_content);
-		LayoutParams params = sl_content.getLayoutParams();
-		params.height = height - MainActivity.statusBarHeight
-				- (int) (157 * density + 0.5f);
-		sl_content.setLayoutParams(params);
+		rl_back = findViewById(R.id.rl_back);
+		rl_send = findViewById(R.id.rl_send);
+		rl_sync = findViewById(R.id.rl_sync);
+		release_et = (EditText) findViewById(R.id.release_et);
+		gridView = (GridView) findViewById(R.id.release_gv);
+		sl_content = findViewById(R.id.sl_content);
+		// LayoutParams params = sl_content.getLayoutParams();
+		// params.height = height - MainActivity.statusBarHeight
+		// - (int) (157 * density + 0.5f);
+		// sl_content.setLayoutParams(params);
 	}
 
 	void initEvent() {
@@ -161,7 +151,7 @@ public class ReleaseImageAndTextFragment extends BaseFragment implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.rl_back:
-			mMainModeManager.back();
+			finish();
 			break;
 		case R.id.rl_send:
 			Send();

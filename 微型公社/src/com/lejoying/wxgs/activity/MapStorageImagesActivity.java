@@ -230,46 +230,63 @@ public class MapStorageImagesActivity extends Activity {
 
 				@Override
 				public void onClick(View arg) {
-					if(MapStorageDirectoryActivity.max==0){
+					if (MapStorageDirectoryActivity.max == 0) {
 						if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
 							imagesHolder0.ivStatus.setVisibility(View.GONE);
-							MapStorageDirectoryActivity.selectedImages.remove(path);
+							MapStorageDirectoryActivity.selectedImages
+									.remove(path);
 							MapStorageDirectoryActivity.selectedImagesMap
 									.remove(mImages.get(arg0));
 							modifyConfirmStyle();
 						} else {
 							imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
-							MapStorageDirectoryActivity.selectedImages.add(path);
-							MapStorageDirectoryActivity.selectedImagesMap.put(path,
-									mImages.get(arg0));
+							MapStorageDirectoryActivity.selectedImages
+									.add(path);
+							MapStorageDirectoryActivity.selectedImagesMap.put(
+									path, mImages.get(arg0));
 							modifyConfirmStyle();
 						}
-					}else{
-						if(MapStorageDirectoryActivity.selectedImages.size()<MapStorageDirectoryActivity.max){
+					} else if (MapStorageDirectoryActivity.max == 1) {
+						imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
+						MapStorageDirectoryActivity.selectedImages.add(path);
+						MapStorageDirectoryActivity.selectedImagesMap.put(path,
+								mImages.get(arg0));
+						modifyConfirmStyle();
+						Intent intent = new Intent();
+						setResult(Activity.RESULT_OK, intent);
+						finish();
+					} else {
+						if (MapStorageDirectoryActivity.selectedImages.size() < MapStorageDirectoryActivity.max) {
 							if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
 								imagesHolder0.ivStatus.setVisibility(View.GONE);
-								MapStorageDirectoryActivity.selectedImages.remove(path);
+								MapStorageDirectoryActivity.selectedImages
+										.remove(path);
 								MapStorageDirectoryActivity.selectedImagesMap
 										.remove(mImages.get(arg0));
 								modifyConfirmStyle();
 							} else {
-								imagesHolder0.ivStatus.setVisibility(View.VISIBLE);
-								MapStorageDirectoryActivity.selectedImages.add(path);
-								MapStorageDirectoryActivity.selectedImagesMap.put(path,
-										mImages.get(arg0));
+								imagesHolder0.ivStatus
+										.setVisibility(View.VISIBLE);
+								MapStorageDirectoryActivity.selectedImages
+										.add(path);
+								MapStorageDirectoryActivity.selectedImagesMap
+										.put(path, mImages.get(arg0));
 								modifyConfirmStyle();
 							}
-						}else{
+						} else {
 							if (imagesHolder0.ivStatus.getVisibility() == View.VISIBLE) {
 								imagesHolder0.ivStatus.setVisibility(View.GONE);
-								MapStorageDirectoryActivity.selectedImages.remove(path);
+								MapStorageDirectoryActivity.selectedImages
+										.remove(path);
 								MapStorageDirectoryActivity.selectedImagesMap
 										.remove(mImages.get(arg0));
 								modifyConfirmStyle();
 							} else {
-								Alert.showMessage("您最多能选择"+MapStorageDirectoryActivity.max+"张图片。"); 
+								Alert.showMessage("您最多能选择"
+										+ MapStorageDirectoryActivity.max
+										+ "张图片。");
 							}
-							
+
 						}
 					}
 				}

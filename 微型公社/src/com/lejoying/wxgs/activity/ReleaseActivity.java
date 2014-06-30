@@ -144,7 +144,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	protected void onResume() {
-		CircleMenu.hide();
+//		CircleMenu.hide();
 		super.onResume();
 	}
 

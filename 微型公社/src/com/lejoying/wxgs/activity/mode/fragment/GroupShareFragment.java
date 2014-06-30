@@ -1,14 +1,19 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
@@ -17,11 +22,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
+import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
+import com.lejoying.wxgs.activity.ReleaseVoteActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.view.RefreshableView;
+import com.lejoying.wxgs.activity.view.RefreshableView.PullToRefreshListener;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
@@ -36,7 +48,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	LinearLayout gshare_scroll_ll;
 	RelativeLayout gshare_send;
 	ListView gshare_lv;
-
+	RefreshableView refreshableView;
+	PopupWindow pop;
+	View popView;
 	int height, width, dip;
 	float density;
 
@@ -78,6 +92,8 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		gshare_send = (RelativeLayout) mContent
 				.findViewById(R.id.rl_gshare_send);
 		gshare_lv = (ListView) mContent.findViewById(R.id.gshare_lv);
+		refreshableView = (RefreshableView) mContent
+				.findViewById(R.id.refreshable_view);
 
 		LayoutParams scrollParams = gshare_scroll.getLayoutParams();
 		LayoutParams lvlParams = gshare_lv.getLayoutParams();
@@ -85,7 +101,241 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		gshare_scroll.setLayoutParams(scrollParams);
 		gshare_lv.setLayoutParams(lvlParams);
 
+		refreshableView.setOnRefreshListener(new PullToRefreshListener() {
+			@Override
+			public void onRefresh() {
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				refreshableView.finishRefreshing();
+			}
+		}, 0);
 		gshare_send.setOnClickListener(this);
+		initPopupWindow();
+	}
+
+	private void initPopupWindow() {
+		final View imageandtext, voice, vote, activity, commodity, service, rl_imageandtext, rl_voice, rl_vote, rl_activity, rl_commodity, rl_service;
+		popView = mInflater.inflate(R.layout.activity_release_option, null);
+		pop = new PopupWindow(popView, LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT);
+		imageandtext = popView.findViewById(R.id.reloption_rl_imageandtext);
+		voice = popView.findViewById(R.id.reloption_rl_voice);
+		vote = popView.findViewById(R.id.reloption_rl_vote);
+		activity = popView.findViewById(R.id.reloption_rl_activity);
+		commodity = popView.findViewById(R.id.reloption_rl_commodity);
+		service = popView.findViewById(R.id.reloption_rl_service);
+		rl_imageandtext = popView.findViewById(R.id.rl_imageandtext);
+		rl_voice = popView.findViewById(R.id.rl_voice);
+		rl_vote = popView.findViewById(R.id.rl_vote);
+		rl_activity = popView.findViewById(R.id.rl_activity);
+		rl_commodity = popView.findViewById(R.id.rl_commodity);
+		rl_service = popView.findViewById(R.id.rl_service);
+
+		imageandtext.setOnTouchListener(new OnTouchListener() {
+			GestureDetector viewDetector = new GestureDetector(getActivity(),
+					new GestureDetector.SimpleOnGestureListener() {
+						@Override
+						public boolean onDown(MotionEvent e) {
+							return true;
+						}
+
+						@Override
+						public boolean onSingleTapUp(MotionEvent e) {
+							startActivity(new Intent(getActivity(),
+									ReleaseImageAndTextActivity.class));
+							return true;
+						}
+
+					});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					rl_imageandtext
+							.setBackgroundResource(R.drawable.reloption_bk_sel);
+					break;
+				case MotionEvent.ACTION_UP:
+					rl_imageandtext
+							.setBackgroundResource(R.drawable.reloption_bk_nor);
+					break;
+				}
+				return viewDetector.onTouchEvent(event);
+			}
+		});
+		voice.setOnTouchListener(new OnTouchListener() {
+			GestureDetector viewDetector = new GestureDetector(getActivity(),
+					new GestureDetector.SimpleOnGestureListener() {
+
+						@Override
+						public boolean onDown(MotionEvent e) {
+							return true;
+						}
+
+						@Override
+						public boolean onSingleTapUp(MotionEvent e) {
+							startActivity(new Intent(getActivity(),
+									ReleaseVoiceActivity.class));
+							return true;
+						}
+
+					});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					rl_voice.setBackgroundResource(R.drawable.reloption_bk_sel);
+					break;
+				case MotionEvent.ACTION_UP:
+					rl_voice.setBackgroundResource(R.drawable.reloption_bk_nor);
+					break;
+				}
+				return viewDetector.onTouchEvent(event);
+			}
+		});
+		vote.setOnTouchListener(new OnTouchListener() {
+			GestureDetector viewDetector = new GestureDetector(getActivity(),
+					new GestureDetector.SimpleOnGestureListener() {
+
+						@Override
+						public boolean onDown(MotionEvent e) {
+							return true;
+						}
+
+						@Override
+						public boolean onSingleTapUp(MotionEvent e) {
+							startActivity(new Intent(getActivity(),
+									ReleaseVoteActivity.class));
+							return true;
+						}
+
+					});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					rl_vote.setBackgroundResource(R.drawable.reloption_bk_sel);
+					break;
+				case MotionEvent.ACTION_UP:
+					rl_vote.setBackgroundResource(R.drawable.reloption_bk_nor);
+					break;
+				}
+				return viewDetector.onTouchEvent(event);
+			}
+		});
+		activity.setOnTouchListener(new OnTouchListener() {
+			GestureDetector viewDetector = new GestureDetector(getActivity(),
+					new GestureDetector.SimpleOnGestureListener() {
+
+						@Override
+						public boolean onDown(MotionEvent e) {
+							return true;
+						}
+
+						@Override
+						public boolean onSingleTapUp(MotionEvent e) {
+							// TODO pop.dismiss();
+							Alert.showMessage("更多功能，敬请期待");
+							return true;
+						}
+
+					});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					rl_activity
+							.setBackgroundResource(R.drawable.reloption_bk_sel);
+					break;
+				case MotionEvent.ACTION_UP:
+					rl_activity
+							.setBackgroundResource(R.drawable.reloption_bk_nor);
+					break;
+				}
+				return viewDetector.onTouchEvent(event);
+			}
+		});
+		commodity.setOnTouchListener(new OnTouchListener() {
+			GestureDetector viewDetector = new GestureDetector(getActivity(),
+					new GestureDetector.SimpleOnGestureListener() {
+
+						@Override
+						public boolean onDown(MotionEvent e) {
+							return true;
+						}
+
+						@Override
+						public boolean onSingleTapUp(MotionEvent e) {
+							// TODO pop.dismiss();
+							Alert.showMessage("更多功能，敬请期待");
+							return true;
+						}
+
+					});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					rl_commodity
+							.setBackgroundResource(R.drawable.reloption_bk_sel);
+					break;
+				case MotionEvent.ACTION_UP:
+					rl_commodity
+							.setBackgroundResource(R.drawable.reloption_bk_nor);
+					break;
+				}
+				return viewDetector.onTouchEvent(event);
+			}
+		});
+		service.setOnTouchListener(new OnTouchListener() {
+			GestureDetector viewDetector = new GestureDetector(getActivity(),
+					new GestureDetector.SimpleOnGestureListener() {
+
+						@Override
+						public boolean onDown(MotionEvent e) {
+							return true;
+						}
+
+						@Override
+						public boolean onSingleTapUp(MotionEvent e) {
+							// TODO pop.dismiss();
+							Alert.showMessage("更多功能，敬请期待");
+							return true;
+						}
+
+					});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					rl_service
+							.setBackgroundResource(R.drawable.reloption_bk_sel);
+					break;
+				case MotionEvent.ACTION_UP:
+					rl_service
+							.setBackgroundResource(R.drawable.reloption_bk_nor);
+					break;
+				}
+				return viewDetector.onTouchEvent(event);
+			}
+		});
+
+		popView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				pop.dismiss();
+
+			}
+		});
+
 	}
 
 	void initData() {
@@ -117,7 +367,8 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.rl_gshare_send:
-			mMainModeManager.showNext(mMainModeManager.mReleaseOptionFragment);
+			pop.showAtLocation((View) mContent.getParent(), Gravity.CENTER, 0,
+					0);
 			break;
 
 		default:
@@ -192,12 +443,8 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			} else {
 				groupShareHolder = (GroupShareHolder) convertView.getTag();
 			}
-			if (false) {
-				groupShareHolder.gshare_ll.setVisibility(View.GONE);
+			if (position == 5) {
 				groupShareHolder.gshare_date_tv.setVisibility(View.VISIBLE);
-				LayoutParams params = groupShareHolder.gshare_date_tv
-						.getLayoutParams();
-				groupShareHolder.gshare_date_tv.setLayoutParams(params);
 				groupShareHolder.gshare_date_tv.setText("3000.13.32");
 			} else {
 				groupShareHolder.gshare_bigpic.setImageBitmap(bm);

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/gshare_date_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="5dp"
         android:textColor="@android:color/white"
+        android:textSize="20sp"
         android:visibility="gone" />
 
     <LinearLayout
@@ -86,22 +90,24 @@
 
             <TextView
                 android:id="@+id/gshare_praise"
-                android:layout_width="26dp"
-                android:layout_height="wrap_content"
+                android:layout_width="27dp"
+                android:layout_height="26dp"
                 android:layout_margin="10dp"
+                android:paddingBottom="3dp"
                 android:background="@drawable/gshare_praise"
                 android:gravity="center"
-                android:textColor="#de2d2d" />
+                android:textColor="#de2d2d"/>
 
             <TextView
                 android:id="@+id/gshare_comment"
-                android:layout_width="26dp"
-                android:layout_height="wrap_content"
+                android:layout_width="31dp"
+                android:layout_height="26dp"
                 android:layout_margin="10dp"
+                android:paddingBottom="4dp"
                 android:background="@drawable/gshare_comment"
                 android:gravity="center"
                 android:textColor="#de2d2d" />
         </LinearLayout>
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
