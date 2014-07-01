@@ -11,11 +11,14 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
+import com.lejoying.wxgs.activity.PicAndVoiceDetailActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
@@ -42,12 +46,14 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.JSONParser.GroupsAndFriends;
 
-public class GroupFragment extends BaseFragment {
+public class GroupFragment extends BaseFragment implements OnTouchListener {
 
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
 
 	LayoutInflater mInflater;
+
+	GestureDetector backViewDetector;
 
 	float density = 1f;
 	int screenHeight = 0;
@@ -157,18 +163,22 @@ public class GroupFragment extends BaseFragment {
 				}
 			}
 		});
-		iv_image.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mMainModeManager.show(mMainModeManager.mGroupShareFragment);
-			}
-		});
-		iv_back.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mMainModeManager.show(mMainModeManager.mGroupShareFragment);
-			}
-		});
+		backViewDetector = new GestureDetector(getActivity(),
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDown(MotionEvent e) {
+						return true;
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						mMainModeManager
+								.show(mMainModeManager.mGroupShareFragment);
+						return true;
+					}
+				});
+		iv_image.setOnTouchListener(this);
+		iv_back.setOnTouchListener(this);
 	}
 
 	boolean added;
@@ -738,5 +748,26 @@ public class GroupFragment extends BaseFragment {
 				});
 			}
 		});
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+
+		switch (v.getId()) {
+		case R.id.iv_back:
+		case R.id.iv_image:
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				iv_back.setBackgroundColor(Color.argb(143, 0, 0, 0));
+				iv_image.setBackgroundColor(Color.argb(143, 0, 0, 0));
+				break;
+			case MotionEvent.ACTION_UP:
+				iv_back.setBackgroundColor(Color.argb(0, 0, 0, 0));
+				iv_image.setBackgroundColor(Color.argb(0, 0, 0, 0));
+				break;
+			}
+			break;
+		}
+		return backViewDetector.onTouchEvent(event);
 	}
 }

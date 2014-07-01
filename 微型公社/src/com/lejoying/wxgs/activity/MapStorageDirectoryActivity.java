@@ -50,7 +50,7 @@ public class MapStorageDirectoryActivity extends Activity {
 	TextView cancleSelect;
 	Bitmap defaultImage;
 	int listStatus;
-	int RESULT_SELECTPIC = 0x1;
+	public static int RESULT_SELECTPIC = 0x1;
 	Map<String, SoftReference<Bitmap>> bitmaps;
 
 	public static List<String> selectedImages = new ArrayList<String>();

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#bf000000" 
+    >
+
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        tools:ignore="UselessParent" >
+
+        <LinearLayout
+            android:id="@+id/ll_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_centerHorizontal="true"
+            android:background="#fff"
+            android:orientation="vertical" >
+
+            <ListView
+                android:id="@+id/lv_groups"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:padding="25dp"
+                android:cacheColorHint="#0000"
+                android:divider="#0000"
+                android:scrollbars="none"
+                android:fadingEdge="none"
+                android:listSelector="#0000" >
+            </ListView>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/dialog_close" />
+    </RelativeLayout>
+
+</RelativeLayout>

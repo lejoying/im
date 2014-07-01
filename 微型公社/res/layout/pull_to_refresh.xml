@@ -7,28 +7,31 @@
     <LinearLayout
         android:layout_width="200dip"
         android:layout_height="60dip"
-        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="28dp"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:layout_width="0dip"
             android:layout_height="60dip"
-            android:layout_weight="3"
-            >
-            <ImageView 
+            android:layout_weight="3" >
+
+            <ImageView
                 android:id="@+id/arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="18dp"
+                android:layout_height="21dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/arrow"
-                />
-            <ProgressBar 
-                android:id="@+id/progress_bar"
-                android:layout_width="30dip"
-                android:layout_height="30dip"
+                android:src="@drawable/arrow" />
+
+            <ImageView
+                android:id="@+id/progress"
+                android:layout_width="18dp"
+                android:layout_height="21dp"
                 android:layout_centerInParent="true"
-                android:visibility="gone"
-                />
+                android:src="@drawable/progress" 
+                android:visibility="gone"/>
+            
         </RelativeLayout>
 
         <LinearLayout
@@ -42,9 +45,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1"
-                android:gravity="center_horizontal|bottom"
+                android:gravity="center_vertical"
                 android:text="@string/pull_to_refresh"
-                android:textColor="#fff" />
+                 />
 
             <TextView
                 android:id="@+id/updated_at"
@@ -53,7 +56,8 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal|top"
                 android:text="@string/updated_at"
-                android:textColor="#fff" />
+                android:textColor="#fff" 
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 

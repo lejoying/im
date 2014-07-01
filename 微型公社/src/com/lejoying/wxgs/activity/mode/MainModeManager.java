@@ -22,7 +22,6 @@ import com.lejoying.wxgs.activity.mode.fragment.GroupManagerFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.mode.fragment.NewFriendsFragment;
-import com.lejoying.wxgs.activity.mode.fragment.ReleaseSelectImageFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SearchFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
@@ -54,7 +53,6 @@ public class MainModeManager extends BaseModeManager {
 	public ChangePasswordFragment mChangePasswordFragment;
 	public GroupBusinessCardFragment mGroupBusinessCardFragment;
 	public GroupShareFragment mGroupShareFragment;
-	public ReleaseSelectImageFragment mReleaseSelectImageFragment;
 
 	public static List<String[]> faceNamesList;
 
@@ -104,8 +102,6 @@ public class MainModeManager extends BaseModeManager {
 			mGroupBusinessCardFragment.setMode(this);
 			mGroupShareFragment = new GroupShareFragment();
 			mGroupShareFragment.setMode(this);
-			mReleaseSelectImageFragment=new ReleaseSelectImageFragment();
-			mReleaseSelectImageFragment.setMode(this);
 			initFace();
 		}
 	}

@@ -40,6 +40,7 @@ import com.lejoying.wxgs.activity.utils.NotificationUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.service.PushService;
 
@@ -82,8 +83,8 @@ public class MainActivity extends BaseActivity {
 
 	public static TextView communityNameTV;
 
-	View vPopWindow;
-	PopupWindow popWindow;
+	View vPopWindow, gPopWindowChild;
+	PopupWindow popWindow, gPopWindow;
 
 	int IS_SQUARE = 0x1, IS_GROUPS = 0x2, IS_CIRCLES = 0x3;
 	int nowFragment = IS_SQUARE;
@@ -103,7 +104,7 @@ public class MainActivity extends BaseActivity {
 		inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mBackground = (BackgroundView) findViewById(R.id.mainBackGround);
-		mBackground.setBackground(R.drawable.background3);
+		mBackground.setBackground(R.drawable.background4);
 		mFragmentManager = getSupportFragmentManager();
 
 		ll_menu_app = (LinearLayout) findViewById(R.id.ll_menu_app);
@@ -266,7 +267,11 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				showPopWindow(MainActivity.this, mBackground);
+				if (nowFragment == IS_GROUPS) {
+					showGroupPopWindow(MainActivity.this, mBackground);
+				} else {
+					showPopWindow(MainActivity.this, mBackground);
+				}
 			}
 		});
 
@@ -352,6 +357,32 @@ public class MainActivity extends BaseActivity {
 		public void onReceive(Context context, Intent intent) {
 			switchMode();
 		}
+	}
+
+	private void showGroupPopWindow(Context context, View parent) {
+		gPopWindowChild = inflater.inflate(R.layout.group_dialog, null, false);
+		gPopWindow = new PopupWindow(gPopWindowChild,
+				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		RelativeLayout rl_content = (RelativeLayout) gPopWindowChild
+				.findViewById(R.id.rl_content);
+		ListView groups = (ListView) gPopWindowChild
+				.findViewById(R.id.lv_groups);
+
+		LayoutParams rl_params = (LayoutParams) rl_content.getLayoutParams();
+		rl_params.height=(int) (height*0.7578125f);
+		rl_params.leftMargin = (int) (20 / density + 0.5f);
+		rl_params.rightMargin = (int) (20 / density + 0.5f);
+		rl_content.setLayoutParams(rl_params);
+
+		groups.setAdapter(new GroupsAdapter(app.data.groups));
+
+		gPopWindowChild.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				gPopWindow.dismiss();
+			}
+		});
+		gPopWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
 	}
 
 	private void showPopWindow(Context context, View parent) {
@@ -442,6 +473,89 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 		popWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
+	}
+
+	class GroupsAdapter extends BaseAdapter {
+
+		List<String> list;
+
+		public GroupsAdapter(List<String> list) {
+			this.list = list;
+		}
+
+		@Override
+		public int getCount() {
+			return list.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return list.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			final GroupsHolder groupsHolder;
+			final Group group = app.data.groupsMap.get(list.get(position));
+			if (convertView == null) {
+				groupsHolder = new GroupsHolder();
+				convertView = inflater
+						.inflate(R.layout.group_dialog_item, null);
+				groupsHolder.ll_dialog = (LinearLayout) convertView
+						.findViewById(R.id.ll_dialog);
+				groupsHolder.iv_group = (ImageView) convertView
+						.findViewById(R.id.iv_square);
+				groupsHolder.iv_mony = (ImageView) convertView
+						.findViewById(R.id.iv_mony);
+				groupsHolder.iv_selected_status = (ImageView) convertView
+						.findViewById(R.id.iv_selected_status);
+				groupsHolder.tv_square = (TextView) convertView
+						.findViewById(R.id.tv_square);
+				convertView.setTag(groupsHolder);
+			} else {
+				groupsHolder = (GroupsHolder) convertView.getTag();
+			}
+			groupsHolder.tv_square.setText(group.name);
+			app.fileHandler.getHeadImage(group.icon, "男", new FileResult() {
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					groupsHolder.iv_group
+							.setImageBitmap(app.fileHandler.bitmaps
+									.get(group.icon));
+				}
+			});
+			if(true){
+				groupsHolder.iv_selected_status.setVisibility(View.VISIBLE);
+			}
+			groupsHolder.ll_dialog.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			groupsHolder.iv_mony.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			return convertView;
+		}
+
+		class GroupsHolder {
+			LinearLayout ll_dialog;
+			ImageView iv_group, iv_mony, iv_selected_status, iv_line;
+			TextView tv_square;
+		}
 	}
 
 	class SquaresAdapter extends BaseAdapter {

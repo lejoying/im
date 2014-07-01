@@ -12,8 +12,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -23,7 +26,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ReleaseVoteActivity extends Activity implements OnClickListener{
+public class ReleaseVoteActivity extends Activity implements OnClickListener,
+		OnTouchListener {
 
 	LayoutInflater mInflater;
 
@@ -37,16 +41,16 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 	Map<Integer, String> voteMap;
 	MyListViewAdapter myAdapter = null;
 
-	private List<Map<String,Object>> subVoteList;
-
+	private List<Map<String, Object>> subVoteList;
+	GestureDetector backViewDetector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.release_vote);
-		mInflater =(LayoutInflater) this
+		mInflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				DisplayMetrics dm = new DisplayMetrics();
+		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
 		dip = (int) (40 * density + 0.5f);
@@ -56,13 +60,13 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 		initData();
 		initEvent();
 	}
-	
+
 	void initData() {
 		voteList = new ArrayList<String>();
 		voteList.add(0, "");
 		voteList.add(1, "");
 		voteList.add(2, "");
-		subVoteList = new ArrayList<Map<String,Object>>();
+		subVoteList = new ArrayList<Map<String, Object>>();
 		// voteMap = new HashMap<Integer, String>();
 		// voteMap.put(1, "");
 		// voteMap.put(2, "");
@@ -79,16 +83,16 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 		subVoteList.clear();
 		for (int i = 0; i < voteList.size(); i++) {
 			if (voteList.get(i) != null) {
-				Map<String,Object> map=new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("location", i);
 				map.put("content", voteList.get(i));
 				subVoteList.add(map);
 			}
 		}
-		
+
 		release_ll.removeAllViews();
 		for (int i = 0; i < subVoteList.size(); i++) {
-			release_ll.addView(getVoteView(i,subVoteList.get(i)));
+			release_ll.addView(getVoteView(i, subVoteList.get(i)));
 		}
 		release_ll.addView(getFooterView());
 
@@ -101,16 +105,29 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 		release_ll = (LinearLayout) findViewById(R.id.release_ll);
 		release_et = (EditText) findViewById(R.id.release_et);
 		sl_content = findViewById(R.id.sl_content);
-//		LayoutParams params = sl_content.getLayoutParams();
-//		params.height = height - MainActivity.statusBarHeight
-//				- (int) (157 * density + 0.5f);
-//		sl_content.setLayoutParams(params);
+		// LayoutParams params = sl_content.getLayoutParams();
+		// params.height = height - MainActivity.statusBarHeight
+		// - (int) (157 * density + 0.5f);
+		// sl_content.setLayoutParams(params);
 	}
 
 	void initEvent() {
-		rl_back.setOnClickListener(this);
+		rl_back.setOnTouchListener(this);
 		rl_send.setOnClickListener(this);
 		rl_sync.setOnClickListener(this);
+		backViewDetector = new GestureDetector(ReleaseVoteActivity.this,
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDown(MotionEvent e) {
+						return true;
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						finish();
+						return true;
+					}
+				});
 	}
 
 	void Send() {
@@ -121,7 +138,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 
 	}
 
-	private View getVoteView(final int order, final Map<String,Object> map) {
+	private View getVoteView(final int order, final Map<String, Object> map) {
 
 		View view = mInflater.inflate(R.layout.release_vote_child, null);
 
@@ -135,7 +152,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 		release_vote_num.setText(order + 1 + ".");
 
 		if (!map.get("content").equals("")) {
-			release_vote_et.setText((String)map.get("content"));
+			release_vote_et.setText((String) map.get("content"));
 		}
 
 		release_vote_et.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -148,8 +165,10 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 							.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									//TODO
-									voteList.set((Integer)(map.get("location")), null);
+									// TODO
+									voteList.set(
+											(Integer) (map.get("location")),
+											null);
 									release_ll.removeViewAt(order);
 									initVoteList();
 								}
@@ -159,7 +178,8 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 							.parseColor("#00000000"));
 					release_vote_clear.setVisibility(View.GONE);
 					if (!release_vote_et.getText().toString().equals("")) {
-						voteList.set((Integer)(map.get("location")), release_vote_et.getText().toString());
+						voteList.set((Integer) (map.get("location")),
+								release_vote_et.getText().toString());
 					}
 				}
 
@@ -184,7 +204,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 		view.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				voteList.add(voteList.size(), "");
+				voteList.add(voteList.size(),"");
 				initVoteList();
 			}
 		});
@@ -299,9 +319,6 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.rl_back:
-			finish();
-			break;
 		case R.id.rl_send:
 			Send();
 			break;
@@ -313,6 +330,24 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener{
 			break;
 		}
 
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+
+		switch (v.getId()) {
+		case R.id.rl_back:
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				rl_back.setBackgroundColor(Color.argb(143, 0, 0, 0));
+				break;
+			case MotionEvent.ACTION_UP:
+				rl_back.setBackgroundColor(Color.argb(0, 0, 0, 0));
+				break;
+			}
+			break;
+		}
+		return backViewDetector.onTouchEvent(event);
 	}
 
 }

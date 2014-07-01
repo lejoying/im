@@ -10,6 +10,7 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,9 +19,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
@@ -38,7 +42,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
 public class PicAndVoiceDetailActivity extends Activity implements
-		OnClickListener {
+		OnClickListener, OnTouchListener {
 
 	MainApplication app = MainApplication.getMainApplication();
 	RelativeLayout ll_picandvoice_navigation;
@@ -52,7 +56,8 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	int mediaTotal = 0;
 	int currentCoverIndex = -1;
 
-	int height, width, dip;
+	public static int height, width;
+	int dip;
 	float density;
 
 	List<View> mainListViews;
@@ -63,6 +68,8 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	MyPageAdapter myPageAdapter;
 
 	List<MediaPlayer> players = new ArrayList<MediaPlayer>();
+
+	GestureDetector backViewDetector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +114,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				if (activity.equals("ReleaseActivity")) {
 					if (currentCoverIndex == currentPageSize) {
 						iscover = false;
-//						ReleaseActivity.cover = "";
+						// ReleaseActivity.cover = "";
 						currentCoverIndex = -1;
 						selectedCoverView
 								.setImageResource(R.drawable.picandvoice_cancel);
@@ -199,6 +206,25 @@ public class PicAndVoiceDetailActivity extends Activity implements
 
 			}
 		});
+		backViewDetector = new GestureDetector(PicAndVoiceDetailActivity.this,
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDown(MotionEvent e) {
+						return true;
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						mFinish();
+						return true;
+					}
+				});
+		tv_setcover.setOnClickListener(this);
+		deleteMediaView.setOnClickListener(this);
+		selectedCoverView.setOnClickListener(this);
+
+		mediaTotalView.setOnTouchListener(this);
+		PicAndVoiceDetailBack.setOnTouchListener(this);
 
 	}
 
@@ -215,27 +241,19 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		selectedCoverView = (ImageView) findViewById(R.id.iv_picandvoice_cancel);
 		picandvoice_Pager = (ViewPager) findViewById(R.id.picandvoice_Pager);
 
-
 		if (activity.equals("ReleaseActivity")) {
 
 		} else if (activity.equals("MapStrage")) {
 			tv_setcover.setText("预览");
 			selectedCoverView.setVisibility(View.GONE);
 
-
 		} else if (activity.equals("Browse")) {
-			tv_setcover.setText("预览");
+			tv_setcover.setText("浏览");
 			selectedCoverView.setVisibility(View.GONE);
 			deleteMediaView.setVisibility(View.GONE);
 
-
 		}
 
-		tv_setcover.setOnClickListener(this);
-		PicAndVoiceDetailBack.setOnClickListener(this);
-		deleteMediaView.setOnClickListener(this);
-		selectedCoverView.setOnClickListener(this);
-		mediaTotalView.setOnClickListener(this);
 	}
 
 	void initData() {
@@ -365,10 +383,10 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.PicAndVoiceDetailBack:
-		case R.id.tv_number:
-			mFinish();
-			break;
+//		case R.id.PicAndVoiceDetailBack:
+//		case R.id.tv_number:
+//			mFinish();
+//			break;
 		case R.id.tv_setcover:
 		case R.id.iv_picandvoice_cancel:
 			if (activity.equals("ReleaseActivity")) {
@@ -376,22 +394,22 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					selectedCoverView
 							.setImageResource(R.drawable.picandvoice_cancel);
 					iscover = false;
-//					ReleaseActivity.cover = "";
+					// ReleaseActivity.cover = "";
 					currentCoverIndex = -1;
 				} else {
 					selectedCoverView
 							.setImageResource(R.drawable.picandvoice_affirm);
 					iscover = true;
 					currentCoverIndex = currentPageSize;
-//					if (currentPageSize <= ReleaseActivity.voices.size()) {
-//						ReleaseActivity.cover = (String) ReleaseActivity.voices
-//								.get(currentPageSize - 1).get("fileName");
-//					} else {
-//						ReleaseActivity.cover = (String) ReleaseActivity.images
-//								.get(currentPageSize
-//										- ReleaseActivity.voices.size() - 1)
-//								.get("fileName");
-//					}
+					// if (currentPageSize <= ReleaseActivity.voices.size()) {
+					// ReleaseActivity.cover = (String) ReleaseActivity.voices
+					// .get(currentPageSize - 1).get("fileName");
+					// } else {
+					// ReleaseActivity.cover = (String) ReleaseActivity.images
+					// .get(currentPageSize
+					// - ReleaseActivity.voices.size() - 1)
+					// .get("fileName");
+					// }
 				}
 			}
 			break;
@@ -416,6 +434,29 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			setResult(Activity.RESULT_OK, intent);
 		}
 		finish();
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+
+		switch (v.getId()) {
+		case R.id.PicAndVoiceDetailBack:
+		case R.id.tv_number:
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				mediaTotalView.setBackgroundColor(Color.argb(143, 0, 0, 0));
+				PicAndVoiceDetailBack.setBackgroundColor(Color.argb(143, 0, 0,
+						0));
+				break;
+			case MotionEvent.ACTION_UP:
+				mediaTotalView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+				PicAndVoiceDetailBack
+						.setBackgroundColor(Color.argb(0, 0, 0, 0));
+				break;
+			}
+			break;
+		}
+		return backViewDetector.onTouchEvent(event);
 	}
 }
 

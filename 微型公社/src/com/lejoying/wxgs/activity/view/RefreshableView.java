@@ -12,6 +12,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -105,7 +108,7 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	/**
 	 * 刷新时显示的进度条
 	 */
-	private ProgressBar progressBar;
+	private ImageView progress;
 
 	/**
 	 * 指示下拉和释放的箭头
@@ -182,16 +185,19 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	public RefreshableView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		header = LayoutInflater.from(context).inflate(R.layout.pull_to_refresh, null, true);
-		progressBar = (ProgressBar) header.findViewById(R.id.progress_bar);
+		header = LayoutInflater.from(context).inflate(R.layout.pull_to_refresh,
+				null, true);
+		progress = (ImageView) header.findViewById(R.id.progress);
 		arrow = (ImageView) header.findViewById(R.id.arrow);
 		description = (TextView) header.findViewById(R.id.description);
 		updateAt = (TextView) header.findViewById(R.id.updated_at);
 		touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+
 		refreshUpdatedAtValue();
 		setOrientation(VERTICAL);
 		addView(header, 0);
 	}
+
 	/**
 	 * 进行一些关键性的初始化操作，比如：将下拉头向上偏移进行隐藏，给ListView注册touch事件。
 	 */
@@ -225,7 +231,8 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 				float yMove = event.getRawY();
 				int distance = (int) (yMove - yDown);
 				// 如果手指是下滑状态，并且下拉头是完全隐藏的，就屏蔽下拉事件
-				if (distance <= 0 && headerLayoutParams.topMargin <= hideHeaderHeight) {
+				if (distance <= 0
+						&& headerLayoutParams.topMargin <= hideHeaderHeight) {
 					return false;
 				}
 				if (distance < touchSlop) {
@@ -238,7 +245,8 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 						currentStatus = STATUS_PULL_TO_REFRESH;
 					}
 					// 通过偏移下拉头的topMargin值，来实现下拉效果
-					headerLayoutParams.topMargin = (distance / 2) + hideHeaderHeight;
+					headerLayoutParams.topMargin = (distance / 2)
+							+ hideHeaderHeight;
 					header.setLayoutParams(headerLayoutParams);
 				}
 				break;
@@ -287,7 +295,8 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	 */
 	public void finishRefreshing() {
 		currentStatus = STATUS_REFRESH_FINISHED;
-		preferences.edit().putLong(UPDATED_AT + mId, System.currentTimeMillis()).commit();
+		preferences.edit()
+				.putLong(UPDATED_AT + mId, System.currentTimeMillis()).commit();
 		new HideHeaderTask().execute();
 	}
 
@@ -326,23 +335,40 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	private void updateHeaderView() {
 		if (lastStatus != currentStatus) {
 			if (currentStatus == STATUS_PULL_TO_REFRESH) {
-				description.setText(getResources().getString(R.string.pull_to_refresh));
+				description.setText(getResources().getString(
+						R.string.pull_to_refresh));
 				arrow.setVisibility(View.VISIBLE);
-				progressBar.setVisibility(View.GONE);
+				progress.clearAnimation();
+				progress.setVisibility(View.GONE);
 				rotateArrow();
 			} else if (currentStatus == STATUS_RELEASE_TO_REFRESH) {
-				description.setText(getResources().getString(R.string.release_to_refresh));
+				description.setText(getResources().getString(
+						R.string.release_to_refresh));
 				arrow.setVisibility(View.VISIBLE);
-				progressBar.setVisibility(View.GONE);
+				progress.clearAnimation();
+				progress.setVisibility(View.GONE);
 				rotateArrow();
 			} else if (currentStatus == STATUS_REFRESHING) {
-				description.setText(getResources().getString(R.string.refreshing));
-				progressBar.setVisibility(View.VISIBLE);
+				description.setText(getResources().getString(
+						R.string.refreshing));
+				progress.setVisibility(View.VISIBLE);
 				arrow.clearAnimation();
 				arrow.setVisibility(View.GONE);
+				rotateProgess();
 			}
 			refreshUpdatedAtValue();
 		}
+	}
+
+	/**
+	 * 正在刷新旋转箭头动画。
+	 */
+	private void rotateProgess() {
+		Animation animation = AnimationUtils.loadAnimation(getContext(),
+				R.anim.rotate_fresh);
+		LinearInterpolator lin = new LinearInterpolator();
+		animation.setInterpolator(lin);
+		progress.startAnimation(animation);
 	}
 
 	/**
@@ -360,7 +386,8 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 			fromDegrees = 0f;
 			toDegrees = 180f;
 		}
-		RotateAnimation animation = new RotateAnimation(fromDegrees, toDegrees, pivotX, pivotY);
+		RotateAnimation animation = new RotateAnimation(fromDegrees, toDegrees,
+				pivotX, pivotY);
 		animation.setDuration(100);
 		animation.setFillAfter(true);
 		arrow.startAnimation(animation);
@@ -384,32 +411,38 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 		} else if (timePassed < ONE_HOUR) {
 			timeIntoFormat = timePassed / ONE_MINUTE;
 			String value = timeIntoFormat + "分钟";
-			updateAtValue = String.format(getResources().getString(R.string.updated_at), value);
+			updateAtValue = String.format(
+					getResources().getString(R.string.updated_at), value);
 		} else if (timePassed < ONE_DAY) {
 			timeIntoFormat = timePassed / ONE_HOUR;
 			String value = timeIntoFormat + "小时";
-			updateAtValue = String.format(getResources().getString(R.string.updated_at), value);
+			updateAtValue = String.format(
+					getResources().getString(R.string.updated_at), value);
 		} else if (timePassed < ONE_MONTH) {
 			timeIntoFormat = timePassed / ONE_DAY;
 			String value = timeIntoFormat + "天";
-			updateAtValue = String.format(getResources().getString(R.string.updated_at), value);
+			updateAtValue = String.format(
+					getResources().getString(R.string.updated_at), value);
 		} else if (timePassed < ONE_YEAR) {
 			timeIntoFormat = timePassed / ONE_MONTH;
 			String value = timeIntoFormat + "个月";
-			updateAtValue = String.format(getResources().getString(R.string.updated_at), value);
+			updateAtValue = String.format(
+					getResources().getString(R.string.updated_at), value);
 		} else {
 			timeIntoFormat = timePassed / ONE_YEAR;
 			String value = timeIntoFormat + "年";
-			updateAtValue = String.format(getResources().getString(R.string.updated_at), value);
+			updateAtValue = String.format(
+					getResources().getString(R.string.updated_at), value);
 		}
 		updateAt.setText(updateAtValue);
 	}
 
-	public void reset(){
+	public void reset() {
 		headerLayoutParams.topMargin = headerLayoutParams.topMargin;
 		header.setLayoutParams(headerLayoutParams);
 		currentStatus = STATUS_REFRESH_FINISHED;
 	}
+
 	/**
 	 * 正在刷新的任务，在此任务中会去回调注册进来的下拉刷新监听器。
 	 * 

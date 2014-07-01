@@ -25,6 +25,7 @@ import android.util.Base64;
 
 import com.aliyun.android.oss.task.PutObjectTask;
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.PicAndVoiceDetailActivity;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -200,6 +201,15 @@ public class OSSFileHandler {
 					if (type == TYPE_IMAGE_SQUAREIMAGE) {
 						imageFileBitmap = MCImageUtils.getZoomBitmapFromFile(
 								imageFile, (int) width, 0);
+					} else if (type == TYPE_IMAGE_COMMON) {
+						// if(PicAndVoiceDetailActivity.width&&){
+						//
+						// }else{
+						//
+						// }
+						imageFileBitmap = MCImageUtils.getZoomBitmapFromFile(
+								imageFile, PicAndVoiceDetailActivity.width,
+								PicAndVoiceDetailActivity.height);
 					} else {
 						imageFileBitmap = BitmapFactory.decodeFile(imageFile
 								.getAbsolutePath());
@@ -301,7 +311,8 @@ public class OSSFileHandler {
 						bitmaps.put(fileName0, bitmap);
 					} else if (type == TYPE_IMAGE_THUMBNAIL) {
 						bitmaps.put(fileName0, bitmap);
-					} else if (type == TYPE_IMAGE_SQUAREIMAGE) {
+					} else if (type == TYPE_IMAGE_SQUAREIMAGE
+							|| type == TYPE_IMAGE_COMMON) {
 						bitmap = MCImageUtils.getZoomBitmapFromFile(imageFile,
 								(int) width, 0);
 					}
