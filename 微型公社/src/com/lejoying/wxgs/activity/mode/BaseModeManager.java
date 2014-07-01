@@ -74,13 +74,17 @@ public abstract class BaseModeManager {
 					.beginTransaction();
 			transaction.setCustomAnimations(R.anim.translate_back,
 					R.anim.translate_finish);
-			if (mCurrentFragment != null) {
+			if (mCurrentFragment != null
+					&& mFragmentManager.findFragmentById(mCurrentFragment
+							.getId()) != null) {
 				transaction.remove(mCurrentFragment);
 			}
-			mCurrentFragment = fragment;
-			transaction.show(fragment);
-			fragment.onResume();
-			transaction.commit();
+			if (fragment != null) {
+				mCurrentFragment = fragment;
+				transaction.show(fragment);
+				fragment.onResume();
+				transaction.commit();
+			}
 			return true;
 		}
 		return false;
