@@ -1233,6 +1233,54 @@ api = {
             success: {"提示信息": "评论群分享成功"},
             failed: { "提示信息": "评论群分享失败", "失败原因": "数据异常" || "消息不存在" }
         }
+    },
+    /***************************************
+     *     URL：/api2/share/delete
+     ***************************************/
+    "share_delete": {
+        description: {
+            id: 1001304,
+            url: "/api2/share/delete"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", gsid: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "删除群分享成功"},
+            failed: { "提示信息": "删除群分享失败", "失败原因": "数据异常" || "群分享不存在" }
+        }
+    },
+    /***************************************
+     *     URL：/api2/share/deletecomment
+     ***************************************/
+    "share_deletecomment": {
+        description: {
+            id: 1001305,
+            url: "/api2/share/deletecomment"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", commentphone: "NNN", atphone: "NNN", gid: "NNN", gsid: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "删除评论成功"},
+            failed: { "提示信息": "删除评论失败", "失败原因": "数据异常" || "群分享不存在" }
+        }
+    },
+    /***************************************
+     *     URL：/api2/share/getshare
+     ***************************************/
+    "share_getshare": {
+        description: {
+            id: 1001306,
+            url: "/api2/share/getshare"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", gsid: "NNN"}
+        },
+        response: {
+            success: {"提示信息": "获取群分享成功"},
+            failed: { "提示信息": "获取群分享失败", "失败原因": "数据异常" || "群分享不存在" }
+        }
     }
 }
 message = {

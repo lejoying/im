@@ -17,7 +17,7 @@ shareManage.sendshare = function (data, response) {
         try {
             message = JSON.parse(messageStr);
             if (message.type == "imagetext" || message.type == "voicetext" || message.type == "vote") {
-                saveShareNode(message);
+                checkShares(gid, message);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
@@ -34,12 +34,69 @@ shareManage.sendshare = function (data, response) {
             response.end();
         }
     }
+    function checkShares(gid, message) {
+        var query = [
+            "MACTH (group:Group)-[r:SHARE]->(shares:Shares)",
+            "WHERE group.gid={gid}",
+            "RETURN group,shares"
+        ].join("\n");
+        var params = {
+            gid: gid
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "发布群分享失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                createSharesTypeNode(gid, message);
+            } else {
+                saveShareNode(message);
+            }
+        });
+    }
+
+    function createSharesTypeNode(gid, message) {
+        var query = [
+            "MATCH (group:Group)",
+            "WHERE group.gid={gid}",
+            "CREATE UNIQUE group-[r:SHARE]->(shares:Shares{shares})",
+            "RETURN shares"
+        ].join("\n");
+        var params = {
+            gid: gid,
+            shares: {}
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "发布群分享失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "发布群分享失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+            } else {
+                saveShareNode(message);
+            }
+        });
+    }
 
     function saveShareNode(message) {
         var query = [
-            'MATCH (group:Group)',
+            'MATCH (group:Group)-[r:SHARE]->(shares:Shares)',
             'WHERE group.gid={gid}',
-            'CREATE group-[r:HAS_SHARE]->(share:Share{share})',
+            'CREATE shares-[r1:HAS_SHARE]->(share:Share{share})',
             'SET share.gsid=ID(share)',
             'RETURN group,share'
         ].join("\n");
@@ -92,7 +149,7 @@ shareManage.getshares = function (data, response) {
     }
     function getSharesNodes() {
         var query = [
-            "MACTH (account:Account)<-[r:HAS_MEMBER]-(group:Group)-[r:HAS_SHARE]->(share:Share)",
+            "MACTH (account:Account)<-[r:HAS_MEMBER]-(group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
             "WHERE group.gid={gid} AND account.phone=share.phone",
             "ORDER BY share.time desc",
             "SKIP {start} LIMIT {pagesize}",
@@ -161,7 +218,7 @@ shareManage.addpraise = function (data, response) {
     }
     function modifySharePraise() {
         var query = [
-            "MATCH (group:Group)-[r:HAS_SHARE]->(share:Share)",
+            "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
             "WHERE group.gid={gid} AND share.gsid={gsid}",
             "RETURN share"
         ].join("\n");
@@ -232,6 +289,8 @@ shareManage.addpraise = function (data, response) {
  ***************************************/
 shareManage.addcomment = function (data, response) {
     response.asynchronous = 1;
+    var phone = data.phone;
+    var phoneTo = data.phoneto;
     var gid = data.gid;
     var gsid = data.gsid;
     var nickName = data.nickName;
@@ -244,7 +303,7 @@ shareManage.addcomment = function (data, response) {
     }
     function modifyShareComments() {
         var query = [
-            "MATCH (group:Group)-[r:HAS_SHARE]->(share:Share)",
+            "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
             "WHERE group.gid={gid} AND share.gsid={gsid}",
             "RETURN share"
         ].join("\n");
@@ -279,8 +338,7 @@ shareManage.addcomment = function (data, response) {
                     }
                     var comment = {
                         phone: phone,
-                        nickName: nickName,
-                        head: head,
+                        phoneto: phoneTo,
                         contentType: contentType,
                         content: content
                     };
@@ -320,9 +378,9 @@ shareManage.delete = function (data, response) {
     }
     function deleteShareNode() {
         var query = [
-            "MATCH (group:Group)-[r:HAS_SHARE]->(share:Share)",
+            "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
             "WHERE group.gid={gid} AND share.gsid={gsid}",
-            "DELETE r,share",
+            "DELETE r1,share",
             "RETURN group"
         ].join("\n");
         var params = {
@@ -353,5 +411,122 @@ shareManage.delete = function (data, response) {
         });
     }
 }
+/***************************************
+ *     URL：/api2/share/deletecomment
+ ***************************************/
+shareManage.deletecomment = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var commentPhone = data.commentphone;
+    var atPhone = data.atphone;
+    var gid = data.gid;
+    var gsid = data.gsid;
+    var arr = [commentPhone, atPhone, gid, gsid];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
 
+    }
+    function deleteComment() {
+        var query = [
+            "MACTH (group:Group)-[r:HAS_SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
+            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "RETURN share"
+        ].join("\n");
+        var params = {
+            gid: gid,
+            gsid: gsid
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "删除评论失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "删除评论失败",
+                    "失败原因": "群分享不存在"
+                }));
+                response.end();
+            } else {
+                var shareNode = results.pop().share;
+                var shareData = shareNode.data;
+                var comments = JSON.parse(shareData.comments);
+                var newComments = [];
+                for (var index in comments) {
+                    var comment = comments[index];
+                    if (comment.phone != commentPhone && comment.phoneto != atPhone) {
+                        newComments.push(comment);
+                    }
+                }
+                shareData.comments = JSON.stringify(newComments);
+                shareNode.save(function (error, node) {
+                    if (error) {
+                        response.write(JSON.stringify({
+                            "提示信息": "删除评论失败",
+                            "失败原因": "数据异常"
+                        }));
+                        response.end();
+                        console.error(error);
+                        return;
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "删除评论成功"
+                        }));
+                        response.end();
+                    }
+                });
+            }
+        });
+    }
+}
+/***************************************
+ *     URL：/api2/share/getshare
+ ***************************************/
+shareManage.getshare = function (data, response) {
+    response.asynchronous = 1;
+    var gid = data.gid;
+    var gsid = data.gsid;
+    var arr = [gid, gsid];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        getShareNode();
+    }
+    function getShareNode() {
+        var query = [
+            "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
+            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "RETURN share"
+        ].join("\n");
+        var params = {
+            gid: gid,
+            gsid: gsid
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享失败",
+                    "失败原因": "群分享不存在"
+                }));
+                response.end();
+            } else {
+                var shareData = results.pop().share.data;
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享成功",
+                    shares: [shareData]
+                }));
+                response.end();
+            }
+        });
+    }
+}
 module.exports = shareManage;
