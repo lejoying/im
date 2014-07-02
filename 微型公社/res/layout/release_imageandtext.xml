@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="1dp"
                 android:text="同步到广场"
                 android:textColor="#fff"
                 android:textSize="16sp" />

@@ -14,17 +14,18 @@ public class ReleaseEditText extends EditText {
 		super(context, attrs);
 		mPaint = new Paint();
 		mPaint.setStyle(Paint.Style.STROKE);
+		mPaint.setStrokeWidth(2);
 		mPaint.setColor(Color.WHITE);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		canvas.drawLine(0, this.getHeight() - 2, this.getWidth() - 2,
-				this.getHeight() - 2, mPaint);
-		canvas.drawLine(this.getWidth() - 2, this.getHeight() - 40,
-				this.getWidth() - 2, this.getHeight() - 2, mPaint);
-		canvas.drawLine(0, this.getHeight() - 40, 0, this.getHeight() - 2,
+		canvas.drawLine(0, this.getHeight() - 1, this.getWidth() - 1,
+				this.getHeight() - 1, mPaint);
+		canvas.drawLine(this.getWidth() - 1, this.getHeight() - 40,
+				this.getWidth() - 1, this.getHeight() - 1, mPaint);
+		canvas.drawLine(0, this.getHeight() - 40, 0, this.getHeight() - 1,
 				mPaint);
 	}
 

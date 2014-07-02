@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -67,15 +69,6 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		voteList.add(1, "");
 		voteList.add(2, "");
 		subVoteList = new ArrayList<Map<String, Object>>();
-		// voteMap = new HashMap<Integer, String>();
-		// voteMap.put(1, "");
-		// voteMap.put(2, "");
-		// voteMap.put(3, "");
-		// myAdapter = new MyListViewAdapter();
-		// release_lv.addFooterView(getFooterView());
-		// release_lv.setAdapter(myAdapter);
-
-		// release_ll.addView(child, index);
 		initVoteList();
 	}
 
@@ -166,11 +159,16 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 								@Override
 								public void onClick(View v) {
 									// TODO
-									voteList.set(
-											(Integer) (map.get("location")),
-											null);
-									release_ll.removeViewAt(order);
-									initVoteList();
+									if(release_ll.getChildCount()>3){
+										voteList.set(
+												(Integer) (map.get("location")),
+												null);
+										release_ll.removeViewAt(order);
+										initVoteList();
+									}else{
+										Alert.showMessage("最少不能少于2个选项");
+									}
+									
 								}
 							});
 				} else {
@@ -181,6 +179,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 						voteList.set((Integer) (map.get("location")),
 								release_vote_et.getText().toString());
 					}
+					initVoteList();
 				}
 
 			}
@@ -342,6 +341,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 				rl_back.setBackgroundColor(Color.argb(143, 0, 0, 0));
 				break;
 			case MotionEvent.ACTION_UP:
+//				playSoundEffect(SoundEffectConstants.CLICK); 
 				rl_back.setBackgroundColor(Color.argb(0, 0, 0, 0));
 				break;
 			}

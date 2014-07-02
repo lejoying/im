@@ -47,7 +47,7 @@ public class MapStorageImagesActivity extends Activity {
 
 	MapStorageImagesAdapter mapStorageImagesAdapter;
 
-	List<Map<String, Object>> mImages;
+	List<HashMap<String, Object>> mImages;
 
 	float height, width, dip;
 	float density;
@@ -115,9 +115,7 @@ public class MapStorageImagesActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// MapStorageDirectoryActivity.selectedImages.clear();
-				Intent intent = new Intent();
-				setResult(Activity.RESULT_OK, intent);
+				setResult(Activity.RESULT_OK);
 				finish();
 			}
 		});
@@ -134,9 +132,10 @@ public class MapStorageImagesActivity extends Activity {
 			}
 		});
 		mCancel.setOnClickListener(new OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
+				setResult(Activity.RESULT_OK);
 				finish();
 			}
 		});

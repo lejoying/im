@@ -70,6 +70,14 @@ public class API {
 	public static final String GROUP_GET = "api2/group/get";
 	public static final String GROUP_GETGROUPSANDMEMBERS = "api2/group/getgroupsandmembers";
 
+	public static final String SHARE_SEND = "api2/share/sendshare";
+	public static final String SHARE_GETSHARES = "api2/share/getshares";
+	public static final String SHARE_ADDPRAISE = "api2/share/addpraise";
+	public static final String SHARE_ADDCOMMENT = "api2/share/addcomment";
+	public static final String SHARE_DELETE = "api2/share/delete";
+	public static final String SHARE_DELETECOMMENT = "api2/share/deletecomment";
+	public static final String SHARE_GETSHARE = "api2/share/getshare";
+
 	public static final String LBS = "lbs";
 	public static final String LBS_UPDATELOCATION = "lbs/updatelocation";
 	public static final String LBS_SETGROUPLOCATION = "lbs/setgrouplocation";

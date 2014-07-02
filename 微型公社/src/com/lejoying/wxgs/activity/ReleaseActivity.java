@@ -3,9 +3,11 @@ package com.lejoying.wxgs.activity;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -123,6 +125,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	String squareContentType = "vit";
 	JSONArray jsonArray;
 
+	Bitmaps bitmaps;
+
 	String cover = "";
 	public static int currentCoverIndex = -1;
 
@@ -144,7 +148,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	}
 
 	protected void onResume() {
-//		CircleMenu.hide();
+		// CircleMenu.hide();
 		super.onResume();
 	}
 
@@ -210,6 +214,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		initFace();
 		images = new ArrayList<Map<String, Object>>();
 		voices = new ArrayList<Map<String, Object>>();
+		bitmaps = new Bitmaps();
 		et_release.addTextChangedListener(new TextWatcher() {
 			String content = "";
 
@@ -616,33 +621,13 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			Alert.showMessage("发送内容不能为空");
 			return;
 		}
-		// if (images.size() != 0) {
-		// for (int i = 0; i < images.size(); i++) {
-		// if (images.get(i).get("bitmap") != null) {
-		// final int j = i;
-		// // app.fileHandler.saveBitmap(new SaveBitmapInterface() {
-		// // @Override
-		// // public void setParams(SaveSettings settings) {
-		// // settings.source = (Bitmap) images.get(j).get(
-		// // "bitmap");
-		// // settings.compressFormat = settings.PNG;
-		// // settings.folder = app.sdcardImageFolder;
-		// // }
-		// //
-		// // @Override
-		// // public void onSuccess(String fileName, String base64) {
-		// //
-		// // }
-		// // });
-		// }
-		// }
-		// }
 		Alert.showLoading(new OnLoadingCancelListener() {
 			@Override
 			public void loadingCancel() {
 				System.out.println("in LoadingCancelListener");
 			}
 		});
+		// TODO
 		if (broadcast == null || broadcast.equals("")) {
 			if (images.size() == 0) {
 				addVoiceToJson();
@@ -758,6 +743,11 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 	public void addImageFromLocal() {
 		Intent selectFromGallery = new Intent(ReleaseActivity.this,
 				MapStorageDirectoryActivity.class);
+		if (images.size() == 0) {
+			selectFromGallery.putExtra("init", true);
+		} else {
+			selectFromGallery.putExtra("init", false);
+		}
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
 
 	}
@@ -814,30 +804,23 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 			nodifyViews();
 		} else if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			// String picturePath = "";
+			@SuppressWarnings("unchecked")
+			HashMap<String, HashMap<String, Object>> photoListMap = (HashMap<String, HashMap<String, Object>>) data
+					.getSerializableExtra("photoListMap");
+			List<String> list = data.getStringArrayListExtra("photoList");
+			images.clear();
 			String format = "";
-			// Uri selectedImage = data.getData();
-			// String[] filePathColumn = { MediaStore.Images.Media.DATA };
-			// Cursor cursor = getContentResolver().query(selectedImage,
-			// filePathColumn, null, null, null);
-			// cursor.moveToFirst();
-			// int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			// picturePath = cursor.getString(columnIndex).toLowerCase(
-			// Locale.getDefault());
-			// format = picturePath.substring(picturePath.lastIndexOf("."));
-			// cursor.close();
-			// System.out.println(MapStorageDirectoryActivity.selectedImages
-			// .size() + "...||||||||||||||||||||||");
-			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
-					.size(); i++) {
-				final String filePath = MapStorageDirectoryActivity.selectedImages
-						.get(i);
+			for (int i = 0; i < list.size(); i++) {
+				final String filePath = list.get(i);
 				format = filePath.substring(filePath.lastIndexOf("."));
-				final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(
-						new File(filePath), 960, 540);
-
-				Map<String, Object> map = MapStorageDirectoryActivity.selectedImagesMap
-						.get(filePath);
+				Bitmap bitmap;
+				if (bitmaps.get(filePath) != null) {
+					bitmap = bitmaps.get("filePath");
+				} else {
+					bitmap = MCImageUtils.getZoomBitmapFromFile(
+							new File(filePath), 960, 540);
+				}
+				Map<String, Object> map = photoListMap.get(filePath);
 				if (map == null) {
 					map = new HashMap<String, Object>();
 				}
@@ -869,7 +852,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 							}
 						});
 			}
-			MapStorageDirectoryActivity.selectedImages.clear();
+			// MapStorageDirectoryActivity.selectedImages.clear();
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
@@ -1167,6 +1150,21 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					}).show();
 		} else {
 			finish();
+		}
+	}
+
+	public class Bitmaps {
+		public Map<String, SoftReference<Bitmap>> softBitmaps = new Hashtable<String, SoftReference<Bitmap>>();
+
+		public void put(String key, Bitmap bitmap) {
+			softBitmaps.put(key, new SoftReference<Bitmap>(bitmap));
+		}
+
+		public Bitmap get(String key) {
+			if (softBitmaps.get(key) == null) {
+				return null;
+			}
+			return softBitmaps.get(key).get();
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,11 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,7 +27,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -66,6 +66,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	int currentPageSize = 0;
 	MediaPlayer currentPlayVoice;
 	MyPageAdapter myPageAdapter;
+	Bitmaps bitmaps;
 
 	List<MediaPlayer> players = new ArrayList<MediaPlayer>();
 
@@ -114,7 +115,6 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				if (activity.equals("ReleaseActivity")) {
 					if (currentCoverIndex == currentPageSize) {
 						iscover = false;
-						// ReleaseActivity.cover = "";
 						currentCoverIndex = -1;
 						selectedCoverView
 								.setImageResource(R.drawable.picandvoice_cancel);
@@ -147,25 +147,56 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					}
 
 				} else if (activity.equals("MapStrage")) {
-					MapStorageDirectoryActivity.selectedImages
-							.remove(currentPageSize - 1);
-					if (MapStorageDirectoryActivity.selectedImages.size() == 0) {
-						mFinish();
+					if (content != null && content.size() != 0) {
+						content.remove(currentPageSize - 1);
+						mainListViews.remove(currentPageSize - 1);
+						mediaTotal--;
+						if (content.size() == 0) {
+							mFinish();
+						} else {
+							myPageAdapter.notifyDataSetChanged();
+							// initData();
+							// myPageAdapter = new MyPageAdapter(mainListViews);
+							// picandvoice_Pager.setAdapter(myPageAdapter);
+						}
+						if (content.size() > currentPageSize) {
+							picandvoice_Pager
+									.setCurrentItem(currentPageSize - 1);
+							mediaTotalView.setText(currentPageSize + "/"
+									+ mediaTotal);
+						} else {
+							currentPageSize = content.size();
+							picandvoice_Pager
+									.setCurrentItem(currentPageSize - 1);
+							mediaTotalView.setText(currentPageSize + "/"
+									+ mediaTotal);
+						}
 					} else {
-						initData();
-						myPageAdapter = new MyPageAdapter(mainListViews);
-						picandvoice_Pager.setAdapter(myPageAdapter);
-					}
-					if (MapStorageDirectoryActivity.selectedImages.size() > currentPageSize) {
-						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
-						mediaTotalView.setText(currentPageSize + "/"
-								+ mediaTotal);
-					} else {
-						currentPageSize = MapStorageDirectoryActivity.selectedImages
-								.size();
-						picandvoice_Pager.setCurrentItem(currentPageSize - 1);
-						mediaTotalView.setText(currentPageSize + "/"
-								+ mediaTotal);
+						MapStorageDirectoryActivity.selectedImages
+								.remove(currentPageSize - 1);
+						mainListViews.remove(currentPageSize - 1);
+						mediaTotal--;
+						if (MapStorageDirectoryActivity.selectedImages.size() == 0) {
+							mFinish();
+						} else {
+							myPageAdapter.notifyDataSetChanged();
+							// initData();
+							// myPageAdapter = new MyPageAdapter(mainListViews);
+							// picandvoice_Pager.setAdapter(myPageAdapter);
+						}
+						if (MapStorageDirectoryActivity.selectedImages.size() > currentPageSize) {
+							picandvoice_Pager
+									.setCurrentItem(currentPageSize - 1);
+							mediaTotalView.setText(currentPageSize + "/"
+									+ mediaTotal);
+						} else {
+							currentPageSize = MapStorageDirectoryActivity.selectedImages
+									.size();
+							picandvoice_Pager
+									.setCurrentItem(currentPageSize - 1);
+							mediaTotalView.setText(currentPageSize + "/"
+									+ mediaTotal);
+						}
 					}
 				} else {
 
@@ -220,7 +251,6 @@ public class PicAndVoiceDetailActivity extends Activity implements
 					}
 				});
 		tv_setcover.setOnClickListener(this);
-		deleteMediaView.setOnClickListener(this);
 		selectedCoverView.setOnClickListener(this);
 
 		mediaTotalView.setOnTouchListener(this);
@@ -259,6 +289,7 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	void initData() {
 		mediaTotal = 0;
 		mainListViews = new ArrayList<View>();
+		bitmaps = new Bitmaps();
 		if (activity.equals("ReleaseActivity")) {
 			for (int i = 0; i < ReleaseActivity.voices.size(); i++) {
 				mediaTotal++;
@@ -345,24 +376,41 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				mainListViews.add(superView);
 			}
 		} else if (activity.equals("MapStrage")) {
-			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
-					.size(); i++) {
-				mediaTotal++;
-				LinearLayout superView = (LinearLayout) mInflater.inflate(
-						R.layout.view_child, null);
-				ImageView iv = (ImageView) superView
-						.findViewById(R.id.iv_child);
-				SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
-						MCImageUtils
-								.getZoomBitmapFromFile(
-										new File(
-												MapStorageDirectoryActivity.selectedImages
-														.get(i)), width, height));
-				iv.setImageBitmap(bm.get());
-				mainListViews.add(superView);
+			if (content != null && content.size() != 0) {
+				for (int i = 0; i < content.size(); i++) {
+					mediaTotal++;
+					LinearLayout superView = (LinearLayout) mInflater.inflate(
+							R.layout.view_child, null);
+					ImageView iv = (ImageView) superView
+							.findViewById(R.id.iv_child);
+					bitmaps.put(
+							content.get(i),
+							MCImageUtils.getZoomBitmapFromFile(
+									new File(content.get(i)), width, height));
+					iv.setImageBitmap(bitmaps.get(content.get(i)));
+					mainListViews.add(superView);
+				}
+			} else {
+				for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
+						.size(); i++) {
+					mediaTotal++;
+					LinearLayout superView = (LinearLayout) mInflater.inflate(
+							R.layout.view_child, null);
+					ImageView iv = (ImageView) superView
+							.findViewById(R.id.iv_child);
+					bitmaps.put(MapStorageDirectoryActivity.selectedImages
+							.get(i), MCImageUtils.getZoomBitmapFromFile(
+							new File(MapStorageDirectoryActivity.selectedImages
+									.get(i)), width, height));
+					iv.setImageBitmap(bitmaps
+							.get(MapStorageDirectoryActivity.selectedImages
+									.get(i)));
+					mainListViews.add(superView);
+				}
 			}
 		} else if (activity.equals("Browse")) {
 			for (int i = 0; i < content.size(); i++) {
+				final int location = i;
 				mediaTotal++;
 				LinearLayout superView = (LinearLayout) mInflater.inflate(
 						R.layout.view_child, null);
@@ -371,7 +419,8 @@ public class PicAndVoiceDetailActivity extends Activity implements
 				app.fileHandler.getImage(content.get(i), new FileResult() {
 					@Override
 					public void onResult(String where, Bitmap bitmap) {
-						iv.setImageBitmap(bitmap);
+						bitmaps.put(content.get(location), bitmap);
+						iv.setImageBitmap(bitmaps.get(content.get(location)));
 					}
 				});
 				mainListViews.add(superView);
@@ -383,10 +432,10 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-//		case R.id.PicAndVoiceDetailBack:
-//		case R.id.tv_number:
-//			mFinish();
-//			break;
+		// case R.id.PicAndVoiceDetailBack:
+		// case R.id.tv_number:
+		// mFinish();
+		// break;
 		case R.id.tv_setcover:
 		case R.id.iv_picandvoice_cancel:
 			if (activity.equals("ReleaseActivity")) {
@@ -432,6 +481,9 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		} else if (activity.equals("MapStrage")) {
 			Intent intent = new Intent();
 			setResult(Activity.RESULT_OK, intent);
+			if (content != null) {
+				intent.putStringArrayListExtra("photoList", content);
+			}
 		}
 		finish();
 	}
@@ -458,6 +510,22 @@ public class PicAndVoiceDetailActivity extends Activity implements
 		}
 		return backViewDetector.onTouchEvent(event);
 	}
+
+	public class Bitmaps {
+		public Map<String, SoftReference<Bitmap>> softBitmaps = new Hashtable<String, SoftReference<Bitmap>>();
+
+		public void put(String key, Bitmap bitmap) {
+			softBitmaps.put(key, new SoftReference<Bitmap>(bitmap));
+		}
+
+		public Bitmap get(String key) {
+			if (softBitmaps.get(key) == null) {
+				return null;
+			}
+			return softBitmaps.get(key).get();
+		}
+	}
+
 }
 
 class MyPageAdapter extends PagerAdapter {
@@ -473,28 +541,45 @@ class MyPageAdapter extends PagerAdapter {
 	}
 
 	@Override
-	public boolean isViewFromObject(View arg0, Object arg1) {
-		return (arg0 == arg1);
+	public boolean isViewFromObject(View view, Object obj) {
+		return (view == obj);
 	}
 
 	@Override
-	public Object instantiateItem(View arg0, int arg1) {
-		try {
-			if (mListViews.get(arg1).getParent() == null)
-				((ViewPager) arg0).addView(mListViews.get(arg1), 0);
-			else {
-				((ViewGroup) mListViews.get(arg1).getParent())
-						.removeView(mListViews.get(arg1));
-				((ViewPager) arg0).addView(mListViews.get(arg1), 0);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return mListViews.get(arg1);
+	public Object instantiateItem(ViewGroup view, int position) {
+		view.addView(mListViews.get(position));
+		return mListViews.get(position);
 	}
 
 	@Override
-	public void destroyItem(View arg0, int arg1, Object arg2) {
-		((ViewPager) arg0).removeView(mListViews.get(arg1));
+	public void destroyItem(View view, int position, Object obj) {
+		((ViewPager) view).removeView((View)obj);
+	}
+
+	@Override
+	public int getItemPosition(Object object) {
+
+		return POSITION_NONE;
+	}
+
+	@Override
+	public Parcelable saveState() {
+
+		return null;
+	}
+
+	@Override
+	public void startUpdate(View container) {
+
+	}
+
+	@Override
+	public void restoreState(Parcelable state, ClassLoader loader) {
+
+	}
+
+	@Override
+	public void finishUpdate(ViewGroup container) {
+
 	}
 }

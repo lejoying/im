@@ -40,10 +40,10 @@ public class MapStorageDirectoryActivity extends Activity {
 	LayoutInflater inflater;
 
 	public static List<String> directorys = new ArrayList<String>();
-	public static Map<String, List<Map<String, Object>>> directoryToImages = new HashMap<String, List<Map<String, Object>>>();
+	public static HashMap<String, List<HashMap<String, Object>>> directoryToImages = new HashMap<String, List<HashMap<String, Object>>>();
 
 	public static String currentShowDirectory = "";
-	public static int max=0;
+	public static int max = 0;
 	MapStorageDirectoryAdapter mapStorageDirectoryAdapter;
 
 	ListView imagesDirectory;
@@ -53,19 +53,26 @@ public class MapStorageDirectoryActivity extends Activity {
 	public static int RESULT_SELECTPIC = 0x1;
 	Map<String, SoftReference<Bitmap>> bitmaps;
 
-	public static List<String> selectedImages = new ArrayList<String>();
-	public static Map<String, Map<String, Object>> selectedImagesMap = new HashMap<String, Map<String, Object>>();
+	public static ArrayList<String> selectedImages = new ArrayList<String>();
+	public static HashMap<String, HashMap<String, Object>> selectedImagesMap = new HashMap<String, HashMap<String, Object>>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_mapstoragedirectory);
+		boolean init = true;
+		if (getIntent().getExtras() != null) {
+			init = getIntent().getExtras().getBoolean("init");
+		}
 		imagesDirectory = (ListView) findViewById(R.id.gv_imagesDirectory);
 		cancleSelect = (TextView) findViewById(R.id.tv_cancle);
 		inflater = this.getLayoutInflater();
 		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
 		directorys = new ArrayList<String>();
-		directoryToImages = new HashMap<String, List<Map<String, Object>>>();
-		selectedImages.clear();
+		directoryToImages = new HashMap<String, List<HashMap<String, Object>>>();
+		if (init) {
+			selectedImagesMap=new HashMap<String, HashMap<String,Object>>();
+			selectedImages = new ArrayList<String>();
+		}
 		getSDImages();
 		mapStorageDirectoryAdapter = new MapStorageDirectoryAdapter();
 		imagesDirectory.setAdapter(mapStorageDirectoryAdapter);
@@ -75,17 +82,22 @@ public class MapStorageDirectoryActivity extends Activity {
 		initEvent();
 		super.onCreate(savedInstanceState);
 	}
+
 	@Override
 	public void onBackPressed() {
-		max=0;
+		max = 0;
 		finish();
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RESULT_SELECTPIC && resultCode == Activity.RESULT_OK) {
-			setResult(Activity.RESULT_OK);
-			max=0;
+		if (resultCode == Activity.RESULT_OK) {
+			Intent intent = new Intent();
+			intent.putStringArrayListExtra("photoList", selectedImages);
+			intent.putExtra("photoListMap", selectedImagesMap);
+			setResult(Activity.RESULT_OK, intent);
+			max = 0;
 			finish();
 		}
 	}
@@ -109,9 +121,10 @@ public class MapStorageDirectoryActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(MapStorageDirectoryActivity.this,
-						MainActivity.class);
-				startActivityForResult(intent, RESULT_SELECTPIC);
+//				Intent intent = new Intent(MapStorageDirectoryActivity.this,
+//						MainActivity.class);
+//				startActivityForResult(intent, RESULT_SELECTPIC);
+				finish();
 
 			}
 		});
@@ -234,7 +247,7 @@ public class MapStorageDirectoryActivity extends Activity {
 				selectionArgs, sortOrder);
 		List<Map<String, Object>> imageList = new ArrayList<Map<String, Object>>();
 		if (cursor != null) {
-			Map<String, Object> imageMap = null;
+			HashMap<String, Object> imageMap = null;
 			cursor.moveToFirst();
 			int index = 0;
 			while (cursor.moveToNext()) {
@@ -258,7 +271,7 @@ public class MapStorageDirectoryActivity extends Activity {
 				imageList.add(imageMap);
 				String directory = path.substring(0, path.lastIndexOf("/"));
 				if (directorys.size() == 0) {
-					List<Map<String, Object>> imagesList = new ArrayList<Map<String, Object>>();
+					List<HashMap<String, Object>> imagesList = new ArrayList<HashMap<String, Object>>();
 					imagesList.add(imageMap);
 					directoryToImages.put("/最近照片", imagesList);
 					directorys.add("/最近照片");
@@ -270,7 +283,7 @@ public class MapStorageDirectoryActivity extends Activity {
 					}
 				}
 				if (directoryToImages.get(directory) == null) {
-					List<Map<String, Object>> imagesList = new ArrayList<Map<String, Object>>();
+					List<HashMap<String, Object>> imagesList = new ArrayList<HashMap<String, Object>>();
 					imagesList.add(imageMap);
 					directoryToImages.put(directory, imagesList);
 					directorys.add(directory);
