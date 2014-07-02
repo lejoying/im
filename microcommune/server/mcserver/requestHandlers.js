@@ -242,7 +242,48 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
         });
     }
 }
-
+var shareManage = require("./handlers/shareManage.js");
+requestHandlers.shareManage = function (request, response, pathObject, data) {
+    if (data == null) {
+        return;
+    }
+    var operation = pathObject["operation"];
+    if (operation == "sendshare") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.sendshare(data, response);
+        });
+    }
+    else if (operation == "getshares") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getshares(data, response);
+        });
+    }
+    else if (operation == "addpraise") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.addpraise(data, response);
+        });
+    }
+    else if (operation == "addcomment") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.addcomment(data, response);
+        });
+    }
+    else if (operation == "delete") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.delete(data, response);
+        });
+    }
+    else if (operation == "deletecomment") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.deletecomment(data, response);
+        });
+    }
+    else if (operation == "getshare") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getshare(data, response);
+        });
+    }
+}
 function setOauthAccessKey(phone, accessKey, next) {
     client.rpush(phone + "_accessKey", accessKey, function (err, reply) {
         if (err != null) {
