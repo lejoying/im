@@ -250,17 +250,17 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
     var operation = pathObject["operation"];
     if (operation == "sendshare") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.sendshare(data, response);
+            shareManage.sendshare(data, response);
         });
     }
     else if (operation == "getshares") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.getshares(data, response);
+            shareManage.getshares(data, response);
         });
     }
     else if (operation == "addpraise") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.addpraise(data, response);
+            shareManage.addpraise(data, response);
         });
     }
     else if (operation == "addcomment") {
@@ -270,17 +270,17 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
     }
     else if (operation == "delete") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.delete(data, response);
+            shareManage.delete(data, response);
         });
     }
     else if (operation == "deletecomment") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.deletecomment(data, response);
+            shareManage.deletecomment(data, response);
         });
     }
     else if (operation == "getshare") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.getshare(data, response);
+            shareManage.getshare(data, response);
         });
     }
 }
