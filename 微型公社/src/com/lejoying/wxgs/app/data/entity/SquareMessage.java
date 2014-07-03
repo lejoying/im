@@ -19,7 +19,7 @@ public class SquareMessage implements Serializable {
 	public String cover = "none";// "none"|| "voice"|| "imageName"
 	public long time;
 	public ArrayList<String> praiseusers = new ArrayList<String>();
-	public ArrayList<String> comments = new ArrayList<String>();
+	public ArrayList<Comment> comments = new ArrayList<Comment>();
 
 	public Content content = new Content();
 

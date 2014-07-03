@@ -1,5 +1,12 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +27,6 @@ import android.widget.BaseAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -31,15 +37,22 @@ import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
 import com.lejoying.wxgs.activity.ReleaseVoteActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.RefreshableView;
 import com.lejoying.wxgs.activity.view.RefreshableView.PullToRefreshListener;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.GroupShare;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class GroupShareFragment extends BaseFragment implements OnClickListener {
 
-	private ListAdapter GroupShareAdapter = null;
+	private GroupShareAdapter groupShareAdapter = null;
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
 	LayoutInflater mInflater;
@@ -55,6 +68,10 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	float density;
 
 	Bitmap bm;
+
+	public static String mCurrentGroupShareID = "228";
+	int nowpage = 0;
+	int pagesize = 30;
 
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
@@ -79,7 +96,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			height = dm.heightPixels;
 			width = dm.widthPixels;
 			initLayout();
+			// mCurrentGroupShareID = app.data.groups.get(0);
 			initData();
+			getGroupShares();
 		}
 		return mContent;
 	}
@@ -104,12 +123,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		refreshableView.setOnRefreshListener(new PullToRefreshListener() {
 			@Override
 			public void onRefresh() {
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				refreshableView.finishRefreshing();
+				getGroupShares();
 			}
 		}, 0);
 		gshare_send.setOnClickListener(this);
@@ -362,8 +376,11 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		bm = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(
 				mInflater.getContext().getResources(), R.drawable.background1),
 				width - (int) (22 * density + 0.5f), 410);
-		GroupShareAdapter = new GroupShareAdapter();
-		gshare_lv.setAdapter(GroupShareAdapter);
+		// ArrayList<GroupShare> groupShares = app.data.groupsMap
+		// .get(mCurrentGroupShareID).groupShares;
+		// if (groupShares != null)
+		// groupShareAdapter = new GroupShareAdapter(groupShares);
+		// gshare_lv.setAdapter(groupShareAdapter);
 	}
 
 	@Override
@@ -380,10 +397,12 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	}
 
-	public class GroupShareAdapter extends BaseAdapter {
+	class GroupShareAdapter extends BaseAdapter {
 
-		public GroupShareAdapter() {
-			// TODO Auto-generated constructor stub
+		ArrayList<GroupShare> groupShares = new ArrayList<GroupShare>();
+
+		public GroupShareAdapter(ArrayList<GroupShare> groupShares) {
+			this.groupShares = groupShares;
 		}
 
 		@Override
@@ -393,14 +412,12 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
-			return 10;
+			return groupShares.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return null;
+			return position;
 		}
 
 		@Override
@@ -410,6 +427,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			GroupShare groupShare = groupShares.get(position);
 			final GroupShareHolder groupShareHolder;
 			if (convertView == null) {
 				groupShareHolder = new GroupShareHolder();
@@ -451,7 +469,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.gshare_date_tv.setText("3000.13.32");
 			} else {
 				groupShareHolder.gshare_bigpic.setImageBitmap(bm);
-				groupShareHolder.gshare_name.setText(app.data.user.nickName);
+				groupShareHolder.gshare_name.setText(groupShare.time + "");
 				groupShareHolder.gshare_time_tv.setText("00:00");
 				groupShareHolder.gshare_praise.setText("10");
 				groupShareHolder.gshare_comment.setText("10");
@@ -476,4 +494,59 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		}
 	}
 
+	public void getGroupShares() {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SHARE_GETSHARES;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentGroupShareID);
+				params.put("nowpage", nowpage + "");
+				params.put("pagesize", pagesize + "");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					final ArrayList<GroupShare> shares = JSONParser
+							.generateSharesFromJSON(jData
+									.getJSONArray("shares"));
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+//							ArrayList<GroupShare> groupShares = data.groupsMap
+//									.get(mCurrentGroupShareID).groupShares;
+//							int index = 0;
+//							for (int i = 0; i < shares.size(); i++) {
+//								GroupShare share = shares.get(i);
+//								if (!groupShares.contains(share)) {
+//									if (nowpage == 0) {
+//										groupShares.add(index, share);
+//										index++;
+//									} else if (nowpage > 0) {
+//										groupShares.add(share);
+//									}
+//								}
+//							}
+						}
+
+						@Override
+						public void modifyUI() {
+							refreshableView.finishRefreshing();
+							groupShareAdapter = new GroupShareAdapter(shares);
+							gshare_lv.setAdapter(groupShareAdapter);
+							// groupShareAdapter.notifyDataSetChanged();
+						}
+					});
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 }

@@ -15,6 +15,7 @@ import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.Event;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.data.entity.GroupShare;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.User;
@@ -476,8 +477,9 @@ public class JSONParser {
 		return squareMessage;
 	}
 
-	public static List<Comment> generateCommentsFromJSON(JSONArray jComments) {
-		List<Comment> comments = new ArrayList<Comment>();
+	public static ArrayList<Comment> generateCommentsFromJSON(
+			JSONArray jComments) {
+		ArrayList<Comment> comments = new ArrayList<Comment>();
 		for (int i = 0; i < jComments.length(); i++) {
 			try {
 				JSONObject jComment = jComments.getJSONObject(i);
@@ -540,5 +542,89 @@ public class JSONParser {
 		}
 
 		return comment;
+	}
+
+	public static ArrayList<GroupShare> generateSharesFromJSON(JSONArray jShares) {
+		ArrayList<GroupShare> shares = new ArrayList<GroupShare>();
+		for (int i = 0; i < jShares.length(); i++) {
+			try {
+				JSONObject jShare = jShares.getJSONObject(i);
+				shares.add(generateShareFromJSON(jShare));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return shares;
+	}
+
+	private static GroupShare generateShareFromJSON(JSONObject jShare) {
+		GroupShare groupShare = new GroupShare();
+		try {
+			groupShare.gsid = jShare.getString("gsid");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			groupShare.type = jShare.getString("type");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			groupShare.phone = jShare.getString("phone");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			groupShare.time = jShare.getLong("time");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			JSONArray jPraises = jShare.getJSONArray("praises");
+			ArrayList<String> praiseusers = new ArrayList<String>();
+			for (int i = 0; i < jPraises.length(); i++) {
+				praiseusers.add(jPraises.getString(i));
+			}
+			groupShare.praiseusers = praiseusers;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			JSONArray jComments = jShare.getJSONArray("comments");
+			groupShare.comments = generateCommentsFromJSON(jComments);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			if ("imagetext".equals(groupShare.type)
+					|| "voicetext".equals(groupShare.type)) {
+				JSONArray jContent = jShare.getJSONArray("content");
+				for (int i = 0; i < jContent.length(); i++) {
+					// Object content = contents.get(i);
+					JSONObject content = new JSONObject(jContent.getString(i));
+					if (content.getString("type").equals("image")) {
+						groupShare.content
+								.addImage(content.getString("detail"));
+					} else if (content.getString("type").equals("voice")) {
+						groupShare.content
+								.addVoice(content.getString("detail"));
+					} else {
+						groupShare.content.text = content.getString("detail");
+					}
+				}
+			} else if ("vote".equals(groupShare.type)) {
+				JSONObject jContent = jShare.getJSONObject("content");
+				groupShare.content.title = jContent.getString("title");
+				JSONArray array = jContent.getJSONArray("options");
+				for (int i = 0; i < array.length(); i++) {
+					groupShare.content.voteoptions.add(array.getString(i));
+				}
+			} else {
+				groupShare.content.text = jShare.getString("content");
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return groupShare;
 	}
 }

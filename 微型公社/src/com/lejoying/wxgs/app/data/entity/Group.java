@@ -19,7 +19,9 @@ public class Group implements Serializable {
 	public String longitude;
 	public String latitude;
 	public String description;
-	
+
+	public ArrayList<GroupShare> groupShares = new ArrayList<GroupShare>();
+
 	@Override
 	public boolean equals(Object o) {
 		boolean flag = false;

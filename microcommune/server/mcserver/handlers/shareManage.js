@@ -157,10 +157,10 @@ shareManage.getshares = function (data, response) {
     }
     function getSharesNodes() {
         var query = [
-            "MATCH (account:Account)<-[r:HAS_MEMBER]-(group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
-            "WHERE group.gid={gid} AND account.phone=share.phone",
-            "RETURN account,share",
-            "ORDER BY share.time",
+            "MATCH (group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
+            "WHERE group.gid={gid}",
+            "RETURN share",
+            "ORDER BY share.time DESC",
             "SKIP {start}",
             "LIMIT {pagesize}"
         ].join("\n");
@@ -188,11 +188,11 @@ shareManage.getshares = function (data, response) {
                 var shares = [];
                 for (var index in results) {
                     var result = results[index];
-                    var accountData = result.account.data;
+//                    var accountData = result.account.data;
                     var shareData = result.share.data;
-                    shareData.nickName = accountData.nickName;
-                    shareData.head = accountData.head;
-                    shareData.sex = accountData.sex;
+//                    shareData.nickName = accountData.nickName;
+//                    shareData.head = accountData.head;
+//                    shareData.sex = accountData.sex;
                     shares.push(shareData);
                 }
                 response.write(JSON.stringify({

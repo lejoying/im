@@ -882,13 +882,20 @@ public class SquareMessageDetail extends BaseActivity {
 			@Override
 			public void success(JSONObject jData) {
 				try {
-					final List<Comment> comments = JSONParser
+					final ArrayList<Comment> comments = JSONParser
 							.generateCommentsFromJSON(jData
 									.getJSONArray("comments"));
-					app.UIHandler.post(new Runnable() {
+					app.dataHandler.exclude(new Modification() {
 
 						@Override
-						public void run() {
+						public void modifyData(Data data) {
+							SquareMessage squareMessage = (SquareMessage) data.squareMessagesMap
+									.get(message.gmid);
+							squareMessage.comments = comments;
+						}
+
+						@Override
+						public void modifyUI() {
 							generateCommentsViews(comments);
 						}
 					});
