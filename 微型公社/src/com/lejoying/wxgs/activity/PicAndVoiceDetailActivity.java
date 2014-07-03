@@ -480,10 +480,10 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			setResult(Activity.RESULT_OK, intent);
 		} else if (activity.equals("MapStrage")) {
 			Intent intent = new Intent();
-			setResult(Activity.RESULT_OK, intent);
 			if (content != null) {
 				intent.putStringArrayListExtra("photoList", content);
 			}
+			setResult(Activity.RESULT_OK, intent);
 		}
 		finish();
 	}

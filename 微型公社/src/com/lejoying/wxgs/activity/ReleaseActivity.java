@@ -794,38 +794,42 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 						map.put("path", toFile.getAbsolutePath());
 					}
 					voices.add(map);
-					nodifyViews();
+					notifyViews();
 				}
 
 			});
 
 		} else if (requestCode == RESULT_PICANDVOICE
 				&& resultCode == Activity.RESULT_OK) {
-			nodifyViews();
+			notifyViews();
 		} else if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK) {
 			@SuppressWarnings("unchecked")
 			HashMap<String, HashMap<String, Object>> photoListMap = (HashMap<String, HashMap<String, Object>>) data
 					.getSerializableExtra("photoListMap");
 			List<String> list = data.getStringArrayListExtra("photoList");
-			images.clear();
-			String format = "";
+			for (int i = 0; i < images.size(); i++) {
+				if (images.get(i).get("way").equals("location")) {
+					images.remove(i);
+					i--;
+				}
+			}
+			if(list.size()==0){
+				notifyViews();
+			}
 			for (int i = 0; i < list.size(); i++) {
 				final String filePath = list.get(i);
-				format = filePath.substring(filePath.lastIndexOf("."));
 				Bitmap bitmap;
 				if (bitmaps.get(filePath) != null) {
 					bitmap = bitmaps.get("filePath");
 				} else {
-					bitmap = MCImageUtils.getZoomBitmapFromFile(
-							new File(filePath), 960, 540);
+					bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
+							filePath), 960, 540);
 				}
 				Map<String, Object> map = photoListMap.get(filePath);
 				if (map == null) {
 					map = new HashMap<String, Object>();
 				}
-				// final String newformat = format;
-				// final String newpicturePath = filePath;
 				if (bitmap != null) {
 					map.put("bitmap", bitmap);
 				}
@@ -847,12 +851,12 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 									ImageMessageInfo imageMessageInfo) {
 								map0.put("file", imageMessageInfo);
 								map0.put("path", filePath);
+								map0.put("way", "location");
 								images.add(map0);
-								nodifyViews();
+								notifyViews();
 							}
 						});
 			}
-			// MapStorageDirectoryActivity.selectedImages.clear();
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
@@ -889,11 +893,12 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					map0.put("file", imageMessageInfo);
 					map0.put("path", picturePath);
 					map0.put("contentType", "image/jpeg");
+					map0.put("way", "camera");
 					File toFile = new File(app.sdcardImageFolder,
 							imageMessageInfo.fileName);
 					tempFile.renameTo(toFile);
 					images.add(map0);
-					nodifyViews();
+					notifyViews();
 				}
 			});
 		}
@@ -1064,7 +1069,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 		});
 	}
 
-	private void nodifyViews() {
+	private void notifyViews() {
 		app.UIHandler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -1267,7 +1272,7 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 					map.put("fileName", imageMessageInfo.fileName);
 					map.put("data", imageMessageInfo.data);
 					images.add(map);
-					nodifyViews();
+					notifyViews();
 				}
 			});
 

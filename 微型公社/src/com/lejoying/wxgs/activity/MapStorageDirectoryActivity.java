@@ -70,7 +70,7 @@ public class MapStorageDirectoryActivity extends Activity {
 		directorys = new ArrayList<String>();
 		directoryToImages = new HashMap<String, List<HashMap<String, Object>>>();
 		if (init) {
-			selectedImagesMap=new HashMap<String, HashMap<String,Object>>();
+			selectedImagesMap = new HashMap<String, HashMap<String, Object>>();
 			selectedImages = new ArrayList<String>();
 		}
 		getSDImages();
@@ -121,9 +121,7 @@ public class MapStorageDirectoryActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-//				Intent intent = new Intent(MapStorageDirectoryActivity.this,
-//						MainActivity.class);
-//				startActivityForResult(intent, RESULT_SELECTPIC);
+				setResult(Activity.RESULT_OK);
 				finish();
 
 			}

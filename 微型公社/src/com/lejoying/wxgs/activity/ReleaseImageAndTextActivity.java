@@ -126,7 +126,10 @@ public class ReleaseImageAndTextActivity extends Activity implements
 			mAdapter.notifyDataSetChanged();
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("contentType", "image/jpg");
 			photoList.add(tempFile.getAbsolutePath());
+			photoListMap.put(tempFile.getAbsolutePath(), map);
 			mAdapter.notifyDataSetChanged();
 		} else if (requestCode == RESULT_PERVIEW
 				&& resultCode == Activity.RESULT_OK) {
@@ -252,26 +255,35 @@ public class ReleaseImageAndTextActivity extends Activity implements
 			e.printStackTrace();
 		}
 		messageJsonArray.put(contentObject);
-		for (int i = 0; i < photoList.size(); i++) {
-			final int j = i;
-			app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
+		if (photoList.size() == 0) {
+			sendMessage("imagetext", messageJsonArray.toString());
+		} else {
+			for (int i = 0; i < photoList.size(); i++) {
+				final int j = i;
+				app.fileHandler
+						.getFileMessageInfo(new FileMessageInfoInterface() {
 
-				@Override
-				public void setParams(FileMessageInfoSettings settings) {
-					settings.path = photoList.get(j);
-					settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
-					settings.fileName=photoList.get(j);
-				}
+							@Override
+							public void setParams(
+									FileMessageInfoSettings settings) {
+								settings.path = photoList.get(j);
+								settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+								settings.fileName = photoList.get(j);
+							}
 
-				@Override
-				public void onSuccess(ImageMessageInfo imageMessageInfo) {
-					checkImage(
-							imageMessageInfo,
-							(String) photoListMap.get(photoList.get(j)).get(
-									"contentType"), photoList.get(j), "image",
-							messageJsonArray);
-				}
-			});
+							@Override
+							public void onSuccess(
+									ImageMessageInfo imageMessageInfo) {
+								checkImage(
+										imageMessageInfo,
+										(String) photoListMap.get(
+												photoList.get(j)).get(
+												"contentType"),
+										photoList.get(j), "image",
+										messageJsonArray);
+							}
+						});
+			}
 		}
 	}
 
@@ -308,6 +320,7 @@ public class ReleaseImageAndTextActivity extends Activity implements
 							// TODO SEND VOICE
 						}
 					} else {
+
 						app.fileHandler.uploadFile(new UploadFileInterface() {
 
 							@Override
@@ -365,6 +378,7 @@ public class ReleaseImageAndTextActivity extends Activity implements
 			@Override
 			public void success(JSONObject jData) {
 				Alert.removeLoading();
+				finish();
 			}
 
 			@Override
@@ -379,7 +393,7 @@ public class ReleaseImageAndTextActivity extends Activity implements
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("phone", app.data.user.phone);
 		params.put("accessKey", app.data.user.accessKey);
-		params.put("gid", "888");
+		params.put("gid", "228");
 		JSONObject messageObject = new JSONObject();
 		try {
 			messageObject.put("type", type);

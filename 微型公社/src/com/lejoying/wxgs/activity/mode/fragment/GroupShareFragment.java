@@ -144,6 +144,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
+							pop.dismiss();
 							startActivity(new Intent(getActivity(),
 									ReleaseImageAndTextActivity.class));
 							return true;
@@ -177,6 +178,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
+							pop.dismiss();
 							startActivity(new Intent(getActivity(),
 									ReleaseVoiceActivity.class));
 							return true;
@@ -208,6 +210,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
+							pop.dismiss();
 							startActivity(new Intent(getActivity(),
 									ReleaseVoteActivity.class));
 							return true;
