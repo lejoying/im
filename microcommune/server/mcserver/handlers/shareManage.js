@@ -36,7 +36,7 @@ shareManage.sendshare = function (data, response) {
     }
     function checkShares(gid, message) {
         var query = [
-            "MACTH (group:Group)-[r:SHARE]->(shares:Shares)",
+            "MATCH (group:Group)-[r:SHARE]->(shares:Shares)",
             "WHERE group.gid={gid}",
             "RETURN group,shares"
         ].join("\n");
@@ -149,7 +149,7 @@ shareManage.getshares = function (data, response) {
     }
     function getSharesNodes() {
         var query = [
-            "MACTH (account:Account)<-[r:HAS_MEMBER]-(group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
+            "MATCH (account:Account)<-[r:HAS_MEMBER]-(group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
             "WHERE group.gid={gid} AND account.phone=share.phone",
             "ORDER BY share.time desc",
             "SKIP {start} LIMIT {pagesize}",
