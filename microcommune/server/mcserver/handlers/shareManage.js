@@ -8,6 +8,7 @@ var verifyEmpty = require("./../lib/verifyParams.js");
  ***************************************/
 shareManage.sendshare = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var messageStr = data.message;
     var gid = data.gid;
@@ -19,6 +20,7 @@ shareManage.sendshare = function (data, response) {
             if (message.type == "imagetext" || message.type == "voicetext" || message.type == "vote") {
                 checkShares(gid, message);
             } else {
+                console.log("4");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
                     "失败原因": "数据格式不正确"
@@ -41,7 +43,7 @@ shareManage.sendshare = function (data, response) {
             "RETURN group,shares"
         ].join("\n");
         var params = {
-            gid: gid
+            gid: parseInt(gid)
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -65,11 +67,12 @@ shareManage.sendshare = function (data, response) {
             "MATCH (group:Group)",
             "WHERE group.gid={gid}",
             "CREATE UNIQUE group-[r:SHARE]->(shares:Shares{shares})",
-            "RETURN shares"
+            "RETURN group"
         ].join("\n");
         var params = {
-            gid: gid,
-            shares: {}
+            gid: parseInt(gid),
+            shares: {
+            }
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -81,6 +84,7 @@ shareManage.sendshare = function (data, response) {
                 console.error(error);
                 return;
             } else if (results.length == 0) {
+                console.log("3");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
                     "失败原因": "数据异常"
@@ -101,13 +105,14 @@ shareManage.sendshare = function (data, response) {
             'RETURN group,share'
         ].join("\n");
         var params = {
-            gid: gid,
+            gid: parseInt(gid),
             share: {
                 phone: phone,
                 praises: JSON.stringify([]),
                 comments: JSON.stringify([]),
                 type: message.type,
-                content: message.content
+                content: message.content,
+                time: new Date().getTime()
             }
         };
         db.query(query, params, function (error, results) {
@@ -120,12 +125,14 @@ shareManage.sendshare = function (data, response) {
                 console.error(error);
                 return;
             } else if (results.length == 0) {
+                console.log("2");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享失败",
                     "失败原因": "数据异常"
                 }));
                 response.end();
             } else {
+                console.log("1");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享成功",
                     time: new Date().getTime()
@@ -140,9 +147,10 @@ shareManage.sendshare = function (data, response) {
  ***************************************/
 shareManage.getshares = function (data, response) {
     response.asynchronous = 1;
+    console.info(data);
     var gid = data.gid;
-    var nowpage = data.nowpage;
-    var pagesize = data.pagesize;
+    var nowpage = (data.nowpage);
+    var pagesize = (data.pagesize);
     var arr = [gid, nowpage, pagesize];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         getSharesNodes();
@@ -151,14 +159,15 @@ shareManage.getshares = function (data, response) {
         var query = [
             "MATCH (account:Account)<-[r:HAS_MEMBER]-(group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
             "WHERE group.gid={gid} AND account.phone=share.phone",
-            "ORDER BY share.time desc",
-            "SKIP {start} LIMIT {pagesize}",
-            "RETURN account,share"
+            "RETURN account,share",
+            "ORDER BY share.time",
+            "SKIP {start}",
+            "LIMIT {pagesize}"
         ].join("\n");
         var params = {
-            gid: gid,
-            start: nowpage * pagesize,
-            pagesize: pagesize
+            gid: parseInt(gid),
+            start: parseInt(nowpage) * parseInt(pagesize),
+            pagesize: parseInt(pagesize)
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -223,8 +232,8 @@ shareManage.addpraise = function (data, response) {
             "RETURN share"
         ].join("\n");
         var params = {
-            gid: gid,
-            gsid: gsid
+            gid: parseInt(gid),
+            gsid: parseInt(gsid)
         };
         db.query(query, params, function (error, results) {
                 if (error) {
@@ -308,8 +317,8 @@ shareManage.addcomment = function (data, response) {
             "RETURN share"
         ].join("\n");
         var params = {
-            gid: gid,
-            gsid: gsid
+            gid: parseInt(gid),
+            gsid: parseInt(gsid)
         };
         db.query(query, params, function (error, results) {
                 if (error) {
@@ -384,8 +393,8 @@ shareManage.delete = function (data, response) {
             "RETURN group"
         ].join("\n");
         var params = {
-            gid: gid,
-            gsid: gsid
+            gid: parseInt(gid),
+            gsid: parseInt(gsid)
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -432,8 +441,8 @@ shareManage.deletecomment = function (data, response) {
             "RETURN share"
         ].join("\n");
         var params = {
-            gid: gid,
-            gsid: gsid
+            gid: parseInt(gid),
+            gsid: parseInt(gsid)
         };
         db.query(query, params, function (error, results) {
             if (error) {
@@ -500,8 +509,8 @@ shareManage.getshare = function (data, response) {
             "RETURN share"
         ].join("\n");
         var params = {
-            gid: gid,
-            gsid: gsid
+            gid: parseInt(gid),
+            gsid: parseInt(gsid)
         };
         db.query(query, params, function (error, results) {
             if (error) {
