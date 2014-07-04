@@ -80,7 +80,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	Bitmap bm;
 
-	public static String mCurrentGroupShareID = "228";
+	public static String mCurrentGroupShareID = "";
 
 	Group mCurrentGroup;
 	int nowpage = 0;
@@ -92,6 +92,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	@Override
 	public void onResume() {
+		getGroupShares();
 		mMainModeManager.handleMenu(true);
 		super.onResume();
 	}
@@ -111,16 +112,14 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			showImageWidth = width - (int) (22 * density + 0.5f);
 			showImageHeight = 410;
 			initLayout();
-			// String cSquare = app.data.currentSquare;
-			// mCurrentGroupShareID = "".equals(cSquare) ? mCurrentGroupShareID
-			// : cSquare;
-			mCurrentGroupShareID = app.data.groups.get(0) == null ? ""
-					: app.data.groups.get(0);
-			groupShareAdapter = new GroupShareAdapter(
-					app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
-			gshare_lv.setAdapter(groupShareAdapter);
-			initData();
+			mCurrentGroupShareID = app.data.currentGroup;
+			// mCurrentGroupShareID = app.data.groups.get(0) == null ? ""
+			// : app.data.groups.get(0);
 			if (!"".equals(mCurrentGroupShareID)) {
+				groupShareAdapter = new GroupShareAdapter(
+						app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
+				gshare_lv.setAdapter(groupShareAdapter);
+				initData();
 				mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
 				getGroupShares();
 			}
@@ -130,7 +129,13 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	public void setGroupShare() {
 		mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
-		getGroupShares();
+		nowpage = 0;
+		if (!"".equals(mCurrentGroupShareID)) {
+			groupShareAdapter = new GroupShareAdapter(
+					app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
+			gshare_lv.setAdapter(groupShareAdapter);
+			getGroupShares();
+		}
 	}
 
 	public void notifyGroupShareViews() {
@@ -159,7 +164,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		refreshableView.setOnRefreshListener(new PullToRefreshListener() {
 			@Override
 			public void onRefresh() {
-				getGroupShares();
+				if (!"".equals(mCurrentGroupShareID)) {
+					getGroupShares();
+				}
 			}
 		}, 0);
 		gshare_send.setOnClickListener(this);
@@ -195,9 +202,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
-							pop.dismiss();
 							startActivity(new Intent(getActivity(),
 									ReleaseImageAndTextActivity.class));
+							pop.dismiss();
 							return true;
 						}
 
@@ -229,9 +236,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
-							pop.dismiss();
 							startActivity(new Intent(getActivity(),
 									ReleaseVoiceActivity.class));
+							pop.dismiss();
 							return true;
 						}
 
@@ -261,9 +268,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
-							pop.dismiss();
 							startActivity(new Intent(getActivity(),
 									ReleaseVoteActivity.class));
+							pop.dismiss();
 							return true;
 						}
 
@@ -582,9 +589,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 				@Override
 				public void onClick(View arg0) {
-					Intent intent = new Intent(getActivity(),
-							SquareMessageDetail.class);
-					startActivity(intent);
+					// Intent intent = new Intent(getActivity(),
+					// SquareMessageDetail.class);
+					// startActivity(intent);
 				}
 			});
 			return convertView;
@@ -663,7 +670,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 						@Override
 						public void modifyUI() {
 							refreshableView.finishRefreshing();
-							groupShareAdapter.notifyDataSetChanged();
+							if (groupShareAdapter != null) {
+								groupShareAdapter.notifyDataSetChanged();
+							}
 						}
 					});
 				} catch (JSONException e) {

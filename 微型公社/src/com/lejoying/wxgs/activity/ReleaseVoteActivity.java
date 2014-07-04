@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 
 import android.app.Activity;
@@ -22,6 +23,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +34,8 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		OnTouchListener {
 
 	LayoutInflater mInflater;
-
+	InputMethodManager imm;
+	
 	int height, width, dip;
 	float density;
 
@@ -41,7 +44,6 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 	EditText release_et;
 	List<String> voteList;
 	Map<Integer, String> voteMap;
-	MyListViewAdapter myAdapter = null;
 
 	private List<Map<String, Object>> subVoteList;
 	GestureDetector backViewDetector;
@@ -52,6 +54,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		setContentView(R.layout.release_vote);
 		mInflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
@@ -132,7 +135,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 	}
 
 	private View getVoteView(final int order, final Map<String, Object> map) {
-
+		
 		View view = mInflater.inflate(R.layout.release_vote_child, null);
 
 		final View ll_background = view.findViewById(R.id.ll_background);
@@ -159,16 +162,20 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 								@Override
 								public void onClick(View v) {
 									// TODO
-									if(release_ll.getChildCount()>3){
+									if (release_ll.getChildCount() > 3) {
 										voteList.set(
 												(Integer) (map.get("location")),
 												null);
 										release_ll.removeViewAt(order);
+										if (imm.isActive()) {
+											imm.hideSoftInputFromWindow(release_vote_et.getWindowToken(),
+													InputMethodManager.HIDE_NOT_ALWAYS);
+										}
 										initVoteList();
-									}else{
+									} else {
 										Alert.showMessage("最少不能少于2个选项");
 									}
-									
+
 								}
 							});
 				} else {
@@ -180,6 +187,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 								release_vote_et.getText().toString());
 					}
 					initVoteList();
+					release_ll.requestFocus();
 				}
 
 			}
@@ -194,125 +202,23 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 				.findViewById(R.id.release_voew_numadd);
 		TextView release_vote_num = (TextView) view
 				.findViewById(R.id.release_vote_num);
+		TextView release_vote_tv = (TextView) view
+				.findViewById(R.id.release_vote_tv);
 		EditText release_vote_et = (EditText) view
 				.findViewById(R.id.release_vote_et);
+
 		release_vote_numadd.setVisibility(View.VISIBLE);
 		release_vote_num.setVisibility(View.GONE);
-		release_vote_et.setHint("添加选项");
-		release_vote_et.setEnabled(false);
+		release_vote_et.setVisibility(View.GONE);
+		release_vote_tv.setVisibility(View.VISIBLE);
 		view.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				voteList.add(voteList.size(),"");
+				voteList.add(voteList.size(), "");
 				initVoteList();
 			}
 		});
 		return view;
-	}
-
-	public class MyListViewAdapter extends BaseAdapter {
-
-		public MyListViewAdapter() {
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public void notifyDataSetChanged() {
-			super.notifyDataSetChanged();
-		}
-
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return voteList.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return voteList.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(final int position, View convertView,
-				ViewGroup parent) {
-			final ListViewHolder listViewHolder;
-			if (convertView == null) {
-				listViewHolder = new ListViewHolder();
-				convertView = mInflater.inflate(R.layout.release_vote_child,
-						null);
-				listViewHolder.ll_background = convertView
-						.findViewById(R.id.ll_background);
-				listViewHolder.release_vote_numadd = (ImageView) convertView
-						.findViewById(R.id.release_voew_numadd);
-				listViewHolder.release_vote_clear = (ImageView) convertView
-						.findViewById(R.id.release_vote_clear);
-				listViewHolder.release_vote_num = (TextView) convertView
-						.findViewById(R.id.release_vote_num);
-				listViewHolder.release_vote_et = (EditText) convertView
-						.findViewById(R.id.release_vote_et);
-
-				convertView.setTag(listViewHolder);
-			} else {
-				listViewHolder = (ListViewHolder) convertView.getTag();
-			}
-			listViewHolder.release_vote_num.setText(position + 1 + ".");
-
-			if (voteList.get(position) != null
-					&& !voteList.get(position).equals("")) {
-				listViewHolder.release_vote_et.setText(voteList.get(position));
-			}
-
-			listViewHolder.release_vote_et
-					.setOnFocusChangeListener(new OnFocusChangeListener() {
-						@Override
-						public void onFocusChange(View v, boolean hasFocus) {
-							if (hasFocus) {
-								listViewHolder.ll_background
-										.setBackgroundResource(R.drawable.border);
-								listViewHolder.release_vote_clear
-										.setVisibility(View.VISIBLE);
-								listViewHolder.release_vote_clear
-										.setOnClickListener(new OnClickListener() {
-											@Override
-											public void onClick(View v) {
-												voteList.remove(position);
-												notifyDataSetChanged();
-											}
-										});
-							} else {
-								listViewHolder.ll_background
-										.setBackgroundColor(Color
-												.parseColor("#00000000"));
-								listViewHolder.release_vote_clear
-										.setVisibility(View.GONE);
-								if (!listViewHolder.release_vote_et.getText()
-										.toString().equals("")) {
-									voteList.remove(position);
-									voteList.add(position,
-											listViewHolder.release_vote_et
-													.getText().toString());
-								}
-								notifyDataSetChanged();
-							}
-
-						}
-					});
-
-			return convertView;
-		}
-
-		class ListViewHolder {
-			View ll_background;
-			ImageView release_vote_numadd, release_vote_clear;
-			TextView release_vote_num;
-			EditText release_vote_et;
-		}
 	}
 
 	@Override
@@ -341,7 +247,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 				rl_back.setBackgroundColor(Color.argb(143, 0, 0, 0));
 				break;
 			case MotionEvent.ACTION_UP:
-//				playSoundEffect(SoundEffectConstants.CLICK); 
+				// playSoundEffect(SoundEffectConstants.CLICK);
 				rl_back.setBackgroundColor(Color.argb(0, 0, 0, 0));
 				break;
 			}
