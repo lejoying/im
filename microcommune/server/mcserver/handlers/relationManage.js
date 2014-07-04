@@ -200,21 +200,11 @@ relationManage.deletefriend = function (data, response) {
                     if (rData.friendStatus == "delete") {
                         deleteAccountToAccountRelationNode(account1Data.phone, account2Data.phone);
                     } else {
-                        if (rData.friendStatus == "blacklist") {
-                            if (rData.phone == account2Data.phone) {
-                                rData.friendStatus = "both";
-                                rData.phone = account1Data.phone;
-                                rNode.save(function (error, node) {
-                                });
-                            }
-                            deleteCircleAccountRelaNode(account1Data.phone, account2Data.phone);
-                        } else {
-                            rData.friendStatus = "delete";
-                            rData.phone = phone;
-                            rNode.save(function (error, node) {
-                            });
-                            deleteCircleAccountRelaNode(account1Data.phone, account2Data.phone);
-                        }
+                        rData.friendStatus = "delete";
+                        rData.phone = phone;
+                        rNode.save(function (error, node) {
+                        });
+                        deleteCircleAccountRelaNode(account1Data.phone, account2Data.phone);
                     }
                 }
             } else {
@@ -294,21 +284,78 @@ relationManage.blacklist = function (data, response) {
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
     var phoneTo = [];
-    var arr = [phone, phoneTo, accessKey];
+    var arr = [phoneToStr];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
             phoneTo = JSON.parse(phoneToStr);
-            modifyAccountBetweenRelation(phone, phoneTo);
+            addFriendToMyBlackList(phone, phoneTo);
+//            modifyAccountBetweenRelation(phone, phoneTo);
         } catch (e) {
             response.write(JSON.stringify({
                 "提示信息": "添加黑名单失败",
                 "失败原因": "参数格式错误"
             }));
             response.end();
-            console.log(e);
+            console.error(e);
             return;
         }
     }
+    function addFriendToMyBlackList(phone, phoneTo) {
+        var query = [
+            "MATCH (account:Account)",
+            "WHERE account.phone={phone}",
+            "RETURN account"
+        ].join("\n");
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "添加黑名单失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "添加黑名单失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                if (accountData.blacklist) {
+                    var blackListObj = JSON.parse(accountData.blacklist);
+                    for (var index in phoneTo) {
+                        blackListObj.push(phoneTo[index]);
+                    }
+                    accountData.blacklist = JSON.stringify(blackListObj);
+                } else {
+                    accountData.blacklist = phoneToStr;
+                }
+                accountNode.save(function (error, node) {
+                    if (error) {
+                        response.write(JSON.stringify({
+                            "提示信息": "添加黑名单失败",
+                            "失败原因": "数据异常"
+                        }));
+                        response.end();
+                        console.log(error);
+                        return;
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "添加黑名单成功"
+                        }));
+                        response.end();
+                    }
+                });
+            }
+        });
+    }
+
     function modifyAccountBetweenRelation(phone, phoneTo) {
         var query = [
             'MATCH (account1:Account)-[r:FRIEND]-(account2:Account)',
