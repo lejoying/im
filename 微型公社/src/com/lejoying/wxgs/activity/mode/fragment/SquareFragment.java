@@ -170,6 +170,7 @@ public class SquareFragment extends BaseFragment {
 						SquareMessageDetail.class);
 				intent.putExtra("mCurrentSquareID", mCurrentSquareID);
 				intent.putExtra("gmid", message.gmid);
+				intent.putExtra("type","square");
 				startActivity(intent);
 			}
 		});

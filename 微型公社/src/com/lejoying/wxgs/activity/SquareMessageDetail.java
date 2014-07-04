@@ -56,6 +56,7 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.GroupShare;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
@@ -69,6 +70,7 @@ public class SquareMessageDetail extends BaseActivity {
 	LayoutInflater inflater;
 
 	SquareMessage message;
+	GroupShare share;
 	String mCurrentSquareID;
 	String gmid;
 	TextView textPanel;
@@ -114,8 +116,13 @@ public class SquareMessageDetail extends BaseActivity {
 		// getWindow().setSoftInputMode(
 		// WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		Intent intent = getIntent();
-		mCurrentSquareID = intent.getStringExtra("mCurrentSquareID");
-		gmid = intent.getStringExtra("gmid");
+		String type=intent.getStringExtra("tpye");
+		if(type.equals("square")){
+			mCurrentSquareID = intent.getStringExtra("mCurrentSquareID");
+			gmid = intent.getStringExtra("gmid");
+		}else if(type.equals("share")){
+			share=(GroupShare) intent.getSerializableExtra("content");
+		}
 		this.message = app.data.squareMessagesMap.get(mCurrentSquareID).get(
 				gmid);
 		inflater = this.getLayoutInflater();

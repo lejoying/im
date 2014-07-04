@@ -491,7 +491,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			GroupShare groupShare = groupShares.get(position);
+			final GroupShare groupShare = groupShares.get(position);
+			GroupShare lastGroupShare = groupShares
+					.get(position == 0 ? position : position - 1);
 			Friend friend = app.data.groupFriends.get(groupShare.phone);
 			final GroupShareHolder groupShareHolder;
 			final int mType = getItemViewType(position);
@@ -550,47 +552,51 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			} else {
 				groupShareHolder = (GroupShareHolder) convertView.getTag();
 			}
-			if (position == 5) {
+			String now = formatYearMonthDay(groupShare.time);
+			String lastTime = formatYearMonthDay(lastGroupShare.time);
+			if (!now.equals(lastTime)) {
 				groupShareHolder.gshare_date_tv.setVisibility(View.VISIBLE);
-				groupShareHolder.gshare_date_tv.setText("3000.13.32");
+				groupShareHolder.gshare_date_tv.setText(now);
 			} else {
-				if (groupShare.content.images.size() > 0) {
-					final String fileName = groupShare.content.images.get(0);
-					app.fileHandler.getThumbnail(fileName, "", showImageWidth,
-							showImageHeight, new FileResult() {
+				groupShareHolder.gshare_date_tv.setVisibility(View.GONE);
+			}
+			if (groupShare.content.images.size() > 0) {
+				final String fileName = groupShare.content.images.get(0);
+				app.fileHandler.getThumbnail(fileName, "", showImageWidth,
+						showImageHeight, new FileResult() {
 
-								@Override
-								public void onResult(String where, Bitmap bitmap) {
-									groupShareHolder.gshare_bigpic
-											.setImageBitmap(app.fileHandler.bitmaps
-													.get(fileName));
-								}
-							});
-				}
-				groupShareHolder.gshare_name.setText(friend.nickName);
-				groupShareHolder.gshare_time_tv
-						.setText(formatHourMinute(groupShare.time));
-				groupShareHolder.gshare_praise.setText(groupShare.praiseusers
-						.size() + "");
-				groupShareHolder.gshare_comment.setText(groupShare.comments
-						.size() + "");
-				groupShareHolder.gshare_content
-						.setText(groupShare.content.text);
-				app.fileHandler.getHeadImage(friend.head, friend.sex,
-						new FileResult() {
-
+							@Override
 							public void onResult(String where, Bitmap bitmap) {
-								groupShareHolder.gshare_head
-										.setImageBitmap(bitmap);
+								groupShareHolder.gshare_bigpic
+										.setImageBitmap(app.fileHandler.bitmaps
+												.get(fileName));
 							}
 						});
 			}
+			groupShareHolder.gshare_name.setText(friend.nickName);
+			groupShareHolder.gshare_time_tv
+					.setText(formatHourMinute(groupShare.time));
+			groupShareHolder.gshare_praise.setText(groupShare.praiseusers
+					.size() + "");
+			groupShareHolder.gshare_comment.setText(groupShare.comments.size()
+					+ "");
+			groupShareHolder.gshare_content.setText(groupShare.content.text);
+			app.fileHandler.getHeadImage(friend.head, friend.sex,
+					new FileResult() {
+
+						public void onResult(String where, Bitmap bitmap) {
+							groupShareHolder.gshare_head.setImageBitmap(bitmap);
+						}
+					});
+
 			convertView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View arg0) {
-					// Intent intent = new Intent(getActivity(),
-					// SquareMessageDetail.class);
+					 Intent intent = new Intent(getActivity(),
+					 SquareMessageDetail.class);
+					 intent.putExtra("content", groupShare);
+					 intent.putExtra("type","share");
 					// startActivity(intent);
 				}
 			});
