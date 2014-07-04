@@ -1,12 +1,16 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,6 +40,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
 import com.lejoying.wxgs.activity.ReleaseVoteActivity;
+import com.lejoying.wxgs.activity.SquareMessageDetail;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.RefreshableView;
@@ -44,7 +49,10 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
+import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
@@ -67,9 +75,14 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	int height, width, dip;
 	float density;
 
+	int showImageWidth;
+	int showImageHeight;
+
 	Bitmap bm;
 
 	public static String mCurrentGroupShareID = "228";
+
+	Group mCurrentGroup;
 	int nowpage = 0;
 	int pagesize = 30;
 
@@ -95,12 +108,35 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			dip = (int) (40 * density + 0.5f);
 			height = dm.heightPixels;
 			width = dm.widthPixels;
+			showImageWidth = width - (int) (22 * density + 0.5f);
+			showImageHeight = 410;
 			initLayout();
-			// mCurrentGroupShareID = app.data.groups.get(0);
+			// String cSquare = app.data.currentSquare;
+			// mCurrentGroupShareID = "".equals(cSquare) ? mCurrentGroupShareID
+			// : cSquare;
+			mCurrentGroupShareID = app.data.groups.get(0) == null ? ""
+					: app.data.groups.get(0);
+			groupShareAdapter = new GroupShareAdapter(
+					app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
+			gshare_lv.setAdapter(groupShareAdapter);
 			initData();
-			getGroupShares();
+			if (!"".equals(mCurrentGroupShareID)) {
+				mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
+				getGroupShares();
+			}
 		}
 		return mContent;
+	}
+
+	public void setGroupShare() {
+		mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
+		getGroupShares();
+	}
+
+	public void notifyGroupShareViews() {
+		if (groupShareAdapter != null) {
+			groupShareAdapter.notifyDataSetChanged();
+		}
 	}
 
 	void initLayout() {
@@ -127,6 +163,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			}
 		}, 0);
 		gshare_send.setOnClickListener(this);
+		gshare_scroll_ll.setOnClickListener(this);
 		initPopupWindow();
 	}
 
@@ -356,26 +393,32 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	}
 
 	void initData() {
-		for (int i = 0; i < 10; i++) {
-			View child = mInflater.inflate(R.layout.view_child, null);
-			final ImageView iv = (ImageView) child.findViewById(R.id.iv_child);
-			app.fileHandler.getHeadImage(app.data.user.head, app.data.user.sex,
-					new FileResult() {
-						public void onResult(String where, Bitmap bitmap) {
-							iv.setImageBitmap(bitmap);
-						}
-					});
-			LinearLayout.LayoutParams headParams = (android.widget.LinearLayout.LayoutParams) iv
-					.getLayoutParams();
-			headParams.height = (int) (height * 0.05078125f);
-			headParams.width = (int) (width * 0.09027778f);
-			headParams.rightMargin = (int) (width * 0.027777778f);
-			iv.setLayoutParams(headParams);
-			gshare_scroll_ll.addView(child);
+		if (!"".equals(mCurrentGroupShareID)) {
+			List<String> members = app.data.groupsMap.get(mCurrentGroupShareID).members;
+			Map<String, Friend> groupFriends = app.data.groupFriends;
+			for (int i = 0; i < members.size(); i++) {
+				Friend friend = groupFriends.get(members.get(i));
+				View child = mInflater.inflate(R.layout.view_child, null);
+				final ImageView iv = (ImageView) child
+						.findViewById(R.id.iv_child);
+				app.fileHandler.getHeadImage(friend.head, friend.sex,
+						new FileResult() {
+							public void onResult(String where, Bitmap bitmap) {
+								iv.setImageBitmap(bitmap);
+							}
+						});
+				LinearLayout.LayoutParams headParams = (android.widget.LinearLayout.LayoutParams) iv
+						.getLayoutParams();
+				headParams.height = (int) (height * 0.05078125f);
+				headParams.width = (int) (width * 0.09027778f);
+				headParams.rightMargin = (int) (width * 0.027777778f);
+				iv.setLayoutParams(headParams);
+				gshare_scroll_ll.addView(child);
+			}
 		}
-		bm = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(
-				mInflater.getContext().getResources(), R.drawable.background1),
-				width - (int) (22 * density + 0.5f), 410);
+		// bm = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(
+		// mInflater.getContext().getResources(), R.drawable.background1),
+		// showImageWidth, showImageHeight);
 		// ArrayList<GroupShare> groupShares = app.data.groupsMap
 		// .get(mCurrentGroupShareID).groupShares;
 		// if (groupShares != null)
@@ -390,7 +433,11 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			pop.showAtLocation((View) mContent.getParent(), Gravity.CENTER, 0,
 					0);
 			break;
-
+		case R.id.gshare_scroll_ll:
+			mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+			mMainModeManager.mChatGroupFragment.mNowChatGroup = mCurrentGroup;
+			mMainModeManager.showNext(mMainModeManager.mChatGroupFragment);
+			break;
 		default:
 			break;
 		}
@@ -417,7 +464,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 		@Override
 		public Object getItem(int position) {
-			return position;
+			return mCurrentGroup.groupShares.get(position);
 		}
 
 		@Override
@@ -426,9 +473,35 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		}
 
 		@Override
+		public int getItemViewType(int position) {
+			return ((GroupShare) (getItem(position))).mType;
+		}
+
+		@Override
+		public int getViewTypeCount() {
+			return GroupShare.MAXTYPE_COUNT;
+		}
+
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			GroupShare groupShare = groupShares.get(position);
+			Friend friend = app.data.groupFriends.get(groupShare.phone);
 			final GroupShareHolder groupShareHolder;
+			final int mType = getItemViewType(position);
+			switch (mType) {
+			case GroupShare.MESSAGE_TYPE_IMAGETEXT:
+
+				break;
+			case GroupShare.MESSAGE_TYPE_VOICETEXT:
+
+				break;
+			case GroupShare.MESSAGE_TYPE_VOTE:
+
+				break;
+
+			default:
+				break;
+			}
 			if (convertView == null) {
 				groupShareHolder = new GroupShareHolder();
 				convertView = mInflater.inflate(
@@ -441,6 +514,12 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 						.findViewById(R.id.gshare_time_iv);
 				groupShareHolder.gshare_bigpic = (ImageView) convertView
 						.findViewById(R.id.gshare_bigpic);
+				LinearLayout.LayoutParams shareImageParams = new LinearLayout.LayoutParams(
+						showImageWidth, showImageHeight);
+				int margin = (int) dp2px(1);
+				shareImageParams.setMargins(margin, margin, margin, margin);
+				groupShareHolder.gshare_bigpic
+						.setLayoutParams(shareImageParams);
 				groupShareHolder.gshare_name = (TextView) convertView
 						.findViewById(R.id.gshare_name);
 				groupShareHolder.gshare_time_tv = (TextView) convertView
@@ -468,14 +547,30 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.gshare_date_tv.setVisibility(View.VISIBLE);
 				groupShareHolder.gshare_date_tv.setText("3000.13.32");
 			} else {
-				groupShareHolder.gshare_bigpic.setImageBitmap(bm);
-				groupShareHolder.gshare_name.setText(groupShare.time + "");
-				groupShareHolder.gshare_time_tv.setText("00:00");
-				groupShareHolder.gshare_praise.setText("10");
-				groupShareHolder.gshare_comment.setText("10");
-				groupShareHolder.gshare_content.setText("123456");
-				app.fileHandler.getHeadImage(app.data.user.head,
-						app.data.user.sex, new FileResult() {
+				if (groupShare.content.images.size() > 0) {
+					final String fileName = groupShare.content.images.get(0);
+					app.fileHandler.getThumbnail(fileName, "", showImageWidth,
+							showImageHeight, new FileResult() {
+
+								@Override
+								public void onResult(String where, Bitmap bitmap) {
+									groupShareHolder.gshare_bigpic
+											.setImageBitmap(app.fileHandler.bitmaps
+													.get(fileName));
+								}
+							});
+				}
+				groupShareHolder.gshare_name.setText(friend.nickName);
+				groupShareHolder.gshare_time_tv
+						.setText(formatHourMinute(groupShare.time));
+				groupShareHolder.gshare_praise.setText(groupShare.praiseusers
+						.size() + "");
+				groupShareHolder.gshare_comment.setText(groupShare.comments
+						.size() + "");
+				groupShareHolder.gshare_content
+						.setText(groupShare.content.text);
+				app.fileHandler.getHeadImage(friend.head, friend.sex,
+						new FileResult() {
 
 							public void onResult(String where, Bitmap bitmap) {
 								groupShareHolder.gshare_head
@@ -483,6 +578,15 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 							}
 						});
 			}
+			convertView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					Intent intent = new Intent(getActivity(),
+							SquareMessageDetail.class);
+					startActivity(intent);
+				}
+			});
 			return convertView;
 		}
 
@@ -492,6 +596,27 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			TextView gshare_name, gshare_time_tv, gshare_content,
 					gshare_praise, gshare_comment, gshare_date_tv;
 		}
+	}
+
+	private float dp2px(float dp) {
+		float px = getResources().getDisplayMetrics().density * dp + 0.5f;
+		return px;
+	}
+
+	@SuppressLint("SimpleDateFormat")
+	public String formatYearMonthDay(long timeMillis) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+		Date date = new Date(timeMillis);
+		String mTime = simpleDateFormat.format(date);
+		return mTime;
+	}
+
+	@SuppressLint("SimpleDateFormat")
+	public String formatHourMinute(long timeMillis) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+		Date date = new Date(timeMillis);
+		String mTime = simpleDateFormat.format(date);
+		return mTime;
 	}
 
 	public void getGroupShares() {
@@ -519,28 +644,26 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public void modifyData(Data data) {
-//							ArrayList<GroupShare> groupShares = data.groupsMap
-//									.get(mCurrentGroupShareID).groupShares;
-//							int index = 0;
-//							for (int i = 0; i < shares.size(); i++) {
-//								GroupShare share = shares.get(i);
-//								if (!groupShares.contains(share)) {
-//									if (nowpage == 0) {
-//										groupShares.add(index, share);
-//										index++;
-//									} else if (nowpage > 0) {
-//										groupShares.add(share);
-//									}
-//								}
-//							}
+							ArrayList<GroupShare> groupShares = data.groupsMap
+									.get(mCurrentGroupShareID).groupShares;
+							int index = 0;
+							for (int i = 0; i < shares.size(); i++) {
+								GroupShare share = shares.get(i);
+								if (!groupShares.contains(share)) {
+									if (nowpage == 0) {
+										groupShares.add(index, share);
+										index++;
+									} else if (nowpage > 0) {
+										groupShares.add(share);
+									}
+								}
+							}
 						}
 
 						@Override
 						public void modifyUI() {
 							refreshableView.finishRefreshing();
-							groupShareAdapter = new GroupShareAdapter(shares);
-							gshare_lv.setAdapter(groupShareAdapter);
-							// groupShareAdapter.notifyDataSetChanged();
+							groupShareAdapter.notifyDataSetChanged();
 						}
 					});
 				} catch (JSONException e) {

@@ -101,8 +101,11 @@ public class OSSFileHandler {
 
 	public void getThumbnail(String imageFileName, String size, int width,
 			int height, FileResult fileResult) {
-		String newName[] = imageFileName.split("\\.");
-		String thumbnailName = newName[0] + size + newName[1];
+		String thumbnailName = imageFileName;
+		if (!"".equals(size)) {
+			String newName[] = imageFileName.split("\\.");
+			thumbnailName = newName[0] + size + newName[1];
+		}
 		String paramFormat = "@" + width / 2 + "w_" + height / 2
 				+ "h_1c_1e_50q";
 		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,

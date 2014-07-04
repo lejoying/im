@@ -39,6 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -393,7 +394,7 @@ public class ReleaseImageAndTextActivity extends Activity implements
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("phone", app.data.user.phone);
 		params.put("accessKey", app.data.user.accessKey);
-		params.put("gid", "228");
+		params.put("gid", GroupShareFragment.mCurrentGroupShareID);
 		JSONObject messageObject = new JSONObject();
 		try {
 			messageObject.put("type", type);

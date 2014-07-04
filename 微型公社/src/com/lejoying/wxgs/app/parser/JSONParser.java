@@ -590,7 +590,7 @@ public class JSONParser {
 			e.printStackTrace();
 		}
 		try {
-			JSONArray jComments = jShare.getJSONArray("comments");
+			JSONArray jComments = new JSONArray(jShare.getString("comments"));
 			groupShare.comments = generateCommentsFromJSON(jComments);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -598,10 +598,15 @@ public class JSONParser {
 		try {
 			if ("imagetext".equals(groupShare.type)
 					|| "voicetext".equals(groupShare.type)) {
-				JSONArray jContent = jShare.getJSONArray("content");
+				if ("imagetext".equals(groupShare.type)) {
+					groupShare.mType = GroupShare.MESSAGE_TYPE_IMAGETEXT;
+				} else if ("voicetext".equals(groupShare.type)) {
+					groupShare.mType = GroupShare.MESSAGE_TYPE_VOICETEXT;
+				}
+				JSONArray jContent = new JSONArray(jShare.getString("content"));
 				for (int i = 0; i < jContent.length(); i++) {
 					// Object content = contents.get(i);
-					JSONObject content = new JSONObject(jContent.getString(i));
+					JSONObject content = jContent.getJSONObject(i);
 					if (content.getString("type").equals("image")) {
 						groupShare.content
 								.addImage(content.getString("detail"));
@@ -613,6 +618,7 @@ public class JSONParser {
 					}
 				}
 			} else if ("vote".equals(groupShare.type)) {
+				groupShare.mType = GroupShare.MESSAGE_TYPE_VOTE;
 				JSONObject jContent = jShare.getJSONObject("content");
 				groupShare.content.title = jContent.getString("title");
 				JSONArray array = jContent.getJSONArray("options");

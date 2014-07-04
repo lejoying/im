@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -363,6 +364,7 @@ public class MainActivity extends BaseActivity {
 		gPopWindowChild = inflater.inflate(R.layout.group_dialog, null, false);
 		gPopWindow = new PopupWindow(gPopWindowChild,
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		gPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		RelativeLayout rl_content = (RelativeLayout) gPopWindowChild
 				.findViewById(R.id.rl_content);
 		ListView groups = (ListView) gPopWindowChild
