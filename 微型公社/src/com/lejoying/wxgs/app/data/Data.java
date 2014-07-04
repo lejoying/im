@@ -34,6 +34,7 @@ public class Data implements Serializable {
 	public Map<String, String> squareFlags = new HashMap<String, String>();
 	public Map<String, List<String>> squareCollects = new HashMap<String, List<String>>();
 	public String currentSquare = "";
+	public String currentGroup = "";
 
 	// Last messages list
 	public List<String> lastChatFriends = new ArrayList<String>();

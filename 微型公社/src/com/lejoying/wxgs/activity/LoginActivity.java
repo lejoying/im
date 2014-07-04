@@ -153,6 +153,7 @@ public class LoginActivity extends Activity implements OnClickListener,
 				data.friends = localData.friends;
 				data.groups = localData.groups;
 				data.currentSquare = localData.currentSquare;
+				data.currentGroup=localData.currentGroup;
 				data.squareFlags = localData.squareFlags;
 				data.squareMessages = localData.squareMessages;
 				data.squareMessagesClassify = localData.squareMessagesClassify;

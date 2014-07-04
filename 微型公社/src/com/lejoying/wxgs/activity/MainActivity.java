@@ -33,6 +33,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
+import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
@@ -41,7 +42,9 @@ import com.lejoying.wxgs.activity.utils.NotificationUtils;
 import com.lejoying.wxgs.activity.view.BackgroundView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.service.PushService;
 
@@ -83,6 +86,8 @@ public class MainActivity extends BaseActivity {
 	public static List<String> communityList;
 
 	public static TextView communityNameTV;
+
+	// public static String nowGroup;
 
 	View vPopWindow, gPopWindowChild;
 	PopupWindow popWindow, gPopWindow;
@@ -133,6 +138,7 @@ public class MainActivity extends BaseActivity {
 		communityList.add("亦庄站");
 		communityList.add("中关村站");
 		communityList.add("天通苑站");
+
 		initMode();
 
 		switchMode();
@@ -221,12 +227,15 @@ public class MainActivity extends BaseActivity {
 														if (mMainMode.mGroupFragment
 																.isAdded()) {
 															mMainMode.mGroupFragment
-																	.notifyViews();
+
+															.notifyViews();
 														}
 														if (mMainMode.mCirclesFragment
 																.isAdded()) {
+
 															mMainMode.mCirclesFragment
-																	.notifyViews();
+
+															.notifyViews();
 														}
 													}
 
@@ -288,6 +297,13 @@ public class MainActivity extends BaseActivity {
 				if (nowFragment == IS_GROUPS) {
 					iv_release_menu.setImageResource(R.drawable.square_release);
 				}
+				if ("98".equals(SquareFragment.mCurrentSquareID)) {
+					communityNameTV.setText(communityList.get(0));
+				} else if ("99".equals(SquareFragment.mCurrentSquareID)) {
+					communityNameTV.setText(communityList.get(1));
+				} else if ("100".equals(SquareFragment.mCurrentSquareID)) {
+					communityNameTV.setText(communityList.get(2));
+				}
 				nowFragment = IS_SQUARE;
 			}
 		});
@@ -300,6 +316,18 @@ public class MainActivity extends BaseActivity {
 				iv_group_menu.setImageResource(R.drawable.group_icon_selected);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
 				iv_release_menu.setImageResource(R.drawable.gshare_group);
+				if ("".equals(app.data.currentGroup)) {
+					if (app.data.groups.size() > 0) {
+						app.data.currentGroup = app.data.groups.get(0);
+						communityNameTV.setText(app.data.groupsMap
+								.get(app.data.groups.get(0)).name);
+					}
+				} else {
+					if (app.data.groups.size() > 0) {
+						communityNameTV.setText(app.data.groupsMap
+								.get(app.data.currentGroup).name);
+					}
+				}
 				nowFragment = IS_GROUPS;
 			}
 		});
@@ -313,6 +341,13 @@ public class MainActivity extends BaseActivity {
 				iv_me_menu.setImageResource(R.drawable.person_icon_selected);
 				if (nowFragment == IS_GROUPS) {
 					iv_release_menu.setImageResource(R.drawable.square_release);
+				}
+				if ("98".equals(SquareFragment.mCurrentSquareID)) {
+					communityNameTV.setText(communityList.get(0));
+				} else if ("99".equals(SquareFragment.mCurrentSquareID)) {
+					communityNameTV.setText(communityList.get(1));
+				} else if ("100".equals(SquareFragment.mCurrentSquareID)) {
+					communityNameTV.setText(communityList.get(2));
 				}
 				nowFragment = IS_CIRCLES;
 			}
@@ -360,6 +395,7 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void showGroupPopWindow(Context context, View parent) {
 		gPopWindowChild = inflater.inflate(R.layout.group_dialog, null, false);
 		gPopWindow = new PopupWindow(gPopWindowChild,
@@ -371,7 +407,7 @@ public class MainActivity extends BaseActivity {
 				.findViewById(R.id.lv_groups);
 
 		LayoutParams rl_params = (LayoutParams) rl_content.getLayoutParams();
-		rl_params.height=(int) (height*0.7578125f);
+		rl_params.height = (int) (height * 0.7578125f);
 		rl_params.leftMargin = (int) (20 / density + 0.5f);
 		rl_params.rightMargin = (int) (20 / density + 0.5f);
 		rl_content.setLayoutParams(rl_params);
@@ -479,7 +515,7 @@ public class MainActivity extends BaseActivity {
 
 	class GroupsAdapter extends BaseAdapter {
 
-		List<String> list;
+		List<String> list = new ArrayList<String>();
 
 		public GroupsAdapter(List<String> list) {
 			this.list = list;
@@ -501,7 +537,8 @@ public class MainActivity extends BaseActivity {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
 			final GroupsHolder groupsHolder;
 			final Group group = app.data.groupsMap.get(list.get(position));
 			if (convertView == null) {
@@ -531,23 +568,43 @@ public class MainActivity extends BaseActivity {
 									.get(group.icon));
 				}
 			});
-			if(true){
+			if (GroupShareFragment.mCurrentGroupShareID.equals(list
+					.get(position))) {
 				groupsHolder.iv_selected_status.setVisibility(View.VISIBLE);
+			} else {
+				groupsHolder.iv_selected_status.setVisibility(View.GONE);
+
 			}
 			groupsHolder.ll_dialog.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					
+					GroupShareFragment.mCurrentGroupShareID = list
+							.get(position);
+					communityNameTV.setText(app.data.groupsMap
+							.get(GroupShareFragment.mCurrentGroupShareID).name);
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							data.currentGroup = GroupShareFragment.mCurrentGroupShareID;
+						}
+
+						@Override
+						public void modifyUI() {
+							mMainMode.mGroupShareFragment.setGroupShare();
+						}
+					});
+					gPopWindow.dismiss();
+					notifyDataSetChanged();
 				}
 			});
 			groupsHolder.iv_mony.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					
+
 				}
 			});
 			return convertView;

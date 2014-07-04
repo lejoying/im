@@ -116,19 +116,29 @@ public class ReleaseImageAndTextActivity extends Activity implements
 		super.onActivityResult(requestCode, resultCode, data);
 		pop.dismiss();
 		if (requestCode == MapStorageDirectoryActivity.RESULT_SELECTPIC
-				&& resultCode == Activity.RESULT_OK) {
-			photoListMap = (HashMap<String, HashMap<String, Object>>) data
+				&& resultCode == Activity.RESULT_OK && data != null) {
+			HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) data
 					.getSerializableExtra("photoListMap");
 			List<String> list = data.getStringArrayListExtra("photoList");
-			photoList.clear();
+
+			for (int i = 0; i < photoList.size(); i++) {
+				if (photoListMap.containsKey(photoList.get(i))) {
+					if (!photoListMap.get(photoList.get(i)).containsKey("way")) {
+						photoList.remove(photoList.get(i));
+						i--;
+					}
+				}
+			}
 			for (int i = 0; i < list.size(); i++) {
 				photoList.add(list.get(i));
+				photoListMap.put(list.get(i), map.get(list.get(i)));
 			}
 			mAdapter.notifyDataSetChanged();
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("contentType", "image/jpg");
+			map.put("way", "camera");
 			photoList.add(tempFile.getAbsolutePath());
 			photoListMap.put(tempFile.getAbsolutePath(), map);
 			mAdapter.notifyDataSetChanged();
