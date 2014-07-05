@@ -580,7 +580,7 @@ public class JSONParser {
 			e.printStackTrace();
 		}
 		try {
-			JSONArray jPraises = jShare.getJSONArray("praises");
+			JSONArray jPraises = new JSONArray(jShare.getString("praises"));
 			ArrayList<String> praiseusers = new ArrayList<String>();
 			for (int i = 0; i < jPraises.length(); i++) {
 				praiseusers.add(jPraises.getString(i));

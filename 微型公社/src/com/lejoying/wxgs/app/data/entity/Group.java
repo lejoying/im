@@ -2,6 +2,7 @@ package com.lejoying.wxgs.app.data.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Group implements Serializable {
@@ -20,7 +21,8 @@ public class Group implements Serializable {
 	public String latitude;
 	public String description;
 
-	public ArrayList<GroupShare> groupShares = new ArrayList<GroupShare>();
+	public ArrayList<String> groupShares = new ArrayList<String>();
+	public HashMap<String, GroupShare> groupSharesMap = new HashMap<String, GroupShare>();
 
 	@Override
 	public boolean equals(Object o) {

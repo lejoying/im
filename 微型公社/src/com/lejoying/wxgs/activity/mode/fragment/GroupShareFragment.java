@@ -13,8 +13,6 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -52,7 +50,6 @@ import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
-import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
@@ -453,9 +450,11 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	class GroupShareAdapter extends BaseAdapter {
 
-		ArrayList<GroupShare> groupShares = new ArrayList<GroupShare>();
+		ArrayList<String> groupShares = new ArrayList<String>();
+		HashMap<String, GroupShare> groupSharesMap = app.data.groupsMap
+				.get(mCurrentGroupShareID).groupSharesMap;
 
-		public GroupShareAdapter(ArrayList<GroupShare> groupShares) {
+		public GroupShareAdapter(ArrayList<String> groupShares) {
 			this.groupShares = groupShares;
 		}
 
@@ -481,7 +480,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 		@Override
 		public int getItemViewType(int position) {
-			return ((GroupShare) (getItem(position))).mType;
+			return groupSharesMap.get((getItem(position))).mType;
 		}
 
 		@Override
@@ -491,9 +490,10 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			final GroupShare groupShare = groupShares.get(position);
-			GroupShare lastGroupShare = groupShares
-					.get(position == 0 ? position : position - 1);
+			final String groupShareGsid = groupShares.get(position);
+			final GroupShare groupShare = groupSharesMap.get(groupShareGsid);
+			GroupShare lastGroupShare = groupSharesMap.get(groupShares
+					.get(position == 0 ? position : position - 1));
 			Friend friend = app.data.groupFriends.get(groupShare.phone);
 			final GroupShareHolder groupShareHolder;
 			final int mType = getItemViewType(position);
@@ -593,10 +593,10 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 				@Override
 				public void onClick(View arg0) {
-					 Intent intent = new Intent(getActivity(),
-					 SquareMessageDetail.class);
-					 intent.putExtra("content", groupShare);
-					 intent.putExtra("type","share");
+					Intent intent = new Intent(getActivity(),
+							SquareMessageDetail.class);
+					intent.putExtra("content", groupShare);
+					intent.putExtra("type", "share");
 					// startActivity(intent);
 				}
 			});
@@ -657,19 +657,22 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public void modifyData(Data data) {
-							ArrayList<GroupShare> groupShares = data.groupsMap
+							ArrayList<String> groupShares = data.groupsMap
 									.get(mCurrentGroupShareID).groupShares;
+							HashMap<String, GroupShare> groupSharesMap = data.groupsMap
+									.get(mCurrentGroupShareID).groupSharesMap;
 							int index = 0;
 							for (int i = 0; i < shares.size(); i++) {
-								GroupShare share = shares.get(i);
-								if (!groupShares.contains(share)) {
+								GroupShare shareGroup = shares.get(i);
+								if (!groupShares.contains(shareGroup.gsid)) {
 									if (nowpage == 0) {
-										groupShares.add(index, share);
+										groupShares.add(index, shareGroup.gsid);
 										index++;
 									} else if (nowpage > 0) {
-										groupShares.add(share);
+										groupShares.add(shareGroup.gsid);
 									}
 								}
+								groupSharesMap.put(shareGroup.gsid, shareGroup);
 							}
 						}
 
