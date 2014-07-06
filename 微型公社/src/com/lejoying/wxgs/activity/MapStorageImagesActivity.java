@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +41,7 @@ public class MapStorageImagesActivity extends Activity {
 	TextView directoryName;
 	TextView mPreview;
 	TextView mConfirm;
+	RelativeLayout mBottomBar;
 
 	LayoutInflater inflater;
 
@@ -71,6 +71,7 @@ public class MapStorageImagesActivity extends Activity {
 		directoryName = (TextView) findViewById(R.id.tv_directoryName);
 		mPreview = (TextView) findViewById(R.id.tv_preview);
 		mConfirm = (TextView) findViewById(R.id.tv_confirm);
+		mBottomBar = (RelativeLayout) findViewById(R.id.rl_bottomBar);
 		mImages = MapStorageDirectoryActivity.directoryToImages
 				.get(MapStorageDirectoryActivity.currentShowDirectory);
 
@@ -111,6 +112,12 @@ public class MapStorageImagesActivity extends Activity {
 	}
 
 	private void initEvent() {
+		mBottomBar.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+			}
+		});
 		mConfirm.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -132,7 +139,7 @@ public class MapStorageImagesActivity extends Activity {
 			}
 		});
 		mCancel.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				setResult(Activity.RESULT_OK);

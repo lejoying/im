@@ -35,6 +35,7 @@ import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
+import com.lejoying.wxgs.activity.mode.fragment.SquareOnLineUserFragment;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.utils.LocationUtils;
@@ -709,8 +710,8 @@ public class MainActivity extends BaseActivity {
 
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(MainActivity.this,
-							SquareOnLineUserActivity.class);
+					// Intent intent = new Intent(MainActivity.this,
+					// SquareOnLineUserActivity.class);
 					String mSquareId = "98";
 					if (arg0 == 0) {
 						mSquareId = "98";
@@ -719,8 +720,10 @@ public class MainActivity extends BaseActivity {
 					} else {
 						mSquareId = "100";
 					}
-					intent.putExtra("mSquareID", mSquareId);
-					startActivity(intent);
+					// intent.putExtra("mSquareID", mSquareId);
+					// startActivity(intent);
+					SquareOnLineUserFragment.mSquareID = mSquareId;
+					mMainMode.showNext(mMainMode.mSquareOnLineUserFragment);
 					popWindow.dismiss();
 				}
 			});

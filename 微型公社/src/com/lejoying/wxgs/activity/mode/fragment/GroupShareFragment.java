@@ -89,7 +89,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	@Override
 	public void onResume() {
-		getGroupShares();
+		if (!"".equals(mCurrentGroupShareID)) {
+			getGroupShares();
+		}
 		mMainModeManager.handleMenu(true);
 		super.onResume();
 	}
@@ -116,7 +118,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareAdapter = new GroupShareAdapter(
 						app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
 				gshare_lv.setAdapter(groupShareAdapter);
-				initData();
+				showGroupMembers();
 				mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
 				getGroupShares();
 			}
@@ -127,6 +129,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	public void setGroupShare() {
 		mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
 		nowpage = 0;
+		showGroupMembers();
 		if (!"".equals(mCurrentGroupShareID)) {
 			groupShareAdapter = new GroupShareAdapter(
 					app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
@@ -396,7 +399,8 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	}
 
-	void initData() {
+	void showGroupMembers() {
+		gshare_scroll_ll.removeAllViews();
 		if (!"".equals(mCurrentGroupShareID)) {
 			List<String> members = app.data.groupsMap.get(mCurrentGroupShareID).members;
 			Map<String, Friend> groupFriends = app.data.groupFriends;
@@ -558,7 +562,14 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.gshare_date_tv.setVisibility(View.VISIBLE);
 				groupShareHolder.gshare_date_tv.setText(now);
 			} else {
-				groupShareHolder.gshare_date_tv.setVisibility(View.GONE);
+				String currentTime = formatYearMonthDay(System
+						.currentTimeMillis());
+				if (!lastTime.equals(currentTime) && position == 0) {
+					groupShareHolder.gshare_date_tv.setVisibility(View.VISIBLE);
+					groupShareHolder.gshare_date_tv.setText(lastTime);
+				} else {
+					groupShareHolder.gshare_date_tv.setVisibility(View.GONE);
+				}
 			}
 			if (groupShare.content.images.size() > 0) {
 				final String fileName = groupShare.content.images.get(0);

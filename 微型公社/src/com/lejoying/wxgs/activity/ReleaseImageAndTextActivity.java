@@ -221,7 +221,7 @@ public class ReleaseImageAndTextActivity extends Activity implements
 
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
-						Send();
+						sendImageTextMessage();
 						return true;
 					}
 				});
@@ -249,7 +249,12 @@ public class ReleaseImageAndTextActivity extends Activity implements
 		});
 	}
 
-	void Send() {
+	void sendImageTextMessage() {
+		String messageContent = release_et.getText().toString().trim();
+		if (photoList.size() == 0 || "".equals(messageContent)) {
+			Alert.showMessage("图文分享内容不完整");
+			return;
+		}
 		sending = true;
 		Alert.showLoading(new OnLoadingCancelListener() {
 			@Override
@@ -261,7 +266,7 @@ public class ReleaseImageAndTextActivity extends Activity implements
 		JSONObject contentObject = new JSONObject();
 		try {
 			contentObject.put("type", "text");
-			contentObject.put("detail", release_et.getText().toString());
+			contentObject.put("detail", messageContent);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

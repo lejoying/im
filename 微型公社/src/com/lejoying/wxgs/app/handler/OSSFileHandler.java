@@ -157,6 +157,7 @@ public class OSSFileHandler {
 		if (type == TYPE_IMAGE_THUMBNAIL) {
 			dImage = defaultImage;
 			currentFileImage = mediationParam;
+			fileResult.onResult(FROM_DEFAULT, dImage);
 		}
 		if (type == TYPE_IMAGE_SQUAREIMAGE) {
 			if (defaultSquareDetailImage == null) {

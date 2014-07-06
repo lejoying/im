@@ -116,12 +116,12 @@ public class SquareMessageDetail extends BaseActivity {
 		// getWindow().setSoftInputMode(
 		// WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		Intent intent = getIntent();
-		String type=intent.getStringExtra("tpye");
-		if(type.equals("square")){
+		String type = intent.getStringExtra("type");
+		if (type.equals("square")) {
 			mCurrentSquareID = intent.getStringExtra("mCurrentSquareID");
 			gmid = intent.getStringExtra("gmid");
-		}else if(type.equals("share")){
-			share=(GroupShare) intent.getSerializableExtra("content");
+		} else if (type.equals("share")) {
+			share = (GroupShare) intent.getSerializableExtra("content");
 		}
 		this.message = app.data.squareMessagesMap.get(mCurrentSquareID).get(
 				gmid);
@@ -896,8 +896,8 @@ public class SquareMessageDetail extends BaseActivity {
 
 						@Override
 						public void modifyData(Data data) {
-							SquareMessage squareMessage = (SquareMessage) data.squareMessagesMap
-									.get(message.gmid);
+							SquareMessage squareMessage = data.squareMessagesMap
+									.get(mCurrentSquareID).get(message.gmid);
 							squareMessage.comments = comments;
 						}
 
