@@ -102,20 +102,20 @@
         <activity
             android:name="com.lejoying.wxgs.activity.ReleaseImageAndTextActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" 
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.ReleaseVoiceActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" 
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.ReleaseVoteActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" 
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <service android:name="com.lejoying.wxgs.app.service.PushService" >
@@ -137,6 +137,13 @@
                 <action android:name="com.lejoying.wxgs.app.parsingiscomplete" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name="com.lejoying.wxgs.activity.DetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
     </application>
 
 </manifest>

@@ -35,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.DetailsActivity;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
 import com.lejoying.wxgs.activity.ReleaseVoteActivity;
@@ -605,10 +606,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				@Override
 				public void onClick(View arg0) {
 					Intent intent = new Intent(getActivity(),
-							SquareMessageDetail.class);
+							DetailsActivity.class);
 					intent.putExtra("content", groupShare);
-					intent.putExtra("type", "share");
-					// startActivity(intent);
+					startActivity(intent);
 				}
 			});
 			return convertView;
