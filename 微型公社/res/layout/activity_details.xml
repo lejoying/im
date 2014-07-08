@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/square_background" >
+    android:background="@drawable/background4" >
 
     <ScrollView
         android:layout_width="match_parent"
@@ -22,13 +22,12 @@
                 android:id="@+id/ll_detailContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#26ffffff"
                 android:orientation="vertical" >
             </LinearLayout>
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
                 android:background="#fff" />
 
             <LinearLayout
@@ -72,7 +71,7 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
                 android:background="#fff" />
 
             <LinearLayout
@@ -101,7 +100,7 @@
                     android:src="@drawable/collected" />
 
                 <ImageView
-                    android:id="@+id/iv_addComment"
+                    android:id="@+id/iv_checkComment"
                     android:layout_width="54dp"
                     android:layout_height="50dp"
                     android:padding="12dp"
@@ -118,13 +117,12 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
                 android:background="#fff" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#26ffffff"
                 android:paddingBottom="10dp" >
 
                 <RelativeLayout
