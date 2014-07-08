@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/square_background" >
 
-    <com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView
+    <ScrollView
         android:id="@+id/sc_square_message_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,7 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical" >
 
-            <com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView
+            <com.lejoying.wxgs.activity.view.InnerScrollView
                 android:id="@+id/sc_square_message_info_all"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
                 </LinearLayout>
-            </com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView>
+            </com.lejoying.wxgs.activity.view.InnerScrollView>
 
             <RelativeLayout
                 android:id="@+id/squareDetailBottomBar"
@@ -110,7 +110,7 @@
                 android:layout_marginTop="-1dp"
                 android:background="#fff" />
         </LinearLayout>
-    </com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView>
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/rl_topMenuBar"

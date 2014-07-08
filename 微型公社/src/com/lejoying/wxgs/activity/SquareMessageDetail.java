@@ -39,6 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -46,6 +47,7 @@ import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.view.InnerScrollView;
 import com.lejoying.wxgs.activity.view.RecordView;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
@@ -82,8 +84,8 @@ public class SquareMessageDetail extends BaseActivity {
 
 	boolean praiseStatus = false;
 
-	SquareMessageInfoScrollView sc_square_message_info;
-	SquareMessageInfoScrollView sc_square_message_info_all;
+	ScrollView sc_square_message_info;
+	InnerScrollView sc_square_message_info_all;
 	RelativeLayout rl_square_message_menu;
 	RelativeLayout squareDetailBottomBar;
 	ImageView squareMessageDetailBack;
@@ -129,9 +131,10 @@ public class SquareMessageDetail extends BaseActivity {
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		players = new ArrayList<MediaPlayer>();
 		recordViews = new ArrayList<RecordView>();
-		setContentView(R.layout.fragment_square_message_detail);
-		sc_square_message_info = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info);
-		sc_square_message_info_all = (SquareMessageInfoScrollView) findViewById(R.id.sc_square_message_info_all);
+		setContentView(R.layout.f_square_detail);//fragment_square_message_detail
+		sc_square_message_info = (ScrollView) findViewById(R.id.sc_square_message_info);
+		sc_square_message_info_all = (InnerScrollView) findViewById(R.id.sc_square_message_info_all);
+		sc_square_message_info_all.parentScrollView = sc_square_message_info;
 		rl_square_message_menu = (RelativeLayout) findViewById(R.id.rl_square_message_menu);
 		squareMessageDetailBack = (ImageView) findViewById(R.id.iv_squareMessageDetailBack);
 		backView = findViewById(R.id.backview);
@@ -247,30 +250,30 @@ public class SquareMessageDetail extends BaseActivity {
 							// });
 						}
 					});
-			imageView.setOnTouchListener(new OnTouchListener() {
-
-				boolean flag = false;
-				int count = 0;
-
-				@Override
-				public boolean onTouch(View arg0, MotionEvent event) {
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						flag = false;
-						count = 0;
-					}
-					if (event.getAction() == MotionEvent.ACTION_MOVE) {
-						count++;
-						flag = true;
-						sc_square_message_info
-								.requestDisallowInterceptTouchEvent(flag);
-						// sc_square_message_info.onTouchEvent(event);
-					}
-					if (count < 15) {
-						flag = false;
-					}
-					return flag;
-				}
-			});
+//			imageView.setOnTouchListener(new OnTouchListener() {
+//
+//				boolean flag = false;
+//				int count = 0;
+//
+//				@Override
+//				public boolean onTouch(View arg0, MotionEvent event) {
+//					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//						flag = false;
+//						count = 0;
+//					}
+//					if (event.getAction() == MotionEvent.ACTION_MOVE) {
+//						count++;
+//						flag = true;
+//						sc_square_message_info
+//								.requestDisallowInterceptTouchEvent(flag);
+//						// sc_square_message_info.onTouchEvent(event);
+//					}
+//					if (count < 15) {
+//						flag = false;
+//					}
+//					return flag;
+//				}
+//			});
 
 			imageView.setOnClickListener(new OnClickListener() {
 
@@ -311,7 +314,89 @@ public class SquareMessageDetail extends BaseActivity {
 			detailContent.addView(textView, params1);
 		}
 		for (int i = 0; i < voices.size(); i++) {
-}
+			final RecordView recordView = new RecordView(
+					SquareMessageDetail.this);
+			recordView.setDragEnable(false);
+			recordView.setMode(RecordView.MODE_PROGRESS);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					(int) width, (int) (height * 0.48080331f));
+			detailContent.addView(recordView, params);
+
+			final String fileName = voices.get(i);
+			app.fileHandler.getFile(new FileInterface() {
+
+				@Override
+				public void setParams(FileSettings settings) {
+					settings.fileName = fileName;
+					settings.folder = app.sdcardVoiceFolder;
+				}
+
+				@Override
+				public void onSuccess(Boolean flag, String fileName) {
+					if (flag) {
+						File file = new File(app.sdcardVoiceFolder, fileName);
+						if (file.exists()) {
+							try {
+								final MediaPlayer player = MediaPlayer.create(
+										SquareMessageDetail.this,
+										Uri.parse(file.getAbsolutePath()));
+								if (player == null) {
+									// Log.e("Coolspan", fileName);
+									return;
+								}
+								players.add(player);
+								recordViews.add(recordView);
+								recordView.setProgressTime(player.getDuration());
+								recordView
+										.setPlayButtonClickListener(new PlayButtonClickListener() {
+
+											@Override
+											public void onPlay() {
+												if (!player.isPlaying()) {
+													player.start();
+												}
+											}
+
+											@Override
+											public void onPause() {
+												if (player.isPlaying()) {
+													player.pause();
+												}
+
+											}
+										});
+								recordView
+										.setProgressListener(new ProgressListener() {
+
+											@Override
+											public void onProgressEnd() {
+												player.pause();
+												// player.reset();
+											}
+
+											@Override
+											public void onDrag(float percent) {
+												// mpPlayer.seekTo((int)
+												// (mpPlayer
+												// .getDuration() * percent));
+
+											}
+										});
+							} catch (SecurityException e) {
+								e.printStackTrace();
+							} catch (IllegalStateException e) {
+								e.printStackTrace();
+							}
+						} else {
+							// to do loading voice failed
+						}
+					} else {
+						// to do loading voice failed
+					}
+
+				}
+			});
+		}
 		textPanel = new TextView(this);
 		textPanel.setTextColor(Color.WHITE);
 		textPanel.setText(ExpressionUtil.getExpressionString(
@@ -673,44 +758,44 @@ public class SquareMessageDetail extends BaseActivity {
 			}
 		});
 
-		sc_square_message_info.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return true;
-			}
-		});
-
-		sc_square_message_info_all.setOnTouchListener(new OnTouchListener() {
-
-			float lastY = 0;
-			boolean overflow;
-			boolean flag;
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				float currentY = event.getY();
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					lastY = 0;
-					overflow = detailContent.getHeight() > sc_square_message_info_all
-							.getHeight();
-					flag = true;
-				}
-				if (overflow) {
-					if (sc_square_message_info.getScrollY() != 0
-							|| (sc_square_message_info_all.getScrollY() == detailContent
-									.getHeight()
-									- sc_square_message_info_all.getHeight() && lastY
-									- currentY > 0)) {
-						flag = false;
-					}
-					lastY = currentY;
-					sc_square_message_info
-							.requestDisallowInterceptTouchEvent(flag);
-				}
-				return true;
-			}
-		});
+//		sc_square_message_info.setOnTouchListener(new OnTouchListener() {
+//
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				return true;
+//			}
+//		});
+//
+//		sc_square_message_info_all.setOnTouchListener(new OnTouchListener() {
+//
+//			float lastY = 0;
+//			boolean overflow;
+//			boolean flag;
+//
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				float currentY = event.getY();
+//				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//					lastY = 0;
+//					overflow = detailContent.getHeight() > sc_square_message_info_all
+//							.getHeight();
+//					flag = true;
+//				}
+//				if (overflow) {
+//					if (sc_square_message_info.getScrollY() != 0
+//							|| (sc_square_message_info_all.getScrollY() == detailContent
+//									.getHeight()
+//									- sc_square_message_info_all.getHeight() && lastY
+//									- currentY > 0)) {
+//						flag = false;
+//					}
+//					lastY = currentY;
+//					sc_square_message_info
+//							.requestDisallowInterceptTouchEvent(flag);
+//				}
+//				return true;
+//			}
+//		});
 	}
 
 	public void praiseSquareMessage(final boolean flag) {

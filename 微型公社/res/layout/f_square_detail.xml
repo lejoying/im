@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/square_background" >
+
+    <ScrollView
+        android:id="@+id/sc_square_message_info"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:id="@+id/rl_square_message_menu_buttom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent" >
+
+                <com.lejoying.wxgs.activity.view.InnerScrollView
+                    android:id="@+id/sc_square_message_info_all"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#26ffffff" >
+
+                    <LinearLayout
+                        android:id="@+id/detailContent"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+                    </LinearLayout>
+                </com.lejoying.wxgs.activity.view.InnerScrollView>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/squareDetailBottomBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#26ffffff" >
+
+                <ImageView
+                    android:id="@+id/imageView_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#26ffffff" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_square_message_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_below="@+id/imageView_line" >
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_squareMessageDetailComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#fff" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <EditText
+                    android:id="@+id/et_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#26ffffff"
+                    android:hint=" 添加评论 ... ..."
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="80dp"
+                    android:paddingTop="15dp"
+                    android:singleLine="true"
+                    android:textColor="#fff" />
+
+                <TextView
+                    android:id="@+id/tv_confirm_release_comment"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/squaredetail_comment_notselected"
+                    android:gravity="center"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="2dp"
+                    android:text="确定"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="-1dp"
+                android:background="#fff" />
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rl_topMenuBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#51000000"
+        android:visibility="visible" >
+
+        <RelativeLayout
+            android:id="@+id/backview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="20dp" >
+
+            <ImageView
+                android:id="@+id/iv_squareMessageDetailBack"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/back" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_squareMessageSendUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="7dp"
+            android:text=""
+            android:textColor="#fff"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_rightTime"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="15dp" >
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|left"
+                android:src="@drawable/time" />
+
+            <TextView
+                android:id="@+id/tv_messageTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:lineSpacingMultiplier="1.2"
+                android:text="昨天20:33"
+                android:textColor="#fff" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_messageUserHead"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp" />
+
+</RelativeLayout>

@@ -66,5 +66,6 @@ public class Data implements Serializable {
 		nearByGroups.clear();
 		squareCollects.clear();
 		currentSquare = "";
+		currentGroup = "";
 	}
 }
