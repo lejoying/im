@@ -35,7 +35,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.DetailsActivity;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
 import com.lejoying.wxgs.activity.ReleaseVoteActivity;
@@ -116,6 +115,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			// mCurrentGroupShareID = app.data.groups.get(0) == null ? ""
 			// : app.data.groups.get(0);
 			if (!"".equals(mCurrentGroupShareID)) {
+				if (app.data.groupsMap.get(mCurrentGroupShareID).groupShares == null) {
+					app.data.groupsMap.get(mCurrentGroupShareID).groupShares = new ArrayList<String>();
+				}
 				groupShareAdapter = new GroupShareAdapter(
 						app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
 				gshare_lv.setAdapter(groupShareAdapter);
@@ -404,25 +406,31 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		gshare_scroll_ll.removeAllViews();
 		if (!"".equals(mCurrentGroupShareID)) {
 			List<String> members = app.data.groupsMap.get(mCurrentGroupShareID).members;
-			Map<String, Friend> groupFriends = app.data.groupFriends;
-			for (int i = 0; i < members.size(); i++) {
-				Friend friend = groupFriends.get(members.get(i));
-				View child = mInflater.inflate(R.layout.view_child, null);
-				final ImageView iv = (ImageView) child
-						.findViewById(R.id.iv_child);
-				app.fileHandler.getHeadImage(friend.head, friend.sex,
-						new FileResult() {
-							public void onResult(String where, Bitmap bitmap) {
-								iv.setImageBitmap(bitmap);
-							}
-						});
-				LinearLayout.LayoutParams headParams = (android.widget.LinearLayout.LayoutParams) iv
-						.getLayoutParams();
-				headParams.height = (int) (height * 0.05078125f);
-				headParams.width = (int) (width * 0.09027778f);
-				headParams.rightMargin = (int) (width * 0.027777778f);
-				iv.setLayoutParams(headParams);
-				gshare_scroll_ll.addView(child);
+			if (members.size() > 0) {
+				Map<String, Friend> groupFriends = app.data.groupFriends;
+				for (int i = 0; i < members.size(); i++) {
+					Friend friend = groupFriends.get(members.get(i));
+					if (friend != null) {
+						View child = mInflater.inflate(R.layout.view_child,
+								null);
+						final ImageView iv = (ImageView) child
+								.findViewById(R.id.iv_child);
+						app.fileHandler.getHeadImage(friend.head, friend.sex,
+								new FileResult() {
+									public void onResult(String where,
+											Bitmap bitmap) {
+										iv.setImageBitmap(bitmap);
+									}
+								});
+						LinearLayout.LayoutParams headParams = (android.widget.LinearLayout.LayoutParams) iv
+								.getLayoutParams();
+						headParams.height = (int) (height * 0.05078125f);
+						headParams.width = (int) (width * 0.09027778f);
+						headParams.rightMargin = (int) (width * 0.027777778f);
+						iv.setLayoutParams(headParams);
+						gshare_scroll_ll.addView(child);
+					}
+				}
 			}
 		}
 		// bm = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(
@@ -461,6 +469,11 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 		public GroupShareAdapter(ArrayList<String> groupShares) {
 			this.groupShares = groupShares;
+			groupSharesMap = app.data.groupsMap.get(mCurrentGroupShareID).groupSharesMap;
+			if (groupSharesMap == null) {
+				groupSharesMap = new HashMap<String, GroupShare>();
+				app.data.groupsMap.get(mCurrentGroupShareID).groupSharesMap = groupSharesMap;
+			}
 		}
 
 		@Override
@@ -606,9 +619,10 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				@Override
 				public void onClick(View arg0) {
 					Intent intent = new Intent(getActivity(),
-							DetailsActivity.class);
+							SquareMessageDetail.class);
 					intent.putExtra("content", groupShare);
-					startActivity(intent);
+					intent.putExtra("type", "share");
+					// startActivity(intent);
 				}
 			});
 			return convertView;
@@ -672,6 +686,16 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 									.get(mCurrentGroupShareID).groupShares;
 							HashMap<String, GroupShare> groupSharesMap = data.groupsMap
 									.get(mCurrentGroupShareID).groupSharesMap;
+							if (groupShares == null) {
+								data.groupsMap.get(mCurrentGroupShareID).groupShares = new ArrayList<String>();
+								groupShares = data.groupsMap
+										.get(mCurrentGroupShareID).groupShares;
+							}
+							if (groupSharesMap == null) {
+								data.groupsMap.get(mCurrentGroupShareID).groupSharesMap = new HashMap<String, GroupShare>();
+								groupSharesMap = data.groupsMap
+										.get(mCurrentGroupShareID).groupSharesMap;
+							}
 							int index = 0;
 							for (int i = 0; i < shares.size(); i++) {
 								GroupShare shareGroup = shares.get(i);

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 
 import android.app.Activity;
@@ -17,14 +16,11 @@ import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,7 +31,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 
 	LayoutInflater mInflater;
 	InputMethodManager imm;
-	
+
 	int height, width, dip;
 	float density;
 
@@ -52,7 +48,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.release_vote);
-		mInflater = (LayoutInflater) this
+		mInflater = (LayoutInflater) ReleaseVoteActivity.this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		DisplayMetrics dm = new DisplayMetrics();
@@ -135,7 +131,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 	}
 
 	private View getVoteView(final int order, final Map<String, Object> map) {
-		
+
 		View view = mInflater.inflate(R.layout.release_vote_child, null);
 
 		final View ll_background = view.findViewById(R.id.ll_background);
@@ -150,34 +146,30 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		if (!map.get("content").equals("")) {
 			release_vote_et.setText((String) map.get("content"));
 		}
-
+		release_vote_clear.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO
+				if (release_ll.getChildCount() > 3) {
+					voteList.set((Integer) (map.get("location")), null);
+					if (imm.isActive()) {
+						imm.hideSoftInputFromWindow(
+								release_vote_et.getWindowToken(),
+								InputMethodManager.HIDE_NOT_ALWAYS);
+					}
+					release_ll.removeViewAt(order);
+					initVoteList();
+				} else {
+					Alert.showMessage("最少不能少于2个选项");
+				}
+			}
+		});
 		release_vote_et.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
 					ll_background.setBackgroundResource(R.drawable.border);
 					release_vote_clear.setVisibility(View.VISIBLE);
-					release_vote_clear
-							.setOnClickListener(new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									// TODO
-									if (release_ll.getChildCount() > 3) {
-										voteList.set(
-												(Integer) (map.get("location")),
-												null);
-										release_ll.removeViewAt(order);
-										if (imm.isActive()) {
-											imm.hideSoftInputFromWindow(release_vote_et.getWindowToken(),
-													InputMethodManager.HIDE_NOT_ALWAYS);
-										}
-										initVoteList();
-									} else {
-										Alert.showMessage("最少不能少于2个选项");
-									}
-
-								}
-							});
 				} else {
 					ll_background.setBackgroundColor(Color
 							.parseColor("#00000000"));
