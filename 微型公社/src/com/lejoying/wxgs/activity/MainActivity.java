@@ -13,7 +13,6 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -322,16 +321,11 @@ public class MainActivity extends BaseActivity {
 						|| app.data.currentGroup == null) {
 					if (app.data.groups.size() > 0) {
 						app.data.currentGroup = app.data.groups.get(0);
-						Log.e("Coolspan", app.data.currentGroup
-								+ "------------");
 						communityNameTV.setText(app.data.groupsMap
 								.get(app.data.groups.get(0)).name);
 					}
 				} else {
 					if (app.data.groups.size() > 0) {
-						Log.e("Coolspan", communityNameTV + "----------"
-								+ app.data.currentGroup + "++++++++++"
-								+ app.data.groupsMap.get(app.data.currentGroup));
 						communityNameTV.setText(app.data.groupsMap
 								.get(app.data.currentGroup).name);
 					}

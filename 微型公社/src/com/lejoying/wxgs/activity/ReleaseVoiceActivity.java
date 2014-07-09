@@ -66,6 +66,7 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 	MediaPlayer mediaPlayer;
 
 	String fileName = "";
+	long voiceTime;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -155,8 +156,8 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
-								recoderVoiceView.setProgressTime(mediaPlayer
-										.getDuration());
+								voiceTime = mediaPlayer.getDuration();
+								recoderVoiceView.setProgressTime(voiceTime);
 							}
 						} else {
 							recoderVoiceView.pauseProgress();
@@ -305,6 +306,12 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 						if ("image".equals(fileType)) {
 
 						} else {
+							JSONObject imageObject = new JSONObject();
+							imageObject.put("type", fileType);
+							imageObject
+									.put("detail", imageMessageInfo.fileName);
+							imageObject.put("time", voiceTime);
+							selectedImages.put(imageObject);
 							sendMessage("voicetext", selectedImages.toString());
 						}
 					} else {

@@ -47,6 +47,7 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
@@ -514,21 +515,6 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 					.get(position == 0 ? position : position - 1));
 			Friend friend = app.data.groupFriends.get(groupShare.phone);
 			final GroupShareHolder groupShareHolder;
-			final int mType = getItemViewType(position);
-			switch (mType) {
-			case GroupShare.MESSAGE_TYPE_IMAGETEXT:
-
-				break;
-			case GroupShare.MESSAGE_TYPE_VOICETEXT:
-
-				break;
-			case GroupShare.MESSAGE_TYPE_VOTE:
-
-				break;
-
-			default:
-				break;
-			}
 			if (convertView == null) {
 				groupShareHolder = new GroupShareHolder();
 				convertView = mInflater.inflate(
@@ -544,15 +530,46 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				LinearLayout.LayoutParams shareImageParams = new LinearLayout.LayoutParams(
 						showImageWidth, showImageHeight);
 				int margin = (int) dp2px(1);
-				shareImageParams.setMargins(margin, margin, margin, margin);
+				shareImageParams.setMargins(0, margin, 0, margin);
 				groupShareHolder.gshare_bigpic
 						.setLayoutParams(shareImageParams);
 				groupShareHolder.gshare_name = (TextView) convertView
 						.findViewById(R.id.gshare_name);
 				groupShareHolder.gshare_time_tv = (TextView) convertView
 						.findViewById(R.id.gshare_time_tv);
+				groupShareHolder.llImageTextView = (LinearLayout) convertView
+						.findViewById(R.id.ll_imagetext);
 				groupShareHolder.gshare_content = (TextView) convertView
-						.findViewById(R.id.gshare_content);
+						.findViewById(R.id.gshare_imageContent);
+
+				groupShareHolder.llVoiceTextView = (LinearLayout) convertView
+						.findViewById(R.id.ll_voicetext);
+				groupShareHolder.rlShowVoice = (RelativeLayout) convertView
+						.findViewById(R.id.rl_showVoice);
+				groupShareHolder.rlShowVoice.setLayoutParams(shareImageParams);
+				groupShareHolder.voiceContent = (TextView) convertView
+						.findViewById(R.id.gshare_voiceContent);
+
+				// 0.7458333333333333
+				int voiceRadius = (int) (showImageHeight * 0.7458333333333333f / 2);
+				groupShareHolder.showVoice = (ImageView) convertView
+						.findViewById(R.id.iv_voice);
+				RelativeLayout.LayoutParams showVoiceParams = new RelativeLayout.LayoutParams(
+						voiceRadius * 2, voiceRadius * 2);
+				showVoiceParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+				groupShareHolder.showVoice.setLayoutParams(showVoiceParams);
+
+				// 0.6458333333333333
+				groupShareHolder.showVoiceTime = (TextView) convertView
+						.findViewById(R.id.tv_voiceTime);
+				RelativeLayout.LayoutParams showVoiceTimeParams = new RelativeLayout.LayoutParams(
+						groupShareHolder.showVoiceTime.getLayoutParams());
+				showVoiceTimeParams.topMargin = (int) (showImageHeight * 0.6458333333333333f);
+				showVoiceTimeParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+				groupShareHolder.showVoiceTime
+						.setLayoutParams(showVoiceTimeParams);
+				groupShareHolder.showVoiceTime.setText("00:02");
+
 				groupShareHolder.gshare_praise = (TextView) convertView
 						.findViewById(R.id.gshare_praise);
 				groupShareHolder.gshare_comment = (TextView) convertView
@@ -566,6 +583,13 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.gshare_head.setLayoutParams(headParams);
 				groupShareHolder.gshare_date_tv.setTextSize(
 						TypedValue.COMPLEX_UNIT_PX, width * 0.06944444f);
+
+				groupShareHolder.praiseIcon = (ImageView) convertView
+						.findViewById(R.id.gshare_praise_icon);
+
+				groupShareHolder.commentIcon = (ImageView) convertView
+						.findViewById(R.id.gshare_comment_icon);
+
 				convertView.setTag(groupShareHolder);
 			} else {
 				groupShareHolder = (GroupShareHolder) convertView.getTag();
@@ -585,27 +609,71 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 					groupShareHolder.gshare_date_tv.setVisibility(View.GONE);
 				}
 			}
-			if (groupShare.content.images.size() > 0) {
-				final String fileName = groupShare.content.images.get(0);
-				app.fileHandler.getThumbnail(fileName, "", showImageWidth,
-						showImageHeight, new FileResult() {
+			final int mType = getItemViewType(position);
+			switch (mType) {
+			case GroupShare.MESSAGE_TYPE_IMAGETEXT:
+				groupShareHolder.llImageTextView.setVisibility(View.VISIBLE);
+				groupShareHolder.llVoiceTextView.setVisibility(View.GONE);
+				if (groupShare.content.images.size() > 0) {
+					final String fileName = groupShare.content.images.get(0);
+					app.fileHandler.getThumbnail(fileName, "", showImageWidth,
+							showImageHeight, new FileResult() {
 
-							@Override
-							public void onResult(String where, Bitmap bitmap) {
-								groupShareHolder.gshare_bigpic
-										.setImageBitmap(app.fileHandler.bitmaps
-												.get(fileName));
-							}
-						});
+								@Override
+								public void onResult(String where, Bitmap bitmap) {
+									groupShareHolder.gshare_bigpic
+											.setImageBitmap(app.fileHandler.bitmaps
+													.get(fileName));
+								}
+							});
+				}
+				groupShareHolder.gshare_content
+						.setText(groupShare.content.text);
+				break;
+			case GroupShare.MESSAGE_TYPE_VOICETEXT:
+				groupShareHolder.llImageTextView.setVisibility(View.GONE);
+				groupShareHolder.llVoiceTextView.setVisibility(View.VISIBLE);
+				groupShareHolder.voiceContent.setText(groupShare.content.text);
+				break;
+			case GroupShare.MESSAGE_TYPE_VOTE:
+
+				break;
+
+			default:
+				break;
 			}
+
 			groupShareHolder.gshare_name.setText(friend.nickName);
 			groupShareHolder.gshare_time_tv
 					.setText(formatHourMinute(groupShare.time));
-			groupShareHolder.gshare_praise.setText(groupShare.praiseusers
-					.size() + "");
-			groupShareHolder.gshare_comment.setText(groupShare.comments.size()
-					+ "");
-			groupShareHolder.gshare_content.setText(groupShare.content.text);
+			groupShareHolder.praiseIcon
+					.setImageResource(R.drawable.gshare_praise);
+			int praiseCount = groupShare.praiseusers.size();
+			groupShareHolder.gshare_praise.setText(praiseCount + "");
+			if (praiseCount != 0) {
+				ArrayList<String> praiseUsers = groupShare.praiseusers;
+				for (int i = 0; i < praiseUsers.size(); i++) {
+					if (app.data.user.phone.equals(praiseUsers.get(i))) {
+						groupShareHolder.praiseIcon
+								.setImageResource(R.drawable.gshare_praised);
+						break;
+					}
+				}
+			}
+			groupShareHolder.commentIcon
+					.setImageResource(R.drawable.gshare_comment);
+			int commentCount = groupShare.comments.size();
+			if (commentCount != 0) {
+				ArrayList<Comment> comments = groupShare.comments;
+				for (int i = 0; i < comments.size(); i++) {
+					if (comments.get(i).phone.equals(app.data.user.phone)) {
+						groupShareHolder.commentIcon
+								.setImageResource(R.drawable.gshare_commented);
+						break;
+					}
+				}
+			}
+			groupShareHolder.gshare_comment.setText(commentCount + "");
 			app.fileHandler.getHeadImage(friend.head, friend.sex,
 					new FileResult() {
 
@@ -622,7 +690,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 							SquareMessageDetail.class);
 					intent.putExtra("content", groupShare);
 					intent.putExtra("type", "share");
-					// startActivity(intent);
+					startActivity(intent);
 				}
 			});
 			return convertView;
@@ -633,6 +701,16 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			ImageView gshare_head, gshare_time_iv, gshare_bigpic;
 			TextView gshare_name, gshare_time_tv, gshare_content,
 					gshare_praise, gshare_comment, gshare_date_tv;
+
+			LinearLayout llImageTextView;
+			LinearLayout llVoiceTextView;
+			RelativeLayout rlShowVoice;
+			TextView voiceContent;
+			ImageView showVoice;
+			TextView showVoiceTime;
+
+			ImageView praiseIcon;
+			ImageView commentIcon;
 		}
 	}
 

@@ -1,7 +1,6 @@
 package com.lejoying.wxgs.activity.view;
 
 import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.app.MainApplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,14 +11,12 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
-import android.transition.Scene;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.widget.Toast;
 
 @SuppressLint("HandlerLeak")
 public class RecoderVoiceView extends ViewGroup {
@@ -60,13 +57,13 @@ public class RecoderVoiceView extends ViewGroup {
 
 	long timerTime;
 	long progressTime;
-	String showProgressTime = "0''";
+	String showProgressTime = "0";
 
 	float distancePoint;
 
 	long drawDelay = 20;
 	long currentTimer;
-	String secondSign = "''";
+	String secondSign = "";
 
 	boolean isDrag;
 
@@ -361,6 +358,7 @@ public class RecoderVoiceView extends ViewGroup {
 		int showTime = (int) Math.floor(progressTime / 1000f);
 		showProgressTime = showTime > 9 ? showTime + secondSign : "0"
 				+ showTime + secondSign;
+		showProgressTime = "00:" + showProgressTime;
 		timeTextX = timeTextCenterX - mPaint.measureText(showProgressTime) / 2;
 		if (mode == MODE_PROGRESS) {
 			deltaAngle = 360f / progressTime;
@@ -529,8 +527,8 @@ public class RecoderVoiceView extends ViewGroup {
 				// canvas.drawText(show,
 				// timeTextCenterX - mPaint.measureText(show) / 2,
 				// timeTextY, mPaint);
-				canvas.drawText(show,
-						(mWidth - mPaint.measureText(showProgressTime)) / 2,
+				show = "00:" + show;
+				canvas.drawText(show, (mWidth - mPaint.measureText(show)) / 2,
 						centerY + innerCircleRadius * 2, mPaint);
 			} else if (mode == MODE_PROGRESS) {
 				if (timeTextX == 0) {

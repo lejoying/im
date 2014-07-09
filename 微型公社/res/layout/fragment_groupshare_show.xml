@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/gshare_date_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="5dp"
-        android:layout_gravity="center_vertical"
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:visibility="gone" />
@@ -64,51 +64,123 @@
                 android:textColor="@android:color/white" />
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/gshare_bigpic"
+        <LinearLayout
+            android:id="@+id/ll_imagetext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            />
+            android:orientation="vertical"
+            android:visibility="gone" >
 
-        <TextView
-            android:id="@+id/gshare_content"
+            <ImageView
+                android:id="@+id/gshare_bigpic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/gshare_imageContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_voicetext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textColor="@android:color/white" />
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/rl_showVoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff" >
+
+                <ImageView
+                    android:id="@+id/iv_voice"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/groupshare_showvoice" />
+
+                <TextView
+                    android:id="@+id/tv_voiceTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="00:00"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/gshare_voiceContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/gshare_dashed" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/gshare_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/gshare_praise_icon"
+                android:layout_width="27dp"
+                android:layout_height="26dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="113dp"
+                android:gravity="center"
+                android:paddingBottom="3dp"
+                android:src="@drawable/gshare_praise" />
 
             <TextView
                 android:id="@+id/gshare_praise"
-                android:layout_width="27dp"
+                android:layout_width="31dp"
                 android:layout_height="26dp"
-                android:layout_margin="10dp"
-                android:paddingBottom="3dp"
-                android:background="@drawable/gshare_praise"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="82dp"
                 android:gravity="center"
-                android:textColor="#de2d2d"/>
+                android:paddingBottom="4dp"
+                android:text="00"
+                android:textColor="#fff" />
+
+            <ImageView
+                android:id="@+id/gshare_comment_icon"
+                android:layout_width="31dp"
+                android:layout_height="26dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="41dp"
+                android:gravity="center"
+                android:paddingBottom="4dp"
+                android:src="@drawable/gshare_comment" />
 
             <TextView
                 android:id="@+id/gshare_comment"
                 android:layout_width="31dp"
                 android:layout_height="26dp"
-                android:layout_margin="10dp"
-                android:paddingBottom="4dp"
-                android:background="@drawable/gshare_comment"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
                 android:gravity="center"
-                android:textColor="#de2d2d" />
-        </LinearLayout>
+                android:paddingBottom="4dp"
+                android:text="00"
+                android:textColor="#fff" />
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>
