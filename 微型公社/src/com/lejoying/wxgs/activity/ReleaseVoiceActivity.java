@@ -101,6 +101,7 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 					@Override
 					public void onPlay() {
 						if (recoderVoiceView.getMode() == RecoderVoiceView.MODE_TIMER) {
+							recoderStatus = ISRECODER;
 							// recoderVoiceView.resetTimer();
 							recoderVoiceView.setDragEnable(false);
 							recoderVoiceView.startTimer();
@@ -137,6 +138,7 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 					@Override
 					public void onPause() {
 						if (recoderVoiceView.getMode() == RecoderVoiceView.MODE_TIMER) {
+							recoderStatus = ISPALY;
 							recoderVoiceView
 									.setMode(RecoderVoiceView.MODE_PROGRESS);
 							recoderVoiceView.stopTimer();
@@ -194,6 +196,7 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 					@Override
 					public void onDeleteRecoder() {
 						fileName = "";
+						recoderStatus = ISRECODER;
 						if (recoderVoiceView.getMode() == RecoderVoiceView.MODE_TIMER) {
 							if (mediaRecorder != null) {
 								mediaRecorder.release();
@@ -336,6 +339,16 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 								if ("image".equals(fileType)) {
 
 								} else {
+									try {
+										JSONObject imageObject = new JSONObject();
+										imageObject.put("type", fileType);
+										imageObject.put("detail",
+												imageMessageInfo.fileName);
+										imageObject.put("time", voiceTime);
+										selectedImages.put(imageObject);
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
 									sendMessage("voicetext",
 											selectedImages.toString());
 								}
@@ -395,7 +408,9 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 	@Override
 	protected void onPause() {
 		if (mediaRecorder != null) {
-			mediaRecorder.stop();
+			if (recoderStatus == ISRECODER) {
+				mediaRecorder.stop();
+			}
 			recoderVoiceView.setShowPlay(true);
 			recoderVoiceView.stopTimer();
 			recoderVoiceView.resetTimer();
@@ -406,17 +421,17 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 		super.onPause();
 	}
 
-	@Override
-	public void finish() {
-		if (mediaRecorder != null) {
-			mediaRecorder.release();
-		}
-		if (mediaPlayer != null) {
-			mediaPlayer.release();
-		}
-
-		super.finish();
-	}
+	// @Override
+	// public void finish() {
+	// if (mediaRecorder != null) {
+	// mediaRecorder.release();
+	// }
+	// if (mediaPlayer != null) {
+	// mediaPlayer.release();
+	// }
+	//
+	// super.finish();
+	// }
 
 	@Override
 	public void onClick(View v) {

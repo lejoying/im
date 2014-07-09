@@ -16,6 +16,8 @@ import com.lejoying.wxgs.app.data.entity.Event;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
+import com.lejoying.wxgs.app.data.entity.GroupShare.VoiceContent;
+import com.lejoying.wxgs.app.data.entity.GroupShare.VoteContent;
 import com.lejoying.wxgs.app.data.entity.Message;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.User;
@@ -611,8 +613,10 @@ public class JSONParser {
 						groupShare.content
 								.addImage(content.getString("detail"));
 					} else if (content.getString("type").equals("voice")) {
-						groupShare.content
-								.addVoice(content.getString("detail"));
+						VoiceContent voiceContent = new VoiceContent();
+						voiceContent.fileName = content.getString("detail");
+						voiceContent.time = content.getLong("time");
+						groupShare.content.addVoice(voiceContent);
 					} else {
 						groupShare.content.text = content.getString("detail");
 					}
@@ -621,9 +625,16 @@ public class JSONParser {
 				groupShare.mType = GroupShare.MESSAGE_TYPE_VOTE;
 				JSONObject jContent = jShare.getJSONObject("content");
 				groupShare.content.title = jContent.getString("title");
-				JSONArray array = jContent.getJSONArray("options");
-				for (int i = 0; i < array.length(); i++) {
-					groupShare.content.voteoptions.add(array.getString(i));
+				JSONArray jOptions = jContent.getJSONArray("options");
+				for (int i = 0; i < jOptions.length(); i++) {
+					JSONObject jOption = jOptions.getJSONObject(i);
+					VoteContent voteContent = new VoteContent();
+					voteContent.content = jOption.getString("content");
+					JSONArray jVoteUsers = jOption.getJSONArray("voteusers");
+					for (int j = 0; j < jVoteUsers.length(); i++) {
+						voteContent.addVoteUser(jVoteUsers.getString(j));
+					}
+					groupShare.content.voteoptions.add(voteContent);
 				}
 			} else {
 				groupShare.content.text = jShare.getString("content");

@@ -1171,7 +1171,9 @@ api = {
                 {type: "text" || "image" || "voice", detail: "XXX"},
                 {},
                 {}
-            ]) || JSON.stringify({title: "XXX", options: ["XXX", "XXX", "XXX"]})}}
+            ]) || JSON.stringify({title: "XXX", options: [
+                {content: "XXX", voteusers: ["XXX", "XXX"]}
+            ]})}}
         },
         response: {
             success: {"提示信息": "发布群分享成功", time: "XXX"},

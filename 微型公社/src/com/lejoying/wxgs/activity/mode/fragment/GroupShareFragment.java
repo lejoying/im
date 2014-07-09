@@ -39,7 +39,6 @@ import com.lejoying.wxgs.activity.DetailsActivity;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
 import com.lejoying.wxgs.activity.ReleaseVoteActivity;
-import com.lejoying.wxgs.activity.SquareMessageDetail;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.RefreshableView;
@@ -569,8 +568,6 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				showVoiceTimeParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 				groupShareHolder.showVoiceTime
 						.setLayoutParams(showVoiceTimeParams);
-				groupShareHolder.showVoiceTime.setText("00:02");
-
 				groupShareHolder.gshare_praise = (TextView) convertView
 						.findViewById(R.id.gshare_praise);
 				groupShareHolder.gshare_comment = (TextView) convertView
@@ -635,6 +632,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.llImageTextView.setVisibility(View.GONE);
 				groupShareHolder.llVoiceTextView.setVisibility(View.VISIBLE);
 				groupShareHolder.voiceContent.setText(groupShare.content.text);
+				int second = (int) (groupShare.content.voices.get(0).time / 1000);
+				String showVoiceTime = second > 9 ? second + "" : "0" + second;
+				groupShareHolder.showVoiceTime.setText("00:" + showVoiceTime);
 				break;
 			case GroupShare.MESSAGE_TYPE_VOTE:
 

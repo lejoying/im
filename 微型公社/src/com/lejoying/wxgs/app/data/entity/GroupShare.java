@@ -34,24 +34,42 @@ public class GroupShare implements Serializable {
 		private static final long serialVersionUID = 1L;
 		// "imagetext" || "voicetext"
 		public ArrayList<String> images = new ArrayList<String>();
-		public ArrayList<String> voices = new ArrayList<String>();
+		public ArrayList<VoiceContent> voices = new ArrayList<VoiceContent>();
 		public String text = "";
 
 		// "vote"
 		public String title;
-		public ArrayList<String> voteoptions = new ArrayList<String>();
-
-		public void addVoteOption(String option) {
-			this.voteoptions.add(option);
-		}
+		public ArrayList<VoteContent> voteoptions = new ArrayList<VoteContent>();
 
 		public void addImage(String imageName) {
 			this.images.add(imageName);
 		}
 
-		public void addVoice(String voiceName) {
-			this.voices.add(voiceName);
+		public void addVoice(VoiceContent voiceContent) {
+			this.voices.add(voiceContent);
 		}
+	}
+
+	public static class VoteContent implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public String content = "";
+		public ArrayList<String> voteUsers = new ArrayList<String>();
+
+		public void addVoteUser(String phone) {
+			voteUsers.add(phone);
+		}
+	}
+
+	public static class VoiceContent implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public String fileName = "";
+		public long time = 0;
 	}
 
 	@Override

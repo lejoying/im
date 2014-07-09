@@ -48,6 +48,7 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
+import com.lejoying.wxgs.app.data.entity.GroupShare.VoiceContent;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
@@ -192,7 +193,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		share = (GroupShare) intent.getSerializableExtra("content");
 		nickNameTo = "";phoneTo="";
 		final List<String> images = share.content.images;
-		List<String> voices = share.content.voices;
+		List<VoiceContent> voices = share.content.voices;
 		String textContent = share.content.text;
 		tv_messageTime.setText(TimeUtils.getTime(share.time));
 		for (String str : share.praiseusers) {
@@ -233,7 +234,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 						}
 					});
 		}
-		for (String str : voices) {
+		for (VoiceContent str : voices) {
 
 		}
 		if (!"".equals(textContent)) {
