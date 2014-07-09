@@ -251,7 +251,7 @@ shareManage.addpraise = function (data, response) {
                     }));
                     response.end();
                 } else {
-                    var shareNode = results.share.pop();
+                    var shareNode = results.pop().share;
                     var shareData = shareNode.data;
                     var praise = shareData.praises;
                     var praiseJSON;
@@ -303,6 +303,7 @@ shareManage.addcomment = function (data, response) {
     var gid = data.gid;
     var gsid = data.gsid;
     var nickName = data.nickName;
+    var nickNameTo=data.nickNameTo;
     var head = data.head;
     var contentType = data.contentType;
     var content = data.content;
@@ -336,7 +337,7 @@ shareManage.addcomment = function (data, response) {
                     }));
                     response.end();
                 } else {
-                    var shareNode = results.share.pop();
+                    var shareNode = results.pop().share;
                     var shareData = shareNode.data;
                     var comments = shareData.comments;
                     var commentsJSON;
@@ -348,8 +349,12 @@ shareManage.addcomment = function (data, response) {
                     var comment = {
                         phone: phone,
                         phoneto: phoneTo,
+                        nickName:nickName,
+                        nickNameTo:nickNameTo,
+                        head:head,
                         contentType: contentType,
-                        content: content
+                        content: content,
+                        time: new Date().getTime()
                     };
                     commentsJSON.push(comment);
                     shareData.comments = JSON.stringify(commentsJSON);
@@ -363,6 +368,7 @@ shareManage.addcomment = function (data, response) {
                             console.error(error);
                             return;
                         } else {
+                            console.log(node);
                             response.write(JSON.stringify({
                                 "提示信息": "评论群分享成功"
                             }));

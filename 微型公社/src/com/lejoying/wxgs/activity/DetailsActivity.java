@@ -3,6 +3,7 @@ package com.lejoying.wxgs.activity;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class DetailsActivity extends Activity implements OnClickListener {
 
 	float height, width, dip;
 	float density;
+
+	String nickNameTo,phoneTo;
 
 	boolean praiseStatus = false;
 
@@ -187,6 +190,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		width = dm.widthPixels;
 		intent = getIntent();
 		share = (GroupShare) intent.getSerializableExtra("content");
+		nickNameTo = "";phoneTo="";
 		final List<String> images = share.content.images;
 		List<String> voices = share.content.voices;
 		String textContent = share.content.text;
@@ -270,21 +274,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		List<Comment> comments = share.comments;
 		tv_checkComment.setText("查看全部" + comments.size() + "条评论...");
 		ll_messageDetailComments.removeAllViews();
-		// for (int i = 0; i < 10; i++) {
-		// Comment fakecomment = new Comment();
-		// fakecomment.content = "123456789";
-		// fakecomment.head = app.data.user.head;
-		// fakecomment.nickName = "哈哈哈";
-		// fakecomment.nickNameTo="笑个屁";
-		// if(i%3==0){
-		// fakecomment.phoneTo = "";
-		// }else{
-		// fakecomment.phoneTo = "110";
-		// }
-		// fakecomment.time = 1404794252435l;
-		// comments.add(fakecomment);
-		// }
-		for (Comment comment : comments) {
+		for (final Comment comment : comments) {
 			View view = inflater
 					.inflate(R.layout.groupshare_commentchild, null);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -313,6 +303,18 @@ public class DetailsActivity extends Activity implements OnClickListener {
 				@Override
 				public void onResult(String where, Bitmap bitmap) {
 					head.setImageBitmap(bitmap);
+				}
+			});
+			view.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(!comment.phone.equals(app.data.user.phone)){
+						phoneTo=comment.phone;
+						nickNameTo=comment.nickName;
+						et_comment.setHint("回复"+nickNameTo);
+					}
+					
 				}
 			});
 			ll_messageDetailComments.addView(view);
@@ -351,16 +353,10 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		app.networkHandler.connection(new CommonNetConnection() {
 			@Override
 			public void success(JSONObject jData) {
-				System.out.println("success");
 				praiseStatus = !praiseStatus;
-				// modifyShare();
-				// resetPraises();
-				// resetComments();
-			}
-
-			@Override
-			protected void unSuccess(JSONObject jData) {
-				System.out.println(jData.toString());
+				modifyShare();
+				resetPraises();
+				resetComments();
 			}
 
 			@Override
@@ -391,6 +387,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			Alert.showMessage("评论内容不能为空");
 			return;
 		}
+		final long time = new Date().getTime();
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -401,9 +398,11 @@ public class DetailsActivity extends Activity implements OnClickListener {
 				params.put("phoneTo", share.phone);
 				params.put("accessKey", app.data.user.accessKey);
 				params.put("nickName", app.data.user.nickName);
+				params.put("nickNameTo", nickNameTo);
 				params.put("head", app.data.user.head);
 				params.put("gid", app.data.currentGroup);
 				params.put("gsid", share.gsid);
+				params.put("time", String.valueOf(time));
 				params.put("contentType", "text");
 				params.put("content", commentContent);
 				settings.params = params;
@@ -413,14 +412,9 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			@Override
 			public void success(JSONObject jData) {
 				et_comment.setText("");
-				// modifyShare();
-				// resetPraises();
-				// resetComments();
-			}
-
-			@Override
-			protected void unSuccess(JSONObject jData) {
-				System.out.println("------" + jData.toString());
+				modifyShare();
+				resetPraises();
+				resetComments();
 			}
 		});
 	}

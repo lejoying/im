@@ -265,7 +265,7 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
     }
     else if (operation == "addcomment") {
         oauth6(data.phone, data.accessKey, response, function () {
-            groupManage.addcomment(data, response);
+            shareManage.addcomment(data, response);
         });
     }
     else if (operation == "delete") {
