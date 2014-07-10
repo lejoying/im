@@ -171,14 +171,14 @@
                         android:layout_width="54dp"
                         android:layout_height="50dp"
                         android:padding="12dp"
-                        android:src="@drawable/collected" />
+                        android:src="@drawable/gshare_praise" />
 
                     <ImageView
                         android:id="@+id/iv_checkComment"
                         android:layout_width="54dp"
                         android:layout_height="50dp"
                         android:padding="12dp"
-                        android:src="@drawable/gshare_comment_detail" />
+                        android:src="@drawable/gshare_comment" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -208,8 +208,7 @@
         android:id="@+id/rl_comment"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:paddingBottom="10dp"
-         >
+        android:paddingBottom="10dp" >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -284,6 +283,105 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
         </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/release_rl_face"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:background="@drawable/card_background_normal"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5px"
+            android:background="#ffffff" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/release_chat_vPager"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:flipInterval="30" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dp"
+            android:background="#ffffff" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5px"
+            android:layout_alignParentBottom="true"
+            android:background="#ffffff" />
+
+        <LinearLayout
+            android:id="@+id/release_ll_facepanel"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:visibility="visible" >
+
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.08"
+                android:scrollbars="none" >
+
+                <LinearLayout
+                    android:id="@+id/release_ll_facemenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" >
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <ImageView
+                android:layout_width="0.5px"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/release_iv_face_left"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_left" />
+
+            <ImageView
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/release_iv_face_right"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_right" />
+
+            <ImageView
+                android:layout_width="0.5px"
+                android:layout_height="match_parent"
+                android:background="#ffffff" />
+
+            <ImageView
+                android:id="@+id/release_iv_face_delete"
+                android:layout_width="28dp"
+                android:layout_height="17dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/face_delete" />
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>

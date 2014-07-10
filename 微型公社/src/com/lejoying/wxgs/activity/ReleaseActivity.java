@@ -34,13 +34,11 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
@@ -67,7 +65,6 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.activity.view.widget.Alert.OnLoadingCancelListener;
-import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
@@ -860,10 +857,8 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			String format = "";
 			Uri uri = Uri.fromFile(tempFile);
 			final String picturePath = uri.getPath();
-			format = "";
 			final Bitmap bitmap = MCImageUtils.getZoomBitmapFromFile(new File(
 					picturePath), 960, 540);
 			Map<String, Object> map = null;
