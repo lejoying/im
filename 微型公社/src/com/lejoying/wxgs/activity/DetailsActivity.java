@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -36,6 +37,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -60,25 +62,31 @@ public class DetailsActivity extends Activity implements OnClickListener {
 	InputMethodManager inputMethodManager;
 
 	Intent intent;
+	Handler handler;
 	LayoutInflater inflater;
 	GroupShare share;
 
 	float height, width, dip;
 	float density;
 
+	int initialHeight, headWidth;
+	
 	String nickNameTo,phoneTo;
 
 	boolean praiseStatus = false;
 
 	LinearLayout ll_message_info, ll_detailContent, ll_praise, ll_praiseMember,
 			ll_messageDetailComments;
-	RelativeLayout rl_sendComment, backView;
+	RelativeLayout rl_sendComment, backView,rl_comment;
 	TextView tv_praiseNum, tv_checkComment, tv_sendComment,
 			tv_squareMessageSendUserName, tv_messageTime;
 	ImageView iv_addPraise, iv_checkComment, iv_comment,
 			iv_squareMessageDetailBack, iv_messageUserHead;
+	ScrollView sv_message_info;
 	EditText et_comment;
 
+	LayoutParams commentLayoutParams;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,7 +95,13 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		initEvent();
 		initData();
 	}
-
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		initialHeight = et_comment.getHeight();
+		headWidth = ll_praiseMember.getWidth()/5;
+		rl_comment.setVisibility(View.GONE);
+		super.onWindowFocusChanged(hasFocus);
+	}
 	private void initEvent() {
 		iv_addPraise.setOnClickListener(this);
 		ll_praise.setOnClickListener(this);
@@ -166,7 +180,9 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		ll_praiseMember = (LinearLayout) findViewById(R.id.ll_praiseMember);
 		ll_messageDetailComments = (LinearLayout) findViewById(R.id.ll_messageDetailComments);
 		rl_sendComment = (RelativeLayout) findViewById(R.id.rl_sendComment);
+		rl_comment = (RelativeLayout) findViewById(R.id.rl_comment);
 		backView = (RelativeLayout) findViewById(R.id.backview);
+		sv_message_info = (ScrollView) findViewById(R.id.sv_message_info);
 		tv_praiseNum = (TextView) findViewById(R.id.tv_praiseNum);
 		tv_checkComment = (TextView) findViewById(R.id.tv_checkComment);
 		tv_sendComment = (TextView) findViewById(R.id.tv_sendComment);
@@ -192,6 +208,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		intent = getIntent();
 		share = (GroupShare) intent.getSerializableExtra("content");
 		nickNameTo = "";phoneTo="";
+		handler = new Handler();
 		final List<String> images = share.content.images;
 		List<VoiceContent> voices = share.content.voices;
 		String textContent = share.content.text;
@@ -263,11 +280,31 @@ public class DetailsActivity extends Activity implements OnClickListener {
 	}
 
 	private void resetPraises() {
+		System.out.println(headWidth);
+		int headwidth=(int) (33 * density + 0.5f);
+		int padding = (int) (5 * density + 0.5f);
 		List<String> praiseusers = share.praiseusers;
 		tv_praiseNum.setText("共获得" + praiseusers.size() + "个赞");
 		ll_praiseMember.removeAllViews();
 		for (int i = 0; i < praiseusers.size(); i++) {
+			final ImageView view = new ImageView(this);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					headwidth, headwidth);
+			view.setPadding(padding, padding, padding, padding);
+			view.setLayoutParams(params);
+			app.fileHandler.getHeadImage(
+					app.data.groupFriends.get(praiseusers.get(i)).head,
+					app.data.groupFriends.get(praiseusers.get(i)).sex,
+					new FileResult() {
 
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							view.setImageBitmap(bitmap);
+						}
+					});
+			ll_praiseMember.addView(view);
+			if (i == 5)
+				break;
 		}
 	}
 
@@ -295,33 +332,45 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			receive.setText(comment.nickName);
 			received.setText(comment.nickNameTo);
 
-			if ("".equals(comment.phoneTo)) {
+			if ("".equals(comment.nickNameTo)) {
 				reply.setVisibility(View.GONE);
 				received.setVisibility(View.GONE);
 			}
 			app.fileHandler.getHeadImage(comment.head, "男", new FileResult() {
-
 				@Override
 				public void onResult(String where, Bitmap bitmap) {
 					head.setImageBitmap(bitmap);
 				}
 			});
 			view.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
-					if(!comment.phone.equals(app.data.user.phone)){
-						phoneTo=comment.phone;
-						nickNameTo=comment.nickName;
-						et_comment.setHint("回复"+nickNameTo);
+					if (rl_comment.getVisibility() == View.GONE) {
+						rl_comment.setVisibility(View.VISIBLE);
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								sv_message_info
+										.fullScroll(ScrollView.FOCUS_DOWN);
+							}
+						});
 					}
-					
+					if (!comment.phone.equals(app.data.user.phone)) {
+						phoneTo = comment.phone;
+						nickNameTo = comment.nickName;
+						et_comment.setHint("回复" + nickNameTo);
+					} else {
+						phoneTo = "";
+						nickNameTo = "";
+						et_comment.setHint("添加评论 ... ...");
+					}
+
 				}
 			});
 			ll_messageDetailComments.addView(view);
 		}
 	}
-
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -332,12 +381,32 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			// TODO show the praised members
 			break;
 		case R.id.iv_checkComment:
-			if (ll_messageDetailComments.getVisibility() == View.VISIBLE) {
-				ll_messageDetailComments.setVisibility(View.GONE);
+			if (!"".equals(phoneTo)) {
+				et_comment.setText("");
+				et_comment.setHint("添加评论 ... ...");
+				phoneTo = "";
+				nickNameTo = "";
 			} else {
-				ll_messageDetailComments.setVisibility(View.VISIBLE);
-			}
-			break;
+				if (rl_comment.getVisibility() == View.VISIBLE) {
+					et_comment.setText("");
+					et_comment.setHint("添加评论 ... ...");
+					commentLayoutParams = rl_comment.getLayoutParams();
+					commentLayoutParams.height = (int) (45 * density + 0.5f);
+					rl_comment.setLayoutParams(commentLayoutParams);
+					rl_comment.setVisibility(View.GONE);
+				} else {
+					phoneTo = "";
+					nickNameTo = "";
+					rl_comment.setVisibility(View.VISIBLE);
+					handler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							sv_message_info.fullScroll(ScrollView.FOCUS_DOWN);
+						}
+					});
+				}
+			}			break;
 		case R.id.iv_comment:
 			// TODO show the faces
 			break;
@@ -356,8 +425,6 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			public void success(JSONObject jData) {
 				praiseStatus = !praiseStatus;
 				modifyShare();
-				resetPraises();
-				resetComments();
 			}
 
 			@Override
@@ -412,10 +479,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void success(JSONObject jData) {
-				et_comment.setText("");
 				modifyShare();
-				resetPraises();
-				resetComments();
 			}
 		});
 	}
@@ -431,6 +495,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 							.generateSharesFromJSON(jData
 									.getJSONArray("shares"));
 					newShare = shares.get(0);
+					share = newShare;
 					app.dataHandler.exclude(new Modification() {
 
 						@Override
@@ -438,9 +503,25 @@ public class DetailsActivity extends Activity implements OnClickListener {
 							data.groupsMap
 									.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
 									.put(newShare.gsid, newShare);
+							phoneTo = "";
+							nickNameTo = "";
+						}
+
+						@Override
+						public void modifyUI() {
+							et_comment.setText("");
+							et_comment.setHint("添加评论 ... ...");
+							resetPraises();
+							resetComments();
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									sv_message_info
+											.fullScroll(ScrollView.FOCUS_DOWN);
+								}
+							});
 						}
 					});
-					share = newShare;
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

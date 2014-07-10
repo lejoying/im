@@ -348,7 +348,7 @@ shareManage.addcomment = function (data, response) {
                     }
                     var comment = {
                         phone: phone,
-                        phoneto: phoneTo,
+                        phoneTo: phoneTo,
                         nickName:nickName,
                         nickNameTo:nickNameTo,
                         head:head,
@@ -368,7 +368,6 @@ shareManage.addcomment = function (data, response) {
                             console.error(error);
                             return;
                         } else {
-                            console.log(node);
                             response.write(JSON.stringify({
                                 "提示信息": "评论群分享成功"
                             }));
