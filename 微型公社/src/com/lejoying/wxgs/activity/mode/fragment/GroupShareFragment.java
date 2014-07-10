@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -35,6 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.R.id;
 import com.lejoying.wxgs.activity.DetailsActivity;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
@@ -51,6 +53,7 @@ import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
+import com.lejoying.wxgs.app.data.entity.GroupShare.VoteContent;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
@@ -117,7 +120,14 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			// : app.data.groups.get(0);
 			if (!"".equals(mCurrentGroupShareID)) {
 				if (app.data.groupsMap.get(mCurrentGroupShareID).groupShares == null) {
-					app.data.groupsMap.get(mCurrentGroupShareID).groupShares = new ArrayList<String>();
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							data.groupsMap.get(mCurrentGroupShareID).groupShares = new ArrayList<String>();
+
+						}
+					});
 				}
 				groupShareAdapter = new GroupShareAdapter(
 						app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
@@ -473,7 +483,13 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			groupSharesMap = app.data.groupsMap.get(mCurrentGroupShareID).groupSharesMap;
 			if (groupSharesMap == null) {
 				groupSharesMap = new HashMap<String, GroupShare>();
-				app.data.groupsMap.get(mCurrentGroupShareID).groupSharesMap = groupSharesMap;
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						data.groupsMap.get(mCurrentGroupShareID).groupSharesMap = groupSharesMap;
+					}
+				});
 			}
 		}
 
@@ -588,6 +604,20 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				groupShareHolder.commentIcon = (ImageView) convertView
 						.findViewById(R.id.gshare_comment_icon);
 
+				groupShareHolder.llVoteView = (LinearLayout) convertView
+						.findViewById(R.id.ll_vote);
+				groupShareHolder.voteTitle = (TextView) convertView
+						.findViewById(R.id.voteTitle);
+				groupShareHolder.llVoteOptions = (LinearLayout) convertView
+						.findViewById(R.id.ll_voteOptions);
+				// 0.1552967276760954
+				RelativeLayout rl_voteTitile = (RelativeLayout) convertView
+						.findViewById(R.id.rl_voteTitile);
+				rl_voteTitile.setBackgroundColor(Color.WHITE);
+				LinearLayout.LayoutParams rl_voteTitileParams = new LinearLayout.LayoutParams(
+						LayoutParams.MATCH_PARENT,
+						(int) (showImageWidth * 0.1552967276760954f));
+				rl_voteTitile.setLayoutParams(rl_voteTitileParams);
 				convertView.setTag(groupShareHolder);
 			} else {
 				groupShareHolder = (GroupShareHolder) convertView.getTag();
@@ -612,6 +642,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			case GroupShare.MESSAGE_TYPE_IMAGETEXT:
 				groupShareHolder.llImageTextView.setVisibility(View.VISIBLE);
 				groupShareHolder.llVoiceTextView.setVisibility(View.GONE);
+				groupShareHolder.llVoteView.setVisibility(View.GONE);
 				if (groupShare.content.images.size() > 0) {
 					final String fileName = groupShare.content.images.get(0);
 					app.fileHandler.getThumbnail(fileName, "", showImageWidth,
@@ -631,13 +662,20 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			case GroupShare.MESSAGE_TYPE_VOICETEXT:
 				groupShareHolder.llImageTextView.setVisibility(View.GONE);
 				groupShareHolder.llVoiceTextView.setVisibility(View.VISIBLE);
+				groupShareHolder.llVoteView.setVisibility(View.GONE);
 				groupShareHolder.voiceContent.setText(groupShare.content.text);
 				int second = (int) (groupShare.content.voices.get(0).time / 1000);
 				String showVoiceTime = second > 9 ? second + "" : "0" + second;
 				groupShareHolder.showVoiceTime.setText("00:" + showVoiceTime);
 				break;
 			case GroupShare.MESSAGE_TYPE_VOTE:
-
+				groupShareHolder.llImageTextView.setVisibility(View.GONE);
+				groupShareHolder.llVoiceTextView.setVisibility(View.GONE);
+				groupShareHolder.llVoteView.setVisibility(View.VISIBLE);
+				groupShareHolder.voteTitle.setText("投票主题 :"
+						+ groupShare.content.title);
+				generateVoteOptionsViews(groupShareHolder.llVoteOptions,
+						groupShare.content.voteoptions);
 				break;
 
 			default:
@@ -712,6 +750,52 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 			ImageView praiseIcon;
 			ImageView commentIcon;
+
+			LinearLayout llVoteView;
+			TextView voteTitle;
+			LinearLayout llVoteOptions;
+		}
+	}
+
+	private void generateVoteOptionsViews(LinearLayout llVoteOptions,
+			ArrayList<VoteContent> voteOptions) {
+		// showImageWidth
+		// option height scale 0.1277777777777778
+		llVoteOptions.removeAllViews();
+		float voteCount = 0;
+		for (int i = 0; i < voteOptions.size(); i++) {
+			voteCount += voteOptions.get(i).voteUsers.size();
+		}
+		for (int i = 0; i < voteOptions.size(); i++) {
+			View v = mInflater.inflate(R.layout.fragment_groupshare_vote_item,
+					null);
+			RelativeLayout voteOptionContent = (RelativeLayout) v
+					.findViewById(R.id.rl_voteOptionContent);
+			LinearLayout.LayoutParams voteOptionContentParams = new LinearLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT,
+					(int) (showImageWidth * 0.1277777777777778f));
+			voteOptionContentParams.topMargin = (int) (0.0233983286908078f * showImageWidth);
+			voteOptionContent.setLayoutParams(voteOptionContentParams);
+			voteOptionContent.setBackgroundColor(Color.argb(26, 255, 255, 255));
+			TextView voteOption = (TextView) v
+					.findViewById(id.tv_voteOptionContent);
+			voteOption.setText(voteOptions.get(i).content);
+			TextView voteOptionNumber = (TextView) v
+					.findViewById(R.id.tv_voteOptionNumber);
+			voteOptionNumber.setText(voteOptions.get(i).voteUsers.size() + "票");
+			TextView voteOptionNumberPlan = (TextView) v
+					.findViewById(R.id.tv_voteOptionNumPlan);
+			if (voteOptions.get(i).voteUsers.size() == 0) {
+				voteOptionNumberPlan.setVisibility(View.GONE);
+			} else {
+				RelativeLayout.LayoutParams voteNumberParams = new RelativeLayout.LayoutParams(
+						(int) ((voteOptions.get(i).voteUsers.size() / voteCount) * showImageWidth),
+						(int) (0.025f * showImageWidth));
+				voteNumberParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+				voteOptionNumberPlan.setLayoutParams(voteNumberParams);
+				voteOptionNumberPlan.setBackgroundColor(Color.WHITE);
+			}
+			llVoteOptions.addView(v);
 		}
 	}
 

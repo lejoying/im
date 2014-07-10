@@ -397,7 +397,9 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 	 * 刷新下拉头中上次更新时间的文字描述。
 	 */
 	private void refreshUpdatedAtValue() {
-		lastUpdateTime = preferences.getLong(UPDATED_AT + mId, -1);
+		if (preferences != null) {
+			lastUpdateTime = preferences.getLong(UPDATED_AT + mId, -1);
+		}
 		long currentTime = System.currentTimeMillis();
 		long timePassed = currentTime - lastUpdateTime;
 		long timeIntoFormat;

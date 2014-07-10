@@ -623,7 +623,8 @@ public class JSONParser {
 				}
 			} else if ("vote".equals(groupShare.type)) {
 				groupShare.mType = GroupShare.MESSAGE_TYPE_VOTE;
-				JSONObject jContent = jShare.getJSONObject("content");
+				JSONObject jContent = new JSONObject(
+						jShare.getString("content"));
 				groupShare.content.title = jContent.getString("title");
 				JSONArray jOptions = jContent.getJSONArray("options");
 				for (int i = 0; i < jOptions.length(); i++) {

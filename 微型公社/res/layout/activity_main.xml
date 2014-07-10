@@ -19,7 +19,7 @@
         android:id="@+id/fragmentContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ll_menu_app">
+        android:layout_below="@+id/ll_menu_app" >
     </FrameLayout>
 
     <LinearLayout
@@ -53,8 +53,8 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:gravity="center"
                         android:clickable="false"
+                        android:gravity="center"
                         android:padding="10dp"
                         android:src="@drawable/square_release" />
                 </RelativeLayout>
@@ -114,12 +114,13 @@
                     android:id="@+id/rl_square_menu"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1" >
 
                     <ImageView
                         android:id="@+id/iv_square_menu"
                         android:layout_width="match_parent"
-                        android:layout_height="33dp"
+                        android:layout_height="35dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:clickable="false"
@@ -132,12 +133,13 @@
                     android:id="@+id/rl_group_menu"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1" >
 
                     <ImageView
                         android:id="@+id/iv_group_menu"
                         android:layout_width="match_parent"
-                        android:layout_height="33dp"
+                        android:layout_height="35dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:clickable="false"
@@ -150,12 +152,13 @@
                     android:id="@+id/rl_me_menu"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1" >
 
                     <ImageView
                         android:id="@+id/iv_me_menu"
                         android:layout_width="match_parent"
-                        android:layout_height="33dp"
+                        android:layout_height="35dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:clickable="false"

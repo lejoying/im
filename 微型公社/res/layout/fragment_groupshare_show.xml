@@ -44,14 +44,15 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@+id/gshare_head"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/gshare_time_iv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/gshare_time_tv"
                 android:src="@drawable/gshare_time" />
 
@@ -130,174 +131,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone" >
+            android:visibility="visible" >
 
             <RelativeLayout
+                android:id="@+id/rl_voteTitile"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="#fff" >
 
                 <TextView
+                    android:id="@+id/voteTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="投票主题  ：今天大家想去哪儿吃饭？"
-                    android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#6e6e6e"
+                    android:textSize="15sp" />
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/ll_voteOptions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
-                    android:background="#bbb" >
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
-
-                        <TextView
-                            android:id="@+id/tv_voteOptionNumPlan"
-                            android:layout_width="120dp"
-                            android:layout_height="10dp"
-                            android:layout_alignParentBottom="true"
-                            android:background="#aaa"
-                            android:visibility="visible" />
-
-                        <TextView
-                            android:id="@+id/tv_voteOptionContent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_above="@+id/tv_voteOptionNumPlan"
-                            android:layout_marginLeft="10dp"
-                            android:gravity="center_vertical"
-                            android:text="家里自己做饭"
-                            android:textColor="#fff" />
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/tv_voteOptionNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="60dp"
-                        android:text="4票"
-                        android:textColor="#fff" />
-
-                    <RelativeLayout
-                        android:id="@+id/rl_operationVote"
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true" >
-
-                        <ImageView
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="#000" />
-
-                        <TextView
-                            android:id="@+id/tv_operationVote"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:layout_centerVertical="true"
-                            android:text="+1"
-                            android:textColor="#fff"
-                            android:textSize="18sp" />
-                    </RelativeLayout>
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/tv_voteUsers"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="2dp"
-                    android:text="Coolspan、CCTV、CNTV、CMTV、CQTV、CETV"
-                    android:textSize="12sp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
-                    android:background="#bbb" >
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
-
-                        <TextView
-                            android:id="@+id/tv_vote_option"
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_alignParentBottom="true"
-                            android:background="#aaa"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_above="@+id/tv_vote_option"
-                            android:layout_marginLeft="10dp"
-                            android:gravity="center_vertical"
-                            android:text="去食堂"
-                            android:textColor="#fff" />
-                    </RelativeLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"
-                        android:text="0票"
-                        android:textColor="#fff" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
-                    android:background="#bbb" >
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
-
-                        <TextView
-                            android:id="@+id/tv_vote_option"
-                            android:layout_width="90dp"
-                            android:layout_height="10dp"
-                            android:layout_alignParentBottom="true"
-                            android:background="#aaa"
-                            android:visibility="visible" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_above="@+id/tv_vote_option"
-                            android:layout_marginLeft="10dp"
-                            android:gravity="center_vertical"
-                            android:text="吃必胜客"
-                            android:textColor="#fff" />
-                    </RelativeLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"
-                        android:text="3票"
-                        android:textColor="#fff" />
-                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -320,14 +176,14 @@
                 android:layout_height="26dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="113dp"
+                android:layout_marginRight="102dp"
                 android:gravity="center"
                 android:paddingBottom="3dp"
                 android:src="@drawable/gshare_praise" />
 
             <TextView
                 android:id="@+id/gshare_praise"
-                android:layout_width="31dp"
+                android:layout_width="20dp"
                 android:layout_height="26dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
@@ -343,14 +199,14 @@
                 android:layout_height="26dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="41dp"
+                android:layout_marginRight="30dp"
                 android:gravity="center"
                 android:paddingBottom="4dp"
                 android:src="@drawable/gshare_comment" />
 
             <TextView
                 android:id="@+id/gshare_comment"
-                android:layout_width="31dp"
+                android:layout_width="20dp"
                 android:layout_height="26dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"

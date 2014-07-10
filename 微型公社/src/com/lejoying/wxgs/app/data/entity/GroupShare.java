@@ -11,9 +11,9 @@ public class GroupShare implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final int MAXTYPE_COUNT = 3;
-	public static final int MESSAGE_TYPE_IMAGETEXT = 0x01;
-	public static final int MESSAGE_TYPE_VOICETEXT = 0x02;
-	public static final int MESSAGE_TYPE_VOTE = 0x03;
+	public static final int MESSAGE_TYPE_IMAGETEXT = 0x00;
+	public static final int MESSAGE_TYPE_VOICETEXT = 0x01;
+	public static final int MESSAGE_TYPE_VOTE = 0x02;
 
 	// type is imagetext or voicetext or vote
 	public int mType;
@@ -38,7 +38,7 @@ public class GroupShare implements Serializable {
 		public String text = "";
 
 		// "vote"
-		public String title;
+		public String title = "";
 		public ArrayList<VoteContent> voteoptions = new ArrayList<VoteContent>();
 
 		public void addImage(String imageName) {

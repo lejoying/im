@@ -5,13 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.app.MainApplication;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -29,6 +36,7 @@ import android.widget.TextView;
 public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		OnTouchListener {
 
+	MainApplication app = MainApplication.getMainApplication();
 	LayoutInflater mInflater;
 	InputMethodManager imm;
 
@@ -41,7 +49,6 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 	List<String> voteList;
 	Map<Integer, String> voteMap;
 
-	private List<Map<String, Object>> subVoteList;
 	GestureDetector backViewDetector;
 
 	@Override
@@ -67,27 +74,23 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		voteList.add(0, "");
 		voteList.add(1, "");
 		voteList.add(2, "");
-		subVoteList = new ArrayList<Map<String, Object>>();
 		initVoteList();
 	}
 
 	private void initVoteList() {
-		subVoteList.clear();
-		for (int i = 0; i < voteList.size(); i++) {
-			if (voteList.get(i) != null) {
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("location", i);
-				map.put("content", voteList.get(i));
-				subVoteList.add(map);
-			}
-		}
-
 		release_ll.removeAllViews();
-		for (int i = 0; i < subVoteList.size(); i++) {
-			release_ll.addView(getVoteView(i, subVoteList.get(i)));
+		for (int i = 0; i < voteList.size(); i++) {
+			release_ll.addView(getVoteView(i, voteList.get(i)));
 		}
 		release_ll.addView(getFooterView());
+	}
 
+	void modifyVoteOptionNumber() {
+		for (int i = 0; i < release_ll.getChildCount(); i++) {
+			View v = release_ll.getChildAt(i);
+			TextView tv = (TextView) v.findViewById(R.id.release_vote_num);
+			tv.setText(i + 1 + "");
+		}
 	}
 
 	void initLayout() {
@@ -123,14 +126,70 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 	}
 
 	void Send() {
+		JSONObject voteContent = new JSONObject();
+		String voteTitle = release_et.getText().toString().trim();
+		if (!"".equals(voteTitle)) {
+			Alert.showMessage("投票标题不能为空");
+		}
+		try {
+			voteContent.put("title", voteTitle);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		boolean checkTrim = true;
+		JSONArray voteOptionsContent = new JSONArray();
+		for (int i = 0; i < release_ll.getChildCount(); i++) {
+			View v = release_ll.getChildAt(i);
+			EditText voteOptionView = (EditText) v
+					.findViewById(R.id.release_vote_et);
+			String voteOptionContent = voteOptionView.getText().toString()
+					.trim();
+			if (!"".equals(voteOptionContent)) {
+				checkTrim = false;
+				Alert.showMessage("投票选项不能为空");
+				break;
+			}
+			JSONObject optionContent = new JSONObject();
+			try {
+				optionContent.put("id", (i + 1) + "");
+				optionContent.put("content", voteOptionContent);
+				optionContent.put("voteusers", new JSONArray());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			voteOptionsContent.put(optionContent);
+		}
+		if (checkTrim) {
+			try {
+				voteContent.put("options", voteOptionsContent);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			// generateMessageParams("vote", voteContent.toString());
+		}
+	}
 
+	public Map<String, String> generateMessageParams(String type, String content) {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("phone", app.data.user.phone);
+		params.put("accessKey", app.data.user.accessKey);
+		params.put("gid", GroupShareFragment.mCurrentGroupShareID);
+		JSONObject messageObject = new JSONObject();
+		try {
+			messageObject.put("type", type);
+			messageObject.put("content", content);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		params.put("message", messageObject.toString());
+		return params;
 	}
 
 	void Sync() {
 
 	}
 
-	private View getVoteView(final int order, final Map<String, Object> map) {
+	private View getVoteView(final int order, final String content) {
 
 		View view = mInflater.inflate(R.layout.release_vote_child, null);
 
@@ -143,22 +202,23 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 				.findViewById(R.id.release_vote_et);
 		release_vote_num.setText(order + 1 + ".");
 
-		if (!map.get("content").equals("")) {
-			release_vote_et.setText((String) map.get("content"));
+		if (!content.equals("")) {
+			release_vote_et.setText(content);
 		}
 		release_vote_clear.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// TODO
 				if (release_ll.getChildCount() > 3) {
-					voteList.set((Integer) (map.get("location")), null);
 					if (imm.isActive()) {
 						imm.hideSoftInputFromWindow(
 								release_vote_et.getWindowToken(),
 								InputMethodManager.HIDE_NOT_ALWAYS);
 					}
-					release_ll.removeViewAt(order);
-					initVoteList();
+					release_ll.removeView((View) release_vote_clear.getParent()
+							.getParent().getParent());
+					// initVoteList();
+					modifyVoteOptionNumber();
 				} else {
 					Alert.showMessage("最少不能少于2个选项");
 				}
@@ -174,12 +234,8 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 					ll_background.setBackgroundColor(Color
 							.parseColor("#00000000"));
 					release_vote_clear.setVisibility(View.GONE);
-					if (!release_vote_et.getText().toString().equals("")) {
-						voteList.set((Integer) (map.get("location")),
-								release_vote_et.getText().toString());
-					}
-					initVoteList();
-					release_ll.requestFocus();
+					// initVoteList();
+					// release_ll.requestFocus();
 				}
 
 			}
@@ -206,8 +262,19 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		view.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				voteList.add(voteList.size(), "");
-				initVoteList();
+				new Handler().post(new Runnable() {
+
+					@Override
+					public void run() {
+						if (release_ll.getChildCount() < 6) {
+							release_ll.addView(getVoteView(0, ""),
+									release_ll.getChildCount() - 1);
+							modifyVoteOptionNumber();
+						} else {
+							Alert.showMessage("最多不能超过5个选项");
+						}
+					}
+				});
 			}
 		});
 		return view;

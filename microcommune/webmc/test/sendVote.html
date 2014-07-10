@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>发起投票</title>
+    <script type="text/javascript" src="./../static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var phone = document.getElementById("js_phone").value;
+            var gid = document.getElementById("js_gid").value;
+            var voteTitle = document.getElementById("js_title").value;
+            var voteOption1 = document.getElementById("js_option1").value;
+            var voteOption2 = document.getElementById("js_option2").value;
+            var voteOption3 = document.getElementById("js_option3").value;
+            var voteOption4 = document.getElementById("js_option4").value;
+            var voteOption5 = document.getElementById("js_option5").value;
+            var message = {};
+            message.type = "vote";
+            var content = {};
+            content.title = voteTitle;
+            var options = [];
+            content.options = options;
+            options.push({id: "1", content: voteOption1, voteusers: []});
+            options.push({id: "2", content: voteOption2, voteusers: []});
+            if (voteOption3 != "")
+                options.push({id: "3", content: voteOption3, voteusers: []});
+            if (voteOption4 != "")
+                options.push({id: "4", content: voteOption4, voteusers: []});
+            if (voteOption5 != "")
+                options.push({id: "5", content: voteOption5, voteusers: []});
+            message.content = JSON.stringify(content);
+            $.ajax({
+                type: "POST",
+                url: "/api2/share/sendshare?",
+                data: {
+                    phone: phone,
+                    accessKey: "lejoying",
+                    gid: gid,
+                    message: JSON.stringify(message)
+                },
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div>
+    phone: <input type="text" id="js_phone"><br/>
+    gid: <input type="text" id="js_gid"><br/>
+    voteTile: <input type="text" id="js_title"><br/>
+    voteOption1<input type="text" id="js_option1"><br/>
+    voteOption2<input type="text" id="js_option2"><br/>
+    voteOption3<input type="text" id="js_option3"><br/>
+    voteOption4<input type="text" id="js_option4"><br/>
+    voteOption5<input type="text" id="js_option5"><br/>
+    <input type="button" value="发起投票" onclick="commit()">
+</div>
+</body>
+</html>

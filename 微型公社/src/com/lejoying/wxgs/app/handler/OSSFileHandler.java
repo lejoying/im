@@ -307,13 +307,16 @@ public class OSSFileHandler {
 					File imageFile = new File(f, fileName0);
 					tempFile.renameTo(imageFile);
 
-					Bitmap bitmap = BitmapFactory.decodeFile(imageFile
-							.getAbsolutePath());
+					Bitmap bitmap = null;
 					if (type == TYPE_IMAGE_HEAD) {
+						bitmap = BitmapFactory.decodeFile(imageFile
+								.getAbsolutePath());
 						bitmap = MCImageUtils.getCircleBitmap(bitmap, true,
 								borderWidth, Color.WHITE);
 						bitmaps.put(fileName0, bitmap);
 					} else if (type == TYPE_IMAGE_THUMBNAIL) {
+						bitmap = BitmapFactory.decodeFile(imageFile
+								.getAbsolutePath());
 						bitmaps.put(fileName0, bitmap);
 					} else if (type == TYPE_IMAGE_SQUAREIMAGE
 							|| type == TYPE_IMAGE_COMMON) {
