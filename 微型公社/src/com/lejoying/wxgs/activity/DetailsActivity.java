@@ -1,25 +1,29 @@
 package com.lejoying.wxgs.activity;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Inflater;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -28,12 +32,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -41,8 +49,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.ReleaseActivity.MyGridAdapter;
+import com.lejoying.wxgs.activity.ReleaseActivity.MyPageAdapter;
+import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
@@ -52,7 +64,6 @@ import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
 import com.lejoying.wxgs.app.data.entity.GroupShare.VoiceContent;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.NetworkHandler.NetConnection;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.parser.JSONParser;
@@ -60,33 +71,41 @@ import com.lejoying.wxgs.app.parser.JSONParser;
 public class DetailsActivity extends Activity implements OnClickListener {
 	MainApplication app = MainApplication.getMainApplication();
 	InputMethodManager inputMethodManager;
-
 	Intent intent;
-	Handler handler;
 	LayoutInflater inflater;
-	GroupShare share;
+	Handler handler;
 
-	float height, width, dip;
-	float density;
-
-	int initialHeight, headWidth;
-	
-	String nickNameTo,phoneTo;
-
-	boolean praiseStatus = false;
-
+	View release_iv_face_left, release_iv_face_right, release_iv_face_delete;
 	LinearLayout ll_message_info, ll_detailContent, ll_praise, ll_praiseMember,
-			ll_messageDetailComments;
-	RelativeLayout rl_sendComment, backView,rl_comment;
+			ll_messageDetailComments, ll_facemenu;
+	RelativeLayout rl_sendComment, backView, rl_comment, rl_face;
 	TextView tv_praiseNum, tv_checkComment, tv_sendComment,
 			tv_squareMessageSendUserName, tv_messageTime;
 	ImageView iv_addPraise, iv_checkComment, iv_comment,
 			iv_squareMessageDetailBack, iv_messageUserHead;
 	ScrollView sv_message_info;
+	HorizontalScrollView horizontalScrollView;
+	ViewPager chat_vPager;
 	EditText et_comment;
 
 	LayoutParams commentLayoutParams;
-	
+
+	GroupShare share;
+
+	float height, width, dip, density;
+
+	int initialHeight, headWidth, chat_vPager_now;
+
+	String nickNameTo, phoneTo;
+	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
+
+	boolean praiseStatus = false;
+
+	List<String[]> faceNamesList;
+	List<List<String>> faceNameList;
+	List<ImageView> faceMenuShowList;
+	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -95,20 +114,33 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		initEvent();
 		initData();
 	}
+
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		initialHeight = et_comment.getHeight();
-		headWidth = ll_praiseMember.getWidth()/5;
 		rl_comment.setVisibility(View.GONE);
 		super.onWindowFocusChanged(hasFocus);
 	}
+
 	private void initEvent() {
 		iv_addPraise.setOnClickListener(this);
 		ll_praise.setOnClickListener(this);
 		iv_checkComment.setOnClickListener(this);
 		iv_comment.setOnClickListener(this);
 		tv_sendComment.setOnClickListener(this);
+		release_iv_face_left.setOnClickListener(this);
+		release_iv_face_right.setOnClickListener(this);
+		release_iv_face_delete.setOnClickListener(this);
 
+		et_comment.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (hasFocus) {
+					rl_face.setVisibility(View.GONE);
+				}
+			}
+		});
 		backView.setOnTouchListener(new OnTouchListener() {
 			GestureDetector backviewDetector = new GestureDetector(
 					DetailsActivity.this,
@@ -141,24 +173,33 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			}
 		});
 		et_comment.addTextChangedListener(new TextWatcher() {
+			String content = "";
 
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
-
+				content = s.toString();
 			}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				// TODO Auto-generated method stub
-
+				commentLayoutParams = rl_comment.getLayoutParams();
+				commentLayoutParams.height = (int) ((45 * density + 0.5f)
+						+ et_comment.getHeight() - initialHeight);
+				rl_comment.setLayoutParams(commentLayoutParams);
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
+				int selectionIndex = et_comment.getSelectionStart();
+				if (!(s.toString()).equals(content)) {
+					SpannableString spannableString = ExpressionUtil
+							.getExpressionString(getBaseContext(),
+									s.toString(), faceRegx, expressionFaceMap);
+					et_comment.setText(spannableString);
+					et_comment.setSelection(selectionIndex);
+				}
 				if ("".equals(et_comment.getText().toString())) {
 					tv_sendComment
 							.setBackgroundResource(R.drawable.squaredetail_comment_notselected);
@@ -170,6 +211,21 @@ public class DetailsActivity extends Activity implements OnClickListener {
 				}
 			}
 
+		});
+		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
+			@Override
+			public void onPageSelected(int arg0) {
+				chat_vPager_now = arg0;
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+
+			}
 		});
 	}
 
@@ -194,11 +250,20 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		iv_squareMessageDetailBack = (ImageView) findViewById(R.id.iv_squareMessageDetailBack);
 		iv_messageUserHead = (ImageView) findViewById(R.id.iv_messageUserHead);
 		et_comment = (EditText) findViewById(R.id.et_comment);
+
+		ll_facemenu = (LinearLayout) findViewById(R.id.release_ll_facemenu);
+		rl_face = (RelativeLayout) findViewById(R.id.release_rl_face);
+		horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
+		chat_vPager = (ViewPager) findViewById(R.id.release_chat_vPager);
+		release_iv_face_left = findViewById(R.id.release_iv_face_left);
+		release_iv_face_right = findViewById(R.id.release_iv_face_right);
+		release_iv_face_delete = findViewById(R.id.release_iv_face_delete);
 	}
 
 	private void initData() {
 		inflater = getLayoutInflater();
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		handler = new Handler();
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
@@ -207,8 +272,9 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		width = dm.widthPixels;
 		intent = getIntent();
 		share = (GroupShare) intent.getSerializableExtra("content");
-		nickNameTo = "";phoneTo="";
-		handler = new Handler();
+		nickNameTo = "";
+		phoneTo = "";
+		chat_vPager_now = 0;
 		final List<String> images = share.content.images;
 		List<VoiceContent> voices = share.content.voices;
 		String textContent = share.content.text;
@@ -275,41 +341,125 @@ public class DetailsActivity extends Activity implements OnClickListener {
 						iv_messageUserHead.setImageBitmap(bitmap);
 					}
 				});
+		initFace();
 		resetPraises();
 		resetComments();
 	}
 
-	private void resetPraises() {
-		System.out.println(headWidth);
-		int headwidth=(int) (33 * density + 0.5f);
-		int padding = (int) (5 * density + 0.5f);
-		List<String> praiseusers = share.praiseusers;
-		tv_praiseNum.setText("共获得" + praiseusers.size() + "个赞");
-		ll_praiseMember.removeAllViews();
-		for (int i = 0; i < praiseusers.size(); i++) {
-			final ImageView view = new ImageView(this);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					headwidth, headwidth);
-			view.setPadding(padding, padding, padding, padding);
-			view.setLayoutParams(params);
-			app.fileHandler.getHeadImage(
-					app.data.groupFriends.get(praiseusers.get(i)).head,
-					app.data.groupFriends.get(praiseusers.get(i)).sex,
-					new FileResult() {
-
-						@Override
-						public void onResult(String where, Bitmap bitmap) {
-							view.setImageBitmap(bitmap);
-						}
-					});
-			ll_praiseMember.addView(view);
-			if (i == 5)
-				break;
+	private void initFace() {
+		faceMenuShowList = new ArrayList<ImageView>();
+		faceNamesList = new ArrayList<String[]>();
+		faceNamesList = MainModeManager.faceNamesList;
+		List<View> mListViews = new ArrayList<View>();
+		List<String> images1 = new ArrayList<String>();
+		for (int i = 0; i < 105; i++) {
+			expressionFaceMap.put(faceNamesList.get(0)[i], "smiley_" + i
+					+ ".png");
+			images1.add("smiley_" + i + ".png");
 		}
+		List<String> images2 = new ArrayList<String>();
+		for (int i = 0; i < 77; i++) {
+			expressionFaceMap.put(faceNamesList.get(1)[i], "emoji_" + i
+					+ ".png");
+			images2.add("emoji_" + i + ".png");
+		}
+		faceNameList = new ArrayList<List<String>>();
+		faceNameList.add(images1);
+		faceNameList.add(images2);
+
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(100,
+				LayoutParams.MATCH_PARENT);
+		lp.gravity = Gravity.CENTER;
+		for (int i = 0; i < 2; i++) {
+			try {
+				ImageView iv = new ImageView(this);
+				iv.setImageBitmap(BitmapFactory.decodeStream(this.getAssets()
+						.open("images/" + faceNameList.get(i).get(0))));
+				iv.setLayoutParams(lp);
+				iv.setTag(i);
+				ll_facemenu.addView(iv);
+				faceMenuShowList.add(iv);
+				ImageView iv_1 = new ImageView(this);
+				iv_1.setBackgroundColor(Color.WHITE);
+				iv_1.setMinimumWidth(1);
+				iv_1.setMinimumHeight(80);
+				iv_1.setMaxWidth(1);
+				ll_facemenu.addView(iv_1);
+				iv.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						int position = (Integer) v.getTag();
+						chat_vPager_now = position;
+						chat_vPager.setCurrentItem(chat_vPager_now);
+					}
+				});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			View v = inflater.inflate(R.layout.f_chat_face_base_gridview, null);
+			GridView chat_base_gv = (GridView) v
+					.findViewById(R.id.chat_base_gv);
+			chat_base_gv.setAdapter(new MyGridAdapter(faceNameList.get(i)));
+			mListViews.add(chat_base_gv);
+		}
+		chat_vPager.setAdapter(new MyPageAdapter(mListViews));
+	}
+
+	private void resetPraises() {
+		if (praiseStatus) {
+			iv_addPraise.setImageResource(R.drawable.gshare_praised);
+		} else {
+			iv_addPraise.setImageResource(R.drawable.gshare_praise);
+		}
+		ll_praiseMember.post(new Runnable() {
+			@Override
+			public void run() {
+				headWidth = ll_praiseMember.getWidth() / 5;
+				int padding = (int) (5 * density + 0.5f);
+				List<String> praiseusers = share.praiseusers;
+				tv_praiseNum.setText("共获得" + praiseusers.size() + "个赞");
+				ll_praiseMember.removeAllViews();
+				ImageView iv = new ImageView(DetailsActivity.this);
+				LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+						0, LayoutParams.WRAP_CONTENT);
+				param.weight = 1;
+				iv.setLayoutParams(param);
+				ll_praiseMember.addView(iv);
+				for (int i = 0; i < praiseusers.size(); i++) {
+					final ImageView view = new ImageView(DetailsActivity.this);
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+							headWidth, headWidth);
+					params.gravity = Gravity.CENTER;
+					view.setPadding(padding, padding, padding, padding);
+					view.setLayoutParams(params);
+					app.fileHandler.getHeadImage(
+							app.data.groupFriends.get(praiseusers.get(i)).head,
+							app.data.groupFriends.get(praiseusers.get(i)).sex,
+							new FileResult() {
+
+								@Override
+								public void onResult(String where, Bitmap bitmap) {
+									view.setImageBitmap(bitmap);
+								}
+							});
+					ll_praiseMember.addView(view);
+					if (i == 5)
+						break;
+				}
+			}
+		});
 	}
 
 	private void resetComments() {
 		List<Comment> comments = share.comments;
+		iv_checkComment.setImageResource(R.drawable.gshare_comment);
+		for (Comment comment : comments) {
+			if (comment.phone.equals(app.data.user.phone)) {
+				iv_checkComment.setImageResource(R.drawable.gshare_commented);
+				break;
+			}
+		}
 		tv_checkComment.setText("查看全部" + comments.size() + "条评论...");
 		ll_messageDetailComments.removeAllViews();
 		for (final Comment comment : comments) {
@@ -326,10 +476,12 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			TextView receive = (TextView) view.findViewById(R.id.receive);
 			TextView received = (TextView) view.findViewById(R.id.received);
 			final ImageView head = (ImageView) view.findViewById(R.id.head);
-
-			content.setText(comment.content);
+			SpannableString spannableString = ExpressionUtil
+					.getExpressionString(getBaseContext(), comment.content,
+							faceRegx, expressionFaceMap);
+			content.setText(spannableString);
 			time.setText(TimeUtils.getTime(comment.time));
-			receive.setText(comment.nickName);
+			receive.setText(comment.nickName); 
 			received.setText(comment.nickNameTo);
 
 			if ("".equals(comment.nickNameTo)) {
@@ -348,13 +500,6 @@ public class DetailsActivity extends Activity implements OnClickListener {
 				public void onClick(View v) {
 					if (rl_comment.getVisibility() == View.GONE) {
 						rl_comment.setVisibility(View.VISIBLE);
-						handler.post(new Runnable() {
-							@Override
-							public void run() {
-								sv_message_info
-										.fullScroll(ScrollView.FOCUS_DOWN);
-							}
-						});
 					}
 					if (!comment.phone.equals(app.data.user.phone)) {
 						phoneTo = comment.phone;
@@ -371,6 +516,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			ll_messageDetailComments.addView(view);
 		}
 	}
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -398,20 +544,128 @@ public class DetailsActivity extends Activity implements OnClickListener {
 					phoneTo = "";
 					nickNameTo = "";
 					rl_comment.setVisibility(View.VISIBLE);
-					handler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							sv_message_info.fullScroll(ScrollView.FOCUS_DOWN);
-						}
-					});
 				}
-			}			break;
+			}
+			break;
 		case R.id.iv_comment:
-			// TODO show the faces
+			if (rl_face.getVisibility() == View.VISIBLE) {
+				rl_face.setVisibility(View.GONE);
+			} else {
+				if (inputMethodManager.isActive()) {
+					inputMethodManager.hideSoftInputFromWindow(
+							DetailsActivity.this.getCurrentFocus()
+									.getWindowToken(),
+							InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+				rl_face.setVisibility(View.VISIBLE);
+			}
+			break;
+		case R.id.et_comment:
+			rl_face.setVisibility(View.GONE);
+
 			break;
 		case R.id.tv_sendComment:
 			sendComment();
+			break;
+		case R.id.release_iv_face_left:
+			int start1 = et_comment.getSelectionStart();
+			String content1 = et_comment.getText().toString();
+			if (start1 - 1 < 0)
+				return;
+			String faceEnd1 = content1.substring(start1 - 1, start1);
+			if ("]".equals(faceEnd1) || ">".equals(faceEnd1)) {
+				String str = content1.substring(0, start1);
+				int index = "]".equals(faceEnd1) ? str.lastIndexOf("[") : str
+						.lastIndexOf("<");
+				if (index != -1) {
+					String faceStr = content1.substring(index, start1);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						et_comment.setSelection(start1 - faceStr.length());
+					} else {
+						if (start1 - 1 >= 0) {
+							et_comment.setSelection(start1 - 1);
+						}
+					}
+				}
+			} else {
+				if (start1 - 1 >= 0) {
+					et_comment.setSelection(start1 - 1);
+				}
+			}
+
+			break;
+		case R.id.release_iv_face_right:
+
+			int start2 = et_comment.getSelectionStart();
+			String content2 = et_comment.getText().toString();
+			if (start2 + 1 > content2.length())
+				return;
+			String faceEnd2 = content2.substring(start2, start2 + 1);
+			if ("[".equals(faceEnd2) || "<".equals(faceEnd2)) {
+				String str = content2.substring(start2);
+				int index = "[".equals(faceEnd2) ? str.indexOf("]") : str
+						.indexOf(">");
+				if (index != -1) {
+					String faceStr = content2.substring(start2, index + start2
+							+ 1);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						et_comment.setSelection(start2 + faceStr.length());
+					} else {
+						if (start2 + 1 <= content2.length()) {
+							et_comment.setSelection(start2 + 1);
+						}
+					}
+				}
+			} else {
+				if (start2 + 1 <= content2.length()) {
+					et_comment.setSelection(start2 + 1);
+				}
+			}
+
+			break;
+		case R.id.release_iv_face_delete:
+
+			int start = et_comment.getSelectionStart();
+			String content = et_comment.getText().toString();
+			if (start - 1 < 0)
+				return;
+			String faceEnd = content.substring(start - 1, start);
+			if ("]".equals(faceEnd) || ">".equals(faceEnd)) {
+				String str = content.substring(0, start);
+				int index = "]".equals(faceEnd) ? str.lastIndexOf("[") : str
+						.lastIndexOf("<");
+				if (index != -1) {
+					String faceStr = content.substring(index, start);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						et_comment.setText(content.substring(0,
+								start - faceStr.length())
+								+ content.substring(start));
+						et_comment.setSelection(start - faceStr.length());
+					} else {
+						if (start - 1 >= 0) {
+							et_comment.setText(content.substring(0, start - 1)
+									+ content.substring(start));
+							et_comment.setSelection(start - 1);
+						}
+					}
+				}
+			} else {
+				if (start - 1 >= 0) {
+					et_comment.setText(content.substring(0, start - 1)
+							+ content.substring(start));
+					et_comment.setSelection(start - 1);
+				}
+			}
+
 			break;
 		default:
 			break;
@@ -541,5 +795,91 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			}
 		});
 
+	}
+
+	class MyGridAdapter extends BaseAdapter {
+		List<String> list;
+
+		public MyGridAdapter(List<String> list) {
+			this.list = list;
+		}
+
+		@Override
+		public int getCount() {
+			return list.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return list.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
+			convertView = inflater.inflate(R.layout.f_chat_base_gridview_item,
+					null);
+			ImageView iv = (ImageView) convertView
+					.findViewById(R.id.chat_base_iv);
+			try {
+				iv.setImageBitmap(BitmapFactory.decodeStream(getBaseContext()
+						.getAssets().open("images/" + list.get(position))));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			convertView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					et_comment.getText().insert(et_comment.getSelectionStart(),
+							faceNamesList.get(chat_vPager_now)[position]);
+				}
+			});
+			return convertView;
+		}
+	}
+
+	class MyPageAdapter extends PagerAdapter {
+		List<View> mListViews;
+
+		public MyPageAdapter(List<View> mListViews) {
+			this.mListViews = mListViews;
+		}
+
+		@Override
+		public int getCount() {
+			return mListViews.size();
+		}
+
+		@Override
+		public boolean isViewFromObject(View view, Object obj) {
+			return (view == obj);
+		}
+
+		@Override
+		public Object instantiateItem(View view, int position) {
+			try {
+				if (mListViews.get(position).getParent() == null)
+					((ViewPager) view).addView(mListViews.get(position), 0);
+				else {
+					((ViewGroup) mListViews.get(position).getParent())
+							.removeView(mListViews.get(position));
+					((ViewPager) view).addView(mListViews.get(position), 0);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return mListViews.get(position);
+		}
+
+		@Override
+		public void destroyItem(View view, int position, Object obj) {
+			((ViewPager) view).removeView(mListViews.get(position));
+		}
 	}
 }
