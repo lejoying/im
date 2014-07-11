@@ -405,6 +405,12 @@ public class RecoderVoiceView extends ViewGroup {
 		return mode;
 	}
 
+	boolean centerColorFlag = false;
+
+	public void setCenterColor() {
+		centerColorFlag = true;
+	}
+
 	public void setDragEnable(boolean isEnable) {
 		this.isDragEnable = isEnable;
 	}
@@ -606,17 +612,24 @@ public class RecoderVoiceView extends ViewGroup {
 			// canvas.drawARGB(38, 255, 255, 255);
 			mPaint.setColor(Color.WHITE);
 			mPaint.setStyle(Paint.Style.STROKE);
+			if (centerColorFlag) {
+				mPaint.setStyle(Paint.Style.FILL);
+			}
 			mPaint.setStrokeWidth(outCircleWidth);
 			canvas.drawCircle(centerX, centerY, innerCircleRadius, mPaint);
 
 			mPaint.setStrokeWidth(0);
 			mPaint.setStyle(Paint.Style.FILL);
+			if (centerColorFlag) {
+				mPaint.setColor(Color.parseColor("13b6ed"));// 13b6ed
+			}
 			if (isShowPlay) {
 				canvas.drawPath(playPath, mPaint);
 			} else {
 				canvas.drawRoundRect(pauseRectfLeft, 0, 0, mPaint);
 				canvas.drawRoundRect(pauseRectfRight, 0, 0, mPaint);
 			}
+			mPaint.setColor(Color.WHITE);
 			if (isShowDelete) {
 				mPaint.setColor(Color.argb(10, 255, 255, 255));
 				mPaint.setStyle(Paint.Style.FILL_AND_STROKE);

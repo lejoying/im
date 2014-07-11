@@ -808,17 +808,41 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		app.networkHandler.connection(new CommonNetConnection() {
 			@Override
 			public void success(JSONObject jData) {
-				if (flag) {
-					praiseView.setTag(true);
-					praiseView.setImageResource(R.drawable.gshare_praised);
-					praiseCountView.setText((Integer.valueOf(praiseCountView
-							.getText().toString()) + 1) + "");
-				} else {
-					praiseView.setTag(false);
-					praiseView.setImageResource(R.drawable.gshare_praise);
-					praiseCountView.setText((Integer.valueOf(praiseCountView
-							.getText().toString()) - 1) + "");
-				}
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						GroupShare groupShare = data.groupsMap
+								.get(mCurrentGroupShareID).groupSharesMap
+								.get(gsid);
+						if (flag) {
+							groupShare.praiseusers.add(app.data.user.phone);
+						} else {
+							groupShare.praiseusers.remove(app.data.user.phone);
+						}
+					}
+
+					@Override
+					public void modifyUI() {
+						if (flag) {
+							praiseView.setTag(true);
+							praiseView
+									.setImageResource(R.drawable.gshare_praised);
+							praiseCountView.setText((Integer
+									.valueOf(praiseCountView.getText()
+											.toString()) + 1)
+									+ "");
+						} else {
+							praiseView.setTag(false);
+							praiseView
+									.setImageResource(R.drawable.gshare_praise);
+							praiseCountView.setText((Integer
+									.valueOf(praiseCountView.getText()
+											.toString()) - 1)
+									+ "");
+						}
+					}
+				});
 			}
 
 			@Override
