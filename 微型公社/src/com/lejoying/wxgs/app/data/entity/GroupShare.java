@@ -48,6 +48,22 @@ public class GroupShare implements Serializable {
 		public void addVoice(VoiceContent voiceContent) {
 			this.voices.add(voiceContent);
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			boolean flag = false;
+			if (o != null) {
+				try {
+					ShareContent gs = (ShareContent) o;
+					if (voteoptions.containsAll(gs.voteoptions)) {
+						flag = true;
+					}
+				} catch (Exception e) {
+					flag = false;
+				}
+			}
+			return flag;
+		}
 	}
 
 	public static class VoteContent implements Serializable {
@@ -60,6 +76,22 @@ public class GroupShare implements Serializable {
 
 		public void addVoteUser(String phone) {
 			voteUsers.add(phone);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			boolean flag = false;
+			if (o != null) {
+				try {
+					VoteContent gs = (VoteContent) o;
+					if (voteUsers.containsAll(gs.voteUsers)) {
+						flag = true;
+					}
+				} catch (Exception e) {
+					flag = false;
+				}
+			}
+			return flag;
 		}
 	}
 
@@ -81,7 +113,8 @@ public class GroupShare implements Serializable {
 				if (gsid.equals(gs.gsid) && type.equals(gs.type)
 						&& phone.equals(gs.phone) && time == gs.time
 						&& praiseusers.containsAll(gs.praiseusers)
-						&& comments.containsAll(gs.comments)) {
+						&& comments.containsAll(gs.comments)
+						&& content.equals(gs.content)) {
 					flag = true;
 				}
 			} catch (Exception e) {
