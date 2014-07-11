@@ -11,8 +11,12 @@ import org.json.JSONObject;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.OnLoadingCancelListener;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 import android.app.Activity;
 import android.content.Context;
@@ -74,10 +78,6 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		voteList.add(0, "");
 		voteList.add(1, "");
 		voteList.add(2, "");
-		initVoteList();
-	}
-
-	private void initVoteList() {
 		release_ll.removeAllViews();
 		for (int i = 0; i < voteList.size(); i++) {
 			release_ll.addView(getVoteView(i, voteList.get(i)));
@@ -128,7 +128,7 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 	void Send() {
 		JSONObject voteContent = new JSONObject();
 		String voteTitle = release_et.getText().toString().trim();
-		if (!"".equals(voteTitle)) {
+		if ("".equals(voteTitle)) {
 			Alert.showMessage("投票标题不能为空");
 		}
 		try {
@@ -138,13 +138,13 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		}
 		boolean checkTrim = true;
 		JSONArray voteOptionsContent = new JSONArray();
-		for (int i = 0; i < release_ll.getChildCount(); i++) {
+		for (int i = 0; i < release_ll.getChildCount() - 1; i++) {
 			View v = release_ll.getChildAt(i);
 			EditText voteOptionView = (EditText) v
 					.findViewById(R.id.release_vote_et);
 			String voteOptionContent = voteOptionView.getText().toString()
 					.trim();
-			if (!"".equals(voteOptionContent)) {
+			if ("".equals(voteOptionContent)) {
 				checkTrim = false;
 				Alert.showMessage("投票选项不能为空");
 				break;
@@ -165,8 +165,37 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			// generateMessageParams("vote", voteContent.toString());
+			Alert.showLoading(new OnLoadingCancelListener() {
+				@Override
+				public void loadingCancel() {
+					System.out.println("loading ...send message");
+				}
+			});
+			sendMessage("vote", voteContent.toString());
 		}
+	}
+
+	void sendMessage(final String contentType, final String content) {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SHARE_SEND;
+				settings.params = generateMessageParams(contentType, content);
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				Alert.removeLoading();
+				finish();
+			}
+
+			@Override
+			protected void unSuccess(JSONObject jData) {
+				Alert.removeLoading();
+				super.unSuccess(jData);
+			}
+		});
 	}
 
 	public Map<String, String> generateMessageParams(String type, String content) {
@@ -208,7 +237,6 @@ public class ReleaseVoteActivity extends Activity implements OnClickListener,
 		release_vote_clear.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO
 				if (release_ll.getChildCount() > 3) {
 					if (imm.isActive()) {
 						imm.hideSoftInputFromWindow(

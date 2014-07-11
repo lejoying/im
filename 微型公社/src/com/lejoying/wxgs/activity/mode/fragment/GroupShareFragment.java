@@ -689,16 +689,37 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 					.setImageResource(R.drawable.gshare_praise);
 			int praiseCount = groupShare.praiseusers.size();
 			groupShareHolder.gshare_praise.setText(praiseCount + "");
+			groupShareHolder.praiseIcon.setTag(false);
 			if (praiseCount != 0) {
 				ArrayList<String> praiseUsers = groupShare.praiseusers;
 				for (int i = 0; i < praiseUsers.size(); i++) {
 					if (app.data.user.phone.equals(praiseUsers.get(i))) {
 						groupShareHolder.praiseIcon
 								.setImageResource(R.drawable.gshare_praised);
+						groupShareHolder.praiseIcon.setTag(true);
 						break;
 					}
 				}
 			}
+			groupShareHolder.praiseIcon
+					.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View arg0) {
+							boolean praiseFlag = (Boolean) groupShareHolder.praiseIcon
+									.getTag();
+							if (praiseFlag) {
+								addPraise(false, groupShareGsid,
+										groupShareHolder.praiseIcon,
+										groupShareHolder.gshare_praise);
+							} else {
+								addPraise(true, groupShareGsid,
+										groupShareHolder.praiseIcon,
+										groupShareHolder.gshare_praise);
+							}
+							// TODO
+						}
+					});
 			groupShareHolder.commentIcon
 					.setImageResource(R.drawable.gshare_comment);
 			int commentCount = groupShare.comments.size();
@@ -720,7 +741,31 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 							groupShareHolder.gshare_head.setImageBitmap(bitmap);
 						}
 					});
+			groupShareHolder.gshare_head
+					.setOnClickListener(new OnClickListener() {
 
+						@Override
+						public void onClick(View arg0) {
+							if (app.data.friends.get(groupShare.phone) != null) {
+								mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+								mMainModeManager.mBusinessCardFragment.mShowFriend = app.data.friends
+										.get(groupShare.phone);
+								mMainModeManager
+										.showNext(mMainModeManager.mBusinessCardFragment);
+							} else if (groupShare.phone
+									.equals(app.data.user.phone)) {
+								mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+								mMainModeManager
+										.showNext(mMainModeManager.mBusinessCardFragment);
+							} else {
+								mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
+								mMainModeManager.mBusinessCardFragment.mShowFriend = app.data.groupFriends
+										.get(groupShare.phone);
+								mMainModeManager
+										.showNext(mMainModeManager.mBusinessCardFragment);
+							}
+						}
+					});
 			convertView.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -755,6 +800,39 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			TextView voteTitle;
 			LinearLayout llVoteOptions;
 		}
+	}
+
+	private void addPraise(final boolean flag, final String gsid,
+			final ImageView praiseView, final TextView praiseCountView) {
+
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			public void success(JSONObject jData) {
+				if (flag) {
+					praiseView.setTag(true);
+					praiseView.setImageResource(R.drawable.gshare_praised);
+					praiseCountView.setText((Integer.valueOf(praiseCountView
+							.getText().toString()) + 1) + "");
+				} else {
+					praiseView.setTag(false);
+					praiseView.setImageResource(R.drawable.gshare_praise);
+					praiseCountView.setText((Integer.valueOf(praiseCountView
+							.getText().toString()) - 1) + "");
+				}
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SHARE_ADDPRAISE;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentGroupShareID);
+				params.put("gsid", gsid);
+				params.put("option", flag + "");
+				settings.params = params;
+			}
+		});
 	}
 
 	private void generateVoteOptionsViews(LinearLayout llVoteOptions,

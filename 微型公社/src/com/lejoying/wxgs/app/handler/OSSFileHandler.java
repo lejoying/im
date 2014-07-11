@@ -107,7 +107,7 @@ public class OSSFileHandler {
 			thumbnailName = newName[0] + size + newName[1];
 		}
 		String paramFormat = "@" + width / 2 + "w_" + height / 2
-				+ "h_1c_1e_50q";
+				+ "h_1c_1e_100q";
 		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,
 				fileResult, paramFormat, 0);
 	}
@@ -173,8 +173,10 @@ public class OSSFileHandler {
 		String where = FROM_DEFAULT;
 		if (!"".equals(imageFileName)) {
 			if (bitmaps.get(currentFileImage) != null
-					&& !bitmaps.get(currentFileImage).equals(dImage)
-					&& type != TYPE_IMAGE_SQUAREIMAGE) {
+					&& !bitmaps.get(currentFileImage).equals(dImage)) {// &&
+																		// type
+																		// !=
+																		// TYPE_IMAGE_SQUAREIMAGE
 				where = FROM_MEMORY;
 				fileResult.onResult(where, bitmaps.get(currentFileImage));
 			} else {
@@ -441,6 +443,7 @@ public class OSSFileHandler {
 	}
 
 	public static class FileSettings {
+		public String directory;
 		public String fileName;
 		public File folder;
 	}
@@ -452,12 +455,12 @@ public class OSSFileHandler {
 	}
 
 	public void getFile(final FileInterface fileInterface) {
-		FileSettings settings = new FileSettings();
-		fileInterface.setParams(settings);
-		final File file = new File(settings.folder, settings.fileName);
+		final FileSettings fileSettings = new FileSettings();
+		fileInterface.setParams(fileSettings);
+		final File file = new File(fileSettings.folder, fileSettings.fileName);
 		if (!file.exists()) {
-			final File folder = settings.folder;
-			final String fileName = settings.fileName;
+			final File folder = fileSettings.folder;
+			final String fileName = fileSettings.fileName;
 			app.networkHandler.connection(new NetConnection() {
 
 				@Override
@@ -490,12 +493,13 @@ public class OSSFileHandler {
 
 				@Override
 				protected void settings(Settings settings) {
-					settings.url = API.DOMAIN_COMMONIMAGE + fileName;
+					settings.url = API.DOMAIN_COMMONIMAGE
+							+ fileSettings.directory + "/" + fileName;
 					settings.method = GET;
 				}
 			});
 		} else {
-			fileInterface.onSuccess(true, settings.fileName);
+			fileInterface.onSuccess(true, fileSettings.fileName);
 		}
 	}
 
