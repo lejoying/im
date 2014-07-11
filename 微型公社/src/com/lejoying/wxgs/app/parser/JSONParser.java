@@ -9,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Circle;
 import com.lejoying.wxgs.app.data.entity.Comment;
@@ -632,7 +634,7 @@ public class JSONParser {
 					VoteContent voteContent = new VoteContent();
 					voteContent.content = jOption.getString("content");
 					JSONArray jVoteUsers = jOption.getJSONArray("voteusers");
-					for (int j = 0; j < jVoteUsers.length(); i++) {
+					for (int j = 0; j < jVoteUsers.length(); j++) {
 						voteContent.addVoteUser(jVoteUsers.getString(j));
 					}
 					groupShare.content.voteoptions.add(voteContent);

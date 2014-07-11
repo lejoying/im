@@ -77,6 +77,7 @@ public class API {
 	public static final String SHARE_DELETE = "api2/share/delete";
 	public static final String SHARE_DELETECOMMENT = "api2/share/deletecomment";
 	public static final String SHARE_GETSHARE = "api2/share/getshare";
+	public static final String SHARE_MODIFYVOTE = "api2/share/modifyvote";
 
 	public static final String LBS = "lbs";
 	public static final String LBS_UPDATELOCATION = "lbs/updatelocation";

@@ -974,6 +974,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 								}
 								groupSharesMap.put(shareGroup.gsid, shareGroup);
 							}
+							shares.clear();
 						}
 
 						@Override

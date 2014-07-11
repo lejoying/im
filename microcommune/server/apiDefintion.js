@@ -1283,6 +1283,22 @@ api = {
             success: {"提示信息": "获取群分享成功"},
             failed: { "提示信息": "获取群分享失败", "失败原因": "数据异常" || "群分享不存在" }
         }
+    },
+    /***************************************
+     *     URL：/api2/share/modifyvote
+     ***************************************/
+    "share_modifyvote": {
+        description: {
+            id: 1001307,
+            url: "/api2/share/modifyvote"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", gid: "NNN", gsid: "NNN", vid: "NNN", opetation: "true" || "false"}
+        },
+        response: {
+            success: {"提示信息": "获取群分享成功"},
+            failed: { "提示信息": "获取群分享失败", "失败原因": "数据异常" || "群分享不存在" }
+        }
     }
 }
 message = {

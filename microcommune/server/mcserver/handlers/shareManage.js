@@ -303,7 +303,7 @@ shareManage.addcomment = function (data, response) {
     var gid = data.gid;
     var gsid = data.gsid;
     var nickName = data.nickName;
-    var nickNameTo=data.nickNameTo;
+    var nickNameTo = data.nickNameTo;
     var head = data.head;
     var contentType = data.contentType;
     var content = data.content;
@@ -349,9 +349,9 @@ shareManage.addcomment = function (data, response) {
                     var comment = {
                         phone: phone,
                         phoneTo: phoneTo,
-                        nickName:nickName,
-                        nickNameTo:nickNameTo,
-                        head:head,
+                        nickName: nickName,
+                        nickNameTo: nickNameTo,
+                        head: head,
                         contentType: contentType,
                         content: content,
                         time: new Date().getTime()
@@ -541,6 +541,102 @@ shareManage.getshare = function (data, response) {
                 response.end();
             }
         });
+    }
+}
+/***************************************
+ *     URL：/api2/share/modifyvote
+ ***************************************/
+shareManage.modifyvote = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var gid = data.gid;
+    var gsid = data.gsid;
+    var option = data.operation;
+    var vid = data.vid;
+    var arr = [gid, gsid, option, vid];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        if (option == "true" || option == "false") {
+            modifyShareVote();
+        } else {
+            response.write(JSON.stringify({
+                "提示信息": "投票失败",
+                "失败原因": "数据格式不正确"
+            }));
+            response.end();
+        }
+    }
+    function modifyShareVote() {
+        var query = [
+            "MATCH (group:Group)-[r:SHARE]->(shares:Shares)-[r1:HAS_SHARE]->(share:Share)",
+            "WHERE group.gid={gid} AND share.gsid={gsid}",
+            "RETURN share"
+        ].join("\n");
+        var params = {
+            gid: parseInt(gid),
+            gsid: parseInt(gsid)
+        };
+        db.query(query, params, function (error, results) {
+                if (error) {
+                    response.write(JSON.stringify({
+                        "提示信息": "投票失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                    console.error(error);
+                    return;
+                } else if (results.length == 0) {
+                    response.write(JSON.stringify({
+                        "提示信息": "投票失败",
+                        "失败原因": "消息不存在"
+                    }));
+                    response.end();
+                } else {
+                    var shareNode = results.pop().share;
+                    var shareData = shareNode.data;
+                    var content = shareData.content;
+                    var contentJson;
+                    if (content != "" && content != null) {
+                        try {
+                            contentJson = JSON.parse(content);
+                            var voteOptions = contentJson.options;
+                            for (var i = 0; i < voteOptions.length; i++) {
+                                var voteUsers = [];
+                                var areadlyVoteUsers = voteOptions[i].voteusers;
+                                for (var j = 0; j < areadlyVoteUsers.length; j++) {
+                                    if (phone != areadlyVoteUsers[j]) {
+                                        voteUsers.push(areadlyVoteUsers[j]);
+                                    }
+                                }
+                                if (i == parseInt(vid) && "true" == option) {
+                                    voteUsers.push(phone);
+                                    console.log("------------");
+                                }
+                                voteOptions[i].voteusers = voteUsers;
+                            }
+                        } catch (e) {
+                            contentJson = {};
+                        }
+                    }
+                    shareData.content = JSON.stringify(contentJson);
+                    shareNode.save(function (error, node) {
+                        if (error) {
+                            response.write(JSON.stringify({
+                                "提示信息": "投票失败",
+                                "失败原因": "数据异常"
+                            }));
+                            response.end();
+                            console.error(error);
+                            return;
+                        } else {
+                            response.write(JSON.stringify({
+                                "提示信息": "投票成功"
+                            }));
+                            response.end();
+                        }
+                    });
+                }
+            }
+        );
     }
 }
 module.exports = shareManage;

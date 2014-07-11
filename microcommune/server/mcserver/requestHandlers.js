@@ -283,6 +283,11 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.getshare(data, response);
         });
     }
+    else if (operation == "modifyvote") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.modifyvote(data, response);
+        });
+    }
 }
 function setOauthAccessKey(phone, accessKey, next) {
     client.rpush(phone + "_accessKey", accessKey, function (err, reply) {
