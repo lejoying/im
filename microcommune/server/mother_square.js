@@ -3,7 +3,7 @@ var flag = true;
 var time = new Date().getTime();
 function start() {
     console.log('Mother process is running.');
-    var ls = require('child_process').spawn('node', ['./index.js']);
+    var ls = require('child_process').spawn('node', ['./index_square.js']);
     ls.stdout.on('data', function (data) {
         console.log(data.toString());
     });
@@ -28,10 +28,10 @@ function sendEmailToMembers(data) {
         {
             ssl: true,
             host: "smtp.exmail.qq.com",//发送 smtp.qq.com，接收 pop.qq.com
-            domain: "[112.126.71.180]",//可以在浏览器中输入 http://ip.qq.com/ 得到
+            domain: "[112.126.71.175]",//可以在浏览器中输入 http://ip.qq.com/ 得到
             to: "qiaoxiaosong@lejoying.com,fengzhicheng@lejoying.com",
             from: "open@lejoying.com",
-            subject: "112.126.71.180(主服务器)服务器异常，正在重启",
+            subject: "112.126.71.175(广场服务器)服务器异常，正在重启",
 //            reply_to: "xxx@xxx.com",
             body: "服务器挂机输出的异常信息如下：\n\r" + data,
             authentication: "login",
