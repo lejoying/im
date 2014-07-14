@@ -621,7 +621,7 @@ public class RecoderVoiceView extends ViewGroup {
 			mPaint.setStrokeWidth(0);
 			mPaint.setStyle(Paint.Style.FILL);
 			if (centerColorFlag) {
-				mPaint.setColor(Color.parseColor("13b6ed"));// 13b6ed
+				mPaint.setColor(Color.parseColor("#13b6ed"));// 13b6ed
 			}
 			if (isShowPlay) {
 				canvas.drawPath(playPath, mPaint);

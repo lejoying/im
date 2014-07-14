@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +18,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
@@ -39,6 +42,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
@@ -49,13 +53,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.ReleaseActivity.MyGridAdapter;
-import com.lejoying.wxgs.activity.ReleaseActivity.MyPageAdapter;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
+import com.lejoying.wxgs.activity.view.RecoderVoiceView;
+import com.lejoying.wxgs.activity.view.RecoderVoiceView.PlayButtonClickListener;
+import com.lejoying.wxgs.activity.view.RecoderVoiceView.ProgressListener;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -63,9 +68,12 @@ import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Comment;
 import com.lejoying.wxgs.app.data.entity.GroupShare;
 import com.lejoying.wxgs.app.data.entity.GroupShare.VoiceContent;
+import com.lejoying.wxgs.app.data.entity.GroupShare.VoteContent;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class DetailsActivity extends Activity implements OnClickListener {
@@ -74,6 +82,8 @@ public class DetailsActivity extends Activity implements OnClickListener {
 	Intent intent;
 	LayoutInflater inflater;
 	Handler handler;
+
+	MediaPlayer player;
 
 	View release_iv_face_left, release_iv_face_right, release_iv_face_delete;
 	LinearLayout ll_message_info, ll_detailContent, ll_praise, ll_praiseMember,
@@ -87,19 +97,19 @@ public class DetailsActivity extends Activity implements OnClickListener {
 	HorizontalScrollView horizontalScrollView;
 	ViewPager chat_vPager;
 	EditText et_comment;
-
+	TextView voteTv;
 	LayoutParams commentLayoutParams;
 
 	GroupShare share;
 
 	float height, width, dip, density;
 
-	int initialHeight, headWidth, chat_vPager_now;
+	int initialHeight, headWidth, chat_vPager_now, selected;
 
 	String nickNameTo, phoneTo;
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 
-	boolean praiseStatus = false;
+	boolean praiseStatus = false, playing = false, voted = false;
 
 	List<String[]> faceNamesList;
 	List<List<String>> faceNameList;
@@ -120,6 +130,20 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		initialHeight = et_comment.getHeight();
 		rl_comment.setVisibility(View.GONE);
 		super.onWindowFocusChanged(hasFocus);
+	}
+
+	@Override
+	public void onBackPressed() {
+		mFinish();
+	}
+
+	private void mFinish() {
+		if (playing) {
+			if (player != null) {
+				player.release();
+			}
+		}
+		finish();
 	}
 
 	private void initEvent() {
@@ -153,7 +177,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
-							finish();
+							mFinish();
 							return true;
 						}
 
@@ -271,12 +295,15 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		height = dm.heightPixels;
 		width = dm.widthPixels;
 		intent = getIntent();
-		share = (GroupShare) intent.getSerializableExtra("content");
+		share = app.data.groupsMap.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+				.get(((GroupShare) intent.getSerializableExtra("content")).gsid);
 		nickNameTo = "";
 		phoneTo = "";
 		chat_vPager_now = 0;
 		final List<String> images = share.content.images;
 		List<VoiceContent> voices = share.content.voices;
+		List<VoteContent> voteoptions = share.content.voteoptions;
+		String voteTitle = share.content.title;
 		String textContent = share.content.text;
 		tv_messageTime.setText(TimeUtils.getTime(share.time));
 		for (String str : share.praiseusers) {
@@ -284,6 +311,51 @@ public class DetailsActivity extends Activity implements OnClickListener {
 				praiseStatus = true;
 				break;
 			}
+		}
+		if (!"".equals(voteTitle)) {
+			TextView titleText = new TextView(this);
+			titleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+			titleText.setTextColor(Color.GRAY);
+			titleText.setBackgroundColor(Color.WHITE);
+			titleText.setText("投票主题:" + voteTitle);
+			titleText.setGravity(Gravity.CENTER_VERTICAL);
+			titleText.setPadding(dp2px(10), 0, 0, 0);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, dp2px(50));
+			params.gravity = Gravity.CENTER;
+			params.setMargins(dp2px(10), dp2px(45), dp2px(10), 0);
+			ll_detailContent.addView(titleText, params);
+			for (int i = 0; i < voteoptions.size(); i++) {
+				initVoteoption(voteoptions.get(i), i + 1);
+			}
+			voteTv = new TextView(this);
+			if (voted) {
+				voteTv.setBackgroundResource(R.drawable.gshare_voted_bt);
+				voteTv.setText("已投票");
+			} else {
+				voteTv.setText("投票");
+				voteTv.setBackgroundResource(R.drawable.gshare_vote_bt);
+			}
+			voteTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+			voteTv.setTextColor(Color.WHITE);
+			voteTv.setGravity(Gravity.CENTER);
+			LinearLayout.LayoutParams btParams = new LinearLayout.LayoutParams(
+					dp2px(146), dp2px(37));
+			btParams.gravity = Gravity.CENTER;
+			btParams.setMargins(0, dp2px(30), 0, dp2px(35));
+			voteTv.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (!voted) {
+						modifyVoteCount(
+								GroupShareFragment.mCurrentGroupShareID,
+								share.gsid, selected, true);
+					}
+
+				}
+			});
+			ll_detailContent.addView(voteTv, btParams);
 		}
 		for (int i = 0; i < images.size(); i++) {
 			final int index = i;
@@ -317,15 +389,38 @@ public class DetailsActivity extends Activity implements OnClickListener {
 						}
 					});
 		}
-		for (VoiceContent str : voices) {
+		for (final VoiceContent voiceContent : voices) {
+			final RecoderVoiceView recoderVoiceView = new RecoderVoiceView(this);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					(int) width, dp2px(300));
+			params.gravity = Gravity.CENTER;
+			recoderVoiceView.setLayoutParams(params);
+			TextView tv = new TextView(this);
+			ll_detailContent.addView(tv, new LinearLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, dp2px(50)));
+			ll_detailContent.addView(recoderVoiceView);
+			app.fileHandler.getFile(new FileInterface() {
+				@Override
+				public void setParams(FileSettings settings) {
+					settings.directory = "voices";
+					settings.fileName = voiceContent.fileName;
+					settings.folder = app.sdcardVoiceFolder;
+				}
 
+				@Override
+				public void onSuccess(Boolean flag, String fileName) {
+					initVoice(fileName, recoderVoiceView);
+				}
+
+			});
 		}
+
 		if (!"".equals(textContent)) {
 			TextView textview = new TextView(this);
 			textview.setTextColor(Color.WHITE);
 			textview.setBackgroundColor(Color.parseColor("#26ffffff"));
 			textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-			int padding = (int) (10 * density + 0.5f);
+			int padding = dp2px(10);
 			textview.setPadding(padding, padding, padding, padding);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -344,6 +439,159 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		initFace();
 		resetPraises();
 		resetComments();
+	}
+
+	private void initVoteoption(VoteContent option, final int location) {
+		String users = "";
+		View view = inflater.inflate(R.layout.fragment_groupshare_vote_item,
+				null);
+		RelativeLayout rl_voteOptionContent = (RelativeLayout) view
+				.findViewById(R.id.rl_voteOptionContent);
+		RelativeLayout rl_operationVote = (RelativeLayout) view
+				.findViewById(R.id.rl_operationVote);
+		TextView tv_voteOptionNumPlan = (TextView) view
+				.findViewById(R.id.tv_voteOptionNumPlan);
+		TextView tv_voteOptionContent = (TextView) view
+				.findViewById(R.id.tv_voteOptionContent);
+		TextView tv_voteOptionNumber = (TextView) view
+				.findViewById(R.id.tv_voteOptionNumber);
+		TextView tv_operationVote = (TextView) view
+				.findViewById(R.id.tv_operationVote);
+		TextView tv_voteUsers = (TextView) view.findViewById(R.id.tv_voteUsers);
+
+		rl_operationVote.setVisibility(View.VISIBLE);
+		tv_voteOptionNumPlan.setVisibility(View.GONE);
+		tv_voteUsers.setVisibility(View.VISIBLE);
+
+		rl_voteOptionContent.setBackgroundColor(Color.parseColor("#26ffffff"));
+		rl_operationVote.setBackgroundColor(Color.parseColor("#4dffffff"));
+
+		if (!voted) {
+			if (option.voteUsers.contains(app.data.user.phone)) {
+				voted = true;
+				rl_voteOptionContent.setBackgroundColor(Color
+						.parseColor("#2613b6ed"));
+				rl_operationVote.setBackgroundColor(Color
+						.parseColor("#4d13b6ed"));
+			}
+		}
+
+		tv_voteOptionContent.setText(option.content);
+		tv_voteOptionNumber.setText(option.voteUsers.size() + "票");
+
+		for (int i = 0; i < option.voteUsers.size(); i++) {
+			if (i == option.voteUsers.size() - 1) {
+				users += app.data.groupFriends.get(option.voteUsers.get(i)).nickName;
+			} else {
+				users += app.data.groupFriends.get(option.voteUsers.get(i)).nickName
+						+ "、";
+			}
+		}
+		tv_voteUsers.setSingleLine();
+		tv_voteUsers.setText(users);
+
+		RelativeLayout.LayoutParams tvParams = (android.widget.RelativeLayout.LayoutParams) tv_voteOptionNumber
+				.getLayoutParams();
+		tvParams.rightMargin = dp2px(65);
+
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				(int) width - dp2px(20), LayoutParams.WRAP_CONTENT);// dp2px(45)
+		// params.setMargins(dp2px(10), 0, dp2px(10), 0);
+		params.gravity = Gravity.CENTER;
+
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (!voted) {
+					for (int i = 1; i < ll_detailContent.getChildCount() - 1; i++) {
+						if (i != location) {
+							ll_detailContent
+									.getChildAt(i)
+									.findViewById(R.id.rl_voteOptionContent)
+									.setBackgroundColor(
+											Color.parseColor("#26ffffff"));
+							ll_detailContent
+									.getChildAt(i)
+									.findViewById(R.id.rl_operationVote)
+									.setBackgroundColor(
+											Color.parseColor("#4dffffff"));
+						} else {
+							ll_detailContent
+									.getChildAt(i)
+									.findViewById(R.id.rl_voteOptionContent)
+									.setBackgroundColor(
+											Color.parseColor("#2613b6ed"));
+							ll_detailContent
+									.getChildAt(i)
+									.findViewById(R.id.rl_operationVote)
+									.setBackgroundColor(
+											Color.parseColor("#4d13b6ed"));
+							selected = i;
+							voteTv.setBackgroundResource(R.drawable.gshare_voted_bt);
+						}
+					}
+
+				}
+			}
+		});
+
+		ll_detailContent.addView(view, params);
+	}
+
+	private void initVoice(String fileName,
+			final RecoderVoiceView recoderVoiceView) {
+
+		player = MediaPlayer.create(DetailsActivity.this, Uri.parse((new File(
+				app.sdcardVoiceFolder, fileName)).getAbsolutePath()));
+		recoderVoiceView.setMode(RecoderVoiceView.MODE_PROGRESS);
+		recoderVoiceView.setShowDelete(false);
+		recoderVoiceView.setCenterColor();
+		recoderVoiceView.setProgressTime(player.getDuration());
+
+		try {
+			player.prepare();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		recoderVoiceView
+				.setPlayButtonClickListener(new PlayButtonClickListener() {
+
+					@Override
+					public void onPlay() {
+						recoderVoiceView.startProgress();
+						player.start();
+						playing = true;
+					}
+
+					@Override
+					public void onPause() {
+						recoderVoiceView.pauseProgress();
+						if (player != null) {
+							player.pause();
+						}
+
+					}
+				});
+		recoderVoiceView.setProgressListener(new ProgressListener() {
+
+			@Override
+			public void onProgressEnd() {
+				recoderVoiceView.stopProgress();
+				playing = false;
+			}
+
+			@Override
+			public void onDrag(float percent) {
+				if (player != null) {
+					player.seekTo((int) (player.getDuration() * percent));
+				}
+
+			}
+		});
+
 	}
 
 	private void initFace() {
@@ -416,7 +664,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			@Override
 			public void run() {
 				headWidth = ll_praiseMember.getWidth() / 5;
-				int padding = (int) (5 * density + 0.5f);
+				int padding = dp2px(5);
 				List<String> praiseusers = share.praiseusers;
 				tv_praiseNum.setText("共获得" + praiseusers.size() + "个赞");
 				ll_praiseMember.removeAllViews();
@@ -467,8 +715,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 					.inflate(R.layout.groupshare_commentchild, null);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			params.setMargins((int) (10 * density + 0.5f), 0,
-					(int) (10 * density + 0.5f), 0);
+			params.setMargins(dp2px(10), 0, dp2px(10), 0);
 			view.setLayoutParams(params);
 			TextView time = (TextView) view.findViewById(R.id.time);
 			TextView content = (TextView) view.findViewById(R.id.content);
@@ -481,7 +728,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 							faceRegx, expressionFaceMap);
 			content.setText(spannableString);
 			time.setText(TimeUtils.getTime(comment.time));
-			receive.setText(comment.nickName); 
+			receive.setText(comment.nickName);
 			received.setText(comment.nickNameTo);
 
 			if ("".equals(comment.nickNameTo)) {
@@ -515,6 +762,63 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			});
 			ll_messageDetailComments.addView(view);
 		}
+	}
+
+	void modifyVoteCount(final String gid, final String gsid, final int vid,
+			final boolean operation) {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SHARE_MODIFYVOTE;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", gid);
+				params.put("gsid", gsid);
+				params.put("vid", "" + vid);
+				params.put("operation", operation + "");
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				voted = true;
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						GroupShare newShare = data.groupsMap
+								.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+								.get(share.gsid);
+						newShare.content.voteoptions.get(selected - 1).voteUsers
+								.add(data.user.phone);
+					}
+
+					@Override
+					public void modifyUI() {
+						TextView view = (TextView) ll_detailContent.getChildAt(
+								selected).findViewById(R.id.tv_voteUsers);
+						view.setText(("".equals(view.getText().toString()) ? ""
+								: view.getText().toString() + "、")
+								+ app.data.user.nickName);
+						voteTv.setText("已投票");
+						TextView num = (TextView) (ll_detailContent
+								.getChildAt(selected)
+								.findViewById(R.id.tv_voteOptionNumber));
+						num.setText(app.data.groupsMap
+								.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+								.get(share.gsid).content.voteoptions
+								.get(selected - 1).voteUsers.size()
+								+ "票");
+					}
+				});
+			}
+		});
+	}
+
+	private int dp2px(int dp) {
+		return (int) (dp * density + 0.5f);
 	}
 
 	@Override
