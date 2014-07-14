@@ -22,6 +22,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -42,7 +44,6 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
@@ -55,9 +56,12 @@ import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
+import com.lejoying.wxgs.activity.mode.fragment.GroupSharePraisesFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
+import com.lejoying.wxgs.activity.view.InnerScrollView;
+import com.lejoying.wxgs.activity.view.InnerScrollView.OnScrollChangedListener;
 import com.lejoying.wxgs.activity.view.RecoderVoiceView;
 import com.lejoying.wxgs.activity.view.RecoderVoiceView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecoderVoiceView.ProgressListener;
@@ -76,12 +80,14 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
-public class DetailsActivity extends Activity implements OnClickListener {
+public class DetailsActivity extends BaseActivity implements OnClickListener {
 	MainApplication app = MainApplication.getMainApplication();
 	InputMethodManager inputMethodManager;
+	FragmentManager mFragmentManager;
 	Intent intent;
 	LayoutInflater inflater;
 	Handler handler;
+	GroupSharePraisesFragment mGroupSharePraisesFragment;
 
 	MediaPlayer player;
 
@@ -94,6 +100,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 	ImageView iv_addPraise, iv_checkComment, iv_comment,
 			iv_squareMessageDetailBack, iv_messageUserHead;
 	ScrollView sv_message_info;
+	InnerScrollView insv_message_info;
 	HorizontalScrollView horizontalScrollView;
 	ViewPager chat_vPager;
 	EditText et_comment;
@@ -106,7 +113,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 
 	int initialHeight, headWidth, chat_vPager_now, selected;
 
-	String nickNameTo, phoneTo;
+	String nickNameTo, phoneTo, inputContent;
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 
 	boolean praiseStatus = false, playing = false, voted = false;
@@ -134,7 +141,11 @@ public class DetailsActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		mFinish();
+		if (mGroupSharePraisesFragment.isAdded()) {
+			mFragmentManager.popBackStack();
+		} else {
+			mFinish();
+		}
 	}
 
 	private void mFinish() {
@@ -155,6 +166,29 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		release_iv_face_left.setOnClickListener(this);
 		release_iv_face_right.setOnClickListener(this);
 		release_iv_face_delete.setOnClickListener(this);
+
+		insv_message_info
+				.setOnScrollChangedListener(new OnScrollChangedListener() {
+
+					@Override
+					public void onScrollChangedListener(int w, int h, int oldw,
+							int oldh) {
+						if (rl_comment.getVisibility() == View.VISIBLE) {
+							inputContent = et_comment.getText().toString();
+							rl_comment.setVisibility(View.GONE);
+							if (inputMethodManager.isActive()) {
+								if (rl_comment.getWindowToken() != null) {
+									inputMethodManager.hideSoftInputFromWindow(
+											rl_comment.getWindowToken(),
+											InputMethodManager.HIDE_NOT_ALWAYS);
+								}
+							}
+							if (rl_face.getVisibility() == View.VISIBLE) {
+								rl_face.setVisibility(View.GONE);
+							}
+						}
+					}
+				});
 
 		et_comment.setOnFocusChangeListener(new OnFocusChangeListener() {
 
@@ -263,6 +297,10 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		rl_comment = (RelativeLayout) findViewById(R.id.rl_comment);
 		backView = (RelativeLayout) findViewById(R.id.backview);
 		sv_message_info = (ScrollView) findViewById(R.id.sv_message_info);
+		insv_message_info = (InnerScrollView) findViewById(R.id.insv_message_info);
+		insv_message_info.parentScrollView = sv_message_info;
+		sv_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		insv_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		tv_praiseNum = (TextView) findViewById(R.id.tv_praiseNum);
 		tv_checkComment = (TextView) findViewById(R.id.tv_checkComment);
 		tv_sendComment = (TextView) findViewById(R.id.tv_sendComment);
@@ -288,12 +326,16 @@ public class DetailsActivity extends Activity implements OnClickListener {
 		inflater = getLayoutInflater();
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		handler = new Handler();
+		mFragmentManager = this.getSupportFragmentManager();
+		mGroupSharePraisesFragment = new GroupSharePraisesFragment();
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
 		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
 		width = dm.widthPixels;
+		LayoutParams insvparams = insv_message_info.getLayoutParams();
+		insvparams.height = (int) (height - MainActivity.statusBarHeight - dp2px(150));
 		intent = getIntent();
 		share = app.data.groupsMap.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
 				.get(((GroupShare) intent.getSerializableExtra("content")).gsid);
@@ -776,7 +818,7 @@ public class DetailsActivity extends Activity implements OnClickListener {
 				params.put("accessKey", app.data.user.accessKey);
 				params.put("gid", gid);
 				params.put("gsid", gsid);
-				params.put("vid", "" + vid);
+				params.put("vid", "" + (vid - 1));
 				params.put("operation", operation + "");
 				settings.params = params;
 			}
@@ -828,27 +870,40 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			addPraise(!praiseStatus);
 			break;
 		case R.id.ll_praise:
-			// TODO show the praised members
+			GroupSharePraisesFragment.praiseUsers = share.praiseusers;
+			FragmentTransaction transaction = mFragmentManager
+					.beginTransaction();
+			transaction.setCustomAnimations(R.anim.translate_new,
+					R.anim.translate_out);
+			if (mGroupSharePraisesFragment.isAdded()) {
+				transaction.show(mGroupSharePraisesFragment);
+			} else {
+				transaction.replace(R.id.fragment_praises,
+						mGroupSharePraisesFragment);
+				transaction.addToBackStack(null);
+			}
+			transaction.commit();
 			break;
 		case R.id.iv_checkComment:
-			if (!"".equals(phoneTo)) {
-				et_comment.setText("");
-				et_comment.setHint("添加评论 ... ...");
-				phoneTo = "";
-				nickNameTo = "";
-			} else {
-				if (rl_comment.getVisibility() == View.VISIBLE) {
+			if (rl_comment.getVisibility() == View.VISIBLE) {
+				if (!"".equals(phoneTo)) {
 					et_comment.setText("");
 					et_comment.setHint("添加评论 ... ...");
-					commentLayoutParams = rl_comment.getLayoutParams();
-					commentLayoutParams.height = (int) (45 * density + 0.5f);
-					rl_comment.setLayoutParams(commentLayoutParams);
-					rl_comment.setVisibility(View.GONE);
-				} else {
 					phoneTo = "";
 					nickNameTo = "";
-					rl_comment.setVisibility(View.VISIBLE);
+				} else {
+					inputContent = et_comment.getText().toString();
+					commentLayoutParams = rl_comment.getLayoutParams();
+					commentLayoutParams.height = dp2px(45);
+					rl_comment.setVisibility(View.GONE);
 				}
+			} else {
+				if (!"".equals(phoneTo)) {
+					et_comment.setHint("回复"
+							+ app.data.groupFriends.get(phoneTo).nickName);
+				}
+				et_comment.setText(inputContent);
+				rl_comment.setVisibility(View.VISIBLE);
 			}
 			break;
 		case R.id.iv_comment:
@@ -982,7 +1037,33 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			@Override
 			public void success(JSONObject jData) {
 				praiseStatus = !praiseStatus;
-				modifyShare();
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						data.groupsMap
+								.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+								.get(share.gsid).praiseusers
+								.add(app.data.user.phone);
+						phoneTo = "";
+						nickNameTo = "";
+					}
+
+					@Override
+					public void modifyUI() {
+						et_comment.setText("");
+						et_comment.setHint("添加评论 ... ...");
+						resetPraises();
+						resetComments();
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								sv_message_info
+										.fullScroll(ScrollView.FOCUS_DOWN);
+							}
+						});
+					}
+				});
 			}
 
 			@Override
@@ -1013,93 +1094,68 @@ public class DetailsActivity extends Activity implements OnClickListener {
 			Alert.showMessage("评论内容不能为空");
 			return;
 		}
-		final long time = new Date().getTime();
+		final Comment comment = new Comment();
+		comment.content = commentContent;
+		comment.contentType = "text";
+		comment.head = app.data.user.head;
+		comment.nickName = app.data.user.nickName;
+		comment.nickNameTo = nickNameTo;
+		comment.phone = app.data.user.phone;
+		comment.phoneTo = share.phone;
+		comment.time = new Date().getTime();
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
 			protected void settings(Settings settings) {
 				settings.url = API.DOMAIN + API.SHARE_ADDCOMMENT;
 				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("phoneTo", share.phone);
+				params.put("phone", comment.phone);
+				params.put("phoneTo", comment.phoneTo);
 				params.put("accessKey", app.data.user.accessKey);
-				params.put("nickName", app.data.user.nickName);
-				params.put("nickNameTo", nickNameTo);
-				params.put("head", app.data.user.head);
+				params.put("nickName", comment.nickName);
+				params.put("nickNameTo", comment.nickNameTo);
+				params.put("head", comment.head);
 				params.put("gid", app.data.currentGroup);
 				params.put("gsid", share.gsid);
-				params.put("time", String.valueOf(time));
-				params.put("contentType", "text");
-				params.put("content", commentContent);
+				params.put("time", String.valueOf(comment.time));
+				params.put("contentType", comment.contentType);
+				params.put("content", comment.content);
 				settings.params = params;
 
 			}
 
 			@Override
 			public void success(JSONObject jData) {
-				modifyShare();
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						data.groupsMap
+								.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+								.get(share.gsid).comments.add(comment);
+						phoneTo = "";
+						nickNameTo = "";
+					}
+
+					@Override
+					public void modifyUI() {
+						et_comment.setText("");
+						et_comment.setHint("添加评论 ... ...");
+						resetPraises();
+						resetComments();
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								sv_message_info
+										.fullScroll(ScrollView.FOCUS_DOWN);
+							}
+						});
+					}
+				});
 			}
 		});
 	}
 
-	private void modifyShare() {
-		app.networkHandler.connection(new CommonNetConnection() {
-
-			@Override
-			public void success(JSONObject jData) {
-				final GroupShare newShare;
-				try {
-					ArrayList<GroupShare> shares = JSONParser
-							.generateSharesFromJSON(jData
-									.getJSONArray("shares"));
-					newShare = shares.get(0);
-					share = newShare;
-					app.dataHandler.exclude(new Modification() {
-
-						@Override
-						public void modifyData(Data data) {
-							data.groupsMap
-									.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
-									.put(newShare.gsid, newShare);
-							phoneTo = "";
-							nickNameTo = "";
-						}
-
-						@Override
-						public void modifyUI() {
-							et_comment.setText("");
-							et_comment.setHint("添加评论 ... ...");
-							resetPraises();
-							resetComments();
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									sv_message_info
-											.fullScroll(ScrollView.FOCUS_DOWN);
-								}
-							});
-						}
-					});
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-
-			}
-
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.SHARE_GETSHARE;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("gid", app.data.currentGroup);
-				params.put("gsid", share.gsid);
-				settings.params = params;
-
-			}
-		});
-
-	}
 
 	class MyGridAdapter extends BaseAdapter {
 		List<String> list;
