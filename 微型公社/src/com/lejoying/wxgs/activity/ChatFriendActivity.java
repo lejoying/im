@@ -140,8 +140,10 @@ public class ChatFriendActivity extends Activity {
 	View iv_send;
 	View iv_more;
 	View iv_more_select;
+	ImageView iv_emoji_normal;
 	EditText editText_message;
-	RelativeLayout rl_chatbottom;
+	LinearLayout rl_chatbottom;
+	RelativeLayout rl_editMenu;
 	RelativeLayout rl_message;
 	RelativeLayout rl_select;
 	RelativeLayout rl_audiopanel;
@@ -250,8 +252,10 @@ public class ChatFriendActivity extends Activity {
 		iv_send = findViewById(R.id.iv_send);
 		iv_more = findViewById(R.id.iv_more);
 		iv_more_select = findViewById(R.id.iv_more_select);
+		iv_emoji_normal = (ImageView) findViewById(R.id.iv_emoji_normal);
 		editText_message = (EditText) findViewById(R.id.et_message);
-		rl_chatbottom = (RelativeLayout) findViewById(R.id.chat_bottom_bar);
+		rl_chatbottom = (LinearLayout) findViewById(R.id.chat_bottom_bar);
+		rl_editMenu = (RelativeLayout) findViewById(R.id.rl_editMenu);
 		rl_message = (RelativeLayout) findViewById(R.id.rl_message);
 		rl_select = (RelativeLayout) findViewById(R.id.rl_select);
 		rl_audiopanel = (RelativeLayout) findViewById(R.id.rl_audiopanel);
@@ -472,6 +476,19 @@ public class ChatFriendActivity extends Activity {
 	}
 
 	void initEvent() {
+		iv_emoji_normal.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				int show_status = rl_face.getVisibility();
+				if (show_status == View.VISIBLE) {
+					rl_face.setVisibility(View.GONE);
+				} else {
+					rl_face.setVisibility(View.VISIBLE);
+					hideSelectTab();
+				}
+			}
+		});
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
@@ -960,35 +977,41 @@ public class ChatFriendActivity extends Activity {
 				if (beforeHeight == 0 || beforeLineHeight == 0) {
 					return;
 				}
-
+				LayoutParams emparams = iv_emoji_normal.getLayoutParams();
 				LayoutParams etparams = editText_message.getLayoutParams();
-				LayoutParams rlparams = rl_chatbottom.getLayoutParams();
+				LinearLayout.LayoutParams rlparams = (android.widget.LinearLayout.LayoutParams) rl_editMenu
+						.getLayoutParams();
 
 				int lineCount = editText_message.getLineCount();
 
 				switch (lineCount) {
 				case 4:
+					emparams.height = beforeHeight + beforeLineHeight;
 					etparams.height = beforeHeight + beforeLineHeight;
 					rlparams.height = beforeHeight + beforeLineHeight;
 					break;
 				case 5:
+					emparams.height = beforeHeight + beforeLineHeight * 2;
 					etparams.height = beforeHeight + beforeLineHeight * 2;
 					rlparams.height = beforeHeight + beforeLineHeight * 2;
 					break;
 
 				default:
 					if (lineCount <= 3) {
+						emparams.height = beforeHeight;
 						etparams.height = beforeHeight;
 						rlparams.height = beforeHeight;
 					}
 					break;
 				}
 				if (lineCount > 5) {
+					emparams.height = beforeHeight + beforeLineHeight * 2;
 					etparams.height = beforeHeight + beforeLineHeight * 2;
 					rlparams.height = beforeHeight + beforeLineHeight * 2;
 				}
+				iv_emoji_normal.setLayoutParams(emparams);
 				editText_message.setLayoutParams(etparams);
-				rl_chatbottom.setLayoutParams(rlparams);
+				rl_editMenu.setLayoutParams(rlparams);
 			}
 
 			@Override
@@ -2165,8 +2188,8 @@ public class ChatFriendActivity extends Activity {
 		faceNameList.add(images2);
 		faceNameList.add(images3);
 
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(100,
-				LayoutParams.MATCH_PARENT);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+				(int) dp2px(52), LayoutParams.MATCH_PARENT);
 		lp.gravity = Gravity.CENTER;
 		for (int i = 0; i < 3; i++) {
 			try {
@@ -2175,6 +2198,7 @@ public class ChatFriendActivity extends Activity {
 						.decodeStream(ChatFriendActivity.this.getAssets().open(
 								"images/" + faceNameList.get(i).get(0))));
 				iv.setLayoutParams(lp);
+				iv.setPadding(10, 10, 10, 10);
 				if (i == 0) {
 					// iv.setBackgroundColor(Color.RED);
 				}
@@ -2182,7 +2206,7 @@ public class ChatFriendActivity extends Activity {
 				ll_facemenu.addView(iv);
 				faceMenuShowList.add(iv);
 				ImageView iv_1 = new ImageView(ChatFriendActivity.this);
-				iv_1.setBackgroundColor(Color.WHITE);
+				iv_1.setBackgroundColor(Color.parseColor("#33ffffff"));
 				iv_1.setMinimumWidth(1);
 				iv_1.setMinimumHeight(80);
 				iv_1.setMaxWidth(1);

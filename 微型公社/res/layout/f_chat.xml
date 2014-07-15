@@ -18,108 +18,6 @@
     </ListView>
 
     <RelativeLayout
-        android:id="@+id/rl_face"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="70dp"
-        android:background="@drawable/card_background_normal"
-        android:visibility="gone" >
-
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:background="#ffffff" />
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/chat_vPager"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:flipInterval="30" />
-
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="40dp"
-            android:background="#ffffff" />
-
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:layout_alignParentBottom="true"
-            android:background="#ffffff" />
-
-        <LinearLayout
-            android:id="@+id/ll_facepanel"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:visibility="visible" >
-
-            <HorizontalScrollView
-                android:id="@+id/horizontalScrollView1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.08"
-                android:scrollbars="none" >
-
-                <LinearLayout
-                    android:id="@+id/ll_facemenu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal" >
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <ImageView
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:background="#ffffff" />
-
-            <ImageView
-                android:id="@+id/iv_face_left"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/face_left" />
-
-            <ImageView
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:background="#ffffff" />
-
-            <ImageView
-                android:id="@+id/iv_face_right"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/face_right" />
-
-            <ImageView
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:background="#ffffff" />
-
-            <ImageView
-                android:id="@+id/iv_face_delete"
-                android:layout_width="28dp"
-                android:layout_height="17dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/face_delete" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/rl_audiopanel"
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -180,160 +78,281 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/chat_bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
 
         <RelativeLayout
-            android:id="@+id/rl_message"
+            android:id="@+id/rl_editMenu"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/card_background_normal" >
+            android:layout_height="70dp" >
 
             <ImageView
-                android:id="@+id/iv_send"
-                android:layout_width="55dp"
-                android:layout_height="70dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:padding="12dp"
-                android:src="@drawable/chat_send"
-                tools:ignore="ContentDescription" />
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="#33ffffff" />
 
-            <ImageView
-                android:id="@+id/iv_more"
-                android:layout_width="40dp"
-                android:layout_height="70dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:padding="13dp"
-                android:src="@drawable/chat_more"
-                tools:ignore="ContentDescription" />
+            <RelativeLayout
+                android:id="@+id/rl_message"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background_normal" >
 
-            <EditText
-                android:id="@+id/et_message"
-                android:layout_width="wrap_content"
-                android:layout_height="70dp"
-                android:layout_toLeftOf="@+id/iv_send"
-                android:layout_toRightOf="@+id/iv_more"
-                android:background="#2fff"
-                android:ems="10"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:textColor="#fff"
-                android:textCursorDrawable="@drawable/edit_cursor"
-                tools:ignore="TextFields" >
+                <ImageView
+                    android:id="@+id/iv_send"
+                    android:layout_width="55dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:padding="12dp"
+                    android:src="@drawable/chat_send"
+                    tools:ignore="ContentDescription" />
 
-                <requestFocus />
-            </EditText>
+                <ImageView
+                    android:id="@+id/iv_more"
+                    android:layout_width="40dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:padding="13dp"
+                    android:src="@drawable/chat_more"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:id="@+id/iv_emoji_normal"
+                    android:layout_width="40dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="55dp"
+                    android:background="#2fff"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:src="@drawable/chat_emoji_normal"
+                    tools:ignore="ContentDescription" />
+
+                <EditText
+                    android:id="@+id/et_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_toLeftOf="@+id/iv_emoji_normal"
+                    android:layout_toRightOf="@+id/iv_more"
+                    android:background="#2fff"
+                    android:ems="10"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:textColor="#fff"
+                    android:textCursorDrawable="@drawable/edit_cursor"
+                    tools:ignore="TextFields" >
+
+                    <requestFocus />
+                </EditText>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_select"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background_normal"
+                android:visibility="gone" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/iv_more_select"
+                    android:background="#2fff"
+                    android:orientation="horizontal" >
+
+                    <RelativeLayout
+                        android:id="@+id/rl_selectedface"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical" >
+
+                        <ImageView
+                            android:id="@+id/iv_emoji"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_centerHorizontal="true"
+                            android:padding="4dp"
+                            android:src="@drawable/chat_emoji_normal"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/iv_emoji"
+                            android:layout_centerHorizontal="true"
+                            android:text="表情"
+                            android:textColor="#fff" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_selectpicture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical" >
+
+                        <ImageView
+                            android:id="@+id/iv_selectpicture"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_centerHorizontal="true"
+                            android:padding="4dp"
+                            android:src="@drawable/chat_picture_normal"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/iv_selectpicture"
+                            android:layout_centerHorizontal="true"
+                            android:text="图片"
+                            android:textColor="#fff" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_makeaudio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical" >
+
+                        <ImageView
+                            android:id="@+id/iv_voice"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_centerHorizontal="true"
+                            android:padding="4dp"
+                            android:src="@drawable/chat_voice_normal"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:id="@+id/tv_voice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/iv_voice"
+                            android:layout_centerHorizontal="true"
+                            android:text="语音"
+                            android:textColor="#fff" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_more_select"
+                    android:layout_width="40dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:padding="13dp"
+                    android:src="@drawable/chat_more"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_select"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/rl_face"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
             android:background="@drawable/card_background_normal"
             android:visibility="gone" >
 
-            <LinearLayout
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="#33ffffff" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/chat_vPager"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/iv_more_select"
-                android:background="#2fff"
-                android:orientation="horizontal" >
-
-                <RelativeLayout
-                    android:id="@+id/rl_selectedface"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical" >
-
-                    <ImageView
-                        android:id="@+id/iv_emoji"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_centerHorizontal="true"
-                        android:padding="4dp"
-                        android:src="@drawable/chat_emoji_normal"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/iv_emoji"
-                        android:layout_centerHorizontal="true"
-                        android:text="表情"
-                        android:textColor="#fff" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rl_selectpicture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical" >
-
-                    <ImageView
-                        android:id="@+id/iv_selectpicture"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_centerHorizontal="true"
-                        android:padding="4dp"
-                        android:src="@drawable/chat_picture_normal"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/iv_selectpicture"
-                        android:layout_centerHorizontal="true"
-                        android:text="图片"
-                        android:textColor="#fff" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rl_makeaudio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical" >
-
-                    <ImageView
-                        android:id="@+id/iv_voice"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_centerHorizontal="true"
-                        android:padding="4dp"
-                        android:src="@drawable/chat_voice_normal"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:id="@+id/tv_voice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/iv_voice"
-                        android:layout_centerHorizontal="true"
-                        android:text="语音"
-                        android:textColor="#fff" />
-                </RelativeLayout>
-            </LinearLayout>
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:flipInterval="30" />
 
             <ImageView
-                android:id="@+id/iv_more_select"
-                android:layout_width="40dp"
-                android:layout_height="70dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:padding="13dp"
-                android:src="@drawable/chat_more"
-                tools:ignore="ContentDescription" />
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="40dp"
+                android:background="#33ffffff" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="#33ffffff" />
+
+            <LinearLayout
+                android:id="@+id/ll_facepanel"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                android:visibility="visible" >
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.08"
+                    android:scrollbars="none" >
+
+                    <LinearLayout
+                        android:id="@+id/ll_facemenu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal" >
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <ImageView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="#33ffffff" />
+
+                <ImageView
+                    android:id="@+id/iv_face_left"
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="11dp"
+                    android:paddingTop="11dp"
+                    android:src="@drawable/face_left" />
+
+                <ImageView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="#33ffffff" />
+
+                <ImageView
+                    android:id="@+id/iv_face_right"
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="11dp"
+                    android:paddingTop="11dp"
+                    android:src="@drawable/face_right" />
+
+                <ImageView
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="#33ffffff" />
+
+                <ImageView
+                    android:id="@+id/iv_face_delete"
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="11dp"
+                    android:paddingTop="11dp"
+                    android:src="@drawable/face_delete" />
+            </LinearLayout>
         </RelativeLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/relativeLayout_topbar"
