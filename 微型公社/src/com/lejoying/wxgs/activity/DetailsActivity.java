@@ -111,7 +111,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 
 	float height, width, dip, density;
 
-	int initialHeight, headWidth, chat_vPager_now, selected;
+	int initialHeight, chat_vPager_now, selected;
 
 	String nickNameTo, phoneTo, inputContent;
 	String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
@@ -338,7 +338,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		insvparams.height = (int) (height - MainActivity.statusBarHeight - dp2px(150));
 		intent = getIntent();
 		share = app.data.groupsMap.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
-				.get(((GroupShare) intent.getSerializableExtra("content")).gsid);
+				.get((intent.getStringExtra("gsid")));
 		nickNameTo = "";
 		phoneTo = "";
 		chat_vPager_now = 0;
@@ -347,6 +347,8 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		List<VoteContent> voteoptions = share.content.voteoptions;
 		String voteTitle = share.content.title;
 		String textContent = share.content.text;
+		tv_squareMessageSendUserName.setText(app.data.groupFriends
+				.get(share.phone).nickName);
 		tv_messageTime.setText(TimeUtils.getTime(share.time));
 		for (String str : share.praiseusers) {
 			if (str.equals(app.data.user.phone)) {
@@ -705,7 +707,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		ll_praiseMember.post(new Runnable() {
 			@Override
 			public void run() {
-				headWidth = ll_praiseMember.getWidth() / 5;
+				int headWidth = ll_praiseMember.getWidth() / 5-5;
 				int padding = dp2px(5);
 				List<String> praiseusers = share.praiseusers;
 				tv_praiseNum.setText("共获得" + praiseusers.size() + "个赞");
@@ -719,9 +721,9 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 				for (int i = 0; i < praiseusers.size(); i++) {
 					final ImageView view = new ImageView(DetailsActivity.this);
 					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-							headWidth, headWidth);
+							headWidth, LayoutParams.WRAP_CONTENT);
 					params.gravity = Gravity.CENTER;
-					view.setPadding(padding, padding, padding, padding);
+					view.setPadding(padding, 0, padding, 0);
 					view.setLayoutParams(params);
 					app.fileHandler.getHeadImage(
 							app.data.groupFriends.get(praiseusers.get(i)).head,
@@ -736,6 +738,9 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 					ll_praiseMember.addView(view);
 					if (i == 5)
 						break;
+					System.out.println(ll_praiseMember.getWidth()
+							+ "------------" + headWidth + "+++++++++"
+							+ ll_praiseMember.getChildAt(0).getWidth());
 				}
 			}
 		});
@@ -1041,10 +1046,17 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 
 					@Override
 					public void modifyData(Data data) {
-						data.groupsMap
-								.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
-								.get(share.gsid).praiseusers
-								.add(app.data.user.phone);
+						if (praiseStatus) {
+							data.groupsMap
+									.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+									.get(share.gsid).praiseusers
+									.add(app.data.user.phone);
+						} else {
+							data.groupsMap
+									.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+									.get(share.gsid).praiseusers
+									.remove(app.data.user.phone);
+						}
 						phoneTo = "";
 						nickNameTo = "";
 					}
@@ -1155,7 +1167,6 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 			}
 		});
 	}
-
 
 	class MyGridAdapter extends BaseAdapter {
 		List<String> list;

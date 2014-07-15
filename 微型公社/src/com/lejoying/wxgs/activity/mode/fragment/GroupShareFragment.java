@@ -772,7 +772,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 				public void onClick(View arg0) {
 					Intent intent = new Intent(getActivity(),
 							DetailsActivity.class);
-					intent.putExtra("content", groupShare);
+					intent.putExtra("gsid", groupShare.gsid);
 					intent.putExtra("type", "share");
 					startActivity(intent);
 				}
