@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -34,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.ChatFriendActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -1316,10 +1318,18 @@ public class CirclesFragment extends BaseFragment {
 					@Override
 					public void onClick(final View holderView) {
 						if (mode.equals("normal")) {
-							mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-							mMainModeManager.mChatFragment.mNowChatFriend = friend;
-							mMainModeManager
-									.showNext(mMainModeManager.mChatFragment);
+							Intent intent = new Intent(getActivity(),
+									ChatFriendActivity.class);
+							intent.putExtra("mStatus",
+									ChatFriendActivity.CHAT_FRIEND);
+							intent.putExtra("mNowChatFriend", friend);
+							startActivity(intent);
+							// mMainModeManager.mChatFragment.mStatus =
+							// ChatFriendFragment.CHAT_FRIEND;
+							// mMainModeManager.mChatFragment.mNowChatFriend =
+							// friend;
+							// mMainModeManager
+							// .showNext(mMainModeManager.mChatFragment);
 						} else if (mode.equals("edit")) {
 							final View friendView = generateFriendView(friend);
 							final View animationView = generateFriendView(friend);
@@ -1742,7 +1752,7 @@ public class CirclesFragment extends BaseFragment {
 			nickname.setText(friend.nickName);
 		}
 		final String headFileName = friend.head;
-		app.fileHandler.getHeadImage(headFileName,friend.sex,
+		app.fileHandler.getHeadImage(headFileName, friend.sex,
 				new FileResult() {
 					@Override
 					public void onResult(String where, Bitmap bitmap) {
