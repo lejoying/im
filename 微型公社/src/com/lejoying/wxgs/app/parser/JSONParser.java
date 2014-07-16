@@ -75,6 +75,7 @@ public class JSONParser {
 		try {
 			friend.phone = jFriend.getString("phone");
 		} catch (JSONException e) {
+			return null;
 		}
 		try {
 			friend.head = jFriend.getString("head");
@@ -124,7 +125,9 @@ public class JSONParser {
 			try {
 				JSONObject jFriend = jFriends.getJSONObject(i);
 				Friend friend = generateFriendFromJSON(jFriend);
-				friends.add(friend);
+				if(friend != null){
+					friends.add(friend);
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

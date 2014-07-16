@@ -148,6 +148,7 @@ public class SearchFriendFragment extends BaseFragment {
 
 			@Override
 			public void success(final JSONObject jData) {
+				System.out.println(jData+"---------00");
 				app.dataHandler.exclude(new Modification() {
 					@Override
 					public void modifyData(Data data) {
