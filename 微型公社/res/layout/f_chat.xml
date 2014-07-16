@@ -101,24 +101,42 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/card_background_normal" >
 
-                <ImageView
+                <TextView
                     android:id="@+id/iv_send"
-                    android:layout_width="55dp"
-                    android:layout_height="70dp"
+                    android:layout_width="47dp"
+                    android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:padding="12dp"
-                    android:src="@drawable/chat_send"
+                    android:layout_marginRight="4dp"
+                    android:background="@drawable/squaredetail_comment_notselected"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="发送"
+                    android:visibility="gone"
                     tools:ignore="ContentDescription" />
 
                 <ImageView
-                    android:id="@+id/iv_more"
-                    android:layout_width="40dp"
+                    android:id="@+id/iv_more_selecting"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="4dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:src="@drawable/chatgroupmore"
+                    android:visibility="visible"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:id="@+id/iv_more_voice"
+                    android:layout_width="56dp"
                     android:layout_height="70dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:padding="13dp"
-                    android:src="@drawable/chat_more"
+                    android:src="@drawable/chat_voice"
                     tools:ignore="ContentDescription" />
 
                 <ImageView
@@ -129,8 +147,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="55dp"
                     android:background="#2fff"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
+                    android:paddingRight="10dp"
                     android:src="@drawable/chat_emoji_normal"
                     tools:ignore="ContentDescription" />
 
@@ -139,7 +156,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="70dp"
                     android:layout_toLeftOf="@+id/iv_emoji_normal"
-                    android:layout_toRightOf="@+id/iv_more"
+                    android:layout_toRightOf="@+id/iv_more_voice"
                     android:background="#2fff"
                     android:ems="10"
                     android:paddingBottom="2dp"
@@ -260,7 +277,7 @@
         <RelativeLayout
             android:id="@+id/rl_face"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="205dp"
             android:background="@drawable/card_background_normal"
             android:visibility="gone" >
 
@@ -272,7 +289,7 @@
             <android.support.v4.view.ViewPager
                 android:id="@+id/chat_vPager"
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_height="170dp"
                 android:layout_gravity="center"
                 android:flipInterval="30" />
 
@@ -280,7 +297,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1px"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="35dp"
                 android:background="#33ffffff" />
 
             <ImageView
@@ -292,7 +309,7 @@
             <LinearLayout
                 android:id="@+id/ll_facepanel"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 android:layout_alignParentBottom="true"
                 android:orientation="horizontal"
                 android:visibility="visible" >
@@ -350,6 +367,94 @@
                     android:paddingBottom="11dp"
                     android:paddingTop="11dp"
                     android:src="@drawable/face_delete" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_chat_menubar"
+            android:layout_width="match_parent"
+            android:layout_height="205dp"
+            android:background="@drawable/card_background_normal"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="22dp"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/chat_selectimage" />
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="#33ffffff" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/chat_camera" />
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="#33ffffff" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/chatgroupcard" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="320dp"
+                android:layout_height="1dp"
+                android:layout_centerInParent="true"
+                android:background="#33ffffff" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="22dp"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/chat_lbs" />
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="#33ffffff" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp" />
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="#33ffffff" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp" />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

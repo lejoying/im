@@ -1,5 +1,7 @@
 package com.lejoying.wxgs.activity;
 
+import com.lejoying.wxgs.R;
+
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -7,7 +9,7 @@ public class GroupInformationActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_group_information);
+
 	}
 }

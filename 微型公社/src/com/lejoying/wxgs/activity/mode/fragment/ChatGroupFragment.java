@@ -258,7 +258,7 @@ public class ChatGroupFragment extends BaseFragment {
 		chatContent.addFooterView(footerView);
 
 		iv_send = mContent.findViewById(R.id.iv_send);
-		iv_more = mContent.findViewById(R.id.iv_more);
+//		iv_more = mContent.findViewById(R.id.iv_more);
 		iv_more_select = mContent.findViewById(R.id.iv_more_select);
 		editText_message = (EditText) mContent.findViewById(R.id.et_message);
 		rl_chatbottom = (RelativeLayout) mContent

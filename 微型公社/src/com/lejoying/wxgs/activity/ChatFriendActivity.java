@@ -50,6 +50,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -72,8 +73,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.MapStorageDirectoryActivity;
-import com.lejoying.wxgs.activity.PicAndVoiceDetailActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
@@ -142,6 +141,8 @@ public class ChatFriendActivity extends Activity {
 	View iv_more_select;
 	ImageView iv_emoji_normal;
 	EditText editText_message;
+	ImageView iv_more_selecting;
+	RelativeLayout rl_chat_menubar;
 	LinearLayout rl_chatbottom;
 	RelativeLayout rl_editMenu;
 	RelativeLayout rl_message;
@@ -191,6 +192,8 @@ public class ChatFriendActivity extends Activity {
 
 	public ListView chatContent;
 
+	InputMethodManager imm;
+
 	public void initShowFirstPosition() {
 		int initShowCount = 10;
 		if (mNowChatFriend.notReadMessagesCount > 10) {
@@ -212,6 +215,8 @@ public class ChatFriendActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.f_chat);
+		imm = (InputMethodManager) getApplicationContext().getSystemService(
+				Context.INPUT_METHOD_SERVICE);
 		getWindow().setBackgroundDrawableResource(R.drawable.background4);
 		mStatus = getIntent().getIntExtra("mStatus", CHAT_FRIEND);
 		if (CHAT_FRIEND == mStatus) {
@@ -250,12 +255,15 @@ public class ChatFriendActivity extends Activity {
 		chatContent.addFooterView(footerView);
 
 		iv_send = findViewById(R.id.iv_send);
-		iv_more = findViewById(R.id.iv_more);
+		// TODO　delete
+		// iv_more = findViewById(R.id.iv_more);
+		iv_more_selecting = (ImageView) findViewById(R.id.iv_more_selecting);
 		iv_more_select = findViewById(R.id.iv_more_select);
 		iv_emoji_normal = (ImageView) findViewById(R.id.iv_emoji_normal);
 		editText_message = (EditText) findViewById(R.id.et_message);
 		rl_chatbottom = (LinearLayout) findViewById(R.id.chat_bottom_bar);
 		rl_editMenu = (RelativeLayout) findViewById(R.id.rl_editMenu);
+		rl_chat_menubar = (RelativeLayout) findViewById(R.id.rl_chat_menubar);
 		rl_message = (RelativeLayout) findViewById(R.id.rl_message);
 		rl_select = (RelativeLayout) findViewById(R.id.rl_select);
 		rl_audiopanel = (RelativeLayout) findViewById(R.id.rl_audiopanel);
@@ -476,16 +484,43 @@ public class ChatFriendActivity extends Activity {
 	}
 
 	void initEvent() {
+		iv_more_selecting.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (imm.isActive()) {
+					// imm.toggleSoftInput(0,
+					// InputMethodManager.HIDE_NOT_ALWAYS);
+					imm.hideSoftInputFromWindow(ChatFriendActivity.this
+							.getCurrentFocus().getWindowToken(),
+							InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+				if (rl_face.getVisibility() == View.VISIBLE) {
+					rl_face.setVisibility(View.GONE);
+				}
+				if (rl_chat_menubar.getVisibility() == View.GONE) {
+					rl_chat_menubar.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 		iv_emoji_normal.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
+				if (imm.isActive()) {
+					imm.hideSoftInputFromWindow(ChatFriendActivity.this
+							.getCurrentFocus().getWindowToken(),
+							InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+				if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
+					rl_chat_menubar.setVisibility(View.GONE);
+				}
 				int show_status = rl_face.getVisibility();
 				if (show_status == View.VISIBLE) {
 					rl_face.setVisibility(View.GONE);
 				} else {
 					rl_face.setVisibility(View.VISIBLE);
-					hideSelectTab();
+					// hideSelectTab();
 				}
 			}
 		});
@@ -921,27 +956,32 @@ public class ChatFriendActivity extends Activity {
 		editText_message.setVisibility(View.VISIBLE);
 		// editText_message.requestFocus();
 
-		iv_more.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return gestureDetector.onTouchEvent(event);
-			}
-		});
-
-		iv_more.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				showSelectTab();
-			}
-		});
+		// iv_more.setOnTouchListener(new OnTouchListener() {
+		//
+		// @Override
+		// public boolean onTouch(View v, MotionEvent event) {
+		// return gestureDetector.onTouchEvent(event);
+		// }
+		// });
+		//
+		// iv_more.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View arg0) {
+		// showSelectTab();
+		// }
+		// });
 		editText_message.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO
-				rl_face.setVisibility(View.GONE);
+				if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
+					rl_chat_menubar.setVisibility(View.GONE);
+				}
+				if (rl_face.getVisibility() == View.VISIBLE) {
+					rl_face.setVisibility(View.GONE);
+				}
 				new Thread() {
 					public void run() {
 						try {
@@ -959,6 +999,20 @@ public class ChatFriendActivity extends Activity {
 					};
 				}.start();
 
+			}
+		});
+		editText_message.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (hasFocus) {
+					if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
+						rl_chat_menubar.setVisibility(View.GONE);
+					}
+					if (rl_face.getVisibility() == View.VISIBLE) {
+						rl_face.setVisibility(View.GONE);
+					}
+				}
 			}
 		});
 		editText_message.addTextChangedListener(new TextWatcher() {
@@ -1023,12 +1077,18 @@ public class ChatFriendActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				int selectionIndex = editText_message.getSelectionStart();
-				if (!(s.toString()).equals(content)) {
+				String afterContent = s.toString().trim();
+				if (!afterContent.equals(content)) {
 					SpannableString spannableString = ExpressionUtil
 							.getExpressionString(ChatFriendActivity.this,
 									s.toString(), faceRegx, expressionFaceMap);
 					editText_message.setText(spannableString);
 					editText_message.setSelection(selectionIndex);
+				}
+				if ("".equals(afterContent)) {
+
+				} else {
+
 				}
 			}
 		});
@@ -1830,6 +1890,9 @@ public class ChatFriendActivity extends Activity {
 	}
 
 	public void sendMessage(final String type, final ArrayList<String> content) {
+		if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
+			rl_chat_menubar.setVisibility(View.GONE);
+		}
 		final Message message = new Message();
 		message.type = Message.MESSAGE_TYPE_SEND;
 		if (mStatus == CHAT_FRIEND) {
