@@ -144,6 +144,7 @@ public class ChatFriendActivity extends Activity {
 	EditText editText_message;
 	ImageView iv_more_selecting;
 	RelativeLayout rl_chat_menubar;
+	ImageView chat_select, chat_camera;
 	LinearLayout rl_chatbottom;
 	RelativeLayout rl_editMenu;
 	RelativeLayout rl_message;
@@ -194,6 +195,8 @@ public class ChatFriendActivity extends Activity {
 	public ListView chatContent;
 
 	InputMethodManager imm;
+
+	File tempFile;
 
 	public void initShowFirstPosition() {
 		int initShowCount = 10;
@@ -265,6 +268,8 @@ public class ChatFriendActivity extends Activity {
 		rl_chatbottom = (LinearLayout) findViewById(R.id.chat_bottom_bar);
 		rl_editMenu = (RelativeLayout) findViewById(R.id.rl_editMenu);
 		rl_chat_menubar = (RelativeLayout) findViewById(R.id.rl_chat_menubar);
+		chat_select = (ImageView) findViewById(R.id.chat_select);
+		chat_camera = (ImageView) findViewById(R.id.chat_camera);
 		rl_message = (RelativeLayout) findViewById(R.id.rl_message);
 		rl_select = (RelativeLayout) findViewById(R.id.rl_select);
 		rl_audiopanel = (RelativeLayout) findViewById(R.id.rl_audiopanel);
@@ -1116,6 +1121,22 @@ public class ChatFriendActivity extends Activity {
 					sendMessage("text", messages);
 					rl_face.setVisibility(View.GONE);
 				}
+			}
+		});
+		chat_select.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				selectPicture();
+
+			}
+		});
+		chat_camera.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				takePicture();
+
 			}
 		});
 	}
@@ -1992,9 +2013,11 @@ public class ChatFriendActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		final ArrayList<String> messages = new ArrayList<String>();
 		if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			final ArrayList<String> messages = new ArrayList<String>();
+			// ArrayList<String>
+			// selectedImages=data.getStringArrayListExtra("photoListMap");
 			isSELECTPICTURE = true;
 			messageNum = 1;
 			for (int i = 0; i < MapStorageDirectoryActivity.selectedImages
@@ -2018,7 +2041,6 @@ public class ChatFriendActivity extends Activity {
 									ImageMessageInfo imageMessageInfo) {
 								String contentType = (String) MapStorageDirectoryActivity.selectedImagesMap
 										.get(filePath).get("contentType");
-								// checkImage(fileName, base64, messages);
 								checkImage(imageMessageInfo, contentType,
 										filePath, "image", messages);
 							}
@@ -2027,6 +2049,25 @@ public class ChatFriendActivity extends Activity {
 
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
+			Uri uri = Uri.fromFile(tempFile);
+			final String picturePath = uri.getPath();
+			app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
+
+				@Override
+				public void setParams(FileMessageInfoSettings settings) {
+					settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+					settings.path = picturePath;
+					settings.fileName = picturePath.substring(picturePath
+							.lastIndexOf("/"));
+				}
+
+				@Override
+				public void onSuccess(ImageMessageInfo imageMessageInfo) {
+					// checkImage(fileName, base64, messages);
+					checkImage(imageMessageInfo, "image/jpeg", picturePath,
+							"image", messages);
+				}
+			});
 
 		} else if (requestCode == RESULT_CATPICTURE
 				&& resultCode == Activity.RESULT_OK && data != null) {
@@ -2041,13 +2082,11 @@ public class ChatFriendActivity extends Activity {
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
 	}
 
-	File tempFile;
-
 	void takePicture() {
-		tempFile = new File(app.sdcardImageFolder, "tempimage");
+		tempFile = new File(app.sdcardImageFolder, "tempimage.jpg");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++));
+			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++)+".jpg");
 		}
 		Uri uri = Uri.fromFile(tempFile);
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

@@ -386,6 +386,7 @@
                 android:orientation="horizontal" >
 
                 <ImageView
+                    android:id="@+id/chat_select"
                     android:layout_width="60dp"
                     android:layout_height="50dp"
                     android:src="@drawable/chat_selectimage" />
@@ -398,6 +399,7 @@
                     android:background="#33ffffff" />
 
                 <ImageView
+                    android:id="@+id/chat_camera"
                     android:layout_width="60dp"
                     android:layout_height="50dp"
                     android:src="@drawable/chat_camera" />

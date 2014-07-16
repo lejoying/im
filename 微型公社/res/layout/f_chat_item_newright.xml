@@ -9,7 +9,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textSize="12sp" />
+        android:textSize="12sp" 
+        android:textColor="#ff616161"
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
