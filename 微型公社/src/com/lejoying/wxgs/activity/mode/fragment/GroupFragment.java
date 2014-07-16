@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.GestureDetector;
@@ -27,10 +28,12 @@ import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.ChatGroupActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.PicAndVoiceDetailActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.NotificationUtils;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
@@ -472,10 +475,14 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 									mMainModeManager
 											.showNext(mMainModeManager.mGroupBusinessCardFragment);
 								} else {
-									mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-									mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
-									mMainModeManager
-											.showNext(mMainModeManager.mChatGroupFragment);
+									Intent intent = new Intent(getActivity(), ChatGroupActivity.class);
+									intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
+									intent.putExtra("mNowChatGroup", String.valueOf(group.gid));
+									startActivity(intent);
+//									mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+//									mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
+//									mMainModeManager
+//											.showNext(mMainModeManager.mChatGroupFragment);
 								}
 							}
 						});

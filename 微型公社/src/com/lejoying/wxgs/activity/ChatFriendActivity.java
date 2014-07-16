@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -1086,9 +1087,19 @@ public class ChatFriendActivity extends Activity {
 					editText_message.setSelection(selectionIndex);
 				}
 				if ("".equals(afterContent)) {
-
+					if (iv_more_selecting.getVisibility() == View.GONE) {
+						iv_more_selecting.setVisibility(View.VISIBLE);
+					}
+					if (iv_send.getVisibility() == View.VISIBLE) {
+						iv_send.setVisibility(View.GONE);
+					}
 				} else {
-
+					if (iv_more_selecting.getVisibility() == View.VISIBLE) {
+						iv_more_selecting.setVisibility(View.GONE);
+					}
+					if (iv_send.getVisibility() == View.GONE) {
+						iv_send.setVisibility(View.VISIBLE);
+					}
 				}
 			}
 		});
@@ -1390,48 +1401,32 @@ public class ChatFriendActivity extends Activity {
 				messageHolder = new MessageHolder();
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
-					convertView = mInflater.inflate(R.layout.f_chat_item_right,
-							null);
-					messageHolder.text = convertView
-							.findViewById(R.id.rl_chatright);
+					convertView = mInflater.inflate(
+							R.layout.f_chat_item_newright, null);
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					convertView = mInflater.inflate(R.layout.f_chat_item_left,
-							null);
-					messageHolder.text = convertView
-							.findViewById(R.id.rl_chatleft);
+					convertView = mInflater.inflate(
+							R.layout.f_chat_item_newleft, null);
 					break;
 				default:
 					break;
 				}
-				messageHolder.tv_time = (TextView) convertView
-						.findViewById(R.id.tv_time);
-				messageHolder.image = (RelativeLayout) convertView
-						.findViewById(R.id.rl_chatleft_image);
+				messageHolder.ll_voice = (LinearLayout) convertView
+						.findViewById(R.id.ll_voice);
 				messageHolder.ll_image = (LinearLayout) convertView
 						.findViewById(R.id.ll_image);
-				messageHolder.rl_image = (RelativeLayout) convertView
-						.findViewById(R.id.rl_image);
-				messageHolder.iv_image_gif = (RelativeLayout) convertView
-						.findViewById(R.id.iv_image_gif);
-				messageHolder.tv_nickname = (TextView) convertView
-						.findViewById(R.id.tv_nickname);
+				messageHolder.rl_gif = (RelativeLayout) convertView
+						.findViewById(R.id.rl_gif);
 				messageHolder.iv_head = (ImageView) convertView
 						.findViewById(R.id.iv_head);
-				messageHolder.iv_sendhead = (ImageView) convertView
-						.findViewById(R.id.iv_sendhead);
+				messageHolder.iv_voice = (ImageView) convertView
+						.findViewById(R.id.iv_voice);
 				messageHolder.tv_chat = (TextView) convertView
 						.findViewById(R.id.tv_chat);
-				messageHolder.voice = convertView
-						.findViewById(R.id.rl_chatleft_voice);
-				messageHolder.iv_voicehead_status = (ImageView) convertView
-						.findViewById(R.id.iv_voicehead_status);
-				messageHolder.iv_voicehead = (ImageView) convertView
-						.findViewById(R.id.iv_voicehead);
+				messageHolder.tv_time = (TextView) convertView
+						.findViewById(R.id.tv_time);
 				messageHolder.tv_voicetime = (TextView) convertView
 						.findViewById(R.id.tv_voicetime);
-				messageHolder.sk_voice = (SeekBar) convertView
-						.findViewById(R.id.sk_voice);
 
 				convertView.setTag(messageHolder);
 			} else {
@@ -1442,12 +1437,31 @@ public class ChatFriendActivity extends Activity {
 					.get(showFirstPosition + position);
 			messageHolder.tv_time.setText(TimeUtils.getTime(Long
 					.valueOf(message.time)));
+			String fileName = app.data.user.head;
+			switch (type) {
+			case Message.MESSAGE_TYPE_SEND:
+				fileName = app.data.user.head;
+				break;
+			case Message.MESSAGE_TYPE_RECEIVE:
+				fileName = mNowChatFriend.head;
+				break;
+			default:
+				break;
+			}
+			final String head = fileName;
+			app.fileHandler.getHeadImage(head, app.data.user.sex,
+					new FileResult() {
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							messageHolder.iv_head
+									.setImageBitmap(app.fileHandler.bitmaps
+											.get(head));
+						}
+					});
 			if (message.contentType.equals("text")) {
-				messageHolder.text.setVisibility(View.VISIBLE);
-				messageHolder.image.setVisibility(View.GONE);
-				messageHolder.voice.setVisibility(View.GONE);
-				messageHolder.rl_image.setVisibility(View.GONE);
-				// messageHolder.tv_chat.setText(message.content);
+				messageHolder.tv_chat.setVisibility(View.VISIBLE);
+				messageHolder.ll_voice.setVisibility(View.GONE);
+				messageHolder.ll_image.setVisibility(View.GONE);
 				String content;
 				try {
 					content = message.content.get(0);
@@ -1459,28 +1473,7 @@ public class ChatFriendActivity extends Activity {
 								faceRegx, expressionFaceMap);
 				messageHolder.tv_chat.setText(spannableString);
 
-				String fileName = app.data.user.head;
-				switch (type) {
-				case Message.MESSAGE_TYPE_SEND:
-					fileName = app.data.user.head;
-					break;
-				case Message.MESSAGE_TYPE_RECEIVE:
-					fileName = mNowChatFriend.head;
-					break;
-				default:
-					break;
-				}
-				final String headFileName = fileName;
-				final ImageView iv_head = messageHolder.iv_head;
-				app.fileHandler.getHeadImage(headFileName, app.data.user.sex,
-						new FileResult() {
-							@Override
-							public void onResult(String where, Bitmap bitmap) {
-								iv_head.setImageBitmap(app.fileHandler.bitmaps
-										.get(headFileName));
-							}
-						});
-				iv_head.setOnClickListener(new OnClickListener() {
+				messageHolder.iv_head.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
@@ -1506,7 +1499,7 @@ public class ChatFriendActivity extends Activity {
 						// }
 					}
 				});
-				messageHolder.text
+				messageHolder.tv_chat
 						.setOnLongClickListener(new OnLongClickListener() {
 
 							@SuppressWarnings("deprecation")
@@ -1529,17 +1522,15 @@ public class ChatFriendActivity extends Activity {
 							}
 						});
 			} else if (message.contentType.equals("image")) {
-				messageHolder.text.setVisibility(View.GONE);
-				messageHolder.voice.setVisibility(View.GONE);
+				messageHolder.tv_chat.setVisibility(View.GONE);
+				messageHolder.ll_voice.setVisibility(View.GONE);
+				messageHolder.ll_image.setVisibility(View.VISIBLE);
 				final String imageFileName = message.content.get(0);
 				String content = message.content.get(0);
 				final String imgLastName = content.substring(content
 						.lastIndexOf(".") + 1);
 				if ("gif".equals(imgLastName)) {
-					messageHolder.image.setVisibility(View.VISIBLE);
-					messageHolder.rl_image.setVisibility(View.GONE);
-					messageHolder.iv_image_gif.setVisibility(View.VISIBLE);
-					messageHolder.iv_image_gif.removeAllViews();
+					messageHolder.ll_image.removeAllViews();
 					app.fileHandler.getFile(new FileInterface() {
 
 						@Override
@@ -1555,16 +1546,30 @@ public class ChatFriendActivity extends Activity {
 
 								@Override
 								public void run() {
+									// RelativeLayout relative = new
+									// RelativeLayout(
+									// ChatFriendActivity.this);
+									// LinearLayout.LayoutParams layoutParams =
+									// new LinearLayout.LayoutParams(
+									// LayoutParams.WRAP_CONTENT,
+									// LayoutParams.WRAP_CONTENT);
+									// layoutParams.gravity = Gravity.CENTER;
+									// relative.setLayoutParams(layoutParams);
 									SampleView sampleView = new SampleView(
 											ChatFriendActivity.this,
 											app.fileHandler.getFileBytes(
 													app.sdcardImageFolder,
 													imageFileName));
-									messageHolder.iv_image_gif
-											.addView(sampleView);
-									// if (where == app.fileHandler.FROM_WEB) {
-									// mAdapter.notifyDataSetChanged();
-									// }
+									RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+											LayoutParams.WRAP_CONTENT,
+											LayoutParams.WRAP_CONTENT);
+									params.addRule(RelativeLayout.CENTER_IN_PARENT);
+									sampleView.setLayoutParams(params);
+									// relative.addView(sampleView);
+									messageHolder.rl_gif.addView(sampleView);
+									messageHolder.rl_gif.getLayoutParams().height = (int) (90 * density +
+
+									0.5f);
 								}
 							});
 
@@ -1572,8 +1577,9 @@ public class ChatFriendActivity extends Activity {
 					});
 
 				} else {
-					messageHolder.image.setVisibility(View.GONE);
-					messageHolder.rl_image.setVisibility(View.VISIBLE);
+					messageHolder.tv_chat.setVisibility(View.GONE);
+					messageHolder.ll_image.setVisibility(View.GONE);
+					messageHolder.ll_image.setVisibility(View.VISIBLE);
 					messageHolder.ll_image.removeAllViews();
 					final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 							(int) (width * 0.493055556f),
@@ -1625,62 +1631,77 @@ public class ChatFriendActivity extends Activity {
 					}
 
 				}
-				final ImageView iv_sendhead = messageHolder.iv_sendhead;
-				switch (type) {
-				case Message.MESSAGE_TYPE_SEND:
-					iv_sendhead.setVisibility(View.GONE);
-					break;
-				case Message.MESSAGE_TYPE_RECEIVE:
-					messageHolder.tv_nickname.setText(mNowChatFriend.nickName);
-					final String headFileName = mNowChatFriend.head;
-					iv_sendhead.setVisibility(View.VISIBLE);
-					app.fileHandler.getHeadImage(headFileName,
-							mNowChatFriend.sex, new FileResult() {
-								@Override
-								public void onResult(String where, Bitmap bitmap) {
-									iv_sendhead
-											.setImageBitmap(app.fileHandler.bitmaps
-													.get(headFileName));
-									iv_sendhead
-											.setOnClickListener(new OnClickListener() {
-												@Override
-												public void onClick(View v) {
-													// TODO
-													// mMainModeManager.mBusinessCardFragment.mStatus
-													// =
-													// BusinessCardFragment.SHOW_FRIEND;
-													// mMainModeManager.mBusinessCardFragment.mShowFriend
-													// = mNowChatFriend;
-													// mMainModeManager
-													// .showNext(mMainModeManager.mBusinessCardFragment);
-												}
-											});
-								}
-							});
-
-					break;
-				default:
-					break;
-				}
+				// final ImageView iv_sendhead = messageHolder.iv_sendhead;
+				// switch (type) {
+				// case Message.MESSAGE_TYPE_SEND:
+				// iv_sendhead.setVisibility(View.GONE);
+				// break;
+				// case Message.MESSAGE_TYPE_RECEIVE:
+				// messageHolder.tv_nickname.setText(mNowChatFriend.nickName);
+				// final String headFileName = mNowChatFriend.head;
+				// iv_sendhead.setVisibility(View.VISIBLE);
+				// app.fileHandler.getHeadImage(headFileName,
+				// mNowChatFriend.sex, new FileResult() {
+				// @Override
+				// public void onResult(String where, Bitmap bitmap) {
+				// iv_sendhead
+				// .setImageBitmap(app.fileHandler.bitmaps
+				// .get(headFileName));
+				// iv_sendhead
+				// .setOnClickListener(new OnClickListener() {
+				// @Override
+				// public void onClick(View v) {
+				// // TODO
+				// // mMainModeManager.mBusinessCardFragment.mStatus
+				// // =
+				// // BusinessCardFragment.SHOW_FRIEND;
+				// // mMainModeManager.mBusinessCardFragment.mShowFriend
+				// // = mNowChatFriend;
+				// // mMainModeManager
+				// // .showNext(mMainModeManager.mBusinessCardFragment);
+				// }
+				// });
+				// }
+				// });
+				//
+				// break;
+				// default:
+				// break;
+				// }
 			} else if (message.contentType.equals("voice")) {
-				messageHolder.text.setVisibility(View.GONE);
-				messageHolder.image.setVisibility(View.GONE);
-				messageHolder.rl_image.setVisibility(View.GONE);
-				messageHolder.voice.setVisibility(View.VISIBLE);
-				String fileName = app.data.user.head;
-				String sex = "男";
+				messageHolder.tv_chat.setVisibility(View.GONE);
+				messageHolder.ll_image.setVisibility(View.GONE);
+				messageHolder.ll_voice.setVisibility(View.VISIBLE);
+				Bitmap bitVoice = BitmapFactory.decodeResource(getResources(),
+						R.drawable.chat_item_voice);
 				switch (type) {
 				case Message.MESSAGE_TYPE_SEND:
-					fileName = app.data.user.head;
-					sex = app.data.user.sex;
+					Matrix mMatrix = new Matrix();
+					mMatrix.setRotate(180);
+					messageHolder.iv_voice.setImageBitmap(Bitmap.createBitmap(
+							bitVoice, 0, 0, bitVoice.getWidth(),
+							bitVoice.getHeight(), mMatrix, true));
 					break;
 				case Message.MESSAGE_TYPE_RECEIVE:
-					fileName = mNowChatFriend.head;
-					sex = mNowChatFriend.sex;
+					messageHolder.iv_voice.setImageBitmap(bitVoice);
 					break;
 				default:
 					break;
 				}
+				// String voiceFileName = app.data.user.head;
+				// String sex = "男";
+				// switch (type) {
+				// case Message.MESSAGE_TYPE_SEND:
+				// voiceFileName = app.data.user.head;
+				// sex = app.data.user.sex;
+				// break;
+				// case Message.MESSAGE_TYPE_RECEIVE:
+				// voiceFileName = mNowChatFriend.head;
+				// sex = mNowChatFriend.sex;
+				// break;
+				// default:
+				// break;
+				// }
 				String mVoiceContent;
 				try {
 					mVoiceContent = message.content.get(0);
@@ -1688,26 +1709,27 @@ public class ChatFriendActivity extends Activity {
 					mVoiceContent = message.content.toString();
 				}
 				final String voiceContent = mVoiceContent;
-				final String headFileName = fileName;
-				final ImageView iv_head = messageHolder.iv_voicehead;
-				final ImageView iv_voicehead_status = messageHolder.iv_voicehead_status;
-				app.fileHandler.getHeadImage(headFileName, sex,
-						new FileResult() {
-							@Override
-							public void onResult(String where, Bitmap bitmap) {
-								iv_head.setImageBitmap(app.fileHandler.bitmaps
-										.get(headFileName));
-								// iv_head.setBackgroundDrawable(new
-								// BitmapDrawable(
-								// app.fileHandler.bitmaps.get(headFileName)));
-								Bitmap newBitmap = BitmapFactory
-										.decodeResource(getResources(),
-												R.drawable.head_voice_start);
-
-								iv_voicehead_status.setImageBitmap(newBitmap);
-								iv_voicehead_status.setTag("start");
-							}
-						});
+				// final String headFileName = voiceFileName;
+				// final ImageView iv_head = messageHolder.iv_voicehead;
+				// final ImageView iv_voicehead_status =
+				// messageHolder.iv_voicehead_status;
+				// app.fileHandler.getHeadImage(headFileName, sex,
+				// new FileResult() {
+				// @Override
+				// public void onResult(String where, Bitmap bitmap) {
+				// iv_head.setImageBitmap(app.fileHandler.bitmaps
+				// .get(headFileName));
+				// // iv_head.setBackgroundDrawable(new
+				// // BitmapDrawable(
+				// // app.fileHandler.bitmaps.get(headFileName)));
+				// Bitmap newBitmap = BitmapFactory
+				// .decodeResource(getResources(),
+				// R.drawable.head_voice_start);
+				//
+				// iv_voicehead_status.setImageBitmap(newBitmap);
+				// iv_voicehead_status.setTag("start");
+				// }
+				// });
 				app.fileHandler.getFile(new FileInterface() {
 
 					@Override
@@ -1732,14 +1754,37 @@ public class ChatFriendActivity extends Activity {
 
 									@Override
 									public void run() {
-										messageHolder.tv_voicetime.setText((int) Math
-												.ceil((double) (mpPlayer
-														.getDuration()) / 1000)
-												+ "\"");
+										int duration = mpPlayer.getDuration() / 1000;
+										messageHolder.tv_voicetime
+												.setText(duration + "\"");
+										int textWidth;
+										if (duration > 0 && duration <= 10) {
+											textWidth = 20;
+										} else if (duration > 10
+												&& duration <= 20) {
+											textWidth = 30;
+										} else if (duration > 20
+												&& duration <= 30) {
+											textWidth = 40;
+										} else if (duration > 30
+												&& duration <= 40) {
+											textWidth = 50;
+										} else if (duration > 40
+												&& duration <= 50) {
+											textWidth = 60;
+										} else if (duration > 50
+												&& duration <= 60) {
+											textWidth = 70;
+										} else {
+											textWidth = 70;
+										}
+										messageHolder.tv_voicetime
+												.setWidth((int) (textWidth
+														* density + 0.5f));
 									}
 								});
-								messageHolder.sk_voice.setMax(mpPlayer
-										.getDuration());
+								// messageHolder.sk_voice.setMax(mpPlayer
+								// .getDuration());
 								// messageHolder.sk_voice.setMax((int) Math
 								// .ceil((double) (mpPlayer.getDuration()) /
 								// 1000));
@@ -1755,112 +1800,58 @@ public class ChatFriendActivity extends Activity {
 					}
 				});
 
-				messageHolder.sk_voice.setProgress(0);
-				messageHolder.sk_voice
-						.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-							@Override
-							public void onStopTrackingTouch(SeekBar seekBar) {
-								messageHolder.sk_voice.setProgress(seekBar
-										.getProgress());
-								messageHolder.mpPlayer.seekTo(seekBar
-										.getProgress());
-								if (!messageHolder.mpPlayer.isPlaying()) {
-									messageHolder.mpPlayer.start();
-									iv_head.performClick();
-								}
-							}
-
-							@Override
-							public void onStartTrackingTouch(SeekBar seekBar) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void onProgressChanged(SeekBar seekBar,
-									int arg1, boolean arg2) {
-								// TODO Auto-generated method stub
-
-							}
-						});
-				iv_head.setOnClickListener(new OnClickListener() {
-					Thread thread = null;
-
+				// messageHolder.sk_voice.setProgress(0);
+				// messageHolder.sk_voice
+				// .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+				//
+				// @Override
+				// public void onStopTrackingTouch(SeekBar seekBar) {
+				// messageHolder.sk_voice.setProgress(seekBar
+				// .getProgress());
+				// messageHolder.mpPlayer.seekTo(seekBar
+				// .getProgress());
+				// if (!messageHolder.mpPlayer.isPlaying()) {
+				// messageHolder.mpPlayer.start();
+				// iv_head.performClick();
+				// }
+				// }
+				//
+				// @Override
+				// public void onStartTrackingTouch(SeekBar seekBar) {
+				// // TODO Auto-generated method stub
+				//
+				// }
+				//
+				// @Override
+				// public void onProgressChanged(SeekBar seekBar,
+				// int arg1, boolean arg2) {
+				// // TODO Auto-generated method stub
+				//
+				// }
+				// });
+				convertView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Bitmap bitmap = null;
-
 						final MediaPlayer mpPlayer = messageHolder.mpPlayer;
 						if (mpPlayer == null)
 							return;
-						if (iv_voicehead_status.getTag() == "start") {
-							bitmap = BitmapFactory.decodeResource(
-									getResources(), R.drawable.head_voice_stop);
-							iv_voicehead_status.setTag("stop");
-							int playTime = messageHolder.sk_voice.getProgress();
-							if (mpPlayer.getDuration() - playTime > 10) {
-								mpPlayer.seekTo(playTime);
-							} else {
-								mpPlayer.seekTo(0);
-							}
-
-							mpPlayer.start();
-							thread = new Thread() {
-								public void run() {
-									while (true) {
-										try {
-											if (ChatFriendActivity.this == null) {
-												mpPlayer.stop();
-												mpPlayer.release();
-												thread.interrupt();
-												break;
-											}
-											Thread.sleep(50);
-											messageHolder.sk_voice.setProgress(mpPlayer
-													.getCurrentPosition());
-											if (mpPlayer.getDuration()
-													- mpPlayer
-															.getCurrentPosition() < 50) {
-												messageHolder.sk_voice
-														.setProgress(messageHolder.sk_voice
-																.getMax());
-												Thread.currentThread()
-														.interrupt();
-												break;
-											}
-										} catch (InterruptedException e) {
-											e.printStackTrace();
-										}
-									}
-								};
-							};
-							thread.start();
-
-							mpPlayer.setOnCompletionListener(new OnCompletionListener() {
-
-								@Override
-								public void onCompletion(MediaPlayer arg0) {
-									if (ChatFriendActivity.this == null) {
-										thread.interrupt();
-										return;
-									}
-									Bitmap bitmap = BitmapFactory
-											.decodeResource(getResources(),
-													R.drawable.head_voice_start);
-									iv_voicehead_status.setImageBitmap(bitmap);
-									iv_voicehead_status.setTag("start");
-								}
-							});
-						} else {
-							bitmap = BitmapFactory
-									.decodeResource(getResources(),
-											R.drawable.head_voice_start);
-							iv_voicehead_status.setTag("start");
+						if (mpPlayer.isPlaying()) {
 							mpPlayer.pause();
-							thread.interrupt();
+							mpPlayer.seekTo(0);
+						} else {
+							mpPlayer.start();
 						}
-						iv_voicehead_status.setImageBitmap(bitmap);
+						mpPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+							@Override
+							public void onCompletion(MediaPlayer arg0) {
+								if (ChatFriendActivity.this == null) {
+									return;
+								} else {
+									mpPlayer.seekTo(0);
+								}
+							}
+						});
 					}
 				});
 			}
@@ -1869,23 +1860,19 @@ public class ChatFriendActivity extends Activity {
 	}
 
 	class MessageHolder {
-		View text;
+
 		ImageView iv_head;
+		ImageView iv_voice;
 		TextView tv_chat;
 		TextView tv_time;
-		ImageView iv_sendhead;
+		TextView tv_voicetime;
 
 		RelativeLayout rl_image;
-		RelativeLayout image;
 		LinearLayout ll_image;
-		TextView tv_nickname;
-		RelativeLayout iv_image_gif;
+		LinearLayout ll_voice;
 
-		View voice;
-		ImageView iv_voicehead;
-		ImageView iv_voicehead_status;
-		TextView tv_voicetime;
-		SeekBar sk_voice;
+		RelativeLayout rl_gif;
+
 		MediaPlayer mpPlayer;
 	}
 

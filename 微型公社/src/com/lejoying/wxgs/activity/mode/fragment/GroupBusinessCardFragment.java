@@ -6,6 +6,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,6 +29,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.ChatGroupActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
@@ -269,11 +271,15 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 				@Override
 				public void onClick(View arg0) {
 					mMainModeManager.back();
-					mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-					mMainModeManager.mChatGroupFragment.mNowChatGroup = app.data.groupsMap
-							.get(mGroup.gid);
-					mMainModeManager
-							.showNext(mMainModeManager.mChatGroupFragment);
+					Intent intent = new Intent(getActivity(), ChatGroupActivity.class);
+					intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
+					intent.putExtra("mNowChatGroup", String.valueOf(mGroup.gid));
+					startActivity(intent);
+//					mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+//					mMainModeManager.mChatGroupFragment.mNowChatGroup = app.data.groupsMap
+//							.get(mGroup.gid);
+//					mMainModeManager
+//							.showNext(mMainModeManager.mChatGroupFragment);
 				}
 			});
 		}

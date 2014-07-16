@@ -154,10 +154,14 @@ public class MainActivity extends BaseActivity {
 					.get(NotificationUtils.message.phone);
 			mMainMode.showNext(mMainMode.mChatFragment);
 		} else if ("chatGroup".equals(NotificationUtils.showFragment)) {
-			mMainMode.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-			mMainMode.mChatFragment.mNowChatGroup = app.data.groupsMap
-					.get(NotificationUtils.message.gid);
-			mMainMode.show(mMainMode.mChatGroupFragment);
+			Intent intent = new Intent(MainActivity.this, ChatGroupActivity.class);
+			intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
+			intent.putExtra("mNowChatGroup", NotificationUtils.message.gid);
+			startActivity(intent);
+//			mMainMode.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
+//			mMainMode.mChatFragment.mNowChatGroup = app.data.groupsMap
+//					.get(NotificationUtils.message.gid);
+//			mMainMode.show(mMainMode.mChatGroupFragment);
 		} else if ("chatList".equals(NotificationUtils.showFragment)) {
 			mMainMode.show(mMainMode.mChatMessagesFragment);
 		}
