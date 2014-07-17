@@ -700,6 +700,7 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
 		mMainModeManager.handleMenu(false);
+		notifyViews();
 		requestLocation();
 		super.onResume();
 	}
