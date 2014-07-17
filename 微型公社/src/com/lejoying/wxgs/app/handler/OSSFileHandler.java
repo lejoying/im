@@ -93,7 +93,7 @@ public class OSSFileHandler {
 		getImageFile(imageFileName, "", TYPE_IMAGE_BACK, fileResult, null, 0);
 	}
 
-	public void getSquareDetailImage(String imageFileName, int width,
+	public void getSquareDetailImage(String imageFileName, float width,
 			FileResult fileResult) {
 		getImageFile(imageFileName, "", TYPE_IMAGE_SQUAREIMAGE, fileResult,
 				null, width);
@@ -113,7 +113,7 @@ public class OSSFileHandler {
 	}
 
 	public void getImageFile(String imageFileName, String mediationParam,
-			int type, FileResult fileResult, String style, int width) {
+			int type, FileResult fileResult, String style, float width) {
 		if (defaultImage == null) {
 			defaultImage = BitmapFactory.decodeResource(app.getResources(),
 					R.drawable.defaultimage);
@@ -166,7 +166,7 @@ public class OSSFileHandler {
 				int height = (int) (defaultSquareDetailImage.getHeight() * (width / defaultSquareDetailImage
 						.getWidth()));
 				defaultSquareDetailImage = Bitmap.createScaledBitmap(
-						defaultImage, (int) (width), height, true);
+						defaultImage, (int)width , height, true);
 			}
 			fileResult.onResult(FROM_DEFAULT, defaultSquareDetailImage);
 		}
@@ -248,7 +248,7 @@ public class OSSFileHandler {
 								|| imageFromWebStatus.get(currentFileImage)
 										.equals("failed")) {
 							getImageFileFromWeb(imageFileName, mediationParam,
-									type, style, width);
+									type, style, (int)width);
 						}
 					}
 				} else {
@@ -262,7 +262,7 @@ public class OSSFileHandler {
 							|| imageFromWebStatus.get(currentFileImage).equals(
 									"failed")) {
 						getImageFileFromWeb(imageFileName, mediationParam,
-								type, style, width);
+								type, style,(int) width);
 					}
 				}
 			}

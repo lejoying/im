@@ -67,6 +67,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -119,6 +120,7 @@ public class ChatFriendActivity extends Activity {
 	public MediaRecorder recorder;
 	public MediaPlayer mPlayer;
 	public List<String> voice_list;
+	public String voice_name;
 	public int play_order = 0;
 	public double voice_length = 0;
 	public long startTime = 0;
@@ -159,6 +161,11 @@ public class ChatFriendActivity extends Activity {
 	TextView tv_voice_timelength;
 	OnTouchListener mOnTouchListener;
 
+	RelativeLayout rl_record;
+	ImageView iv_recordbg;
+	ImageView iv_record;
+	ImageView iv_more_voice;
+
 	RelativeLayout rl_face;
 	LinearLayout ll_facepanel;
 	LinearLayout ll_facemenu;
@@ -173,6 +180,8 @@ public class ChatFriendActivity extends Activity {
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
 	List<String[]> faceNamesList;
 	public static String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
+
+	HashMap<String, SoftReference<Bitmap>> softBitmaps = new HashMap<String, SoftReference<Bitmap>>();
 
 	View groupTopBar;
 	View groupTopBar_back;
@@ -195,6 +204,8 @@ public class ChatFriendActivity extends Activity {
 	public ListView chatContent;
 
 	InputMethodManager imm;
+
+	PopupWindow popWindow;
 
 	File tempFile;
 
@@ -288,6 +299,11 @@ public class ChatFriendActivity extends Activity {
 		iv_face_left = (ImageView) findViewById(R.id.iv_face_left);
 		iv_face_right = (ImageView) findViewById(R.id.iv_face_right);
 		iv_face_delete = (ImageView) findViewById(R.id.iv_face_delete);
+
+		rl_record = (RelativeLayout) findViewById(R.id.rl_record);
+		iv_record = (ImageView) findViewById(R.id.iv_record);
+		iv_more_voice = (ImageView) findViewById(R.id.iv_more_voice);
+		iv_recordbg = (ImageView) findViewById(R.id.iv_recordbg);
 
 		groupTopBar = findViewById(R.id.relativeLayout_topbar);
 		groupTopBar_back = findViewById(R.id.backview);
@@ -500,6 +516,12 @@ public class ChatFriendActivity extends Activity {
 					imm.hideSoftInputFromWindow(ChatFriendActivity.this
 							.getCurrentFocus().getWindowToken(),
 							InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+				if (rl_record.getVisibility() == View.VISIBLE) {
+					rl_record.setVisibility(View.GONE);
+					editText_message.setVisibility(View.VISIBLE);
+					iv_emoji_normal.setVisibility(View.VISIBLE);
+					iv_more_voice.setImageResource(R.drawable.chat_voice);
 				}
 				if (rl_face.getVisibility() == View.VISIBLE) {
 					rl_face.setVisibility(View.GONE);
@@ -1113,13 +1135,18 @@ public class ChatFriendActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				final String message = editText_message.getText().toString();
-				ArrayList<String> messages = new ArrayList<String>();
-				messages.add(message);
-				editText_message.setText("");
-				if (message != null && !message.equals("")) {
-					sendMessage("text", messages);
-					rl_face.setVisibility(View.GONE);
+				if (mPlayer != null) {
+					getRecordVoice();
+				} else {
+					final String message = editText_message.getText()
+							.toString();
+					ArrayList<String> messages = new ArrayList<String>();
+					messages.add(message);
+					editText_message.setText("");
+					if (message != null && !message.equals("")) {
+						sendMessage("text", messages);
+						rl_face.setVisibility(View.GONE);
+					}
 				}
 			}
 		});
@@ -1139,6 +1166,194 @@ public class ChatFriendActivity extends Activity {
 
 			}
 		});
+		iv_more_voice.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (rl_record.getVisibility() == View.VISIBLE) {
+					if (mPlayer != null) {
+						Alert.createDialog(ChatFriendActivity.this)
+								.setTitle("是否取消语音发送?")
+								.setOnConfirmClickListener(
+										new AlertInputDialog.OnDialogClickListener() {
+
+											@Override
+											public void onClick(
+													AlertInputDialog dialog) {
+												File file = new File(
+														app.sdcardVoiceFolder,
+														voice_list
+																.remove(voice_list
+																		.size() - 1));
+												if (file.exists()) {
+													file.delete();
+												}
+												if (recorder != null) {
+													recorder.release();
+													recorder = null;
+												}
+												if (mPlayer != null) {
+													mPlayer.release();
+													mPlayer = null;
+												}
+												iv_more_selecting
+														.setVisibility(View.VISIBLE);
+												iv_send.setVisibility(View.GONE);
+												rl_record
+														.setVisibility(View.GONE);
+												editText_message
+														.setVisibility(View.VISIBLE);
+												iv_emoji_normal
+														.setVisibility(View.VISIBLE);
+												iv_more_voice
+														.setImageResource(R.drawable.chat_voice);
+											}
+
+										}).show();
+					} else {
+						iv_more_selecting.setVisibility(View.VISIBLE);
+						iv_send.setVisibility(View.GONE);
+						rl_record.setVisibility(View.GONE);
+						editText_message.setVisibility(View.VISIBLE);
+						iv_emoji_normal.setVisibility(View.VISIBLE);
+						iv_more_voice.setImageResource(R.drawable.chat_voice);
+					}
+				} else {
+					if (imm.isActive()) {
+						imm.hideSoftInputFromWindow(ChatFriendActivity.this
+								.getCurrentFocus().getWindowToken(),
+								InputMethodManager.HIDE_NOT_ALWAYS);
+					}
+					iv_recordbg.getLayoutParams().width = editText_message
+							.getWidth() + iv_emoji_normal.getWidth();
+					rl_record.setVisibility(View.VISIBLE);
+					editText_message.setVisibility(View.GONE);
+					iv_emoji_normal.setVisibility(View.GONE);
+					iv_record.setImageResource(R.drawable.chat_voice_init);
+					iv_more_voice.setImageResource(R.drawable.chat_keyboard);
+				}
+			}
+		});
+		iv_record.setOnTouchListener(new OnTouchListener() {
+			boolean isLong = false;
+			GestureDetector gestureDetector = new GestureDetector(
+					ChatFriendActivity.this,
+					new GestureDetector.SimpleOnGestureListener() {
+						@Override
+						public void onLongPress(MotionEvent e) {
+							if (mPlayer != null) {
+								isLong = true;
+								iv_record
+										.setImageResource(R.drawable.chat_voice_del);
+							}
+						}
+
+						@Override
+						public boolean onDown(MotionEvent e) {
+							return true;
+						}
+
+						@Override
+						public boolean onSingleTapUp(MotionEvent e) {
+							if (recorder == null && mPlayer == null) {
+								start();
+								iv_record
+										.setImageResource(R.drawable.chat_voice_stop);
+								initPopWindow();
+							} else if (recorder != null && mPlayer == null) {
+								if (System.currentTimeMillis() - startTime > 1000) {
+									recorder.stop();
+									recorder.reset();
+									recorder.release();
+									File file = new File(app.sdcardVoiceFolder,
+											voice_name);
+									if (file.exists()) {
+										mPlayer = MediaPlayer.create(
+												ChatFriendActivity.this,
+												Uri.parse(file
+														.getAbsolutePath()));
+										iv_record
+												.setImageResource(R.drawable.chat_voice_play);
+										iv_more_selecting
+												.setVisibility(View.GONE);
+										iv_send.setVisibility(View.VISIBLE);
+									}
+								} else {
+									File file = new File(app.sdcardVoiceFolder,
+											voice_name);
+									if (file.exists()) {
+										file.delete();
+									}
+									Toast.makeText(ChatFriendActivity.this,
+											"录音时间太短", Toast.LENGTH_SHORT)
+											.show();
+									recorder.reset();
+									recorder = null;
+									iv_record
+											.setImageResource(R.drawable.chat_voice_init);
+								}
+
+							} else if (recorder != null && mPlayer != null) {
+								if (mPlayer.isPlaying()) {
+									mPlayer.pause();
+									iv_record
+											.setImageResource(R.drawable.chat_voice_play);
+								} else {
+									iv_record
+											.setImageResource(R.drawable.chat_voice_pause);
+									mPlayer.start();
+								}
+								mPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+									@Override
+									public void onCompletion(MediaPlayer mp) {
+										mPlayer.seekTo(0);
+										iv_record
+												.setImageResource(R.drawable.chat_voice_play);
+									}
+								});
+							}
+							return true;
+						}
+
+					});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_UP:
+					if (isLong) {
+						File file = new File(app.sdcardVoiceFolder, voice_name);
+						if (file.exists()) {
+							file.delete();
+						}
+						if (recorder != null) {
+							recorder.release();
+							recorder = null;
+						}
+						if (mPlayer != null) {
+							mPlayer.release();
+							mPlayer = null;
+						}
+						iv_more_selecting.setVisibility(View.VISIBLE);
+						iv_send.setVisibility(View.GONE);
+						iv_record.setImageResource(R.drawable.chat_voice_init);
+						isLong = false;
+					}
+					break;
+
+				default:
+					break;
+				}
+
+				return gestureDetector.onTouchEvent(event);
+			}
+		});
+	}
+
+	void initPopWindow() {
+		// TODO Auto-generated method stub
+		View view = mInflater.inflate(R.layout.chat_wave, null, false);
 	}
 
 	void mergeAACAudioFiles() {
@@ -1271,8 +1486,9 @@ public class ChatFriendActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		startTime = System.currentTimeMillis();
 		recorder.start();
+		voice_name = fileName;
 		voice_list.add(fileName);
 		// };
 		// }.start();
@@ -1639,16 +1855,38 @@ public class ChatFriendActivity extends Activity {
 								startActivity(intent);
 							}
 						});
-						app.fileHandler.getImage(mImageFileName,
-								new FileResult() {
-									@Override
-									public void onResult(String where,
-											Bitmap bitmap) {
-										SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
-												bitmap);
-										iv_image.setImageBitmap(bm.get());
-									}
-								});
+						if (softBitmaps.get(mImageFileName) != null) {
+							iv_image.setImageBitmap(softBitmaps.get(
+									mImageFileName).get());
+						} else {
+							app.fileHandler
+									.getSquareDetailImage(
+											mImageFileName,
+											(width * 0.493055556f - (width * 0.01388889f) * 2),
+											new FileResult() {
+												@Override
+												public void onResult(
+														String where,
+														Bitmap bitmap) {
+													SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
+															bitmap);
+													softBitmaps.put(
+															imageFilename, bm);
+													iv_image.setImageBitmap(bm
+															.get());
+												}
+											});
+						}
+						// app.fileHandler.getImage(mImageFileName,
+						// new FileResult() {
+						// @Override
+						// public void onResult(String where,
+						// Bitmap bitmap) {
+						// SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
+						// bitmap);
+						// iv_image.setImageBitmap(bm.get());
+						// }
+						// });
 					}
 
 				}
@@ -1966,6 +2204,27 @@ public class ChatFriendActivity extends Activity {
 								+ mNowChatFriend.phone);
 					}
 				}
+				if (mPlayer != null) {
+					recorder.release();
+					mPlayer.release();
+					recorder = null;
+					mPlayer = null;
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							// TODO Auto-generated method stub
+
+						}
+
+						public void modifyUI() {
+							iv_more_selecting.setVisibility(View.VISIBLE);
+							iv_send.setVisibility(View.GONE);
+							iv_record
+									.setImageResource(R.drawable.chat_voice_init);
+						};
+					});
+				}
 			}
 
 			@Override
@@ -2079,6 +2338,7 @@ public class ChatFriendActivity extends Activity {
 		MapStorageDirectoryActivity.selectedImages.clear();
 		Intent selectFromGallery = new Intent(ChatFriendActivity.this,
 				MapStorageDirectoryActivity.class);
+		selectFromGallery.putExtra("max", 3);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
 	}
 
@@ -2086,7 +2346,8 @@ public class ChatFriendActivity extends Activity {
 		tempFile = new File(app.sdcardImageFolder, "tempimage.jpg");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++)+".jpg");
+			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++)
+					+ ".jpg");
 		}
 		Uri uri = Uri.fromFile(tempFile);
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -2212,11 +2473,12 @@ public class ChatFriendActivity extends Activity {
 	}
 
 	public void getRecordVoice() {
+
 		app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
 
 			@Override
 			public void setParams(FileMessageInfoSettings settings) {
-				settings.fileName = voice_list.get(0);
+				settings.fileName = voice_name;
 				settings.folder = app.sdcardVoiceFolder;
 				settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDVOICE;
 			}
@@ -2237,15 +2499,14 @@ public class ChatFriendActivity extends Activity {
 					@Override
 					public void onSuccess(Boolean flag, String fileName) {
 						File fromFile = new File(app.sdcardVoiceFolder,
-								voice_list.get(0));
+								voice_name);
 						File toFile = new File(app.sdcardVoiceFolder,
 								imageMessageInfo.fileName);
 						fromFile.renameTo(toFile);
-						voice_list.clear();
-						voice_length = 0;
 						ArrayList<String> messages = new ArrayList<String>();
 						messages.add(fileName);
 						sendMessage("voice", messages);
+
 					}
 				});
 

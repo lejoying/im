@@ -62,6 +62,7 @@ public class MapStorageDirectoryActivity extends Activity {
 		boolean init = true;
 		if (getIntent().getExtras() != null) {
 			init = getIntent().getExtras().getBoolean("init");
+			max = getIntent().getExtras().getInt("max");
 		}
 		imagesDirectory = (ListView) findViewById(R.id.gv_imagesDirectory);
 		cancleSelect = (TextView) findViewById(R.id.tv_cancle);

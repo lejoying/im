@@ -517,6 +517,10 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 						.parseColor("#2613b6ed"));
 				rl_operationVote.setBackgroundColor(Color
 						.parseColor("#4d13b6ed"));
+				tv_operationVote.setText("");
+				tv_operationVote.setBackgroundResource(R.drawable.voted);
+				tv_operationVote.getLayoutParams().width = dp2px(20);
+				tv_operationVote.getLayoutParams().height = dp2px(15);
 			}
 		}
 
@@ -707,7 +711,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		ll_praiseMember.post(new Runnable() {
 			@Override
 			public void run() {
-				int headWidth = ll_praiseMember.getWidth() / 5-5;
+				int headWidth = ll_praiseMember.getWidth() / 5 - 5;
 				int padding = dp2px(5);
 				List<String> praiseusers = share.praiseusers;
 				tv_praiseNum.setText("共获得" + praiseusers.size() + "个赞");
@@ -738,9 +742,6 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 					ll_praiseMember.addView(view);
 					if (i == 5)
 						break;
-					System.out.println(ll_praiseMember.getWidth()
-							+ "------------" + headWidth + "+++++++++"
-							+ ll_praiseMember.getChildAt(0).getWidth());
 				}
 			}
 		});
@@ -858,6 +859,13 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 								.get(share.gsid).content.voteoptions
 								.get(selected - 1).voteUsers.size()
 								+ "票");
+						TextView voted = (TextView) (ll_detailContent
+								.getChildAt(selected)
+								.findViewById(R.id.tv_operationVote));
+						voted.setText("");
+						voted.setBackgroundResource(R.drawable.voted);
+						voted.getLayoutParams().width = dp2px(20);
+						voted.getLayoutParams().height = dp2px(15);
 					}
 				});
 			}
