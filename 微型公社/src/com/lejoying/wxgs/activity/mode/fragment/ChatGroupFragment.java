@@ -259,28 +259,28 @@ public class ChatGroupFragment extends BaseFragment {
 
 		iv_send = mContent.findViewById(R.id.iv_send);
 //		iv_more = mContent.findViewById(R.id.iv_more);
-		iv_more_select = mContent.findViewById(R.id.iv_more_select);
+//		iv_more_select = mContent.findViewById(R.id.iv_more_select);
 		editText_message = (EditText) mContent.findViewById(R.id.et_message);
 		rl_chatbottom = (RelativeLayout) mContent
 				.findViewById(R.id.chat_bottom_bar);
 		rl_message = (RelativeLayout) mContent.findViewById(R.id.rl_message);
-		rl_select = (RelativeLayout) mContent.findViewById(R.id.rl_select);
-		rl_audiopanel = (RelativeLayout) mContent
-				.findViewById(R.id.rl_audiopanel);
-		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
-		rl_makeaudio = mContent.findViewById(R.id.rl_makeaudio);
-		tv_voice = (TextView) mContent.findViewById(R.id.tv_voice);
-		tv_voice_start = (TextView) mContent.findViewById(R.id.tv_voice_start);
-		iv_voice_send = (ImageView) mContent.findViewById(R.id.iv_voice_send);
-		iv_voice_play = (ImageView) mContent.findViewById(R.id.iv_voice_play);
-		tv_voice_timelength = (TextView) mContent
-				.findViewById(R.id.tv_voice_timelength);
+//		rl_select = (RelativeLayout) mContent.findViewById(R.id.rl_select);
+//		rl_audiopanel = (RelativeLayout) mContent
+//				.findViewById(R.id.rl_audiopanel);
+//		rl_selectpicture = mContent.findViewById(R.id.rl_selectpicture);
+//		rl_makeaudio = mContent.findViewById(R.id.rl_makeaudio);
+//		tv_voice = (TextView) mContent.findViewById(R.id.tv_voice);
+//		tv_voice_start = (TextView) mContent.findViewById(R.id.tv_voice_start);
+//		iv_voice_send = (ImageView) mContent.findViewById(R.id.iv_voice_send);
+//		iv_voice_play = (ImageView) mContent.findViewById(R.id.iv_voice_play);
+//		tv_voice_timelength = (TextView) mContent
+//				.findViewById(R.id.tv_voice_timelength);
 
 		rl_face = (RelativeLayout) mContent.findViewById(R.id.rl_face);
 		ll_facepanel = (LinearLayout) mContent.findViewById(R.id.ll_facepanel);
 		ll_facemenu = (LinearLayout) mContent.findViewById(R.id.ll_facemenu);
-		rl_selectedface = (RelativeLayout) mContent
-				.findViewById(R.id.rl_selectedface);
+//		rl_selectedface = (RelativeLayout) mContent
+//				.findViewById(R.id.rl_selectedface);
 		chat_vPager = (ViewPager) mContent.findViewById(R.id.chat_vPager);
 		iv_face_left = (ImageView) mContent.findViewById(R.id.iv_face_left);
 		iv_face_right = (ImageView) mContent.findViewById(R.id.iv_face_right);
@@ -292,13 +292,13 @@ public class ChatGroupFragment extends BaseFragment {
 				.findViewById(R.id.textView_groupName);
 		textView_memberCount = (TextView) mContent
 				.findViewById(R.id.textView_memberCount);
-
-		groupCenterBar = mContent.findViewById(R.id.relativeLayout_group);
-		textView_groupNameAndMemberCount = (TextView) mContent
-				.findViewById(R.id.textView_groupNameAndMemberCount);
-		linearlayout = (LinearLayout) groupCenterBar
-				.findViewById(R.id.linearlayout_user);
-		groupSetting = groupCenterBar.findViewById(R.id.groupSetting);
+//
+//		groupCenterBar = mContent.findViewById(R.id.relativeLayout_group);
+//		textView_groupNameAndMemberCount = (TextView) mContent
+//				.findViewById(R.id.textView_groupNameAndMemberCount);
+//		linearlayout = (LinearLayout) groupCenterBar
+//				.findViewById(R.id.linearlayout_user);
+//		groupSetting = groupCenterBar.findViewById(R.id.groupSetting);
 
 		linearlayout_members = (LinearLayout) mContent
 				.findViewById(R.id.linearlayout_members);
@@ -307,7 +307,7 @@ public class ChatGroupFragment extends BaseFragment {
 			groupTopBar.setVisibility(View.GONE);
 			initShowFirstPosition();
 			if (mNowChatFriend.notReadMessagesCount != 0) {
-				app.dataHandler.exclude(new Modification() {
+				app.dataHandler.exclude(new Modification(){
 
 					@Override
 					public void modifyData(Data data) {

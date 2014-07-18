@@ -281,19 +281,19 @@ public class ChatGroupActivity extends Activity {
 		chat_camera = (ImageView) findViewById(R.id.chat_camera);
 		iv_more_selecting = (ImageView) findViewById(R.id.iv_more_selecting);
 		iv_emoji_normal = (ImageView) findViewById(R.id.iv_emoji_normal);
-		iv_more_select = findViewById(R.id.iv_more_select);
+//		iv_more_select = findViewById(R.id.iv_more_select);
 		editText_message = (EditText) findViewById(R.id.et_message);
 		rl_chatbottom = (LinearLayout) findViewById(R.id.chat_bottom_bar);
 		rl_message = (RelativeLayout) findViewById(R.id.rl_message);
-		rl_select = (RelativeLayout) findViewById(R.id.rl_select);
-		rl_audiopanel = (RelativeLayout) findViewById(R.id.rl_audiopanel);
-		rl_selectpicture = findViewById(R.id.rl_selectpicture);
-		rl_makeaudio = findViewById(R.id.rl_makeaudio);
-		tv_voice = (TextView) findViewById(R.id.tv_voice);
-		tv_voice_start = (TextView) findViewById(R.id.tv_voice_start);
-		iv_voice_send = (ImageView) findViewById(R.id.iv_voice_send);
-		iv_voice_play = (ImageView) findViewById(R.id.iv_voice_play);
-		tv_voice_timelength = (TextView) findViewById(R.id.tv_voice_timelength);
+//		rl_select = (RelativeLayout) findViewById(R.id.rl_select);
+//		rl_audiopanel = (RelativeLayout) findViewById(R.id.rl_audiopanel);
+//		rl_selectpicture = findViewById(R.id.rl_selectpicture);
+//		rl_makeaudio = findViewById(R.id.rl_makeaudio);
+//		tv_voice = (TextView) findViewById(R.id.tv_voice);
+//		tv_voice_start = (TextView) findViewById(R.id.tv_voice_start);
+//		iv_voice_send = (ImageView) findViewById(R.id.iv_voice_send);
+//		iv_voice_play = (ImageView) findViewById(R.id.iv_voice_play);
+//		tv_voice_timelength = (TextView) findViewById(R.id.tv_voice_timelength);
 
 		rl_record = (RelativeLayout) findViewById(R.id.rl_record);
 		iv_record = (ImageView) findViewById(R.id.iv_record);
@@ -305,7 +305,7 @@ public class ChatGroupActivity extends Activity {
 		rl_face = (RelativeLayout) findViewById(R.id.rl_face);
 		ll_facepanel = (LinearLayout) findViewById(R.id.ll_facepanel);
 		ll_facemenu = (LinearLayout) findViewById(R.id.ll_facemenu);
-		rl_selectedface = (RelativeLayout) findViewById(R.id.rl_selectedface);
+//		rl_selectedface = (RelativeLayout) findViewById(R.id.rl_selectedface);
 		chat_vPager = (ViewPager) findViewById(R.id.chat_vPager);
 		iv_face_left = (ImageView) findViewById(R.id.iv_face_left);
 		iv_face_right = (ImageView) findViewById(R.id.iv_face_right);
@@ -316,11 +316,11 @@ public class ChatGroupActivity extends Activity {
 		textView_groupName = (TextView) findViewById(R.id.textView_groupName);
 		textView_memberCount = (TextView) findViewById(R.id.textView_memberCount);
 
-		groupCenterBar = findViewById(R.id.relativeLayout_group);
-		textView_groupNameAndMemberCount = (TextView) findViewById(R.id.textView_groupNameAndMemberCount);
+//		groupCenterBar = findViewById(R.id.relativeLayout_group);
+//		textView_groupNameAndMemberCount = (TextView) findViewById(R.id.textView_groupNameAndMemberCount);
 		linearlayout = (LinearLayout) groupCenterBar
 				.findViewById(R.id.linearlayout_user);
-		groupSetting = groupCenterBar.findViewById(R.id.groupSetting);
+//		groupSetting = groupCenterBar.findViewById(R.id.groupSetting);
 
 		linearlayout_members = (LinearLayout) findViewById(R.id.linearlayout_members);
 
