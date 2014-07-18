@@ -29,7 +29,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.ChatGroupActivity;
+import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
@@ -271,9 +271,9 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 				@Override
 				public void onClick(View arg0) {
 					mMainModeManager.back();
-					Intent intent = new Intent(getActivity(), ChatGroupActivity.class);
-					intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
-					intent.putExtra("mNowChatGroup", String.valueOf(mGroup.gid));
+					Intent intent = new Intent(getActivity(), ChatActivity.class);
+					intent.putExtra("status", ChatActivity.CHAT_GROUP);
+					intent.putExtra("gid", mGroup.gid+"");
 					startActivity(intent);
 //					mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
 //					mMainModeManager.mChatGroupFragment.mNowChatGroup = app.data.groupsMap
@@ -353,13 +353,13 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 
 							@Override
 							public void getSuccess() {
-								if (MainActivity.instance.mMainMode.mChatGroupFragment
-										.isAdded()) {
-									mMainModeManager.mChatGroupFragment.mAdapter
-											.notifyDataSetChanged();
-									mMainModeManager.mGroupFragment
-											.notifyViews();
-								}
+//								if (MainActivity.instance.mMainMode.mChatGroupFragment
+//										.isAdded()) {
+//									mMainModeManager.mChatGroupFragment.mAdapter
+//											.notifyDataSetChanged();
+//									mMainModeManager.mGroupFragment
+//											.notifyViews();
+//								}
 							}
 						});
 					}

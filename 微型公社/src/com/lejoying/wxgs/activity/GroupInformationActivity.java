@@ -79,8 +79,11 @@ public class GroupInformationActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		mCurrentGroupInfomation = app.data.groupsMap.get("247");
+		String gid = getIntent().getStringExtra("gid");
+		if (gid == null || "".equals(gid)) {
+			return;
+		}
+		mCurrentGroupInfomation = app.data.groupsMap.get(gid);
 
 		mInflater = this.getLayoutInflater();
 		setContentView(R.layout.activity_group_information);

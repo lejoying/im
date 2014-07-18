@@ -453,10 +453,10 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-					mMainModeManager.mChatFragment.mNowChatFriend = app.data.friends
-							.get(mShowFriend.phone);
-					mMainModeManager.showNext(mMainModeManager.mChatFragment);
+//					mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
+//					mMainModeManager.mChatFragment.mNowChatFriend = app.data.friends
+//							.get(mShowFriend.phone);
+//					mMainModeManager.showNext(mMainModeManager.mChatFragment);
 				}
 			});
 			button2.setOnClickListener(new OnClickListener() {

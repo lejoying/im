@@ -35,7 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.ChatFriendActivity;
+import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -156,16 +156,21 @@ public class CirclesFragment extends BaseFragment {
 	}
 
 	public void notifyViews() {
-		if (MainActivity.instance.mMainMode.mChatFragment.isAdded()
-				|| MainActivity.instance.mMainMode.mChatGroupFragment.isAdded()) {
+		if (mode.equals("normal")) {
+			notifyViews(true, true);
+		} else if (mode.equals("edit")) {
 			notifyViews(true, false);
-		} else {
-			if (mode.equals("normal")) {
-				notifyViews(true, true);
-			} else if (mode.equals("edit")) {
-				notifyViews(true, false);
-			}
 		}
+//		if (MainActivity.instance.mMainMode.mChatFragment.isAdded()
+//				|| MainActivity.instance.mMainMode.mChatGroupFragment.isAdded()) {
+//			notifyViews(true, false);
+//		} else {
+//			if (mode.equals("normal")) {
+//				notifyViews(true, true);
+//			} else if (mode.equals("edit")) {
+//				notifyViews(true, false);
+//			}
+//		}
 	}
 
 	public void notifyViews(boolean initShowMessageCount, boolean showMenu) {
@@ -1140,9 +1145,9 @@ public class CirclesFragment extends BaseFragment {
 		messageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-				mMainModeManager.mChatFragment.mNowChatFriend = friend;
-				mMainModeManager.showNext(mMainModeManager.mChatFragment);
+//				mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
+//				mMainModeManager.mChatFragment.mNowChatFriend = friend;
+//				mMainModeManager.showNext(mMainModeManager.mChatFragment);
 			}
 		});
 	}
@@ -1319,10 +1324,10 @@ public class CirclesFragment extends BaseFragment {
 					public void onClick(final View holderView) {
 						if (mode.equals("normal")) {
 							Intent intent = new Intent(getActivity(),
-									ChatFriendActivity.class);
-							intent.putExtra("mStatus",
-									ChatFriendActivity.CHAT_FRIEND);
-							intent.putExtra("mNowChatFriend", friend);
+									ChatActivity.class);
+							intent.putExtra("status",
+									ChatActivity.CHAT_FRIEND);
+							intent.putExtra("phone", friend.phone);
 							startActivity(intent);
 							// mMainModeManager.mChatFragment.mStatus =
 							// ChatFriendFragment.CHAT_FRIEND;

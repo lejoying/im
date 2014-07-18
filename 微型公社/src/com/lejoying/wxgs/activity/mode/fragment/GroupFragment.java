@@ -28,12 +28,9 @@ import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.ChatGroupActivity;
-import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.activity.PicAndVoiceDetailActivity;
+import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
-import com.lejoying.wxgs.activity.utils.NotificationUtils;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
@@ -475,9 +472,9 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 									mMainModeManager
 											.showNext(mMainModeManager.mGroupBusinessCardFragment);
 								} else {
-									Intent intent = new Intent(getActivity(), ChatGroupActivity.class);
-									intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
-									intent.putExtra("mNowChatGroup", String.valueOf(group.gid));
+									Intent intent = new Intent(getActivity(), ChatActivity.class);
+									intent.putExtra("status", ChatActivity.CHAT_GROUP);
+									intent.putExtra("gid",group.gid+"");
 									startActivity(intent);
 //									mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
 //									mMainModeManager.mChatGroupFragment.mNowChatGroup = group;

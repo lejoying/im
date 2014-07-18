@@ -24,7 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
+import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.app.MainApplication;
@@ -731,7 +731,7 @@ public class SquareContentView extends HorizontalScrollView {
 			}
 
 			contentText.setText(ExpressionUtil.getExpressionString(mContext,
-					message.content.text, ChatFriendFragment.faceRegx,
+					message.content.text, ChatActivity.faceRegx,
 					SquareFragment.expressionFaceMap));
 			// float contentTextSize = contentText.getWidth() / 11;
 			// contentText.setTextSize(contentTextSize);

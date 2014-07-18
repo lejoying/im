@@ -32,7 +32,6 @@ import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareOnLineUserFragment;
@@ -149,19 +148,25 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if ("chatFriend".equals(NotificationUtils.showFragment)) {
-			mMainMode.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-			mMainMode.mChatFragment.mNowChatFriend = app.data.friends
-					.get(NotificationUtils.message.phone);
-			mMainMode.showNext(mMainMode.mChatFragment);
-		} else if ("chatGroup".equals(NotificationUtils.showFragment)) {
-			Intent intent = new Intent(MainActivity.this, ChatGroupActivity.class);
-			intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
-			intent.putExtra("mNowChatGroup", NotificationUtils.message.gid);
+			// mMainMode.mChatFragment.mStatus = ChatActivity.CHAT_FRIEND;
+			// mMainMode.mChatFragment.mNowChatFriend = app.data.friends
+			// .get(NotificationUtils.message.phone);
+			// mMainMode.showNext(mMainMode.mChatFragment);
+			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			intent.putExtra("status", ChatActivity.CHAT_FRIEND);
+			intent.putExtra("phone", NotificationUtils.message.phone);
 			startActivity(intent);
-//			mMainMode.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-//			mMainMode.mChatFragment.mNowChatGroup = app.data.groupsMap
-//					.get(NotificationUtils.message.gid);
-//			mMainMode.show(mMainMode.mChatGroupFragment);
+		} else if ("chatGroup".equals(NotificationUtils.showFragment)) {
+			Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+			intent.putExtra("status", ChatActivity.CHAT_GROUP);
+			intent.putExtra("gid", NotificationUtils.message.gid);
+			startActivity(intent);
+
+			// mMainMode.mChatGroupFragment.mStatus =
+			// ChatFriendFragment.CHAT_GROUP;
+			// mMainMode.mChatFragment.mNowChatGroup = app.data.groupsMap
+			// .get(NotificationUtils.message.gid);
+			// mMainMode.show(mMainMode.mChatGroupFragment);
 		} else if ("chatList".equals(NotificationUtils.showFragment)) {
 			mMainMode.show(mMainMode.mChatMessagesFragment);
 		}

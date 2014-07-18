@@ -30,7 +30,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.ChatGroupActivity;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
@@ -264,9 +263,9 @@ public class GroupBusinessCardActivity extends Activity implements
 				public void onClick(View arg0) {
 					// mMainModeManager.back();
 					Intent intent = new Intent(GroupBusinessCardActivity.this,
-							ChatGroupActivity.class);
-					intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
-					intent.putExtra("mNowChatGroup", String.valueOf(mGroup.gid));
+							ChatActivity.class);
+					intent.putExtra("status", ChatActivity.CHAT_GROUP);
+					intent.putExtra("gid", mGroup.gid + "");
 					startActivity(intent);
 					// mMainModeManager.mChatGroupFragment.mStatus =
 					// ChatFriendFragment.CHAT_GROUP;

@@ -16,7 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.ChatGroupActivity;
+import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.app.MainApplication;
@@ -224,15 +224,15 @@ public class ChatMessagesFragment extends BaseFragment {
 					@Override
 					public void onClick(View view) {
 						if (chatFriend != null) {
-							mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-							mMainModeManager.mChatFragment.mNowChatFriend = chatFriend;
-							mMainModeManager
-									.showNext(mMainModeManager.mChatFragment);
+//							mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
+//							mMainModeManager.mChatFragment.mNowChatFriend = chatFriend;
+//							mMainModeManager
+//									.showNext(mMainModeManager.mChatFragment);
 							notifyViews();
 						} else {
-							Intent intent = new Intent(getActivity(), ChatGroupActivity.class);
-							intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
-							intent.putExtra("mNowChatGroup", String.valueOf(chatGroup.gid));
+							Intent intent = new Intent(getActivity(), ChatActivity.class);
+							intent.putExtra("status", ChatActivity.CHAT_GROUP);
+							intent.putExtra("gid", chatGroup.gid+"");
 							startActivity(intent);
 //							mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
 //							mMainModeManager.mChatGroupFragment.mNowChatGroup = chatGroup;

@@ -16,6 +16,33 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
+import com.lejoying.wxgs.activity.utils.TimeUtils;
+import com.lejoying.wxgs.activity.view.SampleView;
+import com.lejoying.wxgs.activity.view.widget.Alert;
+import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
+import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Friend;
+import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.data.entity.Message;
+import com.lejoying.wxgs.app.handler.OSSFileHandler;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -26,8 +53,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,20 +68,19 @@ import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -64,34 +90,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
 
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.utils.CommonNetConnection;
-import com.lejoying.wxgs.activity.utils.ExpressionUtil;
-import com.lejoying.wxgs.activity.utils.TimeUtils;
-import com.lejoying.wxgs.activity.view.SampleView;
-import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
-import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.API;
-import com.lejoying.wxgs.app.data.Data;
-import com.lejoying.wxgs.app.data.entity.Friend;
-import com.lejoying.wxgs.app.data.entity.Group;
-import com.lejoying.wxgs.app.data.entity.Message;
-import com.lejoying.wxgs.app.handler.DataHandler.Modification;
-import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
-import com.lejoying.wxgs.app.handler.OSSFileHandler;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
-
-public class ChatFriendActivity extends Activity {
+public class ChatActivity extends Activity implements OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
 
@@ -103,16 +104,14 @@ public class ChatFriendActivity extends Activity {
 	public Friend mNowChatFriend;
 	public Group mNowChatGroup;
 
-	// private View mContent;
 	public BaseAdapter mAdapter;
 
-	public MediaRecorder recorder;
+	public MediaRecorder mRecorder;
 	public MediaPlayer mPlayer;
-	public List<String> voice_list;
 	public String voice_name;
 	public int play_order = 0;
 	public double voice_length = 0;
-	public long startTime = 0;
+	public long startRecoderTime = 0;
 
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
@@ -146,6 +145,7 @@ public class ChatFriendActivity extends Activity {
 	LinearLayout ll_wave;
 	ImageView iv_wave;
 
+	ImageView iv_infomation;
 	RelativeLayout rl_face;
 	LinearLayout ll_facepanel;
 	LinearLayout ll_facemenu;
@@ -165,8 +165,6 @@ public class ChatFriendActivity extends Activity {
 	View groupTopBar;
 	View groupTopBar_back;
 	TextView textView_groupName;
-	TextView textView_memberCount;
-	LinearLayout linearlayout_members;
 
 	int beforeHeight;
 	int beforeLineHeight;
@@ -181,22 +179,8 @@ public class ChatFriendActivity extends Activity {
 
 	File tempFile;
 
-	public void initShowFirstPosition() {
-		int initShowCount = 10;
-		if (mNowChatFriend.notReadMessagesCount > 10) {
-			initShowCount = mNowChatFriend.notReadMessagesCount;
-		}
-		int messagesTotalCount = mNowChatFriend.messages.size();
-		if (messagesTotalCount < 10) {
-			initShowCount = messagesTotalCount;
-		}
-		showFirstPosition = messagesTotalCount - initShowCount;
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-	}
+	View headView;
+	View footerView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -204,28 +188,30 @@ public class ChatFriendActivity extends Activity {
 		setContentView(R.layout.f_chat);
 		imm = (InputMethodManager) getApplicationContext().getSystemService(
 				Context.INPUT_METHOD_SERVICE);
-		getWindow().setBackgroundDrawableResource(R.drawable.background4);
-		mStatus = getIntent().getIntExtra("mStatus", CHAT_FRIEND);
-		if (CHAT_FRIEND == mStatus) {
-			mNowChatFriend = (Friend) getIntent().getSerializableExtra(
-					"mNowChatFriend");
-			mNowChatFriend = app.data.friends.get(mNowChatFriend.phone);
-		} else if (CHAT_GROUP == mStatus) {
-
-		}
 		mInflater = this.getLayoutInflater();
+		mStatus = getIntent().getIntExtra("status", CHAT_FRIEND);
+		if (CHAT_FRIEND == mStatus) {
+			String phone = getIntent().getStringExtra("phone");
+			if (phone != null && !"".equals(phone)) {
+				mNowChatFriend = app.data.friends.get(phone);
+			}
+		} else if (CHAT_GROUP == mStatus) {
+			String gid = getIntent().getStringExtra("gid");
+			if (gid != null && !"".equals(gid)) {
+				mNowChatGroup = app.data.groupsMap.get(gid);
+			}
+		}
 
-		// voice
-		voice_list = new ArrayList<String>();
 		faceMenuShowList = new ArrayList<ImageView>();
 		faceNamesList = new ArrayList<String[]>();
-		// mContent = mInflater.inflate(R.layout.f_chat, null);
+
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		density = dm.density;
 		dip = (int) (40 * density + 0.5f);
 		height = dm.heightPixels;
 		width = dm.widthPixels;
+
 		chatContent = (ListView) findViewById(R.id.chatContent);
 
 		if (headView == null) {
@@ -242,8 +228,6 @@ public class ChatFriendActivity extends Activity {
 		chatContent.addFooterView(footerView);
 
 		iv_send = findViewById(R.id.iv_send);
-		// TODO　delete
-		// iv_more = findViewById(R.id.iv_more);
 		iv_more_selecting = (ImageView) findViewById(R.id.iv_more_selecting);
 		iv_emoji_normal = (ImageView) findViewById(R.id.iv_emoji_normal);
 		editText_message = (EditText) findViewById(R.id.et_message);
@@ -268,43 +252,27 @@ public class ChatFriendActivity extends Activity {
 		ll_wave = (LinearLayout) findViewById(R.id.ll_wave);
 		iv_wave = (ImageView) findViewById(R.id.iv_wave);
 
+		iv_infomation = (ImageView) findViewById(R.id.iv_infomation);
 		groupTopBar = findViewById(R.id.relativeLayout_topbar);
 		groupTopBar_back = findViewById(R.id.backview);
 		textView_groupName = (TextView) findViewById(R.id.textView_groupName);
-		textView_memberCount = (TextView) findViewById(R.id.textView_memberCount);
 
-		linearlayout_members = (LinearLayout) findViewById(R.id.linearlayout_members);
-
+		groupTopBar.setVisibility(View.VISIBLE);
 		if (mStatus == CHAT_FRIEND) {
-			groupTopBar.setVisibility(View.VISIBLE);
 			if (!mNowChatFriend.alias.equals("")
 					&& mNowChatFriend.alias != null) {
 				textView_groupName.setText(mNowChatFriend.alias);
 			} else {
 				textView_groupName.setText(mNowChatFriend.nickName);
 			}
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.WRAP_CONTENT,
-					RelativeLayout.LayoutParams.WRAP_CONTENT);
-			// layoutParams.setMargins(45, 0, 0, 0);
-			layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-			textView_groupName.setLayoutParams(layoutParams);
-			textView_memberCount.setText("");
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-					60, 60);
-			params.rightMargin = 20;
-			final ImageView iv_head = new ImageView(this);
-			final String headFileName = mNowChatFriend.head;
-			app.fileHandler.getHeadImage(headFileName, mNowChatFriend.sex,
-					new FileResult() {
+			app.fileHandler.getHeadImage(mNowChatFriend.head,
+					mNowChatFriend.sex, new FileResult() {
+
 						@Override
 						public void onResult(String where, Bitmap bitmap) {
-							iv_head.setImageBitmap(app.fileHandler.bitmaps
-									.get(headFileName));
+							iv_infomation.setImageBitmap(bitmap);
 						}
 					});
-			iv_head.setLayoutParams(params);
-			linearlayout_members.addView(iv_head);
 			initShowFirstPosition();
 			if (mNowChatFriend.notReadMessagesCount != 0) {
 				app.dataHandler.exclude(new Modification() {
@@ -322,107 +290,18 @@ public class ChatFriendActivity extends Activity {
 				});
 			}
 		} else if (mStatus == CHAT_GROUP) {
-			groupTopBar.setVisibility(View.VISIBLE);
-			textView_groupName.setText(mNowChatGroup.name);
-			textView_memberCount.setText("(" + mNowChatGroup.members.size()
-					+ "人)");
-			int topShowCount = mNowChatGroup.members.size() < 4 ? mNowChatGroup.members
-					.size() : 4;
-			for (int i = 0; i < topShowCount; i++) {
-				final ImageView iv_head = new ImageView(this);
-				final String headFileName = app.data.groupFriends
-						.get(mNowChatGroup.members.get(i)).head;
-				app.fileHandler
-						.getHeadImage(headFileName, app.data.groupFriends
-								.get(mNowChatGroup.members.get(i)).sex,
-								new FileResult() {
-									@Override
-									public void onResult(String where,
-											Bitmap bitmap) {
-										iv_head.setImageBitmap(app.fileHandler.bitmaps
-												.get(headFileName));
-									}
-								});
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						40, 40);
-				if (i != 3)
-					params.setMargins(0, 0, 10, 0);
-				iv_head.setLayoutParams(params);
-				linearlayout_members.addView(iv_head);
-			}
-
-			for (int i = 0; i < mNowChatGroup.members.size(); i++) {
-				final Friend friend = app.data.groupFriends
-						.get(mNowChatGroup.members.get(i));
-				View userView = mInflater.inflate(
-						R.layout.fragment_circles_gridpage_item, null);
-				final ImageView iv_head = (ImageView) userView
-						.findViewById(R.id.iv_head);
-				TextView tv_nickname = (TextView) userView
-						.findViewById(R.id.tv_nickname);
-				tv_nickname.setText(friend.nickName);
-				final String headFileName = friend.head;
-				app.fileHandler.getHeadImage(headFileName, friend.sex,
-						new FileResult() {
-							@Override
-							public void onResult(String where, Bitmap bitmap) {
-								iv_head.setImageBitmap(app.fileHandler.bitmaps
-										.get(headFileName));
-							}
-						});
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
-
-				params.setMargins(40, 0, 0, 0);
-
-				if (i == mNowChatGroup.members.size() - 1) {
-					params.setMargins(40, 0, 40, 0);
-				}
-				userView.setLayoutParams(params);
-
-				userView.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						// TODO
-						// if (app.data.friends.get(friend.phone) != null) {
-						// mMainModeManager.mBusinessCardFragment.mStatus =
-						// BusinessCardFragment.SHOW_FRIEND;
-						// mMainModeManager.mBusinessCardFragment.mShowFriend =
-						// friend;
-						// mMainModeManager
-						// .showNext(mMainModeManager.mBusinessCardFragment);
-						// } else if (friend.phone.equals(app.data.user.phone))
-						// {
-						// mMainModeManager.mBusinessCardFragment.mStatus =
-						// BusinessCardFragment.SHOW_SELF;
-						// mMainModeManager.mBusinessCardFragment.mShowFriend =
-						// friend;
-						// mMainModeManager
-						// .showNext(mMainModeManager.mBusinessCardFragment);
-						// } else {
-						// mMainModeManager.mBusinessCardFragment.mStatus =
-						// BusinessCardFragment.SHOW_TEMPFRIEND;
-						// mMainModeManager.mBusinessCardFragment.mShowFriend =
-						// friend;
-						// mMainModeManager
-						// .showNext(mMainModeManager.mBusinessCardFragment);
-						// }
-					}
-				});
-
-			}
-
+			textView_groupName.setText(mNowChatGroup.name + " ( "
+					+ mNowChatGroup.members.size() + "人 )");
 		}
 		// mMainModeManager.handleMenu(false);
 		initEvent();
 		initBaseFaces();
-		if (mStatus == CHAT_FRIEND) {
-			mAdapter = new ChatAdapter();
-		} else if (mStatus == CHAT_GROUP) {
-			mAdapter = new GroupChatAdapter();
-		}
+		mAdapter = new ChatAdapter();
+
+		// if (mStatus == CHAT_FRIEND) {
+		// } else if (mStatus == CHAT_GROUP) {
+		// mAdapter = new GroupChatAdapter();
+		// }
 		chatContent.setAdapter(mAdapter);
 
 		chatContent.setSelection(mAdapter.getCount() - 1);
@@ -450,62 +329,309 @@ public class ChatFriendActivity extends Activity {
 		});
 	}
 
-	View headView;
-	View footerView;
+	public void initShowFirstPosition() {
+		int initShowCount = 10;
+		if (mNowChatFriend.notReadMessagesCount > 10) {
+			initShowCount = mNowChatFriend.notReadMessagesCount;
+		}
+		int messagesTotalCount = mNowChatFriend.messages.size();
+		if (messagesTotalCount < 10) {
+			initShowCount = messagesTotalCount;
+		}
+		showFirstPosition = messagesTotalCount - initShowCount;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+	}
 
 	public float dp2px(float px) {
-		float dp = ChatFriendActivity.this.getResources().getDisplayMetrics().density
+		float dp = ChatActivity.this.getResources().getDisplayMetrics().density
 				* px + 0.5f;
 		return dp;
 	}
 
-	void initEvent() {
-		iv_more_selecting.setOnClickListener(new OnClickListener() {
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.iv_more_selecting:
+			if (imm.isActive()) {
+				// imm.toggleSoftInput(0,
+				// InputMethodManager.HIDE_NOT_ALWAYS);
+				imm.hideSoftInputFromWindow(ChatActivity.this.getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+			if (rl_record.getVisibility() == View.VISIBLE) {
+				rl_record.setVisibility(View.GONE);
+				editText_message.setVisibility(View.VISIBLE);
+				iv_emoji_normal.setVisibility(View.VISIBLE);
+				iv_more_voice.setImageResource(R.drawable.chat_voice);
+			}
+			if (rl_face.getVisibility() == View.VISIBLE) {
+				rl_face.setVisibility(View.GONE);
+			}
+			if (rl_chat_menubar.getVisibility() == View.GONE) {
+				rl_chat_menubar.setVisibility(View.VISIBLE);
+			}
+			break;
+		case R.id.iv_emoji_normal:
+			if (imm.isActive()) {
+				imm.hideSoftInputFromWindow(ChatActivity.this.getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+			if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
+				rl_chat_menubar.setVisibility(View.GONE);
+			}
+			int show_status = rl_face.getVisibility();
+			if (show_status == View.VISIBLE) {
+				rl_face.setVisibility(View.GONE);
+			} else {
+				rl_face.setVisibility(View.VISIBLE);
+				// hideSelectTab();
+			}
+			break;
+		case R.id.ll_facepanel:
 
-			@Override
-			public void onClick(View v) {
-				if (imm.isActive()) {
-					// imm.toggleSoftInput(0,
-					// InputMethodManager.HIDE_NOT_ALWAYS);
-					imm.hideSoftInputFromWindow(ChatFriendActivity.this
-							.getCurrentFocus().getWindowToken(),
-							InputMethodManager.HIDE_NOT_ALWAYS);
+			break;
+		case R.id.iv_face_left:
+			int start = editText_message.getSelectionStart();
+			String content = editText_message.getText().toString();
+			if (start - 1 < 0)
+				return;
+			String faceEnd = content.substring(start - 1, start);
+			if ("]".equals(faceEnd) || ">".equals(faceEnd)) {
+				String str = content.substring(0, start);
+				int index = "]".equals(faceEnd) ? str.lastIndexOf("[") : str
+						.lastIndexOf("<");
+				if (index != -1) {
+					String faceStr = content.substring(index, start);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						editText_message.setSelection(start - faceStr.length());
+					} else {
+						if (start - 1 >= 0) {
+							editText_message.setSelection(start - 1);
+						}
+					}
 				}
-				if (rl_record.getVisibility() == View.VISIBLE) {
+			} else {
+				if (start - 1 >= 0) {
+					editText_message.setSelection(start - 1);
+				}
+			}
+			break;
+		case R.id.iv_face_right:
+			int start1 = editText_message.getSelectionStart();
+			String content1 = editText_message.getText().toString();
+			if (start1 + 1 > content1.length())
+				return;
+			String faceEnd1 = content1.substring(start1, start1 + 1);
+			if ("[".equals(faceEnd1) || "<".equals(faceEnd1)) {
+				String str = content1.substring(start1);
+				int index = "[".equals(faceEnd1) ? str.indexOf("]") : str
+						.indexOf(">");
+				if (index != -1) {
+					String faceStr = content1.substring(start1, index + start1
+							+ 1);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						editText_message
+								.setSelection(start1 + faceStr.length());
+					} else {
+						if (start1 + 1 <= content1.length()) {
+							editText_message.setSelection(start1 + 1);
+						}
+					}
+				}
+			} else {
+				if (start1 + 1 <= content1.length()) {
+					editText_message.setSelection(start1 + 1);
+				}
+			}
+			break;
+		case R.id.iv_face_delete:
+			int start2 = editText_message.getSelectionStart();
+			String content2 = editText_message.getText().toString();
+			if (start2 - 1 < 0)
+				return;
+			String faceEnd2 = content2.substring(start2 - 1, start2);
+			if ("]".equals(faceEnd2) || ">".equals(faceEnd2)) {
+				String str = content2.substring(0, start2);
+				int index = "]".equals(faceEnd2) ? str.lastIndexOf("[") : str
+						.lastIndexOf("<");
+				if (index != -1) {
+					String faceStr = content2.substring(index, start2);
+					Pattern patten = Pattern.compile(faceRegx,
+							Pattern.CASE_INSENSITIVE);
+					Matcher matcher = patten.matcher(faceStr);
+					if (matcher.find()) {
+						editText_message.setText(content2.substring(0, start2
+								- faceStr.length())
+								+ content2.substring(start2));
+						editText_message
+								.setSelection(start2 - faceStr.length());
+					} else {
+						if (start2 - 1 >= 0) {
+							editText_message.setText(content2.substring(0,
+									start2 - 1) + content2.substring(start2));
+							editText_message.setSelection(start2 - 1);
+						}
+					}
+				}
+			} else {
+				if (start2 - 1 >= 0) {
+					editText_message.setText(content2.substring(0, start2 - 1)
+							+ content2.substring(start2));
+					editText_message.setSelection(start2 - 1);
+				}
+			}
+			break;
+		case R.id.et_message:
+			if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
+				rl_chat_menubar.setVisibility(View.GONE);
+			}
+			if (rl_face.getVisibility() == View.VISIBLE) {
+				rl_face.setVisibility(View.GONE);
+			}
+			new Thread() {
+				public void run() {
+					try {
+						sleep(50);
+						app.UIHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								chatContent.setSelection(chatContent
+										.getBottom());
+							}
+						});
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				};
+			}.start();
+			break;
+		case R.id.iv_send:
+			if (mPlayer != null) {
+				getRecordVoice();
+			} else {
+				final String message = editText_message.getText().toString();
+				ArrayList<String> messages = new ArrayList<String>();
+				messages.add(message);
+				editText_message.setText("");
+				if (message != null && !message.equals("")) {
+					sendMessage("text", messages);
+					rl_face.setVisibility(View.GONE);
+				}
+			}
+			break;
+
+		case R.id.chat_select:
+			selectPicture();
+			break;
+		case R.id.chat_camera:
+			takePicture();
+			break;
+		case R.id.iv_more_voice:
+			if (rl_record.getVisibility() == View.VISIBLE) {
+				if (mRecorder != null && mPlayer != null) {
+					Alert.createDialog(ChatActivity.this)
+							.setTitle("是否取消语音发送?")
+							.setOnConfirmClickListener(
+									new AlertInputDialog.OnDialogClickListener() {
+
+										@Override
+										public void onClick(
+												AlertInputDialog dialog) {
+											File file = new File(
+													app.sdcardVoiceFolder,
+													voice_name);
+											if (file.exists()) {
+												file.delete();
+											}
+											if (mRecorder != null) {
+												mRecorder.release();
+												mRecorder = null;
+											}
+											if (mPlayer != null) {
+												mPlayer.release();
+												mPlayer = null;
+											}
+											iv_more_selecting
+													.setVisibility(View.VISIBLE);
+											iv_send.setVisibility(View.GONE);
+											rl_record.setVisibility(View.GONE);
+											editText_message
+													.setVisibility(View.VISIBLE);
+											iv_emoji_normal
+													.setVisibility(View.VISIBLE);
+											iv_more_voice
+													.setImageResource(R.drawable.chat_voice);
+										}
+
+									}).show();
+				} else if (mRecorder != null && mPlayer == null) {
+
+				} else {
+					iv_more_selecting.setVisibility(View.VISIBLE);
+					iv_send.setVisibility(View.GONE);
 					rl_record.setVisibility(View.GONE);
 					editText_message.setVisibility(View.VISIBLE);
 					iv_emoji_normal.setVisibility(View.VISIBLE);
 					iv_more_voice.setImageResource(R.drawable.chat_voice);
 				}
-				if (rl_face.getVisibility() == View.VISIBLE) {
-					rl_face.setVisibility(View.GONE);
-				}
-				if (rl_chat_menubar.getVisibility() == View.GONE) {
-					rl_chat_menubar.setVisibility(View.VISIBLE);
-				}
-			}
-		});
-		iv_emoji_normal.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
+			} else {
 				if (imm.isActive()) {
-					imm.hideSoftInputFromWindow(ChatFriendActivity.this
+					imm.hideSoftInputFromWindow(ChatActivity.this
 							.getCurrentFocus().getWindowToken(),
 							InputMethodManager.HIDE_NOT_ALWAYS);
 				}
 				if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
 					rl_chat_menubar.setVisibility(View.GONE);
 				}
-				int show_status = rl_face.getVisibility();
-				if (show_status == View.VISIBLE) {
-					rl_face.setVisibility(View.GONE);
-				} else {
-					rl_face.setVisibility(View.VISIBLE);
-					// hideSelectTab();
-				}
+				iv_recordbg.getLayoutParams().width = editText_message
+						.getWidth() + iv_emoji_normal.getWidth();
+				rl_record.setVisibility(View.VISIBLE);
+				editText_message.setVisibility(View.GONE);
+				iv_emoji_normal.setVisibility(View.GONE);
+				iv_record.setImageResource(R.drawable.chat_voice_init);
+				iv_more_voice.setImageResource(R.drawable.chat_keyboard);
 			}
-		});
+			break;
+		case R.id.iv_infomation:
+			if (mStatus == CHAT_FRIEND) {
+				// TODO
+
+			} else if (mStatus == CHAT_GROUP) {
+				Intent intent = new Intent(ChatActivity.this,
+						GroupInformationActivity.class);
+				intent.putExtra("gid", mNowChatGroup.gid + "");
+				startActivity(intent);
+			}
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	void initEvent() {
+		iv_more_selecting.setOnClickListener(this);
+		iv_emoji_normal.setOnClickListener(this);
+		ll_facepanel.setOnClickListener(this);
+		iv_face_left.setOnClickListener(this);
+		iv_face_right.setOnClickListener(this);
+		iv_face_delete.setOnClickListener(this);
+		editText_message.setOnClickListener(this);
+		iv_send.setOnClickListener(this);
+		chat_select.setOnClickListener(this);
+		chat_camera.setOnClickListener(this);
+		iv_more_voice.setOnClickListener(this);
+		iv_infomation.setOnClickListener(this);
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
@@ -524,133 +650,9 @@ public class ChatFriendActivity extends Activity {
 
 			}
 		});
-		ll_facepanel.setOnClickListener(null);
-		iv_face_left.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				int start = editText_message.getSelectionStart();
-				String content = editText_message.getText().toString();
-				if (start - 1 < 0)
-					return;
-				String faceEnd = content.substring(start - 1, start);
-				if ("]".equals(faceEnd) || ">".equals(faceEnd)) {
-					String str = content.substring(0, start);
-					int index = "]".equals(faceEnd) ? str.lastIndexOf("[")
-							: str.lastIndexOf("<");
-					if (index != -1) {
-						String faceStr = content.substring(index, start);
-						Pattern patten = Pattern.compile(faceRegx,
-								Pattern.CASE_INSENSITIVE);
-						Matcher matcher = patten.matcher(faceStr);
-						if (matcher.find()) {
-							editText_message.setSelection(start
-									- faceStr.length());
-						} else {
-							if (start - 1 >= 0) {
-								editText_message.setSelection(start - 1);
-							}
-						}
-					}
-				} else {
-					if (start - 1 >= 0) {
-						editText_message.setSelection(start - 1);
-					}
-				}
-			}
-		});
-		iv_face_right.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				int start = editText_message.getSelectionStart();
-				String content = editText_message.getText().toString();
-				if (start + 1 > content.length())
-					return;
-				String faceEnd = content.substring(start, start + 1);
-				if ("[".equals(faceEnd) || "<".equals(faceEnd)) {
-					String str = content.substring(start);
-					int index = "[".equals(faceEnd) ? str.indexOf("]") : str
-							.indexOf(">");
-					if (index != -1) {
-						String faceStr = content.substring(start, index + start
-								+ 1);
-						Pattern patten = Pattern.compile(faceRegx,
-								Pattern.CASE_INSENSITIVE);
-						Matcher matcher = patten.matcher(faceStr);
-						if (matcher.find()) {
-							editText_message.setSelection(start
-									+ faceStr.length());
-						} else {
-							if (start + 1 <= content.length()) {
-								editText_message.setSelection(start + 1);
-							}
-						}
-					}
-				} else {
-					if (start + 1 <= content.length()) {
-						editText_message.setSelection(start + 1);
-					}
-				}
-			}
-		});
-		iv_face_delete.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				int start = editText_message.getSelectionStart();
-				String content = editText_message.getText().toString();
-				if (start - 1 < 0)
-					return;
-				String faceEnd = content.substring(start - 1, start);
-				if ("]".equals(faceEnd) || ">".equals(faceEnd)) {
-					String str = content.substring(0, start);
-					int index = "]".equals(faceEnd) ? str.lastIndexOf("[")
-							: str.lastIndexOf("<");
-					if (index != -1) {
-						String faceStr = content.substring(index, start);
-						Pattern patten = Pattern.compile(faceRegx,
-								Pattern.CASE_INSENSITIVE);
-						Matcher matcher = patten.matcher(faceStr);
-						if (matcher.find()) {
-							editText_message.setText(content.substring(0, start
-									- faceStr.length())
-									+ content.substring(start));
-							editText_message.setSelection(start
-									- faceStr.length());
-						} else {
-							if (start - 1 >= 0) {
-								editText_message.setText(content.substring(0,
-										start - 1) + content.substring(start));
-								editText_message.setSelection(start - 1);
-							}
-						}
-					}
-				} else {
-					if (start - 1 >= 0) {
-						editText_message.setText(content
-								.substring(0, start - 1)
-								+ content.substring(start));
-						editText_message.setSelection(start - 1);
-					}
-				}
-			}
-		});
-		groupTopBar.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO
-				// mMainModeManager.mBusinessCardFragment.mStatus =
-				// BusinessCardFragment.SHOW_FRIEND;
-				// mMainModeManager.mBusinessCardFragment.mShowFriend =
-				// mNowChatFriend;
-				// mMainModeManager
-				// .showNext(mMainModeManager.mBusinessCardFragment);
-			}
-		});
 		final GestureDetector backViewDetector = new GestureDetector(
-				ChatFriendActivity.this,
+				ChatActivity.this,
 				new GestureDetector.SimpleOnGestureListener() {
 					@Override
 					public boolean onDown(MotionEvent e) {
@@ -684,7 +686,7 @@ public class ChatFriendActivity extends Activity {
 		});
 
 		final GestureDetector gestureDetector = new GestureDetector(
-				ChatFriendActivity.this, new OnGestureListener() {
+				ChatActivity.this, new OnGestureListener() {
 
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
@@ -734,38 +736,6 @@ public class ChatFriendActivity extends Activity {
 			}
 		});
 
-		editText_message.setVisibility(View.GONE);
-		editText_message.setVisibility(View.VISIBLE);
-		editText_message.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO
-				if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
-					rl_chat_menubar.setVisibility(View.GONE);
-				}
-				if (rl_face.getVisibility() == View.VISIBLE) {
-					rl_face.setVisibility(View.GONE);
-				}
-				new Thread() {
-					public void run() {
-						try {
-							sleep(50);
-							app.UIHandler.post(new Runnable() {
-								@Override
-								public void run() {
-									chatContent.setSelection(chatContent
-											.getBottom());
-								}
-							});
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					};
-				}.start();
-
-			}
-		});
 		editText_message.setOnFocusChangeListener(new OnFocusChangeListener() {
 
 			@Override
@@ -845,7 +815,7 @@ public class ChatFriendActivity extends Activity {
 				String afterContent = s.toString().trim();
 				if (!afterContent.equals(content)) {
 					SpannableString spannableString = ExpressionUtil
-							.getExpressionString(ChatFriendActivity.this,
+							.getExpressionString(ChatActivity.this,
 									s.toString(), faceRegx, expressionFaceMap);
 					editText_message.setText(spannableString);
 					editText_message.setSelection(selectionIndex);
@@ -868,126 +838,18 @@ public class ChatFriendActivity extends Activity {
 			}
 		});
 
-		iv_send.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (mPlayer != null) {
-					getRecordVoice();
-				} else {
-					final String message = editText_message.getText()
-							.toString();
-					ArrayList<String> messages = new ArrayList<String>();
-					messages.add(message);
-					editText_message.setText("");
-					if (message != null && !message.equals("")) {
-						sendMessage("text", messages);
-						rl_face.setVisibility(View.GONE);
-					}
-				}
-			}
-		});
-		chat_select.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				selectPicture();
-
-			}
-		});
-		chat_camera.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				takePicture();
-
-			}
-		});
-		iv_more_voice.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (rl_record.getVisibility() == View.VISIBLE) {
-					if (recorder != null && mPlayer != null) {
-						Alert.createDialog(ChatFriendActivity.this)
-								.setTitle("是否取消语音发送?")
-								.setOnConfirmClickListener(
-										new AlertInputDialog.OnDialogClickListener() {
-
-											@Override
-											public void onClick(
-													AlertInputDialog dialog) {
-												File file = new File(
-														app.sdcardVoiceFolder,
-														voice_list
-																.remove(voice_list
-																		.size() - 1));
-												if (file.exists()) {
-													file.delete();
-												}
-												if (recorder != null) {
-													recorder.release();
-													recorder = null;
-												}
-												if (mPlayer != null) {
-													mPlayer.release();
-													mPlayer = null;
-												}
-												iv_more_selecting
-														.setVisibility(View.VISIBLE);
-												iv_send.setVisibility(View.GONE);
-												rl_record
-														.setVisibility(View.GONE);
-												editText_message
-														.setVisibility(View.VISIBLE);
-												iv_emoji_normal
-														.setVisibility(View.VISIBLE);
-												iv_more_voice
-														.setImageResource(R.drawable.chat_voice);
-											}
-
-										}).show();
-					} else if (recorder != null && mPlayer == null) {
-
-					} else {
-						iv_more_selecting.setVisibility(View.VISIBLE);
-						iv_send.setVisibility(View.GONE);
-						rl_record.setVisibility(View.GONE);
-						editText_message.setVisibility(View.VISIBLE);
-						iv_emoji_normal.setVisibility(View.VISIBLE);
-						iv_more_voice.setImageResource(R.drawable.chat_voice);
-					}
-				} else {
-					if (imm.isActive()) {
-						imm.hideSoftInputFromWindow(ChatFriendActivity.this
-								.getCurrentFocus().getWindowToken(),
-								InputMethodManager.HIDE_NOT_ALWAYS);
-					}
-					if (rl_chat_menubar.getVisibility() == View.VISIBLE) {
-						rl_chat_menubar.setVisibility(View.GONE);
-					}
-					iv_recordbg.getLayoutParams().width = editText_message
-							.getWidth() + iv_emoji_normal.getWidth();
-					rl_record.setVisibility(View.VISIBLE);
-					editText_message.setVisibility(View.GONE);
-					iv_emoji_normal.setVisibility(View.GONE);
-					iv_record.setImageResource(R.drawable.chat_voice_init);
-					iv_more_voice.setImageResource(R.drawable.chat_keyboard);
-				}
-			}
-		});
 		iv_record.setOnTouchListener(new OnTouchListener() {
 			boolean isLong = false, recording = false;
 			GestureDetector gestureDetector = new GestureDetector(
-					ChatFriendActivity.this,
+					ChatActivity.this,
 					new GestureDetector.SimpleOnGestureListener() {
 						@Override
 						public void onLongPress(MotionEvent e) {
-							if (recorder != null || mPlayer != null) {
+							if (mRecorder != null || mPlayer != null) {
 								isLong = true;
 								recording = false;
 								if (ll_wave.getVisibility() == View.VISIBLE) {
-									recorder.stop();
+									mRecorder.stop();
 									ll_wave.setVisibility(View.GONE);
 								}
 								iv_record
@@ -1002,8 +864,8 @@ public class ChatFriendActivity extends Activity {
 
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
-							if (recorder == null && mPlayer == null) {
-								start();
+							if (mRecorder == null && mPlayer == null) {
+								startRecoder();
 								iv_record
 										.setImageResource(R.drawable.chat_voice_stop);
 								ll_wave.setVisibility(View.VISIBLE);
@@ -1015,7 +877,7 @@ public class ChatFriendActivity extends Activity {
 										while (recording) {
 											try {
 												sleep(200);
-												int x = recorder
+												int x = mRecorder
 														.getMaxAmplitude();
 												if (x != 0) {
 													final int f = (int) (10 * Math
@@ -1051,18 +913,19 @@ public class ChatFriendActivity extends Activity {
 									}
 								}.start();
 
-							} else if (recorder != null && mPlayer == null) {
+							} else if (mRecorder != null && mPlayer == null) {
 								recording = false;
 								ll_wave.setVisibility(View.GONE);
-								if (System.currentTimeMillis() - startTime > 1000) {
-									recorder.stop();
-									recorder.reset();
-									recorder.release();
+								if (System.currentTimeMillis()
+										- startRecoderTime > 1000) {
+									mRecorder.stop();
+									mRecorder.reset();
+									mRecorder.release();
 									File file = new File(app.sdcardVoiceFolder,
 											voice_name);
 									if (file.exists()) {
 										mPlayer = MediaPlayer.create(
-												ChatFriendActivity.this,
+												ChatActivity.this,
 												Uri.parse(file
 														.getAbsolutePath()));
 										iv_record
@@ -1077,16 +940,15 @@ public class ChatFriendActivity extends Activity {
 									if (file.exists()) {
 										file.delete();
 									}
-									Toast.makeText(ChatFriendActivity.this,
-											"录音时间太短", Toast.LENGTH_SHORT)
-											.show();
-									recorder.reset();
-									recorder = null;
+									Toast.makeText(ChatActivity.this, "录音时间太短",
+											Toast.LENGTH_SHORT).show();
+									mRecorder.reset();
+									mRecorder = null;
 									iv_record
 											.setImageResource(R.drawable.chat_voice_init);
 								}
 
-							} else if (recorder != null && mPlayer != null) {
+							} else if (mRecorder != null && mPlayer != null) {
 								if (mPlayer.isPlaying()) {
 									mPlayer.pause();
 									iv_record
@@ -1116,9 +978,9 @@ public class ChatFriendActivity extends Activity {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_UP:
 					if (isLong) {
-						if (recorder != null) {
-							recorder.release();
-							recorder = null;
+						if (mRecorder != null) {
+							mRecorder.release();
+							mRecorder = null;
 						}
 						if (mPlayer != null) {
 							mPlayer.release();
@@ -1144,103 +1006,71 @@ public class ChatFriendActivity extends Activity {
 		});
 	}
 
-	MediaPlayer playAudio(int i) {
-		mPlayer = MediaPlayer.create(ChatFriendActivity.this, Uri
-				.parse((new File(app.sdcardVoiceFolder, voice_list.get(i)))
-						.getAbsolutePath()));
-		mPlayer.start();
-		return mPlayer;
-	}
-
 	@SuppressLint("InlinedApi")
-	void start() {
-		String fileName = new Date().getTime() + ".aac";
+	void startRecoder() {
+		voice_name = new Date().getTime() + ".aac";
 		// AudioRecord audioRecord = new AudioRecord(audioSource,
 		// sampleRateInHz, channelConfig, audioFormat,
 		// bufferSizeInBytes)
-		recorder = new MediaRecorder();
-		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//
+		mRecorder = new MediaRecorder();
+		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//
 		// recorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
 		// recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		// recorder.setAudioSamplingRate(3000);
 		// recorder.setAudioEncodingBitRate(10000);
-		recorder.setOutputFile((new File(app.sdcardVoiceFolder, fileName))
+		mRecorder.setOutputFile((new File(app.sdcardVoiceFolder, voice_name))
 				.getAbsolutePath());
 		try {
-			recorder.prepare();
+			mRecorder.prepare();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		startTime = System.currentTimeMillis();
-		recorder.start();
-		voice_name = fileName;
-		voice_list.add(fileName);
-		// };
-		// }.start();
-	}
-
-	private InputMethodManager getInputMethodManager() {
-		InputMethodManager mInputMethodManager = null;
-		if (mInputMethodManager == null) {
-			mInputMethodManager = (InputMethodManager) this
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
-		}
-		return mInputMethodManager;
-	}
-
-	protected boolean hideSoftInput() {
-		boolean flag = false;
-		if (this.getCurrentFocus() != null) {
-			flag = getInputMethodManager().hideSoftInputFromWindow(
-					this.getCurrentFocus().getWindowToken(), 0);
-		}
-		return flag;
-	}
-
-	public class GroupChatAdapter extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			return mNowChatGroup.messages.size();
-		}
-
-		@Override
-		public Object getItem(int arg0) {
-			return arg0;
-		}
-
-		@Override
-		public long getItemId(int arg0) {
-			return arg0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup arg2) {
-			return convertView;
-		}
-
+		startRecoderTime = System.currentTimeMillis();
+		mRecorder.start();
 	}
 
 	public class ChatAdapter extends BaseAdapter {
 
 		@Override
 		public void notifyDataSetChanged() {
-			if (mNowChatFriend.notReadMessagesCount != 0) {
-				app.dataHandler.exclude(new Modification() {
+			if (mStatus == CHAT_FRIEND) {
+				if (mNowChatFriend.notReadMessagesCount != 0) {
+					app.dataHandler.exclude(new Modification() {
 
-					@Override
-					public void modifyData(Data data) {
-						data.friends.get(mNowChatFriend.phone).notReadMessagesCount = 0;
-					}
+						@Override
+						public void modifyData(Data data) {
+							data.friends.get(mNowChatFriend.phone).notReadMessagesCount = 0;
+						}
 
-					@Override
-					public void modifyUI() {
-						// mMainModeManager.mCirclesFragment.notifyViews();
-						// mMainModeManager.handleMenu(false);
-					}
-				});
+						@Override
+						public void modifyUI() {
+							// mMainModeManager.mCirclesFragment.notifyViews();
+							// mMainModeManager.handleMenu(false);
+						}
+					});
+				}
+			} else if (mStatus == CHAT_GROUP) {
+				if (mNowChatGroup.notReadMessagesCount != 0) {
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							data.groupsMap.get(String
+									.valueOf(mNowChatGroup.gid)).notReadMessagesCount = 0;
+						}
+
+						@Override
+						public void modifyUI() {
+							// if
+							// (MainActivity.instance.mMainMode.mGroupFragment
+							// .isAdded()) {
+							// MainModeManager.mGroupFragment.notifyViews();
+							// }
+						}
+					});
+				}
 			}
 			super.notifyDataSetChanged();
 			chatContent.setSelection(mAdapter.getCount() - 1);
@@ -1248,12 +1078,26 @@ public class ChatFriendActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return mNowChatFriend.messages.size() - showFirstPosition;
+			int count = 0;
+			if (mStatus == CHAT_FRIEND) {
+				count = mNowChatFriend.messages.size() - showFirstPosition;
+			} else if (mStatus == CHAT_GROUP) {
+				count = mNowChatGroup.messages.size() - showFirstPosition;
+			}
+			return count;
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return mNowChatFriend.messages.get(showFirstPosition + position);
+			Object message = null;
+			if (mStatus == CHAT_FRIEND) {
+				message = mNowChatFriend.messages.get(showFirstPosition
+						+ position);
+			} else if (mStatus == CHAT_GROUP) {
+				message = mNowChatGroup.messages.get(showFirstPosition
+						+ position);
+			}
+			return message;
 		}
 
 		@Override
@@ -1311,31 +1155,47 @@ public class ChatFriendActivity extends Activity {
 				messageHolder = (MessageHolder) convertView.getTag();
 			}
 			// final Message message = (Message) getItem(position);
-			final Message message = mNowChatFriend.messages
-					.get(showFirstPosition + position);
+			Message message = null;
+			if (mStatus == CHAT_FRIEND) {
+				message = mNowChatFriend.messages.get(showFirstPosition
+						+ position);
+			} else if (mStatus == CHAT_GROUP) {
+				message = mNowChatGroup.messages.get(showFirstPosition
+						+ position);
+			}
+			if (message == null) {
+				return convertView;
+			}
+			final ArrayList<String> contentList = message.content;
 			messageHolder.tv_time.setText(TimeUtils.getTime(Long
 					.valueOf(message.time)));
 			String fileName = app.data.user.head;
+			String sex = "女";
 			switch (type) {
 			case Message.MESSAGE_TYPE_SEND:
 				fileName = app.data.user.head;
+				sex = app.data.user.sex;
 				break;
 			case Message.MESSAGE_TYPE_RECEIVE:
-				fileName = mNowChatFriend.head;
+				if (mStatus == CHAT_FRIEND) {
+					fileName = mNowChatFriend.head;
+					sex = mNowChatFriend.sex;
+				} else {
+					fileName = app.data.groupFriends.get(message.phone).head;
+					sex = app.data.groupFriends.get(message.phone).sex;
+				}
 				break;
 			default:
 				break;
 			}
 			final String head = fileName;
-			app.fileHandler.getHeadImage(head, app.data.user.sex,
-					new FileResult() {
-						@Override
-						public void onResult(String where, Bitmap bitmap) {
-							messageHolder.iv_head
-									.setImageBitmap(app.fileHandler.bitmaps
-											.get(head));
-						}
-					});
+			app.fileHandler.getHeadImage(head, sex, new FileResult() {
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					messageHolder.iv_head
+							.setImageBitmap(app.fileHandler.bitmaps.get(head));
+				}
+			});
 			if (message.contentType.equals("text")) {
 				messageHolder.tv_chat.setVisibility(View.VISIBLE);
 				messageHolder.ll_voice.setVisibility(View.GONE);
@@ -1347,7 +1207,7 @@ public class ChatFriendActivity extends Activity {
 					content = message.content.toString();
 				}
 				SpannableString spannableString = ExpressionUtil
-						.getExpressionString(ChatFriendActivity.this, content,
+						.getExpressionString(ChatActivity.this, content,
 								faceRegx, expressionFaceMap);
 				messageHolder.tv_chat.setText(spannableString);
 
@@ -1355,26 +1215,6 @@ public class ChatFriendActivity extends Activity {
 
 					@Override
 					public void onClick(View v) {
-						// TODO
-						// switch (type) {
-						// case Message.MESSAGE_TYPE_SEND:
-						// mMainModeManager.mBusinessCardFragment.mStatus =
-						// BusinessCardFragment.SHOW_SELF;
-						// mMainModeManager
-						// .showNext(mMainModeManager.mBusinessCardFragment);
-						// break;
-						// case Message.MESSAGE_TYPE_RECEIVE:
-						// mMainModeManager.mBusinessCardFragment.mStatus =
-						// BusinessCardFragment.SHOW_FRIEND;
-						// mMainModeManager.mBusinessCardFragment.mShowFriend =
-						// mNowChatFriend;
-						// mMainModeManager
-						// .showNext(mMainModeManager.mBusinessCardFragment);
-						// break;
-						//
-						// default:
-						// break;
-						// }
 					}
 				});
 				messageHolder.tv_chat
@@ -1385,17 +1225,11 @@ public class ChatFriendActivity extends Activity {
 							@Override
 							public boolean onLongClick(View v) {
 								@SuppressWarnings("static-access")
-								ClipboardManager clipboard = (ClipboardManager) ChatFriendActivity.this
-										.getSystemService(ChatFriendActivity.this.CLIPBOARD_SERVICE);
-								clipboard.setText(message.content.get(0));
-								// ClipboardManager clip = (ClipboardManager)
-								// getActivity()
-								// .getSystemService(
-								// Context.CLIPBOARD_SERVICE);
-								// // clip.setPrimaryClip()
-								// clip.setText(message.content);
-								Toast.makeText(ChatFriendActivity.this,
-										"复制成功!", Toast.LENGTH_SHORT).show();
+								ClipboardManager clipboard = (ClipboardManager) ChatActivity.this
+										.getSystemService(ChatActivity.this.CLIPBOARD_SERVICE);
+								clipboard.setText(contentList.get(0));
+								Toast.makeText(ChatActivity.this, "复制成功!",
+										Toast.LENGTH_SHORT).show();
 								return true;
 							}
 						});
@@ -1426,7 +1260,7 @@ public class ChatFriendActivity extends Activity {
 								public void run() {
 									// RelativeLayout relative = new
 									// RelativeLayout(
-									// ChatFriendActivity.this);
+									// ChatActivity.this);
 									// LinearLayout.LayoutParams layoutParams =
 									// new LinearLayout.LayoutParams(
 									// LayoutParams.WRAP_CONTENT,
@@ -1434,7 +1268,7 @@ public class ChatFriendActivity extends Activity {
 									// layoutParams.gravity = Gravity.CENTER;
 									// relative.setLayoutParams(layoutParams);
 									SampleView sampleView = new SampleView(
-											ChatFriendActivity.this,
+											ChatActivity.this,
 											app.fileHandler.getFileBytes(
 													app.sdcardImageFolder,
 													imageFileName));
@@ -1486,13 +1320,12 @@ public class ChatFriendActivity extends Activity {
 							@Override
 							public void onClick(View v) {
 
-								Intent intent = new Intent(
-										ChatFriendActivity.this,
+								Intent intent = new Intent(ChatActivity.this,
 										PicAndVoiceDetailActivity.class);
 								intent.putExtra("Activity", "Browse");
 								intent.putExtra("currentIndex", index);
 								intent.putStringArrayListExtra("content",
-										message.content);
+										contentList);
 								startActivity(intent);
 							}
 						});
@@ -1518,56 +1351,9 @@ public class ChatFriendActivity extends Activity {
 												}
 											});
 						}
-						// app.fileHandler.getImage(mImageFileName,
-						// new FileResult() {
-						// @Override
-						// public void onResult(String where,
-						// Bitmap bitmap) {
-						// SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
-						// bitmap);
-						// iv_image.setImageBitmap(bm.get());
-						// }
-						// });
 					}
 
 				}
-				// final ImageView iv_sendhead = messageHolder.iv_sendhead;
-				// switch (type) {
-				// case Message.MESSAGE_TYPE_SEND:
-				// iv_sendhead.setVisibility(View.GONE);
-				// break;
-				// case Message.MESSAGE_TYPE_RECEIVE:
-				// messageHolder.tv_nickname.setText(mNowChatFriend.nickName);
-				// final String headFileName = mNowChatFriend.head;
-				// iv_sendhead.setVisibility(View.VISIBLE);
-				// app.fileHandler.getHeadImage(headFileName,
-				// mNowChatFriend.sex, new FileResult() {
-				// @Override
-				// public void onResult(String where, Bitmap bitmap) {
-				// iv_sendhead
-				// .setImageBitmap(app.fileHandler.bitmaps
-				// .get(headFileName));
-				// iv_sendhead
-				// .setOnClickListener(new OnClickListener() {
-				// @Override
-				// public void onClick(View v) {
-				// // TODO
-				// // mMainModeManager.mBusinessCardFragment.mStatus
-				// // =
-				// // BusinessCardFragment.SHOW_FRIEND;
-				// // mMainModeManager.mBusinessCardFragment.mShowFriend
-				// // = mNowChatFriend;
-				// // mMainModeManager
-				// // .showNext(mMainModeManager.mBusinessCardFragment);
-				// }
-				// });
-				// }
-				// });
-				//
-				// break;
-				// default:
-				// break;
-				// }
 			} else if (message.contentType.equals("voice")) {
 				messageHolder.tv_chat.setVisibility(View.GONE);
 				messageHolder.ll_image.setVisibility(View.GONE);
@@ -1588,20 +1374,6 @@ public class ChatFriendActivity extends Activity {
 				default:
 					break;
 				}
-				// String voiceFileName = app.data.user.head;
-				// String sex = "男";
-				// switch (type) {
-				// case Message.MESSAGE_TYPE_SEND:
-				// voiceFileName = app.data.user.head;
-				// sex = app.data.user.sex;
-				// break;
-				// case Message.MESSAGE_TYPE_RECEIVE:
-				// voiceFileName = mNowChatFriend.head;
-				// sex = mNowChatFriend.sex;
-				// break;
-				// default:
-				// break;
-				// }
 				String mVoiceContent;
 				try {
 					mVoiceContent = message.content.get(0);
@@ -1609,27 +1381,6 @@ public class ChatFriendActivity extends Activity {
 					mVoiceContent = message.content.toString();
 				}
 				final String voiceContent = mVoiceContent;
-				// final String headFileName = voiceFileName;
-				// final ImageView iv_head = messageHolder.iv_voicehead;
-				// final ImageView iv_voicehead_status =
-				// messageHolder.iv_voicehead_status;
-				// app.fileHandler.getHeadImage(headFileName, sex,
-				// new FileResult() {
-				// @Override
-				// public void onResult(String where, Bitmap bitmap) {
-				// iv_head.setImageBitmap(app.fileHandler.bitmaps
-				// .get(headFileName));
-				// // iv_head.setBackgroundDrawable(new
-				// // BitmapDrawable(
-				// // app.fileHandler.bitmaps.get(headFileName)));
-				// Bitmap newBitmap = BitmapFactory
-				// .decodeResource(getResources(),
-				// R.drawable.head_voice_start);
-				//
-				// iv_voicehead_status.setImageBitmap(newBitmap);
-				// iv_voicehead_status.setTag("start");
-				// }
-				// });
 				app.fileHandler.getFile(new FileInterface() {
 
 					@Override
@@ -1644,7 +1395,7 @@ public class ChatFriendActivity extends Activity {
 						if (flag) {
 							try {
 								final MediaPlayer mpPlayer = MediaPlayer
-										.create(ChatFriendActivity.this, Uri
+										.create(ChatActivity.this, Uri
 												.parse((new File(
 														app.sdcardVoiceFolder,
 														voiceContent))
@@ -1683,11 +1434,6 @@ public class ChatFriendActivity extends Activity {
 														* density + 0.5f));
 									}
 								});
-								// messageHolder.sk_voice.setMax(mpPlayer
-								// .getDuration());
-								// messageHolder.sk_voice.setMax((int) Math
-								// .ceil((double) (mpPlayer.getDuration()) /
-								// 1000));
 							} catch (SecurityException e) {
 								e.printStackTrace();
 							} catch (IllegalStateException e) {
@@ -1700,35 +1446,6 @@ public class ChatFriendActivity extends Activity {
 					}
 				});
 
-				// messageHolder.sk_voice.setProgress(0);
-				// messageHolder.sk_voice
-				// .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-				//
-				// @Override
-				// public void onStopTrackingTouch(SeekBar seekBar) {
-				// messageHolder.sk_voice.setProgress(seekBar
-				// .getProgress());
-				// messageHolder.mpPlayer.seekTo(seekBar
-				// .getProgress());
-				// if (!messageHolder.mpPlayer.isPlaying()) {
-				// messageHolder.mpPlayer.start();
-				// iv_head.performClick();
-				// }
-				// }
-				//
-				// @Override
-				// public void onStartTrackingTouch(SeekBar seekBar) {
-				// // TODO Auto-generated method stub
-				//
-				// }
-				//
-				// @Override
-				// public void onProgressChanged(SeekBar seekBar,
-				// int arg1, boolean arg2) {
-				// // TODO Auto-generated method stub
-				//
-				// }
-				// });
 				convertView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -1745,7 +1462,7 @@ public class ChatFriendActivity extends Activity {
 
 							@Override
 							public void onCompletion(MediaPlayer arg0) {
-								if (ChatFriendActivity.this == null) {
+								if (ChatActivity.this == null) {
 									return;
 								} else {
 									mpPlayer.seekTo(0);
@@ -1846,9 +1563,9 @@ public class ChatFriendActivity extends Activity {
 					}
 				}
 				if (mPlayer != null) {
-					recorder.release();
+					mRecorder.release();
 					mPlayer.release();
-					recorder = null;
+					mRecorder = null;
 					mPlayer = null;
 					app.dataHandler.exclude(new Modification() {
 
@@ -1977,7 +1694,7 @@ public class ChatFriendActivity extends Activity {
 
 	void selectPicture() {
 		MapStorageDirectoryActivity.selectedImages.clear();
-		Intent selectFromGallery = new Intent(ChatFriendActivity.this,
+		Intent selectFromGallery = new Intent(ChatActivity.this,
 				MapStorageDirectoryActivity.class);
 		selectFromGallery.putExtra("max", 3);
 		startActivityForResult(selectFromGallery, RESULT_SELECTPICTURE);
@@ -2078,41 +1795,6 @@ public class ChatFriendActivity extends Activity {
 		});
 	}
 
-	public void uploadImageOrVoice(final String type, final String fileName,
-			final String base64, final ArrayList<String> messages) {
-		app.networkHandler.connection(new CommonNetConnection() {
-
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("filename", fileName);
-				params.put("imagedata", base64);
-				settings.params = params;
-			}
-
-			@Override
-			public void success(JSONObject jData) {
-				messages.add(fileName);
-				if (isSELECTPICTURE) {
-					if (messageNum == MapStorageDirectoryActivity.selectedImages
-							.size()) {
-						sendMessage(type, messages);
-						isSELECTPICTURE = false;
-					} else {
-						messageNum++;
-					}
-				} else {
-					sendMessage(type, messages);
-
-				}
-			}
-
-		});
-	}
-
 	public void getRecordVoice() {
 
 		app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
@@ -2184,9 +1866,9 @@ public class ChatFriendActivity extends Activity {
 		lp.gravity = Gravity.CENTER;
 		for (int i = 0; i < 3; i++) {
 			try {
-				ImageView iv = new ImageView(ChatFriendActivity.this);
-				iv.setImageBitmap(BitmapFactory
-						.decodeStream(ChatFriendActivity.this.getAssets().open(
+				ImageView iv = new ImageView(ChatActivity.this);
+				iv.setImageBitmap(BitmapFactory.decodeStream(ChatActivity.this
+						.getAssets().open(
 								"images/" + faceNameList.get(i).get(0))));
 				iv.setLayoutParams(lp);
 				iv.setPadding(10, 10, 10, 10);
@@ -2196,7 +1878,7 @@ public class ChatFriendActivity extends Activity {
 				iv.setTag(i);
 				ll_facemenu.addView(iv);
 				faceMenuShowList.add(iv);
-				ImageView iv_1 = new ImageView(ChatFriendActivity.this);
+				ImageView iv_1 = new ImageView(ChatActivity.this);
 				iv_1.setBackgroundColor(Color.parseColor("#33ffffff"));
 				iv_1.setMinimumWidth(1);
 				iv_1.setMinimumHeight(80);
@@ -2232,19 +1914,19 @@ public class ChatFriendActivity extends Activity {
 						.findViewById(R.id.chat_base_gv);
 				chat_base_gv.setAdapter(new myGridAdapter(faceNameList.get(i)));
 				mListViews.add(chat_base_gv);
-				chat_vPager.setAdapter(new myPageAdapter(mListViews));
+				chat_vPager.setAdapter(new FacePageAdapter(mListViews));
 			}
 		}
 		LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(100,
 				LayoutParams.WRAP_CONTENT);
 		lp1.gravity = Gravity.CENTER;
-		ImageView iv = new ImageView(ChatFriendActivity.this);
+		ImageView iv = new ImageView(ChatActivity.this);
 		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
 				R.drawable.face_add);
 		iv.setImageBitmap(bitmap);
 		iv.setLayoutParams(lp1);
 		ll_facemenu.addView(iv);
-		ImageView iv_1 = new ImageView(ChatFriendActivity.this);
+		ImageView iv_1 = new ImageView(ChatActivity.this);
 		iv_1.setBackgroundColor(Color.WHITE);
 		iv_1.setMinimumWidth(1);
 		iv_1.setMinimumHeight(80);
@@ -2288,9 +1970,8 @@ public class ChatFriendActivity extends Activity {
 			ImageView iv = (ImageView) convertView
 					.findViewById(R.id.chat_base_iv);
 			try {
-				iv.setImageBitmap(BitmapFactory
-						.decodeStream(ChatFriendActivity.this.getAssets().open(
-								"images/" + list.get(position))));
+				iv.setImageBitmap(BitmapFactory.decodeStream(ChatActivity.this
+						.getAssets().open("images/" + list.get(position))));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -2392,10 +2073,10 @@ public class ChatFriendActivity extends Activity {
 		}
 	}
 
-	class myPageAdapter extends PagerAdapter {
+	class FacePageAdapter extends PagerAdapter {
 		List<View> mListViews;
 
-		public myPageAdapter(List<View> mListViews) {
+		public FacePageAdapter(List<View> mListViews) {
 			this.mListViews = mListViews;
 		}
 

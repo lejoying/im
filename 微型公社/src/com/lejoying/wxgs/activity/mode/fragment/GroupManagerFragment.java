@@ -273,11 +273,11 @@ public class GroupManagerFragment extends BaseFragment {
 
 									@Override
 									public void getSuccess() {
-										if (mMainModeManager.mChatGroupFragment
-												.isAdded()) {
-											mMainModeManager.mChatGroupFragment.mAdapter
-													.notifyDataSetChanged();
-										}
+//										if (mMainModeManager.mChatGroupFragment
+//												.isAdded()) {
+//											mMainModeManager.mChatGroupFragment.mAdapter
+//													.notifyDataSetChanged();
+//										}
 										mMainModeManager.mGroupFragment
 												.notifyViews();
 									}
@@ -326,11 +326,11 @@ public class GroupManagerFragment extends BaseFragment {
 
 								@Override
 								public void getSuccess() {
-									if (mMainModeManager.mChatGroupFragment
-											.isAdded()) {
-										mMainModeManager.mChatGroupFragment.mAdapter
-												.notifyDataSetChanged();
-									}
+//									if (mMainModeManager.mChatGroupFragment
+//											.isAdded()) {
+//										mMainModeManager.mChatGroupFragment.mAdapter
+//												.notifyDataSetChanged();
+//									}
 									mMainModeManager.mGroupFragment
 											.notifyViews();
 								}
@@ -534,11 +534,11 @@ public class GroupManagerFragment extends BaseFragment {
 
 													@Override
 													public void getSuccess() {
-														if (mMainModeManager.mChatGroupFragment
-																.isAdded()) {
-															mMainModeManager.mChatGroupFragment.mAdapter
-																	.notifyDataSetChanged();
-														}
+//														if (mMainModeManager.mChatGroupFragment
+//																.isAdded()) {
+//															mMainModeManager.mChatGroupFragment.mAdapter
+//																	.notifyDataSetChanged();
+//														}
 														mMainModeManager.mGroupFragment
 																.notifyViews();
 													}

@@ -37,7 +37,7 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.R.id;
-import com.lejoying.wxgs.activity.ChatGroupActivity;
+import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.DetailsActivity;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
@@ -463,9 +463,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 					0);
 			break;
 		case R.id.gshare_scroll_ll:
-			Intent intent = new Intent(getActivity(), ChatGroupActivity.class);
-			intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
-			intent.putExtra("mNowChatGroup", mCurrentGroupShareID);
+			Intent intent = new Intent(getActivity(), ChatActivity.class);
+			intent.putExtra("status", ChatActivity.CHAT_GROUP);
+			intent.putExtra("gid", mCurrentGroupShareID);
 			startActivity(intent);
 			// mMainModeManager.mChatGroupFragment.mStatus =
 			// ChatFriendFragment.CHAT_GROUP;

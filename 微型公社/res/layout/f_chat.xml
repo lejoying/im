@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/background4"
     android:layout_height="match_parent" >
 
     <ListView
@@ -357,34 +358,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginTop="2dp"
                     android:text="联谊会"
                     android:textColor="#fff"
                     android:textSize="17sp" />
-
-                <TextView
-                    android:id="@+id/textView_memberCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView_groupName"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="-1dp"
-                    android:text=""
-                    android:textColor="#fff"
-                    android:textSize="14sp" />
+              
             </RelativeLayout>
         </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/linearlayout_members"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+	
+        <ImageView 
+            android:id="@+id/iv_infomation"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:orientation="horizontal" >
-        </LinearLayout>
+            android:paddingLeft="10dp"
+            android:paddingRight="30dp"
+            android:src="@drawable/chat_group_menu"
+            />
+       
     </RelativeLayout>
 
 

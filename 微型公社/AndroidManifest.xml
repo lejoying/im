@@ -52,6 +52,11 @@
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustPan" >
         </activity>
+         <activity
+            android:name="com.lejoying.wxgs.activity.ChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle" >
+        </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.GroupInformationActivity"
             android:screenOrientation="portrait"
@@ -59,16 +64,6 @@
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.GroupBusinessCardActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" >
-        </activity>
-        <activity
-            android:name="com.lejoying.wxgs.activity.ChatFriendActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" >
-        </activity>
-        <activity
-            android:name="com.lejoying.wxgs.activity.ChatGroupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>

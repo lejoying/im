@@ -43,7 +43,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.mode.fragment.ChatFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
@@ -131,7 +130,7 @@ public class SquareMessageDetail extends BaseActivity {
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		players = new ArrayList<MediaPlayer>();
 		recordViews = new ArrayList<RecordView>();
-		setContentView(R.layout.f_square_detail);//fragment_square_message_detail
+		setContentView(R.layout.f_square_detail);// fragment_square_message_detail
 		sc_square_message_info = (ScrollView) findViewById(R.id.sc_square_message_info);
 		sc_square_message_info_all = (InnerScrollView) findViewById(R.id.sc_square_message_info_all);
 		sc_square_message_info_all.parentScrollView = sc_square_message_info;
@@ -250,30 +249,30 @@ public class SquareMessageDetail extends BaseActivity {
 							// });
 						}
 					});
-//			imageView.setOnTouchListener(new OnTouchListener() {
-//
-//				boolean flag = false;
-//				int count = 0;
-//
-//				@Override
-//				public boolean onTouch(View arg0, MotionEvent event) {
-//					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//						flag = false;
-//						count = 0;
-//					}
-//					if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//						count++;
-//						flag = true;
-//						sc_square_message_info
-//								.requestDisallowInterceptTouchEvent(flag);
-//						// sc_square_message_info.onTouchEvent(event);
-//					}
-//					if (count < 15) {
-//						flag = false;
-//					}
-//					return flag;
-//				}
-//			});
+			// imageView.setOnTouchListener(new OnTouchListener() {
+			//
+			// boolean flag = false;
+			// int count = 0;
+			//
+			// @Override
+			// public boolean onTouch(View arg0, MotionEvent event) {
+			// if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			// flag = false;
+			// count = 0;
+			// }
+			// if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			// count++;
+			// flag = true;
+			// sc_square_message_info
+			// .requestDisallowInterceptTouchEvent(flag);
+			// // sc_square_message_info.onTouchEvent(event);
+			// }
+			// if (count < 15) {
+			// flag = false;
+			// }
+			// return flag;
+			// }
+			// });
 
 			imageView.setOnClickListener(new OnClickListener() {
 
@@ -400,8 +399,8 @@ public class SquareMessageDetail extends BaseActivity {
 		textPanel = new TextView(this);
 		textPanel.setTextColor(Color.WHITE);
 		textPanel.setText(ExpressionUtil.getExpressionString(
-				SquareMessageDetail.this, textContent,
-				ChatFriendFragment.faceRegx, SquareFragment.expressionFaceMap));
+				SquareMessageDetail.this, textContent, ChatActivity.faceRegx,
+				SquareFragment.expressionFaceMap));
 		if (images.size() == 0 && voices.size() == 0) {
 			TextView textView = new TextView(this);
 			LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
@@ -758,44 +757,44 @@ public class SquareMessageDetail extends BaseActivity {
 			}
 		});
 
-//		sc_square_message_info.setOnTouchListener(new OnTouchListener() {
-//
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				return true;
-//			}
-//		});
-//
-//		sc_square_message_info_all.setOnTouchListener(new OnTouchListener() {
-//
-//			float lastY = 0;
-//			boolean overflow;
-//			boolean flag;
-//
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				float currentY = event.getY();
-//				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//					lastY = 0;
-//					overflow = detailContent.getHeight() > sc_square_message_info_all
-//							.getHeight();
-//					flag = true;
-//				}
-//				if (overflow) {
-//					if (sc_square_message_info.getScrollY() != 0
-//							|| (sc_square_message_info_all.getScrollY() == detailContent
-//									.getHeight()
-//									- sc_square_message_info_all.getHeight() && lastY
-//									- currentY > 0)) {
-//						flag = false;
-//					}
-//					lastY = currentY;
-//					sc_square_message_info
-//							.requestDisallowInterceptTouchEvent(flag);
-//				}
-//				return true;
-//			}
-//		});
+		// sc_square_message_info.setOnTouchListener(new OnTouchListener() {
+		//
+		// @Override
+		// public boolean onTouch(View v, MotionEvent event) {
+		// return true;
+		// }
+		// });
+		//
+		// sc_square_message_info_all.setOnTouchListener(new OnTouchListener() {
+		//
+		// float lastY = 0;
+		// boolean overflow;
+		// boolean flag;
+		//
+		// @Override
+		// public boolean onTouch(View v, MotionEvent event) {
+		// float currentY = event.getY();
+		// if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		// lastY = 0;
+		// overflow = detailContent.getHeight() > sc_square_message_info_all
+		// .getHeight();
+		// flag = true;
+		// }
+		// if (overflow) {
+		// if (sc_square_message_info.getScrollY() != 0
+		// || (sc_square_message_info_all.getScrollY() == detailContent
+		// .getHeight()
+		// - sc_square_message_info_all.getHeight() && lastY
+		// - currentY > 0)) {
+		// flag = false;
+		// }
+		// lastY = currentY;
+		// sc_square_message_info
+		// .requestDisallowInterceptTouchEvent(flag);
+		// }
+		// return true;
+		// }
+		// });
 	}
 
 	public void praiseSquareMessage(final boolean flag) {
