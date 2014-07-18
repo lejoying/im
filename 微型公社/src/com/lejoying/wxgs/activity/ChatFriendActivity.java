@@ -165,6 +165,8 @@ public class ChatFriendActivity extends Activity {
 	ImageView iv_recordbg;
 	ImageView iv_record;
 	ImageView iv_more_voice;
+	LinearLayout ll_wave;
+	ImageView iv_wave;
 
 	RelativeLayout rl_face;
 	LinearLayout ll_facepanel;
@@ -204,8 +206,6 @@ public class ChatFriendActivity extends Activity {
 	public ListView chatContent;
 
 	InputMethodManager imm;
-
-	PopupWindow popWindow;
 
 	File tempFile;
 
@@ -304,6 +304,8 @@ public class ChatFriendActivity extends Activity {
 		iv_record = (ImageView) findViewById(R.id.iv_record);
 		iv_more_voice = (ImageView) findViewById(R.id.iv_more_voice);
 		iv_recordbg = (ImageView) findViewById(R.id.iv_recordbg);
+		ll_wave = (LinearLayout) findViewById(R.id.ll_wave);
+		iv_wave = (ImageView) findViewById(R.id.iv_wave);
 
 		groupTopBar = findViewById(R.id.relativeLayout_topbar);
 		groupTopBar_back = findViewById(R.id.backview);
@@ -1171,7 +1173,7 @@ public class ChatFriendActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (rl_record.getVisibility() == View.VISIBLE) {
-					if (mPlayer != null) {
+					if (recorder != null && mPlayer != null) {
 						Alert.createDialog(ChatFriendActivity.this)
 								.setTitle("是否取消语音发送?")
 								.setOnConfirmClickListener(
@@ -1210,6 +1212,8 @@ public class ChatFriendActivity extends Activity {
 											}
 
 										}).show();
+					} else if (recorder != null && mPlayer == null) {
+
 					} else {
 						iv_more_selecting.setVisibility(View.VISIBLE);
 						iv_send.setVisibility(View.GONE);
@@ -1224,6 +1228,9 @@ public class ChatFriendActivity extends Activity {
 								.getCurrentFocus().getWindowToken(),
 								InputMethodManager.HIDE_NOT_ALWAYS);
 					}
+					if(rl_chat_menubar.getVisibility()==View.VISIBLE){
+						rl_chat_menubar.setVisibility(View.GONE);
+					}
 					iv_recordbg.getLayoutParams().width = editText_message
 							.getWidth() + iv_emoji_normal.getWidth();
 					rl_record.setVisibility(View.VISIBLE);
@@ -1235,14 +1242,19 @@ public class ChatFriendActivity extends Activity {
 			}
 		});
 		iv_record.setOnTouchListener(new OnTouchListener() {
-			boolean isLong = false;
+			boolean isLong = false, recording = false;
 			GestureDetector gestureDetector = new GestureDetector(
 					ChatFriendActivity.this,
 					new GestureDetector.SimpleOnGestureListener() {
 						@Override
 						public void onLongPress(MotionEvent e) {
-							if (mPlayer != null) {
+							if (recorder != null || mPlayer != null) {
 								isLong = true;
+								recording=false;
+								if (ll_wave.getVisibility() == View.VISIBLE) {
+									recorder.stop();
+									ll_wave.setVisibility(View.GONE);
+								}
 								iv_record
 										.setImageResource(R.drawable.chat_voice_del);
 							}
@@ -1259,8 +1271,54 @@ public class ChatFriendActivity extends Activity {
 								start();
 								iv_record
 										.setImageResource(R.drawable.chat_voice_stop);
-								initPopWindow();
+								ll_wave.setVisibility(View.VISIBLE);
+								iv_wave.setImageResource(R.drawable.wave_2);
+								recording = true;
+								new Thread() {
+									@Override
+									public void run() {
+										while (recording) {
+											try {
+												sleep(200);
+												int x = recorder
+														.getMaxAmplitude();
+												if (x != 0) {
+													final int f = (int) (10 * Math
+															.log(x) / Math
+															.log(10));
+													app.UIHandler
+															.post(new Runnable() {
+
+																@Override
+																public void run() {
+																	if (f > 0
+																			&& f < 25) {
+																		iv_wave.setImageResource(R.drawable.wave_1);
+																	} else if (f >= 25
+																			&& f < 30) {
+																		iv_wave.setImageResource(R.drawable.wave_2);
+																	} else if (f >= 30
+																			&& f < 35) {
+																		iv_wave.setImageResource(R.drawable.wave_3);
+																	} else if (f >= 35
+																			&& f < 40) {
+																		iv_wave.setImageResource(R.drawable.wave_4);
+																	} else if (f >= 40) {
+																		iv_wave.setImageResource(R.drawable.wave_5);
+																	}
+																}
+															});
+												}
+											} catch (InterruptedException e1) {
+												e1.printStackTrace();
+											}
+										}
+									}
+								}.start();
+
 							} else if (recorder != null && mPlayer == null) {
+								recording = false;
+								ll_wave.setVisibility(View.GONE);
 								if (System.currentTimeMillis() - startTime > 1000) {
 									recorder.stop();
 									recorder.reset();
@@ -1323,10 +1381,6 @@ public class ChatFriendActivity extends Activity {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_UP:
 					if (isLong) {
-						File file = new File(app.sdcardVoiceFolder, voice_name);
-						if (file.exists()) {
-							file.delete();
-						}
 						if (recorder != null) {
 							recorder.release();
 							recorder = null;
@@ -1334,6 +1388,10 @@ public class ChatFriendActivity extends Activity {
 						if (mPlayer != null) {
 							mPlayer.release();
 							mPlayer = null;
+						}
+						File file = new File(app.sdcardVoiceFolder, voice_name);
+						if (file.exists()) {
+							file.delete();
 						}
 						iv_more_selecting.setVisibility(View.VISIBLE);
 						iv_send.setVisibility(View.GONE);
@@ -1349,11 +1407,6 @@ public class ChatFriendActivity extends Activity {
 				return gestureDetector.onTouchEvent(event);
 			}
 		});
-	}
-
-	void initPopWindow() {
-		// TODO Auto-generated method stub
-		View view = mInflater.inflate(R.layout.chat_wave, null, false);
 	}
 
 	void mergeAACAudioFiles() {
