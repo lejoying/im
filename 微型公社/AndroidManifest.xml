@@ -54,7 +54,11 @@
         </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.GroupInformationActivity"
-            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle" >
+        </activity>
+        <activity
+            android:name="com.lejoying.wxgs.activity.GroupBusinessCardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>

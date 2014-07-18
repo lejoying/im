@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/tv_alias_title"
                     android:layout_below="@+id/tv_alias_title"
-                    android:text="电话:  "
+                    android:text="主要业务:  "
                     android:textColor="#fff" />
 
                 <TextView
@@ -81,8 +81,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/tv_sex_title"
-                    android:layout_below="@+id/tv_sex"
-                    android:text="主要业务:"
+                    android:layout_below="@+id/tv_tag"
+                    android:text="标签:"
                     android:textColor="#fff" />
 
                 <TextView
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/tv_phone_title"
                     android:layout_below="@+id/tv_phone_title"
-                    android:text="性别："
+                    android:text="创建时间："
                     android:textColor="#fff" />
 
                 <TextView
@@ -102,16 +102,16 @@
                     android:layout_toRightOf="@+id/tv_alias_title"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="alias"
+                    android:text=""
                     android:textColor="#fff" />
 
                 <TextView
-                    android:id="@+id/tv_phone"
+                    android:id="@+id/tv_business"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/tv_sex"
+                    android:layout_above="@+id/tv_tag"
                     android:layout_toRightOf="@+id/tv_phone_title"
-                    android:text="1390000000"
+                    android:text=""
                     android:textColor="#fff" />
 
                 <TextView
@@ -121,17 +121,17 @@
                     android:layout_below="@+id/tv_nickname"
                     android:layout_marginTop="10dp"
                     android:layout_toRightOf="@+id/tv_id_title"
-                    android:text="123456789  "
+                    android:text=""
                     android:textColor="#fff" />
 
                 <TextView
-                    android:id="@+id/tv_sex"
+                    android:id="@+id/tv_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/tv_sex_title"
                     android:layout_alignBottom="@+id/tv_sex_title"
                     android:layout_toRightOf="@+id/tv_sex_title"
-                    android:text="MALE"
+                    android:text=""
                     android:textColor="#fff" />
 
                 <TextView
@@ -144,7 +144,7 @@
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:paddingLeft="70dp"
-                    android:text="送水服务，多买多送!!!!!!!!!!!"
+                    android:text=""
                     android:textColor="#fff" />
             </RelativeLayout>
 

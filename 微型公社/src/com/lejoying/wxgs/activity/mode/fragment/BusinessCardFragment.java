@@ -263,11 +263,11 @@ public class BusinessCardFragment extends BaseFragment {
 				.findViewById(R.id.tv_msgpanel_name);
 		TextView tv_nickname = (TextView) mContent
 				.findViewById(R.id.tv_nickname);
-		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
+		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_business);
 		TextView tv_mainbusiness = (TextView) mContent
 				.findViewById(R.id.tv_mainbusiness);
 		TextView tv_id = (TextView) mContent.findViewById(R.id.tv_id);
-		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
+		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_tag);
 		tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
 		tv_alias_title = (TextView) mContent.findViewById(R.id.tv_alias_title);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);

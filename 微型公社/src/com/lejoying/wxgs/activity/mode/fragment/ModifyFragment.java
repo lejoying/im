@@ -154,12 +154,12 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
 		tv_name = (TextView) mContent.findViewById(R.id.tv_name);
 		et_name = (EditText) mContent.findViewById(R.id.et_name);
-		tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
+		tv_sex = (TextView) mContent.findViewById(R.id.tv_tag);
 		tv_modifychangepwd = mContent.findViewById(R.id.tv_modifychangepwd);
 
 		tv_yewu = (TextView) mContent.findViewById(R.id.tv_yewu);
 		et_yewu = (EditText) mContent.findViewById(R.id.et_yewu);
-		tv_phone = (TextView) mContent.findViewById(R.id.tv_phone);
+		tv_phone = (TextView) mContent.findViewById(R.id.tv_business);
 		rl_yewu_edit = mContent.findViewById(R.id.rl_yewu_edit);
 		rl_name = mContent.findViewById(R.id.rl_name);
 		rl_yewu = mContent.findViewById(R.id.rl_yewu);

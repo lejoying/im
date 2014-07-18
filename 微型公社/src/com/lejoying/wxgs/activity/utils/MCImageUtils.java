@@ -172,7 +172,7 @@ public final class MCImageUtils {
 	}
 
 	public static Bitmap createQEcodeImage(String type, String message) {
-		System.out.println(type + "<><><><><><" + message);
+//		System.out.println(type + "<><><><><><" + message);
 
 		File file = new File(app.sdcardQRcodeFolder, type + "_" + message
 				+ ".png");

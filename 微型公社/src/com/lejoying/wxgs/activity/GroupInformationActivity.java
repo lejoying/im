@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -134,19 +135,30 @@ public class GroupInformationActivity extends Activity {
 	}
 
 	private void initEvent() {
+		groupBusinessView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(GroupInformationActivity.this,
+						GroupBusinessCardActivity.class);
+				intent.putExtra("gid", mCurrentGroupInfomation.gid + "");
+				startActivity(intent);
+			}
+		});
 		exit2DeleteGroupView.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Alert.createDialog(GroupInformationActivity.this)
-						.setTitle("删除并退出后,将不再接收此群聊消息")
+						.setTitle("删除并退出后,将不再接收此群聊消息").setLeftButtonText("否")
+						.setRightButtonText("是")
 						.setOnCancelClickListener(new OnDialogClickListener() {
 
 							@Override
 							public void onClick(AlertInputDialog dialog) {
 								finish();
 							}
-						});
+						}).show();
 			}
 		});
 		deletChatMessagesView.setOnClickListener(new OnClickListener() {
@@ -170,7 +182,7 @@ public class GroupInformationActivity extends Activity {
 									}
 								});
 							}
-						});
+						}).show();
 			}
 		});
 		backView.setOnClickListener(new OnClickListener() {

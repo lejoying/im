@@ -183,7 +183,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/tv_sex"
+                        android:id="@+id/tv_tag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -221,7 +221,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/tv_phone"
+                        android:id="@+id/tv_business"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"

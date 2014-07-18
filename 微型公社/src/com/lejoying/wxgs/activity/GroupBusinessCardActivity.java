@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.activity.mode.fragment;
+package com.lejoying.wxgs.activity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -30,8 +31,6 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.ChatGroupActivity;
-import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
@@ -42,7 +41,7 @@ import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
-public class GroupBusinessCardFragment extends BaseFragment implements
+public class GroupBusinessCardActivity extends Activity implements
 		OnClickListener {
 	public Group mGroup;
 
@@ -61,7 +60,7 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 	private boolean stopSend;
 	// private int width, height;
 
-	View mContent;
+	// View mContent;
 	LayoutInflater mInflater;
 
 	ImageView iv_me_back;
@@ -69,22 +68,24 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 	ImageView QRcodeImage;
 
 	MainApplication app = MainApplication.getMainApplication();
-	MainModeManager mMainModeManager;
+	// MainModeManager mMainModeManager;
 
 	String GROUPCARDTYPE = "groupcard";
 
-	public void setMode(MainModeManager mainMode) {
-		mMainModeManager = mainMode;
-	}
-
 	@SuppressLint("HandlerLeak")
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		mInflater = inflater;
-		mContent = inflater.inflate(R.layout.f_businesscard, null);
-		iv_me_back = (ImageView) mContent.findViewById(R.id.iv_me_back);
-		tv_back_show = (TextView) mContent.findViewById(R.id.tv_back_show);
-		QRcodeImage = (ImageView) mContent.findViewById(R.id.iv_tdcode);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Intent intent = getIntent();
+		String gid = intent.getStringExtra("gid");
+		if (gid != null && !"".equals(gid)) {
+			mGroup = app.data.groupsMap.get(gid);
+		}
+		setContentView(R.layout.f_businesscard);
+		iv_me_back = (ImageView) findViewById(R.id.iv_me_back);
+		tv_back_show = (TextView) findViewById(R.id.tv_back_show);
+		QRcodeImage = (ImageView) findViewById(R.id.iv_tdcode);
+		getWindow().setBackgroundDrawableResource(R.drawable.background4);
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -103,11 +104,10 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 				super.handleMessage(msg);
 			}
 		};
-		tv_spacing = (TextView) mContent.findViewById(R.id.tv_spacing);
-		tv_spacing2 = (TextView) mContent.findViewById(R.id.tv_spacing2);
-		tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
-		rl_show = (RelativeLayout) mContent.findViewById(R.id.rl_show);
+		tv_spacing = (TextView) findViewById(R.id.tv_spacing);
+		tv_spacing2 = (TextView) findViewById(R.id.tv_spacing2);
+		tv_mainbusiness = (TextView) findViewById(R.id.tv_mainbusiness);
+		rl_show = (RelativeLayout) findViewById(R.id.rl_show);
 
 		AsyncTask<Integer, Integer, Boolean> asyncTask = new AsyncTask<Integer, Integer, Boolean>() {
 
@@ -121,16 +121,15 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 			@Override
 			protected void onPostExecute(Boolean result) {
 				DisplayMetrics dm = new DisplayMetrics();
-				getActivity().getWindowManager().getDefaultDisplay()
-						.getMetrics(dm);
+				GroupBusinessCardActivity.this.getWindowManager()
+						.getDefaultDisplay().getMetrics(dm);
 				// height = dm.heightPixels;
 				// width = dm.widthPixels;
 				Rect frame = new Rect();
-				getActivity().getWindow().getDecorView()
+				GroupBusinessCardActivity.this.getWindow().getDecorView()
 						.getWindowVisibleDisplayFrame(frame);
 				int statusBarHeight = frame.top;
-				sv_content = (ScrollView) mContent
-						.findViewById(R.id.sv_content);
+				sv_content = (ScrollView) findViewById(R.id.sv_content);
 
 				tv_spacing.setHeight((int) (dm.heightPixels
 						- rl_show.getHeight() - statusBarHeight - tv_spacing2
@@ -173,7 +172,6 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		asyncTask.execute();
 		initData();
 		initEvent();
-		return mContent;
 	}
 
 	private void initEvent() {
@@ -181,14 +179,15 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 
 			@Override
 			public void onClick(View v) {
-				mMainModeManager.back();
+				finish();
+				// mMainModeManager.back();
 			}
 		});
 	}
 
 	public void onResume() {
 		// CircleMenu.showBack();
-		mMainModeManager.handleMenu(false);
+		// mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 
@@ -197,46 +196,39 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 				GROUPCARDTYPE, mGroup.gid + ""));
 		QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
 		tv_back_show.setText("群组资料");
-		group = (ViewGroup) mContent.findViewById(R.id.ll_content);
-		View tv_group = mContent.findViewById(R.id.tv_group_layout);
-		View tv_square = mContent.findViewById(R.id.tv_square_layout);
-		View tv_msg = mContent.findViewById(R.id.tv_msg_layout);
-		rl_bighead = mContent.findViewById(R.id.rl_bighead);
+		group = (ViewGroup) findViewById(R.id.ll_content);
+		View tv_group = findViewById(R.id.tv_group_layout);
+		View tv_square = findViewById(R.id.tv_square_layout);
+		View tv_msg = findViewById(R.id.tv_msg_layout);
+		rl_bighead = findViewById(R.id.rl_bighead);
 		rl_bighead.setVisibility(View.GONE);
 
-		iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
-		tv_bighead = (TextView) mContent.findViewById(R.id.tv_bighead);
-		TextView tv_nickname = (TextView) mContent
-				.findViewById(R.id.tv_nickname);
+		iv_head = (ImageView) findViewById(R.id.iv_head);
+		tv_bighead = (TextView) findViewById(R.id.tv_bighead);
+		TextView tv_nickname = (TextView) findViewById(R.id.tv_nickname);
 
-		TextView tv_id = (TextView) mContent.findViewById(R.id.tv_id);
-		TextView tv_id_title = (TextView) mContent
-				.findViewById(R.id.tv_id_title);
-		TextView tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
-		TextView tv_alias_title = (TextView) mContent
-				.findViewById(R.id.tv_alias_title);
+		TextView tv_id = (TextView) findViewById(R.id.tv_id);
+		TextView tv_id_title = (TextView) findViewById(R.id.tv_id_title);
+		TextView tv_alias = (TextView) findViewById(R.id.tv_alias);
+		TextView tv_alias_title = (TextView) findViewById(R.id.tv_alias_title);
 
-		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_business);
-		TextView tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
-		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_tag);
-		TextView tv_phone_title = (TextView) mContent
-				.findViewById(R.id.tv_phone_title);
-		TextView tv_mainbusiness_title = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness_title);
-		TextView tv_sex_title = (TextView) mContent
-				.findViewById(R.id.tv_sex_title);
+		TextView tv_business = (TextView) findViewById(R.id.tv_business);
+		TextView tv_createTime = (TextView) findViewById(R.id.tv_mainbusiness);
+		TextView tv_tag = (TextView) findViewById(R.id.tv_tag);
+		TextView tv_phone_title = (TextView) findViewById(R.id.tv_phone_title);
+		TextView tv_mainbusiness_title = (TextView) findViewById(R.id.tv_mainbusiness_title);
+		TextView tv_sex_title = (TextView) findViewById(R.id.tv_sex_title);
 
-		Button button1 = (Button) mContent.findViewById(R.id.button1);
-		Button button2 = (Button) mContent.findViewById(R.id.button2);
-		Button button3 = (Button) mContent.findViewById(R.id.button3);
+		Button button1 = (Button) findViewById(R.id.button1);
+		Button button2 = (Button) findViewById(R.id.button2);
+		Button button3 = (Button) findViewById(R.id.button3);
 
-		tv_phone.setVisibility(View.GONE);
-		tv_mainbusiness.setVisibility(View.GONE);
-		tv_sex.setVisibility(View.GONE);
-		tv_phone_title.setVisibility(View.GONE);
-		tv_mainbusiness_title.setVisibility(View.GONE);
-		tv_sex_title.setVisibility(View.GONE);
+		// tv_business.setVisibility(View.GONE);
+		// tv_createTime.setVisibility(View.GONE);
+		// tv_tag.setVisibility(View.GONE);
+		// tv_phone_title.setVisibility(View.GONE);
+		// tv_mainbusiness_title.setVisibility(View.GONE);
+		// tv_sex_title.setVisibility(View.GONE);
 
 		group.removeView(button2);
 		group.removeView(button3);
@@ -270,32 +262,36 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 
 				@Override
 				public void onClick(View arg0) {
-					mMainModeManager.back();
-					Intent intent = new Intent(getActivity(), ChatGroupActivity.class);
+					// mMainModeManager.back();
+					Intent intent = new Intent(GroupBusinessCardActivity.this,
+							ChatGroupActivity.class);
 					intent.putExtra("mStatus", ChatGroupActivity.CHAT_GROUP);
 					intent.putExtra("mNowChatGroup", String.valueOf(mGroup.gid));
 					startActivity(intent);
-//					mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-//					mMainModeManager.mChatGroupFragment.mNowChatGroup = app.data.groupsMap
-//							.get(mGroup.gid);
-//					mMainModeManager
-//							.showNext(mMainModeManager.mChatGroupFragment);
+					// mMainModeManager.mChatGroupFragment.mStatus =
+					// ChatFriendFragment.CHAT_GROUP;
+					// mMainModeManager.mChatGroupFragment.mNowChatGroup =
+					// app.data.groupsMap
+					// .get(mGroup.gid);
+					// mMainModeManager
+					// .showNext(mMainModeManager.mChatGroupFragment);
 				}
 			});
 		}
 		tv_id_title.setText("群组ID：");
-		tv_alias_title.setText("群组描述：");
-
+		// tv_alias_title.setText("群组描述：");
+		tv_alias_title.setVisibility(View.GONE);
 		tv_nickname.setText(mGroup.name);
 		tv_id.setText(String.valueOf(mGroup.gid));
 		if (mGroup.description == null || mGroup.description.equals("")
 				|| mGroup.description.equals("请输入群组描述信息")) {
-			tv_alias.setText("此群组暂无描述");
+			tv_business.setText("此群组暂无业务");
+			tv_alias.setVisibility(View.GONE);
 		} else {
 			tv_alias.setText(mGroup.description);
 		}
 		final String headFileName = mGroup.icon;
-		app.fileHandler.getHeadImage(headFileName,"男", new FileResult() {
+		app.fileHandler.getHeadImage(headFileName, "男", new FileResult() {
 			@Override
 			public void onResult(String where, Bitmap bitmap) {
 				iv_head.setImageBitmap(app.fileHandler.bitmaps
@@ -353,13 +349,14 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 
 							@Override
 							public void getSuccess() {
-								if (MainActivity.instance.mMainMode.mChatGroupFragment
-										.isAdded()) {
-									mMainModeManager.mChatGroupFragment.mAdapter
-											.notifyDataSetChanged();
-									mMainModeManager.mGroupFragment
-											.notifyViews();
-								}
+								// if
+								// (MainActivity.instance.mMainMode.mChatGroupFragment
+								// .isAdded()) {
+								// mMainModeManager.mChatGroupFragment.mAdapter
+								// .notifyDataSetChanged();
+								// mMainModeManager.mGroupFragment
+								// .notifyViews();
+								// }
 							}
 						});
 					}
