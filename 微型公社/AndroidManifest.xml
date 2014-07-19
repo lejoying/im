@@ -45,6 +45,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+         <activity
+            android:name="com.lejoying.wxgs.activity.ChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle" >
+        </activity>
         <activity
             android:name="com.lejoying.wxgs.activity.MainActivity"
             android:launchMode="singleTask"
@@ -52,11 +57,7 @@
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-         <activity
-            android:name="com.lejoying.wxgs.activity.ChatActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CommonStyle" >
-        </activity>
+        
         <activity
             android:name="com.lejoying.wxgs.activity.GroupInformationActivity"
             android:screenOrientation="portrait"
