@@ -236,6 +236,7 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 			// tempGroup.setLayoutParams(params4);
 			// groupViewContainer.addView(tempGroup);
 		}
+		mMainModeManager.handleMenu(false);
 	}
 
 	View myGroup;
@@ -694,11 +695,12 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 
 	@Override
 	public void onResume() {
+		System.out.println("GroupFragment");
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
-		mMainModeManager.handleMenu(false);
 		notifyViews();
 		requestLocation();
+		mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 

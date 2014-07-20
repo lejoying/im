@@ -20,7 +20,6 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -100,6 +99,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 	public static final int CHAT_GROUP = 2;
 
 	public int mStatus;
+
+	public boolean isLeave;
 
 	public Friend mNowChatFriend;
 	public Group mNowChatGroup;
@@ -186,6 +187,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.f_chat);
+		MainActivity.chatInstance = this;
 		imm = (InputMethodManager) getApplicationContext().getSystemService(
 				Context.INPUT_METHOD_SERVICE);
 		mInflater = this.getLayoutInflater();
@@ -343,7 +345,16 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onResume() {
+		if (mAdapter != null) {
+			mAdapter.notifyDataSetChanged();
+		}
 		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		isLeave = true;
+		super.onPause();
 	}
 
 	public float dp2px(float px) {
@@ -1033,6 +1044,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	public class ChatAdapter extends BaseAdapter {
 
+		long lastTime = 0;
+
 		@Override
 		public void notifyDataSetChanged() {
 			if (mStatus == CHAT_FRIEND) {
@@ -1167,8 +1180,26 @@ public class ChatActivity extends Activity implements OnClickListener {
 				return convertView;
 			}
 			final ArrayList<String> contentList = message.content;
-			messageHolder.tv_time.setText(TimeUtils.getTime(Long
-					.valueOf(message.time)));
+			if (position == 0) {
+				messageHolder.tv_time.setText(TimeUtils.getTime(Long
+						.valueOf(message.time)));
+			} else {
+				long beforeTime = 0;
+				if (mStatus == CHAT_FRIEND) {
+					beforeTime = Long.valueOf(mNowChatFriend.messages
+							.get(showFirstPosition + position - 1).time);
+				} else if (mStatus == CHAT_GROUP) {
+					beforeTime = Long.valueOf(mNowChatGroup.messages
+							.get(showFirstPosition + position - 1).time);
+				}
+				long currentMessageTime = Long.valueOf(message.time);
+				if (currentMessageTime - beforeTime < 60000) {
+					messageHolder.tv_time.setText("");
+				} else {
+					messageHolder.tv_time.setText(TimeUtils
+							.getTime(currentMessageTime));
+				}
+			}
 			String fileName = app.data.user.head;
 			String sex = "女";
 			switch (type) {

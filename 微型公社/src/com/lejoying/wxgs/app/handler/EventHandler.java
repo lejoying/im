@@ -50,16 +50,23 @@ public class EventHandler {
 								MainActivity.instance.mMainMode.mGroupFragment
 										.notifyViews();
 							}
-//							if (MainActivity.instance.mMainMode.mChatFragment
-//									.isAdded()) {
-//								MainActivity.instance.mMainMode.mChatFragment.mAdapter
-//										.notifyDataSetChanged();
-//							}
-//							if (MainActivity.instance.mMainMode.mChatGroupFragment
-//									.isAdded()) {
-//								MainActivity.instance.mMainMode.mChatGroupFragment.mAdapter
-//										.notifyDataSetChanged();
-//							}
+							if (MainActivity.chatInstance != null) {
+								if (!MainActivity.chatInstance.isLeave) {
+									MainActivity.chatInstance.mAdapter
+											.notifyDataSetChanged();
+								}
+							}
+							// if (MainActivity.instance.mMainMode.mChatFragment
+							// .isAdded()) {
+							// MainActivity.instance.mMainMode.mChatFragment.mAdapter
+							// .notifyDataSetChanged();
+							// }
+							// if
+							// (MainActivity.instance.mMainMode.mChatGroupFragment
+							// .isAdded()) {
+							// MainActivity.instance.mMainMode.mChatGroupFragment.mAdapter
+							// .notifyDataSetChanged();
+							// }
 							if (MainActivity.instance.mMainMode.mChatMessagesFragment
 									.isAdded()) {
 								MainActivity.instance.mMainMode.mChatMessagesFragment

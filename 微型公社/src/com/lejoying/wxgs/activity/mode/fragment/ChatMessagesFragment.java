@@ -47,9 +47,13 @@ public class ChatMessagesFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
+		System.out.println("ChatMessageFragment");
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
 		mMainModeManager.handleMenu(true);
+		if (messagesAdapter != null) {
+			messagesAdapter.notifyDataSetChanged();
+		}
 		super.onResume();
 	}
 
@@ -115,6 +119,7 @@ public class ChatMessagesFragment extends BaseFragment {
 				ll_not_messages.setVisibility(View.GONE);
 			}
 		}
+		
 	}
 
 	class MyMessagesAdapter extends BaseAdapter {
@@ -224,20 +229,30 @@ public class ChatMessagesFragment extends BaseFragment {
 					@Override
 					public void onClick(View view) {
 						if (chatFriend != null) {
-//							mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-//							mMainModeManager.mChatFragment.mNowChatFriend = chatFriend;
-//							mMainModeManager
-//									.showNext(mMainModeManager.mChatFragment);
+							Intent intent = new Intent(getActivity(),
+									ChatActivity.class);
+							intent.putExtra("status", ChatActivity.CHAT_FRIEND);
+							intent.putExtra("phone", chatFriend.phone);
+							startActivity(intent);
+							// mMainModeManager.mChatFragment.mStatus =
+							// ChatFriendFragment.CHAT_FRIEND;
+							// mMainModeManager.mChatFragment.mNowChatFriend =
+							// chatFriend;
+							// mMainModeManager
+							// .showNext(mMainModeManager.mChatFragment);
 							notifyViews();
 						} else {
-							Intent intent = new Intent(getActivity(), ChatActivity.class);
+							Intent intent = new Intent(getActivity(),
+									ChatActivity.class);
 							intent.putExtra("status", ChatActivity.CHAT_GROUP);
-							intent.putExtra("gid", chatGroup.gid+"");
+							intent.putExtra("gid", chatGroup.gid + "");
 							startActivity(intent);
-//							mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-//							mMainModeManager.mChatGroupFragment.mNowChatGroup = chatGroup;
-//							mMainModeManager
-//									.showNext(mMainModeManager.mChatGroupFragment);
+							// mMainModeManager.mChatGroupFragment.mStatus =
+							// ChatFriendFragment.CHAT_GROUP;
+							// mMainModeManager.mChatGroupFragment.mNowChatGroup
+							// = chatGroup;
+							// mMainModeManager
+							// .showNext(mMainModeManager.mChatGroupFragment);
 							notifyViews();
 						}
 					}

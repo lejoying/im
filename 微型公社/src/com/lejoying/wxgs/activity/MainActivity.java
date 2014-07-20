@@ -56,6 +56,8 @@ public class MainActivity extends BaseActivity {
 	LayoutInflater inflater;
 
 	public static MainActivity instance;
+	
+	public static ChatActivity chatInstance;
 
 	public static final String TAG = "MainActivity";
 
