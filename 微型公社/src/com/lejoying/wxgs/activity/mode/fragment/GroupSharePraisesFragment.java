@@ -130,6 +130,7 @@ public class GroupSharePraisesFragment extends BaseFragment {
 			holder.name.setTextColor(Color.WHITE);
 			holder.sign.setTextColor(Color.GRAY);
 			holder.sign.setSingleLine();
+			convertView.setPadding(0, (int) (10 * density + 0.5f), 0, 0);
 			RelativeLayout.LayoutParams signparams = (RelativeLayout.LayoutParams) holder.sign
 					.getLayoutParams();
 			signparams.topMargin = (int) (5 * density + 0.5f);

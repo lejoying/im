@@ -37,7 +37,8 @@ import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
-public class GroupInformationActivity extends Activity {
+public class GroupInformationActivity extends Activity implements
+		OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
 
@@ -138,6 +139,7 @@ public class GroupInformationActivity extends Activity {
 	}
 
 	private void initEvent() {
+		checkChatMessagesView.setOnClickListener(this);
 		groupBusinessView.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -455,5 +457,20 @@ public class GroupInformationActivity extends Activity {
 			params.leftMargin = friendHolder.position.x;
 			friendHolder.view.setLayoutParams(params);
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.rl_checkChatMessages:
+			setResult(Activity.RESULT_OK);
+			finish();
+			break;
+
+		default:
+			break;
+		}
+
 	}
 }

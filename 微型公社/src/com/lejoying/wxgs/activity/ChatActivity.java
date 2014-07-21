@@ -106,6 +106,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 	public Group mNowChatGroup;
 
 	public BaseAdapter mAdapter;
+	public BaseAdapter mFindAdapter;
 
 	public MediaRecorder mRecorder;
 	public MediaPlayer mPlayer;
@@ -117,6 +118,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 	int RESULT_SELECTPICTURE = 0x124;
 	int RESULT_TAKEPICTURE = 0xa3;
 	int RESULT_CATPICTURE = 0x3d;
+	int RESULT_INFOMATION = 0x4d;
 	int messageNum = 1;
 	int height, width, dip;
 	float density;
@@ -146,6 +148,12 @@ public class ChatActivity extends Activity implements OnClickListener {
 	LinearLayout ll_wave;
 	ImageView iv_wave;
 
+	LinearLayout find_record;
+	RelativeLayout findrecord_backview, findrecord_topbar;
+	ListView lv_findrecord;
+	EditText et_findrecord;
+	ImageView findrecord_sel;
+
 	ImageView iv_infomation;
 	RelativeLayout rl_face;
 	LinearLayout ll_facepanel;
@@ -162,6 +170,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 	public static String faceRegx = "[\\[,<]{1}[\u4E00-\u9FFF]{1,5}[\\],>]{1}|[\\[,<]{1}[a-zA-Z0-9]{1,5}[\\],>]{1}";
 
 	HashMap<String, SoftReference<Bitmap>> softBitmaps = new HashMap<String, SoftReference<Bitmap>>();
+
+	List<Integer> recordList = new ArrayList<Integer>();
 
 	View groupTopBar;
 	View groupTopBar_back;
@@ -203,7 +213,6 @@ public class ChatActivity extends Activity implements OnClickListener {
 				mNowChatGroup = app.data.groupsMap.get(gid);
 			}
 		}
-
 		faceMenuShowList = new ArrayList<ImageView>();
 		faceNamesList = new ArrayList<String[]>();
 
@@ -259,6 +268,13 @@ public class ChatActivity extends Activity implements OnClickListener {
 		groupTopBar_back = findViewById(R.id.backview);
 		textView_groupName = (TextView) findViewById(R.id.textView_groupName);
 
+		find_record = (LinearLayout) findViewById(R.id.find_record);
+		findrecord_backview = (RelativeLayout) findViewById(R.id.findrecord_backview);
+		findrecord_topbar = (RelativeLayout) findViewById(R.id.findrecord_topbar);
+		lv_findrecord = (ListView) findViewById(R.id.lv_findrecord);
+		et_findrecord = (EditText) findViewById(R.id.et_findrecord);
+		findrecord_sel = (ImageView) findViewById(R.id.findrecord_sel);
+
 		groupTopBar.setVisibility(View.VISIBLE);
 		if (mStatus == CHAT_FRIEND) {
 			if (!mNowChatFriend.alias.equals("")
@@ -299,7 +315,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 		initEvent();
 		initBaseFaces();
 		mAdapter = new ChatAdapter();
-
+		mFindAdapter = new FindRecordAdapter();
 		// if (mStatus == CHAT_FRIEND) {
 		// } else if (mStatus == CHAT_GROUP) {
 		// mAdapter = new GroupChatAdapter();
@@ -329,6 +345,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 				isFirst = false;
 			}
 		});
+		lv_findrecord.setAdapter(mFindAdapter);
 	}
 
 	public void initShowFirstPosition() {
@@ -357,10 +374,10 @@ public class ChatActivity extends Activity implements OnClickListener {
 		super.onPause();
 	}
 
-	public float dp2px(float px) {
+	public int dp2px(float px) {
 		float dp = ChatActivity.this.getResources().getDisplayMetrics().density
 				* px + 0.5f;
-		return dp;
+		return (int) dp;
 	}
 
 	@Override
@@ -621,8 +638,17 @@ public class ChatActivity extends Activity implements OnClickListener {
 				Intent intent = new Intent(ChatActivity.this,
 						GroupInformationActivity.class);
 				intent.putExtra("gid", mNowChatGroup.gid + "");
-				startActivity(intent);
+				startActivityForResult(intent, RESULT_INFOMATION);
 			}
+			break;
+		case R.id.findrecord_backview:
+			find_record.setVisibility(View.GONE);
+			groupTopBar.setVisibility(View.VISIBLE);
+			rl_chatbottom.setVisibility(View.VISIBLE);
+			chatContent.setEnabled(true);
+			break;
+		case R.id.findrecord_sel:
+			et_findrecord.setText("");
 			break;
 		default:
 			break;
@@ -643,6 +669,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 		chat_camera.setOnClickListener(this);
 		iv_more_voice.setOnClickListener(this);
 		iv_infomation.setOnClickListener(this);
+		findrecord_backview.setOnClickListener(this);
+		findrecord_sel.setOnClickListener(this);
 		chat_vPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
@@ -845,6 +873,75 @@ public class ChatActivity extends Activity implements OnClickListener {
 					if (iv_send.getVisibility() == View.GONE) {
 						iv_send.setVisibility(View.VISIBLE);
 					}
+				}
+			}
+		});
+
+		et_findrecord.addTextChangedListener(new TextWatcher() {
+			String content = "";
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				content = et_findrecord.getText().toString();
+				if (!"".equals(et_findrecord.getText().toString())) {
+					findrecord_sel.setVisibility(View.VISIBLE);
+					find_record.setBackgroundResource(R.drawable.background4);
+					findrecord_topbar.setBackgroundColor(Color
+							.parseColor("#51000000"));
+					int count = 0;
+					recordList.clear();
+					if (mStatus == CHAT_FRIEND) {
+						count = mNowChatFriend.messages.size();
+						for (int i = 0; i < count; i++) {
+							Message msg = mNowChatFriend.messages.get(i);
+							if ("text".equals(msg.contentType)) {
+								if (msg.content.get(0).indexOf(content) != -1) {
+									recordList.add(i);
+								}
+							}
+						}
+						if (recordList.size() != 0) {
+							lv_findrecord.setVisibility(View.VISIBLE);
+							mFindAdapter.notifyDataSetChanged();
+						} else {
+							lv_findrecord.setVisibility(View.GONE);
+						}
+					} else if (mStatus == CHAT_GROUP) {
+						count = mNowChatGroup.messages.size();
+						for (int i = 0; i < count; i++) {
+							Message msg = mNowChatGroup.messages.get(i);
+							if ("text".equals(msg.contentType)) {
+								if (msg.content.get(0).indexOf(content) != -1) {
+									recordList.add(i);
+								}
+							}
+						}
+						if (recordList.size() != 0) {
+							lv_findrecord.setVisibility(View.VISIBLE);
+							mFindAdapter.notifyDataSetChanged();
+						} else {
+							lv_findrecord.setVisibility(View.GONE);
+						}
+					}
+
+				} else {
+					findrecord_sel.setVisibility(View.GONE);
+					lv_findrecord.setVisibility(View.GONE);
+					findrecord_topbar.setBackgroundColor(Color
+							.parseColor("#00000000"));
+					find_record.setBackgroundColor(Color
+							.parseColor("#51000000"));
 				}
 			}
 		});
@@ -1167,7 +1264,6 @@ public class ChatActivity extends Activity implements OnClickListener {
 			} else {
 				messageHolder = (MessageHolder) convertView.getTag();
 			}
-			// final Message message = (Message) getItem(position);
 			Message message = null;
 			if (mStatus == CHAT_FRIEND) {
 				message = mNowChatFriend.messages.get(showFirstPosition
@@ -1241,13 +1337,6 @@ public class ChatActivity extends Activity implements OnClickListener {
 						.getExpressionString(ChatActivity.this, content,
 								faceRegx, expressionFaceMap);
 				messageHolder.tv_chat.setText(spannableString);
-
-				messageHolder.iv_head.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-					}
-				});
 				messageHolder.tv_chat
 						.setOnLongClickListener(new OnLongClickListener() {
 
@@ -1505,23 +1594,143 @@ public class ChatActivity extends Activity implements OnClickListener {
 			}
 			return convertView;
 		}
+
+		class MessageHolder {
+
+			ImageView iv_head;
+			ImageView iv_voice;
+			TextView tv_chat;
+			TextView tv_time;
+			TextView tv_voicetime;
+
+			RelativeLayout rl_image;
+			LinearLayout ll_image;
+			LinearLayout ll_voice;
+
+			RelativeLayout rl_gif;
+
+			MediaPlayer mpPlayer;
+		}
 	}
 
-	class MessageHolder {
+	public class FindRecordAdapter extends BaseAdapter {
 
-		ImageView iv_head;
-		ImageView iv_voice;
-		TextView tv_chat;
-		TextView tv_time;
-		TextView tv_voicetime;
+		@Override
+		public int getCount() {
+			return recordList.size();
+		}
 
-		RelativeLayout rl_image;
-		LinearLayout ll_image;
-		LinearLayout ll_voice;
+		@Override
+		public Object getItem(int position) {
+			Object message = null;
+			if (mStatus == CHAT_FRIEND) {
+				message = mNowChatFriend.messages.get(recordList.get(position));
+			} else if (mStatus == CHAT_GROUP) {
+				message = mNowChatGroup.messages.get(recordList.get(position));
+			}
+			return message;
+		}
 
-		RelativeLayout rl_gif;
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
 
-		MediaPlayer mpPlayer;
+		@Override
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
+			final RecordHolder holder;
+			Message msg = (Message) getItem(position);
+			if (convertView == null) {
+				holder = new RecordHolder();
+				convertView = mInflater.inflate(
+						R.layout.groupshare_commentchild, null);
+				holder.head = (ImageView) convertView.findViewById(R.id.head);
+				holder.bottomLine = (ImageView) convertView
+						.findViewById(R.id.bottomLine);
+				holder.time = (TextView) convertView.findViewById(R.id.time);
+				holder.content = (TextView) convertView
+						.findViewById(R.id.content);
+				holder.receive = (TextView) convertView
+						.findViewById(R.id.receive);
+				holder.reply = (TextView) convertView.findViewById(R.id.reply);
+				holder.received = (TextView) convertView
+						.findViewById(R.id.received);
+
+				holder.bottomLine.setVisibility(View.GONE);
+				holder.reply.setVisibility(View.GONE);
+				holder.received.setVisibility(View.GONE);
+
+				holder.head.setPadding(dp2px(5), 0, dp2px(5), dp2px(5));
+				holder.head.getLayoutParams().width = (int) dp2px(58);
+				holder.head.getLayoutParams().height = (int) dp2px(53);
+				holder.receive.setTextColor(Color.WHITE);
+				holder.time.setTextColor(Color.parseColor("#ffc8c8c8"));
+				holder.content.setTextColor(Color.parseColor("#ffc8c8c8"));
+				holder.content.setSingleLine();
+				convertView.setPadding(0, dp2px(5), 0, 0);
+				convertView.setBackgroundColor(Color.parseColor("#26ffffff"));
+
+				convertView.setTag(holder);
+			} else {
+				holder = (RecordHolder) convertView.getTag();
+			}
+			String head = "", sex = "", name = "";
+			switch (msg.type) {
+			case Message.MESSAGE_TYPE_SEND:
+				head = app.data.user.head;
+				sex = app.data.user.sex;
+				name = app.data.user.nickName;
+				break;
+			case Message.MESSAGE_TYPE_RECEIVE:
+				if (mStatus == CHAT_FRIEND) {
+					head = mNowChatFriend.head;
+					sex = mNowChatFriend.sex;
+					name = mNowChatFriend.nickName;
+				} else {
+					head = app.data.groupFriends.get(msg.phone).head;
+					sex = app.data.groupFriends.get(msg.phone).sex;
+					name = app.data.groupFriends.get(msg.phone).nickName;
+				}
+				break;
+			default:
+				break;
+			}
+			app.fileHandler.getHeadImage(head, sex, new FileResult() {
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					holder.head.setImageBitmap(bitmap);
+				}
+			});
+			holder.receive.setText(name);
+			holder.content.setText(msg.content.get(0));
+			holder.time.setText(TimeUtils.getTime(Long.valueOf(msg.time)));
+			convertView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					int location = recordList.get(position), count;
+					if (mStatus == CHAT_FRIEND) {
+						count = mNowChatFriend.messages.size();
+					} else {
+						count = mNowChatGroup.messages.size();
+					}
+					if (location > showFirstPosition && location < count) {
+						find_record.setVisibility(View.INVISIBLE);
+						chatContent.setSelection(location);
+					} else {
+
+					}
+				}
+			});
+			return convertView;
+		}
+
+		class RecordHolder {
+			ImageView head, bottomLine;
+			TextView time, content, receive, reply, received;
+		}
 	}
 
 	public void sendMessage(final String type, final ArrayList<String> content) {
@@ -1717,9 +1926,12 @@ public class ChatActivity extends Activity implements OnClickListener {
 				}
 			});
 
-		} else if (requestCode == RESULT_CATPICTURE
-				&& resultCode == Activity.RESULT_OK && data != null) {
-
+		} else if (requestCode == RESULT_INFOMATION
+				&& resultCode == Activity.RESULT_OK) {
+			groupTopBar.setVisibility(View.GONE);
+			rl_chatbottom.setVisibility(View.GONE);
+			find_record.setVisibility(View.VISIBLE);
+			chatContent.setEnabled(false);
 		}
 	}
 

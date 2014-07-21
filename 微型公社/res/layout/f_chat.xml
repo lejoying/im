@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/background4"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/background4" >
 
     <ListView
         android:id="@+id/chatContent"
@@ -364,35 +364,30 @@
                     android:text="联谊会"
                     android:textColor="#fff"
                     android:textSize="17sp" />
-              
             </RelativeLayout>
         </RelativeLayout>
-	
-        <ImageView 
+
+        <ImageView
             android:id="@+id/iv_infomation"
             android:layout_width="70dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:paddingLeft="10dp"
             android:paddingRight="30dp"
-            android:src="@drawable/chat_group_menu"
-            />
-       
+            android:src="@drawable/chat_group_menu" />
     </RelativeLayout>
-
 
     <LinearLayout
         android:id="@+id/ll_wave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/wave_bg"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="190dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="190dp"
+        android:background="@drawable/wave_bg"
         android:orientation="vertical"
         android:padding="10dp"
-        android:visibility="gone"
-         >
+        android:visibility="gone" >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -425,6 +420,110 @@
             android:text="长按录音键，取消发送"
             android:textColor="#fff"
             android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/find_record"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#51000000"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:id="@+id/findrecord_topbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:clickable="true" >
+
+            <RelativeLayout
+                android:id="@+id/findrecord_backview"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingRight="10dp" >
+
+                <ImageView
+                    android:id="@+id/findrecord_ivback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/back" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="20dp"
+                android:layout_toRightOf="@+id/findrecord_backview" >
+
+                <ImageView
+                    android:id="@+id/iv_search"
+                    android:layout_width="23dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/dialog_search" />
+
+                <EditText
+                    android:id="@+id/et_findrecord"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_toRightOf="@+id/iv_search"
+                    android:background="#00000000"
+                    android:hint="搜索"
+                    android:textColor="#fff" />
+
+                <ImageView
+                    android:id="@+id/findrecord_sel"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/et_findrecord"
+                    android:padding="10dp"
+                    android:src="@drawable/card_back"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/iv_bottomline"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/et_findrecord"
+                    android:background="#fff" />
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_above="@+id/iv_bottomline"
+                    android:layout_alignParentLeft="true"
+                    android:background="#fff" />
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_above="@+id/iv_bottomline"
+                    android:layout_alignParentRight="true"
+                    android:background="#fff" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/lv_findrecord"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="#0000"
+            android:divider="#0000"
+            android:dividerHeight="2dp"
+            android:fadingEdge="none"
+            android:listSelector="#0000"
+            android:padding="10dp"
+            android:visibility="gone" >
+        </ListView>
     </LinearLayout>
 
 </RelativeLayout>
