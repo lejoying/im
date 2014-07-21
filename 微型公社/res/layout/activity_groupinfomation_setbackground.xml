@@ -25,6 +25,7 @@
                 android:src="@drawable/back" />
 
             <TextView
+                android:id="@+id/tv_backText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
@@ -34,64 +35,99 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/ll_backgroundOption"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:gravity="center_vertical" >
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
-            android:text="选择背景图"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rl_selectBackGround"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical" >
 
-    <ImageView
-        android:layout_width="340dp"
-        android:layout_height="1dp"
-        android:background="#33ffffff" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:text="选择背景图"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </RelativeLayout>
 
-    <RelativeLayout
+        <ImageView
+            android:layout_width="340dp"
+            android:layout_height="1dp"
+            android:background="#33ffffff" />
+
+        <RelativeLayout
+            android:id="@+id/rl_backGroundFromPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:text="从相册中选择"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="340dp"
+            android:layout_height="1dp"
+            android:background="#33ffffff" />
+
+        <RelativeLayout
+            android:id="@+id/rl_backGroundFromCamera"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:text="拍一张"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="340dp"
+            android:layout_height="1dp"
+            android:background="#33ffffff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_innerBackGround"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:gravity="center_vertical" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone" >
 
-        <TextView
-            android:layout_width="wrap_content"
+        <GridView
+            android:id="@+id/gridView_background"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
-            android:text="从相册中选择"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
-    <ImageView
-        android:layout_width="340dp"
-        android:layout_height="1dp"
-        android:background="#33ffffff" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:gravity="center_vertical" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
-            android:text="拍一张"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
-    <ImageView
-        android:layout_width="340dp"
-        android:layout_height="1dp"
-        android:background="#33ffffff" />
+            android:cacheColorHint="#0000"
+            android:divider="#0000"
+            android:dividerHeight="5dp"
+            android:gravity="center"
+            android:horizontalSpacing="5dp"
+            android:listSelector="#0000"
+            android:numColumns="4"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" >
+        </GridView>
+    </LinearLayout>
 
 </LinearLayout>

@@ -139,6 +139,24 @@ public class GroupInformationActivity extends Activity implements
 	}
 
 	private void initEvent() {
+		groupMemberControlView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(GroupInformationActivity.this,
+						GroupMemberManageActivity.class);
+				startActivity(intent);
+			}
+		});
+		groupSetBackGroundView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(GroupInformationActivity.this,
+						ChatBackGroundSettingActivity.class);
+				startActivity(intent);
+			}
+		});
 		checkChatMessagesView.setOnClickListener(this);
 		groupBusinessView.setOnClickListener(new OnClickListener() {
 
