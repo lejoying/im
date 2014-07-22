@@ -40,7 +40,7 @@ import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 
-public class GroupBusinessCardActivity extends Activity implements
+public class BusinessCardActivity extends Activity implements
 		OnClickListener {
 	public Group mGroup;
 
@@ -120,12 +120,12 @@ public class GroupBusinessCardActivity extends Activity implements
 			@Override
 			protected void onPostExecute(Boolean result) {
 				DisplayMetrics dm = new DisplayMetrics();
-				GroupBusinessCardActivity.this.getWindowManager()
+				BusinessCardActivity.this.getWindowManager()
 						.getDefaultDisplay().getMetrics(dm);
 				// height = dm.heightPixels;
 				// width = dm.widthPixels;
 				Rect frame = new Rect();
-				GroupBusinessCardActivity.this.getWindow().getDecorView()
+				BusinessCardActivity.this.getWindow().getDecorView()
 						.getWindowVisibleDisplayFrame(frame);
 				int statusBarHeight = frame.top;
 				sv_content = (ScrollView) findViewById(R.id.sv_content);
@@ -262,7 +262,7 @@ public class GroupBusinessCardActivity extends Activity implements
 				@Override
 				public void onClick(View arg0) {
 					// mMainModeManager.back();
-					Intent intent = new Intent(GroupBusinessCardActivity.this,
+					Intent intent = new Intent(BusinessCardActivity.this,
 							ChatActivity.class);
 					intent.putExtra("status", ChatActivity.CHAT_GROUP);
 					intent.putExtra("gid", mGroup.gid + "");

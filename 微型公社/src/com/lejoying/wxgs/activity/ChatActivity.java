@@ -374,6 +374,23 @@ public class ChatActivity extends Activity implements OnClickListener {
 		super.onPause();
 	}
 
+	@Override
+	public void onBackPressed() {
+		mFinish();
+	}
+
+	private void mFinish() {
+		if (groupTopBar.getVisibility() == View.VISIBLE
+				&& rl_chatbottom.getVisibility() == View.GONE) {
+			groupTopBar.setVisibility(View.GONE);
+			find_record.setVisibility(View.VISIBLE);
+			chatContent.setEnabled(false);
+		} else {
+			finish();
+		}
+
+	}
+
 	public int dp2px(float px) {
 		float dp = ChatActivity.this.getResources().getDisplayMetrics().density
 				* px + 0.5f;
@@ -645,6 +662,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 			find_record.setVisibility(View.GONE);
 			groupTopBar.setVisibility(View.VISIBLE);
 			rl_chatbottom.setVisibility(View.VISIBLE);
+			if (iv_infomation.getVisibility() == View.GONE)
+				iv_infomation.setVisibility(View.VISIBLE);
 			chatContent.setEnabled(true);
 			break;
 		case R.id.findrecord_sel:
@@ -702,7 +721,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
 						// mMainModeManager.back();
-						finish();
+						mFinish();
 						return true;
 					}
 				});
@@ -1716,11 +1735,19 @@ public class ChatActivity extends Activity implements OnClickListener {
 					} else {
 						count = mNowChatGroup.messages.size();
 					}
-					if (location > showFirstPosition && location < count) {
-						find_record.setVisibility(View.INVISIBLE);
-						chatContent.setSelection(location);
-					} else {
-
+					if (location < showFirstPosition && location <= count) {
+						showFirstPosition = location;
+						mAdapter.notifyDataSetChanged();
+					}
+					find_record.setVisibility(View.INVISIBLE);
+					groupTopBar.setVisibility(View.VISIBLE);
+					iv_infomation.setVisibility(View.GONE);
+					chatContent.setSelection(location);
+					chatContent.setEnabled(true);
+					if (imm.isActive()) {
+						imm.hideSoftInputFromWindow(ChatActivity.this
+								.getCurrentFocus().getWindowToken(),
+								InputMethodManager.HIDE_NOT_ALWAYS);
 					}
 				}
 			});
@@ -1931,6 +1958,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 			groupTopBar.setVisibility(View.GONE);
 			rl_chatbottom.setVisibility(View.GONE);
 			find_record.setVisibility(View.VISIBLE);
+			et_findrecord.setText("");
 			chatContent.setEnabled(false);
 		}
 	}

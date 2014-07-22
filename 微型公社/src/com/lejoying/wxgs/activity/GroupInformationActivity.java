@@ -163,7 +163,7 @@ public class GroupInformationActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(GroupInformationActivity.this,
-						GroupBusinessCardActivity.class);
+						BusinessCardActivity.class);
 				intent.putExtra("gid", mCurrentGroupInfomation.gid + "");
 				startActivity(intent);
 			}

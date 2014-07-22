@@ -73,7 +73,7 @@
             android:theme="@style/CommonStyle" >
         </activity>
         <activity
-            android:name="com.lejoying.wxgs.activity.GroupBusinessCardActivity"
+            android:name="com.lejoying.wxgs.activity.BusinessCardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
         </activity>
