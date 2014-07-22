@@ -145,6 +145,7 @@ public class GroupInformationActivity extends Activity implements
 			public void onClick(View v) {
 				Intent intent = new Intent(GroupInformationActivity.this,
 						GroupMemberManageActivity.class);
+				intent.putExtra("gid", mCurrentGroupInfomation.gid + "");
 				startActivity(intent);
 			}
 		});
