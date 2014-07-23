@@ -105,9 +105,9 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 		};
 		tv_spacing = (TextView) mContent.findViewById(R.id.tv_spacing);
 		tv_spacing2 = (TextView) mContent.findViewById(R.id.tv_spacing2);
-		tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
-		rl_show = (RelativeLayout) mContent.findViewById(R.id.rl_show);
+//		tv_mainbusiness = (TextView) mContent
+//				.findViewById(R.id.tv_mainbusiness);
+//		rl_show = (RelativeLayout) mContent.findViewById(R.id.rl_show);
 
 		AsyncTask<Integer, Integer, Boolean> asyncTask = new AsyncTask<Integer, Integer, Boolean>() {
 
@@ -210,22 +210,21 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 				.findViewById(R.id.tv_nickname);
 
 		TextView tv_id = (TextView) mContent.findViewById(R.id.tv_id);
-		TextView tv_id_title = (TextView) mContent
-				.findViewById(R.id.tv_id_title);
-		TextView tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
-		TextView tv_alias_title = (TextView) mContent
-				.findViewById(R.id.tv_alias_title);
+//		TextView tv_id_title = (TextView) mContent
+//				.findViewById(R.id.tv_id_title);
+//		TextView tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
+//		TextView tv_alias_title = (TextView) mContent
+//				.findViewById(R.id.tv_alias_title);
 
 		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_business);
-		TextView tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
-		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_tag);
-		TextView tv_phone_title = (TextView) mContent
-				.findViewById(R.id.tv_phone_title);
-		TextView tv_mainbusiness_title = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness_title);
-		TextView tv_sex_title = (TextView) mContent
-				.findViewById(R.id.tv_sex_title);
+//		TextView tv_mainbusiness = (TextView) mContent
+//				.findViewById(R.id.tv_mainbusiness);
+//		TextView tv_phone_title = (TextView) mContent
+//				.findViewById(R.id.tv_phone_title);
+//		TextView tv_mainbusiness_title = (TextView) mContent
+//				.findViewById(R.id.tv_mainbusiness_title);
+//		TextView tv_sex_title = (TextView) mContent
+//				.findViewById(R.id.tv_sex_title);
 
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
@@ -233,10 +232,9 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 
 		tv_phone.setVisibility(View.GONE);
 		tv_mainbusiness.setVisibility(View.GONE);
-		tv_sex.setVisibility(View.GONE);
-		tv_phone_title.setVisibility(View.GONE);
-		tv_mainbusiness_title.setVisibility(View.GONE);
-		tv_sex_title.setVisibility(View.GONE);
+//		tv_phone_title.setVisibility(View.GONE);
+//		tv_mainbusiness_title.setVisibility(View.GONE);
+//		tv_sex_title.setVisibility(View.GONE);
 
 		group.removeView(button2);
 		group.removeView(button3);
@@ -283,16 +281,16 @@ public class GroupBusinessCardFragment extends BaseFragment implements
 				}
 			});
 		}
-		tv_id_title.setText("群组ID：");
-		tv_alias_title.setText("群组描述：");
+//		tv_id_title.setText("群组ID：");
+//		tv_alias_title.setText("群组描述：");
 
 		tv_nickname.setText(mGroup.name);
 		tv_id.setText(String.valueOf(mGroup.gid));
 		if (mGroup.description == null || mGroup.description.equals("")
 				|| mGroup.description.equals("请输入群组描述信息")) {
-			tv_alias.setText("此群组暂无描述");
+//			tv_alias.setText("此群组暂无描述");
 		} else {
-			tv_alias.setText(mGroup.description);
+//			tv_alias.setText(mGroup.description);
 		}
 		final String headFileName = mGroup.icon;
 		app.fileHandler.getHeadImage(headFileName,"男", new FileResult() {

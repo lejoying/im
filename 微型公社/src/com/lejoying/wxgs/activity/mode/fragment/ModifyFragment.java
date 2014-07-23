@@ -25,9 +25,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
@@ -55,11 +58,9 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.SaveSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
 
-public class ModifyFragment extends BaseFragment implements OnClickListener,
-		OnFocusChangeListener {
+public class ModifyFragment extends BaseFragment implements OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
-	MainModeManager mMainModeManager;
 
 	int RESULT_SELECTHEAD = 0x123;
 	int RESULT_TAKEPICTURE = 0xa3;
@@ -68,53 +69,26 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 	List<String> yewu;
 
 	View mContent;
-	TextView tv_name;
-	EditText et_name;
-	TextView tv_sex;
-	TextView tv_yewu;
-	EditText et_yewu;
-	View tv_modifychangepwd;
 
-	ImageView iv_head;
-	View rl_head;
-	View rl_yewu_edit;
-	View rl_name;
-	View rl_sex;
-	View rl_yewu;
-
-	TextView tv_phone;
-
-	View tv_spacing;
-	View rl_editbar;
-	View rl_save;
-	View rl_cancel;
-
-	View rl_edithead;
-	View rl_fromgallery;
-	View rl_takepicture;
-	View rl_cancelselect;
-
-	View tv_random;
-
-	TextView tv_yewulength;
-
-	boolean isEdit;
+	LinearLayout ll_backview, ll_complete, ll_head, ll_name, ll_sex,
+			ll_location, ll_business, ll_lable, ll_background;
+	RelativeLayout rl_input;
+	ImageView iv_sel, iv_head;
+	TextView modify_title, tv_name_title, tv_name, tv_sex_title, tv_sex,
+			tv_location_title, tv_location, tv_business_title, tv_business,
+			tv_lable_title, tv_lable, tv_modify;
+	EditText et_input;
 
 	@Override
 	public void onResume() {
-		mMainModeManager.handleMenu(false);
 		super.onResume();
-	}
-
-	public void setMode(MainModeManager mainMode) {
-		mMainModeManager = mainMode;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mContent = inflater.inflate(R.layout.f_modifyinfo, null);
+		mContent = inflater.inflate(R.layout.f_modify, null);
 		app.fileHandler.getBackgroundImage(app.data.user.userBackground,
 				new FileResult() {
 					@Override
@@ -125,46 +99,55 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 					}
 				});
 
-		isEdit = false;
-		initData();
 		initView();
-		mMainModeManager.setKeyDownListener(new KeyDownListener() {
+		initData();
+		initYewu();
+		mContent.setOnKeyListener(new OnKeyListener() {
 
 			@Override
-			public boolean onKeyDown(int keyCode, KeyEvent event) {
-				boolean flag = true;
-				if (keyCode == KeyEvent.KEYCODE_BACK && isEdit) {
-					endModify(false);
-					flag = false;
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					mFinish();
 				}
-				return flag;
+				return true;
 			}
 		});
 		return mContent;
 	}
 
-	@Override
-	public void onDestroyView() {
-		// TODO Auto-generated method stub
-		super.onDestroyView();
+	private void initData() {
+
 	}
 
-	public void initView() {
-		rl_head = mContent.findViewById(R.id.rl_head);
+	private void initView() {
+		ll_backview = (LinearLayout) mContent.findViewById(R.id.ll_backview);
+		ll_complete = (LinearLayout) mContent.findViewById(R.id.ll_complete);
+		ll_head = (LinearLayout) mContent.findViewById(R.id.ll_head);
+		ll_name = (LinearLayout) mContent.findViewById(R.id.ll_name);
+		ll_sex = (LinearLayout) mContent.findViewById(R.id.ll_sex);
+		ll_location = (LinearLayout) mContent.findViewById(R.id.ll_location);
+		ll_business = (LinearLayout) mContent.findViewById(R.id.ll_business);
+		ll_lable = (LinearLayout) mContent.findViewById(R.id.ll_lable);
+		ll_background = (LinearLayout) mContent
+				.findViewById(R.id.ll_background);
+		rl_input = (RelativeLayout) mContent.findViewById(R.id.rl_input);
+		iv_sel = (ImageView) mContent.findViewById(R.id.iv_sel);
 		iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
+		modify_title = (TextView) mContent.findViewById(R.id.modify_title);
+		tv_name_title = (TextView) mContent.findViewById(R.id.tv_name_title);
 		tv_name = (TextView) mContent.findViewById(R.id.tv_name);
-		et_name = (EditText) mContent.findViewById(R.id.et_name);
-		tv_sex = (TextView) mContent.findViewById(R.id.tv_tag);
-		tv_modifychangepwd = mContent.findViewById(R.id.tv_modifychangepwd);
-
-		tv_yewu = (TextView) mContent.findViewById(R.id.tv_yewu);
-		et_yewu = (EditText) mContent.findViewById(R.id.et_yewu);
-		tv_phone = (TextView) mContent.findViewById(R.id.tv_business);
-		rl_yewu_edit = mContent.findViewById(R.id.rl_yewu_edit);
-		rl_name = mContent.findViewById(R.id.rl_name);
-		rl_yewu = mContent.findViewById(R.id.rl_yewu);
-		rl_sex = mContent.findViewById(R.id.rl_sex);
-		tv_random = mContent.findViewById(R.id.tv_random);
+		tv_sex_title = (TextView) mContent.findViewById(R.id.tv_sex_title);
+		tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
+		tv_location_title = (TextView) mContent
+				.findViewById(R.id.tv_location_title);
+		tv_location = (TextView) mContent.findViewById(R.id.tv_location);
+		tv_business_title = (TextView) mContent
+				.findViewById(R.id.tv_business_title);
+		tv_business = (TextView) mContent.findViewById(R.id.tv_business);
+		tv_lable_title = (TextView) mContent.findViewById(R.id.tv_lable_title);
+		tv_lable = (TextView) mContent.findViewById(R.id.tv_lable);
+		tv_modify = (TextView) mContent.findViewById(R.id.tv_modify);
+		et_input = (EditText) mContent.findViewById(R.id.et_input);
 
 		final String headFileName = app.data.user.head;
 		app.fileHandler.getHeadImage(headFileName, app.data.user.sex,
@@ -176,172 +159,67 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 					}
 				});
 
-		rl_edithead = mContent.findViewById(R.id.rl_edithead);
-		rl_fromgallery = mContent.findViewById(R.id.rl_fromgallery);
-		rl_takepicture = mContent.findViewById(R.id.rl_takepicture);
-		rl_cancelselect = mContent.findViewById(R.id.rl_cancelselect);
+		ll_backview.setOnClickListener(this);
+		ll_complete.setOnClickListener(this);
+		ll_head.setOnClickListener(this);
+		ll_name.setOnClickListener(this);
+		ll_sex.setOnClickListener(this);
+		ll_location.setOnClickListener(this);
+		ll_business.setOnClickListener(this);
+		ll_lable.setOnClickListener(this);
+		ll_background.setOnClickListener(this);
+		tv_modify.setOnClickListener(this);
+		iv_sel.setOnClickListener(this);
 
-		tv_modifychangepwd.setOnClickListener(this);
-		rl_fromgallery.setOnClickListener(this);
-		rl_takepicture.setOnClickListener(this);
-		rl_cancelselect.setOnClickListener(this);
-
-		rl_name.setOnClickListener(this);
-		rl_sex.setOnClickListener(this);
-		rl_yewu.setOnClickListener(this);
-		et_name.setOnFocusChangeListener(this);
-		et_yewu.setOnFocusChangeListener(this);
-
-		rl_head.setOnClickListener(this);
-
-		tv_spacing = mContent.findViewById(R.id.tv_spacing);
-		rl_editbar = mContent.findViewById(R.id.rl_editbar);
-		rl_save = mContent.findViewById(R.id.rl_save);
-		rl_cancel = mContent.findViewById(R.id.rl_cancel);
-
-		tv_random.setOnClickListener(this);
-		rl_save.setOnClickListener(this);
-		rl_cancel.setOnClickListener(this);
-
-		tv_name.setText(app.data.user.nickName);
-		tv_sex.setText(app.data.user.sex);
-		tv_phone.setText(app.data.user.phone);
-		tv_yewu.setText(app.data.user.mainBusiness);
-
-		tv_yewulength = (TextView) mContent.findViewById(R.id.tv_yewulength);
-
-		et_yewu.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				// TODO Auto-generated method stub
-				tv_yewulength.setText(s.length() + "/240");
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-	}
-
-	void modifyMode(View v) {
-		changeSelectBackGround(v);
-		if (!isEdit) {
-			isEdit = true;
-			tv_name.setVisibility(View.GONE);
-			tv_yewu.setVisibility(View.GONE);
-			et_name.setVisibility(View.VISIBLE);
-			et_name.setText(tv_name.getText());
-			et_yewu.setVisibility(View.VISIBLE);
-			et_yewu.setText(tv_yewu.getText());
-			rl_yewu_edit.setVisibility(View.VISIBLE);
-
-			tv_spacing.setVisibility(View.VISIBLE);
-			rl_editbar.setVisibility(View.VISIBLE);
-			rl_edithead.setVisibility(View.GONE);
-		}
-	}
-
-	void endModify(boolean isSave) {
-		hideSoftInput();
-		if (isEdit) {
-			isEdit = false;
-			tv_name.setVisibility(View.VISIBLE);
-			tv_yewu.setVisibility(View.VISIBLE);
-			if (isSave) {
-				User user = new User();
-				user.nickName = et_name.getText().toString();
-				user.mainBusiness = et_yewu.getText().toString();
-				user.sex = tv_sex.getText().toString();
-				tv_name.setText(user.nickName);
-				tv_yewu.setText(user.mainBusiness);
-				tv_sex.setText(user.sex);
-				modify(user);
-			}
-			et_name.setVisibility(View.GONE);
-			et_yewu.setVisibility(View.GONE);
-			rl_yewu_edit.setVisibility(View.GONE);
-			tv_spacing.setVisibility(View.GONE);
-			rl_editbar.setVisibility(View.GONE);
-			rl_name.setBackgroundColor(Color.argb(0, 255, 255, 255));
-			rl_yewu.setBackgroundColor(Color.argb(0, 255, 255, 255));
-			rl_sex.setBackgroundColor(Color.argb(0, 255, 255, 255));
-		}
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.rl_head:
-			if (isEdit) {
-				Alert.createDialog(getActivity()).setTitle("是否保存修改")
-						.setLeftButtonText("保存")
-						.setOnConfirmClickListener(new OnDialogClickListener() {
+		case R.id.ll_backview:
+			mFinish();
+			break;
+		case R.id.ll_complete:
 
-							@Override
-							public void onClick(AlertInputDialog dialog) {
-								endModify(true);
-								modifyHead();
-							}
-						}).show();
-			} else {
-				modifyHead();
-			}
 			break;
-		case R.id.rl_name:
-			modifyMode(v);
-			requestFocus(et_name);
+		case R.id.ll_head:
+
 			break;
-		case R.id.rl_yewu:
-			modifyMode(v);
-			requestFocus(et_yewu);
+		case R.id.ll_name:
+
 			break;
-		case R.id.rl_sex:
-			modifyMode(v);
+		case R.id.ll_sex:
 			if (tv_sex.getText().equals("男")) {
 				tv_sex.setText("女");
 			} else {
 				tv_sex.setText("男");
 			}
 			break;
-		case R.id.rl_save:
-			endModify(true);
-			break;
-		case R.id.rl_cancel:
-			endModify(false);
-			break;
-		case R.id.tv_random:
-			et_yewu.requestFocus();
-			et_yewu.setText(yewu.get(new Random().nextInt(yewu.size())));
-			break;
-		case R.id.rl_fromgallery:
-			selectPicture();
-			rl_edithead.setVisibility(View.GONE);
-			break;
-		case R.id.rl_takepicture:
-			takePicture();
-			rl_edithead.setVisibility(View.GONE);
-			break;
-		case R.id.rl_cancelselect:
-			rl_edithead.setVisibility(View.GONE);
-			break;
+		case R.id.ll_location:
 
-		case R.id.tv_modifychangepwd:
-			mMainModeManager.showNext(mMainModeManager.mChangePasswordFragment);
+			break;
+		case R.id.ll_business:
+
+			break;
+		case R.id.ll_lable:
+
+			break;
+		case R.id.ll_background:
+
+			break;
+		case R.id.tv_modify:
+
+			break;
+		case R.id.iv_sel:
+
 			break;
 		default:
 			break;
 		}
+	}
+
+	void mFinish() {
+		// TODO Auto-generated method stub
 	}
 
 	void selectPicture() {
@@ -364,33 +242,33 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
 	}
 
-	void modifyHead() {
-		rl_edithead.setVisibility(View.VISIBLE);
-	}
+	// void modifyHead() {
+	// rl_edithead.setVisibility(View.VISIBLE);
+	// }
 
-	void changeSelectBackGround(View selectView) {
-		rl_name.setBackgroundColor(Color.argb(0, 0, 0, 0));
-		rl_yewu.setBackgroundColor(Color.argb(0, 0, 0, 0));
-		rl_sex.setBackgroundColor(Color.argb(0, 0, 0, 0));
-		selectView.setBackgroundColor(Color.argb(32, 255, 255, 255));
-	}
+	// void changeSelectBackGround(View selectView) {
+	// rl_name.setBackgroundColor(Color.argb(0, 0, 0, 0));
+	// rl_yewu.setBackgroundColor(Color.argb(0, 0, 0, 0));
+	// rl_sex.setBackgroundColor(Color.argb(0, 0, 0, 0));
+	// selectView.setBackgroundColor(Color.argb(32, 255, 255, 255));
+	// }
 
-	void requestFocus(EditText editText) {
-		editText.requestFocus();
-		showSoftInput(editText);
-		editText.setSelection(editText.getText().toString().length());
-	}
+	// void requestFocus(EditText editText) {
+	// editText.requestFocus();
+	// showSoftInput(editText);
+	// editText.setSelection(editText.getText().toString().length());
+	// }
 
-	@Override
-	public void onFocusChange(View v, boolean hasFocus) {
-		if (et_name.hasFocus()) {
-			changeSelectBackGround(rl_name);
-		}
-		if (et_yewu.hasFocus()) {
-			changeSelectBackGround(rl_yewu);
-		}
-
-	}
+	// @Override
+	// public void onFocusChange(View v, boolean hasFocus) {
+	// if (et_name.hasFocus()) {
+	// changeSelectBackGround(rl_name);
+	// }
+	// if (et_yewu.hasFocus()) {
+	// changeSelectBackGround(rl_yewu);
+	// }
+	//
+	// }
 
 	public void startPhotoZoom(Uri uri) {
 		Intent intent = new Intent("com.android.camera.action.CROP");
@@ -506,7 +384,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 								modify(user);
 							}
 						});
-					
+
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -517,28 +395,28 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 
 	}
 
-//	public void uploadImage(final String fileName, final String base64) {
-//		app.networkHandler.connection(new CommonNetConnection() {
-//
-//			@Override
-//			protected void settings(Settings settings) {
-//				settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
-//				Map<String, String> params = new HashMap<String, String>();
-//				params.put("phone", app.data.user.phone);
-//				params.put("accessKey", app.data.user.accessKey);
-//				params.put("filename", fileName);
-//				params.put("imagedata", base64);
-//				settings.params = params;
-//			}
-//
-//			@Override
-//			public void success(JSONObject jData) {
-//				User user = new User();
-//				user.head = fileName;
-//				modify(user);
-//			}
-//		});
-//	}
+	// public void uploadImage(final String fileName, final String base64) {
+	// app.networkHandler.connection(new CommonNetConnection() {
+	//
+	// @Override
+	// protected void settings(Settings settings) {
+	// settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
+	// Map<String, String> params = new HashMap<String, String>();
+	// params.put("phone", app.data.user.phone);
+	// params.put("accessKey", app.data.user.accessKey);
+	// params.put("filename", fileName);
+	// params.put("imagedata", base64);
+	// settings.params = params;
+	// }
+	//
+	// @Override
+	// public void success(JSONObject jData) {
+	// User user = new User();
+	// user.head = fileName;
+	// modify(user);
+	// }
+	// });
+	// }
 
 	public void modify(final User user) {
 		JSONObject account = new JSONObject();
@@ -596,9 +474,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 							});
 
 				}
-				if (mMainModeManager.mBusinessCardFragment.isAdded()) {
-					mMainModeManager.mBusinessCardFragment.initData();
-				}
 			}
 		});
 
@@ -616,7 +491,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener,
 		});
 	}
 
-	public void initData() {
+	public void initYewu() {
 		yewu = new ArrayList<String>();
 		yewu.add("《兼职一》抄作业，  小学所有课本，70/本，中学所有课本100/本  ，高中所有课本，150/本。…注：本人字体优美洒脱，颇有古人风范。  ");
 		yewu.add("《兼职二》代欺负其他小同学，               按身高收费，打1米3～1米4的小同学， 50元/人，  1米4～1米5/60元。1米5-1米6/70元，1米6～1米7/90元。1米7～1米8/100。。1米8以上的活不接 。…注：有哥哥在同一学校的加二十元。爸爸是老师的加三十元每人，《本人有优秀打手二十余人，各个体型魁梧，有丰富沙场做战经验");

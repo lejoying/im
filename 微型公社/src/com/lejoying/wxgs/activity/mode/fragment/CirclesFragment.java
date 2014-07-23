@@ -35,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
@@ -161,16 +162,16 @@ public class CirclesFragment extends BaseFragment {
 		} else if (mode.equals("edit")) {
 			notifyViews(true, false);
 		}
-//		if (MainActivity.instance.mMainMode.mChatFragment.isAdded()
-//				|| MainActivity.instance.mMainMode.mChatGroupFragment.isAdded()) {
-//			notifyViews(true, false);
-//		} else {
-//			if (mode.equals("normal")) {
-//				notifyViews(true, true);
-//			} else if (mode.equals("edit")) {
-//				notifyViews(true, false);
-//			}
-//		}
+		// if (MainActivity.instance.mMainMode.mChatFragment.isAdded()
+		// || MainActivity.instance.mMainMode.mChatGroupFragment.isAdded()) {
+		// notifyViews(true, false);
+		// } else {
+		// if (mode.equals("normal")) {
+		// notifyViews(true, true);
+		// } else if (mode.equals("edit")) {
+		// notifyViews(true, false);
+		// }
+		// }
 	}
 
 	public void notifyViews(boolean initShowMessageCount, boolean showMenu) {
@@ -471,9 +472,14 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-				MainActivity.instance.mMainMode
-						.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
+				Intent intent = new Intent(getActivity(),
+						BusinessCardActivity.class);
+				intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+				startActivity(intent);
+				// MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus
+				// = BusinessCardFragment.SHOW_SELF;
+				// MainActivity.instance.mMainMode
+				// .showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
 			}
 		});
 		save.setOnClickListener(new OnClickListener() {
@@ -1145,9 +1151,10 @@ public class CirclesFragment extends BaseFragment {
 		messageView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-//				mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-//				mMainModeManager.mChatFragment.mNowChatFriend = friend;
-//				mMainModeManager.showNext(mMainModeManager.mChatFragment);
+				// mMainModeManager.mChatFragment.mStatus =
+				// ChatFriendFragment.CHAT_FRIEND;
+				// mMainModeManager.mChatFragment.mNowChatFriend = friend;
+				// mMainModeManager.showNext(mMainModeManager.mChatFragment);
 			}
 		});
 	}
@@ -1325,8 +1332,7 @@ public class CirclesFragment extends BaseFragment {
 						if (mode.equals("normal")) {
 							Intent intent = new Intent(getActivity(),
 									ChatActivity.class);
-							intent.putExtra("status",
-									ChatActivity.CHAT_FRIEND);
+							intent.putExtra("status", ChatActivity.CHAT_FRIEND);
 							intent.putExtra("phone", friend.phone);
 							startActivity(intent);
 							// mMainModeManager.mChatFragment.mStatus =

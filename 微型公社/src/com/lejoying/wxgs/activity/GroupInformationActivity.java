@@ -166,6 +166,7 @@ public class GroupInformationActivity extends Activity implements
 				Intent intent = new Intent(GroupInformationActivity.this,
 						BusinessCardActivity.class);
 				intent.putExtra("gid", mCurrentGroupInfomation.gid + "");
+				intent.putExtra("type", BusinessCardActivity.TYPE_GROUP);
 				startActivity(intent);
 			}
 		});

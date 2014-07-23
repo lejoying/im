@@ -27,126 +27,129 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" />
 
-            <RelativeLayout
-                android:id="@+id/rl_show"
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:id="@+id/ll_show"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:padding="20dp" >
 
-                <ImageView
-                    android:id="@+id/iv_head"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/face_man" />
-
-                <TextView
-                    android:id="@+id/tv_nickname"
+                <LinearLayout
+                    android:id="@+id/ll_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:layout_toRightOf="@+id/iv_head"
-                    android:text="李伟"
-                    android:textColor="#fff"
-                    android:textSize="25sp" />
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
 
-                <TextView
-                    android:id="@+id/tv_id_title"
+                    <ImageView
+                        android:id="@+id/iv_head"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/face_man" />
+
+                    <TextView
+                        android:id="@+id/tv_nickname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:text="李伟"
+                        android:textColor="#fff"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_nickname"
-                    android:layout_marginTop="10dp"
-                    android:text="ID:  "
-                    android:textColor="#fff" />
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
 
-                <TextView
-                    android:id="@+id/tv_alias_title"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ID:  "
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_business"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/tv_id_title"
-                    android:layout_below="@+id/tv_id_title"
-                    android:text="好友备注:  "
-                    android:textColor="#fff" />
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
 
-                <TextView
-                    android:id="@+id/tv_phone_title"
+                    <TextView
+                        android:id="@+id/tv_business_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="主要业务:"
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_business"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="5dp"
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_lable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/tv_alias_title"
-                    android:layout_below="@+id/tv_alias_title"
-                    android:text="主要业务:  "
-                    android:textColor="#fff" />
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
 
-                <TextView
-                    android:id="@+id/tv_mainbusiness_title"
+                    <TextView
+                        android:id="@+id/tv_lable_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="标签:  "
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_lable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_creattime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/tv_sex_title"
-                    android:layout_below="@+id/tv_tag"
-                    android:text="标签:"
-                    android:textColor="#fff" />
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
 
-                <TextView
-                    android:id="@+id/tv_sex_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/tv_phone_title"
-                    android:layout_below="@+id/tv_phone_title"
-                    android:text="创建时间："
-                    android:textColor="#fff" />
+                    <TextView
+                        android:id="@+id/tv_creattime_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="创建时间:  "
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/tv_alias"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_id"
-                    android:layout_toRightOf="@+id/tv_alias_title"
-                    android:ellipsize="end"
-                    android:maxLines="3"
-                    android:text=""
-                    android:textColor="#fff" />
-
-                <TextView
-                    android:id="@+id/tv_business"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/tv_tag"
-                    android:layout_toRightOf="@+id/tv_phone_title"
-                    android:text=""
-                    android:textColor="#fff" />
-
-                <TextView
-                    android:id="@+id/tv_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_nickname"
-                    android:layout_marginTop="10dp"
-                    android:layout_toRightOf="@+id/tv_id_title"
-                    android:text=""
-                    android:textColor="#fff" />
-
-                <TextView
-                    android:id="@+id/tv_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/tv_sex_title"
-                    android:layout_alignBottom="@+id/tv_sex_title"
-                    android:layout_toRightOf="@+id/tv_sex_title"
-                    android:text=""
-                    android:textColor="#fff" />
-
-                <TextView
-                    android:id="@+id/tv_mainbusiness"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/tv_mainbusiness_title"
-                    android:layout_alignParentBottom="true"
-                    android:layout_below="@+id/tv_sex_title"
-                    android:ellipsize="end"
-                    android:maxLines="3"
-                    android:paddingLeft="70dp"
-                    android:text=""
-                    android:textColor="#fff" />
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/tv_creattime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_spacing2"
@@ -425,14 +428,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="3dp"
                 android:layout_toRightOf="@+id/iv_me_back"
                 android:clickable="false"
                 android:singleLine="true"
                 android:text="个人资料"
                 android:textColor="#fff"
-                android:layout_marginLeft="3dp"
                 android:textSize="18sp" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </FrameLayout>
 
 </RelativeLayout>

@@ -153,9 +153,9 @@ public class BusinessCardFragment extends BaseFragment {
 
 		tv_spacing = (TextView) mContent.findViewById(R.id.tv_spacing);
 		tv_spacing2 = (TextView) mContent.findViewById(R.id.tv_spacing2);
-		tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
-		rl_show = (RelativeLayout) mContent.findViewById(R.id.rl_show);
+		// tv_mainbusiness = (TextView) mContent
+		// .findViewById(R.id.tv_mainbusiness);
+		// rl_show = (RelativeLayout) mContent.findViewById(R.id.rl_show);
 		QRcodeImage = (ImageView) mContent.findViewById(R.id.iv_tdcode);
 
 		initData();
@@ -221,6 +221,7 @@ public class BusinessCardFragment extends BaseFragment {
 		asyncTask.execute();
 		return mContent;
 	}
+
 	@Override
 	public void onResume() {
 		mMainModeManager.handleMenu(false);
@@ -264,12 +265,13 @@ public class BusinessCardFragment extends BaseFragment {
 		TextView tv_nickname = (TextView) mContent
 				.findViewById(R.id.tv_nickname);
 		TextView tv_phone = (TextView) mContent.findViewById(R.id.tv_business);
-		TextView tv_mainbusiness = (TextView) mContent
-				.findViewById(R.id.tv_mainbusiness);
+		// TextView tv_mainbusiness = (TextView) mContent
+		// .findViewById(R.id.tv_mainbusiness);
 		TextView tv_id = (TextView) mContent.findViewById(R.id.tv_id);
-		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_tag);
-		tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
-		tv_alias_title = (TextView) mContent.findViewById(R.id.tv_alias_title);
+		TextView tv_sex = (TextView) mContent.findViewById(R.id.tv_sex);
+		// tv_alias = (TextView) mContent.findViewById(R.id.tv_alias);
+		// tv_alias_title = (TextView)
+		// mContent.findViewById(R.id.tv_alias_title);
 		Button button1 = (Button) mContent.findViewById(R.id.button1);
 		Button button2 = (Button) mContent.findViewById(R.id.button2);
 		Button button3 = (Button) mContent.findViewById(R.id.button3);
@@ -392,7 +394,7 @@ public class BusinessCardFragment extends BaseFragment {
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-					mMainModeManager.showNext(mMainModeManager.mModifyFragment);
+					// mMainModeManager.showNext(mMainModeManager.mModifyFragment);
 				}
 			});
 
@@ -453,10 +455,12 @@ public class BusinessCardFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-//					mMainModeManager.mChatFragment.mStatus = ChatFriendFragment.CHAT_FRIEND;
-//					mMainModeManager.mChatFragment.mNowChatFriend = app.data.friends
-//							.get(mShowFriend.phone);
-//					mMainModeManager.showNext(mMainModeManager.mChatFragment);
+					// mMainModeManager.mChatFragment.mStatus =
+					// ChatFriendFragment.CHAT_FRIEND;
+					// mMainModeManager.mChatFragment.mNowChatFriend =
+					// app.data.friends
+					// .get(mShowFriend.phone);
+					// mMainModeManager.showNext(mMainModeManager.mChatFragment);
 				}
 			});
 			button2.setOnClickListener(new OnClickListener() {
