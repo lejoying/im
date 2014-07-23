@@ -56,10 +56,12 @@ public class MainActivity extends BaseActivity {
 	LayoutInflater inflater;
 
 	public static MainActivity instance;
-	
+
 	public static ChatActivity chatInstance;
 
 	public static final String TAG = "MainActivity";
+
+	GroupsAdapter groupsAdapter;
 
 	BackgroundView mBackground;
 
@@ -424,8 +426,8 @@ public class MainActivity extends BaseActivity {
 		rl_params.leftMargin = (int) (20 / density + 0.5f);
 		rl_params.rightMargin = (int) (20 / density + 0.5f);
 		rl_content.setLayoutParams(rl_params);
-
-		groups.setAdapter(new GroupsAdapter(app.data.groups));
+		groupsAdapter = new GroupsAdapter(app.data.groups);
+		groups.setAdapter(groupsAdapter);
 
 		gPopWindowChild.setOnClickListener(new OnClickListener() {
 			@Override

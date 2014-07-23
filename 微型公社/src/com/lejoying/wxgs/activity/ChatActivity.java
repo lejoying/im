@@ -1960,6 +1960,10 @@ public class ChatActivity extends Activity implements OnClickListener {
 			find_record.setVisibility(View.VISIBLE);
 			et_findrecord.setText("");
 			chatContent.setEnabled(false);
+			if (mStatus == CHAT_GROUP) {
+				textView_groupName.setText(mNowChatGroup.name + " ( "
+						+ mNowChatGroup.members.size() + "人 )");
+			}
 		}
 	}
 

@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +29,9 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.InviteOrSelectedFriendActivity.InvitaFriendAdapter;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
+import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
@@ -83,7 +86,7 @@ public class GroupMemberManageActivity extends Activity implements
 		commitCompleteView = (TextView) findViewById(R.id.tv_commit);
 		groupMembersView = (GridView) findViewById(R.id.gridView_groupmembers);
 		backTextView = (TextView) findViewById(R.id.tv_backText);
-		backTextView.setText("成员管理  (" + groupMembers.size() + " )");
+		backTextView.setText("成员管理  ( " + groupMembers.size() + " )");
 		initData();
 		groupMembersAdapter = new GroupMembersAdapter();
 		groupMembersView.setAdapter(groupMembersAdapter);
@@ -96,13 +99,16 @@ public class GroupMemberManageActivity extends Activity implements
 		switch (v.getId()) {
 		case R.id.ll_groupmanagebackview:
 			subtractMembers.clear();
+			setResult(Activity.RESULT_OK);
 			finish();
 			break;
 		case R.id.tv_commit:
 			isSubtract = MANAGE_COMMON;
 			groupMembersAdapter.notifyDataSetChanged();
 			commitCompleteView.setVisibility(View.GONE);
-			modifyGroupMembers(subtractMembers);
+			if (subtractMembers.size() != 0) {
+				modifyGroupMembers(subtractMembers, "subtract");
+			}
 			break;
 		default:
 			break;
@@ -117,6 +123,19 @@ public class GroupMemberManageActivity extends Activity implements
 		height = dm.heightPixels;
 		width = dm.widthPixels;
 	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == InviteOrSelectedFriendActivity.INVITA_FRIEND_GROUP
+				&& resultCode == Activity.RESULT_OK) {
+			ArrayList<String> invitaFriends = data
+					.getStringArrayListExtra("invitafriends");
+			if (invitaFriends.size() > 0) {
+				modifyGroupMembers(invitaFriends, "addmembers");
+			}
+		} else if (requestCode == InviteOrSelectedFriendActivity.INVITA_FRIEND_GROUP
+				&& resultCode == Activity.RESULT_CANCELED) {
+		}
+	};
 
 	class GroupMembersAdapter extends BaseAdapter {
 
@@ -167,7 +186,13 @@ public class GroupMemberManageActivity extends Activity implements
 			if (position < groupMembers.size() + 2 - 2) {
 				final Friend friend = app.data.groupFriends.get(groupMembers
 						.get(position));
-				imageHolder.nickNameView.setText(friend.nickName);
+				String nickName = "";
+				if (friend.nickName.length() >= 4) {
+					nickName = friend.nickName.substring(0, 4);
+				} else {
+					nickName = friend.nickName;
+				}
+				imageHolder.nickNameView.setText(nickName);
 				app.fileHandler.getHeadImage(friend.phone, friend.sex,
 						new FileResult() {
 
@@ -177,14 +202,26 @@ public class GroupMemberManageActivity extends Activity implements
 										.setImageBitmap(bitmap);
 							}
 						});
+				if (isSubtract == MANAGE_COMMON) {
+					convertView.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+						}
+					});
+				}
 				if (isSubtract == MANAGE_SUBTRACT) {
 					convertView.setOnClickListener(new OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
-							subtractMembers.add(friend.phone);
-							groupMembers.remove(position);
-							groupMembersAdapter.notifyDataSetChanged();
+							if (app.data.user.phone.equals(friend.phone)) {
+								Alert.showMessage("不能把自己移出群组");
+							} else {
+								subtractMembers.add(friend.phone);
+								groupMembers.remove(position);
+								groupMembersAdapter.notifyDataSetChanged();
+							}
 						}
 					});
 				}
@@ -217,7 +254,14 @@ public class GroupMemberManageActivity extends Activity implements
 										Intent intent = new Intent(
 												GroupMemberManageActivity.this,
 												InviteOrSelectedFriendActivity.class);
-										startActivity(intent);
+										intent.putExtra(
+												"type",
+												InviteOrSelectedFriendActivity.INVITA_FRIEND_GROUP);
+										intent.putExtra("gid", currentGroup.gid
+												+ "");
+										startActivityForResult(
+												intent,
+												InviteOrSelectedFriendActivity.INVITA_FRIEND_GROUP);
 									}
 								});
 					}
@@ -240,7 +284,16 @@ public class GroupMemberManageActivity extends Activity implements
 		return dp;
 	}
 
-	void modifyGroupMembers(List<String> members) {
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			setResult(Activity.RESULT_OK);
+			finish();
+		}
+		return true;
+	}
+
+	void modifyGroupMembers(List<String> members, final String type) {
 		final JSONArray membersArray = new JSONArray();
 		for (int i = 0; i < members.size(); i++) {
 			membersArray.put(members.get(i));
@@ -248,7 +301,11 @@ public class GroupMemberManageActivity extends Activity implements
 		app.networkHandler.connection(new CommonNetConnection() {
 			@Override
 			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.GROUP_REMOVEMEMBERS;
+				if ("subtract".equals(type)) {
+					settings.url = API.DOMAIN + API.GROUP_REMOVEMEMBERS;
+				} else {
+					settings.url = API.DOMAIN + API.GROUP_ADDMEMBERS;
+				}
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("phone", app.data.user.phone);
 				params.put("accessKey", app.data.user.accessKey);
@@ -266,7 +323,7 @@ public class GroupMemberManageActivity extends Activity implements
 						groupMembers.clear();
 						subtractMembers.clear();
 						groupMembers.addAll(currentGroup.members);
-						backTextView.setText("成员管理  (" + groupMembers.size()
+						backTextView.setText("成员管理  ( " + groupMembers.size()
 								+ " )");
 						groupMembersAdapter.notifyDataSetChanged();
 					}

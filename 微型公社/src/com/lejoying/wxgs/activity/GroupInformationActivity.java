@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
@@ -146,7 +148,7 @@ public class GroupInformationActivity extends Activity implements
 				Intent intent = new Intent(GroupInformationActivity.this,
 						GroupMemberManageActivity.class);
 				intent.putExtra("gid", mCurrentGroupInfomation.gid + "");
-				startActivity(intent);
+				startActivityForResult(intent, 101);
 			}
 		});
 		groupSetBackGroundView.setOnClickListener(new OnClickListener() {
@@ -300,6 +302,51 @@ public class GroupInformationActivity extends Activity implements
 				friendHolder.phone = friend.phone;
 				friendHolder.view = convertView;
 				viewContainer.addView(convertView);
+				// final GestureDetector mInterceptDetector = new
+				// GestureDetector(
+				// GroupInformationActivity.this,
+				// new GestureDetector.SimpleOnGestureListener() {
+				// @Override
+				// public boolean onDown(MotionEvent e) {
+				// // isInterceptTouchEvent = false;
+				// Toast.makeText(GroupInformationActivity.this,
+				// "hahha", Toast.LENGTH_LONG).show();
+				// return true;
+				// }
+				//
+				// @Override
+				// public boolean onScroll(MotionEvent e1,
+				// MotionEvent e2, float distanceX,
+				// float distanceY) {
+				// float absDistanceX = Math.abs(distanceX);
+				// float absDistanceY = Math.abs(distanceY);
+				// if (absDistanceX > absDistanceY) {
+				// isInterceptTouchEvent = true;
+				// } else {
+				// isInterceptTouchEvent = false;
+				// }
+				// return true;
+				// }
+				// });
+				// convertView.setOnTouchListener(new OnTouchListener() {
+				//
+				// @Override
+				// public boolean onTouch(View v, MotionEvent event) {
+				// isInterceptTouchEvent = false;
+				// mInterceptDetector.onTouchEvent(event);
+				// groupInfomationScrollView
+				// .requestDisallowInterceptTouchEvent(isInterceptTouchEvent);
+				// return false;
+				// }
+				// });
+				// convertView.setOnClickListener(new OnClickListener() {
+				//
+				// @Override
+				// public void onClick(View v) {
+				// Toast.makeText(GroupInformationActivity.this, "hahha",
+				// Toast.LENGTH_LONG).show();
+				// }
+				// });
 			}
 
 			circleHolder.friendHolders.add(i, friendHolder);
@@ -477,6 +524,24 @@ public class GroupInformationActivity extends Activity implements
 			params.leftMargin = friendHolder.position.x;
 			friendHolder.view.setLayoutParams(params);
 		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
+			circleHolder = new CircleHolder();
+			notifyMembersViews(viewContainer, circleHolder);
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			setResult(Activity.RESULT_OK);
+			finish();
+		}
+		return true;
 	}
 
 	@Override
