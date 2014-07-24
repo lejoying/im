@@ -55,10 +55,14 @@ public class BusinessCardActivity extends BaseActivity implements
 
 	public static final int TYPE_GROUP = 0x11, TYPE_FRIEND = 0x22,
 			TYPE_SELF = 0x33, SCROLL = 0x51, REQUEST_BACK = 0x99;
+	public static final int RESULT_SELECTPICTURE = 0x123,
+			RESULT_SELECTHEAD = 0xa4, RESULT_TAKEPICTURE = 0xa3,
+			RESULT_TAKEHEAD = 0xa5, RESULT_CATPICTURE = 0x3d;
+
 	public static int type;
+	public static String gid, frindPhone;
 	public Group mGroup;
 	public Friend mFriend;
-	String gid, frindPhone;
 
 	FragmentManager mFragmentManager;
 	ModifyFragment mModifyFragment;
@@ -281,7 +285,7 @@ public class BusinessCardActivity extends BaseActivity implements
 						if (mModifyFragment.isAdded()) {
 							transaction.show(mModifyFragment);
 						} else {
-							transaction.replace(R.id.fragment_praises,
+							transaction.replace(R.id.fl_fragment,
 									mModifyFragment);
 							transaction.addToBackStack(null);
 						}

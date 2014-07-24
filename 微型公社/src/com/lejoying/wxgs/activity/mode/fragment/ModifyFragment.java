@@ -11,10 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,6 +37,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
+import com.lejoying.wxgs.activity.ChatActivity;
+import com.lejoying.wxgs.activity.ChatBackGroundSettingActivity;
 import com.lejoying.wxgs.activity.MapStorageDirectoryActivity;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -45,6 +51,7 @@ import com.lejoying.wxgs.activity.view.widget.CircleMenu;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.data.entity.User;
 import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
@@ -61,22 +68,25 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
 public class ModifyFragment extends BaseFragment implements OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
+	InputMethodManager imm;
 
-	int RESULT_SELECTHEAD = 0x123;
-	int RESULT_TAKEPICTURE = 0xa3;
-	int RESULT_CATPICTURE = 0x3d;
+	final int INPUT_NAME = 0x51, INPUT_BUSINESS = 0x52;
+	int inputType;
+
+	Group mGroup;
+	User mUser;
 
 	List<String> yewu;
 
 	View mContent;
 
 	LinearLayout ll_backview, ll_complete, ll_head, ll_name, ll_sex,
-			ll_location, ll_business, ll_lable, ll_background;
-	RelativeLayout rl_input;
+			ll_location, ll_business, ll_lable;
+	RelativeLayout rl_input, rl_pic;
 	ImageView iv_sel, iv_head;
 	TextView modify_title, tv_name_title, tv_name, tv_sex_title, tv_sex,
 			tv_location_title, tv_location, tv_business_title, tv_business,
-			tv_lable_title, tv_lable, tv_modify;
+			tv_lable_title, tv_lable, tv_modify, tv_camera, tv_sel;
 	EditText et_input;
 
 	@Override
@@ -98,7 +108,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 
 					}
 				});
-
+		imm = (InputMethodManager) getActivity().getApplicationContext()
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		initView();
 		initData();
 		initYewu();
@@ -116,7 +127,52 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 	}
 
 	private void initData() {
-
+		switch (BusinessCardActivity.type) {
+		case BusinessCardActivity.TYPE_GROUP:
+			mGroup = app.data.groupsMap.get(BusinessCardActivity.gid);
+			final String iconFileName = mGroup.icon;
+			app.fileHandler.getHeadImage(iconFileName, app.data.user.sex,
+					new FileResult() {
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							iv_head.setImageBitmap(bitmap);
+						}
+					});
+			ll_sex.setVisibility(View.GONE);
+			ll_location.setVisibility(View.GONE);
+			modify_title.setText("修改群名片");
+			tv_name_title.setText("群名称");
+			tv_name.setText(mGroup.name);
+			tv_business_title.setText("主要业务");
+			tv_business.setText(mGroup.description);
+			tv_lable_title.setText("标签");
+			tv_lable.setText("");
+			break;
+		case BusinessCardActivity.TYPE_SELF:
+			mUser = app.data.user;
+			final String headFileName = mUser.head;
+			app.fileHandler.getHeadImage(headFileName, app.data.user.sex,
+					new FileResult() {
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							iv_head.setImageBitmap(bitmap);
+						}
+					});
+			ll_sex.setVisibility(View.VISIBLE);
+			ll_location.setVisibility(View.VISIBLE);
+			modify_title.setText("编辑个人资料");
+			tv_name_title.setText("昵称");
+			tv_name.setText(mUser.nickName);
+			tv_business_title.setText("个人宣言");
+			tv_business.setText(mUser.mainBusiness);
+			tv_lable_title.setText("爱好");
+			tv_lable.setText("");
+			tv_sex_title.setText("性别");
+			tv_sex.setText(mUser.sex);
+			tv_location_title.setText("所在地");
+			tv_location.setText("");
+			break;
+		}
 	}
 
 	private void initView() {
@@ -128,9 +184,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 		ll_location = (LinearLayout) mContent.findViewById(R.id.ll_location);
 		ll_business = (LinearLayout) mContent.findViewById(R.id.ll_business);
 		ll_lable = (LinearLayout) mContent.findViewById(R.id.ll_lable);
-		ll_background = (LinearLayout) mContent
-				.findViewById(R.id.ll_background);
 		rl_input = (RelativeLayout) mContent.findViewById(R.id.rl_input);
+		rl_pic = (RelativeLayout) mContent.findViewById(R.id.rl_pic);
 		iv_sel = (ImageView) mContent.findViewById(R.id.iv_sel);
 		iv_head = (ImageView) mContent.findViewById(R.id.iv_head);
 		modify_title = (TextView) mContent.findViewById(R.id.modify_title);
@@ -147,17 +202,9 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 		tv_lable_title = (TextView) mContent.findViewById(R.id.tv_lable_title);
 		tv_lable = (TextView) mContent.findViewById(R.id.tv_lable);
 		tv_modify = (TextView) mContent.findViewById(R.id.tv_modify);
+		tv_camera = (TextView) mContent.findViewById(R.id.tv_camera);
+		tv_sel = (TextView) mContent.findViewById(R.id.tv_sel);
 		et_input = (EditText) mContent.findViewById(R.id.et_input);
-
-		final String headFileName = app.data.user.head;
-		app.fileHandler.getHeadImage(headFileName, app.data.user.sex,
-				new FileResult() {
-					@Override
-					public void onResult(String where, Bitmap bitmap) {
-						iv_head.setImageBitmap(app.fileHandler.bitmaps
-								.get(headFileName));
-					}
-				});
 
 		ll_backview.setOnClickListener(this);
 		ll_complete.setOnClickListener(this);
@@ -167,8 +214,9 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 		ll_location.setOnClickListener(this);
 		ll_business.setOnClickListener(this);
 		ll_lable.setOnClickListener(this);
-		ll_background.setOnClickListener(this);
 		tv_modify.setOnClickListener(this);
+		tv_camera.setOnClickListener(this);
+		tv_sel.setOnClickListener(this);
 		iv_sel.setOnClickListener(this);
 
 	}
@@ -180,13 +228,49 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 			mFinish();
 			break;
 		case R.id.ll_complete:
-
+			String name = "",
+			business = "";
+			switch (inputType) {
+			case INPUT_NAME:
+				name = et_input.getText().toString();
+				tv_name.setText(name);
+				switch (BusinessCardActivity.type) {
+				case BusinessCardActivity.TYPE_GROUP:
+					mGroup.name = name;
+					break;
+				case BusinessCardActivity.TYPE_SELF:
+					mUser.nickName = name;
+					break;
+				}
+				break;
+			case INPUT_BUSINESS:
+				business = et_input.getText().toString();
+				tv_business.setText(business);
+				switch (BusinessCardActivity.type) {
+				case BusinessCardActivity.TYPE_GROUP:
+					mGroup.description = business;
+					break;
+				case BusinessCardActivity.TYPE_SELF:
+					mUser.mainBusiness = business;
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+			setFocus(true);
+			ll_complete.setVisibility(View.GONE);
+			rl_input.setVisibility(View.GONE);
+			if (imm.isActive()) {
+				imm.hideSoftInputFromWindow(getActivity().getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
 			break;
 		case R.id.ll_head:
-
-			break;
-		case R.id.ll_name:
-
+			if (rl_pic.getVisibility() == View.GONE) {
+				rl_pic.setVisibility(View.VISIBLE);
+			}
+			setFocus(false);
 			break;
 		case R.id.ll_sex:
 			if (tv_sex.getText().equals("男")) {
@@ -195,23 +279,39 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 				tv_sex.setText("男");
 			}
 			break;
-		case R.id.ll_location:
-
+		case R.id.ll_name:
+			ll_complete.setVisibility(View.VISIBLE);
+			rl_input.setVisibility(View.VISIBLE);
+			rl_input.requestFocus();
+			inputType = INPUT_NAME;
+			et_input.setText(tv_name.getText());
+			setFocus(false);
 			break;
 		case R.id.ll_business:
+			ll_complete.setVisibility(View.VISIBLE);
+			rl_input.setVisibility(View.VISIBLE);
+			rl_input.requestFocus();
+			inputType = INPUT_BUSINESS;
+			et_input.setText(tv_business.getText());
+			setFocus(false);
+			break;
+		case R.id.ll_location:
 
 			break;
 		case R.id.ll_lable:
 
 			break;
-		case R.id.ll_background:
-
-			break;
 		case R.id.tv_modify:
-
+			modify();
 			break;
 		case R.id.iv_sel:
-
+			et_input.setText("");
+			break;
+		case R.id.tv_camera:
+			takePicture(BusinessCardActivity.RESULT_TAKEHEAD);
+			break;
+		case R.id.tv_sel:
+			selectPicture(BusinessCardActivity.RESULT_SELECTHEAD);
 			break;
 		default:
 			break;
@@ -219,17 +319,27 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 	}
 
 	void mFinish() {
-		// TODO Auto-generated method stub
+		setFocus(true);
+		if (ll_complete.getVisibility() == View.VISIBLE) {
+			ll_complete.setVisibility(View.GONE);
+		}
+		if (rl_pic.getVisibility() == View.VISIBLE) {
+			rl_pic.setVisibility(View.GONE);
+		} else if (rl_input.getVisibility() == View.VISIBLE) {
+			rl_input.setVisibility(View.GONE);
+		} else {
+			getFragmentManager().popBackStack();
+		}
 	}
 
-	void selectPicture() {
+	void selectPicture(int requestCode) {
 		Intent selectFromGallery = new Intent(getActivity(),
 				MapStorageDirectoryActivity.class);
 		MapStorageDirectoryActivity.max = 1;
-		startActivityForResult(selectFromGallery, RESULT_SELECTHEAD);
+		startActivityForResult(selectFromGallery, requestCode);
 	}
 
-	void takePicture() {
+	void takePicture(int requestCode) {
 		tempFile = new File(app.sdcardImageFolder, "tempimage");
 		int i = 1;
 		while (tempFile.exists()) {
@@ -239,7 +349,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 		Intent tackPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		tackPicture.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
 		tackPicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		startActivityForResult(tackPicture, RESULT_TAKEPICTURE);
+		startActivityForResult(tackPicture, requestCode);
 	}
 
 	// void modifyHead() {
@@ -279,7 +389,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 		intent.putExtra("outputX", 100);
 		intent.putExtra("outputY", 100);
 		intent.putExtra("return-data", true);
-		startActivityForResult(intent, RESULT_CATPICTURE);
+		startActivityForResult(intent, BusinessCardActivity.RESULT_CATPICTURE);
 	}
 
 	File tempFile;
@@ -287,26 +397,26 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RESULT_SELECTHEAD
+		if (requestCode == BusinessCardActivity.RESULT_SELECTHEAD
 				&& resultCode == Activity.RESULT_OK) {
 			Uri selectedImage = Uri.parse("file://"
 					+ MapStorageDirectoryActivity.selectedImages.get(0));
 			startPhotoZoom(selectedImage);
-		} else if (requestCode == RESULT_TAKEPICTURE
+		} else if (requestCode == BusinessCardActivity.RESULT_TAKEHEAD
 				&& resultCode == Activity.RESULT_OK) {
 			Uri uri = Uri.fromFile(tempFile);
 			startPhotoZoom(uri);
-		} else if (requestCode == RESULT_CATPICTURE
+		} else if (requestCode == BusinessCardActivity.RESULT_CATPICTURE
 				&& resultCode == Activity.RESULT_OK && data != null) {
 			if (tempFile != null && tempFile.exists()) {
 				tempFile.delete();
 			}
-			final Bitmap head = (Bitmap) data.getExtras().get("data");
+			final Bitmap headBitmap = (Bitmap) data.getExtras().get("data");
 			app.fileHandler.saveBitmap(new SaveBitmapInterface() {
 
 				@Override
 				public void setParams(SaveSettings settings) {
-					settings.source = head;
+					settings.source = headBitmap;
 					settings.compressFormat = settings.PNG;
 					settings.folder = app.sdcardHeadImageFolder;
 				}
@@ -338,6 +448,13 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 					}
 				}
 			});
+
+		} else if (requestCode == BusinessCardActivity.RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_OK) {
+			setFocus(true);
+		} else if (requestCode == BusinessCardActivity.RESULT_TAKEHEAD
+				&& resultCode == Activity.RESULT_OK) {
+			setFocus(true);
 		}
 
 	}
@@ -361,9 +478,10 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 			public void success(JSONObject jData) {
 				try {
 					if (jData.getBoolean("exists")) {
-						User user = new User();
-						user.head = imageMessageInfo.fileName;
-						modify(user);
+						// User user = new User();
+						// user.head = imageMessageInfo.fileName;
+						// modify(user);
+						updataImage(imageMessageInfo.fileName);
 					} else {
 
 						app.fileHandler.uploadFile(new UploadFileInterface() {
@@ -379,12 +497,11 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 
 							@Override
 							public void onSuccess(Boolean flag, String fileName) {
-								User user = new User();
-								user.head = fileName;
-								modify(user);
+								// mUser.head = fileName;
+								// modify(mUser);
+								updataImage(imageMessageInfo.fileName);
 							}
 						});
-
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -417,21 +534,61 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 	// }
 	// });
 	// }
+	public void setFocus(boolean whether) {
+		ll_head.setClickable(whether);
+		ll_name.setClickable(whether);
+		ll_sex.setClickable(whether);
+		ll_location.setClickable(whether);
+		ll_business.setClickable(whether);
+		ll_lable.setClickable(whether);
+		tv_modify.setClickable(whether);
+	}
 
-	public void modify(final User user) {
+	void updataImage(String fileName) {
+		switch (BusinessCardActivity.type) {
+		case BusinessCardActivity.TYPE_GROUP:
+			mGroup.icon = fileName;
+			break;
+		case BusinessCardActivity.TYPE_SELF:
+			mUser.head = fileName;
+			break;
+		}
+		app.fileHandler.getHeadImage(fileName, mUser.sex.equals("") ? "男"
+				: mUser.sex, new FileResult() {
+
+			@Override
+			public void onResult(String where, Bitmap bitmap) {
+				iv_head.setImageBitmap(bitmap);
+			}
+		});
+	}
+
+	public void modify() {
+		switch (BusinessCardActivity.type) {
+		case BusinessCardActivity.TYPE_GROUP:
+			modifyGroup();
+			break;
+		case BusinessCardActivity.TYPE_SELF:
+			modifyUser();
+			break;
+		}
+
+	}
+
+	private void modifyUser() {
 		JSONObject account = new JSONObject();
 		try {
-			if (user.head != null && !user.head.equals("Head")) {
-				account.put("head", user.head);
+			if (mUser.head != null && !mUser.head.equals("Head")) {
+				account.put("head", mUser.head);
 			}
-			if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
-				account.put("mainBusiness", user.mainBusiness);
+			if (mUser.mainBusiness != null && !mUser.mainBusiness.equals("")) {
+				account.put("mainBusiness", mUser.mainBusiness);
 			}
-			if (user.sex != null && !user.sex.equals("")) {
-				account.put("sex", user.sex);
+			if (mUser.sex != null && !mUser.sex.equals("")) {
+				account.put("sex", mUser.sex);
 			}
-			if (user.nickName != null && !user.mainBusiness.equals("")) {
-				account.put("nickName", user.nickName);
+			if (mUser.nickName != null && !mUser.mainBusiness.equals("")) {
+				account.put("nickName", mUser.nickName);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -441,41 +598,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 		params.put("phone", app.data.user.phone);
 		params.put("accessKey", app.data.user.accessKey);
 		params.put("account", account.toString());
-
-		app.dataHandler.exclude(new Modification() {
-
-			@Override
-			public void modifyData(Data data) {
-				if (user.head != null && !user.head.equals("Head")) {
-					data.user.head = user.head;
-				}
-				if (user.mainBusiness != null && !user.mainBusiness.equals("")) {
-					data.user.mainBusiness = user.mainBusiness;
-				}
-				if (user.sex != null && !user.sex.equals("")) {
-					data.user.sex = user.sex;
-				}
-				if (user.nickName != null && !user.mainBusiness.equals("")) {
-					data.user.nickName = user.nickName;
-				}
-			}
-
-			@Override
-			public void modifyUI() {
-				if (user.head != null && !user.head.equals("Head")) {
-					final String headFileName = app.data.user.head;
-					app.fileHandler.getHeadImage(headFileName,
-							app.data.user.sex, new FileResult() {
-								@Override
-								public void onResult(String where, Bitmap bitmap) {
-									iv_head.setImageBitmap(app.fileHandler.bitmaps
-											.get(headFileName));
-								}
-							});
-
-				}
-			}
-		});
 
 		app.networkHandler.connection(new CommonNetConnection() {
 
@@ -487,8 +609,79 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 
 			@Override
 			public void success(JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						if (mUser.head != null && !mUser.head.equals("Head")) {
+							data.user.head = mUser.head;
+						}
+						if (mUser.mainBusiness != null
+								&& !mUser.mainBusiness.equals("")) {
+							data.user.mainBusiness = mUser.mainBusiness;
+						}
+						if (mUser.sex != null && !mUser.sex.equals("")) {
+							data.user.sex = mUser.sex;
+						}
+						if (mUser.nickName != null
+								&& !mUser.mainBusiness.equals("")) {
+							data.user.nickName = mUser.nickName;
+						}
+					}
+				});
+				mFinish();
 			}
 		});
+
+	}
+
+	private void modifyGroup() {
+		final Map<String, String> params = new HashMap<String, String>();
+		if (mGroup.icon != null && !mGroup.icon.equals("")) {
+			params.put("icon", mGroup.icon);
+		}
+		if (mGroup.description != null && !mGroup.description.equals("")) {
+			params.put("description", mGroup.description);
+		}
+		if (mGroup.name != null && !mGroup.name.equals("")) {
+			params.put("name", mGroup.name);
+		}
+		params.put("gid", String.valueOf(mGroup.gid));
+		params.put("phone", app.data.user.phone);
+		params.put("accessKey", app.data.user.accessKey);
+
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.GROUP_MODIFY;
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						Group group = data.groupsMap
+								.get(BusinessCardActivity.gid);
+						if (mGroup.icon != null && !mGroup.icon.equals("")) {
+							group.icon = mGroup.icon;
+						}
+						if (mGroup.description != null
+								&& !mGroup.description.equals("")) {
+							group.description = mGroup.description;
+						}
+						if (mGroup.name != null && !mGroup.name.equals("")) {
+							group.name = mGroup.name;
+						}
+					}
+				});
+				mFinish();
+			}
+		});
+
 	}
 
 	public void initYewu() {

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/background4" >
 
     <RelativeLayout
         android:id="@+id/rl_topview"
@@ -38,7 +39,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
-            android:padding="10dp" >
+            android:padding="10dp"
+            android:visibility="gone" >
 
             <TextView
                 android:layout_width="50dp"
@@ -228,24 +230,6 @@
                     android:textColor="#fff"
                     android:textSize="15sp" />
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_background"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="2dp"
-                android:background="#27ffffff"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:text="名片背景"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -322,18 +306,41 @@
         android:id="@+id/rl_pic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000" >
+        android:background="#80000000"
+        android:visibility="gone" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="265dp"
+            android:layout_height="140dp"
+            android:layout_centerInParent="true"
             android:orientation="vertical" >
 
-            <TextView />
+            <TextView
+                android:id="@+id/tv_camera"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.0"
+                android:background="@drawable/button_business_camera"
+                android:gravity="center"
+                android:text="相机拍摄"
+                android:textColor="#27000000"
+                android:textSize="18sp" />
 
-            <ImageView />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#27000000" />
 
-            <TextView />
+            <TextView
+                android:id="@+id/tv_sel"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.0"
+                android:background="@drawable/button_business_sel"
+                android:gravity="center"
+                android:text="手机相册"
+                android:textColor="#27000000"
+                android:textSize="18sp" />
         </LinearLayout>
     </RelativeLayout>
 
