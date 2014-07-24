@@ -537,6 +537,7 @@ groupManage.modify = function (data, response) {
     var gid = data.gid;
     var icon = data.icon;
     var name = data.name;
+    var background = data.background;
     var description = data.description;
     var location = data.location;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
@@ -620,8 +621,28 @@ groupManage.modify = function (data, response) {
                 var groupLocation = groupData.location || JSON.stringify({longitude: 116.422324, latitude: 39.906744});
                 groupLocation = JSON.parse(groupLocation);
                 groupData.name = name || groupData.name;
+                if (icon) {
+                    groupData.icon = icon;
+                }
+//                groupData.head = head || groupData.head;
+//                var head0 = "";
+//                if (groupData.head) {
+//                    head0 = groupData.head;
+//                }
+//                if(head){
+//                    head0 = head;
+//                    groupData.head = head0;
+//                }
                 groupData.description = description || groupData.description;
-                groupData.description = groupData.description || "";
+//                groupData.description = groupData.description || "";
+                var background0 = "";
+                if (groupData.background) {
+                    background0 = groupData.background;
+                }
+                if (background) {
+                    background0 = background;
+                    groupData.background = background0;
+                }
                 var currentLocation = {};
                 if (location) {
                     currentLocation.longitude = location.longitude || groupLocation.longitude;
@@ -902,7 +923,7 @@ groupManage.getgroupsandmembers = function (data, response) {
                         sex: accountData.sex,
                         byPhone: accountData.byPhone,
                         nickName: accountData.nickName,
-                        userBackground:accountData.userBackground
+                        userBackground: accountData.userBackground
                     };
                     if (groupZ[groupData.gid] == null) {
                         var accounts = [];

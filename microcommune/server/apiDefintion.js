@@ -808,7 +808,7 @@ api = {
             url: "/api2/group/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", name: "XXX", description: "XXX", location: {longitude: "NNN", latitude: "NNN"}}
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", name: "XXX", description: "XXX", background: "XXX", icon: "XXX", location: {longitude: "NNN", latitude: "NNN"}}
         },
         response: {
             success: {"提示信息": "修改群组信息成功", group: {}},

@@ -1,6 +1,9 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -37,13 +40,13 @@ public class ChatBackGroundSettingActivity extends Activity implements
 
 	ImageView currentSelectedImageView;
 
-	static int SHOW_BACKGROUNDSETTING = 0x01;
-	static int SHOW_BACKGROUNDSELECTING = 0x02;
+	public static int SHOW_BACKGROUNDSETTING = 0x01;
+	public static int SHOW_BACKGROUNDSELECTING = 0x02;
 	int isShowStatus = SHOW_BACKGROUNDSETTING;
 
-	int RESULT_SELECTPICTURE = 0x11;
-	int RESULT_TAKEPICTURE = 0x12;
-	int RESULT_CATPICTURE = 0x13;
+	static int RESULT_SELECTPICTURE = 0x11;
+	static int RESULT_TAKEPICTURE = 0x12;
+	static int RESULT_CATPICTURE = 0x13;
 
 	float height, width, dip;
 	float density;
@@ -124,6 +127,7 @@ public class ChatBackGroundSettingActivity extends Activity implements
 					ChatBackGroundSettingActivity.this,
 					MapStorageDirectoryActivity.class);
 			intentPhotos.putExtra("max", 1);
+			intentPhotos.putExtra("init", true);
 			startActivityForResult(intentPhotos, RESULT_SELECTPICTURE);
 			break;
 		case R.id.rl_backGroundFromCamera:
@@ -135,11 +139,13 @@ public class ChatBackGroundSettingActivity extends Activity implements
 		}
 	}
 
+	File tempFile;
+
 	void takeCameraPicture() {
-		File tempFile = new File(app.sdcardImageFolder, "tempimage.jpg");
+		tempFile = new File(app.sdcardBackImageFolder, "tempimage.jpg");
 		int i = 1;
 		while (tempFile.exists()) {
-			tempFile = new File(app.sdcardImageFolder, "tempimage" + (i++)
+			tempFile = new File(app.sdcardBackImageFolder, "tempimage" + (i++)
 					+ ".jpg");
 		}
 		Uri uri = Uri.fromFile(tempFile);
@@ -154,15 +160,17 @@ public class ChatBackGroundSettingActivity extends Activity implements
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			Toast.makeText(ChatBackGroundSettingActivity.this,
-					"RESULT_SELECTPICTURE", Toast.LENGTH_LONG).show();
+			setResult(Activity.RESULT_OK, data);
+			finish();
 		} else if (requestCode == RESULT_CATPICTURE
 				&& resultCode == Activity.RESULT_OK) {
 			// takeCameraPicture();
 		} else if (requestCode == RESULT_TAKEPICTURE
 				&& resultCode == Activity.RESULT_OK) {
-			Toast.makeText(ChatBackGroundSettingActivity.this,
-					"RESULT_TAKEPICTURE", Toast.LENGTH_LONG).show();
+			Intent intent = new Intent();
+			intent.putExtra("path", tempFile.getAbsolutePath());
+			setResult(Activity.RESULT_FIRST_USER, intent);
+			finish();
 		}
 	}
 

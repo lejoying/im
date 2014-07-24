@@ -125,7 +125,7 @@ public class JSONParser {
 			try {
 				JSONObject jFriend = jFriends.getJSONObject(i);
 				Friend friend = generateFriendFromJSON(jFriend);
-				if(friend != null){
+				if (friend != null) {
 					friends.add(friend);
 				}
 			} catch (JSONException e) {
@@ -217,6 +217,11 @@ public class JSONParser {
 			try {
 				group.description = jGroup.getString("description");
 			} catch (JSONException e) {
+			}
+			try {
+				group.background = jGroup.getString("background");
+			} catch (JSONException e) {
+				group.background = "";
 			}
 			try {
 				List<Friend> groupFriends = generateFriendsFromJSON(jGroup

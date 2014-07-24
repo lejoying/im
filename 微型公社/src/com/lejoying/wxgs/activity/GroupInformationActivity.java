@@ -1,8 +1,16 @@
 package com.lejoying.wxgs.activity;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
@@ -33,11 +42,22 @@ import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogClickListener;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.data.entity.SquareMessage;
+import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
+import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
+import com.lejoying.wxgs.app.parser.JSONParser;
+import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class GroupInformationActivity extends Activity implements
 		OnClickListener {
@@ -157,7 +177,8 @@ public class GroupInformationActivity extends Activity implements
 			public void onClick(View v) {
 				Intent intent = new Intent(GroupInformationActivity.this,
 						ChatBackGroundSettingActivity.class);
-				startActivity(intent);
+				startActivityForResult(intent,
+						ChatBackGroundSettingActivity.RESULT_SELECTPICTURE);
 			}
 		});
 		checkChatMessagesView.setOnClickListener(this);
@@ -183,7 +204,23 @@ public class GroupInformationActivity extends Activity implements
 
 							@Override
 							public void onClick(AlertInputDialog dialog) {
-								finish();
+								app.dataHandler.exclude(new Modification() {
+
+									@Override
+									public void modifyData(Data data) {
+//										data.groups
+//												.remove(mCurrentGroupInfomation.gid
+//														+ "");
+//										data.groupsMap
+//												.remove(mCurrentGroupInfomation.gid
+//														+ "");
+									}
+
+									@Override
+									public void modifyUI() {
+										finish();
+									}
+								});
 							}
 						}).show();
 			}
@@ -204,7 +241,8 @@ public class GroupInformationActivity extends Activity implements
 									@Override
 									public void modifyData(Data data) {
 										Group group = data.groupsMap
-												.get(mCurrentGroupInfomation.gid);
+												.get(mCurrentGroupInfomation.gid
+														+ "");
 										group.messages.clear();
 									}
 								});
@@ -532,13 +570,142 @@ public class GroupInformationActivity extends Activity implements
 		if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
 			circleHolder = new CircleHolder();
 			notifyMembersViews(viewContainer, circleHolder);
+		} else if (requestCode == ChatBackGroundSettingActivity.RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_OK) {
+			ArrayList<String> photoList = data
+					.getStringArrayListExtra("photoList");
+			@SuppressWarnings("unchecked")
+			HashMap<String, HashMap<String, Object>> photoListMap = (HashMap<String, HashMap<String, Object>>) data
+					.getSerializableExtra("photoListMap");
+			getImageMessageInfo(
+					photoList.get(0),
+					(String) photoListMap.get(photoList.get(0)).get(
+							"contentType"), "images");
+			// Toast.makeText(
+			// GroupInformationActivity.this,
+			// "RESULT_SELECTPICTURE---" + photoList.size() + "---"
+			// + photoListMap.size(), Toast.LENGTH_LONG).show();
+		} else if (requestCode == ChatBackGroundSettingActivity.RESULT_SELECTPICTURE
+				&& resultCode == Activity.RESULT_FIRST_USER) {
+			getImageMessageInfo(data.getStringExtra("path"), "image/jpeg",
+					"camera");
+			// Toast.makeText(GroupInformationActivity.this,
+			// "RESULT_TAKEPICTURE---" + data.getStringExtra("path"),
+			// Toast.LENGTH_LONG).show();
 		}
+	}
+
+	void getImageMessageInfo(final String filePath, final String contentType,
+			final String type) {
+		app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
+
+			@Override
+			public void setParams(FileMessageInfoSettings settings) {
+				settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+				settings.path = filePath;
+				settings.fileName = filePath.substring(filePath
+						.lastIndexOf("/"));
+			}
+
+			@Override
+			public void onSuccess(ImageMessageInfo imageMessageInfo) {
+				File fromFile = new File(filePath);
+				if ("camera".equals(type)) {
+					File toFile = new File(app.sdcardBackImageFolder,
+							imageMessageInfo.fileName);
+					fromFile.renameTo(toFile);
+				} else if ("images".equals(type)) {
+					File toFile = new File(app.sdcardBackImageFolder,
+							imageMessageInfo.fileName);
+					if (!toFile.exists()) {
+						try {
+							FileOutputStream fileOutputStream = new FileOutputStream(
+									toFile);
+							FileInputStream fileInputStream = new FileInputStream(
+									fromFile);
+							StreamParser.parseToFile(fileInputStream,
+									fileOutputStream);
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				checkImage(imageMessageInfo, contentType, filePath);
+			}
+		});
+	}
+
+	public void checkImage(final ImageMessageInfo imageMessageInfo,
+			final String contentType, final String path) {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.IMAGE_CHECK;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("filename", imageMessageInfo.fileName);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					if (jData.getBoolean("exists")) {
+						modifyGroupBackGround(imageMessageInfo.fileName);
+					} else {
+						app.fileHandler.uploadFile(new UploadFileInterface() {
+
+							@Override
+							public void setParams(UploadFileSettings settings) {
+								settings.imageMessageInfo = imageMessageInfo;
+								settings.contentType = contentType;
+								settings.fileName = imageMessageInfo.fileName;
+								settings.path = path;
+								settings.uploadFileType = OSSFileHandler.UPLOAD_FILE_TYPE_BACKGROUNDS;
+							}
+
+							@Override
+							public void onSuccess(Boolean flag, String fileName) {
+								modifyGroupBackGround(imageMessageInfo.fileName);
+							}
+						});
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+					Alert.showMessage("设置群组背景图片失败");
+				}
+			}
+		});
+	}
+
+	void modifyGroupBackGround(final String fileName) {
+		// Toast.makeText(GroupInformationActivity.this, "image---hahahhaha",
+		// Toast.LENGTH_LONG).show();
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.GROUP_MODIFY;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentGroupInfomation.gid + "");
+				params.put("background", fileName);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				System.out.println(jData + "----------------");
+			}
+		});
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			setResult(Activity.RESULT_OK);
+			// setResult(Activity.RESULT_OK);
 			finish();
 		}
 		return true;

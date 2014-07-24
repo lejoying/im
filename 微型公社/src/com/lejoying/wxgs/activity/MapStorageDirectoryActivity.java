@@ -122,9 +122,14 @@ public class MapStorageDirectoryActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				setResult(Activity.RESULT_OK);
+				// setResult(Activity.RESULT_OK);
+				// finish();
+				Intent intent = new Intent();
+				intent.putStringArrayListExtra("photoList", selectedImages);
+				intent.putExtra("photoListMap", selectedImagesMap);
+				setResult(Activity.RESULT_OK, intent);
+				max = 0;
 				finish();
-
 			}
 		});
 	}

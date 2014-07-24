@@ -20,6 +20,8 @@ public class Group implements Serializable {
 	public String longitude;
 	public String latitude;
 	public String description;
+	public String background;
+	
 
 	public ArrayList<String> groupShares = new ArrayList<String>();
 	public HashMap<String, GroupShare> groupSharesMap = new HashMap<String, GroupShare>();

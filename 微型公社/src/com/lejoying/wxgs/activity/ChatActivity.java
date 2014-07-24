@@ -20,6 +20,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
+import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -51,6 +52,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -193,6 +195,9 @@ public class ChatActivity extends Activity implements OnClickListener {
 	View headView;
 	View footerView;
 
+	RelativeLayout rl_parent;
+	String backGroundFileName = "";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -223,6 +228,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 		height = dm.heightPixels;
 		width = dm.widthPixels;
 
+		rl_parent = (RelativeLayout) findViewById(R.id.rl_parent);
 		chatContent = (ListView) findViewById(R.id.chatContent);
 
 		if (headView == null) {
@@ -310,6 +316,19 @@ public class ChatActivity extends Activity implements OnClickListener {
 		} else if (mStatus == CHAT_GROUP) {
 			textView_groupName.setText(mNowChatGroup.name + " ( "
 					+ mNowChatGroup.members.size() + "人 )");
+			if (!"".equals(mNowChatGroup.background)) {
+				backGroundFileName = mNowChatGroup.background;
+				app.fileHandler.getBackgroundImage(mNowChatGroup.background,
+						new FileResult() {
+
+							@Override
+							public void onResult(String where, Bitmap bitmap) {
+								BitmapDrawable bitmapDrawable = new BitmapDrawable(
+										bitmap);
+								rl_parent.setBackgroundDrawable(bitmapDrawable);
+							}
+						});
+			}
 		}
 		// mMainModeManager.handleMenu(false);
 		initEvent();
@@ -1961,6 +1980,11 @@ public class ChatActivity extends Activity implements OnClickListener {
 			et_findrecord.setText("");
 			chatContent.setEnabled(false);
 			if (mStatus == CHAT_GROUP) {
+				Group group = app.data.groupsMap.get(mNowChatGroup.gid + "");
+				if (group == null) {
+					finish();
+					return;
+				}
 				textView_groupName.setText(mNowChatGroup.name + " ( "
 						+ mNowChatGroup.members.size() + "人 )");
 			}

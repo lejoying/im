@@ -324,6 +324,9 @@ public class OSSFileHandler {
 							|| type == TYPE_IMAGE_COMMON) {
 						bitmap = MCImageUtils.getZoomBitmapFromFile(imageFile,
 								(int) width, 0);
+					}else{
+						bitmap = BitmapFactory.decodeFile(imageFile
+								.getAbsolutePath());
 					}
 					final Bitmap bitmap0 = bitmap;
 					List<FileResult> results = fromWebResults.get(fileName0);
