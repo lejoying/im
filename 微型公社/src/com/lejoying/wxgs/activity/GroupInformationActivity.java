@@ -208,12 +208,12 @@ public class GroupInformationActivity extends Activity implements
 
 									@Override
 									public void modifyData(Data data) {
-//										data.groups
-//												.remove(mCurrentGroupInfomation.gid
-//														+ "");
-//										data.groupsMap
-//												.remove(mCurrentGroupInfomation.gid
-//														+ "");
+										// data.groups
+										// .remove(mCurrentGroupInfomation.gid
+										// + "");
+										// data.groupsMap
+										// .remove(mCurrentGroupInfomation.gid
+										// + "");
 									}
 
 									@Override
@@ -324,7 +324,7 @@ public class GroupInformationActivity extends Activity implements
 		}
 		groupMembersCount.setText(" 群组信息  (" + friends.size() + "人)");
 		for (int i = 0; i < friends.size(); i++) {
-			Friend friend = friendsMap.get(friends.get(i));
+			final Friend friend = friendsMap.get(friends.get(i));
 			FriendHolder friendHolder = new FriendHolder();
 			friendHolder.phone = friend.phone;
 			if (friend.phone.equals("")) {
@@ -377,14 +377,28 @@ public class GroupInformationActivity extends Activity implements
 				// return false;
 				// }
 				// });
-				// convertView.setOnClickListener(new OnClickListener() {
-				//
-				// @Override
-				// public void onClick(View v) {
-				// Toast.makeText(GroupInformationActivity.this, "hahha",
-				// Toast.LENGTH_LONG).show();
-				// }
-				// });
+				convertView.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(
+								GroupInformationActivity.this,
+								BusinessCardActivity.class);
+						if (friend.phone.equals(app.data.user.phone)) {
+							intent.putExtra("type",
+									BusinessCardActivity.TYPE_SELF);
+						} else if (app.data.friends.get(friend.phone) != null) {
+							intent.putExtra("type",
+									BusinessCardActivity.TYPE_FRIEND);
+						} else {
+							intent.putExtra("type",
+									BusinessCardActivity.TYPE_TEMPFRIEND);
+							intent.putExtra("friend", friend);
+						}
+						intent.putExtra("phone", friend.phone);
+						startActivity(intent);
+					}
+				});
 			}
 
 			circleHolder.friendHolders.add(i, friendHolder);
@@ -581,17 +595,10 @@ public class GroupInformationActivity extends Activity implements
 					photoList.get(0),
 					(String) photoListMap.get(photoList.get(0)).get(
 							"contentType"), "images");
-			// Toast.makeText(
-			// GroupInformationActivity.this,
-			// "RESULT_SELECTPICTURE---" + photoList.size() + "---"
-			// + photoListMap.size(), Toast.LENGTH_LONG).show();
 		} else if (requestCode == ChatBackGroundSettingActivity.RESULT_SELECTPICTURE
 				&& resultCode == Activity.RESULT_FIRST_USER) {
 			getImageMessageInfo(data.getStringExtra("path"), "image/jpeg",
 					"camera");
-			// Toast.makeText(GroupInformationActivity.this,
-			// "RESULT_TAKEPICTURE---" + data.getStringExtra("path"),
-			// Toast.LENGTH_LONG).show();
 		}
 	}
 

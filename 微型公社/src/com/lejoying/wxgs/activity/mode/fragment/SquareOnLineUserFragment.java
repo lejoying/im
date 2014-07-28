@@ -7,6 +7,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.app.MainApplication;
@@ -53,8 +55,7 @@ public class SquareOnLineUserFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mInflater = inflater;
-		mContent = mInflater
-				.inflate(R.layout.f_square_online_user, null);
+		mContent = mInflater.inflate(R.layout.f_square_online_user, null);
 		mBackView = (RelativeLayout) mContent.findViewById(R.id.backview);
 		mSquareOnLineUserView = (ListView) mContent
 				.findViewById(R.id.lv_square_online_user);
@@ -152,22 +153,43 @@ public class SquareOnLineUserFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View arg0) {
-					if (app.data.friends.get(friend.phone) != null) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
-						mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-						mMainModeManager
-								.showNext(mMainModeManager.mBusinessCardFragment);
-					} else if (friend.phone.equals(app.data.user.phone)) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-						mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-						mMainModeManager
-								.showNext(mMainModeManager.mBusinessCardFragment);
+					Intent intent = new Intent(getActivity(),
+							BusinessCardActivity.class);
+					if (friend.phone.equals(app.data.user.phone)) {
+						intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+					} else if (app.data.friends.get(friend.phone) != null) {
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_FRIEND);
 					} else {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
-						mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-						mMainModeManager
-								.showNext(mMainModeManager.mBusinessCardFragment);
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_TEMPFRIEND);
+						intent.putExtra("friend", friend);
 					}
+					intent.putExtra("phone", friend.phone);
+					startActivity(intent);
+					//
+					// if (app.data.friends.get(friend.phone) != null) {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_FRIEND;
+					// mMainModeManager.mBusinessCardFragment.mShowFriend =
+					// friend;
+					// mMainModeManager
+					// .showNext(mMainModeManager.mBusinessCardFragment);
+					// } else if (friend.phone.equals(app.data.user.phone)) {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_SELF;
+					// mMainModeManager.mBusinessCardFragment.mShowFriend =
+					// friend;
+					// mMainModeManager
+					// .showNext(mMainModeManager.mBusinessCardFragment);
+					// } else {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_TEMPFRIEND;
+					// mMainModeManager.mBusinessCardFragment.mShowFriend =
+					// friend;
+					// mMainModeManager
+					// .showNext(mMainModeManager.mBusinessCardFragment);
+					// }
 				}
 			});
 			return convertView;

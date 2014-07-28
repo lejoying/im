@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -102,9 +103,14 @@ public class ChatMessagesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-				MainActivity.instance.mMainMode
-						.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
+				Intent intent = new Intent(getActivity(),
+						BusinessCardActivity.class);
+				intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+				startActivity(intent);
+				// MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus
+				// = BusinessCardFragment.SHOW_SELF;
+				// MainActivity.instance.mMainMode
+				// .showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
 			}
 		});
 
@@ -119,7 +125,7 @@ public class ChatMessagesFragment extends BaseFragment {
 				ll_not_messages.setVisibility(View.GONE);
 			}
 		}
-		
+
 	}
 
 	class MyMessagesAdapter extends BaseAdapter {

@@ -31,7 +31,6 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.activity.mode.fragment.BusinessCardFragment;
 
 public class CircleMenu {
 
@@ -132,9 +131,9 @@ public class CircleMenu {
 					setItemDeskIndex(mCurrentMenuIndex, ++mCurrentMenuIndex);
 					break;
 				case 11:
-					MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-					MainActivity.instance.mMainMode
-							.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
+//					MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+//					MainActivity.instance.mMainMode
+//							.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
 					break;
 				case 12:
 					MainActivity.instance.mMainMode

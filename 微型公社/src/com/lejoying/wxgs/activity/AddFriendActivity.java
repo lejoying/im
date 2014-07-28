@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
@@ -30,13 +31,22 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 
 	private EditText mView_message;
 	private View mView_send;
+	LinearLayout backView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.f_addfriend);
+		Friend friend = (Friend) getIntent().getSerializableExtra("user");
+		if (friend == null) {
+			return;
+		}
+		mAddFriend = friend;
+		backView = (LinearLayout) findViewById(R.id.ll_backview);
 		mView_message = (EditText) findViewById(R.id.et_message);
 		mView_send = findViewById(R.id.btn_send);
 		mView_send.setOnClickListener(this);
+		backView.setOnClickListener(this);
 	}
 
 	@Override
@@ -47,6 +57,9 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.ll_backview:
+			finish();
+			break;
 		case R.id.btn_send:
 			mAddFriend.addMessage = mView_message.getText().toString();
 			mAddFriend.temp = true;
@@ -74,6 +87,7 @@ public class AddFriendActivity extends Activity implements OnClickListener {
 					// mMainModeManager.clearBackStack(mMainModeManager.mBackStack
 					// .size() - 2);
 					finish();
+					Alert.showMessage("请求加为好友成功");
 					Alert.removeLoading();
 				}
 

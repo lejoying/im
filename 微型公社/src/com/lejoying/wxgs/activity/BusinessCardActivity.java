@@ -54,22 +54,24 @@ public class BusinessCardActivity extends BaseActivity implements
 		OnClickListener {
 
 	public static final int TYPE_GROUP = 0x11, TYPE_FRIEND = 0x22,
-			TYPE_SELF = 0x33, SCROLL = 0x51, REQUEST_BACK = 0x99;
+			TYPE_SELF = 0x33, TYPE_TEMPFRIEND = 0x44, SCROLL = 0x51,
+			REQUEST_BACK = 0x99;
 	public static final int RESULT_SELECTPICTURE = 0x123,
 			RESULT_SELECTHEAD = 0xa4, RESULT_TAKEPICTURE = 0xa3,
 			RESULT_TAKEHEAD = 0xa5, RESULT_CATPICTURE = 0x3d;
 
-	public static int type;
+	public int type;
 	public static String gid, frindPhone;
 	public Group mGroup;
 	public Friend mFriend;
 
 	FragmentManager mFragmentManager;
-	ModifyFragment mModifyFragment;
+	public ModifyFragment mModifyFragment;
 
 	private TextView tv_spacing;
 	private TextView tv_spacing2;
 	private ScrollView sv_content;
+	RelativeLayout backView;
 	ImageView iv_head;
 	TextView tv_bighead;
 	ViewGroup group;
@@ -89,6 +91,19 @@ public class BusinessCardActivity extends BaseActivity implements
 	// private int width, height;
 	String GROUPCARDTYPE = "groupcard";
 	String USERCARDTYPE = "usercard";
+	View tv_group;
+	View tv_square;
+	View tv_msg;
+	TextView tv_nickname;
+	TextView tv_id;
+	TextView tv_createTime;
+	TextView tv_lable;
+	TextView tv_business_title;
+	TextView tv_lable_title;
+	TextView tv_creattime_title;
+	Button button1;
+	Button button2;
+	Button button3;
 
 	@SuppressLint("HandlerLeak")
 	@Override
@@ -101,14 +116,20 @@ public class BusinessCardActivity extends BaseActivity implements
 			if (gid != null && !"".equals(gid)) {
 				mGroup = app.data.groupsMap.get(gid);
 			}
+			if (app.data.groupsMap.get(gid) == null) {
+				mGroup = (Group) intent.getSerializableExtra("group");
+			}
 		} else if (type == TYPE_FRIEND) {
 			frindPhone = intent.getStringExtra("phone");
+		} else if (type == TYPE_TEMPFRIEND) {
+			mFriend = (Friend) intent.getSerializableExtra("friend");
 		}
 		setContentView(R.layout.f_businesscard);
 		mInflater = getLayoutInflater();
 		getWindow().setBackgroundDrawableResource(R.drawable.background4);
 		mFragmentManager = this.getSupportFragmentManager();
 		mModifyFragment = new ModifyFragment();
+		mModifyFragment.setModeInstance(this);
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -154,6 +175,39 @@ public class BusinessCardActivity extends BaseActivity implements
 
 			}
 		};
+		backView = (RelativeLayout) findViewById(R.id.backview);
+		iv_me_back = (ImageView) findViewById(R.id.iv_me_back);
+		tv_back_show = (TextView) findViewById(R.id.tv_back_show);
+		QRcodeImage = (ImageView) findViewById(R.id.iv_tdcode);
+		tv_spacing = (TextView) findViewById(R.id.tv_spacing);
+		tv_spacing2 = (TextView) findViewById(R.id.tv_spacing2);
+
+		// tv_business = (TextView) findViewById(R.id.tv_business);
+		ll_show = (LinearLayout) findViewById(R.id.ll_show);
+
+		sv_content = (ScrollView) findViewById(R.id.sv_content);
+
+		group = (ViewGroup) findViewById(R.id.ll_content);
+		tv_group = findViewById(R.id.tv_group_layout);
+		tv_square = findViewById(R.id.tv_square_layout);
+		tv_msg = findViewById(R.id.tv_msg_layout);
+		rl_bighead = findViewById(R.id.rl_bighead);
+
+		iv_head = (ImageView) findViewById(R.id.iv_head);
+		tv_bighead = (TextView) findViewById(R.id.tv_bighead);
+		tv_nickname = (TextView) findViewById(R.id.tv_nickname);
+		tv_id = (TextView) findViewById(R.id.tv_id);
+		tv_business = (TextView) findViewById(R.id.tv_business);
+		tv_createTime = (TextView) findViewById(R.id.tv_creattime);
+		tv_lable = (TextView) findViewById(R.id.tv_lable);
+
+		tv_business_title = (TextView) findViewById(R.id.tv_business_title);
+		tv_lable_title = (TextView) findViewById(R.id.tv_lable_title);
+		tv_creattime_title = (TextView) findViewById(R.id.tv_creattime_title);
+
+		button1 = (Button) findViewById(R.id.button1);
+		button2 = (Button) findViewById(R.id.button2);
+		button3 = (Button) findViewById(R.id.button3);
 		initData();
 		initEvent();
 		asyncTask.execute();
@@ -165,6 +219,7 @@ public class BusinessCardActivity extends BaseActivity implements
 	}
 
 	private void initEvent() {
+		backView.setOnClickListener(this);
 		iv_head.setOnClickListener(this);
 		rl_bighead.setOnClickListener(this);
 		iv_me_back.setOnClickListener(this);
@@ -200,39 +255,40 @@ public class BusinessCardActivity extends BaseActivity implements
 		});
 	}
 
+	public void notifyData() {
+		if (type == TYPE_SELF) {
+			tv_nickname.setText(app.data.user.nickName);
+			tv_id.setText(String.valueOf(app.data.user.id));
+			tv_business.setText(app.data.user.mainBusiness);
+
+			app.fileHandler.getHeadImage(app.data.user.head, app.data.user.sex,
+					new FileResult() {
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							iv_head.setImageBitmap(bitmap);
+						}
+					});
+		} else if (type == TYPE_GROUP) {
+			tv_nickname.setText(mGroup.name);
+			tv_id.setText(String.valueOf(mGroup.gid));
+			if (mGroup.description == null || mGroup.description.equals("")
+					|| mGroup.description.equals("请输入群组描述信息")) {
+				tv_business.setText("此群组暂无业务");
+			} else {
+				tv_business.setText(mGroup.description);
+			}
+			final String headFileName = mGroup.icon;
+			app.fileHandler.getHeadImage(headFileName, "男", new FileResult() {
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					iv_head.setImageBitmap(app.fileHandler.bitmaps
+							.get(headFileName));
+				}
+			});
+		}
+	}
+
 	public void initData() {
-		iv_me_back = (ImageView) findViewById(R.id.iv_me_back);
-		tv_back_show = (TextView) findViewById(R.id.tv_back_show);
-		QRcodeImage = (ImageView) findViewById(R.id.iv_tdcode);
-		tv_spacing = (TextView) findViewById(R.id.tv_spacing);
-		tv_spacing2 = (TextView) findViewById(R.id.tv_spacing2);
-
-		tv_business = (TextView) findViewById(R.id.tv_business);
-		ll_show = (LinearLayout) findViewById(R.id.ll_show);
-
-		sv_content = (ScrollView) findViewById(R.id.sv_content);
-
-		group = (ViewGroup) findViewById(R.id.ll_content);
-		View tv_group = findViewById(R.id.tv_group_layout);
-		View tv_square = findViewById(R.id.tv_square_layout);
-		View tv_msg = findViewById(R.id.tv_msg_layout);
-		rl_bighead = findViewById(R.id.rl_bighead);
-
-		iv_head = (ImageView) findViewById(R.id.iv_head);
-		tv_bighead = (TextView) findViewById(R.id.tv_bighead);
-		TextView tv_nickname = (TextView) findViewById(R.id.tv_nickname);
-		TextView tv_id = (TextView) findViewById(R.id.tv_id);
-		TextView tv_business = (TextView) findViewById(R.id.tv_business);
-		TextView tv_createTime = (TextView) findViewById(R.id.tv_creattime);
-		TextView tv_lable = (TextView) findViewById(R.id.tv_lable);
-
-		TextView tv_business_title = (TextView) findViewById(R.id.tv_business_title);
-		TextView tv_lable_title = (TextView) findViewById(R.id.tv_lable_title);
-		TextView tv_creattime_title = (TextView) findViewById(R.id.tv_creattime_title);
-
-		Button button1 = (Button) findViewById(R.id.button1);
-		Button button2 = (Button) findViewById(R.id.button2);
-		Button button3 = (Button) findViewById(R.id.button3);
 
 		switch (type) {
 		case TYPE_GROUP:
@@ -257,7 +313,11 @@ public class BusinessCardActivity extends BaseActivity implements
 
 					@Override
 					public void onClick(View v) {
-						addMembersToGroup();
+						if (app.data.groupsMap.get(mGroup.gid + "") == null) {
+							addMembersToGroup();
+						} else {
+							Alert.showMessage("已申请加入改群组");
+						}
 					}
 				});
 			} else {
@@ -292,7 +352,8 @@ public class BusinessCardActivity extends BaseActivity implements
 						transaction.commit();
 					}
 				});
-				button3.setText("推荐给好友");
+				// button3.setText("推荐给好友");
+				group.removeView(button3);
 				button3.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -322,6 +383,7 @@ public class BusinessCardActivity extends BaseActivity implements
 		case TYPE_FRIEND:
 			if (app.data.friends.get(frindPhone) != null) {
 				mFriend = app.data.friends.get(frindPhone);
+				tv_back_show.setText("好友资料");
 
 				group.removeView(tv_group);
 				group.removeView(tv_square);
@@ -331,12 +393,10 @@ public class BusinessCardActivity extends BaseActivity implements
 						USERCARDTYPE, mFriend.phone + ""));
 				QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
 
-				tv_back_show.setText("好友资料");
-
 				button1.setText("发起聊天");
 				button2.setText("修改备注");
 				button3.setText("解除好友关系");
-
+				tv_nickname.setText(mFriend.nickName);
 				tv_business.setText(mFriend.mainBusiness);
 				tv_id.setText(String.valueOf(mFriend.id));
 				app.fileHandler.getHeadImage(mFriend.head, mFriend.sex,
@@ -529,7 +589,17 @@ public class BusinessCardActivity extends BaseActivity implements
 			button1.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View arg0) {
-
+					FragmentTransaction transaction = mFragmentManager
+							.beginTransaction();
+					transaction.setCustomAnimations(R.anim.translate_new,
+							R.anim.translate_out);
+					if (mModifyFragment.isAdded()) {
+						transaction.show(mModifyFragment);
+					} else {
+						transaction.replace(R.id.fl_fragment, mModifyFragment);
+						transaction.addToBackStack(null);
+					}
+					transaction.commit();
 				}
 			});
 
@@ -553,6 +623,32 @@ public class BusinessCardActivity extends BaseActivity implements
 											finish();
 										}
 									}).show();
+				}
+			});
+			break;
+		case TYPE_TEMPFRIEND:
+			QRcodeImage.setImageBitmap(MCImageUtils.createQEcodeImage(
+					USERCARDTYPE, mFriend.phone + ""));
+			QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
+			tv_back_show.setText("用户资料");
+			// button1.setText("发起聊天");
+			// button2.setText("修改备注");
+			// button3.setText("解除好友关系");
+			tv_nickname.setText(mFriend.nickName);
+			tv_business.setText(mFriend.mainBusiness);
+			tv_id.setText(mFriend.id + "");
+			group.removeView(button2);
+			group.removeView(button3);
+
+			button1.setText("加为好友");
+			button1.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(BusinessCardActivity.this,
+							AddFriendActivity.class);
+					intent.putExtra("user", mFriend);
+					startActivity(intent);
 				}
 			});
 			break;
@@ -584,6 +680,9 @@ public class BusinessCardActivity extends BaseActivity implements
 			// ChatBackGroundSettingActivity.class);
 			// startActivityForResult(intent, REQUEST_BACK);
 			break;
+		case R.id.backview:
+			finish();
+			break;
 		default:
 			break;
 		}
@@ -613,27 +712,7 @@ public class BusinessCardActivity extends BaseActivity implements
 
 			@Override
 			public void success(JSONObject jData) {
-				app.UIHandler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						initData();
-						DataUtil.getGroups(new GetDataListener() {
-
-							@Override
-							public void getSuccess() {
-								// if
-								// (MainActivity.instance.mMainMode.mChatGroupFragment
-								// .isAdded()) {
-								// mMainModeManager.mChatGroupFragment.mAdapter
-								// .notifyDataSetChanged();
-								// mMainModeManager.mGroupFragment
-								// .notifyViews();
-								// }
-							}
-						});
-					}
-				});
+				Alert.showMessage("申请加入群组成功");
 			}
 		});
 	}

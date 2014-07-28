@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -37,6 +38,7 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.ScanView;
@@ -470,9 +472,10 @@ public class ScanQRCodeFragment extends BaseFragment implements
 					final Friend friend = JSONParser
 							.generateFriendFromJSON(jData.getJSONArray(
 									"accounts").getJSONObject(0));
-
+					Intent intent = new Intent(getActivity(),
+							BusinessCardActivity.class);
 					if (phone.equals(app.data.user.phone)) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+						intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
 						app.dataHandler.exclude(new Modification() {
 							@Override
 							public void modifyData(Data data) {
@@ -484,7 +487,8 @@ public class ScanQRCodeFragment extends BaseFragment implements
 							}
 						});
 					} else if (app.data.friends.get(phone) != null) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_FRIEND);
 						app.dataHandler.exclude(new Modification() {
 
 							@Override
@@ -494,11 +498,44 @@ public class ScanQRCodeFragment extends BaseFragment implements
 							}
 						});
 					} else {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_TEMPFRIEND);
+						intent.putExtra("friend",friend);
 					}
-					mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-					mMainModeManager
-							.showNext(mMainModeManager.mBusinessCardFragment);
+					intent.putExtra("phone", phone);
+					startActivity(intent);
+					// if (phone.equals(app.data.user.phone)) {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_SELF;
+					// app.dataHandler.exclude(new Modification() {
+					// @Override
+					// public void modifyData(Data data) {
+					// data.user.nickName = friend.nickName;
+					// data.user.mainBusiness = friend.mainBusiness;
+					// data.user.head = friend.head;
+					// data.user.sex = friend.sex;
+					// data.user.id = friend.id;
+					// }
+					// });
+					// } else if (app.data.friends.get(phone) != null) {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_FRIEND;
+					// app.dataHandler.exclude(new Modification() {
+					//
+					// @Override
+					// public void modifyData(Data data) {
+					// friend.messages = data.friends.get(phone).messages;
+					// data.friends.put(phone, friend);
+					// }
+					// });
+					// } else {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_TEMPFRIEND;
+					// }
+					// mMainModeManager.mBusinessCardFragment.mShowFriend =
+					// friend;
+					// mMainModeManager
+					// .showNext(mMainModeManager.mBusinessCardFragment);
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

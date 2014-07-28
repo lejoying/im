@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -26,6 +27,8 @@ import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
+import com.lejoying.wxgs.activity.GroupInformationActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.LocationUtils;
@@ -148,7 +151,7 @@ public class SearchFriendFragment extends BaseFragment {
 
 			@Override
 			public void success(final JSONObject jData) {
-				System.out.println(jData+"---------00");
+				System.out.println(jData + "---------00");
 				app.dataHandler.exclude(new Modification() {
 					@Override
 					public void modifyData(Data data) {
@@ -191,9 +194,10 @@ public class SearchFriendFragment extends BaseFragment {
 					final Friend friend = JSONParser
 							.generateFriendFromJSON(jData.getJSONArray(
 									"accounts").getJSONObject(0));
-
+					Intent intent = new Intent(getActivity(),
+							BusinessCardActivity.class);
 					if (phone.equals(app.data.user.phone)) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
+						intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
 						app.dataHandler.exclude(new Modification() {
 							@Override
 							public void modifyData(Data data) {
@@ -205,7 +209,8 @@ public class SearchFriendFragment extends BaseFragment {
 							}
 						});
 					} else if (app.data.friends.get(phone) != null) {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_FRIEND);
 						app.dataHandler.exclude(new Modification() {
 
 							@Override
@@ -215,11 +220,44 @@ public class SearchFriendFragment extends BaseFragment {
 							}
 						});
 					} else {
-						mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_TEMPFRIEND);
+						intent.putExtra("friend", friend);
 					}
-					mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-					mMainModeManager
-							.showNext(mMainModeManager.mBusinessCardFragment);
+					intent.putExtra("phone", phone);
+					startActivity(intent);
+					// if (phone.equals(app.data.user.phone)) {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_SELF;
+					// app.dataHandler.exclude(new Modification() {
+					// @Override
+					// public void modifyData(Data data) {
+					// data.user.nickName = friend.nickName;
+					// data.user.mainBusiness = friend.mainBusiness;
+					// data.user.head = friend.head;
+					// data.user.sex = friend.sex;
+					// data.user.id = friend.id;
+					// }
+					// });
+					// } else if (app.data.friends.get(phone) != null) {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_FRIEND;
+					// app.dataHandler.exclude(new Modification() {
+					//
+					// @Override
+					// public void modifyData(Data data) {
+					// friend.messages = data.friends.get(phone).messages;
+					// data.friends.put(phone, friend);
+					// }
+					// });
+					// } else {
+					// mMainModeManager.mBusinessCardFragment.mStatus =
+					// BusinessCardFragment.SHOW_TEMPFRIEND;
+					// }
+					// mMainModeManager.mBusinessCardFragment.mShowFriend =
+					// friend;
+					// mMainModeManager
+					// .showNext(mMainModeManager.mBusinessCardFragment);
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -348,22 +386,45 @@ public class SearchFriendFragment extends BaseFragment {
 				convertView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(final View holderView) {
-						if (app.data.friends.get(friend.phone) != null) {
-							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
-							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-							mMainModeManager
-									.showNext(mMainModeManager.mBusinessCardFragment);
-						} else if (friend.phone.equals(app.data.user.phone)) {
-							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-							mMainModeManager
-									.showNext(mMainModeManager.mBusinessCardFragment);
+						Intent intent = new Intent(getActivity(),
+								BusinessCardActivity.class);
+						if (friend.phone.equals(app.data.user.phone)) {
+							intent.putExtra("type",
+									BusinessCardActivity.TYPE_SELF);
+						} else if (app.data.friends.get(friend.phone) != null) {
+							intent.putExtra("type",
+									BusinessCardActivity.TYPE_FRIEND);
 						} else {
-							mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
-							mMainModeManager.mBusinessCardFragment.mShowFriend = friend;
-							mMainModeManager
-									.showNext(mMainModeManager.mBusinessCardFragment);
+							intent.putExtra("type",
+									BusinessCardActivity.TYPE_TEMPFRIEND);
+							intent.putExtra("friend", friend);
 						}
+						intent.putExtra("phone", friend.phone);
+						startActivity(intent);
+
+						// if (app.data.friends.get(friend.phone) != null) {
+						// mMainModeManager.mBusinessCardFragment.mStatus =
+						// BusinessCardFragment.SHOW_FRIEND;
+						// mMainModeManager.mBusinessCardFragment.mShowFriend =
+						// friend;
+						// mMainModeManager
+						// .showNext(mMainModeManager.mBusinessCardFragment);
+						// } else if (friend.phone.equals(app.data.user.phone))
+						// {
+						// mMainModeManager.mBusinessCardFragment.mStatus =
+						// BusinessCardFragment.SHOW_SELF;
+						// mMainModeManager.mBusinessCardFragment.mShowFriend =
+						// friend;
+						// mMainModeManager
+						// .showNext(mMainModeManager.mBusinessCardFragment);
+						// } else {
+						// mMainModeManager.mBusinessCardFragment.mStatus =
+						// BusinessCardFragment.SHOW_TEMPFRIEND;
+						// mMainModeManager.mBusinessCardFragment.mShowFriend =
+						// friend;
+						// mMainModeManager
+						// .showNext(mMainModeManager.mBusinessCardFragment);
+						// }
 					}
 				});
 				container.addView(convertView);
@@ -417,12 +478,14 @@ public class SearchFriendFragment extends BaseFragment {
 				.findViewById(R.id.tv_nickname);
 		nickname.setText(friend.nickName);
 		final String headFileName = friend.head;
-		app.fileHandler.getHeadImage(headFileName,friend.sex,new FileResult() {
-			@Override
-			public void onResult(String where,Bitmap bitmap) {
-				head.setImageBitmap(app.fileHandler.bitmaps.get(headFileName));
-			}
-		});
+		app.fileHandler.getHeadImage(headFileName, friend.sex,
+				new FileResult() {
+					@Override
+					public void onResult(String where, Bitmap bitmap) {
+						head.setImageBitmap(app.fileHandler.bitmaps
+								.get(headFileName));
+					}
+				});
 		return convertView;
 	}
 

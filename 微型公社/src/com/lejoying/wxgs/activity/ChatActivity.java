@@ -318,16 +318,16 @@ public class ChatActivity extends Activity implements OnClickListener {
 					+ mNowChatGroup.members.size() + "人 )");
 			if (!"".equals(mNowChatGroup.background)) {
 				backGroundFileName = mNowChatGroup.background;
-				app.fileHandler.getBackgroundImage(mNowChatGroup.background,
-						new FileResult() {
-
-							@Override
-							public void onResult(String where, Bitmap bitmap) {
-								BitmapDrawable bitmapDrawable = new BitmapDrawable(
-										bitmap);
-								rl_parent.setBackgroundDrawable(bitmapDrawable);
-							}
-						});
+				// app.fileHandler.getBackgroundImage(mNowChatGroup.background,
+				// new FileResult() {
+				//
+				// @Override
+				// public void onResult(String where, Bitmap bitmap) {
+				// BitmapDrawable bitmapDrawable = new BitmapDrawable(
+				// bitmap);
+				// rl_parent.setBackgroundDrawable(bitmapDrawable);
+				// }
+				// });
 			}
 		}
 		// mMainModeManager.handleMenu(false);
@@ -668,8 +668,19 @@ public class ChatActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.iv_infomation:
 			if (mStatus == CHAT_FRIEND) {
-				// TODO
-
+				Intent intent = new Intent(ChatActivity.this,
+						BusinessCardActivity.class);
+				if (mNowChatFriend.phone.equals(app.data.user.phone)) {
+					intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+				} else if (app.data.friends.get(mNowChatFriend.phone) != null) {
+					intent.putExtra("type", BusinessCardActivity.TYPE_FRIEND);
+				} else {
+					intent.putExtra("type",
+							BusinessCardActivity.TYPE_TEMPFRIEND);
+					intent.putExtra("friend", mNowChatFriend);
+				}
+				intent.putExtra("phone", mNowChatFriend.phone);
+				startActivity(intent);
 			} else if (mStatus == CHAT_GROUP) {
 				Intent intent = new Intent(ChatActivity.this,
 						GroupInformationActivity.class);
