@@ -166,7 +166,7 @@ public class OSSFileHandler {
 				int height = (int) (defaultSquareDetailImage.getHeight() * (width / defaultSquareDetailImage
 						.getWidth()));
 				defaultSquareDetailImage = Bitmap.createScaledBitmap(
-						defaultImage, (int)width , height, true);
+						defaultImage, (int) width, height, true);
 			}
 			fileResult.onResult(FROM_DEFAULT, defaultSquareDetailImage);
 		}
@@ -248,7 +248,7 @@ public class OSSFileHandler {
 								|| imageFromWebStatus.get(currentFileImage)
 										.equals("failed")) {
 							getImageFileFromWeb(imageFileName, mediationParam,
-									type, style, (int)width);
+									type, style, (int) width);
 						}
 					}
 				} else {
@@ -262,7 +262,7 @@ public class OSSFileHandler {
 							|| imageFromWebStatus.get(currentFileImage).equals(
 									"failed")) {
 						getImageFileFromWeb(imageFileName, mediationParam,
-								type, style,(int) width);
+								type, style, (int) width);
 					}
 				}
 			}
@@ -324,7 +324,7 @@ public class OSSFileHandler {
 							|| type == TYPE_IMAGE_COMMON) {
 						bitmap = MCImageUtils.getZoomBitmapFromFile(imageFile,
 								(int) width, 0);
-					}else{
+					} else {
 						bitmap = BitmapFactory.decodeFile(imageFile
 								.getAbsolutePath());
 					}
@@ -334,7 +334,12 @@ public class OSSFileHandler {
 						app.UIHandler.post(new Runnable() {
 							@Override
 							public void run() {
-								result.onResult(FROM_WEB, bitmap0);
+								if (bitmap0 == null) {
+									result.onResult(FROM_DEFAULT,
+											defaultSquareDetailImage);
+								} else {
+									result.onResult(FROM_WEB, bitmap0);
+								}
 							}
 						});
 					}

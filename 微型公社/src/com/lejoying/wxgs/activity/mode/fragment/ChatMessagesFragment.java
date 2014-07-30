@@ -3,7 +3,6 @@ package com.lejoying.wxgs.activity.mode.fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
@@ -31,7 +29,7 @@ public class ChatMessagesFragment extends BaseFragment {
 	MainApplication app = MainApplication.getMainApplication();
 	MainModeManager mMainModeManager;
 
-	MyMessagesAdapter messagesAdapter;
+	ChatMessagesAdapter messagesAdapter;
 
 	View mContentView;
 	ListView lv_messages;
@@ -48,14 +46,11 @@ public class ChatMessagesFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		System.out.println("ChatMessageFragment");
-		// CircleMenu.show();
-		// CircleMenu.setPageName(getString(R.string.circlemenu_page_square));
+		super.onResume();
 		mMainModeManager.handleMenu(true);
 		if (messagesAdapter != null) {
-			messagesAdapter.notifyDataSetChanged();
+//			messagesAdapter.notifyDataSetChanged();
 		}
-		super.onResume();
 	}
 
 	@Override
@@ -78,7 +73,7 @@ public class ChatMessagesFragment extends BaseFragment {
 		headView.setHeight(10);
 		lv_messages.addHeaderView(headView);
 		lv_messages.addFooterView(headView);
-		messagesAdapter = new MyMessagesAdapter();
+		messagesAdapter = new ChatMessagesAdapter();
 		lv_messages.setAdapter(messagesAdapter);
 		if (app.data.lastChatFriends.size() == 0) {
 			ll_not_messages.setVisibility(View.VISIBLE);
@@ -94,7 +89,6 @@ public class ChatMessagesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				Log.e("Coolspan", MainActivity.instance + "---==--");
 				MainActivity.instance.mMainMode
 						.show(MainActivity.instance.mMainMode.mCirclesFragment);
 			}
@@ -103,10 +97,12 @@ public class ChatMessagesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(),
-						BusinessCardActivity.class);
-				intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
-				startActivity(intent);
+				MainActivity.instance.mMainMode
+						.show(MainActivity.instance.mMainMode.mMyFragment);
+				// Intent intent = new Intent(getActivity(),
+				// BusinessCardActivity.class);
+				// intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+				// startActivity(intent);
 				// MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus
 				// = BusinessCardFragment.SHOW_SELF;
 				// MainActivity.instance.mMainMode
@@ -128,7 +124,7 @@ public class ChatMessagesFragment extends BaseFragment {
 
 	}
 
-	class MyMessagesAdapter extends BaseAdapter {
+	class ChatMessagesAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
@@ -147,25 +143,29 @@ public class ChatMessagesFragment extends BaseFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			System.out.println("-----" + position);
+			ChatMessageHolder chatMessageHolder = null;
 			long CHAT_TYPE_FRIEND = 0X0001;
 			long CHAT_TYPE_GROUP = 0X0002;
 			long chatType = CHAT_TYPE_FRIEND;
 			String chatItem = app.data.lastChatFriends.get(position);
-			View messageView = null;
 			if (convertView == null) {
-				messageView = mInflater.inflate(
+				chatMessageHolder = new ChatMessageHolder();
+				convertView = mInflater.inflate(
 						R.layout.fragment_circles_messages_item, null);
+				chatMessageHolder.headView = (ImageView) convertView
+						.findViewById(R.id.iv_head);
+				chatMessageHolder.nickNameView = (TextView) convertView
+						.findViewById(R.id.tv_nickname);
+				chatMessageHolder.lastChatView = (TextView) convertView
+						.findViewById(R.id.tv_lastchat);
+				chatMessageHolder.notReadCountView = (TextView) convertView
+						.findViewById(R.id.tv_notread);
+				convertView.setTag(chatMessageHolder);
 			} else {
-				messageView = convertView;
+				chatMessageHolder = (ChatMessageHolder) convertView.getTag();
 			}
-			final ImageView head = (ImageView) messageView
-					.findViewById(R.id.iv_head);
-			TextView nickName = (TextView) messageView
-					.findViewById(R.id.tv_nickname);
-			TextView lastChatMessage = (TextView) messageView
-					.findViewById(R.id.tv_lastchat);
-			TextView notReadCount = (TextView) messageView
-					.findViewById(R.id.tv_notread);
+
 			Friend friend = null;
 			Group group = null;
 			if ("f".equals(chatItem.substring(0, 1))) {
@@ -197,7 +197,7 @@ public class ChatMessagesFragment extends BaseFragment {
 							.size() - 1);
 					notread = chatGroup.notReadMessagesCount;
 				}
-				nickName.setText(chatName);
+				chatMessageHolder.nickNameView.setText(chatName);
 				if (lastMessage.contentType.equals("text")) {
 					String mLasastChatMessage;
 					try {
@@ -205,33 +205,39 @@ public class ChatMessagesFragment extends BaseFragment {
 					} catch (Exception e) {
 						mLasastChatMessage = lastMessage.content.toString();
 					}
-					lastChatMessage.setText(mLasastChatMessage);
+					chatMessageHolder.lastChatView.setText(mLasastChatMessage);
 				} else if (lastMessage.contentType.equals("image")) {
-					lastChatMessage.setText(getString(R.string.text_picture));
+					chatMessageHolder.lastChatView
+							.setText(getString(R.string.text_picture));
 				} else if (lastMessage.contentType.equals("voice")) {
-					lastChatMessage.setText(getActivity().getResources()
-							.getString(R.string.text_voice));
+					chatMessageHolder.lastChatView.setText(getActivity()
+							.getResources().getString(R.string.text_voice));
 				}
 				final String headFileName = chatHeadImgName;
+				final ChatMessageHolder chatMessageHolder0 = chatMessageHolder;
 				app.fileHandler.getHeadImage(headFileName, sex,
 						new FileResult() {
 							@Override
 							public void onResult(String where, Bitmap bitmap) {
-								head.setImageBitmap(app.fileHandler.bitmaps
-										.get(headFileName));
+								chatMessageHolder0.headView
+										.setImageBitmap(app.fileHandler.bitmaps
+												.get(headFileName));
 							}
 						});
 
 				if (notread != null) {
 					if (notread > 0) {
-						notReadCount.setVisibility(View.VISIBLE);
-						notReadCount.setText(notread.toString());
+						chatMessageHolder.notReadCountView
+								.setVisibility(View.VISIBLE);
+						chatMessageHolder.notReadCountView.setText(notread
+								.toString());
 					} else {
-						notReadCount.setText("");
-						notReadCount.setVisibility(View.GONE);
+						chatMessageHolder.notReadCountView.setText("");
+						chatMessageHolder.notReadCountView
+								.setVisibility(View.GONE);
 					}
 				}
-				messageView.setOnClickListener(new OnClickListener() {
+				convertView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						if (chatFriend != null) {
@@ -264,7 +270,14 @@ public class ChatMessagesFragment extends BaseFragment {
 					}
 				});
 			}
-			return messageView;
+			return convertView;
 		}
+	}
+
+	class ChatMessageHolder {
+		ImageView headView;
+		TextView nickNameView;
+		TextView lastChatView;
+		TextView notReadCountView;
 	}
 }

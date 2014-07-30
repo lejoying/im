@@ -6,6 +6,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -564,6 +565,7 @@ public class BusinessCardActivity extends BaseActivity implements
 					USERCARDTYPE, app.data.user.phone + ""));
 			QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
 
+			group.removeView(button2);
 			group.removeView(button3);
 			group.removeView(tv_group);
 			group.removeView(tv_square);
@@ -573,7 +575,7 @@ public class BusinessCardActivity extends BaseActivity implements
 			tv_lable_title.setText("爱好:");
 
 			button1.setText("修改我的名片");
-			button2.setText("退出登录");
+			// button2.setText("退出登录");
 			tv_back_show.setText("个人资料");
 			tv_nickname.setText(app.data.user.nickName);
 			tv_id.setText(String.valueOf(app.data.user.id));
@@ -603,28 +605,28 @@ public class BusinessCardActivity extends BaseActivity implements
 				}
 			});
 
-			button2.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					Alert.createDialog(BusinessCardActivity.this)
-							.setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？")
-							.setOnConfirmClickListener(
-									new AlertInputDialog.OnDialogClickListener() {
-										@Override
-										public void onClick(
-												AlertInputDialog dialog) {
-											Intent service = new Intent(
-													BusinessCardActivity.this,
-													PushService.class);
-											service.putExtra("operation",
-													"stop");
-											BusinessCardActivity.this
-													.startService(service);
-											finish();
-										}
-									}).show();
-				}
-			});
+			// button2.setOnClickListener(new OnClickListener() {
+			// @Override
+			// public void onClick(View arg0) {
+			// Alert.createDialog(BusinessCardActivity.this)
+			// .setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？")
+			// .setOnConfirmClickListener(
+			// new AlertInputDialog.OnDialogClickListener() {
+			// @Override
+			// public void onClick(
+			// AlertInputDialog dialog) {
+			// Intent service = new Intent(
+			// BusinessCardActivity.this,
+			// PushService.class);
+			// service.putExtra("operation",
+			// "stop");
+			// BusinessCardActivity.this
+			// .startService(service);
+			// finish();
+			// }
+			// }).show();
+			// }
+			// });
 			break;
 		case TYPE_TEMPFRIEND:
 			QRcodeImage.setImageBitmap(MCImageUtils.createQEcodeImage(
@@ -667,8 +669,17 @@ public class BusinessCardActivity extends BaseActivity implements
 			group.setVisibility(View.VISIBLE);
 			break;
 		case R.id.iv_head:
-			tv_bighead.setBackgroundDrawable(new BitmapDrawable(
-					app.fileHandler.bitmaps.get(mGroup.icon)));
+			if (type == TYPE_SELF) {
+				tv_bighead.setBackgroundDrawable(new BitmapDrawable(
+						app.fileHandler.bitmaps.get(app.data.user.head)));
+			} else if (type == TYPE_FRIEND) {
+				tv_bighead.setBackgroundDrawable(new BitmapDrawable(
+						app.fileHandler.bitmaps.get(mFriend.head)));
+			} else if (type == TYPE_GROUP) {
+				tv_bighead.setBackgroundDrawable(new BitmapDrawable(
+						app.fileHandler.bitmaps.get(mGroup.icon)));
+			}
+
 			group.setVisibility(View.GONE);
 			rl_bighead.setVisibility(View.VISIBLE);
 			break;
@@ -681,7 +692,7 @@ public class BusinessCardActivity extends BaseActivity implements
 			// startActivityForResult(intent, REQUEST_BACK);
 			break;
 		case R.id.backview:
-			finish();
+			mFinish();
 			break;
 		default:
 			break;
@@ -692,6 +703,7 @@ public class BusinessCardActivity extends BaseActivity implements
 		if (mModifyFragment.isAdded()) {
 			mFragmentManager.popBackStack();
 		} else {
+			setResult(Activity.RESULT_OK);
 			finish();
 		}
 	}

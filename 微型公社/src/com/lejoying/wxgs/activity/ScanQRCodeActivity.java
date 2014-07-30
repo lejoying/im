@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.activity.mode.fragment;
+package com.lejoying.wxgs.activity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -25,11 +26,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -51,12 +49,12 @@ import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 
-public class ScanQRCodeFragment extends BaseFragment implements
+public class ScanQRCodeActivity extends Activity implements
 		SurfaceHolder.Callback, PreviewCallback, AutoFocusCallback {
 
 	MainApplication app = MainApplication.getMainApplication();
-	MainModeManager mMainModeManager;
-	private View mContent;
+	// MainModeManager mMainModeManager;
+	// private View mContent;
 
 	private Camera camera;
 
@@ -91,11 +89,12 @@ public class ScanQRCodeFragment extends BaseFragment implements
 
 	private String ScanContent;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		DisplayMetrics dm = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
 
 		int width = dm.widthPixels;
 		int height = dm.heightPixels;
@@ -109,32 +108,24 @@ public class ScanQRCodeFragment extends BaseFragment implements
 		screenResolution = new Point(width, height);
 		isTake = true;
 		multiFormatReader = new MultiFormatReader();
+
+		setContentView(R.layout.fragment_scanqrcode);
+
+		sfv_scanqrcode = (SurfaceView) findViewById(R.id.sfv_scanqrcode);
+
+		surfaceHolder = sfv_scanqrcode.getHolder();
+		surfaceHolder.addCallback(this);
+		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		scanview = (ScanView) findViewById(R.id.scanview);
+
+		scanview.setFramingRect(getFramingRect(screenResolution));
 	}
 
 	@Override
 	public void onResume() {
 		// CircleMenu.showBack();
-		mMainModeManager.handleMenu(false);
+		// mMainModeManager.handleMenu(false);
 		super.onResume();
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		mContent = inflater.inflate(R.layout.fragment_scanqrcode, null);
-
-		sfv_scanqrcode = (SurfaceView) mContent
-				.findViewById(R.id.sfv_scanqrcode);
-
-		surfaceHolder = sfv_scanqrcode.getHolder();
-		surfaceHolder.addCallback(this);
-		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		scanview = (ScanView) mContent.findViewById(R.id.scanview);
-
-		scanview.setFramingRect(getFramingRect(screenResolution));
-
-		return mContent;
 	}
 
 	public void initCamera() {
@@ -339,19 +330,19 @@ public class ScanQRCodeFragment extends BaseFragment implements
 			switch (what) {
 			case OPERATE_DECODE_SUCCESS_WEBLOGIN:
 				destoryCamera();
-				new AlertDialog.Builder(getActivity()).setTitle("网页端登录")
+				new AlertDialog.Builder(ScanQRCodeActivity.this)
+						.setTitle("网页端登录")
 						.setPositiveButton("确定", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
 								int index = ScanContent.indexOf(":", 3);
-								mMainModeManager.back();
+								// mMainModeManager.back();
 								destoryCamera();
 								webScanQRCodelogin(ScanContent
 										.substring(index + 1));
-								getActivity().getSupportFragmentManager()
-										.popBackStack();
+								finish();
 							}
 						}).setNegativeButton("取消", new OnClickListener() {
 
@@ -369,15 +360,17 @@ public class ScanQRCodeFragment extends BaseFragment implements
 				break;
 			case OPERATE_DECODE_SUCCESS_USERCARD:
 				int index = ScanContent.indexOf(":", 3);
-				mMainModeManager.back();
+				// mMainModeManager.back();
 				scanUserCard(ScanContent.substring(index + 1));
 				destoryCamera();
+				finish();
 				break;
 			case OPERATE_DECODE_SUCCESS_GROUPCARD:
 				int indexg = ScanContent.indexOf(":", 3);
-				mMainModeManager.back();
+				// mMainModeManager.back();
 				scanGroupCard(ScanContent.substring(indexg + 1));
 				destoryCamera();
+				finish();
 				break;
 			case OPERATE_DECODE_FAILED:
 				if (isTake) {
@@ -401,7 +394,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 			case OPERATE_AUTOFOCUS:
 				if (camera != null) {
 					if (isTake) {
-						camera.autoFocus(ScanQRCodeFragment.this);
+						camera.autoFocus(ScanQRCodeActivity.this);
 					}
 				}
 				break;
@@ -432,7 +425,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 	}
 
 	public void setMode(MainModeManager mainMode) {
-		this.mMainModeManager = mainMode;
+		// this.mMainModeManager = mainMode;
 	}
 
 	public void webScanQRCodelogin(final String sessionID) {
@@ -472,7 +465,7 @@ public class ScanQRCodeFragment extends BaseFragment implements
 					final Friend friend = JSONParser
 							.generateFriendFromJSON(jData.getJSONArray(
 									"accounts").getJSONObject(0));
-					Intent intent = new Intent(getActivity(),
+					Intent intent = new Intent(ScanQRCodeActivity.this,
 							BusinessCardActivity.class);
 					if (phone.equals(app.data.user.phone)) {
 						intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
@@ -585,9 +578,9 @@ public class ScanQRCodeFragment extends BaseFragment implements
 					}
 				} catch (Exception e) {
 				}
-				mMainModeManager.mGroupBusinessCardFragment.mGroup = group;
-				mMainModeManager
-						.showNext(mMainModeManager.mGroupBusinessCardFragment);
+				// mMainModeManager.mGroupBusinessCardFragment.mGroup = group;
+				// mMainModeManager
+				// .showNext(mMainModeManager.mGroupBusinessCardFragment);
 			}
 		});
 	}

@@ -20,7 +20,6 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -52,7 +51,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -901,7 +899,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 			public void afterTextChanged(Editable s) {
 				int selectionIndex = editText_message.getSelectionStart();
 				String afterContent = s.toString().trim();
-				if (!afterContent.equals(content)) {
+				if (!s.toString().equals(content)) {
 					SpannableString spannableString = ExpressionUtil
 							.getExpressionString(ChatActivity.this,
 									s.toString(), faceRegx, expressionFaceMap);
