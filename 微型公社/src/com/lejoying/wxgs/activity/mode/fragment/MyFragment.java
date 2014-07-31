@@ -3,15 +3,17 @@ package com.lejoying.wxgs.activity.mode.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.BusinessCardActivity;
@@ -24,6 +26,11 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.service.PushService;
 
+/**
+ * MyFragment 2014-7-30 上午10:25:09
+ * 
+ * @author 乔晓松 qiaoxiaosong@lejoying.com
+ */
 public class MyFragment extends BaseFragment implements OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
@@ -73,6 +80,24 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 		return mMainContentView;
 	}
 
+	void setOnTouch(final View view) {
+		view.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					view.setBackgroundColor(Color.argb(143, 0, 0, 0));
+					break;
+				case MotionEvent.ACTION_UP:
+					view.setBackgroundColor(Color.parseColor("#38ffffff"));
+					break;
+				}
+				return false;
+			}
+		});
+	}
+
 	private void initData() {
 		app.fileHandler.getHeadImage(app.data.user.head, app.data.user.sex,
 				new FileResult() {
@@ -87,11 +112,15 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 	}
 
 	private void initEvent() {
+		userInfomationView.setOnClickListener(this);
 		userSettingView.setOnClickListener(this);
 		current_me_circles.setOnClickListener(this);
 		current_me_message_list.setOnClickListener(this);
 		myBusinessCardView.setOnClickListener(this);
 		exitCurrentUserView.setOnClickListener(this);
+		setOnTouch(exitCurrentUserView);
+		setOnTouch(userSettingView);
+		setOnTouch(myBusinessCardView);
 	}
 
 	public void setMode(MainModeManager mainMode) {
@@ -101,6 +130,13 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.rl_userInfomation:
+			Intent userInfomationIntent = new Intent(getActivity(),
+					BusinessCardActivity.class);
+			userInfomationIntent.putExtra("type",
+					BusinessCardActivity.TYPE_SELF);
+			startActivityForResult(userInfomationIntent, 101);
+			break;
 		case R.id.rl_myBusinessCard:
 			Intent businessCardIntent = new Intent(getActivity(),
 					BusinessCardActivity.class);
@@ -123,10 +159,12 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 							}).show();
 			break;
 		case R.id.current_me_circles:
+			MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_CIRCLE;
 			MainActivity.instance.mMainMode
 					.show(MainActivity.instance.mMainMode.mCirclesFragment);
 			break;
 		case R.id.current_me_message_list:
+			MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_CHATMESSAGE;
 			MainActivity.instance.mMainMode
 					.show(MainActivity.instance.mMainMode.mChatMessagesFragment);
 			break;

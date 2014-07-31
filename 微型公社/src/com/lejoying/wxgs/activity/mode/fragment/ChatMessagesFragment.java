@@ -18,6 +18,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
@@ -40,6 +41,8 @@ public class ChatMessagesFragment extends BaseFragment {
 	RelativeLayout current_me_message_list;
 	RelativeLayout current_me_infomation;
 
+	boolean isInit = false;
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -48,8 +51,8 @@ public class ChatMessagesFragment extends BaseFragment {
 	public void onResume() {
 		super.onResume();
 		mMainModeManager.handleMenu(true);
-		if (messagesAdapter != null) {
-//			messagesAdapter.notifyDataSetChanged();
+		if (messagesAdapter != null && isInit) {
+			messagesAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -89,6 +92,7 @@ public class ChatMessagesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_CIRCLE;
 				MainActivity.instance.mMainMode
 						.show(MainActivity.instance.mMainMode.mCirclesFragment);
 			}
@@ -97,6 +101,7 @@ public class ChatMessagesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_MY;
 				MainActivity.instance.mMainMode
 						.show(MainActivity.instance.mMainMode.mMyFragment);
 				// Intent intent = new Intent(getActivity(),
@@ -143,7 +148,9 @@ public class ChatMessagesFragment extends BaseFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			System.out.println("-----" + position);
+			if (position == getCount() - 1) {
+				isInit = true;
+			}
 			ChatMessageHolder chatMessageHolder = null;
 			long CHAT_TYPE_FRIEND = 0X0001;
 			long CHAT_TYPE_GROUP = 0X0002;
@@ -161,6 +168,8 @@ public class ChatMessagesFragment extends BaseFragment {
 						.findViewById(R.id.tv_lastchat);
 				chatMessageHolder.notReadCountView = (TextView) convertView
 						.findViewById(R.id.tv_notread);
+				chatMessageHolder.lastChatTimeView = (TextView) convertView
+						.findViewById(R.id.tv_time);
 				convertView.setTag(chatMessageHolder);
 			} else {
 				chatMessageHolder = (ChatMessageHolder) convertView.getTag();
@@ -197,6 +206,9 @@ public class ChatMessagesFragment extends BaseFragment {
 							.size() - 1);
 					notread = chatGroup.notReadMessagesCount;
 				}
+				chatMessageHolder.lastChatTimeView
+						.setText(TimeUtils.getChatMessageListTime(Long
+								.valueOf(lastMessage.time)));
 				chatMessageHolder.nickNameView.setText(chatName);
 				if (lastMessage.contentType.equals("text")) {
 					String mLasastChatMessage;
@@ -279,5 +291,6 @@ public class ChatMessagesFragment extends BaseFragment {
 		TextView nickNameView;
 		TextView lastChatView;
 		TextView notReadCountView;
+		TextView lastChatTimeView;
 	}
 }

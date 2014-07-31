@@ -1799,6 +1799,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 			message.phone = mNowChatFriend.phone;
 		} else if (mStatus == CHAT_GROUP) {
 			message.sendType = "group";
+			message.gid = String.valueOf(mNowChatGroup.gid);
+			message.phone = app.data.user.phone;
 		}
 		message.content = content;
 		message.contentType = type;
@@ -1815,8 +1817,10 @@ public class ChatActivity extends Activity implements OnClickListener {
 					data.lastChatFriends.add(0, "f" + mNowChatFriend.phone);
 					// Log.e("Coolspan", data.lastChatFriends.size()
 					// + "---------------chat length");
-				} else {
+				} else if (mStatus == CHAT_GROUP) {
 					mNowChatGroup.messages.add(message);
+					data.lastChatFriends.remove("g" + mNowChatGroup.gid);
+					data.lastChatFriends.add(0, "g" + mNowChatGroup.gid);
 				}
 			}
 
@@ -1855,6 +1859,15 @@ public class ChatActivity extends Activity implements OnClickListener {
 								+ mNowChatFriend.phone);
 						app.data.lastChatFriends.add(0, "f"
 								+ mNowChatFriend.phone);
+					}
+				} else if (mStatus == CHAT_GROUP) {
+					if (app.data.lastChatFriends.indexOf("g"
+							+ mNowChatGroup.gid) != 0) {
+						app.data.lastChatFriends
+								.remove("g" + mNowChatGroup.gid);
+						app.data.lastChatFriends
+								.add(0, "g" + mNowChatGroup.gid);
+						// mMainModeManager.mChatMessagesFragment.notifyViews();
 					}
 				}
 				if (mPlayer != null) {

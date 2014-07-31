@@ -364,7 +364,13 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				mMainMode.show(mMainMode.mCirclesFragment);
+				if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_CIRCLE) {
+					mMainMode.show(mMainMode.mCirclesFragment);
+				} else if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_CHATMESSAGE) {
+					mMainMode.show(mMainMode.mChatMessagesFragment);
+				} else if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_MY) {
+					mMainMode.show(mMainMode.mMyFragment);
+				}
 				iv_square_menu.setImageResource(R.drawable.square_icon);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon_selected);

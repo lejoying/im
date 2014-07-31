@@ -15,7 +15,7 @@ public class Message implements Serializable {
 
 	// type is receive or send
 	public int type;
-	//public String content="";
+	// public String content="";
 	public ArrayList<String> content = new ArrayList<String>();
 	public String time = "";
 	public String sendType = "";
@@ -39,7 +39,8 @@ public class Message implements Serializable {
 		if (o != null) {
 			try {
 				Message m = (Message) o;
-				if (type == m.type && content.equals(m.content)
+
+				if (type == m.type && content.containsAll(m.content)
 						&& time.equals(m.time) && sendType.equals(m.sendType)
 						&& gid.equals(m.gid)
 						&& contentType.equals(m.contentType)

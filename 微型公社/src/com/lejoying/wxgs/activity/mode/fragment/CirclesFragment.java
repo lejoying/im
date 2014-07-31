@@ -481,6 +481,7 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_CHATMESSAGE;
 				MainActivity.instance.mMainMode
 						.show(MainActivity.instance.mMainMode.mChatMessagesFragment);
 
@@ -490,6 +491,7 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_MY;
 				MainActivity.instance.mMainMode
 						.show(MainActivity.instance.mMainMode.mMyFragment);
 				// Intent intent = new Intent(getActivity(),
@@ -1350,8 +1352,8 @@ public class CirclesFragment extends BaseFragment {
 		final LinearLayout ll_pagepoint = (LinearLayout) circleView
 				.findViewById(R.id.ll_pagepoint);
 		ll_pagepoint.removeAllViews();
-		final int pageSize = (circle.phones.size() % 6) == 0 ? (circle.phones
-				.size() / 6) : (circle.phones.size() / 6) + 1;
+		final int pageSize = (circle.phones.size() % 8) == 0 ? (circle.phones
+				.size() / 8) : (circle.phones.size() / 8) + 1;
 		final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);

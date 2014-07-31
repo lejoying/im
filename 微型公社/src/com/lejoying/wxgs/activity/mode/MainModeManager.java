@@ -16,7 +16,6 @@ import com.lejoying.wxgs.activity.mode.fragment.GroupBusinessCardFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupManagerFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
-import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.mode.fragment.MyFragment;
 import com.lejoying.wxgs.activity.mode.fragment.NewFriendsFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
@@ -25,6 +24,11 @@ import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareOnLineUserFragment;
 
 public class MainModeManager extends BaseModeManager {
+
+	public int FRAGMENT_CIRCLE = 0x01;
+	public int FRAGMENT_CHATMESSAGE = 0x02;
+	public int FRAGMENT_MY = 0x03;
+	public int mCurrentMyFragment = FRAGMENT_CIRCLE;
 
 	boolean isInit;
 	FragmentManager mFragmentManager;
@@ -40,13 +44,9 @@ public class MainModeManager extends BaseModeManager {
 	//
 	public ScanQRCodeFragment mScanQRCodeFragment;
 	public SearchFriendFragment mSearchFriendFragment;
-	// public BusinessCardFragment mBusinessCardFragment;
 	public ChatMessagesFragment mChatMessagesFragment;
 	public MyFragment mMyFragment;
-	// public ChatFriendFragment mChatFragment;
-	// public ChatGroupFragment mChatGroupFragment;
 	public NewFriendsFragment mNewFriendsFragment;
-	// public AddFriendFragment mAddFriendFragment;
 	public GroupManagerFragment mGroupManagerFragment;
 	public ChangePasswordFragment mChangePasswordFragment;
 	public GroupBusinessCardFragment mGroupBusinessCardFragment;
@@ -81,20 +81,12 @@ public class MainModeManager extends BaseModeManager {
 			mScanQRCodeFragment.setMode(this);
 			mSearchFriendFragment = new SearchFriendFragment();
 			mSearchFriendFragment.setMode(this);
-			// mBusinessCardFragment = new BusinessCardFragment();
-			// mBusinessCardFragment.setMode(this);
-			// mChatFragment = new ChatFriendFragment();
-			// mChatFragment.setMode(this);
 			mChatMessagesFragment = new ChatMessagesFragment();
 			mChatMessagesFragment.setMode(this);
-			// mChatGroupFragment = new ChatGroupFragment();
-			// mChatGroupFragment.setMode(this);
 			mNewFriendsFragment = new NewFriendsFragment();
 			mNewFriendsFragment.setMode(this);
 			mMyFragment = new MyFragment();
 			mMyFragment.setMode(this);
-			// mAddFriendFragment = new AddFriendFragment();
-			// mAddFriendFragment.setMode(this);
 			mGroupManagerFragment = new GroupManagerFragment();
 			mGroupManagerFragment.setMode(this);
 			mGroupBusinessCardFragment = new GroupBusinessCardFragment();
