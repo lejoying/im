@@ -476,7 +476,7 @@ api = {
             url: "/api2/circle/modify"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", rid: "XXX", circleName: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", rid: "XXX", name: "XXX"}
         },
         response: {
             success: {"提示信息": "修改成功"},

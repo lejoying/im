@@ -293,7 +293,7 @@ public class MainActivity extends BaseActivity {
 			public void onClick(View v) {
 				if (nowFragment == IS_GROUPS) {
 					showGroupPopWindow(MainActivity.this, mBackground);
-				} else {
+				} else if (nowFragment == IS_SQUARE) {
 					showPopWindow(MainActivity.this, mBackground);
 				}
 			}
@@ -333,14 +333,28 @@ public class MainActivity extends BaseActivity {
 				if ("".equals(app.data.currentGroup)
 						|| app.data.currentGroup == null) {
 					if (app.data.groups.size() > 0) {
-						app.data.currentGroup = app.data.groups.get(0);
-						communityNameTV.setText(app.data.groupsMap
-								.get(app.data.groups.get(0)).name);
+						app.dataHandler.exclude(new Modification() {
+
+							@Override
+							public void modifyData(Data data) {
+								data.currentGroup = app.data.groups.get(0);
+
+							}
+						});
+						String groupName = app.data.groupsMap
+								.get(app.data.groups.get(0)).name;
+						communityNameTV.setText(groupName
+								.substring(0, groupName.length() > 8 ? 8
+										: groupName.length()));
 					}
 				} else {
 					if (app.data.groups.size() > 0) {
+						String groupName = app.data.groupsMap
+								.get(app.data.currentGroup).name;
 						communityNameTV.setText(app.data.groupsMap
-								.get(app.data.currentGroup).name);
+								.get(app.data.currentGroup).name
+								.substring(0, groupName.length() > 8 ? 8
+										: groupName.length()));
 					}
 				}
 				nowFragment = IS_GROUPS;
@@ -350,20 +364,20 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				mMainMode.show(mMainMode.mCirclesFragment);
+				if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_CIRCLE) {
+					mMainMode.show(mMainMode.mCirclesFragment);
+				} else if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_CHATMESSAGE) {
+					mMainMode.show(mMainMode.mChatMessagesFragment);
+				} else if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_MY) {
+					mMainMode.show(mMainMode.mMyFragment);
+				}
 				iv_square_menu.setImageResource(R.drawable.square_icon);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon_selected);
 				if (nowFragment == IS_GROUPS) {
 					iv_release_menu.setImageResource(R.drawable.square_release);
 				}
-				if ("98".equals(SquareFragment.mCurrentSquareID)) {
-					communityNameTV.setText(communityList.get(0));
-				} else if ("99".equals(SquareFragment.mCurrentSquareID)) {
-					communityNameTV.setText(communityList.get(1));
-				} else if ("100".equals(SquareFragment.mCurrentSquareID)) {
-					communityNameTV.setText(communityList.get(2));
-				}
+				communityNameTV.setText(app.data.user.nickName);
 				nowFragment = IS_CIRCLES;
 			}
 		});
@@ -373,9 +387,14 @@ public class MainActivity extends BaseActivity {
 			public void onClick(View v) {
 				if (nowFragment == IS_GROUPS) {
 					mMainMode.show(mMainMode.mGroupFragment);
-				} else {
+				} else if (nowFragment == IS_SQUARE) {
 					Intent intent = new Intent(MainActivity.this,
 							ReleaseActivity.class);
+					startActivity(intent);
+				} else if (nowFragment == IS_CIRCLES) {
+					// mMainMode.show(mMainMode.mScanQRCodeFragment);
+					Intent intent = new Intent(MainActivity.this,
+							ScanQRCodeActivity.class);
 					startActivity(intent);
 				}
 			}
@@ -612,14 +631,6 @@ public class MainActivity extends BaseActivity {
 					});
 					gPopWindow.dismiss();
 					notifyDataSetChanged();
-				}
-			});
-			groupsHolder.iv_mony.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-
 				}
 			});
 			return convertView;

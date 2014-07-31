@@ -2,6 +2,7 @@ package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.entity.Friend;
@@ -108,7 +110,7 @@ public class GroupSharePraisesFragment extends BaseFragment {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final GroupSharePraisesHolder holder;
-			Friend friend = app.data.groupFriends
+			final Friend friend = app.data.groupFriends
 					.get(praiseUsers.get(position));
 			if (convertView == null) {
 				holder = new GroupSharePraisesHolder();
@@ -155,8 +157,20 @@ public class GroupSharePraisesFragment extends BaseFragment {
 
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-
+					Intent intent = new Intent(getActivity(),
+							BusinessCardActivity.class);
+					if (friend.phone.equals(app.data.user.phone)) {
+						intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+					} else if (app.data.friends.get(friend.phone) != null) {
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_FRIEND);
+					} else {
+						intent.putExtra("type",
+								BusinessCardActivity.TYPE_TEMPFRIEND);
+						intent.putExtra("friend", friend);
+					}
+					intent.putExtra("phone", friend.phone);
+					startActivity(intent);
 				}
 			});
 			return convertView;

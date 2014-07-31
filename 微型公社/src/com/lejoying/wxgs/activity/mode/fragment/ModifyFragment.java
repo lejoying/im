@@ -70,6 +70,8 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 	MainApplication app = MainApplication.getMainApplication();
 	InputMethodManager imm;
 
+	BusinessCardActivity businessCardActivity;
+
 	final int INPUT_NAME = 0x51, INPUT_BUSINESS = 0x52;
 	int inputType;
 
@@ -88,6 +90,10 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 			tv_location_title, tv_location, tv_business_title, tv_business,
 			tv_lable_title, tv_lable, tv_modify, tv_camera, tv_sel;
 	EditText et_input;
+
+	public void setModeInstance(BusinessCardActivity businessCardActivity) {
+		this.businessCardActivity = businessCardActivity;
+	}
 
 	@Override
 	public void onResume() {
@@ -127,7 +133,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 	}
 
 	private void initData() {
-		switch (BusinessCardActivity.type) {
+		switch (businessCardActivity.type) {
 		case BusinessCardActivity.TYPE_GROUP:
 			mGroup = app.data.groupsMap.get(BusinessCardActivity.gid);
 			final String iconFileName = mGroup.icon;
@@ -234,7 +240,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 			case INPUT_NAME:
 				name = et_input.getText().toString();
 				tv_name.setText(name);
-				switch (BusinessCardActivity.type) {
+				switch (businessCardActivity.type) {
 				case BusinessCardActivity.TYPE_GROUP:
 					mGroup.name = name;
 					break;
@@ -246,7 +252,7 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 			case INPUT_BUSINESS:
 				business = et_input.getText().toString();
 				tv_business.setText(business);
-				switch (BusinessCardActivity.type) {
+				switch (businessCardActivity.type) {
 				case BusinessCardActivity.TYPE_GROUP:
 					mGroup.description = business;
 					break;
@@ -262,8 +268,11 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 			ll_complete.setVisibility(View.GONE);
 			rl_input.setVisibility(View.GONE);
 			if (imm.isActive()) {
-				imm.hideSoftInputFromWindow(getActivity().getCurrentFocus()
-						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+				System.out.println(imm + "---" + getActivity() + "---"
+						+ getActivity().getCurrentFocus());
+				// imm.hideSoftInputFromWindow(getActivity().getCurrentFocus()
+				// .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+				hideSoftInput();
 			}
 			break;
 		case R.id.ll_head:
@@ -328,8 +337,26 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 		} else if (rl_input.getVisibility() == View.VISIBLE) {
 			rl_input.setVisibility(View.GONE);
 		} else {
+			app.UIHandler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					businessCardActivity.notifyData();
+				}
+			});
 			getFragmentManager().popBackStack();
 		}
+		// TODO
+		// app.UIHandler.post(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// businessCardActivity.notifyData();
+		// }
+		// });
+		// if (businessCardActivity.mModifyFragment.isAdded()) {
+		// getFragmentManager().popBackStack();
+		// }
 	}
 
 	void selectPicture(int requestCode) {
@@ -481,7 +508,13 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 						// User user = new User();
 						// user.head = imageMessageInfo.fileName;
 						// modify(user);
-						updataImage(imageMessageInfo.fileName);
+						app.UIHandler.post(new Runnable() {
+
+							@Override
+							public void run() {
+								updataImage(imageMessageInfo.fileName);
+							}
+						});
 					} else {
 
 						app.fileHandler.uploadFile(new UploadFileInterface() {
@@ -499,7 +532,14 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 							public void onSuccess(Boolean flag, String fileName) {
 								// mUser.head = fileName;
 								// modify(mUser);
-								updataImage(imageMessageInfo.fileName);
+								app.UIHandler.post(new Runnable() {
+									
+									@Override
+									public void run() {
+										setFocus(true);
+										updataImage(imageMessageInfo.fileName);
+									}
+								});
 							}
 						});
 					}
@@ -512,28 +552,6 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 
 	}
 
-	// public void uploadImage(final String fileName, final String base64) {
-	// app.networkHandler.connection(new CommonNetConnection() {
-	//
-	// @Override
-	// protected void settings(Settings settings) {
-	// settings.url = API.DOMAIN + API.IMAGE_UPLOAD;
-	// Map<String, String> params = new HashMap<String, String>();
-	// params.put("phone", app.data.user.phone);
-	// params.put("accessKey", app.data.user.accessKey);
-	// params.put("filename", fileName);
-	// params.put("imagedata", base64);
-	// settings.params = params;
-	// }
-	//
-	// @Override
-	// public void success(JSONObject jData) {
-	// User user = new User();
-	// user.head = fileName;
-	// modify(user);
-	// }
-	// });
-	// }
 	public void setFocus(boolean whether) {
 		ll_head.setClickable(whether);
 		ll_name.setClickable(whether);
@@ -545,34 +563,40 @@ public class ModifyFragment extends BaseFragment implements OnClickListener {
 	}
 
 	void updataImage(String fileName) {
-		switch (BusinessCardActivity.type) {
+		String sex = "";
+		switch (businessCardActivity.type) {
 		case BusinessCardActivity.TYPE_GROUP:
 			mGroup.icon = fileName;
+			sex = "";
 			break;
 		case BusinessCardActivity.TYPE_SELF:
 			mUser.head = fileName;
+			sex = mUser.sex.equals("") ? "男" : mUser.sex;
 			break;
 		}
-		app.fileHandler.getHeadImage(fileName, mUser.sex.equals("") ? "男"
-				: mUser.sex, new FileResult() {
+		app.fileHandler.getHeadImage(fileName, sex, new FileResult() {
 
 			@Override
-			public void onResult(String where, Bitmap bitmap) {
+			public void onResult(String where, final Bitmap bitmap) {
 				iv_head.setImageBitmap(bitmap);
 			}
 		});
+		if (rl_pic.getVisibility() == View.VISIBLE) {
+			rl_pic.setVisibility(View.GONE);
+		}
 	}
 
 	public void modify() {
-		switch (BusinessCardActivity.type) {
+		switch (businessCardActivity.type) {
 		case BusinessCardActivity.TYPE_GROUP:
 			modifyGroup();
 			break;
 		case BusinessCardActivity.TYPE_SELF:
 			modifyUser();
 			break;
+		default:
+			break;
 		}
-
 	}
 
 	private void modifyUser() {

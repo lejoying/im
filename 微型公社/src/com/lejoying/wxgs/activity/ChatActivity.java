@@ -20,7 +20,6 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
-import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
@@ -52,7 +51,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -318,16 +316,16 @@ public class ChatActivity extends Activity implements OnClickListener {
 					+ mNowChatGroup.members.size() + "人 )");
 			if (!"".equals(mNowChatGroup.background)) {
 				backGroundFileName = mNowChatGroup.background;
-				app.fileHandler.getBackgroundImage(mNowChatGroup.background,
-						new FileResult() {
-
-							@Override
-							public void onResult(String where, Bitmap bitmap) {
-								BitmapDrawable bitmapDrawable = new BitmapDrawable(
-										bitmap);
-								rl_parent.setBackgroundDrawable(bitmapDrawable);
-							}
-						});
+				// app.fileHandler.getBackgroundImage(mNowChatGroup.background,
+				// new FileResult() {
+				//
+				// @Override
+				// public void onResult(String where, Bitmap bitmap) {
+				// BitmapDrawable bitmapDrawable = new BitmapDrawable(
+				// bitmap);
+				// rl_parent.setBackgroundDrawable(bitmapDrawable);
+				// }
+				// });
 			}
 		}
 		// mMainModeManager.handleMenu(false);
@@ -668,8 +666,19 @@ public class ChatActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.iv_infomation:
 			if (mStatus == CHAT_FRIEND) {
-				// TODO
-
+				Intent intent = new Intent(ChatActivity.this,
+						BusinessCardActivity.class);
+				if (mNowChatFriend.phone.equals(app.data.user.phone)) {
+					intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+				} else if (app.data.friends.get(mNowChatFriend.phone) != null) {
+					intent.putExtra("type", BusinessCardActivity.TYPE_FRIEND);
+				} else {
+					intent.putExtra("type",
+							BusinessCardActivity.TYPE_TEMPFRIEND);
+					intent.putExtra("friend", mNowChatFriend);
+				}
+				intent.putExtra("phone", mNowChatFriend.phone);
+				startActivity(intent);
 			} else if (mStatus == CHAT_GROUP) {
 				Intent intent = new Intent(ChatActivity.this,
 						GroupInformationActivity.class);
@@ -890,7 +899,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 			public void afterTextChanged(Editable s) {
 				int selectionIndex = editText_message.getSelectionStart();
 				String afterContent = s.toString().trim();
-				if (!afterContent.equals(content)) {
+				if (!s.toString().equals(content)) {
 					SpannableString spannableString = ExpressionUtil
 							.getExpressionString(ChatActivity.this,
 									s.toString(), faceRegx, expressionFaceMap);
@@ -1790,6 +1799,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 			message.phone = mNowChatFriend.phone;
 		} else if (mStatus == CHAT_GROUP) {
 			message.sendType = "group";
+			message.gid = String.valueOf(mNowChatGroup.gid);
+			message.phone = app.data.user.phone;
 		}
 		message.content = content;
 		message.contentType = type;
@@ -1806,8 +1817,10 @@ public class ChatActivity extends Activity implements OnClickListener {
 					data.lastChatFriends.add(0, "f" + mNowChatFriend.phone);
 					// Log.e("Coolspan", data.lastChatFriends.size()
 					// + "---------------chat length");
-				} else {
+				} else if (mStatus == CHAT_GROUP) {
 					mNowChatGroup.messages.add(message);
+					data.lastChatFriends.remove("g" + mNowChatGroup.gid);
+					data.lastChatFriends.add(0, "g" + mNowChatGroup.gid);
 				}
 			}
 
@@ -1846,6 +1859,15 @@ public class ChatActivity extends Activity implements OnClickListener {
 								+ mNowChatFriend.phone);
 						app.data.lastChatFriends.add(0, "f"
 								+ mNowChatFriend.phone);
+					}
+				} else if (mStatus == CHAT_GROUP) {
+					if (app.data.lastChatFriends.indexOf("g"
+							+ mNowChatGroup.gid) != 0) {
+						app.data.lastChatFriends
+								.remove("g" + mNowChatGroup.gid);
+						app.data.lastChatFriends
+								.add(0, "g" + mNowChatGroup.gid);
+						// mMainModeManager.mChatMessagesFragment.notifyViews();
 					}
 				}
 				if (mPlayer != null) {

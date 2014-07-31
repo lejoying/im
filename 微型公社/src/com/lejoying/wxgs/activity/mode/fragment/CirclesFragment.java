@@ -16,6 +16,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,7 +36,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.mode.BaseModeManager.KeyDownListener;
@@ -92,6 +92,8 @@ public class CirclesFragment extends BaseFragment {
 	public String copyStatus = "move";// "move"||"copy"
 	public String mode = "normal";// "normal"||"edit"
 
+	int height, width, dip;
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
@@ -143,17 +145,29 @@ public class CirclesFragment extends BaseFragment {
 
 		animatingView.view = circlesViewContenter;
 
-		density = getActivity().getResources().getDisplayMetrics().density;
-
 		mMainModeManager.handleMenu(true);
+
+		initData();
 
 		circleViewCommonAnimation();
 
 		notifyViews();
 
 		initEvent();
-
 		return mContentView;
+	}
+
+	private void initData() {
+		DisplayMetrics dm = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		density = dm.density;
+		dip = (int) (40 * density + 0.5f);
+		height = dm.heightPixels;
+		width = dm.widthPixels;
+		baseLeft = (int) (width - (dp2px(20) * 2) - (dp2px(55) * 4)) / 8;
+		vWidth = (int) (width - (dp2px(20) * 2));
+		headSpace = baseLeft * 2;
+		head = (int) dp2px(55f);
 	}
 
 	public void notifyViews() {
@@ -204,7 +218,11 @@ public class CirclesFragment extends BaseFragment {
 					scrollToY -= dp2px(20);
 				}
 				// float px = 0.1f * px + 0.5f;
-				top = top + height + 25;
+				if (i < 2) {
+					top = top + height + 10;// 25
+				} else {
+					top = top + height + 6;// 25
+				}
 				v.setLayoutParams(layoutParams);
 
 			}
@@ -463,6 +481,7 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
+				MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_CHATMESSAGE;
 				MainActivity.instance.mMainMode
 						.show(MainActivity.instance.mMainMode.mChatMessagesFragment);
 
@@ -472,10 +491,14 @@ public class CirclesFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(),
-						BusinessCardActivity.class);
-				intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
-				startActivity(intent);
+				MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_MY;
+				MainActivity.instance.mMainMode
+						.show(MainActivity.instance.mMainMode.mMyFragment);
+				// Intent intent = new Intent(getActivity(),
+				// BusinessCardActivity.class);
+				// intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+				// startActivity(intent);
+
 				// MainActivity.instance.mMainMode.mBusinessCardFragment.mStatus
 				// = BusinessCardFragment.SHOW_SELF;
 				// MainActivity.instance.mMainMode
@@ -862,6 +885,13 @@ public class CirclesFragment extends BaseFragment {
 		}
 		normalShow.clear();
 
+		if (views.get("button#findmore") == null) {
+			View findMoreFriendButtonView = generateFindMoreFriendButtonView();
+			findMoreFriendButtonView.setTag(46);
+			views.put("button#findmore", findMoreFriendButtonView);
+		}
+		normalShow.add("button#findmore");
+
 		View newFriendButtonView = views.get("button#newfriend");
 		if (newFriendButtonView == null) {
 			newFriendButtonView = generateNewFriendButtonView();
@@ -875,13 +905,15 @@ public class CirclesFragment extends BaseFragment {
 				newFriendsCount++;
 			}
 		}
-		if (newFriendsCount != 0) {
-			notifyNewFriendButtonView(newFriendButtonView, newFriendsCount);
-			normalShow.add("button#newfriend");
-		} else if (newFriendButtonView.getParent() != null) {
-			((ViewGroup) newFriendButtonView.getParent())
-					.removeView(newFriendButtonView);
-		}
+		notifyNewFriendButtonView(newFriendButtonView, newFriendsCount);
+		normalShow.add("button#newfriend");
+		// if (newFriendsCount != 0) {
+		// notifyNewFriendButtonView(newFriendButtonView, newFriendsCount);
+		// normalShow.add("button#newfriend");
+		// } else if (newFriendButtonView.getParent() != null) {
+		// ((ViewGroup) newFriendButtonView.getParent())
+		// .removeView(newFriendButtonView);
+		// }
 
 		// messages.clear();
 		// for (int i = 0; i < lastChatFriendsSize; i++) {
@@ -941,30 +973,26 @@ public class CirclesFragment extends BaseFragment {
 		// }
 		// normalShow.add("button#creategroup");
 
-		if (views.get("button#findmore") == null) {
-			View findMoreFriendButtonView = generateFindMoreFriendButtonView();
-			findMoreFriendButtonView.setTag(46);
-			views.put("button#findmore", findMoreFriendButtonView);
-		}
-		normalShow.add("button#findmore");
-
 	}
 
 	View generateNewFriendButtonView() {
 		View newFriendButtonView = mInflater.inflate(
-				R.layout.fragment_item_button, null);
+				R.layout.fragment_item_button_layout, null);
 		return newFriendButtonView;
 	}
 
 	void notifyNewFriendButtonView(View newFriendButtonView, int newFriendsCount) {
-		Button newFriendButton = (Button) newFriendButtonView
-				.findViewById(R.id.button);
+		TextView newFriendButton = (TextView) newFriendButtonView
+				.findViewById(R.id.tv_type);
+		ImageView findMoreFriendIcon = (ImageView) newFriendButtonView
+				.findViewById(R.id.iv_icon);
+		findMoreFriendIcon.setImageResource(R.drawable.person_icon_selected);
 		if (newFriendsCount != 0) {
 			newFriendButton.setText("新的好友(" + newFriendsCount + ")");
 		} else {
 			newFriendButton.setText("新的好友");
 		}
-		newFriendButton.setOnClickListener(new OnClickListener() {
+		newFriendButtonView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mMainModeManager.showNext(mMainModeManager.mNewFriendsFragment);
@@ -991,11 +1019,14 @@ public class CirclesFragment extends BaseFragment {
 
 	View generateFindMoreFriendButtonView() {
 		View findMoreFriendButtonView = mInflater.inflate(
-				R.layout.fragment_item_button, null);
-		Button findMoreFriendButton = (Button) findMoreFriendButtonView
-				.findViewById(R.id.button);
-		findMoreFriendButton.setText("找到更多密友");
-		findMoreFriendButton.setOnClickListener(new OnClickListener() {
+				R.layout.fragment_item_button_layout, null);
+		TextView findMoreFriendButton = (TextView) findMoreFriendButtonView
+				.findViewById(R.id.tv_type);
+		ImageView findMoreFriendIcon = (ImageView) findMoreFriendButtonView
+				.findViewById(R.id.iv_icon);
+		findMoreFriendIcon.setImageResource(R.drawable.dialog_search);
+		findMoreFriendButton.setText("搜索好友");
+		findMoreFriendButtonView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mMainModeManager
@@ -1164,26 +1195,63 @@ public class CirclesFragment extends BaseFragment {
 		int y = 0;
 	}
 
+	// Position switchPosition(int i) {
+	// Position position = new Position();
+	// if ((i + 1) % 6 == 1) {
+	// position.y = (int) dp2px(11);
+	// position.x = (int) dp2px(26 + i / 6 * 326);
+	// } else if ((i + 1) % 6 == 2) {
+	// position.y = (int) dp2px(11);
+	// position.x = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
+	// } else if ((i + 1) % 6 == 3) {
+	// position.y = (int) dp2px(11);
+	// position.x = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
+	// } else if ((i + 1) % 6 == 4) {
+	// position.y = (int) dp2px(11 + 73 + 27);
+	// position.x = (int) dp2px(26 + i / 6 * 326);
+	// } else if ((i + 1) % 6 == 5) {
+	// position.y = (int) dp2px(11 + 73 + 27);
+	// position.x = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
+	// } else if ((i + 1) % 6 == 0) {
+	// position.y = (int) dp2px(11 + 73 + 27);
+	// position.x = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
+	// }
+	// return position;
+	// }
+	int baseLeft;// 26
+	int headSpace;// 48
+	int head;
+	int vWidth;
+
 	Position switchPosition(int i) {
 		Position position = new Position();
-		if ((i + 1) % 6 == 1) {
+		int baseX = (int) dp2px(i / 8 * 326);
+		if ((i + 1) % 8 == 1) {
 			position.y = (int) dp2px(11);
-			position.x = (int) dp2px(26 + i / 6 * 326);
-		} else if ((i + 1) % 6 == 2) {
+			position.x = (int) (baseLeft + baseX);
+		} else if ((i + 1) % 8 == 2) {
 			position.y = (int) dp2px(11);
-			position.x = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
-		} else if ((i + 1) % 6 == 3) {
+			position.x = (int) (baseLeft + head + headSpace + baseX);
+		} else if ((i + 1) % 8 == 3) {
 			position.y = (int) dp2px(11);
-			position.x = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
-		} else if ((i + 1) % 6 == 4) {
+			position.x = (int) (baseLeft + head + headSpace + head + headSpace + baseX);
+		} else if ((i + 1) % 8 == 4) {
+			position.y = (int) dp2px(11);
+			position.x = (int) (baseLeft + head + headSpace + head + headSpace
+					+ head + headSpace + baseX);
+		} else if ((i + 1) % 8 == 5) {
 			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) dp2px(26 + i / 6 * 326);
-		} else if ((i + 1) % 6 == 5) {
+			position.x = (int) (baseLeft + baseX);
+		} else if ((i + 1) % 8 == 6) {
 			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) dp2px(26 + 55 + 48 + i / 6 * 326);
-		} else if ((i + 1) % 6 == 0) {
+			position.x = (int) (baseLeft + head + headSpace + baseX);
+		} else if ((i + 1) % 8 == 7) {
 			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) dp2px(26 + 55 + 48 + 55 + 48 + i / 6 * 326);
+			position.x = (int) (baseLeft + head + headSpace + head + headSpace + baseX);
+		} else if ((i + 1) % 8 == 0) {
+			position.y = (int) dp2px(11 + 73 + 27);
+			position.x = (int) (baseLeft + head + headSpace + head + headSpace
+					+ head + headSpace + baseX);
 		}
 		return position;
 	}
@@ -1284,8 +1352,8 @@ public class CirclesFragment extends BaseFragment {
 		final LinearLayout ll_pagepoint = (LinearLayout) circleView
 				.findViewById(R.id.ll_pagepoint);
 		ll_pagepoint.removeAllViews();
-		final int pageSize = (circle.phones.size() % 6) == 0 ? (circle.phones
-				.size() / 6) : (circle.phones.size() / 6) + 1;
+		final int pageSize = (circle.phones.size() % 8) == 0 ? (circle.phones
+				.size() / 8) : (circle.phones.size() / 8) + 1;
 		final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
 				android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);

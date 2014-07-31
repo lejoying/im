@@ -124,6 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#fff"
+                        android:text="IT"
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -147,6 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#fff"
+                        android:text="2014年07月25日"
                         android:textSize="15sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -168,6 +170,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
+                android:visibility="gone"
                 tools:ignore="UselessParent" >
 
                 <RelativeLayout
@@ -222,6 +225,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
+                android:visibility="gone"
                 tools:ignore="UselessParent" >
 
                 <RelativeLayout
@@ -264,6 +268,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
+                android:visibility="gone"
                 tools:ignore="UselessParent" >
 
                 <RelativeLayout

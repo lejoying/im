@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
@@ -469,18 +470,31 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 							@Override
 							public void onClick(View arg0) {
 								if (nearByGroup.equals(groupView)) {
-									mMainModeManager.mGroupBusinessCardFragment.mGroup = group;
-									mMainModeManager
-											.showNext(mMainModeManager.mGroupBusinessCardFragment);
-								} else {
-									Intent intent = new Intent(getActivity(), ChatActivity.class);
-									intent.putExtra("status", ChatActivity.CHAT_GROUP);
-									intent.putExtra("gid",group.gid+"");
+									Intent intent = new Intent(getActivity(),
+											BusinessCardActivity.class);
+									intent.putExtra("gid", group.gid + "");
+									intent.putExtra("type",
+											BusinessCardActivity.TYPE_GROUP);
+									intent.putExtra("group", group);
 									startActivity(intent);
-//									mMainModeManager.mChatGroupFragment.mStatus = ChatFriendFragment.CHAT_GROUP;
-//									mMainModeManager.mChatGroupFragment.mNowChatGroup = group;
-//									mMainModeManager
-//											.showNext(mMainModeManager.mChatGroupFragment);
+
+									// mMainModeManager.mGroupBusinessCardFragment.mGroup
+									// = group;
+									// mMainModeManager
+									// .showNext(mMainModeManager.mGroupBusinessCardFragment);
+								} else {
+									Intent intent = new Intent(getActivity(),
+											ChatActivity.class);
+									intent.putExtra("status",
+											ChatActivity.CHAT_GROUP);
+									intent.putExtra("gid", group.gid + "");
+									startActivity(intent);
+									// mMainModeManager.mChatGroupFragment.mStatus
+									// = ChatFriendFragment.CHAT_GROUP;
+									// mMainModeManager.mChatGroupFragment.mNowChatGroup
+									// = group;
+									// mMainModeManager
+									// .showNext(mMainModeManager.mChatGroupFragment);
 								}
 							}
 						});
@@ -520,18 +534,21 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 				notReadMessagesCount.setVisibility(View.GONE);
 			}
 			groupName.setText(group.name);
-			memberCount.setText("(" + String.valueOf(group.members.size())
-					+ ")");
+			Group group0 = group;
+			if (app.data.groupsMap.get(group.gid + "") != null) {
+				group0 = app.data.groupsMap.get(group.gid + "");
+			}
+			memberCount.setText("(" + group0.members.size() + ")");
 
 			LinearLayout members = (LinearLayout) groupHolder.groupItemView
 					.findViewById(R.id.members);
 
 			members.removeAllViews();
-			for (int j = 0; j < group.members.size(); j++) {
+			for (int j = 0; j < group0.members.size(); j++) {
 				if (j == 5) {
 					break;
 				}
-				Friend groupFriend = app.data.groupFriends.get(group.members
+				Friend groupFriend = app.data.groupFriends.get(group0.members
 						.get(j));
 				final ImageView head = new ImageView(getActivity());
 				android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
@@ -549,7 +566,6 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 						});
 				members.addView(head);
 			}
-
 		}
 
 		for (GroupHolder holder : tempHolders) {

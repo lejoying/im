@@ -1,9 +1,6 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.app.MainApplication;

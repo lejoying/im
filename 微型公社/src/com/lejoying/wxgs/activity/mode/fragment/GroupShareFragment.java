@@ -37,8 +37,10 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.R.id;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.DetailsActivity;
+import com.lejoying.wxgs.activity.GroupInformationActivity;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
 import com.lejoying.wxgs.activity.ReleaseVoteActivity;
@@ -753,24 +755,46 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 						@Override
 						public void onClick(View arg0) {
-							if (app.data.friends.get(groupShare.phone) != null) {
-								mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_FRIEND;
-								mMainModeManager.mBusinessCardFragment.mShowFriend = app.data.friends
-										.get(groupShare.phone);
-								mMainModeManager
-										.showNext(mMainModeManager.mBusinessCardFragment);
-							} else if (groupShare.phone
-									.equals(app.data.user.phone)) {
-								mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_SELF;
-								mMainModeManager
-										.showNext(mMainModeManager.mBusinessCardFragment);
+							Intent intent = new Intent(getActivity(),
+									BusinessCardActivity.class);
+							if (groupShare.phone.equals(app.data.user.phone)) {
+								intent.putExtra("type",
+										BusinessCardActivity.TYPE_SELF);
+							} else if (app.data.friends.get(groupShare.phone) != null) {
+								intent.putExtra("type",
+										BusinessCardActivity.TYPE_FRIEND);
 							} else {
-								mMainModeManager.mBusinessCardFragment.mStatus = BusinessCardFragment.SHOW_TEMPFRIEND;
-								mMainModeManager.mBusinessCardFragment.mShowFriend = app.data.groupFriends
-										.get(groupShare.phone);
-								mMainModeManager
-										.showNext(mMainModeManager.mBusinessCardFragment);
+								intent.putExtra("type",
+										BusinessCardActivity.TYPE_TEMPFRIEND);
+								intent.putExtra("friend", app.data.groupFriends
+										.get(groupShare.phone));
 							}
+							intent.putExtra("phone", groupShare.phone);
+							startActivity(intent);
+							// if (app.data.friends.get(groupShare.phone) !=
+							// null) {
+							// mMainModeManager.mBusinessCardFragment.mStatus =
+							// BusinessCardFragment.SHOW_FRIEND;
+							// mMainModeManager.mBusinessCardFragment.mShowFriend
+							// = app.data.friends
+							// .get(groupShare.phone);
+							// mMainModeManager
+							// .showNext(mMainModeManager.mBusinessCardFragment);
+							// } else if (groupShare.phone
+							// .equals(app.data.user.phone)) {
+							// mMainModeManager.mBusinessCardFragment.mStatus =
+							// BusinessCardFragment.SHOW_SELF;
+							// mMainModeManager
+							// .showNext(mMainModeManager.mBusinessCardFragment);
+							// } else {
+							// mMainModeManager.mBusinessCardFragment.mStatus =
+							// BusinessCardFragment.SHOW_TEMPFRIEND;
+							// mMainModeManager.mBusinessCardFragment.mShowFriend
+							// = app.data.groupFriends
+							// .get(groupShare.phone);
+							// mMainModeManager
+							// .showNext(mMainModeManager.mBusinessCardFragment);
+							// }
 						}
 					});
 			convertView.setOnClickListener(new OnClickListener() {
