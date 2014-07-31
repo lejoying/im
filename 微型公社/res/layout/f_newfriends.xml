@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/background4" >
 
     <ListView
         android:id="@+id/contentList"
@@ -36,19 +37,27 @@
                 android:clickable="false"
                 android:src="@drawable/back" />
 
-            <TextView
-                android:id="@+id/tv_back_show"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="25dp"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="3dp"
-                android:layout_toRightOf="@+id/iv_me_back"
-                android:clickable="false"
-                android:singleLine="true"
-                android:text="新的好友"
-                android:textColor="#fff"
-                android:textSize="18sp" />
+                android:layout_marginLeft="50dp"
+                android:src="@drawable/person_icon_selected" />
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_back_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="3dp"
+            android:clickable="false"
+            android:singleLine="true"
+            android:text="新的好友"
+            android:textColor="#fff"
+            android:textSize="18sp" />
     </RelativeLayout>
 
 </RelativeLayout>

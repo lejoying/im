@@ -21,12 +21,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/person_icon_selected" />
+
             <TextView
                 android:id="@+id/panel_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="40dp"
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
@@ -36,6 +46,7 @@
                 android:layout_height="30sp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="2dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="8dp"

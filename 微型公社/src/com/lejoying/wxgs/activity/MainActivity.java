@@ -28,6 +28,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.LoginModeManager;
@@ -142,7 +143,6 @@ public class MainActivity extends BaseActivity {
 		communityList.add("亦庄站");
 		communityList.add("中关村站");
 		communityList.add("天通苑站");
-
 		initMode();
 
 		switchMode();
@@ -319,6 +319,7 @@ public class MainActivity extends BaseActivity {
 					communityNameTV.setText(communityList.get(2));
 				}
 				nowFragment = IS_SQUARE;
+				mMainMode.mCurrentMenuSelected = mMainMode.MSQUARE;
 			}
 		});
 		rl_group_menu.setOnClickListener(new OnClickListener() {
@@ -330,34 +331,9 @@ public class MainActivity extends BaseActivity {
 				iv_group_menu.setImageResource(R.drawable.group_icon_selected);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
 				iv_release_menu.setImageResource(R.drawable.gshare_group);
-				if ("".equals(app.data.currentGroup)
-						|| app.data.currentGroup == null) {
-					if (app.data.groups.size() > 0) {
-						app.dataHandler.exclude(new Modification() {
-
-							@Override
-							public void modifyData(Data data) {
-								data.currentGroup = app.data.groups.get(0);
-
-							}
-						});
-						String groupName = app.data.groupsMap
-								.get(app.data.groups.get(0)).name;
-						communityNameTV.setText(groupName
-								.substring(0, groupName.length() > 8 ? 8
-										: groupName.length()));
-					}
-				} else {
-					if (app.data.groups.size() > 0) {
-						String groupName = app.data.groupsMap
-								.get(app.data.currentGroup).name;
-						communityNameTV.setText(app.data.groupsMap
-								.get(app.data.currentGroup).name
-								.substring(0, groupName.length() > 8 ? 8
-										: groupName.length()));
-					}
-				}
+				initGroupShare();
 				nowFragment = IS_GROUPS;
+				mMainMode.mCurrentMenuSelected = mMainMode.MGROUPSHARE;
 			}
 		});
 		rl_me_menu.setOnClickListener(new OnClickListener() {
@@ -379,6 +355,7 @@ public class MainActivity extends BaseActivity {
 				}
 				communityNameTV.setText(app.data.user.nickName);
 				nowFragment = IS_CIRCLES;
+				mMainMode.mCurrentMenuSelected = mMainMode.MCIRCLES;
 			}
 		});
 		rl_release_menu.setOnClickListener(new OnClickListener() {
@@ -386,6 +363,7 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				if (nowFragment == IS_GROUPS) {
+					mMainMode.mCurrentMenuSelected = mMainMode.MGROUPS;
 					mMainMode.show(mMainMode.mGroupFragment);
 				} else if (nowFragment == IS_SQUARE) {
 					Intent intent = new Intent(MainActivity.this,
@@ -401,17 +379,86 @@ public class MainActivity extends BaseActivity {
 		});
 	}
 
+	public void initGroupShare() {
+		if ("".equals(app.data.currentGroup) || app.data.currentGroup == null) {
+			if (app.data.groups.size() > 0) {
+				app.dataHandler.exclude(new Modification() {
+
+					@Override
+					public void modifyData(Data data) {
+						data.currentGroup = app.data.groups.get(0);
+
+					}
+				});
+				String groupName = app.data.groupsMap.get(app.data.groups
+						.get(0)).name;
+				communityNameTV.setText(groupName.substring(0,
+						groupName.length() > 8 ? 8 : groupName.length()));
+			}
+		} else {
+			if (app.data.groups.size() > 0) {
+				if (app.data.groupsMap.get(app.data.currentGroup) != null) {
+					String groupName = app.data.groupsMap
+							.get(app.data.currentGroup).name;
+					communityNameTV.setText(app.data.groupsMap
+							.get(app.data.currentGroup).name.substring(0,
+							groupName.length() > 8 ? 8 : groupName.length()));
+				} else {
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							data.currentGroup = app.data.groups.get(0);
+
+						}
+					});
+					String groupName = app.data.groupsMap.get(app.data.groups
+							.get(0)).name;
+					communityNameTV.setText(groupName.substring(0,
+							groupName.length() > 8 ? 8 : groupName.length()));
+				}
+			}
+		}
+	}
+
+	boolean isExit;
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (mode.equals(MODE_LOGIN)) {
 			return mLoginMode.onKeyDown(keyCode, event)
 					&& super.onKeyDown(keyCode, event);
 		} else if (mode.equals(MODE_MAIN)) {
-			return mMainMode.onKeyDown(keyCode, event)
+			isExit = mMainMode.onKeyDown(keyCode, event)
 					&& super.onKeyDown(keyCode, event);
+			if (mMainMode.mCurrentMenuSelected == mMainMode.MGROUPS) {
+				isExit = false;
+				mMainMode.mCurrentMenuSelected = mMainMode.MGROUPSHARE;
+				mMainMode.show(mMainMode.mGroupShareFragment);
+			}
+			return isExit;
 		}
 		return super.onKeyDown(keyCode, event);
 
+	}
+
+	long firstTime = 0;
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && isExit) {
+			long secondTime = System.currentTimeMillis();
+			if (secondTime - firstTime > 1000) {
+				Toast.makeText(MainActivity.this, "再按一次退出程序",
+						Toast.LENGTH_SHORT).show();
+				firstTime = secondTime;
+				return true;
+			} else {
+				DataUtil.saveData(this);
+				System.exit(0);
+			}
+		}
+		return super.onKeyUp(keyCode, event);
 	}
 
 	@Override

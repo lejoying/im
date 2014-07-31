@@ -1370,6 +1370,43 @@ public class ChatActivity extends Activity implements OnClickListener {
 							.setImageBitmap(app.fileHandler.bitmaps.get(head));
 				}
 			});
+			final Message message0 = message;
+			messageHolder.iv_head.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (type == Message.MESSAGE_TYPE_SEND) {
+						Intent intent = new Intent(ChatActivity.this,
+								BusinessCardActivity.class);
+						intent.putExtra("type", BusinessCardActivity.TYPE_SELF);
+						startActivity(intent);
+					} else if (type == Message.MESSAGE_TYPE_RECEIVE) {
+						if (mStatus == CHAT_FRIEND) {
+							Intent intent = new Intent(ChatActivity.this,
+									BusinessCardActivity.class);
+							intent.putExtra("type",
+									BusinessCardActivity.TYPE_FRIEND);
+							intent.putExtra("phone", mNowChatFriend.phone);
+							startActivity(intent);
+						} else if (mStatus == CHAT_GROUP) {
+							Intent intent = new Intent(ChatActivity.this,
+									BusinessCardActivity.class);
+							if (app.data.friends.get(message0.phone) != null) {
+								intent.putExtra("type",
+										BusinessCardActivity.TYPE_FRIEND);
+								intent.putExtra("phone", message0.phone);
+							} else if (app.data.groupFriends
+									.get(message0.phone) != null) {
+								intent.putExtra("type",
+										BusinessCardActivity.TYPE_TEMPFRIEND);
+								intent.putExtra("friend", app.data.groupFriends
+										.get(message0.phone));
+							}
+							startActivity(intent);
+						}
+					}
+				}
+			});
 			if (message.contentType.equals("text")) {
 				messageHolder.tv_chat.setVisibility(View.VISIBLE);
 				messageHolder.ll_voice.setVisibility(View.GONE);
@@ -2010,6 +2047,9 @@ public class ChatActivity extends Activity implements OnClickListener {
 				textView_groupName.setText(mNowChatGroup.name + " ( "
 						+ mNowChatGroup.members.size() + "人 )");
 			}
+		} else if (requestCode == RESULT_INFOMATION
+				&& resultCode == Activity.RESULT_CANCELED) {
+			finish();
 		}
 	}
 

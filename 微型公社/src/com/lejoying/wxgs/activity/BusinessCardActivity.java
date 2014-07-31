@@ -35,8 +35,6 @@ import android.widget.TextView;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
-import com.lejoying.wxgs.activity.utils.DataUtil;
-import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;
@@ -49,7 +47,6 @@ import com.lejoying.wxgs.app.data.entity.Group;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
-import com.lejoying.wxgs.app.service.PushService;
 
 public class BusinessCardActivity extends BaseActivity implements
 		OnClickListener {
@@ -397,7 +394,12 @@ public class BusinessCardActivity extends BaseActivity implements
 				button1.setText("发起聊天");
 				button2.setText("修改备注");
 				button3.setText("解除好友关系");
-				tv_nickname.setText(mFriend.nickName);
+				if ("".equals(mFriend.alias)) {
+					tv_nickname.setText(mFriend.nickName);
+				} else {
+					tv_nickname.setText(mFriend.alias + " (" + mFriend.nickName
+							+ ")");
+				}
 				tv_business.setText(mFriend.mainBusiness);
 				tv_id.setText(String.valueOf(mFriend.id));
 				app.fileHandler.getHeadImage(mFriend.head, mFriend.sex,
@@ -453,6 +455,19 @@ public class BusinessCardActivity extends BaseActivity implements
 																				mFriend.alias = alias;
 																			}
 
+																			@Override
+																			public void modifyUI() {
+																				if ("".equals(mFriend.alias)) {
+																					tv_nickname
+																							.setText(mFriend.nickName);
+																				} else {
+																					tv_nickname
+																							.setText(mFriend.alias
+																									+ " ("
+																									+ mFriend.nickName
+																									+ ")");
+																				}
+																			}
 																		});
 															}
 

@@ -184,6 +184,7 @@ public class DataUtil {
 									.generateGroupsFromJSON(jData
 											.getJSONArray("groups"));
 							data.groups.clear();
+							data.groupsMap.clear();
 							for (Group group : groupsAndFriends.groups) {
 								data.groups.add(String.valueOf(group.gid));
 								updateGroup(group, data);

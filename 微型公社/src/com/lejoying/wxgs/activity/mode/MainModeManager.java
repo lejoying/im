@@ -30,6 +30,14 @@ public class MainModeManager extends BaseModeManager {
 	public int FRAGMENT_MY = 0x03;
 	public int mCurrentMyFragment = FRAGMENT_CIRCLE;
 
+	public int MSQUARE = 0x11;
+	public int MGROUPSHARE = 0x12;
+	public int MGROUPS = 0x13;
+	public int MCIRCLES = 0x14;
+	public int NEWFRIENFD = 0x15;// unuse
+	public int SEARCHFRIEND = 0x16;// unuse
+	public int mCurrentMenuSelected = MSQUARE;
+
 	boolean isInit;
 	FragmentManager mFragmentManager;
 
