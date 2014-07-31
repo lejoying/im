@@ -40,7 +40,7 @@ import com.lejoying.wxgs.R.id;
 import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.DetailsActivity;
-import com.lejoying.wxgs.activity.GroupInformationActivity;
+import com.lejoying.wxgs.activity.MainActivity;
 import com.lejoying.wxgs.activity.ReleaseImageAndTextActivity;
 import com.lejoying.wxgs.activity.ReleaseVoiceActivity;
 import com.lejoying.wxgs.activity.ReleaseVoteActivity;
@@ -90,17 +90,36 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 	int nowpage = 0;
 	int pagesize = 30;
 
+	boolean isInit = false;
+
 	public void setMode(MainModeManager mainMode) {
 		mMainModeManager = mainMode;
 	}
 
 	@Override
 	public void onResume() {
-		if (!"".equals(mCurrentGroupShareID)) {
-			getGroupShares();
-		}
-		mMainModeManager.handleMenu(true);
 		super.onResume();
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MGROUPSHARE
+				&& isInit) {
+			System.out.println(app.data.groupsMap.get(mCurrentGroupShareID)
+					+ "------------------------");
+			if (app.data.groupsMap.get(mCurrentGroupShareID) == null) {
+				app.data.currentGroup = app.data.groups.get(0);
+				MainActivity.instance.initGroupShare();
+				mCurrentGroupShareID = app.data.currentGroup;
+				mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
+				groupShareAdapter = null;
+				nowpage = 0;
+			}
+			showGroupMembers();
+			if (!"".equals(mCurrentGroupShareID)) {
+				getGroupShares();
+			}
+			mMainModeManager.handleMenu(true);
+		}
+		if (!isInit) {
+			isInit = true;
+		}
 	}
 
 	@Override
@@ -1013,6 +1032,11 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 							refreshableView.finishRefreshing();
 							if (groupShareAdapter != null) {
 								groupShareAdapter.notifyDataSetChanged();
+							} else {
+								groupShareAdapter = new GroupShareAdapter(
+										app.data.groupsMap
+												.get(mCurrentGroupShareID).groupShares);
+								gshare_lv.setAdapter(groupShareAdapter);
 							}
 						}
 					});

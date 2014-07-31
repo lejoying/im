@@ -145,6 +145,7 @@ public class SquareFragment extends BaseFragment {
 		init();
 		return mContentView;
 	}
+
 	public void changeSquareData() {
 		List<String> messages = app.data.squareMessages.get(mCurrentSquareID);
 		Map<String, SquareMessage> squareMessageMap = app.data.squareMessagesMap
@@ -168,7 +169,7 @@ public class SquareFragment extends BaseFragment {
 						SquareMessageDetail.class);
 				intent.putExtra("mCurrentSquareID", mCurrentSquareID);
 				intent.putExtra("gmid", message.gmid);
-				intent.putExtra("type","square");
+				intent.putExtra("type", "square");
 				startActivity(intent);
 			}
 		});
@@ -281,6 +282,7 @@ public class SquareFragment extends BaseFragment {
 			}
 		}
 	}
+
 	void selectSquareMessageClassify(int id) {
 		int distance = 0;
 		TextView tv1 = classifyTextViews1.get(id);

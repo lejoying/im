@@ -173,6 +173,7 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
+						mMainModeManager.mCurrentMenuSelected = mMainModeManager.MGROUPSHARE;
 						mMainModeManager
 								.show(mMainModeManager.mGroupShareFragment);
 						return true;
@@ -716,7 +717,8 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_group));
 		notifyViews();
 		requestLocation();
-		mMainModeManager.handleMenu(false);
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MGROUPS)
+			mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 

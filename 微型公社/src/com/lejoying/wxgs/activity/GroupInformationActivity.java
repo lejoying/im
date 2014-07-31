@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,10 +31,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
+import com.lejoying.wxgs.activity.utils.DataUtil;
+import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer;
 import com.lejoying.wxgs.activity.view.ScrollContainer.OnPageChangedListener;
 import com.lejoying.wxgs.activity.view.ScrollContainer.ViewContainer;
@@ -46,7 +47,6 @@ import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.Data;
 import com.lejoying.wxgs.app.data.entity.Friend;
 import com.lejoying.wxgs.app.data.entity.Group;
-import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
@@ -56,7 +56,6 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
-import com.lejoying.wxgs.app.parser.JSONParser;
 import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class GroupInformationActivity extends Activity implements
@@ -204,23 +203,8 @@ public class GroupInformationActivity extends Activity implements
 
 							@Override
 							public void onClick(AlertInputDialog dialog) {
-								app.dataHandler.exclude(new Modification() {
-
-									@Override
-									public void modifyData(Data data) {
-										// data.groups
-										// .remove(mCurrentGroupInfomation.gid
-										// + "");
-										// data.groupsMap
-										// .remove(mCurrentGroupInfomation.gid
-										// + "");
-									}
-
-									@Override
-									public void modifyUI() {
-										finish();
-									}
-								});
+								exit2DeleteGroupView.setClickable(false);
+								exitGroup();
 							}
 						}).show();
 			}
@@ -704,7 +688,7 @@ public class GroupInformationActivity extends Activity implements
 
 			@Override
 			public void success(JSONObject jData) {
-				System.out.println(jData + "----------------");
+				// System.out.println(jData + "----------------");
 			}
 		});
 	}
@@ -731,5 +715,52 @@ public class GroupInformationActivity extends Activity implements
 			break;
 		}
 
+	}
+
+	void exitGroup() {
+		final JSONArray membersArray = new JSONArray();
+		membersArray.put(app.data.user.phone);
+		app.networkHandler.connection(new CommonNetConnection() {
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.GROUP_REMOVEMEMBERS;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", mCurrentGroupInfomation.gid + "");
+				params.put("members", membersArray.toString());
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				DataUtil.getGroups(new GetDataListener() {
+
+					@Override
+					public void getSuccess() {
+						app.UIHandler.post(new Runnable() {
+
+							@Override
+							public void run() {
+								setResult(Activity.RESULT_CANCELED);
+								finish();
+							}
+						});
+					}
+				});
+			}
+
+			@Override
+			protected void failed(int failedType) {
+				exit2DeleteGroupView.setClickable(true);
+				super.failed(failedType);
+			}
+
+			@Override
+			protected void failed(int failedType, int responseCode) {
+				exit2DeleteGroupView.setClickable(true);
+				super.failed(failedType, responseCode);
+			}
+		});
 	}
 }

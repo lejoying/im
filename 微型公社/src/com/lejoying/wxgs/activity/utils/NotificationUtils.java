@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.utils;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,11 +10,15 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.os.Vibrator;
+import android.view.View;
+import android.widget.RemoteViews;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
@@ -101,6 +106,40 @@ public final class NotificationUtils {
 		getNotificationManager(context).notify(notificationId, notification);
 	}
 
+	// public void setLatestEventInfo(Context context, CharSequence
+	// contentTitle,
+	// CharSequence contentText, PendingIntent contentIntent) {
+	// // TODO: rewrite this to use Builder
+	// RemoteViews contentView = new RemoteViews(context.getPackageName(),
+	// R.layout.notification_template_base);
+	// if (this.icon != 0) {
+	// contentView.setImageViewResource(R.id.icon, this.icon);
+	// }
+	// if (priority < PRIORITY_LOW) {
+	// contentView.setInt(R.id.icon, "setBackgroundResource",
+	// R.drawable.notification_template_icon_low_bg);
+	// contentView.setInt(R.id.status_bar_latest_event_content,
+	// "setBackgroundResource", R.drawable.notification_bg_low);
+	// }
+	// if (contentTitle != null) {
+	// contentView.setTextViewText(R.id.title, contentTitle);
+	// }
+	// if (contentText != null) {
+	// contentView.setTextViewText(R.id.text, contentText);
+	// }
+	// if (this.when != 0) {
+	// contentView.setViewVisibility(R.id.time, View.VISIBLE);
+	// contentView.setLong(R.id.time, "setTime", when);
+	// }
+	// if (this.number != 0) {
+	// NumberFormat f = NumberFormat.getIntegerInstance();
+	// contentView.setTextViewText(R.id.info, f.format(this.number));
+	// }
+	//
+	// this.contentView = contentView;
+	// this.contentIntent = contentIntent;
+	// }
+
 	public static void cancelNotification(Context context, int notification) {
 		getNotificationManager(context).cancel(notification);
 
@@ -165,7 +204,7 @@ public final class NotificationUtils {
 				+ R.raw.message);
 		String tickerText = "";
 		String contentTitle = "";
-		String contentText ;
+		String contentText;
 		try {
 			contentText = message.content.get(0);
 		} catch (Exception e) {
@@ -207,9 +246,9 @@ public final class NotificationUtils {
 					+ "条消息。";
 		}
 		NotificationUtils.message = message;
-		showNotification(context, NOTIFICATION_NEWMESSAGE, R.drawable.icon,
-				sound, tickerText, contentTitle, contentText, DEFAULT_LIGHTS,
-				Notification.FLAG_NO_CLEAR, intent);
+		showNotification(context, NOTIFICATION_NEWMESSAGE,
+				R.drawable.notifyicon, sound, tickerText, contentTitle,
+				contentText, DEFAULT_LIGHTS, Notification.FLAG_NO_CLEAR, intent);
 		commonVibrate(context);
 	}
 

@@ -3,6 +3,7 @@ package com.lejoying.wxgs.activity.mode.fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -129,7 +130,31 @@ public class ChatMessagesFragment extends BaseFragment {
 
 	}
 
+	public void createShortCut() {
+
+		// 创建快捷方式的Intent
+		Intent shortcutintent = new Intent(
+				"com.android.launcher.action.INSTALL_SHORTCUT");
+		// 不允许重复创建
+		shortcutintent.putExtra("duplicate", false);
+		// 需要现实的名称
+		shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "微信公社0");
+		// 快捷图片(每次重绘logo生成一张新图)
+		Parcelable icon = Intent.ShortcutIconResource.fromContext(getActivity()
+				.getBaseContext(), R.drawable.notifyicon);
+		shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
+		// 点击快捷图片，运行的程序主入口
+		shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent());
+		// 发送广播。OK
+		getActivity().sendBroadcast(shortcutintent);
+	}
+
 	class ChatMessagesAdapter extends BaseAdapter {
+
+		@Override
+		public void notifyDataSetChanged() {
+			super.notifyDataSetChanged();
+		}
 
 		@Override
 		public int getCount() {
@@ -191,21 +216,26 @@ public class ChatMessagesFragment extends BaseFragment {
 				String chatHeadImgName = "";
 				String sex = "男";
 				Message lastMessage = null;
-				Integer notread;
+				Integer notread = null;
 				if (chatType == CHAT_TYPE_FRIEND) {
 					chatName = chatFriend.nickName;
+					if (!"".equals(chatFriend.alias)) {
+						chatName = chatFriend.alias;
+					}
 					chatHeadImgName = chatFriend.head;
 					sex = chatFriend.sex;
 					lastMessage = friend.messages
 							.get(friend.messages.size() - 1);
 					notread = chatFriend.notReadMessagesCount;
-				} else {
+				} else if (chatType == CHAT_TYPE_GROUP) {
 					chatName = chatGroup.name + "(群组)";
 					chatHeadImgName = chatGroup.icon;
 					lastMessage = chatGroup.messages.get(chatGroup.messages
 							.size() - 1);
 					notread = chatGroup.notReadMessagesCount;
 				}
+				if (lastMessage == null)
+					return convertView;
 				chatMessageHolder.lastChatTimeView
 						.setText(TimeUtils.getChatMessageListTime(Long
 								.valueOf(lastMessage.time)));

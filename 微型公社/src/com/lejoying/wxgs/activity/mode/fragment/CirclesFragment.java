@@ -1348,7 +1348,7 @@ public class CirclesFragment extends BaseFragment {
 			CircleHolder circleHolder) {
 		TextView groupName = (TextView) circleView
 				.findViewById(R.id.panel_name);
-		groupName.setText(circle.name);
+		groupName.setText(circle.name + "( " + circle.phones.size() + " )");
 		final LinearLayout ll_pagepoint = (LinearLayout) circleView
 				.findViewById(R.id.ll_pagepoint);
 		ll_pagepoint.removeAllViews();
