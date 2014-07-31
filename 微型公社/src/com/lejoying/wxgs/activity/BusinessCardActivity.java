@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -216,8 +217,27 @@ public class BusinessCardActivity extends BaseActivity implements
 		mFinish();
 	}
 
+	void setOnTouch(final View view) {
+		view.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					view.setBackgroundColor(Color.argb(143, 0, 0, 0));
+					break;
+				case MotionEvent.ACTION_UP:
+					view.setBackgroundColor(Color.parseColor("#38ffffff"));
+					break;
+				}
+				return false;
+			}
+		});
+	}
+
 	private void initEvent() {
 		backView.setOnClickListener(this);
+		setOnTouch(backView);
 		iv_head.setOnClickListener(this);
 		rl_bighead.setOnClickListener(this);
 		iv_me_back.setOnClickListener(this);

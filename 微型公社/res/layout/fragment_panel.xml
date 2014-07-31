@@ -27,7 +27,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/person_icon_selected" />
+                android:src="@drawable/header" />
 
             <TextView
                 android:id="@+id/panel_name"

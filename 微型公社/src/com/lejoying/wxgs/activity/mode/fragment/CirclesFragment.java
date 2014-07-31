@@ -986,7 +986,7 @@ public class CirclesFragment extends BaseFragment {
 				.findViewById(R.id.tv_type);
 		ImageView findMoreFriendIcon = (ImageView) newFriendButtonView
 				.findViewById(R.id.iv_icon);
-		findMoreFriendIcon.setImageResource(R.drawable.person_icon_selected);
+		findMoreFriendIcon.setImageResource(R.drawable.header);
 		if (newFriendsCount != 0) {
 			newFriendButton.setText("新的好友(" + newFriendsCount + ")");
 		} else {
