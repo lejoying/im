@@ -8,12 +8,13 @@
         android:id="@+id/contentList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/rl_business_back"
         android:layout_centerHorizontal="true"
         android:cacheColorHint="#0000"
         android:divider="#0000"
-        android:dividerHeight="20dp"
+        android:dividerHeight="2dp"
         android:listSelector="#0000" >
+
     </ListView>
 
     <RelativeLayout
@@ -26,7 +27,7 @@
             android:id="@+id/backview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingRight="20dp" >
+            android:paddingRight="10dp" >
 
             <ImageView
                 android:id="@+id/iv_me_back"
@@ -43,7 +44,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="50dp"
-                android:src="@drawable/person_icon_selected" />
+                android:src="@drawable/header" />
         </RelativeLayout>
 
         <TextView

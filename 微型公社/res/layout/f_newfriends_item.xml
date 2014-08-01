@@ -11,10 +11,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/card_background"
+        android:background="#38ffffff"
+        android:paddingBottom="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingTop="7dp" >
+        android:paddingTop="10dp" >
 
         <RelativeLayout
             android:id="@+id/rl_right"
@@ -25,12 +26,12 @@
 
             <Button
                 android:id="@+id/btn_agreeadd"
-                android:layout_width="80dp"
+                android:layout_width="60dp"
                 android:layout_height="32dp"
-                android:background="@drawable/button_background"
+                android:background="@drawable/squaredetail_comment_selected"
                 android:text="同意"
-                android:textColor="#fff"
-                android:textSize="15sp" />
+                android:textColor="#90000000"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_added"
@@ -48,55 +49,52 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="等待对方确认"
+                android:text="等待验证"
                 android:textColor="#fff"
                 android:textSize="15sp"
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/rl_content"
             android:layout_width="fill_parent"
-            android:layout_height="37dp"
-            android:layout_below="@+id/rl_top"
-            android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/rl_right" >
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_toLeftOf="@+id/rl_right"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:gravity="center_vertical"
+                android:text="小王a"
+                android:textColor="#fff"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="在吗啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊 啊 啊？"
                 android:textColor="#fff"
                 android:textSize="14sp" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/rl_top"
-            android:layout_width="fill_parent"
-            android:layout_height="37dp"
-            android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/rl_right" >
-
-            <TextView
-                android:id="@+id/tv_nickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/iv_head"
-                android:text="小王"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/rl_right"
+            android:gravity="center_vertical" >
 
             <ImageView
                 android:id="@+id/iv_head"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/face_man"

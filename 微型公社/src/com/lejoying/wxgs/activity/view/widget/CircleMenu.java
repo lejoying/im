@@ -136,8 +136,8 @@ public class CircleMenu {
 //							.showNext(MainActivity.instance.mMainMode.mBusinessCardFragment);
 					break;
 				case 12:
-					MainActivity.instance.mMainMode
-							.showNext(MainActivity.instance.mMainMode.mScanQRCodeFragment);
+//					MainActivity.instance.mMainMode
+//							.showNext(MainActivity.instance.mMainMode.mScanQRCodeFragment);
 					break;
 				case 13:
 

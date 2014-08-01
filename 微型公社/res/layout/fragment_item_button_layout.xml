@@ -18,7 +18,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
-            android:src="@drawable/person_icon_selected"
+            android:src="@drawable/header"
             tools:ignore="ContentDescription" />
 
         <TextView

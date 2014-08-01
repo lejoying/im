@@ -350,9 +350,7 @@ public class MainActivity extends BaseActivity {
 				iv_square_menu.setImageResource(R.drawable.square_icon);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon_selected);
-				if (nowFragment == IS_GROUPS) {
-					iv_release_menu.setImageResource(R.drawable.square_release);
-				}
+				iv_release_menu.setImageResource(R.drawable.scanner);
 				communityNameTV.setText(app.data.user.nickName);
 				nowFragment = IS_CIRCLES;
 				mMainMode.mCurrentMenuSelected = mMainMode.MCIRCLES;
@@ -370,10 +368,10 @@ public class MainActivity extends BaseActivity {
 							ReleaseActivity.class);
 					startActivity(intent);
 				} else if (nowFragment == IS_CIRCLES) {
-					// mMainMode.show(mMainMode.mScanQRCodeFragment);
-					Intent intent = new Intent(MainActivity.this,
-							ScanQRCodeActivity.class);
-					startActivity(intent);
+					 mMainMode.showNext(mMainMode.mScanQRCodeFragment);
+					// Intent intent = new Intent(MainActivity.this,
+					// ScanQRCodeActivity.class);
+					// startActivity(intent);
 				}
 			}
 		});

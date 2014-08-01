@@ -109,7 +109,7 @@ public class NewFriendsFragment extends BaseFragment {
 		View foot = new View(getActivity());
 		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
 				android.widget.AbsListView.LayoutParams.WRAP_CONTENT,
-				(int) dp2px(35));
+				(int) dp2px(10));
 		head.setLayoutParams(params);
 		mContentList.addHeaderView(head);
 		mContentList.addFooterView(foot);
@@ -166,13 +166,14 @@ public class NewFriendsFragment extends BaseFragment {
 					.get(position).addMessage);
 			final String headFileName = app.data.newFriends.get(position).head;
 			final ImageView iv_head = newFriendsHolder.iv_head;
-			app.fileHandler.getHeadImage(headFileName,app.data.newFriends.get(position).sex,new FileResult() {
-				@Override
-				public void onResult(String where, Bitmap bitmap) {
-					iv_head.setImageBitmap(app.fileHandler.bitmaps
-							.get(headFileName));
-				}
-			});
+			app.fileHandler.getHeadImage(headFileName,
+					app.data.newFriends.get(position).sex, new FileResult() {
+						@Override
+						public void onResult(String where, Bitmap bitmap) {
+							iv_head.setImageBitmap(app.fileHandler.bitmaps
+									.get(headFileName));
+						}
+					});
 
 			if (app.data.friends.get(app.data.newFriends.get(position).phone) != null) {
 				newFriendsHolder.btn_agree.setVisibility(View.GONE);
