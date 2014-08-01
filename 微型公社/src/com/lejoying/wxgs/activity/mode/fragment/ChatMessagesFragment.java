@@ -153,6 +153,13 @@ public class ChatMessagesFragment extends BaseFragment {
 
 		@Override
 		public void notifyDataSetChanged() {
+			if (app.data.lastChatFriends.size() == 0) {
+				if (ll_not_messages.getVisibility() == View.GONE)
+					ll_not_messages.setVisibility(View.VISIBLE);
+			} else {
+				if (ll_not_messages.getVisibility() == View.VISIBLE)
+					ll_not_messages.setVisibility(View.GONE);
+			}
 			super.notifyDataSetChanged();
 		}
 
