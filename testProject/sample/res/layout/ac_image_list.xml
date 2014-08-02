@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    
+	<include layout="@layout/group_title" />
+	<ListView 
+	    android:id="@android:id/list"
+   		android:translationY="50dp"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" />
+	
+	
+	
+    <ImageView
+		android:id="@+id/progress_test"
+		android:layout_width="20dp"
+		android:layout_height="20dip"
+		android:translationY="300dp"
+		android:translationX="100dp"
+		android:background="#FF0099cd" 
+		android:contentDescription="@string/descr_image" />
+    
+</RelativeLayout>

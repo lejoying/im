@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="50dp" >
+
+    <ImageView
+		android:id="@+id/progress_line2"
+		android:layout_width="20dp"
+		android:layout_height="20dip"
+		android:background="#FF0099cd" 
+		android:contentDescription="@string/descr_image" />
+    	
+	<ImageView
+		android:id="@+id/progress_line1"
+		android:layout_width="800dp"
+		android:layout_height="50dp"
+		android:layout_alignParentRight="true" 
+		android:translationX="-120dp"
+		android:background="#5FFFFFFF" 
+		android:contentDescription="@string/descr_image" />
+	
+	<RelativeLayout
+	    android:id="@+id/control_progress2"
+    	android:layout_width="fill_parent"
+    	android:translationY="48dp"
+    	android:layout_height="2dp" >
+		<include android:id="@+id/control_progress1" layout="@layout/control_progress"/>
+	</RelativeLayout>
+</merge>
