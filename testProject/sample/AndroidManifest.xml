@@ -46,6 +46,9 @@
         <activity
             android:name="com.open.test1.TestActivity3"
             android:label="Test1.3" />
+        <activity
+            android:name="com.open.test2.TestActivity21"
+            android:label="Test2" />
         
         <!-- Widget -->
         <receiver android:name=".widget.UILWidgetProvider" >

@@ -29,6 +29,8 @@ import android.view.View;
 import com.nostra13.example.universalimageloader.Constants.Extra;
 import com.nostra13.universalimageloader.utils.L;
 import com.open.test1.TestActivity1;
+import com.open.test1.TestActivity2;
+import com.open.test2.TestActivity21;
 
 /**
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -78,6 +80,11 @@ public class HomeActivity extends BaseActivity {
 		startActivity(intent);
 	}
 	
+	public void onTest2Click(View view) {
+		Intent intent = new Intent(this, TestActivity21.class);
+		intent.putExtra(Extra.IMAGES, IMAGES);
+		startActivity(intent);
+	}
 	
 	@Override
 	public void onBackPressed() {
