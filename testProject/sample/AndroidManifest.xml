@@ -38,7 +38,7 @@
             android:name=".ImageGalleryActivity"
             android:label="@string/ac_name_image_gallery" />
         <activity
-            android:name="com.open.test.TestActivity1"
+            android:name="com.open.test1.TestActivity1"
             android:label="Test1" />
         
 

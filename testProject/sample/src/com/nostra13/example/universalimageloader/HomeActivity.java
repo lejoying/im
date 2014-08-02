@@ -28,7 +28,7 @@ import android.view.View;
 
 import com.nostra13.example.universalimageloader.Constants.Extra;
 import com.nostra13.universalimageloader.utils.L;
-import com.open.test.TestActivity1;
+import com.open.test1.TestActivity1;
 
 /**
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)

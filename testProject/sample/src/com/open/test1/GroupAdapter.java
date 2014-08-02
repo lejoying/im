@@ -1,4 +1,4 @@
-package com.open.test;
+package com.open.test1;
 
 import java.util.Collections;
 import java.util.LinkedList;
