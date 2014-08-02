@@ -37,6 +37,10 @@
         <activity
             android:name=".ImageGalleryActivity"
             android:label="@string/ac_name_image_gallery" />
+        <activity
+            android:name="com.open.test.TestActivity1"
+            android:label="Test1" />
+        
 
         <!-- Widget -->
         <receiver android:name=".widget.UILWidgetProvider" >

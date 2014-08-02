@@ -44,6 +44,13 @@
             android:layout_margin="10dip"
             android:onClick="onImageGalleryClick"
             android:text="@string/button_image_gallery" />
+        
+                <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:onClick="onTest1Click"
+            android:text="Test1" />
     </LinearLayout>
 
 </ScrollView>

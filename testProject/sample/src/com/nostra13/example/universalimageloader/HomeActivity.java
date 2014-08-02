@@ -28,6 +28,7 @@ import android.view.View;
 
 import com.nostra13.example.universalimageloader.Constants.Extra;
 import com.nostra13.universalimageloader.utils.L;
+import com.open.test.TestActivity1;
 
 /**
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -71,6 +72,13 @@ public class HomeActivity extends BaseActivity {
 		startActivity(intent);
 	}
 
+	public void onTest1Click(View view) {
+		Intent intent = new Intent(this, TestActivity1.class);
+		intent.putExtra(Extra.IMAGES, IMAGES);
+		startActivity(intent);
+	}
+	
+	
 	@Override
 	public void onBackPressed() {
 		imageLoader.stop();
