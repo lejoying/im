@@ -26,10 +26,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ImageListActivity"
+            android:name=".TestActivity2"
             android:label="@string/ac_name_image_list" />
         <activity
-            android:name=".ImageGridActivity"
+            android:name=".TestActivity3"
             android:label="@string/ac_name_image_grid" />
         <activity
             android:name=".ImagePagerActivity"
@@ -40,8 +40,13 @@
         <activity
             android:name="com.open.test1.TestActivity1"
             android:label="Test1" />
+        <activity
+            android:name="com.open.test1.TestActivity2"
+            android:label="Test1.2" />
+        <activity
+            android:name="com.open.test1.TestActivity3"
+            android:label="Test1.3" />
         
-
         <!-- Widget -->
         <receiver android:name=".widget.UILWidgetProvider" >
             <meta-data

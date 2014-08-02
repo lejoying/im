@@ -1,4 +1,4 @@
-package com.nostra13.example.universalimageloader;
+package com.open.test1;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,7 +10,9 @@ import android.view.Window;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.nostra13.example.universalimageloader.AbsListViewBaseActivity;
 import com.nostra13.example.universalimageloader.Constants.Extra;
+import com.nostra13.example.universalimageloader.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -25,11 +27,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ImageListActivity extends AbsListViewBaseActivity {
+public class TestActivity2 extends AbsListViewBaseActivity {
 
 	DisplayImageOptions options;
 
-	String[] imageUrls;
+	private List<String> list;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,8 @@ public class ImageListActivity extends AbsListViewBaseActivity {
 		setContentView(R.layout.ac_image_list);
 
 		Bundle bundle = getIntent().getExtras();
-		imageUrls = bundle.getStringArray(Extra.IMAGES);
+
+		list = getIntent().getStringArrayListExtra("data");
 
 		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.ic_stub)
@@ -64,10 +67,9 @@ public class ImageListActivity extends AbsListViewBaseActivity {
 	}
 
 	private void startImagePagerActivity(int position) {
-		Intent intent = new Intent(this, ImagePagerActivity.class);
-		intent.putExtra(Extra.IMAGES, imageUrls);
-		intent.putExtra(Extra.IMAGE_POSITION, position);
-		startActivity(intent);
+		// Intent intent = new Intent(this, ImagePagerActivity.class);
+		// intent.putExtra("imageUrl", imageUrl);
+		// startActivity(intent);
 	}
 
 	private static class ViewHolder {
@@ -81,7 +83,7 @@ public class ImageListActivity extends AbsListViewBaseActivity {
 
 		@Override
 		public int getCount() {
-			return imageUrls.length;
+			return list.size();
 		}
 
 		@Override
@@ -111,9 +113,10 @@ public class ImageListActivity extends AbsListViewBaseActivity {
 			}
 
 			holder.text.setText("Item " + (position + 1));
+			String path = list.get(position);
 
-			imageLoader.displayImage(imageUrls[position], holder.image,
-					options, animateFirstListener);
+			imageLoader.displayImage("file://" + path, holder.image, options,
+					animateFirstListener);
 
 			return view;
 		}
@@ -138,8 +141,8 @@ public class ImageListActivity extends AbsListViewBaseActivity {
 					displayedImages.add(imageUri);
 				}
 
-//				saveMyBitmap("pic" + indexBitmap, loadedImage);
-//				indexBitmap++;
+				// saveMyBitmap("pic" + indexBitmap, loadedImage);
+				// indexBitmap++;
 			}
 		}
 
@@ -148,13 +151,13 @@ public class ImageListActivity extends AbsListViewBaseActivity {
 			try {
 				f.createNewFile();
 			} catch (IOException e) {
-				indexBitmap=indexBitmap+1-1;
+				indexBitmap = indexBitmap + 1 - 1;
 			}
 			FileOutputStream fOut = null;
 			try {
 				fOut = new FileOutputStream(f);
 			} catch (FileNotFoundException e) {
-				indexBitmap=indexBitmap+1-1;
+				indexBitmap = indexBitmap + 1 - 1;
 				e.printStackTrace();
 			}
 			mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
