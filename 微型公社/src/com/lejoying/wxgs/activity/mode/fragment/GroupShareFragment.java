@@ -115,8 +115,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			if (!"".equals(mCurrentGroupShareID)) {
 				getGroupShares();
 			}
-			mMainModeManager.handleMenu(true);
 		}
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MGROUPSHARE)
+			mMainModeManager.handleMenu(true);
 		if (!isInit) {
 			isInit = true;
 		}
@@ -435,8 +436,9 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 	}
 
-	void showGroupMembers() {
+	public void showGroupMembers() {
 		gshare_scroll_ll.removeAllViews();
+		System.out.println("--------------" + mCurrentGroupShareID);
 		if (!"".equals(mCurrentGroupShareID)) {
 			List<String> members = app.data.groupsMap.get(mCurrentGroupShareID).members;
 			if (members.size() > 0) {
@@ -509,16 +511,17 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 		public GroupShareAdapter(ArrayList<String> groupShares) {
 			this.groupShares = groupShares;
 			groupSharesMap = app.data.groupsMap.get(mCurrentGroupShareID).groupSharesMap;
-			if (groupSharesMap == null) {
-				groupSharesMap = new HashMap<String, GroupShare>();
-				app.dataHandler.exclude(new Modification() {
-
-					@Override
-					public void modifyData(Data data) {
-						data.groupsMap.get(mCurrentGroupShareID).groupSharesMap = groupSharesMap;
-					}
-				});
-			}
+			// if (groupSharesMap == null) {
+			// groupSharesMap = new HashMap<String, GroupShare>();
+			// app.dataHandler.exclude(new Modification() {
+			//
+			// @Override
+			// public void modifyData(Data data) {
+			// data.groupsMap.get(mCurrentGroupShareID).groupSharesMap =
+			// groupSharesMap;
+			// }
+			// });
+			// }
 		}
 
 		@Override
@@ -820,6 +823,7 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 
 				@Override
 				public void onClick(View arg0) {
+					System.out.println("gsid------" + groupShare.gsid);
 					Intent intent = new Intent(getActivity(),
 							DetailsActivity.class);
 					intent.putExtra("gsid", groupShare.gsid);

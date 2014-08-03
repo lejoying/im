@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
@@ -55,6 +56,7 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupSharePraisesFragment;
+import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
@@ -76,6 +78,7 @@ import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
+import com.lejoying.wxgs.app.parser.JSONParser;
 
 public class DetailsActivity extends BaseActivity implements OnClickListener {
 	MainApplication app = MainApplication.getMainApplication();
@@ -120,11 +123,21 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	List<ImageView> faceMenuShowList;
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
 
+	String gsid = "";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_details);
+		intent = getIntent();
+		gsid = intent.getStringExtra("gsid");
+		share = app.data.groupsMap.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+				.get(gsid);
 		initLayout();
+		if (share == null) {
+			getGroupShares();
+			return;
+		}
 		initEvent();
 		initData();
 	}
@@ -333,12 +346,10 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		width = dm.widthPixels;
 		LayoutParams insvparams = insv_message_info.getLayoutParams();
 		insvparams.height = (int) (height - MainActivity.statusBarHeight - dp2px(150));
-		intent = getIntent();
-		share = app.data.groupsMap.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
-				.get((intent.getStringExtra("gsid")));
 		nickNameTo = "";
 		phoneTo = "";
 		chat_vPager_now = 0;
+
 		final List<String> images = share.content.images;
 		List<VoiceContent> voices = share.content.voices;
 		List<VoteContent> voteoptions = share.content.voteoptions;
@@ -354,7 +365,7 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 			}
 		}
 		if (!"".equals(voteTitle)) {
-			TextView titleText = new TextView(this);
+			TextView titleText = new TextView(DetailsActivity.this);
 			titleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
 			titleText.setTextColor(Color.GRAY);
 			titleText.setBackgroundColor(Color.WHITE);
@@ -1257,5 +1268,56 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 		public void destroyItem(View view, int position, Object obj) {
 			((ViewPager) view).removeView(mListViews.get(position));
 		}
+	}
+
+	public void getGroupShares() {
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.SHARE_GETSHARES;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("gid", GroupShareFragment.mCurrentGroupShareID);
+				params.put("gsid", gsid);
+				settings.params = params;
+			}
+
+			@Override
+			public void success(JSONObject jData) {
+				try {
+					final ArrayList<GroupShare> shares = JSONParser
+							.generateSharesFromJSON(jData
+									.getJSONArray("shares"));
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							HashMap<String, GroupShare> groupSharesMap = data.groupsMap
+									.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap;
+
+							if (groupSharesMap == null) {
+								data.groupsMap
+										.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap = new HashMap<String, GroupShare>();
+								groupSharesMap = data.groupsMap
+										.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap;
+							}
+							groupSharesMap.put(shares.get(0).gsid,
+									shares.get(0));
+						}
+
+						@Override
+						public void modifyUI() {
+							initLayout();
+							initEvent();
+							initData();
+						}
+					});
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

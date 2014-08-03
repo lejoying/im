@@ -106,7 +106,9 @@ public class SquareFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		mMainModeManager.handleMenu(true);
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MSQUARE) {
+			mMainModeManager.handleMenu(true);
+		}
 		// notifyViews();
 		super.onResume();
 	}

@@ -51,8 +51,16 @@ public class ChatMessagesFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mMainModeManager.handleMenu(true);
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MCIRCLES)
+			mMainModeManager.handleMenu(true);
 		if (messagesAdapter != null && isInit) {
+			if (app.data.lastChatFriends.size() == 0) {
+				if (ll_not_messages.getVisibility() == View.GONE)
+					ll_not_messages.setVisibility(View.VISIBLE);
+			} else {
+				if (ll_not_messages.getVisibility() == View.VISIBLE)
+					ll_not_messages.setVisibility(View.GONE);
+			}
 			messagesAdapter.notifyDataSetChanged();
 		}
 	}

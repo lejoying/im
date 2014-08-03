@@ -99,7 +99,7 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 		headSize = (int) dp2px(22);
 		headMargin = (int) ((groupItemWidth - dp2px(22) - headSize * 5) / 6);
 
-		mMainModeManager.handleMenu(false);
+//		mMainModeManager.handleMenu(false);
 
 		mContentView = inflater.inflate(R.layout.fragment_group, null);
 		mScrollContainer = (ScrollContainer) mContentView
@@ -122,7 +122,7 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 		ll_navigation = (LinearLayout) mContentView
 				.findViewById(R.id.ll_navigation);
 		if (mMainModeManager != null) {
-			mMainModeManager.handleMenu(false);
+//			mMainModeManager.handleMenu(false);
 		}
 		initEvent();
 
@@ -238,7 +238,7 @@ public class GroupFragment extends BaseFragment implements OnTouchListener {
 			// tempGroup.setLayoutParams(params4);
 			// groupViewContainer.addView(tempGroup);
 		}
-		mMainModeManager.handleMenu(false);
+//		mMainModeManager.handleMenu(false);
 	}
 
 	View myGroup;

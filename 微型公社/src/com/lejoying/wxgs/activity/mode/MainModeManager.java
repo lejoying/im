@@ -36,6 +36,8 @@ public class MainModeManager extends BaseModeManager {
 	public int MCIRCLES = 0x14;
 	public int NEWFRIENFD = 0x15;// unuse
 	public int SEARCHFRIEND = 0x16;// unuse
+	public int SCANQR = 0x17;
+	public int CHATMESSAGE = 0x18;
 	public int mCurrentMenuSelected = MSQUARE;
 
 	boolean isInit;

@@ -251,19 +251,23 @@ public class MainActivity extends BaseActivity {
 
 															.notifyViews();
 														}
+														if (nowFragment == IS_CIRCLES) {
+															initGroupShare();
+														}
+														if (mMainMode.mGroupShareFragment
+																.isAdded()) {
+															mMainMode.mGroupShareFragment
+																	.showGroupMembers();
+														}
 													}
-
 												});
 											}
 										});
 									}
-
 								});
 							}
 						});
-
 					}
-
 				});
 			}
 		}
@@ -303,14 +307,14 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
+				nowFragment = IS_SQUARE;
+				mMainMode.mCurrentMenuSelected = mMainMode.MSQUARE;
 				mMainMode.show(mMainMode.mSquareFragment);
 				iv_square_menu
 						.setImageResource(R.drawable.square_icon_selected);
 				iv_group_menu.setImageResource(R.drawable.group_icon);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
-				if (nowFragment == IS_GROUPS) {
-					iv_release_menu.setImageResource(R.drawable.square_release);
-				}
+				iv_release_menu.setImageResource(R.drawable.square_release);
 				if ("98".equals(SquareFragment.mCurrentSquareID)) {
 					communityNameTV.setText(communityList.get(0));
 				} else if ("99".equals(SquareFragment.mCurrentSquareID)) {
@@ -318,28 +322,28 @@ public class MainActivity extends BaseActivity {
 				} else if ("100".equals(SquareFragment.mCurrentSquareID)) {
 					communityNameTV.setText(communityList.get(2));
 				}
-				nowFragment = IS_SQUARE;
-				mMainMode.mCurrentMenuSelected = mMainMode.MSQUARE;
 			}
 		});
 		rl_group_menu.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+				nowFragment = IS_GROUPS;
+				mMainMode.mCurrentMenuSelected = mMainMode.MGROUPSHARE;
 				mMainMode.show(mMainMode.mGroupShareFragment);
 				iv_square_menu.setImageResource(R.drawable.square_icon);
 				iv_group_menu.setImageResource(R.drawable.group_icon_selected);
 				iv_me_menu.setImageResource(R.drawable.person_icon);
 				iv_release_menu.setImageResource(R.drawable.gshare_group);
 				initGroupShare();
-				nowFragment = IS_GROUPS;
-				mMainMode.mCurrentMenuSelected = mMainMode.MGROUPSHARE;
 			}
 		});
 		rl_me_menu.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+				nowFragment = IS_CIRCLES;
+				mMainMode.mCurrentMenuSelected = mMainMode.MCIRCLES;
 				if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_CIRCLE) {
 					mMainMode.show(mMainMode.mCirclesFragment);
 				} else if (mMainMode.mCurrentMyFragment == mMainMode.FRAGMENT_CHATMESSAGE) {
@@ -352,8 +356,6 @@ public class MainActivity extends BaseActivity {
 				iv_me_menu.setImageResource(R.drawable.person_icon_selected);
 				iv_release_menu.setImageResource(R.drawable.scanner);
 				communityNameTV.setText(app.data.user.nickName);
-				nowFragment = IS_CIRCLES;
-				mMainMode.mCurrentMenuSelected = mMainMode.MCIRCLES;
 			}
 		});
 		rl_release_menu.setOnClickListener(new OnClickListener() {
@@ -368,7 +370,7 @@ public class MainActivity extends BaseActivity {
 							ReleaseActivity.class);
 					startActivity(intent);
 				} else if (nowFragment == IS_CIRCLES) {
-					 mMainMode.showNext(mMainMode.mScanQRCodeFragment);
+					mMainMode.showNext(mMainMode.mScanQRCodeFragment);
 					// Intent intent = new Intent(MainActivity.this,
 					// ScanQRCodeActivity.class);
 					// startActivity(intent);
@@ -453,7 +455,8 @@ public class MainActivity extends BaseActivity {
 				return true;
 			} else {
 				DataUtil.saveData(this);
-				System.exit(0);
+				// System.exit(0);
+				finish();
 			}
 		}
 		return super.onKeyUp(keyCode, event);

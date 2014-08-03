@@ -21,14 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/header" />
-
             <TextView
                 android:id="@+id/panel_name"
                 android:layout_width="wrap_content"
@@ -52,6 +44,13 @@
                 android:paddingRight="8dp"
                 android:src="@drawable/card_back"
                 android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_alignLeft="@+id/imageView1"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/header" />
         </RelativeLayout>
 
         <ImageView
