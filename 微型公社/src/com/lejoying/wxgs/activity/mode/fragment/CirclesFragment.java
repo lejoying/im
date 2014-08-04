@@ -15,6 +15,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -102,7 +104,8 @@ public class CirclesFragment extends BaseFragment {
 	public void onResume() {
 		// CircleMenu.show();
 		// CircleMenu.setPageName(getString(R.string.circlemenu_page_circles));
-		mMainModeManager.handleMenu(true);
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MCIRCLES)
+			mMainModeManager.handleMenu(true);
 		super.onResume();
 	}
 
@@ -197,7 +200,7 @@ public class CirclesFragment extends BaseFragment {
 			mScrollContainer.setScrollStatus(ScrollContainer.SCROLL_SMOOTH);
 			mScrollContainer
 					.setScrollDirection(ScrollContainer.DIRECTION_VERTICALITY);
-			int top = 25;
+			int top = (int) dp2px(10);// 25
 			int scrollToY = 0;
 			for (int i = 0; i < normalShow.size(); i++) {
 				View v = views.get(normalShow.get(i));
@@ -209,8 +212,13 @@ public class CirclesFragment extends BaseFragment {
 				int height = (int) dp2px(((Integer) v.getTag()).floatValue());
 				RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				layoutParams.setMargins(layoutParams.leftMargin, top,
-						layoutParams.rightMargin, -Integer.MAX_VALUE);
+				if (i == normalShow.size() - 1) {
+					layoutParams.setMargins(layoutParams.leftMargin, top + 10,
+							layoutParams.rightMargin, 50);
+				} else {
+					layoutParams.setMargins(layoutParams.leftMargin, top,
+							layoutParams.rightMargin, -Integer.MAX_VALUE);
+				}
 
 				if (currentEditPosition != -1
 						&& v.equals(views.get(circles.get(currentEditPosition)))) {
@@ -219,9 +227,9 @@ public class CirclesFragment extends BaseFragment {
 				}
 				// float px = 0.1f * px + 0.5f;
 				if (i < 2) {
-					top = top + height + 10;// 25
+					top = top + height + 7;// 25
 				} else {
-					top = top + height + 6;// 25
+					top = top + height;// 25
 				}
 				v.setLayoutParams(layoutParams);
 
@@ -957,7 +965,7 @@ public class CirclesFragment extends BaseFragment {
 				circleHolders.put("group#" + circle.rid, circleHolder);
 				circleView = generateCircleView();
 				views.put("group#" + circle.rid, circleView);
-				circleView.setTag(262);
+				circleView.setTag(274);// 262
 			}
 			notifyCircleView(circleView, circle,
 					circleHolders.get("group#" + circle.rid));
@@ -965,14 +973,41 @@ public class CirclesFragment extends BaseFragment {
 			normalShow.add("group#" + circle.rid);
 			circles.add("group#" + circle.rid);
 		}
+		View findMoreFriendButtonView = generateButtonView();
+		findMoreFriendButtonView.setTag(-20);
+		views.put("button#findmore0", findMoreFriendButtonView);
 
+		RelativeLayout views0 = new RelativeLayout(getActivity());
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+				android.widget.RelativeLayout.LayoutParams.MATCH_PARENT, 50);
+		views0.setLayoutParams(layoutParams);
+		View view = new View(getActivity());
+		views0.setTag(50);
+		views0.addView(view);
+		views.put("button#findmore0", views0);
+		normalShow.add("button#findmore0");
 		// if (views.get("button#creategroup") == null) {
 		// View createGroupButtonView = generateCreateGroupButtonView();
-		// createGroupButtonView.setTag(46);
+		// createGroupButtonView.setTag(10);
 		// views.put("button#creategroup", createGroupButtonView);
 		// }
 		// normalShow.add("button#creategroup");
+	}
 
+	View generateButtonView() {
+		View findMoreFriendButtonView = mInflater.inflate(
+				R.layout.fragment_item_button_layout, null);
+		TextView findMoreFriendButton = (TextView) findMoreFriendButtonView
+				.findViewById(R.id.tv_type);
+		ImageView findMoreFriendIcon = (ImageView) findMoreFriendButtonView
+				.findViewById(R.id.iv_icon);
+		findMoreFriendIcon.setImageDrawable(new BitmapDrawable());
+		findMoreFriendButton.setText("");
+		RelativeLayout rlBackGround = (RelativeLayout) findMoreFriendButtonView
+				.findViewById(R.id.rl_background);
+		rlBackGround.setBackgroundColor(Color.parseColor("#00ffffff"));
+
+		return findMoreFriendButtonView;
 	}
 
 	View generateNewFriendButtonView() {

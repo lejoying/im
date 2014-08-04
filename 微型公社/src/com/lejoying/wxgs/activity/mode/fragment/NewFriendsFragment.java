@@ -267,7 +267,8 @@ public class NewFriendsFragment extends BaseFragment {
 
 	@Override
 	public void onResume() {
-		mMainModeManager.handleMenu(false);
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MCIRCLES)
+			mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 

@@ -58,7 +58,8 @@ public class SearchFriendFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		// CircleMenu.showBack();
-		mMainModeManager.handleMenu(false);
+		if (mMainModeManager.mCurrentMenuSelected == mMainModeManager.MCIRCLES)
+			mMainModeManager.handleMenu(false);
 		super.onResume();
 	}
 

@@ -43,7 +43,6 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 	RelativeLayout current_me_infomation;
 	RelativeLayout userInfomationView;
 	RelativeLayout myBusinessCardView;
-	RelativeLayout exitCurrentUserView;
 	RelativeLayout userSettingView;
 
 	ImageView headImageView;
@@ -65,8 +64,6 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 				.findViewById(R.id.rl_userInfomation);
 		myBusinessCardView = (RelativeLayout) mMainContentView
 				.findViewById(R.id.rl_myBusinessCard);
-		exitCurrentUserView = (RelativeLayout) mMainContentView
-				.findViewById(R.id.rl_exitCurrentUser);
 		userSettingView = (RelativeLayout) mMainContentView
 				.findViewById(R.id.rl_settingwxgs);
 		headImageView = (ImageView) mMainContentView
@@ -117,8 +114,7 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 		current_me_circles.setOnClickListener(this);
 		current_me_message_list.setOnClickListener(this);
 		myBusinessCardView.setOnClickListener(this);
-		exitCurrentUserView.setOnClickListener(this);
-		setOnTouch(exitCurrentUserView);
+
 		setOnTouch(userSettingView);
 		setOnTouch(myBusinessCardView);
 	}
@@ -143,21 +139,6 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 			businessCardIntent.putExtra("type", BusinessCardActivity.TYPE_SELF);
 			startActivityForResult(businessCardIntent, 101);
 			break;
-		case R.id.rl_exitCurrentUser:
-			Alert.createDialog(getActivity())
-					.setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？")
-					.setOnConfirmClickListener(
-							new AlertInputDialog.OnDialogClickListener() {
-								@Override
-								public void onClick(AlertInputDialog dialog) {
-									Intent service = new Intent(getActivity(),
-											PushService.class);
-									service.putExtra("operation", "stop");
-									getActivity().startService(service);
-									// finish();
-								}
-							}).show();
-			break;
 		case R.id.current_me_circles:
 			MainActivity.instance.mMainMode.mCurrentMyFragment = MainActivity.instance.mMainMode.FRAGMENT_CIRCLE;
 			MainActivity.instance.mMainMode
@@ -171,17 +152,26 @@ public class MyFragment extends BaseFragment implements OnClickListener {
 		case R.id.rl_settingwxgs:
 			Intent settingIntent = new Intent(getActivity(),
 					SettingActivity.class);
-			startActivity(settingIntent);
+			startActivityForResult(settingIntent, 102);
+			// startActivity(settingIntent);
 			break;
 		default:
 			break;
 		}
 	}
 
+	public void stopService() {
+		Intent service = new Intent(getActivity(), PushService.class);
+		service.putExtra("operation", "stop");
+		getActivity().startService(service);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
 			initData();
+		} else if (requestCode == 102 && resultCode == Activity.RESULT_OK) {
+			stopService();
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

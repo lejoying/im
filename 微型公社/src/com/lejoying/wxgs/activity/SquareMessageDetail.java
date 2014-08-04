@@ -48,9 +48,9 @@ import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.view.InnerScrollView;
 import com.lejoying.wxgs.activity.view.RecordView;
+import com.lejoying.wxgs.activity.view.InnerScrollView.OnScrollChangedListener;
 import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
-import com.lejoying.wxgs.activity.view.SquareMessageInfoScrollView;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
@@ -147,8 +147,8 @@ public class SquareMessageDetail extends BaseActivity {
 		et_comment = (EditText) findViewById(R.id.et_comment);
 		releaseComment = (TextView) findViewById(R.id.tv_confirm_release_comment);
 		squareDetailBottomBar = (RelativeLayout) findViewById(R.id.squareDetailBottomBar);
-		sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		sc_square_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		// sc_square_message_info_all.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		// sc_square_message_info.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		initData();
 		generateMessageContent();
 		getSquareMessageDetail(message.phone, message.gmid);
@@ -629,6 +629,14 @@ public class SquareMessageDetail extends BaseActivity {
 	Friend currentCommentUser;
 
 	private void initEvent() {
+		sc_square_message_info_all
+				.setOnScrollChangedListener(new OnScrollChangedListener() {
+
+					@Override
+					public void onScrollChangedListener(int w, int h, int oldw,
+							int oldh) {
+					}
+				});
 		et_comment.addTextChangedListener(new TextWatcher() {
 
 			@Override

@@ -173,10 +173,8 @@ public class OSSFileHandler {
 		String where = FROM_DEFAULT;
 		if (!"".equals(imageFileName)) {
 			if (bitmaps.get(currentFileImage) != null
-					&& !bitmaps.get(currentFileImage).equals(dImage)) {// &&
-																		// type
-																		// !=
-																		// TYPE_IMAGE_SQUAREIMAGE
+					&& !bitmaps.get(currentFileImage).equals(dImage)
+					&& (type == TYPE_IMAGE_HEAD || type == TYPE_IMAGE_THUMBNAIL)) {
 				where = FROM_MEMORY;
 				fileResult.onResult(where, bitmaps.get(currentFileImage));
 			} else {
@@ -258,9 +256,9 @@ public class OSSFileHandler {
 					}
 
 					fromWebResults.get(currentFileImage).add(fileResult);
-					if (imageFromWebStatus.get(currentFileImage) == null
-							|| imageFromWebStatus.get(currentFileImage).equals(
-									"failed")) {
+					if ((imageFromWebStatus.get(currentFileImage) == null || imageFromWebStatus
+							.get(currentFileImage).equals("failed"))
+							|| type == TYPE_IMAGE_SQUAREIMAGE) {
 						getImageFileFromWeb(imageFileName, mediationParam,
 								type, style, (int) width);
 					}
@@ -328,6 +326,7 @@ public class OSSFileHandler {
 						bitmap = BitmapFactory.decodeFile(imageFile
 								.getAbsolutePath());
 					}
+					System.out.println(fileName0 + "---7" + bitmap);
 					final Bitmap bitmap0 = bitmap;
 					List<FileResult> results = fromWebResults.get(fileName0);
 					for (final FileResult result : results) {
