@@ -39,36 +39,44 @@ var send_msg = function (to, msg) {
     var opt = {
         hostname: 'app.cloopen.com',
         port: 8883,
-        path: '/2013-12-26/Accounts/%s/SMS/Messages'.replace('%s', ACCOUNT_ID) + '?sig=' + sign.sign,
+        path: '/2013-12-26/Accounts/%s/SMS/TemplateSMS'.replace('%s', ACCOUNT_ID) + '?sig=' + sign.sign,
         method: 'POST',
         headers: {
             'Authorization': sign.header,
             'Content-Type': 'application/json;charset=utf-8',
             'Accept': 'application/json'
+//            'accountSid': ACCOUNT_ID,
+//            'subAccountSid': 8a48b72b41bf81f60141c4c72b7c0274,
+//            'SigParameter': ''
         },
         rejectUnauthorized: false,
         requestCert: true,
         agent: false
     }
-
     var raw = JSON.stringify({
         appId: APP_ID,
         to: to,
-        body: msg,
-        msgType: 0,
-        subAccountSid: SUB_ID
+        templateId: "3070",
+        datas: ["1234567890"]
     });
+//    var raw = JSON.stringify({
+//        appId: APP_ID,
+//        to: to,
+//        body: msg,
+//        msgType: 0,
+//        subAccountSid: SUB_ID
+//    });
     /*var raw = '<?xml version="1.0" encoding="utf-8"?>'
-        + '<SMSMessage>'
-        + '<appId>%(app_id)s</appId>'
-        + '<to>%(to)s</to>'
-        + '<body>%(msg)s</body>'
-        + '<msgType>0</msgType>'
-        + '<subAccountSid>%(sub_id)s</subAccountSid>'
-        + '</SMSMessage>';
-    raw = raw.replace('%(app_id)s', APP_ID).replace('%(sub_id)s', SUB_ID);
-    raw = raw.replace('%(to)s', to).replace('%(msg)s', msg);
-*/
+     + '<SMSMessage>'
+     + '<appId>%(app_id)s</appId>'
+     + '<to>%(to)s</to>'
+     + '<body>%(msg)s</body>'
+     + '<msgType>0</msgType>'
+     + '<subAccountSid>%(sub_id)s</subAccountSid>'
+     + '</SMSMessage>';
+     raw = raw.replace('%(app_id)s', APP_ID).replace('%(sub_id)s', SUB_ID);
+     raw = raw.replace('%(to)s', to).replace('%(msg)s', msg);
+     */
     return {opt: opt, body: raw};
 }
 
@@ -98,15 +106,15 @@ var create_sub = function (name) {
         accountSid: ACCOUNT_ID
     });
     /*var raw = '<?xml version="1.0" encoding="utf-8"?>'
-        + '<SubAccount>'
-        + '<appId>%(app_id)s</appId>'
-        + '<friendlyName>%(name)s</friendlyName>'
-        + '<accountSid>%(account_id)s</accountSid>'
-        + '</SubAccount>';
-    raw = raw.replace('%(app_id)s', APP_ID);
-    raw = raw.replace('%(account_id)s', ACCOUNT_ID);
-    raw = raw.replace('%(name)s', name);
-*/
+     + '<SubAccount>'
+     + '<appId>%(app_id)s</appId>'
+     + '<friendlyName>%(name)s</friendlyName>'
+     + '<accountSid>%(account_id)s</accountSid>'
+     + '</SubAccount>';
+     raw = raw.replace('%(app_id)s', APP_ID);
+     raw = raw.replace('%(account_id)s', ACCOUNT_ID);
+     raw = raw.replace('%(name)s', name);
+     */
     return {opt: opt, body: raw};
 }
 
@@ -139,11 +147,11 @@ var request = function (obj, next) {
  var obj = create_sub('965266509@qq.com');
  request(obj);
  }*/
-sms.sendMsg = function(to, msg, next){
+sms.sendMsg = function (to, msg, next) {
     var obj = send_msg(to, msg, next);
     request(obj, next);
 }
-sms.createsub = function(email){
+sms.createsub = function (email) {
     var obj = create_sub(email);
     request(obj);
 }

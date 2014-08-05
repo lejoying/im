@@ -17,6 +17,7 @@ package com.lejoying.wxgs.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
@@ -30,7 +31,7 @@ import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
  * 
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
  */
-public class AbsListViewBaseActivity extends Activity {
+public class AbsListViewBaseActivity extends FragmentActivity {
 
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -57,8 +58,10 @@ public class AbsListViewBaseActivity extends Activity {
 	}
 
 	private void applyScrollListener() {
-		listView.setOnScrollListener(new PauseOnScrollListener(imageLoader,
-				pauseOnScroll, pauseOnFling));
+		if (listView != null) {
+			listView.setOnScrollListener(new PauseOnScrollListener(imageLoader,
+					pauseOnScroll, pauseOnFling));
+		}
 	}
 
 	@Override

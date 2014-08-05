@@ -153,29 +153,33 @@ public class GroupShareFragment extends BaseFragment implements OnClickListener 
 			// : app.data.groups.get(0);
 
 			options = new DisplayImageOptions.Builder()
-					.showImageOnLoading(R.drawable.ic_stub)
+					// .showImageOnLoading(R.drawable.ic_stub)
 					.showImageForEmptyUri(R.drawable.ic_empty)
 					.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
 					.cacheOnDisk(true).considerExifParams(true)
 					.bitmapConfig(Bitmap.Config.RGB_565).build();
 
 			if (!"".equals(mCurrentGroupShareID)) {
-				if (app.data.groupsMap.get(mCurrentGroupShareID).groupShares == null) {
-					app.dataHandler.exclude(new Modification() {
+				if (app.data.groupsMap.get(mCurrentGroupShareID) != null) {
+					if (app.data.groupsMap.get(mCurrentGroupShareID).groupShares == null) {
+						app.dataHandler.exclude(new Modification() {
 
-						@Override
-						public void modifyData(Data data) {
-							data.groupsMap.get(mCurrentGroupShareID).groupShares = new ArrayList<String>();
+							@Override
+							public void modifyData(Data data) {
+								data.groupsMap.get(mCurrentGroupShareID).groupShares = new ArrayList<String>();
 
-						}
-					});
+							}
+						});
+					} else {
+						groupShareAdapter = new GroupShareAdapter(
+								app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
+						((ListView) listView).setAdapter(groupShareAdapter);
+						showGroupMembers();
+						mCurrentGroup = app.data.groupsMap
+								.get(mCurrentGroupShareID);
+						getGroupShares();
+					}
 				}
-				groupShareAdapter = new GroupShareAdapter(
-						app.data.groupsMap.get(mCurrentGroupShareID).groupShares);
-				((ListView) listView).setAdapter(groupShareAdapter);
-				showGroupMembers();
-				mCurrentGroup = app.data.groupsMap.get(mCurrentGroupShareID);
-				getGroupShares();
 			}
 		}
 		return mContent;
