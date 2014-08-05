@@ -305,7 +305,7 @@ public class PushService extends Service {
 										.generateSquareMessagesFromJSON(jData
 												.getJSONArray("messages"));
 								for (SquareMessage message : newMessages) {
-									if (!squareMessages.contains(message)) {
+									if (!squareMessages.contains(message.gmid)) {
 										squareMessages.add(message.gmid);
 										squareMessagesMap.put(message.gmid,
 												message);

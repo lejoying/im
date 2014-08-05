@@ -131,6 +131,9 @@ public class SquareFragment extends BaseFragment {
 				.get(mCurrentSquareID);
 		if (messages != null) {
 			squareContentView.setSquareMessageList(messages, squareMessageMap);
+			for (String str : messages) {
+				System.out.println(str);
+			}
 		}
 		if ("98".equals(mCurrentSquareID)) {
 			MainActivity.communityNameTV.setText(MainActivity.communityList
