@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -30,12 +29,13 @@ import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.AsyncHandler.Execution;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
-public class MapStorageImagesActivity extends Activity {
+public class MapStorageImagesActivity extends AbsListViewBaseActivity {
 
 	MainApplication app = MainApplication.getMainApplication();
 
-	GridView mImagesContent;
+	// GridView listView;
 	ImageView mBack;
 	TextView mCancel;
 	TextView directoryName;
@@ -59,13 +59,15 @@ public class MapStorageImagesActivity extends Activity {
 
 	int listStatus;
 
+	DisplayImageOptions options;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
 		inflater = this.getLayoutInflater();
 		setContentView(R.layout.activity_mapstorageimages);
-		mImagesContent = (GridView) findViewById(R.id.gv_imagesContent);
+		listView = (GridView) findViewById(R.id.gv_imagesContent);
 		mBack = (ImageView) findViewById(R.id.iv_back);
 		mCancel = (TextView) findViewById(R.id.tv_cancel);
 		directoryName = (TextView) findViewById(R.id.tv_directoryName);
@@ -76,23 +78,25 @@ public class MapStorageImagesActivity extends Activity {
 				.get(MapStorageDirectoryActivity.currentShowDirectory);
 
 		initData();
+
 		mapStorageImagesAdapter = new MapStorageImagesAdapter();
-		mImagesContent.setAdapter(mapStorageImagesAdapter);
+		((GridView) listView).setAdapter(mapStorageImagesAdapter);
 
-		mImagesContent.setOnScrollListener(new OnScrollListener() {
-
-			@Override
-			public void onScrollStateChanged(AbsListView arg0, int arg1) {
-				listStatus = arg1;
-				if (arg1 == SCROLL_STATE_IDLE) {
-					mapStorageImagesAdapter.notifyDataSetChanged();
-				}
-			}
-
-			@Override
-			public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3) {
-			}
-		});
+		// listView.setOnScrollListener(new OnScrollListener() {
+		//
+		// @Override
+		// public void onScrollStateChanged(AbsListView arg0, int arg1) {
+		// listStatus = arg1;
+		// if (arg1 == SCROLL_STATE_IDLE) {
+		// mapStorageImagesAdapter.notifyDataSetChanged();
+		// }
+		// }
+		//
+		// @Override
+		// public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3)
+		// {
+		// }
+		// });
 		defaultImage = ThumbnailUtils.extractThumbnail(BitmapFactory
 				.decodeResource(getResources(), R.drawable.defaultimage), 100,
 				100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
@@ -156,6 +160,13 @@ public class MapStorageImagesActivity extends Activity {
 	}
 
 	private void initData() {
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
+
 		String directory = MapStorageDirectoryActivity.currentShowDirectory;
 		directory = directory.substring(directory.lastIndexOf("/") + 1);
 		directoryName.setText(directory);
@@ -225,12 +236,17 @@ public class MapStorageImagesActivity extends Activity {
 			} else {
 				imagesHolder.ivStatus.setVisibility(View.GONE);
 			}
-			SoftReference<Bitmap> softBitmap = bitmaps.get(path);
-			if (softBitmap == null || softBitmap.get() == null) {
-				loadImage(path);
-				softBitmap = new SoftReference<Bitmap>(defaultImage);
-			}
-			imagesHolder.iv.setImageBitmap(softBitmap.get());
+
+			// SoftReference<Bitmap> softBitmap = bitmaps.get(path);
+			// if (softBitmap == null || softBitmap.get() == null) {
+			// loadImage(path);
+			// softBitmap = new SoftReference<Bitmap>(defaultImage);
+			// }
+			// imagesHolder.iv.setImageBitmap(softBitmap.get());
+
+			imageLoader
+					.displayImage("file://" + path, imagesHolder.iv, options);
+
 			final ImagesHolder imagesHolder0 = imagesHolder;
 			imagesHolder.iv.setOnClickListener(new OnClickListener() {
 

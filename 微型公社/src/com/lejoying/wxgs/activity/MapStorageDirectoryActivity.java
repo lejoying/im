@@ -3,7 +3,9 @@ package com.lejoying.wxgs.activity;
 import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +35,13 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.utils.MCImageUtils;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.handler.AsyncHandler.Execution;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-public class MapStorageDirectoryActivity extends Activity {
+public class MapStorageDirectoryActivity extends AbsListViewBaseActivity {
 
 	MainApplication app = MainApplication.getMainApplication();
 	LayoutInflater inflater;
@@ -46,7 +53,7 @@ public class MapStorageDirectoryActivity extends Activity {
 	public static int max = 0;
 	MapStorageDirectoryAdapter mapStorageDirectoryAdapter;
 
-	ListView imagesDirectory;
+	// ListView listView;
 	TextView cancleSelect;
 	Bitmap defaultImage;
 	int listStatus;
@@ -56,15 +63,18 @@ public class MapStorageDirectoryActivity extends Activity {
 	public static ArrayList<String> selectedImages = new ArrayList<String>();
 	public static HashMap<String, HashMap<String, Object>> selectedImagesMap = new HashMap<String, HashMap<String, Object>>();
 
+	DisplayImageOptions options;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mapstoragedirectory);
 		boolean init = true;
 		if (getIntent().getExtras() != null) {
 			init = getIntent().getExtras().getBoolean("init");
 			max = getIntent().getExtras().getInt("max");
 		}
-		imagesDirectory = (ListView) findViewById(R.id.gv_imagesDirectory);
+		listView = (ListView) findViewById(R.id.gv_imagesDirectory);
 		cancleSelect = (TextView) findViewById(R.id.tv_cancle);
 		inflater = this.getLayoutInflater();
 		bitmaps = new HashMap<String, SoftReference<Bitmap>>();
@@ -75,19 +85,30 @@ public class MapStorageDirectoryActivity extends Activity {
 			selectedImages = new ArrayList<String>();
 		}
 		getSDImages();
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.displayer(new RoundedBitmapDisplayer(20)).build();
 		mapStorageDirectoryAdapter = new MapStorageDirectoryAdapter();
-		imagesDirectory.setAdapter(mapStorageDirectoryAdapter);
+		((ListView) listView).setAdapter(mapStorageDirectoryAdapter);
 		defaultImage = ThumbnailUtils.extractThumbnail(BitmapFactory
 				.decodeResource(getResources(), R.drawable.defaultimage), 60,
 				60, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
 		initEvent();
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	public void onBackPressed() {
 		max = 0;
 		finish();
+	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
 	}
 
 	@Override
@@ -104,7 +125,7 @@ public class MapStorageDirectoryActivity extends Activity {
 	}
 
 	private void initEvent() {
-		imagesDirectory.setOnScrollListener(new OnScrollListener() {
+		listView.setOnScrollListener(new OnScrollListener() {
 
 			@Override
 			public void onScrollStateChanged(AbsListView arg0, int arg1) {
@@ -135,6 +156,8 @@ public class MapStorageDirectoryActivity extends Activity {
 	}
 
 	class MapStorageDirectoryAdapter extends BaseAdapter {
+
+		private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
 		@Override
 		public int getCount() {
@@ -172,12 +195,17 @@ public class MapStorageDirectoryActivity extends Activity {
 
 			final String path = (String) directoryToImages
 					.get(directorys.get(position)).get(0).get("path");
-			SoftReference<Bitmap> softBitmap = bitmaps.get(path);
-			if (softBitmap == null || softBitmap.get() == null) {
-				loadImage(path);
-				softBitmap = new SoftReference<Bitmap>(defaultImage);
-			}
-			imagesHolder.directoryImage.setImageBitmap(softBitmap.get());
+
+			// SoftReference<Bitmap> softBitmap = bitmaps.get(path);
+			// if (softBitmap == null || softBitmap.get() == null) {
+			// loadImage(path);
+			// softBitmap = new SoftReference<Bitmap>(defaultImage);
+			// }
+			// imagesHolder.directoryImage.setImageBitmap(softBitmap.get());
+
+			imageLoader.displayImage("file://" + path,
+					imagesHolder.directoryImage, options, animateFirstListener);
+
 			imagesHolder.directoryName.setText(directorys.get(position)
 					.substring(directorys.get(position).lastIndexOf("/") + 1)
 					+ "("
@@ -202,6 +230,26 @@ public class MapStorageDirectoryActivity extends Activity {
 		ImageView directoryImage;
 		TextView directoryName;
 		ImageView directoryOff;
+	}
+
+	private static class AnimateFirstDisplayListener extends
+			SimpleImageLoadingListener {
+
+		static final List<String> displayedImages = Collections
+				.synchronizedList(new LinkedList<String>());
+
+		@Override
+		public void onLoadingComplete(String imageUri, View view,
+				Bitmap loadedImage) {
+			if (loadedImage != null) {
+				ImageView imageView = (ImageView) view;
+				boolean firstDisplay = !displayedImages.contains(imageUri);
+				if (firstDisplay) {
+					FadeInBitmapDisplayer.animate(imageView, 500);
+					displayedImages.add(imageUri);
+				}
+			}
+		}
 	}
 
 	private void loadImage(final String path) {
