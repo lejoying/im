@@ -419,6 +419,7 @@ public class DetailsActivity extends AbsListViewBaseActivity implements
 				}
 			});
 			ll_detailContent.addView(voteTv, btParams);
+
 		}
 		for (int i = 0; i < images.size(); i++) {
 			final int index = i;
@@ -437,7 +438,7 @@ public class DetailsActivity extends AbsListViewBaseActivity implements
 				boptions.inJustDecodeBounds = true;
 				Bitmap bitmap = BitmapFactory.decodeFile(
 						currentImageFile.getAbsolutePath(), boptions);
-				if (bitmap != null) {
+				if (boptions.outWidth > 0) {
 					isFlag = true;
 				}
 			}

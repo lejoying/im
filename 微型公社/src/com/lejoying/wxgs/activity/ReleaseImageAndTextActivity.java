@@ -1,8 +1,12 @@
 package com.lejoying.wxgs.activity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -48,6 +52,9 @@ import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog.OnDialogCli
 import com.lejoying.wxgs.activity.view.widget.Alert.OnLoadingCancelListener;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.GroupShare;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
@@ -55,6 +62,7 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
+import com.lejoying.wxgs.app.parser.StreamParser;
 
 public class ReleaseImageAndTextActivity extends Activity implements
 		OnClickListener {
@@ -250,18 +258,16 @@ public class ReleaseImageAndTextActivity extends Activity implements
 	}
 
 	void sendImageTextMessage() {
+		final GroupShare groupShare = new GroupShare();
+		modifyLocationData(groupShare);
 		String messageContent = release_et.getText().toString().trim();
+		groupShare.content.text = messageContent;
 		if (photoList.size() == 0 || "".equals(messageContent)) {
 			Alert.showMessage("图文分享内容不完整");
 			return;
 		}
+		finish();
 		sending = true;
-		Alert.showLoading(new OnLoadingCancelListener() {
-			@Override
-			public void loadingCancel() {
-				System.out.println("loading ...send message");
-			}
-		});
 		final JSONArray messageJsonArray = new JSONArray();
 		JSONObject contentObject = new JSONObject();
 		try {
@@ -271,41 +277,85 @@ public class ReleaseImageAndTextActivity extends Activity implements
 			e.printStackTrace();
 		}
 		messageJsonArray.put(contentObject);
-		if (photoList.size() == 0) {
-			sendMessage("imagetext", messageJsonArray.toString());
+		for (int i = 0; i < photoList.size(); i++) {
+			final String path = photoList.get(i);
+			app.fileHandler.getFileMessageInfo(new FileMessageInfoInterface() {
+
+				@Override
+				public void setParams(FileMessageInfoSettings settings) {
+					settings.path = path;
+					settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
+					settings.fileName = path;
+				}
+
+				@Override
+				public void onSuccess(ImageMessageInfo imageMessageInfo) {
+					// JSONObject imageObject = new JSONObject();
+					// try {
+					// imageObject.put("type", "image");
+					// imageObject.put("detail", imageMessageInfo.fileName);
+					// } catch (JSONException e) {
+					// e.printStackTrace();
+					// }
+					// messageJsonArray.put(imageObject);
+					copyToLocation(path, imageMessageInfo.fileName);
+					groupShare.content.addImage(imageMessageInfo.fileName);
+					checkImage(imageMessageInfo, (String) photoListMap
+							.get(path).get("contentType"), path, "image",
+							messageJsonArray, groupShare);
+				}
+			});
+
+			// sendMessage("imagetext", messageJsonArray.toString(),
+			// groupShare);
+		}
+	}
+
+	public void modifyLocationData(final GroupShare groupShare) {
+		groupShare.phone = app.data.user.phone;
+		groupShare.type = "imagetext";
+		groupShare.mType = GroupShare.MESSAGE_TYPE_IMAGETEXT;
+		groupShare.time = new Date().getTime();
+		groupShare.gsid = new Date().getTime() + app.data.user.phone;
+		app.dataHandler.exclude(new Modification() {
+
+			@Override
+			public void modifyData(Data data) {
+				data.groupsMap.get(GroupShareFragment.mCurrentGroupShareID).groupShares
+						.add(0, groupShare.gsid);
+				data.groupsMap.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap
+						.put(groupShare.gsid, groupShare);
+			}
+
+			@Override
+			public void modifyUI() {
+				MainActivity.instance.mMainMode.mGroupShareFragment
+						.notifyGroupShareViews();
+			}
+		});
+	}
+
+	public void copyToLocation(String filePath, String newFileName) {
+		File oldFile = new File(filePath);
+		File newFile = new File(app.sdcardImageFolder + "/" + newFileName);
+		if (filePath.substring(filePath.lastIndexOf("/") + 1).indexOf(
+				"tempimage") == 0) {
+			oldFile.renameTo(newFile);
 		} else {
-			for (int i = 0; i < photoList.size(); i++) {
-				final int j = i;
-				app.fileHandler
-						.getFileMessageInfo(new FileMessageInfoInterface() {
-
-							@Override
-							public void setParams(
-									FileMessageInfoSettings settings) {
-								settings.path = photoList.get(j);
-								settings.FILE_TYPE = OSSFileHandler.FILE_TYPE_SDSELECTIMAGE;
-								settings.fileName = photoList.get(j);
-							}
-
-							@Override
-							public void onSuccess(
-									ImageMessageInfo imageMessageInfo) {
-								checkImage(
-										imageMessageInfo,
-										(String) photoListMap.get(
-												photoList.get(j)).get(
-												"contentType"),
-										photoList.get(j), "image",
-										messageJsonArray);
-							}
-						});
+			if (!newFile.exists()) {
+				try {
+					StreamParser.parseToFile(new FileInputStream(oldFile),
+							new FileOutputStream(newFile));
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
 	public void checkImage(final ImageMessageInfo imageMessageInfo,
 			final String contentType, final String path, final String fileType,
-			final JSONArray selectedImages) {
+			final JSONArray selectedImages, final GroupShare groupShare) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -330,13 +380,12 @@ public class ReleaseImageAndTextActivity extends Activity implements
 							selectedImages.put(imageObject);
 							if (selectedImages.length() - 1 == photoList.size()) {
 								sendMessage("imagetext",
-										selectedImages.toString());
+										selectedImages.toString(), groupShare);
 							}
 						} else {
 							// TODO SEND VOICE
 						}
 					} else {
-
 						app.fileHandler.uploadFile(new UploadFileInterface() {
 
 							@Override
@@ -364,7 +413,8 @@ public class ReleaseImageAndTextActivity extends Activity implements
 										if (selectedImages.length() - 1 == photoList
 												.size()) {
 											sendMessage("imagetext",
-													selectedImages.toString());
+													selectedImages.toString(),
+													groupShare);
 										}
 									} catch (JSONException e) {
 										e.printStackTrace();
@@ -382,7 +432,8 @@ public class ReleaseImageAndTextActivity extends Activity implements
 		});
 	}
 
-	void sendMessage(final String contentType, final String content) {
+	void sendMessage(final String contentType, final String content,
+			final GroupShare groupShare) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -393,13 +444,41 @@ public class ReleaseImageAndTextActivity extends Activity implements
 
 			@Override
 			public void success(JSONObject jData) {
-				Alert.removeLoading();
-				finish();
+				try {
+					final long time = jData.getLong("time");
+					final String gsid = jData.getString("gsid");
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							List<String> groupShares = data.groupsMap
+									.get(GroupShareFragment.mCurrentGroupShareID).groupShares;
+							HashMap<String, GroupShare> groupSharesMap = data.groupsMap
+									.get(GroupShareFragment.mCurrentGroupShareID).groupSharesMap;
+							int location = groupShares.indexOf(groupShare.gsid);
+							groupShares.remove(location);
+							if (!groupShares.contains(gsid)) {
+								groupShares.add(location, gsid);
+							}
+							groupSharesMap.remove(groupShare.gsid);
+							groupShare.gsid = gsid;
+							groupShare.time = time;
+							groupSharesMap.put(groupShare.gsid, groupShare);
+						}
+
+						@Override
+						public void modifyUI() {
+							MainActivity.instance.mMainMode.mGroupShareFragment
+									.notifyGroupShareViews();
+						}
+					});
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 
 			@Override
 			protected void unSuccess(JSONObject jData) {
-				Alert.removeLoading();
 				super.unSuccess(jData);
 			}
 		});
