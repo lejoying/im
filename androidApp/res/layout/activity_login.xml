@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context=".activity.LoginActivity" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        <ImageView
+            android:id="@+id/animateBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/login_background_1" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/loginOrRegister"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:layout_width="125dp"
+                android:layout_height="155dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="45dp"
+                android:background="@drawable/icon_star_text" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/loginOrRegisterButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" >
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="290dp"
+                android:layout_height="47dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_login_register_background"
+                android:text="登 录"
+                android:textColor="#fff"
+                android:textSize="21sp" />
+
+            <Button
+                android:id="@+id/registerButton"
+                android:layout_width="290dp"
+                android:layout_height="47dp"
+                android:layout_below="@+id/loginButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="19dp"
+                android:background="@drawable/button_login_register_background"
+                android:text="注 册"
+                android:textColor="#fff"
+                android:textSize="21sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="286dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/card_login_background_normal"
+        android:visibility="invisible" >
+
+        <TextView
+            android:id="@+id/leftTopText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textColor="#fff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/rightTopTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:padding="10dp"
+            android:textColor="@color/login_text_color"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/cardTopLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/leftTopText"
+            android:background="#fff" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="93dp"
+            android:layout_below="@+id/cardTopLine"
+            android:layout_margin="22dp"
+            android:background="@drawable/button_input_background_normal" >
+
+            <EditText
+                android:id="@+id/input1"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="#0000"
+                android:gravity="left|center_vertical"
+                android:inputType="none"
+                android:paddingLeft="10dp"
+                android:paddingRight="40dp"
+                android:singleLine="true"
+                android:textColor="#fff"
+                android:textColorHint="#8fff"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/inputLine"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/input1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#fff" />
+
+            <EditText
+                android:id="@+id/input2"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_below="@+id/inputLine"
+                android:background="#0000"
+                android:gravity="left|center_vertical"
+                android:inputType="none"
+                android:paddingLeft="10dp"
+                android:paddingRight="40dp"
+                android:singleLine="true"
+                android:textColor="#fff"
+                android:textColorHint="#8fff"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/clearInput1"
+                android:layout_width="40dp"
+                android:layout_height="46dp"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:paddingRight="20dp"
+                android:src="@drawable/input_clear"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/clearInput2"
+                android:layout_width="40dp"
+                android:layout_height="46dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:paddingRight="20dp"
+                android:src="@drawable/input_clear"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/mainButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/cardTopLine"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="153dp"
+            android:background="@drawable/button_card_background"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/leftBottomTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/mainButton"
+            android:layout_marginLeft="20dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:textColor="@color/login_text_color"
+            android:textSize="15sp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/rightBottomTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/mainButton"
+            android:layout_marginRight="20dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:textColor="@color/login_text_color"
+            android:textSize="15sp"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+</RelativeLayout>

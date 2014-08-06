@@ -1,0 +1,73 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="NoAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
+    </style>
+
+    <style name="CommonAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/translate_new</item>
+        <item name="android:activityOpenExitAnimation">@anim/translate_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/translate_back</item>
+        <item name="android:activityCloseExitAnimation">@anim/translate_finish</item>
+        <item name="android:taskOpenEnterAnimation">@anim/translate_new</item>
+        <item name="android:taskOpenExitAnimation">@anim/translate_out</item>
+        <item name="android:taskCloseEnterAnimation">@anim/translate_back</item>
+        <item name="android:taskCloseExitAnimation">@anim/translate_finish</item>
+    </style>
+
+    <style name="CommonAnimation2" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/new_translate_new</item>
+        <item name="android:activityOpenExitAnimation">@anim/new_translate_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/new_translate_back</item>
+        <item name="android:activityCloseExitAnimation">@anim/new_translate_finish</item>
+        <item name="android:taskOpenEnterAnimation">@anim/animation_null</item>
+        <item name="android:taskOpenExitAnimation">@anim/animation_null</item>
+        <item name="android:taskCloseEnterAnimation">@anim/animation_null</item>
+        <item name="android:taskCloseExitAnimation">@anim/animation_null</item>
+    </style>
+
+    <style name="Translucent" parent="android:Theme.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/NoAnimation</item>
+        <item name="android:windowBackground">@color/Transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="CommonStyle" parent="android:Theme.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/CommonAnimation2</item>
+    </style>
+
+    <style name="AlertInputDialog" parent="android:Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+</resources>

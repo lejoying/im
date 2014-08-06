@@ -38,7 +38,7 @@ public class Data {
 	}
 
 	public class Relationship {
-		public Map<String, Friend> friends = new HashMap<String, Friend>();
+		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
 
 		public List<String> circles = new ArrayList<String>();
 		public Map<String, Circle> circlesMap = new HashMap<String, Circle>();
