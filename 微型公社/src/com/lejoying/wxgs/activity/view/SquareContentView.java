@@ -20,17 +20,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.AbsListViewBaseActivity;
 import com.lejoying.wxgs.activity.ChatActivity;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.data.entity.SquareMessage;
 import com.lejoying.wxgs.app.data.entity.SquareMessage.Content;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 public class SquareContentView extends HorizontalScrollView {
 
@@ -63,6 +69,8 @@ public class SquareContentView extends HorizontalScrollView {
 
 	boolean isInIt;
 
+	DisplayImageOptions options;
+
 	public SquareContentView(Context context) {
 		super(context);
 		mContext = context;
@@ -76,6 +84,12 @@ public class SquareContentView extends HorizontalScrollView {
 	}
 
 	private void initialize() {
+		options = new DisplayImageOptions.Builder()
+				// .showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		removeAllViews();
 		mViewContainer = new RelativeLayout(mContext);
 		mViewContainerParmas = new LayoutParams(0, LayoutParams.MATCH_PARENT);
@@ -466,6 +480,8 @@ public class SquareContentView extends HorizontalScrollView {
 		SquareMessage message;
 		boolean isGenerated;
 
+		int requestImageCount = 0;
+
 		public ItemContent(Context context, int style, SquareMessage message) {
 			super(context);
 			this.style = style;
@@ -562,15 +578,18 @@ public class SquareContentView extends HorizontalScrollView {
 					default:
 						break;
 					}
-					app.fileHandler.getThumbnail(fileName, _style, width,
-							height, new FileResult() {
-
-								@Override
-								public void onResult(String where, Bitmap bitmap) {
-									contentImage.setImageBitmap(bitmap);
-
-								}
-							});
+					final int width0 = width;
+					final int height0 = height;
+					getFileImage(fileName, width0, height0);
+					// app.fileHandler.getThumbnail(fileName, _style, width,
+					// height, new FileResult() {
+					//
+					// @Override
+					// public void onResult(String where, Bitmap bitmap) {
+					// contentImage.setImageBitmap(bitmap);
+					//
+					// }
+					// });
 				}
 				if (content.voices.size() > 0) {
 					contentVoice.setImageBitmap(BitmapFactory.decodeResource(
@@ -598,6 +617,45 @@ public class SquareContentView extends HorizontalScrollView {
 					.substring(0, 6) + "..." : message.nickName;
 			nickName.setText(nickNames);
 			time.setText(convertTime(currentTime, message.time));
+		}
+
+		void getFileImage(final String fileName, final int width,
+				final int height) {
+			requestImageCount++;
+			AbsListViewBaseActivity.imageLoader.displayImage(
+					API.DOMAIN_HANDLEIMAGE + "images/" + fileName + "@" + width
+							/ 2 + "w_" + height / 2 + "h_1c_1e_100q",
+					contentImage, options, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view,
+								FailReason failReason) {
+							if (requestImageCount < 5) {
+								try {
+									Thread.sleep(3000);
+									getFileImage(fileName, width, height);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri,
+								View view, Bitmap loadedImage) {
+							// int height = (int)
+							// (loadedImage.getHeight() * (width /
+							// loadedImage
+							// .getWidth()));
+							// LinearLayout.LayoutParams params = new
+							// LinearLayout.LayoutParams(
+							// (int) width, height);
+							// imageView.setLayoutParams(params);
+						}
+					});
 		}
 
 		void saveThumbnailToLocal(final Bitmap bitmap, final String filename) {

@@ -112,8 +112,8 @@ public class GroupShare implements Serializable {
 				GroupShare gs = (GroupShare) o;
 				if (gsid.equals(gs.gsid) && type.equals(gs.type)
 						&& phone.equals(gs.phone) && time == gs.time
-						&& praiseusers.containsAll(gs.praiseusers)
-						&& comments.containsAll(gs.comments)
+//						&& praiseusers.containsAll(gs.praiseusers)
+//						&& comments.containsAll(gs.comments)
 						&& content.equals(gs.content)) {
 					flag = true;
 				}

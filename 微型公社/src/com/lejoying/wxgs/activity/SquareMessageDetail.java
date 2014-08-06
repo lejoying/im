@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -65,6 +66,9 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 public class SquareMessageDetail extends BaseActivity {
 	MainApplication app = MainApplication.getMainApplication();
@@ -110,6 +114,8 @@ public class SquareMessageDetail extends BaseActivity {
 	PopupWindow popWindow;
 
 	InputMethodManager inputMethodManager;
+
+	DisplayImageOptions options;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +197,12 @@ public class SquareMessageDetail extends BaseActivity {
 	}
 
 	public void initData() {
+		options = new DisplayImageOptions.Builder()
+				// .showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		// TODO Auto-generated method stub
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -222,33 +234,84 @@ public class SquareMessageDetail extends BaseActivity {
 			final int index = i;
 			detailContent.addView(imageView);
 			final String fileName = images.get(i);
-			app.fileHandler.getSquareDetailImage(fileName, (int) width,
-					new FileResult() {
+			File currentImageFile = new File(app.sdcardImageFolder, fileName);
+			boolean isFlag = false;
+			String path = "";
+			if (currentImageFile.exists()) {
+				BitmapFactory.Options boptions = new BitmapFactory.Options();
+				boptions.inJustDecodeBounds = true;
+				Bitmap bitmap = BitmapFactory.decodeFile(
+						currentImageFile.getAbsolutePath(), boptions);
+				if (bitmap != null) {
+					isFlag = true;
+				}
+			}
+			if (isFlag) {
+				path = "file://" + currentImageFile.getAbsolutePath();
+			} else {
+				path = API.DOMAIN_COMMONIMAGE + "images/" + fileName;
+			}
+			AbsListViewBaseActivity.imageLoader.displayImage(path, imageView,
+					options, new SimpleImageLoadingListener() {
 						@Override
-						public void onResult(String where, Bitmap bitmap) {
-							int height = (int) (bitmap.getHeight() * (width / bitmap
+						public void onLoadingStarted(String imageUri, View view) {
+						}
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view,
+								FailReason failReason) {
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri,
+								View view, Bitmap loadedImage) {
+							int height = (int) (loadedImage.getHeight() * (width / loadedImage
 									.getWidth()));
 							LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 									(int) width, height);
 							imageView.setLayoutParams(params);
-							imageView.setImageBitmap(bitmap);
-							// imageView.setOnClickListener(new
-							// OnClickListener() {
-							//
-							// @Override
-							// public void onClick(View v) {
-							// Intent intent = new Intent(
-							// SquareMessageDetail.this,
-							// PicAndVoiceDetailActivity.class);
-							// intent.putExtra("currentIndex", index);
-							// intent.putExtra("Activity", "Browse");
-							// intent.putStringArrayListExtra("content",
-							// (ArrayList<String>) images);
-							// startActivity(intent);
-							// }
-							// });
 						}
 					});
+			imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(SquareMessageDetail.this,
+							PicAndVoiceDetailActivity.class);
+					intent.putExtra("currentIndex", index);
+					intent.putExtra("Activity", "Browse");
+					intent.putStringArrayListExtra("content",
+							(ArrayList<String>) images);
+					startActivity(intent);
+				}
+			});
+			// app.fileHandler.getSquareDetailImage(fileName, (int) width,
+			// new FileResult() {
+			// @Override
+			// public void onResult(String where, Bitmap bitmap) {
+			// int height = (int) (bitmap.getHeight() * (width / bitmap
+			// .getWidth()));
+			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+			// (int) width, height);
+			// imageView.setLayoutParams(params);
+			// imageView.setImageBitmap(bitmap);
+			// // imageView.setOnClickListener(new
+			// // OnClickListener() {
+			// //
+			// // @Override
+			// // public void onClick(View v) {
+			// // Intent intent = new Intent(
+			// // SquareMessageDetail.this,
+			// // PicAndVoiceDetailActivity.class);
+			// // intent.putExtra("currentIndex", index);
+			// // intent.putExtra("Activity", "Browse");
+			// // intent.putStringArrayListExtra("content",
+			// // (ArrayList<String>) images);
+			// // startActivity(intent);
+			// // }
+			// // });
+			// }
+			// });
 			// imageView.setOnTouchListener(new OnTouchListener() {
 			//
 			// boolean flag = false;

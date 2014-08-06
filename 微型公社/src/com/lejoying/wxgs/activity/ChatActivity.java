@@ -41,6 +41,9 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.ImageMessageInfo;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.UploadFileSettings;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -91,7 +94,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
-public class ChatActivity extends Activity implements OnClickListener {
+public class ChatActivity extends AbsListViewBaseActivity implements
+		OnClickListener {
 
 	MainApplication app = MainApplication.getMainApplication();
 
@@ -184,7 +188,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	public int showFirstPosition;
 
-	public ListView chatContent;
+	// public ListView chatContent;
 
 	InputMethodManager imm;
 
@@ -195,6 +199,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 
 	RelativeLayout rl_parent;
 	String backGroundFileName = "";
+
+	DisplayImageOptions displayImageOptions;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -226,8 +232,15 @@ public class ChatActivity extends Activity implements OnClickListener {
 		height = dm.heightPixels;
 		width = dm.widthPixels;
 
+		displayImageOptions = new DisplayImageOptions.Builder()
+				// .showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
+
 		rl_parent = (RelativeLayout) findViewById(R.id.rl_parent);
-		chatContent = (ListView) findViewById(R.id.chatContent);
+		listView = (ListView) findViewById(R.id.chatContent);
 
 		if (headView == null) {
 			AbsListView.LayoutParams params = new AbsListView.LayoutParams(
@@ -239,8 +252,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 		if (footerView == null) {
 			footerView = new View(this);
 		}
-		chatContent.addHeaderView(headView);
-		chatContent.addFooterView(footerView);
+		((ListView) listView).addHeaderView(headView);
+		((ListView) listView).addFooterView(footerView);
 
 		iv_send = findViewById(R.id.iv_send);
 		iv_more_selecting = (ImageView) findViewById(R.id.iv_more_selecting);
@@ -337,11 +350,11 @@ public class ChatActivity extends Activity implements OnClickListener {
 		// } else if (mStatus == CHAT_GROUP) {
 		// mAdapter = new GroupChatAdapter();
 		// }
-		chatContent.setAdapter(mAdapter);
+		((ListView) listView).setAdapter(mAdapter);
 
-		chatContent.setSelection(mAdapter.getCount() - 1);
+		listView.setSelection(mAdapter.getCount() - 1);
 
-		chatContent.setOnScrollListener(new OnScrollListener() {
+		listView.setOnScrollListener(new OnScrollListener() {
 			boolean isFirst = true;
 
 			@Override
@@ -357,7 +370,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 					showFirstPosition = showFirstPosition > 10 ? showFirstPosition - 10
 							: 0;
 					mAdapter.notifyDataSetChanged();
-					chatContent.setSelection(old - showFirstPosition);
+					listView.setSelection(old - showFirstPosition);
 				}
 				isFirst = false;
 			}
@@ -401,7 +414,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 				&& rl_chatbottom.getVisibility() == View.GONE) {
 			groupTopBar.setVisibility(View.GONE);
 			find_record.setVisibility(View.VISIBLE);
-			chatContent.setEnabled(false);
+			listView.setEnabled(false);
 		} else {
 			finish();
 		}
@@ -567,8 +580,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 						app.UIHandler.post(new Runnable() {
 							@Override
 							public void run() {
-								chatContent.setSelection(chatContent
-										.getBottom());
+								listView.setSelection(listView.getBottom());
 							}
 						});
 					} catch (InterruptedException e) {
@@ -692,7 +704,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 			rl_chatbottom.setVisibility(View.VISIBLE);
 			if (iv_infomation.getVisibility() == View.GONE)
 				iv_infomation.setVisibility(View.VISIBLE);
-			chatContent.setEnabled(true);
+			listView.setEnabled(true);
 			break;
 		case R.id.findrecord_sel:
 			et_findrecord.setText("");
@@ -1230,7 +1242,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 				}
 			}
 			super.notifyDataSetChanged();
-			chatContent.setSelection(mAdapter.getCount() - 1);
+			listView.setSelection(mAdapter.getCount() - 1);
 		}
 
 		@Override
@@ -1500,10 +1512,11 @@ public class ChatActivity extends Activity implements OnClickListener {
 					final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 							(int) (width * 0.493055556f),
 							(int) (height * 0.1640625f));
-					params.topMargin = (int) ((height * 0.01171875f) / 2);
-					params.leftMargin = (int) (width * 0.01388889f);
-					params.rightMargin = (int) (width * 0.01388889f);
-					params.bottomMargin = (int) ((height * 0.01171875f) / 2);
+					// params.topMargin = (int) ((height * 0.01171875f) / 2);
+					// params.leftMargin = (int) (width * 0.01388889f);
+					// params.rightMargin = (int) (width * 0.01388889f);
+					// params.bottomMargin = (int) ((height * 0.01171875f) / 2);
+					// messageHolder.ll_image.setBackgroundColor(Color.BLUE);
 					for (int i = 0; i < message.content.size(); i++) {
 						String mImageFileName;
 						final int index = i;
@@ -1533,28 +1546,73 @@ public class ChatActivity extends Activity implements OnClickListener {
 								startActivity(intent);
 							}
 						});
-						if (softBitmaps.get(mImageFileName) != null) {
-							iv_image.setImageBitmap(softBitmaps.get(
-									mImageFileName).get());
-						} else {
-							app.fileHandler
-									.getSquareDetailImage(
-											mImageFileName,
-											(width * 0.493055556f - (width * 0.01388889f) * 2),
-											new FileResult() {
-												@Override
-												public void onResult(
-														String where,
-														Bitmap bitmap) {
-													SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
-															bitmap);
-													softBitmaps.put(
-															imageFilename, bm);
-													iv_image.setImageBitmap(bm
-															.get());
-												}
-											});
-						}
+
+						imageLoader.displayImage(API.DOMAIN_HANDLEIMAGE
+								+ "images/" + mImageFileName + "@"
+								+ (int) (width * 0.493055556f) / 2 + "w_"
+								+ (int) (height * 0.1640625f) / 2
+								+ "h_1c_1e_100q", iv_image,
+								displayImageOptions,
+								new ImageLoadingListener() {
+
+									@Override
+									public void onLoadingStarted(String arg0,
+											View arg1) {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void onLoadingFailed(String arg0,
+											View arg1, FailReason arg2) {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void onLoadingComplete(String arg0,
+											View arg1, Bitmap loadedImage) {
+										// int height = (int) (loadedImage
+										// .getHeight() * (((int) (width *
+										// 0.493055556f) / 2) / loadedImage
+										// .getWidth()));
+										LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+												(int) (width * 0.493055556f),
+												(int) (height * 0.1640625f));
+										// iv_image.setBackgroundColor(Color.BLUE);
+										iv_image.setLayoutParams(params);
+									}
+
+									@Override
+									public void onLoadingCancelled(String arg0,
+											View arg1) {
+										// TODO Auto-generated method stub
+
+									}
+								});
+
+						// if (softBitmaps.get(mImageFileName) != null) {
+						// iv_image.setImageBitmap(softBitmaps.get(
+						// mImageFileName).get());
+						// } else {
+						// app.fileHandler
+						// .getSquareDetailImage(
+						// mImageFileName,
+						// (width * 0.493055556f - (width * 0.01388889f) * 2),
+						// new FileResult() {
+						// @Override
+						// public void onResult(
+						// String where,
+						// Bitmap bitmap) {
+						// SoftReference<Bitmap> bm = new SoftReference<Bitmap>(
+						// bitmap);
+						// softBitmaps.put(
+						// imageFilename, bm);
+						// iv_image.setImageBitmap(bm
+						// .get());
+						// }
+						// });
+						// }
 					}
 
 				}
@@ -1807,8 +1865,8 @@ public class ChatActivity extends Activity implements OnClickListener {
 					find_record.setVisibility(View.INVISIBLE);
 					groupTopBar.setVisibility(View.VISIBLE);
 					iv_infomation.setVisibility(View.GONE);
-					chatContent.setSelection(location);
-					chatContent.setEnabled(true);
+					listView.setSelection(location);
+					listView.setEnabled(true);
 					if (imm.isActive()) {
 						imm.hideSoftInputFromWindow(ChatActivity.this
 								.getCurrentFocus().getWindowToken(),
@@ -1865,7 +1923,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 			public void modifyUI() {
 				// mMainModeManager.mChatMessagesFragment.notifyViews();
 				mAdapter.notifyDataSetChanged();
-				chatContent.setSelection(mAdapter.getCount() - 1);
+				listView.setSelection(mAdapter.getCount() - 1);
 				// if (mMainModeManager.mCirclesFragment.isAdded()) {
 				// mMainModeManager.mCirclesFragment.notifyViews();
 				// }
@@ -2037,7 +2095,7 @@ public class ChatActivity extends Activity implements OnClickListener {
 			rl_chatbottom.setVisibility(View.GONE);
 			find_record.setVisibility(View.VISIBLE);
 			et_findrecord.setText("");
-			chatContent.setEnabled(false);
+			listView.setEnabled(false);
 			if (mStatus == CHAT_GROUP) {
 				Group group = app.data.groupsMap.get(mNowChatGroup.gid + "");
 				if (group == null) {

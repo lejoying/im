@@ -132,10 +132,12 @@ shareManage.sendshare = function (data, response) {
                 }));
                 response.end();
             } else {
+                var shareData = results.pop().share.data;
                 console.log("1");
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享成功",
-                    time: new Date().getTime()
+                    time: shareData.time,
+                    gsid: shareData.gsid
                 }));
                 response.end();
             }

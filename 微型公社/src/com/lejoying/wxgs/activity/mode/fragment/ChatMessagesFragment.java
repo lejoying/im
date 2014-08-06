@@ -245,31 +245,37 @@ public class ChatMessagesFragment extends BaseFragment {
 				} else if (chatType == CHAT_TYPE_GROUP) {
 					chatName = chatGroup.name + "(群组)";
 					chatHeadImgName = chatGroup.icon;
-					lastMessage = chatGroup.messages.get(chatGroup.messages
-							.size() - 1);
+					if (chatGroup.messages.size() - 1 >= 0) {
+						lastMessage = chatGroup.messages.get(chatGroup.messages
+								.size() - 1);
+					}
 					notread = chatGroup.notReadMessagesCount;
 				}
-				if (lastMessage == null)
-					return convertView;
-				chatMessageHolder.lastChatTimeView
-						.setText(TimeUtils.getChatMessageListTime(Long
-								.valueOf(lastMessage.time)));
 				chatMessageHolder.nickNameView.setText(chatName);
-				if (lastMessage.contentType.equals("text")) {
-					String mLasastChatMessage;
-					try {
-						mLasastChatMessage = lastMessage.content.get(0);
-					} catch (Exception e) {
-						mLasastChatMessage = lastMessage.content.toString();
+				if (lastMessage != null) {
+					chatMessageHolder.lastChatTimeView.setText(TimeUtils
+							.getChatMessageListTime(Long
+									.valueOf(lastMessage.time)));
+					if (lastMessage.contentType.equals("text")) {
+						String mLasastChatMessage;
+						try {
+							mLasastChatMessage = lastMessage.content.get(0);
+						} catch (Exception e) {
+							mLasastChatMessage = lastMessage.content.toString();
+						}
+						chatMessageHolder.lastChatView
+								.setText(mLasastChatMessage);
+					} else if (lastMessage.contentType.equals("image")) {
+						chatMessageHolder.lastChatView
+								.setText(getString(R.string.text_picture));
+					} else if (lastMessage.contentType.equals("voice")) {
+						chatMessageHolder.lastChatView.setText(getActivity()
+								.getResources().getString(R.string.text_voice));
 					}
-					chatMessageHolder.lastChatView.setText(mLasastChatMessage);
-				} else if (lastMessage.contentType.equals("image")) {
-					chatMessageHolder.lastChatView
-							.setText(getString(R.string.text_picture));
-				} else if (lastMessage.contentType.equals("voice")) {
-					chatMessageHolder.lastChatView.setText(getActivity()
-							.getResources().getString(R.string.text_voice));
+				} else {
+					chatMessageHolder.lastChatView.setText("");
 				}
+
 				final String headFileName = chatHeadImgName;
 				final ChatMessageHolder chatMessageHolder0 = chatMessageHolder;
 				app.fileHandler.getHeadImage(headFileName, sex,

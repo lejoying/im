@@ -64,7 +64,7 @@ squareManage.sendsquaremessage = function (data, response) {
         function sendSquareMessage(content) {
             var time = new Date().getTime();
             var message = {
-                gmid: time + "",
+                gmid: time + "" + phone,
                 sendType: "square",
                 messageType: JSON.parse(content.messageType),
                 contentType: content.contentType,
@@ -102,6 +102,7 @@ squareManage.sendsquaremessage = function (data, response) {
                             notifySquareMessageList.push(message);
                             response.write(JSON.stringify({
                                 "提示信息": "发布广播成功",
+                                gmid: message.gmid,
                                 time: message.time
                             }));
                             response.end();
