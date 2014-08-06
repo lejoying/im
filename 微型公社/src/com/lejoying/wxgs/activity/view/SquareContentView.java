@@ -480,6 +480,8 @@ public class SquareContentView extends HorizontalScrollView {
 		SquareMessage message;
 		boolean isGenerated;
 
+		int requestImageCount = 0;
+
 		public ItemContent(Context context, int style, SquareMessage message) {
 			super(context);
 			this.style = style;
@@ -578,52 +580,7 @@ public class SquareContentView extends HorizontalScrollView {
 					}
 					final int width0 = width;
 					final int height0 = height;
-					AbsListViewBaseActivity.imageLoader.displayImage(
-							API.DOMAIN_HANDLEIMAGE + "images/" + fileName + "@"
-									+ width / 2 + "w_" + height / 2
-									+ "h_1c_1e_100q", contentImage, options,
-							new SimpleImageLoadingListener() {
-								@Override
-								public void onLoadingStarted(String imageUri,
-										View view) {
-								}
-
-								@Override
-								public void onLoadingFailed(String imageUri,
-										View view, FailReason failReason) {
-									try {
-										Thread.sleep(3000);
-										AbsListViewBaseActivity.imageLoader
-												.displayImage(
-														API.DOMAIN_HANDLEIMAGE
-																+ "images/"
-																+ fileName
-																+ "@"
-																+ width0
-																/ 2
-																+ "w_"
-																+ height0
-																/ 2
-																+ "h_1c_1e_100q",
-														contentImage, options);
-									} catch (InterruptedException e) {
-										e.printStackTrace();
-									}
-								}
-
-								@Override
-								public void onLoadingComplete(String imageUri,
-										View view, Bitmap loadedImage) {
-									// int height = (int)
-									// (loadedImage.getHeight() * (width /
-									// loadedImage
-									// .getWidth()));
-									// LinearLayout.LayoutParams params = new
-									// LinearLayout.LayoutParams(
-									// (int) width, height);
-									// imageView.setLayoutParams(params);
-								}
-							});
+					getFileImage(fileName, width0, height0);
 					// app.fileHandler.getThumbnail(fileName, _style, width,
 					// height, new FileResult() {
 					//
@@ -660,6 +617,45 @@ public class SquareContentView extends HorizontalScrollView {
 					.substring(0, 6) + "..." : message.nickName;
 			nickName.setText(nickNames);
 			time.setText(convertTime(currentTime, message.time));
+		}
+
+		void getFileImage(final String fileName, final int width,
+				final int height) {
+			requestImageCount++;
+			AbsListViewBaseActivity.imageLoader.displayImage(
+					API.DOMAIN_HANDLEIMAGE + "images/" + fileName + "@" + width
+							/ 2 + "w_" + height / 2 + "h_1c_1e_100q",
+					contentImage, options, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view,
+								FailReason failReason) {
+							if (requestImageCount < 5) {
+								try {
+									Thread.sleep(3000);
+									getFileImage(fileName, width, height);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri,
+								View view, Bitmap loadedImage) {
+							// int height = (int)
+							// (loadedImage.getHeight() * (width /
+							// loadedImage
+							// .getWidth()));
+							// LinearLayout.LayoutParams params = new
+							// LinearLayout.LayoutParams(
+							// (int) width, height);
+							// imageView.setLayoutParams(params);
+						}
+					});
 		}
 
 		void saveThumbnailToLocal(final Bitmap bitmap, final String filename) {
