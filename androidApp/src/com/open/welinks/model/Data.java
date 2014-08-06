@@ -7,13 +7,24 @@ import java.util.Map;
 
 
 public class Data {
-	UserInformation userInformation = new UserInformation();
-	Relationship relationship = new Relationship();
+	
+	public static Data data;
 
-	static public class UserInformation {
-		User user = new User();
+	public static Data getInstance() {
+		if (data == null) {
+			data = new Data();
+		}
+		return data;
+	}
+	
+	
+	public UserInformation userInformation;
+	public Relationship relationship;
 
-		static public class User {
+	public class UserInformation {
+		public User currentUser;
+
+		public class User {
 			public String userBackground = "Back";
 			public String sex = "";
 			public int id;
@@ -24,10 +35,9 @@ public class Data {
 			public String accessKey = "";
 			public String flag = "none";
 		}
-
 	}
 
-	static public class Relationship {
+	public class Relationship {
 		public Map<String, Friend> friends = new HashMap<String, Friend>();
 
 		public List<String> circles = new ArrayList<String>();
@@ -37,7 +47,7 @@ public class Data {
 		public List<String> groups = new ArrayList<String>();
 		public Map<String, Group> groupsMap = new HashMap<String, Group>();
 
-		static public class Friend {
+		public class Friend {
 			public int id;
 			public String sex = "";
 			public String phone = "";
@@ -55,14 +65,13 @@ public class Data {
 			public String alias = "";
 		}
 
-		static public class Circle {
+		public class Circle {
 			public int rid;
 			public String name = "";
 			public List<String> friends = new ArrayList<String>();
 		}
 		
-
-		static public class Group {
+		public class Group {
 			public int gid;
 			public String icon = "";
 			public String name = "";
@@ -76,5 +85,4 @@ public class Data {
 			public List<String> members = new ArrayList<String>();
 		}
 	}
-
 }
