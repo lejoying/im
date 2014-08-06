@@ -15,14 +15,10 @@
  *******************************************************************************/
 package com.lejoying.wxgs.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.AbsListView;
 
-import com.lejoying.wxgs.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
@@ -33,7 +29,7 @@ import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
  */
 public class AbsListViewBaseActivity extends FragmentActivity {
 
-	protected ImageLoader imageLoader = ImageLoader.getInstance();
+	public static ImageLoader imageLoader = ImageLoader.getInstance();
 
 	protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";
 	protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";

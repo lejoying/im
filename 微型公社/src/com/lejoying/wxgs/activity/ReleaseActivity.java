@@ -782,6 +782,10 @@ public class ReleaseActivity extends BaseActivity implements OnClickListener {
 							squareMessage.time = time;
 							squareMessagesMap.put(squareMessage.gmid,
 									squareMessage);
+						}
+
+						@Override
+						public void modifyUI() {
 							MainActivity.instance.mMainMode.mSquareFragment
 									.notifyViews();
 						}

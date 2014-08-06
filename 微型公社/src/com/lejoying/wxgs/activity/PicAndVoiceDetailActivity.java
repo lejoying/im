@@ -11,6 +11,7 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -39,10 +40,11 @@ import com.lejoying.wxgs.activity.view.RecordView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecordView.ProgressListener;
 import com.lejoying.wxgs.activity.view.SampleView;
 import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
+import com.lejoying.wxgs.app.data.API;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
-public class PicAndVoiceDetailActivity extends Activity implements
-		OnClickListener, OnTouchListener {
+public class PicAndVoiceDetailActivity extends AbsListViewBaseActivity
+		implements OnClickListener, OnTouchListener {
 
 	MainApplication app = MainApplication.getMainApplication();
 	RelativeLayout ll_picandvoice_navigation;
@@ -71,6 +73,8 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	List<MediaPlayer> players = new ArrayList<MediaPlayer>();
 
 	GestureDetector backViewDetector;
+
+	DisplayImageOptions displayImageOptions;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -287,6 +291,12 @@ public class PicAndVoiceDetailActivity extends Activity implements
 	}
 
 	void initData() {
+		displayImageOptions = new DisplayImageOptions.Builder()
+				// .showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		mediaTotal = 0;
 		mainListViews = new ArrayList<View>();
 		bitmaps = new Bitmaps();
@@ -410,19 +420,41 @@ public class PicAndVoiceDetailActivity extends Activity implements
 			}
 		} else if (activity.equals("Browse")) {
 			for (int i = 0; i < content.size(); i++) {
-				final int location = i;
+//				final int location = i;
 				mediaTotal++;
 				LinearLayout superView = (LinearLayout) mInflater.inflate(
 						R.layout.view_child, null);
 				final ImageView iv = (ImageView) superView
 						.findViewById(R.id.iv_child);
-				app.fileHandler.getImage(content.get(i), new FileResult() {
-					@Override
-					public void onResult(String where, Bitmap bitmap) {
-						bitmaps.put(content.get(location), bitmap);
-						iv.setImageBitmap(bitmaps.get(content.get(location)));
+				String imageFileName = content.get(i);
+				File currentImageFile = new File(app.sdcardImageFolder,
+						imageFileName);
+				boolean isFlag = false;
+				String path = "";
+				if (currentImageFile.exists()) {
+					BitmapFactory.Options boptions = new BitmapFactory.Options();
+					boptions.inJustDecodeBounds = true;
+					Bitmap bitmap = BitmapFactory.decodeFile(
+							currentImageFile.getAbsolutePath(), boptions);
+					if (bitmap != null) {
+						isFlag = true;
 					}
-				});
+				}
+				if (isFlag) {
+					path = "file://" + currentImageFile.getAbsolutePath();
+				} else {
+					path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
+				}
+
+				imageLoader.displayImage(path, iv, displayImageOptions);
+
+				// app.fileHandler.getImage(content.get(i), new FileResult() {
+				// @Override
+				// public void onResult(String where, Bitmap bitmap) {
+				// bitmaps.put(content.get(location), bitmap);
+				// iv.setImageBitmap(bitmaps.get(content.get(location)));
+				// }
+				// });
 				mainListViews.add(superView);
 			}
 		}
@@ -553,7 +585,7 @@ class MyPageAdapter extends PagerAdapter {
 
 	@Override
 	public void destroyItem(View view, int position, Object obj) {
-		((ViewPager) view).removeView((View)obj);
+		((ViewPager) view).removeView((View) obj);
 	}
 
 	@Override

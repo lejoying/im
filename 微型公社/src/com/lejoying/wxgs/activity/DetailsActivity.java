@@ -56,7 +56,6 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupSharePraisesFragment;
-import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
@@ -81,7 +80,6 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 public class DetailsActivity extends AbsListViewBaseActivity implements
@@ -130,7 +128,7 @@ public class DetailsActivity extends AbsListViewBaseActivity implements
 
 	String gsid = "";
 
-	DisplayImageOptions options;
+	DisplayImageOptions displayImageOptions;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -340,8 +338,8 @@ public class DetailsActivity extends AbsListViewBaseActivity implements
 	}
 
 	private void initData() {
-		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.ic_stub)
+		displayImageOptions = new DisplayImageOptions.Builder()
+				// .showImageOnLoading(R.drawable.ic_stub)
 				.showImageForEmptyUri(R.drawable.ic_empty)
 				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
 				.cacheOnDisk(true).considerExifParams(true)
@@ -429,9 +427,26 @@ public class DetailsActivity extends AbsListViewBaseActivity implements
 			// (int) width, Integer.MAX_VALUE);
 			// imageView.setLayoutParams(params);
 			ll_detailContent.addView(imageView);
-
-			imageLoader.displayImage(API.DOMAIN_COMMONIMAGE + "images/"
-					+ images.get(i), imageView, options,
+			String imageFileName = images.get(i);
+			File currentImageFile = new File(app.sdcardImageFolder,
+					imageFileName);
+			boolean isFlag = false;
+			String path = "";
+			if (currentImageFile.exists()) {
+				BitmapFactory.Options boptions = new BitmapFactory.Options();
+				boptions.inJustDecodeBounds = true;
+				Bitmap bitmap = BitmapFactory.decodeFile(
+						currentImageFile.getAbsolutePath(), boptions);
+				if (bitmap != null) {
+					isFlag = true;
+				}
+			}
+			if (isFlag) {
+				path = "file://" + currentImageFile.getAbsolutePath();
+			} else {
+				path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
+			}
+			imageLoader.displayImage(path, imageView, displayImageOptions,
 					new SimpleImageLoadingListener() {
 						@Override
 						public void onLoadingStarted(String imageUri, View view) {
@@ -452,6 +467,19 @@ public class DetailsActivity extends AbsListViewBaseActivity implements
 							imageView.setLayoutParams(params);
 						}
 					});
+			imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(DetailsActivity.this,
+							PicAndVoiceDetailActivity.class);
+					intent.putExtra("currentIndex", index);
+					intent.putExtra("Activity", "Browse");
+					intent.putStringArrayListExtra("content",
+							(ArrayList<String>) images);
+					startActivity(intent);
+				}
+			});
 
 			// app.fileHandler.getSquareDetailImage(images.get(i), (int) width,
 			// new FileResult() {
