@@ -42,5 +42,35 @@ public class SquareMessage implements Serializable {
 		public void addVoice(String voiceName) {
 			this.voices.add(voiceName);
 		}
+
+		private boolean containsAll(Content c) {
+			boolean flag = false;
+			if (text.equals(c.text) && images.containsAll(c.images)
+					&& voices.containsAll(c.voices)) {
+				flag = true;
+			}
+			return flag;
+		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		boolean flag = false;
+		if (o != null) {
+			try {
+				SquareMessage m = (SquareMessage) o;
+
+				if (content.containsAll(m.content) && time == (m.time)
+						&& sendType.equals(m.sendType) && gmid.equals(m.gmid)
+						&& contentType.equals(m.contentType)
+						&& messageTypes.containsAll(m.messageTypes)
+						&& phone.equals(m.phone) && nickName.equals(m.nickName)) {
+					flag = true;
+				}
+			} catch (Exception e) {
+
+			}
+		}
+		return flag;
 	}
 }

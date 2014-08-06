@@ -34,9 +34,13 @@ import com.lejoying.wxgs.activity.view.RecoderVoiceView.PlayButtonClickListener;
 import com.lejoying.wxgs.activity.view.RecoderVoiceView.ProgressListener;
 import com.lejoying.wxgs.activity.view.ReleaseEditText;
 import com.lejoying.wxgs.activity.view.widget.Alert;
-import com.lejoying.wxgs.activity.view.widget.Alert.OnLoadingCancelListener;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.data.entity.Group;
+import com.lejoying.wxgs.app.data.entity.GroupShare;
+import com.lejoying.wxgs.app.data.entity.GroupShare.VoiceContent;
+import com.lejoying.wxgs.app.handler.DataHandler.Modification;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 import com.lejoying.wxgs.app.handler.OSSFileHandler;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileMessageInfoInterface;
@@ -248,12 +252,40 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 			Alert.showMessage("声文分享内容不完整");
 			return;
 		}
-		Alert.showLoading(new OnLoadingCancelListener() {
+		finish();
+		// Alert.showLoading(new OnLoadingCancelListener() {
+		// @Override
+		// public void loadingCancel() {
+		// System.out.println("loading ...send message");
+		// }
+		// });
+		final GroupShare mGroupsGroupShare = new GroupShare();
+
+		mGroupsGroupShare.gsid = new Date().getTime() + "";
+		mGroupsGroupShare.phone = app.data.user.phone;
+		mGroupsGroupShare.type = "voicetext";
+		mGroupsGroupShare.mType = GroupShare.MESSAGE_TYPE_VOICETEXT;
+		mGroupsGroupShare.time = new Date().getTime();
+		mGroupsGroupShare.content.text = messageContent;
+
+		app.dataHandler.exclude(new Modification() {
+
 			@Override
-			public void loadingCancel() {
-				System.out.println("loading ...send message");
+			public void modifyData(Data data) {
+				Group group = data.groupsMap
+						.get(GroupShareFragment.mCurrentGroupShareID);
+				group.groupShares.add(0, mGroupsGroupShare.gsid);
+				group.groupSharesMap.put(mGroupsGroupShare.gsid,
+						mGroupsGroupShare);
+			}
+
+			@Override
+			public void modifyUI() {
+				MainActivity.instance.mMainMode.mGroupShareFragment
+						.notifyGroupShareViews();
 			}
 		});
+
 		final JSONArray messageJsonArray = new JSONArray();
 		JSONObject contentObject = new JSONObject();
 		try {
@@ -279,17 +311,21 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 						imageMessageInfo.fileName);
 				if (fromFile.exists()) {
 					fromFile.renameTo(toFile);
+					VoiceContent voiceContent = new VoiceContent();
+					voiceContent.time = voiceTime;
+					voiceContent.fileName = imageMessageInfo.fileName;
+					mGroupsGroupShare.content.addVoice(voiceContent);
 				}
 				checkImage(imageMessageInfo, "audio/x-mei-aac",
 						app.sdcardVoiceFolder.getAbsolutePath(), "voice",
-						messageJsonArray);
+						messageJsonArray, mGroupsGroupShare);
 			}
 		});
 	}
 
 	public void checkImage(final ImageMessageInfo imageMessageInfo,
 			final String contentType, final String path, final String fileType,
-			final JSONArray selectedImages) {
+			final JSONArray selectedImages, final GroupShare mGroupsGroupShare) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -315,7 +351,8 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 									.put("detail", imageMessageInfo.fileName);
 							imageObject.put("time", voiceTime);
 							selectedImages.put(imageObject);
-							sendMessage("voicetext", selectedImages.toString());
+							sendMessage("voicetext", selectedImages.toString(),
+									mGroupsGroupShare);
 						}
 					} else {
 
@@ -350,7 +387,8 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 										e.printStackTrace();
 									}
 									sendMessage("voicetext",
-											selectedImages.toString());
+											selectedImages.toString(),
+											mGroupsGroupShare);
 								}
 							}
 						});
@@ -362,7 +400,8 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 		});
 	}
 
-	void sendMessage(final String contentType, final String content) {
+	void sendMessage(final String contentType, final String content,
+			final GroupShare mGroupsGroupShare) {
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -373,13 +412,48 @@ public class ReleaseVoiceActivity extends Activity implements OnClickListener,
 
 			@Override
 			public void success(JSONObject jData) {
-				Alert.removeLoading();
-				finish();
+				// Alert.removeLoading();
+				// finish();
+				try {
+					final String gsid = jData.getString("gsid");
+					final long time = jData.getLong("time");
+					app.dataHandler.exclude(new Modification() {
+
+						@Override
+						public void modifyData(Data data) {
+							Group group = data.groupsMap
+									.get(GroupShareFragment.mCurrentGroupShareID);
+
+							int index = group.groupShares
+									.indexOf(mGroupsGroupShare.gsid);
+
+							group.groupShares.remove(index);
+							group.groupSharesMap.remove(mGroupsGroupShare.gsid);
+
+							mGroupsGroupShare.gsid = gsid;
+							mGroupsGroupShare.time = time;
+
+							group.groupShares
+									.add(index, mGroupsGroupShare.gsid);
+							group.groupSharesMap.put(mGroupsGroupShare.gsid,
+									mGroupsGroupShare);
+						}
+
+						@Override
+						public void modifyUI() {
+							MainActivity.instance.mMainMode.mGroupShareFragment
+									.notifyGroupShareViews();
+						}
+					});
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			@Override
 			protected void unSuccess(JSONObject jData) {
-				Alert.removeLoading();
+				// Alert.removeLoading();
 				super.unSuccess(jData);
 			}
 		});

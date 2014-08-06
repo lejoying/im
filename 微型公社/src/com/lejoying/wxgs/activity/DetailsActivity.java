@@ -56,7 +56,6 @@ import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupSharePraisesFragment;
-import com.lejoying.wxgs.activity.mode.fragment.ModifyFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.utils.ExpressionUtil;
 import com.lejoying.wxgs.activity.utils.TimeUtils;
@@ -79,8 +78,12 @@ import com.lejoying.wxgs.app.handler.OSSFileHandler.FileInterface;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileResult;
 import com.lejoying.wxgs.app.handler.OSSFileHandler.FileSettings;
 import com.lejoying.wxgs.app.parser.JSONParser;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-public class DetailsActivity extends BaseActivity implements OnClickListener {
+public class DetailsActivity extends AbsListViewBaseActivity implements
+		OnClickListener {
 	MainApplication app = MainApplication.getMainApplication();
 	InputMethodManager inputMethodManager;
 	FragmentManager mFragmentManager;
@@ -124,6 +127,8 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	static Map<String, String> expressionFaceMap = new HashMap<String, String>();
 
 	String gsid = "";
+
+	DisplayImageOptions displayImageOptions;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -333,6 +338,12 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 	}
 
 	private void initData() {
+		displayImageOptions = new DisplayImageOptions.Builder()
+				// .showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		inflater = getLayoutInflater();
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		handler = new Handler();
@@ -408,38 +419,96 @@ public class DetailsActivity extends BaseActivity implements OnClickListener {
 				}
 			});
 			ll_detailContent.addView(voteTv, btParams);
+
 		}
 		for (int i = 0; i < images.size(); i++) {
 			final int index = i;
 			final ImageView imageView = new ImageView(this);
+			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+			// (int) width, Integer.MAX_VALUE);
+			// imageView.setLayoutParams(params);
 			ll_detailContent.addView(imageView);
-			app.fileHandler.getSquareDetailImage(images.get(i), (int) width,
-					new FileResult() {
+			String imageFileName = images.get(i);
+			File currentImageFile = new File(app.sdcardImageFolder,
+					imageFileName);
+			boolean isFlag = false;
+			String path = "";
+			if (currentImageFile.exists()) {
+				BitmapFactory.Options boptions = new BitmapFactory.Options();
+				boptions.inJustDecodeBounds = true;
+				Bitmap bitmap = BitmapFactory.decodeFile(
+						currentImageFile.getAbsolutePath(), boptions);
+				if (boptions.outWidth > 0) {
+					isFlag = true;
+				}
+			}
+			if (isFlag) {
+				path = "file://" + currentImageFile.getAbsolutePath();
+			} else {
+				path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
+			}
+			imageLoader.displayImage(path, imageView, displayImageOptions,
+					new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
 
 						@Override
-						public void onResult(String where, Bitmap bitmap) {
-							int height = (int) (bitmap.getHeight() * (width / bitmap
+						public void onLoadingFailed(String imageUri, View view,
+								FailReason failReason) {
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri,
+								View view, Bitmap loadedImage) {
+							int height = (int) (loadedImage.getHeight() * (width / loadedImage
 									.getWidth()));
 							LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 									(int) width, height);
 							imageView.setLayoutParams(params);
-							imageView.setImageBitmap(bitmap);
-							imageView.setOnClickListener(new OnClickListener() {
-
-								@Override
-								public void onClick(View v) {
-									Intent intent = new Intent(
-											DetailsActivity.this,
-											PicAndVoiceDetailActivity.class);
-									intent.putExtra("currentIndex", index);
-									intent.putExtra("Activity", "Browse");
-									intent.putStringArrayListExtra("content",
-											(ArrayList<String>) images);
-									startActivity(intent);
-								}
-							});
 						}
 					});
+			imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(DetailsActivity.this,
+							PicAndVoiceDetailActivity.class);
+					intent.putExtra("currentIndex", index);
+					intent.putExtra("Activity", "Browse");
+					intent.putStringArrayListExtra("content",
+							(ArrayList<String>) images);
+					startActivity(intent);
+				}
+			});
+
+			// app.fileHandler.getSquareDetailImage(images.get(i), (int) width,
+			// new FileResult() {
+			//
+			// @Override
+			// public void onResult(String where, Bitmap bitmap) {
+			// int height = (int) (bitmap.getHeight() * (width / bitmap
+			// .getWidth()));
+			// LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+			// (int) width, height);
+			// imageView.setLayoutParams(params);
+			// imageView.setImageBitmap(bitmap);
+			// imageView.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// Intent intent = new Intent(
+			// DetailsActivity.this,
+			// PicAndVoiceDetailActivity.class);
+			// intent.putExtra("currentIndex", index);
+			// intent.putExtra("Activity", "Browse");
+			// intent.putStringArrayListExtra("content",
+			// (ArrayList<String>) images);
+			// startActivity(intent);
+			// }
+			// });
+			// }
+			// });
 		}
 		for (final VoiceContent voiceContent : voices) {
 			final RecoderVoiceView recoderVoiceView = new RecoderVoiceView(this);

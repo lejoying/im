@@ -20,19 +20,21 @@ var pvkeyStr0 = RSA.RSAKeyStr("10f540525e6d89c801e5aae681a0a8fa33c437d6c92013b5d
 var pvkey0 = RSA.RSAKey(pvkeyStr0);
 //sms.createsub("coolspan@sina.cn");此子账户已创建
 var sms_power = true;
-//sms.sendMsg("15210721344","qiaoxiaosong",function(data){console.log(data+"--");});
+//sms.sendMsg("15210721344", "qiaoxiaosong", function (data) {
+//    console.log(data + "--");
+//});
 var accountID = -1;
 var redis = require("redis");
 var client = redis.createClient("6379", "127.0.0.1");
 var IDclient = redis.createClient("6379", "115.28.51.197");
 IDclient.get("ID", function (err, reply) {
     if (err != null) {
-        console.error(err+"as");
+        console.error(err + "as");
         throw "用户ID初始化失败...请查看115.28.51.197服务器";
         return;
     } else {
         if (reply == null) {
-            console.warn(reply+"a");
+            console.warn(reply + "a");
             throw "用户ID初始化失败...请查看115.28.51.197服务器";
             return;
         } else {
