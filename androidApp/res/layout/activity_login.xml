@@ -6,41 +6,28 @@
     android:background="#000"
     tools:context=".activity.LoginActivity" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-        <ImageView
-            android:id="@+id/animateBackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/login_background_1" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/loginOrRegister"
+    <ImageView
+        android:id="@+id/animateBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:background="@drawable/login_background_1" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
+    <RelativeLayout
+        android:id="@+id/loginOrRegister"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-            <ImageView
-                android:layout_width="125dp"
-                android:layout_height="155dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="45dp"
-                android:background="@drawable/icon_star_text" />
-        </RelativeLayout>
+        <ImageView
+            android:layout_width="125dp"
+            android:layout_height="155dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/icon_star_text"
+            android:translationY="110dp" />
 
         <RelativeLayout
             android:id="@+id/loginOrRegisterButton"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:visibility="invisible" >
 
             <Button
@@ -51,21 +38,21 @@
                 android:background="@drawable/button_login_register_background"
                 android:text="登 录"
                 android:textColor="#fff"
-                android:textSize="21sp" />
+                android:textSize="21sp"
+                android:translationY="300dp" />
 
             <Button
                 android:id="@+id/registerButton"
                 android:layout_width="290dp"
                 android:layout_height="47dp"
-                android:layout_below="@+id/loginButton"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="19dp"
                 android:background="@drawable/button_login_register_background"
                 android:text="注 册"
                 android:textColor="#fff"
-                android:textSize="21sp" />
+                android:textSize="21sp"
+                android:translationY="370dp" />
         </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/card"

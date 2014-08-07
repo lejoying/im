@@ -10,13 +10,10 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -28,16 +25,6 @@ import android.widget.TextView;
 
 public class LoginActivity extends Activity implements OnClickListener, OnFocusChangeListener {
 
-	// private MainApplication app = MainApplication.getMainApplication();
-
-	private static final int NEWS = 0;
-	private static final int COLOR = 1;
-	private static final int RED = 2;
-	private static final int BULE = 3;
-	private static final int GREED = 4;
-	private static final int FONT = 5;
-	private static final int BIG = 6;
-	private static final int SMALL = 7;
 
 	private Handler handler;
 
@@ -163,6 +150,7 @@ public class LoginActivity extends Activity implements OnClickListener, OnFocusC
 		mainButton = (TextView) findViewById(R.id.mainButton);
 		leftBottomTextButton = (TextView) findViewById(R.id.leftBottomTextButton);
 		rightBottomTextButton = (TextView) findViewById(R.id.rightBottomTextButton);
+		
 	}
 
 	private void initEvent() {
@@ -604,19 +592,8 @@ public class LoginActivity extends Activity implements OnClickListener, OnFocusC
 
 		if (v.equals(loginButton)) {
 			nextAnimation(Status.loginUsePassword, card, loginOrRegister);
-			if (i + 1 == 2) {
-				showSoftInputDelay(input2, animationBackIn.getDuration() + animationBackOut.getDuration() + 20);
-			} else {
-				showSoftInputDelay(input1, animationBackIn.getDuration() + animationBackOut.getDuration() + 20);
-			}
 		} else if (v.equals(registerButton)) {
 			nextAnimation(Status.verifyPhoneForRegister, card, loginOrRegister);
-			if (remainRegister == 0) {
-				showSoftInputDelay(input1, animationNextIn.getDuration() + animationNextOut.getDuration() + 20);
-			} else {
-
-				showSoftInputDelay(input2, animationNextIn.getDuration() + animationNextOut.getDuration() + 20);
-			}
 		}
 	}
 
