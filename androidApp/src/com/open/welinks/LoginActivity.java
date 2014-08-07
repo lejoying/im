@@ -9,7 +9,14 @@ import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -22,6 +29,15 @@ import android.widget.TextView;
 public class LoginActivity extends Activity implements OnClickListener, OnFocusChangeListener {
 
 	// private MainApplication app = MainApplication.getMainApplication();
+
+	private static final int NEWS = 0;
+	private static final int COLOR = 1;
+	private static final int RED = 2;
+	private static final int BULE = 3;
+	private static final int GREED = 4;
+	private static final int FONT = 5;
+	private static final int BIG = 6;
+	private static final int SMALL = 7;
 
 	private Handler handler;
 
@@ -82,6 +98,7 @@ public class LoginActivity extends Activity implements OnClickListener, OnFocusC
 	}
 
 	int i = 1;
+	public String tag = "LoginActivity";
 
 	private void switchToShow() {
 		if (i + 1 != 2) {
@@ -107,6 +124,21 @@ public class LoginActivity extends Activity implements OnClickListener, OnFocusC
 				}
 			}, 500);
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_debug_1, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.debug1_1) {
+			Log.d(tag, "debug1.1");
+		}
+		return true;
 	}
 
 	private void initView() {
