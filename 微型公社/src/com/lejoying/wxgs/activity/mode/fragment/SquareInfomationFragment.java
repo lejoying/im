@@ -1,4 +1,4 @@
-package com.lejoying.wxgs.activity;
+package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.BusinessCardActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
-import com.lejoying.wxgs.activity.mode.fragment.BaseFragment;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;

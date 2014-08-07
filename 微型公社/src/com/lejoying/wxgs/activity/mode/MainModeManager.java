@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.activity.SquareInfomationFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChangePasswordFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatMessagesFragment;
 import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment;
@@ -17,11 +16,13 @@ import com.lejoying.wxgs.activity.mode.fragment.GroupBusinessCardFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupManagerFragment;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
+import com.lejoying.wxgs.activity.mode.fragment.MoreSquaresFragment;
 import com.lejoying.wxgs.activity.mode.fragment.MyFragment;
 import com.lejoying.wxgs.activity.mode.fragment.NewFriendsFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ScanQRCodeFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SearchFriendFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
+import com.lejoying.wxgs.activity.mode.fragment.SquareInfomationFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareOnLineUserFragment;
 
 public class MainModeManager extends BaseModeManager {
@@ -64,6 +65,7 @@ public class MainModeManager extends BaseModeManager {
 	public GroupShareFragment mGroupShareFragment;
 	public SquareOnLineUserFragment mSquareOnLineUserFragment;
 	public SquareInfomationFragment mSquareInfomationFragment;
+	public MoreSquaresFragment mMoreSquaresFragment;
 
 	public static List<String[]> faceNamesList;
 
@@ -107,8 +109,10 @@ public class MainModeManager extends BaseModeManager {
 			mGroupShareFragment.setMode(this);
 			mSquareOnLineUserFragment = new SquareOnLineUserFragment();
 			mSquareOnLineUserFragment.setMode(this);
-			mSquareInfomationFragment=new SquareInfomationFragment();
+			mSquareInfomationFragment = new SquareInfomationFragment();
 			mSquareInfomationFragment.setMode(this);
+			mMoreSquaresFragment = new MoreSquaresFragment();
+			mMoreSquaresFragment.setMode(this);
 			initFace();
 		}
 	}

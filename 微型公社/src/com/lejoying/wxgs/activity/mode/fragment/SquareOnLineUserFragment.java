@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.BusinessCardActivity;
-import com.lejoying.wxgs.activity.SquareInfomationFragment;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.app.MainApplication;
