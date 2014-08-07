@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background4"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#51000000" >
+
+        <RelativeLayout
+            android:id="@+id/backView"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:padding="10dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/back" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="20dp"
+            android:text="广场信息"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+
+        <ImageView
+            android:layout_width="340dp"
+            android:layout_height="1dp"
+            android:background="#33ffffff" />
+
+        <RelativeLayout
+            android:id="@+id/onlinemembers"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/onlinememberscount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:text="在线用户(99)"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/into" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="340dp"
+            android:layout_height="1dp"
+            android:background="#33ffffff" />
+
+        <RelativeLayout
+            android:id="@+id/squarebusinesscard"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:text="广场名片"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="340dp"
+            android:layout_height="1dp"
+            android:background="#33ffffff" />
+
+        <RelativeLayout
+            android:id="@+id/joinsquare"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:text="成为社员"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="340dp"
+            android:layout_height="1dp"
+            android:background="#33ffffff" />
+    </LinearLayout>
+
+</LinearLayout>

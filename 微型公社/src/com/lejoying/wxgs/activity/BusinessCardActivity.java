@@ -53,12 +53,13 @@ public class BusinessCardActivity extends BaseActivity implements
 		OnClickListener {
 
 	public static final int TYPE_GROUP = 0x11, TYPE_FRIEND = 0x22,
-			TYPE_SELF = 0x33, TYPE_TEMPFRIEND = 0x44, SCROLL = 0x51,
-			REQUEST_BACK = 0x99;
+			TYPE_SELF = 0x33, TYPE_TEMPFRIEND = 0x44, TYPE_SQUARE = 0x55,
+			SCROLL = 0x51, REQUEST_BACK = 0x99;
 	public static final int RESULT_SELECTPICTURE = 0x123,
 			RESULT_SELECTHEAD = 0xa4, RESULT_TAKEPICTURE = 0xa3,
 			RESULT_TAKEHEAD = 0xa5, RESULT_CATPICTURE = 0x3d;
 
+	String squareId;
 	public int type;
 	public static String gid, frindPhone;
 	public Group mGroup;
@@ -122,6 +123,9 @@ public class BusinessCardActivity extends BaseActivity implements
 			frindPhone = intent.getStringExtra("phone");
 		} else if (type == TYPE_TEMPFRIEND) {
 			mFriend = (Friend) intent.getSerializableExtra("friend");
+		} else if (type == TYPE_SQUARE) {
+			// TODO
+			squareId = intent.getStringExtra("square");
 		}
 		setContentView(R.layout.f_businesscard);
 		mInflater = getLayoutInflater();
@@ -318,6 +322,7 @@ public class BusinessCardActivity extends BaseActivity implements
 			rl_bighead.setVisibility(View.GONE);
 			tv_business_title.setText("主要业务:");
 			tv_lable_title.setText("标签:");
+			iv_head.setClickable(true);
 
 			group.removeView(tv_group);
 			group.removeView(tv_square);
@@ -398,10 +403,45 @@ public class BusinessCardActivity extends BaseActivity implements
 				}
 			});
 			break;
+		case TYPE_SQUARE:
+			QRcodeImage.setImageBitmap(MCImageUtils.createQEcodeImage(
+					GROUPCARDTYPE, squareId));
+			QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
+			iv_head.setClickable(false);
+			tv_back_show.setText("广场资料");
+			tv_business_title.setText("主要业务:");
+			tv_lable_title.setText("标签:");
+
+			group.removeView(tv_group);
+			group.removeView(tv_square);
+			group.removeView(tv_msg);
+			group.removeView(button1);
+			group.removeView(button2);
+			group.removeView(button3);
+
+			tv_id.setText(squareId);
+			tv_business.setText("此广场暂无业务");
+			String mSquare = "";
+			if (squareId == "98") {
+				mSquare = "亦庄站";
+			} else if (squareId == "99") {
+				mSquare = "中关村站";
+			} else {
+				mSquare = "天通苑站";
+			}
+			tv_nickname.setText(mSquare);
+			app.fileHandler.getHeadImage("", "男", new FileResult() {
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					iv_head.setImageBitmap(bitmap);
+				}
+			});
+			break;
 		case TYPE_FRIEND:
 			if (app.data.friends.get(frindPhone) != null) {
 				mFriend = app.data.friends.get(frindPhone);
 				tv_back_show.setText("好友资料");
+				iv_head.setClickable(true);
 
 				group.removeView(tv_group);
 				group.removeView(tv_square);
@@ -599,6 +639,7 @@ public class BusinessCardActivity extends BaseActivity implements
 			QRcodeImage.setImageBitmap(MCImageUtils.createQEcodeImage(
 					USERCARDTYPE, app.data.user.phone + ""));
 			QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
+			iv_head.setClickable(true);
 
 			group.removeView(button2);
 			group.removeView(button3);
@@ -667,6 +708,7 @@ public class BusinessCardActivity extends BaseActivity implements
 			QRcodeImage.setImageBitmap(MCImageUtils.createQEcodeImage(
 					USERCARDTYPE, mFriend.phone + ""));
 			QRcodeImage.setScaleType(ScaleType.FIT_CENTER);
+			iv_head.setClickable(true);
 			tv_back_show.setText("用户资料");
 			// button1.setText("发起聊天");
 			// button2.setText("修改备注");
@@ -676,7 +718,12 @@ public class BusinessCardActivity extends BaseActivity implements
 			tv_id.setText(mFriend.id + "");
 			group.removeView(button2);
 			group.removeView(button3);
-
+			app.fileHandler.getHeadImage(mFriend.head, "男", new FileResult() {
+				@Override
+				public void onResult(String where, Bitmap bitmap) {
+					iv_head.setImageBitmap(bitmap);
+				}
+			});
 			button1.setText("加为好友");
 			button1.setOnClickListener(new OnClickListener() {
 
@@ -707,7 +754,7 @@ public class BusinessCardActivity extends BaseActivity implements
 			if (type == TYPE_SELF) {
 				tv_bighead.setBackgroundDrawable(new BitmapDrawable(
 						app.fileHandler.bitmaps.get(app.data.user.head)));
-			} else if (type == TYPE_FRIEND) {
+			} else if (type == TYPE_FRIEND || type == TYPE_TEMPFRIEND) {
 				tv_bighead.setBackgroundDrawable(new BitmapDrawable(
 						app.fileHandler.bitmaps.get(mFriend.head)));
 			} else if (type == TYPE_GROUP) {

@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.MainActivity;
+import com.lejoying.wxgs.activity.SquareInfomationFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChangePasswordFragment;
 import com.lejoying.wxgs.activity.mode.fragment.ChatMessagesFragment;
 import com.lejoying.wxgs.activity.mode.fragment.CirclesFragment;
@@ -62,6 +63,7 @@ public class MainModeManager extends BaseModeManager {
 	public GroupBusinessCardFragment mGroupBusinessCardFragment;
 	public GroupShareFragment mGroupShareFragment;
 	public SquareOnLineUserFragment mSquareOnLineUserFragment;
+	public SquareInfomationFragment mSquareInfomationFragment;
 
 	public static List<String[]> faceNamesList;
 
@@ -105,6 +107,8 @@ public class MainModeManager extends BaseModeManager {
 			mGroupShareFragment.setMode(this);
 			mSquareOnLineUserFragment = new SquareOnLineUserFragment();
 			mSquareOnLineUserFragment.setMode(this);
+			mSquareInfomationFragment=new SquareInfomationFragment();
+			mSquareInfomationFragment.setMode(this);
 			initFace();
 		}
 	}

@@ -795,8 +795,8 @@ public class MainActivity extends BaseActivity {
 					}
 					// intent.putExtra("mSquareID", mSquareId);
 					// startActivity(intent);
-					SquareOnLineUserFragment.mSquareID = mSquareId;
-					mMainMode.showNext(mMainMode.mSquareOnLineUserFragment);
+					SquareInfomationFragment.mSquareID = mSquareId;
+					mMainMode.showNext(mMainMode.mSquareInfomationFragment);
 					popWindow.dismiss();
 				}
 			});
