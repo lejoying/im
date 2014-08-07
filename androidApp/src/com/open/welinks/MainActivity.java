@@ -1,14 +1,18 @@
 package com.open.welinks;
 
+import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.Data.UserInformation.LocalConfig;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class MainActivity extends Activity {
+	public Data data = Data.getInstance();
 
 	String tag = "MainActivity";
 	public Context context;
@@ -21,11 +25,22 @@ public class MainActivity extends Activity {
 
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);
-		
+
 		parser.parse();
+
+		getLocalInformation();
 		
 		startActivity(new Intent(MainActivity.this, LoginActivity.class));
 		MainActivity.this.finish();
 	}
 
+	public void getLocalInformation() {
+		LocalConfig localConfig = data.userInformation.localConfig;
+
+		TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+		localConfig.deviceid = telephonyManager.getDeviceId();
+		localConfig.line1Number = telephonyManager.getLine1Number();
+		localConfig.imei = telephonyManager.getSimSerialNumber();
+		localConfig.imsi = telephonyManager.getSubscriberId();
+	}
 }
