@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class Data {
-	
+
 	public static Data data;
 
 	public static Data getInstance() {
@@ -16,8 +15,7 @@ public class Data {
 		}
 		return data;
 	}
-	
-	
+
 	public UserInformation userInformation;
 	public Relationship relationship;
 
@@ -35,6 +33,22 @@ public class Data {
 			public String accessKey = "";
 			public String flag = "none";
 		}
+
+		public LocalConfig localConfig;
+
+		public class LocalConfig {
+			public String deviceid = "";
+			public String line1Number = "";
+			public String imei = "";
+			public String imsi = "";
+		}
+
+		public ServerConfig serverConfig;
+
+		public class ServerConfig {
+
+		}
+
 	}
 
 	public class Relationship {
@@ -43,7 +57,6 @@ public class Data {
 		public List<String> circles = new ArrayList<String>();
 		public Map<String, Circle> circlesMap = new HashMap<String, Circle>();
 
-		
 		public List<String> groups = new ArrayList<String>();
 		public Map<String, Group> groupsMap = new HashMap<String, Group>();
 
@@ -70,7 +83,7 @@ public class Data {
 			public String name = "";
 			public List<String> friends = new ArrayList<String>();
 		}
-		
+
 		public class Group {
 			public int gid;
 			public String icon = "";
@@ -81,7 +94,7 @@ public class Data {
 			public String latitude;
 			public String description;
 			public String background;
-			
+
 			public List<String> members = new ArrayList<String>();
 		}
 	}
