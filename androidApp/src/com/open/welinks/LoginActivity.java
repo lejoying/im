@@ -204,6 +204,7 @@ public class LoginActivity extends Activity implements OnClickListener, OnFocusC
 		loginButton.setOnClickListener(this);
 		registerButton.setOnClickListener(this);
 		rightTopTextButton.setOnClickListener(this);
+		leftTopText.setOnClickListener(this);
 		clearInput1.setOnClickListener(this);
 		clearInput2.setOnClickListener(this);
 		mainButton.setOnClickListener(this);

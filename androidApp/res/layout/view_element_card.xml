@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <TextView
+        android:id="@+id/leftTopText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:clickable="true"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:textColor="#fff"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/rightTopTextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:clickable="true"
+        android:padding="10dp"
+        android:textColor="@color/login_text_color"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/cardTopLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/leftTopText"
+        android:background="#fff"
+        android:contentDescription="white_line" />
+
+    <TextView
+        android:id="@+id/leftBottomTextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/login_text_color"
+        android:textSize="15sp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/rightBottomTextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/login_text_color"
+        android:textSize="15sp"
+        android:visibility="invisible" />
+
+</merge>
