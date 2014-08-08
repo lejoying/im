@@ -1050,11 +1050,12 @@ relationManage.intimatefriends = function (data, response) {
                 console.log(error + "-getCirclesNode");
                 return;
             } else if (results.length > 0) {
+                var accountNode;
                 var accountData;
                 var tempCircles = [];
                 for (var index in results) {
                     if (index == 0) {
-                        accountData = results[index].account.data;
+                        accountNode = results[index].account;
                     }
                     var circleData = results[index].circle.data;
                     circleData.friends = [];
@@ -1062,82 +1063,59 @@ relationManage.intimatefriends = function (data, response) {
                     tempCircles.push(circleData.rid);
                     circleOrder[circleData.rid ] = index;
                 }
+                accountData = accountNode.data;
                 var circlesOrdering = null;
-                if (accountData.circlesOrder) {
+                if (accountData.circlesOrderString) {
                     try {
-                        circlesOrdering = JSON.parse(accountData.circlesOrder);
+                        circlesOrdering = JSON.parse(accountData.circlesOrderString);
                     } catch (e) {
                         circlesOrdering = null
                     }
                 }
-                var newCirclesOrdering = [];
+                var newCirclesOrdering;
                 if (circlesOrdering == null) {
                     newCirclesOrdering = tempCircles;
                     newCirclesOrdering.push(defaultCircleData.rid);
-                    modifyCircleOrder(JSON.stringify(newCirclesOrdering));
+                    accountData.circlesOrderString = JSON.stringify(newCirclesOrdering);
+                    accountNode.save(function (err, node) {
+                        console.log("重置分组顺序数据成功");
+                    });
                 } else {
+                    newCirclesOrdering = [];
                     var isDataConsistentcy = true;
                     for (var index in circlesOrdering) {
                         var circleRid = circlesOrdering[index];
                         if (circleRid == defaultCircleData.rid) {
+                            newCirclesOrdering.push(circleRid);
                             continue;
                         }
                         if (circleOrder[circleRid]) {
                             newCirclesOrdering.push(circleRid);
-                            delete circleOrder[circleRid];
+                            circleOrder[circleRid] = "delete";
                         } else {
                             isDataConsistentcy = false;
                         }
                     }
                     for (var index in circleOrder) {
-                        if (isDataConsistentcy && index != defaultCircleData.rid) {
+                        if (isDataConsistentcy && index != defaultCircleData.rid && circleOrder[index] != "delete") {
                             isDataConsistentcy = false;
                         }
-                        newCirclesOrdering.push(index);
+                        if (circleOrder[index] != "delete") {
+                            newCirclesOrdering.push(parseInt(index));
+                        }
                     }
                     if (!isDataConsistentcy) {
                         newCirclesOrdering.push(defaultCircleData.rid);
-                        modifyCircleOrder(JSON.stringify(newCirclesOrdering));
+                        accountData.circlesOrderString = JSON.stringify(newCirclesOrdering);
+                        accountNode.save(function (err, node) {
+                            console.log("初始化分组顺序数据成功");
+                        });
                     }
                 }
                 getAccountsNode(newCirclesOrdering, circlesMap, phone);
             } else {
+                circles.push(defaultCircleData.rid);
                 getAccountsNode(circles, circlesMap, phone);
-            }
-        });
-    }
-
-    function modifyCircleOrder(circlesOrder) {
-        var query = [
-            "MATCH (account:Account)",
-            "WHERE account.phone={phone}",
-            "RETURN account"
-        ].join("\n");
-        var params = {
-            phone: phone
-        };
-        db.query(query, params, function (error, results) {
-            if (error) {
-                ResponseData(JSON.stringify({
-                    "提示信息": "获取密友圈失败",
-                    "失败原因": "数据异常"
-                }), response);
-                console.log("初始化群组顺序失败");
-                console.error(error);
-                return;
-            } else if (results.length == 0) {
-                console.log("初始化群组顺序失败,用户不存在");
-                ResponseData(JSON.stringify({
-                    "提示信息": "获取密友圈失败",
-                    "失败原因": "数据异常"
-                }), response);
-            } else {
-                var accountNode = results.pop().account;
-                var accountData = accountNode.data;
-                accountData.circlesOrder = circlesOrder;
-                accountNode.save(function (err, node) {
-                });
-                console.log("初始化群组顺序成功");
             }
         });
     }
@@ -1240,11 +1218,14 @@ relationManage.intimatefriends = function (data, response) {
                             circlesMap[defaultCircleData.rid].friends.push(index);
                         }
                     }
+                    if (!accounts) {
+                        accounts = [];
+                    }
                     ResponseData(JSON.stringify({
                         "提示信息": "获取密友圈成功",
                         data: {
                             circles: circles,
-                            friendsMap: accounts ? accounts : [],
+                            friendsMap: accounts,
                             circlesMap: circlesMap
                         }
                     }), response);
@@ -1253,16 +1234,17 @@ relationManage.intimatefriends = function (data, response) {
                         for (var index in accounts) {
                             circlesMap[defaultCircleData.rid].friends.push(index);
                         }
+                    } else {
+                        accounts = [];
                     }
-                    var test = JSON.stringify({
+                    ResponseData(JSON.stringify({
                         "提示信息": "获取密友圈成功",
                         data: {
                             circles: circles,
-                            friendsMap: accounts ? accounts : [],
+                            friendsMap: accounts,
                             circlesMap: circlesMap
                         }
-                    });
-                    ResponseData(test, response);
+                    }), response);
                 }
             }
         );

@@ -46,6 +46,14 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
             accountManage.oauth6(data, response);
         });
     }
+    /*************************************************************
+     * * * * * * * * * * * * New Api * * * * * * * * * * * * * * *
+     *************************************************************/
+    else if (operation == "getuserinfomation") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            accountManage.getuserinfomation(data, response);
+        });
+    }
 }
 var communityManage = require("./handlers/communityManage.js");
 requestHandlers.communityManage = function (request, response, pathObject, data) {

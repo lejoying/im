@@ -704,4 +704,63 @@ accountManage.oauth6 = function (data, response) {
     }));
     response.end();
 }
+/******************************************************************
+ * * * * * * * * * * * * * New Api* * * * * * * * * * * * * * * * *
+ ******************************************************************/
+accountManage.getuserinfomation = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var arr = [phone];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        getAccountNode();
+    }
+    function getAccountNode() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+            } else {
+                var accountData = results.pop().account.data;
+                var account = {
+                    ID: accountData.ID,
+                    phone: accountData.phone,
+                    nickName: accountData.nickName,
+                    mainBusiness: accountData.mainBusiness,
+                    head: accountData.head,
+                    sex: accountData.sex,
+                    userBackground: accountData.userBackground,
+                    accessKey: accessKey,
+                    flag: 0
+                };
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息成功",
+                    data: {
+                        currentUser: account
+                    }
+                }));
+                response.end();
+            }
+        });
+    }
+}
 module.exports = accountManage;

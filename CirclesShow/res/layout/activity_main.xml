@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/background4"
     tools:context=".MainActivity" >
-    <RelativeLayout
+
+    <RelativeLayout
         android:id="@+id/rl_mainMenuBar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -239,14 +240,136 @@
         android:id="@+id/rl_userInfomationContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/rl_userMenuOptions"
+        android:layout_marginTop="100dp"
         android:padding="10dp"
         android:visibility="gone" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:background="#fff" >
+            android:layout_height="90dp"
+            android:layout_gravity="center_vertical"
+            android:background="#38ffffff"
+            android:gravity="center_vertical" >
+
+            <ImageView
+                android:id="@+id/iv_headImage"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/face_man" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="30dp" >
+
+                <TextView
+                    android:id="@+id/tv_userNickname"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:singleLine="true"
+                    android:text="樱桃小丸子"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_userMainBusiness"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:lines="2"
+                    android:paddingRight="10dp"
+                    android:text="爱哭就哭，爱笑就笑，小丸子一样的人生。"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/into" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="90dp"
+            android:background="@drawable/gshare_dashed" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            android:layout_marginTop="90dp"
+            android:background="#38ffffff"
+            android:gravity="center_vertical"
+            android:visibility="visible" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="积分(0)"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="149dp"
+            android:background="#38ffffff"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="我的名片"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/noread_message"
+                android:padding="5dp"
+                android:text="2"
+                android:textColor="#fff"
+                android:textSize="10sp"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="209dp"
+            android:background="#38ffffff"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="设置"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/noread_message"
+                android:padding="5dp"
+                android:text="2"
+                android:textColor="#fff"
+                android:textSize="10sp"
+                android:visibility="gone" />
         </RelativeLayout>
     </RelativeLayout>
 
