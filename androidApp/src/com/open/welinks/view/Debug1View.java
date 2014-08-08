@@ -1,5 +1,6 @@
 package com.open.welinks.view;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class Debug1View {
 		animateFirstListener = new AnimateFirstDisplayListener();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
 		imageLoader.init(ImageLoaderConfiguration.createDefault(thisActivity));
-		
+
 		thisActivity.setContentView(R.layout.debug1_image_list);
 
 		listView = (ListView) thisActivity.findViewById(R.id.view_element_debug1_list);
@@ -77,6 +78,7 @@ public class Debug1View {
 
 	public class TransportingList {
 		public ListView transportingList;
+		public ArrayList<TransportingItem> transportingItems = new ArrayList<TransportingItem>();
 
 		public void initialize(View container) {
 			transportingList = (ListView) container;
@@ -87,6 +89,8 @@ public class Debug1View {
 		public void setContent() {
 			for (int i = 0; i < 10; i++) {
 				TransportingItem transportingItem = new TransportingItem();
+				transportingItems.add(transportingItem);
+
 				View transportingItemView = transportingItem.initialize("test.jpg");
 				transportingList.addFooterView(transportingItemView);
 			}
@@ -97,18 +101,35 @@ public class Debug1View {
 
 			public View transportingItemView;
 
-			public TextView textView;
 			public ImageView imageView;
+
+			public TextView text_filename_view;
+			public TextView text_file_size_view;
+			public TextView text_transport_time_view;
+			public View controlProgressView;
+			
+			public ControlProgress controlProgress;
 
 			public View initialize(String path) {
 				transportingItemView = mInflater.inflate(R.layout.view_element_debug1_list_item, null);
-				textView = (TextView) transportingItemView.findViewById(R.id.text);
-				imageView = (ImageView) transportingItemView.findViewById(R.id.image);
 
-				textView.setText("测试");
+				imageView = (ImageView) transportingItemView.findViewById(R.id.image);
 				String imageUri = "assets://test.jpg";
 				imageLoader.displayImage(imageUri, imageView, options, animateFirstListener);
 
+				text_filename_view = (TextView) transportingItemView.findViewById(R.id.text_filename);
+				text_filename_view.setText("test.jpg");
+
+				text_file_size_view = (TextView) transportingItemView.findViewById(R.id.text_file_size);
+				text_file_size_view.setText("68KB");
+
+				text_transport_time_view = (TextView) transportingItemView.findViewById(R.id.text_transport_time);
+				text_transport_time_view.setText("27ms");
+
+				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
+				this.controlProgress = new ControlProgress();
+				this.controlProgress.initialize(this.controlProgressView);
+				
 				return transportingItemView;
 			}
 		}

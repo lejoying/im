@@ -3,6 +3,7 @@ package com.open.welinks.controller;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.Debug1View;
+import com.open.welinks.view.Debug1View.ControlProgress;
 import com.open.welinks.view.Debug1View.Status;
 
 import android.app.Activity;
@@ -47,6 +48,7 @@ public class Debug1Controller {
 	}
 
 	int targetPercentage = 30;
+	int index = 0;
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.debug2_1) {
@@ -56,10 +58,16 @@ public class Debug1Controller {
 		}
 		if (item.getItemId() == R.id.debug2_2) {
 			Log.d(tag, "Debug1Activity debug2_2");
-			thisView.titleControlProgress.moveTo(targetPercentage);
-			targetPercentage = (targetPercentage + 30) % 100;
+
+			ControlProgress controlProgress = thisView.transportingList.transportingItems.get(index).controlProgress;
+			if (controlProgress.percentage > 50) {
+				controlProgress.moveTo(0);
+			} else {
+				controlProgress.moveTo(100);
+			}
+			index = (index + 1) % 10;
 		}
-		
+
 		if (item.getItemId() == R.id.debug2_3) {
 			Log.d(tag, "Debug1Activity debug2_3");
 			thisView.titleControlProgress.setTo(targetPercentage);

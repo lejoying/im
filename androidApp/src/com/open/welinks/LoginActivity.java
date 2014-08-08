@@ -44,7 +44,7 @@ public class LoginActivity extends Activity {
 		this.thisController = new LoginController(thisActivity);
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
-		
+
 		thisView.initView();
 		thisController.onCreate();
 		thisController.initializeListeners();
@@ -61,6 +61,9 @@ public class LoginActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.debug1_1) {
+			Log.d(tag, "debug1.1");
+			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
+		} else if (item.getItemId() == R.id.debug1_0) {
 			Log.d(tag, "debug1.1");
 			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
 		}
