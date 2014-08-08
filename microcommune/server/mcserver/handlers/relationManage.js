@@ -1079,6 +1079,9 @@ relationManage.intimatefriends = function (data, response) {
                     var isDataConsistentcy = true;
                     for (var index in circlesOrdering) {
                         var circleRid = circlesOrdering[index];
+                        if (circleRid == defaultCircleData.rid) {
+                            continue;
+                        }
                         if (circleOrder[circleRid]) {
                             newCirclesOrdering.push(circleRid);
                             delete circleOrder[circleRid];
@@ -1087,7 +1090,7 @@ relationManage.intimatefriends = function (data, response) {
                         }
                     }
                     for (var index in circleOrder) {
-                        if (isDataConsistentcy) {
+                        if (isDataConsistentcy && index != defaultCircleData.rid) {
                             isDataConsistentcy = false;
                         }
                         newCirclesOrdering.push(index);
