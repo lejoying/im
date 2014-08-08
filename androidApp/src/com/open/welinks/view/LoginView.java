@@ -46,6 +46,8 @@ public class LoginView {
 	public enum Status {
 		welcome, start, loginOrRegister, loginUsePassword, verifyPhoneForRegister, verifyPhoneForResetPassword, verifyPhoneForLogin, setPassword, resetPassword
 	}
+	
+	String 状态机;
 
 	public Status status = Status.welcome;
 

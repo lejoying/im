@@ -71,7 +71,7 @@ public class TestActivity1 extends Activity {
 					int position, long id) {
 				List<String> childList = mGruopMap.get(list.get(position).folderName);
 				
-				Intent mIntent = new Intent(TestActivity1.this, TestActivity3.class);
+				Intent mIntent = new Intent(TestActivity1.this, TestActivity2.class);
 				mIntent.putStringArrayListExtra("data", (ArrayList<String>)childList);
 				startActivity(mIntent);
 				

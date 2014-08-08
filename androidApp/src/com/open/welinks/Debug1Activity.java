@@ -1,13 +1,12 @@
 package com.open.welinks;
 
-import com.open.welinks.controller.LoginController;
+import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data;
-import com.open.welinks.view.LoginView;
-import com.open.welinks.view.LoginView.Status;
+import com.open.welinks.view.Debug1View;
+import com.open.welinks.view.Debug1View.Status;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,13 +14,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class LoginActivity extends Activity {
+public class Debug1Activity extends Activity {
 	public Data data = Data.getInstance();
 	public String tag = "LoginActivity";
 
 	public Context context;
-	public LoginView thisView;
-	public LoginController thisController;
+	public Debug1View thisView;
+	public Debug1Controller thisController;
 	public Activity thisActivity;
 
 	@Override
@@ -40,8 +39,8 @@ public class LoginActivity extends Activity {
 	void linkViewController() {
 		this.thisActivity = this;
 		this.context = this;
-		this.thisView = new LoginView(thisActivity);
-		this.thisController = new LoginController(thisActivity);
+		this.thisView = new Debug1View(thisActivity);
+		this.thisController = new Debug1Controller(thisActivity);
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 		
@@ -54,17 +53,13 @@ public class LoginActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu_debug_1, menu);
+		inflater.inflate(R.menu.menu_debug_2, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.debug1_1) {
-			Log.d(tag, "debug1.1");
-			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
-		}
-		return true;
+		return thisController.onOptionsItemSelected(item);
 	}
 
 	@Override

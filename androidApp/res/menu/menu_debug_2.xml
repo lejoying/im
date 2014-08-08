@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/csubmenu1"
+        android:title="调试接口1">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/debug2_1"
+                    android:title="调试接口2.1"/>
+                <item android:title="子菜单2"/>
+                <item android:title="子菜单3"/>
+            </group>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/csubmenu2"
+        android:title="调试接口2">
+        <menu>
+            <group>
+                <item android:title="子菜单1"/>
+                <item android:title="子菜单2"/>
+                <item android:title="子菜单3"/>
+            </group>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/debug2_2"
+        android:title="调试接口3">
+    </item>
+    <item
+        android:id="@+id/debug2_3"
+        android:title="调试接口4">
+    </item>
+
+</menu>
