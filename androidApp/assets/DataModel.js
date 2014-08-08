@@ -10,6 +10,13 @@ var userInformation = {
 		accessKey : "";
 		flag : "none";
 	},
+	localConfig : {
+		deviceid : "",
+		line1Number : "",
+		imei : "",
+		imsi : ""
+	},
+	serverConfig : {}
 }
 
 var relationship = {

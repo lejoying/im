@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="286dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/card_login_background_normal"
+    android:visibility="invisible" >
+
+    <include layout="@layout/view_element_card" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="93dp"
+        android:layout_margin="22dp"
+        android:background="@drawable/button_input_background_normal"
+        android:translationY="40dp" >
+
+        <EditText
+            android:id="@+id/input1"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="#0000"
+            android:gravity="left|center_vertical"
+            android:inputType="none"
+            android:paddingLeft="10dp"
+            android:paddingRight="40dp"
+            android:singleLine="true"
+            android:textColor="#fff"
+            android:textColorHint="#8fff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/inputLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/input1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#fff" />
+
+        <EditText
+            android:id="@+id/input2"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_below="@+id/inputLine"
+            android:background="#0000"
+            android:gravity="left|center_vertical"
+            android:inputType="none"
+            android:paddingLeft="10dp"
+            android:paddingRight="40dp"
+            android:singleLine="true"
+            android:textColor="#fff"
+            android:textColorHint="#8fff"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/clearInput1"
+            android:layout_width="40dp"
+            android:layout_height="46dp"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:paddingRight="20dp"
+            android:src="@drawable/input_clear"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/clearInput2"
+            android:layout_width="40dp"
+            android:layout_height="46dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:paddingRight="20dp"
+            android:src="@drawable/input_clear"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/mainButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginTop="153dp"
+        android:background="@drawable/button_card_background"
+        android:textColor="#fff"
+        android:textSize="18sp"
+        android:translationY="40dp" />
+
+</RelativeLayout>

@@ -9,5 +9,12 @@
 		head : "Head",
 		accessKey : "fsafafasfsafdsfs",
 		flag : "none"
-	}
+	},
+	localConfig : {
+		deviceid : "",
+		line1Number : "",
+		imei : "",
+		imsi : ""
+	},
+	serverConfig : {}
 }

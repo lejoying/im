@@ -127,6 +127,16 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
             relationManage.modifyalias(data, response);
         });
     }
+
+    /*************************************************************
+     * * * * * * * * * * * * New Api * * * * * * * * * * * * * * *
+     *************************************************************/
+    else if (operation == "intimatefriends") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.intimatefriends(data, response);
+        });
+    }
+
 }
 
 var circleManage = require("./handlers/circleManage.js");
