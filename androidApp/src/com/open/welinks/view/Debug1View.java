@@ -65,7 +65,7 @@ public class Debug1View {
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
 		imageLoader.init(ImageLoaderConfiguration.createDefault(thisActivity));
 
-		thisActivity.setContentView(R.layout.debug1_image_list);
+		thisActivity.setContentView(R.layout.activiry_debug1_image_list);
 
 		listView = (ListView) thisActivity.findViewById(R.id.view_element_debug1_list);
 		transportingList = new TransportingList();
