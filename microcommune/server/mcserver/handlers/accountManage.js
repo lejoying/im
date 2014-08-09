@@ -465,19 +465,17 @@ accountManage.get = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取用户信息失败",
                     "失败原因": "数据异常"
-                }));
-                response.end();
+                }), response);
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取用户信息失败",
                     "失败原因": "用户不存在"
-                }));
-                response.end();
+                }), response);
             } else {
                 var accounts = [];
                 for (var index in results) {
@@ -494,11 +492,10 @@ accountManage.get = function (data, response) {
                     };
                     accounts.push(account);
                 }
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取用户信息成功",
                     accounts: accounts
-                }));
-                response.end();
+                }), response);
             }
         });
     }
@@ -762,5 +759,13 @@ accountManage.getuserinfomation = function (data, response) {
             }
         });
     }
+}
+function ResponseData(responseContent, response) {
+    response.writeHead(200, {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Content-Length": Buffer.byteLength(responseContent, 'utf8')
+    });
+    response.write(responseContent);
+    response.end();
 }
 module.exports = accountManage;
