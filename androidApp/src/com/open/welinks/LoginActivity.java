@@ -7,6 +7,7 @@ import com.open.welinks.view.LoginView.Status;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -43,7 +44,7 @@ public class LoginActivity extends Activity {
 		this.thisController = new LoginController(thisActivity);
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
-		
+
 		thisView.initView();
 		thisController.onCreate();
 		thisController.initializeListeners();
@@ -61,6 +62,10 @@ public class LoginActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.debug1_1) {
 			Log.d(tag, "debug1.1");
+			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
+		} else if (item.getItemId() == R.id.debug1_0) {
+			Log.d(tag, "debug1.1");
+			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
 		}
 		return true;
 	}

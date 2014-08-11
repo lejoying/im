@@ -465,19 +465,17 @@ accountManage.get = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取用户信息失败",
                     "失败原因": "数据异常"
-                }));
-                response.end();
+                }), response);
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取用户信息失败",
                     "失败原因": "用户不存在"
-                }));
-                response.end();
+                }), response);
             } else {
                 var accounts = [];
                 for (var index in results) {
@@ -494,11 +492,10 @@ accountManage.get = function (data, response) {
                     };
                     accounts.push(account);
                 }
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取用户信息成功",
                     accounts: accounts
-                }));
-                response.end();
+                }), response);
             }
         });
     }
@@ -702,6 +699,73 @@ accountManage.oauth6 = function (data, response) {
         "提示信息": "授权成功",
         accessKey3: sha1.hex_sha1(developID + new Date().getTime())
     }));
+    response.end();
+}
+/******************************************************************
+ * * * * * * * * * * * * * New Api* * * * * * * * * * * * * * * * *
+ ******************************************************************/
+accountManage.getuserinfomation = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var arr = [phone];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        getAccountNode();
+    }
+    function getAccountNode() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+            } else {
+                var accountData = results.pop().account.data;
+                var account = {
+                    ID: accountData.ID,
+                    phone: accountData.phone,
+                    nickName: accountData.nickName,
+                    mainBusiness: accountData.mainBusiness,
+                    head: accountData.head,
+                    sex: accountData.sex,
+                    userBackground: accountData.userBackground,
+                    accessKey: accessKey,
+                    flag: 0
+                };
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息成功",
+                    data: {
+                        currentUser: account
+                    }
+                }));
+                response.end();
+            }
+        });
+    }
+}
+function ResponseData(responseContent, response) {
+    response.writeHead(200, {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Content-Length": Buffer.byteLength(responseContent, 'utf8')
+    });
+    response.write(responseContent);
     response.end();
 }
 module.exports = accountManage;

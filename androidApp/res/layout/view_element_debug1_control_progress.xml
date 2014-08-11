@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+		android:id="@+id/progress_line2"
+		android:layout_width="fill_parent"
+		android:layout_height="2dip"
+		android:layout_marginTop="0dp"
+		android:background="#FF0099cd" 
+		android:contentDescription="@string/description_image" />
+    	
+	<ImageView
+		android:id="@+id/progress_line1"
+		android:layout_width="fill_parent"
+		android:layout_height="2dp"
+		android:translationX="0dp"
+		android:background="#FFFFFFFF" 
+		android:contentDescription="@string/description_image" />
+
+</merge>

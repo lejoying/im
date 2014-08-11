@@ -9,7 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:hint="请输入帐号" />
+        android:hint="请输入帐号"
+        android:focusable="true"
+        android:inputType="number" />
 
     <RelativeLayout
         android:id="@+id/rl_getData"
@@ -29,22 +31,13 @@
             android:textSize="18sp" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_showUI"
+    <LinearLayout
+        android:id="@+id/infomationContent"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="200dp"
-        android:background="#38ffffff" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="UI展示"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_getData"
+        android:layout_margin="10dp"
+        android:orientation="vertical" >
+    </LinearLayout>
 
 </RelativeLayout>

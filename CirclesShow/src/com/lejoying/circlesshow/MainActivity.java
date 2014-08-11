@@ -23,11 +23,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lejoying.utils.MCImageUtils;
+import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 
 public class MainActivity extends Activity implements OnClickListener {
 
+	Data data = Data.getInstance();
 	LayoutInflater mInflater;
 
 	int screenHeight, screenWidth, screenDip;
@@ -47,14 +49,18 @@ public class MainActivity extends Activity implements OnClickListener {
 	RelativeLayout chatMessagesListContentView;
 	RelativeLayout userInfomationContentView;
 
+	ImageView userHeadImageView;
+	TextView userNickNameView;
+	TextView userBusinessView;
+
 	Map<String, View> views = new HashMap<String, View>();
 	List<String> normalShow = new ArrayList<String>();
 
 	Map<String, CircleHolder> circleHolders = new Hashtable<String, CircleHolder>();
-	List<String> circles = LaunchActivity.data.relationship.circles;
+	List<String> circles = data.relationship.circles;
 
-	Map<String, Friend> friendsMap = LaunchActivity.data.relationship.friendsMap;
-	Map<String, Circle> circlesMap = LaunchActivity.data.relationship.circlesMap;
+	Map<String, Friend> friendsMap = data.relationship.friendsMap;
+	Map<String, Circle> circlesMap = data.relationship.circlesMap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +108,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		intimateFriendsContentView = (RelativeLayout) findViewById(R.id.rl_intimateFriendsContent);
 		chatMessagesListContentView = (RelativeLayout) findViewById(R.id.rl_chatMessagesContent);
 		userInfomationContentView = (RelativeLayout) findViewById(R.id.rl_userInfomationContent);
+
+		userHeadImageView = (ImageView) findViewById(R.id.iv_headImage);
+		userNickNameView = (TextView) findViewById(R.id.tv_userNickname);
+		userBusinessView = (TextView) findViewById(R.id.tv_userMainBusiness);
 	}
 
 	@Override
@@ -121,6 +131,11 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void notifyViews() {
+		userHeadImageView.setImageBitmap(MCImageUtils.getCircleBitmap(
+				BitmapFactory.decodeResource(getResources(),
+						R.drawable.face_man), true, 5, Color.WHITE));
+		userNickNameView.setText(data.userInformation.currentUser.nickName);
+		userBusinessView.setText(data.userInformation.currentUser.mainBusiness);
 		// generate circle page views
 		generateViews();
 		// init circle page views position
