@@ -139,7 +139,7 @@ public class HttpUtils {
     private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     private static final String ENCODING_GZIP = "gzip";
 
-    private final static int DEFAULT_POOL_SIZE = 3;
+    private final static int DEFAULT_POOL_SIZE = 10;
     private final static PriorityExecutor EXECUTOR = new PriorityExecutor(DEFAULT_POOL_SIZE);
 
     public HttpClient getHttpClient() {

@@ -17,9 +17,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.UserInformation;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.CommonNetConnection;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.utils.NetworkHandler.Settings;
@@ -28,7 +32,7 @@ import com.open.welinks.view.UserIntimateView;
 public class UserIntimateController {
 
 	public Data data = Data.getInstance();
-
+	public String tag = "UserIntimateController";
 	public UserIntimateView thisView;
 	public Context context;
 	public Activity thisActivity;
@@ -49,6 +53,21 @@ public class UserIntimateController {
 		if (phone != null && !"".equals(phone)) {
 			userPhone = phone;
 		}
+
+		this.test();
+	}
+
+	public void test() {
+
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("accessKey", "lejoying");
+		params.addBodyParameter("phone", "151");
+
+		HttpUtils http = new HttpUtils();
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+		String url2 = "http://192.168.1.92/api2/relation/intimatefriends";
+		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.getIntimateFriends);
 	}
 
 	public UserIntimateController(Activity thisActivity) {
@@ -63,17 +82,11 @@ public class UserIntimateController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.intimateFriendsMenuOptionView)) {
-					thisView.changeMenuOptionSelected(
-							thisView.intimateFriendsContentView,
-							thisView.intimateFriendsMenuOptionStatusImage);
+					thisView.changeMenuOptionSelected(thisView.intimateFriendsContentView, thisView.intimateFriendsMenuOptionStatusImage);
 				} else if (view.equals(thisView.chatMessagesListMenuOptionView)) {
-					thisView.changeMenuOptionSelected(
-							thisView.chatMessagesListContentView,
-							thisView.chatMessagesListMenuOptionStatusImage);
+					thisView.changeMenuOptionSelected(thisView.chatMessagesListContentView, thisView.chatMessagesListMenuOptionStatusImage);
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
-					thisView.changeMenuOptionSelected(
-							thisView.userInfomationContentView,
-							thisView.userInfomationMenuOptionStatusImage);
+					thisView.changeMenuOptionSelected(thisView.userInfomationContentView, thisView.userInfomationMenuOptionStatusImage);
 				}
 
 			}
@@ -81,12 +94,9 @@ public class UserIntimateController {
 	}
 
 	public void bindEvent() {
-		thisView.intimateFriendsMenuOptionView
-				.setOnClickListener(mOnClickListener);
-		thisView.chatMessagesListMenuOptionView
-				.setOnClickListener(mOnClickListener);
-		thisView.userInfomationMenuOptionView
-				.setOnClickListener(mOnClickListener);
+		thisView.intimateFriendsMenuOptionView.setOnClickListener(mOnClickListener);
+		thisView.chatMessagesListMenuOptionView.setOnClickListener(mOnClickListener);
+		thisView.userInfomationMenuOptionView.setOnClickListener(mOnClickListener);
 	}
 
 	public long eventCount = 0;
@@ -107,8 +117,7 @@ public class UserIntimateController {
 
 	public boolean onTouchEvent(MotionEvent event) {
 
-		if (!thisView.currentShowContentView
-				.equals(thisView.intimateFriendsContentView)) {
+		if (!thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
 			return true;
 		}
 		eventCount++;
@@ -162,8 +171,7 @@ public class UserIntimateController {
 			public void success(JSONObject jData) {
 				generateTextView("获取个人信息成功...");
 				try {
-					data.userInformation = gson.fromJson(
-							jData.getString("data"), UserInformation.class);
+					data.userInformation = gson.fromJson(jData.getString("data"), UserInformation.class);
 					getIntimateFriendsData(userPhone);
 				} catch (JsonSyntaxException e) {
 					e.printStackTrace();
@@ -197,8 +205,7 @@ public class UserIntimateController {
 			public void success(JSONObject jData) {
 				generateTextView("获取密友成功...");
 				try {
-					data.relationship = gson.fromJson(jData.getString("data"),
-							Relationship.class);
+					data.relationship = gson.fromJson(jData.getString("data"), Relationship.class);
 					generateTextView("准备初始化UI...");
 					// Thread.currentThread().sleep(1000);
 					handler.post(new Runnable() {

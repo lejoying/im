@@ -26,12 +26,16 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.utils.MCImageUtils;
 
 public class UserIntimateView {
-
+	
+	public Data data = Data.getInstance();
+	
+	public String tag = "UserIntimateView";
+	
 	public UserIntimateController thisController;
 	public Context context;
 	public Activity thisActivity;
 
-	public Data data = Data.getInstance();
+
 	public LayoutInflater mInflater;
 
 	public int screenHeight, screenWidth, screenDip;
