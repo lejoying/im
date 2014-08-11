@@ -76,7 +76,8 @@ public class Debug1Controller {
 			thisView.titleControlProgress.setTo(targetPercentage);
 			targetPercentage = (targetPercentage + 30) % 100;
 
-			for (int i = 0; i < 1; i++) {
+			for (int i = 0; i < 10
+					; i++) {
 				testHttp.test1();
 			}
 

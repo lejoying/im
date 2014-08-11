@@ -1,11 +1,13 @@
 package com.open.welinks.controller;
 
-import com.open.welinks.model.Data;
-import com.open.welinks.view.LoginView;
-import com.open.welinks.view.LoginView.Status;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,6 +15,17 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.open.welinks.UserIntimateActivity;
+import com.open.welinks.model.Data;
+import com.open.welinks.utils.CommonNetConnection;
+import com.open.welinks.utils.NetworkHandler;
+import com.open.welinks.utils.NetworkHandler.Settings;
+import com.open.welinks.utils.SHA1;
+import com.open.welinks.view.LoginView;
+import com.open.welinks.view.LoginView.Status;
 
 public class LoginController {
 	public Data data = Data.getInstance();
@@ -30,6 +43,14 @@ public class LoginController {
 	public TextWatcher mTextWatcher1;
 	public TextWatcher mTextWatcher2;
 
+	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
+	Handler handler = new Handler();
+	String url_userauth = "http://www.we-links.com/api2/account/auth";
+
+	Gson gson = new Gson();
+
+	SHA1 msSha1 = new SHA1();
+
 	public LoginController(Activity activity) {
 		this.context = activity;
 		this.thisActivity = activity;
@@ -41,13 +62,15 @@ public class LoginController {
 			@Override
 			public void onFocusChange(View view, boolean hasFocus) {
 				if (view.equals(thisView.input1)) {
-					if (hasFocus && !thisView.input1.getText().toString().equals("")) {
+					if (hasFocus
+							&& !thisView.input1.getText().toString().equals("")) {
 						thisView.clearInput1.setVisibility(View.VISIBLE);
 					} else {
 						thisView.clearInput1.setVisibility(View.INVISIBLE);
 					}
 				} else if (view.equals(thisView.input2)) {
-					if (hasFocus && !thisView.input2.getText().toString().equals("")) {
+					if (hasFocus
+							&& !thisView.input2.getText().toString().equals("")) {
 						thisView.clearInput2.setVisibility(View.VISIBLE);
 					} else {
 						thisView.clearInput2.setVisibility(View.INVISIBLE);
@@ -61,9 +84,27 @@ public class LoginController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.loginButton)) {
-					nextAnimation(Status.loginUsePassword, thisView.card, thisView.loginOrRegister);
+					nextAnimation(Status.loginUsePassword, thisView.card,
+							thisView.loginOrRegister);
 				} else if (view.equals(thisView.registerButton)) {
-					nextAnimation(Status.verifyPhoneForRegister, thisView.card, thisView.loginOrRegister);
+					nextAnimation(Status.verifyPhoneForRegister, thisView.card,
+							thisView.loginOrRegister);
+				} else if (view.equals(thisView.mainButton)) {
+					if (thisView.status == Status.loginUsePassword) {
+						String loginPhone = thisView.input1.getText()
+								.toString().trim();
+						String loginPass = thisView.input2.getText().toString()
+								.trim();
+						if ("".equals(loginPhone) || "".equals(loginPass)) {
+							Toast.makeText(context, "帐号和密码不能为空",
+									Toast.LENGTH_LONG).show();
+							return;
+						}
+						requestUserAuth(loginPhone, loginPass);
+					} else {
+						Toast.makeText(context, "尚未处理", Toast.LENGTH_LONG)
+								.show();
+					}
 				}
 			}
 		};
@@ -71,11 +112,13 @@ public class LoginController {
 		mTextWatcher1 = new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
 			}
 
 			@Override
@@ -91,11 +134,13 @@ public class LoginController {
 		mTextWatcher2 = new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
 			}
 
 			@Override
@@ -130,15 +175,14 @@ public class LoginController {
 		thisView.rightBottomTextButton.setOnClickListener(mOnClickListener);
 	}
 
-	Handler handler = new Handler();
-
 	public void onCreate() {
 		thisView.status = Status.loginOrRegister;
 		handler.postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
-				backAnimation(thisView.status, thisView.loginOrRegisterButton, null);
+				backAnimation(thisView.status, thisView.loginOrRegisterButton,
+						null);
 			}
 		}, 500);
 	}
@@ -147,15 +191,19 @@ public class LoginController {
 		boolean flag = false;
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (thisView.status == Status.loginUsePassword) {
-				backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
+				backAnimation(Status.loginOrRegister, thisView.loginOrRegister,
+						thisView.card);
 			} else if (thisView.status == Status.verifyPhoneForLogin) {
-				backAnimation(Status.loginUsePassword, thisView.card, thisView.card);
+				backAnimation(Status.loginUsePassword, thisView.card,
+						thisView.card);
 
 			} else if (thisView.status == Status.verifyPhoneForRegister) {
-				backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
+				backAnimation(Status.loginOrRegister, thisView.loginOrRegister,
+						thisView.card);
 
 			} else if (thisView.status == Status.verifyPhoneForResetPassword) {
-				backAnimation(Status.loginUsePassword, thisView.card, thisView.card);
+				backAnimation(Status.loginUsePassword, thisView.card,
+						thisView.card);
 			}
 		} else {
 		}
@@ -204,4 +252,31 @@ public class LoginController {
 		}
 	}
 
+	public void requestUserAuth(final String loginPhone, final String loginPass) {
+		mNetworkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			public void success(JSONObject jData) {
+				Intent intent = new Intent(thisActivity,
+						UserIntimateActivity.class);
+				intent.putExtra("phone", loginPhone);
+				thisActivity.startActivity(intent);
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = url_userauth;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", loginPhone);
+				String passwd = msSha1.getDigestOfString(loginPass.getBytes());
+				params.put("password", passwd);
+				settings.params = params;
+			}
+
+			@Override
+			protected void unSuccess(JSONObject jData) {
+				super.unSuccess(jData);
+			}
+		});
+	}
 }
