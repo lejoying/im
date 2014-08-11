@@ -11,6 +11,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout.LayoutParams;
@@ -26,15 +27,14 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.utils.MCImageUtils;
 
 public class UserIntimateView {
-	
+
 	public Data data = Data.getInstance();
-	
+
 	public String tag = "UserIntimateView";
-	
+
 	public UserIntimateController thisController;
 	public Context context;
 	public Activity thisActivity;
-
 
 	public LayoutInflater mInflater;
 
@@ -59,8 +59,8 @@ public class UserIntimateView {
 	public TextView userNickNameView;
 	public TextView userBusinessView;
 
-	public Map<String, View> views = new HashMap<String, View>();
-	public List<String> normalShow = new ArrayList<String>();
+	public Map<String, CircleBody> viewsMap = new HashMap<String, CircleBody>();
+	public MyListBody myListBody;
 
 	public Map<String, CircleHolder> circleHolders = new Hashtable<String, CircleHolder>();
 
@@ -76,8 +76,7 @@ public class UserIntimateView {
 	public void initData() {
 		mInflater = thisActivity.getLayoutInflater();
 		DisplayMetrics displayMetrics = new DisplayMetrics();
-		thisActivity.getWindowManager().getDefaultDisplay()
-				.getMetrics(displayMetrics);
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenDensity = displayMetrics.density;
 		screenDip = (int) (40 * screenDensity + 0.5f);
 		screenHeight = displayMetrics.heightPixels;
@@ -95,131 +94,233 @@ public class UserIntimateView {
 
 	public void initViews() {
 		thisActivity.setContentView(R.layout.activity_userintimate);
-		intimateFriendsMenuOptionView = (RelativeLayout) thisActivity
-				.findViewById(R.id.rl_intimatefriends);
-		chatMessagesListMenuOptionView = (RelativeLayout) thisActivity
-				.findViewById(R.id.rl_chatMessagesList);
-		userInfomationMenuOptionView = (RelativeLayout) thisActivity
-				.findViewById(R.id.rl_userInfomation);
-		intimateFriendsMenuOptionStatusImage = (ImageView) thisActivity
-				.findViewById(R.id.iv_intimatefriends_status);
-		chatMessagesListMenuOptionStatusImage = (ImageView) thisActivity
-				.findViewById(R.id.iv_chatMessagesList_status);
-		userInfomationMenuOptionStatusImage = (ImageView) thisActivity
-				.findViewById(R.id.iv_userInfomation_status);
-		intimateFriendsContentView = (RelativeLayout) thisActivity
-				.findViewById(R.id.rl_intimateFriendsContent);
-		chatMessagesListContentView = (RelativeLayout) thisActivity
-				.findViewById(R.id.rl_chatMessagesContent);
-		userInfomationContentView = (RelativeLayout) thisActivity
-				.findViewById(R.id.rl_userInfomationContent);
 
-		userHeadImageView = (ImageView) thisActivity
-				.findViewById(R.id.iv_headImage);
-		userNickNameView = (TextView) thisActivity
-				.findViewById(R.id.tv_userNickname);
-		userBusinessView = (TextView) thisActivity
-				.findViewById(R.id.tv_userMainBusiness);
+		intimateFriendsMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimatefriends);
+		chatMessagesListMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesList);
+		userInfomationMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomation);
+		intimateFriendsMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_intimatefriends_status);
+		chatMessagesListMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_chatMessagesList_status);
+		userInfomationMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_userInfomation_status);
+
+		intimateFriendsContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimateFriendsContent);
+		myListBody = new MyListBody();
+		myListBody.initialize(intimateFriendsContentView);
+
+		chatMessagesListContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
+		userInfomationContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
+
+		userHeadImageView = (ImageView) thisActivity.findViewById(R.id.iv_headImage);
+		userNickNameView = (TextView) thisActivity.findViewById(R.id.tv_userNickname);
+		userBusinessView = (TextView) thisActivity.findViewById(R.id.tv_userMainBusiness);
+
 	}
 
 	public void notifyViews() {
 
-		intimateFriendsContentView.removeAllViews();
+		// intimateFriendsContentView.removeAllViews();
+		//
+		// circles = data.relationship.circles;
+		// circlesMap = data.relationship.circlesMap;
+		// friendsMap = data.relationship.friendsMap;
+		//
+		// userHeadImageView.setImageBitmap(MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(),
+		// R.drawable.face_man), true, 5, Color.WHITE));
+		// userNickNameView.setText(data.userInformation.currentUser.nickName);
+		// userBusinessView.setText(data.userInformation.currentUser.mainBusiness);
+		// // generate circle page views
+		// generateViews();
+		// // init circle page views position
+		// int top = 0;
+		// for (int i = 0; i < normalShow.size(); i++) {
+		// View v = viewsMap.get(normalShow.get(i));
+		// if (v.getParent() == null) {
+		// intimateFriendsContentView.addView(v, i);
+		// }
+		// int height = (int) dp2px(((Integer) v.getTag()).floatValue());
+		// RelativeLayout.LayoutParams layoutParams = new
+		// RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+		// LayoutParams.WRAP_CONTENT);
+		// if (i == normalShow.size() - 1) {
+		// layoutParams.setMargins(layoutParams.leftMargin, top + 10,
+		// layoutParams.rightMargin, 50);
+		// } else {
+		// layoutParams.setMargins(layoutParams.leftMargin, top,
+		// layoutParams.rightMargin, -Integer.MAX_VALUE);
+		// }
+		// if (i < 2) {
+		// top = top + height + 10;
+		// } else {
+		// top = top + height;
+		// }
+		// // v.setTranslationY(top);
+		// // v.setY(top);
+		// v.setLayoutParams(layoutParams);
+		// }
+	}
+
+	//
+	// public view generateCircleView(){
+	//
+	//
+	// }
+
+	public void showCircles() {
 
 		circles = data.relationship.circles;
 		circlesMap = data.relationship.circlesMap;
 		friendsMap = data.relationship.friendsMap;
 
-		userHeadImageView.setImageBitmap(MCImageUtils.getCircleBitmap(
-				BitmapFactory.decodeResource(thisActivity.getResources(),
-						R.drawable.face_man), true, 5, Color.WHITE));
-		userNickNameView.setText(data.userInformation.currentUser.nickName);
-		userBusinessView.setText(data.userInformation.currentUser.mainBusiness);
-		// generate circle page views
-		generateViews();
-		// init circle page views position
-		int top = 0;
-		for (int i = 0; i < normalShow.size(); i++) {
-			View v = views.get(normalShow.get(i));
-			if (v.getParent() == null) {
-				intimateFriendsContentView.addView(v, i);
+		this.myListBody.circlesSequence.clear();
+
+		for (int i = 0; i < circles.size(); i++) {
+			Circle circle = circlesMap.get(circles.get(i));
+
+			CircleBody circleBody = null;
+			circleBody = new CircleBody();
+			circleBody.initialize();
+			circleBody.setContent(circle);
+
+			this.myListBody.circlesSequence.add("circle#" + circle.rid);
+			this.myListBody.circleBodiesMap.put("circle#" + circle.rid, circleBody);
+
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 300);
+			circleBody.cardView.setY(330 * i + 100);
+
+			this.myListBody.intimateFriendsContentView.addView(circleBody.cardView, layoutParams);
+			Log.d(tag, "addView");
+
+		}
+	}
+
+	public class CircleBody {
+
+		public List<String> friendsSequence = new ArrayList<String>();
+		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
+
+		public View cardView = null;
+		public TextView leftTopText = null;
+
+		public float x;
+		public float y;
+
+		public View initialize() {
+
+			this.cardView = mInflater.inflate(R.layout.view_control_circle_card, null);
+			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
+			return intimateFriendsContentView;
+
+		}
+
+		public void setContent(Circle circle) {
+			leftTopText.setText(circle.name);
+			this.friendsSequence.clear();
+			for (int i = 0; i < circle.friends.size(); i++) {
+				String phone = circle.friends.get(i);
+				Friend friend = friendsMap.get(phone);
+				if (this.friendBodiesMap.get(phone) == null) {
+
+				}
 			}
-			int height = (int) dp2px(((Integer) v.getTag()).floatValue());
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			if (i == normalShow.size() - 1) {
-				layoutParams.setMargins(layoutParams.leftMargin, top + 10,
-						layoutParams.rightMargin, 50);
-			} else {
-				layoutParams.setMargins(layoutParams.leftMargin, top,
-						layoutParams.rightMargin, -Integer.MAX_VALUE);
+		}
+	}
+
+	public class FriendBody {
+		public View cardView = null;
+
+		public ImageView headView;
+		public TextView nickNameView;
+
+		public View Initialize() {
+			cardView = mInflater.inflate(R.layout.circles_gridpage_item, null);
+
+			return cardView;
+		}
+
+		public void setData(Friend friend) {
+
+		}
+	}
+
+	public class MyListBody {
+		public RelativeLayout intimateFriendsContentView = null;
+
+		public List<String> circlesSequence = new ArrayList<String>();
+		public Map<String, CircleBody> circleBodiesMap = new HashMap<String, CircleBody>();
+
+		public View initialize(View container) {
+			intimateFriendsContentView = (RelativeLayout) container;
+			return intimateFriendsContentView;
+
+		}
+
+		public void recordChildrenPosition() {
+			for (int i = 0; i < circlesSequence.size(); i++) {
+				CircleBody circleBody = circleBodiesMap.get(circlesSequence.get(i));
+				circleBody.x = circleBody.cardView.getX();
+				circleBody.y = circleBody.cardView.getY();
 			}
-			if (i < 2) {
-				top = top + height + 10;
-			} else {
-				top = top + height;
+		}
+
+		public void setChildrenPosition(float deltaX, float deltaY) {
+			for (int i = 0; i < circlesSequence.size(); i++) {
+				CircleBody circleBody = circleBodiesMap.get(circlesSequence.get(i));
+				circleBody.cardView.setX(circleBody.x + deltaX);
+				circleBody.cardView.setY(circleBody.y + deltaY);
 			}
-			// v.setTranslationY(top);
-			// v.setY(top);
-			v.setLayoutParams(layoutParams);
 		}
 	}
 
 	public void generateViews() {
-		normalShow.clear();
-		if (views.get("button#findmore") == null) {
-			View findMoreFriendButtonView = generateFindMoreFriendButtonView();
-			findMoreFriendButtonView.setTag(46);
-			views.put("button#findmore", findMoreFriendButtonView);
-		}
-		normalShow.add("button#findmore");
-
-		View newFriendButtonView = views.get("button#newfriend");
-		if (newFriendButtonView == null) {
-			newFriendButtonView = generateNewFriendButtonView();
-			newFriendButtonView.setTag(46);
-			views.put("button#newfriend", newFriendButtonView);
-		}
-
-		int newFriendsCount = 1;
-		notifyNewFriendButtonView(newFriendButtonView, newFriendsCount);
-		normalShow.add("button#newfriend");
-
-		// circles.clear();
-		// generate circles
-		for (int i = 0; i < circles.size(); i++) {
-			Circle circle = circlesMap.get(circles.get(i));
-
-			View circleView = views.get("group#" + circle.rid);
-			if (circleView == null) {
-				CircleHolder circleHolder = new CircleHolder();
-				circleHolders.put("group#" + circle.rid, circleHolder);
-				circleView = generateCircleView();
-				views.put("group#" + circle.rid, circleView);
-				circleView.setTag(265);// 262
-			}
-			notifyCircleView(circleView, circle,
-					circleHolders.get("group#" + circle.rid));
-
-			normalShow.add("group#" + circle.rid);
-			// circles.add("group#" + circle.rid);
-		}
+		// normalShow.clear();
+		// if (viewsMap.get("button#findmore") == null) {
+		// View findMoreFriendButtonView = generateFindMoreFriendButtonView();
+		// findMoreFriendButtonView.setTag(46);
+		// viewsMap.put("button#findmore", findMoreFriendButtonView);
+		// }
+		// normalShow.add("button#findmore");
+		//
+		// View newFriendButtonView = viewsMap.get("button#newfriend");
+		// if (newFriendButtonView == null) {
+		// newFriendButtonView = generateNewFriendButtonView();
+		// newFriendButtonView.setTag(46);
+		// viewsMap.put("button#newfriend", newFriendButtonView);
+		// }
+		//
+		// int newFriendsCount = 1;
+		// notifyNewFriendButtonView(newFriendButtonView, newFriendsCount);
+		// normalShow.add("button#newfriend");
+		//
+		// // circles.clear();
+		// // generate circles
+		// for (int i = 0; i < circles.size(); i++) {
+		// Circle circle = circlesMap.get(circles.get(i));
+		//
+		// View circleView = viewsMap.get("group#" + circle.rid);
+		// if (circleView == null) {
+		// CircleHolder circleHolder = new CircleHolder();
+		// circleHolders.put("group#" + circle.rid, circleHolder);
+		// circleView = generateCircleView();
+		// viewsMap.put("group#" + circle.rid, circleView);
+		// circleView.setTag(265);// 262
+		// }
+		// notifyCircleView(circleView, circle, circleHolders.get("group#" +
+		// circle.rid));
+		//
+		// normalShow.add("group#" + circle.rid);
+		// // circles.add("group#" + circle.rid);
+		// }
 	}
 
-	public void notifyCircleView(final View circleView, Circle circle,
-			CircleHolder circleHolder) {
-		TextView groupName = (TextView) circleView
-				.findViewById(R.id.panel_name);
+	public void notifyCircleView(final View circleView, Circle circle, CircleHolder circleHolder) {
+		TextView groupName = (TextView) circleView.findViewById(R.id.panel_name);
 		groupName.setText(circle.name + "( " + circle.friends.size() + " )");
-		RelativeLayout friendsPanelView = (RelativeLayout) circleView
-				.findViewById(R.id.rl_friendsPanel);
+		RelativeLayout friendsPanelView = (RelativeLayout) circleView.findViewById(R.id.rl_friendsPanel);
 		for (int i = 0; i < circle.friends.size(); i++) {
 			final Friend friend = friendsMap.get(circle.friends.get(i));
 			FriendHolder friendHolder = new FriendHolder();
 			friendHolder.phone = friend.phone;
 			int index = circleHolder.friendHolders.indexOf(friendHolder);
-			friendHolder = (index != -1 ? circleHolder.friendHolders
-					.remove(index) : null);
+			friendHolder = (index != -1 ? circleHolder.friendHolders.remove(index) : null);
 			View convertView = null;
 			if (friendHolder == null) {
 				convertView = generateFriendView(friend);
@@ -253,8 +354,7 @@ public class UserIntimateView {
 			position.x = (int) (baseLeft + head + headSpace + head + headSpace + baseX);
 		} else if ((i + 1) % 8 == 4) {
 			position.y = (int) dp2px(11);
-			position.x = (int) (baseLeft + head + headSpace + head + headSpace
-					+ head + headSpace + baseX);
+			position.x = (int) (baseLeft + head + headSpace + head + headSpace + head + headSpace + baseX);
 		} else if ((i + 1) % 8 == 5) {
 			position.y = (int) dp2px(11 + 73 + 27);
 			position.x = (int) (baseLeft + baseX);
@@ -266,8 +366,7 @@ public class UserIntimateView {
 			position.x = (int) (baseLeft + head + headSpace + head + headSpace + baseX);
 		} else if ((i + 1) % 8 == 0) {
 			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) (baseLeft + head + headSpace + head + headSpace
-					+ head + headSpace + baseX);
+			position.x = (int) (baseLeft + head + headSpace + head + headSpace + head + headSpace + baseX);
 		}
 		return position;
 	}
@@ -284,8 +383,7 @@ public class UserIntimateView {
 		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
 			FriendHolder friendHolder = circleHolder.friendHolders.get(i);
 
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-					(int) dp2px(55f), RelativeLayout.LayoutParams.WRAP_CONTENT);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = -Integer.MAX_VALUE;
 			params.topMargin = friendHolder.position.y;
 			params.leftMargin = friendHolder.position.x;
@@ -294,25 +392,21 @@ public class UserIntimateView {
 	}
 
 	View generateFriendView(Friend friend) {
-		View convertView = mInflater.inflate(R.layout.circles_gridpage_item,
-				null);
-		final ImageView head = (ImageView) convertView
-				.findViewById(R.id.iv_head);
-		TextView nickname = (TextView) convertView
-				.findViewById(R.id.tv_nickname);
+		View convertView = mInflater.inflate(R.layout.circles_gridpage_item, null);
+		final ImageView head = (ImageView) convertView.findViewById(R.id.iv_head);
+		TextView nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
 		if (!friend.alias.equals("") && friend.alias != null) {
 			nickname.setText(friend.alias);
 		} else {
 			nickname.setText(friend.nickName);
 		}
-		head.setImageBitmap(MCImageUtils.getCircleBitmap(BitmapFactory
-				.decodeResource(thisActivity.getResources(),
-						R.drawable.face_man), true, 5, Color.WHITE));
+		head.setImageBitmap(MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man), true, 5, Color.WHITE));
 		return convertView;
 	}
 
-	View generateCircleView() {
-		final View circleView = mInflater.inflate(R.layout.circle_panel, null);
+	public View generateCircleView() {
+		View circleView = mInflater.inflate(R.layout.view_control_circle_card, null);
+
 		return circleView;
 	}
 
@@ -356,8 +450,7 @@ public class UserIntimateView {
 		return dp;
 	}
 
-	public void changeMenuOptionSelected(RelativeLayout contentView,
-			ImageView statusImage) {
+	public void changeMenuOptionSelected(RelativeLayout contentView, ImageView statusImage) {
 		if (statusImage.getVisibility() == View.GONE) {
 			currentMenuOptionSelectedStatusImage.setVisibility(View.GONE);
 			statusImage.setVisibility(View.VISIBLE);
@@ -369,10 +462,8 @@ public class UserIntimateView {
 	}
 
 	void notifyNewFriendButtonView(View newFriendButtonView, int newFriendsCount) {
-		TextView newFriendButton = (TextView) newFriendButtonView
-				.findViewById(R.id.tv_type);
-		ImageView findMoreFriendIcon = (ImageView) newFriendButtonView
-				.findViewById(R.id.iv_icon);
+		TextView newFriendButton = (TextView) newFriendButtonView.findViewById(R.id.tv_type);
+		ImageView findMoreFriendIcon = (ImageView) newFriendButtonView.findViewById(R.id.iv_icon);
 		findMoreFriendIcon.setImageResource(R.drawable.header);
 		if (newFriendsCount != 0) {
 			newFriendButton.setText("新的好友(" + newFriendsCount + ")");
@@ -382,18 +473,14 @@ public class UserIntimateView {
 	}
 
 	View generateNewFriendButtonView() {
-		View newFriendButtonView = mInflater.inflate(
-				R.layout.circle_item_button_layout, null);
+		View newFriendButtonView = mInflater.inflate(R.layout.circle_item_button_layout, null);
 		return newFriendButtonView;
 	}
 
 	View generateFindMoreFriendButtonView() {
-		View findMoreFriendButtonView = mInflater.inflate(
-				R.layout.circle_item_button_layout, null);
-		TextView findMoreFriendButton = (TextView) findMoreFriendButtonView
-				.findViewById(R.id.tv_type);
-		ImageView findMoreFriendIcon = (ImageView) findMoreFriendButtonView
-				.findViewById(R.id.iv_icon);
+		View findMoreFriendButtonView = mInflater.inflate(R.layout.circle_item_button_layout, null);
+		TextView findMoreFriendButton = (TextView) findMoreFriendButtonView.findViewById(R.id.tv_type);
+		ImageView findMoreFriendIcon = (ImageView) findMoreFriendButtonView.findViewById(R.id.iv_icon);
 		findMoreFriendIcon.setImageResource(R.drawable.dialog_search);
 		findMoreFriendButton.setText("搜索好友");
 

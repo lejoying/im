@@ -61,7 +61,7 @@ public class UserIntimateController {
 
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("accessKey", "lejoying");
-		params.addBodyParameter("phone", "151");
+		params.addBodyParameter("phone", "15120088197");
 
 		HttpUtils http = new HttpUtils();
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
@@ -125,15 +125,17 @@ public class UserIntimateController {
 		float y = event.getY();
 		long currentMillis = System.currentTimeMillis();
 
-		RelativeLayout intimateFriendsContentView = thisView.intimateFriendsContentView;
+		// RelativeLayout intimateFriendsContentView =
+		// thisView.intimateFriendsContentView;
 
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
 			pre_x = x;
 			pre_y = y;
 
-			progress_test_x = intimateFriendsContentView.getX();
-			progress_test_y = intimateFriendsContentView.getY();
+			thisView.myListBody.recordChildrenPosition();
+			// progress_test_x = intimateFriendsContentView.getX();
+			// progress_test_y = intimateFriendsContentView.getY();
 
 			if (y > 520) {
 
@@ -147,9 +149,10 @@ public class UserIntimateController {
 			}
 
 			// progress_test.setX(progress_test_x + x - pre_x);
-			intimateFriendsContentView.setY(progress_test_y + y - pre_y);
+			// intimateFriendsContentView.setY(progress_test_y + y - pre_y);
 
 			// progress_line1.setX(progress_line1_x + x - pre_x);
+			thisView.myListBody.setChildrenPosition(0, y - pre_y);
 
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			long delta = currentMillis - lastMillis;

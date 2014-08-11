@@ -35,6 +35,7 @@ public class ViewManager {
 		if (viewName.equals("UserIntimateView")) {
 			if (userIntimateView != null) {
 				Log.d(tag, "notifyView:  UserIntimateView");
+				userIntimateView.showCircles();
 			}
 		}
 	}
