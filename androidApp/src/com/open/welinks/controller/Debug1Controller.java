@@ -1,5 +1,8 @@
 package com.open.welinks.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.Debug1View;
@@ -25,6 +28,8 @@ public class Debug1Controller {
 	public Debug1Controller thisController;
 	public Activity thisActivity;
 
+	ArrayList<HashMap<String, String>> imagesSource;
+
 	public Debug1Controller(Activity activity) {
 		this.context = activity;
 		this.thisActivity = activity;
@@ -39,6 +44,9 @@ public class Debug1Controller {
 
 	public void onCreate() {
 		thisView.status = Status.loginOrRegister;
+
+		imagesSource = (ArrayList<HashMap<String, String>>) thisActivity
+				.getIntent().getSerializableExtra("images");
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -62,7 +70,8 @@ public class Debug1Controller {
 		if (item.getItemId() == R.id.debug2_2) {
 			Log.d(tag, "Debug1Activity debug2_2");
 
-			ControlProgress controlProgress = thisView.transportingList.transportingItems.get(index).controlProgress;
+			ControlProgress controlProgress = thisView.transportingList.transportingItems
+					.get(index).controlProgress;
 			if (controlProgress.percentage > 50) {
 				controlProgress.moveTo(0);
 			} else {
@@ -76,8 +85,7 @@ public class Debug1Controller {
 			thisView.titleControlProgress.setTo(targetPercentage);
 			targetPercentage = (targetPercentage + 30) % 100;
 
-			for (int i = 0; i < 10
-					; i++) {
+			for (int i = 0; i < 10; i++) {
 				testHttp.test1();
 			}
 

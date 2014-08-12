@@ -14,8 +14,8 @@
     <application
         android:name=".UILApplication"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" 
-        android:theme="@style/notitle">
+        android:label="@string/app_name"
+        android:theme="@style/notitle" >
         <activity
             android:name=".HomeActivity"
             android:label="@string/app_name" >
@@ -25,6 +25,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.nostra13.example.universalimageloader.ImageListActivity"
+            android:label="@string/ac_name_image_list" />
+        <activity
+            android:name="com.nostra13.example.universalimageloader.ImageGridActivity"
+            android:label="@string/ac_name_image_list" />
         <activity
             android:name=".TestActivity2"
             android:label="@string/ac_name_image_list" />
@@ -49,7 +55,7 @@
         <activity
             android:name="com.open.test2.TestActivity21"
             android:label="Test2" />
-        
+
         <!-- Widget -->
         <receiver android:name=".widget.UILWidgetProvider" >
             <meta-data

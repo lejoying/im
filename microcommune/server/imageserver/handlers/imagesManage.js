@@ -177,4 +177,44 @@ imagesManage.show = function (data, response) {
      }
      });*/
 }
+/****************************************************
+ * * * * * * * * * New Api* * * * * * * * * * * * * *
+ ****************************************************/
+var crypto = require("crypto");
+var app_secret = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";//OtxrzxIsfpFjA7SwPzILwy8Bw21TLhquhboDYROV
+imagesManage.checkfile = function (data, response) {
+    response.asynchronous = 1;
+    var fileName = data.filename;
+    var notEncryptedContent = data.notencryptedcontent;
+    client.HEXISTS("imageset", fileName, function (error, reply) {
+        if (error != null) {
+            response.write(JSON.stringify({
+                "提示信息": "查询失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error + "check image is exists");
+            return;
+        } else {
+
+            var flag = false;
+//            console.log(reply);
+            var encryptedContent;
+            if (reply == "1") {
+                flag = true;
+                console.log(fileName + "---" + reply + "---文件已存在");
+            } else {
+                encryptedContent = crypto.createHmac('sha1', app_secret).update(notEncryptedContent).digest().toString('base64'); //base64
+                console.log(fileName + "---" + reply + "---文件不存在" + encryptedContent);
+            }
+            response.write(JSON.stringify({
+                "提示信息": "查找成功",
+                "filename": fileName,
+                "exists": flag,
+                "signature": encryptedContent
+            }));
+            response.end();
+        }
+    });
+}
 module.exports = imagesManage;

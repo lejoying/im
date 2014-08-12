@@ -2,7 +2,12 @@ package com.open.welinks;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 
 import com.open.welinks.controller.UserIntimateController;
@@ -19,7 +24,7 @@ public class UserIntimateActivity extends Activity {
 	public UserIntimateView thisView;
 	public UserIntimateController thisController;
 	public Activity thisActivity;
-	
+
 	public ViewManager viewManager = ViewManager.getIntance();
 
 	@Override
@@ -38,7 +43,7 @@ public class UserIntimateActivity extends Activity {
 		this.thisController.thisView = this.thisView;
 
 		viewManager.userIntimateView = this.thisView;
-		
+
 		thisView.initViews();
 		thisView.initData();
 		thisController.initializeListeners();
@@ -47,8 +52,30 @@ public class UserIntimateActivity extends Activity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_debug_1, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.debug1_1) {
+			Log.d(tag, "debug1.1");
+			startActivity(new Intent(UserIntimateActivity.this,
+					Debug1Activity.class));
+		} else if (item.getItemId() == R.id.debug1_0) {
+			Log.d(tag, "debug1.1");
+			startActivity(new Intent(UserIntimateActivity.this,
+					Debug1Activity.class));
+		}
+		return true;
+	}
+
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		super.onTouchEvent(event);
 		return thisController.onTouchEvent(event);
 	}
+
 }
