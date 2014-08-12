@@ -16,6 +16,15 @@ public class Data {
 		return data;
 	}
 
+	public LocalStatus localStatus = new LocalStatus();
+
+	public class LocalStatus {
+		public String thisActivityName = "NONE";
+		public String thisActivityStatus = "";
+		
+		public String debugMode="NONE";//NONE 
+	}
+
 	public UserInformation userInformation;
 	public Relationship relationship;
 

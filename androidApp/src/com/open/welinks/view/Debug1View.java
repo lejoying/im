@@ -25,11 +25,12 @@ import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 public class Debug1View {
 	public Data data = Data.getInstance();
-	public String tag = "LoginView";
+	public String tag = "Debug1View";
 
 	public Context context;
 	public Debug1View thisView;
@@ -107,7 +108,7 @@ public class Debug1View {
 			public TextView text_file_size_view;
 			public TextView text_transport_time_view;
 			public View controlProgressView;
-			
+
 			public ControlProgress controlProgress;
 
 			public View initialize(String path) {
@@ -129,7 +130,11 @@ public class Debug1View {
 				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
 				this.controlProgress.initialize(this.controlProgressView);
-				
+
+				LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 2);
+				this.controlProgress.progress_line1.setLayoutParams(params);
+				this.controlProgress.progress_line2.setLayoutParams(params);
+
 				return transportingItemView;
 			}
 		}
@@ -157,6 +162,8 @@ public class Debug1View {
 		public View controlProgressView;
 
 		public ImageView progress_line1;
+
+		public ImageView progress_line2;
 		public TranslateAnimation move_progress_line1;
 
 		public int percentage = 0;
@@ -168,6 +175,7 @@ public class Debug1View {
 			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
 
 			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
 			controlProgressView = container;
 
 			width = displayMetrics.widthPixels;

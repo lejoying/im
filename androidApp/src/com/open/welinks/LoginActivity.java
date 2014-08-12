@@ -4,6 +4,7 @@ import com.open.welinks.controller.LoginController;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;
 import com.open.welinks.view.LoginView.Status;
+import com.open.welinks.view.ViewManager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,9 +24,11 @@ public class LoginActivity extends Activity {
 	public LoginView thisView;
 	public LoginController thisController;
 	public Activity thisActivity;
+	
+	public ViewManager viewManager = ViewManager.getIntance();
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		linkViewController();
@@ -37,13 +40,21 @@ public class LoginActivity extends Activity {
 		}
 	}
 
-	void linkViewController() {
+	@Override
+	public void onResume() {
+		super.onResume();
+		data.localStatus.thisActivityName = "LoginActivity";
+	}
+
+	public void linkViewController() {
 		this.thisActivity = this;
 		this.context = this;
 		this.thisView = new LoginView(thisActivity);
 		this.thisController = new LoginController(thisActivity);
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
+		
+		viewManager.loginView = this.thisView;
 
 		thisView.initView();
 		thisController.onCreate();

@@ -6,6 +6,8 @@ import com.open.welinks.view.Debug1View;
 import com.open.welinks.view.Debug1View.ControlProgress;
 import com.open.welinks.view.Debug1View.Status;
 
+import com.open.lib.TestHttp;
+
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -49,6 +51,7 @@ public class Debug1Controller {
 
 	int targetPercentage = 30;
 	int index = 0;
+	TestHttp testHttp = new TestHttp();
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.debug2_1) {
@@ -72,6 +75,12 @@ public class Debug1Controller {
 			Log.d(tag, "Debug1Activity debug2_3");
 			thisView.titleControlProgress.setTo(targetPercentage);
 			targetPercentage = (targetPercentage + 30) % 100;
+
+			for (int i = 0; i < 10
+					; i++) {
+				testHttp.test1();
+			}
+
 		}
 		return true;
 	}
