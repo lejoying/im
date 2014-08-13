@@ -1666,12 +1666,10 @@ public class LoginActivity extends Activity implements OnClickListener,
 								params.put("account", "{\"password\":\""
 										+ passwd + "\"}");
 								settings.params = params;
-								System.out.println(passwd);
 							}
 
 							@Override
 							public void success(JSONObject jData) {
-								System.out.println(jData);
 								app.dataHandler.exclude(new Modification() {
 									@Override
 									public void modifyData(Data data) {

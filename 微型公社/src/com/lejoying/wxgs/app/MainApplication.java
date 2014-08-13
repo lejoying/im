@@ -19,6 +19,7 @@ import android.os.StrictMode;
 import com.lejoying.wxgs.activity.BaseActivity;
 import com.lejoying.wxgs.app.data.Configuration;
 import com.lejoying.wxgs.app.data.Data;
+import com.lejoying.wxgs.app.handler.AmapLocationHandler;
 import com.lejoying.wxgs.app.handler.DataHandler;
 import com.lejoying.wxgs.app.handler.AsyncHandler;
 import com.lejoying.wxgs.app.handler.EventHandler;
@@ -49,6 +50,7 @@ public class MainApplication extends Application implements
 	public EventHandler eventHandler;
 	public LocationHandler locationHandler;
 	public AsyncHandler asyncHandler;
+	public AmapLocationHandler amapLocationHandler;
 
 	public static String currentTAG;
 	public static BaseActivity currentActivity;
@@ -94,7 +96,8 @@ public class MainApplication extends Application implements
 		locationHandler.initialize(this);
 		asyncHandler = new AsyncHandler();
 		asyncHandler.initialized(10, UIHandler);
-
+		amapLocationHandler = new AmapLocationHandler();
+		amapLocationHandler.initialize(this);
 		// initialize tool
 		mSHA1 = new SHA1();
 
