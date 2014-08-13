@@ -1223,7 +1223,7 @@ relationManage.intimatefriends = function (data, response) {
                     }
                     ResponseData(JSON.stringify({
                         "提示信息": "获取密友圈成功",
-                        data: {
+                        relationship: {
                             circles: circles,
                             friendsMap: accounts,
                             circlesMap: circlesMap
@@ -1239,7 +1239,7 @@ relationManage.intimatefriends = function (data, response) {
                     }
                     ResponseData(JSON.stringify({
                         "提示信息": "获取密友圈成功",
-                        data: {
+                        relationship: {
                             circles: circles,
                             friendsMap: accounts,
                             circlesMap: circlesMap

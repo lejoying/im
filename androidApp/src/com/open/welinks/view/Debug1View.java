@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,16 +64,23 @@ public class Debug1View {
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
 		animateFirstListener = new AnimateFirstDisplayListener();
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.displayer(new RoundedBitmapDisplayer(20)).build();
 		imageLoader.init(ImageLoaderConfiguration.createDefault(thisActivity));
 
 		thisActivity.setContentView(R.layout.activiry_debug1_image_list);
 
-		listView = (ListView) thisActivity.findViewById(R.id.view_element_debug1_list);
+		listView = (ListView) thisActivity
+				.findViewById(R.id.view_element_debug1_list);
 		transportingList = new TransportingList();
 		transportingList.initialize(listView);
 
-		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
+		controlProgressView = thisActivity
+				.findViewById(R.id.title_control_progress_container);
 		titleControlProgress = new ControlProgress();
 		titleControlProgress.initialize(controlProgressView);
 	}
@@ -88,11 +96,12 @@ public class Debug1View {
 		}
 
 		public void setContent() {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < thisController.imagesSource.size(); i++) {
 				TransportingItem transportingItem = new TransportingItem();
 				transportingItems.add(transportingItem);
 
-				View transportingItemView = transportingItem.initialize("test.jpg");
+				View transportingItemView = transportingItem
+						.initialize(thisController.imagesSource.get(i));
 				transportingList.addFooterView(transportingItemView);
 			}
 
@@ -111,27 +120,37 @@ public class Debug1View {
 
 			public ControlProgress controlProgress;
 
-			public View initialize(String path) {
-				transportingItemView = mInflater.inflate(R.layout.view_element_debug1_list_item, null);
+			public View initialize(HashMap<String, String> imageSource) {
+				transportingItemView = mInflater.inflate(
+						R.layout.view_element_debug1_list_item, null);
 
-				imageView = (ImageView) transportingItemView.findViewById(R.id.image);
-				String imageUri = "assets://test.jpg";
-				imageLoader.displayImage(imageUri, imageView, options, animateFirstListener);
+				String path = imageSource.get("path");
+				imageView = (ImageView) transportingItemView
+						.findViewById(R.id.image);
+				String imageUri = "file://" + path;
+				imageLoader.displayImage(imageUri, imageView, options,
+						animateFirstListener);
 
-				text_filename_view = (TextView) transportingItemView.findViewById(R.id.text_filename);
-				text_filename_view.setText("test.jpg");
+				text_filename_view = (TextView) transportingItemView
+						.findViewById(R.id.text_filename);
+				text_filename_view
+						.setText(path.substring(path.lastIndexOf("/") + 1));
 
-				text_file_size_view = (TextView) transportingItemView.findViewById(R.id.text_file_size);
-				text_file_size_view.setText("68KB");
+				text_file_size_view = (TextView) transportingItemView
+						.findViewById(R.id.text_file_size);
+				text_file_size_view.setText(imageSource.get("size") + "k");
 
-				text_transport_time_view = (TextView) transportingItemView.findViewById(R.id.text_transport_time);
+				text_transport_time_view = (TextView) transportingItemView
+						.findViewById(R.id.text_transport_time);
 				text_transport_time_view.setText("27ms");
 
-				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
+				this.controlProgressView = transportingItemView
+						.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
 				this.controlProgress.initialize(this.controlProgressView);
 
-				LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 2);
+				LayoutParams params = new LayoutParams(
+						LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);
 				this.controlProgress.progress_line2.setLayoutParams(params);
 
@@ -140,12 +159,15 @@ public class Debug1View {
 		}
 	}
 
-	public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+	public static class AnimateFirstDisplayListener extends
+			SimpleImageLoadingListener {
 
-		static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+		static final List<String> displayedImages = Collections
+				.synchronizedList(new LinkedList<String>());
 
 		@Override
-		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+		public void onLoadingComplete(String imageUri, View view,
+				Bitmap loadedImage) {
 			if (loadedImage != null) {
 				ImageView imageView = (ImageView) view;
 				boolean firstDisplay = !displayedImages.contains(imageUri);
@@ -171,11 +193,14 @@ public class Debug1View {
 
 		public void initialize(View container) {
 			DisplayMetrics displayMetrics = new DisplayMetrics();
-			thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			thisActivity.getWindowManager().getDefaultDisplay()
+					.getMetrics(displayMetrics);
 			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
 
-			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
-			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
+			progress_line1 = (ImageView) container
+					.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container
+					.findViewById(R.id.progress_line2);
 			controlProgressView = container;
 
 			width = displayMetrics.widthPixels;
@@ -184,7 +209,8 @@ public class Debug1View {
 
 		public void moveTo(int targetPercentage) {
 			float position = targetPercentage / 100.0f * this.width;
-			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
+			move_progress_line1 = new TranslateAnimation(
+					(percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
 			// TODO old animation becomes memory fragment
 			move_progress_line1.setStartOffset(0);
 			move_progress_line1.setDuration(200);

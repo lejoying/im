@@ -24,7 +24,7 @@ public class LoginActivity extends Activity {
 	public LoginView thisView;
 	public LoginController thisController;
 	public Activity thisActivity;
-	
+
 	public ViewManager viewManager = ViewManager.getIntance();
 
 	@Override
@@ -53,7 +53,7 @@ public class LoginActivity extends Activity {
 		this.thisController = new LoginController(thisActivity);
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
-		
+
 		viewManager.loginView = this.thisView;
 
 		thisView.initView();
@@ -77,6 +77,10 @@ public class LoginActivity extends Activity {
 		} else if (item.getItemId() == R.id.debug1_0) {
 			Log.d(tag, "debug1.1");
 			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
+		} else if (item.getItemId() == R.id.csubmenu2_1) {
+			Log.d(tag, "csubmenu2_1");
+			startActivity(new Intent(LoginActivity.this,
+					ImagesDirectoryActivity.class));
 		}
 		return true;
 	}
