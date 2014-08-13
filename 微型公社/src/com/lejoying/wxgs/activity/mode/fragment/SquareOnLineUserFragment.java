@@ -1,5 +1,6 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,7 @@ public class SquareOnLineUserFragment extends BaseFragment {
 	ListView mSquareOnLineUserView;
 
 	SquareOnLineAdapter onLineAdapter;
-	List<Friend> users;
-	public static String mSquareID = "98";
+	public List<Friend> users = new ArrayList<Friend>();
 
 	View mContent;
 
@@ -59,11 +59,17 @@ public class SquareOnLineUserFragment extends BaseFragment {
 		mBackView = (RelativeLayout) mContent.findViewById(R.id.backview);
 		mSquareOnLineUserView = (ListView) mContent
 				.findViewById(R.id.lv_square_online_user);
-		if (!"".equals(mSquareID)) {
-			getSquareOnLineUsers();
-		}
+		// if (!"".equals(SquareInfomationFragment.mSquareID)) {
+		// getSquareOnLineUsers();
+		// }
 		initEvent();
+		initData();
 		return mContent;
+	}
+
+	private void initData() {
+		onLineAdapter = new SquareOnLineAdapter(users);
+		mSquareOnLineUserView.setAdapter(onLineAdapter);
 	}
 
 	public void setMode(MainModeManager mainMode) {
@@ -205,35 +211,35 @@ public class SquareOnLineUserFragment extends BaseFragment {
 		TextView uDiscription;
 	}
 
-	public void getSquareOnLineUsers() {
-		app.networkHandler.connection(new CommonNetConnection() {
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = API.DOMAIN + API.SQUARE_GETSQUAREUSERS;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", app.data.user.phone);
-				params.put("accessKey", app.data.user.accessKey);
-				params.put("gid", mSquareID);
-				settings.params = params;
-			}
-
-			@Override
-			public void success(JSONObject jData) {
-				try {
-					users = JSONParser.generateFriendsFromJSON(jData
-							.getJSONArray("users"));
-					app.UIHandler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							onLineAdapter = new SquareOnLineAdapter(users);
-							mSquareOnLineUserView.setAdapter(onLineAdapter);
-						}
-					});
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	// public void getSquareOnLineUsers() {
+	// app.networkHandler.connection(new CommonNetConnection() {
+	// @Override
+	// protected void settings(Settings settings) {
+	// settings.url = API.DOMAIN + API.SQUARE_GETSQUAREUSERS;
+	// Map<String, String> params = new HashMap<String, String>();
+	// params.put("phone", app.data.user.phone);
+	// params.put("accessKey", app.data.user.accessKey);
+	// params.put("gid", SquareInfomationFragment.mSquareID);
+	// settings.params = params;
+	// }
+	//
+	// @Override
+	// public void success(JSONObject jData) {
+	// try {
+	// users = JSONParser.generateFriendsFromJSON(jData
+	// .getJSONArray("users"));
+	// app.UIHandler.post(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// onLineAdapter = new SquareOnLineAdapter(users);
+	// mSquareOnLineUserView.setAdapter(onLineAdapter);
+	// }
+	// });
+	// } catch (JSONException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// });
+	// }
 }

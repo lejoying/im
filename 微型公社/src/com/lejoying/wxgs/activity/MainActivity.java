@@ -35,6 +35,7 @@ import com.lejoying.wxgs.activity.mode.LoginModeManager;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.mode.fragment.GroupShareFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareFragment;
+import com.lejoying.wxgs.activity.mode.fragment.SquareInfomationFragment;
 import com.lejoying.wxgs.activity.mode.fragment.SquareOnLineUserFragment;
 import com.lejoying.wxgs.activity.utils.DataUtil;
 import com.lejoying.wxgs.activity.utils.DataUtil.GetDataListener;
@@ -568,7 +569,8 @@ public class MainActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View arg0) {
-				Alert.showMessage("更多社区站尚未开放，敬请期待！");
+				mMainMode.showNext(mMainMode.mMoreSquaresFragment);
+				popWindow.dismiss();
 			}
 		});
 		btClose.setOnClickListener(new OnClickListener() {
@@ -795,8 +797,8 @@ public class MainActivity extends BaseActivity {
 					}
 					// intent.putExtra("mSquareID", mSquareId);
 					// startActivity(intent);
-					SquareOnLineUserFragment.mSquareID = mSquareId;
-					mMainMode.showNext(mMainMode.mSquareOnLineUserFragment);
+					SquareInfomationFragment.mSquareID = mSquareId;
+					mMainMode.showNext(mMainMode.mSquareInfomationFragment);
 					popWindow.dismiss();
 				}
 			});
