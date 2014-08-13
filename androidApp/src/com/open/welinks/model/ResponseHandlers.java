@@ -1,5 +1,7 @@
 package com.open.welinks.model;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
@@ -54,11 +56,13 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
+			Response response = gson.fromJson(responseInfo.result,
+					Response.class);
 			if (response.提示信息.equals("获取密友圈成功")) {
 				data.relationship.circles = response.relationship.circles;
 				data.relationship.circlesMap = response.relationship.circlesMap;
-				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+				data.relationship.friendsMap
+						.putAll(response.relationship.friendsMap);
 			}
 			int i = 1;
 			i = i + 2;
@@ -68,4 +72,23 @@ public class ResponseHandlers {
 		}
 	};
 
+	public ResponseHandler upload = httpClient.new ResponseHandler() {
+
+		@Override
+		public void onStart() {
+			System.out.println("start upload");
+		}
+
+		@Override
+		public void onLoading(long total, long current, boolean isUploading) {
+			System.out.println("loading" + total + "--" + current + "--"
+					+ isUploading);
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			System.out.println(responseInfo.result + "---"
+					+ responseInfo.statusCode);
+		}
+	};
 }

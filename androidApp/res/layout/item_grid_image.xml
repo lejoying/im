@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="120dip" >
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="fill_parent"
+        android:layout_height="120dip"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@style/ProgressBarStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:indeterminate="false"
+        android:max="100" />
+
+    <ImageView
+        android:id="@+id/iv_imageContentStatus"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginLeft="87dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/seleted_status"
+        android:visibility="visible" />
+
+</FrameLayout>

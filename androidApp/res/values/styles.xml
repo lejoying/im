@@ -1,5 +1,6 @@
 <resources>
 
+    <style name="ProgressBarStyle" parent="@android:style/Widget.ProgressBar.Horizontal" />
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
