@@ -1,9 +1,8 @@
-package com.open.welinks.utils;
+package com.aliyun.android.oss;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 public class Base64 {
 	private static final char[] legalChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"

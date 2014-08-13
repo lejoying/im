@@ -12,7 +12,7 @@
      <item android:id="@+id/csubmenu2" android:title="调试接口2"> 
         <menu> 
             <group> 
-                <item android:title="子菜单1"/> 
+                <item android:id="@+id/csubmenu2_1" android:title="相册"/> 
                 <item android:title="子菜单2"/> 
                 <item android:title="子菜单3"/> 
             </group> 

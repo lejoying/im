@@ -76,19 +76,33 @@ public class ResponseHandlers {
 
 		@Override
 		public void onStart() {
-			System.out.println("start upload");
+			System.out.println("start-----upload");
 		}
 
 		@Override
 		public void onLoading(long total, long current, boolean isUploading) {
-			System.out.println("loading" + total + "--" + current + "--"
+			System.out.println("loading" + total + "------" + current + "-----"
 					+ isUploading);
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
+			System.out.println(responseInfo.result + "------"
+					+ responseInfo.statusCode);
+		}
+
+		@Override
+		public void onFailure(com.lidroid.xutils.exception.HttpException error,
+				String msg) {
+		};
+	};
+
+	public ResponseHandler checkFile = httpClient.new ResponseHandler() {
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
 			System.out.println(responseInfo.result + "---"
 					+ responseInfo.statusCode);
 		}
+
 	};
 }

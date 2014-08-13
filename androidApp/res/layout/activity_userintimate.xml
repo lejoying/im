@@ -101,6 +101,7 @@
         android:id="@+id/rl_intimateFriendsContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/rl_userMenuOptions"
         android:padding="10dp"
         android:visibility="visible" >
     </RelativeLayout>

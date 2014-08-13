@@ -23,7 +23,7 @@ public class Debug1Activity extends Activity {
 	public Debug1View thisView;
 	public Debug1Controller thisController;
 	public Activity thisActivity;
-	
+
 	public ViewManager viewManager = ViewManager.getIntance();
 
 	@Override
@@ -46,13 +46,14 @@ public class Debug1Activity extends Activity {
 		this.thisController = new Debug1Controller(thisActivity);
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
-		
+
 		viewManager.debug1View = this.thisView;
-		
-		thisView.initView();
+
 		thisController.onCreate();
+		thisView.initView();
 		thisController.initializeListeners();
 		thisController.bindEvent();
+		thisController.testPutObject();
 	}
 
 	@Override
