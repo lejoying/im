@@ -49,15 +49,15 @@ public class TestImageUpload extends AndroidTestCase {
 		HttpUtils http = new HttpUtils();
 		RequestParams params = new RequestParams();
 
-		String OSS_END_POINT = "http://images6.we-links.com";
+		String OSS_END_POINT = "http://images5.we-links.com";
 
 		String OSS_HOST = "oss-cn-beijing.aliyuncs.com";
 
 		String contentType = "image/jpg";
 
-		String endFileName = "jpeg";
+		String endFileName = "jpg";
 
-		String BACKETNAME = "we-links-test";
+		String BACKETNAME = "welinkstest";
 		String ACCESSKEYID = "dpZe5yUof6KSJ8RM";
 		String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
 
@@ -66,7 +66,7 @@ public class TestImageUpload extends AndroidTestCase {
 		OSSHttpTool httpTool = new OSSHttpTool();
 
 		File sdFile = Environment.getExternalStorageDirectory();
-		File file = new File(sdFile, "temp.jpeg");
+		File file = new File(sdFile, "test1/test.jpg");
 
 		String sha1FileName = "default";
 		byte[] bytes = null;

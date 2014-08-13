@@ -47,16 +47,16 @@ public class HttpClient {
 		public void onLoading(long total, long current, boolean isUploading) {
 			timeLine.received = System.currentTimeMillis();
 			if (isUploading) {
-				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  upload: " + current + "/" + total);
+				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  onLoading upload: " + current + "/" + total);
 			} else {
-				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  reply: " + current + "/" + total);
+				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  onLoading reply: " + current + "/" + total);
 			}
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			timeLine.received = System.currentTimeMillis();
-			Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms   reply: " + responseInfo.result);
+			Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms   onSuccess: " + responseInfo.result);
 		}
 
 		@Override
