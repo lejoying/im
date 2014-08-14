@@ -10,7 +10,6 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Relationship;
-import com.open.welinks.view.ControllerManage;
 import com.open.welinks.view.ViewManage;
 
 public class ResponseHandlers {
@@ -20,8 +19,6 @@ public class ResponseHandlers {
 	public String tag = "ResponseHandlers";
 
 	public ViewManage viewManage = ViewManage.getInstance();
-
-	public ControllerManage controllerManage = ControllerManage.getInstance();
 
 	public static ResponseHandlers responseHandlers;
 
@@ -62,13 +59,11 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result,
-					Response.class);
+			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取密友圈成功")) {
 				data.relationship.circles = response.relationship.circles;
 				data.relationship.circlesMap = response.relationship.circlesMap;
-				data.relationship.friendsMap
-						.putAll(response.relationship.friendsMap);
+				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
 			}
 			int i = 1;
 			i = i + 2;
@@ -96,21 +91,21 @@ public class ResponseHandlers {
 			public String filename;
 			public boolean exists;
 			public String signature;
+			public long expires;
+			public String OSSAccessKeyId;
 
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result,
-					Response.class);
+			Response response = gson.fromJson(responseInfo.result, Response.class);
 			Log.e(tag, responseInfo.result);
 			if (response.提示信息.equals("查找成功")) {
 				if (response.exists) {
 
 				} else if (!response.exists) {
-					Debug1Controller.uploadImage(response.signature,
-							response.filename);
-					Log.e(tag, response.signature + "-----" + response.filename);
+					Log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
+					Debug1Controller.uploadImage(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
 				}
 			}
 		}
