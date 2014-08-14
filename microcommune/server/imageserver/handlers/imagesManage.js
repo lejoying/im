@@ -200,17 +200,21 @@ imagesManage.checkfile = function (data, response) {
             var flag = false;
 //            console.log(reply);
             var encryptedContent;
+            var expires = parseInt((new Date().getTime() + 60000) / 1000);
+            var content = "PUT\n\nimage/jpg\n" + expires + "\nwelinkstest/welinkstest/" + fileName;
             if (reply == "1") {
                 flag = true;
                 console.log(fileName + "---" + reply + "---文件已存在");
             } else {
-                encryptedContent = crypto.createHmac('sha1', app_secret).update(notEncryptedContent).digest().toString('base64'); //base64
+                encryptedContent = crypto.createHmac('sha1', app_secret).update(content).digest().toString('base64'); //base64
                 console.log(fileName + "---" + reply + "---文件不存在" + encryptedContent);
             }
             response.write(JSON.stringify({
                 "提示信息": "查找成功",
                 "filename": fileName,
                 "exists": flag,
+                OSSAccessKeyId: "dpZe5yUof6KSJ8RM",
+                expires: expires,
                 "signature": encryptedContent
             }));
             response.end();
