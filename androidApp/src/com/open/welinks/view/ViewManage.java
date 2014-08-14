@@ -3,9 +3,9 @@ package com.open.welinks.view;
 import android.os.Handler;
 import android.util.Log;
 
-public class ViewManager {
+public class ViewManage {
 
-	public String tag = "ViewManager";
+	public String tag = "ViewManage";
 
 	public Debug1View debug1View = null;
 	public LoginView loginView = null;
@@ -13,11 +13,11 @@ public class ViewManager {
 
 	public Handler handler = new Handler();
 
-	public static ViewManager viewManager;
+	public static ViewManage viewManager;
 
-	public static ViewManager getIntance() {
+	public static ViewManage getInstance() {
 		if (viewManager == null) {
-			viewManager = new ViewManager();
+			viewManager = new ViewManage();
 		}
 		return viewManager;
 	}

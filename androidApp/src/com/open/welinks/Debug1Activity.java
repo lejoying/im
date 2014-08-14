@@ -4,7 +4,7 @@ import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.Debug1View;
 import com.open.welinks.view.Debug1View.Status;
-import com.open.welinks.view.ViewManager;
+import com.open.welinks.view.ViewManage;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,7 +24,7 @@ public class Debug1Activity extends Activity {
 	public Debug1Controller thisController;
 	public Activity thisActivity;
 
-	public ViewManager viewManager = ViewManager.getIntance();
+	public ViewManage viewManager = ViewManage.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

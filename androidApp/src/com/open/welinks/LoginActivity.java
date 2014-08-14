@@ -4,7 +4,7 @@ import com.open.welinks.controller.LoginController;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;
 import com.open.welinks.view.LoginView.Status;
-import com.open.welinks.view.ViewManager;
+import com.open.welinks.view.ViewManage;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,7 +25,7 @@ public class LoginActivity extends Activity {
 	public LoginController thisController;
 	public Activity thisActivity;
 
-	public ViewManager viewManager = ViewManager.getIntance();
+	public ViewManage viewManager = ViewManage.getInstance();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

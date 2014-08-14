@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.UserIntimateView;
-import com.open.welinks.view.ViewManager;
+import com.open.welinks.view.ViewManage;
 
 public class UserIntimateActivity extends Activity {
 
@@ -25,7 +25,7 @@ public class UserIntimateActivity extends Activity {
 	public UserIntimateController thisController;
 	public Activity thisActivity;
 
-	public ViewManager viewManager = ViewManager.getIntance();
+	public ViewManage viewManager = ViewManage.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

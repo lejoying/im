@@ -185,7 +185,7 @@ var app_secret = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";//OtxrzxIsfpFjA7SwPzILwy8Bw21T
 imagesManage.checkfile = function (data, response) {
     response.asynchronous = 1;
     var fileName = data.filename;
-    var notEncryptedContent = data.notencryptedcontent;
+    var notEncryptedContent = data.signaturecontent;
     client.HEXISTS("imageset", fileName, function (error, reply) {
         if (error != null) {
             response.write(JSON.stringify({

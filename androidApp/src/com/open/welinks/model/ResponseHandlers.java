@@ -1,13 +1,17 @@
 package com.open.welinks.model;
 
+import org.apache.http.Header;
+
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
+import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Relationship;
-import com.open.welinks.view.ViewManager;
+import com.open.welinks.view.ControllerManage;
+import com.open.welinks.view.ViewManage;
 
 public class ResponseHandlers {
 
@@ -15,7 +19,9 @@ public class ResponseHandlers {
 
 	public String tag = "ResponseHandlers";
 
-	public ViewManager viewManager = ViewManager.getIntance();
+	public ViewManage viewManage = ViewManage.getInstance();
+
+	public ControllerManage controllerManage = ControllerManage.getInstance();
 
 	public static ResponseHandlers responseHandlers;
 
@@ -67,7 +73,7 @@ public class ResponseHandlers {
 			int i = 1;
 			i = i + 2;
 			if (data.localStatus.debugMode.equals("NONE")) {
-				viewManager.postNotifyView("UserIntimateView");
+				viewManage.postNotifyView("UserIntimateView");
 			}
 		}
 	};
@@ -75,17 +81,38 @@ public class ResponseHandlers {
 	public ResponseHandler upload = httpClient.new ResponseHandler() {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Log.d(tag, "reply: " + responseInfo.result);
+			Log.e(tag, responseInfo + "-------------");
+			Header[] headers = responseInfo.getAllHeaders();
+			for (int i = 0; i < headers.length; i++) {
+				Log.e(tag, "reply upload: " + headers[i]);
+			}
 		}
-
 	};
 
 	public ResponseHandler checkFile = httpClient.new ResponseHandler() {
-		@Override
-		public void onSuccess(ResponseInfo<String> responseInfo) {
-			System.out.println(responseInfo.result + "---"
-					+ responseInfo.statusCode);
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String filename;
+			public boolean exists;
+			public String signature;
+
 		}
 
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result,
+					Response.class);
+			Log.e(tag, responseInfo.result);
+			if (response.提示信息.equals("查找成功")) {
+				if (response.exists) {
+
+				} else if (!response.exists) {
+					Debug1Controller.uploadImage(response.signature,
+							response.filename);
+					Log.e(tag, response.signature + "-----" + response.filename);
+				}
+			}
+		}
 	};
 }
