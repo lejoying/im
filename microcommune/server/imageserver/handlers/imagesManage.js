@@ -201,7 +201,7 @@ imagesManage.checkfile = function (data, response) {
 //            console.log(reply);
             var encryptedContent;
             var expires = parseInt((new Date().getTime() + 60000) / 1000);
-            var content = "PUT\n\nimage/jpg\n" + expires + "\nwelinkstest/welinkstest/" + fileName;
+            var content = "PUT\n\nimage/jpg\n" + expires + "\n/welinkstest/test/" + fileName;
             if (reply == "1") {
                 flag = true;
                 console.log(fileName + "---" + reply + "---文件已存在");
