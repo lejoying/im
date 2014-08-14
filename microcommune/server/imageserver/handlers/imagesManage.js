@@ -217,4 +217,101 @@ imagesManage.checkfile = function (data, response) {
         }
     });
 }
+imagesManage.uploadimagename = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var fileName = data.filename;
+    client.HMSET("imageset", fileName, fileName, function (err, reply) {
+        if (err != null) {
+            response.write(JSON.stringify({
+                "提示信息": "上传图片失败",
+                "失败原因": "数据异常"
+            }), function () {
+                response.end();
+            });
+            console.log(err);
+            return;
+        } else {
+            if (reply == "OK") {
+                response.write(JSON.stringify({
+                    "提示信息": "上传图片成功",
+                    "filename": fileName
+                }));
+                response.end();
+            } else {
+                response.write(JSON.stringify({
+                    "提示信息": "上传图片失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+            }
+        }
+    });
+}
+imagesManage.uploadimagesname = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var fileNames = data.filenames;
+    try {
+        fileNames = JSON.parse(fileNames);
+    } catch (e) {
+        response.write(JSON.stringify({
+            "提示信息": "上传图片失败",
+            "失败原因": "数据异常"
+        }), function () {
+            response.end();
+        });
+        console.log(e);
+        return;
+    }
+    var count = 0;
+    for (var index in fileNames) {
+        var fileName = fileNames[index];
+        client.HMSET("imageset", fileName, fileName, function (err, reply) {
+            if (err != null) {
+                response.write(JSON.stringify({
+                    "提示信息": "上传图片失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(err);
+                return;
+            } else {
+                if (reply == "OK") {
+                    count++;
+                    console.log("OK");
+                    if (count == fileNames.length) {
+                        response.write(JSON.stringify({
+                            "提示信息": "上传图片成功",
+                            "filenames": JSON.stringify(fileNames)
+                        }));
+                        response.end();
+                    }
+                } else {
+                    console.log("failed");
+                    response.write(JSON.stringify({
+                        "提示信息": "上传图片失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+}
+//test();
+function test() {
+    client.HMSET("ha", '"ee", "ee", "ff", "ff"', function (err, reply) {
+        if (err != null) {
+            console.log(err);
+            return;
+        } else {
+            if (reply == "OK") {
+                console.log("OK");
+            } else {
+                console.log("failed");
+            }
+        }
+    });
+}
 module.exports = imagesManage;

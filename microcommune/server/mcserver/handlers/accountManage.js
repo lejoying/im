@@ -751,7 +751,7 @@ accountManage.getuserinfomation = function (data, response) {
                 };
                 response.write(JSON.stringify({
                     "提示信息": "获取用户信息成功",
-                    data: {
+                    userInformation: {
                         currentUser: account
                     }
                 }));

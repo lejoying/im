@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>上传图片名称</title>
+    <script type="text/javascript" src="./../static/js/jquery.js"></script>
+    <script type="text/javascript">
+        function commit() {
+            var name = document.getElementById("js_name").value;
+            $.ajax({
+                type: "POST",
+                url: "/image/uploadimagename?",
+                data: {
+                    phone: "152",
+                    accessKey: "lejoying",
+                    filename: name
+                },
+                success: function (data) {
+                    alert(unescape(data.replace(/\\u/gi, '%u')));
+                }
+            });
+        }
+        function commit1() {
+            var name1 = document.getElementById("js_name1").value;
+            var name2 = document.getElementById("js_name2").value;
+            var name3 = document.getElementById("js_name3").value;
+            var fileNames = [name1, name2, name3];
+            $.ajax({
+                type: "POST",
+                url: "/image/uploadimagesname?",
+                data: {
+                    phone: "152",
+                    accessKey: "lejoying",
+                    filenames: JSON.stringify(fileNames)
+                },
+                success: function (data) {
+                    alert(unescape(data.replace(/\\u/gi, '%u')));
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div style="margin-left: 500px;margin-top: 200px;">
+    <h2>上传单个图片名称</h2>
+    name: <input type="text" id="js_name" value="lejoying"><br/>
+    <input type="button" value="提交" onclick="commit()">
+</div>
+<div style="margin-left: 800px;margin-top: -120px;">
+    <h2>上传单个图片名称</h2>
+    name1: <input type="text" id="js_name1" value="lejoying1"><br/>
+    name2: <input type="text" id="js_name2" value="lejoying2"><br/>
+    name3: <input type="text" id="js_name3" value="lejoying3"><br/>
+    <input type="button" value="提交" onclick="commit1()">
+</div>
+</body>
+</html>

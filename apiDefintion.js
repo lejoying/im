@@ -1,4 +1,4 @@
-var api={};
+var api = {};
 
 /*************************************** ***************************************
  * *    Class：session
@@ -178,6 +178,22 @@ api = {
             success: {"提示信息": "退出成功"},
             failed: {"提示信息": "退出失败", "失败原因": "AccessKey Invalid" || "数据异常"}
         }
+    },
+    /***************New Api*******************
+     *     URL：/api2/account/getuserinfomation
+     ***************************************/
+    "account_getuserinfomation": {
+        description: {
+            id: 1000106,
+            url: "/api2/account/getuserinfomation"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取用户信息成功", userInformation: {currentUser: {}}},
+            failed: {"提示信息": "获取用户信息失败", "失败原因": "AccessKey Invalid" || "数据异常" || "用户不存在"}
+        }
     }
 }
 
@@ -349,6 +365,22 @@ api = {
         response: {
             success: {"提示信息": "修改备注成功"},
             failed: {"提示信息": "修改备注失败", "失败原因": ["数据异常" || "好友不存在"]}
+        }
+    },
+    /***************New Api*****************
+     *     URL：/api2/relation/getintimatefriends
+     ***************************************/
+    "relation_getintimatefriends": {
+        description: {
+            id: 10003078,
+            url: "/api2/relation/getintimatefriends"
+        },
+        request: {
+            typical: {"phone": "XXX", accessKey: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "获取密友圈成功", relationship: {circles: [], circlesMap: {}, friendsMap: {}}},
+            failed: {"提示信息": "获取密友圈失败", "失败原因": "数据异常"}
         }
     }
 }
@@ -637,6 +669,54 @@ api = {
         response: {
             success: {"提示信息": "获取图片成功", "image": "XXX"},
             failed: {"提示信息": "获取图片失败", "失败原因": "数据异常"}
+        }
+    },
+    /**************New Api******************
+     *     URL：/image/checkfile
+     ***************************************/
+    "image_checkfile": {
+        description: {
+            id: 1000703,
+            url: "/image/checkfile"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", filename: "XXX", signaturecontent: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "查找成功", "filename": "XXX", exists: true || false, signature: "XXX"},
+            failed: {"提示信息": "查找", "失败原因": "数据异常"}
+        }
+    },
+    /****************New Api****************
+     *     URL：/image/uploadimagename
+     ***************************************/
+    "image_uploadimagename": {
+        description: {
+            id: 1000704,
+            url: "/image/uploadimagename"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", filename: "XXX"}
+        },
+        response: {
+            success: {"提示信息": "上传图片成功", "filename": "XXX"},
+            failed: {"提示信息": "上传图片失败", "失败原因": "数据异常"}
+        }
+    },
+    /***************New Api******************
+     *     URL：/image/uploadimagesname
+     ***************************************/
+    "image_uploadimagesname": {
+        description: {
+            id: 1000705,
+            url: "/image/uploadimagesname"
+        },
+        request: {
+            typical: {phone: "XXX", accessKey: "XXX", filenames: ["XXX", "XXX", "XXX"]}
+        },
+        response: {
+            success: {"提示信息": "上传图片成功", "filenames": ["XXX", "XXX", "XXX"]},
+            failed: {"提示信息": "上传图片失败", "失败原因": "数据异常"}
         }
     }
 }

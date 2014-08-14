@@ -1225,8 +1225,8 @@ relationManage.intimatefriends = function (data, response) {
                         "提示信息": "获取密友圈成功",
                         relationship: {
                             circles: circles,
-                            friendsMap: accounts,
-                            circlesMap: circlesMap
+                            circlesMap: circlesMap,
+                            friendsMap: accounts
                         }
                     }), response);
                 } else {
@@ -1241,8 +1241,8 @@ relationManage.intimatefriends = function (data, response) {
                         "提示信息": "获取密友圈成功",
                         relationship: {
                             circles: circles,
-                            friendsMap: accounts,
-                            circlesMap: circlesMap
+                            circlesMap: circlesMap,
+                            friendsMap: accounts
                         }
                     }), response);
                 }
