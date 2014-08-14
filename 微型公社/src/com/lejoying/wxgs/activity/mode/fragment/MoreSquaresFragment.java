@@ -1,6 +1,10 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
-import android.location.Location;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,25 +18,19 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
-import com.amap.api.maps.AMap;
-import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
-import com.amap.api.maps.LocationSource.OnLocationChangedListener;
-import com.amap.api.maps.model.CameraPosition;
 import com.lejoying.wxgs.R;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
+import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.app.MainApplication;
+import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.AmapLocationHandler.LocationListener;
+import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 public class MoreSquaresFragment extends BaseFragment implements
 		OnClickListener {
@@ -152,8 +150,41 @@ public class MoreSquaresFragment extends BaseFragment implements
 					public void onLocationChangedListener(
 							AMapLocation aMapLocation) {
 						location.setText(aMapLocation.getAddress());
+						modifylocation(aMapLocation);
 					}
+
 				});
+	}
+
+	private void modifylocation(AMapLocation aMapLocation) {
+		final double longitude = aMapLocation.getLongitude(), latitude = aMapLocation
+				.getLatitude();
+		app.networkHandler.connection(new CommonNetConnection() {
+
+			@Override
+			public void success(JSONObject jData) {
+				System.out.println("+++++++++++++++++");
+			}
+
+			@Override
+			protected void settings(Settings settings) {
+				settings.url = API.DOMAIN + API.LBS_MODIFYACCOUNTLOCATION;
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("phone", app.data.user.phone);
+				params.put("accessKey", app.data.user.accessKey);
+				params.put("nickName", app.data.user.nickName);
+				params.put("sex", app.data.user.sex);
+				params.put("mainBusiness", app.data.user.mainBusiness);
+				params.put("head", app.data.user.head);
+				params.put("online", "1");
+				// JSONObject location = new JSONObject();
+				// location.put("longitude", aMapLocation.getLongitude());
+				// location.put("latitude", aMapLocation.getLatitude());
+				params.put("location", longitude + "," + latitude);
+				settings.params = params;
+			}
+
+		});
 	}
 
 	private void Zoom() {

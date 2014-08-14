@@ -3,10 +3,12 @@ var lbsManage = {};
 var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var ajax = require('./../lib/ajax.js');
+var ajaxlbs = require('./../lib/ajaxlbs.js');
 var MD5 = require('./../lib/md5.js');
 var gps = require('./../lib/convertGPS.js');
 var ak = "qD4I881MqTR7NZQ2TYTa2ZGh";
 var sk = "ACfYlSkHjGkuie3GmKVdsXTPuINEFUim";
+
 //LBS 云存储
 /***************************************
  *     URL：/lbs/create
@@ -1089,6 +1091,178 @@ lbsManage.nearbygroups = function (data, response) {
                     console.log(data);
                     response.write(JSON.stringify({
                         "提示信息": "获取附近群组失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+}
+
+/***************************************
+ *     URL：/lbs/creategrouplocation
+ ***************************************/
+lbsManage.creategrouplocation = function (data, response) {
+    try {
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS.DATA_CREATE,
+            data: {
+                key: serverSetting.LBS.KEY,
+                tableid: serverSetting.LBS.GROUPTABLEID,
+                loctype: 1,
+                data: JSON.stringify({
+                    _name: data.name,
+                    _location: data.location,
+                    gid: data.gid,
+                    icon: data.icon
+                })
+            }, success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    response.write(JSON.stringify({
+                        "提示信息": "创建群组位置成功",
+                        gid: info._id
+                    }));
+                    response.end();
+                } else {
+                    console.log(info.info);
+                    response.write(JSON.stringify({
+                        "提示信息": "创建群组位置失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    } catch (e) {
+        response.write(JSON.stringify({
+            "提示信息": "创建群组位置失败",
+            "失败原因": "参数格式错误"
+        }));
+        response.end();
+        console.log(e);
+        return;
+    }
+}
+/***************************************
+ *     URL：/lbs/modifyaccountlocation
+ ***************************************/
+lbsManage.modifyaccountlocation = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    try {
+        checkLocation(phone)
+    } catch (e) {
+        response.write(JSON.stringify({
+            "提示信息": "修改用户位置信息失败",
+            "失败原因": "参数格式错误"
+        }));
+        response.end();
+        console.log(e);
+        return;
+    }
+
+    function checkLocation(phone) {
+        ajaxlbs.ajax({
+            type: "GET",
+            url: serverSetting.LBS.DATA_SEARCH,
+            data: {
+                tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                filter: "phone:" + phone,
+                key: serverSetting.LBS.KEY
+            },
+            success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    if (info.count == 0) {
+                        createaccountlocation(data, response);
+                    } else {
+                        console.log("HAVE")
+                        var id = info.datas[0]._id;
+                        modifyaccountlocation(data, id, response);
+                    }
+                } else {
+                    console.log(info.info + "查找用户位置信息失败");
+                    response.write(JSON.stringify({
+                        "提示信息": "查找用户位置信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+
+    function createaccountlocation(data, response) {
+        response.asynchronous = 1;
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS.DATA_CREATE,
+            data: {
+                key: serverSetting.LBS.KEY,
+                tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                loctype: 1,
+                data: JSON.stringify({
+                    _name: data.nickName,
+                    _location: data.location,
+                    phone: data.phone,
+                    sex: data.sex,
+                    haed: data.head,
+                    mainBusiness: data.mainBusiness,
+                    online: data.online
+                })
+            }
+            , success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    response.write(JSON.stringify({
+                        "提示信息": "创建用户位置信息成功"
+                    }));
+                    response.end();
+                } else {
+                    console.log(info.info);
+                    response.write(JSON.stringify({
+                        "提示信息": "创建用户位置信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+
+    function modifyaccountlocation(data, id, response) {
+        response.asynchronous = 1;
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS.DATA_UPDATA,
+            data: {
+                key: serverSetting.LBS.KEY,
+                tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                loctype: 1,
+                data: JSON.stringify({
+                    _id: id,
+                    _name: data.nickName,
+                    _location: data.location,
+                    phone: data.phone,
+                    sex: data.sex,
+                    haed: data.head,
+                    mainBusiness: data.mainBusiness,
+                    online: data.online
+                })
+            }, success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    response.write(JSON.stringify({
+                        "提示信息": "修改用户位置信息成功"
+                    }));
+                    response.end();
+                } else {
+                    console.log(info.info);
+                    response.write(JSON.stringify({
+                        "提示信息": "修改用户位置信息失败",
                         "失败原因": "数据异常"
                     }));
                     response.end();
