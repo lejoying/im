@@ -13,7 +13,7 @@
         <menu> 
             <group> 
                 <item android:id="@+id/csubmenu2_1" android:title="相册"/> 
-                <item android:title="子菜单2"/> 
+                <item android:id="@+id/csubmenu2_2" android:title="多线程上传"/> 
                 <item android:title="子菜单3"/> 
             </group> 
         </menu> 

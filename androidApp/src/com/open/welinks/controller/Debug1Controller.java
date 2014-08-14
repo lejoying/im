@@ -48,7 +48,8 @@ import android.view.MenuItem;
 
 public class Debug1Controller {
 	public Data data = Data.getInstance();
-	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+	public static ResponseHandlers responseHandlers = ResponseHandlers
+			.getInstance();
 	public String tag = "Debug1Controller";
 
 	public Runnable animationRunnable;
@@ -76,7 +77,8 @@ public class Debug1Controller {
 		thisView.status = Status.loginOrRegister;
 
 		@SuppressWarnings("unchecked")
-		ArrayList<HashMap<String, String>> imagesSource = (ArrayList<HashMap<String, String>>) thisActivity.getIntent().getSerializableExtra("images");
+		ArrayList<HashMap<String, String>> imagesSource = (ArrayList<HashMap<String, String>>) thisActivity
+				.getIntent().getSerializableExtra("images");
 		if (imagesSource != null) {
 			this.imagesSource = imagesSource;
 		}
@@ -95,7 +97,8 @@ public class Debug1Controller {
 
 		String md5 = null;
 		try {
-			byte[] bytes = StreamParser.parseToByteArray(new FileInputStream(file));
+			byte[] bytes = StreamParser.parseToByteArray(new FileInputStream(
+					file));
 
 			MessageDigest digest = MessageDigest.getInstance("MD5");
 			digest.update(bytes, 0, bytes.length);
@@ -112,9 +115,16 @@ public class Debug1Controller {
 			e.printStackTrace();
 		}
 
-		String value = "PUT" + "\n" + md5 + "\n" + "image/png" + "\n" + DateUtil.getGMTDate() + "\n" + "";
+		String value = "PUT" + "\n" + md5 + "\n" + "image/png" + "\n"
+				+ DateUtil.getGMTDate() + "\n" + "";
 		try {
-			params.addHeader("Authorization", "OSS " + "dpZe5yUof6KSJ8RM" + ":" + getHmacSha1Signature(value, "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG"));
+			params.addHeader(
+					"Authorization",
+					"OSS "
+							+ "dpZe5yUof6KSJ8RM"
+							+ ":"
+							+ getHmacSha1Signature(value,
+									"UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG"));
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
@@ -126,16 +136,20 @@ public class Debug1Controller {
 
 		String url2 = "http://images5.we-links.com/test0.png";
 		try {
-			System.out.println("start http send" + getHmacSha1Signature(value, "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG"));
+			System.out.println("start http send"
+					+ getHmacSha1Signature(value,
+							"UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG"));
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		http.send(HttpRequest.HttpMethod.PUT, url2, params, responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, url2, params,
+				responseHandlers.upload);
 	}
 
-	public static String getHmacSha1Signature(String value, String key) throws NoSuchAlgorithmException, InvalidKeyException {
+	public static String getHmacSha1Signature(String value, String key)
+			throws NoSuchAlgorithmException, InvalidKeyException {
 		byte[] keyBytes = key.getBytes();
 		SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
 
@@ -167,7 +181,8 @@ public class Debug1Controller {
 		if (item.getItemId() == R.id.debug2_2) {
 			Log.d(tag, "Debug1Activity debug2_2");
 
-			ControlProgress controlProgress = thisView.transportingList.transportingItems.get(index).controlProgress;
+			ControlProgress controlProgress = thisView.transportingList.transportingItems
+					.get(index).controlProgress;
 			if (controlProgress.percentage > 50) {
 				controlProgress.moveTo(0);
 			} else {
@@ -198,7 +213,8 @@ public class Debug1Controller {
 	}
 
 	/******************** upload image **************************/
-	public static void uploadImage(String signature, String fileName, long expires, String OSSAccessKeyId) {
+	public static void uploadImage(String signature, String fileName,
+			long expires, String OSSAccessKeyId) {
 		// SHA1 sha1 = new SHA1();
 		HttpUtils http = new HttpUtils();
 		RequestParams params = new RequestParams();
@@ -247,7 +263,8 @@ public class Debug1Controller {
 			params.setBodyEntity(new ByteArrayEntity(bytes));
 		}
 
-		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params,
+				responseHandlers.upload);
 	}
 
 	static String dateStr;
@@ -265,26 +282,29 @@ public class Debug1Controller {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		String contentType = "image/jpg";
+		// String contentType = "image/jpg";
 
 		String endFileName = "jpg";
-		String BACKETNAME = "welinkstest";
-		String resource = "/" + BACKETNAME + "/" + sha1FileName + "." + endFileName;
+//		String BACKETNAME = "welinkstest";
+		// String resource = "/" + BACKETNAME + "/" + sha1FileName + "." +
+		// endFileName;
 
 		dateStr = DateUtil.getGMTDate();
-		String signatureContent = "PUT" + "\n" + "" + "\n" + contentType + "\n" + dateStr + "\n" + "" + resource;
+		// String signatureContent = "PUT" + "\n" + "" + "\n" + contentType +
+		// "\n" + dateStr + "\n" + "" + resource;
 
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("accessKey", "lejoying");
 		params.addBodyParameter("phone", "15120088197");
 		params.addBodyParameter("filename", sha1FileName + "." + endFileName);
-		params.addBodyParameter("signaturecontent", signatureContent);
+		// params.addBodyParameter("signaturecontent", signatureContent);
 
 		HttpUtils http = new HttpUtils();
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		String url2 = "http://192.168.1.92/image/checkfile";
-		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.checkFile);
+		http.send(HttpRequest.HttpMethod.POST, url2, params,
+				responseHandlers.checkFile);
 	}
 
 	public void downloadImage() {
@@ -292,7 +312,8 @@ public class Debug1Controller {
 		RequestParams params = new RequestParams();
 
 		String requestUri = "http://images5.we-links.com/63727A37A9CF78022B408316DA17EAC6D5B519B9.jpg";
-		http.send(HttpRequest.HttpMethod.GET, requestUri, params, responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.GET, requestUri, params,
+				responseHandlers.upload);
 
 	}
 

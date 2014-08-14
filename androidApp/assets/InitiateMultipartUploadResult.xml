@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<InitiateMultipartUploadResult>
+	<Bucket>welinkstest</Bucket>
+	<Key>DE87023723F352DCC12625B788B7DCB527E177DB.jpg</Key>
+	<UploadId>025D4FE9A4BF49C79D027BAD89297742</UploadId>
+</InitiateMultipartUploadResult>
