@@ -12,6 +12,14 @@ serverSetting.LBS.POI_LIST = "http://api.map.baidu.com/geodata/v3/poi/list";
 serverSetting.LBS.POI_UPDATE = "http://api.map.baidu.com/geodata/v3/poi/update";
 serverSetting.LBS.POI_CREATE = "http://api.map.baidu.com/geodata/v3/poi/create";
 serverSetting.LBS.NEARBY = "http://api.map.baidu.com/geosearch/v3/nearby";
+
+serverSetting.LBS.KEY = "0cfd7855ab036b58c865e7b0bde42146";
+serverSetting.LBS.ACCOUNTTABLEID = "53eacbe4e4b0693fbf5fd13b";
+serverSetting.LBS.GROUPTABLEID = "53eacbb9e4b0693fbf5fd0f6";
+serverSetting.LBS.DATA_CREATE = "http://yuntuapi.amap.com/datamanage/data/create";
+serverSetting.LBS.DATA_UPDATA = "http://yuntuapi.amap.com/datamanage/data/update";
+serverSetting.LBS.DATA_DELETE = "http://yuntuapi.amap.com/datamanage/data/delete";
+serverSetting.LBS.DATA_SEARCH = "http://yuntuapi.amap.com/datamanage/data/list";
 var zookeeper = {};
 zookeeper.mcServer = {
     ip: "115.28.51.197",

@@ -71,6 +71,10 @@ requestHandlers.lbsManage = function (request, response, pathObject, data) {
         lbsyunManage.nearbyaccounts(data, response);
     } else if (operation == "nearbygroups") {
         lbsyunManage.nearbygroups(data, response);
+    } else if (operation == "creategrouplocation") {
+        lbsyunManage.creategrouplocation(data, response);
+    } else if (operation == "modifyaccountlocation") {
+        lbsyunManage.modifyaccountlocation(data, response);
     }
 };
 

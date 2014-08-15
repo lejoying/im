@@ -1,6 +1,7 @@
 package com.open.welinks;
 
 import com.open.welinks.controller.LoginController;
+import com.open.welinks.controller.TestMultipartUpload;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;
 import com.open.welinks.view.LoginView.Status;
@@ -81,6 +82,10 @@ public class LoginActivity extends Activity {
 			Log.d(tag, "csubmenu2_1");
 			startActivity(new Intent(LoginActivity.this,
 					ImagesDirectoryActivity.class));
+		} else if (item.getItemId() == R.id.csubmenu2_2) {
+			Log.d(tag, "csubmenu2_2");
+			startActivity(new Intent(LoginActivity.this,
+					TestMultipartUpload.class));
 		}
 		return true;
 	}

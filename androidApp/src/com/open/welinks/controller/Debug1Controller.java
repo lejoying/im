@@ -38,7 +38,8 @@ import com.open.welinks.view.Debug1View.Status;
 
 public class Debug1Controller {
 	public Data data = Data.getInstance();
-	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+	public static ResponseHandlers responseHandlers = ResponseHandlers
+			.getInstance();
 	public static String tag = "Debug1Controller";
 
 	public Runnable animationRunnable;
@@ -66,7 +67,8 @@ public class Debug1Controller {
 		thisView.status = Status.loginOrRegister;
 
 		@SuppressWarnings("unchecked")
-		ArrayList<HashMap<String, String>> imagesSource = (ArrayList<HashMap<String, String>>) thisActivity.getIntent().getSerializableExtra("images");
+		ArrayList<HashMap<String, String>> imagesSource = (ArrayList<HashMap<String, String>>) thisActivity
+				.getIntent().getSerializableExtra("images");
 		if (imagesSource != null) {
 			this.imagesSource = imagesSource;
 		}
@@ -93,7 +95,8 @@ public class Debug1Controller {
 		if (item.getItemId() == R.id.debug2_2) {
 			Log.d(tag, "Debug1Activity debug2_2");
 
-			ControlProgress controlProgress = thisView.transportingList.transportingItems.get(index).controlProgress;
+			ControlProgress controlProgress = thisView.transportingList.transportingItems
+					.get(index).controlProgress;
 			if (controlProgress.percentage > 50) {
 				controlProgress.moveTo(0);
 			} else {
@@ -309,7 +312,8 @@ public class Debug1Controller {
 			params.setBodyEntity(new ByteArrayEntity(bytes));
 		}
 
-		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params,
+				responseHandlers.upload);
 	}
 
 	static String dateStr;
@@ -327,26 +331,29 @@ public class Debug1Controller {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		String contentType = "image/jpg";
+		// String contentType = "image/jpg";
 
 		String endFileName = "jpg";
-		String BACKETNAME = "welinkstest";
-		String resource = "/" + BACKETNAME + "/" + sha1FileName + "." + endFileName;
+//		String BACKETNAME = "welinkstest";
+		// String resource = "/" + BACKETNAME + "/" + sha1FileName + "." +
+		// endFileName;
 
 		dateStr = DateUtil.getGMTDate();
-		String signatureContent = "PUT" + "\n" + "" + "\n" + contentType + "\n" + dateStr + "\n" + "" + resource;
+		// String signatureContent = "PUT" + "\n" + "" + "\n" + contentType +
+		// "\n" + dateStr + "\n" + "" + resource;
 
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("accessKey", "lejoying");
 		params.addBodyParameter("phone", "15120088197");
 		params.addBodyParameter("filename", sha1FileName + "." + endFileName);
-		params.addBodyParameter("signaturecontent", signatureContent);
+		// params.addBodyParameter("signaturecontent", signatureContent);
 
 		HttpUtils http = new HttpUtils();
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		String url2 = "http://192.168.1.91/image/checkfile";
-		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.checkFile);
+		http.send(HttpRequest.HttpMethod.POST, url2, params,
+				responseHandlers.checkFile);
 	}
 
 	public void downloadImage() {
@@ -354,7 +361,8 @@ public class Debug1Controller {
 		RequestParams params = new RequestParams();
 
 		String requestUri = "http://images5.we-links.com/63727A37A9CF78022B408316DA17EAC6D5B519B9.jpg";
-		http.send(HttpRequest.HttpMethod.GET, requestUri, params, responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.GET, requestUri, params,
+				responseHandlers.upload);
 
 	}
 

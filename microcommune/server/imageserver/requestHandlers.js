@@ -51,6 +51,11 @@ requestHandlers.imagesManage = function (request, response, pathObject, data) {
             imagesManage.uploadimagesname(data, response);
         });
     }
+    else if (operation == "checkfile2") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            imagesManage.checkfile2(data, response);
+        });
+    }
 };
 function oauth6(phone, accessKey, response, next) {
     response.asynchronous = 1;
