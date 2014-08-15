@@ -2,7 +2,7 @@ package com.lejoying.wxgs.app.data;
 
 public class API {
 
-	public static final String DOMAIN = "http://www.we-links.com/";
+	public static final String DOMAIN = "http://192.168.1.35/";
 	public static final String DOMAIN_IMAGE = "http://images1.lejoying.com/";
 
 	public static final String DOMAIN_CHECKIMAGE = "http://images1.we-links.com/";
