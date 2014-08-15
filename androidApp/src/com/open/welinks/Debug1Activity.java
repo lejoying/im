@@ -53,7 +53,6 @@ public class Debug1Activity extends Activity {
 		thisView.initView();
 		thisController.initializeListeners();
 		thisController.bindEvent();
-		thisController.testPutObject();
 	}
 
 	@Override

@@ -3,31 +3,29 @@ package com.open.welinks.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.math.BigInteger;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.http.entity.ByteArrayEntity;
 
-import com.aliyun.android.oss.Base64;
+import android.app.Activity;
+import android.content.Context;
+import android.os.Environment;
+import android.os.Handler;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+
 import com.aliyun.android.oss.Helper;
 import com.aliyun.android.oss.OSSHttpTool;
-import com.aliyun.android.oss.ObjectMetaData;
+import com.aliyun.android.oss.task.PutObjectTask;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
+import com.open.lib.TestHttp;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
@@ -37,19 +35,11 @@ import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.Debug1View;
 import com.open.welinks.view.Debug1View.ControlProgress;
 import com.open.welinks.view.Debug1View.Status;
-import com.open.lib.TestHttp;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 
 public class Debug1Controller {
 	public Data data = Data.getInstance();
 	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-	public String tag = "Debug1Controller";
+	public static String tag = "Debug1Controller";
 
 	public Runnable animationRunnable;
 
@@ -80,70 +70,6 @@ public class Debug1Controller {
 		if (imagesSource != null) {
 			this.imagesSource = imagesSource;
 		}
-	}
-
-	public void testPutObject() {
-		System.out.println("start config params");
-		RequestParams params = new RequestParams();
-		params.addHeader("Content-Type", "image/png");
-
-		params.addHeader("Host", "images5.we-links.com");// welinkstest.oss-cn-beijing.aliyuncs.com
-		params.addHeader("Date", DateUtil.getGMTDate());
-
-		File sdFile = Environment.getExternalStorageDirectory();
-		File file = new File(sdFile, "test0.png");
-
-		String md5 = null;
-		try {
-			byte[] bytes = StreamParser.parseToByteArray(new FileInputStream(file));
-
-			MessageDigest digest = MessageDigest.getInstance("MD5");
-			digest.update(bytes, 0, bytes.length);
-			BigInteger bigInt = new BigInteger(1, digest.digest());
-			md5 = bigInt.toString(16).toLowerCase(Locale.getDefault());
-
-			params.addHeader("Content-Length", bytes.length + "");
-			params.addHeader("Content-Md5", md5);
-
-			params.setBodyEntity(new ByteArrayEntity(bytes));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
-		String value = "PUT" + "\n" + md5 + "\n" + "image/png" + "\n" + DateUtil.getGMTDate() + "\n" + "";
-		try {
-			params.addHeader("Authorization", "OSS " + "dpZe5yUof6KSJ8RM" + ":" + getHmacSha1Signature(value, "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG"));
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
-		HttpUtils http = new HttpUtils();
-		http.configSoTimeout(50000);
-
-		String url2 = "http://images5.we-links.com/test0.png";
-		try {
-			System.out.println("start http send" + getHmacSha1Signature(value, "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG"));
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		http.send(HttpRequest.HttpMethod.PUT, url2, params, responseHandlers.upload);
-	}
-
-	public static String getHmacSha1Signature(String value, String key) throws NoSuchAlgorithmException, InvalidKeyException {
-		byte[] keyBytes = key.getBytes();
-		SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
-
-		Mac mac = Mac.getInstance("HmacSHA1");
-		mac.init(signingKey);
-
-		byte[] rawHmac = mac.doFinal(value.getBytes());
-		return new String(Base64.encode(rawHmac));
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -194,18 +120,26 @@ public class Debug1Controller {
 			checkImage();
 		}
 
+		if (item.getItemId() == R.id.debug2_6) {
+			Log.d(tag, "Debug1Activity debug2_6");
+			// uploadImage();
+			// downloadImage();
+			// uploadImageHeadAnth();
+			OSSPutObject();
+		}
+
 		return true;
 	}
 
 	/******************** upload image **************************/
-	public static void uploadImage(String signature, String fileName, long expires, String OSSAccessKeyId) {
+	public static void uploadImageWithInputStreamUploadEntity(String signature, String fileName, long expires, String OSSAccessKeyId) {
 		// SHA1 sha1 = new SHA1();
 		HttpUtils http = new HttpUtils();
 		RequestParams params = new RequestParams();
 
-		String OSS_END_POINT = "http://images5.we-links.com";
+		String OSS_END_POINT = "http://images7.we-links.com";
 
-		String OSS_HOST = "oss-cn-beijing.aliyuncs.com";
+		String OSS_HOST = "oss-cn-hangzhou.aliyuncs.com";
 
 		String contentType = "image/jpg";
 
@@ -214,6 +148,134 @@ public class Debug1Controller {
 
 		File sdFile = Environment.getExternalStorageDirectory();
 		File file = new File(sdFile, "test1/test003.jpg");// "test1/test002.jpg"
+
+		long fileLength = file.length();
+		FileInputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(file);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		String resource = "/" + FolderNAME + "/" + fileName;
+		String requestUri = OSS_END_POINT + resource;
+
+		params.addHeader("Date", dateStr);
+		params.addHeader("Host", OSS_HOST);
+		params.addHeader("Content-Type", contentType);
+		params.addQueryStringParameter("OSSAccessKeyId", OSSAccessKeyId);
+		params.addQueryStringParameter("Expires", expires + "");
+		params.addQueryStringParameter("Signature", signature);
+
+		if (fileLength > 0) {
+			params.setBodyEntity(new InputStreamUploadEntity(inputStream, fileLength));
+		}
+		Log.d(tag, "uploadImageWithInputStreamUploadEntity");
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
+	}
+
+	public void uploadImageHeadAnth() {
+		SHA1 sha1 = new SHA1();
+		HttpUtils http = new HttpUtils();
+		RequestParams params = new RequestParams();
+
+		String OSS_END_POINT = "http://images7.we-links.com";
+
+		String OSS_HOST = "oss-cn-Hangzhou.aliyuncs.com";
+
+		String contentType = "image/jpg";
+
+		String endFileName = "jpg";
+
+		String BACKETNAME = "test";
+		String ACCESSKEYID = "dpZe5yUof6KSJ8RM";
+		String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
+
+		OSSHttpTool httpTool = new OSSHttpTool();
+
+		File sdFile = Environment.getExternalStorageDirectory();
+		File file = new File(sdFile, "test1/test002.jpg");
+
+		String sha1FileName = "default";
+		byte[] bytes = null;
+		try {
+			bytes = StreamParser.parseToByteArray(new FileInputStream(file));
+			sha1FileName = sha1.getDigestOfString(bytes);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		String dateStr = Helper.getGMTDate();
+		String content = "PUT\n\nimage/jpg\n" + dateStr + "\n/wxgs-data/test/" + sha1FileName + ".jpg";
+		String requestUri = OSS_END_POINT + "/test/" + sha1FileName + ".jpg";
+
+		String signature = "";
+		try {
+			signature = Helper.getHmacSha1Signature(content, ACCESSKEYSECRET);
+		} catch (InvalidKeyException e) {
+		} catch (NoSuchAlgorithmException e) {
+		}
+
+		params.addHeader("Authorization", "OSS dpZe5yUof6KSJ8RM:" + signature);
+		params.addHeader("Date", dateStr);
+		params.addHeader("Host", OSS_HOST);
+		params.addHeader("Content-Type", contentType);
+		// params.addHeader("Content-Length", "" + bytes.length);
+
+		if ((bytes != null) && (bytes.length > 0)) {
+			params.setBodyEntity(new ByteArrayEntity(bytes));
+		}
+
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
+	}
+
+	public void OSSPutObject() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				SHA1 sha1 = new SHA1();
+
+				File sdFile = Environment.getExternalStorageDirectory();
+				File file = new File(sdFile, "test1/test003.jpg");
+
+				String sha1FileName = "default.jpg";
+				byte[] bytes = null;
+				try {
+					bytes = StreamParser.parseToByteArray(new FileInputStream(file));
+					sha1FileName = sha1.getDigestOfString(bytes);
+
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				PutObjectTask putObjectTask = new PutObjectTask("wxgs", "images/" + sha1FileName + ".jpg", "image/jpg");
+				putObjectTask.initKey("dpZe5yUof6KSJ8RM", "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG");
+				putObjectTask.setData(bytes);
+				String result = putObjectTask.getResult();
+				System.out.println(result + "---");
+
+				// Log.e(tag, "oss putobject reply:---" + result);
+			}
+		}).start();
+	}
+
+	public static void uploadImageWithByteArrayEntity(String signature, String fileName, long expires, String OSSAccessKeyId) {
+		// SHA1 sha1 = new SHA1();
+		HttpUtils http = new HttpUtils();
+		RequestParams params = new RequestParams();
+
+		String OSS_END_POINT = "http://images7.we-links.com";
+
+		String OSS_HOST = "oss-cn-hangzhou.aliyuncs.com";
+
+		String contentType = "image/jpg";
+
+		String FolderNAME = "test";
+		String ACCESSKEYID = "dpZe5yUof6KSJ8RM";
+
+		File sdFile = Environment.getExternalStorageDirectory();
+		File file = new File(sdFile, "test1/test002.jpg");// "test1/test002.jpg"
 
 		byte[] bytes = null;
 		try {
@@ -283,7 +345,7 @@ public class Debug1Controller {
 		HttpUtils http = new HttpUtils();
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-		String url2 = "http://192.168.1.92/image/checkfile";
+		String url2 = "http://192.168.1.91/image/checkfile";
 		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.checkFile);
 	}
 

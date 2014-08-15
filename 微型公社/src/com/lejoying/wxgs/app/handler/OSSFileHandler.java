@@ -83,8 +83,7 @@ public class OSSFileHandler {
 		getImageFile(imageFileName, "", TYPE_IMAGE_COMMON, fileResult, null, 0);
 	}
 
-	public void getHeadImage(String imageFileName, String sex,
-			FileResult fileResult) {
+	public void getHeadImage(String imageFileName, String sex, FileResult fileResult) {
 		borderWidth = 5;
 		getImageFile(imageFileName, sex, TYPE_IMAGE_HEAD, fileResult, null, 0);
 	}
@@ -93,47 +92,33 @@ public class OSSFileHandler {
 		getImageFile(imageFileName, "", TYPE_IMAGE_BACK, fileResult, null, 0);
 	}
 
-	public void getSquareDetailImage(String imageFileName, float width,
-			FileResult fileResult) {
-		getImageFile(imageFileName, "", TYPE_IMAGE_SQUAREIMAGE, fileResult,
-				null, width);
+	public void getSquareDetailImage(String imageFileName, float width, FileResult fileResult) {
+		getImageFile(imageFileName, "", TYPE_IMAGE_SQUAREIMAGE, fileResult, null, width);
 	}
 
-	public void getThumbnail(String imageFileName, String size, int width,
-			int height, FileResult fileResult) {
+	public void getThumbnail(String imageFileName, String size, int width, int height, FileResult fileResult) {
 		String thumbnailName = imageFileName;
 		if (!"".equals(size)) {
 			String newName[] = imageFileName.split("\\.");
 			thumbnailName = newName[0] + size + newName[1];
 		}
-		String paramFormat = "@" + width / 2 + "w_" + height / 2
-				+ "h_1c_1e_100q";
-		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL,
-				fileResult, paramFormat, 0);
+		String paramFormat = "@" + width / 2 + "w_" + height / 2 + "h_1c_1e_100q";
+		getImageFile(imageFileName, thumbnailName, TYPE_IMAGE_THUMBNAIL, fileResult, paramFormat, 0);
 	}
 
-	public void getImageFile(String imageFileName, String mediationParam,
-			int type, FileResult fileResult, String style, float width) {
+	public void getImageFile(String imageFileName, String mediationParam, int type, FileResult fileResult, String style, float width) {
 		if (defaultImage == null) {
-			defaultImage = BitmapFactory.decodeResource(app.getResources(),
-					R.drawable.defaultimage);
+			defaultImage = BitmapFactory.decodeResource(app.getResources(), R.drawable.defaultimage);
 		}
 		if (defaultHeadBoy == null || defaultHeadGirl == null) {
 			if ("男".equals(mediationParam)) {
-				defaultHeadBoy = MCImageUtils.getCircleBitmap(
-						BitmapFactory.decodeResource(app.getResources(),
-								R.drawable.face_man), true, borderWidth,
-						Color.WHITE);
+				defaultHeadBoy = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(app.getResources(), R.drawable.face_man), true, borderWidth, Color.WHITE);
 			} else if ("女".equals(mediationParam)) {
-				defaultHeadGirl = MCImageUtils.getCircleBitmap(BitmapFactory
-						.decodeResource(app.getResources(),
-								R.drawable.face_woman), true, borderWidth,
-						Color.WHITE);
+				defaultHeadGirl = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(app.getResources(), R.drawable.face_woman), true, borderWidth, Color.WHITE);
 			}
 		}
 		if (defaultBack == null) {
-			defaultBack = BitmapFactory.decodeResource(app.getResources(),
-					R.drawable.background1);
+			defaultBack = BitmapFactory.decodeResource(app.getResources(), R.drawable.background1);
 		}
 
 		Bitmap dImage = defaultImage;
@@ -161,106 +146,78 @@ public class OSSFileHandler {
 		}
 		if (type == TYPE_IMAGE_SQUAREIMAGE) {
 			if (defaultSquareDetailImage == null) {
-				defaultSquareDetailImage = BitmapFactory.decodeResource(
-						app.getResources(), R.drawable.defaultimage);
-				int height = (int) (defaultSquareDetailImage.getHeight() * (width / defaultSquareDetailImage
-						.getWidth()));
-				defaultSquareDetailImage = Bitmap.createScaledBitmap(
-						defaultImage, (int) width, height, true);
+				defaultSquareDetailImage = BitmapFactory.decodeResource(app.getResources(), R.drawable.defaultimage);
+				int height = (int) (defaultSquareDetailImage.getHeight() * (width / defaultSquareDetailImage.getWidth()));
+				defaultSquareDetailImage = Bitmap.createScaledBitmap(defaultImage, (int) width, height, true);
 			}
 			fileResult.onResult(FROM_DEFAULT, defaultSquareDetailImage);
 		}
 		String where = FROM_DEFAULT;
 		if (!"".equals(imageFileName)) {
-			if (bitmaps.get(currentFileImage) != null
-					&& !bitmaps.get(currentFileImage).equals(dImage)
-					&& (type == TYPE_IMAGE_HEAD || type == TYPE_IMAGE_THUMBNAIL)) {
+			if (bitmaps.get(currentFileImage) != null && !bitmaps.get(currentFileImage).equals(dImage) && (type == TYPE_IMAGE_HEAD || type == TYPE_IMAGE_THUMBNAIL)) {
 				where = FROM_MEMORY;
 				fileResult.onResult(where, bitmaps.get(currentFileImage));
 			} else {
 				bitmaps.put(currentFileImage, dImage);
 				File imageFile = null;
 				if (type == TYPE_IMAGE_COMMON) {
-					imageFile = new File(app.sdcardImageFolder,
-							currentFileImage);
+					imageFile = new File(app.sdcardImageFolder, currentFileImage);
 				}
 				if (type == TYPE_IMAGE_HEAD) {
-					imageFile = new File(app.sdcardHeadImageFolder,
-							currentFileImage);
+					imageFile = new File(app.sdcardHeadImageFolder, currentFileImage);
 				}
 				if (type == TYPE_IMAGE_BACK) {
-					imageFile = new File(app.sdcardBackImageFolder,
-							currentFileImage);
+					imageFile = new File(app.sdcardBackImageFolder, currentFileImage);
 				}
 				if (type == TYPE_IMAGE_THUMBNAIL) {
-					imageFile = new File(app.sdcardThumbnailFolder,
-							currentFileImage);
+					imageFile = new File(app.sdcardThumbnailFolder, currentFileImage);
 				}
 				if (type == TYPE_IMAGE_SQUAREIMAGE) {
-					imageFile = new File(app.sdcardImageFolder,
-							currentFileImage);
+					imageFile = new File(app.sdcardImageFolder, currentFileImage);
 				}
 				if (imageFile.exists()) {
 					Bitmap imageFileBitmap;
 					if (type == TYPE_IMAGE_SQUAREIMAGE) {
-						imageFileBitmap = MCImageUtils.getZoomBitmapFromFile(
-								imageFile, (int) width, 0);
+						imageFileBitmap = MCImageUtils.getZoomBitmapFromFile(imageFile, (int) width, 0);
 					} else if (type == TYPE_IMAGE_COMMON) {
 						// if(PicAndVoiceDetailActivity.width&&){
 						//
 						// }else{
 						//
 						// }
-						imageFileBitmap = MCImageUtils.getZoomBitmapFromFile(
-								imageFile, PicAndVoiceDetailActivity.width,
-								PicAndVoiceDetailActivity.height);
+						imageFileBitmap = MCImageUtils.getZoomBitmapFromFile(imageFile, PicAndVoiceDetailActivity.width, PicAndVoiceDetailActivity.height);
 					} else {
-						imageFileBitmap = BitmapFactory.decodeFile(imageFile
-								.getAbsolutePath());
+						imageFileBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 					}
 					if (imageFileBitmap != null) {
 						where = FROM_SDCARD;
-						if (type == TYPE_IMAGE_COMMON
-								|| type == TYPE_IMAGE_BACK
-								|| type == TYPE_IMAGE_SQUAREIMAGE) {
+						if (type == TYPE_IMAGE_COMMON || type == TYPE_IMAGE_BACK || type == TYPE_IMAGE_SQUAREIMAGE) {
 							fileResult.onResult(where, imageFileBitmap);
 						} else if (type == TYPE_IMAGE_HEAD) {
-							bitmaps.put(currentFileImage, MCImageUtils
-									.getCircleBitmap(imageFileBitmap, true,
-											borderWidth, Color.WHITE));
-							fileResult.onResult(where,
-									bitmaps.get(currentFileImage));
+							bitmaps.put(currentFileImage, MCImageUtils.getCircleBitmap(imageFileBitmap, true, borderWidth, Color.WHITE));
+							fileResult.onResult(where, bitmaps.get(currentFileImage));
 						} else if (type == TYPE_IMAGE_THUMBNAIL) {
 							bitmaps.put(currentFileImage, imageFileBitmap);
-							fileResult.onResult(where,
-									bitmaps.get(currentFileImage));
+							fileResult.onResult(where, bitmaps.get(currentFileImage));
 						}
 					} else {
 						if (fromWebResults.get(currentFileImage) == null) {
-							fromWebResults.put(currentFileImage,
-									new ArrayList<FileResult>());
+							fromWebResults.put(currentFileImage, new ArrayList<FileResult>());
 						}
 
 						fromWebResults.get(currentFileImage).add(fileResult);
-						if (imageFromWebStatus.get(currentFileImage) == null
-								|| imageFromWebStatus.get(currentFileImage)
-										.equals("failed")) {
-							getImageFileFromWeb(imageFileName, mediationParam,
-									type, style, (int) width);
+						if (imageFromWebStatus.get(currentFileImage) == null || imageFromWebStatus.get(currentFileImage).equals("failed")) {
+							getImageFileFromWeb(imageFileName, mediationParam, type, style, (int) width);
 						}
 					}
 				} else {
 					if (fromWebResults.get(currentFileImage) == null) {
-						fromWebResults.put(currentFileImage,
-								new ArrayList<FileResult>());
+						fromWebResults.put(currentFileImage, new ArrayList<FileResult>());
 					}
 
 					fromWebResults.get(currentFileImage).add(fileResult);
-					if ((imageFromWebStatus.get(currentFileImage) == null || imageFromWebStatus
-							.get(currentFileImage).equals("failed"))
-							|| type == TYPE_IMAGE_SQUAREIMAGE) {
-						getImageFileFromWeb(imageFileName, mediationParam,
-								type, style, (int) width);
+					if ((imageFromWebStatus.get(currentFileImage) == null || imageFromWebStatus.get(currentFileImage).equals("failed")) || type == TYPE_IMAGE_SQUAREIMAGE) {
+						getImageFileFromWeb(imageFileName, mediationParam, type, style, (int) width);
 					}
 				}
 			}
@@ -275,9 +232,7 @@ public class OSSFileHandler {
 		public void onResult(String where, Bitmap bitmap);
 	}
 
-	private void getImageFileFromWeb(final String imageFileName,
-			final String mediationParam, final int type, final String style,
-			final int width) {
+	private void getImageFileFromWeb(final String imageFileName, final String mediationParam, final int type, final String style, final int width) {
 		File folder = app.sdcardImageFolder;
 		if (type == TYPE_IMAGE_HEAD) {
 			folder = app.sdcardHeadImageFolder;
@@ -295,12 +250,10 @@ public class OSSFileHandler {
 		imageFromWebStatus.put(fileName0, "loading");
 		app.networkHandler.connection(new NetConnection() {
 			@Override
-			protected void success(InputStream is,
-					HttpURLConnection httpURLConnection) {
+			protected void success(InputStream is, HttpURLConnection httpURLConnection) {
 				try {
 					File tempFile = new File(f, "temp_" + fileName0);
-					StreamParser
-							.parseToFile(is, new FileOutputStream(tempFile));
+					StreamParser.parseToFile(is, new FileOutputStream(tempFile));
 					httpURLConnection.disconnect();
 
 					imageFromWebStatus.put(fileName0, "success");
@@ -309,22 +262,16 @@ public class OSSFileHandler {
 
 					Bitmap bitmap = null;
 					if (type == TYPE_IMAGE_HEAD) {
-						bitmap = BitmapFactory.decodeFile(imageFile
-								.getAbsolutePath());
-						bitmap = MCImageUtils.getCircleBitmap(bitmap, true,
-								borderWidth, Color.WHITE);
+						bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+						bitmap = MCImageUtils.getCircleBitmap(bitmap, true, borderWidth, Color.WHITE);
 						bitmaps.put(fileName0, bitmap);
 					} else if (type == TYPE_IMAGE_THUMBNAIL) {
-						bitmap = BitmapFactory.decodeFile(imageFile
-								.getAbsolutePath());
+						bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 						bitmaps.put(fileName0, bitmap);
-					} else if (type == TYPE_IMAGE_SQUAREIMAGE
-							|| type == TYPE_IMAGE_COMMON) {
-						bitmap = MCImageUtils.getZoomBitmapFromFile(imageFile,
-								(int) width, 0);
+					} else if (type == TYPE_IMAGE_SQUAREIMAGE || type == TYPE_IMAGE_COMMON) {
+						bitmap = MCImageUtils.getZoomBitmapFromFile(imageFile, (int) width, 0);
 					} else {
-						bitmap = BitmapFactory.decodeFile(imageFile
-								.getAbsolutePath());
+						bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 					}
 					System.out.println(fileName0 + "---7" + bitmap);
 					final Bitmap bitmap0 = bitmap;
@@ -334,8 +281,7 @@ public class OSSFileHandler {
 							@Override
 							public void run() {
 								if (bitmap0 == null) {
-									result.onResult(FROM_DEFAULT,
-											defaultSquareDetailImage);
+									result.onResult(FROM_DEFAULT, defaultSquareDetailImage);
 								} else {
 									result.onResult(FROM_WEB, bitmap0);
 								}
@@ -372,12 +318,10 @@ public class OSSFileHandler {
 				}
 
 				if (type == TYPE_IMAGE_THUMBNAIL) {
-					settings.url = API.DOMAIN_HANDLEIMAGE + directory
-							+ imageFileName + style;
+					settings.url = API.DOMAIN_HANDLEIMAGE + directory + imageFileName + style;
 					settings.method = GET;
 				} else {
-					settings.url = API.DOMAIN_COMMONIMAGE + directory
-							+ imageFileName;
+					settings.url = API.DOMAIN_COMMONIMAGE + directory + imageFileName;
 					settings.method = GET;
 				}
 			}
@@ -391,25 +335,18 @@ public class OSSFileHandler {
 		if (source != null) {
 			new Thread() {
 				public void run() {
-					byte[] imageByteArray = MCImageUtils
-							.getByteArrayFromBitmap(source,
-									settings.compressFormat, 100);
+					byte[] imageByteArray = MCImageUtils.getByteArrayFromBitmap(source, settings.compressFormat, 100);
 					if (imageByteArray != null) {
-						String base64 = Base64.encodeToString(imageByteArray,
-								Base64.DEFAULT);
+						String base64 = Base64.encodeToString(imageByteArray, Base64.DEFAULT);
 						base64 = base64.trim();
-						String sha1 = app.mSHA1.getDigestOfString(base64
-								.getBytes());
+						String sha1 = app.mSHA1.getDigestOfString(base64.getBytes());
 						sha1 = sha1.toLowerCase(Locale.getDefault());
-						String format = settings.compressFormat == settings.PNG ? ".png"
-								: ".jpg";
-						File localFile = new File(settings.folder, sha1
-								+ format);
+						String format = settings.compressFormat == settings.PNG ? ".png" : ".jpg";
+						File localFile = new File(settings.folder, sha1 + format);
 						if (!localFile.exists()) {
 							FileOutputStream fileOutputStream = null;
 							try {
-								fileOutputStream = new FileOutputStream(
-										localFile);
+								fileOutputStream = new FileOutputStream(localFile);
 								fileOutputStream.write(imageByteArray);
 								fileOutputStream.flush();
 							} catch (FileNotFoundException e) {
@@ -471,12 +408,10 @@ public class OSSFileHandler {
 			app.networkHandler.connection(new NetConnection() {
 
 				@Override
-				protected void success(InputStream is,
-						HttpURLConnection httpURLConnection) {
+				protected void success(InputStream is, HttpURLConnection httpURLConnection) {
 					try {
 						File tempFile = new File(folder, "temp_" + fileName);
-						StreamParser.parseToFile(is, new FileOutputStream(
-								tempFile));
+						StreamParser.parseToFile(is, new FileOutputStream(tempFile));
 						httpURLConnection.disconnect();
 						tempFile.renameTo(file);
 						app.UIHandler.post(new Runnable() {
@@ -500,8 +435,7 @@ public class OSSFileHandler {
 
 				@Override
 				protected void settings(Settings settings) {
-					settings.url = API.DOMAIN_COMMONIMAGE
-							+ fileSettings.directory + "/" + fileName;
+					settings.url = API.DOMAIN_COMMONIMAGE + fileSettings.directory + "/" + fileName;
 					settings.method = GET;
 				}
 			});
@@ -555,13 +489,11 @@ public class OSSFileHandler {
 	public static final int FILE_TYPE_SDSELECTIMAGE = 0x004;
 	public static final int FILE_TYPE_CATETAIMAGE = 0x005;
 
-	public void getFileMessageInfo(
-			final FileMessageInfoInterface fileMessageInfoInterface) {
+	public void getFileMessageInfo(final FileMessageInfoInterface fileMessageInfoInterface) {
 		final FileMessageInfoSettings settings = new FileMessageInfoSettings();
 		fileMessageInfoInterface.setParams(settings);
 		File tempFile = null;
-		if (settings.FILE_TYPE != FILE_TYPE_ASSETS
-				&& settings.FILE_TYPE != FILE_TYPE_SDSELECTIMAGE) {
+		if (settings.FILE_TYPE != FILE_TYPE_ASSETS && settings.FILE_TYPE != FILE_TYPE_SDSELECTIMAGE) {
 			tempFile = new File(settings.folder, settings.fileName);
 			if (!tempFile.isFile()) {
 				return;
@@ -579,8 +511,7 @@ public class OSSFileHandler {
 			@Override
 			public void run() {
 				String fileName = settings.fileName;
-				String suffixLastName = fileName.substring(fileName
-						.lastIndexOf("."));
+				String suffixLastName = fileName.substring(fileName.lastIndexOf("."));
 				MessageDigest digest = null;
 				InputStream in = null;
 				byte buffer[] = new byte[1024];
@@ -592,8 +523,7 @@ public class OSSFileHandler {
 					if (settings.FILE_TYPE != FILE_TYPE_ASSETS) {
 						in = new FileInputStream(file);
 					} else {
-						in = app.getResources().getAssets()
-								.open(settings.assetsPath + settings.fileName);
+						in = app.getResources().getAssets().open(settings.assetsPath + settings.fileName);
 					}
 					if (in == null)
 						return;
@@ -610,19 +540,14 @@ public class OSSFileHandler {
 				}
 				if (data == null)
 					return;
-				String sha1 = new com.lejoying.wxgs.utils.SHA1()
-						.getDigestOfString(data).toLowerCase(
-								Locale.getDefault())
-						+ suffixLastName;
+				String sha1 = new com.lejoying.wxgs.utils.SHA1().getDigestOfString(data).toLowerCase(Locale.getDefault()) + suffixLastName;
 				BigInteger bigInt = new BigInteger(1, digest.digest());
-				String md5 = bigInt.toString(16).toLowerCase(
-						Locale.getDefault());
+				String md5 = bigInt.toString(16).toLowerCase(Locale.getDefault());
 				if (settings.FILE_TYPE == FILE_TYPE_ASSETS) {
 					File file = new File(app.sdcardImageFolder, sha1);
 					if (!file.exists()) {
 						try {
-							FileOutputStream fileOutputStream = new FileOutputStream(
-									file);
+							FileOutputStream fileOutputStream = new FileOutputStream(file);
 							fileOutputStream.write(data, 0, data.length);
 							fileOutputStream.flush();
 							fileOutputStream.close();
@@ -633,8 +558,7 @@ public class OSSFileHandler {
 						}
 					}
 				}
-				final ImageMessageInfo imageMessageInfo = new ImageMessageInfo(
-						sha1, md5, data);
+				final ImageMessageInfo imageMessageInfo = new ImageMessageInfo(sha1, md5, data);
 				fileMessageInfoInterface.onSuccess(imageMessageInfo);
 			}
 		}).start();
@@ -696,8 +620,7 @@ public class OSSFileHandler {
 			directory = "backgrounds/";
 		}
 
-		PutObjectTask task = new PutObjectTask(API.BUCKETNAME, directory
-				+ fileName, settings.contentType);
+		PutObjectTask task = new PutObjectTask(API.BUCKETNAME, directory + fileName, settings.contentType);
 		task.initKey(API.ACCESS_ID, API.ACCESS_KEY);
 		task.setData(imageMessageInfo.data);
 		String result = task.getResult().toLowerCase(Locale.getDefault());

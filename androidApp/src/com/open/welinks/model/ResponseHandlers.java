@@ -105,7 +105,7 @@ public class ResponseHandlers {
 
 				} else if (!response.exists) {
 					Log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
-					Debug1Controller.uploadImage(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
+					Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
 				}
 			}
 		}
