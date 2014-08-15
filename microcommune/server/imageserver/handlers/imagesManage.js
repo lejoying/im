@@ -201,8 +201,8 @@ imagesManage.checkfile = function (data, response) {
 //            console.log(reply);
             var encryptedContent;
             var expires = parseInt((new Date().getTime() + 60000) / 1000);
-            var content = "PUT\n\nimage/jpg\n" + expires + "\n/welinkstest/test/" + fileName;
-            var postContent = "POST\n\n\nimage/jpg\n" + expires + "\n/welinkstest/" + fileName;
+            var content = "PUT\n\nimage/jpg\n" + expires + "\n/wxgs-data/test/" + fileName;
+//            var postContent = "POST\n\n\nimage/jpg\n" + expires + "\n/welinkstest/" + fileName;
             if (reply == "1") {
                 flag = true;
                 console.log(fileName + "---" + reply + "---文件已存在");
@@ -241,13 +241,99 @@ imagesManage.checkfile2 = function (data, response) {
 //            console.log(reply);
             var encryptedContent;
             var expires = parseInt((new Date().getTime() + 60000) / 1000);
-            var content = "PUT\n\nimage/jpg\n" + expires + "\n/welinkstest/test/" + fileName;
+//            var content = "PUT\n\nimage/jpg\n" + expires + "\n/welinkstest/test/" + fileName;
             var postContent = "POST\n\n\n" + expires + "\n/welinkstest/" + fileName + "?uploads";
             if (reply == "1") {
                 flag = true;
                 console.log(fileName + "---" + reply + "---文件已存在");
             } else {
                 encryptedContent = crypto.createHmac('sha1', app_secret).update(postContent).digest().toString('base64'); //base64
+                console.log(fileName + "---" + reply + "---文件不存在" + encryptedContent);
+            }
+            response.write(JSON.stringify({
+                "提示信息": "查找成功",
+                "filename": fileName,
+                "exists": flag,
+                OSSAccessKeyId: "dpZe5yUof6KSJ8RM",
+                expires: expires,
+                "signature": encryptedContent
+            }));
+            response.end();
+        }
+    });
+}
+imagesManage.checkfile3 = function (data, response) {
+    response.asynchronous = 1;
+    var fileName = data.filename;
+    var notEncryptedContent = data.signaturecontent;
+    var partNumber = data.partNumber;
+    var uploadId = data.uploadId;
+    client.HEXISTS("imageset", fileName, function (error, reply) {
+        if (error != null) {
+            response.write(JSON.stringify({
+                "提示信息": "查询失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error + "check image is exists");
+            return;
+        } else {
+
+            var flag = false;
+//            console.log(reply);
+            var encryptedContent;
+            var expires = parseInt((new Date().getTime() + 60000) / 1000);
+            var content = "PUT\n\n\n" + expires + "\n/welinkstest/" + fileName + "?partNumber=" + partNumber;//+ "&amp;uploadId=" + uploadId
+            console.log(content);
+//            var postContent = "POST\n\n\n" + expires + "\n/welinkstest/" + fileName + "?uploads";
+            if (reply == "1") {
+                flag = true;
+                console.log(fileName + "---" + reply + "---文件已存在");
+            } else {
+                encryptedContent = crypto.createHmac('sha1', app_secret).update(content).digest().toString('base64'); //base64
+                console.log(fileName + "---" + reply + "---文件不存在" + encryptedContent);
+            }
+            response.write(JSON.stringify({
+                "提示信息": "查找成功",
+                "filename": fileName,
+                "exists": flag,
+                OSSAccessKeyId: "dpZe5yUof6KSJ8RM",
+                expires: expires,
+                "signature": encryptedContent
+            }));
+            response.end();
+        }
+    });
+}
+imagesManage.checkfile4 = function (data, response) {
+    response.asynchronous = 1;
+    var fileName = data.filename;
+    var notEncryptedContent = data.signaturecontent;
+    var partNumber = data.partNumber;
+    var uploadId = data.uploadId;
+    client.HEXISTS("imageset", fileName, function (error, reply) {
+        if (error != null) {
+            response.write(JSON.stringify({
+                "提示信息": "查询失败",
+                "失败原因": "数据异常"
+            }));
+            response.end();
+            console.log(error + "check image is exists");
+            return;
+        } else {
+
+            var flag = false;
+//            console.log(reply);
+            var encryptedContent;
+            var expires = parseInt((new Date().getTime() + 60000) / 1000);
+            var content = "POST\n\n\n" + expires + "\n/welinkstest/" + fileName + "?uploadId=" + uploadId;//+ "&amp;uploadId=" + uploadId
+            console.log(content);
+//            var postContent = "POST\n\n\n" + expires + "\n/welinkstest/" + fileName + "?uploads";
+            if (reply == "1") {
+                flag = true;
+                console.log(fileName + "---" + reply + "---文件已存在");
+            } else {
+                encryptedContent = crypto.createHmac('sha1', app_secret).update(content).digest().toString('base64'); //base64
                 console.log(fileName + "---" + reply + "---文件不存在" + encryptedContent);
             }
             response.write(JSON.stringify({
