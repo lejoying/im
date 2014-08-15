@@ -82,7 +82,7 @@ public class TestMultipartUpload extends Activity {
 
 		SHA1 sha1 = new SHA1();
 		File sdFile = Environment.getExternalStorageDirectory();
-		File file = new File(sdFile, "qwe.jpg");// "test1/test002.jpg"
+		File file = new File(sdFile, "test1/test003.jpg");// "test1/test002.jpg"
 
 		// byte[] bytes = null;
 		String sha1FileName = "";
@@ -95,8 +95,7 @@ public class TestMultipartUpload extends Activity {
 
 		fileName = sha1FileName + ".jpg";
 
-		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/"
-				+ fileName + "?uploads";
+		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploads";
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -114,8 +113,7 @@ public class TestMultipartUpload extends Activity {
 		params.addQueryStringParameter("OSSAccessKeyId", OSSAccessKeyId);
 		params.addQueryStringParameter("Expires", expires + "");
 		params.addQueryStringParameter("Signature", signature);
-		Log.e(fileName, OSSAccessKeyId + "---" + expires + "---" + signature
-				+ "---" + fileName);
+		Log.e(fileName, OSSAccessKeyId + "---" + expires + "---" + signature + "---" + fileName);
 		httpUtils.send(HttpMethod.POST, url, params, initUpload);
 	}
 
@@ -126,9 +124,7 @@ public class TestMultipartUpload extends Activity {
 			Log.e(tag, responseInfo.statusCode + "-------initUpload success");
 			try {
 				initiateMultipartUploadResult = parseXml(responseInfo.result);
-				Log.e(tag, initiateMultipartUploadResult.bucket + "---"
-						+ initiateMultipartUploadResult.key + "---"
-						+ initiateMultipartUploadResult.uploadId);
+				Log.e(tag, initiateMultipartUploadResult.bucket + "---" + initiateMultipartUploadResult.key + "---" + initiateMultipartUploadResult.uploadId);
 				Header[] headers = responseInfo.getAllHeaders();
 				for (int i = 0; i < headers.length; i++) {
 					Log.e(tag, "reply upload: " + headers[i]);
@@ -167,10 +163,7 @@ public class TestMultipartUpload extends Activity {
 				Log.e(tag, "reply upload: " + headers[i]);
 			}
 			CompleteMultipartUploadResult completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
-			Log.e(tag, completeMultipartUploadResult.location + "---"
-					+ completeMultipartUploadResult.bucket + "---"
-					+ completeMultipartUploadResult.key + "---"
-					+ completeMultipartUploadResult.eTag);
+			Log.e(tag, completeMultipartUploadResult.location + "---" + completeMultipartUploadResult.bucket + "---" + completeMultipartUploadResult.key + "---" + completeMultipartUploadResult.eTag);
 		};
 	};
 
@@ -180,7 +173,7 @@ public class TestMultipartUpload extends Activity {
 
 	public void uploadParts() {
 		currentCount = 0;
-		partCount = (int) Math.ceil(bytes.length / partSize);
+		partCount = (int) Math.ceil((double) bytes.length / (double) partSize);
 
 		Log.e(tag, "partCount:" + partCount);
 
@@ -192,8 +185,7 @@ public class TestMultipartUpload extends Activity {
 			int partID = i + 1;
 			long expires = (new Date().getTime() / 1000) + 600;
 
-			String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME
-					+ "/" + fileName + "?partNumber=" + (i + 1);
+			String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?partNumber=" + (i + 1) + "&uploadId=" + initiateMultipartUploadResult.uploadId;
 			String signature = "";
 			try {
 				signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -205,25 +197,24 @@ public class TestMultipartUpload extends Activity {
 			RequestParams params = new RequestParams();
 			HttpUtils httpUtils = new HttpUtils();
 
-			String url = "http://images5.we-links.com/" + fileName
-					+ "?partNumber=" + (i + 1) + "&amp;uploadId="
-					+ initiateMultipartUploadResult.uploadId;
+			String url = "http://images5.we-links.com/" + fileName + "?partNumber=" + (i + 1) + "&uploadId=" + initiateMultipartUploadResult.uploadId;
 
 			params.addQueryStringParameter("OSSAccessKeyId", OSSAccessKeyId);
 			params.addQueryStringParameter("Expires", expires + "");
 			params.addQueryStringParameter("Signature", signature);
 
-			Log.e(fileName, OSSAccessKeyId + "---" + expires + "---"
-					+ signature + "---" + fileName);
+			Log.e(fileName, OSSAccessKeyId + "---" + expires + "---" + signature + "---" + fileName);
 
 			if ((bytes != null) && (bytes.length > 0)) {
-				byte[] byte0 = new byte[partSize];
+
 				int length = partSize;
 
 				int start = (partID - 1) * partSize;
 				if (partID * partSize > bytes.length) {
 					length = bytes.length - start;
 				}
+
+				byte[] byte0 = new byte[length];
 
 				for (int j = 0; j < length; j++) {
 					byte0[j] = bytes[start + j];
@@ -236,8 +227,7 @@ public class TestMultipartUpload extends Activity {
 				}
 				digest.update(byte0, 0, byte0.length);
 				BigInteger bigInt = new BigInteger(1, digest.digest());
-				String eTag = bigInt.toString(16).toUpperCase(
-						Locale.getDefault());
+				String eTag = bigInt.toString(16).toUpperCase(Locale.getDefault());
 				if (eTag.length() < 32) {
 					for (int h = 0; h < 32 - eTag.length(); h++) {
 						eTag = "0" + eTag;
@@ -257,9 +247,7 @@ public class TestMultipartUpload extends Activity {
 		String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
 		long expires = (new Date().getTime() / 1000) + 600;
 
-		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/"
-				+ fileName + "?uploadId="
-				+ initiateMultipartUploadResult.uploadId;
+		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploadId=" + initiateMultipartUploadResult.uploadId;
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -272,8 +260,7 @@ public class TestMultipartUpload extends Activity {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = "http://images5.we-links.com/" + fileName + "?uploadId="
-				+ initiateMultipartUploadResult.uploadId;
+		String url = "http://images5.we-links.com/" + fileName + "?uploadId=" + initiateMultipartUploadResult.uploadId;
 
 		params.addQueryStringParameter("OSSAccessKeyId", OSSAccessKeyId);
 		params.addQueryStringParameter("Expires", expires + "");
@@ -283,8 +270,7 @@ public class TestMultipartUpload extends Activity {
 		httpUtils.send(HttpMethod.POST, url, params, completeUpload);
 	}
 
-	public static String getHmacSha1Signature(String value, String key)
-			throws NoSuchAlgorithmException, InvalidKeyException {
+	public static String getHmacSha1Signature(String value, String key) throws NoSuchAlgorithmException, InvalidKeyException {
 		byte[] keyBytes = key.getBytes();
 		SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
 
@@ -350,14 +336,11 @@ public class TestMultipartUpload extends Activity {
 		public String eTag;
 	}
 
-	public static CompleteMultipartUploadResult parseXmlCompleteResult(
-			String resultXml) {
+	public static CompleteMultipartUploadResult parseXmlCompleteResult(String resultXml) {
 		CompleteMultipartUploadResult completeMultipartUploadResult = null;
 		try {
-			InputStream is = new ByteArrayInputStream(
-					resultXml.getBytes("UTF-8"));
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
+			InputStream is = new ByteArrayInputStream(resultXml.getBytes("UTF-8"));
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document doc = builder.parse(is);
 			Element rootElement = doc.getDocumentElement();
@@ -368,17 +351,13 @@ public class TestMultipartUpload extends Activity {
 				Node property = properties.item(j);
 				String nodeName = property.getNodeName();
 				if (nodeName.equals("Bucket")) {
-					completeMultipartUploadResult.bucket = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.bucket = property.getFirstChild().getNodeValue();
 				} else if (nodeName.equals("Key")) {
-					completeMultipartUploadResult.key = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.key = property.getFirstChild().getNodeValue();
 				} else if (nodeName.equals("ETag")) {
-					completeMultipartUploadResult.eTag = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.eTag = property.getFirstChild().getNodeValue();
 				} else if (nodeName.equals("Location")) {
-					completeMultipartUploadResult.location = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.location = property.getFirstChild().getNodeValue();
 				}
 			}
 
@@ -402,8 +381,7 @@ public class TestMultipartUpload extends Activity {
 		String uploadId;
 	}
 
-	public InitiateMultipartUploadResult parseXml(String resultXml)
-			throws Exception {
+	public InitiateMultipartUploadResult parseXml(String resultXml) throws Exception {
 		InputStream is = new ByteArrayInputStream(resultXml.getBytes("UTF-8"));
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -416,14 +394,11 @@ public class TestMultipartUpload extends Activity {
 			Node property = properties.item(j);
 			String nodeName = property.getNodeName();
 			if (nodeName.equals("Bucket")) {
-				initiateMultipartUploadResult.bucket = property.getFirstChild()
-						.getNodeValue();
+				initiateMultipartUploadResult.bucket = property.getFirstChild().getNodeValue();
 			} else if (nodeName.equals("Key")) {
-				initiateMultipartUploadResult.key = property.getFirstChild()
-						.getNodeValue();
+				initiateMultipartUploadResult.key = property.getFirstChild().getNodeValue();
 			} else if (nodeName.equals("UploadId")) {
-				initiateMultipartUploadResult.uploadId = property
-						.getFirstChild().getNodeValue();
+				initiateMultipartUploadResult.uploadId = property.getFirstChild().getNodeValue();
 			}
 		}
 		return initiateMultipartUploadResult;
