@@ -96,6 +96,7 @@ public class MoreSquaresFragment extends BaseFragment implements
 	@Override
 	public void onDestroy() {
 		mapView.onDestroy();
+		app.amapLocationHandler.deactivate();
 		super.onDestroy();
 	}
 
@@ -151,8 +152,9 @@ public class MoreSquaresFragment extends BaseFragment implements
 							AMapLocation aMapLocation) {
 						location.setText(aMapLocation.getAddress());
 						modifylocation(aMapLocation);
+						app.amapLocationHandler.searchByBound(mapView.getMap(),
+								app.amapLocationHandler.mAccountTableId);
 					}
-
 				});
 	}
 
@@ -163,7 +165,7 @@ public class MoreSquaresFragment extends BaseFragment implements
 
 			@Override
 			public void success(JSONObject jData) {
-				System.out.println("+++++++++++++++++");
+
 			}
 
 			@Override
