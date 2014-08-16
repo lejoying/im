@@ -16,6 +16,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnLongClickListener;
 
 import com.aliyun.android.oss.Helper;
 import com.aliyun.android.oss.OSSHttpTool;
@@ -26,6 +28,7 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.TestHttp;
 import com.open.welinks.R;
+import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.DateUtil;
@@ -34,6 +37,8 @@ import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.Debug1View;
 import com.open.welinks.view.Debug1View.ControlProgress;
 import com.open.welinks.view.Debug1View.Status;
+import com.open.welinks.view.Debug1View.TransportingList;
+import com.open.welinks.view.Debug1View.TransportingList.TransportingItem;
 
 public class Debug1Controller {
 	public Data data = Data.getInstance();
@@ -48,7 +53,14 @@ public class Debug1Controller {
 	public Debug1Controller thisController;
 	public Activity thisActivity;
 
-	public ArrayList<HashMap<String, String>> imagesSource = new ArrayList<HashMap<String, String>>();;
+	public UploadMultipartList uploadMultipartList = UploadMultipartList
+			.getInstance();
+
+	public UploadLoadingListener uploadLoadingListener;
+
+	public OnLongClickListener onLongClickListener;
+
+	public ArrayList<HashMap<String, String>> imagesSource = new ArrayList<HashMap<String, String>>();
 
 	public Debug1Controller(Activity activity) {
 		this.context = activity;
@@ -56,10 +68,33 @@ public class Debug1Controller {
 	}
 
 	public void initializeListeners() {
+		uploadLoadingListener = new UploadLoadingListener() {
 
+			@Override
+			public void loading(UploadMultipart instance, int precent,
+					int status) {
+				instance.controlProgress.moveTo(precent);
+			}
+		};
+		onLongClickListener = new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				String path = (String) v.getTag();
+				uploadMultipartList.cancleMultipart(path);
+				return false;
+			}
+		};
 	}
 
 	public void bindEvent() {
+		ArrayList<TransportingItem> transportingList = thisView.transportingList.transportingItems;
+		for (int i = 0; i < transportingList.size(); i++) {
+			transportingList.get(i).transportingItemView
+					.setOnLongClickListener(onLongClickListener);
+			transportingList.get(i).uploadMultipart
+					.setUploadLoadingListener(uploadLoadingListener);
+		}
 	}
 
 	public void onCreate() {
@@ -133,8 +168,16 @@ public class Debug1Controller {
 		return true;
 	}
 
+	public UploadMultipart uploadFile(String path, View transportingItemView) {
+		UploadMultipart uploadMultipart = new UploadMultipart(path);
+		uploadMultipartList.addMultipart(uploadMultipart);
+		// uploadMultipart.setUploadLoadingListener(uploadLoadingListener);
+		return uploadMultipart;
+	}
+
 	/******************** upload image **************************/
-	public static void uploadImageWithInputStreamUploadEntity(String signature, String fileName, long expires, String OSSAccessKeyId) {
+	public static void uploadImageWithInputStreamUploadEntity(String signature,
+			String fileName, long expires, String OSSAccessKeyId) {
 		// SHA1 sha1 = new SHA1();
 		HttpUtils http = new HttpUtils();
 		RequestParams params = new RequestParams();
@@ -171,10 +214,12 @@ public class Debug1Controller {
 		params.addQueryStringParameter("Signature", signature);
 
 		if (fileLength > 0) {
-			params.setBodyEntity(new InputStreamUploadEntity(inputStream, fileLength));
+			params.setBodyEntity(new InputStreamUploadEntity(inputStream,
+					fileLength));
 		}
 		Log.d(tag, "uploadImageWithInputStreamUploadEntity");
-		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params,
+				responseHandlers.upload);
 	}
 
 	public void uploadImageHeadAnth() {
@@ -209,7 +254,8 @@ public class Debug1Controller {
 			e.printStackTrace();
 		}
 		String dateStr = Helper.getGMTDate();
-		String content = "PUT\n\nimage/jpg\n" + dateStr + "\n/wxgs-data/test/" + sha1FileName + ".jpg";
+		String content = "PUT\n\nimage/jpg\n" + dateStr + "\n/wxgs-data/test/"
+				+ sha1FileName + ".jpg";
 		String requestUri = OSS_END_POINT + "/test/" + sha1FileName + ".jpg";
 
 		String signature = "";
@@ -229,7 +275,8 @@ public class Debug1Controller {
 			params.setBodyEntity(new ByteArrayEntity(bytes));
 		}
 
-		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params,
+				responseHandlers.upload);
 	}
 
 	public void OSSPutObject() {
@@ -245,14 +292,17 @@ public class Debug1Controller {
 				String sha1FileName = "default.jpg";
 				byte[] bytes = null;
 				try {
-					bytes = StreamParser.parseToByteArray(new FileInputStream(file));
+					bytes = StreamParser.parseToByteArray(new FileInputStream(
+							file));
 					sha1FileName = sha1.getDigestOfString(bytes);
 
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
-				PutObjectTask putObjectTask = new PutObjectTask("wxgs", "images/" + sha1FileName + ".jpg", "image/jpg");
-				putObjectTask.initKey("dpZe5yUof6KSJ8RM", "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG");
+				PutObjectTask putObjectTask = new PutObjectTask("wxgs",
+						"images/" + sha1FileName + ".jpg", "image/jpg");
+				putObjectTask.initKey("dpZe5yUof6KSJ8RM",
+						"UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG");
 				putObjectTask.setData(bytes);
 				String result = putObjectTask.getResult();
 				System.out.println(result + "---");
@@ -262,7 +312,8 @@ public class Debug1Controller {
 		}).start();
 	}
 
-	public static void uploadImageWithByteArrayEntity(String signature, String fileName, long expires, String OSSAccessKeyId) {
+	public static void uploadImageWithByteArrayEntity(String signature,
+			String fileName, long expires, String OSSAccessKeyId) {
 		// SHA1 sha1 = new SHA1();
 		HttpUtils http = new HttpUtils();
 		RequestParams params = new RequestParams();
@@ -333,7 +384,7 @@ public class Debug1Controller {
 		// String contentType = "image/jpg";
 
 		String endFileName = "jpg";
-//		String BACKETNAME = "welinkstest";
+		// String BACKETNAME = "welinkstest";
 		// String resource = "/" + BACKETNAME + "/" + sha1FileName + "." +
 		// endFileName;
 

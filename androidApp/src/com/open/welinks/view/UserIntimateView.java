@@ -20,11 +20,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
-import com.facebook.rebound.ui.Util;
+//import com.facebook.rebound.SimpleSpringListener;
+//import com.facebook.rebound.Spring;
+//import com.facebook.rebound.SpringConfig;
+//import com.facebook.rebound.SpringSystem;
+//import com.facebook.rebound.ui.Util;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
@@ -77,10 +77,10 @@ public class UserIntimateView {
 	public List<String> circles;
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
-
-	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
-
-	public Spring mSpring;
+//
+//	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
+//
+//	public Spring mSpring;
 
 	public UserIntimateView(Activity thisActivity) {
 		this.context = thisActivity;
@@ -101,15 +101,15 @@ public class UserIntimateView {
 
 		currentMenuOptionSelectedStatusImage = intimateFriendsMenuOptionStatusImage;
 		currentShowContentView = intimateFriendsContentView;
-
-		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG).addListener(new SimpleSpringListener() {
-			@Override
-			public void onSpringUpdate(Spring spring) {
-				// Just tell the UI to update based on the springs
-				// current state.
-				render();
-			}
-		});
+//
+//		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG).addListener(new SimpleSpringListener() {
+//			@Override
+//			public void onSpringUpdate(Spring spring) {
+//				// Just tell the UI to update based on the springs
+//				// current state.
+//				render();
+//			}
+//		});
 
 	}
 

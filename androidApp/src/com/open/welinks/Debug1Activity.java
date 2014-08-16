@@ -1,19 +1,18 @@
 package com.open.welinks;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.Debug1View;
 import com.open.welinks.view.Debug1View.Status;
 import com.open.welinks.view.ViewManage;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 public class Debug1Activity extends Activity {
 	public Data data = Data.getInstance();
@@ -50,8 +49,8 @@ public class Debug1Activity extends Activity {
 		viewManager.debug1View = this.thisView;
 
 		thisController.onCreate();
-		thisView.initView();
 		thisController.initializeListeners();
+		thisView.initView();
 		thisController.bindEvent();
 	}
 
