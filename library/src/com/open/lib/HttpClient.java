@@ -8,7 +8,6 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
-import com.open.welinks.entity.Part;
 
 public class HttpClient {
 	public String tag = "TestHttp";
@@ -35,16 +34,6 @@ public class HttpClient {
 	}
 
 	public class ResponseHandler extends RequestCallBack<String> {
-
-		public Part part;
-
-		public final Part getPart() {
-			return part;
-		}
-
-		public void setPart(Part part) {
-			this.part = part;
-		}
 
 		TimeLine timeLine = new TimeLine();
 
