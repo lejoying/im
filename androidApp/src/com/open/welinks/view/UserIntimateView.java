@@ -239,12 +239,15 @@ public class UserIntimateView {
 
 			this.cardView = mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
+			
+			this.leftTopText.setOnClickListener(thisController.mOnClickListener);
 			return intimateFriendsContentView;
-
 		}
 
 		public void setContent(Circle circle) {
-			leftTopText.setText(circle.name);
+			this.leftTopText.setText(circle.name);
+			this.leftTopText.setTag(circle.name);
+			
 			this.friendsSequence.clear();
 			for (int i = 0; i < circle.friends.size(); i++) {
 				String phone = circle.friends.get(i);

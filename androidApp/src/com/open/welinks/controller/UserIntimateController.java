@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,6 +87,8 @@ public class UserIntimateController {
 					thisView.changeMenuOptionSelected(thisView.chatMessagesListContentView, thisView.chatMessagesListMenuOptionStatusImage);
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
 					thisView.changeMenuOptionSelected(thisView.userInfomationContentView, thisView.userInfomationMenuOptionStatusImage);
+				} else if (view.getTag() != null) {
+					Log.d(tag, (String) view.getTag());
 				}
 
 			}
@@ -272,4 +275,5 @@ public class UserIntimateController {
 			}
 		});
 	}
+
 }
