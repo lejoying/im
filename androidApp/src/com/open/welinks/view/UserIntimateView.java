@@ -8,6 +8,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -19,6 +20,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
+import com.facebook.rebound.ui.Util;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
@@ -31,6 +37,8 @@ public class UserIntimateView {
 	public Data data = Data.getInstance();
 
 	public String tag = "UserIntimateView";
+
+	DisplayMetrics displayMetrics;
 
 	public UserIntimateController thisController;
 	public Context context;
@@ -62,11 +70,17 @@ public class UserIntimateView {
 	public Map<String, CircleBody> viewsMap = new HashMap<String, CircleBody>();
 	public MyListBody myListBody;
 
+	public MyPagerBody myPagerBody;
+
 	public Map<String, CircleHolder> circleHolders = new Hashtable<String, CircleHolder>();
 
 	public List<String> circles;
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
+
+	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
+
+	public Spring mSpring;
 
 	public UserIntimateView(Activity thisActivity) {
 		this.context = thisActivity;
@@ -74,9 +88,7 @@ public class UserIntimateView {
 	}
 
 	public void initData() {
-		mInflater = thisActivity.getLayoutInflater();
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
 		screenDensity = displayMetrics.density;
 		screenDip = (int) (40 * screenDensity + 0.5f);
 		screenHeight = displayMetrics.heightPixels;
@@ -90,9 +102,24 @@ public class UserIntimateView {
 		currentMenuOptionSelectedStatusImage = intimateFriendsMenuOptionStatusImage;
 		currentShowContentView = intimateFriendsContentView;
 
+		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG).addListener(new SimpleSpringListener() {
+			@Override
+			public void onSpringUpdate(Spring spring) {
+				// Just tell the UI to update based on the springs
+				// current state.
+				render();
+			}
+		});
+
 	}
 
 	public void initViews() {
+		
+		mInflater = thisActivity.getLayoutInflater();
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		
+		
 		thisActivity.setContentView(R.layout.activity_userintimate);
 
 		intimateFriendsMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimatefriends);
@@ -102,16 +129,27 @@ public class UserIntimateView {
 		chatMessagesListMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_chatMessagesList_status);
 		userInfomationMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_userInfomation_status);
 
+		chatMessagesListContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
+
 		intimateFriendsContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimateFriendsContent);
 		myListBody = new MyListBody();
 		myListBody.initialize(intimateFriendsContentView);
 
-		chatMessagesListContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
 		userInfomationContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
+
+		myPagerBody = new MyPagerBody();
+
+		myPagerBody.addChildView(chatMessagesListContentView);
+		myPagerBody.addChildView(intimateFriendsContentView);
+		myPagerBody.addChildView(userInfomationContentView);
 
 		userHeadImageView = (ImageView) thisActivity.findViewById(R.id.iv_headImage);
 		userNickNameView = (TextView) thisActivity.findViewById(R.id.tv_userNickname);
 		userBusinessView = (TextView) thisActivity.findViewById(R.id.tv_userMainBusiness);
+
+	}
+
+	public void render() {
 
 	}
 
@@ -157,12 +195,6 @@ public class UserIntimateView {
 		// v.setLayoutParams(layoutParams);
 		// }
 	}
-
-	//
-	// public view generateCircleView(){
-	//
-	//
-	// }
 
 	public void showCircles() {
 
@@ -266,6 +298,51 @@ public class UserIntimateView {
 				CircleBody circleBody = circleBodiesMap.get(circlesSequence.get(i));
 				circleBody.cardView.setX(circleBody.x + deltaX);
 				circleBody.cardView.setY(circleBody.y + deltaY);
+			}
+		}
+	}
+
+	public class MyPagerItemBody {
+		View myPagerItemView = null;
+
+		public float x;
+		public float y;
+
+		public View initialize(View myPagerItemView) {
+			this.myPagerItemView = myPagerItemView;
+			return this.myPagerItemView;
+		}
+	}
+
+	public class MyPagerBody {
+		public List<MyPagerItemBody> childrenBodys = new ArrayList<MyPagerItemBody>();
+
+		public View initialize() {
+			return null;
+		}
+
+		public void addChildView(View childView) {
+			int index = childrenBodys.size();
+
+			MyPagerItemBody childBody = new MyPagerItemBody();
+			childBody.initialize(childView);
+			childBody.x = index * displayMetrics.widthPixels;
+
+			childView.setX(childBody.x);
+			childView.setVisibility(View.VISIBLE);
+
+			childrenBodys.add(childBody);
+		}
+
+		public void recordChildrenPosition() {
+			for (MyPagerItemBody childBody : this.childrenBodys) {
+				childBody.x = childBody.myPagerItemView.getX();
+			}
+		}
+
+		public void setChildrenPosition(float deltaX, float deltaY) {
+			for (MyPagerItemBody childBody : this.childrenBodys) {
+				childBody.myPagerItemView.setX(childBody.x + deltaX);
 			}
 		}
 	}

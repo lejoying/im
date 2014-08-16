@@ -66,8 +66,7 @@ public class UserIntimateController {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		String url2 = "http://192.168.1.91/api2/relation/intimatefriends";
-		http.send(HttpRequest.HttpMethod.POST, url2, params,
-				responseHandlers.getIntimateFriends);
+		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.getIntimateFriends);
 	}
 
 	public UserIntimateController(Activity thisActivity) {
@@ -82,17 +81,11 @@ public class UserIntimateController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.intimateFriendsMenuOptionView)) {
-					thisView.changeMenuOptionSelected(
-							thisView.intimateFriendsContentView,
-							thisView.intimateFriendsMenuOptionStatusImage);
+					thisView.changeMenuOptionSelected(thisView.intimateFriendsContentView, thisView.intimateFriendsMenuOptionStatusImage);
 				} else if (view.equals(thisView.chatMessagesListMenuOptionView)) {
-					thisView.changeMenuOptionSelected(
-							thisView.chatMessagesListContentView,
-							thisView.chatMessagesListMenuOptionStatusImage);
+					thisView.changeMenuOptionSelected(thisView.chatMessagesListContentView, thisView.chatMessagesListMenuOptionStatusImage);
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
-					thisView.changeMenuOptionSelected(
-							thisView.userInfomationContentView,
-							thisView.userInfomationMenuOptionStatusImage);
+					thisView.changeMenuOptionSelected(thisView.userInfomationContentView, thisView.userInfomationMenuOptionStatusImage);
 				}
 
 			}
@@ -100,12 +93,9 @@ public class UserIntimateController {
 	}
 
 	public void bindEvent() {
-		thisView.intimateFriendsMenuOptionView
-				.setOnClickListener(mOnClickListener);
-		thisView.chatMessagesListMenuOptionView
-				.setOnClickListener(mOnClickListener);
-		thisView.userInfomationMenuOptionView
-				.setOnClickListener(mOnClickListener);
+		thisView.intimateFriendsMenuOptionView.setOnClickListener(mOnClickListener);
+		thisView.chatMessagesListMenuOptionView.setOnClickListener(mOnClickListener);
+		thisView.userInfomationMenuOptionView.setOnClickListener(mOnClickListener);
 	}
 
 	public long eventCount = 0;
@@ -124,10 +114,14 @@ public class UserIntimateController {
 
 	public float progress_line1_x = 0;
 
+	int touchMoveStatus_None = 0;
+	int touchMoveStatus_Horizontal = 1;
+	int touchMoveStatus_Vertical = 2;
+	int touchMoveStatus = touchMoveStatus_Horizontal;
+
 	public boolean onTouchEvent(MotionEvent event) {
 
-		if (!thisView.currentShowContentView
-				.equals(thisView.intimateFriendsContentView)) {
+		if (!thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
 			return true;
 		}
 		eventCount++;
@@ -139,11 +133,13 @@ public class UserIntimateController {
 		// thisView.intimateFriendsContentView;
 
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			touchMoveStatus = touchMoveStatus_None;
 
 			pre_x = x;
 			pre_y = y;
 
 			thisView.myListBody.recordChildrenPosition();
+			thisView.myPagerBody.recordChildrenPosition();
 			// progress_test_x = intimateFriendsContentView.getX();
 			// progress_test_y = intimateFriendsContentView.getY();
 
@@ -153,6 +149,25 @@ public class UserIntimateController {
 
 			}
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			if (touchMoveStatus == touchMoveStatus_None) {
+				if ((y - pre_y) * (y - pre_y) > 400 || (x - pre_x) * (x - pre_x) > 400) {
+					if ((y - pre_y) * (y - pre_y) > (x - pre_x) * (x - pre_x)) {
+						touchMoveStatus = touchMoveStatus_Vertical;
+					} else {
+						touchMoveStatus = touchMoveStatus_Horizontal;
+					}
+				}
+			}
+			if (touchMoveStatus == touchMoveStatus_Vertical) {
+				x = pre_x;
+
+			} else if (touchMoveStatus == touchMoveStatus_Horizontal) {
+				y = pre_y;
+			} else if (touchMoveStatus == touchMoveStatus_None) {
+				x = pre_x;
+				y = pre_y;
+			}
+
 			if (lastMillis == 0) {
 				lastMillis = currentMillis;
 				return true;
@@ -163,15 +178,12 @@ public class UserIntimateController {
 
 			// progress_line1.setX(progress_line1_x + x - pre_x);
 			thisView.myListBody.setChildrenPosition(0, y - pre_y);
+			thisView.myPagerBody.setChildrenPosition(x - pre_x, 0);
 
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			long delta = currentMillis - lastMillis;
 
-			if (delta == 0 || x == pre_x || y == pre_y) {
-				delta = currentMillis - pre_lastMillis;
-				pre_x = pre_pre_x;
-				pre_y = pre_pre_y;
-			}
+			touchMoveStatus = touchMoveStatus_None;
 
 		}
 		return true;
@@ -184,8 +196,7 @@ public class UserIntimateController {
 			public void success(JSONObject jData) {
 				generateTextView("获取个人信息成功...");
 				try {
-					data.userInformation = gson.fromJson(
-							jData.getString("data"), UserInformation.class);
+					data.userInformation = gson.fromJson(jData.getString("data"), UserInformation.class);
 					getIntimateFriendsData(userPhone);
 				} catch (JsonSyntaxException e) {
 					e.printStackTrace();
@@ -219,8 +230,7 @@ public class UserIntimateController {
 			public void success(JSONObject jData) {
 				generateTextView("获取密友成功...");
 				try {
-					data.relationship = gson.fromJson(jData.getString("data"),
-							Relationship.class);
+					data.relationship = gson.fromJson(jData.getString("data"), Relationship.class);
 					generateTextView("准备初始化UI...");
 					// Thread.currentThread().sleep(1000);
 					handler.post(new Runnable() {

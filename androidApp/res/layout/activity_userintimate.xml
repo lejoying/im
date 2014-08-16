@@ -29,18 +29,18 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:text="好友"
+                android:text="消息"
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/iv_intimatefriends_status"
+                android:id="@+id/iv_chatMessagesList_status"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_alignParentBottom="true"
                 android:background="#fff"
-                android:visibility="visible" >
+                android:visibility="gone" >
             </ImageView>
         </RelativeLayout>
 
@@ -55,18 +55,18 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:text="消息"
+                android:text="好友"
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/iv_chatMessagesList_status"
+                android:id="@+id/iv_intimatefriends_status"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_alignParentBottom="true"
                 android:background="#fff"
-                android:visibility="gone" >
+                android:visibility="visible" >
             </ImageView>
         </RelativeLayout>
 
@@ -96,7 +96,6 @@
             </ImageView>
         </RelativeLayout>
     </RelativeLayout>
-
     <RelativeLayout
         android:id="@+id/rl_intimateFriendsContent"
         android:layout_width="match_parent"
@@ -105,14 +104,13 @@
         android:padding="10dp"
         android:visibility="visible" >
     </RelativeLayout>
-
+    
     <RelativeLayout
         android:id="@+id/rl_chatMessagesContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/rl_userMenuOptions"
         android:padding="10dp"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <ImageView
             android:id="@+id/iv_notMessage"
@@ -131,13 +129,14 @@
             android:text="暂时没有新消息" />
     </RelativeLayout>
 
+
     <RelativeLayout
         android:id="@+id/rl_userInfomationContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="100dp"
         android:padding="10dp"
-        android:visibility="gone" >
+        android:visibility="visible" >
 
         <RelativeLayout
             android:layout_width="match_parent"

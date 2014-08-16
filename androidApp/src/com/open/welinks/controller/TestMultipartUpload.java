@@ -73,16 +73,18 @@ public class TestMultipartUpload extends Activity {
 	List<Part> parts = new ArrayList<Part>();
 	public byte[] bytes;
 	public String fileName;
-
+	String BUCKETNAME = "wxgs-data";
+	String OSSAccessKeyId = "dpZe5yUof6KSJ8RM";
+	String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
+	
 	public void initiateMultipartupload() {
-		String BUCKETNAME = "welinkstest";
-		String OSSAccessKeyId = "dpZe5yUof6KSJ8RM";
-		String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
+
+
 		long expires = (new Date().getTime() / 1000) + 600;
 
 		SHA1 sha1 = new SHA1();
 		File sdFile = Environment.getExternalStorageDirectory();
-		File file = new File(sdFile, "test1/test003.jpg");// "test1/test002.jpg"
+		File file = new File(sdFile, "test1/test002.jpg");// "test1/test002.jpg"
 
 		// byte[] bytes = null;
 		String sha1FileName = "";
@@ -108,7 +110,7 @@ public class TestMultipartUpload extends Activity {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = "http://images5.we-links.com/" + fileName + "?uploads";
+		String url = "http://images7.we-links.com/" + fileName + "?uploads";
 
 		params.addQueryStringParameter("OSSAccessKeyId", OSSAccessKeyId);
 		params.addQueryStringParameter("Expires", expires + "");
@@ -167,7 +169,7 @@ public class TestMultipartUpload extends Activity {
 		};
 	};
 
-	int partSize = 256000;
+	int partSize = 512000;
 	int partCount = 0;
 	int currentCount = 0;
 
@@ -177,9 +179,6 @@ public class TestMultipartUpload extends Activity {
 
 		Log.e(tag, "partCount:" + partCount);
 
-		String BUCKETNAME = "welinkstest";
-		String OSSAccessKeyId = "dpZe5yUof6KSJ8RM";
-		String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
 
 		for (int i = 0; i < partCount; i++) {
 			int partID = i + 1;
@@ -197,7 +196,7 @@ public class TestMultipartUpload extends Activity {
 			RequestParams params = new RequestParams();
 			HttpUtils httpUtils = new HttpUtils();
 
-			String url = "http://images5.we-links.com/" + fileName + "?partNumber=" + (i + 1) + "&uploadId=" + initiateMultipartUploadResult.uploadId;
+			String url = "http://images7.we-links.com/" + fileName + "?partNumber=" + (i + 1) + "&uploadId=" + initiateMultipartUploadResult.uploadId;
 
 			params.addQueryStringParameter("OSSAccessKeyId", OSSAccessKeyId);
 			params.addQueryStringParameter("Expires", expires + "");
@@ -242,9 +241,6 @@ public class TestMultipartUpload extends Activity {
 	}
 
 	public void completeMultipartUpload() {
-		String BUCKETNAME = "welinkstest";
-		String OSSAccessKeyId = "dpZe5yUof6KSJ8RM";
-		String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
 		long expires = (new Date().getTime() / 1000) + 600;
 
 		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploadId=" + initiateMultipartUploadResult.uploadId;
@@ -260,7 +256,7 @@ public class TestMultipartUpload extends Activity {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = "http://images5.we-links.com/" + fileName + "?uploadId=" + initiateMultipartUploadResult.uploadId;
+		String url = "http://images7.we-links.com/" + fileName + "?uploadId=" + initiateMultipartUploadResult.uploadId;
 
 		params.addQueryStringParameter("OSSAccessKeyId", OSSAccessKeyId);
 		params.addQueryStringParameter("Expires", expires + "");
