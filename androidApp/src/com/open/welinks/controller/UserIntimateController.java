@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +39,8 @@ public class UserIntimateController {
 	public Context context;
 	public Activity thisActivity;
 
+	public GestureDetector mGesture;
+
 	public OnClickListener mOnClickListener;
 
 	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
@@ -53,7 +57,7 @@ public class UserIntimateController {
 		if (phone != null && !"".equals(phone)) {
 			userPhone = phone;
 		}
-
+		mGesture = new GestureDetector(thisActivity, new GestureListener());
 		this.test();
 	}
 
@@ -90,7 +94,6 @@ public class UserIntimateController {
 				} else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
-
 			}
 		};
 	}
@@ -123,7 +126,7 @@ public class UserIntimateController {
 	int touchMoveStatus = touchMoveStatus_Horizontal;
 
 	public boolean onTouchEvent(MotionEvent event) {
-
+		mGesture.onTouchEvent(event);
 		if (!thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
 			return true;
 		}
@@ -185,11 +188,49 @@ public class UserIntimateController {
 
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			long delta = currentMillis - lastMillis;
-
 			touchMoveStatus = touchMoveStatus_None;
 
 		}
 		return true;
+	}
+
+	class GestureListener extends SimpleOnGestureListener {
+
+		@Override
+		public boolean onDoubleTap(MotionEvent e) {
+			Log.i("GestureListener", "onDoubleTap");
+			return super.onDoubleTap(e);
+		}
+
+		@Override
+		public boolean onDown(MotionEvent e) {
+			Log.i("GestureListener", "onDown");
+			return super.onDown(e);
+		}
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
+			return super.onFling(e1, e2, velocityX, velocityY);
+		}
+
+		@Override
+		public void onLongPress(MotionEvent e) {
+			Log.i("GestureListener", "onLongPress");
+			super.onLongPress(e);
+		}
+
+		@Override
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+			Log.i("GestureListener", "onScroll:distanceX = " + distanceX + " distanceY = " + distanceY);
+			return super.onScroll(e1, e2, distanceX, distanceY);
+		}
+
+		@Override
+		public boolean onSingleTapUp(MotionEvent e) {
+			Log.i("GestureListener", "onSingleTapUp");
+			return super.onSingleTapUp(e);
+		}
 	}
 
 	public void getUserInfomationData() {
