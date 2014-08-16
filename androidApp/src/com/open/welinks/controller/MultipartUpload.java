@@ -180,87 +180,90 @@ public class MultipartUpload {
 
 		for (int i = 0; i < partCount; i++) {
 			int partID = i + 1;
-			long expires = (new Date().getTime() / 1000) + addExpires;
+			uploadPart(partID);
+		}
+	}
 
-			String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME
-					+ "/" + fileName + "?partNumber=" + (i + 1) + "&uploadId="
-					+ initiateMultipartUploadResult.uploadId;
-			String signature = "";
+	public void uploadPart(final int partID) {
+		long expires = (new Date().getTime() / 1000) + addExpires;
+
+		String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME + "/"
+				+ fileName + "?partNumber=" + partID + "&uploadId="
+				+ initiateMultipartUploadResult.uploadId;
+		String signature = "";
+		try {
+			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
+		} catch (InvalidKeyException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+
+		String url = OSS_HOST_URL + fileName + "?partNumber=" + partID
+				+ "&uploadId=" + initiateMultipartUploadResult.uploadId;
+
+		params.addQueryStringParameter("OSSAccessKeyId", OSSACCESSKEYID);
+		params.addQueryStringParameter("Expires", expires + "");
+		params.addQueryStringParameter("Signature", signature);
+
+		if ((bytes != null) && (bytes.length > 0)) {
+
+			int length = partSize;
+
+			int start = (partID - 1) * partSize;
+			if (partID * partSize > bytes.length) {
+				length = bytes.length - start;
+			}
+
+			byte[] byte0 = new byte[length];
+
+			for (int j = 0; j < length; j++) {
+				byte0[j] = bytes[start + j];
+			}
+			MessageDigest digest = null;
 			try {
-				signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
-			} catch (InvalidKeyException e) {
-				e.printStackTrace();
+				digest = MessageDigest.getInstance("MD5");
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
-			RequestParams params = new RequestParams();
-			HttpUtils httpUtils = new HttpUtils();
-
-			String url = OSS_HOST_URL + fileName + "?partNumber=" + (i + 1)
-					+ "&uploadId=" + initiateMultipartUploadResult.uploadId;
-
-			params.addQueryStringParameter("OSSAccessKeyId", OSSACCESSKEYID);
-			params.addQueryStringParameter("Expires", expires + "");
-			params.addQueryStringParameter("Signature", signature);
-
-			if ((bytes != null) && (bytes.length > 0)) {
-
-				int length = partSize;
-
-				int start = (partID - 1) * partSize;
-				if (partID * partSize > bytes.length) {
-					length = bytes.length - start;
+			digest.update(byte0, 0, byte0.length);
+			BigInteger bigInt = new BigInteger(1, digest.digest());
+			String eTag = bigInt.toString(16).toUpperCase(Locale.getDefault());
+			if (eTag.length() < 32) {
+				for (int h = 0; h < 32 - eTag.length(); h++) {
+					eTag = "0" + eTag;
 				}
-
-				byte[] byte0 = new byte[length];
-
-				for (int j = 0; j < length; j++) {
-					byte0[j] = bytes[start + j];
-				}
-				MessageDigest digest = null;
-				try {
-					digest = MessageDigest.getInstance("MD5");
-				} catch (NoSuchAlgorithmException e) {
-					e.printStackTrace();
-				}
-				digest.update(byte0, 0, byte0.length);
-				BigInteger bigInt = new BigInteger(1, digest.digest());
-				String eTag = bigInt.toString(16).toUpperCase(
-						Locale.getDefault());
-				if (eTag.length() < 32) {
-					for (int h = 0; h < 32 - eTag.length(); h++) {
-						eTag = "0" + eTag;
-					}
-				}
-				Part part = new Part(partID, eTag);
-				parts.add(part);
-				params.setBodyEntity(new ByteArrayEntity(byte0));
-				ResponseHandler inittingUpload = httpClient.new ResponseHandler() {
-
-					@Override
-					public void onSuccess(ResponseInfo<String> responseInfo) {
-						instance.partSuccessCount++;
-						part.setStatus(true);
-						uploadLoadingListener.loading(instance.partSuccessCount
-								/ partCount, UPLOAD_SUCCESS);
-						if (instance.partSuccessCount == instance.partCount) {
-							instance.completeMultipartUpload();
-						}
-					};
-
-					@Override
-					public void onFailure(HttpException error, String msg) {
-						Log.e(tag, error + "-----************---" + msg);
-						instance.isUploadStatus = UPLOAD_FAILED;
-						part.setStatus(false);
-						uploadLoadingListener.loading(instance.partSuccessCount
-								/ partCount, UPLOAD_FAILED);
-					};
-				};
-				inittingUpload.setPart(part);
-				httpUtils.send(HttpMethod.PUT, url, params, inittingUpload);
 			}
+			Part part = new Part(partID, eTag);
+			parts.add(part);
+			params.setBodyEntity(new ByteArrayEntity(byte0));
+			ResponseHandler inittingUpload = httpClient.new ResponseHandler() {
 
+				@Override
+				public void onSuccess(ResponseInfo<String> responseInfo) {
+					instance.partSuccessCount++;
+					part.setStatus(true);
+					uploadLoadingListener.loading(instance.partSuccessCount
+							/ partCount, UPLOAD_SUCCESS);
+					if (instance.partSuccessCount == instance.partCount) {
+						instance.completeMultipartUpload();
+					}
+				};
+
+				@Override
+				public void onFailure(HttpException error, String msg) {
+					Log.e(tag, error + "-----************---" + msg);
+					instance.isUploadStatus = UPLOAD_FAILED;
+					part.setStatus(false);
+					uploadPart(partID);
+					uploadLoadingListener.loading(instance.partSuccessCount
+							/ partCount, UPLOAD_FAILED);
+				};
+			};
+			inittingUpload.setPart(part);
+			httpUtils.send(HttpMethod.PUT, url, params, inittingUpload);
 		}
 	}
 
