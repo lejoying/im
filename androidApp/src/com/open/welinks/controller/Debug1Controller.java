@@ -13,7 +13,6 @@ import org.apache.http.entity.ByteArrayEntity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -241,7 +240,7 @@ public class Debug1Controller {
 				SHA1 sha1 = new SHA1();
 
 				File sdFile = Environment.getExternalStorageDirectory();
-				File file = new File(sdFile, "test1/test003.jpg");
+				File file = new File(sdFile, "qwe.jpg");
 
 				String sha1FileName = "default.jpg";
 				byte[] bytes = null;
