@@ -159,8 +159,9 @@ public class UserIntimateView {
 			deltaY = -deltaY;
 		}
 
-		myListBody.setChildrenPosition(0, (float) deltaY);
-
+		if(thisController.touchMoveStatus==thisController.touchMoveStatus_Up){
+			myListBody.setChildrenPosition(0, (float) deltaY);
+		}
 	}
 
 	public void notifyViews() {

@@ -120,10 +120,15 @@ public class UserIntimateController {
 
 	public float progress_line1_x = 0;
 
-	int touchMoveStatus_None = 0;
-	int touchMoveStatus_Horizontal = 1;
-	int touchMoveStatus_Vertical = 2;
-	int touchMoveStatus = touchMoveStatus_Horizontal;
+	public int touchMoveStatus_None = 4;
+	public int touchMoveStatus_Down = 0;
+	public int touchMoveStatus_Horizontal = 1;
+	public int touchMoveStatus_Vertical = 2;
+	public int touchMoveStatus_Up = 4;
+
+	public int touchMoveStatus = touchMoveStatus_None;
+
+	float Dy = 0;
 
 	public boolean onTouchEvent(MotionEvent event) {
 
@@ -135,23 +140,19 @@ public class UserIntimateController {
 		float y = event.getY();
 		long currentMillis = System.currentTimeMillis();
 
-		// RelativeLayout intimateFriendsContentView =
-		// thisView.intimateFriendsContentView;
-
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			touchMoveStatus = touchMoveStatus_None;
-
+			if (touchMoveStatus == touchMoveStatus_Up) {
+				touchMoveStatus = touchMoveStatus_Down;
+			}
 			pre_x = x;
 			pre_y = y;
 
 			thisView.myListBody.recordChildrenPosition();
 			thisView.myPagerBody.recordChildrenPosition();
-			
+
 			thisView.mSpring.setCurrentValue(0);
 			thisView.mSpring.setEndValue(0);
-			
-			// progress_test_x = intimateFriendsContentView.getX();
-			// progress_test_y = intimateFriendsContentView.getY();
+			Log.e("onTouchEvent", "touch down");
 
 			if (y > 520) {
 
@@ -159,69 +160,49 @@ public class UserIntimateController {
 
 			}
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			if (touchMoveStatus == touchMoveStatus_None) {
+			if (touchMoveStatus == touchMoveStatus_Down) {
 				if ((y - pre_y) * (y - pre_y) > 400 || (x - pre_x) * (x - pre_x) > 400) {
 					if ((y - pre_y) * (y - pre_y) > (x - pre_x) * (x - pre_x)) {
 						touchMoveStatus = touchMoveStatus_Vertical;
+						Dy = pre_y - y;
 						pre_y = y;
+						Log.e("onTouchEvent", "开始纵向滑动:Dy=" + Dy);
 					} else {
 						touchMoveStatus = touchMoveStatus_Horizontal;
 						pre_x = x;
+						Log.e("onTouchEvent", "开始横向滑动");
 					}
 				}
 			}
 			if (touchMoveStatus == touchMoveStatus_Vertical) {
 				x = pre_x;
-
+				thisView.myListBody.setChildrenPosition(0, y - pre_y);
 			} else if (touchMoveStatus == touchMoveStatus_Horizontal) {
 				y = pre_y;
-			} else if (touchMoveStatus == touchMoveStatus_None) {
+				thisView.myPagerBody.setChildrenPosition(x - pre_x, 0);
+			} else {
+				Log.e("onTouchEvent", "unkown status");
 				x = pre_x;
 				y = pre_y;
 			}
 
-			if (lastMillis == 0) {
-				lastMillis = currentMillis;
-				return true;
-			}
-
-			// progress_test.setX(progress_test_x + x - pre_x);
-			// intimateFriendsContentView.setY(progress_test_y + y - pre_y);
-
-			// progress_line1.setX(progress_line1_x + x - pre_x);
-			thisView.myListBody.setChildrenPosition(0, y - pre_y);
-			thisView.myPagerBody.setChildrenPosition(x - pre_x, 0);
-
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
-			long delta = currentMillis - lastMillis;
-
+			Dy = pre_y - y;
+			Log.e("onTouchEvent", "touch up:Dy=" + Dy);
+			touchMoveStatus = touchMoveStatus_Up;
 		}
 		mGesture.onTouchEvent(event);
 		return true;
 	}
 
 	class GestureListener extends SimpleOnGestureListener {
-
-		@Override
-		public boolean onDoubleTap(MotionEvent e) {
-			Log.i("GestureListener", "onDoubleTap");
-			return super.onDoubleTap(e);
-		}
-
-		@Override
-		public boolean onDown(MotionEvent e) {
-			Log.i("GestureListener", "onDown");
-			return super.onDown(e);
-		}
-
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			touchMoveStatus = touchMoveStatus_None;
+			touchMoveStatus = touchMoveStatus_Up;
 			thisView.myListBody.recordChildrenPosition();
 
-			double endValue = thisView.mSpring.getEndValue();
 			thisView.mSpring.setCurrentValue(0);
 			if (velocityY > 0) {
 				thisView.speedY = velocityY;
@@ -236,27 +217,9 @@ public class UserIntimateController {
 			}
 			thisView.mSpring.setEndValue(1);
 
-			return super.onFling(e1, e2, velocityX, velocityY);
+			return true;
 		}
 
-		@Override
-		public void onLongPress(MotionEvent e) {
-			Log.i("GestureListener", "onLongPress");
-			super.onLongPress(e);
-		}
-
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-			// Log.i("GestureListener", "onScroll:distanceX = " + distanceX +
-			// " distanceY = " + distanceY);
-			return super.onScroll(e1, e2, distanceX, distanceY);
-		}
-
-		@Override
-		public boolean onSingleTapUp(MotionEvent e) {
-			Log.i("GestureListener", "onSingleTapUp");
-			return super.onSingleTapUp(e);
-		}
 	}
 
 	public void getUserInfomationData() {
