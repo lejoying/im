@@ -6,17 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.open.welinks.R;
-import com.open.welinks.controller.Debug1Controller;
-import com.open.welinks.model.Data;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,6 +17,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.R;
+import com.open.welinks.controller.Debug1Controller;
+import com.open.welinks.controller.MultipartUpload;
+import com.open.welinks.controller.MultipartUpload.UploadLoadingListener;
+import com.open.welinks.model.Data;
 
 public class Debug1View {
 	public Data data = Data.getInstance();
@@ -153,7 +155,15 @@ public class Debug1View {
 						LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);
 				this.controlProgress.progress_line2.setLayoutParams(params);
+				MultipartUpload multipartUpload = new MultipartUpload("");
+				multipartUpload
+						.setUploadLoadingListener(new UploadLoadingListener() {
 
+							@Override
+							public void loading(int precent, int status) {
+								controlProgress.moveTo(precent);
+							}
+						});
 				return transportingItemView;
 			}
 		}
