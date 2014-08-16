@@ -102,11 +102,10 @@ public class UserIntimateView {
 		currentMenuOptionSelectedStatusImage = intimateFriendsMenuOptionStatusImage;
 		currentShowContentView = intimateFriendsContentView;
 
-		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG).addListener(new SimpleSpringListener() {
+		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
+		mSpring.addListener(new SimpleSpringListener() {
 			@Override
 			public void onSpringUpdate(Spring spring) {
-				// Just tell the UI to update based on the springs
-				// current state.
 				render();
 			}
 		});
@@ -114,12 +113,11 @@ public class UserIntimateView {
 	}
 
 	public void initViews() {
-		
+
 		mInflater = thisActivity.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		
-		
+
 		thisActivity.setContentView(R.layout.activity_userintimate);
 
 		intimateFriendsMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimatefriends);
@@ -149,7 +147,19 @@ public class UserIntimateView {
 
 	}
 
+	public float speedY = 0;
+	public float ratio = 0.00008f;
+
 	public void render() {
+
+		double value = mSpring.getCurrentValue();
+
+		double deltaY = value * ratio * speedY * speedY;
+		if (speedY < 0) {
+			deltaY = -deltaY;
+		}
+
+		myListBody.setChildrenPosition(0, (float) deltaY);
 
 	}
 
@@ -239,7 +249,7 @@ public class UserIntimateView {
 
 			this.cardView = mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
-			
+
 			this.leftTopText.setOnClickListener(thisController.mOnClickListener);
 			return intimateFriendsContentView;
 		}
@@ -247,7 +257,7 @@ public class UserIntimateView {
 		public void setContent(Circle circle) {
 			this.leftTopText.setText(circle.name);
 			this.leftTopText.setTag(circle.name);
-			
+
 			this.friendsSequence.clear();
 			for (int i = 0; i < circle.friends.size(); i++) {
 				String phone = circle.friends.get(i);

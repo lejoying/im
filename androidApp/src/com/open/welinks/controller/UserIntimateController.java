@@ -126,7 +126,7 @@ public class UserIntimateController {
 	int touchMoveStatus = touchMoveStatus_Horizontal;
 
 	public boolean onTouchEvent(MotionEvent event) {
-		mGesture.onTouchEvent(event);
+
 		if (!thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
 			return true;
 		}
@@ -146,6 +146,10 @@ public class UserIntimateController {
 
 			thisView.myListBody.recordChildrenPosition();
 			thisView.myPagerBody.recordChildrenPosition();
+			
+			thisView.mSpring.setCurrentValue(0);
+			thisView.mSpring.setEndValue(0);
+			
 			// progress_test_x = intimateFriendsContentView.getX();
 			// progress_test_y = intimateFriendsContentView.getY();
 
@@ -159,8 +163,10 @@ public class UserIntimateController {
 				if ((y - pre_y) * (y - pre_y) > 400 || (x - pre_x) * (x - pre_x) > 400) {
 					if ((y - pre_y) * (y - pre_y) > (x - pre_x) * (x - pre_x)) {
 						touchMoveStatus = touchMoveStatus_Vertical;
+						pre_y = y;
 					} else {
 						touchMoveStatus = touchMoveStatus_Horizontal;
+						pre_x = x;
 					}
 				}
 			}
@@ -188,9 +194,9 @@ public class UserIntimateController {
 
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			long delta = currentMillis - lastMillis;
-			touchMoveStatus = touchMoveStatus_None;
 
 		}
+		mGesture.onTouchEvent(event);
 		return true;
 	}
 
@@ -211,6 +217,25 @@ public class UserIntimateController {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
+
+			touchMoveStatus = touchMoveStatus_None;
+			thisView.myListBody.recordChildrenPosition();
+
+			double endValue = thisView.mSpring.getEndValue();
+			thisView.mSpring.setCurrentValue(0);
+			if (velocityY > 0) {
+				thisView.speedY = velocityY;
+				if (velocityY > 5000) {
+					thisView.speedY = 5000;
+				}
+			} else if (velocityY < 0) {
+				thisView.speedY = velocityY;
+				if (velocityY < -5000) {
+					thisView.speedY = -5000;
+				}
+			}
+			thisView.mSpring.setEndValue(1);
+
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
 
@@ -222,7 +247,8 @@ public class UserIntimateController {
 
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-			Log.i("GestureListener", "onScroll:distanceX = " + distanceX + " distanceY = " + distanceY);
+			// Log.i("GestureListener", "onScroll:distanceX = " + distanceX +
+			// " distanceY = " + distanceY);
 			return super.onScroll(e1, e2, distanceX, distanceY);
 		}
 
