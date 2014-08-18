@@ -88,12 +88,12 @@ public class UserIntimateController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.intimateFriendsMenuOptionView)) {
-					thisView.changeMenuOptionSelected(thisView.intimateFriendsContentView, thisView.intimateFriendsMenuOptionStatusImage);
-				} else if (view.equals(thisView.chatMessagesListMenuOptionView)) {
-					thisView.changeMenuOptionSelected(thisView.chatMessagesListContentView, thisView.chatMessagesListMenuOptionStatusImage);
+				if (view.equals(thisView.chatMessagesListMenuOptionView)) {
+					thisView.myPagerBody.flipTo(0);
+				} else if (view.equals(thisView.intimateFriendsMenuOptionView)) {
+					thisView.myPagerBody.flipTo(1);
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
-					thisView.changeMenuOptionSelected(thisView.userInfomationContentView, thisView.userInfomationMenuOptionStatusImage);
+					thisView.myPagerBody.flipTo(2);
 				} else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
@@ -211,23 +211,32 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			// if (touchMoveStatus.state == touchMoveStatus.Vertical) {
-			// thisView.myListBody.recordChildrenPosition();
-			//
-			// thisView.mSpring.setCurrentValue(0);
-			// if (velocityY > 0) {
-			// thisView.speedY = velocityY;
-			// if (velocityY > 5000) {
-			// thisView.speedY = 5000;
-			// }
-			// } else if (velocityY < 0) {
-			// thisView.speedY = velocityY;
-			// if (velocityY < -5000) {
-			// thisView.speedY = -5000;
-			// }
-			// }
-			// thisView.mSpring.setEndValue(1);
-			// }
+			if (touchMoveStatus.state == touchMoveStatus.Vertical) {
+				// thisView.myListBody.recordChildrenPosition();
+				//
+				// thisView.mSpring.setCurrentValue(0);
+				// if (velocityY > 0) {
+				// thisView.speedY = velocityY;
+				// if (velocityY > 5000) {
+				// thisView.speedY = 5000;
+				// }
+				// } else if (velocityY < 0) {
+				// thisView.speedY = velocityY;
+				// if (velocityY < -5000) {
+				// thisView.speedY = -5000;
+				// }
+				// }
+				// thisView.mSpring.setEndValue(1);
+			}
+			if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.HOMING) {
+				if (velocityX * velocityX > 1000000) {
+					if (velocityX > 0) {
+						thisView.myPagerBody.flip(-1);
+					} else {
+						thisView.myPagerBody.flip(1);
+					}
+				}
+			}
 			return true;
 		}
 

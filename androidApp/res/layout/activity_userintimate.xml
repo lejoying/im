@@ -18,7 +18,7 @@
         android:background="#38ffffff" >
 
         <RelativeLayout
-            android:id="@+id/rl_intimatefriends"
+            android:id="@+id/rl_chatMessagesList"
             android:layout_width="110dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
@@ -45,7 +45,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_chatMessagesList"
+            android:id="@+id/rl_intimatefriends"
             android:layout_width="110dp"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true" >
@@ -96,6 +96,7 @@
             </ImageView>
         </RelativeLayout>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/rl_intimateFriendsContent"
         android:layout_width="match_parent"
@@ -104,7 +105,7 @@
         android:padding="10dp"
         android:visibility="visible" >
     </RelativeLayout>
-    
+
     <RelativeLayout
         android:id="@+id/rl_chatMessagesContent"
         android:layout_width="match_parent"
@@ -128,7 +129,6 @@
             android:layout_marginTop="10dp"
             android:text="暂时没有新消息" />
     </RelativeLayout>
-
 
     <RelativeLayout
         android:id="@+id/rl_userInfomationContent"

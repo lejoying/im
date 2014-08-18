@@ -185,6 +185,7 @@ public class UserIntimateView {
 			Log.d(tag, "stopChange myPagerBody.status.FIXED");
 			// myPagerBody.recordChildrenPosition();
 			myPagerBody.status.state = myPagerBody.status.FIXED;
+			myPagerBody.pageIndex = myPagerBody.nextPageIndex;
 		}
 	}
 
@@ -361,6 +362,7 @@ public class UserIntimateView {
 		public List<MyPagerItemBody> childrenBodys = new ArrayList<MyPagerItemBody>();
 
 		public int pageIndex = 0;
+		int nextPageIndex = 0;
 		public float pre_x = 0;
 		public float x = 0;
 
@@ -415,12 +417,51 @@ public class UserIntimateView {
 			if (status.state == status.DRAGGING) {
 
 				status.state = status.HOMING;
-				int nextPageIndex = Math.round(-x / displayMetrics.widthPixels);
+				nextPageIndex = Math.round(-x / displayMetrics.widthPixels);
 
 				mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
+
+				int size = childrenBodys.size();
+				if (nextPageIndex > size - 1) {
+					nextPageIndex = size - 1;
+				}
+				if (nextPageIndex < 0) {
+					nextPageIndex = 0;
+				}
+
+				mSpring.setEndValue(nextPageIndex);
+
+			}
+		}
+
+		public void flip(int step) {
+			mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
+			nextPageIndex = pageIndex + step;
+			int size = childrenBodys.size();
+			if (nextPageIndex > size - 1) {
+				nextPageIndex = size - 1;
+			}
+			if (nextPageIndex < 0) {
+				nextPageIndex = 0;
+			}
+			mSpring.setEndValue(nextPageIndex);
+		}
+
+		public void flipTo(int toIndex) {
+			if (toIndex != this.nextPageIndex) {
+				Log.d(tag, "flipTo: " + toIndex);
+				status.state = status.HOMING;
+				mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
+				this.nextPageIndex = toIndex;
+				int size = childrenBodys.size();
+				if (nextPageIndex > size - 1) {
+					nextPageIndex = size - 1;
+				}
+				if (nextPageIndex < 0) {
+					nextPageIndex = 0;
+				}
 				mSpring.setEndValue(nextPageIndex);
 			}
-
 		}
 	}
 
