@@ -33,6 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
+        android:singleLine="true"
         android:textSize="18sp"
         android:translationX="90dp"
         android:translationY="20dp" />
@@ -43,8 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
         android:textSize="15sp"
-        android:translationX="300dp"
-        android:translationY="20dp" />
+        android:translationX="270dp"
+        android:translationY="50dp" />
 
     <TextView
         android:id="@+id/text_transport_time"

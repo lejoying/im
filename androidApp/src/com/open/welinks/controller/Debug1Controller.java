@@ -12,11 +12,14 @@ import org.apache.http.entity.ByteArrayEntity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
+import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 
 import com.aliyun.android.oss.Helper;
@@ -27,6 +30,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.TestHttp;
+import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.Data;
@@ -37,7 +41,6 @@ import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.Debug1View;
 import com.open.welinks.view.Debug1View.ControlProgress;
 import com.open.welinks.view.Debug1View.Status;
-import com.open.welinks.view.Debug1View.TransportingList;
 import com.open.welinks.view.Debug1View.TransportingList.TransportingItem;
 
 public class Debug1Controller {
@@ -60,6 +63,8 @@ public class Debug1Controller {
 
 	public OnLongClickListener onLongClickListener;
 
+	public OnClickListener onClickListener;
+
 	public ArrayList<HashMap<String, String>> imagesSource = new ArrayList<HashMap<String, String>>();
 
 	public Debug1Controller(Activity activity) {
@@ -67,13 +72,45 @@ public class Debug1Controller {
 		this.thisActivity = activity;
 	}
 
+	public void onCreate() {
+		thisView.status = Status.loginOrRegister;
+
+		@SuppressWarnings("unchecked")
+		ArrayList<HashMap<String, String>> imagesSource = (ArrayList<HashMap<String, String>>) thisActivity
+				.getIntent().getSerializableExtra("images");
+		if (imagesSource != null) {
+			this.imagesSource = imagesSource;
+		}
+	}
+
 	public void initializeListeners() {
+		onClickListener = new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (v.equals(thisView.addMonyImageUploadView)) {
+					Intent intent = new Intent(thisActivity,
+							ImagesDirectoryActivity.class);
+					thisActivity.startActivity(intent);
+				}
+			}
+		};
 		uploadLoadingListener = new UploadLoadingListener() {
 
 			@Override
 			public void loading(UploadMultipart instance, int precent,
-					int status) {
-				instance.controlProgress.moveTo(precent);
+					long time, int status) {
+				instance.transportingItem.controlProgress.moveTo(precent);
+				instance.transportingItem.text_transport_time_view.setText(time
+						+ "ms");
+				instance.transportingItem.imageSource.put("precent", precent
+						+ "");
+				instance.transportingItem.imageSource.put("time", time + "");
+				long size = Long.valueOf(instance.transportingItem.imageSource
+						.get("size"));
+				int currentUploadSize = (int) Math.floor(size * precent / 100f);
+				instance.transportingItem.text_file_size_view
+						.setText(currentUploadSize + "/" + size + "k");
 			}
 		};
 		onLongClickListener = new OnLongClickListener() {
@@ -88,23 +125,15 @@ public class Debug1Controller {
 	}
 
 	public void bindEvent() {
+		// onclick
+		thisView.addMonyImageUploadView.setOnClickListener(onClickListener);
+		// onloading onlongclick
 		ArrayList<TransportingItem> transportingList = thisView.transportingList.transportingItems;
 		for (int i = 0; i < transportingList.size(); i++) {
 			transportingList.get(i).transportingItemView
 					.setOnLongClickListener(onLongClickListener);
 			transportingList.get(i).uploadMultipart
 					.setUploadLoadingListener(uploadLoadingListener);
-		}
-	}
-
-	public void onCreate() {
-		thisView.status = Status.loginOrRegister;
-
-		@SuppressWarnings("unchecked")
-		ArrayList<HashMap<String, String>> imagesSource = (ArrayList<HashMap<String, String>>) thisActivity
-				.getIntent().getSerializableExtra("images");
-		if (imagesSource != null) {
-			this.imagesSource = imagesSource;
 		}
 	}
 

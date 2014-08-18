@@ -1,6 +1,7 @@
 package com.open.welinks;
 
 import com.open.welinks.controller.LoginController;
+import com.open.welinks.controller.TestHttpLongPull;
 import com.open.welinks.controller.TestMultipartUpload;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.LoginView;
@@ -84,6 +85,10 @@ public class LoginActivity extends Activity {
 		} else if (item.getItemId() == R.id.csubmenu2_2) {
 			Log.d(tag, "csubmenu2_2");
 			startActivity(new Intent(LoginActivity.this, TestMultipartUpload.class));
+		} else if (item.getItemId() == R.id.csubmenu2_3) {
+			Log.d(tag, "csubmenu2_3");
+			startActivity(new Intent(LoginActivity.this,
+					TestHttpLongPull.class));
 		}
 
 		else if (item.getItemId() == R.id.debug1_3) {

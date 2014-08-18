@@ -49,7 +49,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
-import com.open.welinks.view.Debug1View.ControlProgress;
+import com.open.welinks.view.Debug1View.TransportingList.TransportingItem;
 
 public class UploadMultipart {
 
@@ -96,7 +96,7 @@ public class UploadMultipart {
 
 	public HttpHandler<String> httpHandler;
 
-	public ControlProgress controlProgress;
+	public TransportingItem transportingItem;
 
 	public UploadMultipart(String path) {
 		this.path = path;
@@ -133,7 +133,7 @@ public class UploadMultipart {
 		}
 		if (this.bytes == null) {
 			isUploadStatus = UPLOAD_EMPTY;
-			uploadLoadingListener.loading(instance, 0, UPLOAD_EMPTY);
+			uploadLoadingListener.loading(instance, 0, 0, UPLOAD_EMPTY);
 			return;
 		}
 
@@ -267,6 +267,20 @@ public class UploadMultipart {
 		}
 	}
 
+	public class TimeLine {
+
+		public long start = 0; // 0
+		public long startConnect = 0; // 1
+
+		public long startSend = 0; // 2
+		public long sent = 0; // 3
+
+		public long startReceive = 0; // 4
+		public long received = 0; // 5
+	}
+
+	TimeLine time = new TimeLine();
+
 	class UploadResponseHandler extends ResponseHandler {
 
 		UploadResponseHandler() {
@@ -278,8 +292,19 @@ public class UploadMultipart {
 
 		@Override
 		public void onStart() {
+			if (partID == 1) {
+				time.start = System.currentTimeMillis();
+			}
 			part.setStatus(Part.PART_LOADING);
 		};
+
+		@Override
+		public void onLoading(long total, long current, boolean isUploading) {
+			super.onLoading(total, current, isUploading);
+			time.received = System.currentTimeMillis();
+			Log.e(tag, total + "--*****---" + current + "_+_+_+_+_+_+"
+					+ isUploading);
+		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -289,10 +314,11 @@ public class UploadMultipart {
 					.loading(
 							instance,
 							(int) ((((double) partSuccessCount / (double) partCount)) * 100),
-							UPLOAD_SUCCESS);
+							(time.received - time.start), UPLOAD_SUCCESS);
 			Log.e(tag, partSuccessCount + "-----" + partCount + "------"
 					+ part.eTag);
 			if (partSuccessCount == partCount) {
+				time.received = System.currentTimeMillis();
 				completeMultipartUpload();
 			}
 		};
@@ -359,12 +385,15 @@ public class UploadMultipart {
 	};
 
 	public void cancalMultipartUpload() {
-		httpHandler.cancel();
-		isUploadStatus = UPLOAD_CANCLE;
+		if (httpHandler != null) {
+			httpHandler.cancel();
+			isUploadStatus = UPLOAD_CANCLE;
+		}
 	}
 
 	public interface UploadLoadingListener {
-		public void loading(UploadMultipart instance, int precent, int status);
+		public void loading(UploadMultipart instance, int precent, long time,
+				int status);
 	}
 
 	public void setUploadLoadingListener(UploadLoadingListener listener) {
