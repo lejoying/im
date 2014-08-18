@@ -1,12 +1,12 @@
 package com.open.welinks;
 
-import com.open.welinks.controller.ImagesDirectoryController;
-import com.open.welinks.view.ImagesDirectoryView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.open.welinks.controller.ImagesDirectoryController;
+import com.open.welinks.view.ImagesDirectoryView;
 
 public class ImagesDirectoryActivity extends Activity {
 

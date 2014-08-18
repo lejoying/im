@@ -137,7 +137,7 @@ public class UploadMultipart {
 			return;
 		}
 
-		this.fileName = sha1FileName + suffixName;
+		this.fileName = "mutilpart/"+sha1FileName + suffixName;
 
 		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/"
 				+ fileName + "?uploads";
@@ -279,7 +279,8 @@ public class UploadMultipart {
 		public long received = 0; // 5
 	}
 
-	TimeLine time = new TimeLine();
+	public TimeLine time = new TimeLine();
+	public int uploadPrecent;
 
 	class UploadResponseHandler extends ResponseHandler {
 
@@ -310,11 +311,9 @@ public class UploadMultipart {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			partSuccessCount++;
 			part.setStatus(Part.PART_SUCCESS);
-			uploadLoadingListener
-					.loading(
-							instance,
-							(int) ((((double) partSuccessCount / (double) partCount)) * 100),
-							(time.received - time.start), UPLOAD_SUCCESS);
+			uploadPrecent = (int) ((((double) partSuccessCount / (double) partCount)) * 100);
+			uploadLoadingListener.loading(instance, uploadPrecent,
+					(time.received - time.start), UPLOAD_SUCCESS);
 			Log.e(tag, partSuccessCount + "-----" + partCount + "------"
 					+ part.eTag);
 			if (partSuccessCount == partCount) {
