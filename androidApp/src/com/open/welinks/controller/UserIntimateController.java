@@ -58,7 +58,10 @@ public class UserIntimateController {
 			userPhone = phone;
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
-		this.test();
+		
+		
+		thisView.showCircles();
+//		this.test();
 	}
 
 	public void test() {

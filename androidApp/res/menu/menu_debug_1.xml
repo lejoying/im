@@ -18,14 +18,8 @@
             </group> 
         </menu> 
     </item>
-     <item android:id="@+id/csubmenu3" android:title="调试接口3"> 
-        <menu> 
-            <group> 
-                <item android:title="子菜单1"/> 
-                <item android:title="子菜单2"/> 
-                <item android:title="子菜单3"/> 
-            </group> 
-        </menu> 
+     <item android:id="@+id/debug1_3" android:title="调试接口3"> 
+
     </item>
      <item android:id="@+id/debug1_0" android:title="调试接口4"> 
     </item>
