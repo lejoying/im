@@ -30,6 +30,7 @@ import com.open.welinks.utils.CommonNetConnection;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.utils.NetworkHandler.Settings;
 import com.open.welinks.view.UserIntimateView;
+import com.open.welinks.view.UserIntimateView.MyPagerBody.Status;
 
 public class UserIntimateController {
 
@@ -58,7 +59,9 @@ public class UserIntimateController {
 			userPhone = phone;
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
-		this.test();
+
+		thisView.showCircles();
+		// this.test();
 	}
 
 	public void test() {
@@ -85,12 +88,12 @@ public class UserIntimateController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.intimateFriendsMenuOptionView)) {
-					thisView.changeMenuOptionSelected(thisView.intimateFriendsContentView, thisView.intimateFriendsMenuOptionStatusImage);
-				} else if (view.equals(thisView.chatMessagesListMenuOptionView)) {
-					thisView.changeMenuOptionSelected(thisView.chatMessagesListContentView, thisView.chatMessagesListMenuOptionStatusImage);
+				if (view.equals(thisView.chatMessagesListMenuOptionView)) {
+					thisView.myPagerBody.flipTo(0);
+				} else if (view.equals(thisView.intimateFriendsMenuOptionView)) {
+					thisView.myPagerBody.flipTo(1);
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
-					thisView.changeMenuOptionSelected(thisView.userInfomationContentView, thisView.userInfomationMenuOptionStatusImage);
+					thisView.myPagerBody.flipTo(2);
 				} else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
@@ -120,13 +123,12 @@ public class UserIntimateController {
 
 	public float progress_line1_x = 0;
 
-	public int touchMoveStatus_None = 4;
-	public int touchMoveStatus_Down = 0;
-	public int touchMoveStatus_Horizontal = 1;
-	public int touchMoveStatus_Vertical = 2;
-	public int touchMoveStatus_Up = 4;
+	public class TouchMoveStatus {
+		public int None = 4, Down = 1, Horizontal = 2, Vertical = 3, Up = 4;
+		public int state = None;
+	}
 
-	public int touchMoveStatus = touchMoveStatus_None;
+	public TouchMoveStatus touchMoveStatus = new TouchMoveStatus();
 
 	float Dy = 0;
 
@@ -141,17 +143,14 @@ public class UserIntimateController {
 		long currentMillis = System.currentTimeMillis();
 
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			if (touchMoveStatus == touchMoveStatus_Up) {
-				touchMoveStatus = touchMoveStatus_Down;
+			if (touchMoveStatus.state == touchMoveStatus.Up) {
+				touchMoveStatus.state = touchMoveStatus.Down;
+			} else {
+				Log.e("onTouchEvent", "unkown status: not touchMoveStatus.Up");
 			}
 			pre_x = x;
 			pre_y = y;
 
-			thisView.myListBody.recordChildrenPosition();
-			thisView.myPagerBody.recordChildrenPosition();
-
-			thisView.mSpring.setCurrentValue(0);
-			thisView.mSpring.setEndValue(0);
 			Log.e("onTouchEvent", "touch down");
 
 			if (y > 520) {
@@ -160,28 +159,35 @@ public class UserIntimateController {
 
 			}
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			if (touchMoveStatus == touchMoveStatus_Down) {
+			if (touchMoveStatus.state == touchMoveStatus.Down) {
 				if ((y - pre_y) * (y - pre_y) > 400 || (x - pre_x) * (x - pre_x) > 400) {
 					if ((y - pre_y) * (y - pre_y) > (x - pre_x) * (x - pre_x)) {
-						touchMoveStatus = touchMoveStatus_Vertical;
+						touchMoveStatus.state = touchMoveStatus.Vertical;
+						thisView.myListBody.recordChildrenPosition();
 						Dy = pre_y - y;
 						pre_y = y;
 						Log.e("onTouchEvent", "开始纵向滑动:Dy=" + Dy);
 					} else {
-						touchMoveStatus = touchMoveStatus_Horizontal;
+						touchMoveStatus.state = touchMoveStatus.Horizontal;
+						if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.FIXED||thisView.myPagerBody.status.state == thisView.myPagerBody.status.HOMING) {
+							thisView.myPagerBody.recordChildrenPosition();
+							thisView.myPagerBody.status.state = thisView.myPagerBody.status.DRAGGING;
+						} else {
+							Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + thisView.myPagerBody.status.state);
+						}
+
 						pre_x = x;
 						Log.e("onTouchEvent", "开始横向滑动");
 					}
 				}
-			}
-			if (touchMoveStatus == touchMoveStatus_Vertical) {
+			} else if (touchMoveStatus.state == touchMoveStatus.Vertical) {
 				x = pre_x;
 				thisView.myListBody.setChildrenPosition(0, y - pre_y);
-			} else if (touchMoveStatus == touchMoveStatus_Horizontal) {
+			} else if (touchMoveStatus.state == touchMoveStatus.Horizontal) {
 				y = pre_y;
-				thisView.myPagerBody.setChildrenPosition(x - pre_x, 0);
+				thisView.myPagerBody.setChildrenDeltaPosition(x - pre_x, 0);
 			} else {
-				Log.e("onTouchEvent", "unkown status");
+				Log.e("onTouchEvent", "unkown status: touchMoveStatus.Up");
 				x = pre_x;
 				y = pre_y;
 			}
@@ -189,7 +195,12 @@ public class UserIntimateController {
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			Dy = pre_y - y;
 			Log.e("onTouchEvent", "touch up:Dy=" + Dy);
-			touchMoveStatus = touchMoveStatus_Up;
+			// thisView.myPagerBody.homing();
+			if (touchMoveStatus.state == touchMoveStatus.Horizontal && (thisView.myPagerBody.status.state == thisView.myPagerBody.status.DRAGGING || thisView.myPagerBody.status.state == thisView.myPagerBody.status.FIXED)) {
+				thisView.myPagerBody.homing();
+			}
+
+			touchMoveStatus.state = touchMoveStatus.Up;
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -200,23 +211,32 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			touchMoveStatus = touchMoveStatus_Up;
-			thisView.myListBody.recordChildrenPosition();
-
-			thisView.mSpring.setCurrentValue(0);
-			if (velocityY > 0) {
-				thisView.speedY = velocityY;
-				if (velocityY > 5000) {
-					thisView.speedY = 5000;
-				}
-			} else if (velocityY < 0) {
-				thisView.speedY = velocityY;
-				if (velocityY < -5000) {
-					thisView.speedY = -5000;
+			if (touchMoveStatus.state == touchMoveStatus.Vertical) {
+				// thisView.myListBody.recordChildrenPosition();
+				//
+				// thisView.mSpring.setCurrentValue(0);
+				// if (velocityY > 0) {
+				// thisView.speedY = velocityY;
+				// if (velocityY > 5000) {
+				// thisView.speedY = 5000;
+				// }
+				// } else if (velocityY < 0) {
+				// thisView.speedY = velocityY;
+				// if (velocityY < -5000) {
+				// thisView.speedY = -5000;
+				// }
+				// }
+				// thisView.mSpring.setEndValue(1);
+			}
+			if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.HOMING) {
+				if (velocityX * velocityX > 1000000) {
+					if (velocityX > 0) {
+						thisView.myPagerBody.flip(-1);
+					} else {
+						thisView.myPagerBody.flip(1);
+					}
 				}
 			}
-			thisView.mSpring.setEndValue(1);
-
 			return true;
 		}
 

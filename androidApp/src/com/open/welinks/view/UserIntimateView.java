@@ -8,7 +8,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -55,9 +54,7 @@ public class UserIntimateView {
 	public RelativeLayout intimateFriendsMenuOptionView;
 	public RelativeLayout chatMessagesListMenuOptionView;
 	public RelativeLayout userInfomationMenuOptionView;
-	public ImageView intimateFriendsMenuOptionStatusImage;
-	public ImageView chatMessagesListMenuOptionStatusImage;
-	public ImageView userInfomationMenuOptionStatusImage;
+	public ImageView pager_indicator;
 
 	public RelativeLayout intimateFriendsContentView;
 	public RelativeLayout chatMessagesListContentView;
@@ -78,7 +75,13 @@ public class UserIntimateView {
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
 
-	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
+	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(60, 10);
+
+	public enum Status {
+		MESSAGES, FRIENDS, MINE
+	}
+
+	public Status status = Status.MESSAGES;
 
 	public Spring mSpring;
 
@@ -99,7 +102,6 @@ public class UserIntimateView {
 		headSpace = baseLeft * 2;
 		head = (int) dp2px(55f);
 
-		currentMenuOptionSelectedStatusImage = intimateFriendsMenuOptionStatusImage;
 		currentShowContentView = intimateFriendsContentView;
 
 		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
@@ -107,6 +109,11 @@ public class UserIntimateView {
 			@Override
 			public void onSpringUpdate(Spring spring) {
 				render();
+			}
+
+			@Override
+			public void onSpringAtRest(Spring spring) {
+				stopChange();
 			}
 		});
 
@@ -123,9 +130,7 @@ public class UserIntimateView {
 		intimateFriendsMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimatefriends);
 		chatMessagesListMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesList);
 		userInfomationMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomation);
-		intimateFriendsMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_intimatefriends_status);
-		chatMessagesListMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_chatMessagesList_status);
-		userInfomationMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_userInfomation_status);
+		pager_indicator = (ImageView) thisActivity.findViewById(R.id.pager_indicator);
 
 		chatMessagesListContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
 
@@ -136,6 +141,8 @@ public class UserIntimateView {
 		userInfomationContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
 
 		myPagerBody = new MyPagerBody();
+		myPagerBody.pager_indicator = pager_indicator;
+		myPagerBody.initialize();
 
 		myPagerBody.addChildView(chatMessagesListContentView);
 		myPagerBody.addChildView(intimateFriendsContentView);
@@ -154,13 +161,29 @@ public class UserIntimateView {
 
 		double value = mSpring.getCurrentValue();
 
-		double deltaY = value * ratio * speedY * speedY;
-		if (speedY < 0) {
-			deltaY = -deltaY;
-		}
+		if (thisController.touchMoveStatus.state == thisController.touchMoveStatus.Up) {
+			if (myPagerBody.status.state == myPagerBody.status.FIXED) {
+				double deltaY = value * ratio * speedY * speedY;
+				if (speedY < 0) {
+					deltaY = -deltaY;
+				}
+				myListBody.setChildrenPosition(0, (float) deltaY);
+			} else if (myPagerBody.status.state == myPagerBody.status.HOMING) {
 
-		if(thisController.touchMoveStatus==thisController.touchMoveStatus_Up){
-			myListBody.setChildrenPosition(0, (float) deltaY);
+				double deltaX = -displayMetrics.widthPixels * value;
+				myPagerBody.setChildrenPosition((float) deltaX, 0);
+			}
+		} else {
+			Log.d(tag, "render skip");
+		}
+	}
+
+	public void stopChange() {
+		if (myPagerBody.status.state == myPagerBody.status.HOMING) {
+			Log.d(tag, "stopChange myPagerBody.status.FIXED");
+			// myPagerBody.recordChildrenPosition();
+			myPagerBody.status.state = myPagerBody.status.FIXED;
+			myPagerBody.pageIndex = myPagerBody.nextPageIndex;
 		}
 	}
 
@@ -288,6 +311,7 @@ public class UserIntimateView {
 	}
 
 	public class MyListBody {
+
 		public RelativeLayout intimateFriendsContentView = null;
 
 		public List<String> circlesSequence = new ArrayList<String>();
@@ -314,6 +338,7 @@ public class UserIntimateView {
 				circleBody.cardView.setY(circleBody.y + deltaY);
 			}
 		}
+
 	}
 
 	public class MyPagerItemBody {
@@ -321,6 +346,9 @@ public class UserIntimateView {
 
 		public float x;
 		public float y;
+
+		public float pre_x = 0;
+		public float pre_y = 0;
 
 		public View initialize(View myPagerItemView) {
 			this.myPagerItemView = myPagerItemView;
@@ -330,8 +358,25 @@ public class UserIntimateView {
 
 	public class MyPagerBody {
 		public List<MyPagerItemBody> childrenBodys = new ArrayList<MyPagerItemBody>();
+		public ImageView pager_indicator;
+		int pager_indicator_trip = 0;
+
+		public int pageIndex = 0;
+		int nextPageIndex = 0;
+		public float pre_x = 0;
+		public float x = 0;
+
+		float deltaX = 0;
+
+		public class Status {
+			public int FIXED = 0, DRAGGING = 1, HOMING = 2;
+			public int state = FIXED;
+		}
+
+		public Status status = new Status();
 
 		public View initialize() {
+			pager_indicator_trip = (int) (110 * displayMetrics.density);
 			return null;
 		}
 
@@ -349,14 +394,81 @@ public class UserIntimateView {
 		}
 
 		public void recordChildrenPosition() {
+			pre_x = x;
 			for (MyPagerItemBody childBody : this.childrenBodys) {
-				childBody.x = childBody.myPagerItemView.getX();
+				childBody.pre_x = childBody.myPagerItemView.getX();
 			}
 		}
 
-		public void setChildrenPosition(float deltaX, float deltaY) {
+		public void setChildrenDeltaPosition(float deltaX, float deltaY) {
+			this.x = this.pre_x + deltaX;
+
+			float pager_indicator_position = -(this.pre_x + deltaX) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
+			pager_indicator.setX(pager_indicator_position);
 			for (MyPagerItemBody childBody : this.childrenBodys) {
-				childBody.myPagerItemView.setX(childBody.x + deltaX);
+				childBody.myPagerItemView.setX(childBody.pre_x + deltaX);
+			}
+		}
+
+		public void setChildrenPosition(float x, float y) {
+			this.x = x;
+			
+			float pager_indicator_position = -(x) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
+			pager_indicator.setX(pager_indicator_position);
+			
+			for (MyPagerItemBody childBody : this.childrenBodys) {
+				childBody.myPagerItemView.setX(childBody.x + x);
+			}
+		}
+
+		public void homing() {
+			if (status.state == status.DRAGGING) {
+
+				status.state = status.HOMING;
+				nextPageIndex = Math.round(-x / displayMetrics.widthPixels);
+
+				mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
+
+				int size = childrenBodys.size();
+				if (nextPageIndex > size - 1) {
+					nextPageIndex = size - 1;
+				}
+				if (nextPageIndex < 0) {
+					nextPageIndex = 0;
+				}
+
+				mSpring.setEndValue(nextPageIndex);
+
+			}
+		}
+
+		public void flip(int step) {
+			mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
+			this.nextPageIndex = this.nextPageIndex + step;
+			int size = childrenBodys.size();
+			if (nextPageIndex > size - 1) {
+				nextPageIndex = size - 1;
+			}
+			if (nextPageIndex < 0) {
+				nextPageIndex = 0;
+			}
+			mSpring.setEndValue(nextPageIndex);
+		}
+
+		public void flipTo(int toIndex) {
+			if (toIndex != this.nextPageIndex) {
+				Log.d(tag, "flipTo: " + toIndex);
+				status.state = status.HOMING;
+				mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
+				this.nextPageIndex = toIndex;
+				int size = childrenBodys.size();
+				if (nextPageIndex > size - 1) {
+					nextPageIndex = size - 1;
+				}
+				if (nextPageIndex < 0) {
+					nextPageIndex = 0;
+				}
+				mSpring.setEndValue(nextPageIndex);
 			}
 		}
 	}
