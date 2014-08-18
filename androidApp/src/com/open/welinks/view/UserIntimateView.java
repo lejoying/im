@@ -76,7 +76,7 @@ public class UserIntimateView {
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
 
-	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(60, 10);
+	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(5, 7);
 
 	public enum Status {
 		MESSAGES, FRIENDS, MINE
@@ -163,7 +163,7 @@ public class UserIntimateView {
 		double value = mSpring.getCurrentValue();
 
 		if (thisController.touchMoveStatus.state == thisController.touchMoveStatus.Up) {
-			if (myPagerBody.status.state == myPagerBody.status.FIXED) {
+			if (myPagerBody.status.state == myPagerBody.status.FIXED && myListBody.status.state == myListBody.status.DRAGGING) {
 				double deltaY = value * ratio * speedY * speedY;
 				if (speedY < 0) {
 					deltaY = -deltaY;
@@ -180,7 +180,9 @@ public class UserIntimateView {
 	}
 
 	public void stopChange() {
-		if (myPagerBody.status.state == myPagerBody.status.HOMING) {
+		if (myPagerBody.status.state == myPagerBody.status.FIXED && myListBody.status.state == myListBody.status.DRAGGING) {
+			myListBody.status.state = myListBody.status.FIXED;
+		} else if (myPagerBody.status.state == myPagerBody.status.HOMING) {
 			Log.d(tag, "stopChange myPagerBody.status.FIXED");
 			// myPagerBody.recordChildrenPosition();
 			myPagerBody.status.state = myPagerBody.status.FIXED;
@@ -250,8 +252,9 @@ public class UserIntimateView {
 			this.myListBody.circlesSequence.add("circle#" + circle.rid);
 			this.myListBody.circleBodiesMap.put("circle#" + circle.rid, circleBody);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 300);
-			circleBody.cardView.setY(330 * i + 100);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (260 * displayMetrics.density));
+			circleBody.cardView.setY(280 * displayMetrics.density * i);
+			circleBody.cardView.setX(0);
 
 			this.myListBody.intimateFriendsContentView.addView(circleBody.cardView, layoutParams);
 			Log.d(tag, "addView");
@@ -317,6 +320,13 @@ public class UserIntimateView {
 
 		public List<String> circlesSequence = new ArrayList<String>();
 		public Map<String, CircleBody> circleBodiesMap = new HashMap<String, CircleBody>();
+
+		public class Status {
+			public int FIXED = 0, DRAGGING = 1, INERTIAMOVING = 2;
+			public int state = FIXED;
+		}
+
+		public Status status = new Status();
 
 		public View initialize(View container) {
 			intimateFriendsContentView = (RelativeLayout) container;

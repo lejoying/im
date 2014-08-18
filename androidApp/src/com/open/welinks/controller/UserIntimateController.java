@@ -163,7 +163,14 @@ public class UserIntimateController {
 				if ((y - pre_y) * (y - pre_y) > 400 || (x - pre_x) * (x - pre_x) > 400) {
 					if ((y - pre_y) * (y - pre_y) > (x - pre_x) * (x - pre_x)) {
 						touchMoveStatus.state = touchMoveStatus.Vertical;
-						thisView.myListBody.recordChildrenPosition();
+						
+						if (thisView.myListBody.status.state == thisView.myListBody.status.FIXED||thisView.myListBody.status.state == thisView.myListBody.status.INERTIAMOVING) {
+							thisView.myListBody.recordChildrenPosition();
+							thisView.myListBody.status.state = thisView.myListBody.status.DRAGGING;
+						} else {
+							Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + thisView.myPagerBody.status.state);
+						}
+
 						Dy = pre_y - y;
 						pre_y = y;
 						Log.e("onTouchEvent", "开始纵向滑动:Dy=" + Dy);
@@ -211,22 +218,22 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			if (touchMoveStatus.state == touchMoveStatus.Vertical) {
-				// thisView.myListBody.recordChildrenPosition();
-				//
-				// thisView.mSpring.setCurrentValue(0);
-				// if (velocityY > 0) {
-				// thisView.speedY = velocityY;
-				// if (velocityY > 5000) {
-				// thisView.speedY = 5000;
-				// }
-				// } else if (velocityY < 0) {
-				// thisView.speedY = velocityY;
-				// if (velocityY < -5000) {
-				// thisView.speedY = -5000;
-				// }
-				// }
-				// thisView.mSpring.setEndValue(1);
+			if (thisView.myListBody.status.state == thisView.myListBody.status.DRAGGING) {
+				 thisView.myListBody.recordChildrenPosition();
+				
+				 thisView.mSpring.setCurrentValue(0);
+				 if (velocityY > 0) {
+				 thisView.speedY = velocityY;
+				 if (velocityY > 5000) {
+				 thisView.speedY = 5000;
+				 }
+				 } else if (velocityY < 0) {
+				 thisView.speedY = velocityY;
+				 if (velocityY < -5000) {
+				 thisView.speedY = -5000;
+				 }
+				 }
+				 thisView.mSpring.setEndValue(1);
 			}
 			if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.HOMING) {
 				if (velocityX * velocityX > 1000000) {
