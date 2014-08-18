@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -376,7 +377,12 @@ public class UserIntimateView {
 		public Status status = new Status();
 
 		public View initialize() {
-			pager_indicator_trip = (int) (110 * displayMetrics.density);
+
+			pager_indicator_trip = (int) (displayMetrics.widthPixels - (0 * displayMetrics.density)) / 3;
+			ViewGroup.LayoutParams params = pager_indicator.getLayoutParams();
+			params.height = (int) (1.8 * displayMetrics.density);
+			params.width = pager_indicator_trip;
+			pager_indicator.setLayoutParams(params);
 			return null;
 		}
 
@@ -412,10 +418,10 @@ public class UserIntimateView {
 
 		public void setChildrenPosition(float x, float y) {
 			this.x = x;
-			
+
 			float pager_indicator_position = -(x) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
 			pager_indicator.setX(pager_indicator_position);
-			
+
 			for (MyPagerItemBody childBody : this.childrenBodys) {
 				childBody.myPagerItemView.setX(childBody.x + x);
 			}
