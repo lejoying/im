@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.apache.http.entity.ByteArrayEntity;
 
@@ -14,7 +13,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
-import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -32,6 +30,7 @@ import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.TestHttp;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
+import com.open.welinks.controller.ImagesDirectoryController.ImageBean;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
@@ -65,7 +64,7 @@ public class Debug1Controller {
 
 	public OnClickListener onClickListener;
 
-	public ArrayList<HashMap<String, String>> imagesSource = new ArrayList<HashMap<String, String>>();
+	public ArrayList<ImageBean> prepareUploadFiles = new ArrayList<ImageBean>();
 
 	public Debug1Controller(Activity activity) {
 		this.context = activity;
@@ -75,11 +74,10 @@ public class Debug1Controller {
 	public void onCreate() {
 		thisView.status = Status.loginOrRegister;
 
-		@SuppressWarnings("unchecked")
-		ArrayList<HashMap<String, String>> imagesSource = (ArrayList<HashMap<String, String>>) thisActivity
-				.getIntent().getSerializableExtra("images");
+		ArrayList<ImageBean> imagesSource = data.tempData.prepareUploadImages;
+		data.tempData.prepareUploadImages = null;
 		if (imagesSource != null) {
-			this.imagesSource = imagesSource;
+			this.prepareUploadFiles.addAll(imagesSource);
 		}
 	}
 
@@ -103,11 +101,8 @@ public class Debug1Controller {
 				instance.transportingItem.controlProgress.moveTo(precent);
 				instance.transportingItem.text_transport_time_view.setText(time
 						+ "ms");
-				instance.transportingItem.imageSource.put("precent", precent
-						+ "");
-				instance.transportingItem.imageSource.put("time", time + "");
-				long size = Long.valueOf(instance.transportingItem.imageSource
-						.get("size"));
+				long size = Long
+						.valueOf(instance.transportingItem.imageSource.size);
 				int currentUploadSize = (int) Math.floor(size * precent / 100f);
 				instance.transportingItem.text_file_size_view
 						.setText(currentUploadSize + "/" + size + "k");
@@ -129,7 +124,7 @@ public class Debug1Controller {
 		thisView.addMonyImageUploadView.setOnClickListener(onClickListener);
 		// onloading onlongclick
 		ArrayList<TransportingItem> transportingList = thisView.transportingList.transportingItems;
-		for (int i = 0; i < transportingList.size(); i++) {
+		for (int i = 0; i < transportingList.size() - 1; i++) {
 			transportingList.get(i).transportingItemView
 					.setOnLongClickListener(onLongClickListener);
 			transportingList.get(i).uploadMultipart
@@ -197,7 +192,7 @@ public class Debug1Controller {
 		return true;
 	}
 
-	public UploadMultipart uploadFile(String path, View transportingItemView) {
+	public UploadMultipart uploadFile(String path) {
 		UploadMultipart uploadMultipart = new UploadMultipart(path);
 		uploadMultipartList.addMultipart(uploadMultipart);
 		// uploadMultipart.setUploadLoadingListener(uploadLoadingListener);

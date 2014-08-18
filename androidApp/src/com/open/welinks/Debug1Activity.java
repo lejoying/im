@@ -25,10 +25,12 @@ public class Debug1Activity extends Activity {
 
 	public ViewManage viewManager = ViewManage.getInstance();
 
+	public boolean isInit;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		isInit = false;
 		linkViewController();
 
 		if (thisView.status == Status.welcome) {
@@ -69,6 +71,18 @@ public class Debug1Activity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (isInit) {
+			thisController.onCreate();
+			thisController.initializeListeners();
+			thisView.initView();
+			thisController.bindEvent();
+		}
+		isInit = true;
 	}
 
 	@Override

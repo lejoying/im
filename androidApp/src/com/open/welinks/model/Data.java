@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.open.welinks.controller.ImagesDirectoryController.ImageBean;
+
 public class Data {
 
 	public static Data data;
@@ -16,13 +18,19 @@ public class Data {
 		return data;
 	}
 
+	public TempData tempData = new TempData();
+
+	public class TempData {
+		public ArrayList<ImageBean> prepareUploadImages;
+	}
+
 	public LocalStatus localStatus = new LocalStatus();
 
 	public class LocalStatus {
 		public String thisActivityName = "NONE";
 		public String thisActivityStatus = "";
-		
-		public String debugMode="NONE";//NONE 
+
+		public String debugMode = "NONE";// NONE
 	}
 
 	public UserInformation userInformation;

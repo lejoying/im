@@ -21,11 +21,13 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.open.welinks.Debug1Activity;
 import com.open.welinks.ImageGridActivity;
+import com.open.welinks.model.Data;
 import com.open.welinks.view.ImagesDirectoryView;
 import com.open.welinks.view.ImagesDirectoryView.MyGridViewAdapter;
 
 public class ImagesDirectoryController {
 
+	public Data data = Data.getInstance();
 	public String tag = "ImagesDirectoryController";
 
 	public final static int SCAN_OK = 1;
@@ -37,7 +39,7 @@ public class ImagesDirectoryController {
 
 	public ArrayList<String> imageDirectorys = new ArrayList<String>();
 	public HashMap<String, ArrayList<String>> mGruopMap = new HashMap<String, ArrayList<String>>();
-	public HashMap<String, HashMap<String, String>> imagesDescription = new HashMap<String, HashMap<String, String>>();
+	public static HashMap<String, ImageBean> imagesDescription = new HashMap<String, ImageBean>();
 
 	public static ArrayList<String> selectedImage = new ArrayList<String>();
 
@@ -100,12 +102,13 @@ public class ImagesDirectoryController {
 		if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
 			if (selectedImage.size() > 0) {
 				Intent intent = new Intent(thisActivity, Debug1Activity.class);
-				ArrayList<HashMap<String, String>> images = new ArrayList<HashMap<String, String>>();
+				ArrayList<ImageBean> images = new ArrayList<ImageBean>();
 				for (int i = 0; i < selectedImage.size(); i++) {
 					images.add(imagesDescription.get(selectedImage.get(i)));
 				}
 				selectedImage.clear();
-				intent.putExtra("images", images);
+				// intent.putExtra("images", images);
+				this.data.tempData.prepareUploadImages = images;
 				thisActivity.startActivity(intent);
 			}
 			System.out.println("OKOKOKO");
@@ -115,23 +118,14 @@ public class ImagesDirectoryController {
 	}
 
 	public class ImageBean {
+
 		public String parentName;
 		public String path;
 
 		public String contentType;
-		public long size;
+		public String size;
 
-		public ImageBean() {
-		}
-
-		public ImageBean(String parentName, String path, String contentType,
-				long size) {
-			super();
-			this.parentName = parentName;
-			this.path = path;
-			this.contentType = contentType;
-			this.size = size;
-		}
+		public UploadMultipart multipart;
 	}
 
 	private void getImages() {
@@ -152,7 +146,7 @@ public class ImagesDirectoryController {
 							.getColumnIndex(MediaStore.Images.Media.DATA));
 					long size = mCursor.getLong(mCursor
 							.getColumnIndex(MediaStore.Images.Media.SIZE)) / 1024;
-					String type = mCursor.getString(mCursor
+					String contentType = mCursor.getString(mCursor
 							.getColumnIndex(MediaStore.Images.Media.MIME_TYPE));
 					String parentName = new File(path).getParentFile()
 							.getName();
@@ -165,15 +159,21 @@ public class ImagesDirectoryController {
 						mGruopMap.get(parentName).add(path);
 					}
 
-					
 					ImageBean imageBean = new ImageBean();
-					
-					HashMap<String, String> imageDescription = new HashMap<String, String>();
-					imageDescription.put("size", size + "");
-					imageDescription.put("path", path);
-					imageDescription.put("parentName", parentName);
-					imageDescription.put("Content-Type", type);
-					imagesDescription.put(path, imageDescription);
+
+					imageBean.parentName = parentName;
+					imageBean.path = path;
+
+					imageBean.contentType = contentType;
+					imageBean.size = size + "";
+
+					// HashMap<String, String> imageDescription = new
+					// HashMap<String, String>();
+					// imageDescription.put("size", size + "");
+					// imageDescription.put("path", path);
+					// imageDescription.put("parentName", parentName);
+					// imageDescription.put("Content-Type", type);
+					imagesDescription.put(path, imageBean);
 				}
 				mCursor.close();
 				mHandler.sendEmptyMessage(SCAN_OK);

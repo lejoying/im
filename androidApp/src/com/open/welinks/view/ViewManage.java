@@ -11,6 +11,8 @@ public class ViewManage {
 	public LoginView loginView = null;
 	public UserIntimateView userIntimateView = null;
 
+	public DownloadOssFileView downloadOssFileView = null;
+
 	public Handler handler = new Handler();
 
 	public static ViewManage viewManager;

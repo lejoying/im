@@ -2,7 +2,6 @@ package com.open.welinks.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +26,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
 import com.open.welinks.controller.Debug1Controller;
+import com.open.welinks.controller.ImagesDirectoryController.ImageBean;
 import com.open.welinks.controller.UploadMultipart;
 import com.open.welinks.model.Data;
 
@@ -48,7 +48,7 @@ public class Debug1View {
 	public ControlProgress titleControlProgress;
 	public TransportingList transportingList;
 	public View controlProgressView;
-	
+
 	public TextView addMonyImageUploadView;
 
 	public LayoutInflater mInflater;
@@ -76,7 +76,7 @@ public class Debug1View {
 		imageLoader.init(ImageLoaderConfiguration.createDefault(thisActivity));
 
 		thisActivity.setContentView(R.layout.activiry_debug1_image_list);
-		
+
 		addMonyImageUploadView = (TextView) thisActivity
 				.findViewById(R.id.rightTopText);
 
@@ -102,22 +102,29 @@ public class Debug1View {
 		}
 
 		public void setContent() {
-			for (int i = 0; i < thisController.imagesSource.size(); i++) {
+			for (int i = 0; i < thisController.prepareUploadFiles.size(); i++) {
 				TransportingItem transportingItem = new TransportingItem();
 				transportingItems.add(transportingItem);
 
+				ImageBean imageBean = thisController.prepareUploadFiles.get(i);
+
 				View transportingItemView = transportingItem
-						.initialize(thisController.imagesSource.get(i));
-				String path = thisController.imagesSource.get(i).get("path");
-				UploadMultipart uploadMultipart = thisController.uploadFile(
-						path, transportingItemView);
-				uploadMultipart.transportingItem = transportingItem;
-				transportingItem.uploadMultipart = uploadMultipart;
+						.initialize(imageBean);
+				String path = imageBean.path;
+				if (imageBean.multipart == null) {
+					imageBean.multipart = thisController.uploadFile(path);
+				}
+
+				imageBean.multipart.transportingItem = transportingItem;
+				transportingItem.uploadMultipart = imageBean.multipart;
 				transportingItemView.setTag(path);
 				// controlProgress.setTag(uploadMultipart);
 				transportingList.addFooterView(transportingItemView);
 			}
-
+			TransportingItem transportingItem = new TransportingItem();
+			transportingItems.add(transportingItem);
+			View transportingItemView = transportingItem.initialize(null);
+			transportingList.addFooterView(transportingItemView);
 		}
 
 		public class TransportingItem {
@@ -135,14 +142,19 @@ public class Debug1View {
 
 			public UploadMultipart uploadMultipart;
 
-			public HashMap<String, String> imageSource;
+			public ImageBean imageSource;
 
-			public View initialize(HashMap<String, String> imageSource) {
+			public View initialize(ImageBean imageSource) {
 				this.imageSource = imageSource;
 				transportingItemView = mInflater.inflate(
 						R.layout.view_element_debug1_list_item, null);
-
-				String path = imageSource.get("path");
+				if (imageSource == null) {
+					this.controlProgressView = transportingItemView
+							.findViewById(R.id.list_item_progress_container);
+					controlProgressView.setVisibility(View.GONE);
+					return transportingItemView;
+				}
+				String path = imageSource.path;
 				imageView = (ImageView) transportingItemView
 						.findViewById(R.id.image);
 				String imageUri = "file://" + path;
@@ -156,8 +168,7 @@ public class Debug1View {
 
 				text_file_size_view = (TextView) transportingItemView
 						.findViewById(R.id.text_file_size);
-				text_file_size_view.setText("0/" + imageSource.get("size")
-						+ "k");
+				text_file_size_view.setText("0/" + imageSource.size + "k");
 
 				text_transport_time_view = (TextView) transportingItemView
 						.findViewById(R.id.text_transport_time);
@@ -167,6 +178,21 @@ public class Debug1View {
 						.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
 				this.controlProgress.initialize(this.controlProgressView);
+				if (imageSource.multipart != null) {
+					long time = imageSource.multipart.time.received
+							- imageSource.multipart.time.start;
+					if (time < 0) {
+						time = 0;
+					}
+					text_transport_time_view.setText(time + "ms");
+					long size = Long.valueOf(imageSource.size);
+					int currentUploadSize = (int) Math.floor(size
+							* imageSource.multipart.uploadPrecent / 100f);
+					text_file_size_view.setText(currentUploadSize + "/" + size
+							+ "k");
+					this.controlProgress
+							.moveTo(imageSource.multipart.uploadPrecent);
+				}
 
 				LayoutParams params = new LayoutParams(
 						LayoutParams.MATCH_PARENT, 2);
