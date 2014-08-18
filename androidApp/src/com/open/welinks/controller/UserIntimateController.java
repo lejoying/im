@@ -145,17 +145,12 @@ public class UserIntimateController {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			if (touchMoveStatus.state == touchMoveStatus.Up) {
 				touchMoveStatus.state = touchMoveStatus.Down;
-			}else{
+			} else {
 				Log.e("onTouchEvent", "unkown status: not touchMoveStatus.Up");
 			}
 			pre_x = x;
 			pre_y = y;
 
-			thisView.myListBody.recordChildrenPosition();
-			thisView.myPagerBody.recordChildrenPosition();
-
-			thisView.mSpring.setCurrentValue(0);
-			thisView.mSpring.setEndValue(0);
 			Log.e("onTouchEvent", "touch down");
 
 			if (y > 520) {
@@ -168,12 +163,14 @@ public class UserIntimateController {
 				if ((y - pre_y) * (y - pre_y) > 400 || (x - pre_x) * (x - pre_x) > 400) {
 					if ((y - pre_y) * (y - pre_y) > (x - pre_x) * (x - pre_x)) {
 						touchMoveStatus.state = touchMoveStatus.Vertical;
+						thisView.myListBody.recordChildrenPosition();
 						Dy = pre_y - y;
 						pre_y = y;
 						Log.e("onTouchEvent", "开始纵向滑动:Dy=" + Dy);
 					} else {
 						touchMoveStatus.state = touchMoveStatus.Horizontal;
 						if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.FIXED) {
+							thisView.myPagerBody.recordChildrenPosition();
 							thisView.myPagerBody.status.state = thisView.myPagerBody.status.DRAGGING;
 						} else {
 							Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + thisView.myPagerBody.status.state);
@@ -188,7 +185,7 @@ public class UserIntimateController {
 				thisView.myListBody.setChildrenPosition(0, y - pre_y);
 			} else if (touchMoveStatus.state == touchMoveStatus.Horizontal) {
 				y = pre_y;
-				thisView.myPagerBody.setChildrenPosition(x - pre_x, 0);
+				thisView.myPagerBody.setChildrenDeltaPosition(x - pre_x, 0);
 			} else {
 				Log.e("onTouchEvent", "unkown status: touchMoveStatus.Up");
 				x = pre_x;
@@ -198,10 +195,11 @@ public class UserIntimateController {
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			Dy = pre_y - y;
 			Log.e("onTouchEvent", "touch up:Dy=" + Dy);
+			// thisView.myPagerBody.homing();
 			if (touchMoveStatus.state == touchMoveStatus.Horizontal && thisView.myPagerBody.status.state == thisView.myPagerBody.status.DRAGGING) {
 				thisView.myPagerBody.homing();
 			}
-			
+
 			touchMoveStatus.state = touchMoveStatus.Up;
 		}
 		mGesture.onTouchEvent(event);

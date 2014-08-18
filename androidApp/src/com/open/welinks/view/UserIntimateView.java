@@ -172,10 +172,10 @@ public class UserIntimateView {
 				myListBody.setChildrenPosition(0, (float) deltaY);
 			} else if (myPagerBody.status.state == myPagerBody.status.HOMING) {
 
-				double deltaX = myPagerBody.deltaX * value;
+				double deltaX = -displayMetrics.widthPixels * value;
 				myPagerBody.setChildrenPosition((float) deltaX, 0);
 			}
-		}else{
+		} else {
 			Log.d(tag, "render skip");
 		}
 	}
@@ -183,7 +183,7 @@ public class UserIntimateView {
 	public void stopChange() {
 		if (myPagerBody.status.state == myPagerBody.status.HOMING) {
 			Log.d(tag, "stopChange myPagerBody.status.FIXED");
-			myPagerBody.recordChildrenPosition();
+			// myPagerBody.recordChildrenPosition();
 			myPagerBody.status.state = myPagerBody.status.FIXED;
 		}
 	}
@@ -348,6 +348,9 @@ public class UserIntimateView {
 		public float x;
 		public float y;
 
+		public float pre_x = 0;
+		public float pre_y = 0;
+
 		public View initialize(View myPagerItemView) {
 			this.myPagerItemView = myPagerItemView;
 			return this.myPagerItemView;
@@ -390,14 +393,21 @@ public class UserIntimateView {
 		public void recordChildrenPosition() {
 			pre_x = x;
 			for (MyPagerItemBody childBody : this.childrenBodys) {
-				childBody.x = childBody.myPagerItemView.getX();
+				childBody.pre_x = childBody.myPagerItemView.getX();
 			}
 		}
 
-		public void setChildrenPosition(float deltaX, float deltaY) {
-			x = pre_x + deltaX;
+		public void setChildrenDeltaPosition(float deltaX, float deltaY) {
+			this.x = this.pre_x + deltaX;
 			for (MyPagerItemBody childBody : this.childrenBodys) {
-				childBody.myPagerItemView.setX(childBody.x + deltaX);
+				childBody.myPagerItemView.setX(childBody.pre_x + deltaX);
+			}
+		}
+
+		public void setChildrenPosition(float x, float y) {
+			this.x = x;
+			for (MyPagerItemBody childBody : this.childrenBodys) {
+				childBody.myPagerItemView.setX(childBody.x + x);
 			}
 		}
 
@@ -405,19 +415,10 @@ public class UserIntimateView {
 			if (status.state == status.DRAGGING) {
 
 				status.state = status.HOMING;
+				int nextPageIndex = Math.round(-x / displayMetrics.widthPixels);
 
-				deltaX = (-x) - displayMetrics.widthPixels * pageIndex;
-
-				if (deltaX > displayMetrics.widthPixels / 2) {
-					pageIndex++;
-					deltaX = (-x) - displayMetrics.widthPixels * pageIndex;
-					double value = 1.0f * (2.0f * (-deltaX) / displayMetrics.widthPixels);
-					mSpring.setCurrentValue(value);
-				} else {
-					double value = 1.0f * (2.0f * (deltaX) / displayMetrics.widthPixels);
-					mSpring.setCurrentValue(value);
-				}
-				mSpring.setEndValue(0);
+				mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
+				mSpring.setEndValue(nextPageIndex);
 			}
 
 		}
