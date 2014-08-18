@@ -8,7 +8,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -24,7 +23,6 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.facebook.rebound.ui.Util;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
@@ -78,7 +76,13 @@ public class UserIntimateView {
 	public Map<String, Circle> circlesMap;
 	public Map<String, Friend> friendsMap;
 
-	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
+	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(60, 10);
+
+	public enum Status {
+		MESSAGES, FRIENDS, MINE
+	}
+
+	public Status status = Status.MESSAGES;
 
 	public Spring mSpring;
 
@@ -107,6 +111,11 @@ public class UserIntimateView {
 			@Override
 			public void onSpringUpdate(Spring spring) {
 				render();
+			}
+
+			@Override
+			public void onSpringAtRest(Spring spring) {
+				stopChange();
 			}
 		});
 
@@ -154,13 +163,28 @@ public class UserIntimateView {
 
 		double value = mSpring.getCurrentValue();
 
-		double deltaY = value * ratio * speedY * speedY;
-		if (speedY < 0) {
-			deltaY = -deltaY;
-		}
+		if (thisController.touchMoveStatus.state == thisController.touchMoveStatus.Up) {
+			if (myPagerBody.status.state == myPagerBody.status.FIXED) {
+				double deltaY = value * ratio * speedY * speedY;
+				if (speedY < 0) {
+					deltaY = -deltaY;
+				}
+				myListBody.setChildrenPosition(0, (float) deltaY);
+			} else if (myPagerBody.status.state == myPagerBody.status.HOMING) {
 
-		if(thisController.touchMoveStatus==thisController.touchMoveStatus_Up){
-			myListBody.setChildrenPosition(0, (float) deltaY);
+				double deltaX = myPagerBody.deltaX * value;
+				myPagerBody.setChildrenPosition((float) deltaX, 0);
+			}
+		}else{
+			Log.d(tag, "render skip");
+		}
+	}
+
+	public void stopChange() {
+		if (myPagerBody.status.state == myPagerBody.status.HOMING) {
+			Log.d(tag, "stopChange myPagerBody.status.FIXED");
+			myPagerBody.recordChildrenPosition();
+			myPagerBody.status.state = myPagerBody.status.FIXED;
 		}
 	}
 
@@ -288,6 +312,7 @@ public class UserIntimateView {
 	}
 
 	public class MyListBody {
+
 		public RelativeLayout intimateFriendsContentView = null;
 
 		public List<String> circlesSequence = new ArrayList<String>();
@@ -314,6 +339,7 @@ public class UserIntimateView {
 				circleBody.cardView.setY(circleBody.y + deltaY);
 			}
 		}
+
 	}
 
 	public class MyPagerItemBody {
@@ -330,6 +356,19 @@ public class UserIntimateView {
 
 	public class MyPagerBody {
 		public List<MyPagerItemBody> childrenBodys = new ArrayList<MyPagerItemBody>();
+
+		public int pageIndex = 0;
+		public float pre_x = 0;
+		public float x = 0;
+
+		float deltaX = 0;
+
+		public class Status {
+			public int FIXED = 0, DRAGGING = 1, HOMING = 2;
+			public int state = FIXED;
+		}
+
+		public Status status = new Status();
 
 		public View initialize() {
 			return null;
@@ -349,15 +388,38 @@ public class UserIntimateView {
 		}
 
 		public void recordChildrenPosition() {
+			pre_x = x;
 			for (MyPagerItemBody childBody : this.childrenBodys) {
 				childBody.x = childBody.myPagerItemView.getX();
 			}
 		}
 
 		public void setChildrenPosition(float deltaX, float deltaY) {
+			x = pre_x + deltaX;
 			for (MyPagerItemBody childBody : this.childrenBodys) {
 				childBody.myPagerItemView.setX(childBody.x + deltaX);
 			}
+		}
+
+		public void homing() {
+			if (status.state == status.DRAGGING) {
+
+				status.state = status.HOMING;
+
+				deltaX = (-x) - displayMetrics.widthPixels * pageIndex;
+
+				if (deltaX > displayMetrics.widthPixels / 2) {
+					pageIndex++;
+					deltaX = (-x) - displayMetrics.widthPixels * pageIndex;
+					double value = 1.0f * (2.0f * (-deltaX) / displayMetrics.widthPixels);
+					mSpring.setCurrentValue(value);
+				} else {
+					double value = 1.0f * (2.0f * (deltaX) / displayMetrics.widthPixels);
+					mSpring.setCurrentValue(value);
+				}
+				mSpring.setEndValue(0);
+			}
+
 		}
 	}
 
