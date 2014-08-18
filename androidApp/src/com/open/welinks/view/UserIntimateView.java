@@ -53,9 +53,7 @@ public class UserIntimateView {
 	public RelativeLayout intimateFriendsMenuOptionView;
 	public RelativeLayout chatMessagesListMenuOptionView;
 	public RelativeLayout userInfomationMenuOptionView;
-	public ImageView intimateFriendsMenuOptionStatusImage;
-	public ImageView chatMessagesListMenuOptionStatusImage;
-	public ImageView userInfomationMenuOptionStatusImage;
+	public ImageView pager_indicator;
 
 	public RelativeLayout intimateFriendsContentView;
 	public RelativeLayout chatMessagesListContentView;
@@ -103,7 +101,6 @@ public class UserIntimateView {
 		headSpace = baseLeft * 2;
 		head = (int) dp2px(55f);
 
-		currentMenuOptionSelectedStatusImage = intimateFriendsMenuOptionStatusImage;
 		currentShowContentView = intimateFriendsContentView;
 
 		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
@@ -132,9 +129,7 @@ public class UserIntimateView {
 		intimateFriendsMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimatefriends);
 		chatMessagesListMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesList);
 		userInfomationMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomation);
-		intimateFriendsMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_intimatefriends_status);
-		chatMessagesListMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_chatMessagesList_status);
-		userInfomationMenuOptionStatusImage = (ImageView) thisActivity.findViewById(R.id.iv_userInfomation_status);
+		pager_indicator = (ImageView) thisActivity.findViewById(R.id.pager_indicator);
 
 		chatMessagesListContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
 
@@ -436,7 +431,7 @@ public class UserIntimateView {
 
 		public void flip(int step) {
 			mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
-			nextPageIndex = pageIndex + step;
+			this.nextPageIndex = this.nextPageIndex + step;
 			int size = childrenBodys.size();
 			if (nextPageIndex > size - 1) {
 				nextPageIndex = size - 1;

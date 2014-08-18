@@ -169,7 +169,7 @@ public class UserIntimateController {
 						Log.e("onTouchEvent", "开始纵向滑动:Dy=" + Dy);
 					} else {
 						touchMoveStatus.state = touchMoveStatus.Horizontal;
-						if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.FIXED) {
+						if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.FIXED||thisView.myPagerBody.status.state == thisView.myPagerBody.status.HOMING) {
 							thisView.myPagerBody.recordChildrenPosition();
 							thisView.myPagerBody.status.state = thisView.myPagerBody.status.DRAGGING;
 						} else {
@@ -196,7 +196,7 @@ public class UserIntimateController {
 			Dy = pre_y - y;
 			Log.e("onTouchEvent", "touch up:Dy=" + Dy);
 			// thisView.myPagerBody.homing();
-			if (touchMoveStatus.state == touchMoveStatus.Horizontal && thisView.myPagerBody.status.state == thisView.myPagerBody.status.DRAGGING) {
+			if (touchMoveStatus.state == touchMoveStatus.Horizontal && (thisView.myPagerBody.status.state == thisView.myPagerBody.status.DRAGGING || thisView.myPagerBody.status.state == thisView.myPagerBody.status.FIXED)) {
 				thisView.myPagerBody.homing();
 			}
 
