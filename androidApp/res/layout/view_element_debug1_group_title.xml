@@ -22,6 +22,20 @@
         android:textColor="#fff"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/rightTopText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/textview_bg"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="添加"
+        android:textColor="#fff"
+        android:textSize="16sp"
+        android:translationX="290dp" />
+
     <RelativeLayout
         android:id="@+id/title_control_progress_container"
         android:layout_width="fill_parent"

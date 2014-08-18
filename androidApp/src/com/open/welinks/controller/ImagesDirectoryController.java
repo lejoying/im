@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.sax.StartElementListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -115,6 +114,26 @@ public class ImagesDirectoryController {
 		}
 	}
 
+	public class ImageBean {
+		public String parentName;
+		public String path;
+
+		public String contentType;
+		public long size;
+
+		public ImageBean() {
+		}
+
+		public ImageBean(String parentName, String path, String contentType,
+				long size) {
+			super();
+			this.parentName = parentName;
+			this.path = path;
+			this.contentType = contentType;
+			this.size = size;
+		}
+	}
+
 	private void getImages() {
 		new Thread(new Runnable() {
 
@@ -146,6 +165,9 @@ public class ImagesDirectoryController {
 						mGruopMap.get(parentName).add(path);
 					}
 
+					
+					ImageBean imageBean = new ImageBean();
+					
 					HashMap<String, String> imageDescription = new HashMap<String, String>();
 					imageDescription.put("size", size + "");
 					imageDescription.put("path", path);

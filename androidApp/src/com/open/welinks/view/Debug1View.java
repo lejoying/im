@@ -48,6 +48,8 @@ public class Debug1View {
 	public ControlProgress titleControlProgress;
 	public TransportingList transportingList;
 	public View controlProgressView;
+	
+	public TextView addMonyImageUploadView;
 
 	public LayoutInflater mInflater;
 
@@ -74,6 +76,9 @@ public class Debug1View {
 		imageLoader.init(ImageLoaderConfiguration.createDefault(thisActivity));
 
 		thisActivity.setContentView(R.layout.activiry_debug1_image_list);
+		
+		addMonyImageUploadView = (TextView) thisActivity
+				.findViewById(R.id.rightTopText);
 
 		listView = (ListView) thisActivity
 				.findViewById(R.id.view_element_debug1_list);
@@ -103,6 +108,13 @@ public class Debug1View {
 
 				View transportingItemView = transportingItem
 						.initialize(thisController.imagesSource.get(i));
+				String path = thisController.imagesSource.get(i).get("path");
+				UploadMultipart uploadMultipart = thisController.uploadFile(
+						path, transportingItemView);
+				uploadMultipart.transportingItem = transportingItem;
+				transportingItem.uploadMultipart = uploadMultipart;
+				transportingItemView.setTag(path);
+				// controlProgress.setTag(uploadMultipart);
 				transportingList.addFooterView(transportingItemView);
 			}
 
@@ -120,9 +132,13 @@ public class Debug1View {
 			public View controlProgressView;
 
 			public ControlProgress controlProgress;
+
 			public UploadMultipart uploadMultipart;
 
+			public HashMap<String, String> imageSource;
+
 			public View initialize(HashMap<String, String> imageSource) {
+				this.imageSource = imageSource;
 				transportingItemView = mInflater.inflate(
 						R.layout.view_element_debug1_list_item, null);
 
@@ -140,11 +156,12 @@ public class Debug1View {
 
 				text_file_size_view = (TextView) transportingItemView
 						.findViewById(R.id.text_file_size);
-				text_file_size_view.setText(imageSource.get("size") + "k");
+				text_file_size_view.setText("0/" + imageSource.get("size")
+						+ "k");
 
 				text_transport_time_view = (TextView) transportingItemView
 						.findViewById(R.id.text_transport_time);
-				text_transport_time_view.setText("27ms");
+				text_transport_time_view.setText("0ms");
 
 				this.controlProgressView = transportingItemView
 						.findViewById(R.id.list_item_progress_container);
@@ -155,12 +172,6 @@ public class Debug1View {
 						LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);
 				this.controlProgress.progress_line2.setLayoutParams(params);
-				UploadMultipart uploadMultipart = thisController.uploadFile(
-						path, transportingItemView);
-				uploadMultipart.controlProgress = controlProgress;
-				this.uploadMultipart = uploadMultipart;
-				transportingItemView.setTag(path);
-				// controlProgress.setTag(uploadMultipart);
 				return transportingItemView;
 			}
 		}
