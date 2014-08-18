@@ -23,6 +23,7 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
+import com.facebook.rebound.ui.Util;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
@@ -140,6 +141,8 @@ public class UserIntimateView {
 		userInfomationContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
 
 		myPagerBody = new MyPagerBody();
+		myPagerBody.pager_indicator = pager_indicator;
+		myPagerBody.initialize();
 
 		myPagerBody.addChildView(chatMessagesListContentView);
 		myPagerBody.addChildView(intimateFriendsContentView);
@@ -355,6 +358,8 @@ public class UserIntimateView {
 
 	public class MyPagerBody {
 		public List<MyPagerItemBody> childrenBodys = new ArrayList<MyPagerItemBody>();
+		public ImageView pager_indicator;
+		int pager_indicator_trip = 0;
 
 		public int pageIndex = 0;
 		int nextPageIndex = 0;
@@ -371,6 +376,7 @@ public class UserIntimateView {
 		public Status status = new Status();
 
 		public View initialize() {
+			pager_indicator_trip = (int) (110 * displayMetrics.density);
 			return null;
 		}
 
@@ -396,6 +402,9 @@ public class UserIntimateView {
 
 		public void setChildrenDeltaPosition(float deltaX, float deltaY) {
 			this.x = this.pre_x + deltaX;
+
+			float pager_indicator_position = -(this.pre_x + deltaX) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
+			pager_indicator.setX(pager_indicator_position);
 			for (MyPagerItemBody childBody : this.childrenBodys) {
 				childBody.myPagerItemView.setX(childBody.pre_x + deltaX);
 			}
@@ -403,6 +412,10 @@ public class UserIntimateView {
 
 		public void setChildrenPosition(float x, float y) {
 			this.x = x;
+			
+			float pager_indicator_position = -(x) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
+			pager_indicator.setX(pager_indicator_position);
+			
 			for (MyPagerItemBody childBody : this.childrenBodys) {
 				childBody.myPagerItemView.setX(childBody.x + x);
 			}
