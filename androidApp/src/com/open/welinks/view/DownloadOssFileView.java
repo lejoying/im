@@ -67,29 +67,20 @@ public class DownloadOssFileView {
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
 		animateFirstListener = new AnimateFirstDisplayListener();
-		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.ic_stub)
-				.showImageForEmptyUri(R.drawable.ic_empty)
-				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
-				.cacheOnDisk(true).considerExifParams(true)
-				.displayer(new RoundedBitmapDisplayer(20)).build();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
 		imageLoader.init(ImageLoaderConfiguration.createDefault(thisActivity));
 
 		thisActivity.setContentView(R.layout.activity_downloadossfiles);
 
-		leftTopTextView = (TextView) thisActivity
-				.findViewById(R.id.leftTopText);
+		leftTopTextView = (TextView) thisActivity.findViewById(R.id.leftTopText);
 		leftTopTextView.setText("下载列表");
-		addMonyImageUploadView = (TextView) thisActivity
-				.findViewById(R.id.rightTopText);
+		addMonyImageUploadView = (TextView) thisActivity.findViewById(R.id.rightTopText);
 
-		listView = (ListView) thisActivity
-				.findViewById(R.id.view_element_debug1_list);
+		listView = (ListView) thisActivity.findViewById(R.id.view_element_debug1_list);
 		transportingList = new TransportingList();
 		transportingList.initialize(listView);
 
-		controlProgressView = thisActivity
-				.findViewById(R.id.title_control_progress_container);
+		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
 		titleControlProgress = new ControlProgress();
 		titleControlProgress.initialize(controlProgressView);
 	}
@@ -105,16 +96,13 @@ public class DownloadOssFileView {
 		}
 
 		public void setContent() {
-			for (int i = 0; i < data.localStatus.localData.prepareDownloadImagesList
-					.size(); i++) {
+			for (int i = 0; i < data.localStatus.localData.prepareDownloadImagesList.size(); i++) {
 				TransportingItem transportingItem = new TransportingItem();
 				transportingItems.add(transportingItem);
 
-				ImageBean imageBean = data.localStatus.localData.prepareDownloadImagesList
-						.get(i);
+				ImageBean imageBean = data.localStatus.localData.prepareDownloadImagesList.get(i);
 
-				View transportingItemView = transportingItem
-						.initialize(imageBean);
+				View transportingItemView = transportingItem.initialize(imageBean);
 				String path = imageBean.path;
 				if (imageBean.downloadFile == null) {
 					imageBean.downloadFile = thisController.downloadFile(path);
@@ -152,70 +140,45 @@ public class DownloadOssFileView {
 
 			public View initialize(ImageBean imageSource) {
 				this.imageSource = imageSource;
-				transportingItemView = mInflater.inflate(
-						R.layout.view_element_debug1_list_item, null);
+				transportingItemView = mInflater.inflate(R.layout.view_element_debug1_list_item, null);
 				if (imageSource == null) {
-					this.controlProgressView = transportingItemView
-							.findViewById(R.id.list_item_progress_container);
+					this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 					controlProgressView.setVisibility(View.GONE);
 					return transportingItemView;
 				}
 				String path = imageSource.path;
-				imageView = (ImageView) transportingItemView
-						.findViewById(R.id.image);
+				imageView = (ImageView) transportingItemView.findViewById(R.id.image);
 
-				text_filename_view = (TextView) transportingItemView
-						.findViewById(R.id.text_filename);
-				text_filename_view
-						.setText(path.substring(path.lastIndexOf("/") + 1));
+				text_filename_view = (TextView) transportingItemView.findViewById(R.id.text_filename);
+				text_filename_view.setText(path.substring(path.lastIndexOf("/") + 1));
 
-				text_file_size_view = (TextView) transportingItemView
-						.findViewById(R.id.text_file_size);
+				text_file_size_view = (TextView) transportingItemView.findViewById(R.id.text_file_size);
 				text_file_size_view.setText("0/" + imageSource.size + "k");
 
-				text_transport_time_view = (TextView) transportingItemView
-						.findViewById(R.id.text_transport_time);
+				text_transport_time_view = (TextView) transportingItemView.findViewById(R.id.text_transport_time);
 				text_transport_time_view.setText("0ms");
 
-				this.controlProgressView = transportingItemView
-						.findViewById(R.id.list_item_progress_container);
+				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
 				this.controlProgress.initialize(this.controlProgressView);
 				if (imageSource.downloadFile != null) {
-					long time = imageSource.downloadFile.time.received
-							- imageSource.downloadFile.time.start;
+					long time = imageSource.downloadFile.time.received - imageSource.downloadFile.time.start;
 					if (time < 0) {
 						time = 0;
 					}
 					text_transport_time_view.setText(time + "ms");
 					long size = Long.valueOf(imageSource.size);
-					int currentUploadSize = (int) Math.floor(size
-							* imageSource.downloadFile.uploadPrecent / 100f);
-					text_file_size_view.setText(currentUploadSize / 1000 + "/"
-							+ size / 1000 + "k");
+					int currentUploadSize = (int) Math.floor(size * imageSource.downloadFile.uploadPrecent / 100f);
+					text_file_size_view.setText(currentUploadSize / 1000 + "/" + size / 1000 + "k");
 					if (imageSource.downloadFile.isDownloadStatus == DownloadFile.DOWNLOAD_SUCCESS) {
-						String fileName = path
-								.substring(path.lastIndexOf("/") + 1);
-						int index = fileName.lastIndexOf(".");
-						String suffixName = fileName.substring(index);
-						if (suffixName.equals(".jpg")
-								|| suffixName.equals(".jpeg")) {
-							suffixName = ".osj";
-						} else if (suffixName.equals("png")) {
-							suffixName = ".osp";
-						}
-						fileName = fileName.substring(0, index) + suffixName;
+						String fileName = thisController.urlToLocalFileName(path);
 						File file = new File(sdFile, "test0/" + fileName);
-						imageLoader.displayImage(
-								"file://" + file.getAbsolutePath(), imageView,
-								options, animateFirstListener);
+						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, options, animateFirstListener);
 					}
-					this.controlProgress
-							.moveTo(imageSource.downloadFile.uploadPrecent);
+					this.controlProgress.moveTo(imageSource.downloadFile.uploadPrecent);
 				}
 
-				LayoutParams params = new LayoutParams(
-						LayoutParams.MATCH_PARENT, 2);
+				LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);
 				this.controlProgress.progress_line2.setLayoutParams(params);
 				return transportingItemView;
@@ -223,23 +186,12 @@ public class DownloadOssFileView {
 		}
 	}
 
-	public interface UploadLoading {
-		public void loading(View v);
-	}
+	public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
-	public void setUploadLoading(UploadLoading uploadLoading) {
-		UploadLoading uploadLoadings = uploadLoading;
-	}
-
-	public static class AnimateFirstDisplayListener extends
-			SimpleImageLoadingListener {
-
-		static final List<String> displayedImages = Collections
-				.synchronizedList(new LinkedList<String>());
+		static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
 		@Override
-		public void onLoadingComplete(String imageUri, View view,
-				Bitmap loadedImage) {
+		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 			if (loadedImage != null) {
 				ImageView imageView = (ImageView) view;
 				boolean firstDisplay = !displayedImages.contains(imageUri);
@@ -265,14 +217,11 @@ public class DownloadOssFileView {
 
 		public void initialize(View container) {
 			DisplayMetrics displayMetrics = new DisplayMetrics();
-			thisActivity.getWindowManager().getDefaultDisplay()
-					.getMetrics(displayMetrics);
+			thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
 
-			progress_line1 = (ImageView) container
-					.findViewById(R.id.progress_line1);
-			progress_line2 = (ImageView) container
-					.findViewById(R.id.progress_line2);
+			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
 			controlProgressView = container;
 
 			width = displayMetrics.widthPixels;
@@ -281,8 +230,7 @@ public class DownloadOssFileView {
 
 		public void moveTo(int targetPercentage) {
 			float position = targetPercentage / 100.0f * this.width;
-			move_progress_line1 = new TranslateAnimation(
-					(percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
+			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
 			// TODO old animation becomes memory fragment
 			move_progress_line1.setStartOffset(0);
 			move_progress_line1.setDuration(200);

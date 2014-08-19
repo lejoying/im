@@ -69,29 +69,29 @@ public class DownloadFile {
 			time.start = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_START;
 			Log.e(tag, "-----start-----");
-
 		}
 
 		@Override
-		public void onLoading(long total, long current, boolean isUploading) {
+		public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
 			time.received = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_LOADINGING;
 			uploadPrecent = (int) ((((double) current / (double) total)) * 100);
 			downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+			if (imageBean.size != 0) {
+				for (int i = 0; i < headers.length; i++) {
+					Header header = headers[i];
+					if (header.getName().equals("Content-Length")) {
+						imageBean.size = Long.valueOf(header.getValue());
+					}
+				}
+			}
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<File> responseInfo) {
 			time.received = System.currentTimeMillis();
-			Header[] headers = responseInfo.getAllHeaders();
-			for (int i = 0; i < headers.length; i++) {
-				Header header = headers[i];
-				if (header.getName().equals("Content-Length")) {
-					imageBean.size = Long.valueOf(header.getValue());
-				}
-			}
-			downloadListener.success(instance, isDownloadStatus);
 			isDownloadStatus = DOWNLOAD_SUCCESS;
+			downloadListener.success(instance, isDownloadStatus);
 			Log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 

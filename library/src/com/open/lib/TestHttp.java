@@ -1,5 +1,7 @@
 package com.open.lib;
 
+import org.apache.http.Header;
+
 import android.util.Log;
 
 import com.lidroid.xutils.HttpUtils;
@@ -47,7 +49,7 @@ public class TestHttp {
 			}
 
 			@Override
-			public void onLoading(long total, long current, boolean isUploading) {
+			public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
 				timeLine.received = System.currentTimeMillis();
 				if (isUploading) {
 					Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  upload: " + current + "/" + total);

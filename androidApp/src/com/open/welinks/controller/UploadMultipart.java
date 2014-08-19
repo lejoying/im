@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.http.Header;
 import org.apache.http.entity.ByteArrayEntity;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -123,8 +124,7 @@ public class UploadMultipart {
 		File file = new File(path);
 
 		try {
-			this.bytes = StreamParser
-					.parseToByteArray(new FileInputStream(file));
+			this.bytes = StreamParser.parseToByteArray(new FileInputStream(file));
 			sha1FileName = sha1.getDigestOfString(bytes);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -137,10 +137,9 @@ public class UploadMultipart {
 			return;
 		}
 
-		this.fileName = "mutilpart/"+sha1FileName + suffixName;
+		this.fileName = "mutilpart/" + sha1FileName + suffixName;
 
-		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/"
-				+ fileName + "?uploads";
+		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploads";
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -179,8 +178,7 @@ public class UploadMultipart {
 		};
 
 		@Override
-		public void onFailure(com.lidroid.xutils.exception.HttpException error,
-				String msg) {
+		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			isUploadStatus = UPLOAD_INITFAILED;
 			initiateMultipartupload();
 		};
@@ -202,9 +200,7 @@ public class UploadMultipart {
 	public void uploadPart(final int partID) {
 		long expires = (new Date().getTime() / 1000) + addExpires;
 
-		String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME + "/"
-				+ fileName + "?partNumber=" + partID + "&uploadId="
-				+ initiateMultipartUploadResult.uploadId;
+		String postContent = "PUT\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?partNumber=" + partID + "&uploadId=" + initiateMultipartUploadResult.uploadId;
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -216,8 +212,7 @@ public class UploadMultipart {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = OSS_HOST_URL + fileName + "?partNumber=" + partID
-				+ "&uploadId=" + initiateMultipartUploadResult.uploadId;
+		String url = OSS_HOST_URL + fileName + "?partNumber=" + partID + "&uploadId=" + initiateMultipartUploadResult.uploadId;
 
 		params.addQueryStringParameter("OSSAccessKeyId", OSSACCESSKEYID);
 		params.addQueryStringParameter("Expires", expires + "");
@@ -256,8 +251,7 @@ public class UploadMultipart {
 			if (!parts.contains(part)) {
 				parts.add(part);
 			}
-			params.setBodyEntity(new InputStreamUploadEntity(
-					new ByteArrayInputStream(byte0), byte0.length));
+			params.setBodyEntity(new InputStreamUploadEntity(new ByteArrayInputStream(byte0), byte0.length));
 			params.setBodyEntity(new ByteArrayEntity(byte0));
 			UploadResponseHandler uploadResponseHandler = new UploadResponseHandler();
 			uploadResponseHandler.partID = partID;
@@ -300,11 +294,10 @@ public class UploadMultipart {
 		};
 
 		@Override
-		public void onLoading(long total, long current, boolean isUploading) {
-			super.onLoading(total, current, isUploading);
+		public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
+			super.onLoading(total, current, isUploading, headers);
 			time.received = System.currentTimeMillis();
-			Log.e(tag, total + "--*****---" + current + "_+_+_+_+_+_+"
-					+ isUploading);
+			Log.e(tag, total + "--*****---" + current + "_+_+_+_+_+_+" + isUploading);
 		}
 
 		@Override
@@ -312,10 +305,8 @@ public class UploadMultipart {
 			partSuccessCount++;
 			part.setStatus(Part.PART_SUCCESS);
 			uploadPrecent = (int) ((((double) partSuccessCount / (double) partCount)) * 100);
-			uploadLoadingListener.loading(instance, uploadPrecent,
-					(time.received - time.start), UPLOAD_SUCCESS);
-			Log.e(tag, partSuccessCount + "-----" + partCount + "------"
-					+ part.eTag);
+			uploadLoadingListener.loading(instance, uploadPrecent, (time.received - time.start), UPLOAD_SUCCESS);
+			Log.e(tag, partSuccessCount + "-----" + partCount + "------" + part.eTag);
 			if (partSuccessCount == partCount) {
 				time.received = System.currentTimeMillis();
 				completeMultipartUpload();
@@ -338,9 +329,7 @@ public class UploadMultipart {
 	public void completeMultipartUpload() {
 		long expires = (new Date().getTime() / 1000) + addExpires;
 
-		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/"
-				+ fileName + "?uploadId="
-				+ initiateMultipartUploadResult.uploadId;
+		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploadId=" + initiateMultipartUploadResult.uploadId;
 		String signature = "";
 		try {
 			signature = getHmacSha1Signature(postContent, ACCESSKEYSECRET);
@@ -353,8 +342,7 @@ public class UploadMultipart {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 
-		String url = OSS_HOST_URL + fileName + "?uploadId="
-				+ initiateMultipartUploadResult.uploadId;
+		String url = OSS_HOST_URL + fileName + "?uploadId=" + initiateMultipartUploadResult.uploadId;
 
 		params.addQueryStringParameter("OSSAccessKeyId", OSSACCESSKEYID);
 		params.addQueryStringParameter("Expires", expires + "");
@@ -370,15 +358,11 @@ public class UploadMultipart {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			CompleteMultipartUploadResult completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
 			isUploadStatus = UPLOAD_SUCCESS;
-			Log.e(tag, completeMultipartUploadResult.location + "---"
-					+ completeMultipartUploadResult.bucket + "---"
-					+ completeMultipartUploadResult.key + "---"
-					+ completeMultipartUploadResult.eTag);
+			Log.e(tag, completeMultipartUploadResult.location + "---" + completeMultipartUploadResult.bucket + "---" + completeMultipartUploadResult.key + "---" + completeMultipartUploadResult.eTag);
 		};
 
 		@Override
-		public void onFailure(com.lidroid.xutils.exception.HttpException error,
-				String msg) {
+		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
 			isUploadStatus = UPLOAD_FAILED;
 		};
 	};
@@ -391,8 +375,7 @@ public class UploadMultipart {
 	}
 
 	public interface UploadLoadingListener {
-		public void loading(UploadMultipart instance, int precent, long time,
-				int status);
+		public void loading(UploadMultipart instance, int precent, long time, int status);
 	}
 
 	public void setUploadLoadingListener(UploadLoadingListener listener) {
@@ -453,8 +436,7 @@ public class UploadMultipart {
 		}
 	}
 
-	public static String getHmacSha1Signature(String value, String key)
-			throws NoSuchAlgorithmException, InvalidKeyException {
+	public static String getHmacSha1Signature(String value, String key) throws NoSuchAlgorithmException, InvalidKeyException {
 		byte[] keyBytes = key.getBytes();
 		SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
 
@@ -507,10 +489,8 @@ public class UploadMultipart {
 	public CompleteMultipartUploadResult parseXmlCompleteResult(String resultXml) {
 		CompleteMultipartUploadResult completeMultipartUploadResult = null;
 		try {
-			InputStream is = new ByteArrayInputStream(
-					resultXml.getBytes("UTF-8"));
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
+			InputStream is = new ByteArrayInputStream(resultXml.getBytes("UTF-8"));
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document doc = builder.parse(is);
 			Element rootElement = doc.getDocumentElement();
@@ -521,17 +501,13 @@ public class UploadMultipart {
 				Node property = properties.item(j);
 				String nodeName = property.getNodeName();
 				if (nodeName.equals("Bucket")) {
-					completeMultipartUploadResult.bucket = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.bucket = property.getFirstChild().getNodeValue();
 				} else if (nodeName.equals("Key")) {
-					completeMultipartUploadResult.key = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.key = property.getFirstChild().getNodeValue();
 				} else if (nodeName.equals("ETag")) {
-					completeMultipartUploadResult.eTag = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.eTag = property.getFirstChild().getNodeValue();
 				} else if (nodeName.equals("Location")) {
-					completeMultipartUploadResult.location = property
-							.getFirstChild().getNodeValue();
+					completeMultipartUploadResult.location = property.getFirstChild().getNodeValue();
 				}
 			}
 
@@ -555,8 +531,7 @@ public class UploadMultipart {
 		String uploadId;
 	}
 
-	public InitiateMultipartUploadResult parseXml(String resultXml)
-			throws Exception {
+	public InitiateMultipartUploadResult parseXml(String resultXml) throws Exception {
 		InputStream is = new ByteArrayInputStream(resultXml.getBytes("UTF-8"));
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -569,14 +544,11 @@ public class UploadMultipart {
 			Node property = properties.item(j);
 			String nodeName = property.getNodeName();
 			if (nodeName.equals("Bucket")) {
-				initiateMultipartUploadResult.bucket = property.getFirstChild()
-						.getNodeValue();
+				initiateMultipartUploadResult.bucket = property.getFirstChild().getNodeValue();
 			} else if (nodeName.equals("Key")) {
-				initiateMultipartUploadResult.key = property.getFirstChild()
-						.getNodeValue();
+				initiateMultipartUploadResult.key = property.getFirstChild().getNodeValue();
 			} else if (nodeName.equals("UploadId")) {
-				initiateMultipartUploadResult.uploadId = property
-						.getFirstChild().getNodeValue();
+				initiateMultipartUploadResult.uploadId = property.getFirstChild().getNodeValue();
 			}
 		}
 		return initiateMultipartUploadResult;
