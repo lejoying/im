@@ -58,10 +58,16 @@ public class DownloadOssFileController {
 		paths = new String[] { Oss_Host + "20F5B7FCE06E5CC24B0B875389A55AF11023DC4D.jpg", Oss_Host + "2AFF1954C7B313A9BCE6A56B6CA1DEC77E96A6DC.png", Oss_Host + "2F5791D890001B3D41EB2FFFC5EB1448E1597F91.png", Oss_Host + "3097B1772863E8124BFDCD20F771F6D1547D1A9E.jpg", Oss_Host + "450E249AA2335F7499F6EDEED840A9DEDF01CDDE.jpg", Oss_Host + "957BED54FB76F947B43D66BC324C7A6AA68AD1F6.jpg", Oss_Host + "983EBA49BD1564E3B117059283CE59A5115CED3A.jpg", Oss_Host + "A0DD7F909178445CCDB34394D47D859F17C6A05D.jpg", Oss_Host + "55CCAABEBA40364550841D0E64EE17D663713F87.jpg", Oss_Host + "7905B516EA97EDAC71E6A02DA04392C2B632D6C5.jpg", Oss_Host + "3748A2E00E1FEBCADE100BC8BCA62694D9614618.jpg", Oss_Host + "A0DD7F909178445CCDB34394D47D859F17C6A05D.jpg", Oss_Host + "B750457DD14BFE0D1B92168A5ECD0E8742DA23FE.jpg",
 				Oss_Host + "FD2D8F3F76D7CF2E9B655E0584042CE0CC04532B.jpg", Oss_Host + "ED22A28C7FAA543C22BA428A560836BF80C310FA.jpg" };
 		int start = data.localStatus.localData.prepareDownloadImagesList.size();
-		for (int i = start; i < start + 3; i++) {
-			ImageBean bean = data.tempData.new ImageBean();
-			bean.path = paths[i];
-			imagesSource.add(bean);
+		if (start < paths.length) {
+			int length = start + 3;
+			if (length > paths.length) {
+				length = paths.length - start;
+			}
+			for (int i = start; i < start + 3; i++) {
+				ImageBean bean = data.tempData.new ImageBean();
+				bean.path = paths[i];
+				imagesSource.add(bean);
+			}
 		}
 		if (imagesSource != null) {
 			data.localStatus.localData.prepareDownloadImagesList.addAll(imagesSource);

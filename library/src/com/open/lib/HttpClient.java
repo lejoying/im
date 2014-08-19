@@ -47,7 +47,7 @@ public class HttpClient {
 		}
 
 		@Override
-		public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
+		public void onLoading(long total, long current, boolean isUploading) {
 			timeLine.received = System.currentTimeMillis();
 			if (isUploading) {
 				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  onLoading upload: " + current + "/" + total);
@@ -85,7 +85,7 @@ public class HttpClient {
 		ResponseHandler<String> requestCallBack = new ResponseHandler<String>() {
 
 			@Override
-			public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
+			public void onLoading(long total, long current, boolean isUploading) {
 				timeLine.received = System.currentTimeMillis();
 				if (isUploading) {
 					Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  upload: " + current + "/" + total);

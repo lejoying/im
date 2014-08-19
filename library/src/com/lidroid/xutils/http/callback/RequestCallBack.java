@@ -85,7 +85,10 @@ public abstract class RequestCallBack<T> {
 	public void onCancelled() {
 	}
 
-	public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
+	public void onLoading(long total, long current, boolean isUploading) {
+	}
+
+	public void onConneced(Header[] headers) {
 	}
 
 	public abstract void onSuccess(ResponseInfo<T> responseInfo);
