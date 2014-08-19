@@ -29,8 +29,9 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.utils.MCImageUtils;
-
+import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.lib.viewbody.PagerBody;
+import com.open.lib.viewbody.ListBody;
 
 public class UserIntimateView {
 
@@ -66,7 +67,7 @@ public class UserIntimateView {
 	public TextView userBusinessView;
 
 	public Map<String, CircleBody> viewsMap = new HashMap<String, CircleBody>();
-	public MyListBody myListBody;
+	public ListBody myListBody;
 
 	public PagerBody myPagerBody;
 
@@ -136,8 +137,8 @@ public class UserIntimateView {
 		chatMessagesListContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
 
 		intimateFriendsContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimateFriendsContent);
-		myListBody = new MyListBody();
-		myListBody.initialize(intimateFriendsContentView);
+		myListBody = new ListBody();
+		myListBody.initialize(displayMetrics, intimateFriendsContentView);
 
 		userInfomationContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
 
@@ -187,18 +188,18 @@ public class UserIntimateView {
 		circlesMap = data.relationship.circlesMap;
 		friendsMap = data.relationship.friendsMap;
 
-		this.myListBody.circlesSequence.clear();
+		this.myListBody.listItemsSequence.clear();
 
 		for (int i = 0; i < circles.size(); i++) {
 			Circle circle = circlesMap.get(circles.get(i));
 
 			CircleBody circleBody = null;
-			circleBody = new CircleBody();
+			circleBody = new CircleBody(this.myListBody);
 			circleBody.initialize();
 			circleBody.setContent(circle);
 
-			this.myListBody.circlesSequence.add("circle#" + circle.rid);
-			this.myListBody.circleBodiesMap.put("circle#" + circle.rid, circleBody);
+			this.myListBody.listItemsSequence.add("circle#" + circle.rid);
+			this.myListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (260 * displayMetrics.density));
 			circleBody.cardView.setY(270 * displayMetrics.density * i + 2 * displayMetrics.density);
@@ -210,8 +211,13 @@ public class UserIntimateView {
 		}
 	}
 
-	public class CircleBody {
+	public class CircleBody extends MyListItemBody{
 
+		CircleBody(ListBody listBody){
+			listBody.super();
+		}
+		
+		
 		public List<String> friendsSequence = new ArrayList<String>();
 		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
 
@@ -259,59 +265,6 @@ public class UserIntimateView {
 
 		public void setData(Friend friend) {
 
-		}
-	}
-
-	public class MyListBody {
-
-		public RelativeLayout intimateFriendsContentView = null;
-
-		public List<String> circlesSequence = new ArrayList<String>();
-		public Map<String, CircleBody> circleBodiesMap = new HashMap<String, CircleBody>();
-
-		public class Status {
-			public int FIXED = 0, DRAGGING = 1, INERTIAMOVING = 2;
-			public int state = FIXED;
-		}
-
-		public Status status = new Status();
-
-		public View initialize(View container) {
-			intimateFriendsContentView = (RelativeLayout) container;
-			return intimateFriendsContentView;
-
-		}
-
-		public void recordChildrenPosition() {
-			for (int i = 0; i < circlesSequence.size(); i++) {
-				CircleBody circleBody = circleBodiesMap.get(circlesSequence.get(i));
-				circleBody.x = circleBody.cardView.getX();
-				circleBody.y = circleBody.cardView.getY();
-			}
-		}
-
-		public void setChildrenPosition(float deltaX, float deltaY) {
-			for (int i = 0; i < circlesSequence.size(); i++) {
-				CircleBody circleBody = circleBodiesMap.get(circlesSequence.get(i));
-				circleBody.cardView.setX(circleBody.x + deltaX);
-				circleBody.cardView.setY(circleBody.y + deltaY);
-			}
-		}
-
-	}
-
-	public class MyPagerItemBody {
-		View myPagerItemView = null;
-
-		public float x;
-		public float y;
-
-		public float pre_x = 0;
-		public float pre_y = 0;
-
-		public View initialize(View myPagerItemView) {
-			this.myPagerItemView = myPagerItemView;
-			return this.myPagerItemView;
 		}
 	}
 
