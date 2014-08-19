@@ -7,7 +7,8 @@
     <RelativeLayout
         android:id="@+id/rl_mainMenuBar"
         android:layout_width="match_parent"
-        android:layout_height="50dp" >
+        android:layout_height="48dp"
+        android:background="@color/card_color" >
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="用户ABC"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="18sp" />
 
             <ImageView

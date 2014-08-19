@@ -6,7 +6,7 @@
     <ImageView
 		android:id="@+id/progress_line2"
 		android:layout_width="fill_parent"
-		android:layout_height="2dip"
+		android:layout_height="1.5dip"
 		android:layout_marginTop="0dp"
 		android:background="#FF0099cd" 
 		android:contentDescription="@string/description_image" />
@@ -14,9 +14,8 @@
 	<ImageView
 		android:id="@+id/progress_line1"
 		android:layout_width="fill_parent"
-		android:layout_height="2dp"
+		android:layout_height="1.5dp"
 		android:translationX="0dp"
-		android:background="#FFFFFFFF" 
+		android:background="@color/text_color" 
 		android:contentDescription="@string/description_image" />
-
 </merge>

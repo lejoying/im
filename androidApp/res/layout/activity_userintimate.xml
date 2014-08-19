@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/login_background_2"
     tools:context=".UserIntimateActivity" >
 
     <include layout="@layout/activity_userintimate_title" >
@@ -15,6 +15,15 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="50dp" >
+
+        <ImageView
+            android:id="@+id/pager_indicator"
+            android:layout_width="110dp"
+            android:layout_height="2dp"
+            android:background="@color/card_color"
+            android:translationY="2dp"
+            android:visibility="visible" >
+        </ImageView>
 
         <RelativeLayout
             android:id="@+id/rl_chatMessagesList"
@@ -30,7 +39,7 @@
                 android:gravity="center"
                 android:text="消息"
                 android:textAlignment="center"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="18sp" />
         </RelativeLayout>
 
@@ -47,7 +56,7 @@
                 android:gravity="center"
                 android:text="好友"
                 android:textAlignment="center"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="18sp" />
         </RelativeLayout>
 
@@ -64,18 +73,9 @@
                 android:gravity="center"
                 android:text="我"
                 android:textAlignment="center"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="18sp" />
         </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/pager_indicator"
-            android:layout_width="110dp"
-            android:layout_height="2dp"
-            android:background="#38ffffff"
-            android:translationY="2dp"
-            android:visibility="visible" >
-        </ImageView>
     </RelativeLayout>
 
     <RelativeLayout
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:layout_gravity="center_vertical"
-            android:background="#38ffffff"
+            android:background="@color/card_color"
             android:gravity="center_vertical" >
 
             <ImageView
@@ -146,7 +146,7 @@
                     android:layout_height="20dp"
                     android:singleLine="true"
                     android:text="樱桃小丸子"
-                    android:textColor="#fff"
+                    android:textColor="@color/text_color"
                     android:textSize="16sp" />
 
                 <TextView
@@ -157,7 +157,7 @@
                     android:lines="2"
                     android:paddingRight="10dp"
                     android:text="爱哭就哭，爱笑就笑，小丸子一样的人生。"
-                    android:textColor="#fff" />
+                    android:textColor="@color/text_color" />
             </RelativeLayout>
 
             <ImageView
@@ -179,7 +179,7 @@
             android:layout_width="match_parent"
             android:layout_height="49dp"
             android:layout_marginTop="90dp"
-            android:background="#38ffffff"
+            android:background="@color/card_color"
             android:gravity="center_vertical"
             android:visibility="visible" >
 
@@ -188,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="积分(0)"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="18sp" />
         </RelativeLayout>
 
@@ -196,7 +196,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="149dp"
-            android:background="#38ffffff"
+            android:background="@color/card_color"
             android:gravity="center_vertical" >
 
             <TextView
@@ -204,7 +204,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="我的名片"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="18sp" />
 
             <TextView
@@ -215,7 +215,7 @@
                 android:background="@drawable/noread_message"
                 android:padding="5dp"
                 android:text="2"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="10sp"
                 android:visibility="gone" />
         </RelativeLayout>
@@ -224,7 +224,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="209dp"
-            android:background="#38ffffff"
+            android:background="@color/card_color"
             android:gravity="center_vertical" >
 
             <TextView
@@ -232,7 +232,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="设置"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="18sp" />
 
             <TextView
@@ -243,7 +243,7 @@
                 android:background="@drawable/noread_message"
                 android:padding="5dp"
                 android:text="2"
-                android:textColor="#fff"
+                android:textColor="@color/text_color"
                 android:textSize="10sp"
                 android:visibility="gone" />
         </RelativeLayout>

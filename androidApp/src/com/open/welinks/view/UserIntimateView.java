@@ -201,7 +201,7 @@ public class UserIntimateView {
 			this.myListBody.circleBodiesMap.put("circle#" + circle.rid, circleBody);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (260 * displayMetrics.density));
-			circleBody.cardView.setY(270 * displayMetrics.density * i + 8 * displayMetrics.density);
+			circleBody.cardView.setY(270 * displayMetrics.density * i + 2 * displayMetrics.density);
 			circleBody.cardView.setX(0);
 
 			this.myListBody.intimateFriendsContentView.addView(circleBody.cardView, layoutParams);

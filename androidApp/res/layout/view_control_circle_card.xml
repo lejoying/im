@@ -8,7 +8,7 @@
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     android:layout_marginTop="10dp"
-    android:background="#38ffffff"
+    android:background="@color/card_color"
     android:visibility="visible" >
 
     <include

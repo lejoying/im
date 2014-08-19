@@ -10,7 +10,7 @@
         android:clickable="true"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
-        android:textColor="#fff"
+        android:textColor="@color/text_color"
         android:textSize="16sp" />
 
     <TextView
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/leftTopText"
-        android:background="#fff"
+        android:background="@color/text_color"
         android:contentDescription="white_line" />
 
     <TextView
