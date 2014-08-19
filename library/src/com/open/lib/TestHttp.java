@@ -49,7 +49,7 @@ public class TestHttp {
 			}
 
 			@Override
-			public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
+			public void onLoading(long total, long current, boolean isUploading) {
 				timeLine.received = System.currentTimeMillis();
 				if (isUploading) {
 					Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  upload: " + current + "/" + total);

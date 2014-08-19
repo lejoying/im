@@ -23,7 +23,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.http.Header;
 import org.apache.http.entity.ByteArrayEntity;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -34,8 +33,6 @@ import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
-
-import android.util.Log;
 
 import com.aliyun.android.oss.Base64;
 import com.google.gson.Gson;
@@ -94,6 +91,8 @@ public class UploadMultipart {
 	public int partSize = 256000;
 	public int partCount = 0;
 	public int partSuccessCount = 0;
+
+	public CompleteMultipartUploadResult completeMultipartUploadResult;
 
 	public HttpHandler<String> httpHandler;
 
@@ -189,7 +188,7 @@ public class UploadMultipart {
 		partSuccessCount = 0;
 		partCount = (int) Math.ceil((double) bytes.length / (double) partSize);
 
-		Log.e(tag, "partCount:" + partCount);
+		// Log.e(tag, "partCount:" + partCount);
 
 		for (int i = 0; i < partCount; i++) {
 			int partID = i + 1;
@@ -294,10 +293,11 @@ public class UploadMultipart {
 		};
 
 		@Override
-		public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
-			super.onLoading(total, current, isUploading, headers);
+		public void onLoading(long total, long current, boolean isUploading) {
+			super.onLoading(total, current, isUploading);
 			time.received = System.currentTimeMillis();
-			Log.e(tag, total + "--*****---" + current + "_+_+_+_+_+_+" + isUploading);
+			// Log.e(tag, total + "--*****---" + current + "_+_+_+_+_+_+" +
+			// isUploading);
 		}
 
 		@Override
@@ -306,7 +306,8 @@ public class UploadMultipart {
 			part.setStatus(Part.PART_SUCCESS);
 			uploadPrecent = (int) ((((double) partSuccessCount / (double) partCount)) * 100);
 			uploadLoadingListener.loading(instance, uploadPrecent, (time.received - time.start), UPLOAD_SUCCESS);
-			Log.e(tag, partSuccessCount + "-----" + partCount + "------" + part.eTag);
+			// Log.e(tag, partSuccessCount + "-----" + partCount + "------" +
+			// part.eTag);
 			if (partSuccessCount == partCount) {
 				time.received = System.currentTimeMillis();
 				completeMultipartUpload();
@@ -315,7 +316,7 @@ public class UploadMultipart {
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
-			Log.e(tag, error + "-----************---" + msg);
+			// Log.e(tag, error + "-----************---" + msg);
 			// instance.isUploadStatus = UPLOAD_FAILED;
 			part.setStatus(Part.PART_FAILED);
 			if (isUploadStatus != UPLOAD_CANCLE) {
@@ -356,9 +357,12 @@ public class UploadMultipart {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			CompleteMultipartUploadResult completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
+			completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
 			isUploadStatus = UPLOAD_SUCCESS;
-			Log.e(tag, completeMultipartUploadResult.location + "---" + completeMultipartUploadResult.bucket + "---" + completeMultipartUploadResult.key + "---" + completeMultipartUploadResult.eTag);
+			// Log.e(tag, completeMultipartUploadResult.location + "---" +
+			// completeMultipartUploadResult.bucket + "---" +
+			// completeMultipartUploadResult.key + "---" +
+			// completeMultipartUploadResult.eTag);
 		};
 
 		@Override

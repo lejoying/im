@@ -4,8 +4,6 @@ import java.io.File;
 
 import org.apache.http.Header;
 
-import android.util.Log;
-
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
@@ -68,23 +66,29 @@ public class DownloadFile {
 		public void onStart() {
 			time.start = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_START;
-			Log.e(tag, "-----start-----");
+			// Log.e(tag, "-----start-----");
 		}
 
 		@Override
-		public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
-			time.received = System.currentTimeMillis();
-			isDownloadStatus = DOWNLOAD_LOADINGING;
-			uploadPrecent = (int) ((((double) current / (double) total)) * 100);
-			downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
-			if (imageBean.size != 0) {
+		public void onConneced(Header[] headers) {
+			if (imageBean.size == 0) {
 				for (int i = 0; i < headers.length; i++) {
 					Header header = headers[i];
 					if (header.getName().equals("Content-Length")) {
 						imageBean.size = Long.valueOf(header.getValue());
+						downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+						break;
 					}
 				}
 			}
+		};
+
+		@Override
+		public void onLoading(long total, long current, boolean isUploading) {
+			time.received = System.currentTimeMillis();
+			isDownloadStatus = DOWNLOAD_LOADINGING;
+			uploadPrecent = (int) ((((double) current / (double) total)) * 100);
+			downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
 		}
 
 		@Override
@@ -92,13 +96,13 @@ public class DownloadFile {
 			time.received = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_SUCCESS;
 			downloadListener.success(instance, isDownloadStatus);
-			Log.e(tag, "-----success-----" + responseInfo.statusCode);
+			// Log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			isDownloadStatus = DOWNLOAD_FAILED;
-			Log.d(tag, "onFailure: -----" + msg);
+			// Log.d(tag, "onFailure: -----" + msg);
 		}
 	};
 

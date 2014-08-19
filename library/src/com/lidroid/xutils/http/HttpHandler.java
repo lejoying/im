@@ -101,7 +101,7 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
 		return this.callback;
 	}
 
-	HttpResponse response;
+	public HttpResponse response;
 
 	// 执行请求
 	@SuppressWarnings("unchecked")
@@ -136,6 +136,7 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
 				if (!isCancelled()) {
 					// TODO response Overall situation
 					response = client.execute(request, context);
+					callback.onConneced(response.getAllHeaders());
 					// Header[] headers = response.getAllHeaders();
 					// for (int i = 0; i < headers.length; i++) {
 					// Header header = headers[i];
@@ -225,7 +226,7 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
 			if (values.length != 3)
 				return;
 			this.state = State.LOADING;
-			callback.onLoading(Long.valueOf(String.valueOf(values[1])), Long.valueOf(String.valueOf(values[2])), isUploading, response.getAllHeaders());
+			callback.onLoading(Long.valueOf(String.valueOf(values[1])), Long.valueOf(String.valueOf(values[2])), isUploading);
 			break;
 		case UPDATE_FAILURE:
 			if (values.length != 3)
