@@ -33,7 +33,7 @@ public class Data {
 			public String path;
 
 			public String contentType;
-			public long size;
+			public long size = 0;
 
 			public UploadMultipart multipart;
 

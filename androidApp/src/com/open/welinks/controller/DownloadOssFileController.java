@@ -25,8 +25,7 @@ import com.open.welinks.view.DownloadOssFileView.TransportingList.TransportingIt
 
 public class DownloadOssFileController {
 	public Data data = Data.getInstance();
-	public static ResponseHandlers responseHandlers = ResponseHandlers
-			.getInstance();
+	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 	public static String tag = "DownloadOssFileController";
 
 	public Runnable animationRunnable;
@@ -50,33 +49,14 @@ public class DownloadOssFileController {
 	public DownloadOssFileController(Activity activity) {
 		this.context = activity;
 		this.thisActivity = activity;
-		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.ic_stub)
-				.showImageForEmptyUri(R.drawable.ic_empty)
-				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
-				.cacheOnDisk(true).considerExifParams(true)
-				.displayer(new RoundedBitmapDisplayer(20)).build();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
 	}
 
 	public void onCreate() {
 		String Oss_Host = "http://images5.we-links.com/mutilpart/";
 		ArrayList<ImageBean> imagesSource = new ArrayList<ImageBean>();
-		paths = new String[] {
-				Oss_Host + "20F5B7FCE06E5CC24B0B875389A55AF11023DC4D.jpg",
-				Oss_Host + "2AFF1954C7B313A9BCE6A56B6CA1DEC77E96A6DC.png",
-				Oss_Host + "2F5791D890001B3D41EB2FFFC5EB1448E1597F91.png",
-				Oss_Host + "3097B1772863E8124BFDCD20F771F6D1547D1A9E.jpg",
-				Oss_Host + "450E249AA2335F7499F6EDEED840A9DEDF01CDDE.jpg",
-				Oss_Host + "957BED54FB76F947B43D66BC324C7A6AA68AD1F6.jpg",
-				Oss_Host + "983EBA49BD1564E3B117059283CE59A5115CED3A.jpg",
-				Oss_Host + "A0DD7F909178445CCDB34394D47D859F17C6A05D.jpg",
-				Oss_Host + "55CCAABEBA40364550841D0E64EE17D663713F87.jpg",
-				Oss_Host + "7905B516EA97EDAC71E6A02DA04392C2B632D6C5.jpg",
-				Oss_Host + "3748A2E00E1FEBCADE100BC8BCA62694D9614618.jpg",
-				Oss_Host + "A0DD7F909178445CCDB34394D47D859F17C6A05D.jpg",
-				Oss_Host + "B750457DD14BFE0D1B92168A5ECD0E8742DA23FE.jpg",
-				Oss_Host + "FD2D8F3F76D7CF2E9B655E0584042CE0CC04532B.jpg",
-				Oss_Host + "ED22A28C7FAA543C22BA428A560836BF80C310FA.jpg" };
+		paths = new String[] { Oss_Host + "20F5B7FCE06E5CC24B0B875389A55AF11023DC4D.jpg", Oss_Host + "2AFF1954C7B313A9BCE6A56B6CA1DEC77E96A6DC.png", Oss_Host + "2F5791D890001B3D41EB2FFFC5EB1448E1597F91.png", Oss_Host + "3097B1772863E8124BFDCD20F771F6D1547D1A9E.jpg", Oss_Host + "450E249AA2335F7499F6EDEED840A9DEDF01CDDE.jpg", Oss_Host + "957BED54FB76F947B43D66BC324C7A6AA68AD1F6.jpg", Oss_Host + "983EBA49BD1564E3B117059283CE59A5115CED3A.jpg", Oss_Host + "A0DD7F909178445CCDB34394D47D859F17C6A05D.jpg", Oss_Host + "55CCAABEBA40364550841D0E64EE17D663713F87.jpg", Oss_Host + "7905B516EA97EDAC71E6A02DA04392C2B632D6C5.jpg", Oss_Host + "3748A2E00E1FEBCADE100BC8BCA62694D9614618.jpg", Oss_Host + "A0DD7F909178445CCDB34394D47D859F17C6A05D.jpg", Oss_Host + "B750457DD14BFE0D1B92168A5ECD0E8742DA23FE.jpg",
+				Oss_Host + "FD2D8F3F76D7CF2E9B655E0584042CE0CC04532B.jpg", Oss_Host + "ED22A28C7FAA543C22BA428A560836BF80C310FA.jpg" };
 		int start = data.localStatus.localData.prepareDownloadImagesList.size();
 		for (int i = start; i < start + 3; i++) {
 			ImageBean bean = data.tempData.new ImageBean();
@@ -84,8 +64,7 @@ public class DownloadOssFileController {
 			imagesSource.add(bean);
 		}
 		if (imagesSource != null) {
-			data.localStatus.localData.prepareDownloadImagesList
-					.addAll(imagesSource);
+			data.localStatus.localData.prepareDownloadImagesList.addAll(imagesSource);
 		}
 	}
 
@@ -95,8 +74,7 @@ public class DownloadOssFileController {
 			@Override
 			public void onClick(View v) {
 				if (v.equals(thisView.addMonyImageUploadView)) {
-					if (data.localStatus.localData.prepareDownloadImagesList
-							.size() < paths.length) {
+					if (data.localStatus.localData.prepareDownloadImagesList.size() < paths.length) {
 						onCreate();
 						initializeListeners();
 						thisView.initView();
@@ -111,10 +89,7 @@ public class DownloadOssFileController {
 			@Override
 			public void success(DownloadFile instance, int status) {
 				// TODO
-				instance.transportingItem.text_file_size_view
-						.setText(instance.imageBean.size / 1000 + "k");
-				String fileName = instance.url.substring(instance.url
-						.lastIndexOf("/") + 1);
+				String fileName = instance.url.substring(instance.url.lastIndexOf("/") + 1);
 				int index = fileName.lastIndexOf(".");
 				String suffixName = fileName.substring(index);
 				if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
@@ -124,17 +99,15 @@ public class DownloadOssFileController {
 				}
 				fileName = fileName.substring(0, index) + suffixName;
 				File file = new File(sdFile, "test0/" + fileName);
-				imageLoader.displayImage("file://" + file.getAbsolutePath(),
-						instance.transportingItem.imageView, options);
+				imageLoader.displayImage("file://" + file.getAbsolutePath(), instance.transportingItem.imageView, options);
 			}
 
 			@Override
 			public void loading(DownloadFile instance, int precent, int status) {
 				// TODO
 				instance.transportingItem.controlProgress.moveTo(precent);
-				instance.transportingItem.text_transport_time_view
-						.setText((instance.time.received - instance.time.start)
-								+ "ms");
+				instance.transportingItem.text_transport_time_view.setText((instance.time.received - instance.time.start) + "ms");
+				instance.transportingItem.text_file_size_view.setText(instance.imageBean.size / 1000 + "k");
 			}
 		};
 	}
@@ -143,8 +116,7 @@ public class DownloadOssFileController {
 		thisView.addMonyImageUploadView.setOnClickListener(onClickListener);
 		ArrayList<TransportingItem> transportingList = thisView.transportingList.transportingItems;
 		for (int i = 0; i < transportingList.size() - 1; i++) {
-			transportingList.get(i).downloadFile
-					.setDownloadFileListener(downloadListener);
+			transportingList.get(i).downloadFile.setDownloadFileListener(downloadListener);
 		}
 	}
 
@@ -178,8 +150,7 @@ public class DownloadOssFileController {
 		}
 		fileName = fileName.substring(0, index) + suffixName;
 		File file = new File(sdFile, "test0/" + fileName);
-		DownloadFile downloadFile = new DownloadFile(url,
-				file.getAbsolutePath());
+		DownloadFile downloadFile = new DownloadFile(url, file.getAbsolutePath());
 		downloadFileList.addDownloadFile(downloadFile);
 		return downloadFile;
 	}

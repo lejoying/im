@@ -15,6 +15,9 @@
 
 package com.lidroid.xutils.http.callback;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 
@@ -82,7 +85,7 @@ public abstract class RequestCallBack<T> {
 	public void onCancelled() {
 	}
 
-	public void onLoading(long total, long current, boolean isUploading) {
+	public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
 	}
 
 	public abstract void onSuccess(ResponseInfo<T> responseInfo);

@@ -1,5 +1,7 @@
 package com.open.lib;
 
+import org.apache.http.Header;
+
 import android.util.Log;
 
 import com.lidroid.xutils.HttpUtils;
@@ -41,27 +43,23 @@ public class HttpClient {
 		public void onStart() {
 			timeLine.start = System.currentTimeMillis();
 			timeLine.received = System.currentTimeMillis();
-			Log.d(tag, "timeline: " + (timeLine.received - timeLine.start)
-					+ "ms  onStart");
+			Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  onStart");
 		}
 
 		@Override
-		public void onLoading(long total, long current, boolean isUploading) {
+		public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
 			timeLine.received = System.currentTimeMillis();
 			if (isUploading) {
-				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start)
-						+ "ms  onLoading upload: " + current + "/" + total);
+				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  onLoading upload: " + current + "/" + total);
 			} else {
-				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start)
-						+ "ms  onLoading reply: " + current + "/" + total);
+				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  onLoading reply: " + current + "/" + total);
 			}
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<T> responseInfo) {
 			timeLine.received = System.currentTimeMillis();
-			Log.d(tag, "timeline: " + (timeLine.received - timeLine.start)
-					+ "ms   onSuccess: " + responseInfo.result);
+			Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms   onSuccess: " + responseInfo.result);
 		}
 
 		@Override
@@ -87,24 +85,19 @@ public class HttpClient {
 		ResponseHandler<String> requestCallBack = new ResponseHandler<String>() {
 
 			@Override
-			public void onLoading(long total, long current, boolean isUploading) {
+			public void onLoading(long total, long current, boolean isUploading, Header[] headers) {
 				timeLine.received = System.currentTimeMillis();
 				if (isUploading) {
-					Log.d(tag, "timeline: "
-							+ (timeLine.received - timeLine.start)
-							+ "ms  upload: " + current + "/" + total);
+					Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  upload: " + current + "/" + total);
 				} else {
-					Log.d(tag, "timeline: "
-							+ (timeLine.received - timeLine.start)
-							+ "ms  reply: " + current + "/" + total);
+					Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms  reply: " + current + "/" + total);
 				}
 			}
 
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
 				timeLine.received = System.currentTimeMillis();
-				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start)
-						+ "ms   reply: " + responseInfo.result);
+				Log.d(tag, "timeline: " + (timeLine.received - timeLine.start) + "ms   reply: " + responseInfo.result);
 				super.onSuccess(responseInfo);
 			}
 
