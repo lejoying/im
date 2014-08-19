@@ -89,15 +89,7 @@ public class DownloadOssFileController {
 			@Override
 			public void success(DownloadFile instance, int status) {
 				// TODO
-				String fileName = instance.url.substring(instance.url.lastIndexOf("/") + 1);
-				int index = fileName.lastIndexOf(".");
-				String suffixName = fileName.substring(index);
-				if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
-					suffixName = ".osj";
-				} else if (suffixName.equals(".png")) {
-					suffixName = ".osp";
-				}
-				fileName = fileName.substring(0, index) + suffixName;
+				String fileName = urlToLocalFileName(instance.url);
 				File file = new File(sdFile, "test0/" + fileName);
 				imageLoader.displayImage("file://" + file.getAbsolutePath(), instance.transportingItem.imageView, options);
 			}
@@ -140,6 +132,14 @@ public class DownloadOssFileController {
 	public File sdFile = Environment.getExternalStorageDirectory();
 
 	public DownloadFile downloadFile(String url) {
+		String fileName = urlToLocalFileName(url);
+		File file = new File(sdFile, "test0/" + fileName);
+		DownloadFile downloadFile = new DownloadFile(url, file.getAbsolutePath());
+		downloadFileList.addDownloadFile(downloadFile);
+		return downloadFile;
+	}
+
+	public String urlToLocalFileName(String url) {
 		String fileName = url.substring(url.lastIndexOf("/") + 1);
 		int index = fileName.lastIndexOf(".");
 		String suffixName = fileName.substring(index);
@@ -149,9 +149,6 @@ public class DownloadOssFileController {
 			suffixName = ".osp";
 		}
 		fileName = fileName.substring(0, index) + suffixName;
-		File file = new File(sdFile, "test0/" + fileName);
-		DownloadFile downloadFile = new DownloadFile(url, file.getAbsolutePath());
-		downloadFileList.addDownloadFile(downloadFile);
-		return downloadFile;
+		return fileName;
 	}
 }

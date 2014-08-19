@@ -90,8 +90,8 @@ public class DownloadFile {
 		@Override
 		public void onSuccess(ResponseInfo<File> responseInfo) {
 			time.received = System.currentTimeMillis();
-			downloadListener.success(instance, isDownloadStatus);
 			isDownloadStatus = DOWNLOAD_SUCCESS;
+			downloadListener.success(instance, isDownloadStatus);
 			Log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 
