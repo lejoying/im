@@ -15,77 +15,77 @@
 
 package com.lidroid.xutils.http.callback;
 
-
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 
 public abstract class RequestCallBack<T> {
 
-    private static final int DEFAULT_RATE = 1000;
+	// loading run rate
+	private static final int DEFAULT_RATE = 100;
 
-    private static final int MIN_RATE = 200;
+	private static final int MIN_RATE = 100;
 
-    private String requestUrl;
+	private String requestUrl;
 
-    protected Object userTag;
+	protected Object userTag;
 
-    public RequestCallBack() {
-        this.rate = DEFAULT_RATE;
-    }
+	public RequestCallBack() {
+		this.rate = DEFAULT_RATE;
+	}
 
-    public RequestCallBack(int rate) {
-        this.rate = rate;
-    }
+	public RequestCallBack(int rate) {
+		this.rate = rate;
+	}
 
-    public RequestCallBack(Object userTag) {
-        this.rate = DEFAULT_RATE;
-        this.userTag = userTag;
-    }
+	public RequestCallBack(Object userTag) {
+		this.rate = DEFAULT_RATE;
+		this.userTag = userTag;
+	}
 
-    public RequestCallBack(int rate, Object userTag) {
-        this.rate = rate;
-        this.userTag = userTag;
-    }
+	public RequestCallBack(int rate, Object userTag) {
+		this.rate = rate;
+		this.userTag = userTag;
+	}
 
-    private int rate;
+	private int rate;
 
-    public final int getRate() {
-        if (rate < MIN_RATE) {
-            return MIN_RATE;
-        }
-        return rate;
-    }
+	public final int getRate() {
+		if (rate < MIN_RATE) {
+			return MIN_RATE;
+		}
+		return rate;
+	}
 
-    public final void setRate(int rate) {
-        this.rate = rate;
-    }
+	public final void setRate(int rate) {
+		this.rate = rate;
+	}
 
-    public Object getUserTag() {
-        return userTag;
-    }
+	public Object getUserTag() {
+		return userTag;
+	}
 
-    public void setUserTag(Object userTag) {
-        this.userTag = userTag;
-    }
+	public void setUserTag(Object userTag) {
+		this.userTag = userTag;
+	}
 
-    public final String getRequestUrl() {
-        return requestUrl;
-    }
+	public final String getRequestUrl() {
+		return requestUrl;
+	}
 
-    public final void setRequestUrl(String requestUrl) {
-        this.requestUrl = requestUrl;
-    }
+	public final void setRequestUrl(String requestUrl) {
+		this.requestUrl = requestUrl;
+	}
 
-    public void onStart() {
-    }
+	public void onStart() {
+	}
 
-    public void onCancelled() {
-    }
+	public void onCancelled() {
+	}
 
-    public void onLoading(long total, long current, boolean isUploading) {
-    }
+	public void onLoading(long total, long current, boolean isUploading) {
+	}
 
-    public abstract void onSuccess(ResponseInfo<T> responseInfo);
+	public abstract void onSuccess(ResponseInfo<T> responseInfo);
 
-    public abstract void onFailure(HttpException error, String msg);
+	public abstract void onFailure(HttpException error, String msg);
 }

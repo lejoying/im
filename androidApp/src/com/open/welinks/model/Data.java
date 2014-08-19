@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.open.welinks.controller.ImagesDirectoryController.ImageBean;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.controller.UploadMultipart;
+import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Data {
 
@@ -22,6 +24,21 @@ public class Data {
 
 	public class TempData {
 		public ArrayList<ImageBean> prepareUploadImages;
+
+		public ArrayList<String> prepareDownloadImages;
+
+		public class ImageBean {
+
+			public String parentName;
+			public String path;
+
+			public String contentType;
+			public long size;
+
+			public UploadMultipart multipart;
+
+			public DownloadFile downloadFile;
+		}
 	}
 
 	public LocalStatus localStatus = new LocalStatus();
@@ -31,6 +48,13 @@ public class Data {
 		public String thisActivityStatus = "";
 
 		public String debugMode = "NONE";// NONE
+
+		public LocalData localData = new LocalData();
+
+		public class LocalData {
+			public ArrayList<ImageBean> prepareUploadImagesList = new ArrayList<ImageBean>();
+			public ArrayList<ImageBean> prepareDownloadImagesList = new ArrayList<ImageBean>();
+		}
 	}
 
 	public UserInformation userInformation;

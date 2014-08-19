@@ -33,7 +33,7 @@ public class HttpClient {
 		public long received = 0; // 5
 	}
 
-	public class ResponseHandler extends RequestCallBack<String> {
+	public class ResponseHandler<T> extends RequestCallBack<T> {
 
 		TimeLine timeLine = new TimeLine();
 
@@ -58,7 +58,7 @@ public class HttpClient {
 		}
 
 		@Override
-		public void onSuccess(ResponseInfo<String> responseInfo) {
+		public void onSuccess(ResponseInfo<T> responseInfo) {
 			timeLine.received = System.currentTimeMillis();
 			Log.d(tag, "timeline: " + (timeLine.received - timeLine.start)
 					+ "ms   onSuccess: " + responseInfo.result);
@@ -84,7 +84,7 @@ public class HttpClient {
 		String url2 = "http://192.168.1.92/api2/relation/intimatefriends";
 
 		final TimeLine timeLine = new TimeLine();
-		ResponseHandler requestCallBack = new ResponseHandler() {
+		ResponseHandler<String> requestCallBack = new ResponseHandler<String>() {
 
 			@Override
 			public void onLoading(long total, long current, boolean isUploading) {

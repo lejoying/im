@@ -26,9 +26,9 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
 import com.open.welinks.controller.Debug1Controller;
-import com.open.welinks.controller.ImagesDirectoryController.ImageBean;
 import com.open.welinks.controller.UploadMultipart;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Debug1View {
 	public Data data = Data.getInstance();
@@ -102,11 +102,13 @@ public class Debug1View {
 		}
 
 		public void setContent() {
-			for (int i = 0; i < thisController.prepareUploadFiles.size(); i++) {
+			for (int i = 0; i < data.localStatus.localData.prepareUploadImagesList
+					.size(); i++) {
 				TransportingItem transportingItem = new TransportingItem();
 				transportingItems.add(transportingItem);
 
-				ImageBean imageBean = thisController.prepareUploadFiles.get(i);
+				ImageBean imageBean = data.localStatus.localData.prepareUploadImagesList
+						.get(i);
 
 				View transportingItemView = transportingItem
 						.initialize(imageBean);

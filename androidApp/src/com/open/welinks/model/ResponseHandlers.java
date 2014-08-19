@@ -31,7 +31,7 @@ public class ResponseHandlers {
 
 	public HttpClient httpClient = HttpClient.getInstance();
 
-	public ResponseHandler auth = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> auth = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -39,7 +39,7 @@ public class ResponseHandlers {
 		}
 	};
 
-	public ResponseHandler register = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> register = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -49,7 +49,7 @@ public class ResponseHandlers {
 
 	Gson gson = new Gson();
 
-	public ResponseHandler getIntimateFriends = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> getIntimateFriends = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
@@ -73,7 +73,7 @@ public class ResponseHandlers {
 		}
 	};
 
-	public ResponseHandler upload = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> upload = httpClient.new ResponseHandler<String>() {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Log.e(tag, responseInfo + "-------------");
@@ -84,7 +84,7 @@ public class ResponseHandlers {
 		}
 	};
 
-	public ResponseHandler checkFile = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> checkFile = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;

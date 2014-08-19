@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.open.welinks.Debug1Activity;
 import com.open.welinks.ImageGridActivity;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.view.ImagesDirectoryView;
 import com.open.welinks.view.ImagesDirectoryView.MyGridViewAdapter;
 
@@ -117,17 +118,6 @@ public class ImagesDirectoryController {
 		}
 	}
 
-	public class ImageBean {
-
-		public String parentName;
-		public String path;
-
-		public String contentType;
-		public String size;
-
-		public UploadMultipart multipart;
-	}
-
 	private void getImages() {
 		new Thread(new Runnable() {
 
@@ -159,13 +149,13 @@ public class ImagesDirectoryController {
 						mGruopMap.get(parentName).add(path);
 					}
 
-					ImageBean imageBean = new ImageBean();
+					ImageBean imageBean = data.tempData.new ImageBean();
 
 					imageBean.parentName = parentName;
 					imageBean.path = path;
 
 					imageBean.contentType = contentType;
-					imageBean.size = size + "";
+					imageBean.size = size;
 
 					// HashMap<String, String> imageDescription = new
 					// HashMap<String, String>();

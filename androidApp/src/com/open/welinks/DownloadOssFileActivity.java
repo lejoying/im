@@ -1,26 +1,20 @@
 package com.open.welinks;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.lib.HttpClient;
 import com.open.welinks.controller.DownloadOssFileController;
+import com.open.welinks.model.Data;
 import com.open.welinks.view.DownloadOssFileView;
 import com.open.welinks.view.ViewManage;
 
 public class DownloadOssFileActivity extends Activity {
-
+	public Data data = Data.getInstance();
 	public String tag = "DownloadOssFileActivity";
 
 	public Context context;
@@ -28,7 +22,7 @@ public class DownloadOssFileActivity extends Activity {
 	public DownloadOssFileController thisController;
 	public Activity thisActivity;
 
-	public ViewManage viewManage = ViewManage.getInstance();
+	public ViewManage viewManager = ViewManage.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +30,7 @@ public class DownloadOssFileActivity extends Activity {
 		linkViewController();
 	}
 
-	public void linkViewController() {
+	void linkViewController() {
 		this.thisActivity = this;
 		this.context = this;
 		this.thisView = new DownloadOssFileView(thisActivity);
@@ -44,52 +38,39 @@ public class DownloadOssFileActivity extends Activity {
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 
-		viewManage.downloadOssFileView = this.thisView;
+		viewManager.downloadOssFileView = this.thisView;
 
+		thisController.onCreate();
+		thisController.initializeListeners();
 		thisView.initView();
-		test();
-
-		// thisView.initView();
-		// thisController.onCreate();
-		// thisController.initializeListeners();
-		// thisController.bindEvent();
+		thisController.bindEvent();
 	}
 
-	public class ResponseHandler0 extends RequestCallBack<File> {
-
-		@Override
-		public void onStart() {
-			Log.e(tag, "-----start-----");
-
-		}
-
-		@Override
-		public void onLoading(long total, long current, boolean isUploading) {
-			Log.e(tag, current + "-----" + total + "-----" + isUploading);
-		}
-
-		@Override
-		public void onSuccess(ResponseInfo<File> responseInfo) {
-			Log.e(tag, "-----success-----" + responseInfo.statusCode);
-		}
-
-		@Override
-		public void onFailure(HttpException error, String msg) {
-			Log.d(tag, "onFailure: -----" + msg);
-		}
-	};
-
-	HttpClient httpClient = HttpClient.getInstance();
-	public ResponseHandler0 download = new ResponseHandler0() {
-
-	};
-
-	public void test() {
-//		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		String requestUri = "http://images5.we-links.com/mutilpart/20F5B7FCE06E5CC24B0B875389A55AF11023DC4D.jpg";
-		httpUtils.download(requestUri, Environment
-				.getExternalStorageDirectory().getAbsolutePath() + "/song.jpg",
-				download);
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_debug_2, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return thisController.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		return thisController.onKeyDown(keyCode, event);
+	}
+
 }

@@ -119,7 +119,7 @@ public class TestMultipartUpload extends Activity {
 		httpUtils.send(HttpMethod.POST, url, params, initUpload);
 	}
 
-	public ResponseHandler initUpload = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> initUpload = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -138,7 +138,7 @@ public class TestMultipartUpload extends Activity {
 		};
 	};
 
-	public static ResponseHandler inittingUpload = httpClient.new ResponseHandler() {
+	public static ResponseHandler<String> inittingUpload = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -155,7 +155,7 @@ public class TestMultipartUpload extends Activity {
 			// }
 		};
 	};
-	public static ResponseHandler completeUpload = httpClient.new ResponseHandler() {
+	public static ResponseHandler<String> completeUpload = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {

@@ -30,9 +30,9 @@ import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.TestHttp;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
-import com.open.welinks.controller.ImagesDirectoryController.ImageBean;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.SHA1;
@@ -64,7 +64,8 @@ public class Debug1Controller {
 
 	public OnClickListener onClickListener;
 
-	public ArrayList<ImageBean> prepareUploadFiles = new ArrayList<ImageBean>();
+	// public ArrayList<ImageBean> prepareUploadFiles = new
+	// ArrayList<ImageBean>();
 
 	public Debug1Controller(Activity activity) {
 		this.context = activity;
@@ -77,7 +78,8 @@ public class Debug1Controller {
 		ArrayList<ImageBean> imagesSource = data.tempData.prepareUploadImages;
 		data.tempData.prepareUploadImages = null;
 		if (imagesSource != null) {
-			this.prepareUploadFiles.addAll(imagesSource);
+			data.localStatus.localData.prepareUploadImagesList
+					.addAll(imagesSource);
 		}
 	}
 

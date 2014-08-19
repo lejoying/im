@@ -165,7 +165,7 @@ public class UploadMultipart {
 		httpHandler = httpUtils.send(HttpMethod.POST, url, params, initUpload);
 	}
 
-	public ResponseHandler initUpload = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> initUpload = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -282,7 +282,7 @@ public class UploadMultipart {
 	public TimeLine time = new TimeLine();
 	public int uploadPrecent;
 
-	class UploadResponseHandler extends ResponseHandler {
+	class UploadResponseHandler extends ResponseHandler<String> {
 
 		UploadResponseHandler() {
 			httpClient.super();
@@ -364,7 +364,7 @@ public class UploadMultipart {
 		httpUtils.send(HttpMethod.POST, url, params, completeUpload);
 	}
 
-	public ResponseHandler completeUpload = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> completeUpload = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {

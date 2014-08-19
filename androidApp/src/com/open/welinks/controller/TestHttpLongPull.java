@@ -36,7 +36,7 @@ public class TestHttpLongPull extends Activity {
 		httpUtils.send(HttpMethod.POST, url, params, test);
 	}
 
-	public ResponseHandler test = httpClient.new ResponseHandler() {
+	public ResponseHandler<String> test = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
