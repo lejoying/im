@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
+    android:background="@drawable/background"
     tools:context=".UserIntimateActivity" >
 
     <include layout="@layout/activity_userintimate_title" >
@@ -12,8 +12,8 @@
         android:id="@+id/rl_userMenuOptions"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="50dp" >
 
         <RelativeLayout
@@ -72,8 +72,8 @@
             android:id="@+id/pager_indicator"
             android:layout_width="110dp"
             android:layout_height="2dp"
-            android:layout_alignParentBottom="true"
-            android:background="#fff"
+            android:background="#38ffffff"
+            android:translationY="2dp"
             android:visibility="visible" >
         </ImageView>
     </RelativeLayout>

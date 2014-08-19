@@ -14,7 +14,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -24,7 +23,6 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.facebook.rebound.ui.Util;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
@@ -32,13 +30,15 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.utils.MCImageUtils;
 
+import com.open.lib.viewbody.PagerBody;
+
 public class UserIntimateView {
 
 	public Data data = Data.getInstance();
 
 	public String tag = "UserIntimateView";
 
-	DisplayMetrics displayMetrics;
+	public DisplayMetrics displayMetrics;
 
 	public UserIntimateController thisController;
 	public Context context;
@@ -68,7 +68,7 @@ public class UserIntimateView {
 	public Map<String, CircleBody> viewsMap = new HashMap<String, CircleBody>();
 	public MyListBody myListBody;
 
-	public MyPagerBody myPagerBody;
+	public PagerBody myPagerBody;
 
 	public Map<String, CircleHolder> circleHolders = new Hashtable<String, CircleHolder>();
 
@@ -141,9 +141,9 @@ public class UserIntimateView {
 
 		userInfomationContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
 
-		myPagerBody = new MyPagerBody();
+		myPagerBody = new PagerBody();
 		myPagerBody.pager_indicator = pager_indicator;
-		myPagerBody.initialize();
+		myPagerBody.initialize(displayMetrics);
 
 		myPagerBody.addChildView(chatMessagesListContentView);
 		myPagerBody.addChildView(intimateFriendsContentView);
@@ -162,17 +162,13 @@ public class UserIntimateView {
 
 		double value = mSpring.getCurrentValue();
 
-		if (thisController.touchMoveStatus.state == thisController.touchMoveStatus.Up) {
+		if (thisController.touchStatus.state == thisController.touchStatus.Up) {
 			if (myPagerBody.status.state == myPagerBody.status.FIXED && myListBody.status.state == myListBody.status.DRAGGING) {
 				double deltaY = value * ratio * speedY * speedY;
 				if (speedY < 0) {
 					deltaY = -deltaY;
 				}
 				myListBody.setChildrenPosition(0, (float) deltaY);
-			} else if (myPagerBody.status.state == myPagerBody.status.HOMING) {
-
-				double deltaX = -displayMetrics.widthPixels * value;
-				myPagerBody.setChildrenPosition((float) deltaX, 0);
 			}
 		} else {
 			Log.d(tag, "render skip");
@@ -182,55 +178,7 @@ public class UserIntimateView {
 	public void stopChange() {
 		if (myPagerBody.status.state == myPagerBody.status.FIXED && myListBody.status.state == myListBody.status.DRAGGING) {
 			myListBody.status.state = myListBody.status.FIXED;
-		} else if (myPagerBody.status.state == myPagerBody.status.HOMING) {
-			Log.d(tag, "stopChange myPagerBody.status.FIXED");
-			// myPagerBody.recordChildrenPosition();
-			myPagerBody.status.state = myPagerBody.status.FIXED;
-			myPagerBody.pageIndex = myPagerBody.nextPageIndex;
 		}
-	}
-
-	public void notifyViews() {
-
-		// intimateFriendsContentView.removeAllViews();
-		//
-		// circles = data.relationship.circles;
-		// circlesMap = data.relationship.circlesMap;
-		// friendsMap = data.relationship.friendsMap;
-		//
-		// userHeadImageView.setImageBitmap(MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(),
-		// R.drawable.face_man), true, 5, Color.WHITE));
-		// userNickNameView.setText(data.userInformation.currentUser.nickName);
-		// userBusinessView.setText(data.userInformation.currentUser.mainBusiness);
-		// // generate circle page views
-		// generateViews();
-		// // init circle page views position
-		// int top = 0;
-		// for (int i = 0; i < normalShow.size(); i++) {
-		// View v = viewsMap.get(normalShow.get(i));
-		// if (v.getParent() == null) {
-		// intimateFriendsContentView.addView(v, i);
-		// }
-		// int height = (int) dp2px(((Integer) v.getTag()).floatValue());
-		// RelativeLayout.LayoutParams layoutParams = new
-		// RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-		// LayoutParams.WRAP_CONTENT);
-		// if (i == normalShow.size() - 1) {
-		// layoutParams.setMargins(layoutParams.leftMargin, top + 10,
-		// layoutParams.rightMargin, 50);
-		// } else {
-		// layoutParams.setMargins(layoutParams.leftMargin, top,
-		// layoutParams.rightMargin, -Integer.MAX_VALUE);
-		// }
-		// if (i < 2) {
-		// top = top + height + 10;
-		// } else {
-		// top = top + height;
-		// }
-		// // v.setTranslationY(top);
-		// // v.setY(top);
-		// v.setLayoutParams(layoutParams);
-		// }
 	}
 
 	public void showCircles() {
@@ -253,7 +201,7 @@ public class UserIntimateView {
 			this.myListBody.circleBodiesMap.put("circle#" + circle.rid, circleBody);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (260 * displayMetrics.density));
-			circleBody.cardView.setY(280 * displayMetrics.density * i);
+			circleBody.cardView.setY(270 * displayMetrics.density * i + 8 * displayMetrics.density);
 			circleBody.cardView.setX(0);
 
 			this.myListBody.intimateFriendsContentView.addView(circleBody.cardView, layoutParams);
@@ -364,128 +312,6 @@ public class UserIntimateView {
 		public View initialize(View myPagerItemView) {
 			this.myPagerItemView = myPagerItemView;
 			return this.myPagerItemView;
-		}
-	}
-
-	public class MyPagerBody {
-		public List<MyPagerItemBody> childrenBodys = new ArrayList<MyPagerItemBody>();
-		public ImageView pager_indicator;
-		int pager_indicator_trip = 0;
-
-		public int pageIndex = 0;
-		int nextPageIndex = 0;
-		public float pre_x = 0;
-		public float x = 0;
-
-		float deltaX = 0;
-
-		public class Status {
-			public int FIXED = 0, DRAGGING = 1, HOMING = 2;
-			public int state = FIXED;
-		}
-
-		public Status status = new Status();
-
-		public View initialize() {
-
-			pager_indicator_trip = (int) (displayMetrics.widthPixels - (0 * displayMetrics.density)) / 3;
-			ViewGroup.LayoutParams params = pager_indicator.getLayoutParams();
-			params.height = (int) (1.8 * displayMetrics.density);
-			params.width = pager_indicator_trip;
-			pager_indicator.setLayoutParams(params);
-			return null;
-		}
-
-		public void addChildView(View childView) {
-			int index = childrenBodys.size();
-
-			MyPagerItemBody childBody = new MyPagerItemBody();
-			childBody.initialize(childView);
-			childBody.x = index * displayMetrics.widthPixels;
-
-			childView.setX(childBody.x);
-			childView.setVisibility(View.VISIBLE);
-
-			childrenBodys.add(childBody);
-		}
-
-		public void recordChildrenPosition() {
-			pre_x = x;
-			for (MyPagerItemBody childBody : this.childrenBodys) {
-				childBody.pre_x = childBody.myPagerItemView.getX();
-			}
-		}
-
-		public void setChildrenDeltaPosition(float deltaX, float deltaY) {
-			this.x = this.pre_x + deltaX;
-
-			float pager_indicator_position = -(this.pre_x + deltaX) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
-			pager_indicator.setX(pager_indicator_position);
-			for (MyPagerItemBody childBody : this.childrenBodys) {
-				childBody.myPagerItemView.setX(childBody.pre_x + deltaX);
-			}
-		}
-
-		public void setChildrenPosition(float x, float y) {
-			this.x = x;
-
-			float pager_indicator_position = -(x) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
-			pager_indicator.setX(pager_indicator_position);
-
-			for (MyPagerItemBody childBody : this.childrenBodys) {
-				childBody.myPagerItemView.setX(childBody.x + x);
-			}
-		}
-
-		public void homing() {
-			if (status.state == status.DRAGGING) {
-
-				status.state = status.HOMING;
-				nextPageIndex = Math.round(-x / displayMetrics.widthPixels);
-
-				mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
-
-				int size = childrenBodys.size();
-				if (nextPageIndex > size - 1) {
-					nextPageIndex = size - 1;
-				}
-				if (nextPageIndex < 0) {
-					nextPageIndex = 0;
-				}
-
-				mSpring.setEndValue(nextPageIndex);
-
-			}
-		}
-
-		public void flip(int step) {
-			mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
-			this.nextPageIndex = this.nextPageIndex + step;
-			int size = childrenBodys.size();
-			if (nextPageIndex > size - 1) {
-				nextPageIndex = size - 1;
-			}
-			if (nextPageIndex < 0) {
-				nextPageIndex = 0;
-			}
-			mSpring.setEndValue(nextPageIndex);
-		}
-
-		public void flipTo(int toIndex) {
-			if (toIndex != this.nextPageIndex) {
-				Log.d(tag, "flipTo: " + toIndex);
-				status.state = status.HOMING;
-				mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
-				this.nextPageIndex = toIndex;
-				int size = childrenBodys.size();
-				if (nextPageIndex > size - 1) {
-					nextPageIndex = size - 1;
-				}
-				if (nextPageIndex < 0) {
-					nextPageIndex = 0;
-				}
-				mSpring.setEndValue(nextPageIndex);
-			}
 		}
 	}
 
