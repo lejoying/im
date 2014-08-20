@@ -22,7 +22,7 @@ public class ListBody {
 	public Spring mSpring;
 	public PagerSpringListener mPagerSpringListener;
 
-	public SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(5, 7);
+	public SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(8, 7);
 
 	public View initialize(DisplayMetrics displayMetrics, View containerView) {
 		this.displayMetrics = displayMetrics;
@@ -53,8 +53,8 @@ public class ListBody {
 	public class MyListItemBody {
 		public View myListItemView = null;
 
-		public float x;
-		public float y;
+		public float x = 0;
+		public float y = 0;
 
 		public float pre_x = 0;
 		public float pre_y = 0;
@@ -164,6 +164,7 @@ public class ListBody {
 		}
 		if (touchStatus.state == touchStatus.Horizontal) {
 		} else {
+
 			Log.e("onTouchEvent", "unkown status: touchMoveStatus.Up");
 		}
 	}
@@ -172,7 +173,9 @@ public class ListBody {
 		if (isActive == false) {
 			return;
 		}
-
+		if (this.bodyStatus.state == this.bodyStatus.DRAGGING || this.bodyStatus.state == this.bodyStatus.FIXED) {
+			sliding(0);
+		}
 		touchStatus.state = touchStatus.Up;
 	}
 
@@ -232,11 +235,11 @@ public class ListBody {
 	}
 
 	public void setChildrenPosition(float x, float y) {
-		this.x = y;
+		this.x = x;
 		this.y = y;
 		for (int i = 0; i < listItemsSequence.size(); i++) {
 			MyListItemBody myListItemBody = listItemBodiesMap.get(listItemsSequence.get(i));
-			myListItemBody.myListItemView.setX(myListItemBody.x + x);
+			// myListItemBody.myListItemView.setX(myListItemBody.x + x);
 			myListItemBody.myListItemView.setY(myListItemBody.y + y);
 		}
 	}
@@ -249,6 +252,13 @@ public class ListBody {
 			endValue = currentValue + this.ratio * speedY * speedY / displayMetrics.heightPixels;
 		} else {
 			endValue = currentValue - this.ratio * speedY * speedY / displayMetrics.heightPixels;
+		}
+		if (endValue > 0) {
+			endValue = 0;
+		}
+
+		if (endValue < -(this.height - displayMetrics.heightPixels + 110 * displayMetrics.density) / displayMetrics.heightPixels) {
+			endValue = -(this.height - displayMetrics.heightPixels + 110 * displayMetrics.density) / displayMetrics.heightPixels;
 		}
 
 		this.mSpring.setCurrentValue(currentValue);

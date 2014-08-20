@@ -138,6 +138,9 @@ public class UserIntimateView {
 		public void onStart(String bodyTag, float variable) {
 			if (bodyTag.equals("PagerBody")) {
 				thisView.friendListBody.inActive();
+				if (variable == 2) {
+					thisController.mScaleSpring.setEndValue(1);
+				}
 			}
 		}
 
@@ -151,7 +154,7 @@ public class UserIntimateView {
 					thisView.friendListBody.active();
 				} else if (variable == 2) {
 					thisView.activityStatus.state = thisView.activityStatus.ME;
-
+					thisController.mScaleSpring.setEndValue(0);
 				}
 			}
 
