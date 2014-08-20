@@ -48,6 +48,8 @@ public class UserIntimateController {
 
 	public String userPhone;
 
+	// public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	// public Spring mScaleSpring = mSpringSystem.createSpring();
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
 
 	public void oncreate() {
@@ -71,11 +73,11 @@ public class UserIntimateController {
 	}
 
 	public void onResume() {
-		thisView.mScaleSpring.addListener(mSpringListener);
+		thisView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 	}
 
 	public void onPause() {
-		thisView.mScaleSpring.removeListener(mSpringListener);
+		thisView.mMePageAppIconScaleSpring.removeListener(mSpringListener);
 	}
 
 	private class ExampleSpringListener extends SimpleSpringListener {
@@ -107,16 +109,15 @@ public class UserIntimateController {
 	}
 
 	public void initializeListeners() {
-
 		onTouchListener = new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
-					thisView.mScaleSpring.setEndValue(1);
+					thisView.mMePageAppIconScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-					thisView.mScaleSpring.setEndValue(0);
+					thisView.mMePageAppIconScaleSpring.setEndValue(0);
 				}
 				return true;
 			}
@@ -127,13 +128,10 @@ public class UserIntimateController {
 			public void onClick(View view) {
 				if (view.equals(thisView.chatMessagesListMenuOptionView)) {
 					thisView.myPagerBody.flipTo(0);
-					thisView.currentShowContentView = thisView.chatMessagesListContentView;
 				} else if (view.equals(thisView.intimateFriendsMenuOptionView)) {
 					thisView.myPagerBody.flipTo(1);
-					thisView.currentShowContentView = thisView.intimateFriendsContentView;
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
 					thisView.myPagerBody.flipTo(2);
-					thisView.currentShowContentView = thisView.userInfomationContentView;
 				} else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
@@ -157,36 +155,19 @@ public class UserIntimateController {
 
 	public boolean onTouchEvent(MotionEvent event) {
 
-		if (thisView.currentShowContentView.equals(thisView.userInfomationContentView)) {
-			return true;
-		}
-		boolean isActive = false;
-		if (thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
-			isActive = true;
-		} else if (thisView.currentShowContentView.equals(thisView.chatMessagesListContentView)) {
-			isActive = false;
-		}
-
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			thisView.myPagerBody.onTouchDown(event);
-			if (isActive) {
-				thisView.myListBody.onTouchDown(event);
-			} else {
-				thisView.chatMessageListBody.onTouchDown(event);
-			}
+			thisView.friendListBody.onTouchDown(event);
+			thisView.chatMessageListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.myPagerBody.onTouchMove(event);
-			if (isActive)
-				thisView.myListBody.onTouchMove(event);
-			else
-				thisView.chatMessageListBody.onTouchMove(event);
+			thisView.friendListBody.onTouchMove(event);
+			thisView.chatMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.myPagerBody.onTouchUp(event);
-			if (isActive)
-				thisView.myListBody.onTouchUp(event);
-			else
-				thisView.chatMessageListBody.onTouchUp(event);
+			thisView.friendListBody.onTouchUp(event);
+			thisView.chatMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -197,17 +178,18 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			if (thisView.myListBody.bodyStatus.state == thisView.myListBody.bodyStatus.DRAGGING && thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
-				thisView.myListBody.onFling(velocityX, velocityY);
+			if (thisView.friendListBody.bodyStatus.state == thisView.friendListBody.bodyStatus.DRAGGING) {
+				thisView.friendListBody.onFling(velocityX, velocityY);
 			}
 			if (thisView.myPagerBody.bodyStatus.state == thisView.myPagerBody.bodyStatus.HOMING) {
 				thisView.myPagerBody.onFling(velocityX, velocityY);
 			}
-			if (thisView.chatMessageListBody.bodyStatus.state == thisView.chatMessageListBody.bodyStatus.DRAGGING && thisView.currentShowContentView.equals(thisView.chatMessagesListContentView)) {
+			if (thisView.chatMessageListBody.bodyStatus.state == thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 				thisView.chatMessageListBody.onFling(velocityX, velocityY);
 			}
 			return true;
 		}
+
 	}
 
 	void generateTextView(final String message) {

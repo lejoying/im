@@ -23,7 +23,11 @@ public class PagerBody {
 
 	public SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(200, 15);
 
-	public View initialize(DisplayMetrics displayMetrics) {
+	BodyCallback bodyCallback;
+
+	public View initialize(DisplayMetrics displayMetrics, BodyCallback bodyCallback) {
+
+		this.bodyCallback = bodyCallback;
 		this.displayMetrics = displayMetrics;
 
 		pager_indicator_trip = (int) (displayMetrics.widthPixels - (20 * displayMetrics.density)) / 3;
@@ -67,13 +71,13 @@ public class PagerBody {
 		}
 	}
 
-	boolean isActive = true;
+	public boolean isActive = true;
 
-	void active() {
+	public void active() {
 		isActive = true;
 	}
 
-	void inActive() {
+	public void inActive() {
 		isActive = false;
 	}
 
@@ -116,6 +120,8 @@ public class PagerBody {
 			Log.d(tag, "stopChange myPagerBody.status.FIXED");
 			this.bodyStatus.state = this.bodyStatus.FIXED;
 			this.pageIndex = this.nextPageIndex;
+
+			this.bodyCallback.onFixed(tag, this.pageIndex);
 		}
 	}
 
@@ -156,6 +162,7 @@ public class PagerBody {
 					if (this.bodyStatus.state == this.bodyStatus.FIXED || this.bodyStatus.state == this.bodyStatus.HOMING) {
 						this.recordChildrenPosition();
 						this.bodyStatus.state = this.bodyStatus.DRAGGING;
+						this.bodyCallback.onStart(tag, this.pageIndex);
 					} else {
 						Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + this.bodyStatus.state);
 					}
