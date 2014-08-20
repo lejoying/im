@@ -104,20 +104,16 @@ public class UserIntimateController {
 
 	public boolean onTouchEvent(MotionEvent event) {
 
-		if (!thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
-			return true;
-		}
-
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			thisView.myPagerBody.onTouchDown(event);
-			thisView.myListBody.onTouchDown(event);
+			thisView.friendListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.myPagerBody.onTouchMove(event);
-			thisView.myListBody.onTouchMove(event);
+			thisView.friendListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.myPagerBody.onTouchUp(event);
-			thisView.myListBody.onTouchUp(event);
+			thisView.friendListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -128,8 +124,8 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			if (thisView.myListBody.bodyStatus.state == thisView.myListBody.bodyStatus.DRAGGING) {
-				thisView.myListBody.onFling(velocityX, velocityY);
+			if (thisView.friendListBody.bodyStatus.state == thisView.friendListBody.bodyStatus.DRAGGING) {
+				thisView.friendListBody.onFling(velocityX, velocityY);
 			}
 			if (thisView.myPagerBody.bodyStatus.state == thisView.myPagerBody.bodyStatus.HOMING) {
 				thisView.myPagerBody.onFling(velocityX, velocityY);

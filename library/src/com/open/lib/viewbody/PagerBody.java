@@ -23,7 +23,11 @@ public class PagerBody {
 
 	public SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(200, 15);
 
-	public View initialize(DisplayMetrics displayMetrics) {
+	BodyCallback bodyCallback;
+
+	public View initialize(DisplayMetrics displayMetrics, BodyCallback bodyCallback) {
+
+		this.bodyCallback = bodyCallback;
 		this.displayMetrics = displayMetrics;
 
 		pager_indicator_trip = (int) (displayMetrics.widthPixels - (20 * displayMetrics.density)) / 3;
@@ -33,7 +37,7 @@ public class PagerBody {
 		pager_indicator.setLayoutParams(params);
 		SpringSystem mSpringSystem = SpringSystem.create();
 		mSpring = mSpringSystem.createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
-		
+
 		mPagerSpringListener = new PagerSpringListener();
 		mSpring.addListener(mPagerSpringListener);
 
@@ -67,23 +71,23 @@ public class PagerBody {
 		}
 	}
 
-	boolean isActive = true;
+	public boolean isActive = true;
 
-	void active() {
+	public void active() {
 		isActive = true;
 	}
 
-	void inActive() {
+	public void inActive() {
 		isActive = false;
 	}
-	
+
 	public class BodyStatus {
 		public int FIXED = 0, DRAGGING = 1, HOMING = 2;
 		public int state = FIXED;
 	}
 
 	public BodyStatus bodyStatus = new BodyStatus();
-	
+
 	public class TouchStatus {
 		public int None = 4, Down = 1, Horizontal = 2, Vertical = 3, Up = 4;
 		public int state = None;
@@ -116,12 +120,13 @@ public class PagerBody {
 			Log.d(tag, "stopChange myPagerBody.status.FIXED");
 			this.bodyStatus.state = this.bodyStatus.FIXED;
 			this.pageIndex = this.nextPageIndex;
+
+			this.bodyCallback.onFixed(tag, this.pageIndex);
 		}
 	}
 
 	float touch_pre_x = 0;
 	float touch_pre_y = 0;
-	
 
 	public void onTouchDown(MotionEvent event) {
 		if (isActive == false) {
@@ -157,6 +162,7 @@ public class PagerBody {
 					if (this.bodyStatus.state == this.bodyStatus.FIXED || this.bodyStatus.state == this.bodyStatus.HOMING) {
 						this.recordChildrenPosition();
 						this.bodyStatus.state = this.bodyStatus.DRAGGING;
+						this.bodyCallback.onStart(tag, this.pageIndex);
 					} else {
 						Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + this.bodyStatus.state);
 					}
@@ -208,8 +214,6 @@ public class PagerBody {
 	public float x = 0;
 
 	public float deltaX = 0;
-
-
 
 	public void addChildView(View childView) {
 		int index = childrenBodys.size();

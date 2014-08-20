@@ -65,13 +65,13 @@ public class ListBody {
 		}
 	}
 
-	boolean isActive = true;
+	public boolean isActive = true;
 
-	void active() {
+	public void active() {
 		isActive = true;
 	}
 
-	void inActive() {
+	public void inActive() {
 		isActive = false;
 	}
 
@@ -112,6 +112,11 @@ public class ListBody {
 	public void stopChange() {
 		if (isActive == false) {
 			return;
+		}
+
+		if (this.bodyStatus.state == this.bodyStatus.DRAGGING) {
+			Log.d(tag, "stopChange bodyStatus.FIXED");
+			this.bodyStatus.state = this.bodyStatus.FIXED;
 		}
 	}
 
@@ -201,8 +206,7 @@ public class ListBody {
 
 	public float pre_x = 0;
 	public float x = 0;
-
-	public float deltaX = 0;
+	public float height = 0;
 
 	public void setChildrenDeltaPosition(float deltaX, float deltaY) {
 		this.x = this.pre_x + deltaX;

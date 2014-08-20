@@ -21,8 +21,10 @@ import android.widget.TextView;
 
 import com.facebook.rebound.SpringConfig;
 import com.open.lib.viewbody.ListBody;
+import com.open.lib.viewbody.ListBody.BodyStatus;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.lib.viewbody.PagerBody;
+import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
@@ -39,32 +41,27 @@ public class UserIntimateView {
 	public DisplayMetrics displayMetrics;
 
 	public UserIntimateController thisController;
+	public UserIntimateView thisView;
 	public Context context;
 	public Activity thisActivity;
 
 	public LayoutInflater mInflater;
-
-	public int screenHeight, screenWidth, screenDip;
-	public float screenDensity = 1.0f;
-
-	public ImageView currentMenuOptionSelectedStatusImage;
-	public RelativeLayout currentShowContentView;
 
 	public RelativeLayout intimateFriendsMenuOptionView;
 	public RelativeLayout chatMessagesListMenuOptionView;
 	public RelativeLayout userInfomationMenuOptionView;
 	public ImageView pager_indicator;
 
-	public RelativeLayout intimateFriendsContentView;
-	public RelativeLayout chatMessagesListContentView;
-	public RelativeLayout userInfomationContentView;
+	public RelativeLayout friendsView;
+	public RelativeLayout messagesView;
+	public RelativeLayout meView;
 
 	public ImageView userHeadImageView;
 	public TextView userNickNameView;
 	public TextView userBusinessView;
 
 	public Map<String, CircleBody> viewsMap = new HashMap<String, CircleBody>();
-	public ListBody myListBody;
+	public ListBody friendListBody;
 
 	public PagerBody myPagerBody;
 
@@ -76,37 +73,29 @@ public class UserIntimateView {
 
 	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(5, 7);
 
-	public enum Status {
-		MESSAGES, FRIENDS, MINE
+	public class ActivityStatus {
+		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
+		public float state = MESSAGES;
 	}
 
-	public Status status = Status.MESSAGES;
+	public ActivityStatus activityStatus = new ActivityStatus();
 
 	public UserIntimateView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
+		this.thisView = this;
 	}
 
 	public void initData() {
-
-		screenDensity = displayMetrics.density;
-		screenDip = (int) (40 * screenDensity + 0.5f);
-		screenHeight = displayMetrics.heightPixels;
-		screenWidth = displayMetrics.widthPixels;
-
-		baseLeft = (int) (screenWidth - (dp2px(20) * 2) - (dp2px(55) * 4)) / 8;
-		vWidth = (int) (screenWidth - (dp2px(20) * 2));
-		headSpace = baseLeft * 2;
-		head = (int) dp2px(55f);
-
-		currentShowContentView = intimateFriendsContentView;
-
 	}
 
 	public void initViews() {
 
 		mInflater = thisActivity.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
+
+		MyBodyCallback myBodyCallback = new MyBodyCallback();
+
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 		thisActivity.setContentView(R.layout.activity_userintimate);
@@ -116,21 +105,21 @@ public class UserIntimateView {
 		userInfomationMenuOptionView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomation);
 		pager_indicator = (ImageView) thisActivity.findViewById(R.id.pager_indicator);
 
-		chatMessagesListContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
+		messagesView = (RelativeLayout) thisActivity.findViewById(R.id.rl_chatMessagesContent);
 
-		intimateFriendsContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimateFriendsContent);
-		myListBody = new ListBody();
-		myListBody.initialize(displayMetrics, intimateFriendsContentView);
+		friendsView = (RelativeLayout) thisActivity.findViewById(R.id.rl_intimateFriendsContent);
+		friendListBody = new ListBody();
+		friendListBody.initialize(displayMetrics, friendsView);
 
-		userInfomationContentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
+		meView = (RelativeLayout) thisActivity.findViewById(R.id.rl_userInfomationContent);
 
 		myPagerBody = new PagerBody();
 		myPagerBody.pager_indicator = pager_indicator;
-		myPagerBody.initialize(displayMetrics);
+		myPagerBody.initialize(displayMetrics, myBodyCallback);
 
-		myPagerBody.addChildView(chatMessagesListContentView);
-		myPagerBody.addChildView(intimateFriendsContentView);
-		myPagerBody.addChildView(userInfomationContentView);
+		myPagerBody.addChildView(messagesView);
+		myPagerBody.addChildView(friendsView);
+		myPagerBody.addChildView(meView);
 
 		userHeadImageView = (ImageView) thisActivity.findViewById(R.id.iv_headImage);
 		userNickNameView = (TextView) thisActivity.findViewById(R.id.tv_userNickname);
@@ -138,9 +127,33 @@ public class UserIntimateView {
 
 	}
 
+	class MyBodyCallback extends BodyCallback {
+		@Override
+		public void onStart(String bodyTag, float variable) {
+			if(bodyTag.equals("PagerBody")){
+				thisView.friendListBody.inActive();
+			}
+		}
+
+		@Override
+		public void onFixed(String bodyTag, float variable) {
+			if(bodyTag.equals("PagerBody")){
+				if(variable==0){
+					thisView.activityStatus.state=thisView.activityStatus.MESSAGES;
+				}else if(variable==1){
+					thisView.activityStatus.state=thisView.activityStatus.FRIENDS;
+					thisView.friendListBody.active();
+				}else if(variable==2){
+					thisView.activityStatus.state=thisView.activityStatus.ME;
+
+				}
+			}
+
+		}
+	}
+
 	public float speedY = 0;
 	public float ratio = 0.00008f;
-
 
 	public void showCircles() {
 
@@ -148,35 +161,36 @@ public class UserIntimateView {
 		circlesMap = data.relationship.circlesMap;
 		friendsMap = data.relationship.friendsMap;
 
-		this.myListBody.listItemsSequence.clear();
+		this.friendListBody.listItemsSequence.clear();
 
 		for (int i = 0; i < circles.size(); i++) {
 			Circle circle = circlesMap.get(circles.get(i));
 
 			CircleBody circleBody = null;
-			circleBody = new CircleBody(this.myListBody);
+			circleBody = new CircleBody(this.friendListBody);
 			circleBody.initialize();
 			circleBody.setContent(circle);
 
-			this.myListBody.listItemsSequence.add("circle#" + circle.rid);
-			this.myListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
+			this.friendListBody.listItemsSequence.add("circle#" + circle.rid);
+			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (260 * displayMetrics.density));
 			circleBody.cardView.setY(270 * displayMetrics.density * i + 2 * displayMetrics.density);
 			circleBody.cardView.setX(0);
 
-			this.myListBody.containerView.addView(circleBody.cardView, layoutParams);
+			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
+			this.friendListBody.height = this.friendListBody.height + 270;
 			Log.d(tag, "addView");
 
 		}
 	}
 
-	public class CircleBody extends MyListItemBody{
+	public class CircleBody extends MyListItemBody {
 
-		CircleBody(ListBody listBody){
+		CircleBody(ListBody listBody) {
 			listBody.super();
 		}
-		
+
 		public List<String> friendsSequence = new ArrayList<String>();
 		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
 
@@ -189,7 +203,7 @@ public class UserIntimateView {
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 
 			this.leftTopText.setOnClickListener(thisController.mOnClickListener);
-			
+
 			super.initialize(cardView);
 			return cardView;
 		}
@@ -291,46 +305,9 @@ public class UserIntimateView {
 		setFriendsPositions(circleHolder);
 	}
 
-	public int baseLeft;// 26
-	public int headSpace;// 48
-	public int head;
-	public int vWidth;
-
-	public Position switchPosition(int i) {
-		Position position = new Position();
-		int baseX = (int) dp2px(i / 8 * 326);
-		if ((i + 1) % 8 == 1) {
-			position.y = (int) dp2px(11);
-			position.x = (int) (baseLeft + baseX);
-		} else if ((i + 1) % 8 == 2) {
-			position.y = (int) dp2px(11);
-			position.x = (int) (baseLeft + head + headSpace + baseX);
-		} else if ((i + 1) % 8 == 3) {
-			position.y = (int) dp2px(11);
-			position.x = (int) (baseLeft + head + headSpace + head + headSpace + baseX);
-		} else if ((i + 1) % 8 == 4) {
-			position.y = (int) dp2px(11);
-			position.x = (int) (baseLeft + head + headSpace + head + headSpace + head + headSpace + baseX);
-		} else if ((i + 1) % 8 == 5) {
-			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) (baseLeft + baseX);
-		} else if ((i + 1) % 8 == 6) {
-			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) (baseLeft + head + headSpace + baseX);
-		} else if ((i + 1) % 8 == 7) {
-			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) (baseLeft + head + headSpace + head + headSpace + baseX);
-		} else if ((i + 1) % 8 == 0) {
-			position.y = (int) dp2px(11 + 73 + 27);
-			position.x = (int) (baseLeft + head + headSpace + head + headSpace + head + headSpace + baseX);
-		}
-		return position;
-	}
-
 	public void resolveFriendsPositions(CircleHolder circleHolder) {
 		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
 			FriendHolder friendHolder = circleHolder.friendHolders.get(i);
-			friendHolder.position = switchPosition(i);
 			friendHolder.index = i;
 		}
 	}
@@ -339,7 +316,7 @@ public class UserIntimateView {
 		for (int i = 0; i < circleHolder.friendHolders.size(); i++) {
 			FriendHolder friendHolder = circleHolder.friendHolders.get(i);
 
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) dp2px(55f), RelativeLayout.LayoutParams.WRAP_CONTENT);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) (displayMetrics.density * 55f), RelativeLayout.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = -Integer.MAX_VALUE;
 			params.topMargin = friendHolder.position.y;
 			params.leftMargin = friendHolder.position.x;
@@ -381,40 +358,6 @@ public class UserIntimateView {
 		String phone = "";
 		int index;
 
-		@Override
-		public boolean equals(Object o) {
-			boolean flag = false;
-			if (o != null) {
-				if (o instanceof FriendHolder) {
-					FriendHolder h = (FriendHolder) o;
-					if (phone.equals(h.phone)) {
-						flag = true;
-					}
-				} else if (o instanceof String) {
-					String s = (String) o;
-					if (phone.equals(s)) {
-						flag = true;
-					}
-				}
-			}
-			return flag;
-		}
-	}
-
-	public float dp2px(float px) {
-		float dp = screenDensity * px + 0.5f;
-		return dp;
-	}
-
-	public void changeMenuOptionSelected(RelativeLayout contentView, ImageView statusImage) {
-		if (statusImage.getVisibility() == View.GONE) {
-			currentMenuOptionSelectedStatusImage.setVisibility(View.GONE);
-			statusImage.setVisibility(View.VISIBLE);
-			currentShowContentView.setVisibility(View.GONE);
-			contentView.setVisibility(View.VISIBLE);
-		}
-		currentShowContentView = contentView;
-		currentMenuOptionSelectedStatusImage = statusImage;
 	}
 
 	void notifyNewFriendButtonView(View newFriendButtonView, int newFriendsCount) {
