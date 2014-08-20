@@ -30,11 +30,7 @@ public class PagerBody {
 		this.bodyCallback = bodyCallback;
 		this.displayMetrics = displayMetrics;
 
-		pager_indicator_trip = (int) (displayMetrics.widthPixels - (20 * displayMetrics.density)) / 3;
-		ViewGroup.LayoutParams params = pager_indicator.getLayoutParams();
-		params.height = (int) (32 * displayMetrics.density);
-		params.width = pager_indicator_trip;
-		pager_indicator.setLayoutParams(params);
+
 		SpringSystem mSpringSystem = SpringSystem.create();
 		mSpring = mSpringSystem.createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
 

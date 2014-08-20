@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -122,24 +123,25 @@ public class UserIntimateView {
 		messages_friends_me_View = (RelativeLayout) mInflater.inflate(R.layout.view_main_messages_friends_me, null);
 
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);
+		int main_pager_indicator_trip = (int) (44 * displayMetrics.density);
 
 		mainPagerBody = new PagerBody();
 		mainPagerBody.pager_indicator = main_pager_indicator;
+		mainPagerBody.pager_indicator_trip = main_pager_indicator_trip;
 		mainPagerBody.initialize(displayMetrics, myBodyCallback);
 
-		main_container.addView(squareView, 0);
+		main_container.addView(squareView);
 		mainPagerBody.addChildView(squareView);
 
-		main_container.addView(shareView, 0);
+		main_container.addView(shareView);
 		mainPagerBody.addChildView(shareView);
 
-		main_container.addView(messages_friends_me_View, 0);
+		main_container.addView(messages_friends_me_View);
 		mainPagerBody.addChildView(messages_friends_me_View);
 
 		intimateFriendsMenuOptionView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimatefriends);
 		chatMessagesListMenuOptionView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesList);
 		userInfomationMenuOptionView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomation);
-		messages_friends_me_pager_indicator = (ImageView) messages_friends_me_View.findViewById(R.id.messages_friends_me_pager_indicator);
 
 		messagesView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesContent);
 		friendsView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimateFriendsContent);
@@ -148,8 +150,16 @@ public class UserIntimateView {
 
 		meView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomationContent);
 
+		messages_friends_me_pager_indicator = (ImageView) messages_friends_me_View.findViewById(R.id.messages_friends_me_pager_indicator);
+		int messages_friends_me_pager_indicator_trip = (int) (displayMetrics.widthPixels - (20 * displayMetrics.density)) / 3;
+		ViewGroup.LayoutParams params2 = messages_friends_me_pager_indicator.getLayoutParams();
+		params2.height = (int) (32 * displayMetrics.density);
+		params2.width = messages_friends_me_pager_indicator_trip;
+		messages_friends_me_pager_indicator.setLayoutParams(params2);
+
 		messages_friends_me_PagerBody = new PagerBody();
 		messages_friends_me_PagerBody.pager_indicator = messages_friends_me_pager_indicator;
+		messages_friends_me_PagerBody.pager_indicator_trip = messages_friends_me_pager_indicator_trip;
 		messages_friends_me_PagerBody.initialize(displayMetrics, myBodyCallback);
 
 		messages_friends_me_PagerBody.addChildView(messagesView);

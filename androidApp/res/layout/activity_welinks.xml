@@ -12,14 +12,30 @@
         android:background="@color/card_color" >
 
         <RelativeLayout
+            android:layout_width="132dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:translationX="-10dp" >
+
+            <ImageView
+                android:id="@+id/main_pager_indicator"
+                android:layout_width="44dp"
+                android:layout_height="42dp"
+                android:background="@color/card_color"
+                android:translationY="2dp"
+                android:visibility="visible" >
+            </ImageView>
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp" >
+            android:translationX="-12dp" >
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:clickable="false"
@@ -32,11 +48,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="45dp" >
+            android:translationX="-57dp" >
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:clickable="false"
@@ -49,11 +65,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="85dp" >
+            android:translationX="-101dp" >
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:clickable="false"
@@ -61,15 +77,6 @@
                 android:padding="5dp"
                 android:src="@drawable/square_icon" />
         </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/main_pager_indicator"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@color/card_color"
-            android:translationY="2dp"
-            android:visibility="visible" >
-        </ImageView>
     </RelativeLayout>
 
     <RelativeLayout
