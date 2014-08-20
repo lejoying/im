@@ -130,21 +130,21 @@ public class UserIntimateView {
 	class MyBodyCallback extends BodyCallback {
 		@Override
 		public void onStart(String bodyTag, float variable) {
-			if(bodyTag.equals("PagerBody")){
+			if (bodyTag.equals("PagerBody")) {
 				thisView.friendListBody.inActive();
 			}
 		}
 
 		@Override
 		public void onFixed(String bodyTag, float variable) {
-			if(bodyTag.equals("PagerBody")){
-				if(variable==0){
-					thisView.activityStatus.state=thisView.activityStatus.MESSAGES;
-				}else if(variable==1){
-					thisView.activityStatus.state=thisView.activityStatus.FRIENDS;
+			if (bodyTag.equals("PagerBody")) {
+				if (variable == 0) {
+					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
+				} else if (variable == 1) {
+					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
 					thisView.friendListBody.active();
-				}else if(variable==2){
-					thisView.activityStatus.state=thisView.activityStatus.ME;
+				} else if (variable == 2) {
+					thisView.activityStatus.state = thisView.activityStatus.ME;
 
 				}
 			}
@@ -175,11 +175,12 @@ public class UserIntimateView {
 			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (260 * displayMetrics.density));
-			circleBody.cardView.setY(270 * displayMetrics.density * i + 2 * displayMetrics.density);
+			circleBody.y = 270 * displayMetrics.density * i + 2 * displayMetrics.density;
+			circleBody.cardView.setY(circleBody.y);
 			circleBody.cardView.setX(0);
 
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
-			this.friendListBody.height = this.friendListBody.height + 270;
+			this.friendListBody.height = this.friendListBody.height + 270 * displayMetrics.density;
 			Log.d(tag, "addView");
 
 		}
