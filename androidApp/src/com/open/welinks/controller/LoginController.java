@@ -19,10 +19,8 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
-import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
 import com.open.welinks.UserIntimateActivity;
@@ -59,9 +57,7 @@ public class LoginController {
 
 	public SHA1 msSha1 = new SHA1();
 
-	public BaseSpringSystem mSpringSystem = SpringSystem.create();
-	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
-	public Spring mScaleSpring = mSpringSystem.createSpring();
+	public MySpringListener mSpringListener = new MySpringListener();
 
 	public LoginController(Activity activity) {
 		this.context = activity;
@@ -75,9 +71,9 @@ public class LoginController {
 			public boolean onTouch(View v, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
-					mScaleSpring.setEndValue(1);
+					thisView.mScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-					mScaleSpring.setEndValue(0);
+					thisView.mScaleSpring.setEndValue(0);
 				}
 				return true;
 			}
@@ -201,14 +197,14 @@ public class LoginController {
 	}
 
 	public void onResume() {
-		mScaleSpring.addListener(mSpringListener);
+		thisView.mScaleSpring.addListener(mSpringListener);
 	}
 
 	public void onPause() {
-		mScaleSpring.removeListener(mSpringListener);
+		thisView.mScaleSpring.removeListener(mSpringListener);
 	}
 
-	private class ExampleSpringListener extends SimpleSpringListener {
+	private class MySpringListener extends SimpleSpringListener {
 		@Override
 		public void onSpringUpdate(Spring spring) {
 			float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, 1, 0.5);

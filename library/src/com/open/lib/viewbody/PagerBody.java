@@ -302,4 +302,14 @@ public class PagerBody {
 			mSpring.setEndValue(nextPageIndex);
 		}
 	}
+
+	public interface OnPagerBodyChangeListener {
+		public void onPageChange();
+	}
+
+	public OnPagerBodyChangeListener onPagerBodyChangeListener;
+
+	public void setOnPagerBodyChangeListener(OnPagerBodyChangeListener onPagerBodyChangeListener) {
+		this.onPagerBodyChangeListener = onPagerBodyChangeListener;
+	}
 }

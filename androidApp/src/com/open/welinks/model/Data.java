@@ -59,6 +59,7 @@ public class Data {
 
 	public UserInformation userInformation;
 	public Relationship relationship;
+	public Messages messages;
 
 	public class UserInformation {
 		public User currentUser;
@@ -137,6 +138,31 @@ public class Data {
 			public String background;
 
 			public List<String> members = new ArrayList<String>();
+		}
+	}
+
+	public class Messages {
+
+		public Map<String, ArrayList<Message>> friendMessageMap = new HashMap<String, ArrayList<Message>>();
+
+		public Map<String, ArrayList<Message>> groupMessageMap = new HashMap<String, ArrayList<Message>>();
+
+		public List<String> messagesOrder = new ArrayList<String>();
+
+		public class Message {
+
+			public static final int MESSAGE_TYPE_SEND = 0x01;
+			public static final int MESSAGE_TYPE_RECEIVE = 0x02;
+
+			public int type;
+			public String time;
+			public String sendType;
+			public String gid;
+			public String status;
+			public String phone;
+			public String nickName;
+			public String contentType;
+			public String content;
 		}
 	}
 }

@@ -13,10 +13,8 @@ import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -24,6 +22,8 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.UserIntimateView;
@@ -50,9 +50,9 @@ public class UserIntimateController {
 
 	public String userPhone;
 
-	public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	// public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	// public Spring mScaleSpring = mSpringSystem.createSpring();
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
-	public Spring mScaleSpring = mSpringSystem.createSpring();
 
 	public void oncreate() {
 		String phone = thisActivity.getIntent().getStringExtra("phone");
@@ -63,14 +63,23 @@ public class UserIntimateController {
 
 		thisView.showCircles();
 		// this.test();
+		initChatMessages();
+		thisView.showMessages();
+	}
+
+	void initChatMessages() {
+		// read message.js content transformation to Gson
+		String messageContent = Parser.getInstance().getFromAssets("message.js");
+		Messages messages = gson.fromJson(messageContent, Messages.class);
+		data.messages = messages;
 	}
 
 	public void onResume() {
-		mScaleSpring.addListener(mSpringListener);
+		thisView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 	}
 
 	public void onPause() {
-		mScaleSpring.removeListener(mSpringListener);
+		thisView.mMePageAppIconScaleSpring.removeListener(mSpringListener);
 	}
 
 	private class ExampleSpringListener extends SimpleSpringListener {
@@ -108,9 +117,9 @@ public class UserIntimateController {
 			public boolean onTouch(View v, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
-					mScaleSpring.setEndValue(1);
+					thisView.mMePageAppIconScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-					mScaleSpring.setEndValue(0);
+					thisView.mMePageAppIconScaleSpring.setEndValue(0);
 				}
 				return true;
 			}
@@ -174,14 +183,17 @@ public class UserIntimateController {
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
 			thisView.friendListBody.onTouchDown(event);
+			thisView.chatMessageListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
 			thisView.friendListBody.onTouchMove(event);
+			thisView.chatMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 			thisView.friendListBody.onTouchUp(event);
+			thisView.chatMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -200,6 +212,9 @@ public class UserIntimateController {
 			}
 			if (thisView.mainPagerBody.bodyStatus.state == thisView.mainPagerBody.bodyStatus.HOMING) {
 				thisView.mainPagerBody.onFling(velocityX, velocityY);
+			}
+			if (thisView.chatMessageListBody.bodyStatus.state == thisView.chatMessageListBody.bodyStatus.DRAGGING) {
+				thisView.chatMessageListBody.onFling(velocityX, velocityY);
 			}
 			return true;
 		}

@@ -91,24 +91,32 @@
         android:id="@+id/rl_chatMessagesContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:translationY="88dp"
         android:visibility="visible" >
 
-        <ImageView
-            android:id="@+id/iv_notMessage"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/not_messages"
-            tools:ignore="ContentDescription" />
+        <RelativeLayout
+            android:id="@+id/rl_chatMessagesNotRead"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_notMessage"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="暂时没有新消息" />
+            <ImageView
+                android:id="@+id/iv_notMessage"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/not_messages"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_notMessage"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="暂时没有新消息" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <RelativeLayout
@@ -179,15 +187,15 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:translationY="265dp"
-            android:background="@drawable/dashed_line" />
+            android:background="@drawable/dashed_line"
+            android:translationY="265dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="49dp"
-            android:translationY="265dp"
             android:background="@color/card_color"
             android:gravity="center_vertical"
+            android:translationY="265dp"
             android:visibility="visible" >
 
             <TextView
@@ -202,9 +210,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:translationY="321dp"
             android:background="@color/card_color"
             android:gravity="center_vertical"
+            android:translationY="321dp"
             android:visibility="visible" >
 
             <TextView
@@ -231,9 +239,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:translationY="378dp"
             android:background="@color/card_color"
             android:gravity="center_vertical"
+            android:translationY="378dp"
             android:visibility="visible" >
 
             <TextView

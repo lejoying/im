@@ -6,8 +6,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -20,7 +23,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
@@ -28,8 +34,10 @@ import com.open.lib.viewbody.PagerBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
 public class UserIntimateView {
@@ -71,6 +79,8 @@ public class UserIntimateView {
 
 	public RelativeLayout main_container;
 
+	public RelativeLayout chatMessagesNotReadView;
+
 	public ImageView userHeadImageView;
 	public TextView userNickNameView;
 	public TextView userBusinessView;
@@ -93,6 +103,16 @@ public class UserIntimateView {
 
 	public static final SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(5, 7);
 
+	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(10, 2);
+	public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	public Spring mMePageAppIconScaleSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
+
+	public ListBody chatMessageListBody;
+
+	public enum Status {
+		MESSAGES, FRIENDS, MINE
+	}
+
 	public class ActivityStatus {
 		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
 		public float subState = MESSAGES;
@@ -110,6 +130,7 @@ public class UserIntimateView {
 	public void initData() {
 	}
 
+	@SuppressLint("CutPasteId")
 	public void initViews() {
 
 		mInflater = thisActivity.getLayoutInflater();
@@ -126,6 +147,8 @@ public class UserIntimateView {
 		squareView = (RelativeLayout) mInflater.inflate(R.layout.view_main_square, null);
 		shareView = (RelativeLayout) mInflater.inflate(R.layout.view_main_share, null);
 		messages_friends_me_View = (RelativeLayout) mInflater.inflate(R.layout.view_main_messages_friends_me, null);
+
+		chatMessagesNotReadView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesNotRead);
 
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);
 		int main_pager_indicator_trip = (int) (44 * displayMetrics.density);
@@ -151,9 +174,13 @@ public class UserIntimateView {
 
 		squareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.square_menu_view);
 		shareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.share_menu_view);
+		
 		messages_friends_me_menuView = (RelativeLayout) thisActivity.findViewById(R.id.messages_friends_me_menu_view);
 
 		messagesView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesContent);
+		chatMessageListBody = new ListBody();
+		chatMessageListBody.initialize(displayMetrics, messagesView);
+
 		friendsView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimateFriendsContent);
 		friendListBody = new ListBody();
 		friendListBody.initialize(displayMetrics, friendsView);
@@ -193,7 +220,7 @@ public class UserIntimateView {
 			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				thisView.friendListBody.inActive();
 				if (variable == 2) {
-					thisController.mScaleSpring.setEndValue(1);
+					mMePageAppIconScaleSpring.setEndValue(1);
 				}
 			}
 		}
@@ -204,6 +231,7 @@ public class UserIntimateView {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
 					thisView.activityStatus.subState = thisView.activityStatus.MESSAGES;
+					thisView.chatMessageListBody.active();
 				} else if (variable == 1) {
 					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
 					thisView.activityStatus.subState = thisView.activityStatus.FRIENDS;
@@ -211,7 +239,6 @@ public class UserIntimateView {
 				} else if (variable == 2) {
 					thisView.activityStatus.state = thisView.activityStatus.ME;
 					thisView.activityStatus.subState = thisView.activityStatus.ME;
-					thisController.mScaleSpring.setEndValue(0);
 				}
 			} else if (bodyTag.equals("mainPagerBody")) {
 				if (variable == 0) {
@@ -225,7 +252,7 @@ public class UserIntimateView {
 					if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 						thisView.friendListBody.active();
 					} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
-						thisController.mScaleSpring.setEndValue(0);
+						mMePageAppIconScaleSpring.setEndValue(0);
 					}
 
 				}
@@ -320,6 +347,82 @@ public class UserIntimateView {
 
 		public void setData(Friend friend) {
 
+		}
+	}
+
+	public void showMessages() {
+
+		List<String> messagesOrder = data.messages.messagesOrder;
+		Map<String, ArrayList<Message>> friendMessageMap = data.messages.friendMessageMap;
+		Map<String, ArrayList<Message>> groupMessageMap = data.messages.groupMessageMap;
+
+		this.chatMessageListBody.listItemsSequence.clear();
+		if (messagesOrder.size() > 0) {
+			chatMessagesNotReadView.setVisibility(View.GONE);
+		}
+		for (int i = 0; i < messagesOrder.size(); i++) {
+			String key = messagesOrder.get(i);
+			Message message = null;
+			if (key.indexOf("p") == 0) {
+				message = friendMessageMap.get(key).get(0);
+			} else if (key.indexOf("g") == 0) {
+				message = groupMessageMap.get(key).get(0);
+			}
+			MessageBody messageBody = null;
+			messageBody = new MessageBody(this.chatMessageListBody);
+			messageBody.initialize();
+			messageBody.setContent(message);
+
+			this.chatMessageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
+			this.chatMessageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
+
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (70 * displayMetrics.density));
+			messageBody.y = 80 * displayMetrics.density * i + 2 * displayMetrics.density;
+			messageBody.cardView.setY(messageBody.y);
+			messageBody.cardView.setX(0);
+			this.chatMessageListBody.height = this.chatMessageListBody.height + 80 * displayMetrics.density;
+			this.chatMessageListBody.containerView.addView(messageBody.cardView, layoutParams);
+		}
+
+		// View view = mInflater.inflate(R.layout.chat_message_item, null);
+		// chatMessagesListContentView.addView(view);
+	}
+
+	public class MessageBody extends MyListItemBody {
+
+		MessageBody(ListBody listBody) {
+			listBody.super();
+		}
+
+		public View cardView = null;
+
+		public ImageView headView;
+		public TextView nickNameView;
+		public TextView lastChatTimeView;
+		public TextView lastChatMessageView;
+		public TextView notReadNumberView;
+
+		public View initialize() {
+
+			this.cardView = mInflater.inflate(R.layout.chat_message_item, null);
+			headView = (ImageView) this.cardView.findViewById(R.id.userHeadView);
+			nickNameView = (TextView) this.cardView.findViewById(R.id.tv_nickname);
+			lastChatTimeView = (TextView) this.cardView.findViewById(R.id.tv_time);
+			lastChatMessageView = (TextView) this.cardView.findViewById(R.id.tv_lastchatcontent);
+			notReadNumberView = (TextView) this.cardView.findViewById(R.id.tv_notread);
+			super.initialize(cardView);
+			return cardView;
+		}
+
+		public void setContent(Message message) {
+			Resources resources = thisActivity.getResources();
+			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+			headView.setImageBitmap(bitmap);
+			nickNameView.setText(message.nickName);
+			lastChatMessageView.setText(message.content);
+			lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
+			notReadNumberView.setText("1");
 		}
 	}
 
