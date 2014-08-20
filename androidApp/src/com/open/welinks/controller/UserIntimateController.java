@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.rebound.BaseSpringSystem;
@@ -21,6 +22,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
@@ -117,13 +119,23 @@ public class UserIntimateController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.chatMessagesListMenuOptionView)) {
+				if (view.equals(thisView.messagesMenuView)) {
 					thisView.messages_friends_me_PagerBody.flipTo(0);
-				} else if (view.equals(thisView.intimateFriendsMenuOptionView)) {
+				} else if (view.equals(thisView.friendsMenuView)) {
 					thisView.messages_friends_me_PagerBody.flipTo(1);
-				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
+				} else if (view.equals(thisView.meMenuView)) {
 					thisView.messages_friends_me_PagerBody.flipTo(2);
-				} else if (view.getTag() != null) {
+				}
+
+				else if (view.equals(thisView.squareMenuView)) {
+					thisView.mainPagerBody.flipTo(0);
+				} else if (view.equals(thisView.shareMenuView)) {
+					thisView.mainPagerBody.flipTo(1);
+				} else if (view.equals(thisView.messages_friends_me_menuView)) {
+					thisView.mainPagerBody.flipTo(2);
+				}
+
+				else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
 			}
@@ -131,9 +143,14 @@ public class UserIntimateController {
 	}
 
 	public void bindEvent() {
-		thisView.intimateFriendsMenuOptionView.setOnClickListener(mOnClickListener);
-		thisView.chatMessagesListMenuOptionView.setOnClickListener(mOnClickListener);
-		thisView.userInfomationMenuOptionView.setOnClickListener(mOnClickListener);
+		thisView.friendsMenuView.setOnClickListener(mOnClickListener);
+		thisView.messagesMenuView.setOnClickListener(mOnClickListener);
+		thisView.meMenuView.setOnClickListener(mOnClickListener);
+
+		thisView.squareMenuView.setOnClickListener(mOnClickListener);
+		thisView.shareMenuView.setOnClickListener(mOnClickListener);
+		thisView.messages_friends_me_menuView.setOnClickListener(mOnClickListener);
+
 		thisView.mRootView.setOnTouchListener(onTouchListener);
 	}
 

@@ -28,10 +28,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/messages_friends_me_menu_view"
+            android:layout_width="44dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:translationX="-12dp" >
+            android:translationX="-10dp" >
 
             <ImageView
                 android:layout_width="38dp"
@@ -45,10 +46,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/share_menu_view"
+            android:layout_width="44dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:translationX="-57dp" >
+            android:translationX="-54dp" >
 
             <ImageView
                 android:layout_width="38dp"
@@ -62,10 +64,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/square_menu_view"
+            android:layout_width="44dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:translationX="-101dp" >
+            android:translationX="-98dp" >
 
             <ImageView
                 android:layout_width="38dp"

@@ -47,9 +47,13 @@ public class UserIntimateView {
 
 	public LayoutInflater mInflater;
 
-	public RelativeLayout intimateFriendsMenuOptionView;
-	public RelativeLayout chatMessagesListMenuOptionView;
-	public RelativeLayout userInfomationMenuOptionView;
+	public RelativeLayout friendsMenuView;
+	public RelativeLayout messagesMenuView;
+	public RelativeLayout meMenuView;
+
+	public RelativeLayout squareMenuView;
+	public RelativeLayout shareMenuView;
+	public RelativeLayout messages_friends_me_menuView;
 
 	public ImageView messages_friends_me_pager_indicator;
 	public ImageView main_pager_indicator;
@@ -126,6 +130,7 @@ public class UserIntimateView {
 		int main_pager_indicator_trip = (int) (44 * displayMetrics.density);
 
 		mainPagerBody = new PagerBody();
+		mainPagerBody.tag = "mainPagerBody";
 		mainPagerBody.pager_indicator = main_pager_indicator;
 		mainPagerBody.pager_indicator_trip = main_pager_indicator_trip;
 		mainPagerBody.initialize(displayMetrics, myBodyCallback);
@@ -139,9 +144,13 @@ public class UserIntimateView {
 		main_container.addView(messages_friends_me_View);
 		mainPagerBody.addChildView(messages_friends_me_View);
 
-		intimateFriendsMenuOptionView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimatefriends);
-		chatMessagesListMenuOptionView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesList);
-		userInfomationMenuOptionView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomation);
+		friendsMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimatefriends);
+		messagesMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesList);
+		meMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomation);
+		
+		squareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.square_menu_view);
+		shareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.share_menu_view);
+		messages_friends_me_menuView = (RelativeLayout) thisActivity.findViewById(R.id.messages_friends_me_menu_view);
 
 		messagesView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesContent);
 		friendsView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimateFriendsContent);
@@ -158,6 +167,7 @@ public class UserIntimateView {
 		messages_friends_me_pager_indicator.setLayoutParams(params2);
 
 		messages_friends_me_PagerBody = new PagerBody();
+		messages_friends_me_PagerBody.tag = "messages_friends_me_PagerBody";
 		messages_friends_me_PagerBody.pager_indicator = messages_friends_me_pager_indicator;
 		messages_friends_me_PagerBody.pager_indicator_trip = messages_friends_me_pager_indicator_trip;
 		messages_friends_me_PagerBody.initialize(displayMetrics, myBodyCallback);
@@ -178,7 +188,7 @@ public class UserIntimateView {
 	class MyBodyCallback extends BodyCallback {
 		@Override
 		public void onStart(String bodyTag, float variable) {
-			if (bodyTag.equals("PagerBody")) {
+			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				thisView.friendListBody.inActive();
 				if (variable == 2) {
 					thisController.mScaleSpring.setEndValue(1);
@@ -188,7 +198,7 @@ public class UserIntimateView {
 
 		@Override
 		public void onFixed(String bodyTag, float variable) {
-			if (bodyTag.equals("PagerBody")) {
+			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
 				} else if (variable == 1) {
