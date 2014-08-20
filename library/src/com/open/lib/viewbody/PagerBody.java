@@ -67,6 +67,23 @@ public class PagerBody {
 		}
 	}
 
+	boolean isActive = true;
+
+	void active() {
+		isActive = true;
+	}
+
+	void inActive() {
+		isActive = false;
+	}
+	
+	public class BodyStatus {
+		public int FIXED = 0, DRAGGING = 1, HOMING = 2;
+		public int state = FIXED;
+	}
+
+	public BodyStatus bodyStatus = new BodyStatus();
+	
 	public class TouchStatus {
 		public int None = 4, Down = 1, Horizontal = 2, Vertical = 3, Up = 4;
 		public int state = None;
@@ -75,11 +92,13 @@ public class PagerBody {
 	public TouchStatus touchStatus = new TouchStatus();
 
 	public void render() {
-
+		if (isActive == false) {
+			return;
+		}
 		double value = mSpring.getCurrentValue();
 
 		if (this.touchStatus.state == this.touchStatus.Up) {
-			if (this.status.state == this.status.HOMING) {
+			if (this.bodyStatus.state == this.bodyStatus.HOMING) {
 
 				double deltaX = -displayMetrics.widthPixels * value;
 				this.setChildrenPosition((float) deltaX, 0);
@@ -90,9 +109,12 @@ public class PagerBody {
 	}
 
 	public void stopChange() {
-		if (this.status.state == this.status.HOMING) {
+		if (isActive == false) {
+			return;
+		}
+		if (this.bodyStatus.state == this.bodyStatus.HOMING) {
 			Log.d(tag, "stopChange myPagerBody.status.FIXED");
-			this.status.state = this.status.FIXED;
+			this.bodyStatus.state = this.bodyStatus.FIXED;
 			this.pageIndex = this.nextPageIndex;
 		}
 	}
@@ -102,6 +124,9 @@ public class PagerBody {
 	
 
 	public void onTouchDown(MotionEvent event) {
+		if (isActive == false) {
+			return;
+		}
 		float x = event.getX();
 		float y = event.getY();
 		if (touchStatus.state == touchStatus.Up) {
@@ -114,24 +139,29 @@ public class PagerBody {
 	}
 
 	public void onTouchMove(MotionEvent event) {
+		if (isActive == false) {
+			return;
+		}
 		float x = event.getX();
 		float y = event.getY();
 		if (touchStatus.state == touchStatus.Down) {
-			if ((y - touch_pre_y) * (y - touch_pre_y) > 400 || (x - touch_pre_x) * (x - touch_pre_x) > 400) {
-				if ((y - touch_pre_y) * (y - touch_pre_y) > (x - touch_pre_x) * (x - touch_pre_x)) {
+			float deltaX = (x - touch_pre_x) * (x - touch_pre_x);
+			float deltaY = (y - touch_pre_y) * (y - touch_pre_y);
+			if (deltaY > 400 || deltaX > 400) {
+				if (deltaY > deltaX) {
 					touchStatus.state = touchStatus.Vertical;
 					touch_pre_y = y;
-					Log.e("onTouchEvent", "开始纵向滑动");
+					Log.e("onTouchEvent", "Vertical moving");
 				} else {
 					touchStatus.state = touchStatus.Horizontal;
-					if (this.status.state == this.status.FIXED || this.status.state == this.status.HOMING) {
+					if (this.bodyStatus.state == this.bodyStatus.FIXED || this.bodyStatus.state == this.bodyStatus.HOMING) {
 						this.recordChildrenPosition();
-						this.status.state = this.status.DRAGGING;
+						this.bodyStatus.state = this.bodyStatus.DRAGGING;
 					} else {
-						Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + this.status.state);
+						Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + this.bodyStatus.state);
 					}
 					touch_pre_x = x;
-					Log.e("onTouchEvent", "开始横向滑动");
+					Log.e("onTouchEvent", "Horizontal moving");
 				}
 			}
 		} else if (touchStatus.state == touchStatus.Horizontal) {
@@ -139,13 +169,14 @@ public class PagerBody {
 			this.setChildrenDeltaPosition(x - touch_pre_x, 0);
 		} else {
 			Log.e("onTouchEvent", "unkown status: touchMoveStatus.Up");
-			x = pre_x;
-			y = touch_pre_y;
 		}
 	}
 
 	public void onTouchUp(MotionEvent event) {
-		if (touchStatus.state == touchStatus.Horizontal && (this.status.state == this.status.DRAGGING || this.status.state == this.status.FIXED)) {
+		if (isActive == false) {
+			return;
+		}
+		if (touchStatus.state == touchStatus.Horizontal && (this.bodyStatus.state == this.bodyStatus.DRAGGING || this.bodyStatus.state == this.bodyStatus.FIXED)) {
 			this.homing();
 		}
 
@@ -153,7 +184,10 @@ public class PagerBody {
 	}
 
 	public void onFling(float velocityX, float velocityY) {
-		if (this.status.state == this.status.HOMING) {
+		if (isActive == false) {
+			return;
+		}
+		if (this.bodyStatus.state == this.bodyStatus.HOMING) {
 			if (velocityX * velocityX > 1000000) {
 				if (velocityX > 0) {
 					this.flip(-1);
@@ -175,12 +209,7 @@ public class PagerBody {
 
 	public float deltaX = 0;
 
-	public class Status {
-		public int FIXED = 0, DRAGGING = 1, HOMING = 2;
-		public int state = FIXED;
-	}
 
-	public Status status = new Status();
 
 	public void addChildView(View childView) {
 		int index = childrenBodys.size();
@@ -224,9 +253,9 @@ public class PagerBody {
 	}
 
 	public void homing() {
-		if (status.state == status.DRAGGING) {
+		if (bodyStatus.state == bodyStatus.DRAGGING) {
 
-			status.state = status.HOMING;
+			bodyStatus.state = bodyStatus.HOMING;
 			nextPageIndex = Math.round(-x / displayMetrics.widthPixels);
 
 			mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
@@ -260,7 +289,7 @@ public class PagerBody {
 	public void flipTo(int toIndex) {
 		if (toIndex != this.nextPageIndex) {
 			Log.d(tag, "flipTo: " + toIndex);
-			status.state = status.HOMING;
+			bodyStatus.state = bodyStatus.HOMING;
 			mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
 			this.nextPageIndex = toIndex;
 			int size = childrenBodys.size();

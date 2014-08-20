@@ -111,10 +111,13 @@ public class UserIntimateController {
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			thisView.myPagerBody.onTouchDown(event);
+			thisView.myListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.myPagerBody.onTouchMove(event);
+			thisView.myListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.myPagerBody.onTouchUp(event);
+			thisView.myListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -125,24 +128,10 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			if (thisView.myListBody.status.state == thisView.myListBody.status.DRAGGING) {
-				// thisView.myListBody.recordChildrenPosition();
-				//
-				// thisView.mSpring.setCurrentValue(0);
-				// if (velocityY > 0) {
-				// thisView.speedY = velocityY;
-				// if (velocityY > 5000) {
-				// thisView.speedY = 5000;
-				// }
-				// } else if (velocityY < 0) {
-				// thisView.speedY = velocityY;
-				// if (velocityY < -5000) {
-				// thisView.speedY = -5000;
-				// }
-				// }
-				// thisView.mSpring.setEndValue(1);
+			if (thisView.myListBody.bodyStatus.state == thisView.myListBody.bodyStatus.DRAGGING) {
+				thisView.myListBody.onFling(velocityX, velocityY);
 			}
-			if (thisView.myPagerBody.status.state == thisView.myPagerBody.status.HOMING) {
+			if (thisView.myPagerBody.bodyStatus.state == thisView.myPagerBody.bodyStatus.HOMING) {
 				thisView.myPagerBody.onFling(velocityX, velocityY);
 			}
 			return true;

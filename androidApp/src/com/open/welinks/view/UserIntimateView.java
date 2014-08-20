@@ -19,19 +19,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
+import com.open.lib.viewbody.ListBody;
+import com.open.lib.viewbody.ListBody.MyListItemBody;
+import com.open.lib.viewbody.PagerBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.utils.MCImageUtils;
-import com.open.lib.viewbody.ListBody.MyListItemBody;
-import com.open.lib.viewbody.PagerBody;
-import com.open.lib.viewbody.ListBody;
 
 public class UserIntimateView {
 
@@ -85,8 +82,6 @@ public class UserIntimateView {
 
 	public Status status = Status.MESSAGES;
 
-	public Spring mSpring;
-
 	public UserIntimateView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -105,19 +100,6 @@ public class UserIntimateView {
 		head = (int) dp2px(55f);
 
 		currentShowContentView = intimateFriendsContentView;
-
-		mSpring = SpringSystem.create().createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
-		mSpring.addListener(new SimpleSpringListener() {
-			@Override
-			public void onSpringUpdate(Spring spring) {
-				render();
-			}
-
-			@Override
-			public void onSpringAtRest(Spring spring) {
-				stopChange();
-			}
-		});
 
 	}
 
@@ -159,28 +141,6 @@ public class UserIntimateView {
 	public float speedY = 0;
 	public float ratio = 0.00008f;
 
-	public void render() {
-
-		double value = mSpring.getCurrentValue();
-
-		if (thisController.touchStatus.state == thisController.touchStatus.Up) {
-			if (myPagerBody.status.state == myPagerBody.status.FIXED && myListBody.status.state == myListBody.status.DRAGGING) {
-				double deltaY = value * ratio * speedY * speedY;
-				if (speedY < 0) {
-					deltaY = -deltaY;
-				}
-				myListBody.setChildrenPosition(0, (float) deltaY);
-			}
-		} else {
-			Log.d(tag, "render skip");
-		}
-	}
-
-	public void stopChange() {
-		if (myPagerBody.status.state == myPagerBody.status.FIXED && myListBody.status.state == myListBody.status.DRAGGING) {
-			myListBody.status.state = myListBody.status.FIXED;
-		}
-	}
 
 	public void showCircles() {
 
@@ -205,7 +165,7 @@ public class UserIntimateView {
 			circleBody.cardView.setY(270 * displayMetrics.density * i + 2 * displayMetrics.density);
 			circleBody.cardView.setX(0);
 
-			this.myListBody.intimateFriendsContentView.addView(circleBody.cardView, layoutParams);
+			this.myListBody.containerView.addView(circleBody.cardView, layoutParams);
 			Log.d(tag, "addView");
 
 		}
@@ -217,15 +177,11 @@ public class UserIntimateView {
 			listBody.super();
 		}
 		
-		
 		public List<String> friendsSequence = new ArrayList<String>();
 		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
 
 		public View cardView = null;
 		public TextView leftTopText = null;
-
-		public float x;
-		public float y;
 
 		public View initialize() {
 
@@ -233,7 +189,9 @@ public class UserIntimateView {
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 
 			this.leftTopText.setOnClickListener(thisController.mOnClickListener);
-			return intimateFriendsContentView;
+			
+			super.initialize(cardView);
+			return cardView;
 		}
 
 		public void setContent(Circle circle) {
