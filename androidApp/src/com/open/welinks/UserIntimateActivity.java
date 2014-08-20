@@ -62,12 +62,10 @@ public class UserIntimateActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.debug1_1) {
 			Log.d(tag, "debug1.1");
-			startActivity(new Intent(UserIntimateActivity.this,
-					Debug1Activity.class));
+			startActivity(new Intent(UserIntimateActivity.this, Debug1Activity.class));
 		} else if (item.getItemId() == R.id.debug1_0) {
 			Log.d(tag, "debug1.1");
-			startActivity(new Intent(UserIntimateActivity.this,
-					Debug1Activity.class));
+			startActivity(new Intent(UserIntimateActivity.this, Debug1Activity.class));
 		}
 		return true;
 	}
@@ -76,6 +74,18 @@ public class UserIntimateActivity extends Activity {
 	public boolean onTouchEvent(MotionEvent event) {
 		super.onTouchEvent(event);
 		return thisController.onTouchEvent(event);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		thisController.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		thisController.onPause();
 	}
 
 }

@@ -60,6 +60,9 @@ public class UserIntimateView {
 	public TextView userNickNameView;
 	public TextView userBusinessView;
 
+	public ImageView mAppIconToNameView;
+	public View mRootView;
+
 	public Map<String, CircleBody> viewsMap = new HashMap<String, CircleBody>();
 	public ListBody friendListBody;
 
@@ -124,6 +127,9 @@ public class UserIntimateView {
 		userHeadImageView = (ImageView) thisActivity.findViewById(R.id.iv_headImage);
 		userNickNameView = (TextView) thisActivity.findViewById(R.id.tv_userNickname);
 		userBusinessView = (TextView) thisActivity.findViewById(R.id.tv_userMainBusiness);
+
+		mAppIconToNameView = (ImageView) thisActivity.findViewById(R.id.appIconToName);
+		mRootView = mAppIconToNameView;
 
 	}
 

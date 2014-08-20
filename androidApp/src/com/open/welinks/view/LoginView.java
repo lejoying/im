@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LoginView {
@@ -37,6 +38,9 @@ public class LoginView {
 	public TextView mainButton;
 	public TextView leftBottomTextButton;
 	public TextView rightBottomTextButton;
+	public ImageView appIconToName;
+
+	public View mRootView;
 
 	public Animation animationNextOut;
 	public Animation animationNextIn;
@@ -46,7 +50,7 @@ public class LoginView {
 	public enum Status {
 		welcome, start, loginOrRegister, loginUsePassword, verifyPhoneForRegister, verifyPhoneForResetPassword, verifyPhoneForLogin, setPassword, resetPassword
 	}
-	
+
 	String 状态机;
 
 	public Status status = Status.welcome;
@@ -80,7 +84,8 @@ public class LoginView {
 		mainButton = (TextView) thisActivity.findViewById(R.id.mainButton);
 		leftBottomTextButton = (TextView) thisActivity.findViewById(R.id.leftBottomTextButton);
 		rightBottomTextButton = (TextView) thisActivity.findViewById(R.id.rightBottomTextButton);
-
+		appIconToName = (ImageView) thisActivity.findViewById(R.id.appIconToName);
+		mRootView = appIconToName;
 	}
 
 	int remainRegister = 0;
