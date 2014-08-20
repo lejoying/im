@@ -128,10 +128,16 @@ public class UserIntimateController {
 				}
 
 				else if (view.equals(thisView.squareMenuView)) {
+					thisView.mainPagerBody.active();
+					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(0);
 				} else if (view.equals(thisView.shareMenuView)) {
+					thisView.mainPagerBody.active();
+					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(1);
 				} else if (view.equals(thisView.messages_friends_me_menuView)) {
+					thisView.mainPagerBody.active();
+					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(2);
 				}
 
@@ -165,15 +171,15 @@ public class UserIntimateController {
 
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
-			// thisView.messages_friends_me_PagerBody.onTouchDown(event);
+			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
 			thisView.friendListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
-			// thisView.messages_friends_me_PagerBody.onTouchMove(event);
+			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
 			thisView.friendListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
-			// thisView.messages_friends_me_PagerBody.onTouchUp(event);
+			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 			thisView.friendListBody.onTouchUp(event);
 		}
@@ -190,8 +196,7 @@ public class UserIntimateController {
 				thisView.friendListBody.onFling(velocityX, velocityY);
 			}
 			if (thisView.messages_friends_me_PagerBody.bodyStatus.state == thisView.messages_friends_me_PagerBody.bodyStatus.HOMING) {
-				// thisView.messages_friends_me_PagerBody.onFling(velocityX,
-				// velocityY);
+				thisView.messages_friends_me_PagerBody.onFling(velocityX, velocityY);
 			}
 			if (thisView.mainPagerBody.bodyStatus.state == thisView.mainPagerBody.bodyStatus.HOMING) {
 				thisView.mainPagerBody.onFling(velocityX, velocityY);

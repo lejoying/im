@@ -95,7 +95,8 @@ public class UserIntimateView {
 
 	public class ActivityStatus {
 		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
-		public float state = MESSAGES;
+		public float subState = MESSAGES;
+		public float state = SQUARE;
 	}
 
 	public ActivityStatus activityStatus = new ActivityStatus();
@@ -147,7 +148,7 @@ public class UserIntimateView {
 		friendsMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimatefriends);
 		messagesMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesList);
 		meMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomation);
-		
+
 		squareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.square_menu_view);
 		shareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.share_menu_view);
 		messages_friends_me_menuView = (RelativeLayout) thisActivity.findViewById(R.id.messages_friends_me_menu_view);
@@ -175,6 +176,7 @@ public class UserIntimateView {
 		messages_friends_me_PagerBody.addChildView(messagesView);
 		messages_friends_me_PagerBody.addChildView(friendsView);
 		messages_friends_me_PagerBody.addChildView(meView);
+		messages_friends_me_PagerBody.inActive();
 
 		userHeadImageView = (ImageView) thisActivity.findViewById(R.id.iv_headImage);
 		userNickNameView = (TextView) thisActivity.findViewById(R.id.tv_userNickname);
@@ -201,12 +203,31 @@ public class UserIntimateView {
 			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
+					thisView.activityStatus.subState = thisView.activityStatus.MESSAGES;
 				} else if (variable == 1) {
 					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
+					thisView.activityStatus.subState = thisView.activityStatus.FRIENDS;
 					thisView.friendListBody.active();
 				} else if (variable == 2) {
 					thisView.activityStatus.state = thisView.activityStatus.ME;
+					thisView.activityStatus.subState = thisView.activityStatus.ME;
 					thisController.mScaleSpring.setEndValue(0);
+				}
+			} else if (bodyTag.equals("mainPagerBody")) {
+				if (variable == 0) {
+					thisView.activityStatus.state = thisView.activityStatus.SQUARE;
+				} else if (variable == 1) {
+					thisView.activityStatus.state = thisView.activityStatus.SHARE;
+				} else if (variable == 2) {
+					thisView.activityStatus.state = thisView.activityStatus.subState;
+					thisView.mainPagerBody.inActive();
+					thisView.messages_friends_me_PagerBody.active();
+					if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+						thisView.friendListBody.active();
+					} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
+						thisController.mScaleSpring.setEndValue(0);
+					}
+
 				}
 			}
 
