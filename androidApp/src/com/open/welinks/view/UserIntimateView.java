@@ -63,6 +63,9 @@ public class UserIntimateView {
 	public TextView userNickNameView;
 	public TextView userBusinessView;
 
+	public ImageView mAppIconToNameView;
+	public View mRootView;
+
 	public Map<String, CircleBody> viewsMap = new HashMap<String, CircleBody>();
 	public ListBody myListBody;
 
@@ -136,11 +139,13 @@ public class UserIntimateView {
 		userNickNameView = (TextView) thisActivity.findViewById(R.id.tv_userNickname);
 		userBusinessView = (TextView) thisActivity.findViewById(R.id.tv_userMainBusiness);
 
+		mAppIconToNameView = (ImageView) thisActivity.findViewById(R.id.appIconToName);
+		mRootView = mAppIconToNameView;
+
 	}
 
 	public float speedY = 0;
 	public float ratio = 0.00008f;
-
 
 	public void showCircles() {
 
@@ -171,12 +176,12 @@ public class UserIntimateView {
 		}
 	}
 
-	public class CircleBody extends MyListItemBody{
+	public class CircleBody extends MyListItemBody {
 
-		CircleBody(ListBody listBody){
+		CircleBody(ListBody listBody) {
 			listBody.super();
 		}
-		
+
 		public List<String> friendsSequence = new ArrayList<String>();
 		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
 
@@ -189,7 +194,7 @@ public class UserIntimateView {
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 
 			this.leftTopText.setOnClickListener(thisController.mOnClickListener);
-			
+
 			super.initialize(cardView);
 			return cardView;
 		}

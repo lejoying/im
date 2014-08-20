@@ -12,11 +12,18 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringSystem;
+import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
 import com.open.welinks.UserIntimateActivity;
 import com.open.welinks.model.Data;
@@ -42,14 +49,19 @@ public class LoginController {
 	public OnClickListener mOnClickListener;
 	public TextWatcher mTextWatcher1;
 	public TextWatcher mTextWatcher2;
+	public OnTouchListener onTouchListener;
 
-	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
-	Handler handler = new Handler();
-	String url_userauth = "http://www.we-links.com/api2/account/auth";
+	public NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
+	public Handler handler = new Handler();
+	public String url_userauth = "http://www.we-links.com/api2/account/auth";
 
-	Gson gson = new Gson();
+	public Gson gson = new Gson();
 
-	SHA1 msSha1 = new SHA1();
+	public SHA1 msSha1 = new SHA1();
+
+	public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
+	public Spring mScaleSpring = mSpringSystem.createSpring();
 
 	public LoginController(Activity activity) {
 		this.context = activity;
@@ -57,20 +69,31 @@ public class LoginController {
 	}
 
 	public void initializeListeners() {
+		onTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				int action = event.getAction();
+				if (action == MotionEvent.ACTION_DOWN) {
+					mScaleSpring.setEndValue(1);
+				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+					mScaleSpring.setEndValue(0);
+				}
+				return true;
+			}
+		};
 		mOnFocusChangeListener = new OnFocusChangeListener() {
 
 			@Override
 			public void onFocusChange(View view, boolean hasFocus) {
 				if (view.equals(thisView.input1)) {
-					if (hasFocus
-							&& !thisView.input1.getText().toString().equals("")) {
+					if (hasFocus && !thisView.input1.getText().toString().equals("")) {
 						thisView.clearInput1.setVisibility(View.VISIBLE);
 					} else {
 						thisView.clearInput1.setVisibility(View.INVISIBLE);
 					}
 				} else if (view.equals(thisView.input2)) {
-					if (hasFocus
-							&& !thisView.input2.getText().toString().equals("")) {
+					if (hasFocus && !thisView.input2.getText().toString().equals("")) {
 						thisView.clearInput2.setVisibility(View.VISIBLE);
 					} else {
 						thisView.clearInput2.setVisibility(View.INVISIBLE);
@@ -84,26 +107,20 @@ public class LoginController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.loginButton)) {
-					nextAnimation(Status.loginUsePassword, thisView.card,
-							thisView.loginOrRegister);
+					nextAnimation(Status.loginUsePassword, thisView.card, thisView.loginOrRegister);
 				} else if (view.equals(thisView.registerButton)) {
-					nextAnimation(Status.verifyPhoneForRegister, thisView.card,
-							thisView.loginOrRegister);
+					nextAnimation(Status.verifyPhoneForRegister, thisView.card, thisView.loginOrRegister);
 				} else if (view.equals(thisView.mainButton)) {
 					if (thisView.status == Status.loginUsePassword) {
-						String loginPhone = thisView.input1.getText()
-								.toString().trim();
-						String loginPass = thisView.input2.getText().toString()
-								.trim();
+						String loginPhone = thisView.input1.getText().toString().trim();
+						String loginPass = thisView.input2.getText().toString().trim();
 						if ("".equals(loginPhone) || "".equals(loginPass)) {
-							Toast.makeText(context, "帐号和密码不能为空",
-									Toast.LENGTH_LONG).show();
+							Toast.makeText(context, "帐号和密码不能为空", Toast.LENGTH_LONG).show();
 							return;
 						}
 						requestUserAuth(loginPhone, loginPass);
 					} else {
-						Toast.makeText(context, "尚未处理", Toast.LENGTH_LONG)
-								.show();
+						Toast.makeText(context, "尚未处理", Toast.LENGTH_LONG).show();
 					}
 				}
 			}
@@ -112,13 +129,11 @@ public class LoginController {
 		mTextWatcher1 = new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
 
 			@Override
@@ -134,13 +149,11 @@ public class LoginController {
 		mTextWatcher2 = new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
 
 			@Override
@@ -173,6 +186,7 @@ public class LoginController {
 		thisView.mainButton.setOnClickListener(mOnClickListener);
 		thisView.leftBottomTextButton.setOnClickListener(mOnClickListener);
 		thisView.rightBottomTextButton.setOnClickListener(mOnClickListener);
+		thisView.mRootView.setOnTouchListener(onTouchListener);
 	}
 
 	public void onCreate() {
@@ -181,29 +195,41 @@ public class LoginController {
 
 			@Override
 			public void run() {
-				backAnimation(thisView.status, thisView.loginOrRegisterButton,
-						null);
+				backAnimation(thisView.status, thisView.loginOrRegisterButton, null);
 			}
 		}, 500);
+	}
+
+	public void onResume() {
+		mScaleSpring.addListener(mSpringListener);
+	}
+
+	public void onPause() {
+		mScaleSpring.removeListener(mSpringListener);
+	}
+
+	private class ExampleSpringListener extends SimpleSpringListener {
+		@Override
+		public void onSpringUpdate(Spring spring) {
+			float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, 1, 0.5);
+			thisView.appIconToName.setScaleX(mappedValue);
+			thisView.appIconToName.setScaleY(mappedValue);
+		}
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		boolean flag = false;
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (thisView.status == Status.loginUsePassword) {
-				backAnimation(Status.loginOrRegister, thisView.loginOrRegister,
-						thisView.card);
+				backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
 			} else if (thisView.status == Status.verifyPhoneForLogin) {
-				backAnimation(Status.loginUsePassword, thisView.card,
-						thisView.card);
+				backAnimation(Status.loginUsePassword, thisView.card, thisView.card);
 
 			} else if (thisView.status == Status.verifyPhoneForRegister) {
-				backAnimation(Status.loginOrRegister, thisView.loginOrRegister,
-						thisView.card);
+				backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
 
 			} else if (thisView.status == Status.verifyPhoneForResetPassword) {
-				backAnimation(Status.loginUsePassword, thisView.card,
-						thisView.card);
+				backAnimation(Status.loginUsePassword, thisView.card, thisView.card);
 			}
 		} else {
 		}
@@ -257,8 +283,7 @@ public class LoginController {
 
 			@Override
 			public void success(JSONObject jData) {
-				Intent intent = new Intent(thisActivity,
-						UserIntimateActivity.class);
+				Intent intent = new Intent(thisActivity, UserIntimateActivity.class);
 				intent.putExtra("phone", loginPhone);
 				thisActivity.startActivity(intent);
 			}

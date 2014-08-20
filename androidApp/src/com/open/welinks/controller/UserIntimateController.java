@@ -9,8 +9,14 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringSystem;
+import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -31,6 +37,7 @@ public class UserIntimateController {
 	public GestureDetector mGesture;
 
 	public OnClickListener mOnClickListener;
+	public OnTouchListener onTouchListener;
 
 	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
 	Handler handler = new Handler();
@@ -41,6 +48,10 @@ public class UserIntimateController {
 
 	public String userPhone;
 
+	public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
+	public Spring mScaleSpring = mSpringSystem.createSpring();
+
 	public void oncreate() {
 		String phone = thisActivity.getIntent().getStringExtra("phone");
 		if (phone != null && !"".equals(phone)) {
@@ -50,6 +61,23 @@ public class UserIntimateController {
 
 		thisView.showCircles();
 		// this.test();
+	}
+
+	public void onResume() {
+		mScaleSpring.addListener(mSpringListener);
+	}
+
+	public void onPause() {
+		mScaleSpring.removeListener(mSpringListener);
+	}
+
+	private class ExampleSpringListener extends SimpleSpringListener {
+		@Override
+		public void onSpringUpdate(Spring spring) {
+			float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, 1, 0.5);
+			thisView.mAppIconToNameView.setScaleX(mappedValue);
+			thisView.mAppIconToNameView.setScaleY(mappedValue);
+		}
 	}
 
 	public void test() {
@@ -72,6 +100,19 @@ public class UserIntimateController {
 	}
 
 	public void initializeListeners() {
+		onTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				int action = event.getAction();
+				if (action == MotionEvent.ACTION_DOWN) {
+					mScaleSpring.setEndValue(1);
+				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+					mScaleSpring.setEndValue(0);
+				}
+				return true;
+			}
+		};
 		mOnClickListener = new OnClickListener() {
 
 			@Override
@@ -93,6 +134,7 @@ public class UserIntimateController {
 		thisView.intimateFriendsMenuOptionView.setOnClickListener(mOnClickListener);
 		thisView.chatMessagesListMenuOptionView.setOnClickListener(mOnClickListener);
 		thisView.userInfomationMenuOptionView.setOnClickListener(mOnClickListener);
+		thisView.mRootView.setOnTouchListener(onTouchListener);
 	}
 
 	public class TouchStatus {

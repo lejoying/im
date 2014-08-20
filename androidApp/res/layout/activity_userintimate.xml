@@ -120,12 +120,20 @@
         android:padding="10dp"
         android:visibility="visible" >
 
+        <ImageView
+            android:id="@+id/appIconToName"
+            android:layout_width="125dp"
+            android:layout_height="155dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/icon_star_text" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:layout_gravity="center_vertical"
             android:background="@color/card_color"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical"
+            android:translationY="175dp" >
 
             <ImageView
                 android:id="@+id/iv_headImage"
@@ -172,13 +180,13 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="90dp"
+            android:translationY="265dp"
             android:background="@drawable/dashed_line" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="49dp"
-            android:layout_marginTop="90dp"
+            android:translationY="265dp"
             android:background="@color/card_color"
             android:gravity="center_vertical"
             android:visibility="visible" >
@@ -195,9 +203,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="149dp"
+            android:translationY="321dp"
             android:background="@color/card_color"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical"
+            android:visibility="visible" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -223,9 +232,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="209dp"
+            android:translationY="378dp"
             android:background="@color/card_color"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical"
+            android:visibility="visible" >
 
             <TextView
                 android:layout_width="wrap_content"

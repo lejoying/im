@@ -45,6 +45,7 @@ public class LoginActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		thisController.onResume();
 		data.localStatus.thisActivityName = "LoginActivity";
 	}
 
@@ -81,12 +82,10 @@ public class LoginActivity extends Activity {
 			startActivity(new Intent(LoginActivity.this, Debug1Activity.class));
 		} else if (item.getItemId() == R.id.csubmenu2_1) {
 			Log.d(tag, "csubmenu2_1");
-			startActivity(new Intent(LoginActivity.this,
-					ImagesDirectoryActivity.class));
+			startActivity(new Intent(LoginActivity.this, ImagesDirectoryActivity.class));
 		} else if (item.getItemId() == R.id.csubmenu2_2) {
 			Log.d(tag, "csubmenu2_2");
-			startActivity(new Intent(LoginActivity.this,
-					TestMultipartUpload.class));
+			startActivity(new Intent(LoginActivity.this, TestMultipartUpload.class));
 		} else if (item.getItemId() == R.id.csubmenu2_3) {
 			Log.d(tag, "csubmenu2_3");
 			startActivity(new Intent(LoginActivity.this, TestHttpLongPull.class));
@@ -97,8 +96,7 @@ public class LoginActivity extends Activity {
 
 		else if (item.getItemId() == R.id.debug1_3) {
 			Log.d(tag, "debug1_3");
-			startActivity(new Intent(LoginActivity.this,
-					UserIntimateActivity.class));
+			startActivity(new Intent(LoginActivity.this, UserIntimateActivity.class));
 		}
 		return true;
 	}
@@ -106,6 +104,7 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		thisController.onPause();
 	}
 
 	@Override
