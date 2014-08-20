@@ -1,5 +1,9 @@
 package com.open.welinks.view;
 
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
 import com.open.welinks.R;
 import com.open.welinks.controller.LoginController;
 import com.open.welinks.model.Data;
@@ -54,6 +58,11 @@ public class LoginView {
 	String 状态机;
 
 	public Status status = Status.welcome;
+
+	public SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(10, 2);
+
+	public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	public Spring mScaleSpring = mSpringSystem.createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
 
 	public LoginView(Activity activity) {
 		this.context = activity;

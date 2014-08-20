@@ -12,16 +12,16 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
-import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.UserIntimateView;
@@ -48,9 +48,7 @@ public class UserIntimateController {
 
 	public String userPhone;
 
-	public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
-	public Spring mScaleSpring = mSpringSystem.createSpring();
 
 	public void oncreate() {
 		String phone = thisActivity.getIntent().getStringExtra("phone");
@@ -61,14 +59,23 @@ public class UserIntimateController {
 
 		thisView.showCircles();
 		// this.test();
+		initChatMessages();
+		thisView.showChatMessages();
+	}
+
+	void initChatMessages() {
+		// read message.js content transformation to Gson
+		String messageContent = Parser.getInstance().getFromAssets("message.js");
+		Messages messages = gson.fromJson(messageContent, Messages.class);
+		data.messages = messages;
 	}
 
 	public void onResume() {
-		mScaleSpring.addListener(mSpringListener);
+		thisView.mScaleSpring.addListener(mSpringListener);
 	}
 
 	public void onPause() {
-		mScaleSpring.removeListener(mSpringListener);
+		thisView.mScaleSpring.removeListener(mSpringListener);
 	}
 
 	private class ExampleSpringListener extends SimpleSpringListener {
@@ -100,15 +107,16 @@ public class UserIntimateController {
 	}
 
 	public void initializeListeners() {
+
 		onTouchListener = new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
-					mScaleSpring.setEndValue(1);
+					thisView.mScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-					mScaleSpring.setEndValue(0);
+					thisView.mScaleSpring.setEndValue(0);
 				}
 				return true;
 			}
@@ -119,10 +127,13 @@ public class UserIntimateController {
 			public void onClick(View view) {
 				if (view.equals(thisView.chatMessagesListMenuOptionView)) {
 					thisView.myPagerBody.flipTo(0);
+					thisView.currentShowContentView = thisView.chatMessagesListContentView;
 				} else if (view.equals(thisView.intimateFriendsMenuOptionView)) {
 					thisView.myPagerBody.flipTo(1);
+					thisView.currentShowContentView = thisView.intimateFriendsContentView;
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
 					thisView.myPagerBody.flipTo(2);
+					thisView.currentShowContentView = thisView.userInfomationContentView;
 				} else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
@@ -146,20 +157,36 @@ public class UserIntimateController {
 
 	public boolean onTouchEvent(MotionEvent event) {
 
-		if (!thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
+		if (thisView.currentShowContentView.equals(thisView.userInfomationContentView)) {
 			return true;
+		}
+		boolean isActive = false;
+		if (thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
+			isActive = true;
+		} else if (thisView.currentShowContentView.equals(thisView.chatMessagesListContentView)) {
+			isActive = false;
 		}
 
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			thisView.myPagerBody.onTouchDown(event);
-			thisView.myListBody.onTouchDown(event);
+			if (isActive) {
+				thisView.myListBody.onTouchDown(event);
+			} else {
+				thisView.chatMessageListBody.onTouchDown(event);
+			}
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.myPagerBody.onTouchMove(event);
-			thisView.myListBody.onTouchMove(event);
+			if (isActive)
+				thisView.myListBody.onTouchMove(event);
+			else
+				thisView.chatMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.myPagerBody.onTouchUp(event);
-			thisView.myListBody.onTouchUp(event);
+			if (isActive)
+				thisView.myListBody.onTouchUp(event);
+			else
+				thisView.chatMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -170,15 +197,17 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			if (thisView.myListBody.bodyStatus.state == thisView.myListBody.bodyStatus.DRAGGING) {
+			if (thisView.myListBody.bodyStatus.state == thisView.myListBody.bodyStatus.DRAGGING && thisView.currentShowContentView.equals(thisView.intimateFriendsContentView)) {
 				thisView.myListBody.onFling(velocityX, velocityY);
 			}
 			if (thisView.myPagerBody.bodyStatus.state == thisView.myPagerBody.bodyStatus.HOMING) {
 				thisView.myPagerBody.onFling(velocityX, velocityY);
 			}
+			if (thisView.chatMessageListBody.bodyStatus.state == thisView.chatMessageListBody.bodyStatus.DRAGGING && thisView.currentShowContentView.equals(thisView.chatMessagesListContentView)) {
+				thisView.chatMessageListBody.onFling(velocityX, velocityY);
+			}
 			return true;
 		}
-
 	}
 
 	void generateTextView(final String message) {
