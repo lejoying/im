@@ -118,11 +118,11 @@ public class UserIntimateController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.chatMessagesListMenuOptionView)) {
-					thisView.myPagerBody.flipTo(0);
+					thisView.messages_friends_me_PagerBody.flipTo(0);
 				} else if (view.equals(thisView.intimateFriendsMenuOptionView)) {
-					thisView.myPagerBody.flipTo(1);
+					thisView.messages_friends_me_PagerBody.flipTo(1);
 				} else if (view.equals(thisView.userInfomationMenuOptionView)) {
-					thisView.myPagerBody.flipTo(2);
+					thisView.messages_friends_me_PagerBody.flipTo(2);
 				} else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
@@ -148,13 +148,16 @@ public class UserIntimateController {
 
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
-			thisView.myPagerBody.onTouchDown(event);
+			// thisView.messages_friends_me_PagerBody.onTouchDown(event);
+			thisView.mainPagerBody.onTouchDown(event);
 			thisView.friendListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
-			thisView.myPagerBody.onTouchMove(event);
+			// thisView.messages_friends_me_PagerBody.onTouchMove(event);
+			thisView.mainPagerBody.onTouchMove(event);
 			thisView.friendListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
-			thisView.myPagerBody.onTouchUp(event);
+			// thisView.messages_friends_me_PagerBody.onTouchUp(event);
+			thisView.mainPagerBody.onTouchUp(event);
 			thisView.friendListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
@@ -169,8 +172,12 @@ public class UserIntimateController {
 			if (thisView.friendListBody.bodyStatus.state == thisView.friendListBody.bodyStatus.DRAGGING) {
 				thisView.friendListBody.onFling(velocityX, velocityY);
 			}
-			if (thisView.myPagerBody.bodyStatus.state == thisView.myPagerBody.bodyStatus.HOMING) {
-				thisView.myPagerBody.onFling(velocityX, velocityY);
+			if (thisView.messages_friends_me_PagerBody.bodyStatus.state == thisView.messages_friends_me_PagerBody.bodyStatus.HOMING) {
+				// thisView.messages_friends_me_PagerBody.onFling(velocityX,
+				// velocityY);
+			}
+			if (thisView.mainPagerBody.bodyStatus.state == thisView.mainPagerBody.bodyStatus.HOMING) {
+				thisView.mainPagerBody.onFling(velocityX, velocityY);
 			}
 			return true;
 		}

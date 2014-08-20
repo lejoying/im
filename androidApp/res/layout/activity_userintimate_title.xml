@@ -8,7 +8,7 @@
         android:id="@+id/rl_mainMenuBar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/card_color" >
+         >
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -51,74 +51,6 @@
                 android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"
                 android:src="@drawable/subscript_triangle" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true" >
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="5dp" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:clickable="false"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:src="@drawable/person_icon_selected" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="45dp" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:clickable="false"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:src="@drawable/group_icon" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="85dp" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:clickable="false"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:src="@drawable/square_icon" />
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/title_control_progress_container"
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:translationY="46dp" >
-
-            <include
-                android:id="@+id/title_control_progress"
-                layout="@layout/view_element_debug1_control_progress" />
         </RelativeLayout>
     </RelativeLayout>
 

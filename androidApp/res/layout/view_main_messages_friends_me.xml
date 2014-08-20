@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background_2"
     tools:context=".UserIntimateActivity" >
 
     <include layout="@layout/activity_userintimate_title" >
@@ -17,7 +16,7 @@
         android:layout_marginTop="50dp" >
 
         <ImageView
-            android:id="@+id/pager_indicator"
+            android:id="@+id/messages_friends_me_pager_indicator"
             android:layout_width="110dp"
             android:layout_height="2dp"
             android:background="@color/card_color"
