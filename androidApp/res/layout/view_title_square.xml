@@ -39,7 +39,7 @@
                 android:layout_alignParentLeft="true"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="用户ABC"
+                android:text="用户"
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 

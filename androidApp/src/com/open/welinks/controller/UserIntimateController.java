@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.rebound.SimpleSpringListener;
@@ -20,10 +19,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
-import com.open.welinks.R;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Messages;
-import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.UserIntimateView;
@@ -63,15 +59,10 @@ public class UserIntimateController {
 
 		thisView.showCircles();
 		// this.test();
-		initChatMessages();
+		// initChatMessages();
 		thisView.showMessages();
-	}
 
-	void initChatMessages() {
-		// read message.js content transformation to Gson
-		String messageContent = Parser.getInstance().getFromAssets("message.js");
-		Messages messages = gson.fromJson(messageContent, Messages.class);
-		data.messages = messages;
+		thisView.showShareMessages();
 	}
 
 	public void onResume() {
@@ -150,6 +141,12 @@ public class UserIntimateController {
 					thisView.mainPagerBody.flipTo(2);
 				}
 
+				else if (view.equals(thisView.shareTopMenuGroupNameParent)) {
+					thisView.showGroupsDialog();
+				} else if (view.equals(thisView.groupDialogView)) {
+					thisView.dismissGroupDialog();
+				}
+
 				else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
@@ -167,6 +164,9 @@ public class UserIntimateController {
 		thisView.messages_friends_me_menuView.setOnClickListener(mOnClickListener);
 
 		thisView.mRootView.setOnTouchListener(onTouchListener);
+
+		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
+		thisView.groupDialogView.setOnClickListener(mOnClickListener);
 	}
 
 	public class TouchStatus {
@@ -184,16 +184,19 @@ public class UserIntimateController {
 			thisView.mainPagerBody.onTouchDown(event);
 			thisView.friendListBody.onTouchDown(event);
 			thisView.chatMessageListBody.onTouchDown(event);
+			thisView.shareMessageListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
 			thisView.friendListBody.onTouchMove(event);
 			thisView.chatMessageListBody.onTouchMove(event);
+			thisView.shareMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 			thisView.friendListBody.onTouchUp(event);
 			thisView.chatMessageListBody.onTouchUp(event);
+			thisView.shareMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -215,6 +218,9 @@ public class UserIntimateController {
 			}
 			if (thisView.chatMessageListBody.bodyStatus.state == thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 				thisView.chatMessageListBody.onFling(velocityX, velocityY);
+			}
+			if (thisView.shareMessageListBody.bodyStatus.state == thisView.shareMessageListBody.bodyStatus.DRAGGING) {
+				thisView.shareMessageListBody.onFling(velocityX, velocityY);
 			}
 			return true;
 		}

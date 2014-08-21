@@ -60,6 +60,7 @@ public class Data {
 	public UserInformation userInformation;
 	public Relationship relationship;
 	public Messages messages;
+	public Shares shares;
 
 	public class UserInformation {
 		public User currentUser;
@@ -163,6 +164,41 @@ public class Data {
 			public String nickName;
 			public String contentType;
 			public String content;
+		}
+	}
+
+	public class Shares {
+
+		public Map<String, Share> shareMap = new HashMap<String, Share>();
+
+		public class Share {
+
+			public List<String> sharesOrder = new ArrayList<String>();
+
+			public Map<String, ShareMessage> sharesMap = new HashMap<String, ShareMessage>();
+
+			public class ShareMessage {
+				public int mType;
+				public String gsid;
+				public String type;
+				public String phone;
+				public long time;
+				public List<String> praiseusers = new ArrayList<String>();
+				public List<Comment> comments = new ArrayList<Comment>();
+				public String content;
+			}
+
+			public class Comment {
+				public String phone;
+				public String nickName;
+				public String head;
+				public String phoneTo;
+				public String nickNameTo;
+				public String headTo;
+				public String contentType;// "text"
+				public String content;
+				public long time;
+			}
 		}
 	}
 }

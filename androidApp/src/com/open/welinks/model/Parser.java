@@ -7,12 +7,14 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
+import com.open.welinks.model.Data.Shares;
 import com.open.welinks.model.Data.UserInformation;
 
 public class Parser {
 	String tag = "Parser";
-	
+
 	public static Parser parser;
 
 	public static Parser getInstance() {
@@ -37,18 +39,24 @@ public class Parser {
 
 		String userInformationStr = getFromAssets("userInformation.js");
 		data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
-		
+
 		String userInformationStr_debug = gson.toJson(data.userInformation);
 		Log.d(tag, userInformationStr_debug);
-		
+
 		String relationshipStr = getFromAssets("relationship.js");
 		data.relationship = gson.fromJson(relationshipStr, Relationship.class);
-		
+
+		String messageContent = getFromAssets("message.js");
+		Messages messages = gson.fromJson(messageContent, Messages.class);
+		data.messages = messages;
+
+		String shareContent = getFromAssets("share.js");
+		Shares shares = gson.fromJson(shareContent, Shares.class);
+		data.shares = shares;
+
 		int i = 1;
 		i = i + 68;
 	}
-	
-
 
 	public String getFromAssets(String fileName) {
 		String result = null;

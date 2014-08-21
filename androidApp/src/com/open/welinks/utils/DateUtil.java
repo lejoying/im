@@ -66,4 +66,12 @@ public class DateUtil {
 			w = 0;
 		return new String[] { w + "", weekDays[w] };
 	}
+
+	@SuppressLint("SimpleDateFormat")
+	public static String formatHourMinute(long timeMillis) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+		Date date = new Date(timeMillis);
+		String mTime = simpleDateFormat.format(date);
+		return mTime;
+	}
 }
