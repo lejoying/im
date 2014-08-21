@@ -418,12 +418,12 @@
 			"latitude" : ""
 		}
 	},
-	groups : ["好友圈", "同学会", "同乡会"],
+	groups : ["1001", "1002", "1003"],
 	groupsMap : {
-		"好友圈" : {
-			gid : 123,
+		"1001" : {
+			gid : 1001,
 			icon : "",
-			name : "好友圈",
+			name : "1001好友圈",
 			notReadMessagesCount : 12,
 			distance : 4562;
 			longitude : "";
@@ -432,10 +432,22 @@
 			background : "";
 			members : ["13355558881", "15266688897"]
 		},
-		"同学会" : {
-			gid : 124,
+		"1002" : {
+			gid : 1002,
 			icon : "",
-			name : "同学会",
+			name : "1002同学会",
+			notReadMessagesCount : 12,
+			distance : 4562;
+			longitude : "";
+			latitude : "";
+			description : "";
+			background : "";
+			members : ["13355558881", "15266688897"]
+		},
+		"1003" : {
+			gid : 1003,
+			icon : "",
+			name : "1003同事会",
 			notReadMessagesCount : 12,
 			distance : 4562;
 			longitude : "";

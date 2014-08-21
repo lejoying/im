@@ -13,13 +13,16 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,6 +40,9 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.Shares.Share;
+import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -112,6 +118,16 @@ public class UserIntimateView {
 	public Spring mMePageAppIconScaleSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
 
 	public ListBody chatMessageListBody;
+
+	// share
+	public RelativeLayout shareMessageView;
+	public ListBody shareMessageListBody;
+
+	public RelativeLayout shareTopMenuGroupNameParent;
+	public TextView shareTopMenuGroupName;
+
+	public PopupWindow groupPopWindow;
+	public View groupDialogView;
 
 	public enum Status {
 		MESSAGES, FRIENDS, MINE
@@ -195,6 +211,16 @@ public class UserIntimateView {
 		friendsView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimateFriendsContent);
 		friendListBody = new ListBody();
 		friendListBody.initialize(displayMetrics, friendsView);
+
+		// share
+		shareMessageView = (RelativeLayout) shareView.findViewById(R.id.groupShareMessageContent);
+		shareMessageListBody = new ListBody();
+		shareMessageListBody.initialize(displayMetrics, shareMessageView);
+
+		groupDialogView = mInflater.inflate(R.layout.share_group_select_dialog, null, false);
+
+		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
+		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
 
 		meView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomationContent);
 
@@ -284,6 +310,7 @@ public class UserIntimateView {
 					thisView.activityStatus.state = thisView.activityStatus.SQUARE;
 				} else if (variable == 1) {
 					thisView.activityStatus.state = thisView.activityStatus.SHARE;
+					thisView.shareMessageListBody.active();
 				} else if (variable == 2) {
 					thisView.activityStatus.state = thisView.activityStatus.subState;
 					thisView.mainPagerBody.inActive();
@@ -476,6 +503,134 @@ public class UserIntimateView {
 			lastChatMessageView.setText(message.content);
 			lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			notReadNumberView.setText("1");
+		}
+	}
+
+	public void showShareMessages() {
+		Share share = data.shares.shareMap.get("1001");
+		List<String> sharesOrder = share.sharesOrder;
+		Map<String, ShareMessage> sharesMap = share.sharesMap;
+		this.shareMessageListBody.listItemsSequence.clear();
+		for (int i = 0; i < sharesOrder.size(); i++) {
+			String key = sharesOrder.get(i);
+			ShareMessage shareMessage = null;
+			shareMessage = sharesMap.get(key);
+			SharesMessageBody sharesMessageBody = null;
+			sharesMessageBody = new SharesMessageBody(this.shareMessageListBody);
+			sharesMessageBody.initialize();
+			sharesMessageBody.setContent(shareMessage);
+
+			this.shareMessageListBody.listItemsSequence.add("message#" + shareMessage.phone + "_" + shareMessage.time);
+			this.shareMessageListBody.listItemBodiesMap.put("message#" + shareMessage.phone + "_" + shareMessage.time, sharesMessageBody);
+
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (340 * displayMetrics.density));
+			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density;
+			sharesMessageBody.cardView.setY(sharesMessageBody.y);
+			sharesMessageBody.cardView.setX(0);
+			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
+			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
+		}
+	}
+
+	public class SharesMessageBody extends MyListItemBody {
+
+		SharesMessageBody(ListBody listBody) {
+			listBody.super();
+		}
+
+		public View cardView = null;
+
+		public ImageView headView;
+		public TextView nickNameView;
+		public TextView releaseTimeView;
+		public TextView shareTextContentView;
+		public ImageView shareImageContentView;
+		public TextView sharePraiseNumberView;
+		public TextView shareCommentNumberView;
+
+		public View initialize() {
+
+			this.cardView = mInflater.inflate(R.layout.share_message_item, null);
+			this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
+			this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
+			this.releaseTimeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
+			this.shareTextContentView = (TextView) this.cardView.findViewById(R.id.share_textContent);
+			this.shareImageContentView = (ImageView) this.cardView.findViewById(R.id.share_imageContent);
+			this.sharePraiseNumberView = (TextView) this.cardView.findViewById(R.id.share_praise);
+			this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
+			super.initialize(this.cardView);
+			return cardView;
+		}
+
+		public void setContent(ShareMessage shareMessage) {
+			Resources resources = thisActivity.getResources();
+			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+			this.headView.setImageBitmap(bitmap);
+			this.nickNameView.setText(shareMessage.phone);
+			this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
+			this.shareTextContentView.setText(shareMessage.content);
+			// this.sharePraiseNumberView.setText(shareMessage.praiseusers.size());
+			// this.shareCommentNumberView.setText(shareMessage.comments.size());
+		}
+	}
+
+	public RelativeLayout groupsContent;
+
+	@SuppressWarnings("deprecation")
+	public void showGroupsDialog() {
+		groupPopWindow = new PopupWindow(groupDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
+		RelativeLayout mainContentView = (RelativeLayout) groupDialogView.findViewById(R.id.mainContent);
+
+		groupsContent = (RelativeLayout) groupDialogView.findViewById(R.id.groupsContent);
+		setGroupsDialogContent();
+		RelativeLayout.LayoutParams mainContentParams = (RelativeLayout.LayoutParams) mainContentView.getLayoutParams();
+		mainContentParams.height = (int) (displayMetrics.heightPixels * 0.7578125f);
+		mainContentParams.leftMargin = (int) (20 / displayMetrics.density + 0.5f);
+		mainContentParams.rightMargin = (int) (20 / displayMetrics.density + 0.5f);
+		mainContentView.setLayoutParams(mainContentParams);
+		groupPopWindow.showAtLocation(thisView.main_container, Gravity.CENTER, 0, 0);
+	}
+
+	public void dismissGroupDialog() {
+		groupPopWindow.dismiss();
+	}
+
+	public void setGroupsDialogContent() {
+		List<String> groups = data.relationship.groups;
+		Map<String, Group> groupsMap = data.relationship.groupsMap;
+		groupsContent.removeAllViews();
+		for (int i = 0; i < groups.size(); i++) {
+			GroupDialogItem groupDialogItem = new GroupDialogItem();
+			View view = groupDialogItem.initialize();
+			groupDialogItem.setContent(groupsMap.get(groups.get(i)));
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (60 * displayMetrics.density));
+			layoutParams.topMargin = (int) (60 * displayMetrics.density * i);
+			groupsContent.addView(view, layoutParams);
+		}
+	}
+
+	public class GroupDialogItem {
+
+		public View cardView;
+
+		public ImageView groupIconView;
+		public TextView groupNameView;
+
+		public View initialize() {
+			this.cardView = mInflater.inflate(R.layout.share_group_select_dialog_item, null);
+			this.groupIconView = (ImageView) this.cardView.findViewById(R.id.groupIcon);
+			this.groupNameView = (TextView) this.cardView.findViewById(R.id.groupName);
+			return cardView;
+		}
+
+		public void setContent(Group group) {
+			Resources resources = thisActivity.getResources();
+			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+			this.groupIconView.setImageBitmap(bitmap);
+			this.groupNameView.setText(group.name);
 		}
 	}
 

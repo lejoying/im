@@ -21,18 +21,19 @@
                 android:layout_centerVertical="true"
                 android:clickable="false"
                 android:gravity="center"
-                android:padding="10dp"
-                android:src="@drawable/scanner_code" />
+                android:padding="0dp"
+                android:src="@drawable/share_to_group_icon" />
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/shareTopMenuGroupNameParent"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="60dp" >
 
             <TextView
-                android:id="@+id/tv_title"
+                android:id="@+id/shareTopMenuGroupName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
@@ -45,7 +46,7 @@
             <ImageView
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:layout_alignRight="@+id/tv_title"
+                android:layout_alignRight="@+id/shareTopMenuGroupName"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"
