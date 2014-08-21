@@ -30,7 +30,6 @@ public class PagerBody {
 		this.bodyCallback = bodyCallback;
 		this.displayMetrics = displayMetrics;
 
-
 		SpringSystem mSpringSystem = SpringSystem.create();
 		mSpring = mSpringSystem.createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
 
@@ -70,11 +69,16 @@ public class PagerBody {
 	public boolean isActive = true;
 
 	public void active() {
+		Log.d(tag, "active");
 		isActive = true;
+		this.bodyStatus.state = this.bodyStatus.FIXED;
+		this.touchStatus.state = this.touchStatus.None;
 	}
 
 	public void inActive() {
-		isActive = false;
+		Log.d(tag, "inActive");
+		this.isActive = false;
+		this.touchStatus.state = this.touchStatus.None;
 	}
 
 	public class BodyStatus {
@@ -92,9 +96,9 @@ public class PagerBody {
 	public TouchStatus touchStatus = new TouchStatus();
 
 	public void render() {
-		if (isActive == false) {
-			return;
-		}
+		// if (isActive == false) {
+		// return;
+		// }
 		double value = mSpring.getCurrentValue();
 
 		if (this.touchStatus.state == this.touchStatus.Up) {
@@ -133,7 +137,7 @@ public class PagerBody {
 		if (touchStatus.state == touchStatus.Up) {
 			touchStatus.state = touchStatus.Down;
 		} else {
-			Log.e("onTouchEvent", "unkown status: not touchMoveStatus.Up");
+			Log.e(tag, "unkown status: not touchMoveStatus.Up");
 		}
 		touch_pre_x = x;
 		touch_pre_y = y;
@@ -152,25 +156,35 @@ public class PagerBody {
 				if (deltaY > deltaX) {
 					touchStatus.state = touchStatus.Vertical;
 					touch_pre_y = y;
-					Log.e("onTouchEvent", "Vertical moving");
+					Log.e(tag, "Vertical moving");
 				} else {
 					touchStatus.state = touchStatus.Horizontal;
 					if (this.bodyStatus.state == this.bodyStatus.FIXED || this.bodyStatus.state == this.bodyStatus.HOMING) {
+						if (this.nextPageIndex == 0 && x - touch_pre_x > 0) {
+							if (this.bodyCallback.onOverRange(tag, -1) == true) {
+								return;
+							}
+						} else if (this.nextPageIndex == 3 && x - touch_pre_x < 0) {
+							if (this.bodyCallback.onOverRange(tag, -1) == true) {
+								return;
+							}
+						}
 						this.recordChildrenPosition();
 						this.bodyStatus.state = this.bodyStatus.DRAGGING;
 						this.bodyCallback.onStart(tag, this.pageIndex);
 					} else {
-						Log.e("onTouchEvent", "thisView.myPagerBody.status error: " + this.bodyStatus.state);
+						Log.e(tag, "thisView.myPagerBody.status error: " + this.bodyStatus.state);
 					}
 					touch_pre_x = x;
-					Log.e("onTouchEvent", "Horizontal moving");
+					Log.e(tag, "Horizontal moving");
 				}
 			}
 		} else if (touchStatus.state == touchStatus.Horizontal) {
 			y = touch_pre_y;
 			this.setChildrenDeltaPosition(x - touch_pre_x, 0);
 		} else {
-			Log.e("onTouchEvent", "unkown status: touchMoveStatus.Up");
+			this.onTouchDown(event);
+			Log.e(tag, "unkown status: touchMoveStatus.Up");
 		}
 	}
 
@@ -178,9 +192,7 @@ public class PagerBody {
 		if (isActive == false) {
 			return;
 		}
-		if (touchStatus.state == touchStatus.Horizontal && (this.bodyStatus.state == this.bodyStatus.DRAGGING || this.bodyStatus.state == this.bodyStatus.FIXED)) {
-			this.homing();
-		}
+		this.homing();
 
 		touchStatus.state = touchStatus.Up;
 	}
@@ -269,7 +281,8 @@ public class PagerBody {
 			}
 
 			mSpring.setEndValue(nextPageIndex);
-
+			this.bodyCallback.onFlipping(tag, this.nextPageIndex);
+			Log.d(tag, "homing to " + this.nextPageIndex);
 		}
 	}
 
@@ -284,6 +297,9 @@ public class PagerBody {
 			nextPageIndex = 0;
 		}
 		mSpring.setEndValue(nextPageIndex);
+		this.bodyCallback.onFlipping(tag, this.nextPageIndex);
+
+		Log.d(tag, "flip to(step) " + this.nextPageIndex);
 	}
 
 	public void flipTo(int toIndex) {
@@ -300,6 +316,9 @@ public class PagerBody {
 				nextPageIndex = 0;
 			}
 			mSpring.setEndValue(nextPageIndex);
+			this.bodyCallback.onFlipping(tag, this.nextPageIndex);
+
+			Log.d(tag, "flip to " + this.nextPageIndex);
 		}
 	}
 
