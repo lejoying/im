@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.rebound.SimpleSpringListener;
@@ -20,7 +19,6 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
-import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Parser;

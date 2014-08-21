@@ -77,6 +77,10 @@ public class UserIntimateView {
 	public RelativeLayout shareView;
 	public RelativeLayout squareView;
 
+	public RelativeLayout title_messages_friends_me;
+	public RelativeLayout title_share;
+	public RelativeLayout title_square;
+
 	public RelativeLayout main_container;
 
 	public RelativeLayout chatMessagesNotReadView;
@@ -148,6 +152,10 @@ public class UserIntimateView {
 		shareView = (RelativeLayout) mInflater.inflate(R.layout.view_main_share, null);
 		messages_friends_me_View = (RelativeLayout) mInflater.inflate(R.layout.view_main_messages_friends_me, null);
 
+		title_square = (RelativeLayout) squareView.findViewById(R.id.title_square);
+		title_share = (RelativeLayout) shareView.findViewById(R.id.title_share);
+		title_messages_friends_me = (RelativeLayout) messages_friends_me_View.findViewById(R.id.title_messages_friends_me);
+
 		chatMessagesNotReadView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesNotRead);
 
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);
@@ -161,12 +169,15 @@ public class UserIntimateView {
 
 		main_container.addView(squareView);
 		mainPagerBody.addChildView(squareView);
+		mainPagerBody.setTitleView(title_square, 0);
 
 		main_container.addView(shareView);
 		mainPagerBody.addChildView(shareView);
+		mainPagerBody.setTitleView(title_share, 1);
 
 		main_container.addView(messages_friends_me_View);
 		mainPagerBody.addChildView(messages_friends_me_View);
+		mainPagerBody.setTitleView(title_messages_friends_me, 2);
 
 		friendsMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_intimatefriends);
 		messagesMenuView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesList);

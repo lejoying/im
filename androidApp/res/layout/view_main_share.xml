@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context=".UserIntimateActivity" >
 
-    <include layout="@layout/view_title_messages_friends_me" >
+    <include layout="@layout/view_title_share" >
     </include>
 
     <RelativeLayout
