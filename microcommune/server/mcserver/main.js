@@ -13,7 +13,7 @@ http.createServer(
     function (request, response) {
 
         response.writeHead(200, {
-            "Content-Type":"application/json; charset=UTF-8"
+            "Content-Type": "application/json; charset=UTF-8"
         });
         route(routemap, request.url, request, response);
 
@@ -24,5 +24,4 @@ http.createServer(
         }
 
     }).listen(8071);
-
 console.log("The mc server is running.8071");

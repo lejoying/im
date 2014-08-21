@@ -3,12 +3,15 @@ package com.lejoying.wxgs.activity.mode.fragment;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,12 +26,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.LatLng;
 import com.lejoying.wxgs.R;
+import com.lejoying.wxgs.activity.CreateSquareActivity;
 import com.lejoying.wxgs.activity.mode.MainModeManager;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
+import com.lejoying.wxgs.app.handler.AmapLocationHandler.CreateLocationListener;
 import com.lejoying.wxgs.app.handler.AmapLocationHandler.LocationListener;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
@@ -152,8 +160,11 @@ public class MoreSquaresFragment extends BaseFragment implements
 							AMapLocation aMapLocation) {
 						location.setText(aMapLocation.getAddress());
 						modifylocation(aMapLocation);
-						app.amapLocationHandler.searchByBound(mapView.getMap(),
-								app.amapLocationHandler.mAccountTableId);
+//						app.amapLocationHandler.searchAccountsByBound(mapView
+//								.getMap());
+						app.amapLocationHandler.searchSquaresByBound(mapView
+								.getMap());
+
 					}
 				});
 	}
@@ -161,6 +172,7 @@ public class MoreSquaresFragment extends BaseFragment implements
 	private void modifylocation(AMapLocation aMapLocation) {
 		final double longitude = aMapLocation.getLongitude(), latitude = aMapLocation
 				.getLatitude();
+		final String address = aMapLocation.getAddress();
 		app.networkHandler.connection(new CommonNetConnection() {
 
 			@Override
@@ -179,10 +191,15 @@ public class MoreSquaresFragment extends BaseFragment implements
 				params.put("mainBusiness", app.data.user.mainBusiness);
 				params.put("head", app.data.user.head);
 				params.put("online", "1");
-				// JSONObject location = new JSONObject();
-				// location.put("longitude", aMapLocation.getLongitude());
-				// location.put("latitude", aMapLocation.getLatitude());
-				params.put("location", longitude + "," + latitude);
+				JSONObject location = new JSONObject();
+				try {
+					location.put("longitude", longitude);
+					location.put("latitude", latitude);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				params.put("location", location.toString());
+				params.put("address", address);
 				settings.params = params;
 			}
 
@@ -260,7 +277,7 @@ public class MoreSquaresFragment extends BaseFragment implements
 		} else if (id == R.id.zoom) {
 			Zoom();
 		} else if (id == R.id.create) {
-
+			startActivity(new Intent(getActivity(), CreateSquareActivity.class));
 		}
 
 	}

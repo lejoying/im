@@ -26,8 +26,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
- 
-    <application
+     
+<application
         android:name="com.lejoying.wxgs.app.MainApplication"
         android:allowBackup="true"
         android:icon="@drawable/icon"
@@ -180,6 +180,12 @@
 
         <activity
             android:name="com.lejoying.wxgs.activity.DetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+        <activity
+            android:name="com.lejoying.wxgs.activity.CreateSquareActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustResize" >

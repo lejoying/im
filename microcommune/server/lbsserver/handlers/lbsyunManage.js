@@ -1099,57 +1099,10 @@ lbsManage.nearbygroups = function (data, response) {
         });
     }
 }
-
 /***************************************
- *     URL：/lbs/creategrouplocation
+ *     URL：/lbs/modifyAccountLocation
  ***************************************/
-lbsManage.creategrouplocation = function (data, response) {
-    try {
-        ajax.ajax({
-            type: "POST",
-            url: serverSetting.LBS.DATA_CREATE,
-            data: {
-                key: serverSetting.LBS.KEY,
-                tableid: serverSetting.LBS.GROUPTABLEID,
-                loctype: 1,
-                data: JSON.stringify({
-                    _name: data.name,
-                    _location: data.location,
-                    gid: data.gid,
-                    icon: data.icon
-                })
-            }, success: function (info) {
-                var info = JSON.parse(info);
-                if (info.status == 1) {
-                    response.write(JSON.stringify({
-                        "提示信息": "创建群组位置成功",
-                        gid: info._id
-                    }));
-                    response.end();
-                } else {
-                    console.log(info.info);
-                    response.write(JSON.stringify({
-                        "提示信息": "创建群组位置失败",
-                        "失败原因": "数据异常"
-                    }));
-                    response.end();
-                }
-            }
-        });
-    } catch (e) {
-        response.write(JSON.stringify({
-            "提示信息": "创建群组位置失败",
-            "失败原因": "参数格式错误"
-        }));
-        response.end();
-        console.log(e);
-        return;
-    }
-}
-/***************************************
- *     URL：/lbs/modifyaccountlocation
- ***************************************/
-lbsManage.modifyaccountlocation = function (data, response) {
+lbsManage.modifyAccountLocation = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     try {
@@ -1165,7 +1118,7 @@ lbsManage.modifyaccountlocation = function (data, response) {
     }
 
     function checkLocation(phone) {
-        ajaxlbs.ajax({
+        ajax.ajax({
             type: "GET",
             url: serverSetting.LBS.DATA_SEARCH,
             data: {
@@ -1179,12 +1132,10 @@ lbsManage.modifyaccountlocation = function (data, response) {
                     if (info.count == 0) {
                         createaccountlocation(data, response);
                     } else {
-                        console.log("HAVE")
                         var id = info.datas[0]._id;
                         modifyaccountlocation(data, id, response);
                     }
                 } else {
-                    console.log(info.info + "查找用户位置信息失败");
                     response.write(JSON.stringify({
                         "提示信息": "查找用户位置信息失败",
                         "失败原因": "数据异常"
@@ -1196,6 +1147,7 @@ lbsManage.modifyaccountlocation = function (data, response) {
     }
 
     function createaccountlocation(data, response) {
+        var location = JSON.parse(data.location);
         response.asynchronous = 1;
         ajax.ajax({
             type: "POST",
@@ -1203,18 +1155,18 @@ lbsManage.modifyaccountlocation = function (data, response) {
             data: {
                 key: serverSetting.LBS.KEY,
                 tableid: serverSetting.LBS.ACCOUNTTABLEID,
-                loctype: 1,
+                loctype: 2,
                 data: JSON.stringify({
                     _name: data.nickName,
-                    _location: data.location,
+                    _location: location.longitude + "," + location.latitude,
+                    _address: data.address,
                     phone: data.phone,
                     sex: data.sex,
                     haed: data.head,
                     mainBusiness: data.mainBusiness,
                     online: data.online
                 })
-            }
-            , success: function (info) {
+            }, success: function (info) {
                 var info = JSON.parse(info);
                 if (info.status == 1) {
                     response.write(JSON.stringify({
@@ -1235,17 +1187,19 @@ lbsManage.modifyaccountlocation = function (data, response) {
 
     function modifyaccountlocation(data, id, response) {
         response.asynchronous = 1;
+        var location = JSON.parse(data.location);
         ajax.ajax({
             type: "POST",
             url: serverSetting.LBS.DATA_UPDATA,
             data: {
                 key: serverSetting.LBS.KEY,
                 tableid: serverSetting.LBS.ACCOUNTTABLEID,
-                loctype: 1,
+                loctype: 2,
                 data: JSON.stringify({
                     _id: id,
                     _name: data.nickName,
-                    _location: data.location,
+                    _location: location.longitude + "," + location.latitude,
+                    _address: data.address,
                     phone: data.phone,
                     sex: data.sex,
                     haed: data.head,
