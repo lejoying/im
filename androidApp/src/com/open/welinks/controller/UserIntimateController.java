@@ -1,8 +1,12 @@
 package com.open.welinks.controller;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
+import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -10,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.rebound.SimpleSpringListener;
@@ -19,10 +24,13 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.open.welinks.SettingActivity;
+import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.UserIntimateView;
+import com.open.welinks.view.UserIntimateView.SharesMessageBody;
 
 public class UserIntimateController {
 
@@ -36,6 +44,7 @@ public class UserIntimateController {
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
+	public DownloadListener downloadListener;
 
 	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
 	Handler handler = new Handler();
@@ -63,6 +72,8 @@ public class UserIntimateController {
 		thisView.showMessages();
 
 		thisView.showShareMessages();
+
+		thisView.showGroupMembers();
 	}
 
 	public void onResume() {
@@ -102,6 +113,19 @@ public class UserIntimateController {
 	}
 
 	public void initializeListeners() {
+		downloadListener = new DownloadListener() {
+
+			@Override
+			public void loading(DownloadFile instance, int precent, int status) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void success(DownloadFile instance, int status) {
+				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.options);
+			}
+		};
 		onTouchListener = new OnTouchListener() {
 
 			@Override
@@ -147,6 +171,11 @@ public class UserIntimateController {
 					thisView.dismissGroupDialog();
 				}
 
+				else if (view.equals(thisView.me_setting_view)) {
+					Intent intent = new Intent(thisActivity, SettingActivity.class);
+					thisActivity.startActivity(intent);
+				}
+
 				else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
 				}
@@ -167,6 +196,17 @@ public class UserIntimateController {
 
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnClickListener(mOnClickListener);
+
+		List<String> listItemsSqquece = thisView.shareMessageListBody.listItemsSequence;
+		for (int i = 0; i < listItemsSqquece.size(); i++) {
+			String key = listItemsSqquece.get(i);
+			SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get(key);
+			if (sharesMessageBody.downloadFile != null) {
+				sharesMessageBody.downloadFile.setDownloadFileListener(downloadListener);
+			}
+		}
+
+		thisView.me_setting_view.setOnClickListener(mOnClickListener);
 	}
 
 	public class TouchStatus {

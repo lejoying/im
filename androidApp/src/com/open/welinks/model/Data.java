@@ -178,6 +178,10 @@ public class Data {
 			public Map<String, ShareMessage> sharesMap = new HashMap<String, ShareMessage>();
 
 			public class ShareMessage {
+				public static final int MESSAGE_TYPE_IMAGETEXT = 0x01;
+				public static final int MESSAGE_TYPE_VOICETEXT = 0x02;
+				public static final int MESSAGE_TYPE_VOTE = 0x03;
+
 				public int mType;
 				public String gsid;
 				public String type;
@@ -198,6 +202,15 @@ public class Data {
 				public String contentType;// "text"
 				public String content;
 				public long time;
+			}
+
+			public class ShareContent {
+				public List<ShareContentItem> shareContentItems = new ArrayList<ShareContentItem>();
+
+				public class ShareContentItem {
+					public String type;// text image
+					public String detail;
+				}
 			}
 		}
 	}

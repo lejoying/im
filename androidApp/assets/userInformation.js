@@ -3,7 +3,7 @@
 		userBackground = "Black",
 		sex : "male",
 		id : 168987,
-		phone : "13899887777",
+		phone : "151",
 		nickName : "mimi",
 		mainBusiness : "eat",
 		head : "Head",

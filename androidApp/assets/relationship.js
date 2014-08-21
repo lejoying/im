@@ -430,7 +430,7 @@
 			latitude : "";
 			description : "";
 			background : "";
-			members : ["13355558881", "15266688897"]
+			members : ["15210721344", "18640488253"]
 		},
 		"1002" : {
 			gid : 1002,
@@ -442,7 +442,7 @@
 			latitude : "";
 			description : "";
 			background : "";
-			members : ["13355558881", "15266688897"]
+			members : ["15210721344", "18640488253"]
 		},
 		"1003" : {
 			gid : 1003,
@@ -454,7 +454,7 @@
 			latitude : "";
 			description : "";
 			background : "";
-			members : ["13355558881", "15266688897"]
+			members : ["15210721344", "18640488253"]
 		}
 	}
 }

@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.apache.http.Header;
 
+import android.view.View;
+
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
@@ -41,6 +43,8 @@ public class DownloadFile {
 
 	public ImageBean imageBean;
 
+	public View view;
+
 	public TimeLine time = new TimeLine();
 
 	public int uploadPrecent;
@@ -58,6 +62,8 @@ public class DownloadFile {
 			return;
 		}
 		HttpUtils httpUtils = new HttpUtils();
+		// Log.e(tag, "-----startAAA-----");
+
 		httpUtils.download(url, path, download);
 	}
 
@@ -71,16 +77,19 @@ public class DownloadFile {
 
 		@Override
 		public void onConneced(Header[] headers) {
-			if (imageBean.size == 0) {
-				for (int i = 0; i < headers.length; i++) {
-					Header header = headers[i];
-					if (header.getName().equals("Content-Length")) {
-						imageBean.size = Long.valueOf(header.getValue());
-						downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
-						break;
+			if (imageBean != null) {
+				if (imageBean.size == 0) {
+					for (int i = 0; i < headers.length; i++) {
+						Header header = headers[i];
+						if (header.getName().equals("Content-Length")) {
+							imageBean.size = Long.valueOf(header.getValue());
+							downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+							break;
+						}
 					}
 				}
 			}
+			// Log.e(tag, "-----onConneced-----");
 		};
 
 		@Override
@@ -89,6 +98,7 @@ public class DownloadFile {
 			isDownloadStatus = DOWNLOAD_LOADINGING;
 			uploadPrecent = (int) ((((double) current / (double) total)) * 100);
 			downloadListener.loading(instance, uploadPrecent, isDownloadStatus);
+			// Log.e(tag, "-----onLoading-----");
 		}
 
 		@Override

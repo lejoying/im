@@ -3,13 +3,19 @@ package com.open.welinks;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.UserIntimateView;
@@ -27,11 +33,25 @@ public class UserIntimateActivity extends Activity {
 
 	public ViewManage viewManager = ViewManage.getInstance();
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		if (Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
+			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
+		}
+		initImageLoader(getApplicationContext());
 		linkViewController();
+	}
+
+	public static void initImageLoader(Context context) {
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
+		ImageLoader.getInstance().init(config);
+	}
+
+	public static class Config {
+		public static final boolean DEVELOPER_MODE = false;
 	}
 
 	void linkViewController() {
@@ -46,9 +66,9 @@ public class UserIntimateActivity extends Activity {
 
 		thisView.initViews();
 		thisView.initData();
+		thisController.oncreate();
 		thisController.initializeListeners();
 		thisController.bindEvent();
-		thisController.oncreate();
 	}
 
 	@Override
