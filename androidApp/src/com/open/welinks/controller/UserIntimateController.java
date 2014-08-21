@@ -182,18 +182,18 @@ public class UserIntimateController {
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
-			thisView.friendListBody.onTouchDown(event);
-			thisView.chatMessageListBody.onTouchDown(event);
+			// thisView.friendListBody.onTouchDown(event);
+			// thisView.chatMessageListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
-			thisView.friendListBody.onTouchMove(event);
-			thisView.chatMessageListBody.onTouchMove(event);
+			// thisView.friendListBody.onTouchMove(event);
+			// thisView.chatMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
-			thisView.friendListBody.onTouchUp(event);
-			thisView.chatMessageListBody.onTouchUp(event);
+			// thisView.friendListBody.onTouchUp(event);
+			// thisView.chatMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -204,18 +204,20 @@ public class UserIntimateController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			if (thisView.friendListBody.bodyStatus.state == thisView.friendListBody.bodyStatus.DRAGGING) {
-				thisView.friendListBody.onFling(velocityX, velocityY);
-			}
+			// if (thisView.friendListBody.bodyStatus.state ==
+			// thisView.friendListBody.bodyStatus.DRAGGING) {
+			// thisView.friendListBody.onFling(velocityX, velocityY);
+			// }
 			if (thisView.messages_friends_me_PagerBody.bodyStatus.state == thisView.messages_friends_me_PagerBody.bodyStatus.HOMING) {
 				thisView.messages_friends_me_PagerBody.onFling(velocityX, velocityY);
 			}
 			if (thisView.mainPagerBody.bodyStatus.state == thisView.mainPagerBody.bodyStatus.HOMING) {
 				thisView.mainPagerBody.onFling(velocityX, velocityY);
 			}
-			if (thisView.chatMessageListBody.bodyStatus.state == thisView.chatMessageListBody.bodyStatus.DRAGGING) {
-				thisView.chatMessageListBody.onFling(velocityX, velocityY);
-			}
+			// if (thisView.chatMessageListBody.bodyStatus.state ==
+			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
+			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
+			// }
 			return true;
 		}
 

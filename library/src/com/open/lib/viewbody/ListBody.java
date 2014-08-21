@@ -128,7 +128,7 @@ public class ListBody {
 		if (touchStatus.state == touchStatus.Up) {
 			touchStatus.state = touchStatus.Down;
 		} else {
-			Log.e("onTouchEvent", "unkown status: not touchMoveStatus.Up");
+			Log.e(tag, "unkown status: not touchMoveStatus.Up");
 		}
 		touch_pre_x = x;
 		touch_pre_y = y;
@@ -151,11 +151,11 @@ public class ListBody {
 					this.bodyStatus.state = this.bodyStatus.DRAGGING;
 					this.recordChildrenPosition();
 
-					Log.e("onTouchEvent", "Vertical moving");
+					Log.e(tag, "Vertical moving");
 				} else {
 					touchStatus.state = touchStatus.Horizontal;
 					touch_pre_x = x;
-					Log.e("onTouchEvent", "Horizontal moving");
+					Log.e(tag, "Horizontal moving");
 				}
 			}
 		} else if (touchStatus.state == touchStatus.Vertical) {
@@ -165,7 +165,7 @@ public class ListBody {
 		if (touchStatus.state == touchStatus.Horizontal) {
 		} else {
 
-			Log.e("onTouchEvent", "unkown status: touchMoveStatus.Up");
+			Log.e(tag, "unkown status: touchMoveStatus.Up");
 		}
 	}
 

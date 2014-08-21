@@ -174,7 +174,7 @@ public class UserIntimateView {
 
 		squareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.square_menu_view);
 		shareMenuView = (RelativeLayout) thisActivity.findViewById(R.id.share_menu_view);
-		
+
 		messages_friends_me_menuView = (RelativeLayout) thisActivity.findViewById(R.id.messages_friends_me_menu_view);
 
 		messagesView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesContent);
@@ -218,10 +218,38 @@ public class UserIntimateView {
 		@Override
 		public void onStart(String bodyTag, float variable) {
 			if (bodyTag.equals("messages_friends_me_PagerBody")) {
+
 				thisView.friendListBody.inActive();
 				if (variable == 2) {
 					mMePageAppIconScaleSpring.setEndValue(1);
 				}
+			}
+		}
+
+		int lastOnFlipingIndex = -1;
+
+		@Override
+		public void onFlipping(String bodyTag, float variable) {
+			if (bodyTag.equals("messages_friends_me_PagerBody")) {
+				if (variable == 0) {
+				} else if (variable == 1) {
+				} else if (variable == 2) {
+				}
+				lastOnFlipingIndex = -1;
+			} else if (bodyTag.equals("mainPagerBody")) {
+				if (variable == 0) {
+					lastOnFlipingIndex = -1;
+				} else if (variable == 1) {
+					lastOnFlipingIndex = 1;
+				} else if (variable == 2) {
+					if (lastOnFlipingIndex == 1) {
+						Log.d(tag, "bodyTag onFliping:" + variable + "  lastOnFlipingIndex: " + lastOnFlipingIndex);
+						thisView.messages_friends_me_PagerBody.active();
+						thisView.mainPagerBody.inActive();
+					}
+					lastOnFlipingIndex = -1;
+				}
+
 			}
 		}
 
@@ -257,8 +285,22 @@ public class UserIntimateView {
 
 				}
 			}
-
 		}
+
+		@Override
+		public boolean onOverRange(String bodyTag, float variable) {
+			if (bodyTag.equals("messages_friends_me_PagerBody")) {
+				if (variable == -1) {
+					Log.d(tag, "messages_friends_me_PagerBody onOverRange");
+
+					thisView.mainPagerBody.active();
+					thisView.messages_friends_me_PagerBody.inActive();
+					return true;
+				}
+			}
+			return false;
+		}
+
 	}
 
 	public float speedY = 0;
