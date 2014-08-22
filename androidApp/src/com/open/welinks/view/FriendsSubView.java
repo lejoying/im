@@ -46,7 +46,6 @@ public class FriendsSubView {
 	public void initData() {
 	}
 
-	@SuppressLint("CutPasteId")
 	public void initViews() {
 
 		this.friendsView = mainView.friendsView;

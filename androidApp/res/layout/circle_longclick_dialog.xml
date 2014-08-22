@@ -5,20 +5,11 @@
     android:layout_height="match_parent"
     android:background="#bf000000" >
 
-    <RelativeLayout
-        android:id="@+id/mainContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="50dp"
-        tools:ignore="UselessParent" >
-
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="190dp"
+            android:layout_width="260dp"
+            android:layout_height="185dp"
             android:layout_centerHorizontal="true"
-            android:layout_margin="100dp"
+            android:layout_centerVertical="true"
             android:background="#fff" >
 
             <TextView
@@ -27,8 +18,8 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="20dp"
                 android:text="微型公社"
-                android:textColor="#000"
-                android:textSize="20sp" />
+                android:textColor="#ff0099cd"
+                android:textSize="18sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -36,7 +27,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="60dp"
-                android:background="#aabbcc" />
+                android:background="#44000000" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -48,7 +39,7 @@
                 android:paddingTop="5dp"
                 android:text="修改组名"
                 android:textColor="#000"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -56,7 +47,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="101dp"
-                android:background="#aabbcc" />
+                android:background="#22000000" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -66,9 +57,9 @@
                 android:paddingBottom="5dp"
                 android:paddingLeft="30dp"
                 android:paddingTop="5dp"
-                android:text="新建分组"
+                android:text="删除该组"
                 android:textColor="#000"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -76,7 +67,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="142dp"
-                android:background="#aabbcc" />
+                android:background="#22000000" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -88,8 +79,7 @@
                 android:paddingTop="5dp"
                 android:text="新建分组"
                 android:textColor="#000"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </RelativeLayout>
-    </RelativeLayout>
 
 </RelativeLayout>

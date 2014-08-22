@@ -220,21 +220,21 @@ public class MainController {
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
-			// thisView.friendListBody.onTouchDown(event);
+			thisView.friendsSubView.friendListBody.onTouchDown(event);
 			// thisView.chatMessageListBody.onTouchDown(event);
-			thisView.shareSubView.shareMessageListBody.onTouchDown(event);
+			// thisView.shareSubView.shareMessageListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
-			// thisView.friendListBody.onTouchMove(event);
+			thisView.friendsSubView.friendListBody.onTouchMove(event);
 			// thisView.chatMessageListBody.onTouchMove(event);
-			thisView.shareSubView.shareMessageListBody.onTouchMove(event);
+			// thisView.shareSubView.shareMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
-			// thisView.friendListBody.onTouchUp(event);
+			thisView.friendsSubView.friendListBody.onTouchUp(event);
 			// thisView.chatMessageListBody.onTouchUp(event);
-			thisView.shareSubView.shareMessageListBody.onTouchUp(event);
+			// thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -245,10 +245,9 @@ public class MainController {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
 
-			// if (thisView.friendListBody.bodyStatus.state ==
-			// thisView.friendListBody.bodyStatus.DRAGGING) {
-			// thisView.friendListBody.onFling(velocityX, velocityY);
-			// }
+			if (thisView.friendsSubView.friendListBody.bodyStatus.state == thisView.friendsSubView.friendListBody.bodyStatus.DRAGGING) {
+				thisView.friendsSubView.friendListBody.onFling(velocityX, velocityY);
+			}
 			if (thisView.messages_friends_me_PagerBody.bodyStatus.state == thisView.messages_friends_me_PagerBody.bodyStatus.HOMING) {
 				thisView.messages_friends_me_PagerBody.onFling(velocityX, velocityY);
 			}
@@ -259,9 +258,12 @@ public class MainController {
 			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
 			// }
-			if (thisView.shareSubView.shareMessageListBody.bodyStatus.state == thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
-				thisView.shareSubView.shareMessageListBody.onFling(velocityX, velocityY);
-			}
+			// if (thisView.shareSubView.shareMessageListBody.bodyStatus.state
+			// ==
+			// thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
+			// thisView.shareSubView.shareMessageListBody.onFling(velocityX,
+			// velocityY);
+			// }
 			return true;
 		}
 

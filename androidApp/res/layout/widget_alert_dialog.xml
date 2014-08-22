@@ -37,9 +37,9 @@
             android:id="@+id/confirm"
             android:layout_width="100dp"
             android:layout_height="36dp"
-            android:background="#38000000"
+            android:background="#ff0099cd"
             android:text="确定"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <Button
@@ -47,9 +47,9 @@
             android:layout_width="100dp"
             android:layout_height="36dp"
             android:layout_alignParentRight="true"
-            android:background="#38000000"
+            android:background="#ff0099cd"
             android:text="取消"
-            android:textColor="#000"
+            android:textColor="#fff"
             android:textSize="18sp" />
     </RelativeLayout>
 

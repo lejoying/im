@@ -97,7 +97,7 @@ public class ShareSubView {
 		sharesMessageBody0.cardView.setX(0);
 		this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
 		this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < sharesOrder.size(); i++) {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
 			shareMessage = sharesMap.get(key);
