@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -73,7 +72,7 @@ public class UserIntimateController {
 
 		thisView.showShareMessages();
 
-		thisView.showGroupMembers();
+		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 	}
 
 	public void onResume() {
