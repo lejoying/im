@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -106,6 +108,7 @@ public class FriendsSubView {
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 
 			this.leftTopText.setOnClickListener(mainView.thisController.mOnClickListener);
+			this.cardView.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
 			super.initialize(cardView);
 			return cardView;
@@ -142,5 +145,4 @@ public class FriendsSubView {
 
 		}
 	}
-
 }

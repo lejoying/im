@@ -11,6 +11,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class MainController {
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
 	public DownloadListener downloadListener;
+	public OnLongClickListener onLongClickListener;
 
 	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
 	Handler handler = new Handler();
@@ -110,12 +112,18 @@ public class MainController {
 	}
 
 	public void initializeListeners() {
+		onLongClickListener = new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				// thisView.friendsSubView.showCircleSettingDialog();
+				return true;
+			}
+		};
 		downloadListener = new DownloadListener() {
 
 			@Override
 			public void loading(DownloadFile instance, int precent, int status) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
