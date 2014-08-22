@@ -3,17 +3,16 @@ package com.open.lib.viewbody;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
 
 public class PagerBody {
 	public String tag = "PagerBody";
@@ -53,6 +52,7 @@ public class PagerBody {
 
 	public class MyPagerItemBody {
 		public View myPagerItemView = null;
+		public View myPagerTitleView = null;
 
 		public float x;
 		public float y;
@@ -236,6 +236,11 @@ public class PagerBody {
 		childrenBodys.add(childBody);
 	}
 
+	public void setTitleView(View myPagerTitleView, int index) {
+		MyPagerItemBody childBody = childrenBodys.get(index);
+		childBody.myPagerTitleView = myPagerTitleView;
+	}
+
 	public void recordChildrenPosition() {
 		pre_x = x;
 		for (MyPagerItemBody childBody : this.childrenBodys) {
@@ -248,8 +253,23 @@ public class PagerBody {
 
 		float pager_indicator_position = -(this.pre_x + deltaX) * (float) pager_indicator_trip / (float) displayMetrics.widthPixels;
 		pager_indicator.setX(pager_indicator_position);
+
 		for (MyPagerItemBody childBody : this.childrenBodys) {
 			childBody.myPagerItemView.setX(childBody.pre_x + deltaX);
+
+		}
+		setTitleViewAlpha();
+	}
+
+	public void setTitleViewAlpha() {
+
+		for (int index = 0; index < this.childrenBodys.size(); index++) {
+			MyPagerItemBody childBody = this.childrenBodys.get(index);
+
+			if (childBody.myPagerTitleView != null) {
+				float alpha = (-this.x) / (float) displayMetrics.widthPixels + 0.33f - (float) index;
+				childBody.myPagerTitleView.setAlpha(3.3f * alpha);
+			}
 		}
 	}
 
@@ -262,6 +282,7 @@ public class PagerBody {
 		for (MyPagerItemBody childBody : this.childrenBodys) {
 			childBody.myPagerItemView.setX(childBody.x + x);
 		}
+		setTitleViewAlpha();
 	}
 
 	public void homing() {

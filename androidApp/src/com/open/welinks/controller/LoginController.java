@@ -23,7 +23,7 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
-import com.open.welinks.UserIntimateActivity;
+import com.open.welinks.MainActivity;
 import com.open.welinks.model.Data;
 import com.open.welinks.utils.CommonNetConnection;
 import com.open.welinks.utils.NetworkHandler;
@@ -279,7 +279,7 @@ public class LoginController {
 
 			@Override
 			public void success(JSONObject jData) {
-				Intent intent = new Intent(thisActivity, UserIntimateActivity.class);
+				Intent intent = new Intent(thisActivity, MainActivity.class);
 				intent.putExtra("phone", loginPhone);
 				thisActivity.startActivity(intent);
 			}

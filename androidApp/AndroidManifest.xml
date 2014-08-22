@@ -24,7 +24,7 @@
         <uses-library android:name="android.test.runner" />
 
         <activity
-            android:name="com.open.welinks.MainActivity"
+            android:name="com.open.welinks.LaunchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle" >
@@ -92,7 +92,7 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name="com.open.welinks.UserIntimateActivity"
+            android:name="com.open.welinks.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"

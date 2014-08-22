@@ -5,10 +5,9 @@
     android:layout_height="wrap_content" >
 
     <RelativeLayout
-        android:id="@+id/rl_mainMenuBar"
+        android:id="@+id/title_square"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-         >
+        android:layout_height="48dp" >
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -39,7 +38,7 @@
                 android:layout_alignParentLeft="true"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="用户"
+                android:text="广场山海关站"
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 

@@ -92,11 +92,13 @@ public class LoginActivity extends Activity {
 		} else if (item.getItemId() == R.id.csubmenu2_4) {
 			Log.d(tag, "csubmenu2_4");
 			startActivity(new Intent(LoginActivity.this, DownloadOssFileActivity.class));
-		}
-
-		else if (item.getItemId() == R.id.debug1_3) {
+		} else if (item.getItemId() == R.id.debug1_2) {
+			thisView.showCircleSettingDialog();
+		} else if (item.getItemId() == R.id.debug1_4) {
+			thisView.showInputDialog();
+		} else if (item.getItemId() == R.id.debug1_3) {
 			Log.d(tag, "debug1_3");
-			startActivity(new Intent(LoginActivity.this, UserIntimateActivity.class));
+			startActivity(new Intent(LoginActivity.this, MainActivity.class));
 		}
 		return true;
 	}

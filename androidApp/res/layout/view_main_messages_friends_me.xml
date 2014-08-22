@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    tools:context=".UserIntimateActivity" >
+    tools:context=".MainActivity" >
 
     <include layout="@layout/view_title_messages_friends_me" >
     </include>
@@ -78,7 +78,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_intimateFriendsContent"
+        android:id="@+id/friendsContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="10dp"
@@ -88,7 +88,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_chatMessagesContent"
+        android:id="@+id/messagesContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="10dp"
@@ -97,7 +97,7 @@
         android:visibility="visible" >
 
         <RelativeLayout
-            android:id="@+id/rl_chatMessagesNotRead"
+            android:id="@+id/NoMessagesStatus"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
@@ -120,7 +120,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_userInfomationContent"
+        android:id="@+id/meContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="100dp"

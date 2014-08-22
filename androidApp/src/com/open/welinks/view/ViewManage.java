@@ -9,7 +9,7 @@ public class ViewManage {
 
 	public Debug1View debug1View = null;
 	public LoginView loginView = null;
-	public UserIntimateView userIntimateView = null;
+	public MainView mainView = null;
 
 	public DownloadOssFileView downloadOssFileView = null;
 
@@ -35,9 +35,9 @@ public class ViewManage {
 
 	public void notifyView(String viewName) {
 		if (viewName.equals("UserIntimateView")) {
-			if (userIntimateView != null) {
+			if (mainView != null) {
 				Log.d(tag, "notifyView:  UserIntimateView");
-				userIntimateView.showCircles();
+				mainView.friendsSubView.showCircles();
 			}
 		}
 	}

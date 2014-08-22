@@ -1,22 +1,31 @@
 package com.open.welinks.view;
 
-import com.facebook.rebound.BaseSpringSystem;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
-import com.open.welinks.R;
-import com.open.welinks.controller.LoginController;
-import com.open.welinks.model.Data;
-
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.InputType;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
+import com.facebook.rebound.SpringUtil;
+import com.open.welinks.R;
+import com.open.welinks.controller.LoginController;
+import com.open.welinks.model.Data;
 
 public class LoginView {
 	public Data data = Data.getInstance();
@@ -222,6 +231,96 @@ public class LoginView {
 			input2.setText("");
 			input1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 			input2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		}
+	}
+
+	public PopupWindow inputPopWindow;
+	public View inputDialogView;
+
+	public void showInputDialog() {
+		mInflater = thisActivity.getLayoutInflater();
+		inputDialogView = mInflater.inflate(R.layout.widget_alert_input_dialog, null);
+		inputPopWindow = new PopupWindow(inputDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		inputPopWindow.setBackgroundDrawable(new BitmapDrawable());
+		inputPopWindow.showAtLocation(loginOrRegister, Gravity.CENTER, 0, 0);
+	}
+
+	// public BaseSpringSystem mSpringSystem0 = SpringSystem.create();
+	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 9);
+	public SpringConfig IMAGE_SPRING_CONFIG_TO = SpringConfig.fromOrigamiTensionAndFriction(40, 15);
+	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
+	public Spring dialogOutSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG_TO);
+	public Spring dialogInSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG_TO);
+	public View dialogRootView;
+	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
+
+	public RelativeLayout cirlcesDialogContent;
+	public PopupWindow circlePopWindow;
+	public View circleDialogView;
+
+	public RelativeLayout dialogContentView;
+	public View inputDialigView;
+
+	public LayoutInflater mInflater;
+
+	public int SHOW_DIALOG = 0x01;
+	public int DIALOG_SWITCH = 0x02;
+	public int currentStatus = SHOW_DIALOG;
+
+	public void showCircleSettingDialog() {
+		currentStatus = SHOW_DIALOG;
+		mInflater = thisActivity.getLayoutInflater();
+		dialogSpring.addListener(dialogSpringListener);
+		// final DisplayMetrics displayMetrics = new DisplayMetrics();
+		circleDialogView = mInflater.inflate(R.layout.circle_longclick_dialog, null);
+		dialogContentView = (RelativeLayout) circleDialogView.findViewById(R.id.dialogContent);
+		inputDialigView = circleDialogView.findViewById(R.id.inputDialogContent);
+
+		dialogRootView = dialogContentView;
+		dialogSpring.setCurrentValue(0);
+		dialogSpring.setEndValue(1);
+
+		circlePopWindow = new PopupWindow(circleDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		circlePopWindow.setBackgroundDrawable(new BitmapDrawable());
+		circlePopWindow.showAtLocation(loginOrRegister, Gravity.CENTER, 0, 0);
+
+		circleDialogView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (currentStatus == SHOW_DIALOG) {
+					dialogSpring.removeListener(dialogSpringListener);
+					// circlePopWindow.dismiss();
+					// dialogRootView = circleDialogView;
+					currentStatus = DIALOG_SWITCH;
+					dialogOutSpring.addListener(dialogSpringListener);
+					dialogOutSpring.setCurrentValue(1.2);
+					dialogOutSpring.setEndValue(0);
+					dialogInSpring.addListener(dialogSpringListener);
+					inputDialigView.setVisibility(View.VISIBLE);
+					dialogInSpring.setCurrentValue(1);
+					dialogInSpring.setEndValue(0);
+				}
+			}
+		});
+	}
+
+	private class DialogShowSpringListener extends SimpleSpringListener {
+		@Override
+		public void onSpringUpdate(Spring spring) {
+			float mappedValue = (float) spring.getCurrentValue();
+			if (spring.equals(dialogSpring)) {
+				dialogRootView.setScaleX(mappedValue);
+				dialogRootView.setScaleY(mappedValue);
+			} else if (spring.equals(dialogOutSpring)) {
+				float y = dialogRootView.getY();
+				dialogRootView.setY(y - 100 * mappedValue);
+				if (mappedValue == 0) {
+				}
+			} else if (spring.equals(dialogInSpring)) {
+				float y = inputDialigView.getTranslationY();
+				inputDialigView.setTranslationY(y - 100 * mappedValue);
+			}
 		}
 	}
 }

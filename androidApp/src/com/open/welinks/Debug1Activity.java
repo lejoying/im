@@ -54,6 +54,7 @@ public class Debug1Activity extends Activity {
 		thisController.initializeListeners();
 		thisView.initView();
 		thisController.bindEvent();
+//		thisView.showCircleSettingDialog();
 	}
 
 	@Override
