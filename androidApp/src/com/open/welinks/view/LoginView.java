@@ -1,5 +1,20 @@
 package com.open.welinks.view;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.text.InputType;
+import android.view.Gravity;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
+
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
@@ -7,16 +22,9 @@ import com.facebook.rebound.SpringSystem;
 import com.open.welinks.R;
 import com.open.welinks.controller.LoginController;
 import com.open.welinks.model.Data;
-
-import android.app.Activity;
-import android.content.Context;
-import android.text.InputType;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
+import com.open.welinks.utils.Alert;
+import com.open.welinks.utils.Alert.AlertInputDialog;
+import com.open.welinks.utils.Alert.AlertInputDialog.OnDialogClickListener;
 
 public class LoginView {
 	public Data data = Data.getInstance();
@@ -223,5 +231,40 @@ public class LoginView {
 			input1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 			input2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		}
+	}
+
+	public RelativeLayout cirlcesDialogContent;
+	public PopupWindow circlePopWindow;
+	public View circleDialogView;
+
+	public void showCircleSettingDialog() {
+		// DisplayMetrics displayMetrics = new DisplayMetrics();
+		circleDialogView = thisActivity.getLayoutInflater().inflate(R.layout.circle_longclick_dialog, null);
+		circlePopWindow = new PopupWindow(circleDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		circlePopWindow.setBackgroundDrawable(new BitmapDrawable());
+		// RelativeLayout mainContentView = (RelativeLayout)
+		// circleDialogView.findViewById(R.id.mainContent);
+
+		// cirlcesDialogContent = (RelativeLayout)
+		// circleDialogView.findViewById(R.id.groupsContent);
+		// RelativeLayout.LayoutParams mainContentParams =
+		// (RelativeLayout.LayoutParams) mainContentView.getLayoutParams();
+		// mainContentParams.height = (int) (displayMetrics.heightPixels *
+		// 0.7578125f);
+		// mainContentParams.leftMargin = (int) (20 / displayMetrics.density +
+		// 0.5f);
+		// mainContentParams.rightMargin = (int) (20 / displayMetrics.density +
+		// 0.5f);
+		// mainContentView.setLayoutParams(mainContentParams);
+		circlePopWindow.showAtLocation(loginOrRegister, Gravity.CENTER, 0, 0);
+	}
+
+	public void showALert() {
+		Alert.createInputDialog(context).setTitle("请输入信息").setOnConfirmClickListener(new OnDialogClickListener() {
+			@Override
+			public void onClick(final AlertInputDialog dialog) {
+
+			}
+		}).show();
 	}
 }

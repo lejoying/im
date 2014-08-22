@@ -8,12 +8,16 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -53,6 +57,8 @@ public class Debug1View {
 
 	public LayoutInflater mInflater;
 
+	public RelativeLayout dialogContentView;
+
 	public enum Status {
 		welcome, start, loginOrRegister, loginUsePassword, verifyPhoneForRegister, verifyPhoneForResetPassword, verifyPhoneForLogin, setPassword, resetPassword
 	}
@@ -67,28 +73,23 @@ public class Debug1View {
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
 		animateFirstListener = new AnimateFirstDisplayListener();
-		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.ic_stub)
-				.showImageForEmptyUri(R.drawable.ic_empty)
-				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
-				.cacheOnDisk(true).considerExifParams(true)
-				.displayer(new RoundedBitmapDisplayer(20)).build();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(20)).build();
 		imageLoader.init(ImageLoaderConfiguration.createDefault(thisActivity));
 
 		thisActivity.setContentView(R.layout.activiry_debug1_image_list);
 
-		addMonyImageUploadView = (TextView) thisActivity
-				.findViewById(R.id.rightTopText);
+		dialogContentView = (RelativeLayout) thisActivity.findViewById(R.id.dialogContent);
 
-		listView = (ListView) thisActivity
-				.findViewById(R.id.view_element_debug1_list);
+		addMonyImageUploadView = (TextView) thisActivity.findViewById(R.id.rightTopText);
+
+		listView = (ListView) thisActivity.findViewById(R.id.view_element_debug1_list);
 		transportingList = new TransportingList();
 		transportingList.initialize(listView);
 
-		controlProgressView = thisActivity
-				.findViewById(R.id.title_control_progress_container);
+		controlProgressView = thisActivity.findViewById(R.id.title_control_progress_container);
 		titleControlProgress = new ControlProgress();
 		titleControlProgress.initialize(controlProgressView);
+
 	}
 
 	public class TransportingList {
@@ -102,16 +103,13 @@ public class Debug1View {
 		}
 
 		public void setContent() {
-			for (int i = 0; i < data.localStatus.localData.prepareUploadImagesList
-					.size(); i++) {
+			for (int i = 0; i < data.localStatus.localData.prepareUploadImagesList.size(); i++) {
 				TransportingItem transportingItem = new TransportingItem();
 				transportingItems.add(transportingItem);
 
-				ImageBean imageBean = data.localStatus.localData.prepareUploadImagesList
-						.get(i);
+				ImageBean imageBean = data.localStatus.localData.prepareUploadImagesList.get(i);
 
-				View transportingItemView = transportingItem
-						.initialize(imageBean);
+				View transportingItemView = transportingItem.initialize(imageBean);
 				String path = imageBean.path;
 				if (imageBean.multipart == null) {
 					imageBean.multipart = thisController.uploadFile(path);
@@ -148,56 +146,42 @@ public class Debug1View {
 
 			public View initialize(ImageBean imageSource) {
 				this.imageSource = imageSource;
-				transportingItemView = mInflater.inflate(
-						R.layout.view_element_debug1_list_item, null);
+				transportingItemView = mInflater.inflate(R.layout.view_element_debug1_list_item, null);
 				if (imageSource == null) {
-					this.controlProgressView = transportingItemView
-							.findViewById(R.id.list_item_progress_container);
+					this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 					controlProgressView.setVisibility(View.GONE);
 					return transportingItemView;
 				}
 				String path = imageSource.path;
-				imageView = (ImageView) transportingItemView
-						.findViewById(R.id.image);
+				imageView = (ImageView) transportingItemView.findViewById(R.id.image);
 				String imageUri = "file://" + path;
-				imageLoader.displayImage(imageUri, imageView, options,
-						animateFirstListener);
+				imageLoader.displayImage(imageUri, imageView, options, animateFirstListener);
 
-				text_filename_view = (TextView) transportingItemView
-						.findViewById(R.id.text_filename);
-				text_filename_view
-						.setText(path.substring(path.lastIndexOf("/") + 1));
+				text_filename_view = (TextView) transportingItemView.findViewById(R.id.text_filename);
+				text_filename_view.setText(path.substring(path.lastIndexOf("/") + 1));
 
-				text_file_size_view = (TextView) transportingItemView
-						.findViewById(R.id.text_file_size);
+				text_file_size_view = (TextView) transportingItemView.findViewById(R.id.text_file_size);
 				text_file_size_view.setText("0/" + imageSource.size + "k");
 
-				text_transport_time_view = (TextView) transportingItemView
-						.findViewById(R.id.text_transport_time);
+				text_transport_time_view = (TextView) transportingItemView.findViewById(R.id.text_transport_time);
 				text_transport_time_view.setText("0ms");
 
-				this.controlProgressView = transportingItemView
-						.findViewById(R.id.list_item_progress_container);
+				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
 				this.controlProgress.initialize(this.controlProgressView);
 				if (imageSource.multipart != null) {
-					long time = imageSource.multipart.time.received
-							- imageSource.multipart.time.start;
+					long time = imageSource.multipart.time.received - imageSource.multipart.time.start;
 					if (time < 0) {
 						time = 0;
 					}
 					text_transport_time_view.setText(time + "ms");
 					long size = Long.valueOf(imageSource.size);
-					int currentUploadSize = (int) Math.floor(size
-							* imageSource.multipart.uploadPrecent / 100f);
-					text_file_size_view.setText(currentUploadSize + "/" + size
-							+ "k");
-					this.controlProgress
-							.moveTo(imageSource.multipart.uploadPrecent);
+					int currentUploadSize = (int) Math.floor(size * imageSource.multipart.uploadPrecent / 100f);
+					text_file_size_view.setText(currentUploadSize + "/" + size + "k");
+					this.controlProgress.moveTo(imageSource.multipart.uploadPrecent);
 				}
 
-				LayoutParams params = new LayoutParams(
-						LayoutParams.MATCH_PARENT, 2);
+				LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);
 				this.controlProgress.progress_line2.setLayoutParams(params);
 				return transportingItemView;
@@ -213,15 +197,12 @@ public class Debug1View {
 		UploadLoading uploadLoadings = uploadLoading;
 	}
 
-	public static class AnimateFirstDisplayListener extends
-			SimpleImageLoadingListener {
+	public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
-		static final List<String> displayedImages = Collections
-				.synchronizedList(new LinkedList<String>());
+		static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
 		@Override
-		public void onLoadingComplete(String imageUri, View view,
-				Bitmap loadedImage) {
+		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 			if (loadedImage != null) {
 				ImageView imageView = (ImageView) view;
 				boolean firstDisplay = !displayedImages.contains(imageUri);
@@ -247,14 +228,11 @@ public class Debug1View {
 
 		public void initialize(View container) {
 			DisplayMetrics displayMetrics = new DisplayMetrics();
-			thisActivity.getWindowManager().getDefaultDisplay()
-					.getMetrics(displayMetrics);
+			thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 			move_progress_line1 = new TranslateAnimation(103, 0, 0, 0);
 
-			progress_line1 = (ImageView) container
-					.findViewById(R.id.progress_line1);
-			progress_line2 = (ImageView) container
-					.findViewById(R.id.progress_line2);
+			progress_line1 = (ImageView) container.findViewById(R.id.progress_line1);
+			progress_line2 = (ImageView) container.findViewById(R.id.progress_line2);
 			controlProgressView = container;
 
 			width = displayMetrics.widthPixels;
@@ -263,8 +241,7 @@ public class Debug1View {
 
 		public void moveTo(int targetPercentage) {
 			float position = targetPercentage / 100.0f * this.width;
-			move_progress_line1 = new TranslateAnimation(
-					(percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
+			move_progress_line1 = new TranslateAnimation((percentage - targetPercentage) / 100.0f * width, 0, 0, 0);
 			// TODO old animation becomes memory fragment
 			move_progress_line1.setStartOffset(0);
 			move_progress_line1.setDuration(200);

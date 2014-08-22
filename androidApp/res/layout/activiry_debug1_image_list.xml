@@ -11,4 +11,10 @@
         android:layout_height="fill_parent"
         android:translationY="50dp" />
 
+    <RelativeLayout
+        android:id="@+id/dialogContent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </RelativeLayout>
+
 </RelativeLayout>

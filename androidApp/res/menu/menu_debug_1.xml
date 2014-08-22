@@ -4,8 +4,8 @@
         <menu> 
             <group> 
                 <item android:id="@+id/debug1_1"  android:title="调试接口1.1"/> 
-                <item android:title="子菜单2"/> 
-                <item android:title="子菜单3"/> 
+                <item android:id="@+id/debug1_2" android:title="子菜单2"/> 
+                <item android:id="@+id/debug1_4" android:title="子菜单3"/> 
             </group> 
         </menu> 
     </item>
