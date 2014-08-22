@@ -26,14 +26,12 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.AMap;
-import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnInfoWindowClickListener;
 import com.amap.api.maps.AMap.OnMapLongClickListener;
 import com.amap.api.maps.AMap.OnMarkerClickListener;
 import com.amap.api.maps.AMap.OnMarkerDragListener;
 import com.amap.api.maps.LocationSource;
-import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Circle;
 import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
@@ -48,6 +46,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 	MainApplication app;
 	LocationListener mLocationListener;
 	CreateLocationListener mCreateLocationListener;
+	SearchDataListener mSearchDataListener;
 
 	private LocationManagerProxy mLocationManagerProxy;
 	private OnLocationChangedListener mListener;
@@ -61,8 +60,9 @@ public class AmapLocationHandler extends AndroidTestCase implements
 	public String mAccountTableId = "53eacbe4e4b0693fbf5fd13b";
 	public String mGroupTableId = "53eacbb9e4b0693fbf5fd0f6";
 	public int TPYE_ACCOUNT = 0x1, TPYE_GROUP = 0x2, TPYE_SQUARE = 0x3;
-	private String createAddress = "";
 	private int searchType;
+	private boolean haveAmap = false;
+	private String createAddress = "";
 	private ArrayList<Marker> mPoiMarks = new ArrayList<Marker>();
 	private ArrayList<Circle> mPoiCircles = new ArrayList<Circle>();
 	private List<Map<String, Object>> mInfomations = new ArrayList<Map<String, Object>>();
@@ -85,6 +85,11 @@ public class AmapLocationHandler extends AndroidTestCase implements
 				double latitude);
 	}
 
+	public interface SearchDataListener {
+		public void onDataSearchedListenerListener(
+				List<Map<String, Object>> infomations);
+	}
+
 	public void requestMapLocation(AMap aMap, LocationListener locationListener) {
 		mLocationManagerProxy = LocationManagerProxy.getInstance(app);
 		mLocationListener = locationListener;
@@ -92,7 +97,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 		aMap.setLocationSource(this);// 设置定位监听
 		aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
 		aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
-		aMap.setMyLocationType(AMap.LOCATION_TYPE_MAP_FOLLOW);
+		aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
 	}
 
 	public void requestLocationInfomation(LocationListener locationListener) {
@@ -103,9 +108,21 @@ public class AmapLocationHandler extends AndroidTestCase implements
 				LocationProviderProxy.AMapNetwork, 60 * 1000, 15, this);
 	}
 
-	public void searchAccountsByBound(AMap mAMap) {
-		searchType = TPYE_ACCOUNT;
+	public void searchAccountsByBound(AMap mAMap,
+			SearchDataListener searchDataListener) {
 		this.mAMap = mAMap;
+		haveAmap = true;
+		searchAccountsByBound(searchDataListener);
+	}
+
+	public void searchAccountsByBound(SearchDataListener searchDataListener) {
+		mSearchDataListener = searchDataListener;
+		searchType = TPYE_ACCOUNT;
+		if (haveAmap) {
+			haveAmap = false;
+		} else {
+			mAMap = null;
+		}
 		SearchBound bound = new SearchBound(new LatLonPoint(
 				amapLocation.getLatitude(), amapLocation.getLongitude()), 10000);
 		try {
@@ -114,13 +131,24 @@ public class AmapLocationHandler extends AndroidTestCase implements
 			e.printStackTrace();
 		}
 		mQuery.addFilterString("online", "1");
-		mQuery.addFilterString("phone!", app.data.user.phone);
 		searchByBound();
 	}
 
-	public void searchGroupsByBound(AMap mAMap) {
-		searchType = TPYE_GROUP;
+	public void searchGroupsByBound(AMap mAMap,
+			SearchDataListener searchDataListener) {
+		haveAmap = true;
 		this.mAMap = mAMap;
+		searchGroupsByBound(searchDataListener);
+	}
+
+	public void searchGroupsByBound(SearchDataListener searchDataListener) {
+		mSearchDataListener = searchDataListener;
+		searchType = TPYE_GROUP;
+		if (haveAmap) {
+			haveAmap = false;
+		} else {
+			mAMap = null;
+		}
 		SearchBound bound = new SearchBound(new LatLonPoint(
 				amapLocation.getLatitude(), amapLocation.getLongitude()), 10000);
 		try {
@@ -133,9 +161,21 @@ public class AmapLocationHandler extends AndroidTestCase implements
 		searchByBound();
 	}
 
-	public void searchSquaresByBound(AMap mAMap) {
-		searchType = TPYE_SQUARE;
+	public void searchSquaresByBound(AMap mAMap,
+			SearchDataListener searchDataListener) {
+		haveAmap = true;
 		this.mAMap = mAMap;
+		searchSquaresByBound(searchDataListener);
+	}
+
+	public void searchSquaresByBound(SearchDataListener searchDataListener) {
+		mSearchDataListener = searchDataListener;
+		searchType = TPYE_SQUARE;
+		if (haveAmap) {
+			haveAmap = false;
+		} else {
+			mAMap = null;
+		}
 		SearchBound bound = new SearchBound(new LatLonPoint(
 				amapLocation.getLatitude(), amapLocation.getLongitude()), 10000);
 		try {
@@ -162,6 +202,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 
 	public void createLocation(AMap mAMap,
 			CreateLocationListener createLocationListener) {
+		this.mAMap = mAMap;
 		mCreateLocationListener = createLocationListener;
 		mAMap.setOnMapLongClickListener(this);
 		mAMap.setOnMarkerDragListener(this);
@@ -184,6 +225,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 			}
 			mInfomations.add(map);
 		}
+		mSearchDataListener.onDataSearchedListenerListener(mInfomations);
 	}
 
 	private void addToMap() {
@@ -264,6 +306,8 @@ public class AmapLocationHandler extends AndroidTestCase implements
 				&& amapLocation.getAMapException().getErrorCode() == 0) {
 			if (mListener != null) {
 				mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
+				float bearing = mAMap.getCameraPosition().bearing;
+				mAMap.setMyLocationRotateAngle(bearing);
 				// mAMap.animateCamera(CameraUpdateFactory
 				// .newCameraPosition(new CameraPosition(new LatLng(
 				// amapLocation.getLongitude(), amapLocation
@@ -278,6 +322,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 	public void activate(OnLocationChangedListener listener) {
 		mListener = listener;
 		mLocationManagerProxy.removeUpdates(this);
+		mLocationManagerProxy.setGpsEnable(true);
 		mLocationManagerProxy.requestLocationData(
 				LocationProviderProxy.AMapNetwork, 60 * 1000, 10, this);
 
@@ -307,8 +352,10 @@ public class AmapLocationHandler extends AndroidTestCase implements
 					mCloudItems = cloudResult.getClouds();
 					if (mCloudItems != null && mCloudItems.size() > 0) {
 						parsingInfomation(mCloudItems);
-						removeFromMap();
-						addToMap();
+						if (mAMap != null) {
+							removeFromMap();
+							addToMap();
+						}
 					}
 				} else {
 					Toast.makeText(app, "对不起，没有搜索到相关数据！", Toast.LENGTH_LONG)
@@ -366,6 +413,8 @@ public class AmapLocationHandler extends AndroidTestCase implements
 		if (createMarker == null) {
 			createMarker = mAMap.addMarker(new MarkerOptions().position(point)
 					.draggable(true).title(""));
+		} else {
+			createMarker.setPosition(point);
 		}
 		mCreateLocationListener.onCreateLocationChangedListener(
 				point.longitude, point.latitude);
