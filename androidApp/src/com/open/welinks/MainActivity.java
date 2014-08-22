@@ -65,8 +65,8 @@ public class MainActivity extends Activity {
 		viewManager.mainView = this.thisView;
 
 		thisView.initViews();
-		thisController.oncreate();
 		thisController.initializeListeners();
+		thisController.oncreate();
 		thisController.bindEvent();
 	}
 
