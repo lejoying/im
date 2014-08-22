@@ -1,5 +1,6 @@
 package com.open.welinks.view;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -14,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,11 +32,18 @@ import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
+import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.lib.viewbody.PagerBody;
 import com.open.welinks.R;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.UserIntimateController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
@@ -42,6 +51,9 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
+import com.open.welinks.model.Data.Shares.Share.Comment;
+import com.open.welinks.model.Data.Shares.Share.ShareContent;
+import com.open.welinks.model.Data.Shares.Share.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -125,9 +137,12 @@ public class UserIntimateView {
 
 	public RelativeLayout shareTopMenuGroupNameParent;
 	public TextView shareTopMenuGroupName;
+	public RelativeLayout groupMembersListContentView;
 
 	public PopupWindow groupPopWindow;
 	public View groupDialogView;
+
+	public RelativeLayout me_setting_view;
 
 	public enum Status {
 		MESSAGES, FRIENDS, MINE
@@ -173,6 +188,8 @@ public class UserIntimateView {
 		title_messages_friends_me = (RelativeLayout) messages_friends_me_View.findViewById(R.id.title_messages_friends_me);
 
 		chatMessagesNotReadView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_chatMessagesNotRead);
+
+		me_setting_view = (RelativeLayout) messages_friends_me_View.findViewById(R.id.mySetting);
 
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);
 		int main_pager_indicator_trip = (int) (44 * displayMetrics.density);
@@ -221,6 +238,8 @@ public class UserIntimateView {
 
 		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
+
+		groupMembersListContentView = (RelativeLayout) shareView.findViewById(R.id.groupMembersListContent);
 
 		meView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomationContent);
 
@@ -532,6 +551,11 @@ public class UserIntimateView {
 		}
 	}
 
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+	public DisplayImageOptions options;
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+	public Gson gson = new Gson();
+
 	public class SharesMessageBody extends MyListItemBody {
 
 		SharesMessageBody(ListBody listBody) {
@@ -546,10 +570,13 @@ public class UserIntimateView {
 		public TextView shareTextContentView;
 		public ImageView shareImageContentView;
 		public TextView sharePraiseNumberView;
+		public ImageView sharePraiseIconView;
 		public TextView shareCommentNumberView;
+		public ImageView shareCommentIconView;
+
+		public DownloadFile downloadFile = null;
 
 		public View initialize() {
-
 			this.cardView = mInflater.inflate(R.layout.share_message_item, null);
 			this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
 			this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
@@ -557,8 +584,10 @@ public class UserIntimateView {
 			this.shareTextContentView = (TextView) this.cardView.findViewById(R.id.share_textContent);
 			this.shareImageContentView = (ImageView) this.cardView.findViewById(R.id.share_imageContent);
 			this.sharePraiseNumberView = (TextView) this.cardView.findViewById(R.id.share_praise);
+			this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
 			this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
-			super.initialize(this.cardView);
+			this.shareCommentIconView = (ImageView) this.cardView.findViewById(R.id.share_comment_icon);
+			super.initialize(cardView);
 			return cardView;
 		}
 
@@ -567,15 +596,96 @@ public class UserIntimateView {
 			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			this.headView.setImageBitmap(bitmap);
-			this.nickNameView.setText(shareMessage.phone);
+			this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
 			this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
-			this.shareTextContentView.setText(shareMessage.content);
-			// this.sharePraiseNumberView.setText(shareMessage.praiseusers.size());
-			// this.shareCommentNumberView.setText(shareMessage.comments.size());
+			ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+			String textContent = "";
+			String imageContent = "";
+			List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+			for (int i = 0; i < shareContentItems.size(); i++) {
+				ShareContentItem shareContentItem = shareContentItems.get(i);
+				if (shareContentItem.type.equals("image")) {
+					imageContent = shareContentItem.detail;
+					if (!"".equals(textContent))
+						break;
+				} else if (shareContentItem.type.equals("text")) {
+					textContent = shareContentItem.detail;
+					if (!"".equals(imageContent))
+						break;
+				}
+			}
+
+			this.shareTextContentView.setText(textContent);
+			File sdFile = Environment.getExternalStorageDirectory();
+			File file = new File(sdFile, "wxgs/" + imageContent);
+			int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
+			int showImageHeight = (int) (displayMetrics.density * 200 + 0.5f);
+			RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
+			// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
+			shareImageContentView.setLayoutParams(shareImageParams);
+			final String url = "http://images3.we-links.com/images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+			final String path = file.getAbsolutePath();
+			if (file.exists()) {
+				imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						downloadFile = new DownloadFile(url, path);
+						downloadFile.view = shareImageContentView;
+						downloadFileList.addDownloadFile(downloadFile);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+					}
+				});
+			} else {
+				downloadFile = new DownloadFile(url, path);
+				downloadFile.view = shareImageContentView;
+				downloadFileList.addDownloadFile(downloadFile);
+			}
+
+			// // TODO remove listener to Controller
+			// downloadFile.setDownloadFileListener(new DownloadListener() {
+			//
+			// @Override
+			// public void success(DownloadFile instance, int status) {
+			// imageLoader.displayImage("file://" + path, shareImageContentView,
+			// options);
+			// }
+			//
+			// @Override
+			// public void loading(DownloadFile instance, int precent, int
+			// status) {
+			//
+			// }
+			// });
+
+			this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+			this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
+			String userPhone = data.userInformation.currentUser.phone;
+			if (shareMessage.praiseusers.contains(userPhone)) {
+				this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+			} else {
+				this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+			}
+			List<Comment> comments = shareMessage.comments;
+			this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
+			for (int i = 0; i < comments.size(); i++) {
+				Comment comment = comments.get(i);
+				if (comment.phone.equals(userPhone)) {
+					this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
+					break;
+				}
+			}
 		}
 	}
 
-	public RelativeLayout groupsContent;
+	public RelativeLayout groupsDialogContent;
 
 	@SuppressWarnings("deprecation")
 	public void showGroupsDialog() {
@@ -583,7 +693,7 @@ public class UserIntimateView {
 		groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		RelativeLayout mainContentView = (RelativeLayout) groupDialogView.findViewById(R.id.mainContent);
 
-		groupsContent = (RelativeLayout) groupDialogView.findViewById(R.id.groupsContent);
+		groupsDialogContent = (RelativeLayout) groupDialogView.findViewById(R.id.groupsContent);
 		setGroupsDialogContent();
 		RelativeLayout.LayoutParams mainContentParams = (RelativeLayout.LayoutParams) mainContentView.getLayoutParams();
 		mainContentParams.height = (int) (displayMetrics.heightPixels * 0.7578125f);
@@ -600,14 +710,14 @@ public class UserIntimateView {
 	public void setGroupsDialogContent() {
 		List<String> groups = data.relationship.groups;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
-		groupsContent.removeAllViews();
+		groupsDialogContent.removeAllViews();
 		for (int i = 0; i < groups.size(); i++) {
 			GroupDialogItem groupDialogItem = new GroupDialogItem();
 			View view = groupDialogItem.initialize();
 			groupDialogItem.setContent(groupsMap.get(groups.get(i)));
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (60 * displayMetrics.density));
 			layoutParams.topMargin = (int) (60 * displayMetrics.density * i);
-			groupsContent.addView(view, layoutParams);
+			groupsDialogContent.addView(view, layoutParams);
 		}
 	}
 
@@ -631,6 +741,25 @@ public class UserIntimateView {
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			this.groupIconView.setImageBitmap(bitmap);
 			this.groupNameView.setText(group.name);
+		}
+	}
+
+	public void showGroupMembers() {
+		groupMembersListContentView.removeAllViews();
+		List<String> groupMembers = data.relationship.groupsMap.get("1001").members;
+		// Map<String, Friend> friendsMap = data.relationship.friendsMap;
+		Resources resources = thisActivity.getResources();
+		Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		for (int i = 0; i < groupMembers.size(); i++) {
+			// String key = groupMembers.get(i);
+			// Friend friend = friendsMap.get(key);
+			ImageView imageView = new ImageView(context);
+			imageView.setImageBitmap(bitmap);
+			int height = (int) (50 * displayMetrics.density);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(height, height);
+			layoutParams.leftMargin = (int) (50 * displayMetrics.density * i);
+			groupMembersListContentView.addView(imageView, layoutParams);
 		}
 	}
 

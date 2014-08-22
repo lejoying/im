@@ -85,7 +85,7 @@ groupManage.create = function (data, response) {
         var group = {
             name: name,
             icon: "978b3e6986071e464fd6632e1fd864652c42ca27.png",
-            gtype: "group"
+            gtype: data.gtype
         }
         group.description = data.description || "请输入群组描述信息";
         if (location) {
@@ -116,6 +116,7 @@ groupManage.create = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 var group = results.pop().group.data;
+                createGroupLocation(group);
                 if (members.length > 0) {
                     addMembersToGroup(group, members);
                     console.log("开始初始化群组第一批用户个数:" + members.length);
@@ -126,7 +127,7 @@ groupManage.create = function (data, response) {
                         group: group
                     }))
                     response.end();
-                    setGroupLBSLocation(phone, data.accessKey, location, group);
+//                    setGroupLBSLocation(phone, data.accessKey, location, group);
                 }
             } else {
                 response.write(JSON.stringify({
@@ -169,9 +170,44 @@ groupManage.create = function (data, response) {
                 for (var index in members) {
                     push.inform(phone, members[index], accessKey, "*", {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: group.gid, operation: true}});
                 }
-                setGroupLBSLocation(phone, data.accessKey, location, group);
+//                setGroupLBSLocation(phone, data.accessKey, location, group);
             }
         });
+    }
+
+    function createGroupLocation(group) {
+        var location = JSON.parse(group.location)
+        location = location.longitude + "," + location.latitude
+        try {
+            ajax.ajax({
+                type: "POST",
+                url: serverSetting.LBS.DATA_CREATE,
+                data: {
+                    key: serverSetting.LBS.KEY,
+                    tableid: serverSetting.LBS.GROUPTABLEID,
+                    loctype: 2,
+                    data: JSON.stringify({
+                        _name: group.name,
+                        _location: location,
+                        _address: data.address,
+                        gid: group.gid,
+                        icon: group.icon,
+                        gtype: group.gtype,
+                        description: group.description
+                    })
+                }, success: function (info) {
+                    var info = JSON.parse(info);
+                    if (info.status == 1) {
+                        console.log("success--" + info._id)
+                    } else {
+
+                    }
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return;
+        }
     }
 }
 function setGroupLBSLocation(phone, accessKey, location, group) {
@@ -539,6 +575,7 @@ groupManage.modify = function (data, response) {
     var name = data.name;
     var background = data.background;
     var description = data.description;
+    var address = data.address;
     var location = data.location;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
     var list = [phone, gid];
@@ -560,6 +597,7 @@ groupManage.modify = function (data, response) {
             return;
         }
         checkGroupNode(gid);
+        checkGroupLocation(gid);
     }
 
     function checkGroupNode(gid) {
@@ -663,13 +701,74 @@ groupManage.modify = function (data, response) {
                 for (var index in accounts) {
                     push.inform(phone, index, accessKey, "*", {"提示信息": "成功", event: "groupinformationchanged", event_content: {gid: gid}});
                 }
-                setGroupLBSLocation(phone, accessKey, JSON.stringify(currentLocation), groupData);
+//                setGroupLBSLocation(phone, accessKey, JSON.stringify(currentLocation), groupData);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "修改群组信息失败",
                     "失败原因": "群组不存在"
                 }));
                 response.end();
+            }
+        });
+    }
+
+    function checkGroupLocation(gid) {
+        ajax.ajax({
+            type: "GET",
+            url: serverSetting.LBS.DATA_SEARCH,
+            data: {
+                tableid: serverSetting.LBS.GROUPTABLEID,
+                filter: "gid:" + gid,
+                key: serverSetting.LBS.KEY
+            },
+            success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    var id = info.datas[0]._id;
+                    modifyGroupLocation(id);
+                } else {
+                    response.write(JSON.stringify({
+                        "提示信息": "查找群组位置信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+
+    function modifyGroupLocation(id) {
+        var location = JSON.parse(data.location);
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS.DATA_UPDATA,
+            data: {
+                key: serverSetting.LBS.KEY,
+                tableid: serverSetting.LBS.GROUPTABLEID,
+                loctype: 2,
+                data: JSON.stringify({
+                    _id: id,
+                    _name: name,
+                    _location: location.longitude + "," + location.latitude,
+                    _address: address,
+                    icon: icon,
+                    description: description
+                })
+            }, success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    response.write(JSON.stringify({
+                        "提示信息": "修改用户位置信息成功"
+                    }));
+                    response.end();
+                } else {
+                    console.log(info.info);
+                    response.write(JSON.stringify({
+                        "提示信息": "修改用户位置信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
             }
         });
     }

@@ -26,12 +26,14 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.AMap.InfoWindowAdapter;
 import com.amap.api.maps.AMap.OnInfoWindowClickListener;
 import com.amap.api.maps.AMap.OnMapLongClickListener;
 import com.amap.api.maps.AMap.OnMarkerClickListener;
 import com.amap.api.maps.AMap.OnMarkerDragListener;
 import com.amap.api.maps.LocationSource;
+import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Circle;
 import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
@@ -57,9 +59,10 @@ public class AmapLocationHandler extends AndroidTestCase implements
 	private Marker createMarker;
 
 	public String mAccountTableId = "53eacbe4e4b0693fbf5fd13b";
-	public String mGroupFTableId = "53eacbb9e4b0693fbf5fd0f6";
+	public String mGroupTableId = "53eacbb9e4b0693fbf5fd0f6";
+	public int TPYE_ACCOUNT = 0x1, TPYE_GROUP = 0x2, TPYE_SQUARE = 0x3;
 	private String createAddress = "";
-
+	private int searchType;
 	private ArrayList<Marker> mPoiMarks = new ArrayList<Marker>();
 	private ArrayList<Circle> mPoiCircles = new ArrayList<Circle>();
 	private List<Map<String, Object>> mInfomations = new ArrayList<Map<String, Object>>();
@@ -85,10 +88,11 @@ public class AmapLocationHandler extends AndroidTestCase implements
 	public void requestMapLocation(AMap aMap, LocationListener locationListener) {
 		mLocationManagerProxy = LocationManagerProxy.getInstance(app);
 		mLocationListener = locationListener;
+		mAMap = aMap;
 		aMap.setLocationSource(this);// 设置定位监听
 		aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
 		aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
-		aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
+		aMap.setMyLocationType(AMap.LOCATION_TYPE_MAP_FOLLOW);
 	}
 
 	public void requestLocationInfomation(LocationListener locationListener) {
@@ -99,21 +103,57 @@ public class AmapLocationHandler extends AndroidTestCase implements
 				LocationProviderProxy.AMapNetwork, 60 * 1000, 15, this);
 	}
 
-	public void searchByBound(AMap mAMap, String mTableID) {
+	public void searchAccountsByBound(AMap mAMap) {
+		searchType = TPYE_ACCOUNT;
+		this.mAMap = mAMap;
+		SearchBound bound = new SearchBound(new LatLonPoint(
+				amapLocation.getLatitude(), amapLocation.getLongitude()), 10000);
+		try {
+			mQuery = new CloudSearch.Query(mAccountTableId, "", bound);
+		} catch (AMapCloudException e) {
+			e.printStackTrace();
+		}
+		mQuery.addFilterString("online", "1");
+		mQuery.addFilterString("phone!", app.data.user.phone);
+		searchByBound();
+	}
+
+	public void searchGroupsByBound(AMap mAMap) {
+		searchType = TPYE_GROUP;
+		this.mAMap = mAMap;
+		SearchBound bound = new SearchBound(new LatLonPoint(
+				amapLocation.getLatitude(), amapLocation.getLongitude()), 10000);
+		try {
+			mQuery = new CloudSearch.Query(mGroupTableId, "", bound);
+		} catch (AMapCloudException e) {
+			e.printStackTrace();
+		}
+		mQuery.addFilterString("gtype", "group");
+		mQuery.setPageSize(30);
+		searchByBound();
+	}
+
+	public void searchSquaresByBound(AMap mAMap) {
+		searchType = TPYE_SQUARE;
+		this.mAMap = mAMap;
+		SearchBound bound = new SearchBound(new LatLonPoint(
+				amapLocation.getLatitude(), amapLocation.getLongitude()), 10000);
+		try {
+			mQuery = new CloudSearch.Query(mGroupTableId, "", bound);
+		} catch (AMapCloudException e) {
+			e.printStackTrace();
+		}
+		mQuery.addFilterString("gtype", "community");
+		mQuery.setPageSize(30);
+		searchByBound();
+	}
+
+	private void searchByBound() {
 		mCloudSearch = new CloudSearch(app);
 		mCloudSearch.setOnCloudSearchListener(this);
 		mAMap.setOnMarkerClickListener(this);
 		mAMap.setOnInfoWindowClickListener(this);
 		mAMap.setInfoWindowAdapter(this);
-		this.mAMap = mAMap;
-		SearchBound bound = new SearchBound(new LatLonPoint(
-				amapLocation.getLatitude(), amapLocation.getLongitude()), 10000);
-		try {
-			mQuery = new CloudSearch.Query(mTableID, "", bound);
-		} catch (AMapCloudException e) {
-			e.printStackTrace();
-		}
-		mQuery.setPageSize(30);
 		CloudSearch.Sortingrules sorting = new CloudSearch.Sortingrules("_id",
 				false);
 		mQuery.setSortingrules(sorting);
@@ -125,7 +165,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 		mCreateLocationListener = createLocationListener;
 		mAMap.setOnMapLongClickListener(this);
 		mAMap.setOnMarkerDragListener(this);
-		this.mAMap = mAMap;
+		createMarker = null;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -147,14 +187,14 @@ public class AmapLocationHandler extends AndroidTestCase implements
 	}
 
 	private void addToMap() {
-		if (mInfomations.get(0).get("gid") == null) {
+		if (searchType == TPYE_ACCOUNT) {
 			for (int i = 0; i < mCloudItems.size(); i++) {
 				Marker marker = mAMap.addMarker(getMarkerOptions(mCloudItems
 						.get(i)));
 				marker.setObject(i);
 				mPoiMarks.add(marker);
 			}
-		} else {
+		} else if (searchType == TPYE_GROUP || searchType == TPYE_SQUARE) {
 			for (int i = 0; i < mCloudItems.size(); i++) {
 				Circle circle = mAMap.addCircle(getCircleOptions(mCloudItems
 						.get(i)));
@@ -185,7 +225,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 		return new CircleOptions()
 				.center(new LatLng(mCloudItem.getLatLonPoint().getLatitude(),
 						mCloudItem.getLatLonPoint().getLongitude()))
-				.radius(4000).strokeColor(Color.argb(50, 1, 1, 1))
+				.radius(2000).strokeColor(Color.argb(50, 1, 1, 1))
 				.fillColor(Color.argb(50, 1, 1, 1)).strokeWidth(25);
 	}
 
@@ -224,6 +264,10 @@ public class AmapLocationHandler extends AndroidTestCase implements
 				&& amapLocation.getAMapException().getErrorCode() == 0) {
 			if (mListener != null) {
 				mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
+				// mAMap.animateCamera(CameraUpdateFactory
+				// .newCameraPosition(new CameraPosition(new LatLng(
+				// amapLocation.getLongitude(), amapLocation
+				// .getLatitude()), 18, 0, 0)));
 			}
 			this.amapLocation = amapLocation;
 			mLocationListener.onLocationChangedListener(amapLocation);
@@ -252,9 +296,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 	@Override
 	public void onCloudItemDetailSearched(CloudItemDetail cloudItemResult,
 			int rCode) {
-		// TODO
-		Toast.makeText(app, "onCloudItemDetailSearched", Toast.LENGTH_LONG)
-				.show();
+		// abandoned
 	}
 
 	@Override
@@ -321,7 +363,7 @@ public class AmapLocationHandler extends AndroidTestCase implements
 
 	@Override
 	public void onMapLongClick(LatLng point) {
-		if (!createMarker.isVisible()) {
+		if (createMarker == null) {
 			createMarker = mAMap.addMarker(new MarkerOptions().position(point)
 					.draggable(true).title(""));
 		}

@@ -9,15 +9,14 @@
         android:id="@+id/gshare_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="horizontal" >
+        android:layout_margin="5dp" >
 
         <ImageView
             android:id="@+id/share_head"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
             android:src="@drawable/face_man" />
 
         <TextView
@@ -25,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             android:layout_toRightOf="@+id/share_head"
             android:text="ABCD"
             android:textColor="@android:color/white"
@@ -59,8 +58,8 @@
         <ImageView
             android:id="@+id/share_imageContent"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@color/card_color" />
+            android:layout_height="wrap_content"
+            android:background="#000" />
 
         <TextView
             android:id="@+id/share_textContent"
@@ -89,7 +88,7 @@
         android:layout_marginTop="300dp" >
 
         <ImageView
-            android:id="@+id/gshare_praise_icon"
+            android:id="@+id/share_praise_icon"
             android:layout_width="27dp"
             android:layout_height="26dp"
             android:layout_alignParentRight="true"
@@ -112,7 +111,7 @@
             android:textColor="@color/text_color" />
 
         <ImageView
-            android:id="@+id/gshare_comment_icon"
+            android:id="@+id/share_comment_icon"
             android:layout_width="31dp"
             android:layout_height="26dp"
             android:layout_alignParentRight="true"
