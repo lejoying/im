@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -23,19 +22,18 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
-import com.open.welinks.SettingActivity;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
-import com.open.welinks.view.UserIntimateView;
-import com.open.welinks.view.UserIntimateView.SharesMessageBody;
+import com.open.welinks.view.MainView;
+import com.open.welinks.view.ShareSubView.SharesMessageBody;
 
-public class UserIntimateController {
+public class MainController {
 
 	public Data data = Data.getInstance();
 	public String tag = "UserIntimateController";
-	public UserIntimateView thisView;
+	public MainView thisView;
 	public Context context;
 	public Activity thisActivity;
 
@@ -65,30 +63,30 @@ public class UserIntimateController {
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 
-		thisView.showCircles();
+		thisView.friendsSubView.showCircles();
 		// this.test();
 		// initChatMessages();
-		thisView.showMessages();
+		thisView.messagesSubView.showMessages();
 
-		thisView.showShareMessages();
+		thisView.shareSubView.showShareMessages();
 
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 	}
 
 	public void onResume() {
-		thisView.mMePageAppIconScaleSpring.addListener(mSpringListener);
+		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 	}
 
 	public void onPause() {
-		thisView.mMePageAppIconScaleSpring.removeListener(mSpringListener);
+		thisView.meSubView.mMePageAppIconScaleSpring.removeListener(mSpringListener);
 	}
 
 	private class ExampleSpringListener extends SimpleSpringListener {
 		@Override
 		public void onSpringUpdate(Spring spring) {
 			float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, 1, 0.5);
-			thisView.mAppIconToNameView.setScaleX(mappedValue);
-			thisView.mAppIconToNameView.setScaleY(mappedValue);
+			thisView.meSubView.mAppIconToNameView.setScaleX(mappedValue);
+			thisView.meSubView.mAppIconToNameView.setScaleY(mappedValue);
 		}
 	}
 
@@ -105,7 +103,7 @@ public class UserIntimateController {
 		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.getIntimateFriends);
 	}
 
-	public UserIntimateController(Activity thisActivity) {
+	public MainController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 
@@ -122,7 +120,7 @@ public class UserIntimateController {
 
 			@Override
 			public void success(DownloadFile instance, int status) {
-				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.options);
+				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.shareSubView.options);
 			}
 		};
 		onTouchListener = new OnTouchListener() {
@@ -131,9 +129,9 @@ public class UserIntimateController {
 			public boolean onTouch(View v, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
-					thisView.mMePageAppIconScaleSpring.setEndValue(1);
+					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-					thisView.mMePageAppIconScaleSpring.setEndValue(0);
+					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
 				}
 				return true;
 			}
@@ -164,16 +162,17 @@ public class UserIntimateController {
 					thisView.mainPagerBody.flipTo(2);
 				}
 
-				else if (view.equals(thisView.shareTopMenuGroupNameParent)) {
-					thisView.showGroupsDialog();
-				} else if (view.equals(thisView.groupDialogView)) {
-					thisView.dismissGroupDialog();
+				else if (view.equals(thisView.shareSubView.shareTopMenuGroupNameParent)) {
+					thisView.shareSubView.showGroupsDialog();
+				} else if (view.equals(thisView.shareSubView.groupDialogView)) {
+					thisView.shareSubView.dismissGroupDialog();
 				}
 
-				else if (view.equals(thisView.me_setting_view)) {
-					Intent intent = new Intent(thisActivity, SettingActivity.class);
-					thisActivity.startActivity(intent);
-				}
+				// else if (view.equals(thisView.meSubView.me_setting_view)) {
+				// Intent intent = new Intent(thisActivity,
+				// SettingActivity.class);
+				// thisActivity.startActivity(intent);
+				// }
 
 				else if (view.getTag() != null) {
 					Log.d(tag, (String) view.getTag());
@@ -191,21 +190,21 @@ public class UserIntimateController {
 		thisView.shareMenuView.setOnClickListener(mOnClickListener);
 		thisView.messages_friends_me_menuView.setOnClickListener(mOnClickListener);
 
-		thisView.mRootView.setOnTouchListener(onTouchListener);
+		thisView.meSubView.mRootView.setOnTouchListener(onTouchListener);
 
-		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
-		thisView.groupDialogView.setOnClickListener(mOnClickListener);
+		thisView.shareSubView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
+		thisView.shareSubView.groupDialogView.setOnClickListener(mOnClickListener);
 
-		List<String> listItemsSqquece = thisView.shareMessageListBody.listItemsSequence;
+		List<String> listItemsSqquece = thisView.shareSubView.shareMessageListBody.listItemsSequence;
 		for (int i = 0; i < listItemsSqquece.size(); i++) {
 			String key = listItemsSqquece.get(i);
-			SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get(key);
+			SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareSubView.shareMessageListBody.listItemBodiesMap.get(key);
 			if (sharesMessageBody.downloadFile != null) {
 				sharesMessageBody.downloadFile.setDownloadFileListener(downloadListener);
 			}
 		}
 
-		thisView.me_setting_view.setOnClickListener(mOnClickListener);
+		// thisView.me_setting_view.setOnClickListener(mOnClickListener);
 	}
 
 	public class TouchStatus {
@@ -223,19 +222,19 @@ public class UserIntimateController {
 			thisView.mainPagerBody.onTouchDown(event);
 			// thisView.friendListBody.onTouchDown(event);
 			// thisView.chatMessageListBody.onTouchDown(event);
-			thisView.shareMessageListBody.onTouchDown(event);
+			thisView.shareSubView.shareMessageListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
 			// thisView.friendListBody.onTouchMove(event);
 			// thisView.chatMessageListBody.onTouchMove(event);
-			thisView.shareMessageListBody.onTouchMove(event);
+			thisView.shareSubView.shareMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 			// thisView.friendListBody.onTouchUp(event);
 			// thisView.chatMessageListBody.onTouchUp(event);
-			thisView.shareMessageListBody.onTouchUp(event);
+			thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -260,8 +259,8 @@ public class UserIntimateController {
 			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
 			// }
-			if (thisView.shareMessageListBody.bodyStatus.state == thisView.shareMessageListBody.bodyStatus.DRAGGING) {
-				thisView.shareMessageListBody.onFling(velocityX, velocityY);
+			if (thisView.shareSubView.shareMessageListBody.bodyStatus.state == thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
+				thisView.shareSubView.shareMessageListBody.onFling(velocityX, velocityY);
 			}
 			return true;
 		}

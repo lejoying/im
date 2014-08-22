@@ -96,7 +96,7 @@ public class LoginActivity extends Activity {
 
 		else if (item.getItemId() == R.id.debug1_3) {
 			Log.d(tag, "debug1_3");
-			startActivity(new Intent(LoginActivity.this, UserIntimateActivity.class));
+			startActivity(new Intent(LoginActivity.this, MainActivity.class));
 		}
 		return true;
 	}
