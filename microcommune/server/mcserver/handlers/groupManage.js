@@ -185,7 +185,7 @@ groupManage.create = function (data, response) {
                 data: {
                     key: serverSetting.LBS.KEY,
                     tableid: serverSetting.LBS.GROUPTABLEID,
-                    loctype: 2,
+                    loctype: 1,
                     data: JSON.stringify({
                         _name: group.name,
                         _location: location,
