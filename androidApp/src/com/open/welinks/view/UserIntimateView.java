@@ -133,7 +133,7 @@ public class UserIntimateView {
 
 	public RelativeLayout shareTopMenuGroupNameParent;
 	public TextView shareTopMenuGroupName;
-	public RelativeLayout groupMembersListContentView;
+//	public RelativeLayout groupMembersListContentView;
 
 	public PopupWindow groupPopWindow;
 	public View groupDialogView;
@@ -228,7 +228,7 @@ public class UserIntimateView {
 		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
 
-		groupMembersListContentView = (RelativeLayout) shareView.findViewById(R.id.groupMembersListContent);
+//		groupMembersListContentView = (RelativeLayout) shareView.findViewById(R.id.groupMembersListContent);
 
 		meView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.rl_userInfomationContent);
 
@@ -519,20 +519,32 @@ public class UserIntimateView {
 		List<String> sharesOrder = share.sharesOrder;
 		Map<String, ShareMessage> sharesMap = share.sharesMap;
 		this.shareMessageListBody.listItemsSequence.clear();
-		for (int i = 0; i < sharesOrder.size(); i++) {
+		SharesMessageBody sharesMessageBody0 = null;
+		sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
+		sharesMessageBody0.initialize(-1);
+		sharesMessageBody0.setContent(null);
+		this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
+		this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
+		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (50 * displayMetrics.density));
+		sharesMessageBody0.y = 60 * displayMetrics.density * 0 + 2 * displayMetrics.density;
+		sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
+		sharesMessageBody0.cardView.setX(0);
+		this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
+		this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
+		for (int i = 0; i < 3; i++) {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
 			shareMessage = sharesMap.get(key);
 			SharesMessageBody sharesMessageBody = null;
 			sharesMessageBody = new SharesMessageBody(this.shareMessageListBody);
-			sharesMessageBody.initialize();
+			sharesMessageBody.initialize(i);
 			sharesMessageBody.setContent(shareMessage);
 
 			this.shareMessageListBody.listItemsSequence.add("message#" + shareMessage.phone + "_" + shareMessage.time);
 			this.shareMessageListBody.listItemBodiesMap.put("message#" + shareMessage.phone + "_" + shareMessage.time, sharesMessageBody);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (340 * displayMetrics.density));
-			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density;
+			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
@@ -565,110 +577,107 @@ public class UserIntimateView {
 
 		public DownloadFile downloadFile = null;
 
-		public View initialize() {
-			this.cardView = mInflater.inflate(R.layout.share_message_item, null);
-			this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
-			this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
-			this.releaseTimeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
-			this.shareTextContentView = (TextView) this.cardView.findViewById(R.id.share_textContent);
-			this.shareImageContentView = (ImageView) this.cardView.findViewById(R.id.share_imageContent);
-			this.sharePraiseNumberView = (TextView) this.cardView.findViewById(R.id.share_praise);
-			this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
-			this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
-			this.shareCommentIconView = (ImageView) this.cardView.findViewById(R.id.share_comment_icon);
+		public int i;
+		public RelativeLayout groupMembersListContentView;
+
+		public View initialize(int i) {
+			this.i = i;
+			if (i == -1) {
+				this.cardView = mInflater.inflate(R.layout.share_group_members_show, null);
+				this.groupMembersListContentView = (RelativeLayout) this.cardView.findViewById(R.id.groupMembersListContent);
+			} else {
+				this.cardView = mInflater.inflate(R.layout.share_message_item, null);
+				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
+				this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
+				this.releaseTimeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
+				this.shareTextContentView = (TextView) this.cardView.findViewById(R.id.share_textContent);
+				this.shareImageContentView = (ImageView) this.cardView.findViewById(R.id.share_imageContent);
+				this.sharePraiseNumberView = (TextView) this.cardView.findViewById(R.id.share_praise);
+				this.sharePraiseIconView = (ImageView) this.cardView.findViewById(R.id.share_praise_icon);
+				this.shareCommentNumberView = (TextView) this.cardView.findViewById(R.id.share_comment);
+				this.shareCommentIconView = (ImageView) this.cardView.findViewById(R.id.share_comment_icon);
+			}
 			super.initialize(cardView);
 			return cardView;
 		}
 
 		public void setContent(ShareMessage shareMessage) {
-			Resources resources = thisActivity.getResources();
-			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
-			this.headView.setImageBitmap(bitmap);
-			this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
-			this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
-			ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
-			String textContent = "";
-			String imageContent = "";
-			List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
-			for (int i = 0; i < shareContentItems.size(); i++) {
-				ShareContentItem shareContentItem = shareContentItems.get(i);
-				if (shareContentItem.type.equals("image")) {
-					imageContent = shareContentItem.detail;
-					if (!"".equals(textContent))
-						break;
-				} else if (shareContentItem.type.equals("text")) {
-					textContent = shareContentItem.detail;
-					if (!"".equals(imageContent))
-						break;
+			if (i == -1) {
+				showGroupMembers(this.groupMembersListContentView);
+			} else {
+				Resources resources = thisActivity.getResources();
+				Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+				bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+				this.headView.setImageBitmap(bitmap);
+				this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
+				this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
+				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
+				String textContent = "";
+				String imageContent = "";
+				List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+				for (int i = 0; i < shareContentItems.size(); i++) {
+					ShareContentItem shareContentItem = shareContentItems.get(i);
+					if (shareContentItem.type.equals("image")) {
+						imageContent = shareContentItem.detail;
+						if (!"".equals(textContent))
+							break;
+					} else if (shareContentItem.type.equals("text")) {
+						textContent = shareContentItem.detail;
+						if (!"".equals(imageContent))
+							break;
+					}
 				}
-			}
 
-			this.shareTextContentView.setText(textContent);
-			File sdFile = Environment.getExternalStorageDirectory();
-			File file = new File(sdFile, "wxgs/" + imageContent);
-			int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
-			int showImageHeight = (int) (displayMetrics.density * 200 + 0.5f);
-			RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
-			// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
-			shareImageContentView.setLayoutParams(shareImageParams);
-			final String url = "http://images3.we-links.com/images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
-			final String path = file.getAbsolutePath();
-			if (file.exists()) {
-				imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
-					@Override
-					public void onLoadingStarted(String imageUri, View view) {
+				this.shareTextContentView.setText(textContent);
+				File sdFile = Environment.getExternalStorageDirectory();
+				File file = new File(sdFile, "wxgs/" + imageContent);
+				int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
+				int showImageHeight = (int) (displayMetrics.density * 200 + 0.5f);
+				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
+				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
+				shareImageContentView.setLayoutParams(shareImageParams);
+				final String url = "http://images3.we-links.com/images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+				final String path = file.getAbsolutePath();
+				if (file.exists()) {
+					imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+							downloadFile = new DownloadFile(url, path);
+							downloadFile.view = shareImageContentView;
+							downloadFileList.addDownloadFile(downloadFile);
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+						}
+					});
+				} else {
+					downloadFile = new DownloadFile(url, path);
+					downloadFile.view = shareImageContentView;
+					downloadFileList.addDownloadFile(downloadFile);
+				}
+
+				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
+				this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
+				String userPhone = data.userInformation.currentUser.phone;
+				if (shareMessage.praiseusers.contains(userPhone)) {
+					this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
+				} else {
+					this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
+				}
+				List<Comment> comments = shareMessage.comments;
+				this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
+				for (int i = 0; i < comments.size(); i++) {
+					Comment comment = comments.get(i);
+					if (comment.phone.equals(userPhone)) {
+						this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
+						break;
 					}
-
-					@Override
-					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						downloadFile = new DownloadFile(url, path);
-						downloadFile.view = shareImageContentView;
-						downloadFileList.addDownloadFile(downloadFile);
-					}
-
-					@Override
-					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-					}
-				});
-			} else {
-				downloadFile = new DownloadFile(url, path);
-				downloadFile.view = shareImageContentView;
-				downloadFileList.addDownloadFile(downloadFile);
-			}
-
-			// // TODO remove listener to Controller
-			// downloadFile.setDownloadFileListener(new DownloadListener() {
-			//
-			// @Override
-			// public void success(DownloadFile instance, int status) {
-			// imageLoader.displayImage("file://" + path, shareImageContentView,
-			// options);
-			// }
-			//
-			// @Override
-			// public void loading(DownloadFile instance, int precent, int
-			// status) {
-			//
-			// }
-			// });
-
-			this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
-			this.shareCommentNumberView.setText(shareMessage.comments.size() + "");
-			String userPhone = data.userInformation.currentUser.phone;
-			if (shareMessage.praiseusers.contains(userPhone)) {
-				this.sharePraiseIconView.setImageResource(R.drawable.praised_icon);
-			} else {
-				this.sharePraiseIconView.setImageResource(R.drawable.praise_icon);
-			}
-			List<Comment> comments = shareMessage.comments;
-			this.shareCommentIconView.setImageResource(R.drawable.comment_icon);
-			for (int i = 0; i < comments.size(); i++) {
-				Comment comment = comments.get(i);
-				if (comment.phone.equals(userPhone)) {
-					this.shareCommentIconView.setImageResource(R.drawable.commented_icon);
-					break;
 				}
 			}
 		}
@@ -733,7 +742,7 @@ public class UserIntimateView {
 		}
 	}
 
-	public void showGroupMembers() {
+	public void showGroupMembers(RelativeLayout groupMembersListContentView) {
 		groupMembersListContentView.removeAllViews();
 		List<String> groupMembers = data.relationship.groupsMap.get("1001").members;
 		// Map<String, Friend> friendsMap = data.relationship.friendsMap;
@@ -744,6 +753,7 @@ public class UserIntimateView {
 			// String key = groupMembers.get(i);
 			// Friend friend = friendsMap.get(key);
 			ImageView imageView = new ImageView(context);
+			// imageView.setBackgroundColor(Color.BLACK);
 			imageView.setImageBitmap(bitmap);
 			int height = (int) (50 * displayMetrics.density);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(height, height);
