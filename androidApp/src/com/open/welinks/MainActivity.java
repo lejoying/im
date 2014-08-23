@@ -66,7 +66,6 @@ public class MainActivity extends Activity {
 
 		thisView.initViews();
 		thisController.oncreate();
-		thisController.initializeListeners();
 		thisController.bindEvent();
 	}
 

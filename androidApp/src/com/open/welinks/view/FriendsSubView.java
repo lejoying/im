@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -90,6 +92,7 @@ public class FriendsSubView {
 		}
 	}
 
+	
 	public class CircleBody extends MyListItemBody {
 
 		CircleBody(ListBody listBody) {
@@ -101,14 +104,18 @@ public class FriendsSubView {
 
 		public View cardView = null;
 		public TextView leftTopText = null;
+		public ImageView gripView = null;
 
 		public View initialize() {
 
 			this.cardView = mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
+			this.gripView = (ImageView) this.cardView.findViewById(R.id.grip);
 
-			this.leftTopText.setOnClickListener(mainView.thisController.mOnClickListener);
-			this.cardView.setOnLongClickListener(mainView.thisController.onLongClickListener);
+			this.leftTopText.setOnTouchListener(mainView.thisController.onTouchListener);
+//			this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
+			
+			this.gripView.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
 			super.initialize(cardView);
 			return cardView;
@@ -117,6 +124,8 @@ public class FriendsSubView {
 		public void setContent(Circle circle) {
 			this.leftTopText.setText(circle.name);
 			this.leftTopText.setTag(circle.name);
+
+			this.gripView.setTag(circle);
 
 			this.friendsSequence.clear();
 			for (int i = 0; i < circle.friends.size(); i++) {

@@ -25,6 +25,16 @@
         android:textSize="16sp" />
 
     <ImageView
+        android:id="@+id/grip"
+        android:layout_width="36dp"
+        android:layout_height="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="13dp"
+        android:background="@drawable/grip"
+        android:contentDescription="grip"
+        android:layout_marginTop="13dp" />
+
+    <ImageView
         android:id="@+id/cardTopLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"

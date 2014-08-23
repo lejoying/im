@@ -25,6 +25,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
@@ -65,6 +66,7 @@ public class MainController {
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 
+		this.initializeListeners();
 		thisView.friendsSubView.showCircles();
 		// this.test();
 		// initChatMessages();
@@ -115,9 +117,17 @@ public class MainController {
 		onLongClickListener = new OnLongClickListener() {
 
 			@Override
-			public boolean onLongClick(View v) {
+			public boolean onLongClick(View view) {
+				Object viewTag = view.getTag();
+				if (Circle.class.isInstance(viewTag) == true) {
+					Circle circle = (Circle) viewTag;
+					Log.d(tag, "onLongClick: rid:" + circle.rid + "name" + circle.name);
+					thisView.friendsSubView.friendListBody.onOrdering("circle#" + circle.rid);
+				} else {
+					Log.d(tag, "onLongClick: " + (String) view.getTag());
+				}
 				// thisView.friendsSubView.showCircleSettingDialog();
-				return true;
+				return false;
 			}
 		};
 		downloadListener = new DownloadListener() {
@@ -134,14 +144,18 @@ public class MainController {
 		onTouchListener = new OnTouchListener() {
 
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public boolean onTouch(View view, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
 					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
 					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
+
+					if (view.getTag() != null) {
+						Log.d(tag, "ACTION_UP" + (String) view.getTag());
+					}
 				}
-				return true;
+				return false;
 			}
 		};
 		mOnClickListener = new OnClickListener() {
@@ -245,7 +259,7 @@ public class MainController {
 			// thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
-		return true;
+		return false;
 	}
 
 	class GestureListener extends SimpleOnGestureListener {
