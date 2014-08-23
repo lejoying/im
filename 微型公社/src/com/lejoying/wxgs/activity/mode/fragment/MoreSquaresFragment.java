@@ -162,7 +162,17 @@ public class MoreSquaresFragment extends BaseFragment implements
 							AMapLocation aMapLocation) {
 						location.setText(aMapLocation.getAddress());
 						modifylocation(aMapLocation);
-						app.amapLocationHandler.searchAccountsByBound(
+//						app.amapLocationHandler.searchAccountsByBound(
+//								mapView.getMap(), new SearchDataListener() {
+//
+//									@Override
+//									public void onDataSearchedListenerListener(
+//											List<Map<String, Object>> infomations) {
+//										// TODO Auto-generated method stub
+//
+//									}
+//								});
+						app.amapLocationHandler.searchSquaresByBound(
 								mapView.getMap(), new SearchDataListener() {
 
 									@Override
