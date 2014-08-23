@@ -76,7 +76,7 @@ public class ListBody {
 	}
 
 	public class BodyStatus {
-		public int FIXED = 0, DRAGGING = 1, INERTIAMOVING = 2;
+		public int FIXED = 0, DRAGGING = 1, INERTIAMOVING = 2, ORDERING = 3;
 		public int state = FIXED;
 	}
 
@@ -198,6 +198,14 @@ public class ListBody {
 			}
 			sliding(speedY);
 		}
+	}
+
+	public MyListItemBody orderingItem;
+
+	public void onOrdering(String key) {
+		this.bodyStatus.state = this.bodyStatus.ORDERING;
+
+		orderingItem = listItemBodiesMap.get(key);
 	}
 
 	public float pre_x = 0;

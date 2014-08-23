@@ -4,6 +4,7 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -173,8 +174,10 @@ public class CreateSquareActivity extends Activity implements OnClickListener {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+				JSONArray members = new JSONArray();
 				params.put("location", location.toString());
 				params.put("gtype", "community");
+				params.put("members", members.toString());
 				params.put("description", squareDescription);
 				params.put("address", "");
 				settings.params = params;

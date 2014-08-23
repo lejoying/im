@@ -274,7 +274,7 @@ public class ShareSubView {
 		releaseVoteButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoteShareButton);
 
 		releaseImageTextButton.setOnClickListener(mainView.thisController.mOnClickListener);
-		releaseImageTextButton.setOnTouchListener(mainView.thisController.onTouchListener);
+		releaseImageTextButton.setOnTouchListener(mainView.thisController.onTouchBackColorListener);
 		dialogMainContentView.setOnClickListener(mainView.thisController.mOnClickListener);
 		releaseShareDialogView.setOnClickListener(mainView.thisController.mOnClickListener);
 		// releaseVoiceTextButton.setOnClickListener(mainView.thisController.mOnClickListener);

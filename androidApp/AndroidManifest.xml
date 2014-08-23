@@ -105,6 +105,12 @@
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustPan" >
         </activity>
+        <activity
+            android:name="com.open.welinks.ChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
     </application>
 
 </manifest>

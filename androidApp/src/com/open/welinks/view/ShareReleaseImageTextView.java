@@ -68,7 +68,6 @@ public class ShareReleaseImageTextView {
 		for (int i = 0; i < selectedImageList.size(); i++) {
 			ImageView imageView = new ImageView(context);
 			int width = (int) (displayMetrics.density * 50);
-			Log.e(tag, "-------000-----" + width);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
 			this.mImagesContentView.addView(imageView, layoutParams);
 			float x = i * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;

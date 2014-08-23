@@ -48,6 +48,7 @@ public class MainController {
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
+	public OnTouchListener onTouchBackColorListener;
 	public DownloadListener downloadListener;
 	public OnLongClickListener onLongClickListener;
 
@@ -118,6 +119,21 @@ public class MainController {
 	}
 
 	public void initializeListeners() {
+		onTouchBackColorListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				if (view == thisView.shareSubView.releaseImageTextButton) {
+					int motionEvent = event.getAction();
+					if (motionEvent == MotionEvent.ACTION_DOWN) {
+						view.setBackgroundColor(Color.argb(143, 0, 0, 0));
+					} else if (motionEvent == MotionEvent.ACTION_UP) {
+						view.setBackgroundColor(Color.parseColor("#00000000"));
+					}
+				}
+				return false;
+			}
+		};
 		onLongClickListener = new OnLongClickListener() {
 
 			@Override
@@ -146,15 +162,6 @@ public class MainController {
 					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
 					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
-				}
-				if (view == thisView.shareSubView.releaseImageTextButton) {
-					int motionEvent = event.getAction();
-					if (motionEvent == MotionEvent.ACTION_DOWN) {
-						view.setBackgroundColor(Color.argb(143, 0, 0, 0));
-					} else if (motionEvent == MotionEvent.ACTION_UP) {
-						view.setBackgroundColor(Color.parseColor("#00000000"));
-					}
-					return false;
 				}
 				return true;
 			}
