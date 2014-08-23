@@ -155,9 +155,9 @@ public class MainController {
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
 					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
 
-					if (view.getTag() != null) {
-						Log.d(tag, "ACTION_UP" + (String) view.getTag());
-					}
+					// if (view.getTag() != null) {
+					// Log.d(tag, "ACTION_UP" + (String) view.getTag());
+					// }
 				}
 				return false;
 			}

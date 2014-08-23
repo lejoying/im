@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,6 +36,7 @@ import com.open.welinks.R;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.utils.MCImageUtils;
 
 public class FriendsSubView {
 
@@ -100,7 +105,6 @@ public class FriendsSubView {
 		}
 	}
 
-	
 	public class CircleBody extends MyListItemBody {
 
 		CircleBody(ListBody listBody) {
@@ -110,56 +114,84 @@ public class FriendsSubView {
 		public List<String> friendsSequence = new ArrayList<String>();
 		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
 
-		public View cardView = null;
+		public RelativeLayout cardView = null;
 		public TextView leftTopText = null;
 		public ImageView gripView = null;
 
 		public View initialize() {
 
-			this.cardView = mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
+			this.cardView = (RelativeLayout) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 			this.gripView = (ImageView) this.cardView.findViewById(R.id.grip);
 
 			this.leftTopText.setOnTouchListener(mainView.thisController.onTouchListener);
-//			this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
-			
+			// this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
+
 			this.gripView.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
+			itemWidth = mainView.displayMetrics.widthPixels - 20 * mainView.displayMetrics.density;
+			itemHeight = 260 * displayMetrics.density;
 			super.initialize(cardView);
 			return cardView;
 		}
+
+		float itemWidth = 0;
+		float itemHeight = 0;
 
 		public void setContent(Circle circle) {
 			this.leftTopText.setText(circle.name);
 			this.leftTopText.setTag(circle);
 
 			this.gripView.setTag(circle);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) (55 * displayMetrics.density), (int) (78 * displayMetrics.density));
 
 			this.friendsSequence.clear();
 			for (int i = 0; i < circle.friends.size(); i++) {
 				String phone = circle.friends.get(i);
 				Friend friend = friendsMap.get(phone);
-				if (this.friendBodiesMap.get(phone) == null) {
 
+				FriendBody friendBody = new FriendBody();
+				friendBody.Initialize();
+				friendBody.setData(friend);
+
+				this.cardView.addView(friendBody.friendView, layoutParams);
+
+				int p = i / 8;
+				int x = 120 * (int) displayMetrics.density * (i % 4) + (int) itemWidth / 16;
+				int y = p * (int) itemWidth + 140 * (int) displayMetrics.density * ((i / 4) % 2) + 96 * (int) displayMetrics.density;
+
+				friendBody.friendView.setX(x);
+				friendBody.friendView.setY(y);
+
+				if (this.friendBodiesMap.get(phone) == null) {
+					// optimize friendBodiesMap pool
 				}
 			}
 		}
 	}
 
 	public class FriendBody {
-		public View cardView = null;
+		public View friendView = null;
 
-		public ImageView headView;
+		public ImageView headImageView;
 		public TextView nickNameView;
 
 		public View Initialize() {
-			cardView = mainView.mInflater.inflate(R.layout.circles_gridpage_item, null);
+			this.friendView = mainView.mInflater.inflate(R.layout.circles_gridpage_item, null);
+			this.headImageView = (ImageView) this.friendView.findViewById(R.id.head_image);
+			this.nickNameView = (TextView) this.friendView.findViewById(R.id.nickname);
 
-			return cardView;
+			return friendView;
 		}
 
 		public void setData(Friend friend) {
 
+			Resources resources = mainView.thisActivity.getResources();
+			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+			this.headImageView.setImageBitmap(bitmap);
+
+			this.nickNameView.setText(friend.nickName);
 		}
 	}
 
