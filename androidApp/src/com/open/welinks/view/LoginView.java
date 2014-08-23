@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,6 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
-import com.facebook.rebound.SpringUtil;
 import com.open.welinks.R;
 import com.open.welinks.controller.LoginController;
 import com.open.welinks.model.Data;
@@ -313,13 +313,15 @@ public class LoginView {
 				dialogRootView.setScaleX(mappedValue);
 				dialogRootView.setScaleY(mappedValue);
 			} else if (spring.equals(dialogOutSpring)) {
-				float y = dialogRootView.getY();
-				dialogRootView.setY(y - 100 * mappedValue);
-				if (mappedValue == 0) {
+				float y = dialogRootView.getTranslationY();
+				dialogRootView.setTranslationY(y - 100 * mappedValue);
+				Log.e(tag, mappedValue + "---------------");
+				if (mappedValue <= 0.8f) {
+					
 				}
 			} else if (spring.equals(dialogInSpring)) {
 				float y = inputDialigView.getTranslationY();
-				inputDialigView.setTranslationY(y - 100 * mappedValue);
+				inputDialigView.setTranslationY(y - 1280 * mappedValue);
 			}
 		}
 	}

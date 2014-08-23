@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.rebound.SimpleSpringListener;
@@ -27,6 +29,7 @@ import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
@@ -118,6 +121,7 @@ public class MainController {
 
 			@Override
 			public boolean onLongClick(View view) {
+				thisView.friendsSubView.showCircleSettingDialog(view);
 				Object viewTag = view.getTag();
 				if (Circle.class.isInstance(viewTag) == true) {
 					Circle circle = (Circle) viewTag;
@@ -190,6 +194,33 @@ public class MainController {
 					thisView.shareSubView.dismissGroupDialog();
 				}
 
+				else if (view.equals(thisView.friendsSubView.modifyCircleNameView)) {
+					if (thisView.friendsSubView.currentStatus == thisView.friendsSubView.SHOW_DIALOG) {
+						thisView.friendsSubView.dialogSpring.removeListener(thisView.friendsSubView.dialogSpringListener);
+						thisView.friendsSubView.currentStatus = thisView.friendsSubView.DIALOG_SWITCH;
+						thisView.friendsSubView.dialogOutSpring.addListener(thisView.friendsSubView.dialogSpringListener);
+						thisView.friendsSubView.dialogOutSpring.setCurrentValue(1.0);
+						thisView.friendsSubView.dialogOutSpring.setEndValue(0);
+						thisView.friendsSubView.dialogInSpring.addListener(thisView.friendsSubView.dialogSpringListener);
+						thisView.friendsSubView.inputDialigView.setVisibility(View.VISIBLE);
+						thisView.friendsSubView.dialogInSpring.setCurrentValue(1);
+						thisView.friendsSubView.dialogInSpring.setEndValue(0);
+					}
+				} else if (view.equals(thisView.friendsSubView.cancleButton)) {
+					thisView.friendsSubView.dismissCircleSettingDialog();
+				} else if (view.equals(thisView.friendsSubView.confirmButton)) {
+					EditText editText = ((EditText) (view.getTag()));
+					String inputContent = editText.getText().toString().trim();
+					if ("".equals(inputContent)) {
+						generateTextView("组名不能为空");
+						return;
+					}
+					TextView circleNameView = (TextView) editText.getTag();
+					circleNameView.setText(inputContent);
+					thisView.friendsSubView.dismissCircleSettingDialog();
+					Circle circle = (Circle) circleNameView.getTag();
+					circle.name = inputContent;
+				}
 				// else if (view.equals(thisView.meSubView.me_setting_view)) {
 				// Intent intent = new Intent(thisActivity,
 				// SettingActivity.class);

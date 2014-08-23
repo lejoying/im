@@ -1,6 +1,7 @@
 package com.lejoying.wxgs.activity.mode.fragment;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -38,6 +39,7 @@ import com.lejoying.wxgs.app.MainApplication;
 import com.lejoying.wxgs.app.data.API;
 import com.lejoying.wxgs.app.handler.AmapLocationHandler.CreateLocationListener;
 import com.lejoying.wxgs.app.handler.AmapLocationHandler.LocationListener;
+import com.lejoying.wxgs.app.handler.AmapLocationHandler.SearchDataListener;
 import com.lejoying.wxgs.app.handler.NetworkHandler.Settings;
 
 public class MoreSquaresFragment extends BaseFragment implements
@@ -160,10 +162,18 @@ public class MoreSquaresFragment extends BaseFragment implements
 							AMapLocation aMapLocation) {
 						location.setText(aMapLocation.getAddress());
 						modifylocation(aMapLocation);
-//						app.amapLocationHandler.searchAccountsByBound(mapView
-//								.getMap());
-						app.amapLocationHandler.searchSquaresByBound(mapView
-								.getMap());
+						app.amapLocationHandler.searchAccountsByBound(
+								mapView.getMap(), new SearchDataListener() {
+
+									@Override
+									public void onDataSearchedListenerListener(
+											List<Map<String, Object>> infomations) {
+										// TODO Auto-generated method stub
+
+									}
+								});
+						// app.amapLocationHandler.searchSquaresByBound(mapView
+						// .getMap());
 
 					}
 				});
