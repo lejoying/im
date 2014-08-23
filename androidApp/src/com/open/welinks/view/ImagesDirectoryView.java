@@ -99,7 +99,7 @@ public class ImagesDirectoryView {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ViewHolder viewHolder;
 			String directoryName = thisController.imageDirectorys.get(position);
-			String path = thisController.mGruopMap.get(directoryName).get(0);
+			String path = thisController.mImageDirectorysMap.get(directoryName).get(0);
 			if (convertView == null) {
 				viewHolder = new ViewHolder();
 
@@ -119,7 +119,7 @@ public class ImagesDirectoryView {
 						.setImageResource(R.drawable.friends_sends_pictures_no);
 			}
 			viewHolder.mTextViewTitle.setText(directoryName);
-			viewHolder.mTextViewCounts.setText(thisController.mGruopMap.get(
+			viewHolder.mTextViewCounts.setText(thisController.mImageDirectorysMap.get(
 					directoryName).size()
 					+ "");
 

@@ -20,11 +20,13 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.R;
 import com.open.welinks.controller.ImagesDirectoryController;
 import com.open.welinks.controller.ImagesGridController;
+import com.open.welinks.model.Data;
 
 public class ImagesGridView {
 
 	public String tag = "ImagesGridView";
 
+	public Data data = Data.getInstance();
 	LayoutInflater mInflater;
 
 	public Context context;
@@ -40,25 +42,31 @@ public class ImagesGridView {
 	public GridView mGridView;
 	public TextView mConfirm;
 
+	public ImageView backImageDirectoryView;
+	public TextView directoryNameView;
+
 	public void initViews() {
 		thisActivity.setContentView(R.layout.activity_image_grid);
 		mGridView = (GridView) thisActivity.findViewById(R.id.gridview);
 		mConfirm = (TextView) thisActivity.findViewById(R.id.tv_confirm);
+		backImageDirectoryView = (ImageView) thisActivity.findViewById(R.id.backImageDirectory);
+		directoryNameView = (TextView) thisActivity.findViewById(R.id.directoryName);
 	}
 
 	public void initData() {
 		mInflater = thisActivity.getLayoutInflater();
-		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.ic_stub)
-				.showImageForEmptyUri(R.drawable.ic_empty)
-				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
-				.cacheOnDisk(true).considerExifParams(true)
-				.bitmapConfig(Bitmap.Config.RGB_565).build();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 
 		mImageAdapter = new ImageAdapter();
 		mGridView.setAdapter(mImageAdapter);
-		this.mConfirm.setText("确定("
-				+ ImagesDirectoryController.selectedImage.size() + ")");
+		int size = 0;
+		if (data.tempData.selectedImageList != null) {
+			size = data.tempData.selectedImageList.size();
+		} else {
+			size = ImagesDirectoryController.selectedImage.size();
+		}
+		this.mConfirm.setText("确定(" + size + ")");
+		this.directoryNameView.setText(thisController.parentName);
 
 	}
 
@@ -94,52 +102,50 @@ public class ImagesGridView {
 			final ViewHolder holder;
 			View view = convertView;
 			if (view == null) {
-				view = mInflater.inflate(R.layout.item_grid_image, parent,
-						false);
+				view = mInflater.inflate(R.layout.item_grid_image, parent, false);
 				holder = new ViewHolder();
 				assert view != null;
 				holder.imageView = (ImageView) view.findViewById(R.id.image);
-				holder.progressBar = (ProgressBar) view
-						.findViewById(R.id.progress);
-				holder.imageStatusView = (ImageView) view
-						.findViewById(R.id.iv_imageContentStatus);
+				holder.progressBar = (ProgressBar) view.findViewById(R.id.progress);
+				holder.imageStatusView = (ImageView) view.findViewById(R.id.iv_imageContentStatus);
 				view.setTag(holder);
 			} else {
 				holder = (ViewHolder) view.getTag();
 			}
 			String path = thisController.imagesSource.get(position);
+			try {
+				if (ImagesDirectoryController.selectedImage == null)
+					return view;
+			} catch (Exception e) {
+				return view;
+			}
 			if (ImagesDirectoryController.selectedImage.contains(path)) {
 				holder.imageStatusView.setVisibility(View.VISIBLE);
 			} else {
 				holder.imageStatusView.setVisibility(View.GONE);
 			}
-			imageLoader.displayImage("file://" + path, holder.imageView,
-					options, new SimpleImageLoadingListener() {
-						@Override
-						public void onLoadingStarted(String imageUri, View view) {
-							holder.progressBar.setProgress(0);
-							holder.progressBar.setVisibility(View.VISIBLE);
-						}
+			imageLoader.displayImage("file://" + path, holder.imageView, options, new SimpleImageLoadingListener() {
+				@Override
+				public void onLoadingStarted(String imageUri, View view) {
+					holder.progressBar.setProgress(0);
+					holder.progressBar.setVisibility(View.VISIBLE);
+				}
 
-						@Override
-						public void onLoadingFailed(String imageUri, View view,
-								FailReason failReason) {
-							holder.progressBar.setVisibility(View.GONE);
-						}
+				@Override
+				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					holder.progressBar.setVisibility(View.GONE);
+				}
 
-						@Override
-						public void onLoadingComplete(String imageUri,
-								View view, Bitmap loadedImage) {
-							holder.progressBar.setVisibility(View.GONE);
-						}
-					}, new ImageLoadingProgressListener() {
-						@Override
-						public void onProgressUpdate(String imageUri,
-								View view, int current, int total) {
-							holder.progressBar.setProgress(Math.round(100.0f
-									* current / total));
-						}
-					});
+				@Override
+				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					holder.progressBar.setVisibility(View.GONE);
+				}
+			}, new ImageLoadingProgressListener() {
+				@Override
+				public void onProgressUpdate(String imageUri, View view, int current, int total) {
+					holder.progressBar.setProgress(Math.round(100.0f * current / total));
+				}
+			});
 
 			return view;
 		}

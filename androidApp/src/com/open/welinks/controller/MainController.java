@@ -4,6 +4,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -25,10 +27,11 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Circle;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
@@ -137,12 +140,21 @@ public class MainController {
 		onTouchListener = new OnTouchListener() {
 
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public boolean onTouch(View view, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
 					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(1);
 				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
 					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
+				}
+				if (view == thisView.shareSubView.releaseImageTextButton) {
+					int motionEvent = event.getAction();
+					if (motionEvent == MotionEvent.ACTION_DOWN) {
+						view.setBackgroundColor(Color.argb(143, 0, 0, 0));
+					} else if (motionEvent == MotionEvent.ACTION_UP) {
+						view.setBackgroundColor(Color.parseColor("#00000000"));
+					}
+					return false;
 				}
 				return true;
 			}
@@ -205,6 +217,14 @@ public class MainController {
 					thisView.friendsSubView.dismissCircleSettingDialog();
 					Circle circle = (Circle) circleNameView.getTag();
 					circle.name = inputContent;
+				} else if (view.equals(thisView.shareSubView.releaseShareView)) {
+					thisView.shareSubView.showReleaseShareDialogView();
+				} else if (view.equals(thisView.shareSubView.releaseShareDialogView)) {
+					thisView.shareSubView.dismissReleaseShareDialogView();
+				} else if (view.equals(thisView.shareSubView.releaseImageTextButton)) {
+					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
+					thisActivity.startActivity(intent);
+					thisView.shareSubView.dismissReleaseShareDialogView();
 				}
 				// else if (view.equals(thisView.meSubView.me_setting_view)) {
 				// Intent intent = new Intent(thisActivity,
@@ -260,19 +280,19 @@ public class MainController {
 			thisView.mainPagerBody.onTouchDown(event);
 			thisView.friendsSubView.friendListBody.onTouchDown(event);
 			// thisView.chatMessageListBody.onTouchDown(event);
-			// thisView.shareSubView.shareMessageListBody.onTouchDown(event);
+			thisView.shareSubView.shareMessageListBody.onTouchDown(event);
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
 			thisView.friendsSubView.friendListBody.onTouchMove(event);
 			// thisView.chatMessageListBody.onTouchMove(event);
-			// thisView.shareSubView.shareMessageListBody.onTouchMove(event);
+			thisView.shareSubView.shareMessageListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 			thisView.friendsSubView.friendListBody.onTouchUp(event);
 			// thisView.chatMessageListBody.onTouchUp(event);
-			// thisView.shareSubView.shareMessageListBody.onTouchUp(event);
+			thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -296,12 +316,9 @@ public class MainController {
 			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
 			// }
-			// if (thisView.shareSubView.shareMessageListBody.bodyStatus.state
-			// ==
-			// thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
-			// thisView.shareSubView.shareMessageListBody.onFling(velocityX,
-			// velocityY);
-			// }
+			if (thisView.shareSubView.shareMessageListBody.bodyStatus.state == thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
+				thisView.shareSubView.shareMessageListBody.onFling(velocityX, velocityY);
+			}
 			return true;
 		}
 

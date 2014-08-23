@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background"
+    android:focusable="true"
+    android:focusableInTouchMode="true" >
+
+    <EditText
+        android:id="@+id/releaseTextContentView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp"
+        android:background="#00ffffff"
+        android:gravity="top"
+        android:includeFontPadding="true"
+        android:lineSpacingMultiplier="1.1"
+        android:padding="10dp"
+        android:textColor="#fff"
+        android:textCursorDrawable="@drawable/edit_cursor"
+        android:textSize="20sp" />
+
+    <RelativeLayout
+        android:id="@+id/releaseImagesContent"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#60aabbcc"
+        android:layout_marginBottom="50dp" >
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/releaseButtomBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#20000000" >
+
+        <TextView
+            android:id="@+id/releaseCancel"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:text="@string/cancle_text"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:id="@+id/release_iv_voice"
+            android:layout_width="73dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="70dp"
+            android:padding="10dp"
+            android:src="@drawable/release_voice" />
+
+        <ImageView
+            android:id="@+id/release_iv_voice1"
+            android:layout_width="73dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="143dp"
+            android:padding="10dp"
+            android:src="@drawable/release_face" />
+
+        <ImageView
+            android:id="@+id/selectImageButton"
+            android:layout_width="76dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="216dp"
+            android:padding="10dp"
+            android:src="@drawable/release_pic" />
+
+        <TextView
+            android:id="@+id/releaseConfirm"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:text="@string/confirm_text"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

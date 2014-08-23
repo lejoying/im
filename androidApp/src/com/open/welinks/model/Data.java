@@ -26,6 +26,8 @@ public class Data {
 		public ArrayList<ImageBean> prepareUploadImages;
 
 		public ArrayList<String> prepareDownloadImages;
+		
+		public ArrayList<String> selectedImageList;
 
 		public class ImageBean {
 

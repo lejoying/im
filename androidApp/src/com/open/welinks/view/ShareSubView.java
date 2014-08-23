@@ -78,6 +78,8 @@ public class ShareSubView {
 		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
 
+		initReleaseShareDialogView();
+
 	}
 
 	public void showShareMessages() {
@@ -123,6 +125,10 @@ public class ShareSubView {
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public Gson gson = new Gson();
 
+	// share top Bar child view
+	public RelativeLayout groupMembersListContentView;
+	public ImageView releaseShareView;
+
 	public class SharesMessageBody extends MyListItemBody {
 
 		SharesMessageBody(ListBody listBody) {
@@ -144,13 +150,13 @@ public class ShareSubView {
 		public DownloadFile downloadFile = null;
 
 		public int i;
-		public RelativeLayout groupMembersListContentView;
 
 		public View initialize(int i) {
 			this.i = i;
 			if (i == -1) {
 				this.cardView = mainView.mInflater.inflate(R.layout.share_group_members_show, null);
-				this.groupMembersListContentView = (RelativeLayout) this.cardView.findViewById(R.id.groupMembersListContent);
+				groupMembersListContentView = (RelativeLayout) this.cardView.findViewById(R.id.groupMembersListContent);
+				releaseShareView = (ImageView) this.cardView.findViewById(R.id.releaseShare);
 			} else {
 				this.cardView = mainView.mInflater.inflate(R.layout.share_message_item, null);
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
@@ -169,7 +175,8 @@ public class ShareSubView {
 
 		public void setContent(ShareMessage shareMessage) {
 			if (i == -1) {
-				showGroupMembers(this.groupMembersListContentView);
+				showGroupMembers(groupMembersListContentView);
+				releaseShareView.setOnClickListener(mainView.thisController.mOnClickListener);
 			} else {
 				Resources resources = mainView.thisActivity.getResources();
 				Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
@@ -246,6 +253,46 @@ public class ShareSubView {
 					}
 				}
 			}
+		}
+	}
+
+	public PopupWindow releaseSharePopWindow;
+
+	public View releaseShareDialogView;
+	public RelativeLayout dialogMainContentView;
+
+	public RelativeLayout releaseImageTextButton;
+	public RelativeLayout releaseVoiceTextButton;
+	public RelativeLayout releaseVoteButton;
+
+	@SuppressWarnings("deprecation")
+	public void initReleaseShareDialogView() {
+		releaseShareDialogView = mainView.mInflater.inflate(R.layout.share_release_type_dialog, null);
+		dialogMainContentView = (RelativeLayout) releaseShareDialogView.findViewById(R.id.dialogMainContent);
+		releaseImageTextButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseImageTextShareButton);
+		releaseVoiceTextButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoiceTextShareButton);
+		releaseVoteButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoteShareButton);
+
+		releaseImageTextButton.setOnClickListener(mainView.thisController.mOnClickListener);
+		releaseImageTextButton.setOnTouchListener(mainView.thisController.onTouchListener);
+		dialogMainContentView.setOnClickListener(mainView.thisController.mOnClickListener);
+		releaseShareDialogView.setOnClickListener(mainView.thisController.mOnClickListener);
+		// releaseVoiceTextButton.setOnClickListener(mainView.thisController.mOnClickListener);
+		// releaseVoteButton.setOnClickListener(mainView.thisController.mOnClickListener);
+
+		releaseSharePopWindow = new PopupWindow(releaseShareDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		releaseSharePopWindow.setBackgroundDrawable(new BitmapDrawable());
+	}
+
+	public void showReleaseShareDialogView() {
+		if (releaseSharePopWindow != null) {
+			releaseSharePopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
+		}
+	}
+
+	public void dismissReleaseShareDialogView() {
+		if (releaseSharePopWindow != null) {
+			releaseSharePopWindow.dismiss();
 		}
 	}
 

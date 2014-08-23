@@ -44,8 +44,7 @@ import com.open.welinks.view.Debug1View.TransportingList.TransportingItem;
 
 public class Debug1Controller {
 	public Data data = Data.getInstance();
-	public static ResponseHandlers responseHandlers = ResponseHandlers
-			.getInstance();
+	public static ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 	public static String tag = "Debug1Controller";
 
 	public Runnable animationRunnable;
@@ -55,8 +54,7 @@ public class Debug1Controller {
 	public Debug1Controller thisController;
 	public Activity thisActivity;
 
-	public UploadMultipartList uploadMultipartList = UploadMultipartList
-			.getInstance();
+	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
 
 	public UploadLoadingListener uploadLoadingListener;
 
@@ -78,8 +76,7 @@ public class Debug1Controller {
 		ArrayList<ImageBean> imagesSource = data.tempData.prepareUploadImages;
 		data.tempData.prepareUploadImages = null;
 		if (imagesSource != null) {
-			data.localStatus.localData.prepareUploadImagesList
-					.addAll(imagesSource);
+			data.localStatus.localData.prepareUploadImagesList.addAll(imagesSource);
 		}
 	}
 
@@ -89,8 +86,7 @@ public class Debug1Controller {
 			@Override
 			public void onClick(View v) {
 				if (v.equals(thisView.addMonyImageUploadView)) {
-					Intent intent = new Intent(thisActivity,
-							ImagesDirectoryActivity.class);
+					Intent intent = new Intent(thisActivity, ImagesDirectoryActivity.class);
 					thisActivity.startActivity(intent);
 				}
 			}
@@ -98,16 +94,12 @@ public class Debug1Controller {
 		uploadLoadingListener = new UploadLoadingListener() {
 
 			@Override
-			public void loading(UploadMultipart instance, int precent,
-					long time, int status) {
+			public void loading(UploadMultipart instance, int precent, long time, int status) {
 				instance.transportingItem.controlProgress.moveTo(precent);
-				instance.transportingItem.text_transport_time_view.setText(time
-						+ "ms");
-				long size = Long
-						.valueOf(instance.transportingItem.imageSource.size);
+				instance.transportingItem.text_transport_time_view.setText(time + "ms");
+				long size = Long.valueOf(instance.transportingItem.imageSource.size);
 				int currentUploadSize = (int) Math.floor(size * precent / 100f);
-				instance.transportingItem.text_file_size_view
-						.setText(currentUploadSize + "/" + size + "k");
+				instance.transportingItem.text_file_size_view.setText(currentUploadSize + "/" + size + "k");
 			}
 		};
 		onLongClickListener = new OnLongClickListener() {
@@ -127,10 +119,8 @@ public class Debug1Controller {
 		// onloading onlongclick
 		ArrayList<TransportingItem> transportingList = thisView.transportingList.transportingItems;
 		for (int i = 0; i < transportingList.size() - 1; i++) {
-			transportingList.get(i).transportingItemView
-					.setOnLongClickListener(onLongClickListener);
-			transportingList.get(i).uploadMultipart
-					.setUploadLoadingListener(uploadLoadingListener);
+			transportingList.get(i).transportingItemView.setOnLongClickListener(onLongClickListener);
+			transportingList.get(i).uploadMultipart.setUploadLoadingListener(uploadLoadingListener);
 		}
 	}
 
@@ -155,8 +145,7 @@ public class Debug1Controller {
 		if (item.getItemId() == R.id.debug2_2) {
 			Log.d(tag, "Debug1Activity debug2_2");
 
-			ControlProgress controlProgress = thisView.transportingList.transportingItems
-					.get(index).controlProgress;
+			ControlProgress controlProgress = thisView.transportingList.transportingItems.get(index).controlProgress;
 			if (controlProgress.percentage > 50) {
 				controlProgress.moveTo(0);
 			} else {
@@ -202,8 +191,7 @@ public class Debug1Controller {
 	}
 
 	/******************** upload image **************************/
-	public static void uploadImageWithInputStreamUploadEntity(String signature,
-			String fileName, long expires, String OSSAccessKeyId) {
+	public static void uploadImageWithInputStreamUploadEntity(String signature, String fileName, long expires, String OSSAccessKeyId) {
 		// SHA1 sha1 = new SHA1();
 		HttpUtils http = new HttpUtils();
 		RequestParams params = new RequestParams();
@@ -240,12 +228,10 @@ public class Debug1Controller {
 		params.addQueryStringParameter("Signature", signature);
 
 		if (fileLength > 0) {
-			params.setBodyEntity(new InputStreamUploadEntity(inputStream,
-					fileLength));
+			params.setBodyEntity(new InputStreamUploadEntity(inputStream, fileLength));
 		}
 		Log.d(tag, "uploadImageWithInputStreamUploadEntity");
-		http.send(HttpRequest.HttpMethod.PUT, requestUri, params,
-				responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
 	}
 
 	public void uploadImageHeadAnth() {
@@ -280,8 +266,7 @@ public class Debug1Controller {
 			e.printStackTrace();
 		}
 		String dateStr = Helper.getGMTDate();
-		String content = "PUT\n\nimage/jpg\n" + dateStr + "\n/wxgs-data/test/"
-				+ sha1FileName + ".jpg";
+		String content = "PUT\n\nimage/jpg\n" + dateStr + "\n/wxgs-data/test/" + sha1FileName + ".jpg";
 		String requestUri = OSS_END_POINT + "/test/" + sha1FileName + ".jpg";
 
 		String signature = "";
@@ -301,8 +286,7 @@ public class Debug1Controller {
 			params.setBodyEntity(new ByteArrayEntity(bytes));
 		}
 
-		http.send(HttpRequest.HttpMethod.PUT, requestUri, params,
-				responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
 	}
 
 	public void OSSPutObject() {
@@ -318,17 +302,14 @@ public class Debug1Controller {
 				String sha1FileName = "default.jpg";
 				byte[] bytes = null;
 				try {
-					bytes = StreamParser.parseToByteArray(new FileInputStream(
-							file));
+					bytes = StreamParser.parseToByteArray(new FileInputStream(file));
 					sha1FileName = sha1.getDigestOfString(bytes);
 
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
-				PutObjectTask putObjectTask = new PutObjectTask("wxgs",
-						"images/" + sha1FileName + ".jpg", "image/jpg");
-				putObjectTask.initKey("dpZe5yUof6KSJ8RM",
-						"UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG");
+				PutObjectTask putObjectTask = new PutObjectTask("wxgs", "images/" + sha1FileName + ".jpg", "image/jpg");
+				putObjectTask.initKey("dpZe5yUof6KSJ8RM", "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG");
 				putObjectTask.setData(bytes);
 				String result = putObjectTask.getResult();
 				System.out.println(result + "---");
@@ -338,8 +319,7 @@ public class Debug1Controller {
 		}).start();
 	}
 
-	public static void uploadImageWithByteArrayEntity(String signature,
-			String fileName, long expires, String OSSAccessKeyId) {
+	public static void uploadImageWithByteArrayEntity(String signature, String fileName, long expires, String OSSAccessKeyId) {
 		// SHA1 sha1 = new SHA1();
 		HttpUtils http = new HttpUtils();
 		RequestParams params = new RequestParams();
@@ -388,8 +368,7 @@ public class Debug1Controller {
 			params.setBodyEntity(new ByteArrayEntity(bytes));
 		}
 
-		http.send(HttpRequest.HttpMethod.PUT, requestUri, params,
-				responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.PUT, requestUri, params, responseHandlers.upload);
 	}
 
 	static String dateStr;
@@ -428,8 +407,7 @@ public class Debug1Controller {
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 		String url2 = "http://192.168.1.91/image/checkfile";
-		http.send(HttpRequest.HttpMethod.POST, url2, params,
-				responseHandlers.checkFile);
+		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.checkFile);
 	}
 
 	public void downloadImage() {
@@ -437,8 +415,7 @@ public class Debug1Controller {
 		RequestParams params = new RequestParams();
 
 		String requestUri = "http://images5.we-links.com/63727A37A9CF78022B408316DA17EAC6D5B519B9.jpg";
-		http.send(HttpRequest.HttpMethod.GET, requestUri, params,
-				responseHandlers.upload);
+		http.send(HttpRequest.HttpMethod.GET, requestUri, params, responseHandlers.upload);
 
 	}
 
