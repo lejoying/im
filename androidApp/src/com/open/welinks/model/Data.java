@@ -56,6 +56,8 @@ public class Data {
 		public class LocalData {
 			public ArrayList<ImageBean> prepareUploadImagesList = new ArrayList<ImageBean>();
 			public ArrayList<ImageBean> prepareDownloadImagesList = new ArrayList<ImageBean>();
+
+			public String currentSelectedGroup = null;
 		}
 	}
 

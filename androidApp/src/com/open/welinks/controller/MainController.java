@@ -1,7 +1,5 @@
 package com.open.welinks.controller;
 
-import org.apache.http.entity.ByteArrayEntity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +42,8 @@ public class MainController {
 	public Context context;
 	public Activity thisActivity;
 
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
 	public GestureDetector mGesture;
 	public GestureDetector mListGesture;
 
@@ -79,6 +79,8 @@ public class MainController {
 		thisView.messagesSubView.showMessages();
 
 		thisView.shareSubView.showShareMessages();
+		
+		this.getUserCurrentAllGroup();
 
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 	}
@@ -373,7 +375,9 @@ public class MainController {
 	public void getUserCurrentAllGroup() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", "lejoying");
 
-		httpUtils.send(HttpMethod.POST, "", params, completeUpload);
+		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/group/getgroupmembers", params, responseHandlers.getGroupMembers);
 	}
 }
