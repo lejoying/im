@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,10 +13,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -30,6 +27,7 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
+import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
@@ -46,7 +44,7 @@ public class FriendsSubView {
 
 	public DisplayMetrics displayMetrics;
 
-	public RelativeLayout friendsView;
+	public TouchView friendsView;
 
 	public ListBody friendListBody;
 
@@ -68,7 +66,7 @@ public class FriendsSubView {
 		this.friendsView = mainView.friendsView;
 		this.displayMetrics = mainView.displayMetrics;
 
-		friendsView = (RelativeLayout) mainView.friendsView.findViewById(R.id.friendsContainer);
+		friendsView = (TouchView) mainView.friendsView.findViewById(R.id.friendsContainer);
 		friendListBody = new ListBody();
 		friendListBody.initialize(displayMetrics, friendsView);
 
@@ -93,13 +91,13 @@ public class FriendsSubView {
 			this.friendListBody.listItemsSequence.add("circle#" + circle.rid);
 			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (260 * displayMetrics.density));
-			circleBody.y = 270 * displayMetrics.density * i + 2 * displayMetrics.density;
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) circleBody.itemHeight);
+			circleBody.y = this.friendListBody.height + 2 * displayMetrics.density;
 			circleBody.cardView.setY(circleBody.y);
 			circleBody.cardView.setX(0);
 
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
-			this.friendListBody.height = this.friendListBody.height + 270 * displayMetrics.density;
+			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight + 10 * displayMetrics.density;
 			Log.d(tag, "addView");
 
 		}
@@ -114,13 +112,15 @@ public class FriendsSubView {
 		public List<String> friendsSequence = new ArrayList<String>();
 		public Map<String, FriendBody> friendBodiesMap = new HashMap<String, FriendBody>();
 
-		public RelativeLayout cardView = null;
+		public TouchView cardView = null;
 		public TextView leftTopText = null;
 		public ImageView gripView = null;
 
+		int lineCount = 0;
+
 		public View initialize() {
 
-			this.cardView = (RelativeLayout) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
+			this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 			this.gripView = (ImageView) this.cardView.findViewById(R.id.grip);
 
@@ -131,6 +131,7 @@ public class FriendsSubView {
 
 			itemWidth = mainView.displayMetrics.widthPixels - 20 * mainView.displayMetrics.density;
 			itemHeight = 260 * displayMetrics.density;
+
 			super.initialize(cardView);
 			return cardView;
 		}
@@ -143,7 +144,13 @@ public class FriendsSubView {
 			this.leftTopText.setTag(circle);
 
 			this.gripView.setTag(circle);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) (55 * displayMetrics.density), (int) (78 * displayMetrics.density));
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (55 * displayMetrics.density), (int) (78 * displayMetrics.density));
+
+			int lineCount = circle.friends.size() / 4;
+			if (lineCount == 0) {
+				lineCount = 1;
+			}
+			itemHeight = (164 + lineCount * 96) * displayMetrics.density;
 
 			this.friendsSequence.clear();
 			for (int i = 0; i < circle.friends.size(); i++) {
@@ -156,9 +163,8 @@ public class FriendsSubView {
 
 				this.cardView.addView(friendBody.friendView, layoutParams);
 
-				int p = i / 8;
 				int x = 120 * (int) displayMetrics.density * (i % 4) + (int) itemWidth / 16;
-				int y = p * (int) itemWidth + 140 * (int) displayMetrics.density * ((i / 4) % 2) + 96 * (int) displayMetrics.density;
+				int y = 140 * (int) displayMetrics.density * (i / 4) + 96 * (int) displayMetrics.density;
 
 				friendBody.friendView.setX(x);
 				friendBody.friendView.setY(y);

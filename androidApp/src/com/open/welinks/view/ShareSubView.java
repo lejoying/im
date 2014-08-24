@@ -70,6 +70,7 @@ public class ShareSubView {
 		this.displayMetrics = mainView.displayMetrics;
 
 		shareMessageView = (RelativeLayout) shareView.findViewById(R.id.groupShareMessageContent);
+		
 		shareMessageListBody = new ListBody();
 		shareMessageListBody.initialize(displayMetrics, shareMessageView);
 

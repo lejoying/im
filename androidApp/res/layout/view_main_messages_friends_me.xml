@@ -77,7 +77,7 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <RelativeLayout
+    <com.open.lib.TouchView
         android:id="@+id/friendsContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -85,7 +85,7 @@
         android:paddingRight="10dp"
         android:translationY="88dp"
         android:visibility="visible" >
-    </RelativeLayout>
+    </com.open.lib.TouchView>
 
     <RelativeLayout
         android:id="@+id/messagesContainer"
