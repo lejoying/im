@@ -24,23 +24,23 @@
         android:textColor="@color/login_text_color"
         android:textSize="16sp" />
 
-    <ImageView
+    <com.open.lib.TouchImageView
         android:id="@+id/grip"
         android:layout_width="36dp"
         android:layout_height="15dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="13dp"
+        android:layout_gravity="right"
         android:background="@drawable/grip"
         android:contentDescription="grip"
-        android:layout_marginTop="13dp" />
+        android:translationX="-12dp"
+        android:translationY="12dp" />
 
     <ImageView
         android:id="@+id/cardTopLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/leftTopText"
         android:background="@color/text_color"
-        android:contentDescription="white_line" />
+        android:contentDescription="white_line"
+        android:translationY="40dp" />
 
     <TextView
         android:id="@+id/leftBottomTextButton"

@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.PagerBody;
 import com.open.welinks.R;
@@ -56,7 +57,7 @@ public class MainView {
 	public ImageView messages_friends_me_pager_indicator;
 	public ImageView main_pager_indicator;
 
-	public RelativeLayout friendsView;
+	public TouchView friendsView;
 	public RelativeLayout messagesView;
 	public RelativeLayout meView;
 
@@ -142,7 +143,7 @@ public class MainView {
 
 		messagesView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.messagesContainer);
 
-		friendsView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.friendsContainer);
+		friendsView = (TouchView) messages_friends_me_View.findViewById(R.id.friendsContainer);
 
 		meView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.meContainer);
 

@@ -9,7 +9,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
 
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
@@ -33,7 +33,7 @@ public class ListBody {
 		mPagerSpringListener = new PagerSpringListener();
 		mSpring.addListener(mPagerSpringListener);
 
-		this.containerView = (RelativeLayout) containerView;
+		this.containerView = (ViewGroup) containerView;
 		return containerView;
 
 	}
@@ -225,7 +225,7 @@ public class ListBody {
 		}
 	}
 
-	public RelativeLayout containerView = null;
+	public ViewGroup containerView = null;
 
 	public List<String> listItemsSequence = new ArrayList<String>();
 	public Map<String, MyListItemBody> listItemBodiesMap = new HashMap<String, MyListItemBody>();

@@ -43,11 +43,13 @@ public class MainController {
 	public Activity thisActivity;
 
 	public GestureDetector mGesture;
+	public GestureDetector mListGesture;
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
 	public DownloadListener downloadListener;
 	public OnLongClickListener onLongClickListener;
+	public ListOnTouchListener listOnTouchListener;
 
 	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
 	Handler handler = new Handler();
@@ -68,16 +70,15 @@ public class MainController {
 			userPhone = phone;
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
+		mListGesture = new GestureDetector(thisActivity, new GestureListener());
 
 		this.initializeListeners();
 		thisView.friendsSubView.showCircles();
-		// this.test();
-		// initChatMessages();
 		thisView.messagesSubView.showMessages();
 
 		thisView.shareSubView.showShareMessages();
 
-		// thisView.showGroupMembers(thisView.groupMembersListContentView);
+//		thisView.showGroupMembers(thisView.groupMembersListContentView);
 	}
 
 	public void onResume() {
@@ -232,6 +233,7 @@ public class MainController {
 				}
 			}
 		};
+		listOnTouchListener = new ListOnTouchListener();
 	}
 
 	public void bindEvent() {
@@ -248,14 +250,18 @@ public class MainController {
 		thisView.shareSubView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		thisView.shareSubView.groupDialogView.setOnClickListener(mOnClickListener);
 
-		List<String> listItemsSqquece = thisView.shareSubView.shareMessageListBody.listItemsSequence;
-		for (int i = 0; i < listItemsSqquece.size(); i++) {
-			String key = listItemsSqquece.get(i);
-			SharesMessageBody sharesMessageBody = (SharesMessageBody) thisView.shareSubView.shareMessageListBody.listItemBodiesMap.get(key);
-			if (sharesMessageBody.downloadFile != null) {
-				sharesMessageBody.downloadFile.setDownloadFileListener(downloadListener);
-			}
-		}
+		// thisView.friendsSubView.friendsView.setOnTouchListener(listOnTouchListener);
+
+		// List<String> listItemsSqquece =
+		// thisView.shareSubView.shareMessageListBody.listItemsSequence;
+		// for (int i = 0; i < listItemsSqquece.size(); i++) {
+		// String key = listItemsSqquece.get(i);
+		// SharesMessageBody sharesMessageBody = (SharesMessageBody)
+		// thisView.shareSubView.shareMessageListBody.listItemBodiesMap.get(key);
+		// if (sharesMessageBody.downloadFile != null) {
+		// sharesMessageBody.downloadFile.setDownloadFileListener(downloadListener);
+		// }
+		// }
 
 		// thisView.me_setting_view.setOnClickListener(mOnClickListener);
 	}
@@ -271,6 +277,7 @@ public class MainController {
 
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
+			Log.d(tag, "Activity on touch down");
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
 			thisView.friendsSubView.friendListBody.onTouchDown(event);
@@ -291,6 +298,28 @@ public class MainController {
 		}
 		mGesture.onTouchEvent(event);
 		return false;
+	}
+
+	class ListOnTouchListener implements OnTouchListener {
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+
+			int motionEvent = event.getAction();
+			if (motionEvent == MotionEvent.ACTION_DOWN) {
+				Log.d(tag, "List on touch down");
+				thisView.friendsSubView.friendListBody.onTouchDown(event);
+			} else if (motionEvent == MotionEvent.ACTION_MOVE) {
+				Log.d(tag, "List on touch move");
+				thisView.friendsSubView.friendListBody.onTouchMove(event);
+			} else if (motionEvent == MotionEvent.ACTION_UP) {
+				Log.d(tag, "List on touch up");
+				thisView.friendsSubView.friendListBody.onTouchUp(event);
+			}
+			mListGesture.onTouchEvent(event);
+			return true;
+		}
+
 	}
 
 	class GestureListener extends SimpleOnGestureListener {
