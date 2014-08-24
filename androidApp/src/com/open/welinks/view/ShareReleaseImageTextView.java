@@ -1,11 +1,11 @@
 package com.open.welinks.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,6 +40,8 @@ public class ShareReleaseImageTextView {
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DisplayImageOptions options;
 
+	public MyScrollImageBody myScrollImageBody;
+
 	public ShareReleaseImageTextView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -58,7 +60,11 @@ public class ShareReleaseImageTextView {
 		mSelectImageButtonView = (ImageView) thisActivity.findViewById(R.id.selectImageButton);
 
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).considerExifParams(true).displayer(new RoundedBitmapDisplayer(0)).build();
+		myScrollImageBody = new MyScrollImageBody();
+		myScrollImageBody.initialize(mImagesContentView);
 	}
+
+	int width;
 
 	public void showSelectedImages() {
 		this.mImagesContentView.removeAllViews();
@@ -66,16 +72,71 @@ public class ShareReleaseImageTextView {
 		if (selectedImageList.size() > 0)
 			this.mImagesContentView.setVisibility(View.VISIBLE);
 		for (int i = 0; i < selectedImageList.size(); i++) {
-			ImageView imageView = new ImageView(context);
-			int width = (int) (displayMetrics.density * 50);
+			String key = selectedImageList.get(i);
+			ImageBody imageBody = new ImageBody();
+			imageBody.initialize();
+
+			width = (int) (displayMetrics.density * 50);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
-			this.mImagesContentView.addView(imageView, layoutParams);
+			myScrollImageBody.contentView.addView(imageBody.imageView, layoutParams);
 			float x = i * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;
 			if (i == 0) {
 				x = 2 * displayMetrics.density;
 			}
-			imageView.setTranslationX(x);
-			imageLoader.displayImage("file://" + selectedImageList.get(i), imageView, options);
+			imageBody.imageView.setX(x);// Translation
+			imageLoader.displayImage("file://" + key, imageBody.imageView, options);
+			myScrollImageBody.selectedImagesSequence.add(key);
+			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
 		}
+	}
+
+	public class MyScrollImageBody {
+		public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
+		public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
+
+		public RelativeLayout contentView;
+
+		public RelativeLayout initialize(RelativeLayout view) {
+			this.contentView = view;
+			return view;
+		}
+
+		public void recordChildrenPosition() {
+			for (int i = 0; i < selectedImagesSequence.size(); i++) {
+				String key = selectedImagesSequence.get(i);
+				ImageBody imageBody = selectedImagesSequenceMap.get(key);
+				imageBody.x = imageBody.imageView.getX();
+				imageBody.y = imageBody.imageView.getY();
+			}
+		}
+
+		public void setChildrenPosition(float deltaX, float deltaY) {
+			float screenWidth = displayMetrics.widthPixels;
+			float totalLength = selectedImagesSequence.size() * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;
+			if (totalLength < screenWidth) {
+				return;
+			}
+			for (int i = 0; i < selectedImagesSequence.size(); i++) {
+				ImageBody imageBody = selectedImagesSequenceMap.get(selectedImagesSequence.get(i));
+				if ((imageBody.x + deltaX) < (screenWidth - totalLength))
+					break;
+				if (i == 0 && (imageBody.x + deltaX) > (5 * displayMetrics.density))
+					break;
+				imageBody.imageView.setX(imageBody.x + deltaX);
+				imageBody.imageView.setY(imageBody.y + deltaY);
+			}
+		}
+	}
+
+	public class ImageBody {
+		public float x;
+		public float y;
+		public ImageView imageView;
+
+		public ImageView initialize() {
+			this.imageView = new ImageView(context);
+			return this.imageView;
+		}
+
 	}
 }

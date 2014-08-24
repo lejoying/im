@@ -3,7 +3,6 @@ package com.open.welinks.view;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;

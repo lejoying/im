@@ -95,7 +95,7 @@ public class ImagesDirectoryController {
 	}
 
 	public void setDate() {
-		if (data.tempData.prepareUploadImages != null) {
+		if (data.tempData.selectedImageList != null) {
 			selectedImage = data.tempData.selectedImageList;
 		}
 		getImages();
@@ -108,7 +108,7 @@ public class ImagesDirectoryController {
 				images.add(mImagesDescription.get(selectedImage.get(i)));
 			}
 			this.data.tempData.selectedImageList = selectedImage;
-			selectedImage = null;
+			selectedImage = new ArrayList<String>();
 			thisActivity.setResult(Activity.RESULT_OK);
 			thisActivity.finish();
 			System.out.println("confirm selected image");

@@ -1,5 +1,7 @@
 package com.open.welinks.controller;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -84,8 +86,66 @@ public class ShareReleaseImageTextController {
 		data.tempData.selectedImageList = null;
 	}
 
-	public void onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
+	public long eventCount = 0;
 
+	public int preTouchTimes = 5;
+	public float pre_x = 0;
+	public float pre_y = 0;
+	long lastMillis = 0;
+
+	public float pre_pre_x = 0;
+	public float pre_pre_y = 0;
+	long pre_lastMillis = 0;
+
+	public float progress_test_x = 0;
+	public float progress_test_y = 0;
+
+	public float progress_line1_x = 0;
+
+	public void onTouchEvent(MotionEvent event) {
+		eventCount++;
+		float x = event.getX();
+		float y = event.getY();
+		long currentMillis = System.currentTimeMillis();
+
+		// RelativeLayout intimateFriendsContentView =
+		// thisView.intimateFriendsContentView;
+
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+			pre_x = x;
+			pre_y = y;
+
+			thisView.myScrollImageBody.recordChildrenPosition();
+			// progress_test_x = intimateFriendsContentView.getX();
+			// progress_test_y = intimateFriendsContentView.getY();
+
+			if (y > 520) {
+
+			} else {
+
+			}
+		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			if (lastMillis == 0) {
+				lastMillis = currentMillis;
+			}
+
+			// progress_test.setX(progress_test_x + x - pre_x);
+			// intimateFriendsContentView.setY(progress_test_y + y - pre_y);
+
+			// progress_line1.setX(progress_line1_x + x - pre_x);
+//			Log.e(tag, (x - pre_x) + "-----------------x");
+			thisView.myScrollImageBody.setChildrenPosition(x - pre_x, 0);
+			// thisView.myScrollImageBody.setChildrenPosition(0, y - pre_y);
+
+		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+			long delta = currentMillis - lastMillis;
+
+			if (delta == 0 || x == pre_x || y == pre_y) {
+				delta = currentMillis - pre_lastMillis;
+				pre_x = pre_pre_x;
+				pre_y = pre_pre_y;
+			}
+		}
 	}
 }
