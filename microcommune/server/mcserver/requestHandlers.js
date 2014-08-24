@@ -259,6 +259,14 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
             groupManage.getgroupsandmembers(data, response);
         });
     }
+    /***************************************************
+     * * * * * * * *New Api* * * * * * * * * * * * * * *
+     ***************************************************/
+    else if (operation == "getgroupmembers") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.getgroupmembers(data, response);
+        });
+    }
 }
 var shareManage = require("./handlers/shareManage.js");
 requestHandlers.shareManage = function (request, response, pathObject, data) {

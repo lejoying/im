@@ -1044,5 +1044,158 @@ groupManage.getgroupsandmembers = function (data, response) {
         });
     }
 }
+/*******************************************************************
+ * * * * * * * * * *New Api* * * * * * * * * * * * * * * * * * * * *
+ *******************************************************************/
+groupManage.getgroupmembers = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    getAccountGroups();
 
+    var friendsMap = {};
+    var groups = [];
+    var groupsMap = {};
+
+    function getAccountGroups() {
+        var query = [
+            'MATCH (account:Account)<-[HAS_MEMBER]-(group:Group)',
+            'WHERE account.phone={phone}',
+            'RETURN group'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write({
+                    "提示信息": "获取群组成员失败",
+                    "失败原因": "数据异常"
+                });
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length > 0) {
+                var length = results.length;
+                var count = 0;
+                for (var index in results) {
+                    count++;
+                    var groupData = results[index].group.data;
+                    groups.push(groupData.gid);
+                    if (count == length) {
+                        getGroupsMembers(groups);
+                    }
+                }
+            } else {
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群组成员成功",
+                    relationship: {
+                        friendsMap: friendsMap,
+                        groups: groups,
+                        groupsMap: groupsMap
+                    }
+                }), response);
+            }
+        });
+    }
+
+    function getGroupsMembers(groupIDs) {
+        var query = [
+            'MATCH (group:Group)-[r1:HAS_MEMBER]->(account:Account)',
+            'WHERE group.gid IN {groupIDs}',
+            'RETURN group,account'
+        ].join('\n');
+        var params = {
+            groupIDs: groupIDs
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群组失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.log(error);
+                return;
+            } else {
+                groups = [];
+                for (var index in results) {
+                    var it = results[index];
+                    var groupData = it.group.data;
+                    var accountData = it.account.data;
+                    var location;
+                    if (groupData.location) {
+                        try {
+                            location = JSON.parse(groupData.location);
+                        } catch (e) {
+                            location = {
+                                longitude: "0",
+                                latitude: "0"
+                            };
+                        }
+                    } else {
+                        location = {
+                            longitude: "0",
+                            latitude: "0"
+                        };
+                    }
+                    var account = {
+                        id: accountData.ID,
+                        sex: accountData.sex,
+                        phone: accountData.phone,
+                        mainBusiness: accountData.mainBusiness,
+                        head: accountData.head,
+                        nickName: accountData.nickName,
+                        userBackground: accountData.userBackground,
+                        addMessage: "",
+                        friendStatus: "",
+                        alias: "",
+                        flag: "none",
+                        accessKey: "",
+                        distance: 0,
+                        notReadMessagesCount: 0,
+                        longitude: location.longitude,
+                        latitude: location.latitude
+                    };
+                    friendsMap[account.phone] = account;
+                    if (!groupsMap[groupData.gid + ""]) {
+                        groups.push(groupData.gid + "");
+                        var group = {
+                            gid: groupData.gid,
+                            icon: groupData.icon,
+                            name: groupData.name,
+                            notReadMessagesCount: 0,
+                            distance: 0,
+                            longitude: location.longitude,
+                            latitude: location.latitude,
+                            description: groupData.description,
+                            background: groupData.background
+                        };
+                        var members = [];
+                        members.push(account.phone);
+                        group.members = members;
+                        groupsMap[groupData.gid + ""] = group;
+                    } else {
+                        groupsMap[groupData.gid + ""].members.push(account.phone);
+                    }
+                }
+                ResponseData(JSON.stringify({
+                    "提示信息": "获取群组成员成功",
+                    relationship: {
+                        friendsMap: friendsMap,
+                        groups: groups,
+                        groupsMap: groupsMap
+                    }
+                }), response);
+            }
+        });
+    }
+}
+function ResponseData(responseContent, response) {
+    response.writeHead(200, {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Content-Length": Buffer.byteLength(responseContent, 'utf8')
+    });
+    response.write(responseContent);
+    response.end();
+}
 module.exports = groupManage;
