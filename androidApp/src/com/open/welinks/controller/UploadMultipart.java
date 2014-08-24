@@ -118,6 +118,12 @@ public class UploadMultipart {
 		String sha1FileName = "";
 		String suffixName = path.substring(path.lastIndexOf("."));
 
+		if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
+			suffixName = ".osj";
+		} else if (suffixName.equals(".png")) {
+			suffixName = ".osp";
+		}
+
 		long expires = (new Date().getTime() / 1000) + addExpires;
 
 		File file = new File(path);
@@ -359,6 +365,7 @@ public class UploadMultipart {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
 			isUploadStatus = UPLOAD_SUCCESS;
+			uploadLoadingListener.success(instance, (int) (time.received - time.start));
 			// Log.e(tag, completeMultipartUploadResult.location + "---" +
 			// completeMultipartUploadResult.bucket + "---" +
 			// completeMultipartUploadResult.key + "---" +
@@ -380,6 +387,8 @@ public class UploadMultipart {
 
 	public interface UploadLoadingListener {
 		public void loading(UploadMultipart instance, int precent, long time, int status);
+
+		public void success(UploadMultipart instance, int time);
 	}
 
 	public void setUploadLoadingListener(UploadLoadingListener listener) {

@@ -110,4 +110,18 @@ public class ResponseHandlers {
 			}
 		}
 	};
+
+	// All groups of the current user
+	public ResponseHandler<String> getGroups = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Relationship relationship;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+
+		};
+	};
 }

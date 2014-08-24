@@ -47,19 +47,22 @@ public class ShareSubView {
 
 	public DisplayMetrics displayMetrics;
 
-	public RelativeLayout shareView;
+	public MainView mainView;
 
 	// share
+	public RelativeLayout shareView;
+
 	public RelativeLayout shareMessageView;
 	public ListBody shareMessageListBody;
 
 	public RelativeLayout shareTopMenuGroupNameParent;
 	public TextView shareTopMenuGroupName;
 
+	// group
 	public PopupWindow groupPopWindow;
 	public View groupDialogView;
 
-	public MainView mainView;
+	public RelativeLayout groupsDialogContent;
 
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -70,7 +73,7 @@ public class ShareSubView {
 		this.displayMetrics = mainView.displayMetrics;
 
 		shareMessageView = (RelativeLayout) shareView.findViewById(R.id.groupShareMessageContent);
-		
+
 		shareMessageListBody = new ListBody();
 		shareMessageListBody.initialize(displayMetrics, shareMessageView);
 
@@ -80,6 +83,8 @@ public class ShareSubView {
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
 
 		initReleaseShareDialogView();
+
+		initializationGroupsDialog();
 
 	}
 
@@ -297,26 +302,29 @@ public class ShareSubView {
 		}
 	}
 
-	public RelativeLayout groupsDialogContent;
-
 	@SuppressWarnings("deprecation")
-	public void showGroupsDialog() {
+	public void initializationGroupsDialog() {
 		groupPopWindow = new PopupWindow(groupDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		RelativeLayout mainContentView = (RelativeLayout) groupDialogView.findViewById(R.id.mainContent);
 
 		groupsDialogContent = (RelativeLayout) groupDialogView.findViewById(R.id.groupsContent);
-		setGroupsDialogContent();
 		RelativeLayout.LayoutParams mainContentParams = (RelativeLayout.LayoutParams) mainContentView.getLayoutParams();
 		mainContentParams.height = (int) (displayMetrics.heightPixels * 0.7578125f);
 		mainContentParams.leftMargin = (int) (20 / displayMetrics.density + 0.5f);
 		mainContentParams.rightMargin = (int) (20 / displayMetrics.density + 0.5f);
 		mainContentView.setLayoutParams(mainContentParams);
-		groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
+		setGroupsDialogContent();
+	}
+
+	public void showGroupsDialog() {
+		if (groupPopWindow != null)
+			groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
 	}
 
 	public void dismissGroupDialog() {
-		groupPopWindow.dismiss();
+		if (groupPopWindow != null)
+			groupPopWindow.dismiss();
 	}
 
 	public void setGroupsDialogContent() {

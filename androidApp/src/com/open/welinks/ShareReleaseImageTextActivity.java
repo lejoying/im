@@ -39,16 +39,19 @@ public class ShareReleaseImageTextActivity extends Activity {
 		thisController.initializeListeners();
 		thisController.bindEvent();
 	}
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		thisController.onTouchEvent(event);
 		return super.onTouchEvent(event);
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		thisController.onActivityResult(requestCode, resultCode, data);
 	}
+
 	@Override
 	public void finish() {
 		thisController.finish();

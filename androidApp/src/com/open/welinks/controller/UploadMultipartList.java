@@ -20,10 +20,10 @@ public class UploadMultipartList {
 		return uploadMultipartList;
 	}
 
-	public void addMultipart(UploadMultipart multipartUpload) {
-		this.uploadMultipartFilesList.add(multipartUpload.path);
-		this.uploadMultipartFilesMap.put(multipartUpload.path, multipartUpload);
-		multipartUpload.startUpload();
+	public void addMultipart(UploadMultipart multipart) {
+		this.uploadMultipartFilesList.add(multipart.path);
+		this.uploadMultipartFilesMap.put(multipart.path, multipart);
+		multipart.startUpload();
 	}
 
 	public void cancleMultipart(String path) {

@@ -26,7 +26,7 @@ public class Data {
 		public ArrayList<ImageBean> prepareUploadImages;
 
 		public ArrayList<String> prepareDownloadImages;
-		
+
 		public ArrayList<String> selectedImageList;
 
 		public class ImageBean {
@@ -180,13 +180,14 @@ public class Data {
 			public Map<String, ShareMessage> sharesMap = new HashMap<String, ShareMessage>();
 
 			public class ShareMessage {
+				public static final int MAXTYPE_COUNT = 3;
 				public static final int MESSAGE_TYPE_IMAGETEXT = 0x01;
 				public static final int MESSAGE_TYPE_VOICETEXT = 0x02;
 				public static final int MESSAGE_TYPE_VOTE = 0x03;
 
-				public int mType;
+				public int mType;// MESSAGE_TYPE
 				public String gsid;
-				public String type;
+				public String type;// imagetext voicetext vote
 				public String phone;
 				public long time;
 				public List<String> praiseusers = new ArrayList<String>();

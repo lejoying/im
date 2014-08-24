@@ -1,6 +1,6 @@
 package com.open.welinks.controller;
 
-import java.util.List;
+import org.apache.http.entity.ByteArrayEntity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
@@ -34,7 +35,6 @@ import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
-import com.open.welinks.view.ShareSubView.SharesMessageBody;
 
 public class MainController {
 
@@ -80,7 +80,7 @@ public class MainController {
 
 		thisView.shareSubView.showShareMessages();
 
-//		thisView.showGroupMembers(thisView.groupMembersListContentView);
+		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 	}
 
 	public void onResume() {
@@ -370,4 +370,10 @@ public class MainController {
 		});
 	}
 
+	public void getUserCurrentAllGroup() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+
+		httpUtils.send(HttpMethod.POST, "", params, completeUpload);
+	}
 }

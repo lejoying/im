@@ -88,6 +88,7 @@ public class ShareReleaseImageTextView {
 			myScrollImageBody.selectedImagesSequence.add(key);
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
 		}
+		myScrollImageBody.contentView.setOnTouchListener(thisController.onTouchListener);
 	}
 
 	public class MyScrollImageBody {
@@ -117,18 +118,24 @@ public class ShareReleaseImageTextView {
 				return;
 			}
 			for (int i = 0; i < selectedImagesSequence.size(); i++) {
-				ImageBody imageBody = selectedImagesSequenceMap.get(selectedImagesSequence.get(i));
+				String key = selectedImagesSequence.get(i);
+				ImageBody imageBody = selectedImagesSequenceMap.get(key);
 				if ((imageBody.x + deltaX) < (screenWidth - totalLength))
 					break;
 				if (i == 0 && (imageBody.x + deltaX) > (5 * displayMetrics.density))
 					break;
 				imageBody.imageView.setX(imageBody.x + deltaX);
 				imageBody.imageView.setY(imageBody.y + deltaY);
+				imageBody.imageView.setTag(i);
+				// imageBody.imageView.setOnClickListener(thisController.monClickListener);
+				// imageBody.imageView.setOnTouchListener(thisController.onTouchListener);
 			}
 		}
 	}
 
 	public class ImageBody {
+		public int i;
+
 		public float x;
 		public float y;
 		public ImageView imageView;
@@ -137,6 +144,5 @@ public class ShareReleaseImageTextView {
 			this.imageView = new ImageView(context);
 			return this.imageView;
 		}
-
 	}
 }

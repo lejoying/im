@@ -101,6 +101,12 @@ public class Debug1Controller {
 				int currentUploadSize = (int) Math.floor(size * precent / 100f);
 				instance.transportingItem.text_file_size_view.setText(currentUploadSize + "/" + size + "k");
 			}
+
+			@Override
+			public void success(UploadMultipart instance, int time) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		onLongClickListener = new OnLongClickListener() {
 
