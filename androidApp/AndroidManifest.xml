@@ -35,13 +35,20 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.open.welinks.ShareReleaseImageTextActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+        <activity
             android:name="com.open.welinks.controller.TestHttpLongPull"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-         <activity
+        <activity
             android:name="com.open.welinks.SettingActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -94,6 +101,12 @@
         <activity
             android:name="com.open.welinks.MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name="com.open.welinks.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustPan" >

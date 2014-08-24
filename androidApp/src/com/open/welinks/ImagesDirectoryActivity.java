@@ -32,15 +32,9 @@ public class ImagesDirectoryActivity extends Activity {
 		this.thisController.thisView = this.thisView;
 
 		thisView.initViews();
-
 		thisController.setDate();
 		thisController.initializeListeners();
 		thisController.bindEvent();
-
-		// thisView.initView();
-		// thisController.onCreate();
-		// thisController.initializeListeners();
-		// thisController.bindEvent();
 	}
 
 	@Override

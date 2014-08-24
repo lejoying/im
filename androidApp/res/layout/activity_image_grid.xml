@@ -5,9 +5,29 @@
     android:layout_height="fill_parent" >
 
     <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:background="#38ffffff" >
+
+        <ImageView
+            android:id="@+id/backImageDirectory"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="30dp"
+            android:paddingTop="10dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:id="@+id/directoryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="AlbumName"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_confirm"
@@ -15,9 +35,15 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
             android:layout_marginRight="20dp"
-            android:gravity="center_vertical"
-            android:padding="15dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/textview_bg"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
             android:text="确定(0)"
             android:textSize="16sp" />
     </RelativeLayout>
@@ -26,12 +52,14 @@
         android:id="@+id/gridview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginTop="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayout1"
         android:gravity="center"
         android:horizontalSpacing="4dip"
         android:numColumns="3"
         android:padding="4dip"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="4dip" />
+        android:verticalSpacing="4dip" >
+    </GridView>
 
 </RelativeLayout>

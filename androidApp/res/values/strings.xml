@@ -3,5 +3,13 @@
 
     <string name="app_name">微型公社new</string>
     <string name="description_image">微型公社new</string>
+    <string name="image_text">图文</string>
+    <string name="voice_text">语音</string>
+    <string name="vote_text">投票</string>
+    <string name="cancle_text">取消</string>
+    <string name="confirm_text">确定</string>
+    <string name="selectAlbum_text">选择相册</string>
+    <string name="action_settings">设置</string>
+    
 
 </resources>

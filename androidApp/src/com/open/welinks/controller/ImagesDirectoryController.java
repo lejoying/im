@@ -19,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.open.welinks.Debug1Activity;
 import com.open.welinks.ImageGridActivity;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
@@ -39,13 +38,15 @@ public class ImagesDirectoryController {
 	public ImagesDirectoryView thisView;
 
 	public ArrayList<String> imageDirectorys = new ArrayList<String>();
-	public HashMap<String, ArrayList<String>> mGruopMap = new HashMap<String, ArrayList<String>>();
-	public static HashMap<String, ImageBean> imagesDescription = new HashMap<String, ImageBean>();
+	public HashMap<String, ArrayList<String>> mImageDirectorysMap = new HashMap<String, ArrayList<String>>();
+	public static HashMap<String, ImageBean> mImagesDescription = new HashMap<String, ImageBean>();
 
 	public static ArrayList<String> selectedImage = new ArrayList<String>();
 
 	public OnClickListener onClickListener;
 	OnItemClickListener onItemClickListener;
+
+	public int RESULT_REQUESTCODE_SELECTIMAGE = 0x01;
 
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
@@ -79,13 +80,11 @@ public class ImagesDirectoryController {
 		onItemClickListener = new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Intent intent = new Intent(thisActivity,
-						ImageGridActivity.class);
-				intent.putStringArrayListExtra("images",
-						mGruopMap.get(imageDirectorys.get(position)));
-				thisActivity.startActivityForResult(intent, 100);
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent intent = new Intent(thisActivity, ImageGridActivity.class);
+				intent.putExtra("parentName", imageDirectorys.get(position));
+				intent.putStringArrayListExtra("images", mImageDirectorysMap.get(imageDirectorys.get(position)));
+				thisActivity.startActivityForResult(intent, RESULT_REQUESTCODE_SELECTIMAGE);
 			}
 		};
 	}
@@ -96,25 +95,25 @@ public class ImagesDirectoryController {
 	}
 
 	public void setDate() {
+		if (data.tempData.prepareUploadImages != null) {
+			selectedImage = data.tempData.selectedImageList;
+		}
 		getImages();
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-			if (selectedImage.size() > 0) {
-				Intent intent = new Intent(thisActivity, Debug1Activity.class);
-				ArrayList<ImageBean> images = new ArrayList<ImageBean>();
-				for (int i = 0; i < selectedImage.size(); i++) {
-					images.add(imagesDescription.get(selectedImage.get(i)));
-				}
-				selectedImage.clear();
-				// intent.putExtra("images", images);
-				this.data.tempData.prepareUploadImages = images;
-				thisActivity.startActivity(intent);
+		if (requestCode == RESULT_REQUESTCODE_SELECTIMAGE && resultCode == Activity.RESULT_OK) {
+			ArrayList<ImageBean> images = new ArrayList<ImageBean>();
+			for (int i = 0; i < selectedImage.size(); i++) {
+				images.add(mImagesDescription.get(selectedImage.get(i)));
 			}
-			System.out.println("OKOKOKO");
+			this.data.tempData.selectedImageList = selectedImage;
+			selectedImage = null;
+			thisActivity.setResult(Activity.RESULT_OK);
+			thisActivity.finish();
+			System.out.println("confirm selected image");
 		} else {
-			System.out.println("error---fail");
+			System.out.println("cancle selected image");
 		}
 	}
 
@@ -124,29 +123,20 @@ public class ImagesDirectoryController {
 			@Override
 			public void run() {
 				Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-				ContentResolver mContentResolver = thisActivity
-						.getContentResolver();
-				Cursor mCursor = mContentResolver.query(mImageUri, null,
-						MediaStore.Images.Media.MIME_TYPE + "=? or "
-								+ MediaStore.Images.Media.MIME_TYPE + "=?",
-						new String[] { "image/jpeg", "image/png" },
-						MediaStore.Images.Media.DATE_MODIFIED);
+				ContentResolver mContentResolver = thisActivity.getContentResolver();
+				Cursor mCursor = mContentResolver.query(mImageUri, null, MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?", new String[] { "image/jpeg", "image/png" }, MediaStore.Images.Media.DATE_MODIFIED);
 				while (mCursor.moveToNext()) {
-					String path = mCursor.getString(mCursor
-							.getColumnIndex(MediaStore.Images.Media.DATA));
-					long size = mCursor.getLong(mCursor
-							.getColumnIndex(MediaStore.Images.Media.SIZE)) / 1024;
-					String contentType = mCursor.getString(mCursor
-							.getColumnIndex(MediaStore.Images.Media.MIME_TYPE));
-					String parentName = new File(path).getParentFile()
-							.getName();
-					if (!mGruopMap.containsKey(parentName)) {
+					String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.DATA));
+					long size = mCursor.getLong(mCursor.getColumnIndex(MediaStore.Images.Media.SIZE)) / 1024;
+					String contentType = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE));
+					String parentName = new File(path).getParentFile().getName();
+					if (!mImageDirectorysMap.containsKey(parentName)) {
 						imageDirectorys.add(parentName);
 						ArrayList<String> chileList = new ArrayList<String>();
 						chileList.add(path);
-						mGruopMap.put(parentName, chileList);
+						mImageDirectorysMap.put(parentName, chileList);
 					} else {
-						mGruopMap.get(parentName).add(path);
+						mImageDirectorysMap.get(parentName).add(path);
 					}
 
 					ImageBean imageBean = data.tempData.new ImageBean();
@@ -156,14 +146,7 @@ public class ImagesDirectoryController {
 
 					imageBean.contentType = contentType;
 					imageBean.size = size;
-
-					// HashMap<String, String> imageDescription = new
-					// HashMap<String, String>();
-					// imageDescription.put("size", size + "");
-					// imageDescription.put("path", path);
-					// imageDescription.put("parentName", parentName);
-					// imageDescription.put("Content-Type", type);
-					imagesDescription.put(path, imageBean);
+					mImagesDescription.put(path, imageBean);
 				}
 				mCursor.close();
 				mHandler.sendEmptyMessage(SCAN_OK);
