@@ -112,7 +112,7 @@ public class ResponseHandlers {
 	};
 
 	// All groups of the current user
-	public ResponseHandler<String> getGroupMembers = httpClient.new ResponseHandler<String>() {
+	public ResponseHandler<String> getGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
@@ -123,11 +123,23 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取群组成员成功")) {
+
 				data.relationship.groups = response.relationship.groups;
 				data.relationship.groupsMap = response.relationship.groupsMap;
 				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+
+				// init current share
+				if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
+					if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+						data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
+					}
+				} else {
+					data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
+				}
 				// Set the option group dialog content
 				viewManage.mainView.shareSubView.setGroupsDialogContent();
+				viewManage.mainView.shareSubView.showShareMessages();
+				viewManage.mainView.shareSubView.showGroupMembers();
 			}
 		};
 	};

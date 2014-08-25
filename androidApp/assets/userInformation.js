@@ -7,7 +7,7 @@
 		nickName : "mimi",
 		mainBusiness : "eat",
 		head : "Head",
-		accessKey : "fsafafasfsafdsfs",
+		accessKey : "lejoying",
 		flag : "none"
 	},
 	localConfig : {

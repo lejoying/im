@@ -5,25 +5,35 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
+import android.os.Handler;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
+import com.google.gson.Gson;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Shares.Share;
+import com.open.welinks.model.Data.Shares.Share.ShareContent;
+import com.open.welinks.model.Data.Shares.Share.ShareContent.ShareContentItem;
+import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareReleaseImageTextView;
+import com.open.welinks.view.ViewManage;
 
 public class ShareReleaseImageTextController {
 	public Data data = Data.getInstance();
@@ -47,7 +57,16 @@ public class ShareReleaseImageTextController {
 
 	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
 
-	public int currentUploadCount;
+	public ViewManage viewManage = ViewManage.getInstance();
+
+	public int currentUploadCount = 0;
+
+	public String currentSelectedGroup = data.localStatus.localData.currentSelectedGroup;
+	public User currentUser = data.userInformation.currentUser;
+
+	public Gson gson = new Gson();
+
+	public Handler handler = new Handler();
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
@@ -58,7 +77,6 @@ public class ShareReleaseImageTextController {
 		mImageFile = new File(mSdCardFile, "welinks/images/");
 		if (!mImageFile.exists())
 			mImageFile.mkdirs();
-
 	}
 
 	public void initializeListeners() {
@@ -71,6 +89,9 @@ public class ShareReleaseImageTextController {
 			@Override
 			public void success(UploadMultipart instance, int time) {
 				currentUploadCount++;
+				if (currentUploadCount == 1) {
+					viewManage.mainView.shareSubView.showShareMessages();
+				}
 			}
 		};
 		onTouchListener = new OnTouchListener() {
@@ -149,15 +170,56 @@ public class ShareReleaseImageTextController {
 		String sendContent = thisView.mEditTextView.getText().toString().trim();
 		if ("".equals(sendContent))
 			return;
+		thisActivity.finish();
 		if (data.tempData.selectedImageList != null) {
 			copyFileToSprecifiedDirecytory();
 		}
 		if (data.shares.shareMap.get("") == null) {
 
 		}
-		// ShareMessage shareContent = new ShareMessage();
-		// ShareContentItem shareContentItem = new ShareContentItem();
+		// Package structure to share news
+		if (data.shares == null) {
+			data.shares = data.new Shares();
+		}
+		if (data.shares.shareMap.get(currentSelectedGroup) == null) {
+			Share share = data.shares.new Share();
+			data.shares.shareMap.put(currentSelectedGroup, share);
+		}
+		long time = new Date().getTime();
+		Share share = data.shares.shareMap.get(currentSelectedGroup);
+		ShareMessage shareMessage = share.new ShareMessage();
+		shareMessage.mType = shareMessage.MESSAGE_TYPE_IMAGETEXT;
+		shareMessage.gsid = currentUser.phone + "_" + time;
+		shareMessage.type = "imagetext";
+		shareMessage.phone = currentUser.phone;
+		shareMessage.time = time;
 
+		ShareContent shareContent = share.new ShareContent();
+		ShareContentItem shareContentItem = shareContent.new ShareContentItem();
+		shareContentItem.type = "text";
+		shareContentItem.detail = sendContent;
+		shareContent.shareContentItems.add(shareContentItem);
+
+		ShareContentItem shareContentItem2 = shareContent.new ShareContentItem();
+		shareContentItem2.type = "image";
+		shareContentItem2.detail = data.tempData.selectedImageList.get(0);
+		shareContent.shareContentItems.add(shareContentItem2);
+
+		String content = gson.toJson(shareContent);
+		Log.e(tag, content);
+		// shareMessage.content = content;
+		//
+		// // To add data to the data
+		// share.sharesOrder.add(0, shareMessage.gsid);
+		// share.sharesMap.put(shareMessage.gsid, shareMessage);
+		//
+		// handler.post(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// viewManage.mainView.shareSubView.showShareMessages();
+		// }
+		// });
 	}
 
 	public void copyFileToSprecifiedDirecytory() {
@@ -196,7 +258,7 @@ public class ShareReleaseImageTextController {
 	}
 
 	public void finish() {
-		data.tempData.selectedImageList = null;
+		// data.tempData.selectedImageList = null;
 	}
 
 	public float pre_x = 0;

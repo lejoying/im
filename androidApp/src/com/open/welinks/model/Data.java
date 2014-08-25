@@ -57,7 +57,7 @@ public class Data {
 			public ArrayList<ImageBean> prepareUploadImagesList = new ArrayList<ImageBean>();
 			public ArrayList<ImageBean> prepareDownloadImagesList = new ArrayList<ImageBean>();
 
-			public String currentSelectedGroup = null;
+			public String currentSelectedGroup = "";
 		}
 	}
 
@@ -182,10 +182,10 @@ public class Data {
 			public Map<String, ShareMessage> sharesMap = new HashMap<String, ShareMessage>();
 
 			public class ShareMessage {
-				public static final int MAXTYPE_COUNT = 3;
-				public static final int MESSAGE_TYPE_IMAGETEXT = 0x01;
-				public static final int MESSAGE_TYPE_VOICETEXT = 0x02;
-				public static final int MESSAGE_TYPE_VOTE = 0x03;
+				public int MAXTYPE_COUNT = 3;
+				public int MESSAGE_TYPE_IMAGETEXT = 0x01;
+				public int MESSAGE_TYPE_VOICETEXT = 0x02;
+				public int MESSAGE_TYPE_VOTE = 0x03;
 
 				public int mType;// MESSAGE_TYPE
 				public String gsid;
