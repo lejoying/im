@@ -128,7 +128,7 @@ public class FriendsSubView {
 			this.leftTopText.setOnTouchListener(mainView.thisController.onTouchListener);
 			// this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
-			this.gripView.setOnLongClickListener(mainView.thisController.onLongClickListener);
+			this.gripView.setOnLongClickListener(thisController.onLongClickListener);
 
 			itemWidth = mainView.displayMetrics.widthPixels - 20 * mainView.displayMetrics.density;
 			itemHeight = 260 * displayMetrics.density;

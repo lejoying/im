@@ -44,7 +44,7 @@ public class MainController {
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
 	public DownloadListener downloadListener;
-	public OnLongClickListener onLongClickListener;
+
 	public ListOnTouchListener listOnTouchListener;
 
 	public SquareSubController squareSubController;
@@ -122,14 +122,7 @@ public class MainController {
 	public void initializeListeners() {
 		friendsSubController.initializeListeners();
 
-		onLongClickListener = new OnLongClickListener() {
 
-			@Override
-			public boolean onLongClick(View view) {
-				thisView.friendsSubView.showCircleSettingDialog(view);
-				return true;
-			}
-		};
 		downloadListener = new DownloadListener() {
 
 			@Override
