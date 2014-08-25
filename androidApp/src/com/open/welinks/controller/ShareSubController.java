@@ -17,7 +17,6 @@ public class ShareSubController {
 		
 	}
 	public void bindEvent() {
-		// TODO Auto-generated method stub
 		
 	}
 

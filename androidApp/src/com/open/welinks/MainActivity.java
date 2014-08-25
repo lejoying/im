@@ -72,6 +72,8 @@ public class MainActivity extends Activity {
 		this.thisView.thisController = this.thisController;
 		this.thisController.thisView = this.thisView;
 
+		linkSubViewController();
+
 		viewManager.mainView = this.thisView;
 
 		thisController.initializeListeners();

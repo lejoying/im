@@ -12,8 +12,6 @@ public class MessagesSubController {
 		
 	}
 	public void bindEvent() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
