@@ -30,6 +30,8 @@ public class MeSubView {
 
 	public MainView mainView;
 
+	public MeSubView thisController;
+
 	public MeSubView(MainView mainView) {
 		this.mainView = mainView;
 	}

@@ -1,21 +1,17 @@
 package com.open.welinks.controller;
 
 import com.open.welinks.model.Data;
-import com.open.welinks.view.FriendsSubView;
+import com.open.welinks.view.MessagesSubView;
 
-public class FriendsSubController {
+public class MessagesSubController {
 
 	public Data data = Data.getInstance();
-
-	public FriendsSubView thisView;
-	public FriendsSubController thisController;
-
+	public String tag = "UserIntimateController";
+	public MessagesSubView thisView;
 	public void initializeListeners() {
-
+		
 	}
-
 	public void bindEvent() {
-
 	}
 
 }

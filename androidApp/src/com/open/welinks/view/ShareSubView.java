@@ -271,6 +271,8 @@ public class ShareSubView {
 	public RelativeLayout releaseVoiceTextButton;
 	public RelativeLayout releaseVoteButton;
 
+	public ShareSubView thisController;
+
 	@SuppressWarnings("deprecation")
 	public void initReleaseShareDialogView() {
 		releaseShareDialogView = mainView.mInflater.inflate(R.layout.share_release_type_dialog, null);

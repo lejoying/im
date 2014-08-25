@@ -56,6 +56,12 @@ public class MainController {
 	public OnLongClickListener onLongClickListener;
 	public ListOnTouchListener listOnTouchListener;
 
+	public SquareSubController squareSubController;
+	public ShareSubController shareSubController;
+	public MessagesSubController messagesSubController;
+	public FriendsSubController friendsSubController;
+	public MeSubController meSubController;
+
 	NetworkHandler mNetworkHandler = NetworkHandler.getInstance();
 	Handler handler = new Handler();
 	String url_userInfomation = "http://www.we-links.com/api2/account/getuserinfomation";
@@ -68,6 +74,7 @@ public class MainController {
 	// public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	// public Spring mScaleSpring = mSpringSystem.createSpring();
 	public ExampleSpringListener mSpringListener = new ExampleSpringListener();
+	private MainController thisController;
 
 	public void oncreate() {
 		String phone = thisActivity.getIntent().getStringExtra("phone");
@@ -120,10 +127,12 @@ public class MainController {
 	public MainController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
-
+		
+		thisController=this;
 	}
 
 	public void initializeListeners() {
+		friendsSubController.initializeListeners();
 		onTouchBackColorListener = new OnTouchListener() {
 
 			@Override
@@ -263,9 +272,17 @@ public class MainController {
 			}
 		};
 		listOnTouchListener = new ListOnTouchListener();
+
+		this.thisController.squareSubController.initializeListeners();
+		this.thisController.shareSubController.initializeListeners();
+		this.thisController.messagesSubController.initializeListeners();
+		this.thisController.friendsSubController.initializeListeners();
+		this.thisController.meSubController.initializeListeners();
 	}
 
 	public void bindEvent() {
+		friendsSubController.bindEvent();
+
 		thisView.friendsMenuView.setOnClickListener(mOnClickListener);
 		thisView.messagesMenuView.setOnClickListener(mOnClickListener);
 		thisView.meMenuView.setOnClickListener(mOnClickListener);
@@ -293,6 +310,12 @@ public class MainController {
 		// }
 
 		// thisView.me_setting_view.setOnClickListener(mOnClickListener);
+		
+		this.thisController.squareSubController.bindEvent();
+		this.thisController.shareSubController.bindEvent();
+		this.thisController.messagesSubController.bindEvent();
+		this.thisController.friendsSubController.bindEvent();
+		this.thisController.meSubController.bindEvent();
 	}
 
 	public class TouchStatus {
