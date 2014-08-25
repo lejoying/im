@@ -26,10 +26,12 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.welinks.R;
 import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
@@ -79,7 +81,7 @@ public class MainController {
 		thisView.messagesSubView.showMessages();
 
 		thisView.shareSubView.showShareMessages();
-		
+
 		this.getUserCurrentAllGroup();
 
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
@@ -243,6 +245,19 @@ public class MainController {
 				// }
 
 				else if (view.getTag() != null) {
+					String tagContent = (String) view.getTag();
+					int index = tagContent.lastIndexOf("#");
+					String type = tagContent.substring(0, index);
+					String content = tagContent.substring(index + 1);
+					if ("GroupDialogContentItem".equals(type)) {
+						data.localStatus.localData.currentSelectedGroup = content;
+						thisView.shareSubView.dismissGroupDialog();
+						Group group = data.relationship.groupsMap.get(content);
+						TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
+						shareTopMenuGroupName.setText(group.name);
+//						thisView.shareSubView.
+					}
+
 					Log.d(tag, (String) view.getTag());
 				}
 			}
