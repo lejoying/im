@@ -128,7 +128,7 @@ public class ListBody {
 		if (touchStatus.state == touchStatus.Up) {
 			touchStatus.state = touchStatus.Down;
 		} else {
-			Log.e(tag, "unkown status: not touchMoveStatus.Up");
+			// Log.e(tag, "unkown status: not touchMoveStatus.Up");
 		}
 		touch_pre_x = x;
 		touch_pre_y = y;
@@ -165,7 +165,7 @@ public class ListBody {
 		if (touchStatus.state == touchStatus.Horizontal) {
 		} else {
 
-			Log.e(tag, "unkown status: touchMoveStatus.Up");
+			// Log.e(tag, "unkown status: touchMoveStatus.Up");
 		}
 	}
 

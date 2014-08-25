@@ -26,7 +26,7 @@ public class MeSubView {
 	public ImageView mAppIconToNameView;
 	public View mRootView;
 
-	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(10, 2);
+	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(100, 4);
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	public Spring mMePageAppIconScaleSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
 

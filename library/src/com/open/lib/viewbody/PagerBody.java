@@ -137,7 +137,7 @@ public class PagerBody {
 		if (touchStatus.state == touchStatus.Up) {
 			touchStatus.state = touchStatus.Down;
 		} else {
-			Log.e(tag, "unkown status: not touchMoveStatus.Up");
+			// Log.e(tag, "unkown status: not touchMoveStatus.Up");
 		}
 		touch_pre_x = x;
 		touch_pre_y = y;
@@ -184,7 +184,7 @@ public class PagerBody {
 			this.setChildrenDeltaPosition(x - touch_pre_x, 0);
 		} else {
 			this.onTouchDown(event);
-			Log.e(tag, "unkown status: touchMoveStatus.Up");
+			// Log.e(tag, "unkown status: touchMoveStatus.Up");
 		}
 	}
 

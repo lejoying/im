@@ -115,7 +115,7 @@ public class FriendsSubView {
 
 		public TouchView cardView = null;
 		public TextView leftTopText = null;
-		public ImageView gripView = null;
+		public TouchView gripView = null;
 
 		int lineCount = 0;
 
@@ -123,12 +123,12 @@ public class FriendsSubView {
 
 			this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
-			this.gripView = (ImageView) this.cardView.findViewById(R.id.grip);
+			this.gripView = (TouchView) this.cardView.findViewById(R.id.grip);
 
-			this.leftTopText.setOnTouchListener(mainView.thisController.onTouchListener);
+			this.leftTopText.setOnTouchListener(thisController.onTouchListener);
 			// this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
-			this.gripView.setOnLongClickListener(thisController.onLongClickListener);
+			this.gripView.setOnTouchListener(thisController.onTouchListener);
 
 			itemWidth = mainView.displayMetrics.widthPixels - 20 * mainView.displayMetrics.density;
 			itemHeight = 260 * displayMetrics.density;
@@ -239,6 +239,7 @@ public class FriendsSubView {
 	public TextView cancleButton;
 	public TextView confirmButton;
 	public EditText inputEditView;
+	public TextView circleName;
 
 	public void showCircleSettingDialog(View view) {
 		currentStatus = SHOW_DIALOG;
@@ -263,6 +264,7 @@ public class FriendsSubView {
 
 		modifyCircleNameView = (TextView) circleDialogView.findViewById(R.id.modifyCircleName);
 		modifyCircleNameView.setOnClickListener(mainView.thisController.mOnClickListener);
+		circleName = (TextView) circleDialogView.findViewById(R.id.circleName);
 
 		cancleButton = (TextView) circleDialogView.findViewById(R.id.cancel);
 		confirmButton = (TextView) circleDialogView.findViewById(R.id.confirm);
@@ -270,6 +272,7 @@ public class FriendsSubView {
 		confirmButton.setOnClickListener(mainView.thisController.mOnClickListener);
 		inputEditView = (EditText) circleDialogView.findViewById(R.id.input);
 		Circle circle = (Circle) view.getTag();
+		circleName.setText(circle.name);
 		inputEditView.setText(circle.name);
 		inputEditView.setTag(view);
 		confirmButton.setTag(inputEditView);
