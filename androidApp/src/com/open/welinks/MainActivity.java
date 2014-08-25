@@ -16,9 +16,19 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.controller.MainController;
+import com.open.welinks.controller.MeSubController;
+import com.open.welinks.controller.MessagesSubController;
+import com.open.welinks.controller.ShareSubController;
+import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
+import com.open.welinks.view.MeSubView;
+import com.open.welinks.view.MessagesSubView;
+import com.open.welinks.view.ShareSubView;
+import com.open.welinks.view.SquareSubView;
 import com.open.welinks.view.ViewManage;
 
 public class MainActivity extends Activity {
@@ -68,6 +78,33 @@ public class MainActivity extends Activity {
 		thisView.initViews();
 		thisController.oncreate();
 		thisController.bindEvent();
+	}
+
+	void linkSubViewController() {
+
+		this.thisView.squareSubView = new SquareSubView(this.thisView);
+		this.thisView.shareSubView = new ShareSubView(this.thisView);
+		this.thisView.messagesSubView = new MessagesSubView(this.thisView);
+		this.thisView.friendsSubView = new FriendsSubView(this.thisView);
+		this.thisView.meSubView = new MeSubView(this.thisView);
+
+		this.thisController.squareSubController = new SquareSubController();
+		this.thisController.shareSubController = new ShareSubController();
+		this.thisController.messagesSubController = new MessagesSubController();
+		this.thisController.friendsSubController = new FriendsSubController();
+		this.thisController.meSubController = new MeSubController();
+
+		this.thisController.squareSubController.thisView = this.thisView.squareSubView;
+		this.thisController.shareSubController.thisView = this.thisView.shareSubView;
+		this.thisController.messagesSubController.thisView = this.thisView.messagesSubView;
+		this.thisController.friendsSubController.thisView = this.thisView.friendsSubView;
+		this.thisController.meSubController.thisView = this.thisView.meSubView;
+
+		this.thisView.squareSubView.thisController = this.thisController.squareSubController.thisView;
+		this.thisView.shareSubView.thisController = this.thisController.shareSubController.thisView;
+		this.thisView.messagesSubView.thisController = this.thisController.messagesSubController.thisView;
+		this.thisView.friendsSubView.thisController = this.thisController.friendsSubController.thisView;
+		this.thisView.meSubView.thisController = this.thisController.meSubController.thisView;
 	}
 
 	@Override

@@ -14,6 +14,8 @@ public class SquareSubView {
 	public DisplayMetrics displayMetrics;
 
 	public MainView mainView;
+
+	public SquareSubView thisController;
 	
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;

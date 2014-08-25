@@ -39,6 +39,8 @@ public class MessagesSubView {
 
 	public MainView mainView;
 
+	public MessagesSubView thisController;
+
 	public MessagesSubView(MainView mainView) {
 		this.mainView = mainView;
 

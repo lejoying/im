@@ -282,6 +282,8 @@ public class FriendsSubView {
 	float height;
 	float y0;
 
+	public FriendsSubView thisController;
+
 	private class DialogShowSpringListener extends SimpleSpringListener {
 		@Override
 		public void onSpringUpdate(Spring spring) {

@@ -164,16 +164,13 @@ public class MainView {
 		messages_friends_me_PagerBody.addChildView(meView);
 		messages_friends_me_PagerBody.inActive();
 
-		squareSubView = new SquareSubView(this);
-		squareSubView.initViews();
-		shareSubView = new ShareSubView(this);
-		shareSubView.initViews();
-		messagesSubView = new MessagesSubView(this);
-		messagesSubView.initViews();
-		friendsSubView = new FriendsSubView(this);
-		friendsSubView.initViews();
-		meSubView = new MeSubView(this);
-		meSubView.initViews();
+		
+		this.thisView.squareSubView.initViews();
+		this.thisView.shareSubView.initViews();
+		this.thisView.messagesSubView.initViews();
+		this.thisView.friendsSubView.initViews();
+		this.thisView.meSubView.initViews();
+
 
 	}
 
