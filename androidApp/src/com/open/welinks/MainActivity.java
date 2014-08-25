@@ -90,11 +90,11 @@ public class MainActivity extends Activity {
 		this.thisView.friendsSubView = new FriendsSubView(this.thisView);
 		this.thisView.meSubView = new MeSubView(this.thisView);
 
-		this.thisController.squareSubController = new SquareSubController();
-		this.thisController.shareSubController = new ShareSubController();
-		this.thisController.messagesSubController = new MessagesSubController();
-		this.thisController.friendsSubController = new FriendsSubController();
-		this.thisController.meSubController = new MeSubController();
+		this.thisController.squareSubController = new SquareSubController(this.thisController);
+		this.thisController.shareSubController = new ShareSubController(this.thisController);
+		this.thisController.messagesSubController = new MessagesSubController(this.thisController);
+		this.thisController.friendsSubController = new FriendsSubController(this.thisController);
+		this.thisController.meSubController = new MeSubController(this.thisController);
 
 		this.thisController.squareSubController.thisView = this.thisView.squareSubView;
 		this.thisController.shareSubController.thisView = this.thisView.shareSubView;

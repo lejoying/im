@@ -65,6 +65,8 @@ public class ShareSubView {
 
 	public RelativeLayout groupsDialogContent;
 
+	public ListBody groupListBody;
+
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
 	}
@@ -77,8 +79,6 @@ public class ShareSubView {
 
 		shareMessageListBody = new ListBody();
 		shareMessageListBody.initialize(displayMetrics, shareMessageView);
-
-		groupDialogView = mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
 
 		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
@@ -282,31 +282,32 @@ public class ShareSubView {
 		releaseVoiceTextButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoiceTextShareButton);
 		releaseVoteButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoteShareButton);
 
-		releaseImageTextButton.setOnClickListener(mainView.thisController.mOnClickListener);
-		releaseImageTextButton.setOnTouchListener(mainView.thisController.onTouchBackColorListener);
-		dialogMainContentView.setOnClickListener(mainView.thisController.mOnClickListener);
-		releaseShareDialogView.setOnClickListener(mainView.thisController.mOnClickListener);
-		// releaseVoiceTextButton.setOnClickListener(mainView.thisController.mOnClickListener);
-		// releaseVoteButton.setOnClickListener(mainView.thisController.mOnClickListener);
+		releaseImageTextButton.setOnClickListener(thisController.mOnClickListener);
+		releaseImageTextButton.setOnTouchListener(thisController.onTouchBackColorListener);
+		dialogMainContentView.setOnClickListener(thisController.mOnClickListener);
+		releaseShareDialogView.setOnClickListener(thisController.mOnClickListener);
+		// releaseVoiceTextButton.setOnClickListener(thisController.mOnClickListener);
+		// releaseVoteButton.setOnClickListener(thisController.mOnClickListener);
 
 		releaseSharePopWindow = new PopupWindow(releaseShareDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		releaseSharePopWindow.setBackgroundDrawable(new BitmapDrawable());
 	}
 
 	public void showReleaseShareDialogView() {
-		if (releaseSharePopWindow != null) {
+		if (releaseSharePopWindow != null && !releaseSharePopWindow.isShowing()) {
 			releaseSharePopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
 		}
 	}
 
 	public void dismissReleaseShareDialogView() {
-		if (releaseSharePopWindow != null) {
+		if (releaseSharePopWindow != null && releaseSharePopWindow.isShowing()) {
 			releaseSharePopWindow.dismiss();
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	public void initializationGroupsDialog() {
+		groupDialogView = mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
 		groupPopWindow = new PopupWindow(groupDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		RelativeLayout mainContentView = (RelativeLayout) groupDialogView.findViewById(R.id.mainContent);
@@ -317,16 +318,19 @@ public class ShareSubView {
 		mainContentParams.leftMargin = (int) (20 / displayMetrics.density + 0.5f);
 		mainContentParams.rightMargin = (int) (20 / displayMetrics.density + 0.5f);
 		mainContentView.setLayoutParams(mainContentParams);
+		groupListBody = new ListBody();
+		groupListBody.initialize(displayMetrics, groupsDialogContent);
 		setGroupsDialogContent();
+		groupsDialogContent.setOnClickListener(thisController.mOnClickListener);
 	}
 
 	public void showGroupsDialog() {
-		if (groupPopWindow != null)
+		if (groupPopWindow != null && !groupPopWindow.isShowing())
 			groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
 	}
 
 	public void dismissGroupDialog() {
-		if (groupPopWindow != null)
+		if (groupPopWindow != null && groupPopWindow.isShowing())
 			groupPopWindow.dismiss();
 	}
 
@@ -334,36 +338,66 @@ public class ShareSubView {
 		List<String> groups = data.relationship.groups;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
 		groupsDialogContent.removeAllViews();
+		groupListBody.listItemsSequence.clear();
 		for (int i = 0; i < groups.size(); i++) {
-			GroupDialogItem groupDialogItem = new GroupDialogItem();
+			GroupDialogItem groupDialogItem = new GroupDialogItem(this.groupListBody);
 			View view = groupDialogItem.initialize();
-			groupDialogItem.setContent(groupsMap.get(groups.get(i)));
+			Group group = groupsMap.get(groups.get(i));
+			groupDialogItem.setContent(group);
+
+			groupListBody.listItemsSequence.add("group#" + group.gid + "_" + group.name);
+			groupListBody.listItemBodiesMap.put("group#" + group.gid + "_" + group.name, groupDialogItem);
+
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (60 * displayMetrics.density));
-			layoutParams.topMargin = (int) (60 * displayMetrics.density * i);
-			groupsDialogContent.addView(view, layoutParams);
+			groupDialogItem.y = (60 * displayMetrics.density * i);
+			groupDialogItem.cardView.setY(groupDialogItem.y);
+			groupDialogItem.cardView.setX(0);
+			this.groupListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
+			this.groupListBody.containerView.addView(groupDialogItem.cardView, layoutParams);
+
+			// onclick
+			view.setTag("GroupDialogContentItem#" + group.gid);
+			view.setTag(R.id.shareTopMenuGroupName, shareTopMenuGroupName);
+			view.setOnClickListener(thisController.mOnClickListener);
 		}
 	}
 
-	public class GroupDialogItem {
+	public class GroupDialogItem extends MyListItemBody {
+		GroupDialogItem(ListBody listBody) {
+			listBody.super();
+		}
 
 		public View cardView;
 
 		public ImageView groupIconView;
 		public TextView groupNameView;
+		public ImageView groupSelectedStatusView;
+
+		public Group group;
 
 		public View initialize() {
 			this.cardView = mainView.mInflater.inflate(R.layout.share_group_select_dialog_item, null);
 			this.groupIconView = (ImageView) this.cardView.findViewById(R.id.groupIcon);
 			this.groupNameView = (TextView) this.cardView.findViewById(R.id.groupName);
+			this.groupSelectedStatusView = (ImageView) this.cardView.findViewById(R.id.groupSelectedStatus);
 			return cardView;
 		}
 
 		public void setContent(Group group) {
+			this.group = group;
 			Resources resources = mainView.thisActivity.getResources();
 			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			this.groupIconView.setImageBitmap(bitmap);
 			this.groupNameView.setText(group.name);
+		}
+
+		public void setViewLayout() {
+			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
+				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
+			} else {
+				this.groupSelectedStatusView.setVisibility(View.GONE);
+			}
 		}
 	}
 
