@@ -87,6 +87,8 @@ public class UploadMultipart {
 	public byte[] bytes;
 	public String fileName = "";
 
+	public static String OSS_DIRECTORY = "multipart/";
+
 	public int addExpires = 600;
 	public int partSize = 256000;
 	public int partCount = 0;
@@ -107,13 +109,22 @@ public class UploadMultipart {
 		this.contentType = contentType;
 	}
 
-	public void startUpload() {
-		instance = this;
-		initiateMultipartupload();
+	public UploadMultipart(String path, String fileName, byte[] bytes) {
+		this.path = path;
+		this.fileName = OSS_DIRECTORY + fileName;
+		this.bytes = bytes;
 	}
 
-	public void initiateMultipartupload() {
-		isUploadStatus = UPLOAD_INIT;
+	public void startUpload() {
+		instance = this;
+		if (!"".equals(fileName)) {
+			initiateMultipartupload();
+		} else {
+			initiateMultipartUploadParams();
+		}
+	}
+
+	public void initiateMultipartUploadParams() {
 		SHA1 sha1 = new SHA1();
 		String sha1FileName = "";
 		String suffixName = path.substring(path.lastIndexOf("."));
@@ -123,8 +134,6 @@ public class UploadMultipart {
 		} else if (suffixName.equals(".png")) {
 			suffixName = ".osp";
 		}
-
-		long expires = (new Date().getTime() / 1000) + addExpires;
 
 		File file = new File(path);
 
@@ -142,8 +151,12 @@ public class UploadMultipart {
 			return;
 		}
 
-		this.fileName = "mutilpart/" + sha1FileName + suffixName;
+		this.fileName = OSS_DIRECTORY + sha1FileName + suffixName;
+	}
 
+	public void initiateMultipartupload() {
+		isUploadStatus = UPLOAD_INIT;
+		long expires = (new Date().getTime() / 1000) + addExpires;
 		String postContent = "POST\n\n\n" + expires + "\n/" + BUCKETNAME + "/" + fileName + "?uploads";
 		String signature = "";
 		try {

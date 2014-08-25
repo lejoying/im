@@ -61,6 +61,15 @@ public class Data {
 		}
 	}
 
+	public class ShareContent {
+		public List<ShareContentItem> shareContentItems = new ArrayList<ShareContentItem>();
+
+		public class ShareContentItem {
+			public String type;// text image
+			public String detail;
+		}
+	}
+
 	public UserInformation userInformation;
 	public Relationship relationship;
 	public Messages messages;
@@ -207,15 +216,6 @@ public class Data {
 				public String contentType;// "text"
 				public String content;
 				public long time;
-			}
-
-			public class ShareContent {
-				public List<ShareContentItem> shareContentItems = new ArrayList<ShareContentItem>();
-
-				public class ShareContentItem {
-					public String type;// text image
-					public String detail;
-				}
 			}
 		}
 	}

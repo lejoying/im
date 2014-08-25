@@ -32,10 +32,10 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.ShareContent;
+import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
-import com.open.welinks.model.Data.Shares.Share.ShareContent;
-import com.open.welinks.model.Data.Shares.Share.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -105,6 +105,7 @@ public class ShareSubView {
 	public void showShareMessages() {
 		this.shareMessageListBody.listItemsSequence.clear();
 		this.shareMessageListBody.containerView.removeAllViews();
+		this.shareMessageListBody.height = 0;
 		SharesMessageBody sharesMessageBody0 = null;
 		sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
 		sharesMessageBody0.initialize(-1);
@@ -130,20 +131,26 @@ public class ShareSubView {
 			SharesMessageBody sharesMessageBody = null;
 
 			String keyName = "message#" + shareMessage.phone + "_" + shareMessage.time;
+			boolean isExists = false;
 			if (this.shareMessageListBody.listItemBodiesMap.get(keyName) != null) {
 				sharesMessageBody = (SharesMessageBody) this.shareMessageListBody.listItemBodiesMap.get(keyName);
+				isExists = true;
 			} else {
 				sharesMessageBody = new SharesMessageBody(this.shareMessageListBody);
 				sharesMessageBody.initialize(i);
-				this.shareMessageListBody.listItemsSequence.add(keyName);
 				this.shareMessageListBody.listItemBodiesMap.put(keyName, sharesMessageBody);
 			}
+			this.shareMessageListBody.listItemsSequence.add(keyName);
 			sharesMessageBody.setContent(shareMessage);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (340 * displayMetrics.density));
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
 			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
+			// Why the object cache access to cheap 10dp view position
+			if (isExists) {
+				sharesMessageBody.cardView.setX(10 * displayMetrics.density);
+			}
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 		}
@@ -230,7 +237,7 @@ public class ShareSubView {
 
 				this.shareTextContentView.setText(textContent);
 				File sdFile = Environment.getExternalStorageDirectory();
-				File file = new File(sdFile, "wxgs/" + imageContent);
+				File file = new File(sdFile, "welinks/images/" + imageContent);
 				int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
 				int showImageHeight = (int) (displayMetrics.density * 200 + 0.5f);
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
@@ -260,6 +267,7 @@ public class ShareSubView {
 					downloadFile = new DownloadFile(url, path);
 					downloadFile.view = shareImageContentView;
 					downloadFileList.addDownloadFile(downloadFile);
+					// TODO CallBack
 				}
 
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
@@ -371,9 +379,9 @@ public class ShareSubView {
 			} else {
 				groupDialogItem = new GroupDialogItem(this.groupListBody);
 				view = groupDialogItem.initialize();
-				groupListBody.listItemsSequence.add(key);
 				groupListBody.listItemBodiesMap.put(key, groupDialogItem);
 			}
+			groupListBody.listItemsSequence.add(key);
 			groupDialogItem.setContent(group);
 			groupDialogItem.setViewLayout();
 
