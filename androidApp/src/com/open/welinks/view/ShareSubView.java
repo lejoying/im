@@ -29,6 +29,7 @@ import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
+import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
@@ -271,7 +272,7 @@ public class ShareSubView {
 	public RelativeLayout releaseVoiceTextButton;
 	public RelativeLayout releaseVoteButton;
 
-	public ShareSubView thisController;
+	public ShareSubController thisController;
 
 	@SuppressWarnings("deprecation")
 	public void initReleaseShareDialogView() {
@@ -281,12 +282,12 @@ public class ShareSubView {
 		releaseVoiceTextButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoiceTextShareButton);
 		releaseVoteButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoteShareButton);
 
-		releaseImageTextButton.setOnClickListener(mainView.thisController.mOnClickListener);
-		releaseImageTextButton.setOnTouchListener(mainView.thisController.onTouchBackColorListener);
-		dialogMainContentView.setOnClickListener(mainView.thisController.mOnClickListener);
-		releaseShareDialogView.setOnClickListener(mainView.thisController.mOnClickListener);
-		// releaseVoiceTextButton.setOnClickListener(mainView.thisController.mOnClickListener);
-		// releaseVoteButton.setOnClickListener(mainView.thisController.mOnClickListener);
+		releaseImageTextButton.setOnClickListener(thisController.mOnClickListener);
+		releaseImageTextButton.setOnTouchListener(thisController.onTouchBackColorListener);
+		dialogMainContentView.setOnClickListener(thisController.mOnClickListener);
+		releaseShareDialogView.setOnClickListener(thisController.mOnClickListener);
+		// releaseVoiceTextButton.setOnClickListener(thisController.mOnClickListener);
+		// releaseVoteButton.setOnClickListener(thisController.mOnClickListener);
 
 		releaseSharePopWindow = new PopupWindow(releaseShareDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		releaseSharePopWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -320,7 +321,7 @@ public class ShareSubView {
 		groupListBody = new ListBody();
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
 		setGroupsDialogContent();
-		groupsDialogContent.setOnClickListener(mainView.thisController.mOnClickListener);
+		groupsDialogContent.setOnClickListener(thisController.mOnClickListener);
 	}
 
 	public void showGroupsDialog() {
@@ -357,7 +358,7 @@ public class ShareSubView {
 			// onclick
 			view.setTag("GroupDialogContentItem#" + group.gid);
 			view.setTag(R.id.shareTopMenuGroupName, shareTopMenuGroupName);
-			view.setOnClickListener(mainView.thisController.mOnClickListener);
+			view.setOnClickListener(thisController.mOnClickListener);
 		}
 	}
 

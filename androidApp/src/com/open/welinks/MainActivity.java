@@ -90,11 +90,11 @@ public class MainActivity extends Activity {
 		this.thisView.friendsSubView = new FriendsSubView(this.thisView);
 		this.thisView.meSubView = new MeSubView(this.thisView);
 
-		this.thisController.squareSubController = new SquareSubController();
-		this.thisController.shareSubController = new ShareSubController();
-		this.thisController.messagesSubController = new MessagesSubController();
-		this.thisController.friendsSubController = new FriendsSubController();
-		this.thisController.meSubController = new MeSubController();
+		this.thisController.squareSubController = new SquareSubController(this.thisController);
+		this.thisController.shareSubController = new ShareSubController(this.thisController);
+		this.thisController.messagesSubController = new MessagesSubController(this.thisController);
+		this.thisController.friendsSubController = new FriendsSubController(this.thisController);
+		this.thisController.meSubController = new MeSubController(this.thisController);
 
 		this.thisController.squareSubController.thisView = this.thisView.squareSubView;
 		this.thisController.shareSubController.thisView = this.thisView.shareSubView;
@@ -102,11 +102,11 @@ public class MainActivity extends Activity {
 		this.thisController.friendsSubController.thisView = this.thisView.friendsSubView;
 		this.thisController.meSubController.thisView = this.thisView.meSubView;
 
-		this.thisView.squareSubView.thisController = this.thisController.squareSubController.thisView;
-		this.thisView.shareSubView.thisController = this.thisController.shareSubController.thisView;
-		this.thisView.messagesSubView.thisController = this.thisController.messagesSubController.thisView;
-		this.thisView.friendsSubView.thisController = this.thisController.friendsSubController.thisView;
-		this.thisView.meSubView.thisController = this.thisController.meSubController.thisView;
+		this.thisView.squareSubView.thisController = this.thisController.squareSubController;
+		this.thisView.shareSubView.thisController = this.thisController.shareSubController;
+		this.thisView.messagesSubView.thisController = this.thisController.messagesSubController;
+		this.thisView.friendsSubView.thisController = this.thisController.friendsSubController;
+		this.thisView.meSubView.thisController = this.thisController.meSubController;
 	}
 
 	@Override

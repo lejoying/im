@@ -2,8 +2,6 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -25,13 +23,9 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.open.welinks.R;
-import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
-import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
@@ -44,14 +38,11 @@ public class MainController {
 	public Context context;
 	public Activity thisActivity;
 
-	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-
 	public GestureDetector mGesture;
 	public GestureDetector mListGesture;
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
-	public OnTouchListener onTouchBackColorListener;
 	public DownloadListener downloadListener;
 	public OnLongClickListener onLongClickListener;
 	public ListOnTouchListener listOnTouchListener;
@@ -88,9 +79,6 @@ public class MainController {
 		thisView.messagesSubView.showMessages();
 
 		thisView.shareSubView.showShareMessages();
-
-		this.getUserCurrentAllGroup();
-
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 	}
 
@@ -127,27 +115,13 @@ public class MainController {
 	public MainController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
-		
-		thisController=this;
+
+		thisController = this;
 	}
 
 	public void initializeListeners() {
 		friendsSubController.initializeListeners();
-		onTouchBackColorListener = new OnTouchListener() {
 
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-				if (view == thisView.shareSubView.releaseImageTextButton) {
-					int motionEvent = event.getAction();
-					if (motionEvent == MotionEvent.ACTION_DOWN) {
-						view.setBackgroundColor(Color.argb(143, 0, 0, 0));
-					} else if (motionEvent == MotionEvent.ACTION_UP) {
-						view.setBackgroundColor(Color.parseColor("#00000000"));
-					}
-				}
-				return false;
-			}
-		};
 		onLongClickListener = new OnLongClickListener() {
 
 			@Override
@@ -206,12 +180,6 @@ public class MainController {
 					thisView.mainPagerBody.flipTo(2);
 				}
 
-				else if (view.equals(thisView.shareSubView.shareTopMenuGroupNameParent)) {
-					thisView.shareSubView.showGroupsDialog();
-				} else if (view.equals(thisView.shareSubView.groupDialogView)) {
-					thisView.shareSubView.dismissGroupDialog();
-				}
-
 				else if (view.equals(thisView.friendsSubView.modifyCircleNameView)) {
 					if (thisView.friendsSubView.currentStatus == thisView.friendsSubView.SHOW_DIALOG) {
 						thisView.friendsSubView.dialogSpring.removeListener(thisView.friendsSubView.dialogSpringListener);
@@ -238,34 +206,9 @@ public class MainController {
 					thisView.friendsSubView.dismissCircleSettingDialog();
 					Circle circle = (Circle) circleNameView.getTag();
 					circle.name = inputContent;
-				} else if (view.equals(thisView.shareSubView.releaseShareView)) {
-					thisView.shareSubView.showReleaseShareDialogView();
-				} else if (view.equals(thisView.shareSubView.releaseShareDialogView)) {
-					thisView.shareSubView.dismissReleaseShareDialogView();
-				} else if (view.equals(thisView.shareSubView.releaseImageTextButton)) {
-					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
-					thisActivity.startActivity(intent);
-					thisView.shareSubView.dismissReleaseShareDialogView();
 				}
-				// else if (view.equals(thisView.meSubView.me_setting_view)) {
-				// Intent intent = new Intent(thisActivity,
-				// SettingActivity.class);
-				// thisActivity.startActivity(intent);
-				// }
 
 				else if (view.getTag() != null) {
-					String tagContent = (String) view.getTag();
-					int index = tagContent.lastIndexOf("#");
-					String type = tagContent.substring(0, index);
-					String content = tagContent.substring(index + 1);
-					if ("GroupDialogContentItem".equals(type)) {
-						data.localStatus.localData.currentSelectedGroup = content;
-						thisView.shareSubView.dismissGroupDialog();
-						Group group = data.relationship.groupsMap.get(content);
-						TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
-						shareTopMenuGroupName.setText(group.name);
-//						thisView.shareSubView.
-					}
 
 					Log.d(tag, (String) view.getTag());
 				}
@@ -293,9 +236,6 @@ public class MainController {
 
 		thisView.meSubView.mRootView.setOnTouchListener(onTouchListener);
 
-		thisView.shareSubView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
-		thisView.shareSubView.groupDialogView.setOnClickListener(mOnClickListener);
-
 		// thisView.friendsSubView.friendsView.setOnTouchListener(listOnTouchListener);
 
 		// List<String> listItemsSqquece =
@@ -310,7 +250,7 @@ public class MainController {
 		// }
 
 		// thisView.me_setting_view.setOnClickListener(mOnClickListener);
-		
+
 		this.thisController.squareSubController.bindEvent();
 		this.thisController.shareSubController.bindEvent();
 		this.thisController.messagesSubController.bindEvent();
@@ -408,14 +348,5 @@ public class MainController {
 				Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 			}
 		});
-	}
-
-	public void getUserCurrentAllGroup() {
-		RequestParams params = new RequestParams();
-		HttpUtils httpUtils = new HttpUtils();
-		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", "lejoying");
-
-		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/group/getgroupmembers", params, responseHandlers.getGroupMembers);
 	}
 }

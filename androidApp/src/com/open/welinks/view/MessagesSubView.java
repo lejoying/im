@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
+import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.utils.DateUtil;
@@ -39,7 +40,7 @@ public class MessagesSubView {
 
 	public MainView mainView;
 
-	public MessagesSubView thisController;
+	public MessagesSubController thisController;
 
 	public MessagesSubView(MainView mainView) {
 		this.mainView = mainView;
