@@ -102,11 +102,11 @@ public class MainActivity extends Activity {
 		this.thisController.friendsSubController.thisView = this.thisView.friendsSubView;
 		this.thisController.meSubController.thisView = this.thisView.meSubView;
 
-		this.thisView.squareSubView.thisController = this.thisController.squareSubController.thisView;
-		this.thisView.shareSubView.thisController = this.thisController.shareSubController.thisView;
-		this.thisView.messagesSubView.thisController = this.thisController.messagesSubController.thisView;
-		this.thisView.friendsSubView.thisController = this.thisController.friendsSubController.thisView;
-		this.thisView.meSubView.thisController = this.thisController.meSubController.thisView;
+		this.thisView.squareSubView.thisController = this.thisController.squareSubController;
+		this.thisView.shareSubView.thisController = this.thisController.shareSubController;
+		this.thisView.messagesSubView.thisController = this.thisController.messagesSubController;
+		this.thisView.friendsSubView.thisController = this.thisController.friendsSubController;
+		this.thisView.meSubView.thisController = this.thisController.meSubController;
 	}
 
 	@Override

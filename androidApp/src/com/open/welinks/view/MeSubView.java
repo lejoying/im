@@ -9,6 +9,7 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.open.welinks.R;
+import com.open.welinks.controller.MeSubController;
 import com.open.welinks.model.Data;
 
 public class MeSubView {
@@ -30,7 +31,7 @@ public class MeSubView {
 
 	public MainView mainView;
 
-	public MeSubView thisController;
+	public MeSubController thisController;
 
 	public MeSubView(MainView mainView) {
 		this.mainView = mainView;

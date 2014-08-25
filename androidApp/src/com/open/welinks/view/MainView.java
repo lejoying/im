@@ -8,6 +8,7 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -190,6 +191,7 @@ public class MainView {
 
 		@Override
 		public void onFlipping(String bodyTag, float variable) {
+			main_container.playSoundEffect(SoundEffectConstants.CLICK);
 			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				if (variable == 0) {
 				} else if (variable == 1) {
@@ -215,6 +217,7 @@ public class MainView {
 
 		@Override
 		public void onFixed(String bodyTag, float variable) {
+			
 			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;

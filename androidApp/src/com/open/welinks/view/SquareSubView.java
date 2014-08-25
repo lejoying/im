@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import android.util.DisplayMetrics;
 
+import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 
 public class SquareSubView {
@@ -15,7 +16,7 @@ public class SquareSubView {
 
 	public MainView mainView;
 
-	public SquareSubView thisController;
+	public SquareSubController thisController;
 	
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;

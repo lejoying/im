@@ -51,7 +51,7 @@ public class MainController {
 	public OnTouchListener onTouchListener;
 	public OnTouchListener onTouchBackColorListener;
 	public DownloadListener downloadListener;
-	public OnLongClickListener onLongClickListener;
+
 	public ListOnTouchListener listOnTouchListener;
 
 	public SquareSubController squareSubController;
@@ -146,14 +146,7 @@ public class MainController {
 				return false;
 			}
 		};
-		onLongClickListener = new OnLongClickListener() {
 
-			@Override
-			public boolean onLongClick(View view) {
-				thisView.friendsSubView.showCircleSettingDialog(view);
-				return true;
-			}
-		};
 		downloadListener = new DownloadListener() {
 
 			@Override

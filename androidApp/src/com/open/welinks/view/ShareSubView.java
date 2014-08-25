@@ -29,6 +29,7 @@ import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
+import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
@@ -271,7 +272,7 @@ public class ShareSubView {
 	public RelativeLayout releaseVoiceTextButton;
 	public RelativeLayout releaseVoteButton;
 
-	public ShareSubView thisController;
+	public ShareSubController thisController;
 
 	@SuppressWarnings("deprecation")
 	public void initReleaseShareDialogView() {

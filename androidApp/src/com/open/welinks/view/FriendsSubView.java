@@ -31,6 +31,7 @@ import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
+import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -127,7 +128,7 @@ public class FriendsSubView {
 			this.leftTopText.setOnTouchListener(mainView.thisController.onTouchListener);
 			// this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
-			this.gripView.setOnLongClickListener(mainView.thisController.onLongClickListener);
+			this.gripView.setOnLongClickListener(thisController.onLongClickListener);
 
 			itemWidth = mainView.displayMetrics.widthPixels - 20 * mainView.displayMetrics.density;
 			itemHeight = 260 * displayMetrics.density;
@@ -282,7 +283,7 @@ public class FriendsSubView {
 	float height;
 	float y0;
 
-	public FriendsSubView thisController;
+	public FriendsSubController thisController;
 
 	private class DialogShowSpringListener extends SimpleSpringListener {
 		@Override
