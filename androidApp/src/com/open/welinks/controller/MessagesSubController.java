@@ -9,13 +9,21 @@ import com.open.welinks.view.MessagesSubView;
 public class MessagesSubController {
 
 	public Data data = Data.getInstance();
-	public String tag = "UserIntimateController";
+	public String tag = "MessagesSubController";
 	public MessagesSubView thisView;
 	public MessagesSubController thisconController;
 
 	public OnClickListener mOnClickListener;
 
+
+	public MainController mainController;
+
+	public MessagesSubController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
 	public void initializeListeners() {
+
 		mOnClickListener = new OnClickListener() {
 
 			@Override

@@ -11,11 +11,18 @@ public class FriendsSubController {
 	public String tag = "UserIntimateController";
 
 	public Data data = Data.getInstance();
+	public String tag = "FriendsSubController";
 
 	public FriendsSubView thisView;
 	public FriendsSubController thisController;
 
 	public OnClickListener mOnClickListener;
+
+	public MainController mainController;
+
+	public FriendsSubController(MainController mainController) {
+		this.mainController = mainController;
+	}
 
 	public void initializeListeners() {
 		mOnClickListener = new OnClickListener() {

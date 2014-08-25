@@ -6,13 +6,21 @@ import com.open.welinks.view.SquareSubView;
 public class SquareSubController {
 
 	public Data data = Data.getInstance();
-	public String tag = "UserIntimateController";
+	public String tag = "SquareSubController";
 	public SquareSubView thisView;
-	public void initializeListeners() {
-		
+
+	public MainController mainController;
+
+	public SquareSubController(MainController mainController) {
+		this.mainController = mainController;
 	}
+
+	public void initializeListeners() {
+
+	}
+
 	public void bindEvent() {
-		
+
 	}
 
 }

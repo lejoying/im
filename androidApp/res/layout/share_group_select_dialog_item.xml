@@ -39,7 +39,7 @@
     </RelativeLayout>
 
     <ImageView
-        android:id="@+id/group_selected_status"
+        android:id="@+id/groupSelectedStatus"
         android:layout_width="15dp"
         android:layout_height="10dp"
         android:layout_centerHorizontal="true"
