@@ -118,7 +118,6 @@ public class MainController {
 	}
 
 	public void initializeListeners() {
-		friendsSubController.initializeListeners();
 
 		downloadListener = new DownloadListener() {
 
@@ -199,7 +198,6 @@ public class MainController {
 	}
 
 	public void bindEvent() {
-		friendsSubController.bindEvent();
 
 		thisView.friendsMenuView.setOnClickListener(mOnClickListener);
 		thisView.messagesMenuView.setOnClickListener(mOnClickListener);

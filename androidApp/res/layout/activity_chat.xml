@@ -55,13 +55,18 @@
             android:src="@drawable/chat_group_menu" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <ListView
         android:id="@+id/chat_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="70dp"
-        android:layout_marginTop="50dp" >
-    </RelativeLayout>
+        android:layout_marginTop="50dp"
+        android:cacheColorHint="#0000"
+        android:divider="#0000"
+        android:dividerHeight="20dp"
+        android:fadingEdge="none"
+        android:listSelector="#0000" >
+    </ListView>
 
     <RelativeLayout
         android:id="@+id/chat_bottom_bar"

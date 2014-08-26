@@ -39,7 +39,7 @@
                 android:textSize="16sp" />
 
             <RelativeLayout
-                android:id="@+id/ll_voice"
+                android:id="@+id/voice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
