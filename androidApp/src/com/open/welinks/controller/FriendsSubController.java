@@ -1,5 +1,4 @@
 package com.open.welinks.controller;
-package com.open.welinks.controller;
 
 import android.app.Service;
 import android.os.Vibrator;
