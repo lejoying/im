@@ -43,7 +43,6 @@ public class FriendsSubController {
 
 			@Override
 			public void onClick(View view) {
-				Log.d(tag, "onclick");
 				Friend friend = null;
 				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
 					Intent intent = new Intent(thisView.mainView.thisActivity,
