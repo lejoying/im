@@ -165,13 +165,11 @@ public class MainView {
 		messages_friends_me_PagerBody.addChildView(meView);
 		messages_friends_me_PagerBody.inActive();
 
-		
 		this.thisView.squareSubView.initViews();
 		this.thisView.shareSubView.initViews();
 		this.thisView.messagesSubView.initViews();
 		this.thisView.friendsSubView.initViews();
 		this.thisView.meSubView.initViews();
-
 
 	}
 
@@ -208,6 +206,7 @@ public class MainView {
 						Log.d(tag, "bodyTag onFliping:" + variable + "  lastOnFlipingIndex: " + lastOnFlipingIndex);
 						thisView.messages_friends_me_PagerBody.active();
 						thisView.mainPagerBody.inActive();
+						thisView.activityStatus.state = thisView.activityStatus.subState;
 					}
 					lastOnFlipingIndex = -1;
 				}
@@ -217,7 +216,7 @@ public class MainView {
 
 		@Override
 		public void onFixed(String bodyTag, float variable) {
-			
+
 			if (bodyTag.equals("messages_friends_me_PagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
@@ -249,6 +248,7 @@ public class MainView {
 
 				}
 			}
+			Log.i(bodyTag, "thisView.activityStatus.state: " + thisView.activityStatus.state);
 		}
 
 		@Override
