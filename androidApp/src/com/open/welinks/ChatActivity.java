@@ -6,10 +6,11 @@ import com.open.welinks.view.ChatView;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
-import android.view.Menu;
 import android.view.MotionEvent;
 
 public class ChatActivity extends Activity {
+
+	public String tag = "ChatActivity";
 
 	public ChatView chatView;
 	public ChatController chatController;
@@ -19,7 +20,6 @@ public class ChatActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_chat);
 		linkViewController();
 	}
 
@@ -33,16 +33,9 @@ public class ChatActivity extends Activity {
 		chatController.thisView = chatView;
 
 		chatView.initViews();
-		chatController.initializeListeners();
 		chatController.bindEvent();
+		chatController.initializeListeners();
 
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.chat, menu);
-		return true;
 	}
 
 	@Override

@@ -4,10 +4,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
@@ -22,6 +21,7 @@ public class FriendsSubController {
 
 	public FriendsSubView thisView;
 	public FriendsSubController thisController;
+	public OnClickListener mOnClickListener;
 	public MainController mainController;
 
 	public OnLongClickListener onLongClickListener;

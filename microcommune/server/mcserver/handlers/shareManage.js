@@ -12,6 +12,7 @@ shareManage.sendshare = function (data, response) {
     var phone = data.phone;
     var messageStr = data.message;
     var gid = data.gid;
+    var ogsid = data.ogsid;
     var message;
     var arr = [phone, messageStr, gid];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
@@ -137,7 +138,9 @@ shareManage.sendshare = function (data, response) {
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享成功",
                     time: shareData.time,
-                    gsid: shareData.gsid
+                    ogsid: ogsid,
+                    gsid: shareData.gsid,
+                    gid: gid
                 }));
                 response.end();
             }

@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 public class ChatView {
 
+	public String tag = "ChatView";
+
 	public DisplayMetrics displayMetrics;
 	public LayoutInflater mInflater;
 

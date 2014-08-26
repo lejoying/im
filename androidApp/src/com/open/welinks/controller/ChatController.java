@@ -12,6 +12,8 @@ import com.open.welinks.view.ChatView;
 
 public class ChatController {
 
+	public String tag = "ChatController";
+	
 	public ChatController thisController;
 	public Activity thisActivity;
 	public Context context;

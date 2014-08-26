@@ -1266,7 +1266,7 @@ api = {
             url: "/api2/share/sendshare"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", message: {type: "imagetext" || "voicetext" || "vote", content: JSON.stringify([
+            typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", ogsid: "XXX", message: {type: "imagetext" || "voicetext" || "vote", content: JSON.stringify([
                 {type: "text" || "image" || "voice", detail: "XXX"},
                 {},
                 {}
@@ -1275,7 +1275,7 @@ api = {
             ]})}}
         },
         response: {
-            success: {"提示信息": "发布群分享成功", time: "XXX"},
+            success: {"提示信息": "发布群分享成功", time: "XXX", gid: "NNN", gsid: "XXX", ogsid: "XXX"},
             failed: { "提示信息": "发布群分享失败", "失败原因": "数据异常" }
         }
     },

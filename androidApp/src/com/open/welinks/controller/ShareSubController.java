@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,9 +18,10 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.R;
 import com.open.welinks.ShareReleaseImageTextActivity;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.ShareSubView;
 
 public class ShareSubController {
@@ -34,12 +38,23 @@ public class ShareSubController {
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchBackColorListener;
+	public OnTouchListener mOnTouchListener;
 
 	public ShareSubController(MainController mainController) {
 		this.mainController = mainController;
+
+		mGesture = new GestureDetector(thisActivity, new GestureListener());
 	}
 
 	public void initializeListeners() {
+		mOnTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				// return onTouchEvent(event);
+				return true;
+			}
+		};
 		mOnClickListener = new OnClickListener() {
 
 			@Override
@@ -53,8 +68,8 @@ public class ShareSubController {
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseImageTextButton)) {
-					Intent intent = new Intent(thisActivity, ShareReleaseImageTextActivity.class);
-					thisActivity.startActivity(intent);
+					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
@@ -62,12 +77,14 @@ public class ShareSubController {
 					String type = tagContent.substring(0, index);
 					String content = tagContent.substring(index + 1);
 					if ("GroupDialogContentItem".equals(type)) {
+						// modify data
 						data.localStatus.localData.currentSelectedGroup = content;
+						// modify UI
 						thisView.dismissGroupDialog();
 						Group group = data.relationship.groupsMap.get(content);
 						TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
 						shareTopMenuGroupName.setText(group.name);
-						// thisView.shareSubView.
+						thisView.modifyCurrentShowGroup();
 					}
 				}
 			}
@@ -98,9 +115,37 @@ public class ShareSubController {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
-		params.addBodyParameter("accessKey", "lejoying");
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 
-		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/group/getgroupmembers", params, responseHandlers.getGroupMembers);
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}
 
+	public GestureDetector mGesture;
+
+	public boolean onTouchEvent(MotionEvent event) {
+
+		int motionEvent = event.getAction();
+		if (motionEvent == MotionEvent.ACTION_DOWN) {
+			Log.d(tag, "Activity on touch down");
+			thisView.groupListBody.onTouchDown(event);
+		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
+			thisView.groupListBody.onTouchMove(event);
+		} else if (motionEvent == MotionEvent.ACTION_UP) {
+			thisView.groupListBody.onTouchUp(event);
+		}
+		mGesture.onTouchEvent(event);
+		return true;
+	}
+
+	class GestureListener extends SimpleOnGestureListener {
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
+
+			if (thisView.groupListBody.bodyStatus.state == thisView.groupListBody.bodyStatus.DRAGGING) {
+				thisView.groupListBody.onFling(velocityX, velocityY);
+			}
+			return true;
+		}
+	}
 }
