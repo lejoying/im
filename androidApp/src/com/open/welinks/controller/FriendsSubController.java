@@ -21,6 +21,8 @@ public class FriendsSubController {
 
 	public Data data = Data.getInstance();
 
+	public String tag = "UserIntimateActivity";
+
 	public FriendsSubView thisView;
 	public FriendsSubController thisController;
 	public OnClickListener mOnClickListener;
@@ -37,7 +39,7 @@ public class FriendsSubController {
 	}
 
 	public void initializeListeners() {
-		onLongClickListener = new OnLongClickListener() {
+		mOnClickListener = new OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
@@ -50,6 +52,10 @@ public class FriendsSubController {
 					intent.putExtra("type", "point");
 					thisView.mainView.thisActivity.startActivity(intent);
 				}
+			}
+		};
+
+		onLongClickListener = new OnLongClickListener() {
 
 			public boolean onLongClick(View view) {
 				return true;
@@ -66,8 +72,10 @@ public class FriendsSubController {
 					Object viewTag = view.getTag(R.id.tag_first);
 					if (Circle.class.isInstance(viewTag) == true) {
 						Circle circle = (Circle) viewTag;
-						Log.d(tag, "onTouch: rid:" + circle.rid + "name" + circle.name);
-						thisView.friendListBody.onOrdering("circle#" + circle.rid);
+						Log.d(tag, "onTouch: rid:" + circle.rid + "name"
+								+ circle.name);
+						thisView.friendListBody.onOrdering("circle#"
+								+ circle.rid);
 
 						onTouchDownCircle = circle;
 						onTouchDownView = view;
@@ -90,14 +98,17 @@ public class FriendsSubController {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class == "card_title") {
 
-				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+				thisView.mainView.main_container
+						.playSoundEffect(SoundEffectConstants.CLICK);
 				thisView.showCircleSettingDialog(onTouchDownCircle);
 				onTouchDownView = null;
 				onTouchDownCircle = null;
 			} else if (view_class == "card_grip") {
-				Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
+				Circle circle = data.relationship.circlesMap.get(""
+						+ onTouchDownCircle.rid);
 
-				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap
+						.get("circle#" + circle.rid);
 
 				circleBody.gripCardBackground.setVisibility(View.VISIBLE);
 			}
@@ -109,7 +120,8 @@ public class FriendsSubController {
 		if (onTouchDownView != null && onTouchDownCircle != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class == "card_title") {
-				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+				thisView.mainView.main_container
+						.playSoundEffect(SoundEffectConstants.CLICK);
 
 				thisView.showCircleSettingDialog(onTouchDownCircle);
 				onTouchDownView = null;
@@ -125,7 +137,8 @@ public class FriendsSubController {
 		Circle circle = data.relationship.circlesMap.get("" + inputCircle.rid);
 		circle.name = inputContent;
 
-		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap
+				.get("circle#" + circle.rid);
 
 		circleBody.leftTopText.setText(inputContent);
 

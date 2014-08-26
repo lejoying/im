@@ -134,7 +134,7 @@ public class FriendsSubView {
 					R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView
 					.findViewById(R.id.leftTopText);
-			this.gripView = (ImageView) this.cardView.findViewById(R.id.grip);
+			this.gripView = (TouchView) this.cardView.findViewById(R.id.grip);
 			this.leftTopTextButton = (TouchView) this.cardView.findViewById(R.id.leftTopTextButton);
 
 			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
