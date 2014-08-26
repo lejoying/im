@@ -115,17 +115,21 @@ public class FriendsSubView {
 
 		public TouchView cardView = null;
 		public TextView leftTopText = null;
+		public TouchView leftTopTextButton = null;
 		public TouchView gripView = null;
-
+		public ImageView gripCardBackground=null;
+		
 		int lineCount = 0;
 
 		public View initialize() {
 
 			this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
+			this.leftTopTextButton = (TouchView) this.cardView.findViewById(R.id.leftTopTextButton);
 			this.gripView = (TouchView) this.cardView.findViewById(R.id.grip);
-
-			this.leftTopText.setOnTouchListener(thisController.onTouchListener);
+			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
+			
+			this.leftTopTextButton.setOnTouchListener(thisController.onTouchListener);
 			// this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
 			this.gripView.setOnTouchListener(thisController.onTouchListener);
@@ -142,9 +146,13 @@ public class FriendsSubView {
 
 		public void setContent(Circle circle) {
 			this.leftTopText.setText(circle.name);
-			this.leftTopText.setTag(circle);
 
-			this.gripView.setTag(circle);
+			this.leftTopTextButton.setTag(R.id.tag_first, circle);
+			this.leftTopTextButton.setTag(R.id.tag_class, "card_title");
+
+			this.gripView.setTag(R.id.tag_first, circle);
+			this.gripView.setTag(R.id.tag_class, "card_grip");
+			
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (55 * displayMetrics.density), (int) (78 * displayMetrics.density));
 
 			int lineCount = circle.friends.size() / 4;
@@ -241,7 +249,7 @@ public class FriendsSubView {
 	public EditText inputEditView;
 	public TextView circleName;
 
-	public void showCircleSettingDialog(View view) {
+	public void showCircleSettingDialog(Circle circle) {
 		currentStatus = SHOW_DIALOG;
 		mInflater = mainView.thisActivity.getLayoutInflater();
 		dialogSpring.addListener(dialogSpringListener);
@@ -271,11 +279,13 @@ public class FriendsSubView {
 		cancleButton.setOnClickListener(mainView.thisController.mOnClickListener);
 		confirmButton.setOnClickListener(mainView.thisController.mOnClickListener);
 		inputEditView = (EditText) circleDialogView.findViewById(R.id.input);
-		Circle circle = (Circle) view.getTag();
 		circleName.setText(circle.name);
 		inputEditView.setText(circle.name);
-		inputEditView.setTag(view);
-		confirmButton.setTag(inputEditView);
+
+		confirmButton.setTag(R.id.tag_first, inputEditView);
+		confirmButton.setTag(R.id.tag_second, circle);
+
+		confirmButton.setTag(R.id.tag_class, "CircleSettingConfirmButton");
 	}
 
 	public void dismissCircleSettingDialog() {

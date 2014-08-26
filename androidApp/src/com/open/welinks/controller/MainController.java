@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
@@ -173,17 +174,14 @@ public class MainController {
 				} else if (view.equals(thisView.friendsSubView.cancleButton)) {
 					thisView.friendsSubView.dismissCircleSettingDialog();
 				} else if (view.equals(thisView.friendsSubView.confirmButton)) {
-					EditText editText = ((EditText) (view.getTag()));
+					EditText editText = ((EditText) (view.getTag(R.id.tag_first)));
 					String inputContent = editText.getText().toString().trim();
-					if ("".equals(inputContent)) {
-						generateTextView("组名不能为空");
-						return;
+					Circle circle = (Circle) view.getTag(R.id.tag_second);
+					if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+						friendsSubController.onConfirmButton(inputContent, circle);
 					}
-					TextView circleNameView = (TextView) editText.getTag();
-					circleNameView.setText(inputContent);
+
 					thisView.friendsSubView.dismissCircleSettingDialog();
-					Circle circle = (Circle) circleNameView.getTag();
-					circle.name = inputContent;
 				}
 
 				else if (view.getTag() != null) {
@@ -327,7 +325,9 @@ public class MainController {
 		}
 
 		public boolean onDoubleTapEvent(MotionEvent event) {
-
+			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+				friendsSubController.onDoubleTapEvent(event);
+			}
 			return false;
 		}
 
