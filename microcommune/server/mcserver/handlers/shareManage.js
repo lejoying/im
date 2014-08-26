@@ -644,4 +644,73 @@ shareManage.modifyvote = function (data, response) {
         );
     }
 }
+
+/*******************************************************************************
+ * * * * * * * * * * * * New Api * * * * * * * * * * * * * * * * * * * * * * * *
+ *******************************************************************************/
+shareManage.getgroupshares = function (data, response) {
+    response.asynchronous = 1;
+    console.info(data);
+    var gid = data.gid;
+    var nowpage = (data.nowpage);
+    var pagesize = (data.pagesize);
+    var arr = [gid, nowpage, pagesize];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        getSharesNodes();
+    }
+    function getSharesNodes() {
+        var query = [
+            "MATCH (group:Group)-[r1:SHARE]->(shares:Shares)-[r2:HAS_SHARE]->(share:Share)",
+            "WHERE group.gid={gid}",
+            "RETURN share",
+            "ORDER BY share.time DESC",
+            "SKIP {start}",
+            "LIMIT {pagesize}"
+        ].join("\n");
+        var params = {
+            gid: parseInt(gid),
+            start: parseInt(nowpage) * parseInt(pagesize),
+            pagesize: parseInt(pagesize)
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享成功",
+                    gid: gid,
+                    shares: {
+                        sharesOrder: [],
+                        sharesMap: {}
+                    }
+                }));
+                response.end();
+            } else {
+                var sharesOrder = [];
+                var sharesMap = {};
+                for (var index in results) {
+                    var result = results[index];
+                    var shareData = result.share.data;
+                    sharesOrder.push(shareData.gsid);
+                    sharesMap[shareData.gsid] = shareData;
+                }
+                response.write(JSON.stringify({
+                    "提示信息": "获取群分享成功",
+                    gid: gid,
+                    shares: {
+                        sharesOrder: sharesOrder,
+                        sharesMap: sharesMap
+                    }
+                }));
+                response.end();
+            }
+        });
+    }
+}
 module.exports = shareManage;
