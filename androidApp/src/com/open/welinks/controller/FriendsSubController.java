@@ -1,5 +1,7 @@
 package com.open.welinks.controller;
 
+import android.app.Service;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -54,7 +56,6 @@ public class FriendsSubController {
 					if (Circle.class.isInstance(viewTag) == true) {
 						Circle circle = (Circle) viewTag;
 						Log.d(tag, "onTouch: rid:" + circle.rid + "name" + circle.name);
-						thisView.friendListBody.onOrdering("circle#" + circle.rid);
 
 						onTouchDownCircle = circle;
 						onTouchDownView = view;
@@ -87,6 +88,12 @@ public class FriendsSubController {
 				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
 
 				circleBody.gripCardBackground.setVisibility(View.VISIBLE);
+
+				Vibrator vibrator = (Vibrator) this.mainController.thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
+				long[] pattern = { 100, 100, 300 };
+				vibrator.vibrate(pattern, -1);
+
+				thisView.friendListBody.onOrdering("circle#" + circle.rid);
 			}
 
 		}
@@ -117,5 +124,7 @@ public class FriendsSubController {
 		circleBody.leftTopText.setText(inputContent);
 
 	}
+
+
 
 }

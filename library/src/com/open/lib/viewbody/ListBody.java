@@ -15,6 +15,8 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
+import com.open.lib.OpenLooper;
+import com.open.lib.OpenLooper.LoopCallback;
 
 public class ListBody {
 	public String tag = "ListBody";
@@ -34,6 +36,12 @@ public class ListBody {
 		mSpring.addListener(mPagerSpringListener);
 
 		this.containerView = (ViewGroup) containerView;
+
+		openLooper = new OpenLooper();
+		openLooper.createOpenLooper();
+		loopCallback = new ListLoopCallback(openLooper);
+		openLooper.loopCallback = loopCallback;
+
 		return containerView;
 
 	}
@@ -83,7 +91,7 @@ public class ListBody {
 	public BodyStatus bodyStatus = new BodyStatus();
 
 	public class TouchStatus {
-		public int None = 4, Down = 1, Horizontal = 2, Vertical = 3, Up = 4;
+		public int None = 4, Down = 1, Horizontal = 2, Vertical = 3, Up = 4, LongPress = 5;
 		public int state = None;
 	}
 
@@ -134,13 +142,15 @@ public class ListBody {
 		touch_pre_y = y;
 	}
 
+	public long lastMillis;
+
 	public void onTouchMove(MotionEvent event) {
 		if (isActive == false) {
 			return;
 		}
 		float x = event.getX();
 		float y = event.getY();
-		if (touchStatus.state == touchStatus.Down) {
+		if (touchStatus.state == touchStatus.Down || touchStatus.state == touchStatus.LongPress) {
 			float deltaX = (x - touch_pre_x) * (x - touch_pre_x);
 			float deltaY = (y - touch_pre_y) * (y - touch_pre_y);
 			if (deltaY > 400 || deltaX > 400) {
@@ -148,7 +158,9 @@ public class ListBody {
 					touchStatus.state = touchStatus.Vertical;
 					touch_pre_y = y;
 
-					this.bodyStatus.state = this.bodyStatus.DRAGGING;
+					if (touchStatus.state == touchStatus.Down) {
+						this.bodyStatus.state = this.bodyStatus.DRAGGING;
+					}
 					this.recordChildrenPosition();
 
 					Log.e(tag, "Vertical moving");
@@ -160,11 +172,27 @@ public class ListBody {
 			}
 		} else if (touchStatus.state == touchStatus.Vertical) {
 			x = touch_pre_x;
-			this.setChildrenDeltaPosition(0, y - touch_pre_y);
-		}
-		if (touchStatus.state == touchStatus.Horizontal) {
-		} else {
+			if (bodyStatus.state == bodyStatus.DRAGGING) {
+				this.setChildrenDeltaPosition(0, y - touch_pre_y);
+			} else if (bodyStatus.state == bodyStatus.ORDERING) {
 
+				if (y < this.displayMetrics.heightPixels / 3) {
+					this.OrderingMoveDirection = OrderingMoveUp;
+					this.openLooper.start();
+				} else if (y > 2 * this.displayMetrics.heightPixels / 3) {
+					this.OrderingMoveDirection = OrderingMoveDown;
+					this.openLooper.start();
+				} else {
+					this.OrderingMoveDirection = 0;
+					this.openLooper.stop();
+				}
+
+				orderingItemBody.myListItemView.setY(orderingItem_pre_y + y - touch_pre_y);
+
+			}
+		} else if (touchStatus.state == touchStatus.Horizontal) {
+			y = touch_pre_y;
+		} else {
 			// Log.e(tag, "unkown status: touchMoveStatus.Up");
 		}
 	}
@@ -200,12 +228,17 @@ public class ListBody {
 		}
 	}
 
-	public MyListItemBody orderingItem;
+	public MyListItemBody orderingItemBody;
+	public String orderingItemKey;
+	public float orderingItem_pre_y = 0;
 
 	public void onOrdering(String key) {
+		orderingItemKey = key;
+		this.touchStatus.state = this.touchStatus.LongPress;
 		this.bodyStatus.state = this.bodyStatus.ORDERING;
 
-		orderingItem = listItemBodiesMap.get(key);
+		orderingItemBody = listItemBodiesMap.get(key);
+		orderingItem_pre_y = orderingItemBody.y;
 	}
 
 	public float pre_x = 0;
@@ -219,7 +252,11 @@ public class ListBody {
 		this.y = this.pre_y + deltaY;
 
 		for (int i = 0; i < listItemsSequence.size(); i++) {
-			MyListItemBody myListItemBody = listItemBodiesMap.get(listItemsSequence.get(i));
+			String key = listItemsSequence.get(i);
+			if (key.equals(orderingItemKey)) {
+				continue;
+			}
+			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
 			myListItemBody.myListItemView.setX(myListItemBody.pre_x + deltaX);
 			myListItemBody.myListItemView.setY(myListItemBody.pre_y + deltaY);
 		}
@@ -271,5 +308,56 @@ public class ListBody {
 
 		this.mSpring.setCurrentValue(currentValue);
 		this.mSpring.setEndValue(endValue);
+	}
+
+	OpenLooper openLooper = null;
+	LoopCallback loopCallback = null;
+
+	public class ListLoopCallback extends LoopCallback {
+		public ListLoopCallback(OpenLooper openLooper) {
+			openLooper.super();
+		}
+
+		@Override
+		public void loop(double ellapsedMillis) {
+			orderingMove(OrderingMoveDirection, (float) ellapsedMillis);
+		}
+	}
+
+	int OrderingMoveDirection = 0;
+	int OrderingMoveUp = 1;
+	int OrderingMoveDown = -1;
+
+	public void orderingMove(int direction, float delta) {
+		if (direction == 0) {
+			return;
+		}
+
+		if (direction == OrderingMoveUp) {
+			setChildrenDeltaPosition(0, delta * this.orderSpeed);
+
+		} else if (direction == OrderingMoveDown) {
+			setChildrenDeltaPosition(0, -delta * this.orderSpeed);
+		}
+		recordChildrenPosition();
+	}
+
+	float dxSpeed = 0;
+	float dySpeed = 0;
+
+	float orderSpeed = 0.66f;
+
+	public void dampenSpeed(long deltaMillis) {
+		if (dxSpeed != 0.0f) {
+			dxSpeed *= (1.0f - 0.001f * deltaMillis);
+			if (Math.abs(dxSpeed) < 0.001f)
+				dxSpeed = 0.0f;
+		}
+
+		if (dySpeed != 0.0f) {
+			dySpeed *= (1.0f - 0.001f * deltaMillis);
+			if (Math.abs(dySpeed) < 0.001f)
+				dySpeed = 0.0f;
+		}
 	}
 }
