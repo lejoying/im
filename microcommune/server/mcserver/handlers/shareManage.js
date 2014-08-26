@@ -138,7 +138,7 @@ shareManage.sendshare = function (data, response) {
                 response.write(JSON.stringify({
                     "提示信息": "发布群分享成功",
                     time: shareData.time,
-                    ogid: ogsid,
+                    ogsid: ogsid,
                     gsid: shareData.gsid,
                     gid: gid
                 }));
