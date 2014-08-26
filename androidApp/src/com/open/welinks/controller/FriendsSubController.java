@@ -1,7 +1,9 @@
 package com.open.welinks.controller;
+package com.open.welinks.controller;
 
 import android.app.Service;
 import android.os.Vibrator;
+import android.content.Intent;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -10,8 +12,10 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 
+import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.FriendsSubView.CircleBody;
@@ -19,7 +23,8 @@ import com.open.welinks.view.FriendsSubView.CircleBody;
 public class FriendsSubController {
 
 	public Data data = Data.getInstance();
-	public String tag = "FriendsSubController";
+
+	public String tag = "UserIntimateActivity";
 
 	public FriendsSubView thisView;
 	public FriendsSubController thisController;
@@ -37,9 +42,24 @@ public class FriendsSubController {
 	}
 
 	public void initializeListeners() {
-		onLongClickListener = new OnLongClickListener() {
+		mOnClickListener = new OnClickListener() {
 
 			@Override
+			public void onClick(View view) {
+				Log.d(tag, "onclick");
+				Friend friend = null;
+				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
+					Intent intent = new Intent(thisView.mainView.thisActivity,
+							ChatActivity.class);
+					intent.putExtra("id", friend.phone);
+					intent.putExtra("type", "point");
+					thisView.mainView.thisActivity.startActivity(intent);
+				}
+			}
+		};
+
+		onLongClickListener = new OnLongClickListener() {
+
 			public boolean onLongClick(View view) {
 				return true;
 			}
@@ -78,14 +98,17 @@ public class FriendsSubController {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class == "card_title") {
 
-				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+				thisView.mainView.main_container
+						.playSoundEffect(SoundEffectConstants.CLICK);
 				thisView.showCircleSettingDialog(onTouchDownCircle);
 				onTouchDownView = null;
 				onTouchDownCircle = null;
 			} else if (view_class == "card_grip") {
-				Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
+				Circle circle = data.relationship.circlesMap.get(""
+						+ onTouchDownCircle.rid);
 
-				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap
+						.get("circle#" + circle.rid);
 
 				circleBody.gripCardBackground.setVisibility(View.VISIBLE);
 
@@ -116,7 +139,8 @@ public class FriendsSubController {
 		if (onTouchDownView != null && onTouchDownCircle != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class == "card_title") {
-				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+				thisView.mainView.main_container
+						.playSoundEffect(SoundEffectConstants.CLICK);
 
 				thisView.showCircleSettingDialog(onTouchDownCircle);
 				onTouchDownView = null;
@@ -132,7 +156,8 @@ public class FriendsSubController {
 		Circle circle = data.relationship.circlesMap.get("" + inputCircle.rid);
 		circle.name = inputContent;
 
-		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap
+				.get("circle#" + circle.rid);
 
 		circleBody.leftTopText.setText(inputContent);
 

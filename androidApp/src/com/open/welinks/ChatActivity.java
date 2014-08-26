@@ -33,18 +33,21 @@ public class ChatActivity extends Activity {
 		chatController.thisView = chatView;
 
 		chatView.initViews();
-		chatController.bindEvent();
 		chatController.initializeListeners();
+		chatController.onCreate();
+		chatController.bindEvent();
 
 	}
 
 	@Override
 	protected void onResume() {
+		super.onResume();
 		chatController.onResume();
 	}
 
 	@Override
 	protected void onPause() {
+		super.onPause();
 		chatController.onPause();
 	}
 

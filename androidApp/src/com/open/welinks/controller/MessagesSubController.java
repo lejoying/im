@@ -1,9 +1,14 @@
 package com.open.welinks.controller;
 
+import android.content.Intent;
+import android.sax.StartElementListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import com.open.welinks.ChatActivity;
+import com.open.welinks.R;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.view.MessagesSubView;
 
 public class MessagesSubController {
@@ -14,7 +19,6 @@ public class MessagesSubController {
 	public MessagesSubController thisconController;
 
 	public OnClickListener mOnClickListener;
-
 
 	public MainController mainController;
 
@@ -28,8 +32,16 @@ public class MessagesSubController {
 
 			@Override
 			public void onClick(View view) {
-				// TODO Auto-generated method stub
+				Message message = null;
+				if ((message = (Message) view.getTag(R.id.chat_content)) != null) {
+					Intent intent = new Intent(thisView.mainView.thisActivity,
+							ChatActivity.class);
+					intent.putExtra("id", message.phone);
+					intent.putExtra("type", message.sendType);
+					thisView.mainView.thisActivity.startActivity(intent);
+				} else {
 
+				}
 			}
 		};
 	}

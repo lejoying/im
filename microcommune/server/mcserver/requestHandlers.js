@@ -314,6 +314,11 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.modifyvote(data, response);
         });
     }
+    else if (operation == "getgroupshares") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            shareManage.getgroupshares(data, response);
+        });
+    }
 }
 function setOauthAccessKey(phone, accessKey, next) {
     client.rpush(phone + "_accessKey", accessKey, function (err, reply) {

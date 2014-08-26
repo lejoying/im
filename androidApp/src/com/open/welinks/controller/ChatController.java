@@ -13,7 +13,7 @@ import com.open.welinks.view.ChatView;
 public class ChatController {
 
 	public String tag = "ChatController";
-	
+
 	public ChatController thisController;
 	public Activity thisActivity;
 	public Context context;
@@ -24,10 +24,24 @@ public class ChatController {
 
 	public Data data = Data.getInstance();
 
+	public String type, id;
+
 	public ChatController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		context = thisActivity;
 		thisController = this;
+	}
+
+	public void onCreate() {
+		String id = thisActivity.getIntent().getStringExtra("id");
+		if (id != null && !"".equals(id)) {
+			this.id = id;
+		}
+		String type = thisActivity.getIntent().getStringExtra("type");
+		if (type != null && !"".equals(type)) {
+			this.type = type;
+		}
+		thisView.showChatViews();
 	}
 
 	public void initializeListeners() {
