@@ -9,11 +9,9 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.rebound.SimpleSpringListener;
@@ -23,6 +21,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
@@ -33,7 +32,7 @@ import com.open.welinks.view.MainView;
 public class MainController {
 
 	public Data data = Data.getInstance();
-	public String tag = "UserIntimateController";
+	public String tag = "MainController";
 	public MainView thisView;
 	public Context context;
 	public Activity thisActivity;
@@ -42,7 +41,6 @@ public class MainController {
 	public GestureDetector mListGesture;
 
 	public OnClickListener mOnClickListener;
-	public OnTouchListener onTouchListener;
 	public DownloadListener downloadListener;
 
 	public ListOnTouchListener listOnTouchListener;
@@ -121,7 +119,6 @@ public class MainController {
 
 	public void initializeListeners() {
 
-
 		downloadListener = new DownloadListener() {
 
 			@Override
@@ -133,19 +130,7 @@ public class MainController {
 				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.shareSubView.options);
 			}
 		};
-		onTouchListener = new OnTouchListener() {
 
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-				int action = event.getAction();
-				if (action == MotionEvent.ACTION_DOWN) {
-					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(1);
-				} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-					thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
-				}
-				return true;
-			}
-		};
 		mOnClickListener = new OnClickListener() {
 
 			@Override
@@ -187,17 +172,14 @@ public class MainController {
 				} else if (view.equals(thisView.friendsSubView.cancleButton)) {
 					thisView.friendsSubView.dismissCircleSettingDialog();
 				} else if (view.equals(thisView.friendsSubView.confirmButton)) {
-					EditText editText = ((EditText) (view.getTag()));
+					EditText editText = ((EditText) (view.getTag(R.id.tag_first)));
 					String inputContent = editText.getText().toString().trim();
-					if ("".equals(inputContent)) {
-						generateTextView("组名不能为空");
-						return;
+					Circle circle = (Circle) view.getTag(R.id.tag_second);
+					if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+						friendsSubController.onConfirmButton(inputContent, circle);
 					}
-					TextView circleNameView = (TextView) editText.getTag();
-					circleNameView.setText(inputContent);
+
 					thisView.friendsSubView.dismissCircleSettingDialog();
-					Circle circle = (Circle) circleNameView.getTag();
-					circle.name = inputContent;
 				}
 
 				else if (view.getTag() != null) {
@@ -224,8 +206,6 @@ public class MainController {
 		thisView.squareMenuView.setOnClickListener(mOnClickListener);
 		thisView.shareMenuView.setOnClickListener(mOnClickListener);
 		thisView.messages_friends_me_menuView.setOnClickListener(mOnClickListener);
-
-		thisView.meSubView.mRootView.setOnTouchListener(onTouchListener);
 
 		// thisView.friendsSubView.friendsView.setOnTouchListener(listOnTouchListener);
 
@@ -329,6 +309,29 @@ public class MainController {
 			return true;
 		}
 
+		public void onLongPress(MotionEvent event) {
+			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+				friendsSubController.onLongPress(event);
+			}
+
+		}
+
+		public boolean onDoubleTap(MotionEvent event) {
+
+			return false;
+		}
+
+		public boolean onDoubleTapEvent(MotionEvent event) {
+			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+				friendsSubController.onDoubleTapEvent(event);
+			}
+			return false;
+		}
+
+		public boolean onSingleTapUp(MotionEvent event) {
+
+			return false;
+		}
 	}
 
 	void generateTextView(final String message) {

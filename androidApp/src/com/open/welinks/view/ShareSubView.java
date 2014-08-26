@@ -32,10 +32,10 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.ShareContent;
+import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
-import com.open.welinks.model.Data.Shares.Share.ShareContent;
-import com.open.welinks.model.Data.Shares.Share.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -67,6 +67,11 @@ public class ShareSubView {
 
 	public ListBody groupListBody;
 
+	// share top Bar child view
+	public View groupMembersView;
+	public RelativeLayout groupMembersListContentView;
+	public ImageView releaseShareView;
+
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
 	}
@@ -83,17 +88,24 @@ public class ShareSubView {
 		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
 
+		this.groupMembersView = mainView.mInflater.inflate(R.layout.share_group_members_show, null);
+		groupMembersListContentView = (RelativeLayout) this.groupMembersView.findViewById(R.id.groupMembersListContent);
+		releaseShareView = (ImageView) this.groupMembersView.findViewById(R.id.releaseShare);
+
+		showShareMessages();
+
 		initReleaseShareDialogView();
 
 		initializationGroupsDialog();
 
+		thisController.getUserCurrentAllGroup();
+
 	}
 
 	public void showShareMessages() {
-		Share share = data.shares.shareMap.get("1001");
-		List<String> sharesOrder = share.sharesOrder;
-		Map<String, ShareMessage> sharesMap = share.sharesMap;
 		this.shareMessageListBody.listItemsSequence.clear();
+		this.shareMessageListBody.containerView.removeAllViews();
+		this.shareMessageListBody.height = 0;
 		SharesMessageBody sharesMessageBody0 = null;
 		sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
 		sharesMessageBody0.initialize(-1);
@@ -106,22 +118,39 @@ public class ShareSubView {
 		sharesMessageBody0.cardView.setX(0);
 		this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
 		this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
+
+		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
+		if (share == null)
+			return;
+		List<String> sharesOrder = share.sharesOrder;
+		Map<String, ShareMessage> sharesMap = share.sharesMap;
 		for (int i = 0; i < sharesOrder.size(); i++) {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
 			shareMessage = sharesMap.get(key);
 			SharesMessageBody sharesMessageBody = null;
-			sharesMessageBody = new SharesMessageBody(this.shareMessageListBody);
-			sharesMessageBody.initialize(i);
+
+			String keyName = "message#" + shareMessage.phone + "_" + shareMessage.time;
+			boolean isExists = false;
+			if (this.shareMessageListBody.listItemBodiesMap.get(keyName) != null) {
+				sharesMessageBody = (SharesMessageBody) this.shareMessageListBody.listItemBodiesMap.get(keyName);
+				isExists = true;
+			} else {
+				sharesMessageBody = new SharesMessageBody(this.shareMessageListBody);
+				sharesMessageBody.initialize(i);
+				this.shareMessageListBody.listItemBodiesMap.put(keyName, sharesMessageBody);
+			}
+			this.shareMessageListBody.listItemsSequence.add(keyName);
 			sharesMessageBody.setContent(shareMessage);
 
-			this.shareMessageListBody.listItemsSequence.add("message#" + shareMessage.phone + "_" + shareMessage.time);
-			this.shareMessageListBody.listItemBodiesMap.put("message#" + shareMessage.phone + "_" + shareMessage.time, sharesMessageBody);
-
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (340 * displayMetrics.density));
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
 			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
+			// Why the object cache access to cheap 10dp view position
+			if (isExists) {
+				sharesMessageBody.cardView.setX(10 * displayMetrics.density);
+			}
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 		}
@@ -131,10 +160,6 @@ public class ShareSubView {
 	public DisplayImageOptions options;
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public Gson gson = new Gson();
-
-	// share top Bar child view
-	public RelativeLayout groupMembersListContentView;
-	public ImageView releaseShareView;
 
 	public class SharesMessageBody extends MyListItemBody {
 
@@ -161,9 +186,11 @@ public class ShareSubView {
 		public View initialize(int i) {
 			this.i = i;
 			if (i == -1) {
-				this.cardView = mainView.mInflater.inflate(R.layout.share_group_members_show, null);
-				groupMembersListContentView = (RelativeLayout) this.cardView.findViewById(R.id.groupMembersListContent);
-				releaseShareView = (ImageView) this.cardView.findViewById(R.id.releaseShare);
+				this.cardView = groupMembersView;
+				// groupMembersListContentView = (RelativeLayout)
+				// this.cardView.findViewById(R.id.groupMembersListContent);
+				// releaseShareView = (ImageView)
+				// this.cardView.findViewById(R.id.releaseShare);
 			} else {
 				this.cardView = mainView.mInflater.inflate(R.layout.share_message_item, null);
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
@@ -182,8 +209,8 @@ public class ShareSubView {
 
 		public void setContent(ShareMessage shareMessage) {
 			if (i == -1) {
-				showGroupMembers(groupMembersListContentView);
-				releaseShareView.setOnClickListener(mainView.thisController.mOnClickListener);
+				// showGroupMembers(groupMembersListContentView);
+				releaseShareView.setOnClickListener(thisController.mOnClickListener);
 			} else {
 				Resources resources = mainView.thisActivity.getResources();
 				Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
@@ -210,7 +237,7 @@ public class ShareSubView {
 
 				this.shareTextContentView.setText(textContent);
 				File sdFile = Environment.getExternalStorageDirectory();
-				File file = new File(sdFile, "wxgs/" + imageContent);
+				File file = new File(sdFile, "welinks/images/" + imageContent);
 				int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
 				int showImageHeight = (int) (displayMetrics.density * 200 + 0.5f);
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
@@ -240,6 +267,7 @@ public class ShareSubView {
 					downloadFile = new DownloadFile(url, path);
 					downloadFile.view = shareImageContentView;
 					downloadFileList.addDownloadFile(downloadFile);
+					// TODO CallBack
 				}
 
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
@@ -321,7 +349,8 @@ public class ShareSubView {
 		groupListBody = new ListBody();
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
 		setGroupsDialogContent();
-		groupsDialogContent.setOnClickListener(thisController.mOnClickListener);
+		// groupsDialogContent.setOnClickListener(thisController.mOnClickListener);
+		groupsDialogContent.setOnTouchListener(thisController.mOnTouchListener);
 	}
 
 	public void showGroupsDialog() {
@@ -340,13 +369,21 @@ public class ShareSubView {
 		groupsDialogContent.removeAllViews();
 		groupListBody.listItemsSequence.clear();
 		for (int i = 0; i < groups.size(); i++) {
-			GroupDialogItem groupDialogItem = new GroupDialogItem(this.groupListBody);
-			View view = groupDialogItem.initialize();
 			Group group = groupsMap.get(groups.get(i));
+			String key = "group#" + group.gid + "_" + group.name;
+			GroupDialogItem groupDialogItem;
+			View view = null;
+			if (groupListBody.listItemBodiesMap.get(key) != null) {
+				groupDialogItem = (GroupDialogItem) groupListBody.listItemBodiesMap.get(key);
+				view = groupDialogItem.cardView;
+			} else {
+				groupDialogItem = new GroupDialogItem(this.groupListBody);
+				view = groupDialogItem.initialize();
+				groupListBody.listItemBodiesMap.put(key, groupDialogItem);
+			}
+			groupListBody.listItemsSequence.add(key);
 			groupDialogItem.setContent(group);
-
-			groupListBody.listItemsSequence.add("group#" + group.gid + "_" + group.name);
-			groupListBody.listItemBodiesMap.put("group#" + group.gid + "_" + group.name, groupDialogItem);
+			groupDialogItem.setViewLayout();
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (60 * displayMetrics.density));
 			groupDialogItem.y = (60 * displayMetrics.density * i);
@@ -359,6 +396,16 @@ public class ShareSubView {
 			view.setTag("GroupDialogContentItem#" + group.gid);
 			view.setTag(R.id.shareTopMenuGroupName, shareTopMenuGroupName);
 			view.setOnClickListener(thisController.mOnClickListener);
+		}
+	}
+
+	public void modifyCurrentShowGroup() {
+		List<String> listItemsSequence = groupListBody.listItemsSequence;
+		Map<String, MyListItemBody> listItemsSequenceMap = groupListBody.listItemBodiesMap;
+		for (int i = 0; i < listItemsSequence.size(); i++) {
+			String key = listItemsSequence.get(i);
+			GroupDialogItem body = (GroupDialogItem) listItemsSequenceMap.get(key);
+			body.setViewLayout();
 		}
 	}
 
@@ -390,20 +437,26 @@ public class ShareSubView {
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			this.groupIconView.setImageBitmap(bitmap);
 			this.groupNameView.setText(group.name);
-		}
-
-		public void setViewLayout() {
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
 			} else {
 				this.groupSelectedStatusView.setVisibility(View.GONE);
 			}
 		}
+
+		public void setViewLayout() {
+			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
+				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
+				this.groupNameView.setText(group.name);
+			} else {
+				this.groupSelectedStatusView.setVisibility(View.GONE);
+			}
+		}
 	}
 
-	public void showGroupMembers(RelativeLayout groupMembersListContentView) {
+	public void showGroupMembers() {
 		groupMembersListContentView.removeAllViews();
-		List<String> groupMembers = data.relationship.groupsMap.get("1001").members;
+		List<String> groupMembers = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).members;
 		// Map<String, Friend> friendsMap = data.relationship.friendsMap;
 		Resources resources = mainView.thisActivity.getResources();
 		Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
