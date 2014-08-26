@@ -141,9 +141,6 @@ public class FriendsSubView {
 			return cardView;
 		}
 
-		float itemWidth = 0;
-		float itemHeight = 0;
-
 		public void setContent(Circle circle) {
 			this.leftTopText.setText(circle.name);
 

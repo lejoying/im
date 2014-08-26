@@ -99,6 +99,19 @@ public class FriendsSubController {
 		}
 	}
 
+	public void onSingleTapUp(MotionEvent event) {
+		if (onTouchDownView != null && onTouchDownCircle != null) {
+			Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
+			CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+			circleBody.gripCardBackground.setVisibility(View.INVISIBLE);
+
+			onTouchDownView = null;
+			onTouchDownCircle = null;
+			thisView.friendListBody.onStopOrdering();
+		}
+
+	}
+
 	public void onDoubleTapEvent(MotionEvent event) {
 		if (onTouchDownView != null && onTouchDownCircle != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
@@ -124,7 +137,5 @@ public class FriendsSubController {
 		circleBody.leftTopText.setText(inputContent);
 
 	}
-
-
 
 }
