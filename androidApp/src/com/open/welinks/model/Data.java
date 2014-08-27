@@ -29,6 +29,8 @@ public class Data {
 
 		public ArrayList<String> selectedImageList;
 
+		public ArrayList<String> praiseusersList;
+
 		public class ImageBean {
 
 			public String parentName;

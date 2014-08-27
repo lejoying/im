@@ -79,15 +79,26 @@ public class ShareSubView {
 
 	public float imageHeightScale = 0.5686505598114319f;
 
+	public float panelScale = 1.010845986984816f;
+
+	public int panelHeight;
+
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
 	}
+
+	public Bitmap bitmap;
 
 	public void initViews() {
 		this.shareView = mainView.shareView;
 		this.displayMetrics = mainView.displayMetrics;
 
+		Resources resources = mainView.thisActivity.getResources();
+		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+
 		shareImageHeight = (int) (this.displayMetrics.widthPixels * imageHeightScale);
+		panelHeight = (int) (this.displayMetrics.widthPixels * panelScale);
 		Log.e(tag, "height--------------" + shareImageHeight);
 
 		shareMessageView = (ViewGroup) shareView.findViewById(R.id.groupShareMessageContent);
@@ -155,8 +166,8 @@ public class ShareSubView {
 			this.shareMessageListBody.listItemsSequence.add(keyName);
 			sharesMessageBody.setContent(shareMessage);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (350 * displayMetrics.density));
-			sharesMessageBody.y = 360 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
+			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
@@ -229,9 +240,6 @@ public class ShareSubView {
 				// showGroupMembers(groupMembersListContentView);
 				releaseShareView.setOnClickListener(thisController.mOnClickListener);
 			} else {
-				Resources resources = mainView.thisActivity.getResources();
-				Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-				bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 				this.headView.setImageBitmap(bitmap);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
@@ -259,8 +267,8 @@ public class ShareSubView {
 				this.shareTextContentView.setText(textContent);
 				File sdFile = Environment.getExternalStorageDirectory();
 				File file = new File(sdFile, "welinks/thumbnail/" + imageContent);
-				int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
-				int showImageHeight = shareImageHeight;// (int) (displayMetrics.density * 200 + 0.5f);
+				final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
+				final int showImageHeight = shareImageHeight;// (int) (displayMetrics.density * 200 + 0.5f);
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
@@ -282,7 +290,9 @@ public class ShareSubView {
 
 						@Override
 						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
+							int height = showImageHeight;
+							RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(showImageWidth, height);
+							shareImageContentView.setLayoutParams(params);
 						}
 					});
 				} else {

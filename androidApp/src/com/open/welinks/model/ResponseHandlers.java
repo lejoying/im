@@ -148,7 +148,7 @@ public class ResponseHandlers {
 			}
 		};
 	};
-	public ResponseHandler<String> sendShareCallBack = httpClient.new ResponseHandler<String>() {
+	public ResponseHandler<String> share_sendShareCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
@@ -177,7 +177,7 @@ public class ResponseHandlers {
 			}
 		};
 	};
-	public ResponseHandler<String> getSharesCallBack = httpClient.new ResponseHandler<String>() {
+	public ResponseHandler<String> share_getSharesCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
@@ -208,6 +208,44 @@ public class ResponseHandlers {
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
+			}
+		};
+	};
+	public ResponseHandler<String> share_modifyPraiseusersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String gid;
+			public String gsid;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("点赞群分享成功")) {
+
+			} else if (response.提示信息.equals("点赞群分享失败")) {
+				Share share = data.shares.shareMap.get(response.gid);
+				ShareMessage shareMessage = share.sharesMap.get(response.gsid);
+				shareMessage.praiseusers.remove(data.userInformation.currentUser.phone);
+			}
+		};
+	};
+	public ResponseHandler<String> share_addCommentCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String gid;
+			public String gsid;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("评论群分享成功")) {
+
+			} else if (response.提示信息.equals("评论群分享失败")) {
+
 			}
 		};
 	};

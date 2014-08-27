@@ -12,5 +12,6 @@
     <string name="confirm_text">确定</string>
     <string name="selectAlbum_text">选择相册</string>
     <string name="action_settings">设置</string>
+    <string name="praise_text">称赞者</string>
 
 </resources>

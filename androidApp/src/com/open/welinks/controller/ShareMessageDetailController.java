@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,12 +12,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.PictureBrowseActivity;
+import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.InnerScrollView.OnScrollChangedListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareMessageDetailView;
@@ -45,10 +51,16 @@ public class ShareMessageDetailController {
 
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+	public User currentUser;
+
 	public ShareMessageDetailController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
 		thisController = this;
+
+		currentUser = data.userInformation.currentUser;
 	}
 
 	public void initData() {
@@ -116,6 +128,17 @@ public class ShareMessageDetailController {
 					thisActivity.finish();
 				} else if (view.equals(thisView.praiseIconView)) {
 					Toast.makeText(thisActivity, "praiseICon", Toast.LENGTH_SHORT).show();
+					boolean option = false;
+					if (!shareMessage.praiseusers.contains(currentUser.phone)) {
+						option = true;
+						shareMessage.praiseusers.add(currentUser.phone);
+						thisView.praiseIconView.setImageResource(R.drawable.praised_icon);
+					} else {
+						shareMessage.praiseusers.remove(currentUser.phone);
+						thisView.praiseIconView.setImageResource(R.drawable.praise_icon);
+					}
+					thisView.showPraiseUsersContent();
+					modifyPraiseusersToMessage(option);
 				} else if (view.equals(thisView.commentIconView)) {
 					if (thisView.commentInputView.getVisibility() == View.GONE) {
 						thisView.commentInputView.setVisibility(View.VISIBLE);
@@ -139,7 +162,6 @@ public class ShareMessageDetailController {
 						intent.putExtra("position", content);
 						intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_COMMON);
 						thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE);
-						Toast.makeText(thisActivity, "ShareMessageDetailImage---------" + content, Toast.LENGTH_SHORT).show();
 					}
 				}
 			}
@@ -156,6 +178,33 @@ public class ShareMessageDetailController {
 		thisView.mainScrollView.setOnTouchListener(mOnTouchListener);
 		thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
 
+	}
+
+	public void modifyPraiseusersToMessage(boolean option) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("gsid", shareMessage.gsid);
+		params.addBodyParameter("option", option + "");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_modifyPraiseusersCallBack);
+	}
+
+	public void addCommentToMessage(String contentType, String content) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("gsid", shareMessage.gsid);
+		params.addBodyParameter("nickName", currentUser.nickName);
+		params.addBodyParameter("head", currentUser.head);
+		params.addBodyParameter("contentType", contentType);
+		params.addBodyParameter("content", content);
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_addCommentCallBack);
 	}
 
 	public void finish() {

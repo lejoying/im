@@ -9,4 +9,6 @@ public class API {
 
 	// share
 	public static String SHARE_GETSHARES = "http://www.we-links.com/api2/share/getgroupshares";
+	public static String SHARE_ADDPRAISE = "http://www.we-links.com/api2/share/addpraise";
+	public static String SHARE_ADDCOMMENT = "http://www.we-links.com/api2/share/addcomment";
 }

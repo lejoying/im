@@ -223,11 +223,12 @@ shareManage.addpraise = function (data, response) {
         if (option == "true" || option == "false") {
             modifySharePraise();
         } else {
-            response.write(JSON.stringify({
+            ResponseData(JSON.stringify({
                 "提示信息": "点赞群分享失败",
-                "失败原因": "数据格式不正确"
-            }));
-            response.end();
+                "失败原因": "数据格式不正确",
+                gid: gid,
+                gsid: gsid
+            }), response);
         }
     }
     function modifySharePraise() {
@@ -242,19 +243,21 @@ shareManage.addpraise = function (data, response) {
         };
         db.query(query, params, function (error, results) {
                 if (error) {
-                    response.write(JSON.stringify({
+                    ResponseData(JSON.stringify({
                         "提示信息": "点赞群分享失败",
-                        "失败原因": "数据异常"
-                    }));
-                    response.end();
+                        "失败原因": "数据异常",
+                        gid: gid,
+                        gsid: gsid
+                    }), response);
                     console.error(error);
                     return;
                 } else if (results.length == 0) {
-                    response.write(JSON.stringify({
+                    ResponseData(JSON.stringify({
                         "提示信息": "点赞群分享失败",
-                        "失败原因": "消息不存在"
-                    }));
-                    response.end();
+                        "失败原因": "消息不存在",
+                        gid: gid,
+                        gsid: gsid
+                    }), response);
                 } else {
                     var shareNode = results.pop().share;
                     var shareData = shareNode.data;
@@ -279,18 +282,20 @@ shareManage.addpraise = function (data, response) {
                     shareData.praises = JSON.stringify(praiseJSON);
                     shareNode.save(function (error, node) {
                         if (error) {
-                            response.write(JSON.stringify({
+                            ResponseData(JSON.stringify({
                                 "提示信息": "点赞群分享失败",
-                                "失败原因": "数据异常"
-                            }));
-                            response.end();
+                                "失败原因": "数据异常",
+                                gid: gid,
+                                gsid: gsid
+                            }), response);
                             console.error(error);
                             return;
                         } else {
-                            response.write(JSON.stringify({
-                                "提示信息": "点赞群分享成功"
-                            }));
-                            response.end();
+                            ResponseData(JSON.stringify({
+                                "提示信息": "点赞群分享成功",
+                                gid: gid,
+                                gsid: gsid
+                            }), response);
                         }
                     });
                 }
@@ -328,19 +333,21 @@ shareManage.addcomment = function (data, response) {
         };
         db.query(query, params, function (error, results) {
                 if (error) {
-                    response.write(JSON.stringify({
+                    ResponseData(JSON.stringify({
                         "提示信息": "评论群分享失败",
-                        "失败原因": "数据异常"
-                    }));
-                    response.end();
+                        "失败原因": "数据异常",
+                        gid: gid,
+                        gsid: gsid
+                    }), response);
                     console.error(error);
                     return;
                 } else if (results.length == 0) {
-                    response.write(JSON.stringify({
+                    ResponseData(JSON.stringify({
                         "提示信息": "评论群分享失败",
-                        "失败原因": "消息不存在"
-                    }));
-                    response.end();
+                        "失败原因": "消息不存在",
+                        gid: gid,
+                        gsid: gsid
+                    }), response);
                 } else {
                     var shareNode = results.pop().share;
                     var shareData = shareNode.data;
@@ -365,18 +372,20 @@ shareManage.addcomment = function (data, response) {
                     shareData.comments = JSON.stringify(commentsJSON);
                     shareNode.save(function (error, node) {
                         if (error) {
-                            response.write(JSON.stringify({
+                            ResponseData(JSON.stringify({
                                 "提示信息": "评论群分享失败",
-                                "失败原因": "数据异常"
-                            }));
-                            response.end();
+                                "失败原因": "数据异常",
+                                gid: gid,
+                                gsid: gsid
+                            }), response);
                             console.error(error);
                             return;
                         } else {
-                            response.write(JSON.stringify({
-                                "提示信息": "评论群分享成功"
-                            }));
-                            response.end();
+                            ResponseData(JSON.stringify({
+                                "提示信息": "评论群分享成功",
+                                gid: gid,
+                                gsid: gsid
+                            }), response);
                         }
                     });
                 }
@@ -674,23 +683,21 @@ shareManage.getgroupshares = function (data, response) {
         };
         db.query(query, params, function (error, results) {
             if (error) {
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取群分享失败",
                     "失败原因": "数据异常"
-                }));
-                response.end();
+                }), response);
                 console.error(error);
                 return;
             } else if (results.length == 0) {
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取群分享成功",
                     gid: gid,
                     shares: {
                         sharesOrder: [],
                         sharesMap: {}
                     }
-                }));
-                response.end();
+                }), response);
             } else {
                 var sharesOrder = [];
                 var sharesMap = {};
@@ -709,17 +716,24 @@ shareManage.getgroupshares = function (data, response) {
                     sharesOrder.push(share.gsid + "");
                     sharesMap[share.gsid] = share;
                 }
-                response.write(JSON.stringify({
+                ResponseData(JSON.stringify({
                     "提示信息": "获取群分享成功",
                     gid: gid,
                     shares: {
                         sharesOrder: sharesOrder,
                         sharesMap: sharesMap
                     }
-                }));
-                response.end();
+                }), response);
             }
         });
     }
+}
+function ResponseData(responseContent, response) {
+    response.writeHead(200, {
+        "Content-Type": "application/json; charset=UTF-8",
+        "Content-Length": Buffer.byteLength(responseContent, 'utf8')
+    });
+    response.write(responseContent);
+    response.end();
 }
 module.exports = shareManage;

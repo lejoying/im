@@ -164,7 +164,7 @@ public class ShareSubController {
 		params.addBodyParameter("nowpage", "0");
 		params.addBodyParameter("pagesize", "20");
 
-		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.getSharesCallBack);
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack);
 	}
 
 	public void getUserCurrentAllGroup() {

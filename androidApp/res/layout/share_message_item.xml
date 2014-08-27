@@ -16,7 +16,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
             android:src="@drawable/face_man" />
 
         <TextView
@@ -58,8 +58,7 @@
         <ImageView
             android:id="@+id/share_imageContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#000" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/share_textContent"

@@ -7,12 +7,14 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -35,6 +37,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
+import com.open.welinks.utils.MCImageUtils;
 
 public class ShareMessageDetailView {
 
@@ -77,6 +80,8 @@ public class ShareMessageDetailView {
 	public ImageView commentIconView;
 	public ImageView praiseIconView;
 
+	public TextView praiseusersNumView;
+
 	public ShareMessageDetailView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
@@ -88,8 +93,15 @@ public class ShareMessageDetailView {
 			mImageFile.mkdirs();
 	}
 
+	public Bitmap bitmap;
+
 	public void initView() {
 		initData();
+
+		Resources resources = thisActivity.getResources();
+		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+
 		thisActivity.setContentView(R.layout.activity_share_message_detail);
 		shareMessageDetailContentView = (LinearLayout) thisActivity.findViewById(R.id.shareMessageDetailContentView);
 		mainScrollView = (ScrollView) thisActivity.findViewById(R.id.mainScrollView);
@@ -98,6 +110,8 @@ public class ShareMessageDetailView {
 		detailScrollView.parentScrollView = mainScrollView;
 		mainScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		detailScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+		praiseusersNumView = (TextView) thisActivity.findViewById(R.id.praiseusersNum);
 
 		praiseUserContentView = (LinearLayout) thisActivity.findViewById(R.id.praiseUserContentView);
 
@@ -205,6 +219,39 @@ public class ShareMessageDetailView {
 			textview.setLayoutParams(params);
 			textview.setText(textContent);
 			shareMessageDetailContentView.addView(textview);
+		}
+		if (thisController.shareMessage.praiseusers.contains(thisController.currentUser.phone)) {
+			praiseIconView.setImageResource(R.drawable.praised_icon);
+		} else {
+			praiseIconView.setImageResource(R.drawable.praise_icon);
+		}
+		showPraiseUsersContent();
+	}
+
+	public void showPraiseUsersContent() {
+		// TODO
+		praiseUserContentView.removeAllViews();
+		List<String> praiseUsers = thisController.shareMessage.praiseusers;
+
+		int headWidth = praiseUserContentView.getWidth() / 5 - 5;
+		int padding = (int) (5 * screenDensity);
+		praiseusersNumView.setText("共获得" + praiseUsers.size() + "个赞");
+		ImageView iv = new ImageView(thisActivity);
+		LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT);
+		param.weight = 1;
+		iv.setLayoutParams(param);
+		praiseUserContentView.addView(iv);
+		for (int i = 0; i < praiseUsers.size(); i++) {
+			final ImageView view = new ImageView(thisActivity);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(headWidth, LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.CENTER;
+			view.setPadding(padding, 0, padding, 0);
+			view.setLayoutParams(params);
+			view.setImageBitmap(bitmap);
+
+			praiseUserContentView.addView(view);
+			if (i == 5)
+				break;
 		}
 	}
 

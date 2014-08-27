@@ -295,7 +295,7 @@ public class ShareReleaseImageTextController {
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/share/sendshare", params, responseHandlers.sendShareCallBack);
+		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/share/sendshare", params, responseHandlers.share_sendShareCallBack);
 	}
 
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {

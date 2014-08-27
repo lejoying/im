@@ -1315,8 +1315,8 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", gid: "XXX", gsid: "NNN", option: "true" || "false"}
         },
         response: {
-            success: {"提示信息": "点赞群分享成功"},
-            failed: { "提示信息": "点赞群分享失败", "失败原因": "数据异常" || "消息不存在" }
+            success: {"提示信息": "点赞群分享成功", gid: "XXX", gsid: "NNN"},
+            failed: { "提示信息": "点赞群分享失败", "失败原因": "数据异常" || "消息不存在", gid: "XXX", gsid: "NNN" }
         }
     },
     /***************************************
@@ -1331,8 +1331,8 @@ api = {
             typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", head: "XXX", gid: "XXX", gsid: "NNN", contentType: "text", content: "XXX"}
         },
         response: {
-            success: {"提示信息": "评论群分享成功"},
-            failed: { "提示信息": "评论群分享失败", "失败原因": "数据异常" || "消息不存在" }
+            success: {"提示信息": "评论群分享成功", gid: "XXX", gsid: "NNN"},
+            failed: { "提示信息": "评论群分享失败", "失败原因": "数据异常" || "消息不存在", gid: "XXX", gsid: "NNN"}
         }
     },
     /***************************************
