@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -39,6 +40,13 @@ public class PictureBrowseView {
 
 	public ImagePagerAdapter imagePagerAdapter;
 
+	// top bar view
+	public ImageView backView;
+	public TextView imageNumberView;
+	public TextView titleView;
+	public ImageView choiceCoverView;
+	public ImageView deleteButtonView;
+
 	public DisplayImageOptions options;
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -52,14 +60,24 @@ public class PictureBrowseView {
 		thisActivity.setContentView(R.layout.activity_picture_browse);
 		imageViewPageContent = (ViewPager) thisActivity.findViewById(R.id.mainPagerContent);
 
+		backView = (ImageView) thisActivity.findViewById(R.id.PicAndVoiceDetailBack);
+		imageNumberView = (TextView) thisActivity.findViewById(R.id.imageTotalNumber);
+		titleView = (TextView) thisActivity.findViewById(R.id.centerTitle);
+		choiceCoverView = (ImageView) thisActivity.findViewById(R.id.choiceCoverView);
+		deleteButtonView = (ImageView) thisActivity.findViewById(R.id.deleteImageView);
+
 		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true).displayer(new FadeInBitmapDisplayer(300)).build();
 
 		imagePagerAdapter = new ImagePagerAdapter(thisController.imagesBrowseList);
 		imageViewPageContent.setAdapter(imagePagerAdapter);
 		imageViewPageContent.setCurrentItem(thisController.currentPosition);
+
+		imageNumberView.setText("1/" + thisController.imagesBrowseList.size());
+		titleView.setText("浏览");
 	}
 
 	public void notifyAdapter() {
+		imageNumberView.setText(thisController.currentPosition + 1 + "/" + thisController.imagesBrowseList.size());
 		imagePagerAdapter.notifyDataSetChanged();
 	}
 
@@ -125,7 +143,7 @@ public class PictureBrowseView {
 				}
 			});
 
-			view.addView(imageLayout, 0);
+			view.addView(imageLayout);
 			return imageLayout;
 		}
 

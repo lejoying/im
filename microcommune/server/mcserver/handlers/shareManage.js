@@ -697,8 +697,17 @@ shareManage.getgroupshares = function (data, response) {
                 for (var index in results) {
                     var result = results[index];
                     var shareData = result.share.data;
-                    sharesOrder.push(shareData.gsid);
-                    sharesMap[shareData.gsid] = shareData;
+                    var share = {
+                        comments: JSON.parse(shareData.comments),
+                        content: shareData.content,
+                        praiseusers: JSON.parse(shareData.praises),
+                        gsid: shareData.gsid,
+                        type: shareData.type,
+                        time: shareData.time,
+                        phone: shareData.phone
+                    };
+                    sharesOrder.push(share.gsid + "");
+                    sharesMap[share.gsid] = share;
                 }
                 response.write(JSON.stringify({
                     "提示信息": "获取群分享成功",

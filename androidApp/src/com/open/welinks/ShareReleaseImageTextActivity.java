@@ -53,6 +53,12 @@ public class ShareReleaseImageTextActivity extends Activity {
 	}
 
 	@Override
+	public void onBackPressed() {
+		thisController.onBackPressed();
+		super.onBackPressed();
+	}
+
+	@Override
 	public void finish() {
 		thisController.finish();
 		super.finish();

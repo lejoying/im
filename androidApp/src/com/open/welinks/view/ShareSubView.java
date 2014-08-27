@@ -24,12 +24,14 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.ShareContent;
@@ -92,13 +94,12 @@ public class ShareSubView {
 		groupMembersListContentView = (RelativeLayout) this.groupMembersView.findViewById(R.id.groupMembersListContent);
 		releaseShareView = (ImageView) this.groupMembersView.findViewById(R.id.releaseShare);
 
+		thisController.getUserCurrentAllGroup();
 		showShareMessages();
 
 		initReleaseShareDialogView();
 
 		initializationGroupsDialog();
-
-		thisController.getUserCurrentAllGroup();
 
 	}
 
@@ -153,6 +154,9 @@ public class ShareSubView {
 			}
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
+			// TODO
+			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
+			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 		}
 	}
 
@@ -167,7 +171,7 @@ public class ShareSubView {
 			listBody.super();
 		}
 
-		public View cardView = null;
+		public TouchView cardView = null;
 
 		public ImageView headView;
 		public TextView nickNameView;
@@ -186,13 +190,13 @@ public class ShareSubView {
 		public View initialize(int i) {
 			this.i = i;
 			if (i == -1) {
-				this.cardView = groupMembersView;
+				this.cardView = (TouchView) groupMembersView;
 				// groupMembersListContentView = (RelativeLayout)
 				// this.cardView.findViewById(R.id.groupMembersListContent);
 				// releaseShareView = (ImageView)
 				// this.cardView.findViewById(R.id.releaseShare);
 			} else {
-				this.cardView = mainView.mInflater.inflate(R.layout.share_message_item, null);
+				this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.share_message_item, null);
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
 				this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
 				this.releaseTimeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
@@ -216,7 +220,11 @@ public class ShareSubView {
 				Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 				bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 				this.headView.setImageBitmap(bitmap);
-				this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
+				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
+					this.nickNameView.setText(shareMessage.phone);
+				} else {
+					this.nickNameView.setText(data.relationship.friendsMap.get(shareMessage.phone).nickName);
+				}
 				this.releaseTimeView.setText(DateUtil.formatHourMinute(shareMessage.time));
 				ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
 				String textContent = "";
@@ -237,13 +245,13 @@ public class ShareSubView {
 
 				this.shareTextContentView.setText(textContent);
 				File sdFile = Environment.getExternalStorageDirectory();
-				File file = new File(sdFile, "welinks/images/" + imageContent);
+				File file = new File(sdFile, "welinks/thumbnail/" + imageContent);
 				int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
 				int showImageHeight = (int) (displayMetrics.density * 200 + 0.5f);
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				final String url = "http://images3.we-links.com/images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+				final String url = API.DOMAIN_OSS_THUMBNAIL + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
 				final String path = file.getAbsolutePath();
 				if (file.exists()) {
 					imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
@@ -255,6 +263,7 @@ public class ShareSubView {
 						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 							downloadFile = new DownloadFile(url, path);
 							downloadFile.view = shareImageContentView;
+							downloadFile.setDownloadFileListener(thisController.downloadListener);
 							downloadFileList.addDownloadFile(downloadFile);
 						}
 
@@ -264,10 +273,32 @@ public class ShareSubView {
 						}
 					});
 				} else {
+					File file2 = new File(sdFile, "welinks/images/" + imageContent);
+					final String path2 = file2.getAbsolutePath();
+					if (file2.exists()) {
+						imageLoader.displayImage("file://" + path2, shareImageContentView, options, new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingStarted(String imageUri, View view) {
+							}
+
+							@Override
+							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+								downloadFile = new DownloadFile(url, path);
+								downloadFile.view = shareImageContentView;
+								downloadFile.setDownloadFileListener(thisController.downloadListener);
+								downloadFileList.addDownloadFile(downloadFile);
+							}
+
+							@Override
+							public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+							}
+						});
+					}
 					downloadFile = new DownloadFile(url, path);
 					downloadFile.view = shareImageContentView;
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
 					downloadFileList.addDownloadFile(downloadFile);
-					// TODO CallBack
 				}
 
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
@@ -456,7 +487,9 @@ public class ShareSubView {
 
 	public void showGroupMembers() {
 		groupMembersListContentView.removeAllViews();
-		List<String> groupMembers = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup).members;
+		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		shareTopMenuGroupName.setText(group.name);
+		List<String> groupMembers = group.members;
 		// Map<String, Friend> friendsMap = data.relationship.friendsMap;
 		Resources resources = mainView.thisActivity.getResources();
 		Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);

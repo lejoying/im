@@ -57,11 +57,12 @@ public class UploadMultipart {
 
 	public Gson gson = new Gson();
 
-	public String BUCKETNAME = "welinkstest";
+	public String BUCKETNAME = "wxgs";// welinkstest
 	public String OSSACCESSKEYID = "dpZe5yUof6KSJ8RM";
 	public String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
 
-	public String OSS_HOST_URL = "http://images5.we-links.com/";
+	public String OSS_HOST_URL = "http://images2.we-links.com/";// http://images5.we-links.com/
+	public static String OSS_DIRECTORY = "images/";// multipart
 
 	public UploadLoadingListener uploadLoadingListener;
 
@@ -87,7 +88,6 @@ public class UploadMultipart {
 	public byte[] bytes;
 	public String fileName = "";
 
-	public static String OSS_DIRECTORY = "multipart/";
 
 	public int addExpires = 600;
 	public int partSize = 256000;

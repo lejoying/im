@@ -37,8 +37,8 @@ public class PictureBrowseActivity extends Activity {
 
 		thisController.onCreate(savedInstanceState);
 		thisView.initView();
-		// thisController.initializeListeners();
-		// thisController.bindEvent();
+		thisController.initializeListeners();
+		thisController.bindEvent();
 	}
 
 	@Override

@@ -204,6 +204,7 @@ public class Data {
 				public List<String> praiseusers = new ArrayList<String>();
 				public List<Comment> comments = new ArrayList<Comment>();
 				public String content;
+				public String status;// sending sent failed
 			}
 
 			public class Comment {

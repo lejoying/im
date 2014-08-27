@@ -25,6 +25,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
 import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
@@ -34,6 +37,7 @@ import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
 import com.open.welinks.view.ShareReleaseImageTextView;
@@ -104,8 +108,7 @@ public class ShareReleaseImageTextController {
 
 				@Override
 				public boolean onDown(MotionEvent event) {
-					onTouchEvent(event);
-					return true;
+					return onTouchEvent(event);
 				}
 
 				@Override
@@ -142,20 +145,18 @@ public class ShareReleaseImageTextController {
 			public void onClick(View view) {
 				if (view == thisView.mCancleButtonView) {
 					thisActivity.finish();
+					data.tempData.selectedImageList = null;
 				} else if (view == thisView.mConfirmButtonView) {
 					sendImageTextShare();
-					// thisActivity.finish();
 				} else if (view == thisView.mSelectImageButtonView) {
 					Intent intent = new Intent(thisActivity, ImagesDirectoryActivity.class);
 					thisActivity.startActivityForResult(intent, RESULT_REQUESTCODE_SELECTIMAGE);
 				} else if (view.getTag() != null) {
 					// selected images onclick handle
-					// Log.e(tag, view.getTag().toString() +
-					// "------------------current");
-					// Intent intent = new Intent(thisActivity,
-					// PictureBrowseActivity.class);
-					// intent.putExtra("position", view.getTag().toString());
-					// thisActivity.startActivity(intent);
+					Log.e(tag, view.getTag().toString() + "------------------current");
+					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+					intent.putExtra("position", view.getTag().toString());
+					thisActivity.startActivity(intent);
 				}
 			}
 		};
@@ -199,6 +200,7 @@ public class ShareReleaseImageTextController {
 				shareMessage.type = "imagetext";
 				shareMessage.phone = currentUser.phone;
 				shareMessage.time = time;
+				shareMessage.status = "sending";
 
 				ShareContent shareContent = data.new ShareContent();
 				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
@@ -217,6 +219,7 @@ public class ShareReleaseImageTextController {
 				// To add data to the data
 				share.sharesOrder.add(0, shareMessage.gsid);
 				share.sharesMap.put(shareMessage.gsid, shareMessage);
+				sendMessageToServer(content, shareMessage.gsid);
 
 				// Local data diaplay in MainHandler
 				handler.post(new Runnable() {
@@ -237,8 +240,22 @@ public class ShareReleaseImageTextController {
 		public String content;
 	}
 
-	public void sendMessageToServer() {
-		// SendShareMessage sendShareMessage
+	public void sendMessageToServer(String content, String gsid) {
+		SendShareMessage sendShareMessage = new SendShareMessage();
+		sendShareMessage.type = "imagetext";
+		sendShareMessage.content = content;
+
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("gid", currentSelectedGroup);
+		params.addBodyParameter("ogsid", gsid);
+		params.addBodyParameter("message", gson.toJson(sendShareMessage));
+
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
+		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/share/sendshare", params, responseHandlers.sendShareCallBack);
 	}
 
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
@@ -288,6 +305,10 @@ public class ShareReleaseImageTextController {
 		}
 	}
 
+	public void onBackPressed() {
+		data.tempData.selectedImageList = null;
+	}
+
 	public void finish() {
 		// data.tempData.selectedImageList = null;
 	}
@@ -300,7 +321,7 @@ public class ShareReleaseImageTextController {
 	public float pre_pre_y = 0;
 	long pre_lastMillis = 0;
 
-	public void onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(MotionEvent event) {
 		float x = event.getX();
 		float y = event.getY();
 		long currentMillis = System.currentTimeMillis();
@@ -327,5 +348,6 @@ public class ShareReleaseImageTextController {
 				pre_y = pre_pre_y;
 			}
 		}
+		return true;
 	}
 }

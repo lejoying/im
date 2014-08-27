@@ -11,13 +11,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.R;
+import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
+import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -39,20 +42,34 @@ public class ShareSubController {
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
+	public DownloadListener downloadListener;
 
 	public ShareSubController(MainController mainController) {
+		thisActivity = mainController.thisActivity;
+
 		this.mainController = mainController;
 
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
 	}
 
 	public void initializeListeners() {
+
+		downloadListener = new DownloadListener() {
+
+			@Override
+			public void loading(DownloadFile instance, int precent, int status) {
+			}
+
+			@Override
+			public void success(DownloadFile instance, int status) {
+				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.options);
+			}
+		};
 		mOnTouchListener = new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				// return onTouchEvent(event);
-				return true;
+				return onTouchEvent(event);
 			}
 		};
 		mOnClickListener = new OnClickListener() {
@@ -83,8 +100,14 @@ public class ShareSubController {
 						thisView.dismissGroupDialog();
 						Group group = data.relationship.groupsMap.get(content);
 						TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
+						data.localStatus.localData.currentSelectedGroup = group.gid + "";
 						shareTopMenuGroupName.setText(group.name);
 						thisView.modifyCurrentShowGroup();
+						getCurrentGroupShareMessages();
+					} else if ("ShareMessageDetail".equals(type)) {
+						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+						intent.putExtra("gsid", content);
+						thisActivity.startActivity(intent);
 					}
 				}
 			}
@@ -109,6 +132,18 @@ public class ShareSubController {
 	public void bindEvent() {
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnClickListener(mOnClickListener);
+	}
+
+	public void getCurrentGroupShareMessages() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("nowpage", "0");
+		params.addBodyParameter("pagesize", "20");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.getSharesCallBack);
 	}
 
 	public void getUserCurrentAllGroup() {

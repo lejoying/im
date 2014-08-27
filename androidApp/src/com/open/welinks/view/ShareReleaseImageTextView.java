@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.open.lib.TouchImageView;
+import com.open.lib.TouchView;
 import com.open.welinks.R;
 import com.open.welinks.controller.ShareReleaseImageTextController;
 import com.open.welinks.model.Data;
@@ -29,7 +31,7 @@ public class ShareReleaseImageTextView {
 	public Activity thisActivity;
 
 	public EditText mEditTextView;
-	public RelativeLayout mImagesContentView;
+	public TouchView mImagesContentView;
 	public RelativeLayout mReleaseButtomBarView;
 
 	public TextView mCancleButtonView;
@@ -53,7 +55,7 @@ public class ShareReleaseImageTextView {
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		thisActivity.setContentView(R.layout.share_release_imagetext);
 		mEditTextView = (EditText) thisActivity.findViewById(R.id.releaseTextContentView);
-		mImagesContentView = (RelativeLayout) thisActivity.findViewById(R.id.releaseImagesContent);
+		mImagesContentView = (TouchView) thisActivity.findViewById(R.id.releaseImagesContent);
 		mReleaseButtomBarView = (RelativeLayout) thisActivity.findViewById(R.id.releaseButtomBar);
 		mCancleButtonView = (TextView) thisActivity.findViewById(R.id.releaseCancel);
 		mConfirmButtonView = (TextView) thisActivity.findViewById(R.id.releaseConfirm);
@@ -87,6 +89,8 @@ public class ShareReleaseImageTextView {
 			imageLoader.displayImage("file://" + key, imageBody.imageView, options);
 			myScrollImageBody.selectedImagesSequence.add(key);
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
+			imageBody.imageView.setTag(i);
+			imageBody.imageView.setOnClickListener(thisController.monClickListener);
 		}
 		myScrollImageBody.contentView.setOnTouchListener(thisController.onTouchListener);
 	}
@@ -95,9 +99,9 @@ public class ShareReleaseImageTextView {
 		public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
 		public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
 
-		public RelativeLayout contentView;
+		public TouchView contentView;
 
-		public RelativeLayout initialize(RelativeLayout view) {
+		public TouchView initialize(TouchView view) {
 			this.contentView = view;
 			return view;
 		}
@@ -126,9 +130,6 @@ public class ShareReleaseImageTextView {
 					break;
 				imageBody.imageView.setX(imageBody.x + deltaX);
 				imageBody.imageView.setY(imageBody.y + deltaY);
-				imageBody.imageView.setTag(i);
-				// imageBody.imageView.setOnClickListener(thisController.monClickListener);
-				// imageBody.imageView.setOnTouchListener(thisController.onTouchListener);
 			}
 		}
 	}
@@ -138,10 +139,10 @@ public class ShareReleaseImageTextView {
 
 		public float x;
 		public float y;
-		public ImageView imageView;
+		public TouchImageView imageView;
 
-		public ImageView initialize() {
-			this.imageView = new ImageView(context);
+		public TouchImageView initialize() {
+			this.imageView = new TouchImageView(context);
 			return this.imageView;
 		}
 	}

@@ -20,14 +20,14 @@
         android:textCursorDrawable="@drawable/edit_cursor"
         android:textSize="20sp" />
 
-    <RelativeLayout
+    <com.open.lib.TouchView
         android:id="@+id/releaseImagesContent"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="#60aabbcc"
-        android:layout_marginBottom="50dp" >
-    </RelativeLayout>
+        android:layout_marginBottom="50dp"
+        android:background="#60aabbcc" >
+    </com.open.lib.TouchView>
 
     <RelativeLayout
         android:id="@+id/releaseButtomBar"
