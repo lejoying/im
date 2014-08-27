@@ -118,74 +118,81 @@
         android:visibility="gone" >
 
         <RelativeLayout
-            android:id="@+id/selectedface"
-            android:layout_width="120dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical" >
+            android:layout_marginRight="40dp"
+            android:background="#2fff" >
 
-            <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_centerHorizontal="true"
-                android:padding="4dp"
-                android:src="@drawable/chat_emoji_normal"
-                tools:ignore="ContentDescription" />
+            <RelativeLayout
+                android:id="@+id/selectedface"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="45dp"
-                android:text="表情"
-                android:textColor="#fff" />
-        </RelativeLayout>
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerHorizontal="true"
+                    android:padding="4dp"
+                    android:src="@drawable/chat_emoji_normal"
+                    tools:ignore="ContentDescription" />
 
-        <RelativeLayout
-            android:id="@+id/selectpicture"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:translationX="100dp" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="45dp"
+                    android:text="@string/face_text"
+                    android:textColor="#fff" />
+            </RelativeLayout>
 
-            <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_centerHorizontal="true"
-                android:padding="4dp"
-                android:src="@drawable/chat_picture_normal"
-                tools:ignore="ContentDescription" />
+            <RelativeLayout
+                android:id="@+id/selectpicture"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:translationX="100dp" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="45dp"
-                android:text="图片"
-                android:textColor="#fff" />
-        </RelativeLayout>
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerHorizontal="true"
+                    android:padding="4dp"
+                    android:src="@drawable/chat_picture_normal"
+                    tools:ignore="ContentDescription" />
 
-        <RelativeLayout
-            android:id="@+id/makeaudio"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:translationX="200dp" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="45dp"
+                    android:text="@string/picture_text"
+                    android:textColor="#fff" />
+            </RelativeLayout>
 
-            <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_centerHorizontal="true"
-                android:padding="4dp"
-                android:src="@drawable/chat_voice_normal"
-                tools:ignore="ContentDescription" />
+            <RelativeLayout
+                android:id="@+id/makeaudio"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:translationX="200dp" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="45dp"
-                android:text="语音"
-                android:textColor="#fff" />
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerHorizontal="true"
+                    android:padding="4dp"
+                    android:src="@drawable/chat_voice_normal"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="45dp"
+                    android:text="@string/voice_text"
+                    android:textColor="#fff" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <ImageView

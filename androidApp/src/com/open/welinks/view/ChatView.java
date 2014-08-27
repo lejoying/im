@@ -1,12 +1,14 @@
 package com.open.welinks.view;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.MessageContent;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -21,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -165,20 +168,26 @@ public class ChatView {
 			} else {
 				chatHolder = (ChatHolder) convertView.getTag();
 			}
-
+			MessageContent content = thisController
+					.getMessageContent(message.content);
 			String contentType = message.contentType;
 			if ("text".equals(contentType)) {
 				chatHolder.character.setVisibility(View.VISIBLE);
 				chatHolder.image.setVisibility(View.GONE);
 				chatHolder.voice.setVisibility(View.GONE);
-				chatHolder.character.setText("");
+				chatHolder.character.setText(content.text);
 			} else if ("image".equals(contentType)) {
 				chatHolder.character.setVisibility(View.GONE);
 				chatHolder.image.setVisibility(View.VISIBLE);
 				chatHolder.voice.setVisibility(View.GONE);
-				// for (;;) {
-				// chatHolder.image.addView(null);
-				// }
+				List<String> images = content.images;
+				for (String image : images) {
+					ImageView child = new ImageView(thisActivity);
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+							LayoutParams.WRAP_CONTENT,
+							LayoutParams.WRAP_CONTENT);
+					chatHolder.image.addView(child, params);
+				}
 			} else if ("voice".equals(contentType)) {
 				chatHolder.character.setVisibility(View.GONE);
 				chatHolder.image.setVisibility(View.GONE);

@@ -180,6 +180,12 @@ public class Data {
 		}
 	}
 
+	public class MessageContent {
+		public String text = "";
+		public String voice = "";
+		public List<String> images = new ArrayList<String>();
+	}
+
 	public class Shares {
 
 		public Map<String, Share> shareMap = new HashMap<String, Share>();

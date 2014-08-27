@@ -6,6 +6,7 @@ import com.open.welinks.view.ChatView;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.MotionEvent;
 
 public class ChatActivity extends Activity {
@@ -37,6 +38,15 @@ public class ChatActivity extends Activity {
 		chatController.onCreate();
 		chatController.bindEvent();
 
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == R.id.chat_content
+				&& requestCode == Activity.RESULT_OK) {
+			this.chatController.addImagesToMessage();
+		}
 	}
 
 	@Override

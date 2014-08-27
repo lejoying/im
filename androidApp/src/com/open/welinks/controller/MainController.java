@@ -243,21 +243,32 @@ public class MainController {
 			Log.d(tag, "Activity on touch down");
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
-			thisView.friendsSubView.friendListBody.onTouchDown(event);
-			// thisView.chatMessageListBody.onTouchDown(event);
-			thisView.shareSubView.shareMessageListBody.onTouchDown(event);
+
+			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+				thisView.friendsSubView.friendListBody.onTouchDown(event);
+			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
+				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
+			}
+
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
-			thisView.friendsSubView.friendListBody.onTouchMove(event);
-			// thisView.chatMessageListBody.onTouchMove(event);
-			thisView.shareSubView.shareMessageListBody.onTouchMove(event);
+
+			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+				thisView.friendsSubView.friendListBody.onTouchMove(event);
+			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
+				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
+			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
-			thisView.friendsSubView.friendListBody.onTouchUp(event);
-			// thisView.chatMessageListBody.onTouchUp(event);
-			thisView.shareSubView.shareMessageListBody.onTouchUp(event);
+
+			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+				friendsSubController.onSingleTapUp(event);
+				thisView.friendsSubView.friendListBody.onTouchUp(event);
+			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
+				thisView.shareSubView.shareMessageListBody.onTouchUp(event);
+			}
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -278,6 +289,7 @@ public class MainController {
 			} else if (motionEvent == MotionEvent.ACTION_UP) {
 				Log.d(tag, "List on touch up");
 				thisView.friendsSubView.friendListBody.onTouchUp(event);
+
 			}
 			mListGesture.onTouchEvent(event);
 			return true;
@@ -303,9 +315,12 @@ public class MainController {
 			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
 			// }
-			if (thisView.shareSubView.shareMessageListBody.bodyStatus.state == thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
-				thisView.shareSubView.shareMessageListBody.onFling(velocityX, velocityY);
-			}
+			// if (thisView.shareSubView.shareMessageListBody.bodyStatus.state
+			// ==
+			// thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
+			// thisView.shareSubView.shareMessageListBody.onFling(velocityX,
+			// velocityY);
+			// }
 			return true;
 		}
 
@@ -329,7 +344,6 @@ public class MainController {
 		}
 
 		public boolean onSingleTapUp(MotionEvent event) {
-
 			return false;
 		}
 	}
