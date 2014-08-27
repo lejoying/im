@@ -304,7 +304,12 @@ public class MainController {
 
 			if (thisView.friendsSubView.friendListBody.bodyStatus.state == thisView.friendsSubView.friendListBody.bodyStatus.DRAGGING) {
 				thisView.friendsSubView.friendListBody.onFling(velocityX, velocityY);
+			} else if (thisView.friendsSubView.friendListBody.bodyStatus.state == thisView.friendsSubView.friendListBody.bodyStatus.FIXED) {
+				thisView.friendsSubView.friendListBody.onFling(velocityX, velocityY);
+			} else {
+				Log.i(tag, "bodyStatus error:" + thisView.friendsSubView.friendListBody.bodyStatus.state);
 			}
+
 			if (thisView.messages_friends_me_PagerBody.bodyStatus.state == thisView.messages_friends_me_PagerBody.bodyStatus.HOMING) {
 				thisView.messages_friends_me_PagerBody.onFling(velocityX, velocityY);
 			}
@@ -351,7 +356,7 @@ public class MainController {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				friendsSubController.onScroll();
 			}
-			
+
 			return false;
 		}
 	}

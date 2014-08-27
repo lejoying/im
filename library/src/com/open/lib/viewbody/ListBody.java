@@ -86,7 +86,7 @@ public class ListBody {
 	}
 
 	public class BodyStatus {
-		public int FIXED = 0, DRAGGING = 1, INERTIAMOVING = 2, ORDERING = 3;
+		public int FIXED = 0, DRAGGING = 1, HOMINGMOVING = 2, ORDERING = 3;
 		public int state = FIXED;
 	}
 
@@ -100,7 +100,7 @@ public class ListBody {
 	public TouchStatus touchStatus = new TouchStatus();
 
 	public float speedY = 0;
-	public float ratio = 0.00008f;
+	public float ratio = 0.0008f;
 
 	public void render() {
 		if (isActive == false) {
@@ -130,7 +130,7 @@ public class ListBody {
 	float touch_pre_y = 0;
 
 	public void onTouchDown(MotionEvent event) {
-		Log.e(tag, "this.touchStatus.state:  touchStatus.Down" + this.touchStatus.state);
+		Log.i(tag, "bodyStatus:  " + this.bodyStatus.state + "     touchStatus:  " + this.touchStatus.state);
 		if (isActive == false) {
 			return;
 		}
@@ -139,6 +139,7 @@ public class ListBody {
 
 		if (touchStatus.state == touchStatus.Up) {
 			touchStatus.state = touchStatus.Down;
+			this.openLooper.stop();
 		} else {
 			// Log.e(tag, "unkown status: not touchMoveStatus.Up");
 		}
@@ -147,7 +148,7 @@ public class ListBody {
 		touch_pre_y = y;
 	}
 
-	public long lastMillis;
+	public long lastMillis = 0;
 
 	public void onTouchMove(MotionEvent event) {
 		if (isActive == false) {
@@ -227,7 +228,7 @@ public class ListBody {
 			return;
 		}
 		if (this.bodyStatus.state == this.bodyStatus.DRAGGING || this.bodyStatus.state == this.bodyStatus.FIXED) {
-			sliding(0);
+			// sliding(0);
 		} else if (this.bodyStatus.state == this.bodyStatus.ORDERING) {
 			this.bodyStatus.state = this.bodyStatus.FIXED;
 		}
@@ -238,20 +239,22 @@ public class ListBody {
 		if (isActive == false) {
 			return;
 		}
-		if (this.bodyStatus.state == this.bodyStatus.DRAGGING) {
+		if (this.bodyStatus.state == this.bodyStatus.DRAGGING||this.bodyStatus.state == this.bodyStatus.FIXED) {
 
 			if (velocityY > 0) {
 				this.speedY = velocityY;
-				if (velocityY > 5000) {
-					this.speedY = 5000;
+				if (velocityY > 10000) {
+					this.speedY = 10000;
 				}
 			} else if (velocityY < 0) {
 				this.speedY = velocityY;
-				if (velocityY < -5000) {
-					this.speedY = -5000;
+				if (velocityY < -10000) {
+					this.speedY = -10000;
 				}
 			}
 			sliding(speedY);
+		} else {
+			Log.i(tag, "bodyStatus error:" + this.bodyStatus.state);
 		}
 	}
 
@@ -280,9 +283,9 @@ public class ListBody {
 	public float height = 0;
 
 	public void setChildrenDeltaXY(float deltaX, float deltaY) {
-		if (this.y > 0 || this.y < -(this.height - 2 * 260 * displayMetrics.density)) {
-			deltaY = deltaY / 4;
-		}
+		// if (this.y > 0 || this.y < -(this.height - 2 * 260 * displayMetrics.density)) {
+		// deltaY = deltaY / 4;
+		// }
 		this.x = this.x + deltaX;
 		this.y = this.y + deltaY;
 
@@ -324,24 +327,28 @@ public class ListBody {
 	// }
 
 	public void sliding(float speedY) {
-
-		double currentValue = this.y / displayMetrics.heightPixels;
-		double endValue = 0;
-		if (speedY > 0) {
-			endValue = currentValue + this.ratio * speedY * speedY / displayMetrics.heightPixels;
-		} else {
-			endValue = currentValue - this.ratio * speedY * speedY / displayMetrics.heightPixels;
-		}
-		if (endValue > 0) {
-			endValue = 0;
-		}
-
-		if (endValue < -(this.height - displayMetrics.heightPixels + 110 * displayMetrics.density) / displayMetrics.heightPixels) {
-			endValue = -(this.height - displayMetrics.heightPixels + 110 * displayMetrics.density) / displayMetrics.heightPixels;
-		}
-
-		this.mSpring.setCurrentValue(currentValue);
-		this.mSpring.setEndValue(endValue);
+		Log.i(tag, "sliding:  " + speedY);
+		this.dySpeed = speedY;
+		bodyStatus.state = bodyStatus.HOMINGMOVING;
+		lastMillis = System.currentTimeMillis();
+		this.openLooper.start();
+		// double currentValue = this.y / displayMetrics.heightPixels;
+		// double endValue = 0;
+		// if (speedY > 0) {
+		// endValue = currentValue + this.ratio * speedY * speedY / displayMetrics.heightPixels;
+		// } else {
+		// endValue = currentValue - this.ratio * speedY * speedY / displayMetrics.heightPixels;
+		// }
+		// if (endValue > 0) {
+		// endValue = 0;
+		// }
+		//
+		// if (endValue < -(this.height - displayMetrics.heightPixels + 110 * displayMetrics.density) / displayMetrics.heightPixels) {
+		// endValue = -(this.height - displayMetrics.heightPixels + 110 * displayMetrics.density) / displayMetrics.heightPixels;
+		// }
+		//
+		// this.mSpring.setCurrentValue(currentValue);
+		// this.mSpring.setEndValue(endValue);
 	}
 
 	OpenLooper openLooper = null;
@@ -354,7 +361,11 @@ public class ListBody {
 
 		@Override
 		public void loop(double ellapsedMillis) {
-			// orderingMove(OrderingMoveDirection, (float) ellapsedMillis);
+			if (bodyStatus.state == bodyStatus.ORDERING) {
+				orderingMove(OrderingMoveDirection, (float) ellapsedMillis);
+			} else if (bodyStatus.state == bodyStatus.HOMINGMOVING) {
+				homingMove((float) ellapsedMillis);
+			}
 		}
 	}
 
@@ -409,10 +420,10 @@ public class ListBody {
 				if (ratio < -1) {
 					ratio = -1;
 				}
-				Log.i(tag, "ratio:  " + ratio);
+				// Log.i(tag, "ratio:  " + ratio);
 
 				myListItemBody.offset_y = ratio * itemHeight;
-				Log.d(tag, "myListItemBody.offset_y:  " + myListItemBody.offset_y);
+				// Log.d(tag, "myListItemBody.offset_y:  " + myListItemBody.offset_y);
 			}
 		}
 
@@ -423,16 +434,33 @@ public class ListBody {
 
 	float orderSpeed = 0.66f;
 
-	public void dampenSpeed(long deltaMillis) {
-		if (dxSpeed != 0.0f) {
-			dxSpeed *= (1.0f - 0.001f * deltaMillis);
-			if (Math.abs(dxSpeed) < 0.001f)
-				dxSpeed = 0.0f;
+	public void homingMove(float delta1) {
+		long currentMillis = System.currentTimeMillis();
+
+		// update rotations
+		if (lastMillis != 0) {
+			long delta = currentMillis - lastMillis;
+			dampenSpeed(delta);
+			setChildrenDeltaXY(0, this.ratio * delta * this.dySpeed);
+			this.setChildrenPosition();
+
+			// Log.i(tag, "homingMove:  dySpeed: " + (int) this.dySpeed + "   delta:" + delta);
 		}
 
+		// update millis
+		lastMillis = currentMillis;
+
+		if (this.dySpeed == 0) {
+			bodyStatus.state = bodyStatus.FIXED;
+			this.openLooper.stop();
+		}
+	}
+
+	public void dampenSpeed(long deltaMillis) {
+
 		if (dySpeed != 0.0f) {
-			dySpeed *= (1.0f - 0.001f * deltaMillis);
-			if (Math.abs(dySpeed) < 0.001f)
+			dySpeed *= (1.0f - 0.002f * deltaMillis);
+			if (Math.abs(dySpeed) < 50f)
 				dySpeed = 0.0f;
 		}
 	}
