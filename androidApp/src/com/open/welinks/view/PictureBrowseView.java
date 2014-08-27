@@ -50,6 +50,9 @@ public class PictureBrowseView {
 	public DisplayImageOptions options;
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
+	public static int IMAGEBROWSE_COMMON = 0x01;
+	public static int IMAGEBROWSE_OPTION = 0x02;
+
 	public PictureBrowseView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -74,6 +77,12 @@ public class PictureBrowseView {
 
 		imageNumberView.setText("1/" + thisController.imagesBrowseList.size());
 		titleView.setText("浏览");
+
+		if (thisController.currentType == IMAGEBROWSE_COMMON) {
+			deleteButtonView.setVisibility(View.GONE);
+		} else if (thisController.currentType == IMAGEBROWSE_OPTION) {
+			deleteButtonView.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public void notifyAdapter() {

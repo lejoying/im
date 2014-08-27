@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.http.Header;
 
+import android.util.Log;
 import android.view.View;
 
 import com.lidroid.xutils.HttpUtils;
@@ -106,13 +107,13 @@ public class DownloadFile {
 			time.received = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_SUCCESS;
 			downloadListener.success(instance, isDownloadStatus);
-			// Log.e(tag, "-----success-----" + responseInfo.statusCode);
+			Log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			isDownloadStatus = DOWNLOAD_FAILED;
-			// Log.d(tag, "onFailure: -----" + msg);
+			Log.d(tag, "onFailure: -----" + msg);
 		}
 	};
 

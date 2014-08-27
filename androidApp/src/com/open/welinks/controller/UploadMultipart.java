@@ -88,7 +88,6 @@ public class UploadMultipart {
 	public byte[] bytes;
 	public String fileName = "";
 
-
 	public int addExpires = 600;
 	public int partSize = 256000;
 	public int partCount = 0;
@@ -128,6 +127,7 @@ public class UploadMultipart {
 		SHA1 sha1 = new SHA1();
 		String sha1FileName = "";
 		String suffixName = path.substring(path.lastIndexOf("."));
+		suffixName = suffixName.toLowerCase(Locale.getDefault());
 
 		if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
 			suffixName = ".osj";

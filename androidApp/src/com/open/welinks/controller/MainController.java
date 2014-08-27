@@ -248,6 +248,10 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
+				if (thisView.shareSubView.groupPopWindow.isShowing()) {
+					thisView.shareSubView.groupListBody.onTouchDown(event);
+					Log.e(tag, "----------dialog down");
+				}
 			}
 
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
@@ -258,6 +262,10 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
+				if (thisView.shareSubView.groupPopWindow.isShowing()) {
+					thisView.shareSubView.groupListBody.onTouchMove(event);
+					Log.e(tag, "----------dialog move");
+				}
 			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
@@ -267,7 +275,12 @@ public class MainController {
 				friendsSubController.onSingleTapUp(event);
 				thisView.friendsSubView.friendListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
+				shareSubController.onSingleTapUp(event);
 				thisView.shareSubView.shareMessageListBody.onTouchUp(event);
+				if (thisView.shareSubView.groupPopWindow.isShowing()) {
+					thisView.shareSubView.groupListBody.onTouchUp(event);
+					Log.e(tag, "----------dialog up");
+				}
 			}
 		}
 		mGesture.onTouchEvent(event);
@@ -350,8 +363,10 @@ public class MainController {
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				friendsSubController.onScroll();
+			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
+				shareSubController.onScroll();
 			}
-			
+
 			return false;
 		}
 	}

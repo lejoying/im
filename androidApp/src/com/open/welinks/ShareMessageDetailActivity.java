@@ -38,4 +38,10 @@ public class ShareMessageDetailActivity extends Activity {
 		thisView.initView();
 		thisController.bindEvent();
 	}
+	
+	@Override
+	public void finish() {
+		thisController.finish();
+		super.finish();
+	}
 }

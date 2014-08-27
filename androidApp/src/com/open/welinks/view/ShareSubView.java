@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
@@ -75,6 +75,10 @@ public class ShareSubView {
 	public RelativeLayout groupMembersListContentView;
 	public ImageView releaseShareView;
 
+	public int shareImageHeight;
+
+	public float imageHeightScale = 0.5686505598114319f;
+
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
 	}
@@ -82,6 +86,9 @@ public class ShareSubView {
 	public void initViews() {
 		this.shareView = mainView.shareView;
 		this.displayMetrics = mainView.displayMetrics;
+
+		shareImageHeight = (int) (this.displayMetrics.widthPixels * imageHeightScale);
+		Log.e(tag, "height--------------" + shareImageHeight);
 
 		shareMessageView = (ViewGroup) shareView.findViewById(R.id.groupShareMessageContent);
 
@@ -95,7 +102,10 @@ public class ShareSubView {
 		groupMembersListContentView = (RelativeLayout) this.groupMembersView.findViewById(R.id.groupMembersListContent);
 		releaseShareView = (ImageView) this.groupMembersView.findViewById(R.id.releaseShare);
 
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+
 		thisController.getUserCurrentAllGroup();
+
 		showShareMessages();
 
 		initReleaseShareDialogView();
@@ -145,8 +155,8 @@ public class ShareSubView {
 			this.shareMessageListBody.listItemsSequence.add(keyName);
 			sharesMessageBody.setContent(shareMessage);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
-			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (350 * displayMetrics.density));
+			sharesMessageBody.y = 360 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
@@ -156,8 +166,9 @@ public class ShareSubView {
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 			// TODO
+			sharesMessageBody.cardView.setTag(R.id.tag_class, "share_view");
 			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
-			 sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener1);
+			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 		}
 	}
@@ -249,11 +260,11 @@ public class ShareSubView {
 				File sdFile = Environment.getExternalStorageDirectory();
 				File file = new File(sdFile, "welinks/thumbnail/" + imageContent);
 				int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
-				int showImageHeight = (int) (displayMetrics.density * 200 + 0.5f);
+				int showImageHeight = shareImageHeight;// (int) (displayMetrics.density * 200 + 0.5f);
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				final String url = API.DOMAIN_OSS_THUMBNAIL + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+				final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
 				final String path = file.getAbsolutePath();
 				if (file.exists()) {
 					imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
@@ -278,24 +289,7 @@ public class ShareSubView {
 					File file2 = new File(sdFile, "welinks/images/" + imageContent);
 					final String path2 = file2.getAbsolutePath();
 					if (file2.exists()) {
-						imageLoader.displayImage("file://" + path2, shareImageContentView, options, new SimpleImageLoadingListener() {
-							@Override
-							public void onLoadingStarted(String imageUri, View view) {
-							}
-
-							@Override
-							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-								downloadFile = new DownloadFile(url, path);
-								downloadFile.view = shareImageContentView;
-								downloadFile.setDownloadFileListener(thisController.downloadListener);
-								downloadFileList.addDownloadFile(downloadFile);
-							}
-
-							@Override
-							public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-							}
-						});
+						imageLoader.displayImage("file://" + path2, shareImageContentView, options);
 					}
 					downloadFile = new DownloadFile(url, path);
 					downloadFile.view = shareImageContentView;
@@ -373,6 +367,8 @@ public class ShareSubView {
 		groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		RelativeLayout mainContentView = (RelativeLayout) groupDialogView.findViewById(R.id.mainContent);
 
+		groupPopWindow.setOutsideTouchable(true);
+
 		groupsDialogContent = (RelativeLayout) groupDialogView.findViewById(R.id.groupsContent);
 		RelativeLayout.LayoutParams mainContentParams = (RelativeLayout.LayoutParams) mainContentView.getLayoutParams();
 		mainContentParams.height = (int) (displayMetrics.heightPixels * 0.7578125f);
@@ -416,13 +412,13 @@ public class ShareSubView {
 			}
 			groupListBody.listItemsSequence.add(key);
 			groupDialogItem.setContent(group);
-			groupDialogItem.setViewLayout();
+			// groupDialogItem.setViewLayout();
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (60 * displayMetrics.density));
 			groupDialogItem.y = (60 * displayMetrics.density * i);
 			groupDialogItem.cardView.setY(groupDialogItem.y);
 			groupDialogItem.cardView.setX(0);
-			this.groupListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
+			this.groupListBody.height = this.groupListBody.height + 60 * displayMetrics.density;
 			this.groupListBody.containerView.addView(groupDialogItem.cardView, layoutParams);
 
 			// onclick

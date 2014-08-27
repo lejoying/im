@@ -2,15 +2,25 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.PictureBrowseActivity;
+import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.view.InnerScrollView.OnScrollChangedListener;
+import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareMessageDetailView;
 
 public class ShareMessageDetailController {
@@ -29,6 +39,11 @@ public class ShareMessageDetailController {
 	public OnClickListener mOnClickListener;
 	public OnScrollChangedListener mOnScrollChangedListener;
 	public OnTouchListener mOnTouchListener;
+	public DownloadListener downloadListener;
+
+	public int IMAGEBROWSE_REQUESTCODE = 0x01;
+
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
 	public ShareMessageDetailController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -45,6 +60,35 @@ public class ShareMessageDetailController {
 	}
 
 	public void initializeListeners() {
+		downloadListener = new DownloadListener() {
+
+			@Override
+			public void success(DownloadFile instance, int status) {
+				final ImageView imageView = (ImageView) instance.view;
+				thisView.imageLoader.displayImage("file://" + instance.path, imageView, thisView.displayImageOptions, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						int height = (int) (loadedImage.getHeight() * (thisView.screenWidth / loadedImage.getWidth()));
+						LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) thisView.screenWidth, height);
+						imageView.setLayoutParams(params);
+					}
+				});
+			}
+
+			@Override
+			public void loading(DownloadFile instance, int precent, int status) {
+				// TODO Auto-generated method stub
+
+			}
+		};
 		mOnTouchListener = new OnTouchListener() {
 
 			@Override
@@ -90,6 +134,11 @@ public class ShareMessageDetailController {
 					String type = tagContent.substring(0, index);
 					String content = tagContent.substring(index + 1);
 					if ("ShareMessageDetailImage".equals(type)) {
+						data.tempData.selectedImageList = thisView.showImages;
+						Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+						intent.putExtra("position", content);
+						intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_COMMON);
+						thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE);
 						Toast.makeText(thisActivity, "ShareMessageDetailImage---------" + content, Toast.LENGTH_SHORT).show();
 					}
 				}
@@ -107,5 +156,9 @@ public class ShareMessageDetailController {
 		thisView.mainScrollView.setOnTouchListener(mOnTouchListener);
 		thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
 
+	}
+
+	public void finish() {
+		data.tempData.selectedImageList = null;
 	}
 }

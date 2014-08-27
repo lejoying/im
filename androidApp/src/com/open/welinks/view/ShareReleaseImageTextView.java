@@ -7,9 +7,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -31,7 +33,7 @@ public class ShareReleaseImageTextView {
 	public Activity thisActivity;
 
 	public EditText mEditTextView;
-	public TouchView mImagesContentView;
+	public RelativeLayout mImagesContentView;
 	public RelativeLayout mReleaseButtomBarView;
 
 	public TextView mCancleButtonView;
@@ -55,7 +57,7 @@ public class ShareReleaseImageTextView {
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		thisActivity.setContentView(R.layout.share_release_imagetext);
 		mEditTextView = (EditText) thisActivity.findViewById(R.id.releaseTextContentView);
-		mImagesContentView = (TouchView) thisActivity.findViewById(R.id.releaseImagesContent);
+		mImagesContentView = (RelativeLayout) thisActivity.findViewById(R.id.releaseImagesContent);
 		mReleaseButtomBarView = (RelativeLayout) thisActivity.findViewById(R.id.releaseButtomBar);
 		mCancleButtonView = (TextView) thisActivity.findViewById(R.id.releaseCancel);
 		mConfirmButtonView = (TextView) thisActivity.findViewById(R.id.releaseConfirm);
@@ -71,8 +73,15 @@ public class ShareReleaseImageTextView {
 	public void showSelectedImages() {
 		this.mImagesContentView.removeAllViews();
 		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
-		if (selectedImageList.size() > 0)
+		if (selectedImageList.size() > 0) {
 			this.mImagesContentView.setVisibility(View.VISIBLE);
+			RelativeLayout.LayoutParams layoutParams = (LayoutParams) this.mEditTextView.getLayoutParams();
+			layoutParams.bottomMargin = (int) (displayMetrics.density * 100 + 0.5f);
+		} else {
+			this.mImagesContentView.setVisibility(View.GONE);
+			RelativeLayout.LayoutParams layoutParams = (LayoutParams) this.mEditTextView.getLayoutParams();
+			layoutParams.bottomMargin = (int) (displayMetrics.density * 50 + 0.5f);
+		}
 		for (int i = 0; i < selectedImageList.size(); i++) {
 			String key = selectedImageList.get(i);
 			ImageBody imageBody = new ImageBody();
@@ -91,6 +100,7 @@ public class ShareReleaseImageTextView {
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
 			imageBody.imageView.setTag(i);
 			imageBody.imageView.setOnClickListener(thisController.monClickListener);
+			// imageBody.imageView.setOnTouchListener(thisController.mScrollOnTouchListener);
 		}
 		myScrollImageBody.contentView.setOnTouchListener(thisController.onTouchListener);
 	}
@@ -99,9 +109,9 @@ public class ShareReleaseImageTextView {
 		public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
 		public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
 
-		public TouchView contentView;
+		public RelativeLayout contentView;
 
-		public TouchView initialize(TouchView view) {
+		public RelativeLayout initialize(RelativeLayout view) {
 			this.contentView = view;
 			return view;
 		}

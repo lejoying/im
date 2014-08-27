@@ -29,12 +29,12 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
+import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
-import com.open.welinks.view.InnerScrollView.OnScrollChangedListener;
 
 public class ShareMessageDetailView {
 
@@ -51,7 +51,10 @@ public class ShareMessageDetailView {
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DisplayImageOptions displayImageOptions;
 
-	float screenHeight, screenWidth, screenDip, screenDensity;
+	float screenHeight;
+	public float screenWidth;
+	float screenDip;
+	float screenDensity;
 	public File mSdCardFile;
 	public File mImageFile;
 
@@ -62,7 +65,7 @@ public class ShareMessageDetailView {
 	public LinearLayout shareMessageDetailContentView;
 	public ScrollView mainScrollView;
 	public InnerScrollView detailScrollView;
-	
+
 	public LinearLayout mainScrollInnerView;
 
 	public LinearLayout praiseUserContentView;
@@ -124,13 +127,15 @@ public class ShareMessageDetailView {
 		screenWidth = displayMetrics.widthPixels;
 	}
 
+	public ArrayList<String> showImages;
+
 	public void showShareMessageDetail() {
 		String content = thisController.shareMessage.content;
 		ShareContent shareContent = gson.fromJson("{shareContentItems:" + content + "}", ShareContent.class);
 		List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
 		String textContent = "";
 		int index = 0;
-		ArrayList<String> images = new ArrayList<String>();
+		showImages = new ArrayList<String>();
 		for (int i = 0; i < shareContentItems.size(); i++) {
 			final ImageView imageView = new ImageView(thisActivity);
 			shareMessageDetailContentView.addView(imageView);
@@ -142,12 +147,13 @@ public class ShareMessageDetailView {
 			}
 			String imageFileName = shareContentItem.detail;
 
-			images.add(imageFileName);
 			imageView.setTag("ShareMessageDetailImage#" + index);
 			index++;
 			imageView.setOnClickListener(thisController.mOnClickListener);
 
 			File currentImageFile = new File(mImageFile, imageFileName);
+			String filepath = currentImageFile.getAbsolutePath();
+			showImages.add(filepath);
 			boolean isFlag = false;
 			String path = "";
 			if (currentImageFile.exists()) {
@@ -159,26 +165,34 @@ public class ShareMessageDetailView {
 				}
 			}
 			if (isFlag) {
-				path = "file://" + currentImageFile.getAbsolutePath();
+				path = "file://" + filepath;
 			} else {
 				path = API.DOMAIN_COMMONIMAGE + "images/" + imageFileName;
 			}
-			imageLoader.displayImage(path, imageView, displayImageOptions, new SimpleImageLoadingListener() {
-				@Override
-				public void onLoadingStarted(String imageUri, View view) {
-				}
 
-				@Override
-				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-				}
+			if (!isFlag) {
+				DownloadFile downloadFile = new DownloadFile(path, filepath);
+				downloadFile.view = imageView;
+				downloadFile.setDownloadFileListener(thisController.downloadListener);
+				thisController.downloadFileList.addDownloadFile(downloadFile);
+			} else {
+				imageLoader.displayImage(path, imageView, displayImageOptions, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
 
-				@Override
-				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-					int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
-					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
-					imageView.setLayoutParams(params);
-				}
-			});
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						int height = (int) (loadedImage.getHeight() * (screenWidth / loadedImage.getWidth()));
+						LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) screenWidth, height);
+						imageView.setLayoutParams(params);
+					}
+				});
+			}
 		}
 		if (!"".equals(textContent)) {
 			TextView textview = new TextView(thisActivity);

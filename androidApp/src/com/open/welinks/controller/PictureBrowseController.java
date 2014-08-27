@@ -25,6 +25,7 @@ public class PictureBrowseController {
 	public ArrayList<String> imagesBrowseList;
 
 	public int currentPosition;
+	public int currentType;
 
 	public OnClickListener mOnClickListener;
 	public OnPageChangeListener mOnPageChangeListener;
@@ -33,6 +34,7 @@ public class PictureBrowseController {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 		currentPosition = Integer.valueOf(thisActivity.getIntent().getStringExtra("position"));
+		currentType = thisActivity.getIntent().getIntExtra("type", thisView.IMAGEBROWSE_COMMON);
 		if (data.tempData.selectedImageList != null)
 			imagesBrowseList = data.tempData.selectedImageList;
 		else
@@ -75,6 +77,7 @@ public class PictureBrowseController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.backView)) {
+					thisActivity.setResult(Activity.RESULT_CANCELED);
 					thisActivity.finish();
 				} else if (view.equals(thisView.choiceCoverView)) {
 					Toast.makeText(context, "choiceCoverView", Toast.LENGTH_SHORT).show();
@@ -84,7 +87,7 @@ public class PictureBrowseController {
 						thisActivity.finish();
 					} else if (currentPosition > imagesBrowseList.size() - 1) {
 						currentPosition = imagesBrowseList.size() - 1;
-//						thisView.imageViewPageContent.setCurrentItem(currentPosition);
+						// thisView.imageViewPageContent.setCurrentItem(currentPosition);
 					}
 					thisView.notifyAdapter();
 					Toast.makeText(context, "deleteButtonView", Toast.LENGTH_SHORT).show();
@@ -98,5 +101,10 @@ public class PictureBrowseController {
 		thisView.choiceCoverView.setOnClickListener(mOnClickListener);
 		thisView.deleteButtonView.setOnClickListener(mOnClickListener);
 		thisView.imageViewPageContent.setOnPageChangeListener(mOnPageChangeListener);
+	}
+
+	public void onBackPressed() {
+		thisActivity.setResult(Activity.RESULT_CANCELED);
+		thisActivity.finish();
 	}
 }

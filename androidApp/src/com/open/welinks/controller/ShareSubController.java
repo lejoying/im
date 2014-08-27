@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -41,10 +40,12 @@ public class ShareSubController {
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public OnClickListener mOnClickListener;
-	public OnClickListener mOnClickListener1;
+	// public OnClickListener mOnClickListener1;
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
 	public DownloadListener downloadListener;
+
+	public View onTouchDownView;
 
 	public ShareSubController(MainController mainController) {
 		thisActivity = mainController.thisActivity;
@@ -74,20 +75,24 @@ public class ShareSubController {
 				// return onTouchEvent(event);
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
+					String view_class = (String) view.getTag(R.id.tag_class);
+					if (view_class.equals("share_view")) {
+						onTouchDownView = view;
+					}
 					Log.i(tag, "ACTION_DOWN");
-//					thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+					// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 				}
 				return false;
 			}
 		};
-		mOnClickListener1 = new OnClickListener() {
-
-			@Override
-			public void onClick(View view) {
-				Log.i(tag, "onClick");
-				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
-			}
-		};
+		// mOnClickListener1 = new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View view) {
+		// Log.i(tag, "onClick");
+		// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+		// }
+		// };
 		mOnClickListener = new OnClickListener() {
 
 			@Override
@@ -147,7 +152,7 @@ public class ShareSubController {
 
 	public void bindEvent() {
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
-		thisView.groupDialogView.setOnClickListener(mOnClickListener);
+		// thisView.groupDialogView.setOnClickListener(mOnClickListener);
 	}
 
 	public void getCurrentGroupShareMessages() {
@@ -198,6 +203,19 @@ public class ShareSubController {
 				thisView.groupListBody.onFling(velocityX, velocityY);
 			}
 			return true;
+		}
+	}
+
+	public void onScroll() {
+		onTouchDownView = null;
+	}
+
+	public void onSingleTapUp(MotionEvent event) {
+		if (onTouchDownView != null) {
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			if (view_class.equals("share_view")) {
+				onTouchDownView.performClick();
+			}
 		}
 	}
 }
