@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -55,7 +56,7 @@ public class ShareSubView {
 	// share
 	public RelativeLayout shareView;
 
-	public RelativeLayout shareMessageView;
+	public ViewGroup shareMessageView;
 	public ListBody shareMessageListBody;
 
 	public RelativeLayout shareTopMenuGroupNameParent;
@@ -82,7 +83,7 @@ public class ShareSubView {
 		this.shareView = mainView.shareView;
 		this.displayMetrics = mainView.displayMetrics;
 
-		shareMessageView = (RelativeLayout) shareView.findViewById(R.id.groupShareMessageContent);
+		shareMessageView = (ViewGroup) shareView.findViewById(R.id.groupShareMessageContent);
 
 		shareMessageListBody = new ListBody();
 		shareMessageListBody.initialize(displayMetrics, shareMessageView);
@@ -156,7 +157,8 @@ public class ShareSubView {
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 			// TODO
 			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
-			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
+			 sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener1);
+			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 		}
 	}
 
@@ -171,7 +173,7 @@ public class ShareSubView {
 			listBody.super();
 		}
 
-		public TouchView cardView = null;
+		public ViewGroup cardView = null;
 
 		public ImageView headView;
 		public TextView nickNameView;
@@ -190,13 +192,13 @@ public class ShareSubView {
 		public View initialize(int i) {
 			this.i = i;
 			if (i == -1) {
-				this.cardView = (TouchView) groupMembersView;
+				this.cardView = (ViewGroup) groupMembersView;
 				// groupMembersListContentView = (RelativeLayout)
 				// this.cardView.findViewById(R.id.groupMembersListContent);
 				// releaseShareView = (ImageView)
 				// this.cardView.findViewById(R.id.releaseShare);
 			} else {
-				this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.share_message_item, null);
+				this.cardView = (ViewGroup) mainView.mInflater.inflate(R.layout.share_message_item, null);
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
 				this.nickNameView = (TextView) this.cardView.findViewById(R.id.share_nickName);
 				this.releaseTimeView = (TextView) this.cardView.findViewById(R.id.share_releaseTime);
@@ -381,7 +383,7 @@ public class ShareSubView {
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
 		setGroupsDialogContent();
 		// groupsDialogContent.setOnClickListener(thisController.mOnClickListener);
-		groupsDialogContent.setOnTouchListener(thisController.mOnTouchListener);
+		// groupsDialogContent.setOnTouchListener(thisController.mOnTouchListener);
 	}
 
 	public void showGroupsDialog() {
@@ -427,6 +429,7 @@ public class ShareSubView {
 			view.setTag("GroupDialogContentItem#" + group.gid);
 			view.setTag(R.id.shareTopMenuGroupName, shareTopMenuGroupName);
 			view.setOnClickListener(thisController.mOnClickListener);
+
 		}
 	}
 

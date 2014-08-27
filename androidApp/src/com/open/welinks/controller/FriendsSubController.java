@@ -47,8 +47,7 @@ public class FriendsSubController {
 			public void onClick(View view) {
 				Friend friend = null;
 				if ((friend = (Friend) view.getTag(R.id.friendsContainer)) != null) {
-					Intent intent = new Intent(thisView.mainView.thisActivity,
-							ChatActivity.class);
+					Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
 					intent.putExtra("id", friend.phone);
 					intent.putExtra("type", "point");
 					thisView.mainView.thisActivity.startActivity(intent);
@@ -69,6 +68,10 @@ public class FriendsSubController {
 			public boolean onTouch(View view, MotionEvent event) {
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
+					String view_class = (String) view.getTag(R.id.tag_class);
+					if (view_class.equals("friend_view")) {
+						onTouchDownView = view;
+					}
 					// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 					Object viewTag = view.getTag(R.id.tag_first);
 					if (Circle.class.isInstance(viewTag) == true) {
@@ -96,17 +99,14 @@ public class FriendsSubController {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class == "card_title") {
 
-				thisView.mainView.main_container
-						.playSoundEffect(SoundEffectConstants.CLICK);
+				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 				thisView.showCircleSettingDialog(onTouchDownCircle);
 				onTouchDownView = null;
 				onTouchDownCircle = null;
 			} else if (view_class == "card_grip") {
-				Circle circle = data.relationship.circlesMap.get(""
-						+ onTouchDownCircle.rid);
+				Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
 
-				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap
-						.get("circle#" + circle.rid);
+				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
 
 				circleBody.gripCardBackground.setVisibility(View.VISIBLE);
 
@@ -121,14 +121,20 @@ public class FriendsSubController {
 	}
 
 	public void onSingleTapUp(MotionEvent event) {
-		if (onTouchDownView != null && onTouchDownCircle != null) {
-			Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
-			CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
-			circleBody.gripCardBackground.setVisibility(View.INVISIBLE);
+		if (onTouchDownView != null) {
+			if (onTouchDownCircle != null) {
+				Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
+				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+				circleBody.gripCardBackground.setVisibility(View.INVISIBLE);
 
-			onTouchDownView = null;
-			onTouchDownCircle = null;
-			thisView.friendListBody.onStopOrdering();
+				onTouchDownView = null;
+				onTouchDownCircle = null;
+				thisView.friendListBody.onStopOrdering();
+			}
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			if (view_class.equals("friend_view")) {
+				onTouchDownView.performClick();
+			}
 		}
 
 	}
@@ -137,8 +143,7 @@ public class FriendsSubController {
 		if (onTouchDownView != null && onTouchDownCircle != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class == "card_title") {
-				thisView.mainView.main_container
-						.playSoundEffect(SoundEffectConstants.CLICK);
+				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 
 				thisView.showCircleSettingDialog(onTouchDownCircle);
 				onTouchDownView = null;
@@ -154,11 +159,14 @@ public class FriendsSubController {
 		Circle circle = data.relationship.circlesMap.get("" + inputCircle.rid);
 		circle.name = inputContent;
 
-		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap
-				.get("circle#" + circle.rid);
+		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
 
 		circleBody.leftTopText.setText(inputContent);
 
+	}
+
+	public void onScroll() {
+		onTouchDownView = null;
 	}
 
 }

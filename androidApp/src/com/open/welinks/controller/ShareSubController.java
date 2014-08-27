@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -40,6 +41,7 @@ public class ShareSubController {
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public OnClickListener mOnClickListener;
+	public OnClickListener mOnClickListener1;
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
 	public DownloadListener downloadListener;
@@ -69,7 +71,21 @@ public class ShareSubController {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				return onTouchEvent(event);
+				// return onTouchEvent(event);
+				int action = event.getAction();
+				if (action == MotionEvent.ACTION_DOWN) {
+					Log.i(tag, "ACTION_DOWN");
+//					thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+				}
+				return false;
+			}
+		};
+		mOnClickListener1 = new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				Log.i(tag, "onClick");
+				thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 			}
 		};
 		mOnClickListener = new OnClickListener() {
@@ -157,20 +173,21 @@ public class ShareSubController {
 
 	public GestureDetector mGesture;
 
-	public boolean onTouchEvent(MotionEvent event) {
-
-		int motionEvent = event.getAction();
-		if (motionEvent == MotionEvent.ACTION_DOWN) {
-			Log.d(tag, "Activity on touch down");
-			thisView.groupListBody.onTouchDown(event);
-		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
-			thisView.groupListBody.onTouchMove(event);
-		} else if (motionEvent == MotionEvent.ACTION_UP) {
-			thisView.groupListBody.onTouchUp(event);
-		}
-		mGesture.onTouchEvent(event);
-		return true;
-	}
+	//
+	// public boolean onTouchEvent(MotionEvent event) {
+	//
+	// int motionEvent = event.getAction();
+	// if (motionEvent == MotionEvent.ACTION_DOWN) {
+	// Log.d(tag, "Activity on touch down");
+	// thisView.groupListBody.onTouchDown(event);
+	// } else if (motionEvent == MotionEvent.ACTION_MOVE) {
+	// thisView.groupListBody.onTouchMove(event);
+	// } else if (motionEvent == MotionEvent.ACTION_UP) {
+	// thisView.groupListBody.onTouchUp(event);
+	// }
+	// mGesture.onTouchEvent(event);
+	// return true;
+	// }
 
 	class GestureListener extends SimpleOnGestureListener {
 		@Override

@@ -346,6 +346,14 @@ public class MainController {
 		public boolean onSingleTapUp(MotionEvent event) {
 			return false;
 		}
+
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+				friendsSubController.onScroll();
+			}
+			
+			return false;
+		}
 	}
 
 	void generateTextView(final String message) {

@@ -15,8 +15,8 @@
             android:id="@+id/share_head"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/face_man" />
 
         <TextView

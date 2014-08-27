@@ -67,8 +67,7 @@ public class FriendsSubView {
 		this.friendsView = mainView.friendsView;
 		this.displayMetrics = mainView.displayMetrics;
 
-		friendsView = (TouchView) mainView.friendsView
-				.findViewById(R.id.friendsContainer);
+		friendsView = (TouchView) mainView.friendsView.findViewById(R.id.friendsContainer);
 		friendListBody = new ListBody();
 		friendListBody.initialize(displayMetrics, friendsView);
 
@@ -91,21 +90,15 @@ public class FriendsSubView {
 			circleBody.setContent(circle);
 
 			this.friendListBody.listItemsSequence.add("circle#" + circle.rid);
-			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid,
-					circleBody);
+			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
-			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(
-					(int) (displayMetrics.widthPixels - displayMetrics.density * 20),
-					(int) circleBody.itemHeight);
-			circleBody.y = this.friendListBody.height + 2
-					* displayMetrics.density;
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) circleBody.itemHeight);
+			circleBody.y = this.friendListBody.height + 2 * displayMetrics.density;
 			circleBody.cardView.setY(circleBody.y);
 			circleBody.cardView.setX(0);
 
-			this.friendListBody.containerView.addView(circleBody.cardView,
-					layoutParams);
-			this.friendListBody.height = this.friendListBody.height
-					+ circleBody.itemHeight + 10 * displayMetrics.density;
+			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
+			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight + 10 * displayMetrics.density;
 			Log.d(tag, "addView");
 
 		}
@@ -124,28 +117,25 @@ public class FriendsSubView {
 		public TextView leftTopText = null;
 		public TouchView leftTopTextButton = null;
 		public TouchView gripView = null;
-		public ImageView gripCardBackground=null;
-		
+		public ImageView gripCardBackground = null;
+
 		int lineCount = 0;
 
 		public View initialize() {
 
-			this.cardView = (TouchView) mainView.mInflater.inflate(
-					R.layout.view_control_circle_card, null);
-			this.leftTopText = (TextView) this.cardView
-					.findViewById(R.id.leftTopText);
+			this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
+			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
 			this.gripView = (TouchView) this.cardView.findViewById(R.id.grip);
 			this.leftTopTextButton = (TouchView) this.cardView.findViewById(R.id.leftTopTextButton);
 
 			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
-			
+
 			this.leftTopTextButton.setOnTouchListener(thisController.onTouchListener);
 			// this.leftTopText.setOnLongClickListener(mainView.thisController.onLongClickListener);
 
 			this.gripView.setOnTouchListener(thisController.onTouchListener);
 
-			itemWidth = mainView.displayMetrics.widthPixels - 20
-					* mainView.displayMetrics.density;
+			itemWidth = mainView.displayMetrics.widthPixels - 20 * mainView.displayMetrics.density;
 			itemHeight = 260 * displayMetrics.density;
 
 			super.initialize(cardView);
@@ -160,10 +150,8 @@ public class FriendsSubView {
 
 			this.gripView.setTag(R.id.tag_first, circle);
 			this.gripView.setTag(R.id.tag_class, "card_grip");
-			
-			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(
-					(int) (55 * displayMetrics.density),
-					(int) (78 * displayMetrics.density));
+
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (55 * displayMetrics.density), (int) (78 * displayMetrics.density));
 
 			int lineCount = circle.friends.size() / 4;
 			if (lineCount == 0) {
@@ -182,10 +170,8 @@ public class FriendsSubView {
 
 				this.cardView.addView(friendBody.friendView, layoutParams);
 
-				int x = 120 * (int) displayMetrics.density * (i % 4)
-						+ (int) itemWidth / 16;
-				int y = 140 * (int) displayMetrics.density * (i / 4) + 96
-						* (int) displayMetrics.density;
+				int x = 120 * (int) displayMetrics.density * (i % 4) + (int) itemWidth / 16;
+				int y = 140 * (int) displayMetrics.density * (i / 4) + 96 * (int) displayMetrics.density;
 
 				friendBody.friendView.setX(x);
 				friendBody.friendView.setY(y);
@@ -204,26 +190,26 @@ public class FriendsSubView {
 		public TextView nickNameView;
 
 		public View Initialize() {
-			this.friendView = mainView.mInflater.inflate(
-					R.layout.circles_gridpage_item, null);
-			this.headImageView = (ImageView) this.friendView
-					.findViewById(R.id.head_image);
-			this.nickNameView = (TextView) this.friendView
-					.findViewById(R.id.nickname);
+			this.friendView = mainView.mInflater.inflate(R.layout.circles_gridpage_item, null);
+			this.headImageView = (ImageView) this.friendView.findViewById(R.id.head_image);
+			this.nickNameView = (TextView) this.friendView.findViewById(R.id.nickname);
 			return friendView;
 		}
 
 		public void setData(Friend friend) {
 
 			Resources resources = mainView.thisActivity.getResources();
-			Bitmap bitmap = BitmapFactory.decodeResource(resources,
-					R.drawable.face_man);
+			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			this.headImageView.setImageBitmap(bitmap);
 
 			this.nickNameView.setText(friend.nickName);
 			this.friendView.setTag(R.id.friendsContainer, friend);
+			this.friendView.setTag(R.id.tag_class, "friend_view");
 			this.friendView.setOnClickListener(thisController.mOnClickListener);
+
+			this.friendView.setOnTouchListener(thisController.onTouchListener);
+
 		}
 	}
 
@@ -232,26 +218,18 @@ public class FriendsSubView {
 
 	public void showInputDialog() {
 		mInflater = mainView.thisActivity.getLayoutInflater();
-		inputDialogView = mInflater.inflate(R.layout.widget_alert_input_dialog,
-				null);
-		inputPopWindow = new PopupWindow(inputDialogView,
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		inputDialogView = mInflater.inflate(R.layout.widget_alert_input_dialog, null);
+		inputPopWindow = new PopupWindow(inputDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		inputPopWindow.setBackgroundDrawable(new BitmapDrawable());
-		inputPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER,
-				0, 0);
+		inputPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
 	}
 
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();
-	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig
-			.fromOrigamiTensionAndFriction(40, 9);
-	public SpringConfig IMAGE_SPRING_CONFIG_TO = SpringConfig
-			.fromOrigamiTensionAndFriction(40, 15);
-	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(
-			IMAGE_SPRING_CONFIG);
-	public Spring dialogOutSpring = mSpringSystem.createSpring()
-			.setSpringConfig(IMAGE_SPRING_CONFIG_TO);
-	public Spring dialogInSpring = mSpringSystem.createSpring()
-			.setSpringConfig(IMAGE_SPRING_CONFIG_TO);
+	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 9);
+	public SpringConfig IMAGE_SPRING_CONFIG_TO = SpringConfig.fromOrigamiTensionAndFriction(40, 15);
+	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
+	public Spring dialogOutSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG_TO);
+	public Spring dialogInSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG_TO);
 	public View dialogRootView;
 	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
 
@@ -279,40 +257,30 @@ public class FriendsSubView {
 		mInflater = mainView.thisActivity.getLayoutInflater();
 		dialogSpring.addListener(dialogSpringListener);
 		// final DisplayMetrics displayMetrics = new DisplayMetrics();
-		circleDialogView = mInflater.inflate(R.layout.circle_longclick_dialog,
-				null);
-		dialogContentView = (RelativeLayout) circleDialogView
-				.findViewById(R.id.dialogContent);
-		inputDialigView = circleDialogView
-				.findViewById(R.id.inputDialogContent);
+		circleDialogView = mInflater.inflate(R.layout.circle_longclick_dialog, null);
+		dialogContentView = (RelativeLayout) circleDialogView.findViewById(R.id.dialogContent);
+		inputDialigView = circleDialogView.findViewById(R.id.inputDialogContent);
 		height = displayMetrics.density * 140 + 0.5f;
 		// y = inputDialigView.getTranslationY();
-		y = ((displayMetrics.heightPixels - height) / 2)
-				+ displayMetrics.heightPixels;
+		y = ((displayMetrics.heightPixels - height) / 2) + displayMetrics.heightPixels;
 		inputDialigView.setTranslationY(y);
 		dialogRootView = dialogContentView;
 		y0 = dialogRootView.getTranslationY();
 		dialogSpring.setCurrentValue(0);
 		dialogSpring.setEndValue(1);
 
-		circlePopWindow = new PopupWindow(circleDialogView,
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		circlePopWindow = new PopupWindow(circleDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		circlePopWindow.setBackgroundDrawable(new BitmapDrawable());
-		circlePopWindow.showAtLocation(mainView.main_container, Gravity.CENTER,
-				0, 0);
+		circlePopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
 
-		modifyCircleNameView = (TextView) circleDialogView
-				.findViewById(R.id.modifyCircleName);
-		modifyCircleNameView
-				.setOnClickListener(mainView.thisController.mOnClickListener);
+		modifyCircleNameView = (TextView) circleDialogView.findViewById(R.id.modifyCircleName);
+		modifyCircleNameView.setOnClickListener(mainView.thisController.mOnClickListener);
 		circleName = (TextView) circleDialogView.findViewById(R.id.circleName);
 
 		cancleButton = (TextView) circleDialogView.findViewById(R.id.cancel);
 		confirmButton = (TextView) circleDialogView.findViewById(R.id.confirm);
-		cancleButton
-				.setOnClickListener(mainView.thisController.mOnClickListener);
-		confirmButton
-				.setOnClickListener(mainView.thisController.mOnClickListener);
+		cancleButton.setOnClickListener(mainView.thisController.mOnClickListener);
+		confirmButton.setOnClickListener(mainView.thisController.mOnClickListener);
 		inputEditView = (EditText) circleDialogView.findViewById(R.id.input);
 		circleName.setText(circle.name);
 		inputEditView.setText(circle.name);
@@ -341,8 +309,7 @@ public class FriendsSubView {
 				dialogRootView.setScaleX(mappedValue);
 				dialogRootView.setScaleY(mappedValue);
 			} else if (spring.equals(dialogOutSpring)) {
-				dialogRootView.setTranslationY(y0 - displayMetrics.heightPixels
-						* (1.0f - mappedValue));
+				dialogRootView.setTranslationY(y0 - displayMetrics.heightPixels * (1.0f - mappedValue));
 				// Log.e(tag, mappedValue + "---------------");
 				if (mappedValue <= 0.8f) {
 
