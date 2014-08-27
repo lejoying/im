@@ -34,6 +34,8 @@ public class FriendsSubController {
 	public OnTouchListener onTouchListener;
 
 	public View onTouchDownView;
+	public View onClickView;
+
 	public Circle onTouchDownCircle;
 
 	public FriendsSubController(MainController mainController) {
@@ -71,6 +73,7 @@ public class FriendsSubController {
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("friend_view")) {
 						onTouchDownView = view;
+						onClickView = view;
 					}
 					// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 					Object viewTag = view.getTag(R.id.tag_first);
@@ -131,10 +134,14 @@ public class FriendsSubController {
 				onTouchDownCircle = null;
 				thisView.friendListBody.onStopOrdering();
 			}
-			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
-			if (view_class.equals("friend_view")) {
-				onTouchDownView.performClick();
+			if (onClickView != null) {
+				String view_class = (String) onClickView.getTag(R.id.tag_class);
+				if (view_class.equals("friend_view")) {
+					onClickView.performClick();
+					onClickView = null;
+				}
 			}
+
 		}
 
 	}
@@ -166,7 +173,7 @@ public class FriendsSubController {
 	}
 
 	public void onScroll() {
-		onTouchDownView = null;
+		onClickView = null;
 	}
 
 }
