@@ -329,15 +329,18 @@ public class MainController {
 			if (thisView.mainPagerBody.bodyStatus.state == thisView.mainPagerBody.bodyStatus.HOMING) {
 				thisView.mainPagerBody.onFling(velocityX, velocityY);
 			}
+
+			if (thisView.shareSubView.shareMessageListBody.bodyStatus.state == thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
+				thisView.shareSubView.shareMessageListBody.onFling(velocityX, velocityY);
+			} else if (thisView.shareSubView.shareMessageListBody.bodyStatus.state == thisView.shareSubView.shareMessageListBody.bodyStatus.FIXED) {
+				thisView.shareSubView.shareMessageListBody.onFling(velocityX, velocityY);
+			} else {
+				Log.i(tag, "bodyStatus error:" + thisView.shareSubView.shareMessageListBody.bodyStatus.state);
+			}
+			
 			// if (thisView.chatMessageListBody.bodyStatus.state ==
 			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
-			// }
-			// if (thisView.shareSubView.shareMessageListBody.bodyStatus.state
-			// ==
-			// thisView.shareSubView.shareMessageListBody.bodyStatus.DRAGGING) {
-			// thisView.shareSubView.shareMessageListBody.onFling(velocityX,
-			// velocityY);
 			// }
 			return true;
 		}
