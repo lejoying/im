@@ -10,7 +10,7 @@
         android:id="@+id/releaseTextContentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="50dp"
         android:background="#00ffffff"
         android:gravity="top"
         android:includeFontPadding="true"
@@ -20,14 +20,14 @@
         android:textCursorDrawable="@drawable/edit_cursor"
         android:textSize="20sp" />
 
-    <com.open.lib.TouchView
+    <RelativeLayout
         android:id="@+id/releaseImagesContent"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
-        android:background="#60aabbcc" >
-    </com.open.lib.TouchView>
+        android:visibility="gone" >
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/releaseButtomBar"

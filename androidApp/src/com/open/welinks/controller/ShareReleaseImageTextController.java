@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
@@ -23,6 +24,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -40,6 +43,7 @@ import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
+import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareReleaseImageTextView;
 import com.open.welinks.view.ViewManage;
 
@@ -77,6 +81,8 @@ public class ShareReleaseImageTextController {
 
 	public Handler handler = new Handler();
 
+	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
+
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -88,7 +94,40 @@ public class ShareReleaseImageTextController {
 			mImageFile.mkdirs();
 	}
 
+	public OnTouchListener mScrollOnTouchListener;
+
 	public void initializeListeners() {
+		mScrollOnTouchListener = new OnTouchListener() {
+			GestureDetector backviewDetector = new GestureDetector(thisActivity, new GestureDetector.SimpleOnGestureListener() {
+
+				@Override
+				public boolean onDown(MotionEvent event) {
+					return onTouchEvent(event);
+				}
+
+				@Override
+				public boolean onSingleTapUp(MotionEvent e) {
+					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
+					intent.putExtra("position", "0");
+					intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_OPTION);
+					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
+					return true;
+				}
+
+				@Override
+				public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+					// TODO Auto-generated method stub
+					return super.onScroll(e1, e2, distanceX, distanceY);
+				}
+
+			});
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				return backviewDetector.onTouchEvent(event);
+			}
+		};
 		uploadLoadingListener = new UploadLoadingListener() {
 
 			@Override
@@ -115,7 +154,8 @@ public class ShareReleaseImageTextController {
 				public boolean onSingleTapUp(MotionEvent e) {
 					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
 					intent.putExtra("position", "0");
-					thisActivity.startActivity(intent);
+					intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_OPTION);
+					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
 					return true;
 				}
 
@@ -156,7 +196,7 @@ public class ShareReleaseImageTextController {
 					Log.e(tag, view.getTag().toString() + "------------------current");
 					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
 					intent.putExtra("position", view.getTag().toString());
-					thisActivity.startActivity(intent);
+					thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE_OPTION);
 				}
 			}
 		};
@@ -264,6 +304,7 @@ public class ShareReleaseImageTextController {
 		for (int i = 0; i < selectedImageList.size(); i++) {
 			String key = selectedImageList.get(i);
 			String suffixName = key.substring(key.lastIndexOf("."));
+			suffixName = suffixName.toLowerCase(Locale.getDefault());
 			if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
 				suffixName = ".osj";
 			} else if (suffixName.equals(".png")) {
@@ -302,6 +343,27 @@ public class ShareReleaseImageTextController {
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == RESULT_REQUESTCODE_SELECTIMAGE && resultCode == Activity.RESULT_OK) {
 			thisView.showSelectedImages();
+		} else {
+			Log.e(tag, "------------------result");
+			ArrayList<String> selectedImageList = data.tempData.selectedImageList;
+			if (selectedImageList != null) {
+				if (selectedImageList.size() > 0) {
+					RelativeLayout.LayoutParams layoutParams = (LayoutParams) thisView.mEditTextView.getLayoutParams();
+					layoutParams.bottomMargin = (int) (thisView.displayMetrics.density * 100 + 0.5f);
+					thisView.mImagesContentView.setVisibility(View.VISIBLE);
+					if (selectedImageList.size() != thisView.mImagesContentView.getChildCount()) {
+						thisView.showSelectedImages();
+					}
+				} else {
+					RelativeLayout.LayoutParams layoutParams = (LayoutParams) thisView.mEditTextView.getLayoutParams();
+					layoutParams.bottomMargin = (int) (thisView.displayMetrics.density * 50 + 0.5f);
+					thisView.mImagesContentView.setVisibility(View.GONE);
+				}
+			} else {
+				RelativeLayout.LayoutParams layoutParams = (LayoutParams) thisView.mEditTextView.getLayoutParams();
+				layoutParams.bottomMargin = (int) (thisView.displayMetrics.density * 50 + 0.5f);
+				thisView.mImagesContentView.setVisibility(View.GONE);
+			}
 		}
 	}
 

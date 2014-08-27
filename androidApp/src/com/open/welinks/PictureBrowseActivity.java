@@ -46,4 +46,9 @@ public class PictureBrowseActivity extends Activity {
 		thisController.onSaveInstanceState(outState);
 		super.onSaveInstanceState(outState);
 	}
+	@Override
+	public void onBackPressed() {
+		thisController.onBackPressed();
+		super.onBackPressed();
+	}
 }

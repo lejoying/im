@@ -7,6 +7,7 @@ import org.apache.http.Header;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
@@ -187,22 +188,26 @@ public class ResponseHandlers {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			// Log.e(tag, responseInfo.result);
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取群分享成功")) {
-				Share share = data.shares.shareMap.get(response.gid);
-				if (share == null) {
-					share = data.shares.new Share();
-					data.shares.shareMap.put(response.gid, share);
-				}
-				List<String> sharesOrder = response.shares.sharesOrder;
-				for (int i = sharesOrder.size() - 1; i >= 0; i--) {
-					String key = sharesOrder.get(i);
-					if (!share.sharesOrder.contains(key)) {
-						share.sharesOrder.add(0, key);
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取群分享成功")) {
+					Share share = data.shares.shareMap.get(response.gid);
+					if (share == null) {
+						share = data.shares.new Share();
+						data.shares.shareMap.put(response.gid, share);
 					}
+					List<String> sharesOrder = response.shares.sharesOrder;
+					for (int i = sharesOrder.size() - 1; i >= 0; i--) {
+						String key = sharesOrder.get(i);
+						if (!share.sharesOrder.contains(key)) {
+							share.sharesOrder.add(0, key);
+						}
+					}
+					share.sharesMap.putAll(response.shares.sharesMap);
+					viewManage.mainView.shareSubView.showShareMessages();
 				}
-				share.sharesMap.putAll(response.shares.sharesMap);
-				viewManage.mainView.shareSubView.showShareMessages();
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
 			}
 		};
 	};
