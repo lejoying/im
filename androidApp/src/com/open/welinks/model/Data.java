@@ -29,7 +29,7 @@ public class Data {
 
 		public ArrayList<String> selectedImageList;
 
-		public ArrayList<String> praiseusersList;
+		public List<String> praiseusersList;
 
 		public class ImageBean {
 

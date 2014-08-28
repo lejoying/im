@@ -17,6 +17,8 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,8 +37,11 @@ import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.ShareMessageDetailController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
+import com.open.welinks.model.Data.Shares.Share.Comment;
+import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
 public class ShareMessageDetailView {
@@ -54,10 +59,10 @@ public class ShareMessageDetailView {
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DisplayImageOptions displayImageOptions;
 
-	float screenHeight;
+	public float screenHeight;
 	public float screenWidth;
-	float screenDip;
-	float screenDensity;
+	public float screenDip;
+	public float screenDensity;
 	public File mSdCardFile;
 	public File mImageFile;
 
@@ -77,10 +82,22 @@ public class ShareMessageDetailView {
 	public EditText commentEditTextView;
 	public RelativeLayout confirmSendCommentView;
 
+	public LinearLayout commentContentView;
+
+	public TextView commentNumberView;
+
+	public TextView sendCommentView;
+
 	public ImageView commentIconView;
 	public ImageView praiseIconView;
 
 	public TextView praiseusersNumView;
+
+	public TextView sendShareMessageUserNameView;
+	public TextView shareMessageTimeView;
+	public ImageView shareMessageUserHeadView;
+
+	public InputMethodManager inputMethodManager;
 
 	public ShareMessageDetailView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -102,6 +119,8 @@ public class ShareMessageDetailView {
 		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
+		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+
 		thisActivity.setContentView(R.layout.activity_share_message_detail);
 		shareMessageDetailContentView = (LinearLayout) thisActivity.findViewById(R.id.shareMessageDetailContentView);
 		mainScrollView = (ScrollView) thisActivity.findViewById(R.id.mainScrollView);
@@ -110,6 +129,14 @@ public class ShareMessageDetailView {
 		detailScrollView.parentScrollView = mainScrollView;
 		mainScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		detailScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+		sendShareMessageUserNameView = (TextView) thisActivity.findViewById(R.id.sendShareMessageUserName);
+		shareMessageTimeView = (TextView) thisActivity.findViewById(R.id.shareMessageTime);
+		shareMessageUserHeadView = (ImageView) thisActivity.findViewById(R.id.shareMessageUserHead);
+
+		sendCommentView = (TextView) thisActivity.findViewById(R.id.sendComment);
+		commentNumberView = (TextView) thisActivity.findViewById(R.id.checkCommentNumber);
+		commentContentView = (LinearLayout) thisActivity.findViewById(R.id.messageDetailComments);
 
 		praiseusersNumView = (TextView) thisActivity.findViewById(R.id.praiseusersNum);
 
@@ -142,8 +169,16 @@ public class ShareMessageDetailView {
 	}
 
 	public ArrayList<String> showImages;
+	public Friend friend;
 
 	public void showShareMessageDetail() {
+		friend = data.relationship.friendsMap.get(thisController.shareMessage.phone);
+		if (friend != null) {
+			sendShareMessageUserNameView.setText(friend.nickName);
+			shareMessageUserHeadView.setImageBitmap(bitmap);
+		}
+		shareMessageTimeView.setText(DateUtil.getTime(thisController.shareMessage.time));
+
 		String content = thisController.shareMessage.content;
 		ShareContent shareContent = gson.fromJson("{shareContentItems:" + content + "}", ShareContent.class);
 		List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
@@ -226,6 +261,7 @@ public class ShareMessageDetailView {
 			praiseIconView.setImageResource(R.drawable.praise_icon);
 		}
 		showPraiseUsersContent();
+		notifyShareMessageComments();
 	}
 
 	public void showPraiseUsersContent() {
@@ -252,6 +288,63 @@ public class ShareMessageDetailView {
 			praiseUserContentView.addView(view);
 			if (i == 5)
 				break;
+		}
+	}
+
+	public void notifyShareMessageComments() {
+		List<Comment> comments = thisController.shareMessage.comments;
+		// Log.e(tag, comments.size() + "---------------size");
+		commentIconView.setImageResource(R.drawable.comment_icon);
+		for (Comment comment : comments) {
+			if (comment.phone.equals(thisController.currentUser.phone)) {
+				commentIconView.setImageResource(R.drawable.commented_icon);
+				break;
+			}
+		}
+		commentNumberView.setText("查看全部" + comments.size() + "条评论...");
+		commentContentView.removeAllViews();
+		for (final Comment comment : comments) {
+			View view = mInflater.inflate(R.layout.groupshare_commentchild, null);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			params.setMargins((int) (10 * screenDensity), 0, (int) (10 * screenDensity), 0);
+			view.setLayoutParams(params);
+			TextView time = (TextView) view.findViewById(R.id.time);
+			TextView content = (TextView) view.findViewById(R.id.content);
+			TextView reply = (TextView) view.findViewById(R.id.reply);
+			TextView receive = (TextView) view.findViewById(R.id.receive);
+			TextView received = (TextView) view.findViewById(R.id.received);
+			final ImageView head = (ImageView) view.findViewById(R.id.head);
+			content.setText(comment.content);
+			time.setText(DateUtil.getTime(comment.time));
+			receive.setText(comment.nickName);
+			received.setText(comment.nickNameTo);
+
+			if ("".equals(comment.nickNameTo)) {
+				reply.setVisibility(View.GONE);
+				received.setVisibility(View.GONE);
+			}
+			head.setImageBitmap(bitmap);
+			view.setTag("ShareComment#" + comment.phone);
+			view.setTag(R.id.commentEditTextView, comment);
+			view.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// if (rl_comment.getVisibility() == View.GONE) {
+					// rl_comment.setVisibility(View.VISIBLE);
+					// }
+					// if (!comment.phone.equals(app.data.user.phone)) {
+					// phoneTo = comment.phone;
+					// nickNameTo = comment.nickName;
+					// et_comment.setHint("回复" + nickNameTo);
+					// } else {
+					// phoneTo = "";
+					// nickNameTo = "";
+					// et_comment.setHint("添加评论 ... ...");
+					// }
+				}
+			});
+			commentContentView.addView(view);
 		}
 	}
 

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -65,7 +66,11 @@ public class ShareSubController {
 
 			@Override
 			public void success(DownloadFile instance, int status) {
-				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.options);
+				DisplayImageOptions options = thisView.options;
+				if (instance.view.getTag() != null) {
+					options = thisView.displayImageOptions;
+				}
+				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
 			}
 		};
 		mOnTouchListener = new OnTouchListener() {
@@ -125,6 +130,7 @@ public class ShareSubController {
 						shareTopMenuGroupName.setText(group.name);
 						thisView.modifyCurrentShowGroup();
 						getCurrentGroupShareMessages();
+						thisView.showGroupMembers();
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 						intent.putExtra("gsid", content);

@@ -168,6 +168,7 @@ public class ResponseHandlers {
 				viewManage.mainView.shareSubView.setGroupsDialogContent();
 				viewManage.mainView.shareSubView.showShareMessages();
 				viewManage.mainView.shareSubView.showGroupMembers();
+				viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
 			}
 		};
 	};
@@ -246,7 +247,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("点赞群分享成功")) {
-
+				Log.e(tag, "---------------------点赞群分享成功");
 			} else if (response.提示信息.equals("点赞群分享失败")) {
 				Share share = data.shares.shareMap.get(response.gid);
 				ShareMessage shareMessage = share.sharesMap.get(response.gsid);
@@ -266,7 +267,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("评论群分享成功")) {
-
+				Log.e(tag, "---------------------评论群分享成功");
 			} else if (response.提示信息.equals("评论群分享失败")) {
 
 			}

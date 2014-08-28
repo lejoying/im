@@ -212,6 +212,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
+                android:background="#000"
                 android:layout_marginTop="25dp" />
         </RelativeLayout>
 

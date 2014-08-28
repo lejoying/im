@@ -315,6 +315,7 @@ shareManage.addcomment = function (data, response) {
     var nickName = data.nickName;
     var nickNameTo = data.nickNameTo;
     var head = data.head;
+	var headTo = data.headTo;
     var contentType = data.contentType;
     var content = data.content;
     var arr = [gid, gsid, nickName, contentType, content];
@@ -364,6 +365,7 @@ shareManage.addcomment = function (data, response) {
                         nickName: nickName,
                         nickNameTo: nickNameTo,
                         head: head,
+						headTo:headTo||"",
                         contentType: contentType,
                         content: content,
                         time: new Date().getTime()

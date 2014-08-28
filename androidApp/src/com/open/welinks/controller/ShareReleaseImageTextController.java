@@ -92,6 +92,8 @@ public class ShareReleaseImageTextController {
 		mImageFile = new File(mSdCardFile, "welinks/images/");
 		if (!mImageFile.exists())
 			mImageFile.mkdirs();
+
+		data.tempData.selectedImageList = null;
 	}
 
 	public OnTouchListener mScrollOnTouchListener;
