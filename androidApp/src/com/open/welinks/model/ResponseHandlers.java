@@ -116,6 +116,29 @@ public class ResponseHandlers {
 		}
 	};
 
+	public ResponseHandler<String> message_sendMessageCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public long time;
+			public String sendType;
+			public String gid;
+			public String phoneto;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("发送成功")) {
+				if ("point".equals(response.sendType)) {
+					// data.messages.friendMessageMap.get(response.phoneto).get(0).time = String.valueOf(response.time);
+				} else if ("group".equals(response.sendType)) {
+					// data.messages.groupMessageMap.get(response.gid).get(0).time = String.valueOf(response.time);
+				}
+			}
+		};
+	};
+
 	// All groups of the current user
 	public ResponseHandler<String> getGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {

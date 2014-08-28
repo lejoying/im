@@ -100,7 +100,10 @@ messageManage.send = function (data, response) {
         }
         response.write(JSON.stringify({
             "提示信息": "发送成功",
-            time: time
+            time: time,
+            sendType: sendType,
+            gid: gid,
+            phoneto: phoneto
         }));
         response.end();
     });

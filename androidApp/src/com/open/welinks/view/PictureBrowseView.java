@@ -1,10 +1,12 @@
 package com.open.welinks.view;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -120,7 +122,13 @@ public class PictureBrowseView {
 			assert imageLayout != null;
 			ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
 			final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
-			final String path = images.get(position);
+			String fileName = images.get(position);
+			if (fileName.lastIndexOf("/") == -1) {
+				File sdFile = Environment.getExternalStorageDirectory();
+				File file = new File(sdFile, "welinks/images/" + fileName);
+				fileName = file.getAbsolutePath();
+			}
+			final String path = fileName;
 			final String url = API.DOMAIN_COMMONIMAGE + "images/" + path.substring(path.lastIndexOf("/") + 1);
 			imageLoader.displayImage("file://" + path, imageView, options, new SimpleImageLoadingListener() {
 				@Override

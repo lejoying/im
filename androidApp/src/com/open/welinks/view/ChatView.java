@@ -169,7 +169,6 @@ public class ChatView {
 				chatHolder.image.setVisibility(View.VISIBLE);
 				chatHolder.voice.setVisibility(View.GONE);
 				List<String> images = content.images;
-				data.tempData.selectedImageList = (ArrayList<String>) images;
 				for (int i = 0; i < images.size(); i++) {
 					String image = images.get(i);
 					ImageView child = new ImageView(thisActivity);
@@ -178,7 +177,8 @@ public class ChatView {
 						params.topMargin = i * (int) (116 * displayMetrics.density + 0.5f);
 					}
 					chatHolder.image.addView(child, params);
-					child.setTag(R.id.image, i);
+					child.setTag(R.id.tag_first, i);
+					child.setTag(R.id.tag_second, images);
 					child.setOnClickListener(thisController.mOnClickListener);
 					thisController.setImageThumbnail(image, child);
 				}

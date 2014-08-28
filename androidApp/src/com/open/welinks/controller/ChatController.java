@@ -22,6 +22,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -33,8 +36,10 @@ import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.MessageContent;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ChatView;
 
@@ -63,6 +68,8 @@ public class ChatController {
 	public InputMethodManager inputMethodManager;
 
 	public String type, key;
+
+	public User currentUser = data.userInformation.currentUser;
 
 	public ChatController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -102,10 +109,12 @@ public class ChatController {
 	public void initializeListeners() {
 		mOnClickListener = new OnClickListener() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
-				if (view.getTag(R.id.image) != null) {
-					int position = (Integer) view.getTag(R.id.image);
+				if (view.getTag(R.id.tag_first) != null) {
+					int position = (Integer) view.getTag(R.id.tag_first);
+					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_second);
 					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
 					intent.putExtra("position", String.valueOf(position));
 					thisActivity.startActivity(intent);
@@ -280,16 +289,19 @@ public class ChatController {
 		sendMessage(content);
 	}
 
-	public void sendMessage(MessageContent content) {
-		String contentType = "";
-		if ("".equals(content.text)) {
-			if ("".equals(content.voice)) {
+	public void sendMessage(MessageContent messageContent) {
+		String contentType = "", content = "";
+		if ("".equals(messageContent.text)) {
+			if ("".equals(messageContent.voice)) {
 				contentType = "image";
+				content = gson.toJson(messageContent.images);
 			} else {
 				contentType = "voice";
+				content = gson.toJson(messageContent.voice);
 			}
 		} else {
 			contentType = "text";
+			content = gson.toJson(messageContent.text);
 		}
 		Message message = data.messages.new Message();
 		message.content = gson.toJson(content);
@@ -308,6 +320,32 @@ public class ChatController {
 			data.messages.friendMessageMap.get(key).add(message);
 		}
 		thisView.mChatAdapter.notifyDataSetChanged();
+		sendMessageToServer(contentType, content);
+	}
+
+	public void sendMessageToServer(String contentType, String content) {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+
+		SendMessage sendMessage = new SendMessage();
+		sendMessage.type = contentType;
+		sendMessage.content = content;
+
+		params.addBodyParameter("phone", currentUser.phone);
+		params.addBodyParameter("accessKey", currentUser.accessKey);
+		params.addBodyParameter("sendType", type);
+		params.addBodyParameter("message", gson.toJson(sendMessage));
+
+		if ("group".equals(type)) {
+			params.addBodyParameter("gid", key);
+			params.addBodyParameter("phoneto", gson.toJson(data.relationship.groupsMap.get(key).members));
+		} else if ("point".equals(type)) {
+			params.addBodyParameter("phoneto", key);
+			params.addBodyParameter("gid", "");
+		}
+
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/message/send", params, responseHandlers.message_sendMessageCallBack);
 	}
 
 	public void uploadFile(final String filePath, final String fileName, final byte[] bytes) {
@@ -319,5 +357,10 @@ public class ChatController {
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			}
 		}.start();
+	}
+
+	public class SendMessage {
+		public String type;// image voice text
+		public String content;
 	}
 }
