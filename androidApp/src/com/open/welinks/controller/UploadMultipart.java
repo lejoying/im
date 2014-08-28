@@ -34,6 +34,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
+import android.view.View;
+
 import com.aliyun.android.oss.Base64;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -67,6 +69,8 @@ public class UploadMultipart {
 	public UploadLoadingListener uploadLoadingListener;
 
 	public UploadMultipart instance;
+
+	public View view;
 
 	public String path; // example:"/sdcard/test/test001.jpg"
 	public String contentType = null;// example: "image/jpg" "image/png"

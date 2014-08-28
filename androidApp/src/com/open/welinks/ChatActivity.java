@@ -43,10 +43,7 @@ public class ChatActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == R.id.chat_content
-				&& requestCode == Activity.RESULT_OK) {
-			this.chatController.addImagesToMessage();
-		}
+		chatController.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override

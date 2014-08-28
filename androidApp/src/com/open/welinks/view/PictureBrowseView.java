@@ -23,7 +23,10 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.PictureBrowseController;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 
 public class PictureBrowseView {
@@ -50,6 +53,9 @@ public class PictureBrowseView {
 	public DisplayImageOptions options;
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
+	public DownloadFile downloadFile = null;
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+
 	public static int IMAGEBROWSE_COMMON = 0x01;
 	public static int IMAGEBROWSE_OPTION = 0x02;
 
@@ -75,7 +81,7 @@ public class PictureBrowseView {
 		imageViewPageContent.setAdapter(imagePagerAdapter);
 		imageViewPageContent.setCurrentItem(thisController.currentPosition);
 
-		imageNumberView.setText("1/" + thisController.imagesBrowseList.size());
+		imageNumberView.setText((thisController.currentPosition + 1) + "/" + thisController.imagesBrowseList.size());
 		titleView.setText("浏览");
 
 		if (thisController.currentType == IMAGEBROWSE_COMMON) {
@@ -109,13 +115,14 @@ public class PictureBrowseView {
 		}
 
 		@Override
-		public Object instantiateItem(ViewGroup view, int position) {
+		public Object instantiateItem(ViewGroup view, final int position) {
 			View imageLayout = mInflater.inflate(R.layout.view_picture_browse_item, view, false);
 			assert imageLayout != null;
 			ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
 			final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
-
-			imageLoader.displayImage("file://" + images.get(position), imageView, options, new SimpleImageLoadingListener() {
+			final String path = images.get(position);
+			final String url = API.DOMAIN_COMMONIMAGE + "images/" + path.substring(path.lastIndexOf("/") + 1);
+			imageLoader.displayImage("file://" + path, imageView, options, new SimpleImageLoadingListener() {
 				@Override
 				public void onLoadingStarted(String imageUri, View view) {
 					spinner.setVisibility(View.VISIBLE);
@@ -123,6 +130,10 @@ public class PictureBrowseView {
 
 				@Override
 				public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					downloadFile = new DownloadFile(url, path);
+					downloadFile.view = view;
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
+					downloadFileList.addDownloadFile(downloadFile);
 					String message = null;
 					switch (failReason.getType()) {
 					case IO_ERROR:
