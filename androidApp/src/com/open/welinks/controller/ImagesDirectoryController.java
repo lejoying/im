@@ -97,6 +97,8 @@ public class ImagesDirectoryController {
 	public void setDate() {
 		if (data.tempData.selectedImageList != null) {
 			selectedImage = data.tempData.selectedImageList;
+		} else {
+			selectedImage = new ArrayList<String>();
 		}
 		getImages();
 	}

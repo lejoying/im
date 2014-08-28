@@ -2,6 +2,7 @@ package com.open.welinks.controller;
 
 import java.util.ArrayList;
 
+import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.PictureBrowseView;
 
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class PictureBrowseController {
@@ -29,6 +31,7 @@ public class PictureBrowseController {
 
 	public OnClickListener mOnClickListener;
 	public OnPageChangeListener mOnPageChangeListener;
+	public DownloadListener downloadListener;
 
 	public PictureBrowseController(Activity thisActivity) {
 		this.context = thisActivity;
@@ -92,6 +95,20 @@ public class PictureBrowseController {
 					thisView.notifyAdapter();
 					Toast.makeText(context, "deleteButtonView", Toast.LENGTH_SHORT).show();
 				}
+			}
+		};
+		downloadListener = new DownloadListener() {
+
+			@Override
+			public void success(DownloadFile instance, int status) {
+				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.options);
+
+			}
+
+			@Override
+			public void loading(DownloadFile instance, int precent, int status) {
+				// TODO Auto-generated method stub
+
 			}
 		};
 	}
