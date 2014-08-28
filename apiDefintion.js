@@ -1328,7 +1328,7 @@ api = {
             url: "/api2/share/addcomment"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", head: "XXX", gid: "XXX", gsid: "NNN", contentType: "text", content: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", head: "XXX", phoneTo:"NNN",nickNameTo:"XXX",gid: "XXX", gsid: "NNN", contentType: "text", content: "XXX"}
         },
         response: {
             success: {"提示信息": "评论群分享成功", gid: "XXX", gsid: "NNN"},

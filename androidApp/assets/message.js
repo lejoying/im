@@ -9,7 +9,7 @@
 				"phone" : "151",
 				"nickName" : "151Name",
 				"contentType" : "text",
-				"content" : "我是151"
+				"content" : "[]"
 			}
 		],
 		"p152" : [{

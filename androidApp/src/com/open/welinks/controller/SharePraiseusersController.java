@@ -1,14 +1,14 @@
 package com.open.welinks.controller;
 
-import java.util.ArrayList;
-
-import com.open.welinks.model.Data;
-import com.open.welinks.view.SharePraiseusersView;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
+
+import com.open.welinks.model.Data;
+import com.open.welinks.view.SharePraiseusersView;
 
 public class SharePraiseusersController {
 
@@ -22,7 +22,7 @@ public class SharePraiseusersController {
 
 	public OnClickListener mOnClickListener;
 
-	public ArrayList<String> praiseusersList;
+	public List<String> praiseusersList;
 
 	public SharePraiseusersController(Activity thisActivity) {
 		this.context = thisActivity;

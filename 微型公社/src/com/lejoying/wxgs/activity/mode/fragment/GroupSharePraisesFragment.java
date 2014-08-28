@@ -180,7 +180,5 @@ public class GroupSharePraisesFragment extends BaseFragment {
 			ImageView head;
 			TextView name, sign, reply;
 		}
-
 	}
-
 }

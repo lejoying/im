@@ -1,16 +1,23 @@
 package com.open.welinks.controller;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.ScrollView;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -19,9 +26,12 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
+import com.open.welinks.SharePraiseusersActivity;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Shares.Share;
+import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.ResponseHandlers;
@@ -41,11 +51,13 @@ public class ShareMessageDetailController {
 
 	public String gsid = "";
 	public ShareMessage shareMessage;
+	public Share share;
 
 	public OnClickListener mOnClickListener;
 	public OnScrollChangedListener mOnScrollChangedListener;
 	public OnTouchListener mOnTouchListener;
 	public DownloadListener downloadListener;
+	public TextWatcher textWatcher;
 
 	public int IMAGEBROWSE_REQUESTCODE = 0x01;
 
@@ -54,6 +66,12 @@ public class ShareMessageDetailController {
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public User currentUser;
+
+	public String phoneTo = "";
+	public String nickNameTo = "";
+	public String headTo;
+
+	int initialHeight;
 
 	public ShareMessageDetailController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -64,6 +82,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void initData() {
+		share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
 			this.gsid = gsid;
@@ -72,6 +91,40 @@ public class ShareMessageDetailController {
 	}
 
 	public void initializeListeners() {
+		textWatcher = new TextWatcher() {
+
+			String content = "";
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				content = s.toString();
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				LayoutParams commentLayoutParams = thisView.commentInputView.getLayoutParams();
+				// Log.e(content, (45 * thisView.screenDensity + 0.5f) + "--------------height--" + thisView.commentEditTextView.getHeight() + "--------" + initialHeight);
+				commentLayoutParams.height = (int) ((45 * thisView.screenDensity + 0.5f) + thisView.commentEditTextView.getHeight() - 40);
+				// Log.e(content, commentLayoutParams.height + "--------------height");
+				// thisView.commentInputView.setLayoutParams(commentLayoutParams);
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				int selectionIndex = thisView.commentEditTextView.getSelectionStart();
+				if (!(s.toString()).equals(content)) {
+					thisView.commentEditTextView.setText(s.toString());
+					thisView.commentEditTextView.setSelection(selectionIndex);
+				}
+				if ("".equals(thisView.commentEditTextView.getText().toString())) {
+					thisView.sendCommentView.setBackgroundResource(R.drawable.comment_notselected);
+					thisView.sendCommentView.setTextColor(Color.WHITE);
+				} else {
+					thisView.sendCommentView.setBackgroundResource(R.drawable.comment_selected);
+					thisView.sendCommentView.setTextColor(Color.BLACK);
+				}
+			}
+		};
 		downloadListener = new DownloadListener() {
 
 			@Override
@@ -105,9 +158,9 @@ public class ShareMessageDetailController {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				if (thisView.commentInputView.getVisibility() == View.VISIBLE) {
-					thisView.commentInputView.setVisibility(View.GONE);
-				}
+				// if (thisView.commentInputView.getVisibility() == View.VISIBLE) {
+				// thisView.commentInputView.setVisibility(View.GONE);
+				// }
 				return false;
 			}
 		};
@@ -127,7 +180,6 @@ public class ShareMessageDetailController {
 				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.praiseIconView)) {
-					Toast.makeText(thisActivity, "praiseICon", Toast.LENGTH_SHORT).show();
 					boolean option = false;
 					if (!shareMessage.praiseusers.contains(currentUser.phone)) {
 						option = true;
@@ -148,9 +200,40 @@ public class ShareMessageDetailController {
 						thisView.commentInputView.setVisibility(View.GONE);
 					}
 				} else if (view.equals(thisView.praiseUserContentView)) {
-					Toast.makeText(thisActivity, "praiseUserContentView", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(thisActivity, "praiseUserContentView", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent(thisActivity, SharePraiseusersActivity.class);
+					data.tempData.praiseusersList = shareMessage.praiseusers;
+					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.confirmSendCommentView)) {
-					Toast.makeText(thisActivity, "confirmSendCommentView", Toast.LENGTH_SHORT).show();
+					String commentContent = thisView.commentEditTextView.getText().toString().trim();
+					thisView.commentEditTextView.setText("");
+					phoneTo = "";
+					nickNameTo = "";
+					headTo = "";
+					thisView.commentEditTextView.setHint("添加评论 ... ...");
+					if (thisView.commentInputView.getVisibility() == View.VISIBLE) {
+						thisView.commentInputView.setVisibility(View.GONE);
+					}
+					if (thisView.inputMethodManager.isActive()) {
+						thisView.inputMethodManager.hideSoftInputFromWindow(thisView.commentInputView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					}
+					Comment comment = share.new Comment();
+					comment.phone = currentUser.phone;
+					comment.nickName = currentUser.nickName;
+					comment.head = currentUser.head;
+					comment.phoneTo = phoneTo;
+					comment.nickNameTo = nickNameTo;
+					comment.headTo = headTo;
+					comment.contentType = "text";
+					comment.content = commentContent;
+					comment.time = new Date().getTime();
+					shareMessage.comments.add(comment);
+
+					thisView.notifyShareMessageComments();
+
+					thisView.mainScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+
+					addCommentToMessage("text", commentContent);
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
@@ -162,6 +245,22 @@ public class ShareMessageDetailController {
 						intent.putExtra("position", content);
 						intent.putExtra("type", PictureBrowseView.IMAGEBROWSE_COMMON);
 						thisActivity.startActivityForResult(intent, IMAGEBROWSE_REQUESTCODE);
+					} else if ("ShareComment".equals(type)) {
+						Comment comment = (Comment) view.getTag(R.id.commentEditTextView);
+						if (thisView.commentInputView.getVisibility() == View.GONE) {
+							thisView.commentInputView.setVisibility(View.VISIBLE);
+						}
+						if (!content.equals(currentUser.phone)) {
+							phoneTo = comment.phone;
+							nickNameTo = comment.nickName;
+							headTo = comment.head;
+							thisView.commentEditTextView.setHint("回复" + nickNameTo);
+						} else {
+							phoneTo = "";
+							nickNameTo = "";
+							headTo = "";
+							thisView.commentEditTextView.setHint("添加评论 ... ...");
+						}
 					}
 				}
 			}
@@ -178,6 +277,7 @@ public class ShareMessageDetailController {
 		thisView.mainScrollView.setOnTouchListener(mOnTouchListener);
 		thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
 
+		thisView.commentEditTextView.addTextChangedListener(textWatcher);
 	}
 
 	public void modifyPraiseusersToMessage(boolean option) {
@@ -201,13 +301,20 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("gsid", shareMessage.gsid);
 		params.addBodyParameter("nickName", currentUser.nickName);
 		params.addBodyParameter("head", currentUser.head);
+		params.addBodyParameter("phoneTo", phoneTo);
+		params.addBodyParameter("nickNameTo", nickNameTo);
+		params.addBodyParameter("headTo", headTo);
 		params.addBodyParameter("contentType", contentType);
 		params.addBodyParameter("content", content);
 
-		httpUtils.send(HttpMethod.POST, API.SHARE_ADDPRAISE, params, responseHandlers.share_addCommentCallBack);
+		httpUtils.send(HttpMethod.POST, API.SHARE_ADDCOMMENT, params, responseHandlers.share_addCommentCallBack);
 	}
 
 	public void finish() {
 		data.tempData.selectedImageList = null;
+	}
+
+	public void onWindwoFocusChanged() {
+		initialHeight = thisView.commentEditTextView.getHeight();
 	}
 }

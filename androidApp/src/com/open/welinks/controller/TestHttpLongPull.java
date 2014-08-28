@@ -24,24 +24,45 @@ public class TestHttpLongPull extends Activity {
 
 	}
 
+	RequestParams params = new RequestParams();
+	HttpUtils httpUtils = new HttpUtils();
+	String url = "http://www.we-links.com/api2/session/event";
+
 	public void test() {
-		RequestParams params = new RequestParams();
 		params.addQueryStringParameter("phone", "151");
 		params.addQueryStringParameter("accessKey", "lejoying");
 
-		HttpUtils httpUtils = new HttpUtils();
-		httpUtils.configTimeout(3000);
-		httpUtils.configRequestRetryCount(Integer.MAX_VALUE);
-		String url = "http://www.we-links.com/api2/session/event";
-		httpUtils.send(HttpMethod.POST, url, params, test);
+		// params.addHeader("Timeout", 30000 + "");
+
+		httpUtils.configRequestRetryCount(5);
+		httpUtils.send(HttpMethod.GET, url, params, test);
 	}
 
 	public ResponseHandler<String> test = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Log.e(tag, responseInfo.statusCode + "-------initUpload success");
+			Log.e(tag, responseInfo.statusCode + "------- success");
+			httpUtils.send(HttpMethod.GET, url, params, test);
+			try {
+				Thread.currentThread().sleep(50000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		};
 
+		@Override
+		public void onFailure(com.lidroid.xutils.exception.HttpException error, String msg) {
+			Log.e(tag, error + "------- onFailure");
+			httpUtils.send(HttpMethod.GET, url, params, test);
+			try {
+				Thread.currentThread().sleep(70000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.e(tag, error + "------- onFailure2");
 		};
 	};
 }

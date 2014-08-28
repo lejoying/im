@@ -38,6 +38,11 @@ public class ShareMessageDetailActivity extends Activity {
 		thisView.initView();
 		thisController.bindEvent();
 	}
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		thisController.onWindwoFocusChanged();
+		super.onWindowFocusChanged(hasFocus);
+	}
 	
 	@Override
 	public void finish() {

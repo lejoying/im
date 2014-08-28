@@ -1,6 +1,8 @@
 package com.open.welinks.view;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,9 @@ import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.TouchImageView;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
@@ -34,6 +37,7 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
@@ -99,7 +103,7 @@ public class ShareSubView {
 
 		shareImageHeight = (int) (this.displayMetrics.widthPixels * imageHeightScale);
 		panelHeight = (int) (this.displayMetrics.widthPixels * panelScale);
-		Log.e(tag, "height--------------" + shareImageHeight);
+		// Log.e(tag, "height--------------" + shareImageHeight);
 
 		shareMessageView = (ViewGroup) shareView.findViewById(R.id.groupShareMessageContent);
 
@@ -115,6 +119,16 @@ public class ShareSubView {
 
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 
+		myScrollImageBody = new MyScrollImageBody();
+		myScrollImageBody.initialize(groupMembersListContentView);
+		// groupMembersListContentView.setBackgroundColor(Color.RED);
+		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
+
+		mSdCardFile = Environment.getExternalStorageDirectory();
+		mImageFile = new File(mSdCardFile, "welinks/heads/");
+		if (!mImageFile.exists())
+			mImageFile.mkdirs();
+
 		thisController.getUserCurrentAllGroup();
 
 		showShareMessages();
@@ -123,6 +137,10 @@ public class ShareSubView {
 
 		initializationGroupsDialog();
 
+	}
+
+	public void getCurrentGroupShareMessages() {
+		thisController.getCurrentGroupShareMessages();
 	}
 
 	public void showShareMessages() {
@@ -394,12 +412,14 @@ public class ShareSubView {
 
 	public void showGroupsDialog() {
 		if (groupPopWindow != null && !groupPopWindow.isShowing())
-			groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
+			groupListBody.active();
+		groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
 	}
 
 	public void dismissGroupDialog() {
 		if (groupPopWindow != null && groupPopWindow.isShowing())
-			groupPopWindow.dismiss();
+			groupListBody.inActive();
+		groupPopWindow.dismiss();
 	}
 
 	public void setGroupsDialogContent() {
@@ -494,25 +514,137 @@ public class ShareSubView {
 		}
 	}
 
+	public MyScrollImageBody myScrollImageBody;
+	public int width;
+	public File mSdCardFile;
+	public File mImageFile;
+	public DisplayImageOptions displayImageOptions;
+
 	public void showGroupMembers() {
 		groupMembersListContentView.removeAllViews();
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		shareTopMenuGroupName.setText(group.name);
 		List<String> groupMembers = group.members;
-		// Map<String, Friend> friendsMap = data.relationship.friendsMap;
-		Resources resources = mainView.thisActivity.getResources();
-		Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		Map<String, Friend> friendsMap = data.relationship.friendsMap;
+
+		width = (int) (displayMetrics.density * 40);
 		for (int i = 0; i < groupMembers.size(); i++) {
-			// String key = groupMembers.get(i);
-			// Friend friend = friendsMap.get(key);
-			ImageView imageView = new ImageView(mainView.thisActivity);
-			// imageView.setBackgroundColor(Color.BLACK);
-			imageView.setImageBitmap(bitmap);
-			int height = (int) (50 * displayMetrics.density);
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(height, height);
-			layoutParams.leftMargin = (int) (50 * displayMetrics.density * i);
-			groupMembersListContentView.addView(imageView, layoutParams);
+			String key = groupMembers.get(i);
+			Friend friend = friendsMap.get(key);
+
+			ImageBody imageBody = new ImageBody();
+			imageBody.initialize();
+
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
+			myScrollImageBody.contentView.addView(imageBody.imageView, layoutParams);
+			float x = i * (width + 2 * displayMetrics.density) + 5 * displayMetrics.density;
+			if (i == 0) {
+				x = 5 * displayMetrics.density;
+			}
+			imageBody.imageView.setX(x);// Translation
+			imageBody.imageView.setImageBitmap(bitmap);
+			if ("".equals(friend.head)) {
+				imageBody.imageView.setImageBitmap(bitmap);
+			} else {
+				File currentImageFile = new File(mImageFile, friend.head);
+				String filepath = currentImageFile.getAbsolutePath();
+				boolean isFlag = false;
+				String path = "";
+				if (currentImageFile.exists()) {
+					BitmapFactory.Options boptions = new BitmapFactory.Options();
+					boptions.inJustDecodeBounds = true;
+					BitmapFactory.decodeFile(currentImageFile.getAbsolutePath(), boptions);
+					if (boptions.outWidth > 0) {
+						isFlag = true;
+					}
+				}
+				if (isFlag) {
+					path = "file://" + filepath;
+				} else {
+					path = API.DOMAIN_COMMONIMAGE + "heads/" + friend.head;
+				}
+
+				if (!isFlag) {
+					DownloadFile downloadFile = new DownloadFile(path, filepath);
+					downloadFile.view = imageBody.imageView;
+					downloadFile.view.setTag("head");
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
+					downloadFileList.addDownloadFile(downloadFile);
+				} else {
+					imageLoader.displayImage(path, imageBody.imageView, displayImageOptions, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+						}
+					});
+				}
+			}
+
+			// imageLoader.displayImage("file://" + key, imageBody.imageView, options);
+			myScrollImageBody.selectedImagesSequence.add(key);
+			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
+			imageBody.imageView.setTag(i);
+			// imageBody.imageView.setOnClickListener(thisController.monClickListener);
+		}
+	}
+
+	public class MyScrollImageBody {
+		public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
+		public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
+
+		public RelativeLayout contentView;
+
+		public RelativeLayout initialize(RelativeLayout view) {
+			this.contentView = view;
+			return view;
+		}
+
+		public void recordChildrenPosition() {
+			for (int i = 0; i < selectedImagesSequence.size(); i++) {
+				String key = selectedImagesSequence.get(i);
+				ImageBody imageBody = selectedImagesSequenceMap.get(key);
+				imageBody.x = imageBody.imageView.getX();
+				imageBody.y = imageBody.imageView.getY();
+			}
+		}
+
+		public void setChildrenPosition(float deltaX, float deltaY) {
+			float screenWidth = displayMetrics.widthPixels;
+			float totalLength = selectedImagesSequence.size() * (width + 2 * displayMetrics.density) + 2 * displayMetrics.density;
+			if (totalLength < screenWidth) {
+				return;
+			}
+			for (int i = 0; i < selectedImagesSequence.size(); i++) {
+				String key = selectedImagesSequence.get(i);
+				ImageBody imageBody = selectedImagesSequenceMap.get(key);
+				if ((imageBody.x + deltaX) < (screenWidth - totalLength))
+					break;
+				if (i == 0 && (imageBody.x + deltaX) > (5 * displayMetrics.density))
+					break;
+				imageBody.imageView.setX(imageBody.x + deltaX);
+				imageBody.imageView.setY(imageBody.y + deltaY);
+			}
+		}
+	}
+
+	public class ImageBody {
+		public int i;
+
+		public float x;
+		public float y;
+		public TouchImageView imageView;
+
+		public TouchImageView initialize() {
+			this.imageView = new TouchImageView(mainView.context);
+			return this.imageView;
 		}
 	}
 }
