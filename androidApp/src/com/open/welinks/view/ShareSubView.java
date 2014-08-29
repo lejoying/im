@@ -22,6 +22,11 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -86,6 +91,11 @@ public class ShareSubView {
 	public float panelScale = 1.010845986984816f;
 
 	public int panelHeight;
+
+	public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 9);
+	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
+	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
 
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -171,7 +181,7 @@ public class ShareSubView {
 			shareMessage = sharesMap.get(key);
 			SharesMessageBody sharesMessageBody = null;
 
-			String keyName = "message#" + shareMessage.phone + "_" + shareMessage.time;
+			String keyName = "message#" + shareMessage.gsid;
 			boolean isExists = false;
 			if (this.shareMessageListBody.listItemBodiesMap.get(keyName) != null) {
 				sharesMessageBody = (SharesMessageBody) this.shareMessageListBody.listItemBodiesMap.get(keyName);
@@ -194,6 +204,13 @@ public class ShareSubView {
 			}
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
+			if (i == 0) {
+				shareMessageRootView = sharesMessageBody.cardView;
+				dialogSpring.addListener(dialogSpringListener);
+				dialogSpring.setCurrentValue(0);
+				dialogSpring.setEndValue(1);
+			}
+
 			// TODO
 			sharesMessageBody.cardView.setTag(R.id.tag_class, "share_view");
 			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
@@ -227,6 +244,8 @@ public class ShareSubView {
 
 		public DownloadFile downloadFile = null;
 
+		public ShareMessage message;
+
 		public int i;
 
 		public View initialize(int i) {
@@ -258,6 +277,7 @@ public class ShareSubView {
 				// showGroupMembers(groupMembersListContentView);
 				releaseShareView.setOnClickListener(thisController.mOnClickListener);
 			} else {
+				this.message = shareMessage;
 				this.headView.setImageBitmap(bitmap);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
@@ -645,6 +665,20 @@ public class ShareSubView {
 		public TouchImageView initialize() {
 			this.imageView = new TouchImageView(mainView.context);
 			return this.imageView;
+		}
+	}
+
+	public void onResume() {
+	}
+
+	public View shareMessageRootView;
+
+	private class DialogShowSpringListener extends SimpleSpringListener {
+		@Override
+		public void onSpringUpdate(Spring spring) {
+			float mappedValue = (float) spring.getCurrentValue();
+			shareMessageRootView.setScaleX(mappedValue);
+			shareMessageRootView.setScaleY(mappedValue);
 		}
 	}
 }

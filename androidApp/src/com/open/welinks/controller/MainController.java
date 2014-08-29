@@ -2,6 +2,7 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -82,6 +83,7 @@ public class MainController {
 
 	public void onResume() {
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
+		thisView.shareSubView.onResume();
 	}
 
 	public void onPause() {
@@ -387,5 +389,10 @@ public class MainController {
 				Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+		shareSubController.onActivityResult(requestCode, resultCode, data);
+		
 	}
 }

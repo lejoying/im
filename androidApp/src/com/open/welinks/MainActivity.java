@@ -156,4 +156,9 @@ public class MainActivity extends Activity {
 		thisController.onPause();
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		thisController.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }
