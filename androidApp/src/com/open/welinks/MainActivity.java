@@ -47,25 +47,16 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (Config.DEVELOPER_MODE
-				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-					.detectAll().penaltyDialog().build());
-			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-					.detectAll().penaltyDeath().build());
+		if (Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
+			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
 		}
 		initImageLoader(getApplicationContext());
 		linkViewController();
 	}
 
 	public static void initImageLoader(Context context) {
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				context).threadPriority(Thread.NORM_PRIORITY - 2)
-				.denyCacheImageMultipleSizesInMemory()
-				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
-				.diskCacheSize(50 * 1024 * 1024)
-				.tasksProcessingOrder(QueueProcessingType.LIFO)
-				.writeDebugLogs().build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
 		ImageLoader.getInstance().init(config);
 	}
 
@@ -99,16 +90,11 @@ public class MainActivity extends Activity {
 		this.thisView.friendsSubView = new FriendsSubView(this.thisView);
 		this.thisView.meSubView = new MeSubView(this.thisView);
 
-		this.thisController.squareSubController = new SquareSubController(
-				this.thisController);
-		this.thisController.shareSubController = new ShareSubController(
-				this.thisController);
-		this.thisController.messagesSubController = new MessagesSubController(
-				this.thisController);
-		this.thisController.friendsSubController = new FriendsSubController(
-				this.thisController);
-		this.thisController.meSubController = new MeSubController(
-				this.thisController);
+		this.thisController.squareSubController = new SquareSubController(this.thisController);
+		this.thisController.shareSubController = new ShareSubController(this.thisController);
+		this.thisController.messagesSubController = new MessagesSubController(this.thisController);
+		this.thisController.friendsSubController = new FriendsSubController(this.thisController);
+		this.thisController.meSubController = new MeSubController(this.thisController);
 
 		this.thisController.squareSubController.thisView = this.thisView.squareSubView;
 		this.thisController.shareSubController.thisView = this.thisView.shareSubView;
@@ -161,4 +147,9 @@ public class MainActivity extends Activity {
 		thisController.onPause();
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		thisController.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }

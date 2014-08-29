@@ -27,6 +27,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.ShareSubView;
+import com.open.welinks.view.ShareSubView.SharesMessageBody;
 
 public class ShareSubController {
 
@@ -41,12 +42,16 @@ public class ShareSubController {
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public OnClickListener mOnClickListener;
-	// public OnClickListener mOnClickListener1;
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
 	public DownloadListener downloadListener;
-
 	public View onTouchDownView;
+
+	public int SCAN_MESSAGEDETAIL = 0x01;
+	public String currentScanMessageKey;
+
+	public int nowpage = 0;
+	public int pagesize = 20;
 
 	public ShareSubController(MainController mainController) {
 		thisActivity = mainController.thisActivity;
@@ -90,14 +95,6 @@ public class ShareSubController {
 				return false;
 			}
 		};
-		// mOnClickListener1 = new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View view) {
-		// Log.i(tag, "onClick");
-		// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
-		// }
-		// };
 		mOnClickListener = new OnClickListener() {
 
 			@Override
@@ -134,7 +131,8 @@ public class ShareSubController {
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 						intent.putExtra("gsid", content);
-						thisActivity.startActivity(intent);
+						currentScanMessageKey = content;
+						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
 					}
 				}
 			}
@@ -167,8 +165,8 @@ public class ShareSubController {
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
-		params.addBodyParameter("nowpage", "0");
-		params.addBodyParameter("pagesize", "20");
+		params.addBodyParameter("nowpage", nowpage + "");
+		params.addBodyParameter("pagesize", pagesize + "");
 
 		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack);
 	}
@@ -221,6 +219,21 @@ public class ShareSubController {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class.equals("share_view")) {
 				onTouchDownView.performClick();
+			}
+		}
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Data data2) {
+		if (requestCode == SCAN_MESSAGEDETAIL) {
+			if (thisView.shareMessageListBody != null) {
+				if (thisView.shareMessageListBody.listItemsSequence.size() > 0) {
+					if (currentScanMessageKey != null) {
+						SharesMessageBody body = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
+						if (body != null) {
+							body.setContent(body.message);
+						}
+					}
+				}
 			}
 		}
 	}

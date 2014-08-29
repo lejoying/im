@@ -1,58 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:padding="7dp" >
+    android:layout_height="60dp" >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="60dp"
+        android:padding="7dp" >
 
-        <ImageView
-            android:id="@+id/groupIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp" />
-
-        <TextView
-            android:id="@+id/groupName"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:paddingLeft="55dp"
-            android:singleLine="true"
-            android:text="亦庄文化园站"
-            android:textColor="#000" />
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/groupIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp" />
+
+            <TextView
+                android:id="@+id/groupName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingLeft="55dp"
+                android:singleLine="true"
+                android:text="亦庄文化园站"
+                android:textColor="#000" />
+
+            <ImageView
+                android:id="@+id/groupMonyInfomation"
+                android:layout_width="20dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:src="@drawable/dialog_mach" />
+        </RelativeLayout>
 
         <ImageView
-            android:id="@+id/groupMonyInfomation"
-            android:layout_width="20dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="8dp"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:src="@drawable/dialog_mach" />
+            android:id="@+id/groupSelectedStatus"
+            android:layout_width="15dp"
+            android:layout_height="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp"
+            android:src="@drawable/dialog_selected"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="43dp"
+            android:background="#878585" />
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/groupSelectedStatus"
-        android:layout_width="15dp"
-        android:layout_height="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
-        android:src="@drawable/dialog_selected"
-        android:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/iv_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="43dp"
-        android:background="#878585" />
 
 </RelativeLayout>
