@@ -2,11 +2,15 @@ package com.open.welinks.model;
 
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
+import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.view.ViewManage;
 
 public class ResponseEventHandlers {
@@ -17,11 +21,15 @@ public class ResponseEventHandlers {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
-	public static ResponseEventHandlers responseEventHandlers;
+	public static ResponseEventHandlers responseEventHandlers = ResponseEventHandlers.getInstance();
 
 	public HttpClient httpClient = HttpClient.getInstance();
 
 	public Gson gson = new Gson();
+
+	public class MSG {
+		public List<String> message;
+	}
 
 	public static ResponseEventHandlers getInstance() {
 		if (responseEventHandlers == null) {
@@ -30,9 +38,14 @@ public class ResponseEventHandlers {
 		return responseEventHandlers;
 	}
 
+	/**
+	 * "message":["{\"contentType\":\"text\",\"sendType\":\"point\",\"phone\":\"153\",\"content\":\"哈哈\",\"time\":1409291471285,\"phoneto\":\"[\\\"154\\\"]\"}"]
+	 * 
+	 */
 	public void handleEvent(Event event) {
 		if (event.event.equals("message")) {
-			// TODO
+			// Message message = gson.fromJson(event.event_content.message, Message.class);
+			// Log.d("sys", message.message.get(0).phone);
 		}
 	}
 
@@ -109,7 +122,7 @@ public class ResponseEventHandlers {
 	public class Event {
 		public String 提示信息;
 		public String event;
-		public String evnet_content;
+		public MSG event_content;
 	}
 
 	public class EventContent {
@@ -119,6 +132,7 @@ public class ResponseEventHandlers {
 	}
 
 	public void parseEvent(ResponseInfo<String> responseInfo) {
+//		Log.e(tag, responseInfo.result + "----------resule");
 		Event event = gson.fromJson(responseInfo.result, Event.class);
 		responseEventHandlers.handleEvent(event);
 	}

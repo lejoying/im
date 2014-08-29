@@ -179,13 +179,8 @@ public class Data {
 			public String nickName;
 			public String contentType;
 			public String content;
+			public String phoneto;
 		}
-	}
-
-	public class MessageContent {
-		public String text = "";
-		public String voice = "";
-		public List<String> images = new ArrayList<String>();
 	}
 
 	public class Shares {

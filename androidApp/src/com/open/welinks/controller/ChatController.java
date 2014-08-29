@@ -3,6 +3,7 @@ package com.open.welinks.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
@@ -37,7 +38,6 @@ import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.model.Data.MessageContent;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.MCImageUtils;
@@ -123,9 +123,8 @@ public class ChatController {
 				} else if (view.equals(thisView.infomation)) {
 
 				} else if (view.equals(thisView.send)) {
-					MessageContent content = data.new MessageContent();
-					content.text = thisView.input.getText().toString();
-					sendMessage(content);
+					String text = thisView.input.getText().toString();
+					sendMessage(text, "text");
 					thisView.input.setText("");
 				} else if (view.equals(thisView.more)) {
 					showSelectTab();
@@ -188,8 +187,8 @@ public class ChatController {
 
 	}
 
-	public MessageContent getMessageContent(String content) {
-		return gson.fromJson(content, MessageContent.class);
+	public ArrayList<String> getImageFromJson(String content) {
+		return gson.fromJson(content, ArrayList.class);
 	}
 
 	public void setImageThumbnail(String fileName, ImageView view) {
@@ -279,32 +278,19 @@ public class ChatController {
 	public void addImagesToMessage() {
 		ArrayList<String> selectedImageList = data.tempData.selectedImageList;
 		data.tempData.selectedImageList = null;
-		MessageContent content = data.new MessageContent();
 		File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
+		ArrayList<String> content = new ArrayList<String>();
 		for (String filePath : selectedImageList) {
 			Map<String, Object> map = MCImageUtils.processImagesInformation(filePath, targetFolder);
-			content.images.add((String) map.get("fileName"));
+			content.add((String) map.get("fileName"));
 			uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"));
 		}
-		sendMessage(content);
+		sendMessage(gson.toJson(content), "image");
 	}
 
-	public void sendMessage(MessageContent messageContent) {
-		String contentType = "", content = "";
-		if ("".equals(messageContent.text)) {
-			if ("".equals(messageContent.voice)) {
-				contentType = "image";
-				content = gson.toJson(messageContent.images);
-			} else {
-				contentType = "voice";
-				content = gson.toJson(messageContent.voice);
-			}
-		} else {
-			contentType = "text";
-			content = gson.toJson(messageContent.text);
-		}
+	public void sendMessage(String messageContent, String contentType) {
 		Message message = data.messages.new Message();
-		message.content = gson.toJson(content);
+		message.content = messageContent;
 		message.contentType = contentType;
 		message.sendType = "point";
 		message.phone = data.userInformation.currentUser.phone;
@@ -320,7 +306,7 @@ public class ChatController {
 			data.messages.friendMessageMap.get(key).add(message);
 		}
 		thisView.mChatAdapter.notifyDataSetChanged();
-		sendMessageToServer(contentType, content);
+		sendMessageToServer(contentType, messageContent);
 	}
 
 	public void sendMessageToServer(String contentType, String content) {
@@ -328,7 +314,7 @@ public class ChatController {
 		RequestParams params = new RequestParams();
 
 		SendMessage sendMessage = new SendMessage();
-		sendMessage.type = contentType;
+		sendMessage.contentType = contentType;
 		sendMessage.content = content;
 
 		params.addBodyParameter("phone", currentUser.phone);
@@ -340,12 +326,14 @@ public class ChatController {
 			params.addBodyParameter("gid", key);
 			params.addBodyParameter("phoneto", gson.toJson(data.relationship.groupsMap.get(key).members));
 		} else if ("point".equals(type)) {
-			params.addBodyParameter("phoneto", key);
+			List<String> phoneto = new ArrayList<String>();
+			phoneto.add(key);
+			params.addBodyParameter("phoneto", gson.toJson(phoneto));
 			params.addBodyParameter("gid", "");
 		}
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/message/send", params, responseHandlers.message_sendMessageCallBack);
+		httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
 	}
 
 	public void uploadFile(final String filePath, final String fileName, final byte[] bytes) {
@@ -360,7 +348,7 @@ public class ChatController {
 	}
 
 	public class SendMessage {
-		public String type;// image voice text
+		public String contentType;// image voice text
 		public String content;
 	}
 }

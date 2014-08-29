@@ -14,4 +14,14 @@
     <string name="action_settings">设置</string>
     <string name="praise_text">称赞者</string>
 
+    <!-- alert message -->
+    <string name="alert_text_phonenotnull">手机号不能为空</string>
+    <string name="alert_text_passnotnull">密码不能为空</string>
+    <string name="alert_text_passlength">密码长度需大于六位</string>
+    <string name="alert_text_codenotnull">验证码不能为空</string>
+    <string name="alert_text_nointernet">没有网络连接</string>
+    <string name="alert_text_phoneformaterror">手机号码格式错误</string>
+    <string name="alert_text_nettimeout">网络连接超时</string>
+    <string name="alert_text_neterror">网络错误</string>
+
 </resources>

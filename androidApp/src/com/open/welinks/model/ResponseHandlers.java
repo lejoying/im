@@ -119,22 +119,22 @@ public class ResponseHandlers {
 	public ResponseHandler<String> message_sendMessageCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
-			public String 失败原因;
+//			public String 失败原因;
 			public long time;
-			public String sendType;
-			public String gid;
-			public String phoneto;
+			// public String sendType;
+			// public String gid;
+			// public String phoneto;
 		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发送成功")) {
-				if ("point".equals(response.sendType)) {
-					// data.messages.friendMessageMap.get(response.phoneto).get(0).time = String.valueOf(response.time);
-				} else if ("group".equals(response.sendType)) {
-					// data.messages.groupMessageMap.get(response.gid).get(0).time = String.valueOf(response.time);
-				}
+				// if ("point".equals(response.sendType)) {
+				// // data.messages.friendMessageMap.get(response.phoneto).get(0).time = String.valueOf(response.time);
+				// } else if ("group".equals(response.sendType)) {
+				// // data.messages.groupMessageMap.get(response.gid).get(0).time = String.valueOf(response.time);
+				// }
 			}
 		};
 	};
@@ -151,24 +151,25 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取群组成员成功")) {
+				if (response.relationship.groups.size() != 0) {
+					data.relationship.groups = response.relationship.groups;
+					data.relationship.groupsMap = response.relationship.groupsMap;
+					data.relationship.friendsMap.putAll(response.relationship.friendsMap);
 
-				data.relationship.groups = response.relationship.groups;
-				data.relationship.groupsMap = response.relationship.groupsMap;
-				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
-
-				// init current share
-				if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
-					if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+					// init current share
+					if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
+						if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+							data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
+						}
+					} else {
 						data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
 					}
-				} else {
-					data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
+					// Set the option group dialog content
+					viewManage.mainView.shareSubView.setGroupsDialogContent();
+					viewManage.mainView.shareSubView.showShareMessages();
+					viewManage.mainView.shareSubView.showGroupMembers();
+					viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
 				}
-				// Set the option group dialog content
-				viewManage.mainView.shareSubView.setGroupsDialogContent();
-				viewManage.mainView.shareSubView.showShareMessages();
-				viewManage.mainView.shareSubView.showGroupMembers();
-				viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
 			}
 		};
 	};

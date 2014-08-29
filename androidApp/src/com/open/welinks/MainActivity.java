@@ -23,6 +23,7 @@ import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.service.PushService;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.MeSubView;
@@ -47,25 +48,24 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (Config.DEVELOPER_MODE
-				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-					.detectAll().penaltyDialog().build());
-			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-					.detectAll().penaltyDeath().build());
+		if (Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
+			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
 		}
 		initImageLoader(getApplicationContext());
 		linkViewController();
+		startPushService();
+	}
+
+	public void startPushService() {
+		Intent service = new Intent(thisActivity, PushService.class);
+		service.putExtra("phone", data.userInformation.currentUser.phone);
+		service.putExtra("accessKey", data.userInformation.currentUser.accessKey);
+		startService(service);
 	}
 
 	public static void initImageLoader(Context context) {
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				context).threadPriority(Thread.NORM_PRIORITY - 2)
-				.denyCacheImageMultipleSizesInMemory()
-				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
-				.diskCacheSize(50 * 1024 * 1024)
-				.tasksProcessingOrder(QueueProcessingType.LIFO)
-				.writeDebugLogs().build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2).denyCacheImageMultipleSizesInMemory().diskCacheFileNameGenerator(new Md5FileNameGenerator()).diskCacheSize(50 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO).writeDebugLogs().build();
 		ImageLoader.getInstance().init(config);
 	}
 
@@ -99,16 +99,11 @@ public class MainActivity extends Activity {
 		this.thisView.friendsSubView = new FriendsSubView(this.thisView);
 		this.thisView.meSubView = new MeSubView(this.thisView);
 
-		this.thisController.squareSubController = new SquareSubController(
-				this.thisController);
-		this.thisController.shareSubController = new ShareSubController(
-				this.thisController);
-		this.thisController.messagesSubController = new MessagesSubController(
-				this.thisController);
-		this.thisController.friendsSubController = new FriendsSubController(
-				this.thisController);
-		this.thisController.meSubController = new MeSubController(
-				this.thisController);
+		this.thisController.squareSubController = new SquareSubController(this.thisController);
+		this.thisController.shareSubController = new ShareSubController(this.thisController);
+		this.thisController.messagesSubController = new MessagesSubController(this.thisController);
+		this.thisController.friendsSubController = new FriendsSubController(this.thisController);
+		this.thisController.meSubController = new MeSubController(this.thisController);
 
 		this.thisController.squareSubController.thisView = this.thisView.squareSubView;
 		this.thisController.shareSubController.thisView = this.thisView.shareSubView;

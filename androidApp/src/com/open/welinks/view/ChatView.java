@@ -1,14 +1,15 @@
 package com.open.welinks.view;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.open.lib.viewbody.ListBody;
 import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.MessageContent;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -60,6 +61,8 @@ public class ChatView {
 
 	public ChatAdapter mChatAdapter;
 
+	Bitmap bitmap;
+
 	public ChatView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		context = thisActivity;
@@ -86,6 +89,9 @@ public class ChatView {
 		selectpicture = (RelativeLayout) thisActivity.findViewById(R.id.selectpicture);
 		makeaudio = (RelativeLayout) thisActivity.findViewById(R.id.makeaudio);
 		more_selected = (ImageView) thisActivity.findViewById(R.id.more_selected);
+
+		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
+		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 	}
 
 	public void showChatViews() {
@@ -109,6 +115,12 @@ public class ChatView {
 	public class ChatAdapter extends BaseAdapter {
 
 		ArrayList<Message> messages;
+
+		@Override
+		public void notifyDataSetChanged() {
+			super.notifyDataSetChanged();
+			chat_content.setSelection(this.getCount());
+		}
 
 		public ChatAdapter(ArrayList<Message> messages) {
 			this.messages = messages;
@@ -157,18 +169,18 @@ public class ChatView {
 			} else {
 				chatHolder = (ChatHolder) convertView.getTag();
 			}
-			MessageContent content = thisController.getMessageContent(message.content);
 			String contentType = message.contentType;
 			if ("text".equals(contentType)) {
 				chatHolder.character.setVisibility(View.VISIBLE);
 				chatHolder.image.setVisibility(View.GONE);
 				chatHolder.voice.setVisibility(View.GONE);
-				chatHolder.character.setText(content.text);
+				chatHolder.character.setText(message.content);
 			} else if ("image".equals(contentType)) {
 				chatHolder.character.setVisibility(View.GONE);
 				chatHolder.image.setVisibility(View.VISIBLE);
 				chatHolder.voice.setVisibility(View.GONE);
-				List<String> images = content.images;
+				chatHolder.image.removeAllViews();
+				List<String> images = thisController.getImageFromJson(message.content);
 				for (int i = 0; i < images.size(); i++) {
 					String image = images.get(i);
 					ImageView child = new ImageView(thisActivity);
@@ -196,8 +208,6 @@ public class ChatView {
 				chatHolder.voicetime.setText("");
 			}
 			chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
-			Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
-			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			chatHolder.head.setImageBitmap(bitmap);
 			return convertView;
 		}
@@ -207,6 +217,6 @@ public class ChatView {
 			public TextView time, character, voicetime;
 			public ImageView voice_icon, head;
 		}
-	}
 
+	}
 }

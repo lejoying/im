@@ -133,6 +133,9 @@
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
+
+        <service android:name="com.open.welinks.service.PushService" >
+        </service>
     </application>
 
 </manifest>

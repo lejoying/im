@@ -29,6 +29,11 @@ public class API {
 	 * http://www.we-links.com/api2/share/addcomment
 	 */
 	public static String SHARE_ADDCOMMENT = "http://www.we-links.com/api2/share/addcomment";
+	// message
+	/**
+	 * http://www.we-links.com/api2/message/send
+	 */
+	public static String MESSAGE_SEND = "http://www.we-links.com/api2/message/send";
 
 	// session
 	/**

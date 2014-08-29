@@ -3,9 +3,11 @@ package com.open.welinks.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.HttpHandler;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
@@ -18,12 +20,14 @@ public class PushService extends Service {
 
 	public String tag = "PushService";
 
+	public boolean operation;
+
 	public HttpClient httpClient = HttpClient.getInstance();
 
-	public RequestParams params = new RequestParams();
-	public HttpUtils httpUtils = new HttpUtils();
+	public RequestParams params;
+	public HttpUtils httpUtils;
 
-	public ResponseInfoHandler mResponseInfoHandler = new ResponseInfoHandler(10);
+	public ResponseInfoHandler mResponseInfoHandler;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -31,26 +35,61 @@ public class PushService extends Service {
 		return null;
 	}
 
-	public void startIMLongPull() {
-		params.addQueryStringParameter("phone", "151");
-		params.addQueryStringParameter("accessKey", "lejoying");
+	@Override
+	public void onCreate() {
+		params = new RequestParams();
+		httpUtils = new HttpUtils();
+		mResponseInfoHandler = new ResponseInfoHandler(10);
+		super.onCreate();
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		operation = true;
+		String phone = intent.getStringExtra("phone");
+		String accessKey = intent.getStringExtra("accessKey");
+		startIMLongPull(phone, accessKey);
+		return super.onStartCommand(intent, flags, startId);
+	}
+
+	@Override
+	public void onDestroy() {
+		operation = false;
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+
+	public void startIMLongPull(String phone, String accessKey) {
+		params.addQueryStringParameter("phone", phone);
+		params.addQueryStringParameter("accessKey", accessKey);
 		connect();
 	}
 
+	HttpHandler<String> httpHandler;
+
 	public void connect() {
-		httpUtils.send(HttpMethod.GET, API.SESSION_EVENT, params, longPull);
+		if (operation) {
+			HttpUtils httpUtils = new HttpUtils();
+			httpHandler = httpUtils.send(HttpMethod.GET, API.SESSION_EVENT, params, longPull);
+			Log.e(tag, "=-----------------send request");
+		}
 	}
 
 	public ResponseHandler<String> longPull = httpClient.new ResponseHandler<String>() {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
+			System.out.println("success-----------------");
+			if (httpHandler != null) {
+				httpHandler.cancel(true);
+			}
 			connect();
 			mResponseInfoHandler.exclude(responseInfo);
 		}
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
+			System.out.println("fail---------------------");
 			connect();
 		};
 	};
