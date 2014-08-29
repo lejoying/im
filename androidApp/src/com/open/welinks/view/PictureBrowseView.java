@@ -117,6 +117,11 @@ public class PictureBrowseView {
 		}
 
 		@Override
+		public int getItemPosition(Object object) {
+			return POSITION_NONE;
+		}
+
+		@Override
 		public Object instantiateItem(ViewGroup view, final int position) {
 			View imageLayout = mInflater.inflate(R.layout.view_picture_browse_item, view, false);
 			assert imageLayout != null;
