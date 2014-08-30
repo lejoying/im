@@ -1,10 +1,12 @@
 package com.open.welinks.model;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -27,10 +29,6 @@ public class ResponseEventHandlers {
 
 	public Gson gson = new Gson();
 
-	public class MSG {
-		public List<String> message;
-	}
-
 	public static ResponseEventHandlers getInstance() {
 		if (responseEventHandlers == null) {
 			responseEventHandlers = new ResponseEventHandlers();
@@ -38,14 +36,45 @@ public class ResponseEventHandlers {
 		return responseEventHandlers;
 	}
 
-	/**
-	 * "message":["{\"contentType\":\"text\",\"sendType\":\"point\",\"phone\":\"153\",\"content\":\"哈哈\",\"time\":1409291471285,\"phoneto\":\"[\\\"154\\\"]\"}"]
-	 * 
-	 */
 	public void handleEvent(Event event) {
 		if (event.event.equals("message")) {
-			// Message message = gson.fromJson(event.event_content.message, Message.class);
-			// Log.d("sys", message.message.get(0).phone);
+			System.out.println("?????????????????????????");
+			for (String content : event.event_content.message) {
+				Message message = gson.fromJson(content, Message.class);
+				message.type = Message.MESSAGE_TYPE_RECEIVE;
+				if ("point".equals(message.sendType)) {
+					ArrayList<Message> list = data.messages.friendMessageMap.get(message.phone);
+					if (list == null) {
+						list = new ArrayList<Data.Messages.Message>();
+						data.messages.friendMessageMap.put(message.phone, list);
+					}
+					list.add(message);
+				} else if ("group".equals(message.sendType)) {
+					ArrayList<Message> list = data.messages.groupMessageMap.get(message.gid);
+					if (list == null) {
+						list = new ArrayList<Data.Messages.Message>();
+						data.messages.groupMessageMap.put(message.gid, list);
+					}
+					list.add(message);
+				}
+				if (viewManage.chatView != null) {
+					String key = viewManage.chatView.thisController.key;
+					if (key.equals(message.phone) || key.equals(message.gid)) {
+						viewManage.chatView.thisController.handler.post(new Runnable() {
+
+							@Override
+							public void run() {
+								viewManage.chatView.mChatAdapter.notifyDataSetChanged();
+							}
+						});
+					} else {
+						viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
+					}
+				} else {
+					viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
+				}
+
+			}
 		}
 	}
 
@@ -122,17 +151,14 @@ public class ResponseEventHandlers {
 	public class Event {
 		public String 提示信息;
 		public String event;
-		public MSG event_content;
+		public EventContent event_content;
 	}
 
 	public class EventContent {
-		public String phone;
-		public String gid;
-		public boolean operation;
+		public List<String> message;
 	}
 
 	public void parseEvent(ResponseInfo<String> responseInfo) {
-//		Log.e(tag, responseInfo.result + "----------resule");
 		Event event = gson.fromJson(responseInfo.result, Event.class);
 		responseEventHandlers.handleEvent(event);
 	}

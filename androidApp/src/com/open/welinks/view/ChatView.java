@@ -98,18 +98,21 @@ public class ChatView {
 		String type = thisController.type, key = thisController.key;
 		ArrayList<Message> messages = null;
 		if ("group".equals(type)) {
-			if ((messages = data.messages.groupMessageMap.get(key)) == null) {
+			messages = data.messages.groupMessageMap.get(key);
+			if (messages == null) {
 				messages = new ArrayList<Data.Messages.Message>();
 				data.messages.groupMessageMap.put(key, messages);
 			}
 		} else if ("point".equals(type)) {
-			if ((messages = data.messages.friendMessageMap.get(key)) == null) {
+			messages = data.messages.friendMessageMap.get(key);
+			if (messages == null) {
 				messages = new ArrayList<Data.Messages.Message>();
 				data.messages.friendMessageMap.put(key, messages);
 			}
 		}
 		mChatAdapter = new ChatAdapter(messages);
 		chat_content.setAdapter(mChatAdapter);
+		chat_content.setSelection(mChatAdapter.getCount());
 	}
 
 	public class ChatAdapter extends BaseAdapter {
@@ -142,16 +145,11 @@ public class ChatView {
 		}
 
 		@Override
-		public int getItemViewType(int position) {
-			return messages.get(position).type;
-		}
-
-		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			Message message = messages.get(position);
 			ChatHolder chatHolder = null;
-			int type = getItemViewType(position);
-			if (convertView == null) {
+			int type = message.type;
+//			if (convertView == null) {
 				chatHolder = new ChatHolder();
 				if (type == Message.MESSAGE_TYPE_SEND) {
 					convertView = mInflater.inflate(R.layout.f_chat_item_send, null);
@@ -166,9 +164,9 @@ public class ChatView {
 				chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
 				chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
 				convertView.setTag(chatHolder);
-			} else {
-				chatHolder = (ChatHolder) convertView.getTag();
-			}
+//			} else {
+//				chatHolder = (ChatHolder) convertView.getTag();
+//			}
 			String contentType = message.contentType;
 			if ("text".equals(contentType)) {
 				chatHolder.character.setVisibility(View.VISIBLE);

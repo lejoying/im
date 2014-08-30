@@ -10,6 +10,7 @@ public class ViewManage {
 	public Debug1View debug1View = null;
 	public LoginView loginView = null;
 	public MainView mainView = null;
+	public ChatView chatView = null;
 
 	public DownloadOssFileView downloadOssFileView = null;
 

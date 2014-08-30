@@ -1,5 +1,7 @@
 package com.open.welinks.service;
 
+import java.util.Random;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -29,6 +31,9 @@ public class PushService extends Service {
 
 	public ResponseInfoHandler mResponseInfoHandler;
 
+	public Random random;
+	public int i;
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -40,12 +45,14 @@ public class PushService extends Service {
 		params = new RequestParams();
 		httpUtils = new HttpUtils();
 		mResponseInfoHandler = new ResponseInfoHandler(10);
+		random = new Random();
 		super.onCreate();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		operation = true;
+		i = Math.abs(random.nextInt()) % 1000;
 		String phone = intent.getStringExtra("phone");
 		String accessKey = intent.getStringExtra("accessKey");
 		startIMLongPull(phone, accessKey);
@@ -70,9 +77,10 @@ public class PushService extends Service {
 	public void connect() {
 		if (operation) {
 			HttpUtils httpUtils = new HttpUtils();
-			httpHandler = httpUtils.send(HttpMethod.GET, API.SESSION_EVENT, params, longPull);
-			Log.e(tag, "=-----------------send request");
+			httpHandler = httpUtils.send(HttpMethod.GET, API.SESSION_EVENT + "/?i=" + i, params, longPull);
+			Log.e(tag, i + "-----------");
 		}
+		i++;
 	}
 
 	public ResponseHandler<String> longPull = httpClient.new ResponseHandler<String>() {

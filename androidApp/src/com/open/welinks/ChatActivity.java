@@ -2,6 +2,7 @@ package com.open.welinks;
 
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.view.ChatView;
+import com.open.welinks.view.ViewManage;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -17,6 +18,8 @@ public class ChatActivity extends Activity {
 	public ChatController chatController;
 	public Activity thisActivity;
 	public Context context;
+
+	public ViewManage viewManage = ViewManage.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class ChatActivity extends Activity {
 		chatController.thisView = chatView;
 
 		chatView.initViews();
+		viewManage.chatView = chatView;
+
 		chatController.initializeListeners();
 		chatController.onCreate();
 		chatController.bindEvent();
@@ -59,7 +64,14 @@ public class ChatActivity extends Activity {
 	}
 
 	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		chatController.onDestroy();
+	}
+
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return chatController.onTouchEvent(event);
 	}
+	
 }
