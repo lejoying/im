@@ -226,6 +226,7 @@ public class ChatController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<String> getImageFromJson(String content) {
 		return gson.fromJson(content, ArrayList.class);
 	}

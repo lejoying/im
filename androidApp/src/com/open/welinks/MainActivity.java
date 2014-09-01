@@ -1,8 +1,10 @@
 package com.open.welinks;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -42,6 +44,8 @@ public class MainActivity extends Activity {
 	public MainController thisController;
 	public Activity thisActivity;
 
+	public LongConnectionReceiver mReceiver;
+
 	public ViewManage viewManager = ViewManage.getInstance();
 
 	@SuppressWarnings("unused")
@@ -58,9 +62,14 @@ public class MainActivity extends Activity {
 	}
 
 	public void startPushService() {
+		mReceiver = new LongConnectionReceiver();
+		IntentFilter filter = new IntentFilter(PushService.LONGPULL_STOP);
+		registerReceiver(mReceiver, filter);
+
 		Intent service = new Intent(thisActivity, PushService.class);
 		service.putExtra("phone", data.userInformation.currentUser.phone);
 		service.putExtra("accessKey", data.userInformation.currentUser.accessKey);
+		service.putExtra("operation", true);
 		startService(service);
 	}
 
@@ -160,5 +169,14 @@ public class MainActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		thisController.onActivityResult(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	class LongConnectionReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			data.userInformation.currentUser.accessKey = "";
+			startActivity(new Intent(MainActivity.this, LoginActivity.class));
+			finish();
+		}
 	}
 }

@@ -4,6 +4,7 @@ import com.open.welinks.controller.BusinessCardController;
 import com.open.welinks.view.BusinessCardView;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 public class BusinessCardActivity extends Activity {
@@ -25,6 +26,14 @@ public class BusinessCardActivity extends Activity {
 
 		thisView.thisController = thisController;
 		thisController.thisView = thisView;
+
+		thisView.fillData();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		thisController.onActivityResult(requestCode, resultCode, data);
 	}
 
 }

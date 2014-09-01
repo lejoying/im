@@ -1,12 +1,8 @@
 package com.open.welinks.view;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.open.lib.viewbody.ListBody;
-import com.open.lib.viewbody.ListBody.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.model.Data;
@@ -25,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -149,24 +144,24 @@ public class ChatView {
 			Message message = messages.get(position);
 			ChatHolder chatHolder = null;
 			int type = message.type;
-//			if (convertView == null) {
-				chatHolder = new ChatHolder();
-				if (type == Message.MESSAGE_TYPE_SEND) {
-					convertView = mInflater.inflate(R.layout.f_chat_item_send, null);
-				} else if (type == Message.MESSAGE_TYPE_RECEIVE) {
-					convertView = mInflater.inflate(R.layout.f_chat_item_receive, null);
-				}
-				chatHolder.time = (TextView) convertView.findViewById(R.id.time);
-				chatHolder.character = (TextView) convertView.findViewById(R.id.character);
-				chatHolder.image = (RelativeLayout) convertView.findViewById(R.id.image);
-				chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
-				chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
-				chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
-				chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
-				convertView.setTag(chatHolder);
-//			} else {
-//				chatHolder = (ChatHolder) convertView.getTag();
-//			}
+			// if (convertView == null) {
+			chatHolder = new ChatHolder();
+			if (type == Message.MESSAGE_TYPE_SEND) {
+				convertView = mInflater.inflate(R.layout.f_chat_item_send, null);
+			} else if (type == Message.MESSAGE_TYPE_RECEIVE) {
+				convertView = mInflater.inflate(R.layout.f_chat_item_receive, null);
+			}
+			chatHolder.time = (TextView) convertView.findViewById(R.id.time);
+			chatHolder.character = (TextView) convertView.findViewById(R.id.character);
+			chatHolder.image = (RelativeLayout) convertView.findViewById(R.id.image);
+			chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
+			chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
+			chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
+			chatHolder.head = (ImageView) convertView.findViewById(R.id.head);
+			convertView.setTag(chatHolder);
+			// } else {
+			// chatHolder = (ChatHolder) convertView.getTag();
+			// }
 			String contentType = message.contentType;
 			if ("text".equals(contentType)) {
 				chatHolder.character.setVisibility(View.VISIBLE);

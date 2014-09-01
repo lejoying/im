@@ -4,7 +4,6 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/rl_business_back"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#51000000" >
@@ -16,7 +15,6 @@
             android:paddingRight="20dp" >
 
             <ImageView
-                android:id="@+id/iv_me_back"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_centerVertical="true"
@@ -25,12 +23,11 @@
                 android:src="@drawable/back" />
 
             <TextView
-                android:id="@+id/tv_back_show"
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="3dp"
-                android:layout_toRightOf="@+id/iv_me_back"
+                android:layout_marginLeft="43dp"
                 android:clickable="false"
                 android:singleLine="true"
                 android:text="个人资料"
@@ -40,7 +37,6 @@
     </RelativeLayout>
 
     <ScrollView
-        android:id="@+id/sv_content"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
@@ -50,38 +46,36 @@
         android:scrollbars="none" >
 
         <LinearLayout
-            android:id="@+id/ll_content"
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/tv_spacing"
+                android:id="@+id/spacing_one"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" />
 
             <LinearLayout
-                android:id="@+id/ll_show"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="20dp" >
 
                 <LinearLayout
-                    android:id="@+id/ll_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="5dp" >
 
                     <ImageView
-                        android:id="@+id/iv_head"
+                        android:id="@+id/head"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:src="@drawable/face_man" />
 
                     <TextView
-                        android:id="@+id/tv_nickname"
+                        android:id="@+id/nickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -92,7 +86,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -106,7 +99,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/tv_id"
+                        android:id="@+id/id"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#fff"
@@ -114,14 +107,13 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_business"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="5dp" >
 
                     <TextView
-                        android:id="@+id/tv_business_title"
+                        android:id="@+id/business_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="主要业务:"
@@ -129,7 +121,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/tv_business"
+                        android:id="@+id/business"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:lineSpacingExtra="5dp"
@@ -138,14 +130,13 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_lable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="5dp" >
 
                     <TextView
-                        android:id="@+id/tv_lable_title"
+                        android:id="@+id/lable_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="标签:  "
@@ -153,7 +144,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/tv_lable"
+                        android:id="@+id/lable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="IT"
@@ -162,14 +153,13 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_creattime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="5dp" >
 
                     <TextView
-                        android:id="@+id/tv_creattime_title"
+                        android:id="@+id/creattime_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="创建时间:  "
@@ -177,7 +167,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/tv_creattime"
+                        android:id="@+id/creattime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2014年07月25日"
@@ -187,7 +177,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_spacing2"
+                android:id="@+id/spacing_two"
                 android:layout_width="fill_parent"
                 android:layout_height="25dp" />
 
@@ -202,7 +192,6 @@
                 android:paddingRight="20dp" >
 
                 <TextView
-                    android:id="@+id/group_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -212,19 +201,16 @@
                     android:textSize="18sp" />
 
                 <ImageView
-                    android:id="@+id/imageView4"
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
-                    android:layout_alignLeft="@+id/group_name"
-                    android:layout_below="@+id/group_name"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="28dp"
                     android:background="#9fff" />
 
                 <ImageView
-                    android:id="@+id/iv_tdcode"
+                    android:id="@+id/tdcode"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
-                    android:layout_below="@id/imageView4"
+                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="10dp"
@@ -232,7 +218,7 @@
             </RelativeLayout>
 
             <Button
-                android:id="@+id/button1"
+                android:id="@+id/button_one"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
@@ -247,7 +233,7 @@
             </Button>
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/button_two"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
@@ -262,7 +248,7 @@
             </Button>
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/button_three"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
@@ -277,7 +263,7 @@
             </Button>
 
             <TextView
-                android:id="@+id/tv_spacing3"
+                android:id="@+id/spacing_three"
                 android:layout_width="fill_parent"
                 android:layout_height="10dp"
                 android:visibility="invisible" />

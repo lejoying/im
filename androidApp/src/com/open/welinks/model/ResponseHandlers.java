@@ -119,7 +119,7 @@ public class ResponseHandlers {
 	public ResponseHandler<String> message_sendMessageCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
-//			public String 失败原因;
+			// public String 失败原因;
 			public long time;
 			// public String sendType;
 			// public String gid;
@@ -173,6 +173,21 @@ public class ResponseHandlers {
 			}
 		};
 	};
+
+	public ResponseHandler<String> group_addmembers = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("加入群组成功")) {
+				Log.e(tag, "---------------------加入群组成功");
+			}
+		};
+
+	};
+
 	public ResponseHandler<String> share_sendShareCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
@@ -273,5 +288,31 @@ public class ResponseHandlers {
 
 			}
 		};
+	};
+	public ResponseHandler<String> relation_modifyAlias = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改备注成功")) {
+				Log.e(tag, "---------------------修改备注成功");
+			}
+		};
+
+	};
+	public ResponseHandler<String> relation_deletefriend = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("删除成功")) {
+				Log.e(tag, "---------------------删除成功");
+			}
+		};
+
 	};
 }

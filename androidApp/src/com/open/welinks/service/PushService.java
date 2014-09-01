@@ -22,6 +22,8 @@ public class PushService extends Service {
 
 	public String tag = "PushService";
 
+	public static final String LONGPULL_STOP = "com.open.welinks.service.longpull_stop";
+
 	public boolean operation;
 
 	public HttpClient httpClient = HttpClient.getInstance();
@@ -51,11 +53,15 @@ public class PushService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		operation = true;
-		i = Math.abs(random.nextInt()) % 1000;
-		String phone = intent.getStringExtra("phone");
-		String accessKey = intent.getStringExtra("accessKey");
-		startIMLongPull(phone, accessKey);
+		operation = intent.getBooleanExtra("operation", true);
+		if (operation) {
+			i = Math.abs(random.nextInt()) % 1000;
+			String phone = intent.getStringExtra("phone");
+			String accessKey = intent.getStringExtra("accessKey");
+			startIMLongPull(phone, accessKey);
+		} else {
+			stopLongPull();
+		}
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -70,6 +76,10 @@ public class PushService extends Service {
 		params.addQueryStringParameter("phone", phone);
 		params.addQueryStringParameter("accessKey", accessKey);
 		connect();
+	}
+
+	public void stopLongPull() {
+		sendBroadcast(new Intent(LONGPULL_STOP));
 	}
 
 	HttpHandler<String> httpHandler;

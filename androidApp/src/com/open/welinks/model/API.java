@@ -15,6 +15,10 @@ public class API {
 	 * http://www.we-links.com/api2/group/getgroupmembers
 	 */
 	public static String GROUP_GETGROUPMEMBERS = "http://www.we-links.com/api2/group/getgroupmembers";
+	/**
+	 * http://www.we-links.com/api2/group/addmembers
+	 */
+	public static String GROUP_ADDMEMBERS = "http://www.we-links.com/api2/group/addmembers";
 
 	// share
 	/**
@@ -40,4 +44,14 @@ public class API {
 	 * http://www.we-links.com/api2/session/event
 	 */
 	public static String SESSION_EVENT = "http://www.we-links.com/api2/session/event";
+
+	// relation
+	/**
+	 * http://www.we-links.com/api2/relation/modifyalias
+	 */
+	public static String MODIFY_ALIAS = "http://www.we-links.com/api2/relation/modifyalias";
+	/**
+	 * http://www.we-links.com/api2/relation/deletefriend
+	 */
+	public static String DELETE_FRIEND = "http://www.we-links.com/api2/relation/deletefriend";
 }

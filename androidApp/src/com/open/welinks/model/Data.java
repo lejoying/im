@@ -110,6 +110,7 @@ public class Data {
 	}
 
 	public class Relationship {
+		public List<String> friends = new ArrayList<String>();
 		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
 
 		public List<String> circles = new ArrayList<String>();
