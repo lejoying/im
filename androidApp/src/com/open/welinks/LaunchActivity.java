@@ -12,6 +12,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class LaunchActivity extends Activity {
+
+	public boolean isDebug = true;
 	public Data data = Data.getInstance();
 
 	String tag = "MainActivity";
@@ -29,8 +31,12 @@ public class LaunchActivity extends Activity {
 		parser.parse();
 
 		getLocalInformation();
-		
-		startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+		if(isDebug){
+			startActivity(new Intent(LaunchActivity.this, TestListActivity.class));
+		}else{
+			startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+		}
+
 		LaunchActivity.this.finish();
 	}
 

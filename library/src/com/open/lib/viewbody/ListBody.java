@@ -230,6 +230,8 @@ public class ListBody {
 		if (this.bodyStatus.state == this.bodyStatus.DRAGGING || this.bodyStatus.state == this.bodyStatus.FIXED) {
 			// sliding(0);
 		} else if (this.bodyStatus.state == this.bodyStatus.ORDERING) {
+			this.resolveOffset();
+			onStopOrdering();
 			this.bodyStatus.state = this.bodyStatus.FIXED;
 		}
 		touchStatus.state = touchStatus.Up;
@@ -239,7 +241,7 @@ public class ListBody {
 		if (isActive == false) {
 			return;
 		}
-		if (this.bodyStatus.state == this.bodyStatus.DRAGGING||this.bodyStatus.state == this.bodyStatus.FIXED) {
+		if (this.bodyStatus.state == this.bodyStatus.DRAGGING || this.bodyStatus.state == this.bodyStatus.FIXED) {
 
 			if (velocityY > 0) {
 				this.speedY = velocityY;
@@ -307,6 +309,15 @@ public class ListBody {
 			}
 			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
 			myListItemBody.myListItemView.setY(myListItemBody.y - myListItemBody.offset_y);
+		}
+	}
+
+	public void resolveOffset() {
+		for (int i = 0; i < listItemsSequence.size(); i++) {
+			String key = listItemsSequence.get(i);
+			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
+			myListItemBody.y = myListItemBody.y - myListItemBody.offset_y;
+			myListItemBody.offset_y = 0;
 		}
 	}
 
