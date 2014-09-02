@@ -23,8 +23,11 @@
     <string name="alert_text_phoneformaterror">手机号码格式错误</string>
     <string name="alert_text_nettimeout">网络连接超时</string>
     <string name="alert_text_neterror">网络错误</string>
-    <string name="title_activity_add_friend">AddFriendActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_modify_information">ModifyInformationActivity</string>
+    <!-- button text -->
+    <string name="button_send">发送</string>
+    <!-- hint text -->
+    <string name="hint_verify">请输入验证消息</string>
+    <!-- common textview -->
+    <string name="text_verify">对方启用了朋友验证</string>
 
 </resources>

@@ -13,6 +13,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Relationship;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.view.ViewManage;
@@ -174,6 +175,20 @@ public class ResponseHandlers {
 		};
 	};
 
+	public ResponseHandler<String> account_modify = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改用户信息成功")) {
+				Log.e(tag, "---------------------修改用户信息成功");
+			}
+		};
+
+	};
+
 	public ResponseHandler<String> group_addmembers = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
@@ -183,6 +198,22 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("加入群组成功")) {
 				Log.e(tag, "---------------------加入群组成功");
+			}
+		};
+
+	};
+
+	public ResponseHandler<String> group_modify = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public Group group;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改群组信息成功")) {
+				data.relationship.groupsMap.put(String.valueOf(response.group.gid), response.group);
+				Log.e(tag, "---------------------修改群组信息成功");
 			}
 		};
 
@@ -311,6 +342,19 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("删除成功")) {
 				Log.e(tag, "---------------------删除成功");
+			}
+		};
+
+	};
+	public ResponseHandler<String> relation_addfriend = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("发送请求成功")) {
+				Log.e(tag, "---------------------发送请求成功");
 			}
 		};
 

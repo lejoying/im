@@ -77,8 +77,9 @@ public class BusinessCardView {
 			businessCard.lable = "暂无标签";
 			businessCard.creattime = "2014年 9月 1日";
 			businessCard.button_one = "修改我的名片";
-			businessCard.button_two = "退出登录";
+			businessCard.button_two = "";
 			businessCard.button_three = "";
+			button_two.setVisibility(View.GONE);
 			button_three.setVisibility(View.GONE);
 		} else if (status.equals(Status.FRIEND)) {
 			Friend friend = thisController.data.relationship.friendsMap.get(thisController.key);

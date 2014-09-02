@@ -31,7 +31,7 @@ public class BusinessCardController {
 	public BusinessCardActivity thisActivity;
 
 	public Data data = Data.getInstance();
-	public String key;
+	public String key, type;
 
 	public OnClickListener mOnClickListener;
 
@@ -44,9 +44,8 @@ public class BusinessCardController {
 	}
 
 	public void onCreate() {
-		String key = thisActivity.getIntent().getStringExtra("key");
-		String type = thisActivity.getIntent().getStringExtra("type");
-		this.key = key;
+		key = thisActivity.getIntent().getStringExtra("key");
+		type = thisActivity.getIntent().getStringExtra("type");
 		if ("point".equals(type)) {
 			if (key.equals(data.userInformation.currentUser.phone)) {
 				thisView.status = Status.SELF;
@@ -91,7 +90,7 @@ public class BusinessCardController {
 					}
 				} else if (view.equals(thisView.button_two)) {
 					if (thisView.status.equals(Status.SELF)) {
-						logOut();
+						// unused
 					} else if (thisView.status.equals(Status.FRIEND)) {
 						modifyAlias();
 					} else if (thisView.status.equals(Status.JOINEDGROUP)) {
@@ -135,11 +134,15 @@ public class BusinessCardController {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUESTCODE_MODIFY && resultCode == Activity.RESULT_OK) {
 			thisView.fillData();
+		} else if (requestCode == REQUESTCODE_ADD && resultCode == Activity.RESULT_OK) {
+
 		}
 	}
 
 	public void modifyInformation() {
 		Intent intent = new Intent(thisActivity, ModifyInformationActivity.class);
+		intent.putExtra("key", key);
+		intent.putExtra("type", type);
 		thisActivity.startActivityForResult(intent, REQUESTCODE_MODIFY);
 	}
 
@@ -182,7 +185,7 @@ public class BusinessCardController {
 				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 				params.addBodyParameter("phoneto", "[\"" + friend.phone + "\"]");
 				ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-				httpUtils.send(HttpMethod.POST, API.DELETE_FRIEND, params, responseHandlers.relation_deletefriend);
+				httpUtils.send(HttpMethod.POST, API.RELATION_DELETEFRIEND, params, responseHandlers.relation_deletefriend);
 			}
 		}).show();
 	}
@@ -212,19 +215,6 @@ public class BusinessCardController {
 		}
 	}
 
-	public void logOut() {
-		Alert.createDialog(thisActivity).setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？").setOnConfirmClickListener(new AlertInputDialog.OnDialogClickListener() {
-			@Override
-			public void onClick(AlertInputDialog dialog) {
-				Intent service = new Intent(thisActivity, PushService.class);
-				service.putExtra("operation", false);
-				thisActivity.startService(service);
-				thisActivity.finish();
-			}
-		}).show();
-
-	}
-
 	public void uploadAlias(String alias) {
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
@@ -233,7 +223,7 @@ public class BusinessCardController {
 		params.addBodyParameter("friend", key);
 		params.addBodyParameter("alias", alias);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.MODIFY_ALIAS, params, responseHandlers.relation_modifyAlias);
+		httpUtils.send(HttpMethod.POST, API.RELATION_MODIFYALIAS, params, responseHandlers.relation_modifyAlias);
 
 	}
 }
