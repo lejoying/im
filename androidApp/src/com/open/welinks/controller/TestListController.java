@@ -1,20 +1,27 @@
 package com.open.welinks.controller;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.open.welinks.R;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.view.TestListView;
+import com.open.welinks.view.TestListView.CircleBody;
 
 public class TestListController {
 
@@ -27,6 +34,7 @@ public class TestListController {
 	public GestureDetector mGesture;
 
 	public OnClickListener mOnClickListener;
+	public OnTouchListener onTouchListener;
 
 	Handler handler = new Handler();
 
@@ -42,7 +50,7 @@ public class TestListController {
 			userPhone = phone;
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
-
+		thisView.showCircles();
 	}
 
 	public void onResume() {
@@ -58,6 +66,11 @@ public class TestListController {
 		thisController = this;
 	}
 
+	public Circle onTouchDownCircle;
+
+	public View onTouchDownView;
+	public View onClickView;
+
 	public void initializeListeners() {
 
 		mOnClickListener = new OnClickListener() {
@@ -69,6 +82,32 @@ public class TestListController {
 
 					Log.d(tag, (String) view.getTag());
 				}
+			}
+		};
+
+		onTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				int action = event.getAction();
+				if (action == MotionEvent.ACTION_DOWN) {
+					String view_class = (String) view.getTag(R.id.tag_class);
+					if (view_class.equals("friend_view")) {
+						onTouchDownView = view;
+						onClickView = view;
+					}
+					Object viewTag = view.getTag(R.id.tag_first);
+					if (Circle.class.isInstance(viewTag) == true) {
+						Circle circle = (Circle) viewTag;
+						Log.d(tag, "onTouch: rid:" + circle.rid + "name" + circle.name);
+
+						onTouchDownCircle = circle;
+						onTouchDownView = view;
+					} else {
+						Log.d(tag, "onTouch: " + (String) viewTag);
+					}
+				}
+				return false;
 			}
 		};
 	}
@@ -89,8 +128,14 @@ public class TestListController {
 		int motionEvent = event.getAction();
 		if (motionEvent == MotionEvent.ACTION_DOWN) {
 			Log.d(tag, "Activity on touch down");
+			thisView.friendListBody.onTouchDown(event);
+
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
+			thisView.friendListBody.onTouchMove(event);
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
+			thisView.friendListBody.onTouchUp(event);
+
+			thisController.onSingleTapUp(event);
 		}
 		mGesture.onTouchEvent(event);
 		return true;
@@ -100,14 +145,12 @@ public class TestListController {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
-
+			thisView.friendListBody.onFling(velocityX, velocityY);
 			return true;
 		}
 
 		public void onLongPress(MotionEvent event) {
-			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-			}
-
+			thisController.onLongPress(event);
 		}
 
 		public boolean onDoubleTap(MotionEvent event) {
@@ -116,8 +159,6 @@ public class TestListController {
 		}
 
 		public boolean onDoubleTapEvent(MotionEvent event) {
-			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-			}
 			return false;
 		}
 
@@ -142,6 +183,80 @@ public class TestListController {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+
+	}
+
+	public void onLongPress(MotionEvent event) {
+		if (onTouchDownView != null && onTouchDownCircle != null) {
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			if (view_class == "card_title") {
+
+				thisView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+				// thisView.showCircleSettingDialog(onTouchDownCircle);
+				onTouchDownView = null;
+				onTouchDownCircle = null;
+			} else if (view_class == "card_grip") {
+				Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
+
+				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+
+				circleBody.gripCardBackground.setVisibility(View.VISIBLE);
+
+				Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
+				long[] pattern = { 100, 100, 300 };
+				vibrator.vibrate(pattern, -1);
+
+				thisView.friendListBody.onOrdering("circle#" + circle.rid);
+			}
+
+		}
+	}
+
+	public void onSingleTapUp(MotionEvent event) {
+		if (onTouchDownView != null) {
+			if (onTouchDownCircle != null) {
+				Circle circle = data.relationship.circlesMap.get("" + onTouchDownCircle.rid);
+				CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+				circleBody.gripCardBackground.setVisibility(View.INVISIBLE);
+
+				onTouchDownView = null;
+				onTouchDownCircle = null;
+				thisView.friendListBody.onStopOrdering();
+			}
+			if (onClickView != null) {
+				String view_class = (String) onClickView.getTag(R.id.tag_class);
+				if (view_class.equals("friend_view")) {
+					onClickView.performClick();
+					onClickView = null;
+				}
+			}
+
+		}
+
+	}
+
+	public void onDoubleTapEvent(MotionEvent event) {
+		if (onTouchDownView != null && onTouchDownCircle != null) {
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			if (view_class == "card_title") {
+				thisView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
+
+				onTouchDownView = null;
+				onTouchDownCircle = null;
+			}
+		}
+	}
+
+	public void onConfirmButton(String inputContent, Circle inputCircle) {
+		if ("".equals(inputContent)) {
+			return;
+		}
+		Circle circle = data.relationship.circlesMap.get("" + inputCircle.rid);
+		circle.name = inputContent;
+
+		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
+
+		circleBody.leftTopText.setText(inputContent);
 
 	}
 }
