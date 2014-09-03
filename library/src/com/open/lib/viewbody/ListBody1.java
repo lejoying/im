@@ -486,10 +486,6 @@ public class ListBody1 {
 
 			float itemHeight = myListItemBody.itemHeight;
 
-			if (myListItemBody.next_position == 0) {
-				myListItemBody.next_position = myListItemBody.y;
-			}
-
 			float ratio = 0;
 
 			if (itemTop < ordering_itemTop && ordering_itemTop < itemBottom && myListItemBody.offset_y <= 0) {
