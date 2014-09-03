@@ -66,7 +66,6 @@ public class ListBody1 {
 
 		public float offset_y = 0;
 
-		public float distance_to_ordering = 0;
 		public float next_position = 0;
 
 		public float itemWidth = 0;
@@ -275,6 +274,7 @@ public class ListBody1 {
 			this.bodyStatus.state = this.bodyStatus.ORDERING;
 
 			orderingItemBody = listItemBodiesMap.get(key);
+			resolveNextPosition();
 		} else {
 			Log.i(tag, "this.bodyStatus.state:  " + this.bodyStatus.state);
 		}
@@ -320,17 +320,12 @@ public class ListBody1 {
 		}
 	}
 
-	public void resolveDistanceToOrdering() {
+	public void resolveNextPosition() {
 		for (int i = 0; i < listItemsSequence.size(); i++) {
 			String key = listItemsSequence.get(i);
 			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
-
-			if (myListItemBody.offset_y != 0) {
-				Log.d(tag, "resolveOffsetToOrdering error");
-			}
-			myListItemBody.distance_to_ordering = orderingItemBody.y - myListItemBody.y;
+			myListItemBody.next_position = myListItemBody.y;
 		}
-		Log.d(tag, "resolveOffsetToOrdering");
 
 	}
 
@@ -453,11 +448,9 @@ public class ListBody1 {
 
 			float itemHeight = myListItemBody.itemHeight;
 
-			float distance = ordering_itemTop - myListItemBody.y;
-
-			float Δ_distance = distance - myListItemBody.distance_to_ordering;
-
-			myListItemBody.next_position = myListItemBody.y;
+			if (myListItemBody.next_position == 0) {
+				myListItemBody.next_position = myListItemBody.y;
+			}
 
 			float ratio = 0;
 
@@ -476,12 +469,24 @@ public class ListBody1 {
 				ratio = -1;
 			}
 
-			if (ratio > 0.5 || ratio < -0.5) {
-				myListItemBody.next_position = orderingItemBody.y;
-				orderingItemBody.next_position = myListItemBody.y;
+			if (Math.abs(ratio) < 0.5) {
+				if (ratio > 0) {
+					myListItemBody.next_position = itemTop;
+					orderingItemBody.next_position = itemTop - ordering_itemHeight;
+				} else {
+					myListItemBody.next_position = itemTop;
+					orderingItemBody.next_position = itemBottom;
+				}
+
 			} else {
-				myListItemBody.next_position = myListItemBody.y;
-				orderingItemBody.next_position = orderingItemBody.y;
+				if (ratio > 0) {
+					myListItemBody.next_position = myListItemBody.y - ordering_itemHeight;
+					orderingItemBody.next_position = itemTop;
+				} else {
+					myListItemBody.next_position = myListItemBody.y + ordering_itemHeight;
+					orderingItemBody.next_position = itemTop;
+				}
+
 			}
 
 			myListItemBody.offset_y = ratio * ordering_itemHeight;
