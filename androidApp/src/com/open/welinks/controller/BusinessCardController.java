@@ -2,6 +2,9 @@ package com.open.welinks.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -17,7 +20,6 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.service.PushService;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
@@ -34,13 +36,16 @@ public class BusinessCardController {
 	public String key, type;
 
 	public OnClickListener mOnClickListener;
+	public DisplayMetrics displayMetrics;
+	public AsyncTask<Integer, Integer, Boolean> asyncTask;
+
+	public Handler handler;
 
 	public static final int REQUESTCODE_MODIFY = 0x1, REQUESTCODE_ADD = 0x2;
 
 	public BusinessCardController(BusinessCardActivity activity) {
 		thisActivity = activity;
 		thisController = this;
-		onCreate();
 	}
 
 	public void onCreate() {
@@ -63,8 +68,22 @@ public class BusinessCardController {
 		} else if ("square".equals(type)) {
 			thisView.status = Status.SQUARE;
 		}
-
+		handler = new Handler();
+		displayMetrics = new DisplayMetrics();
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		initializeListeners();
+	}
+
+	public void onWindowFocusChanged(boolean hasFocus) {
+		System.out.println("height:" + displayMetrics.heightPixels + "content;" + thisView.content.getHeight() + "backview:" + thisView.backview.getHeight() + "statusBarHeight:" + data.tempData.statusBarHeight);
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				thisView.spacing_one.getLayoutParams().height = displayMetrics.heightPixels - thisView.spacing_two.getHeight() - thisView.content.getHeight() - thisView.backview.getHeight() - data.tempData.statusBarHeight;
+				// thisView.spacing_one.setHeight(displayMetrics.heightPixels - thisView.spacing_two.getHeight() - thisView.content.getHeight() - thisView.backview.getHeight() - data.tempData.statusBarHeight);
+			}
+		});
 	}
 
 	public void initializeListeners() {
@@ -73,7 +92,7 @@ public class BusinessCardController {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(thisView.backview)) {
-
+					thisActivity.finish();
 				} else if (view.equals(thisView.button_one)) {
 					if (thisView.status.equals(Status.SELF)) {
 						modifyInformation();
@@ -117,6 +136,20 @@ public class BusinessCardController {
 						// unused
 					}
 				}
+
+			}
+		};
+		asyncTask = new AsyncTask<Integer, Integer, Boolean>() {
+
+			@Override
+			protected Boolean doInBackground(Integer... params) {
+				while (thisView.content.getHeight() == 0)
+					;
+				return true;
+			}
+
+			@Override
+			protected void onPostExecute(Boolean result) {
 
 			}
 		};

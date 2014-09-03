@@ -27,7 +27,15 @@ public class BusinessCardActivity extends Activity {
 		thisView.thisController = thisController;
 		thisController.thisView = thisView;
 
+		thisView.initView();
+		thisController.onCreate();
 		thisView.fillData();
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		thisController.onWindowFocusChanged(hasFocus);
 	}
 
 	@Override

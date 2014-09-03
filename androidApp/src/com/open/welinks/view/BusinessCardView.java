@@ -29,16 +29,15 @@ public class BusinessCardView {
 
 	public BusinessCard businessCard;
 
+	public Status status = Status.SELF;
+
 	public enum Status {
 		SELF, FRIEND, TEMPFRIEND, JOINEDGROUP, NOTJOINGROUP, SQUARE
 	}
 
-	public Status status;
-
 	public BusinessCardView(BusinessCardActivity activity) {
 		thisActivity = activity;
 		thisView = this;
-		initView();
 	}
 
 	public void initView() {
@@ -185,7 +184,7 @@ public class BusinessCardView {
 			creattime_title.setText("创建时间:");
 		}
 		nickname.setText(businessCard.nickname);
-		id.setText(businessCard.id);
+		id.setText(String.valueOf(businessCard.id));
 		business.setText(businessCard.mainBusiness);
 		lable.setText(businessCard.lable);
 		creattime.setText(businessCard.creattime);
