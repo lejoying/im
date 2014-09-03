@@ -11,32 +11,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringSystem;
 import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
 
 public class ListBody1 {
 	public String tag = "ListBody";
 	public DisplayMetrics displayMetrics;
-	public Spring mSpring;
-	public PagerSpringListener mPagerSpringListener;
-
-	public SpringConfig ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(8, 7);
 
 	public View initialize(DisplayMetrics displayMetrics, View containerView) {
 		this.displayMetrics = displayMetrics;
 
-		SpringSystem mSpringSystem = SpringSystem.create();
-		mSpring = mSpringSystem.createSpring().setSpringConfig(ORIGAMI_SPRING_CONFIG);
-
-		mPagerSpringListener = new PagerSpringListener();
-		mSpring.addListener(mPagerSpringListener);
-
 		this.containerView = (ViewGroup) containerView;
-
 		openLooper = new OpenLooper();
 		openLooper.createOpenLooper();
 		loopCallback = new ListLoopCallback(openLooper);
@@ -44,18 +29,6 @@ public class ListBody1 {
 
 		return containerView;
 
-	}
-
-	public class PagerSpringListener extends SimpleSpringListener {
-		@Override
-		public void onSpringUpdate(Spring spring) {
-			render();
-		}
-
-		@Override
-		public void onSpringAtRest(Spring spring) {
-			stopChange();
-		}
 	}
 
 	public class MyListItemBody {
@@ -88,7 +61,7 @@ public class ListBody1 {
 	}
 
 	public class BodyStatus {
-		public int FIXED = 0, DRAGGING = 1, HOMINGMOVING = 2, ORDERING = 3, ORDERINGHOMING = 4;
+		public int FIXED = 0, DRAGGING = 1, FLINGHOMING = 2, ORDERING = 3, ORDERINGHOMING = 4, BOUNDARYHOMING = 5;
 		public int state = FIXED;
 	}
 
@@ -103,19 +76,6 @@ public class ListBody1 {
 
 	public float speedY = 0;
 	public float ratio = 0.0008f;
-
-	public void render() {
-		if (isActive == false) {
-			return;
-		}
-		double value = mSpring.getCurrentValue();
-
-		if (this.touchStatus.state == this.touchStatus.Up) {
-			// this.setChildrenPosition(0, (float) (value * displayMetrics.heightPixels));
-		} else {
-			Log.d(tag, "render skip");
-		}
-	}
 
 	public void stopChange() {
 		if (isActive == false) {
@@ -226,13 +186,25 @@ public class ListBody1 {
 		}
 	}
 
+	public float bondary_offset = 0;
+
 	public void onTouchUp(MotionEvent event) {
 		if (isActive == false) {
 			return;
 		}
-		if (this.bodyStatus.state == this.bodyStatus.DRAGGING || this.bodyStatus.state == this.bodyStatus.FIXED) {
-			// sliding(0);
-			this.bodyStatus.state = this.bodyStatus.FIXED;
+		if (this.bodyStatus.state == this.bodyStatus.DRAGGING) {
+			if (this.y >= 0) {
+				bondary_offset = this.y;
+				this.bodyStatus.state = this.bodyStatus.BOUNDARYHOMING;
+				boundarySpeedRatio = 3;
+				this.openLooper.start();
+			} else if (this.y <= -(this.height - containerHeight)) {
+				bondary_offset = this.y + (this.height - containerHeight);
+				this.bodyStatus.state = this.bodyStatus.BOUNDARYHOMING;
+				boundarySpeedRatio = 3;
+				this.openLooper.start();
+			}
+
 		} else if (this.bodyStatus.state == this.bodyStatus.ORDERING) {
 
 			this.bodyStatus.state = this.bodyStatus.ORDERINGHOMING;
@@ -300,9 +272,11 @@ public class ListBody1 {
 	public void setChildrenDeltaXY(float deltaX, float deltaY) {
 
 		if (this.y >= 0 && deltaY > 0) {
-			return;
+			deltaY = deltaY / 4;
+			// return;
 		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {
-			return;
+			deltaY = deltaY / 4;
+			// return;
 		}
 
 		this.x = this.x + deltaX;
@@ -321,9 +295,11 @@ public class ListBody1 {
 	public void setChildrenDeltaNextPosition(float deltaX, float deltaY) {
 
 		if (this.y >= 0 && deltaY > 0) {
-			return;
+			deltaY = deltaY / 4 + 1 - 2 / 2;
+			// return;
 		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {
-			return;
+			deltaY = deltaY / 4;
+			// return;
 		}
 
 		for (int i = 0; i < listItemsSequence.size(); i++) {
@@ -378,7 +354,7 @@ public class ListBody1 {
 	public void sliding(float speedY) {
 		Log.i(tag, "sliding:  " + speedY);
 		this.dySpeed = speedY;
-		bodyStatus.state = bodyStatus.HOMINGMOVING;
+		bodyStatus.state = bodyStatus.FLINGHOMING;
 		lastMillis = System.currentTimeMillis();
 		this.openLooper.start();
 	}
@@ -395,10 +371,12 @@ public class ListBody1 {
 		public void loop(double ellapsedMillis) {
 			if (bodyStatus.state == bodyStatus.ORDERING) {
 				orderingMove(OrderingMoveDirection, (float) ellapsedMillis);
-			} else if (bodyStatus.state == bodyStatus.HOMINGMOVING) {
-				homingMove((float) ellapsedMillis);
+			} else if (bodyStatus.state == bodyStatus.FLINGHOMING) {
+				flingHoming((float) ellapsedMillis);
 			} else if (bodyStatus.state == bodyStatus.ORDERINGHOMING) {
 				orderingHoming(OrderingMoveDirection, (float) ellapsedMillis);
+			} else if (bodyStatus.state == bodyStatus.BOUNDARYHOMING) {
+				boundaryHoming(OrderingMoveDirection, (float) ellapsedMillis);
 			}
 		}
 	}
@@ -407,11 +385,44 @@ public class ListBody1 {
 	int OrderingMoveUp = 1;
 	int OrderingMoveDown = -1;
 
+	public void boundaryHoming(int direction, float delta) {
+		if (this.bondary_offset > 0) {
+			if (delta * this.orderSpeed * this.boundarySpeedRatio > this.bondary_offset) {
+				this.setChildrenDeltaXY(0, -this.bondary_offset);
+				this.bondary_offset = 0;
+				bodyStatus.state = bodyStatus.FIXED;
+				this.openLooper.stop();
+			} else {
+				this.setChildrenDeltaXY(0, -delta * this.orderSpeed * this.boundarySpeedRatio);
+				this.bondary_offset = this.bondary_offset - delta * this.orderSpeed * this.boundarySpeedRatio;
+			}
+		}
+
+		if (this.bondary_offset < 0) {
+			if (-delta * this.orderSpeed * this.boundarySpeedRatio < this.bondary_offset) {
+				this.setChildrenDeltaXY(0, -this.bondary_offset);
+				this.bondary_offset = 0;
+				bodyStatus.state = bodyStatus.FIXED;
+				this.openLooper.stop();
+			} else {
+				this.setChildrenDeltaXY(0, delta * this.orderSpeed * this.boundarySpeedRatio);
+				this.bondary_offset = this.bondary_offset + delta * this.orderSpeed * this.boundarySpeedRatio;
+			}
+		}
+		this.setChildrenPosition();
+	}
+
 	public void orderingMove(int direction, float delta) {
 		if (direction == 0) {
 			return;
 		}
-
+		
+		if (this.y >= 0) {
+			this.openLooper.stop();
+		} else if (this.y <= -(this.height - containerHeight)) {
+			this.openLooper.stop();
+		}
+		
 		if (direction == OrderingMoveUp) {
 			setChildrenDeltaXY(0, delta * this.orderSpeed);
 			setChildrenDeltaNextPosition(0, delta * this.orderSpeed);
@@ -424,9 +435,7 @@ public class ListBody1 {
 		computeOffset();
 		this.setChildrenPosition();
 
-		if (this.y > 0 || this.y < -(this.height - 2 * 260 * displayMetrics.density)) {
-			this.openLooper.stop();
-		}
+
 	}
 
 	public void orderingHoming(int direction, float delta) {
@@ -461,7 +470,6 @@ public class ListBody1 {
 	}
 
 	public void computeOffset() {
-		float y = orderingItemBody.y - orderingItemBody.offset_y;
 		float ordering_itemHeight = orderingItemBody.itemHeight;
 
 		float ordering_itemTop = orderingItemBody.y - orderingItemBody.offset_y;
@@ -529,8 +537,10 @@ public class ListBody1 {
 	float dySpeed = 0;
 
 	float orderSpeed = 0.46f;
+	float boundarySpeedRatio = 3;
+	int outOfBandaryTimes = 0;
 
-	public void homingMove(float delta1) {
+	public void flingHoming(float delta1) {
 		long currentMillis = System.currentTimeMillis();
 
 		if (lastMillis != 0) {
@@ -538,6 +548,23 @@ public class ListBody1 {
 			dampenSpeed(delta);
 			setChildrenDeltaXY(0, this.ratio * delta * this.dySpeed);
 			this.setChildrenPosition();
+		}
+
+		if (this.y >= 0) {
+			outOfBandaryTimes++;
+		} else if (this.y <= -(this.height - containerHeight)) {
+			outOfBandaryTimes++;
+		}
+		if (outOfBandaryTimes > 3) {
+			if (this.y >= 0) {
+				bondary_offset = this.y;
+			} else if (this.y <= -(this.height - containerHeight)) {
+				bondary_offset = this.y + (this.height - containerHeight);
+			}
+			boundarySpeedRatio = Math.abs(bondary_offset) / 60;
+			this.bodyStatus.state = this.bodyStatus.BOUNDARYHOMING;
+
+			outOfBandaryTimes = 0;
 		}
 
 		lastMillis = currentMillis;

@@ -52,10 +52,11 @@ public class TestListController {
 			userPhone = phone;
 		}
 		mGesture = new GestureDetector(thisActivity, new GestureListener());
-		thisView.showCircles();
+
 	}
 
 	public void onResume() {
+		thisView.showCircles();
 	}
 
 	public void onPause() {
