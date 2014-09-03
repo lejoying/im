@@ -39,6 +39,7 @@ public class ListBody1 {
 
 		public float offset_y = 0;
 
+		public float pre_position = 0;
 		public float next_position = 0;
 
 		public float itemWidth = 0;
@@ -147,7 +148,7 @@ public class ListBody1 {
 		} else if (touchStatus.state == touchStatus.Vertical) {
 			x = touch_pre_x;
 			if (bodyStatus.state == bodyStatus.DRAGGING) {
-				this.setChildrenDeltaXY(0, y - touch_pre_y);
+				this.setDeltaXY(0, y - touch_pre_y);
 				this.setChildrenPosition();
 				touch_pre_y = y;
 
@@ -161,9 +162,11 @@ public class ListBody1 {
 					}
 
 				} else if (y > 2 * this.displayMetrics.heightPixels / 3 && (y - touch_pre_y) > 0) {
-					if (this.y > -(this.height - 2 * 260 * displayMetrics.density)) {
+					if (this.y > -(this.height - containerHeight)) {
 						this.OrderingMoveDirection = OrderingMoveDown;
 						this.openLooper.start();
+						
+						Log.i(tag, "openLooper.start() " + this.y);
 					}
 
 				} else {
@@ -172,7 +175,7 @@ public class ListBody1 {
 				}
 
 				orderingItemBody.offset_y = orderingItemBody.offset_y - (y - touch_pre_y);
-				orderingItemBody.myListItemView.setY(orderingItemBody.y - orderingItemBody.offset_y);
+				orderingItemBody.myListItemView.setY(this.y + orderingItemBody.y - orderingItemBody.offset_y);
 				touch_pre_y = y;
 
 				computeOffset();
@@ -269,37 +272,33 @@ public class ListBody1 {
 
 	public int containerHeight = 0;
 
-	public void setChildrenDeltaXY(float deltaX, float deltaY) {
-
+	public void setDeltaXY(float deltaX, float deltaY) {
 		if (this.y >= 0 && deltaY > 0) {
 			deltaY = deltaY / 4;
-			// return;
 		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {
 			deltaY = deltaY / 4;
-			// return;
 		}
 
-		this.x = this.x + deltaX;
 		this.y = this.y + deltaY;
-
-		for (int i = 0; i < listItemsSequence.size(); i++) {
-			String key = listItemsSequence.get(i);
-			if (key.equals(orderingItemKey)) {
-				continue;
-			}
-			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
-			myListItemBody.y = myListItemBody.y + deltaY;
-		}
 	}
+
+	// public void setChildrenDeltaXY(float deltaX, float deltaY) {
+	// for (int i = 0; i < listItemsSequence.size(); i++) {
+	// String key = listItemsSequence.get(i);
+	// if (key.equals(orderingItemKey)) {
+	// continue;
+	// }
+	// MyListItemBody myListItemBody = listItemBodiesMap.get(key);
+	// myListItemBody.y = myListItemBody.y + deltaY;
+	// }
+	// }
 
 	public void setChildrenDeltaNextPosition(float deltaX, float deltaY) {
 
 		if (this.y >= 0 && deltaY > 0) {
-			deltaY = deltaY / 4 + 1 - 2 / 2;
-			// return;
+			deltaY = deltaY / 4;
 		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {
 			deltaY = deltaY / 4;
-			// return;
 		}
 
 		for (int i = 0; i < listItemsSequence.size(); i++) {
@@ -319,7 +318,7 @@ public class ListBody1 {
 				continue;
 			}
 			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
-			myListItemBody.myListItemView.setY(myListItemBody.y - myListItemBody.offset_y);
+			myListItemBody.myListItemView.setY(this.y + myListItemBody.y - myListItemBody.offset_y);
 		}
 	}
 
@@ -328,6 +327,7 @@ public class ListBody1 {
 			String key = listItemsSequence.get(i);
 			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
 			myListItemBody.next_position = myListItemBody.y;
+			myListItemBody.pre_position = myListItemBody.y;
 		}
 
 	}
@@ -388,24 +388,24 @@ public class ListBody1 {
 	public void boundaryHoming(int direction, float delta) {
 		if (this.bondary_offset > 0) {
 			if (delta * this.orderSpeed * this.boundarySpeedRatio > this.bondary_offset) {
-				this.setChildrenDeltaXY(0, -this.bondary_offset);
+				this.setDeltaXY(0, -this.bondary_offset);
 				this.bondary_offset = 0;
 				bodyStatus.state = bodyStatus.FIXED;
 				this.openLooper.stop();
 			} else {
-				this.setChildrenDeltaXY(0, -delta * this.orderSpeed * this.boundarySpeedRatio);
+				this.setDeltaXY(0, -delta * this.orderSpeed * this.boundarySpeedRatio);
 				this.bondary_offset = this.bondary_offset - delta * this.orderSpeed * this.boundarySpeedRatio;
 			}
 		}
 
 		if (this.bondary_offset < 0) {
 			if (-delta * this.orderSpeed * this.boundarySpeedRatio < this.bondary_offset) {
-				this.setChildrenDeltaXY(0, -this.bondary_offset);
+				this.setDeltaXY(0, -this.bondary_offset);
 				this.bondary_offset = 0;
 				bodyStatus.state = bodyStatus.FIXED;
 				this.openLooper.stop();
 			} else {
-				this.setChildrenDeltaXY(0, delta * this.orderSpeed * this.boundarySpeedRatio);
+				this.setDeltaXY(0, delta * this.orderSpeed * this.boundarySpeedRatio);
 				this.bondary_offset = this.bondary_offset + delta * this.orderSpeed * this.boundarySpeedRatio;
 			}
 		}
@@ -416,25 +416,21 @@ public class ListBody1 {
 		if (direction == 0) {
 			return;
 		}
-		
-		if (this.y >= 0) {
-			this.openLooper.stop();
-		} else if (this.y <= -(this.height - containerHeight)) {
-			this.openLooper.stop();
-		}
-		
-		if (direction == OrderingMoveUp) {
-			setChildrenDeltaXY(0, delta * this.orderSpeed);
-			setChildrenDeltaNextPosition(0, delta * this.orderSpeed);
 
-		} else if (direction == OrderingMoveDown) {
-			setChildrenDeltaXY(0, -delta * this.orderSpeed);
-			setChildrenDeltaNextPosition(0, -delta * this.orderSpeed);
+		float distance = (float) direction * delta * this.orderSpeed;
+
+		if (this.y + distance >= 0) {
+			distance = -this.y;
+			this.openLooper.stop();
+		} else if (this.y + distance <= -(this.height - containerHeight)) {
+			distance = -this.y - (this.height - containerHeight);
+			this.openLooper.stop();
 		}
+		setDeltaXY(0, distance);
+		orderingItemBody.offset_y = orderingItemBody.offset_y + distance;
 
 		computeOffset();
 		this.setChildrenPosition();
-
 
 	}
 
@@ -475,6 +471,9 @@ public class ListBody1 {
 		float ordering_itemTop = orderingItemBody.y - orderingItemBody.offset_y;
 		float ordering_itemBottom = ordering_itemTop + orderingItemBody.itemHeight;
 
+		float ordering_itemTop_pre = orderingItemBody.pre_position;
+		float ordering_itemBottom_pre = ordering_itemTop_pre + orderingItemBody.itemHeight;
+
 		for (int i = 0; i < listItemsSequence.size(); i++) {
 			String key = listItemsSequence.get(i);
 			if (key.equals(orderingItemKey)) {
@@ -482,7 +481,7 @@ public class ListBody1 {
 			}
 			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
 
-			float itemTop = myListItemBody.y - myListItemBody.offset_y * 0;
+			float itemTop = myListItemBody.y;
 			float itemBottom = itemTop + myListItemBody.itemHeight;
 
 			float itemHeight = myListItemBody.itemHeight;
@@ -498,6 +497,16 @@ public class ListBody1 {
 			} else if (itemTop < ordering_itemBottom && ordering_itemBottom < itemBottom && myListItemBody.offset_y >= 0) {
 				ratio = (ordering_itemBottom - itemTop) / itemHeight;
 			} else {
+				if (ordering_itemTop_pre > itemTop && ordering_itemTop > itemTop) {
+					ratio = 0;
+				} else if (ordering_itemTop_pre > itemTop && ordering_itemTop < itemTop) {
+					ratio = -1;
+				} else if (ordering_itemTop_pre < itemTop && ordering_itemTop < itemTop) {
+					ratio = 0;
+				} else if (ordering_itemTop_pre < itemTop && ordering_itemTop > itemTop) {
+					ratio = 1;
+				}
+				myListItemBody.offset_y = ratio * ordering_itemHeight;
 				continue;
 			}
 
@@ -546,7 +555,7 @@ public class ListBody1 {
 		if (lastMillis != 0) {
 			long delta = currentMillis - lastMillis;
 			dampenSpeed(delta);
-			setChildrenDeltaXY(0, this.ratio * delta * this.dySpeed);
+			setDeltaXY(0, this.ratio * delta * this.dySpeed);
 			this.setChildrenPosition();
 		}
 
