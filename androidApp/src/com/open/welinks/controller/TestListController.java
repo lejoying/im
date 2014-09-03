@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -150,6 +152,15 @@ public class TestListController {
 		}
 
 		public void onLongPress(MotionEvent event) {
+			Rect frame = new Rect();
+			thisActivity.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+			int statusBarHeight = frame.top;
+			int contentTop = thisActivity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+			// statusBarHeight是上面所求的状态栏的高度
+			int titleBarHeight = contentTop - statusBarHeight;
+			
+			Log.v(tag, "statusBarHeight: " + statusBarHeight + "    titleBarHeight:" + titleBarHeight);
+
 			thisController.onLongPress(event);
 		}
 

@@ -24,8 +24,8 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.TouchView;
-import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.lib.viewbody.ListBody1;
+import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.TestListController;
@@ -94,7 +94,7 @@ public class TestListView {
 		friendsMap = data.relationship.friendsMap;
 
 		this.friendListBody.listItemsSequence.clear();
-
+		this.friendListBody.height = 2 * displayMetrics.density;
 		for (int i = 0; i < circles.size(); i++) {
 			Circle circle = circlesMap.get(circles.get(i));
 
@@ -107,15 +107,21 @@ public class TestListView {
 			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 10 * displayMetrics.density));
-			circleBody.y = this.friendListBody.height + 2 * displayMetrics.density;
+			circleBody.y = this.friendListBody.height;
 			circleBody.cardView.setY(circleBody.y);
 			circleBody.cardView.setX(0);
 
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
 			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight;
+
 			Log.d(tag, "addView");
+			Log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);
 
 		}
+
+		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38);
+		Log.v(tag, "containerHeight: " + this.friendListBody.containerHeight + "    heightPixels:" + this.displayMetrics.heightPixels);
+
 	}
 
 	public class CircleBody extends MyListItemBody {
