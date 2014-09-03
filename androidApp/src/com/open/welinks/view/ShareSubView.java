@@ -97,6 +97,11 @@ public class ShareSubView {
 	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
 	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
 
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+	public DisplayImageOptions options;
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+	public Gson gson = new Gson();
+
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
 	}
@@ -175,11 +180,40 @@ public class ShareSubView {
 			return;
 		List<String> sharesOrder = share.sharesOrder;
 		Map<String, ShareMessage> sharesMap = share.sharesMap;
+		ShareMessage lastShareMessage = null;
+		int timeBarCount = 0;
 		for (int i = 0; i < sharesOrder.size(); i++) {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
 			shareMessage = sharesMap.get(key);
 			SharesMessageBody sharesMessageBody = null;
+			// .........................
+			String lastTime;
+			if (lastShareMessage == null) {
+				lastTime = "";
+			} else {
+				lastTime = DateUtil.formatYearMonthDay(lastShareMessage.time);
+			}
+			String nowTime = DateUtil.formatYearMonthDay(shareMessage.time);
+			if (!nowTime.equals(lastTime)) {
+				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
+				sharesMessageBody0.initialize(-2);
+				sharesMessageBody0.setContent(shareMessage);
+				this.shareMessageListBody.listItemsSequence.add("message#" + "timeBar" + shareMessage.time);
+				this.shareMessageListBody.listItemBodiesMap.put("message#" + "timeBar" + shareMessage.time, sharesMessageBody0);
+				RelativeLayout.LayoutParams layoutParams_2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (40 * displayMetrics.density));
+				sharesMessageBody0.y = 350 * displayMetrics.density * i + 50 * displayMetrics.density * (timeBarCount + 1) + 2 * displayMetrics.density;
+				sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
+				sharesMessageBody0.cardView.setX(0);
+				this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
+				this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams_2);
+				// sharesMessageBody0.cardView.setBackgroundColor(Color.RED);
+				i--;
+				timeBarCount++;
+				lastShareMessage = shareMessage;
+				continue;
+			}
+			// .........................
 
 			String keyName = "message#" + shareMessage.gsid;
 			boolean isExists = false;
@@ -195,7 +229,7 @@ public class ShareSubView {
 			sharesMessageBody.setContent(shareMessage);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
-			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density;
+			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density * (timeBarCount + 1);
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
@@ -219,11 +253,6 @@ public class ShareSubView {
 		}
 	}
 
-	public ImageLoader imageLoader = ImageLoader.getInstance();
-	public DisplayImageOptions options;
-	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
-	public Gson gson = new Gson();
-
 	public class SharesMessageBody extends MyListItemBody {
 
 		SharesMessageBody(ListBody listBody) {
@@ -242,6 +271,8 @@ public class ShareSubView {
 		public TextView shareCommentNumberView;
 		public ImageView shareCommentIconView;
 
+		public TextView messageTimeView;
+
 		public DownloadFile downloadFile = null;
 
 		public ShareMessage message;
@@ -256,6 +287,9 @@ public class ShareSubView {
 				// this.cardView.findViewById(R.id.groupMembersListContent);
 				// releaseShareView = (ImageView)
 				// this.cardView.findViewById(R.id.releaseShare);
+			} else if (i == -2) {
+				this.cardView = (ViewGroup) mainView.mInflater.inflate(R.layout.share_message_item_title, null);
+				this.messageTimeView = (TextView) this.cardView.findViewById(R.id.releaseMessageTime);
 			} else {
 				this.cardView = (ViewGroup) mainView.mInflater.inflate(R.layout.share_message_item, null);
 				this.headView = (ImageView) this.cardView.findViewById(R.id.share_head);
@@ -276,6 +310,8 @@ public class ShareSubView {
 			if (i == -1) {
 				// showGroupMembers(groupMembersListContentView);
 				releaseShareView.setOnClickListener(thisController.mOnClickListener);
+			} else if (i == -2) {
+				this.messageTimeView.setText(DateUtil.formatYearMonthDay(shareMessage.time));
 			} else {
 				this.message = shareMessage;
 				this.headView.setImageBitmap(bitmap);
@@ -322,6 +358,7 @@ public class ShareSubView {
 						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 							downloadFile = new DownloadFile(url, path);
 							downloadFile.view = shareImageContentView;
+							downloadFile.view.setTag("image");
 							downloadFile.setDownloadFileListener(thisController.downloadListener);
 							downloadFileList.addDownloadFile(downloadFile);
 						}
@@ -341,6 +378,7 @@ public class ShareSubView {
 					}
 					downloadFile = new DownloadFile(url, path);
 					downloadFile.view = shareImageContentView;
+					downloadFile.view.setTag("image");
 					downloadFile.setDownloadFileListener(thisController.downloadListener);
 					downloadFileList.addDownloadFile(downloadFile);
 				}

@@ -135,6 +135,12 @@ public class MainController {
 			public void success(DownloadFile instance, int status) {
 				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.shareSubView.options);
 			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 
 		mOnClickListener = new OnClickListener() {
