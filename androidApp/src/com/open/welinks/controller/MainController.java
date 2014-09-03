@@ -1,5 +1,7 @@
 package com.open.welinks.controller;
 
+import java.lang.reflect.Field;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -79,6 +81,8 @@ public class MainController {
 
 		thisView.shareSubView.showShareMessages();
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
+
+		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
 	}
 
 	public void onResume() {
@@ -345,7 +349,7 @@ public class MainController {
 			} else {
 				Log.i(tag, "bodyStatus error:" + thisView.shareSubView.shareMessageListBody.bodyStatus.state);
 			}
-			
+
 			// if (thisView.chatMessageListBody.bodyStatus.state ==
 			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
@@ -399,6 +403,23 @@ public class MainController {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		shareSubController.onActivityResult(requestCode, resultCode, data);
-		
+
+	}
+
+	public int getStatusBarHeight(Context context) {
+		Class<?> c = null;
+		Object obj = null;
+		Field field = null;
+		int x = 0, statusBarHeight = 0;
+		try {
+			c = Class.forName("com.android.internal.R$dimen");
+			obj = c.newInstance();
+			field = c.getField("status_bar_height");
+			x = Integer.parseInt(field.get(obj).toString());
+			statusBarHeight = context.getResources().getDimensionPixelSize(x);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		return statusBarHeight;
 	}
 }

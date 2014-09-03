@@ -23,6 +23,8 @@ public class Data {
 	public TempData tempData = new TempData();
 
 	public class TempData {
+		public int statusBarHeight;
+
 		public ArrayList<ImageBean> prepareUploadImages;
 
 		public ArrayList<String> prepareDownloadImages;

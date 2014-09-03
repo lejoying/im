@@ -48,6 +48,7 @@ public class MeSubController {
 				if (view.equals(thisView.myBusiness)) {
 					Intent intent = new Intent(mainController.thisActivity, BusinessCardActivity.class);
 					intent.putExtra("type", "point");
+					intent.putExtra("key", data.userInformation.currentUser.phone);
 					mainController.thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.mySetting)) {
 					mainController.thisActivity.startActivity(new Intent(mainController.thisActivity, SettingActivity.class));
