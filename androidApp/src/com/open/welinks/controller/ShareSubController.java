@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -23,6 +24,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -134,7 +136,10 @@ public class ShareSubController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.shareTopMenuGroupNameParent)) {
+				if (view.equals(thisView.leftImageButton)) {
+					Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.shareTopMenuGroupNameParent)) {
 					thisView.showGroupsDialog();
 				} else if (view.equals(thisView.groupDialogView)) {
 					thisView.dismissGroupDialog();
@@ -190,6 +195,7 @@ public class ShareSubController {
 	}
 
 	public void bindEvent() {
+		thisView.leftImageButton.setOnClickListener(mOnClickListener);
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		// thisView.groupDialogView.setOnClickListener(mOnClickListener);
 	}

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background4"
+    android:background="@drawable/background"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".activity.GroupInformationActivity" >
@@ -15,7 +15,7 @@
         android:background="#33000000" >
 
         <LinearLayout
-            android:id="@+id/ll_backview"
+            android:id="@+id/backView"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:gravity="center"
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
-                android:text="群组信息(0人)"
+                android:text="群组信息(6人)"
                 android:textColor="#fff"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/panel_name"
+                        android:id="@+id/groupName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
@@ -101,7 +101,7 @@
                     tools:ignore="ContentDescription" />
 
                 <RelativeLayout
-                    android:id="@+id/viewContainer"
+                    android:id="@+id/memberContainer"
                     android:layout_width="match_parent"
                     android:layout_height="220dp" >
                 </RelativeLayout>
@@ -175,7 +175,7 @@
                 android:background="#33ffffff" />
 
             <RelativeLayout
-                android:id="@+id/rl_groupmembercontrol"
+                android:id="@+id/groupMemberControl"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:gravity="center_vertical" >
@@ -217,6 +217,7 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/groupName2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -231,7 +232,7 @@
                 android:background="#33ffffff" />
 
             <RelativeLayout
-                android:id="@+id/rl_groupBusiness"
+                android:id="@+id/groupBusinessCard"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:gravity="center_vertical" >
@@ -265,13 +266,20 @@
                     android:textColor="#fff"
                     android:textSize="16sp" />
 
-                <TextView
+                <SeekBar
+                    android:id="@+id/ldm_bottom_btn2_ssb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="20dp"
-                    android:text="开关"
-                    android:textColor="#fff" />
+                    android:clickable="false"
+                    android:max="100"
+                    android:maxHeight="25dp"
+                    android:maxWidth="100dp"
+                    android:minHeight="25dp"
+                    android:progressDrawable="@drawable/slide_btn"
+                    android:thumb="@drawable/slide_btn_thumb"
+                    android:thumbOffset="0dp" />
             </RelativeLayout>
 
             <ImageView
@@ -280,70 +288,7 @@
                 android:background="#33ffffff" />
 
             <RelativeLayout
-                android:id="@+id/rl_groupSetBackGround"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="设置当前聊天背景"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="340dp"
-                android:layout_height="1dp"
-                android:background="#33ffffff" />
-
-            <RelativeLayout
-                android:id="@+id/rl_checkChatMessages"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="查找聊天记录"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="340dp"
-                android:layout_height="1dp"
-                android:background="#33ffffff" />
-
-            <RelativeLayout
-                android:id="@+id/rl_deleteChatMessages"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="清空聊天记录"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="340dp"
-                android:layout_height="1dp"
-                android:background="#33ffffff" />
-
-            <RelativeLayout
-                android:id="@+id/rl_exit2DeleteGroup"
+                android:id="@+id/exit2DeleteGroup"
                 android:layout_width="340dp"
                 android:layout_height="44dp"
                 android:layout_marginBottom="30dp"

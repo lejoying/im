@@ -68,6 +68,7 @@ public class ShareSubView {
 	public ViewGroup shareMessageView;
 	public ListBody shareMessageListBody;
 
+	public ImageView leftImageButton;
 	public RelativeLayout shareTopMenuGroupNameParent;
 	public TextView shareTopMenuGroupName;
 
@@ -125,6 +126,8 @@ public class ShareSubView {
 		shareMessageListBody = new ListBody();
 		shareMessageListBody.initialize(displayMetrics, shareMessageView);
 
+		
+		leftImageButton = (ImageView) shareView.findViewById(R.id.leftImageButton);
 		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- 背景图 -->
+    <item
+        android:id="@+android:id/background"
+        android:drawable="@drawable/slide_btn_off"/>
+    <!-- 第二进度图 -->
+    <item android:id="@+android:id/SecondaryProgress">
+        <clip android:drawable="@drawable/slide_btn_off" />
+    </item>
+    <!-- 进度度 -->
+    <item android:id="@+android:id/progress">
+        <clip android:drawable="@drawable/slide_btn_on" />
+    </item>
+
+</layer-list>
