@@ -84,7 +84,6 @@ public class ListBody1 {
 		}
 
 		if (this.bodyStatus.state == this.bodyStatus.DRAGGING) {
-			Log.d(tag, "stopChange bodyStatus.FIXED");
 			this.bodyStatus.state = this.bodyStatus.FIXED;
 		}
 	}
@@ -93,7 +92,7 @@ public class ListBody1 {
 	float touch_pre_y = 0;
 
 	public void onTouchDown(MotionEvent event) {
-		Log.i(tag, "bodyStatus:  " + this.bodyStatus.state + "     touchStatus:  " + this.touchStatus.state);
+		// Log.i(tag, "bodyStatus:  " + this.bodyStatus.state + "     touchStatus:  " + this.touchStatus.state);
 		if (isActive == false) {
 			return;
 		}
@@ -120,8 +119,6 @@ public class ListBody1 {
 		}
 		float x = event.getX();
 		float y = event.getY();
-		// Log.i(tag, "this.bodyStatus.state:  " + this.bodyStatus.state);
-		// Log.i(tag, "this.touchStatus.state:  " + this.touchStatus.state);
 		if (touchStatus.state == touchStatus.Down || touchStatus.state == touchStatus.LongPress) {
 			float deltaX = (x - touch_pre_x) * (x - touch_pre_x);
 			float deltaY = (y - touch_pre_y) * (y - touch_pre_y);
@@ -129,20 +126,17 @@ public class ListBody1 {
 				if (deltaY > deltaX) {
 
 					if (touchStatus.state == touchStatus.Down) {
-						Log.i(tag, "this.bodyStatus.state:  this.bodyStatus.DRAGGING" + this.bodyStatus.state);
 						this.bodyStatus.state = this.bodyStatus.DRAGGING;
 					}
 
 					touchStatus.state = touchStatus.Vertical;
 					touch_pre_y = y;
 
-					// this.recordChildrenPosition();
-
-					Log.e(tag, "Vertical moving");
+					// Log.e(tag, "Vertical moving");
 				} else {
 					touchStatus.state = touchStatus.Horizontal;
 					touch_pre_x = x;
-					Log.e(tag, "Horizontal moving");
+					// Log.e(tag, "Horizontal moving");
 				}
 			}
 		} else if (touchStatus.state == touchStatus.Vertical) {
@@ -154,7 +148,6 @@ public class ListBody1 {
 
 			} else if (bodyStatus.state == bodyStatus.ORDERING) {
 
-				// Log.i(tag, "this.y:  " + this.y);
 				if (y < this.displayMetrics.heightPixels / 3 && (y - touch_pre_y) < 0) {
 					if (this.y < 0) {
 						this.OrderingMoveDirection = OrderingMoveUp;
@@ -165,8 +158,6 @@ public class ListBody1 {
 					if (this.y > -(this.height - containerHeight)) {
 						this.OrderingMoveDirection = OrderingMoveDown;
 						this.openLooper.start();
-						
-						Log.i(tag, "openLooper.start() " + this.y);
 					}
 
 				} else {
@@ -234,7 +225,7 @@ public class ListBody1 {
 			}
 			sliding(speedY);
 		} else {
-			Log.i(tag, "bodyStatus error:" + this.bodyStatus.state);
+			// Log.i(tag, "bodyStatus error:" + this.bodyStatus.state);
 		}
 	}
 
@@ -242,7 +233,7 @@ public class ListBody1 {
 	public String orderingItemKey;
 
 	public void onOrdering(String key) {
-		Log.e(tag, "LongPress");
+		// Log.e(tag, "LongPress");
 		if (this.bodyStatus.state == this.bodyStatus.FIXED) {
 			this.orderingItemKey = key;
 			this.touchStatus.state = this.touchStatus.LongPress;
@@ -251,7 +242,7 @@ public class ListBody1 {
 			orderingItemBody = listItemBodiesMap.get(key);
 			resolveNextPosition();
 		} else {
-			Log.i(tag, "this.bodyStatus.state:  " + this.bodyStatus.state);
+			// Log.i(tag, "this.bodyStatus.state:  " + this.bodyStatus.state);
 		}
 	}
 
@@ -282,35 +273,6 @@ public class ListBody1 {
 		this.y = this.y + deltaY;
 	}
 
-	// public void setChildrenDeltaXY(float deltaX, float deltaY) {
-	// for (int i = 0; i < listItemsSequence.size(); i++) {
-	// String key = listItemsSequence.get(i);
-	// if (key.equals(orderingItemKey)) {
-	// continue;
-	// }
-	// MyListItemBody myListItemBody = listItemBodiesMap.get(key);
-	// myListItemBody.y = myListItemBody.y + deltaY;
-	// }
-	// }
-
-	public void setChildrenDeltaNextPosition(float deltaX, float deltaY) {
-
-		if (this.y >= 0 && deltaY > 0) {
-			deltaY = deltaY / 4;
-		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {
-			deltaY = deltaY / 4;
-		}
-
-		for (int i = 0; i < listItemsSequence.size(); i++) {
-			String key = listItemsSequence.get(i);
-			if (key.equals(orderingItemKey)) {
-				continue;
-			}
-			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
-			myListItemBody.next_position = myListItemBody.next_position + deltaY;
-		}
-	}
-
 	public void setChildrenPosition() {
 		for (int i = 0; i < listItemsSequence.size(); i++) {
 			String key = listItemsSequence.get(i);
@@ -329,7 +291,6 @@ public class ListBody1 {
 			myListItemBody.next_position = myListItemBody.y;
 			myListItemBody.pre_position = myListItemBody.y;
 		}
-
 	}
 
 	public void resolveOffset() {
@@ -342,7 +303,6 @@ public class ListBody1 {
 		}
 		setChildrenPosition();
 		this.openLooper.start();
-		Log.d(tag, "resolveOffset");
 
 	}
 
@@ -352,7 +312,6 @@ public class ListBody1 {
 	public Map<String, MyListItemBody> listItemBodiesMap = new HashMap<String, MyListItemBody>();
 
 	public void sliding(float speedY) {
-		Log.i(tag, "sliding:  " + speedY);
 		this.dySpeed = speedY;
 		bodyStatus.state = bodyStatus.FLINGHOMING;
 		lastMillis = System.currentTimeMillis();
@@ -450,10 +409,8 @@ public class ListBody1 {
 
 			if (myListItemBody.y < myListItemBody.next_position) {
 				myListItemBody.y = myListItemBody.y + delta * this.orderSpeed;
-				// myListItemBody.next_position = myListItemBody.next_position - delta * this.orderSpeed / 2;
 			} else {
 				myListItemBody.y = myListItemBody.y - delta * this.orderSpeed;
-				// myListItemBody.next_position = myListItemBody.next_position + delta * this.orderSpeed / 2;
 			}
 			ifStop = false;
 		}
@@ -472,7 +429,6 @@ public class ListBody1 {
 		float ordering_itemBottom = ordering_itemTop + orderingItemBody.itemHeight;
 
 		float ordering_itemTop_pre = orderingItemBody.pre_position;
-		float ordering_itemBottom_pre = ordering_itemTop_pre + orderingItemBody.itemHeight;
 
 		for (int i = 0; i < listItemsSequence.size(); i++) {
 			String key = listItemsSequence.get(i);
