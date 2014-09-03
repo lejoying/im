@@ -309,6 +309,18 @@ public class ListBody1 {
 		}
 	}
 
+	public void setChildrenDeltaNextPosition(float deltaX, float deltaY) {
+
+		for (int i = 0; i < listItemsSequence.size(); i++) {
+			String key = listItemsSequence.get(i);
+			if (key.equals(orderingItemKey)) {
+				continue;
+			}
+			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
+			myListItemBody.next_position = myListItemBody.next_position + deltaY;
+		}
+	}
+
 	public void setChildrenPosition() {
 		for (int i = 0; i < listItemsSequence.size(); i++) {
 			String key = listItemsSequence.get(i);
@@ -367,7 +379,7 @@ public class ListBody1 {
 		@Override
 		public void loop(double ellapsedMillis) {
 			if (bodyStatus.state == bodyStatus.ORDERING) {
-				// orderingMove(OrderingMoveDirection, (float) ellapsedMillis);
+				orderingMove(OrderingMoveDirection, (float) ellapsedMillis);
 			} else if (bodyStatus.state == bodyStatus.HOMINGMOVING) {
 				homingMove((float) ellapsedMillis);
 			} else if (bodyStatus.state == bodyStatus.ORDERINGHOMING) {
@@ -387,9 +399,11 @@ public class ListBody1 {
 
 		if (direction == OrderingMoveUp) {
 			setChildrenDeltaXY(0, delta * this.orderSpeed);
+			setChildrenDeltaNextPosition(0, delta * this.orderSpeed);
 
 		} else if (direction == OrderingMoveDown) {
 			setChildrenDeltaXY(0, -delta * this.orderSpeed);
+			setChildrenDeltaNextPosition(0, -delta * this.orderSpeed);
 		}
 		// if (this.y > 0 || this.y < -(this.height - 2 * 260 * displayMetrics.density)) {
 		// this.openLooper.stop();

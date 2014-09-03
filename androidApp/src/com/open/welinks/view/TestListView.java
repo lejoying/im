@@ -106,13 +106,13 @@ public class TestListView {
 			this.friendListBody.listItemsSequence.add("circle#" + circle.rid);
 			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
-			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) circleBody.itemHeight);
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 10 * displayMetrics.density));
 			circleBody.y = this.friendListBody.height + 2 * displayMetrics.density;
 			circleBody.cardView.setY(circleBody.y);
 			circleBody.cardView.setX(0);
 
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
-			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight + 00 * displayMetrics.density;
+			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight;
 			Log.d(tag, "addView");
 
 		}
@@ -172,7 +172,7 @@ public class TestListView {
 				lineCount = 1;
 			}
 			lineCount = 0;
-			itemHeight = (164 + lineCount * 96) * displayMetrics.density;
+			itemHeight = (174 + lineCount * 96) * displayMetrics.density;
 
 			this.friendsSequence.clear();
 			for (int i = 0; i < circle.friends.size() && i < 4; i++) {
