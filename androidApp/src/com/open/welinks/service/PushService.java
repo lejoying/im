@@ -53,7 +53,7 @@ public class PushService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		operation = intent.getBooleanExtra("operation", true);
+		operation = intent.getBooleanExtra("operation", false);
 		if (operation) {
 			i = Math.abs(random.nextInt()) % 1000;
 			String phone = intent.getStringExtra("phone");

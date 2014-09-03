@@ -1,20 +1,31 @@
 package com.open.welinks.controller;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.graphics.Bitmap;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
+import com.open.welinks.R;
+import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -33,11 +44,17 @@ public class BusinessCardController {
 	public BusinessCardActivity thisActivity;
 
 	public Data data = Data.getInstance();
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+
+	public DownloadFile downloadFile;
+	public DisplayImageOptions options;
+
 	public String key, type;
 
 	public OnClickListener mOnClickListener;
+	public DownloadListener downloadListener;
 	public DisplayMetrics displayMetrics;
-	public AsyncTask<Integer, Integer, Boolean> asyncTask;
 
 	public Handler handler;
 
@@ -71,19 +88,12 @@ public class BusinessCardController {
 		handler = new Handler();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
 		initializeListeners();
 	}
 
 	public void onWindowFocusChanged(boolean hasFocus) {
-		System.out.println("height:" + displayMetrics.heightPixels + "content;" + thisView.content.getHeight() + "backview:" + thisView.backview.getHeight() + "statusBarHeight:" + data.tempData.statusBarHeight);
-		handler.post(new Runnable() {
-
-			@Override
-			public void run() {
-				thisView.spacing_one.getLayoutParams().height = displayMetrics.heightPixels - thisView.spacing_two.getHeight() - thisView.content.getHeight() - thisView.backview.getHeight() - data.tempData.statusBarHeight;
-				// thisView.spacing_one.setHeight(displayMetrics.heightPixels - thisView.spacing_two.getHeight() - thisView.content.getHeight() - thisView.backview.getHeight() - data.tempData.statusBarHeight);
-			}
-		});
+		thisView.spacing_one.setHeight(displayMetrics.heightPixels - thisView.spacing_two.getHeight() - thisView.infomation_layout.getHeight() - thisView.backview.getHeight() - data.tempData.statusBarHeight);
 	}
 
 	public void initializeListeners() {
@@ -139,17 +149,15 @@ public class BusinessCardController {
 
 			}
 		};
-		asyncTask = new AsyncTask<Integer, Integer, Boolean>() {
+		downloadListener = new DownloadListener() {
 
 			@Override
-			protected Boolean doInBackground(Integer... params) {
-				while (thisView.content.getHeight() == 0)
-					;
-				return true;
+			public void success(DownloadFile instance, int status) {
+
 			}
 
 			@Override
-			protected void onPostExecute(Boolean result) {
+			public void loading(DownloadFile instance, int precent, int status) {
 
 			}
 		};
@@ -221,6 +229,31 @@ public class BusinessCardController {
 				httpUtils.send(HttpMethod.POST, API.RELATION_DELETEFRIEND, params, responseHandlers.relation_deletefriend);
 			}
 		}).show();
+	}
+
+	public void setHeadImage(String fileName, ImageView view) {
+		File sdFile = Environment.getExternalStorageDirectory();
+		File file = new File(sdFile, "welinks/heads/" + fileName);
+		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
+		final String path = file.getAbsolutePath();
+		imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingStarted(String imageUri, View view) {
+			}
+
+			@Override
+			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+				downloadFile = new DownloadFile(url, path);
+				downloadFile.view = view;
+				downloadFile.setDownloadFileListener(thisController.downloadListener);
+				downloadFileList.addDownloadFile(downloadFile);
+			}
+
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+			}
+		});
 	}
 
 	public void addFriend() {

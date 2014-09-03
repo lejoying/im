@@ -1,5 +1,8 @@
 package com.open.welinks.view;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +17,7 @@ import com.open.welinks.controller.BusinessCardController;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.utils.MCImageUtils;
 
 public class BusinessCardView {
 	public BusinessCardController thisController;
@@ -22,7 +26,7 @@ public class BusinessCardView {
 
 	public LayoutInflater mInflater;
 	public RelativeLayout backview;
-	public LinearLayout content;
+	public LinearLayout content, infomation_layout;
 	public TextView spacing_one, spacing_two, spacing_three, title, business_title, lable_title, creattime_title, nickname, id, business, lable, creattime;
 	public ImageView head, tdcode;
 	public Button button_one, button_two, button_three;
@@ -46,6 +50,7 @@ public class BusinessCardView {
 
 		backview = (RelativeLayout) thisActivity.findViewById(R.id.backview);
 		content = (LinearLayout) thisActivity.findViewById(R.id.content);
+		infomation_layout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
 		spacing_one = (TextView) thisActivity.findViewById(R.id.spacing_one);
 		spacing_two = (TextView) thisActivity.findViewById(R.id.spacing_two);
 		spacing_three = (TextView) thisActivity.findViewById(R.id.spacing_three);
@@ -63,6 +68,7 @@ public class BusinessCardView {
 		button_one = (Button) thisActivity.findViewById(R.id.button_one);
 		button_two = (Button) thisActivity.findViewById(R.id.button_two);
 		button_three = (Button) thisActivity.findViewById(R.id.button_three);
+
 	}
 
 	public void fillData() {
@@ -158,6 +164,12 @@ public class BusinessCardView {
 			button_three.setVisibility(View.GONE);
 
 		}
+		if (businessCard.icon.equals("Head") || "".equals(businessCard.icon)) {
+			Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man), true, 5, Color.WHITE);
+			thisView.head.setImageBitmap(bitmap);
+		} else {
+			thisController.setHeadImage(businessCard.icon, thisView.head);
+		}
 		setData(businessCard);
 	}
 
@@ -189,7 +201,7 @@ public class BusinessCardView {
 		lable.setText(businessCard.lable);
 		creattime.setText(businessCard.creattime);
 		button_one.setText(businessCard.button_one);
-		button_two.setText(businessCard.button_three);
+		button_two.setText(businessCard.button_two);
 		button_three.setText(businessCard.button_three);
 	}
 

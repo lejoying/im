@@ -7,8 +7,16 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.UploadMultipart;
 import com.open.welinks.controller.UploadMultipartList;
+import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
@@ -26,12 +34,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 public class ModifyInformationActivity extends Activity implements OnClickListener {
@@ -45,8 +56,15 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public String key, type, headFileName;
 	public boolean modified = false;
 
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+
+	public DownloadFile downloadFile;
+	public DisplayImageOptions options;
+
 	public onDataChanged mOnDataChanged;
 	public UploadLoadingListener uploadLoadingListener;
+	public DownloadListener downloadListener;
 
 	public File tempFile, sdFile;
 
@@ -58,13 +76,17 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public ImageView head, del;
 	public EditText input;
 
+	public InputMethodManager inputMethodManager;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_modify_information);
 		key = getIntent().getStringExtra("key");
 		type = getIntent().getStringExtra("type");
-
+		inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
+		sdFile = new File(Environment.getExternalStorageDirectory(), "welinks/heads/");
 		initView();
 		initializeListeners();
 	}
@@ -90,11 +112,11 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			Uri uri = Uri.fromFile(tempFile);
 			startPhotoZoom(uri);
 		} else if (requestCode == REQUESTCODE_CAT && resultCode == Activity.RESULT_OK) {
-			Bitmap headBitmap = MCImageUtils.getCircleBitmap((Bitmap) data.getExtras().get("data"), true, 5, Color.WHITE);
-			head.setImageBitmap(headBitmap);
-			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), sdFile);
+			Map<String, Object> map = MCImageUtils.processImagesInformation(this.data.tempData.selectedImageList.get(0), sdFile);
 			headFileName = (String) map.get("fileName");
-			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"));
+			initHeadImage(headFileName, head);
+			uploadFile("file://" + this.data.tempData.selectedImageList.get(0), (String) map.get("fileName"), (byte[]) map.get("bytes"));
+			pic_layout.setVisibility(View.GONE);
 		}
 	}
 
@@ -155,7 +177,18 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 			}
 		};
+		downloadListener = new DownloadListener() {
 
+			@Override
+			public void success(DownloadFile instance, int status) {
+
+			}
+
+			@Override
+			public void loading(DownloadFile instance, int precent, int status) {
+
+			}
+		};
 	}
 
 	public void fillData() {
@@ -168,9 +201,19 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			lable_title.setText("爱好");
 			sex_title.setText("性别");
 			name.setText(user.nickName);
-			sex.setText(user.sex);
+			if ("male".equals(user.sex)) {
+				sex.setText("男");
+			} else {
+				sex.setText("女");
+			}
 			business.setText(user.mainBusiness);
 			lable.setText("");
+			if (user.head.equals("Head") || "".equals(user.head)) {
+				Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_man), true, 5, Color.WHITE);
+				head.setImageBitmap(bitmap);
+			} else {
+				initHeadImage(user.head, head);
+			}
 		} else if ("group".equals(type)) {
 			group = data.relationship.groupsMap.get(key);
 			sex_layout.setVisibility(View.GONE);
@@ -182,6 +225,12 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			name.setText(group.name);
 			business.setText(group.description);
 			lable.setText("");
+			if ("".equals(group.icon)) {
+				Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_man), true, 5, Color.WHITE);
+				head.setImageBitmap(bitmap);
+			} else {
+				initHeadImage(group.icon, head);
+			}
 		}
 	}
 
@@ -190,14 +239,16 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		if (view.equals(backview)) {
 			mFinish();
 		} else if (view.equals(complete)) {
-			sendData();
+			mOnDataChanged.onDataChangedListener();
 		} else if (view.equals(head_layout)) {
 			pic_layout.setVisibility(View.VISIBLE);
 		} else if (view.equals(sex_layout)) {
 			if ("男".equals(sex.getText().toString())) {
 				sex.setText("女");
+				user.sex = "female";
 			} else {
 				sex.setText("男");
+				user.sex = "male";
 			}
 		} else if (view.equals(name_layout)) {
 			modifyData(name);
@@ -208,9 +259,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		} else if (view.equals(location_layout)) {
 
 		} else if (view.equals(modify)) {
-			mOnDataChanged.onDataChangedListener();
+			sendData();
 		} else if (view.equals(camera)) {
-			takePicture(REQUESTCODE_TAKE);
+			// takePicture(REQUESTCODE_TAKE);
 		} else if (view.equals(album)) {
 			selectPicture(REQUESTCODE_SELECT);
 		} else if (view.equals(del)) {
@@ -224,7 +275,11 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			if (!"".equals(headFileName)) {
 				user.head = headFileName;
 			}
-			user.sex = sex.getText().toString();
+			if ("男".equals(sex.getText().toString())) {
+				user.sex = "male";
+			} else {
+				user.sex = "female";
+			}
 			user.nickName = name.getText().toString();
 			user.mainBusiness = business.getText().toString();
 			HttpUtils httpUtils = new HttpUtils();
@@ -257,12 +312,22 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 	public void modifyData(final TextView view) {
 		input_layout.setVisibility(View.VISIBLE);
+		complete.setVisibility(View.VISIBLE);
+		setFocus(false);
 		input.setText(view.getText().toString());
+		input.requestFocus();
+		inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_FORCED);
+
 		mOnDataChanged = new onDataChanged() {
 			@Override
 			public void onDataChangedListener() {
+
+				inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
 				view.setText(input.getText().toString());
 				input_layout.setVisibility(View.GONE);
+				complete.setVisibility(View.GONE);
+				setFocus(true);
 				modified = true;
 			}
 		};
@@ -275,7 +340,6 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	void takePicture(int requestCode) {
-		sdFile = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
 		tempFile = new File(sdFile, "tempimage");
 		int i = 1;
 		while (tempFile.exists()) {
@@ -297,7 +361,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		intent.putExtra("outputX", 100);
 		intent.putExtra("outputY", 100);
 		intent.putExtra("return-data", true);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 		startActivityForResult(intent, REQUESTCODE_CAT);
 	}
 
@@ -325,6 +389,41 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			finish();
 		}
 
+	}
+
+	public void initHeadImage(String fileName, ImageView view) {
+		File sdFile = Environment.getExternalStorageDirectory();
+		File file = new File(sdFile, "welinks/heads/" + fileName);
+		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
+		final String path = file.getAbsolutePath();
+		imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingStarted(String imageUri, View view) {
+			}
+
+			@Override
+			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+				downloadFile = new DownloadFile(url, path);
+				downloadFile.view = view;
+				downloadFile.setDownloadFileListener(downloadListener);
+				downloadFileList.addDownloadFile(downloadFile);
+			}
+
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+			}
+		});
+	}
+
+	public void setFocus(boolean whether) {
+		head_layout.setClickable(whether);
+		name_layout.setClickable(whether);
+		sex_layout.setClickable(whether);
+		location_layout.setClickable(whether);
+		business_layout.setClickable(whether);
+		lable_layout.setClickable(whether);
+		modify.setClickable(whether);
 	}
 
 	public interface onDataChanged {

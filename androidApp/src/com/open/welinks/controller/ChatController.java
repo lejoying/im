@@ -32,6 +32,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
@@ -132,7 +133,10 @@ public class ChatController {
 				} else if (view.equals(thisView.backview)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.infomation)) {
-
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("key", key);
+					intent.putExtra("type", type);
+					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.send)) {
 					String text = thisView.input.getText().toString();
 					sendMessage(text, "text");
