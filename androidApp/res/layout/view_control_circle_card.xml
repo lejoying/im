@@ -8,14 +8,14 @@
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     android:layout_marginTop="10dp"
-    android:background="@drawable/card_login_background_normal"
+    android:background="@drawable/card_login_background_normal1"
     android:visibility="visible" >
 
     <com.open.lib.TouchImageView
         android:id="@+id/grip_card_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/card_login_background_normal"
+        android:background="@drawable/card_login_background_press"
         android:visibility="invisible" />
 
     <include

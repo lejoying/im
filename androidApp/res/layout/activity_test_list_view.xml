@@ -9,7 +9,8 @@
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
-        android:background="@color/card_color" >
+        android:background="@color/card_color" 
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="132dp"
@@ -86,7 +87,7 @@
         android:id="@+id/title_control_progress_container"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:translationY="46dp" >
+        android:translationY="0dp" >
 
         <include
             android:id="@+id/title_control_progress"
@@ -99,7 +100,7 @@
         android:layout_height="match_parent"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:translationY="88dp"
+        android:translationY="2dp"
         android:visibility="visible" >
     </com.open.lib.TouchView>
 

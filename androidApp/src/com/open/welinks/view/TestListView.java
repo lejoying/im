@@ -112,7 +112,7 @@ public class TestListView {
 			circleBody.cardView.setX(0);
 
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
-			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight + 10 * displayMetrics.density;
+			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight + 00 * displayMetrics.density;
 			Log.d(tag, "addView");
 
 		}
@@ -171,10 +171,11 @@ public class TestListView {
 			if (lineCount == 0) {
 				lineCount = 1;
 			}
+			lineCount = 0;
 			itemHeight = (164 + lineCount * 96) * displayMetrics.density;
 
 			this.friendsSequence.clear();
-			for (int i = 0; i < circle.friends.size(); i++) {
+			for (int i = 0; i < circle.friends.size() && i < 4; i++) {
 				String phone = circle.friends.get(i);
 				Friend friend = friendsMap.get(phone);
 
