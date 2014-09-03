@@ -24,7 +24,7 @@ public class MeSubView {
 	public TextView userBusinessView;
 
 	public ImageView mAppIconToNameView;
-	public View mRootView;
+	public View mRootView, myBusiness, mySetting;
 
 	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(100, 4);
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();
@@ -43,6 +43,9 @@ public class MeSubView {
 		userHeadImageView = (ImageView) mainView.meView.findViewById(R.id.iv_headImage);
 		userNickNameView = (TextView) mainView.meView.findViewById(R.id.tv_userNickname);
 		userBusinessView = (TextView) mainView.meView.findViewById(R.id.tv_userMainBusiness);
+
+		myBusiness = mainView.meView.findViewById(R.id.myBusiness);
+		mySetting = mainView.meView.findViewById(R.id.mySetting);
 
 		mAppIconToNameView = (ImageView) mainView.meView.findViewById(R.id.appIconToName);
 		mRootView = mAppIconToNameView;

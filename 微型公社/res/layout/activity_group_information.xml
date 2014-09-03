@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
-                android:text="群组信息(6人)"
+                android:text="群组信息(0人)"
                 android:textColor="#fff"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -100,11 +100,11 @@
                     android:background="#9fff"
                     tools:ignore="ContentDescription" />
 
-                <com.lejoying.wxgs.activity.view.ScrollContainer
+                <RelativeLayout
                     android:id="@+id/viewContainer"
                     android:layout_width="match_parent"
                     android:layout_height="220dp" >
-                </com.lejoying.wxgs.activity.view.ScrollContainer>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_pagepoint"

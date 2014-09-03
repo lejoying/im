@@ -1,6 +1,7 @@
 package com.open.welinks.controller;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.sax.StartElementListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +23,8 @@ public class MessagesSubController {
 
 	public MainController mainController;
 
+	public Handler handler = new Handler();
+
 	public MessagesSubController(MainController mainController) {
 		this.mainController = mainController;
 	}
@@ -34,10 +37,14 @@ public class MessagesSubController {
 			public void onClick(View view) {
 				Message message = null;
 				if ((message = (Message) view.getTag(R.id.chat_content)) != null) {
-					Intent intent = new Intent(thisView.mainView.thisActivity,
-							ChatActivity.class);
-					intent.putExtra("id", message.phone);
-					intent.putExtra("type", message.sendType);
+					Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
+					String sendType = message.sendType;
+					if ("point".equals(sendType)) {
+						intent.putExtra("id", message.phone);
+					} else if ("group".equals(sendType)) {
+						intent.putExtra("id", message.gid);
+					}
+					intent.putExtra("type", sendType);
 					thisView.mainView.thisActivity.startActivity(intent);
 				} else {
 
@@ -49,4 +56,20 @@ public class MessagesSubController {
 	public void bindEvent() {
 	}
 
+	public void addMessageToSubView(Message message) {
+		if ("point".equals(message.sendType)) {
+			data.messages.messagesOrder.add(0, "p" + message.phone);
+		} else {
+			data.messages.messagesOrder.add(0, "g" + message.gid);
+		}
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				thisView.messageListBody.containerView.removeAllViews();
+				thisView.showMessages();
+			}
+		});
+
+	}
 }

@@ -11,10 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -30,6 +32,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.BusinessCardActivity;
+import com.open.welinks.ChatActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
@@ -37,6 +41,7 @@ import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -48,12 +53,13 @@ public class ChatController {
 	public String tag = "ChatController";
 
 	public ChatController thisController;
-	public Activity thisActivity;
+	public ChatActivity thisActivity;
 	public Context context;
 	public ChatView thisView;
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
+	public OnFocusChangeListener mFocusChangeListener;
 	public UploadLoadingListener uploadLoadingListener;
 	public DownloadListener downloadListener;
 
@@ -67,11 +73,13 @@ public class ChatController {
 	public DisplayImageOptions options;
 	public InputMethodManager inputMethodManager;
 
+	public Handler handler = new Handler();
+
 	public String type, key;
 
 	public User currentUser = data.userInformation.currentUser;
 
-	public ChatController(Activity thisActivity) {
+	public ChatController(ChatActivity thisActivity) {
 		this.thisActivity = thisActivity;
 		context = thisActivity;
 		thisController = this;
@@ -106,6 +114,10 @@ public class ChatController {
 
 	}
 
+	public void onDestroy() {
+		thisActivity.viewManage.chatView = null;
+	}
+
 	public void initializeListeners() {
 		mOnClickListener = new OnClickListener() {
 
@@ -121,7 +133,10 @@ public class ChatController {
 				} else if (view.equals(thisView.backview)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.infomation)) {
-
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("key", key);
+					intent.putExtra("type", type);
+					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.send)) {
 					String text = thisView.input.getText().toString();
 					sendMessage(text, "text");
@@ -137,6 +152,26 @@ public class ChatController {
 					// TODO
 				} else if (view.equals(thisView.more_selected)) {
 					hideSelectTab();
+				} else if (view.equals(thisView.input)) {
+					if (inputMethodManager.isActive()) {
+						new Thread() {
+							public void run() {
+								try {
+									sleep(100);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								handler.post(new Runnable() {
+
+									@Override
+									public void run() {
+										thisView.chat_content.setSelection(thisView.mChatAdapter.getCount());
+
+									}
+								});
+							};
+						}.start();
+					}
 				}
 
 			}
@@ -166,6 +201,19 @@ public class ChatController {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		mFocusChangeListener = new OnFocusChangeListener() {
+
+			@Override
+			public void onFocusChange(View view, boolean hasFocus) {
+
+			}
 		};
 	}
 
@@ -184,9 +232,11 @@ public class ChatController {
 		thisView.selectpicture.setOnClickListener(mOnClickListener);
 		thisView.makeaudio.setOnClickListener(mOnClickListener);
 		thisView.more_selected.setOnClickListener(mOnClickListener);
+		thisView.input.setOnClickListener(mOnClickListener);
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<String> getImageFromJson(String content) {
 		return gson.fromJson(content, ArrayList.class);
 	}
@@ -323,8 +373,15 @@ public class ChatController {
 		params.addBodyParameter("message", gson.toJson(sendMessage));
 
 		if ("group".equals(type)) {
+			Group group = data.relationship.groupsMap.get(key);
+			if (group == null) {
+				group = data.relationship.new Group();
+				group.members.add("154");
+				group.members.add("155");
+				group.members.add("156");
+			}
 			params.addBodyParameter("gid", key);
-			params.addBodyParameter("phoneto", gson.toJson(data.relationship.groupsMap.get(key).members));
+			params.addBodyParameter("phoneto", gson.toJson(group.members));
 		} else if ("point".equals(type)) {
 			List<String> phoneto = new ArrayList<String>();
 			phoneto.add(key);

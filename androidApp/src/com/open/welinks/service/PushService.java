@@ -1,5 +1,7 @@
 package com.open.welinks.service;
 
+import java.util.Random;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -20,6 +22,8 @@ public class PushService extends Service {
 
 	public String tag = "PushService";
 
+	public static final String LONGPULL_STOP = "com.open.welinks.service.longpull_stop";
+
 	public boolean operation;
 
 	public HttpClient httpClient = HttpClient.getInstance();
@@ -28,6 +32,9 @@ public class PushService extends Service {
 	public HttpUtils httpUtils;
 
 	public ResponseInfoHandler mResponseInfoHandler;
+
+	public Random random;
+	public int i;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -40,15 +47,21 @@ public class PushService extends Service {
 		params = new RequestParams();
 		httpUtils = new HttpUtils();
 		mResponseInfoHandler = new ResponseInfoHandler(10);
+		random = new Random();
 		super.onCreate();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		operation = true;
-		String phone = intent.getStringExtra("phone");
-		String accessKey = intent.getStringExtra("accessKey");
-		startIMLongPull(phone, accessKey);
+		operation = intent.getBooleanExtra("operation", false);
+		if (operation) {
+			i = Math.abs(random.nextInt()) % 1000;
+			String phone = intent.getStringExtra("phone");
+			String accessKey = intent.getStringExtra("accessKey");
+			startIMLongPull(phone, accessKey);
+		} else {
+			stopLongPull();
+		}
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -65,14 +78,19 @@ public class PushService extends Service {
 		connect();
 	}
 
+	public void stopLongPull() {
+		sendBroadcast(new Intent(LONGPULL_STOP));
+	}
+
 	HttpHandler<String> httpHandler;
 
 	public void connect() {
 		if (operation) {
 			HttpUtils httpUtils = new HttpUtils();
-			httpHandler = httpUtils.send(HttpMethod.GET, API.SESSION_EVENT, params, longPull);
-			Log.e(tag, "=-----------------send request");
+			httpHandler = httpUtils.send(HttpMethod.GET, API.SESSION_EVENT + "/?i=" + i, params, longPull);
+			Log.e(tag, i + "-----------");
 		}
+		i++;
 	}
 
 	public ResponseHandler<String> longPull = httpClient.new ResponseHandler<String>() {

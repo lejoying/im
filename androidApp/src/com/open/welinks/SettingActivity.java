@@ -1,6 +1,11 @@
 package com.open.welinks;
 
+import com.open.welinks.service.PushService;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -35,21 +40,19 @@ public class SettingActivity extends Activity implements OnClickListener {
 		setOnTouch(exitCurrentUserView);
 		backView.setOnClickListener(this);
 		backView.setOnTouchListener(new OnTouchListener() {
-			GestureDetector backviewDetector = new GestureDetector(
-					SettingActivity.this,
-					new GestureDetector.SimpleOnGestureListener() {
+			GestureDetector backviewDetector = new GestureDetector(SettingActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
-						@Override
-						public boolean onDown(MotionEvent e) {
-							return true;
-						}
+				@Override
+				public boolean onDown(MotionEvent e) {
+					return true;
+				}
 
-						@Override
-						public boolean onSingleTapUp(MotionEvent e) {
-							finish();
-							return true;
-						}
-					});
+				@Override
+				public boolean onSingleTapUp(MotionEvent e) {
+					finish();
+					return true;
+				}
+			});
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -73,16 +76,7 @@ public class SettingActivity extends Activity implements OnClickListener {
 			finish();
 			break;
 		case R.id.rl_exitCurrentUser:
-//			Alert.createDialog(SettingActivity.this)
-//					.setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？")
-//					.setOnConfirmClickListener(
-//							new AlertInputDialog.OnDialogClickListener() {
-//								@Override
-//								public void onClick(AlertInputDialog dialog) {
-//									setResult(Activity.RESULT_OK);
-//									finish();
-//								}
-//							}).show();
+			logOut();
 			break;
 		default:
 			break;
@@ -105,5 +99,18 @@ public class SettingActivity extends Activity implements OnClickListener {
 				return false;
 			}
 		});
+	}
+
+	public void logOut() {
+		Alert.createDialog(this).setTitle("退出登录后您将接收不到任何消息，确定要退出登录吗？").setOnConfirmClickListener(new AlertInputDialog.OnDialogClickListener() {
+			@Override
+			public void onClick(AlertInputDialog dialog) {
+				Intent service = new Intent(SettingActivity.this, PushService.class);
+				service.putExtra("operation", false);
+				startService(service);
+				finish();
+			}
+		}).show();
+
 	}
 }

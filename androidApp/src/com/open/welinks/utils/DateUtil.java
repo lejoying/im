@@ -11,6 +11,15 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateUtil {
+
+	@SuppressLint("SimpleDateFormat")
+	public static String formatYearMonthDay(long timeMillis) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+		Date date = new Date(timeMillis);
+		String mTime = simpleDateFormat.format(date);
+		return mTime;
+	}
+
 	public static String getGMTDate() {
 		return getGMTDate(new Date());
 	}

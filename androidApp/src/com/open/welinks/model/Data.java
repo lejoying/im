@@ -23,6 +23,8 @@ public class Data {
 	public TempData tempData = new TempData();
 
 	public class TempData {
+		public int statusBarHeight;
+
 		public ArrayList<ImageBean> prepareUploadImages;
 
 		public ArrayList<String> prepareDownloadImages;
@@ -110,6 +112,7 @@ public class Data {
 	}
 
 	public class Relationship {
+		public List<String> friends = new ArrayList<String>();
 		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
 
 		public List<String> circles = new ArrayList<String>();
