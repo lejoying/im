@@ -197,6 +197,12 @@ public class ChatController {
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		mFocusChangeListener = new OnFocusChangeListener() {
 

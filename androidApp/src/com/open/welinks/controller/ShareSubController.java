@@ -3,6 +3,7 @@ package com.open.welinks.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -12,12 +13,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -70,12 +75,42 @@ public class ShareSubController {
 			}
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void success(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
 				if (instance.view.getTag() != null) {
 					options = thisView.displayImageOptions;
 				}
-				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
+				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						Log.e(tag, "---------------failed");
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+						instance.view.setLayoutParams(params);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					}
+				});
+			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				if (instance.view.getTag() != null) {
+					if ("image".equals(instance.view.getTag().toString())) {
+						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
+						ImageView imageView = ((ImageView) (instance.view));
+						imageView.setImageResource(R.drawable.ic_error);
+						// RelativeLayout.LayoutParams params = (LayoutParams) imageView.getLayoutParams();
+						// params.height = 10;
+						// imageView.setLayoutParams(params);
+						// imageView.setBackgroundColor(Color.RED);
+					}
+				}
 			}
 		};
 		mOnTouchListener = new OnTouchListener() {

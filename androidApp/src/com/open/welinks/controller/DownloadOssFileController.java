@@ -107,6 +107,12 @@ public class DownloadOssFileController {
 				instance.transportingItem.text_transport_time_view.setText((instance.time.received - instance.time.start) + "ms");
 				instance.transportingItem.text_file_size_view.setText(instance.imageBean.size / 1000 + "k");
 			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 

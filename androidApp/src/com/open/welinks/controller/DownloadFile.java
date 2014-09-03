@@ -113,6 +113,7 @@ public class DownloadFile {
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			isDownloadStatus = DOWNLOAD_FAILED;
+			downloadListener.failure(instance, isDownloadStatus);
 			Log.d(tag, "onFailure: -----" + msg);
 		}
 	};
@@ -133,6 +134,8 @@ public class DownloadFile {
 		public void loading(DownloadFile instance, int precent, int status);
 
 		public void success(DownloadFile instance, int status);
+
+		public void failure(DownloadFile instance, int status);
 	}
 
 	public void setDownloadFileListener(DownloadListener downloadListener) {
