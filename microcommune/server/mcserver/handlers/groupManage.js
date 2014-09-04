@@ -1085,7 +1085,7 @@ groupManage.getgroupmembers = function (data, response) {
                     }
                     count++;
                     var groupData = results[index].group.data;
-                    groups.push(groupData.gid);
+                    groups.push(parseInt(groupData.gid));
                     groupOrder[groupData.gid] = index;
                     if (count == length) {
                         var accountData = accountNode.data;
@@ -1111,7 +1111,7 @@ groupManage.getgroupmembers = function (data, response) {
                             for (var index in groupsOrdering) {
                                 var gid = groupsOrdering[index];
                                 if (groupOrder[gid]) {
-                                    newCirclesOrdering.push(gid);
+                                    newCirclesOrdering.push(parseInt(gid));
                                     groupOrder[gid] = "delete";
                                 } else {
                                     isDataConsistentcy = false;
