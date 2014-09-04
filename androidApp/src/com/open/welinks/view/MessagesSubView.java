@@ -15,8 +15,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.open.lib.viewbody.ListBody;
-import com.open.lib.viewbody.ListBody.MyListItemBody;
+import com.open.lib.TouchView;
+import com.open.lib.viewbody.ListBody1;
+import com.open.lib.viewbody.ListBody1.MyListItemBody;
+
 import com.open.welinks.R;
 import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.model.Data;
@@ -32,11 +34,11 @@ public class MessagesSubView {
 
 	public DisplayMetrics displayMetrics;
 
-	public RelativeLayout messagesView;
+	public TouchView messagesView;
 
 	public RelativeLayout noMessagesStatusView;
 
-	public ListBody messageListBody;
+	public ListBody1 messageListBody;
 
 	public MainView mainView;
 
@@ -51,11 +53,10 @@ public class MessagesSubView {
 		this.messagesView = mainView.messagesView;
 		this.displayMetrics = mainView.displayMetrics;
 
-		messageListBody = new ListBody();
+		messageListBody = new ListBody1();
 		messageListBody.initialize(displayMetrics, messagesView);
 
-		noMessagesStatusView = (RelativeLayout) messagesView
-				.findViewById(R.id.NoMessagesStatus);
+		noMessagesStatusView = (RelativeLayout) messagesView.findViewById(R.id.NoMessagesStatus);
 
 	}
 
@@ -82,32 +83,25 @@ public class MessagesSubView {
 			messageBody.initialize();
 			messageBody.setContent(message);
 
-			this.messageListBody.listItemsSequence.add("message#"
-					+ message.phone + "_" + message.time);
-			this.messageListBody.listItemBodiesMap.put("message#"
-					+ message.phone + "_" + message.time, messageBody);
+			this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
+			this.messageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT,
-					(int) (70 * displayMetrics.density));
-			messageBody.y = 80 * displayMetrics.density * i + 2
-					* displayMetrics.density;
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (70 * displayMetrics.density));
+			messageBody.y = this.messageListBody.height;
 			messageBody.cardView.setY(messageBody.y);
 			messageBody.cardView.setX(0);
 			messageBody.cardView.setTag(R.id.chat_content, message);
-			messageBody.cardView
-					.setOnClickListener(thisController.mOnClickListener);
-			this.messageListBody.height = this.messageListBody.height + 80
-					* displayMetrics.density;
-			this.messageListBody.containerView.addView(messageBody.cardView,
-					layoutParams);
+			messageBody.cardView.setOnClickListener(thisController.mOnClickListener);
+			this.messageListBody.height = this.messageListBody.height + 80 * displayMetrics.density;
+			this.messageListBody.containerView.addView(messageBody.cardView, layoutParams);
 		}
+		this.messageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
 
 	}
 
 	public class MessageBody extends MyListItemBody {
 
-		MessageBody(ListBody listBody) {
+		MessageBody(ListBody1 listBody) {
 			listBody.super();
 		}
 
@@ -121,32 +115,24 @@ public class MessagesSubView {
 
 		public View initialize() {
 
-			this.cardView = mainView.mInflater.inflate(
-					R.layout.chat_message_item, null);
-			headView = (ImageView) this.cardView
-					.findViewById(R.id.userHeadView);
-			nickNameView = (TextView) this.cardView
-					.findViewById(R.id.tv_nickname);
-			lastChatTimeView = (TextView) this.cardView
-					.findViewById(R.id.tv_time);
-			lastChatMessageView = (TextView) this.cardView
-					.findViewById(R.id.tv_lastchatcontent);
-			notReadNumberView = (TextView) this.cardView
-					.findViewById(R.id.tv_notread);
+			this.cardView = mainView.mInflater.inflate(R.layout.chat_message_item, null);
+			headView = (ImageView) this.cardView.findViewById(R.id.userHeadView);
+			nickNameView = (TextView) this.cardView.findViewById(R.id.tv_nickname);
+			lastChatTimeView = (TextView) this.cardView.findViewById(R.id.tv_time);
+			lastChatMessageView = (TextView) this.cardView.findViewById(R.id.tv_lastchatcontent);
+			notReadNumberView = (TextView) this.cardView.findViewById(R.id.tv_notread);
 			super.initialize(cardView);
 			return cardView;
 		}
 
 		public void setContent(Message message) {
 			Resources resources = mainView.thisActivity.getResources();
-			Bitmap bitmap = BitmapFactory.decodeResource(resources,
-					R.drawable.face_man);
+			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			headView.setImageBitmap(bitmap);
 			nickNameView.setText(message.nickName);
 			lastChatMessageView.setText(message.content);
-			lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long
-					.valueOf(message.time)));
+			lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			notReadNumberView.setText("1");
 		}
 	}

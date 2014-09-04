@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,9 +12,12 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
+import com.open.lib.MyLog;
 
 public class PagerBody {
 	public String tag = "PagerBody";
+	public MyLog log = new MyLog(tag, false);
+
 	public DisplayMetrics displayMetrics;
 	public Spring mSpring;
 	public PagerSpringListener mPagerSpringListener;
@@ -69,14 +71,14 @@ public class PagerBody {
 	public boolean isActive = true;
 
 	public void active() {
-		Log.d(tag, "active");
+		log.d(tag, "active");
 		isActive = true;
 		this.bodyStatus.state = this.bodyStatus.FIXED;
 		this.touchStatus.state = this.touchStatus.None;
 	}
 
 	public void inActive() {
-		Log.d(tag, "inActive");
+		log.d(tag, "inActive");
 		this.isActive = false;
 		this.touchStatus.state = this.touchStatus.None;
 	}
@@ -108,7 +110,7 @@ public class PagerBody {
 				this.setChildrenPosition((float) deltaX, 0);
 			}
 		} else {
-			Log.d(tag, "render skip");
+			log.d(tag, "render skip");
 		}
 	}
 
@@ -117,7 +119,7 @@ public class PagerBody {
 			return;
 		}
 		if (this.bodyStatus.state == this.bodyStatus.HOMING) {
-			Log.d(tag, "stopChange myPagerBody.status.FIXED");
+			// Log.d(tag, "stopChange myPagerBody.status.FIXED");
 			this.bodyStatus.state = this.bodyStatus.FIXED;
 			this.pageIndex = this.nextPageIndex;
 
@@ -156,7 +158,7 @@ public class PagerBody {
 				if (deltaY > deltaX) {
 					touchStatus.state = touchStatus.Vertical;
 					touch_pre_y = y;
-					Log.e(tag, "Vertical moving");
+					log.e(tag, "Vertical moving");
 				} else {
 					touchStatus.state = touchStatus.Horizontal;
 					if (this.bodyStatus.state == this.bodyStatus.FIXED || this.bodyStatus.state == this.bodyStatus.HOMING) {
@@ -173,10 +175,10 @@ public class PagerBody {
 						this.bodyStatus.state = this.bodyStatus.DRAGGING;
 						this.bodyCallback.onStart(tag, this.pageIndex);
 					} else {
-						Log.e(tag, "thisView.myPagerBody.status error: " + this.bodyStatus.state);
+						log.e(tag, "thisView.myPagerBody.status error: " + this.bodyStatus.state);
 					}
 					touch_pre_x = x;
-					Log.e(tag, "Horizontal moving");
+					log.e(tag, "Horizontal moving");
 				}
 			}
 		} else if (touchStatus.state == touchStatus.Horizontal) {
@@ -303,7 +305,7 @@ public class PagerBody {
 
 			mSpring.setEndValue(nextPageIndex);
 			this.bodyCallback.onFlipping(tag, this.nextPageIndex);
-			Log.d(tag, "homing to " + this.nextPageIndex);
+			log.d(tag, "homing to " + this.nextPageIndex);
 		}
 	}
 
@@ -320,12 +322,12 @@ public class PagerBody {
 		mSpring.setEndValue(nextPageIndex);
 		this.bodyCallback.onFlipping(tag, this.nextPageIndex);
 
-		Log.d(tag, "flip to(step) " + this.nextPageIndex);
+		log.d(tag, "flip to(step) " + this.nextPageIndex);
 	}
 
 	public void flipTo(int toIndex) {
 		if (toIndex != this.nextPageIndex) {
-			Log.d(tag, "flipTo: " + toIndex);
+			log.d(tag, "flipTo: " + toIndex);
 			bodyStatus.state = bodyStatus.HOMING;
 			mSpring.setCurrentValue(-x / displayMetrics.widthPixels);
 			this.nextPageIndex = toIndex;
@@ -339,7 +341,7 @@ public class PagerBody {
 			mSpring.setEndValue(nextPageIndex);
 			this.bodyCallback.onFlipping(tag, this.nextPageIndex);
 
-			Log.d(tag, "flip to " + this.nextPageIndex);
+			log.d(tag, "flip to " + this.nextPageIndex);
 		}
 	}
 

@@ -58,7 +58,7 @@ public class MainView {
 	public ImageView main_pager_indicator;
 
 	public TouchView friendsView;
-	public RelativeLayout messagesView;
+	public TouchView messagesView;
 	public RelativeLayout meView;
 
 	public RelativeLayout messages_friends_me_View;
@@ -141,7 +141,7 @@ public class MainView {
 
 		messages_friends_me_menuView = (RelativeLayout) thisActivity.findViewById(R.id.messages_friends_me_menu_view);
 
-		messagesView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.messagesContainer);
+		messagesView = (TouchView) messages_friends_me_View.findViewById(R.id.messagesContainer);
 
 		friendsView = (TouchView) messages_friends_me_View.findViewById(R.id.friendsContainer);
 
@@ -204,9 +204,33 @@ public class MainView {
 				} else if (variable == 2) {
 					if (lastOnFlipingIndex == 1) {
 						Log.d(tag, "bodyTag onFliping:" + variable + "  lastOnFlipingIndex: " + lastOnFlipingIndex);
-						thisView.messages_friends_me_PagerBody.active();
-						thisView.mainPagerBody.inActive();
+						
 						thisView.activityStatus.state = thisView.activityStatus.subState;
+						thisView.mainPagerBody.inActive();
+						thisView.messages_friends_me_PagerBody.active();
+						if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
+
+							thisView.shareSubView.shareMessageListBody.inActive();
+							thisView.shareSubView.groupListBody.inActive();
+							thisView.messagesSubView.messageListBody.active();
+							thisView.friendsSubView.friendListBody.inActive();
+
+						} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+
+							thisView.shareSubView.shareMessageListBody.inActive();
+							thisView.shareSubView.groupListBody.inActive();
+							thisView.messagesSubView.messageListBody.inActive();
+							thisView.friendsSubView.friendListBody.active();
+
+						} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
+							thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
+
+							thisView.shareSubView.shareMessageListBody.inActive();
+							thisView.shareSubView.groupListBody.inActive();
+							thisView.messagesSubView.messageListBody.inActive();
+							thisView.friendsSubView.friendListBody.inActive();
+
+						}
 					}
 					lastOnFlipingIndex = -1;
 				}
@@ -221,30 +245,47 @@ public class MainView {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
 					thisView.activityStatus.subState = thisView.activityStatus.MESSAGES;
+
+					thisView.shareSubView.shareMessageListBody.inActive();
+					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.active();
+					thisView.friendsSubView.friendListBody.inActive();
 				} else if (variable == 1) {
 					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
 					thisView.activityStatus.subState = thisView.activityStatus.FRIENDS;
+
+					thisView.shareSubView.shareMessageListBody.inActive();
+					thisView.shareSubView.groupListBody.inActive();
+					thisView.messagesSubView.messageListBody.inActive();
 					thisView.friendsSubView.friendListBody.active();
 				} else if (variable == 2) {
 					thisView.activityStatus.state = thisView.activityStatus.ME;
 					thisView.activityStatus.subState = thisView.activityStatus.ME;
+
+					thisView.shareSubView.shareMessageListBody.inActive();
+					thisView.shareSubView.groupListBody.inActive();
+					thisView.messagesSubView.messageListBody.inActive();
+					thisView.friendsSubView.friendListBody.inActive();
 				}
 			} else if (bodyTag.equals("mainPagerBody")) {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.SQUARE;
+
+					thisView.shareSubView.shareMessageListBody.inActive();
+					thisView.shareSubView.groupListBody.inActive();
+					thisView.messagesSubView.messageListBody.inActive();
+					thisView.friendsSubView.friendListBody.inActive();
+
 				} else if (variable == 1) {
 					thisView.activityStatus.state = thisView.activityStatus.SHARE;
+
 					thisView.shareSubView.shareMessageListBody.active();
+					thisView.shareSubView.groupListBody.inActive();
+					thisView.messagesSubView.messageListBody.inActive();
+					thisView.friendsSubView.friendListBody.inActive();
+
 				} else if (variable == 2) {
-					thisView.activityStatus.state = thisView.activityStatus.subState;
-					thisView.mainPagerBody.inActive();
-					thisView.messages_friends_me_PagerBody.active();
-					if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
-						thisView.friendsSubView.friendListBody.active();
-					} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
-						thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
-					}
+					
 
 				}
 			}

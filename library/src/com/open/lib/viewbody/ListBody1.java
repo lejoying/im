@@ -6,16 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.open.lib.MyLog;
 import com.open.lib.OpenLooper;
 import com.open.lib.OpenLooper.LoopCallback;
 
 public class ListBody1 {
 	public String tag = "ListBody";
+	public MyLog log = new MyLog(tag, false);
+
 	public DisplayMetrics displayMetrics;
 
 	public View initialize(DisplayMetrics displayMetrics, View containerView) {
@@ -92,7 +94,7 @@ public class ListBody1 {
 	float touch_pre_y = 0;
 
 	public void onTouchDown(MotionEvent event) {
-		// Log.i(tag, "bodyStatus:  " + this.bodyStatus.state + "     touchStatus:  " + this.touchStatus.state);
+		// log.i(tag, "bodyStatus:  " + this.bodyStatus.state + "     touchStatus:  " + this.touchStatus.state);
 		if (isActive == false) {
 			return;
 		}
@@ -104,7 +106,7 @@ public class ListBody1 {
 			this.openLooper.stop();
 			this.bodyStatus.state = this.bodyStatus.FIXED;
 		} else {
-			// Log.e(tag, "unkown status: not touchMoveStatus.Up");
+			// log.e(tag, "unkown status: not touchMoveStatus.Up");
 		}
 
 		touch_pre_x = x;
@@ -132,11 +134,11 @@ public class ListBody1 {
 					touchStatus.state = touchStatus.Vertical;
 					touch_pre_y = y;
 
-					// Log.e(tag, "Vertical moving");
+					// log.e(tag, "Vertical moving");
 				} else {
 					touchStatus.state = touchStatus.Horizontal;
 					touch_pre_x = x;
-					// Log.e(tag, "Horizontal moving");
+					// log.e(tag, "Horizontal moving");
 				}
 			}
 		} else if (touchStatus.state == touchStatus.Vertical) {
@@ -176,7 +178,7 @@ public class ListBody1 {
 		} else if (touchStatus.state == touchStatus.Horizontal) {
 			y = touch_pre_y;
 		} else {
-			// Log.e(tag, "unkown status: touchMoveStatus.Up");
+			// log.e(tag, "unkown status: touchMoveStatus.Up");
 		}
 	}
 
@@ -225,7 +227,7 @@ public class ListBody1 {
 			}
 			sliding(speedY);
 		} else {
-			// Log.i(tag, "bodyStatus error:" + this.bodyStatus.state);
+			// log.i(tag, "bodyStatus error:" + this.bodyStatus.state);
 		}
 	}
 
@@ -233,7 +235,7 @@ public class ListBody1 {
 	public String orderingItemKey;
 
 	public void onOrdering(String key) {
-		// Log.e(tag, "LongPress");
+		// log.e(tag, "LongPress");
 		if (this.bodyStatus.state == this.bodyStatus.FIXED) {
 			this.orderingItemKey = key;
 			this.touchStatus.state = this.touchStatus.LongPress;
@@ -242,7 +244,7 @@ public class ListBody1 {
 			orderingItemBody = listItemBodiesMap.get(key);
 			resolveNextPosition();
 		} else {
-			// Log.i(tag, "this.bodyStatus.state:  " + this.bodyStatus.state);
+			// log.i(tag, "this.bodyStatus.state:  " + this.bodyStatus.state);
 		}
 	}
 

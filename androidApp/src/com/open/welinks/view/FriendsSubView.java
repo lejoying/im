@@ -28,8 +28,8 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.open.lib.TouchView;
-import com.open.lib.viewbody.ListBody;
-import com.open.lib.viewbody.ListBody.MyListItemBody;
+import com.open.lib.viewbody.ListBody1;
+import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.model.Data;
@@ -47,7 +47,7 @@ public class FriendsSubView {
 
 	public TouchView friendsView;
 
-	public ListBody friendListBody;
+	public ListBody1 friendListBody;
 
 	public List<String> circles;
 	public Map<String, Circle> circlesMap;
@@ -68,7 +68,7 @@ public class FriendsSubView {
 		this.displayMetrics = mainView.displayMetrics;
 
 		friendsView = (TouchView) mainView.friendsView.findViewById(R.id.friendsContainer);
-		friendListBody = new ListBody();
+		friendListBody = new ListBody1();
 		friendListBody.initialize(displayMetrics, friendsView);
 
 	}
@@ -92,21 +92,24 @@ public class FriendsSubView {
 			this.friendListBody.listItemsSequence.add("circle#" + circle.rid);
 			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
-			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) circleBody.itemHeight);
-			circleBody.y = this.friendListBody.height + 2 * displayMetrics.density;
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 10 * displayMetrics.density));
+			circleBody.y = this.friendListBody.height;
 			circleBody.cardView.setY(circleBody.y);
 			circleBody.cardView.setX(0);
 
 			this.friendListBody.containerView.addView(circleBody.cardView, layoutParams);
-			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight + 10 * displayMetrics.density;
-			Log.d(tag, "addView");
+			this.friendListBody.height = this.friendListBody.height + circleBody.itemHeight;
+			// Log.d(tag, "addView");
+			Log.v(tag, "this.friendListBody.height: " + this.friendListBody.height + "    circleBody.y:  " + circleBody.y);
 
 		}
+
+		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
 	}
 
 	public class CircleBody extends MyListItemBody {
 
-		CircleBody(ListBody listBody) {
+		CircleBody(ListBody1 listBody) {
 			listBody.super();
 		}
 
@@ -157,7 +160,7 @@ public class FriendsSubView {
 			if (lineCount == 0) {
 				lineCount = 1;
 			}
-			itemHeight = (164 + lineCount * 96) * displayMetrics.density;
+			itemHeight = (174 + lineCount * 96) * displayMetrics.density;
 
 			this.friendsSequence.clear();
 			for (int i = 0; i < circle.friends.size(); i++) {

@@ -107,7 +107,7 @@ public class TestListView {
 			this.friendListBody.listItemsSequence.add("circle#" + circle.rid);
 			this.friendListBody.listItemBodiesMap.put("circle#" + circle.rid, circleBody);
 
-			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 00 * displayMetrics.density));
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (circleBody.itemHeight - 10 * displayMetrics.density));
 			circleBody.y = this.friendListBody.height;
 			circleBody.cardView.setY(circleBody.y);
 			circleBody.cardView.setX(0);
