@@ -15,6 +15,10 @@ public class API {
 	 * http://www.we-links.com/api2/account/modify
 	 */
 	public static String ACCOUNT_MODIFY = "http://www.we-links.com/api2/account/modify";
+	/**
+	 * http://www.we-links.com/api2/account/auth
+	 */
+	public static String ACCOUNT_AUTH = "http://www.we-links.com/api2/account/auth";
 
 	// group
 	/**
