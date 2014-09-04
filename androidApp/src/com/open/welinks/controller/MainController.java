@@ -261,10 +261,7 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
-				if (thisView.shareSubView.groupPopWindow.isShowing()) {
-					thisView.shareSubView.groupListBody.onTouchDown(event);
-					Log.e(tag, "----------dialog down");
-				}
+				thisView.shareSubView.groupListBody.onTouchDown(event);
 			}
 
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
@@ -277,10 +274,7 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
-				if (thisView.shareSubView.groupPopWindow.isShowing()) {
-					thisView.shareSubView.groupListBody.onTouchMove(event);
-					Log.e(tag, "----------dialog move");
-				}
+				thisView.shareSubView.groupListBody.onTouchMove(event);
 			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
@@ -294,10 +288,7 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onSingleTapUp(event);
 				thisView.shareSubView.shareMessageListBody.onTouchUp(event);
-				if (thisView.shareSubView.groupPopWindow.isShowing()) {
-					thisView.shareSubView.groupListBody.onTouchUp(event);
-					Log.e(tag, "----------dialog up");
-				}
+				thisView.shareSubView.groupListBody.onTouchUp(event);
 			}
 		}
 		mGesture.onTouchEvent(event);
@@ -363,6 +354,14 @@ public class MainController {
 				Log.i(tag, "bodyStatus error:" + thisView.shareSubView.shareMessageListBody.bodyStatus.state);
 			}
 
+			if (thisView.shareSubView.groupListBody.bodyStatus.state == thisView.shareSubView.groupListBody.bodyStatus.DRAGGING) {
+				thisView.shareSubView.groupListBody.onFling(velocityX, velocityY);
+			} else if (thisView.shareSubView.groupListBody.bodyStatus.state == thisView.shareSubView.groupListBody.bodyStatus.FIXED) {
+				thisView.shareSubView.groupListBody.onFling(velocityX, velocityY);
+			} else {
+				Log.i(tag, "bodyStatus error:" + thisView.shareSubView.groupListBody.bodyStatus.state);
+			}
+
 			// if (thisView.chatMessageListBody.bodyStatus.state ==
 			// thisView.chatMessageListBody.bodyStatus.DRAGGING) {
 			// thisView.chatMessageListBody.onFling(velocityX, velocityY);
@@ -373,6 +372,9 @@ public class MainController {
 		public void onLongPress(MotionEvent event) {
 			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				friendsSubController.onLongPress(event);
+			}
+			if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
+				shareSubController.onLongPress(event);
 			}
 
 		}

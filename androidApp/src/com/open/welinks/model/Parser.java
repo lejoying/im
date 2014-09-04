@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Shares;
+import com.open.welinks.model.Data.Squares;
 import com.open.welinks.model.Data.UserInformation;
 
 public class Parser {
@@ -53,6 +54,10 @@ public class Parser {
 		String shareContent = getFromAssets("share.js");
 		Shares shares = gson.fromJson(shareContent, Shares.class);
 		data.shares = shares;
+
+		String squareContent = getFromAssets("square.js");
+		Squares squares = gson.fromJson(squareContent, Squares.class);
+		data.squares = squares;
 
 		int i = 1;
 		i = i + 68;

@@ -2,6 +2,7 @@ package com.open.welinks;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.open.welinks.controller.GroupMemberManageController;
@@ -37,5 +38,11 @@ public class GroupMemberManageActivity extends Activity {
 		thisController.onCreate();
 		thisController.initializeListeners();
 		thisController.bindEvent();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		thisController.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

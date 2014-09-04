@@ -234,7 +234,7 @@ public class ListBody1 {
 	public MyListItemBody orderingItemBody;
 	public String orderingItemKey;
 
-	public void onOrdering(String key) {
+	public void startOrdering(String key) {
 		// log.e(tag, "LongPress");
 		if (this.bodyStatus.state == this.bodyStatus.FIXED) {
 			this.orderingItemKey = key;
@@ -248,7 +248,7 @@ public class ListBody1 {
 		}
 	}
 
-	public void onStopOrdering() {
+	public void stopOrdering() {
 		if (this.bodyStatus.state == this.bodyStatus.ORDERING || this.bodyStatus.state == this.bodyStatus.ORDERINGHOMING) {
 			this.touchStatus.state = this.touchStatus.Up;
 			this.bodyStatus.state = this.bodyStatus.ORDERINGHOMING;
@@ -256,6 +256,56 @@ public class ListBody1 {
 			this.orderingItemKey = null;
 			this.orderingItemBody = null;
 			this.resolveOffset();
+		}
+	}
+
+	public BodyCallback bodyCallback = null;
+
+	public void onStopOrdering() {
+		sortListOrder();
+
+		log.i(listItemsSequence.toString());
+		logListOrder();
+
+		// bodyCallback = new BodyCallback();
+		if (bodyCallback != null) {
+			bodyCallback.onStopOrdering(listItemsSequence);
+		}
+	}
+
+	public void logListOrder() {
+
+		int listSize = listItemsSequence.size();
+
+		for (int i = 0; i < listSize; i++) {
+			String key = listItemsSequence.get(i);
+			float y = listItemBodiesMap.get(key).y;
+			log.d("key:" + key + "   y:" + y);
+		}
+	}
+
+	public void sortListOrder() {
+
+		int listSize = listItemsSequence.size();
+		int lastSwichindex = listSize - 1;
+
+		for (int i = 0; i < listSize; i++) {
+
+			int innerSize = lastSwichindex;
+			lastSwichindex = 0;
+			for (int j = 0; j < innerSize; j++) {
+
+				String key1 = listItemsSequence.get(j);
+				String key2 = listItemsSequence.get(j + 1);
+				float y1 = listItemBodiesMap.get(key1).y;
+				float y2 = listItemBodiesMap.get(key2).y;
+
+				if (y1 > y2) {
+					lastSwichindex = j;
+					listItemsSequence.set(j + 1, key1);
+					listItemsSequence.set(j, key2);
+				}
+			}
 		}
 	}
 
@@ -421,6 +471,8 @@ public class ListBody1 {
 		if (ifStop) {
 			bodyStatus.state = bodyStatus.FIXED;
 			this.openLooper.stop();
+
+			this.onStopOrdering();
 		}
 	}
 

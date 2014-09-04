@@ -1,5 +1,6 @@
 package com.open.welinks.view;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -81,13 +81,15 @@ public class GroupMemberManageView {
 		this.groupMemberGridView.setAdapter(groupMembersAdapter);
 	}
 
+	public List<String> subtractMembers = new ArrayList<String>();
+
 	public class GroupMembersAdapter extends BaseAdapter {
 
-		public List<String> members;
+		public List<String> members = new ArrayList<String>();
 		public Map<String, Friend> friendsMap;
 
 		public GroupMembersAdapter() {
-			members = thisController.currentGroup.members;
+			members.addAll(thisController.currentGroup.members);
 			friendsMap = data.relationship.friendsMap;
 			groupMemberCountView.setText("成员管理 ( " + members.size() + "人 )");
 		}
@@ -101,9 +103,9 @@ public class GroupMemberManageView {
 		@Override
 		public int getCount() {
 			if (isSubtract == MANAGE_COMMON) {
-				return thisController.currentGroup.members.size() + 2;
+				return members.size() + 2;
 			} else {
-				return thisController.currentGroup.members.size();
+				return members.size();
 			}
 		}
 
@@ -147,29 +149,9 @@ public class GroupMemberManageView {
 				}
 				imageHolder.nickNameView.setText(nickName);
 				imageHolder0.imageContent.setImageBitmap(defaultBitmapHead);
-				if (isSubtract == MANAGE_COMMON) {
-					convertView.setOnClickListener(new OnClickListener() {
 
-						@Override
-						public void onClick(View v) {
-						}
-					});
-				}
-				if (isSubtract == MANAGE_SUBTRACT) {
-					convertView.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							// if (app.data.user.phone.equals(friend.phone)) {
-							// Alert.showMessage("不能把自己移出群组");
-							// } else {
-							// subtractMembers.add(friend.phone);
-							// groupMembers.remove(position);
-							// groupMembersAdapter.notifyDataSetChanged();
-							// }
-						}
-					});
-				}
+				convertView.setTag(R.id.iv_image, "subtractonclick#" + friend.phone);
+				convertView.setOnClickListener(thisController.mOnClickListener);
 			} else {
 				if (isSubtract == MANAGE_COMMON) {
 					imageHolder.nickNameView.setText("");

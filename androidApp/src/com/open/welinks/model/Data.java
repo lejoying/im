@@ -78,6 +78,7 @@ public class Data {
 	public Relationship relationship;
 	public Messages messages;
 	public Shares shares;
+	public Squares squares;
 
 	public class UserInformation {
 		public User currentUser;
@@ -197,6 +198,47 @@ public class Data {
 			public Map<String, ShareMessage> sharesMap = new HashMap<String, ShareMessage>();
 
 			public class ShareMessage {
+				public int MAXTYPE_COUNT = 3;
+				public int MESSAGE_TYPE_IMAGETEXT = 0x01;
+				public int MESSAGE_TYPE_VOICETEXT = 0x02;
+				public int MESSAGE_TYPE_VOTE = 0x03;
+
+				public int mType;// MESSAGE_TYPE
+				public String gsid;
+				public String type;// imagetext voicetext vote
+				public String phone;
+				public long time;
+				public List<String> praiseusers = new ArrayList<String>();
+				public List<Comment> comments = new ArrayList<Comment>();
+				public String content;
+				public String status;// sending sent failed
+			}
+
+			public class Comment {
+				public String phone;
+				public String nickName;
+				public String head;
+				public String phoneTo;
+				public String nickNameTo;
+				public String headTo;
+				public String contentType;// "text"
+				public String content;
+				public long time;
+			}
+		}
+	}
+
+	public class Squares {
+
+		public Map<String, Square> squareMap = new HashMap<String, Square>();
+
+		public class Square {
+
+			public List<String> squaresOrder = new ArrayList<String>();
+
+			public Map<String, Square> squaresMap = new HashMap<String, Square>();
+
+			public class SquareMessage {
 				public int MAXTYPE_COUNT = 3;
 				public int MESSAGE_TYPE_IMAGETEXT = 0x01;
 				public int MESSAGE_TYPE_VOICETEXT = 0x02;

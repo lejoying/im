@@ -159,7 +159,7 @@ public class TestListController {
 			int contentTop = thisActivity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
 			// statusBarHeight是上面所求的状态栏的高度
 			int titleBarHeight = contentTop - statusBarHeight;
-			
+
 			Log.v(tag, "statusBarHeight: " + statusBarHeight + "    titleBarHeight:" + titleBarHeight);
 
 			thisController.onLongPress(event);
@@ -218,7 +218,7 @@ public class TestListController {
 				long[] pattern = { 100, 100, 300 };
 				vibrator.vibrate(pattern, -1);
 
-				thisView.friendListBody.onOrdering("circle#" + circle.rid);
+				thisView.friendListBody.startOrdering("circle#" + circle.rid);
 			}
 
 		}
@@ -233,7 +233,7 @@ public class TestListController {
 
 				onTouchDownView = null;
 				onTouchDownCircle = null;
-				thisView.friendListBody.onStopOrdering();
+				thisView.friendListBody.stopOrdering();
 			}
 			if (onClickView != null) {
 				String view_class = (String) onClickView.getTag(R.id.tag_class);

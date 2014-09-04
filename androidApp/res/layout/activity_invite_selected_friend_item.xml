@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/ll_nickNameType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_nickNameFirst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="10dp"
+            android:text="A"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:background="#fff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_friendinfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/iv_friendHead"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp" />
+
+        <ImageView
+            android:id="@+id/iv_friendHeadStatus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="-40dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/group_members_add"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_friendNickName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="乔晓松"
+            android:textColor="#fff" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#26ffffff" />
+
+</LinearLayout>

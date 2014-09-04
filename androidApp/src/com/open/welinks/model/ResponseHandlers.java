@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.controller.Debug1Controller;
@@ -171,6 +172,7 @@ public class ResponseHandlers {
 						data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
 					}
 					// Set the option group dialog content
+					Log.e(tag, data.relationship.groups.toString());
 					viewManage.mainView.shareSubView.setGroupsDialogContent();
 					viewManage.mainView.shareSubView.showShareMessages();
 					viewManage.mainView.shareSubView.showGroupMembers();
@@ -375,7 +377,6 @@ public class ResponseHandlers {
 				Log.e(tag, "---------------------删除成功");
 			}
 		};
-
 	};
 	public ResponseHandler<String> relation_addfriend = httpClient.new ResponseHandler<String>() {
 		class Response {
@@ -388,6 +389,31 @@ public class ResponseHandlers {
 				Log.e(tag, "---------------------发送请求成功");
 			}
 		};
+	};
 
+	public RequestCallBack<String> modifyCircleSequenceCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改分组顺序成功")) {
+				Log.e(tag, "---------------------修改分组顺序成功");
+			}
+		};
+	};
+
+	public RequestCallBack<String> modifyGroupSequenceCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改群组顺序成功")) {
+				Log.e(tag, "---------------------修改群组顺序成功");
+			}
+		};
 	};
 }

@@ -1,8 +1,11 @@
 package com.open.welinks.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Service;
-import android.os.Vibrator;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -11,11 +14,18 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 
+import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Circle;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.FriendsSubView.CircleBody;
 
@@ -25,6 +35,8 @@ public class FriendsSubController {
 
 	public String tag = "UserIntimateActivity";
 
+	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+
 	public FriendsSubView thisView;
 	public FriendsSubController thisController;
 	public OnClickListener mOnClickListener;
@@ -32,6 +44,8 @@ public class FriendsSubController {
 
 	public OnLongClickListener onLongClickListener;
 	public OnTouchListener onTouchListener;
+
+	public BodyCallback bodyCallback;
 
 	public View onTouchDownView;
 	public View onClickView;
@@ -91,9 +105,27 @@ public class FriendsSubController {
 				return false;
 			}
 		};
+		bodyCallback = new BodyCallback() {
+			@Override
+			public void onStopOrdering(List<String> listItemsSequence) {
+				super.onStopOrdering(listItemsSequence);
+				List<String> rids = new ArrayList<String>();
+				for (int i = 0; i < listItemsSequence.size(); i++) {
+					String key = listItemsSequence.get(i);
+					rids.add(key.substring(key.indexOf("#") + 1));
+				}
+				// modify local data
+				data.relationship.circles = rids;
+				Gson gson = new Gson();
+				String ridSequence = gson.toJson(rids);
+				// modify server data
+				modifyGroupSequence(ridSequence);
+			}
+		};
 	}
 
 	public void bindEvent() {
+		thisView.friendListBody.bodyCallback = this.bodyCallback;
 
 	}
 
@@ -117,7 +149,7 @@ public class FriendsSubController {
 				long[] pattern = { 100, 100, 300 };
 				vibrator.vibrate(pattern, -1);
 
-				thisView.friendListBody.onOrdering("circle#" + circle.rid);
+				thisView.friendListBody.startOrdering("circle#" + circle.rid);
 			}
 
 		}
@@ -132,7 +164,7 @@ public class FriendsSubController {
 
 				onTouchDownView = null;
 				onTouchDownCircle = null;
-				thisView.friendListBody.onStopOrdering();
+				thisView.friendListBody.stopOrdering();
 			}
 			if (onClickView != null) {
 				String view_class = (String) onClickView.getTag(R.id.tag_class);
@@ -176,4 +208,13 @@ public class FriendsSubController {
 		onClickView = null;
 	}
 
+	public void modifyGroupSequence(String circleSequence) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("sequence", circleSequence);
+
+		httpUtils.send(HttpMethod.POST, API.RELATION_MODIFYCIRCLESEQUENCE, params, responseHandlers.modifyCircleSequenceCallBack);
+	}
 }

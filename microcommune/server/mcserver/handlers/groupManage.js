@@ -1060,7 +1060,7 @@ groupManage.getgroupmembers = function (data, response) {
         var query = [
             'MATCH (account:Account)<-[HAS_MEMBER]-(group:Group)',
             'WHERE account.phone={phone}',
-            'RETURN group'
+            'RETURN account,group'
         ].join('\n');
         var params = {
             phone: phone
@@ -1077,11 +1077,63 @@ groupManage.getgroupmembers = function (data, response) {
             } else if (results.length > 0) {
                 var length = results.length;
                 var count = 0;
+                var accountNode;
+                var groupOrder = {};
                 for (var index in results) {
+                    if (count == 0) {
+                        accountNode = results[index].account;
+                    }
                     count++;
                     var groupData = results[index].group.data;
-                    groups.push(groupData.gid);
+                    groups.push(parseInt(groupData.gid));
+                    groupOrder[groupData.gid] = index;
                     if (count == length) {
+                        var accountData = accountNode.data;
+                        var groupsOrdering = null;
+                        if (accountData.groupsSequenceString) {
+                            try {
+                                groupsOrdering = JSON.parse(accountData.groupsSequenceString);
+                            } catch (e) {
+                                groupsOrdering = null
+                            }
+                        }
+                        var newCirclesOrdering;
+                        if (groupsOrdering == null) {
+                            accountData.groupsSequenceString = JSON.stringify(groups);
+                            accountNode.save(function (err, node) {
+                                if (!err) {
+                                    console.log("重置群组顺序数据成功");
+                                }
+                            });
+                        } else {
+                            newCirclesOrdering = [];
+                            var isDataConsistentcy = true;
+                            for (var index in groupsOrdering) {
+                                var gid = groupsOrdering[index];
+                                if (groupOrder[gid]) {
+                                    newCirclesOrdering.push(parseInt(gid));
+                                    groupOrder[gid] = "delete";
+                                } else {
+                                    isDataConsistentcy = false;
+                                }
+                            }
+                            for (var index in groupOrder) {
+                                if (isDataConsistentcy && groupOrder[index] != "delete") {
+                                    isDataConsistentcy = false;
+                                }
+                                if (groupOrder[index] != "delete") {
+                                    newCirclesOrdering.push(parseInt(index));
+                                }
+                            }
+                            if (!isDataConsistentcy) {
+                                accountData.groupsSequenceString = JSON.stringify(newCirclesOrdering);
+                                accountNode.save(function (err, node) {
+                                    console.log("初始化群组顺序数据成功");
+                                });
+                            }
+                            groups = newCirclesOrdering;
+                        }
+//                        console.error(groups);
                         getGroupsMembers(groups);
                     }
                 }
@@ -1117,7 +1169,7 @@ groupManage.getgroupmembers = function (data, response) {
                 console.log(error);
                 return;
             } else {
-                groups = [];
+//                groups = [];
                 for (var index in results) {
                     var it = results[index];
                     var groupData = it.group.data;
@@ -1158,7 +1210,7 @@ groupManage.getgroupmembers = function (data, response) {
                     };
                     friendsMap[account.phone] = account;
                     if (!groupsMap[groupData.gid + ""]) {
-                        groups.push(groupData.gid + "");
+//                        groups.push(groupData.gid + "");
                         var group = {
                             gid: groupData.gid,
                             icon: groupData.icon,
@@ -1185,6 +1237,49 @@ groupManage.getgroupmembers = function (data, response) {
                         groups: groups,
                         groupsMap: groupsMap
                     }
+                }), response);
+            }
+        });
+    }
+}
+groupManage.modifysequence = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var groupSequence = data.sequence;
+    modifyGroupSeqence();
+    function modifyGroupSeqence() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组顺序失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组顺序失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                accountData.groupsSequenceString = groupSequence;
+                accountNode.save(function (err, node) {
+                    if (err) {
+                        console.info(err);
+                    }
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改群组顺序成功"
                 }), response);
             }
         });
