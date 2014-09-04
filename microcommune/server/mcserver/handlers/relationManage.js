@@ -1250,6 +1250,52 @@ relationManage.intimatefriends = function (data, response) {
         );
     }
 }
+//   /api2 / relation / modifysequence
+
+relationManage.modifysequence = function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var circleSequence = data.sequence;
+    modifyAccountSeqence();
+    function modifyAccountSeqence() {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改分组顺序失败",
+                    "失败原因": "数据异常"
+                }), response);
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改分组顺序失败",
+                    "失败原因": "用户不存在"
+                }), response);
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                accountData.circlesOrderString = circleSequence;
+                accountNode.save(function (err, node) {
+                    if (error) {
+                        console.error(err);
+                    }
+                });
+                ResponseData(JSON.stringify({
+                    "提示信息": "修改分组顺序成功"
+                }), response);
+            }
+        });
+    }
+}
+
 function ResponseData(responseContent, response) {
     response.writeHead(200, {
         "Content-Type": "application/json; charset=UTF-8",

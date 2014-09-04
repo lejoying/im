@@ -144,6 +144,11 @@ requestHandlers.relationManage = function (request, response, pathObject, data) 
             relationManage.intimatefriends(data, response);
         });
     }
+    else if (operation == "modifysequence") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            relationManage.modifysequence(data, response);
+        });
+    }
 
 }
 
@@ -265,6 +270,11 @@ requestHandlers.groupManage = function (request, response, pathObject, data) {
     else if (operation == "getgroupmembers") {
         oauth6(data.phone, data.accessKey, response, function () {
             groupManage.getgroupmembers(data, response);
+        });
+    }
+    else if (operation == "modifysequence") {
+        oauth6(data.phone, data.accessKey, response, function () {
+            groupManage.modifysequence(data, response);
         });
     }
 }

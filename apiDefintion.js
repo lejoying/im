@@ -382,6 +382,19 @@ api = {
             success: {"提示信息": "获取密友圈成功", relationship: {circles: [], circlesMap: {}, friendsMap: {}}},
             failed: {"提示信息": "获取密友圈失败", "失败原因": "数据异常"}
         }
+    },
+    "relation_modifysequence": {
+        description: {
+            id: 10003079,
+            url: "/api2/relation/modifysequence"
+        },
+        request: {
+            typical: {"phone": "XXX", accessKey: "XXX", sequence: "[XXX,XXX,XXX,XXX,XXX]"}
+        },
+        response: {
+            success: {"提示信息": "修改分组顺序成功"},
+            failed: {"提示信息": "修改分组顺序失败", "失败原因": "数据异常" || "用户不存在"}
+        }
     }
 }
 /*************************************** ***************************************
@@ -965,6 +978,19 @@ api = {
             success: {"提示信息": "获取群组成功", relationship: {friendsMap: {}, groups: [], groupsMap: {}}},
             failed: {"提示信息": "获取群组失败", "失败原因": "数据异常"}
         }
+    },
+    "group_modifysequence": {
+        description: {
+            id: 1001009,
+            url: "/api2/group/modifysequence"
+        },
+        request: {
+            typical: {"phone": "XXX", accessKey: "XXX", sequence: "[XXX,XXX,XXX,XXX,XXX]"}
+        },
+        response: {
+            success: {"提示信息": "修改群组顺序成功"},
+            failed: {"提示信息": "修改群组顺序失败", "失败原因": "数据异常" || "用户不存在"}
+        }
     }
 }
 /*************************************** ***************************************
@@ -1328,7 +1354,7 @@ api = {
             url: "/api2/share/addcomment"
         },
         request: {
-            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", head: "XXX", phoneTo:"NNN",nickNameTo:"XXX",gid: "XXX", gsid: "NNN", contentType: "text", content: "XXX"}
+            typical: {phone: "XXX", accessKey: "XXX", nickName: "XXX", head: "XXX", phoneTo: "NNN", nickNameTo: "XXX", gid: "XXX", gsid: "NNN", contentType: "text", content: "XXX"}
         },
         response: {
             success: {"提示信息": "评论群分享成功", gid: "XXX", gsid: "NNN"},
