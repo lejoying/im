@@ -117,7 +117,7 @@ public class FriendsSubController {
 				long[] pattern = { 100, 100, 300 };
 				vibrator.vibrate(pattern, -1);
 
-				thisView.friendListBody.onOrdering("circle#" + circle.rid);
+				thisView.friendListBody.startOrdering("circle#" + circle.rid);
 			}
 
 		}
@@ -132,7 +132,7 @@ public class FriendsSubController {
 
 				onTouchDownView = null;
 				onTouchDownCircle = null;
-				thisView.friendListBody.onStopOrdering();
+				thisView.friendListBody.stopOrdering();
 			}
 			if (onClickView != null) {
 				String view_class = (String) onClickView.getTag(R.id.tag_class);

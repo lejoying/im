@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
+import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
@@ -58,8 +60,8 @@ public class ShareSubView {
 	public Data data = Data.getInstance();
 
 	public String tag = "ShareSubView";
-	
-	public MyLog log = new MyLog(tag, true);
+
+	public MyLog log = new MyLog(tag, false);
 
 	public DisplayMetrics displayMetrics;
 
@@ -76,10 +78,11 @@ public class ShareSubView {
 	public TextView shareTopMenuGroupName;
 
 	// group
-	public PopupWindow groupPopWindow;
+	// public PopupWindow groupPopWindow;
+	// pop layout
 	public View groupDialogView;
 
-	public RelativeLayout groupsDialogContent;
+	public TouchView groupsDialogContent;
 
 	public ListBody1 groupListBody;
 
@@ -186,7 +189,7 @@ public class ShareSubView {
 		List<String> sharesOrder = share.sharesOrder;
 		Map<String, ShareMessage> sharesMap = share.sharesMap;
 		ShareMessage lastShareMessage = null;
-		int timeBarCount = 0;
+		// int timeBarCount = 0;
 		for (int i = 0; i < sharesOrder.size(); i++) {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
@@ -253,8 +256,7 @@ public class ShareSubView {
 			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 		}
-		
-		
+
 		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
 	}
 
@@ -451,16 +453,14 @@ public class ShareSubView {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void initializationGroupsDialog() {
 		groupDialogView = mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
-		groupPopWindow = new PopupWindow(groupDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
-		groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
+		// groupPopWindow = new PopupWindow(groupDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		// groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
+		// groupPopWindow.setOutsideTouchable(true);
+
 		RelativeLayout mainContentView = (RelativeLayout) groupDialogView.findViewById(R.id.mainContent);
-
-		groupPopWindow.setOutsideTouchable(true);
-
-		groupsDialogContent = (RelativeLayout) groupDialogView.findViewById(R.id.groupsContent);
+		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
 		RelativeLayout.LayoutParams mainContentParams = (RelativeLayout.LayoutParams) mainContentView.getLayoutParams();
 		mainContentParams.height = (int) (displayMetrics.heightPixels * 0.7578125f);
 		mainContentParams.leftMargin = (int) (20 / displayMetrics.density + 0.5f);
@@ -474,21 +474,27 @@ public class ShareSubView {
 	}
 
 	public void showGroupsDialog() {
-		if (groupPopWindow != null && !groupPopWindow.isShowing())
-			groupListBody.active();
-		groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
+		groupListBody.active();
+		shareMessageListBody.inActive();
+		mainView.mainPagerBody.inActive();
+		// groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
+
+		mainView.main_container.addView(this.groupDialogView);
 	}
 
 	public void dismissGroupDialog() {
-		if (groupPopWindow != null && groupPopWindow.isShowing())
-			groupListBody.inActive();
-		groupPopWindow.dismiss();
+		groupListBody.inActive();
+		shareMessageListBody.active();
+		mainView.mainPagerBody.active();
+		// groupPopWindow.dismiss();
+		mainView.main_container.removeView(this.groupDialogView);
 	}
 
 	public void setGroupsDialogContent() {
 		List<String> groups = data.relationship.groups;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
 		groupsDialogContent.removeAllViews();
+		this.groupListBody.height = 0;
 		groupListBody.listItemsSequence.clear();
 		for (int i = 0; i < groups.size(); i++) {
 			Group group = groupsMap.get(groups.get(i));
@@ -507,8 +513,8 @@ public class ShareSubView {
 			groupDialogItem.setContent(group);
 			// groupDialogItem.setViewLayout();
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (60 * displayMetrics.density));
-			groupDialogItem.y = (60 * displayMetrics.density * i);
+			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 60), (int) (60 * displayMetrics.density));
+			groupDialogItem.y = this.groupListBody.height;
 			groupDialogItem.cardView.setY(groupDialogItem.y);
 			groupDialogItem.cardView.setX(0);
 			this.groupListBody.height = this.groupListBody.height + 60 * displayMetrics.density;
@@ -517,9 +523,16 @@ public class ShareSubView {
 			// onclick
 			view.setTag("GroupDialogContentItem#" + group.gid);
 			view.setTag(R.id.shareTopMenuGroupName, shareTopMenuGroupName);
+			// listener
+			view.setTag(R.id.tag_class, "group_view");
+			view.setTag(R.id.tag_first, group);
 			view.setOnClickListener(thisController.mOnClickListener);
+			view.setOnTouchListener(thisController.mOnTouchListener);
 
+			Log.v(tag, "this.friendListBody.height: " + this.groupListBody.height + "    circleBody.y:  " + groupDialogItem.y);
 		}
+		this.groupListBody.containerHeight = (int) (displayMetrics.heightPixels * 0.6578125f);
+
 	}
 
 	public void modifyCurrentShowGroup() {
@@ -543,6 +556,8 @@ public class ShareSubView {
 		public TextView groupNameView;
 		public ImageView groupSelectedStatusView;
 
+		public ImageView gripCardBackground;
+
 		public Group group;
 
 		public View initialize() {
@@ -550,6 +565,10 @@ public class ShareSubView {
 			this.groupIconView = (ImageView) this.cardView.findViewById(R.id.groupIcon);
 			this.groupNameView = (TextView) this.cardView.findViewById(R.id.groupName);
 			this.groupSelectedStatusView = (ImageView) this.cardView.findViewById(R.id.groupSelectedStatus);
+
+			this.gripCardBackground = (ImageView) this.cardView.findViewById(R.id.grip_card_background);
+
+			super.initialize(cardView);
 			return cardView;
 		}
 
@@ -565,6 +584,7 @@ public class ShareSubView {
 			} else {
 				this.groupSelectedStatusView.setVisibility(View.GONE);
 			}
+			this.itemHeight = 60 * displayMetrics.density;
 		}
 
 		public void setViewLayout() {

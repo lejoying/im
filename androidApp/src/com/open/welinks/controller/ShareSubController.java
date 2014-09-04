@@ -1,14 +1,13 @@
 package com.open.welinks.controller;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.sax.StartElementListener;
+import android.os.Vibrator;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,6 +33,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.ShareSubView;
+import com.open.welinks.view.ShareSubView.GroupDialogItem;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
 
 public class ShareSubController {
@@ -52,7 +52,13 @@ public class ShareSubController {
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
 	public DownloadListener downloadListener;
+
 	public View onTouchDownView;
+	public View onLongPressView;;
+
+	public boolean isTouchDown = false;
+
+	public Group onTouchDownGroup;
 
 	public int SCAN_MESSAGEDETAIL = 0x01;
 	public String currentScanMessageKey;
@@ -64,8 +70,6 @@ public class ShareSubController {
 		thisActivity = mainController.thisActivity;
 
 		this.mainController = mainController;
-
-		mGesture = new GestureDetector(thisActivity, new GestureListener());
 	}
 
 	public void initializeListeners() {
@@ -122,11 +126,30 @@ public class ShareSubController {
 				// return onTouchEvent(event);
 				int action = event.getAction();
 				if (action == MotionEvent.ACTION_DOWN) {
+					if (isTouchDown) {
+						return false;
+					}
 					String view_class = (String) view.getTag(R.id.tag_class);
 					if (view_class.equals("share_view")) {
 						onTouchDownView = view;
+						onLongPressView = view;
+						isTouchDown = true;
+					} else if (view_class.equals("group_view")) {
+						// group dialog item onTouch
+						onTouchDownView = view;
+						isTouchDown = true;
+						Object viewTag = view.getTag(R.id.tag_first);
+						if (Group.class.isInstance(viewTag) == true) {
+							Group group = (Group) viewTag;
+							Log.d(tag, "onTouch: gid:" + group.gid + "name" + group.name);
+
+							onTouchDownGroup = group;
+						} else {
+							Log.d(tag, "onTouch: " + (String) viewTag);
+						}
 					}
-					Log.i(tag, "ACTION_DOWN");
+
+					Log.i(tag, "ACTION_DOWN---" + view_class);
 					// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
 				}
 				return false;
@@ -221,47 +244,54 @@ public class ShareSubController {
 		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}
 
-	public GestureDetector mGesture;
-
-	//
-	// public boolean onTouchEvent(MotionEvent event) {
-	//
-	// int motionEvent = event.getAction();
-	// if (motionEvent == MotionEvent.ACTION_DOWN) {
-	// Log.d(tag, "Activity on touch down");
-	// thisView.groupListBody.onTouchDown(event);
-	// } else if (motionEvent == MotionEvent.ACTION_MOVE) {
-	// thisView.groupListBody.onTouchMove(event);
-	// } else if (motionEvent == MotionEvent.ACTION_UP) {
-	// thisView.groupListBody.onTouchUp(event);
-	// }
-	// mGesture.onTouchEvent(event);
-	// return true;
-	// }
-
-	class GestureListener extends SimpleOnGestureListener {
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			Log.i("GestureListener", "onFling:velocityX = " + velocityX + " velocityY" + velocityY);
-
-			if (thisView.groupListBody.bodyStatus.state == thisView.groupListBody.bodyStatus.DRAGGING) {
-				thisView.groupListBody.onFling(velocityX, velocityY);
-			}
-			return true;
-		}
-	}
-
 	public void onScroll() {
 		onTouchDownView = null;
 	}
 
+	public void onLongPress(MotionEvent event) {
+		if (onTouchDownView != null && onTouchDownGroup != null) {
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			if (view_class.equals("group_view")) {
+	
+				Group group = data.relationship.groupsMap.get("" + onTouchDownGroup.gid);
+				GroupDialogItem groupDialogItem = (GroupDialogItem) thisView.groupListBody.listItemBodiesMap.get("group#" + group.gid + "_" + group.name);
+
+				groupDialogItem.gripCardBackground.setVisibility(View.VISIBLE);
+
+				Vibrator vibrator = (Vibrator) this.mainController.thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
+				long[] pattern = { 100, 100, 300 };
+				vibrator.vibrate(pattern, -1);
+
+				thisView.groupListBody.startOrdering("group#" + group.gid + "_" + group.name);
+				
+				onLongPressView = onTouchDownView;
+				onTouchDownView = null;
+			}
+		}
+	}
+
 	public void onSingleTapUp(MotionEvent event) {
+		if (onLongPressView != null) {
+			if (onTouchDownGroup != null) {
+				Group group = data.relationship.groupsMap.get("" + onTouchDownGroup.gid);
+				GroupDialogItem groupDialogItem = (GroupDialogItem) thisView.groupListBody.listItemBodiesMap.get("group#" + group.gid + "_" + group.name);
+				groupDialogItem.gripCardBackground.setVisibility(View.INVISIBLE);
+
+				onLongPressView = null;
+				onTouchDownGroup = null;
+				thisView.groupListBody.stopOrdering();
+			}
+		}
 		if (onTouchDownView != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class.equals("share_view")) {
 				onTouchDownView.performClick();
+			} else if (view_class.equals("group_view")) {
+				onTouchDownView.performClick();
 			}
+			onTouchDownView = null;
 		}
+		isTouchDown = false;
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Data data2) {

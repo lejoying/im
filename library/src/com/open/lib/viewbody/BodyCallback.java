@@ -1,5 +1,7 @@
 package com.open.lib.viewbody;
 
+import java.util.List;
+
 public class BodyCallback {
 
 	public void onStart(String bodyTag, float variables) {
@@ -16,5 +18,10 @@ public class BodyCallback {
 
 	public boolean onOverRange(String bodyTag, float variable) {
 		return false;
+	}
+	
+
+	public void onStopOrdering(List<String> listItemsSequence) {
+		
 	}
 }

@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp" >
 
-    <RelativeLayout
+    <com.open.lib.TouchImageView
+        android:id="@+id/grip_card_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/card_login_background_press"
+        android:visibility="invisible" />
+
+    <com.open.lib.TouchView
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:padding="7dp" >
 
-        <RelativeLayout
+        <com.open.lib.TouchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <ImageView
+            <com.open.lib.TouchImageView
                 android:id="@+id/groupIcon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="8dp" />
 
-            <TextView
+            <com.open.lib.TouchTextView
                 android:id="@+id/groupName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -29,20 +36,20 @@
                 android:text="亦庄文化园站"
                 android:textColor="#000" />
 
-            <ImageView
+            <com.open.lib.TouchImageView
                 android:id="@+id/groupMonyInfomation"
                 android:layout_width="20dp"
                 android:layout_height="40dp"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="8dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:src="@drawable/dialog_mach" />
-        </RelativeLayout>
+        </com.open.lib.TouchView>
 
-        <ImageView
+        <com.open.lib.TouchImageView
             android:id="@+id/groupSelectedStatus"
             android:layout_width="15dp"
             android:layout_height="10dp"
@@ -51,13 +58,13 @@
             android:src="@drawable/dialog_selected"
             android:visibility="visible" />
 
-        <ImageView
+        <com.open.lib.TouchImageView
             android:id="@+id/iv_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal|bottom"
             android:layout_marginTop="43dp"
             android:background="#878585" />
-    </RelativeLayout>
+    </com.open.lib.TouchView>
 
-</RelativeLayout>
+</com.open.lib.TouchView>
