@@ -62,7 +62,7 @@ public class ShareSubView {
 
 	public String tag = "ShareSubView";
 
-	public MyLog log = new MyLog(tag, false);
+	public MyLog log = new MyLog(tag, true);
 
 	public DisplayMetrics displayMetrics;
 
@@ -498,6 +498,8 @@ public class ShareSubView {
 		this.groupListBody.height = 0;
 		groupListBody.listItemsSequence.clear();
 		for (int i = 0; i < groups.size(); i++) {
+//			boolean a = groups.get(i) == "1765";
+//			log.e(a + "--------" + groups.get(i) + "---" + groupsMap.get("1765"));
 			Group group = groupsMap.get(groups.get(i));
 			String key = "group#" + group.gid + "_" + group.name;
 			GroupDialogItem groupDialogItem;
@@ -533,7 +535,7 @@ public class ShareSubView {
 			Log.v(tag, "this.friendListBody.height: " + this.groupListBody.height + "    circleBody.y:  " + groupDialogItem.y);
 		}
 		this.groupListBody.containerHeight = (int) (displayMetrics.heightPixels * 0.6578125f);
-		
+
 	}
 
 	public void modifyCurrentShowGroup() {

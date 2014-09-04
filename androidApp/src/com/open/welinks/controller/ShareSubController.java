@@ -231,13 +231,16 @@ public class ShareSubController {
 			public void onStopOrdering(List<String> listItemsSequence) {
 				super.onStopOrdering(listItemsSequence);
 				log.e(tag, listItemsSequence.toString());
-				List<String> gids = new ArrayList<String>();
+				List<String> gidsList = new ArrayList<String>();
 				for (int i = 0; i < listItemsSequence.size(); i++) {
 					String key = listItemsSequence.get(i);
-					gids.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
+					gidsList.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
 				}
-				log.e(tag, gids.toString());
-				log.e(tag + "gson", gson.toJson(gids));
+				// modify local data
+				data.relationship.groups = gidsList;
+				String sequenceListString = gson.toJson(gidsList);
+				// modify server data
+				modifyGroupSequence(sequenceListString);
 			}
 		};
 	}
@@ -254,10 +257,9 @@ public class ShareSubController {
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("sequence", sequenceListString);
 
-		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
+		httpUtils.send(HttpMethod.POST, API.GROUP_MODIFYGROUPSEQUENCE, params, responseHandlers.modifyGroupSequenceCallBack);
 	}
 
 	public void getCurrentGroupShareMessages() {

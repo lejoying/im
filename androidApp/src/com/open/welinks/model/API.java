@@ -33,6 +33,10 @@ public class API {
 	 * http://www.we-links.com/api2/group/modify
 	 */
 	public static String GROUP_MODIFY = "http://www.we-links.com/api2/group/modify";
+	/**
+	 * http://www.we-links.com/api2/group/modifysequence
+	 */
+	public static String GROUP_MODIFYGROUPSEQUENCE = "http://www.we-links.com/api2/group/modifysequence";
 
 	// share
 	/**
@@ -72,4 +76,9 @@ public class API {
 	 * http://www.we-links.com/api2/relation/addfriend
 	 */
 	public static String RELATION_ADDFRIEND = "http://www.we-links.com/api2/relation/addfriend";
+	/**
+	 * http://www.we-links.com/api2/relation/modifysequence
+	 */
+	public static String RELATION_MODIFYCIRCLESEQUENCE = "http://www.we-links.com/api2/relation/modifysequence";
+
 }
