@@ -194,6 +194,11 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 				// TODO Auto-generated method stub
 
 			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				
+			}
 		};
 	}
 
