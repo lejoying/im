@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -28,9 +27,14 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringUtil;
 import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.MainActivity;
 import com.open.welinks.R;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.CommonNetConnection;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.utils.NetworkHandler.Settings;
@@ -126,8 +130,10 @@ public class LoginController {
 			public void onClick(View view) {
 				if (view.equals(thisView.loginButton)) {
 					nextAnimation(Status.loginUsePassword, thisView.card, thisView.loginOrRegister);
+					showSoftInput(thisView.input1);
 				} else if (view.equals(thisView.registerButton)) {
 					nextAnimation(Status.verifyPhoneForRegister, thisView.card, thisView.loginOrRegister);
+					showSoftInput(thisView.input1);
 				} else if (view.equals(thisView.clearInput1)) {
 					thisView.input1.setText("");
 				} else if (view.equals(thisView.clearInput2)) {
@@ -496,6 +502,7 @@ public class LoginController {
 
 	public void onCreate() {
 		thisView.status = Status.loginOrRegister;
+		thisView.progressBar.setProgress(0);
 		handler.postDelayed(new Runnable() {
 
 			@Override
@@ -736,32 +743,13 @@ public class LoginController {
 	}
 
 	public void requestUserAuth(final String loginPhone, final String loginPass) {
-		mNetworkHandler.connection(new CommonNetConnection() {
-
-			@Override
-			public void success(JSONObject jData) {
-				Intent intent = new Intent(thisActivity, MainActivity.class);
-				intent.putExtra("phone", loginPhone);
-				thisActivity.startActivity(intent);
-				Alert.removeLoading();
-			}
-
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = url_userauth;
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", loginPhone);
-				String passwd = msSha1.getDigestOfString(loginPass.getBytes());
-				params.put("password", passwd);
-				settings.params = params;
-			}
-
-			@Override
-			protected void unSuccess(JSONObject jData) {
-				Alert.removeLoading();
-				super.unSuccess(jData);
-			}
-		});
+		growProgressBar(30);
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", loginPhone);
+		params.addBodyParameter("password", msSha1.getDigestOfString(loginPass.getBytes()));
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_AUTH, params, responseHandlers.account_auth);
 	}
 
 	public void requestUserAuthWithVerifyCode(final String loginPhone, final String loginCode) {
@@ -905,5 +893,68 @@ public class LoginController {
 			}
 
 		});
+	}
+
+	public void growProgressBar(final int progress) {
+		new Thread() {
+			public void run() {
+				for (int i = 0; i < progress; i++) {
+					try {
+						sleep(5);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							thisView.progressBar.incrementProgressBy(1);
+						}
+					});
+				}
+			};
+		}.start();
+	}
+
+	public void loginSuccessful(final String phone, final String accessKey) {
+		new Thread() {
+			public void run() {
+				data.userInformation.currentUser.phone = phone;
+				data.userInformation.currentUser.accessKey = accessKey;
+				data.localStatus.thisActivityName = "MainActivity";
+				Intent intent = new Intent(thisActivity, MainActivity.class);
+				intent.putExtra("phone", phone);
+				for (int i = 1; i <= 60; i++) {
+					try {
+						sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					thisView.progressBar.incrementProgressBy(1);
+				}
+				thisActivity.startActivity(intent);
+				thisActivity.finish();
+			};
+		}.start();
+	}
+
+	public void loginFail(String 失败原因) {
+		thisView.error_message.setText(失败原因);
+		new Thread() {
+			public void run() {
+				try {
+					sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				handler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						thisView.error_message.setText("");
+					}
+				});
+			};
+		}.start();
+		thisView.progressBar.setProgress(0);
 	}
 }

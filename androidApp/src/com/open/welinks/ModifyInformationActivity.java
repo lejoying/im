@@ -191,7 +191,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 			@Override
 			public void failure(DownloadFile instance, int status) {
-				
+
 			}
 		};
 	}

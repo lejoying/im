@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
@@ -44,6 +45,7 @@ public class LoginView {
 	public View card;
 	public TextView leftTopText;
 	public TextView rightTopTextButton;
+	public TextView error_message;
 	public EditText input1;
 	public EditText input2;
 	public View clearInput1;
@@ -52,6 +54,7 @@ public class LoginView {
 	public TextView leftBottomTextButton;
 	public TextView rightBottomTextButton;
 	public ImageView appIconToName;
+	public ProgressBar progressBar;
 
 	public View mRootView;
 
@@ -103,6 +106,8 @@ public class LoginView {
 		leftBottomTextButton = (TextView) thisActivity.findViewById(R.id.leftBottomTextButton);
 		rightBottomTextButton = (TextView) thisActivity.findViewById(R.id.rightBottomTextButton);
 		appIconToName = (ImageView) thisActivity.findViewById(R.id.appIconToName);
+		error_message = (TextView) thisActivity.findViewById(R.id.err_message);
+		progressBar = (ProgressBar) thisActivity.findViewById(R.id.progressBar);
 		mRootView = appIconToName;
 	}
 
@@ -317,7 +322,7 @@ public class LoginView {
 				dialogRootView.setTranslationY(y - 100 * mappedValue);
 				Log.e(tag, mappedValue + "---------------");
 				if (mappedValue <= 0.8f) {
-					
+
 				}
 			} else if (spring.equals(dialogInSpring)) {
 				float y = inputDialigView.getTranslationY();
