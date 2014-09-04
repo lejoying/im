@@ -160,6 +160,12 @@ public class BusinessCardController {
 			public void loading(DownloadFile instance, int precent, int status) {
 
 			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		bindEvent();
 	}
