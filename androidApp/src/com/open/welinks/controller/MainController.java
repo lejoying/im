@@ -139,7 +139,7 @@ public class MainController {
 			@Override
 			public void failure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 
@@ -255,8 +255,9 @@ public class MainController {
 			Log.d(tag, "Activity on touch down");
 			thisView.messages_friends_me_PagerBody.onTouchDown(event);
 			thisView.mainPagerBody.onTouchDown(event);
-
-			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
+				thisView.messagesSubView.messageListBody.onTouchDown(event);
+			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				thisView.friendsSubView.friendListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
@@ -270,7 +271,9 @@ public class MainController {
 			thisView.messages_friends_me_PagerBody.onTouchMove(event);
 			thisView.mainPagerBody.onTouchMove(event);
 
-			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
+				thisView.messagesSubView.messageListBody.onTouchMove(event);
+			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				thisView.friendsSubView.friendListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
@@ -283,7 +286,9 @@ public class MainController {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
 			thisView.mainPagerBody.onTouchUp(event);
 
-			if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
+			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
+				thisView.messagesSubView.messageListBody.onTouchUp(event);
+			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				friendsSubController.onSingleTapUp(event);
 				thisView.friendsSubView.friendListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
@@ -333,6 +338,14 @@ public class MainController {
 				thisView.friendsSubView.friendListBody.onFling(velocityX, velocityY);
 			} else {
 				Log.i(tag, "bodyStatus error:" + thisView.friendsSubView.friendListBody.bodyStatus.state);
+			}
+
+			if (thisView.messagesSubView.messageListBody.bodyStatus.state == thisView.messagesSubView.messageListBody.bodyStatus.DRAGGING) {
+				thisView.messagesSubView.messageListBody.onFling(velocityX, velocityY);
+			} else if (thisView.messagesSubView.messageListBody.bodyStatus.state == thisView.messagesSubView.messageListBody.bodyStatus.FIXED) {
+				thisView.messagesSubView.messageListBody.onFling(velocityX, velocityY);
+			} else {
+				Log.i(tag, "bodyStatus error:" + thisView.messagesSubView.messageListBody.bodyStatus.state);
 			}
 
 			if (thisView.messages_friends_me_PagerBody.bodyStatus.state == thisView.messages_friends_me_PagerBody.bodyStatus.HOMING) {

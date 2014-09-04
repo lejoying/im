@@ -19,6 +19,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
@@ -51,6 +52,7 @@ public class BusinessCardController {
 	public DisplayImageOptions options;
 
 	public String key, type;
+	public File file;
 
 	public OnClickListener mOnClickListener;
 	public DownloadListener downloadListener;
@@ -153,7 +155,20 @@ public class BusinessCardController {
 
 			@Override
 			public void success(DownloadFile instance, int status) {
+				imageLoader.displayImage("file://" + file.getAbsolutePath(), (ImageAware) downloadFile.view, options, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
 
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+					}
+				});
 			}
 
 			@Override
@@ -164,7 +179,7 @@ public class BusinessCardController {
 			@Override
 			public void failure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 		bindEvent();
@@ -239,27 +254,13 @@ public class BusinessCardController {
 
 	public void setHeadImage(String fileName, ImageView view) {
 		File sdFile = Environment.getExternalStorageDirectory();
-		File file = new File(sdFile, "welinks/heads/" + fileName);
+		file = new File(sdFile, "welinks/heads/" + fileName);
 		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
 		final String path = file.getAbsolutePath();
-		imageLoader.displayImage("file://" + path, view, options, new SimpleImageLoadingListener() {
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-			}
-
-			@Override
-			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-				downloadFile = new DownloadFile(url, path);
-				downloadFile.view = view;
-				downloadFile.setDownloadFileListener(thisController.downloadListener);
-				downloadFileList.addDownloadFile(downloadFile);
-			}
-
-			@Override
-			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-			}
-		});
+		downloadFile = new DownloadFile(url, path);
+		downloadFile.view = view;
+		downloadFile.setDownloadFileListener(thisController.downloadListener);
+		downloadFileList.addDownloadFile(downloadFile);
 	}
 
 	public void addFriend() {

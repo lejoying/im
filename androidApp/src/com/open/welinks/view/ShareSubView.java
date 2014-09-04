@@ -33,9 +33,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
-import com.open.lib.viewbody.ListBody;
-import com.open.lib.viewbody.ListBody.MyListItemBody;
+import com.open.lib.viewbody.ListBody1;
+import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
@@ -57,6 +58,8 @@ public class ShareSubView {
 	public Data data = Data.getInstance();
 
 	public String tag = "ShareSubView";
+	
+	public MyLog log = new MyLog(tag, true);
 
 	public DisplayMetrics displayMetrics;
 
@@ -66,7 +69,7 @@ public class ShareSubView {
 	public RelativeLayout shareView;
 
 	public ViewGroup shareMessageView;
-	public ListBody shareMessageListBody;
+	public ListBody1 shareMessageListBody;
 
 	public ImageView leftImageButton;
 	public RelativeLayout shareTopMenuGroupNameParent;
@@ -78,7 +81,7 @@ public class ShareSubView {
 
 	public RelativeLayout groupsDialogContent;
 
-	public ListBody groupListBody;
+	public ListBody1 groupListBody;
 
 	// share top Bar child view
 	public View groupMembersView;
@@ -123,10 +126,9 @@ public class ShareSubView {
 
 		shareMessageView = (ViewGroup) shareView.findViewById(R.id.groupShareMessageContent);
 
-		shareMessageListBody = new ListBody();
+		shareMessageListBody = new ListBody1();
 		shareMessageListBody.initialize(displayMetrics, shareMessageView);
 
-		
 		leftImageButton = (ImageView) shareView.findViewById(R.id.leftImageButton);
 		shareTopMenuGroupNameParent = (RelativeLayout) shareView.findViewById(R.id.shareTopMenuGroupNameParent);
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
@@ -205,19 +207,17 @@ public class ShareSubView {
 				this.shareMessageListBody.listItemsSequence.add("message#" + "timeBar" + shareMessage.time);
 				this.shareMessageListBody.listItemBodiesMap.put("message#" + "timeBar" + shareMessage.time, sharesMessageBody0);
 				RelativeLayout.LayoutParams layoutParams_2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (40 * displayMetrics.density));
-				sharesMessageBody0.y = 350 * displayMetrics.density * i + 50 * displayMetrics.density * (timeBarCount + 1) + 2 * displayMetrics.density;
+				sharesMessageBody0.y = this.shareMessageListBody.height;
 				sharesMessageBody0.cardView.setY(sharesMessageBody0.y);
 				sharesMessageBody0.cardView.setX(0);
-				this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
+				this.shareMessageListBody.height = this.shareMessageListBody.height + 50 * displayMetrics.density;
 				this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams_2);
-				// sharesMessageBody0.cardView.setBackgroundColor(Color.RED);
 				i--;
-				timeBarCount++;
 				lastShareMessage = shareMessage;
 				continue;
 			}
 			// .........................
-
+			log.e("message#---" + shareMessage.gsid);
 			String keyName = "message#" + shareMessage.gsid;
 			boolean isExists = false;
 			if (this.shareMessageListBody.listItemBodiesMap.get(keyName) != null) {
@@ -232,7 +232,7 @@ public class ShareSubView {
 			sharesMessageBody.setContent(shareMessage);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
-			sharesMessageBody.y = 350 * displayMetrics.density * i + 2 * displayMetrics.density + 50 * displayMetrics.density * (timeBarCount + 1);
+			sharesMessageBody.y = this.shareMessageListBody.height;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
 			// Why the object cache access to cheap 10dp view position
@@ -248,17 +248,19 @@ public class ShareSubView {
 				dialogSpring.setEndValue(1);
 			}
 
-			// TODO
 			sharesMessageBody.cardView.setTag(R.id.tag_class, "share_view");
 			sharesMessageBody.cardView.setTag("ShareMessageDetail#" + shareMessage.gsid);
 			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 		}
+		
+		
+		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
 	}
 
 	public class SharesMessageBody extends MyListItemBody {
 
-		SharesMessageBody(ListBody listBody) {
+		SharesMessageBody(ListBody1 listBody) {
 			listBody.super();
 		}
 
@@ -464,7 +466,7 @@ public class ShareSubView {
 		mainContentParams.leftMargin = (int) (20 / displayMetrics.density + 0.5f);
 		mainContentParams.rightMargin = (int) (20 / displayMetrics.density + 0.5f);
 		mainContentView.setLayoutParams(mainContentParams);
-		groupListBody = new ListBody();
+		groupListBody = new ListBody1();
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
 		setGroupsDialogContent();
 		// groupsDialogContent.setOnClickListener(thisController.mOnClickListener);
@@ -531,7 +533,7 @@ public class ShareSubView {
 	}
 
 	public class GroupDialogItem extends MyListItemBody {
-		GroupDialogItem(ListBody listBody) {
+		GroupDialogItem(ListBody1 listBody) {
 			listBody.super();
 		}
 

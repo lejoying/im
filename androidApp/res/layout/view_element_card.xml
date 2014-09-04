@@ -46,12 +46,13 @@
             android:translationY="14dp" />
     </com.open.lib.TouchView>
 
-    <ImageView
-        android:id="@+id/cardTopLine"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/text_color"
-        android:contentDescription="white_line"
+        android:background="#fff"
+        android:max="90"
         android:translationY="44dp" />
 
     <TextView

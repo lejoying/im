@@ -16,6 +16,7 @@ import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.utils.RSAUtils;
 import com.open.welinks.view.ViewManage;
 
 public class ResponseHandlers {
@@ -132,9 +133,13 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发送成功")) {
 				// if ("point".equals(response.sendType)) {
-				// // data.messages.friendMessageMap.get(response.phoneto).get(0).time = String.valueOf(response.time);
+				// //
+				// data.messages.friendMessageMap.get(response.phoneto).get(0).time
+				// = String.valueOf(response.time);
 				// } else if ("group".equals(response.sendType)) {
-				// // data.messages.groupMessageMap.get(response.gid).get(0).time = String.valueOf(response.time);
+				// //
+				// data.messages.groupMessageMap.get(response.gid).get(0).time =
+				// String.valueOf(response.time);
 				// }
 			}
 		};
@@ -184,6 +189,32 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
 				Log.e(tag, "---------------------修改用户信息成功");
+			}
+		};
+
+	};
+	public ResponseHandler<String> account_auth = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String uid;
+			public String accessKey;
+			public String PbKey;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("普通鉴权成功")) {
+				String accessKey = "", phone = "";
+				try {
+					accessKey = RSAUtils.decrypt(response.PbKey, response.accessKey);
+					phone = RSAUtils.decrypt(response.PbKey, response.uid);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				viewManage.loginView.thisController.loginSuccessful(phone, accessKey);
+			} else {
+				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}
 		};
 
