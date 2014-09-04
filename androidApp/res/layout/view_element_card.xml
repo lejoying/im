@@ -53,6 +53,15 @@
         android:layout_height="1dp"
         android:background="#fff"
         android:max="90"
+        android:translationY="44dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/cardTopLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/text_color"
+        android:contentDescription="white_line"
         android:translationY="44dp" />
 
     <TextView

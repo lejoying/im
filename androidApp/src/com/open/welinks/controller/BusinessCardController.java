@@ -8,8 +8,11 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
 import com.lidroid.xutils.HttpUtils;
@@ -55,8 +58,11 @@ public class BusinessCardController {
 	public File file;
 
 	public OnClickListener mOnClickListener;
+	public OnTouchListener mOnTouchListener;
 	public DownloadListener downloadListener;
 	public DisplayMetrics displayMetrics;
+
+	public GestureDetector backDetector;
 
 	public Handler handler;
 
@@ -103,9 +109,7 @@ public class BusinessCardController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.backview)) {
-					thisActivity.finish();
-				} else if (view.equals(thisView.button_one)) {
+				if (view.equals(thisView.button_one)) {
 					if (thisView.status.equals(Status.SELF)) {
 						modifyInformation();
 					} else if (thisView.status.equals(Status.FRIEND)) {
@@ -147,8 +151,17 @@ public class BusinessCardController {
 					} else if (thisView.status.equals(Status.SQUARE)) {
 						// unused
 					}
+				} else if (view.equals(thisView.backview)) {
+					thisActivity.finish();
 				}
 
+			}
+		};
+		mOnTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				return false;
 			}
 		};
 		downloadListener = new DownloadListener() {
@@ -178,7 +191,6 @@ public class BusinessCardController {
 
 			@Override
 			public void failure(DownloadFile instance, int status) {
-				// TODO Auto-generated method stub
 
 			}
 		};

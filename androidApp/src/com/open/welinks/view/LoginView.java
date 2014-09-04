@@ -55,6 +55,7 @@ public class LoginView {
 	public TextView rightBottomTextButton;
 	public ImageView appIconToName;
 	public ProgressBar progressBar;
+	public ImageView cardTopLine;
 
 	public View mRootView;
 
@@ -108,6 +109,10 @@ public class LoginView {
 		appIconToName = (ImageView) thisActivity.findViewById(R.id.appIconToName);
 		error_message = (TextView) thisActivity.findViewById(R.id.err_message);
 		progressBar = (ProgressBar) thisActivity.findViewById(R.id.progressBar);
+		cardTopLine = (ImageView) thisActivity.findViewById(R.id.cardTopLine);
+
+		cardTopLine.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
 		mRootView = appIconToName;
 	}
 

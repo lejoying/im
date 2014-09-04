@@ -24,9 +24,6 @@ import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.MCImageUtils;
-import com.open.welinks.view.Alert;
-import com.open.welinks.view.Alert.AlertInputDialog;
-import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,6 +32,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,7 +49,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 	public Gson gson = new Gson();
 
-	public static final int REQUESTCODE_SELECT = 0x1, REQUESTCODE_TAKE = 0x2, REQUESTCODE_CAT = 0x3;
+	public int REQUESTCODE_SELECT = 0x1, REQUESTCODE_TAKE = 0x2, REQUESTCODE_CAT = 0x3, TAG_EXIT = 0x99, TAG_EDIT = 0x98;
 
 	public String key, type, headFileName;
 	public boolean modified = false;
@@ -71,10 +69,11 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public User user;
 	public Group group;
 
-	public View backview, complete, head_layout, name_layout, sex_layout, location_layout, business_layout, lable_layout, input_layout, pic_layout;
-	public TextView modify_title, name_title, name, sex_title, sex, location_title, location, business_title, business, lable_title, lable, modify, camera, album;
-	public ImageView head, del;
+	public View backview, head_layout, name_layout, sex_layout, location_layout, business_layout, lable_layout, pic_layout, inputDialogContent;
+	public TextView modify_title, name_title, name, sex_title, sex, location_title, location, business_title, business, lable_title, lable, modify, camera, album, input_title;
+	public ImageView head;
 	public EditText input;
+	public Button confirm, cancel;
 
 	public InputMethodManager inputMethodManager;
 
@@ -95,10 +94,10 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public void onBackPressed() {
 		if (pic_layout.getVisibility() == View.VISIBLE) {
 			pic_layout.setVisibility(View.GONE);
-		} else if (input_layout.getVisibility() == View.VISIBLE) {
-			input_layout.setVisibility(View.GONE);
+		} else if (inputDialogContent.getVisibility() == View.VISIBLE) {
+			inputDialogContent.setVisibility(View.GONE);
 		} else {
-			finish();
+			mFinish();
 		}
 	}
 
@@ -122,14 +121,12 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 	private void initView() {
 		backview = findViewById(R.id.backview);
-		complete = findViewById(R.id.complete);
 		head_layout = findViewById(R.id.head_layout);
 		name_layout = findViewById(R.id.name_layout);
 		sex_layout = findViewById(R.id.sex_layout);
 		location_layout = findViewById(R.id.location_layout);
 		business_layout = findViewById(R.id.business_layout);
 		lable_layout = findViewById(R.id.lable_layout);
-		input_layout = findViewById(R.id.input_layout);
 		pic_layout = findViewById(R.id.pic_layout);
 		modify_title = (TextView) findViewById(R.id.modify_title);
 		name_title = (TextView) findViewById(R.id.name_title);
@@ -146,11 +143,13 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		camera = (TextView) findViewById(R.id.camera);
 		album = (TextView) findViewById(R.id.album);
 		head = (ImageView) findViewById(R.id.head);
-		del = (ImageView) findViewById(R.id.del);
 		input = (EditText) findViewById(R.id.input);
+		inputDialogContent = findViewById(R.id.inputDialogContent);
+		input_title = (TextView) findViewById(R.id.title);
+		confirm = (Button) findViewById(R.id.confirm);
+		cancel = (Button) findViewById(R.id.cancel);
 
 		backview.setOnClickListener(this);
-		complete.setOnClickListener(this);
 		head_layout.setOnClickListener(this);
 		name_layout.setOnClickListener(this);
 		sex_layout.setOnClickListener(this);
@@ -160,7 +159,8 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		modify.setOnClickListener(this);
 		camera.setOnClickListener(this);
 		album.setOnClickListener(this);
-		del.setOnClickListener(this);
+		confirm.setOnClickListener(this);
+		cancel.setOnClickListener(this);
 		fillData();
 	}
 
@@ -243,10 +243,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public void onClick(View view) {
 		if (view.equals(backview)) {
 			mFinish();
-		} else if (view.equals(complete)) {
-			mOnDataChanged.onDataChangedListener();
 		} else if (view.equals(head_layout)) {
-			pic_layout.setVisibility(View.VISIBLE);
+			selectPicture(REQUESTCODE_SELECT);
+			// pic_layout.setVisibility(View.VISIBLE);
 		} else if (view.equals(sex_layout)) {
 			if ("男".equals(sex.getText().toString())) {
 				sex.setText("女");
@@ -255,6 +254,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 				sex.setText("男");
 				user.sex = "male";
 			}
+			modified = true;
 		} else if (view.equals(name_layout)) {
 			modifyData(name);
 		} else if (view.equals(business_layout)) {
@@ -269,8 +269,26 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			// takePicture(REQUESTCODE_TAKE);
 		} else if (view.equals(album)) {
 			selectPicture(REQUESTCODE_SELECT);
-		} else if (view.equals(del)) {
-			input.setText("");
+		} else if (view.equals(confirm)) {
+			if (view.getTag().equals(TAG_EDIT)) {
+				mOnDataChanged.onDataChangedListener();
+				if (inputMethodManager.isActive()) {
+					inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
+				}
+				setFocus(true);
+			} else if (view.getTag().equals(TAG_EXIT)) {
+				sendData();
+			}
+		} else if (view.equals(cancel)) {
+			if (view.getTag().equals(TAG_EDIT)) {
+				inputDialogContent.setVisibility(View.GONE);
+				if (inputMethodManager.isActive()) {
+					inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
+				}
+				setFocus(true);
+			} else if (view.getTag().equals(TAG_EXIT)) {
+				finish();
+			}
 		}
 
 	}
@@ -316,22 +334,25 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	public void modifyData(final TextView view) {
-		input_layout.setVisibility(View.VISIBLE);
-		complete.setVisibility(View.VISIBLE);
+		inputDialogContent.setVisibility(View.VISIBLE);
+		input.setVisibility(View.VISIBLE);
+		confirm.setText("确定");
+		cancel.setText("取消");
+		confirm.setTag(TAG_EDIT);
+		cancel.setTag(TAG_EDIT);
+		input_title.setText("请输入内容");
 		setFocus(false);
-		input.setText(view.getText().toString());
+		String content = view.getText().toString();
+		input.setText(content);
+		input.setSelection(content.length());
 		input.requestFocus();
 		inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_FORCED);
 
 		mOnDataChanged = new onDataChanged() {
 			@Override
 			public void onDataChangedListener() {
-
-				inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
 				view.setText(input.getText().toString());
-				input_layout.setVisibility(View.GONE);
-				complete.setVisibility(View.GONE);
+				inputDialogContent.setVisibility(View.GONE);
 				setFocus(true);
 				modified = true;
 			}
@@ -383,13 +404,13 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 	public void mFinish() {
 		if (modified) {
-			Alert.createDialog(this).setTitle("您有修改尚未提交，是否退出？").setOnConfirmClickListener(new OnDialogClickListener() {
-
-				@Override
-				public void onClick(AlertInputDialog dialog) {
-					finish();
-				}
-			}).show();
+			inputDialogContent.setVisibility(View.VISIBLE);
+			input.setVisibility(View.GONE);
+			confirm.setText("保存");
+			cancel.setText("取消");
+			confirm.setTag(TAG_EXIT);
+			cancel.setTag(TAG_EXIT);
+			input_title.setText("您有修改尚未提交，是否保存？");
 		} else {
 			finish();
 		}

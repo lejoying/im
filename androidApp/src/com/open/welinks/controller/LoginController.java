@@ -130,10 +130,10 @@ public class LoginController {
 			public void onClick(View view) {
 				if (view.equals(thisView.loginButton)) {
 					nextAnimation(Status.loginUsePassword, thisView.card, thisView.loginOrRegister);
-					showSoftInput(thisView.input1);
+					showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
 				} else if (view.equals(thisView.registerButton)) {
 					nextAnimation(Status.verifyPhoneForRegister, thisView.card, thisView.loginOrRegister);
-					showSoftInput(thisView.input1);
+					showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
 				} else if (view.equals(thisView.clearInput1)) {
 					thisView.input1.setText("");
 				} else if (view.equals(thisView.clearInput2)) {
@@ -142,6 +142,7 @@ public class LoginController {
 					if (thisView.status == Status.loginUsePassword) {
 						if (view.equals(thisView.rightTopTextButton)) {
 							backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
+							hideSoftInput();
 						} else if (view.equals(thisView.mainButton)) {
 							if (thisView.status == Status.loginUsePassword) {
 								String loginPhone = thisView.input1.getText().toString().trim();
@@ -743,7 +744,7 @@ public class LoginController {
 	}
 
 	public void requestUserAuth(final String loginPhone, final String loginPass) {
-		growProgressBar(30);
+		growProgressBar(30, 30);
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", loginPhone);
@@ -895,7 +896,7 @@ public class LoginController {
 		});
 	}
 
-	public void growProgressBar(final int progress) {
+	public void growProgressBar(final int progress, final int max) {
 		new Thread() {
 			public void run() {
 				for (int i = 0; i < progress; i++) {
@@ -907,7 +908,8 @@ public class LoginController {
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
-							thisView.progressBar.incrementProgressBy(1);
+							if (thisView.progressBar.getProgress() < max)
+								thisView.progressBar.incrementProgressBy(1);
 						}
 					});
 				}
@@ -923,7 +925,7 @@ public class LoginController {
 				data.localStatus.thisActivityName = "MainActivity";
 				Intent intent = new Intent(thisActivity, MainActivity.class);
 				intent.putExtra("phone", phone);
-				for (int i = 1; i <= 60; i++) {
+				for (int i = 1; i <= 50; i++) {
 					try {
 						sleep(10);
 					} catch (InterruptedException e) {

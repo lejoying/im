@@ -58,7 +58,7 @@ public class ShareSubView {
 	public Data data = Data.getInstance();
 
 	public String tag = "ShareSubView";
-	
+
 	public MyLog log = new MyLog(tag, true);
 
 	public DisplayMetrics displayMetrics;
@@ -253,8 +253,7 @@ public class ShareSubView {
 			sharesMessageBody.cardView.setOnClickListener(thisController.mOnClickListener);
 			sharesMessageBody.cardView.setOnTouchListener(thisController.mOnTouchListener);
 		}
-		
-		
+
 		this.shareMessageListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
 	}
 
@@ -347,7 +346,10 @@ public class ShareSubView {
 				File sdFile = Environment.getExternalStorageDirectory();
 				File file = new File(sdFile, "welinks/thumbnail/" + imageContent);
 				final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
-				final int showImageHeight = shareImageHeight;// (int) (displayMetrics.density * 200 + 0.5f);
+				final int showImageHeight = shareImageHeight;// (int)
+																// (displayMetrics.density
+																// * 200 +
+																// 0.5f);
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
@@ -651,7 +653,8 @@ public class ShareSubView {
 				}
 			}
 
-			// imageLoader.displayImage("file://" + key, imageBody.imageView, options);
+			// imageLoader.displayImage("file://" + key, imageBody.imageView,
+			// options);
 			myScrollImageBody.selectedImagesSequence.add(key);
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
 			imageBody.imageView.setTag(i);
