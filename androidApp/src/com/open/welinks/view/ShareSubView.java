@@ -37,6 +37,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
 import com.open.lib.TouchView;
+import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
@@ -532,7 +533,7 @@ public class ShareSubView {
 			Log.v(tag, "this.friendListBody.height: " + this.groupListBody.height + "    circleBody.y:  " + groupDialogItem.y);
 		}
 		this.groupListBody.containerHeight = (int) (displayMetrics.heightPixels * 0.6578125f);
-
+		
 	}
 
 	public void modifyCurrentShowGroup() {

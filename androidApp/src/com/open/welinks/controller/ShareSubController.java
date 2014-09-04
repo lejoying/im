@@ -1,5 +1,8 @@
 package com.open.welinks.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
@@ -17,12 +20,15 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.lib.MyLog;
+import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
@@ -40,6 +46,8 @@ public class ShareSubController {
 
 	public Data data = Data.getInstance();
 	public String tag = "ShareSubController";
+	public MyLog log = new MyLog(tag, true);
+
 	public ShareSubView thisView;
 	public Context context;
 	public Activity thisActivity;
@@ -52,6 +60,7 @@ public class ShareSubController {
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
 	public DownloadListener downloadListener;
+	public BodyCallback bodyCallback;
 
 	public View onTouchDownView;
 	public View onLongPressView;;
@@ -65,6 +74,8 @@ public class ShareSubController {
 
 	public int nowpage = 0;
 	public int pagesize = 20;
+
+	public Gson gson = new Gson();
 
 	public ShareSubController(MainController mainController) {
 		thisActivity = mainController.thisActivity;
@@ -215,12 +226,38 @@ public class ShareSubController {
 				return false;
 			}
 		};
+		bodyCallback = new BodyCallback() {
+			@Override
+			public void onStopOrdering(List<String> listItemsSequence) {
+				super.onStopOrdering(listItemsSequence);
+				log.e(tag, listItemsSequence.toString());
+				List<String> gids = new ArrayList<String>();
+				for (int i = 0; i < listItemsSequence.size(); i++) {
+					String key = listItemsSequence.get(i);
+					gids.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
+				}
+				log.e(tag, gids.toString());
+				log.e(tag + "gson", gson.toJson(gids));
+			}
+		};
 	}
 
 	public void bindEvent() {
+		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		// thisView.groupDialogView.setOnClickListener(mOnClickListener);
+	}
+
+	public void modifyGroupSequence(String sequenceListString) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETGROUPMEMBERS, params, responseHandlers.getGroupMembersCallBack);
 	}
 
 	public void getCurrentGroupShareMessages() {
@@ -252,7 +289,7 @@ public class ShareSubController {
 		if (onTouchDownView != null && onTouchDownGroup != null) {
 			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
 			if (view_class.equals("group_view")) {
-	
+
 				Group group = data.relationship.groupsMap.get("" + onTouchDownGroup.gid);
 				GroupDialogItem groupDialogItem = (GroupDialogItem) thisView.groupListBody.listItemBodiesMap.get("group#" + group.gid + "_" + group.name);
 
@@ -263,7 +300,7 @@ public class ShareSubController {
 				vibrator.vibrate(pattern, -1);
 
 				thisView.groupListBody.startOrdering("group#" + group.gid + "_" + group.name);
-				
+
 				onLongPressView = onTouchDownView;
 				onTouchDownView = null;
 			}

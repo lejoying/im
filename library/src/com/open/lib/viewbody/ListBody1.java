@@ -2,7 +2,6 @@ package com.open.lib.viewbody;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ import com.open.lib.OpenLooper.LoopCallback;
 
 public class ListBody1 {
 	public String tag = "ListBody";
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public DisplayMetrics displayMetrics;
 
@@ -268,8 +267,10 @@ public class ListBody1 {
 		log.i(listItemsSequence.toString());
 		logListOrder();
 
-		bodyCallback = new BodyCallback();
-		bodyCallback.onStopOrdering(listItemsSequence);
+		// bodyCallback = new BodyCallback();
+		if (bodyCallback != null) {
+			bodyCallback.onStopOrdering(listItemsSequence);
+		}
 	}
 
 	public void logListOrder() {

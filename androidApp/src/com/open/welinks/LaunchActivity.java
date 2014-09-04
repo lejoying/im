@@ -13,7 +13,7 @@ import android.util.Log;
 
 public class LaunchActivity extends Activity {
 
-	public boolean isDebug = true;
+	public boolean isDebug = false;
 	public Data data = Data.getInstance();
 
 	String tag = "MainActivity";
