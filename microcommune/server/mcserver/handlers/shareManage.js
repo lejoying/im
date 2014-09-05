@@ -696,8 +696,8 @@ shareManage.getgroupshares = function (data, response) {
                     "提示信息": "获取群分享成功",
                     gid: gid,
                     shares: {
-                        sharesOrder: [],
-                        sharesMap: {}
+                        shareMessagesOrder: [],
+                        shareMessagesMap: {}
                     }
                 }), response);
             } else {
@@ -722,8 +722,8 @@ shareManage.getgroupshares = function (data, response) {
                     "提示信息": "获取群分享成功",
                     gid: gid,
                     shares: {
-                        sharesOrder: sharesOrder,
-                        sharesMap: sharesMap
+                        shareMessagesOrder: sharesOrder,
+                        shareMessagesMap: sharesMap
                     }
                 }), response);
             }
