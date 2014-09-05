@@ -153,9 +153,9 @@ public class ChatView {
 			int type = message.type;
 			// if (convertView == null) {
 			chatHolder = new ChatHolder();
-			if (type == Message.MESSAGE_TYPE_SEND) {
+			if (type == message.MESSAGE_TYPE_SEND) {
 				convertView = mInflater.inflate(R.layout.f_chat_item_send, null);
-			} else if (type == Message.MESSAGE_TYPE_RECEIVE) {
+			} else if (type == message.MESSAGE_TYPE_RECEIVE) {
 				convertView = mInflater.inflate(R.layout.f_chat_item_receive, null);
 			}
 			chatHolder.time = (TextView) convertView.findViewById(R.id.time);
@@ -199,7 +199,7 @@ public class ChatView {
 				chatHolder.image.setVisibility(View.GONE);
 				chatHolder.voice.setVisibility(View.VISIBLE);
 				Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_item_voice);
-				if (type == Message.MESSAGE_TYPE_SEND) {
+				if (type == message.MESSAGE_TYPE_SEND) {
 					Matrix mMatrix = new Matrix();
 					mMatrix.setRotate(180);
 					bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, true);

@@ -37,7 +37,6 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
 import com.open.lib.TouchView;
-import com.open.lib.viewbody.BodyCallback;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
@@ -187,8 +186,8 @@ public class ShareSubView {
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (share == null)
 			return;
-		List<String> sharesOrder = share.sharesOrder;
-		Map<String, ShareMessage> sharesMap = share.sharesMap;
+		List<String> sharesOrder = share.shareMessagesOrder;
+		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
 		// int timeBarCount = 0;
 		for (int i = 0; i < sharesOrder.size(); i++) {

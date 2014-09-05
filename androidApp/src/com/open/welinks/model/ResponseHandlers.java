@@ -311,15 +311,15 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发布群分享成功")) {
 				Share share = data.shares.shareMap.get(response.gid);
-				ShareMessage shareMessage = share.sharesMap.get(response.ogsid);
+				ShareMessage shareMessage = share.shareMessagesMap.get(response.ogsid);
 				shareMessage.gsid = response.gsid;
 				shareMessage.time = response.time;
 				shareMessage.status = "sent";
-				int index = share.sharesOrder.indexOf(response.ogsid);
-				share.sharesOrder.remove(index);
-				share.sharesOrder.add(0, response.gsid);
-				share.sharesMap.remove(response.ogsid);
-				share.sharesMap.put(shareMessage.gsid, shareMessage);
+				int index = share.shareMessagesOrder.indexOf(response.ogsid);
+				share.shareMessagesOrder.remove(index);
+				share.shareMessagesOrder.add(0, response.gsid);
+				share.shareMessagesMap.remove(response.ogsid);
+				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				viewManage.mainView.shareSubView.showShareMessages();
 				Log.e(tag, "---------------------发送成功");
 			}
@@ -344,14 +344,14 @@ public class ResponseHandlers {
 						share = data.shares.new Share();
 						data.shares.shareMap.put(response.gid, share);
 					}
-					List<String> sharesOrder = response.shares.sharesOrder;
+					List<String> sharesOrder = response.shares.shareMessagesOrder;
 					for (int i = sharesOrder.size() - 1; i >= 0; i--) {
 						String key = sharesOrder.get(i);
-						if (!share.sharesOrder.contains(key)) {
-							share.sharesOrder.add(0, key);
+						if (!share.shareMessagesOrder.contains(key)) {
+							share.shareMessagesOrder.add(0, key);
 						}
 					}
-					share.sharesMap.putAll(response.shares.sharesMap);
+					share.shareMessagesMap.putAll(response.shares.shareMessagesMap);
 					viewManage.mainView.shareSubView.showShareMessages();
 				}
 			} catch (JsonSyntaxException e) {
@@ -374,7 +374,7 @@ public class ResponseHandlers {
 				Log.e(tag, "---------------------点赞群分享成功");
 			} else if (response.提示信息.equals("点赞群分享失败")) {
 				Share share = data.shares.shareMap.get(response.gid);
-				ShareMessage shareMessage = share.sharesMap.get(response.gsid);
+				ShareMessage shareMessage = share.shareMessagesMap.get(response.gsid);
 				shareMessage.praiseusers.remove(data.userInformation.currentUser.phone);
 			}
 		};
