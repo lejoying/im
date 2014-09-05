@@ -589,6 +589,7 @@ public class LoginController {
 				}
 			}, thisView.animationBackOut.getDuration());
 		}
+		thisView.progressBar.setProgress(0);
 	}
 
 	public InputMethodManager getInputMethodManager() {

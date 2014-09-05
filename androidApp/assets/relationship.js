@@ -419,10 +419,10 @@
 			"latitude" : ""
 		}
 	},
-	groups : ["1001", "1002", "1003"],
+	groups : ["312", "313", "1003"],
 	groupsMap : {
-		"1001" : {
-			gid : 1001,
+		"312" : {
+			gid : 312,
 			icon : "",
 			name : "1001好友圈",
 			notReadMessagesCount : 12,
@@ -433,11 +433,11 @@
 			background : "";
 			members : ["15210721344", "18640488253"]
 		},
-		"1002" : {
-			gid : 1002,
+		"313" : {
+			gid : 313,
 			icon : "",
 			name : "1002同学会",
-			notReadMessagesCount : 12,
+			notReadMessagesCount : 22,
 			distance : 4562;
 			longitude : "";
 			latitude : "";

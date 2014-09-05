@@ -1,39 +1,51 @@
 {
 	"friendMessageMap" : {
-		"p151" : [{
+		"p121" : [{
 				"type" : 1,
 				"time" : "1408506528617",
 				"sendType" : "point",
 				"gid" : "",
 				"status" : "sent",
-				"phone" : "151",
+				"phone" : "121",
 				"nickName" : "151Name",
 				"contentType" : "text",
 				"content" : "[]"
 			}
 		],
-		"p152" : [{
+		"p122" : [{
 				"type" : 1,
 				"time" : "1408506528617",
 				"sendType" : "point",
 				"gid" : "",
 				"status" : "sent",
-				"phone" : "152",
+				"phone" : "122",
 				"nickName" : "152Name",
 				"contentType" : "text",
 				"content" : "我是152"
 			}
 		],
-		"p153" : [{
+		"p123" : [{
 				"type" : 1,
 				"time" : "1408506528617",
 				"sendType" : "point",
 				"gid" : "",
 				"status" : "sent",
-				"phone" : "153",
+				"phone" : "123",
 				"nickName" : "153Name",
 				"contentType" : "text",
 				"content" : "我是153"
+			}
+		],
+		"p125" : [{
+				"type" : 1,
+				"time" : "1408506528617",
+				"sendType" : "point",
+				"gid" : "",
+				"status" : "sent",
+				"phone" : "125",
+				"nickName" : "154Name",
+				"contentType" : "text",
+				"content" : "我是154"
 			}
 		],
 		"p154" : [{
@@ -43,18 +55,6 @@
 				"gid" : "",
 				"status" : "sent",
 				"phone" : "154",
-				"nickName" : "154Name",
-				"contentType" : "text",
-				"content" : "我是154"
-			}
-		],
-		"p155" : [{
-				"type" : 1,
-				"time" : "1408506528617",
-				"sendType" : "point",
-				"gid" : "",
-				"status" : "sent",
-				"phone" : "155",
 				"nickName" : "155Name",
 				"contentType" : "text",
 				"content" : "我是155"
@@ -72,37 +72,25 @@
 				"content" : "我是156"
 			}
 		],
-		"p157" : [{
+		"p153" : [{
 				"type" : 1,
 				"time" : "1408506528617",
 				"sendType" : "point",
 				"gid" : "",
 				"status" : "sent",
-				"phone" : "157",
+				"phone" : "153",
 				"nickName" : "157Name",
 				"contentType" : "text",
 				"content" : "我是153"
 			}
-		],
-		"p158" : [{
-				"type" : 1,
-				"time" : "1408506528617",
-				"sendType" : "point",
-				"gid" : "",
-				"status" : "sent",
-				"phone" : "158",
-				"nickName" : "158Name",
-				"contentType" : "text",
-				"content" : "我是158"
-			}
 		]
 	},
 	"groupMessageMap" : {
-		"g101" : [{
+		"g313" : [{
 				"type" : 1,
 				"time" : "1408506528617",
 				"sendType" : "group",
-				"gid" : "101",
+				"gid" : "312",
 				"status" : "sent",
 				"phone" : "888",
 				"nickName" : "888Name",
@@ -110,11 +98,11 @@
 				"content" : "我是888"
 			}
 		],
-		"g102" : [{
+		"g312" : [{
 				"type" : 1,
 				"time" : "1408506528617",
 				"sendType" : "group",
-				"gid" : "102",
+				"gid" : "313",
 				"status" : "sent",
 				"phone" : "999",
 				"nickName" : "999Name",
@@ -123,5 +111,5 @@
 			}
 		]
 	},
-	"messagesOrder" : ["g101", "g102", "p158", "p157", "p156", "p155", "p151", "p152", "p153", "p154"]
+	"messagesOrder" : ["g312", "g313", "p121", "p122", "p123", "p125", "p153", "p154", "p156"]
 }

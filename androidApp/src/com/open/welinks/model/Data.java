@@ -171,9 +171,6 @@ public class Data {
 
 		public class Message {
 
-			public int MESSAGE_TYPE_SEND = 0x01;
-			public int MESSAGE_TYPE_RECEIVE = 0x02;
-
 			public int type;
 			public String time;
 			public String sendType;

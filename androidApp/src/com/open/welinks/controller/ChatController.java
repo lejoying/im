@@ -3,6 +3,7 @@ package com.open.welinks.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
@@ -41,6 +43,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
@@ -62,7 +65,7 @@ public class ChatController {
 	public OnTouchListener onTouchListener;
 	public OnFocusChangeListener mFocusChangeListener;
 	public UploadLoadingListener uploadLoadingListener;
-	public DownloadListener downloadListener;
+	public DownloadListener downloadListener, headDownloadListener;
 
 	public Data data = Data.getInstance();
 	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
@@ -71,10 +74,12 @@ public class ChatController {
 	public Gson gson = new Gson();
 
 	public DownloadFile downloadFile = null;
-	public DisplayImageOptions options;
+	public DisplayImageOptions options, headOptions;
 	public InputMethodManager inputMethodManager;
 
 	public Handler handler = new Handler();
+
+	public Map<String, String> unsendMessage;
 
 	public String type, key;
 
@@ -100,6 +105,8 @@ public class ChatController {
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		sdFile = Environment.getExternalStorageDirectory();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
+		unsendMessage = new HashMap<String, String>();
 		thisView.showChatViews();
 	}
 
@@ -129,14 +136,13 @@ public class ChatController {
 			@Override
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
-					int position = (Integer) view.getTag(R.id.tag_first);
-					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_second);
+					data.tempData.selectedImageList = (ArrayList<String>) view.getTag(R.id.tag_first);
 					Intent intent = new Intent(thisActivity, PictureBrowseActivity.class);
-					intent.putExtra("position", String.valueOf(position));
+					intent.putExtra("position", String.valueOf(0));
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.backview)) {
 					thisActivity.finish();
-				} else if (view.equals(thisView.infomation)) {
+				} else if (view.equals(thisView.infomation_layout)) {
 					if ("point".equals(type)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
 						intent.putExtra("key", key);
@@ -149,7 +155,7 @@ public class ChatController {
 					}
 				} else if (view.equals(thisView.send)) {
 					String text = thisView.input.getText().toString();
-					sendMessage(text, "text");
+					sendMessageToLocal(text, "text", new Date().getTime());
 					thisView.input.setText("");
 				} else if (view.equals(thisView.more)) {
 					showSelectTab();
@@ -190,13 +196,19 @@ public class ChatController {
 
 			@Override
 			public void success(UploadMultipart instance, int time) {
+				int total = (Integer) instance.view.getTag(R.id.tag_first);
+				int current = (Integer) instance.view.getTag(R.id.tag_second);
+				instance.view.setTag(R.id.tag_second, ++current);
+				if (current == total) {
+					// sendMessageToServer("image",
+					// unsendMessage.remove((String)
+					// instance.view.getTag(R.id.tag_third)));
+				}
 				thisView.mChatAdapter.notifyDataSetChanged();
 			}
 
 			@Override
 			public void loading(UploadMultipart instance, int precent, long time, int status) {
-				// TODO Auto-generated method stub
-
 			}
 		};
 		downloadListener = new DownloadListener() {
@@ -208,14 +220,30 @@ public class ChatController {
 
 			@Override
 			public void loading(DownloadFile instance, int precent, int status) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void failure(DownloadFile instance, int status) {
-				// TODO Auto-generated method stub
 
+			}
+		};
+		headDownloadListener = new DownloadListener() {
+
+			@Override
+			public void success(DownloadFile instance, int status) {
+				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, headOptions);
+			}
+
+			@Override
+			public void loading(DownloadFile instance, int precent, int status) {
+
+			}
+
+			@Override
+			public void failure(DownloadFile instance, int status) {
+				ImageView headView = (ImageView) instance.view;
+				headView.setImageBitmap(thisView.bitmap);
 			}
 		};
 		mFocusChangeListener = new OnFocusChangeListener() {
@@ -235,7 +263,7 @@ public class ChatController {
 
 	public void bindEvent() {
 		thisView.backview.setOnClickListener(mOnClickListener);
-		thisView.infomation.setOnClickListener(mOnClickListener);
+		thisView.infomation_layout.setOnClickListener(mOnClickListener);
 		thisView.send.setOnClickListener(mOnClickListener);
 		thisView.more.setOnClickListener(mOnClickListener);
 		thisView.selectedface.setOnClickListener(mOnClickListener);
@@ -339,33 +367,42 @@ public class ChatController {
 		data.tempData.selectedImageList = null;
 		File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
 		ArrayList<String> content = new ArrayList<String>();
+		View view = new View(thisActivity);
+		long time = new Date().getTime();
+		view.setTag(R.id.tag_first, selectedImageList.size());
+		view.setTag(R.id.tag_second, 0);
+		view.setTag(R.id.tag_third, time);
 		for (String filePath : selectedImageList) {
 			Map<String, Object> map = MCImageUtils.processImagesInformation(filePath, targetFolder);
 			content.add((String) map.get("fileName"));
-			uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"));
+			uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
 		}
-		sendMessage(gson.toJson(content), "image");
+		sendMessageToLocal(gson.toJson(content), "image", time);
 	}
 
-	public void sendMessage(String messageContent, String contentType) {
+	public void sendMessageToLocal(String messageContent, String contentType, long time) {
 		Message message = data.messages.new Message();
 		message.content = messageContent;
 		message.contentType = contentType;
 		message.sendType = "point";
 		message.phone = data.userInformation.currentUser.phone;
 		message.nickName = data.userInformation.currentUser.nickName;
-		message.time = String.valueOf(new Date().getTime());
+		message.time = String.valueOf(time);
 		message.status = "sending";
-		message.type = message.MESSAGE_TYPE_SEND;
+		message.type = Constant.MESSAGE_TYPE_SEND;
 		if ("group".equals(type)) {
 			message.gid = key;
 			message.sendType = "group";
-			data.messages.groupMessageMap.get(key).add(message);
+			data.messages.groupMessageMap.get("g" + key).add(message);
 		} else {
-			data.messages.friendMessageMap.get(key).add(message);
+			data.messages.friendMessageMap.get("p" + key).add(message);
 		}
 		thisView.mChatAdapter.notifyDataSetChanged();
+		// if ("text".equals(contentType)) {
 		sendMessageToServer(contentType, messageContent);
+		// } else {
+		// unsendMessage.put(String.valueOf(time), messageContent);
+		// }
 	}
 
 	public void sendMessageToServer(String contentType, String content) {
@@ -380,14 +417,10 @@ public class ChatController {
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("sendType", type);
 		params.addBodyParameter("message", gson.toJson(sendMessage));
-
 		if ("group".equals(type)) {
 			Group group = data.relationship.groupsMap.get(key);
 			if (group == null) {
 				group = data.relationship.new Group();
-				group.members.add("154");
-				group.members.add("155");
-				group.members.add("156");
 			}
 			params.addBodyParameter("gid", key);
 			params.addBodyParameter("phoneto", gson.toJson(group.members));
@@ -402,19 +435,36 @@ public class ChatController {
 		httpUtils.send(HttpMethod.POST, API.MESSAGE_SEND, params, responseHandlers.message_sendMessageCallBack);
 	}
 
-	public void uploadFile(final String filePath, final String fileName, final byte[] bytes) {
-		new Thread() {
-			@Override
-			public void run() {
-				UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes);
-				uploadMultipartList.addMultipart(multipart);
-				multipart.setUploadLoadingListener(uploadLoadingListener);
-			}
-		}.start();
+	public void uploadFile(final String filePath, final String fileName, final byte[] bytes, final View view) {
+		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes);
+		multipart.view = view;
+		uploadMultipartList.addMultipart(multipart);
+		multipart.setUploadLoadingListener(uploadLoadingListener);
 	}
 
-	public void setHeadImage() {
+	public void setHeadImage(String fileName, ImageView view) {
+		File sdFile = Environment.getExternalStorageDirectory();
+		File file = new File(sdFile, "welinks/heads/" + fileName);
+		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
+		final String path = file.getAbsolutePath();
+		imageLoader.displayImage("file://" + file.getAbsolutePath(), view, headOptions, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingStarted(String imageUri, View view) {
+			}
 
+			@Override
+			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+				downloadFile = new DownloadFile(url, path);
+				downloadFile.view = view;
+				downloadFile.setDownloadFileListener(thisController.headDownloadListener);
+				downloadFileList.addDownloadFile(downloadFile);
+			}
+
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+			}
+		});
 	}
 
 	public class SendMessage {

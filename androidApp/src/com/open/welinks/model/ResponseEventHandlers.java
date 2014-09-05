@@ -129,19 +129,19 @@ public class ResponseEventHandlers {
 	public void updateLocalMessage(List<String> messages) {
 		for (String content : messages) {
 			Message message = gson.fromJson(content, Message.class);
-			message.type = message.MESSAGE_TYPE_RECEIVE;
+			message.type = Constant.MESSAGE_TYPE_RECEIVE;
 			if ("point".equals(message.sendType)) {
-				ArrayList<Message> list = data.messages.friendMessageMap.get(message.phone);
+				ArrayList<Message> list = data.messages.friendMessageMap.get("p" + message.phone);
 				if (list == null) {
 					list = new ArrayList<Data.Messages.Message>();
-					data.messages.friendMessageMap.put(message.phone, list);
+					data.messages.friendMessageMap.put("p" + message.phone, list);
 				}
 				list.add(message);
 			} else if ("group".equals(message.sendType)) {
-				ArrayList<Message> list = data.messages.groupMessageMap.get(message.gid);
+				ArrayList<Message> list = data.messages.groupMessageMap.get("g" + message.gid);
 				if (list == null) {
 					list = new ArrayList<Data.Messages.Message>();
-					data.messages.groupMessageMap.put(message.gid, list);
+					data.messages.groupMessageMap.put("g" + message.gid, list);
 				}
 				list.add(message);
 			}
@@ -156,12 +156,22 @@ public class ResponseEventHandlers {
 						}
 					});
 				} else {
-					viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
+					modifyMessagesSubView(message);
 				}
 			} else {
-				viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
+				modifyMessagesSubView(message);
 			}
 
 		}
+
+	}
+
+	public void modifyMessagesSubView(Message message) {
+		if ("point".equals(message.sendType)) {
+			data.relationship.friendsMap.get(message.phone).notReadMessagesCount++;
+		} else if ("group".equals(message.sendType)) {
+			data.relationship.groupsMap.get(message.gid).notReadMessagesCount++;
+		}
+		viewManage.mainView.messagesSubView.thisController.addMessageToSubView(message);
 	}
 }

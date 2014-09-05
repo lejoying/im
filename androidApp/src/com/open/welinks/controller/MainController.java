@@ -90,10 +90,16 @@ public class MainController {
 		data.localStatus.thisActivityName = "MainActivity";
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 		thisView.shareSubView.onResume();
+		thisView.messagesSubView.onResume();
 	}
 
 	public void onPause() {
 		thisView.meSubView.mMePageAppIconScaleSpring.removeListener(mSpringListener);
+	}
+
+	public void onDestroy() {
+		thisView.messagesSubView.onDestroy();
+
 	}
 
 	private class ExampleSpringListener extends SimpleSpringListener {
@@ -384,6 +390,9 @@ public class MainController {
 		}
 
 		public boolean onSingleTapUp(MotionEvent event) {
+			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
+				messagesSubController.onSingleTapUp(event);
+			}
 			return false;
 		}
 
@@ -429,4 +438,5 @@ public class MainController {
 		}
 		return statusBarHeight;
 	}
+
 }
