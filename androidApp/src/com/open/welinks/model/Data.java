@@ -39,9 +39,9 @@ public class Data {
 			public String contentType;
 			public long size = 0;
 
-//			public UploadMultipart multipart;
-//
-//			public DownloadFile downloadFile;
+			// public UploadMultipart multipart;
+			//
+			// public DownloadFile downloadFile;
 		}
 	}
 
@@ -246,6 +246,8 @@ public class Data {
 				public String gsid;
 				public String type;// imagetext voicetext vote
 				public String phone;
+				public String nickName;
+				public String head;
 				public long time;
 				public List<String> praiseusers = new ArrayList<String>();
 				public List<Comment> comments = new ArrayList<Comment>();

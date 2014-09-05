@@ -16,7 +16,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TestHttp;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.ResponseHandlers;
@@ -40,7 +39,7 @@ public class DownloadOssFileController {
 
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 
 	public OnClickListener onClickListener;
 
@@ -90,10 +89,10 @@ public class DownloadOssFileController {
 			}
 		};
 
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 				// TODO
 				String fileName = urlToLocalFileName(instance.url);
 				File file = new File(sdFile, "test0/" + fileName);
@@ -109,7 +108,7 @@ public class DownloadOssFileController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
 				
 			}

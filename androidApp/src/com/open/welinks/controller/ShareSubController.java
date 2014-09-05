@@ -34,7 +34,6 @@ import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -60,7 +59,7 @@ public class ShareSubController {
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 	public BodyCallback bodyCallback;
 
 	public View onTouchDownView;
@@ -86,14 +85,14 @@ public class ShareSubController {
 
 	public void initializeListeners() {
 
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
 			public void loading(DownloadFile instance, int precent, int status) {
 			}
 
 			@Override
-			public void success(final DownloadFile instance, int status) {
+			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
 				if (instance.view.getTag() != null) {
 					options = thisView.displayImageOptions;
@@ -117,7 +116,7 @@ public class ShareSubController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 				if (instance.view.getTag() != null) {
 					if ("image".equals(instance.view.getTag().toString())) {
 						Log.e(tag, "---------------failure" + instance.view.getTag().toString());

@@ -22,19 +22,17 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.AddFriendActivity;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.ModifyInformationActivity;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
@@ -59,7 +57,7 @@ public class BusinessCardController {
 
 	public OnClickListener mOnClickListener;
 	public OnTouchListener mOnTouchListener;
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 	public DisplayMetrics displayMetrics;
 
 	public GestureDetector backDetector;
@@ -164,10 +162,10 @@ public class BusinessCardController {
 				return false;
 			}
 		};
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
 			}
 
@@ -177,7 +175,7 @@ public class BusinessCardController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 
 			}
 		};

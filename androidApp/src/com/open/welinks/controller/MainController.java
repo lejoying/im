@@ -27,7 +27,6 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.ResponseHandlers;
@@ -46,7 +45,7 @@ public class MainController {
 	public GestureDetector mListGesture;
 
 	public OnClickListener mOnClickListener;
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 
 	public ListOnTouchListener listOnTouchListener;
 
@@ -128,19 +127,19 @@ public class MainController {
 
 	public void initializeListeners() {
 
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
 			public void loading(DownloadFile instance, int precent, int status) {
 			}
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.shareSubView.options);
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
 
 			}

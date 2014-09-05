@@ -6,16 +6,19 @@ import java.util.Map;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.FrameLayout.LayoutParams;
 
+import com.google.gson.Gson;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.ShareContent;
+import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Squares.Square;
 import com.open.welinks.model.Data.Squares.Square.SquareMessage;
 
@@ -40,6 +43,8 @@ public class SquareSubView {
 	public ImageView squareReleaseButtonView;
 	public TextView squareNameView;
 	public RelativeLayout squareContainerView;
+
+	public Gson gson = new Gson();
 
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -77,11 +82,9 @@ public class SquareSubView {
 			squareMessageBody.initialize(i);
 			squareMessageBody.setData(squareMessage);
 
-			
 			this.squareListBody.listItemsSequence.add("square#" + squareMessage.gsid);
 			this.squareListBody.listItemBodiesMap.put("square#" + squareMessage.gsid, squareMessageBody);
-			
-			
+
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (115 * displayMetrics.density));
 			squareMessageBody.y = this.squareListBody.height;
 			squareMessageBody.cardView.setY(squareMessageBody.y);
@@ -125,13 +128,29 @@ public class SquareSubView {
 		}
 
 		public void setData(SquareMessage message) {
+			ShareContent shareContent = gson.fromJson("{shareContentItems:" + message.content + "}", ShareContent.class);
+			String textContent = "";
+			String imageContent = "";
+			List<ShareContentItem> shareContentItems = shareContent.shareContentItems;
+			for (int i = 0; i < shareContentItems.size(); i++) {
+				ShareContentItem shareContentItem = shareContentItems.get(i);
+				if (shareContentItem.type.equals("image")) {
+					imageContent = shareContentItem.detail;
+					if (!"".equals(textContent))
+						break;
+				} else if (shareContentItem.type.equals("text")) {
+					textContent = shareContentItem.detail;
+					if (!"".equals(imageContent))
+						break;
+				}
+			}
 			if ("left".equals(option)) {
 				this.messageImageView.setImageResource(R.drawable.square_temp);
 			} else {
 				this.messageImageView.setImageResource(R.drawable.square_temp1);
 			}
-			this.messageContentView.setText(message.content);
-			this.messageAuthorView.setText(message.phone);
+			this.messageContentView.setText(textContent);
+			this.messageAuthorView.setText(message.nickName);
 		}
 	}
 }

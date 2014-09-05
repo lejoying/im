@@ -27,7 +27,6 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
 import com.open.welinks.SharePraiseusersActivity;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Shares.Share;
@@ -56,7 +55,7 @@ public class ShareMessageDetailController {
 	public OnClickListener mOnClickListener;
 	public OnScrollChangedListener mOnScrollChangedListener;
 	public OnTouchListener mOnTouchListener;
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 	public TextWatcher textWatcher;
 
 	public int IMAGEBROWSE_REQUESTCODE = 0x01;
@@ -125,10 +124,10 @@ public class ShareMessageDetailController {
 				}
 			}
 		};
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 				final ImageView imageView = (ImageView) instance.view;
 				thisView.imageLoader.displayImage("file://" + instance.path, imageView, thisView.displayImageOptions, new SimpleImageLoadingListener() {
 					@Override
@@ -155,7 +154,7 @@ public class ShareMessageDetailController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
 
 			}
