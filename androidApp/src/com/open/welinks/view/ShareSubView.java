@@ -349,7 +349,10 @@ public class ShareSubView {
 				File sdFile = Environment.getExternalStorageDirectory();
 				File file = new File(sdFile, "welinks/thumbnail/" + imageContent);
 				final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
-				final int showImageHeight = shareImageHeight;// (int) (displayMetrics.density * 200 + 0.5f);
+				final int showImageHeight = shareImageHeight;// (int)
+																// (displayMetrics.density
+																// * 200 +
+																// 0.5f);
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
@@ -673,7 +676,8 @@ public class ShareSubView {
 				}
 			}
 
-			// imageLoader.displayImage("file://" + key, imageBody.imageView, options);
+			// imageLoader.displayImage("file://" + key, imageBody.imageView,
+			// options);
 			myScrollImageBody.selectedImagesSequence.add(key);
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
 			imageBody.imageView.setTag(i);

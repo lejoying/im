@@ -316,6 +316,10 @@ public class ListBody1 {
 	public int containerHeight = 0;
 
 	public void setDeltaXY(float deltaX, float deltaY) {
+
+		if (this.height < this.containerHeight) {
+			return;
+		}
 		if (this.y >= 0 && deltaY > 0) {
 			deltaY = deltaY / 4;
 		} else if (this.y <= -(this.height - containerHeight) && deltaY < 0) {

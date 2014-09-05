@@ -14,6 +14,7 @@
             android:id="@+id/backview"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:background="@drawable/backview_background"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingRight="10dp" >
@@ -33,25 +34,11 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/complete"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:padding="10dp"
-            android:visibility="gone" >
-
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center"
-                android:background="@drawable/squaredetail_comment_notselected"
-                android:gravity="center"
-                android:text="完成"
-                android:textColor="#fff"
-                android:textSize="16sp" />
-        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#fff" />
     </RelativeLayout>
 
     <LinearLayout
@@ -125,8 +112,7 @@
                 android:layout_height="50dp"
                 android:layout_marginBottom="2dp"
                 android:background="#27ffffff"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/sex_title"
@@ -153,8 +139,7 @@
                 android:layout_height="50dp"
                 android:layout_marginBottom="2dp"
                 android:background="#27ffffff"
-                android:orientation="horizontal"
-               >
+                android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/location_title"
@@ -247,59 +232,73 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/input_layout"
-        android:layout_width="wrap_content"
+        android:id="@+id/inputDialogContent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
         android:background="#80000000"
         android:padding="20dp"
         android:visibility="gone" >
 
         <LinearLayout
-            android:id="@+id/edit_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="50dp"
+            android:background="#fff"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="请输入内容"
+                android:textColor="#000"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/input"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1.0"
-                android:background="#00000000"
-                android:textColor="#fff" />
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/line_0099cd"
+                android:hint="请输入"
+                android:padding="4dp"
+                android:textColor="#000"
+                android:textColorHint="#ccc"
+                android:textCursorDrawable="@null"
+                android:textSize="17sp" />
 
-            <ImageView
-                android:id="@+id/del"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center_vertical"
-                android:padding="5dp"
-                android:src="@drawable/card_back" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="12dp" >
+
+                <Button
+                    android:id="@+id/confirm"
+                    android:layout_width="100dp"
+                    android:layout_height="36dp"
+                    android:background="#ff0099cd"
+                    android:text="确定"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/cancel"
+                    android:layout_width="100dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentRight="true"
+                    android:background="#ff0099cd"
+                    android:text="取消"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />
+            </RelativeLayout>
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/bottomline"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/edit_layout"
-            android:background="#fff" />
-
-        <ImageView
-            android:layout_width="1dp"
-            android:layout_height="15dp"
-            android:layout_above="@+id/bottomline"
-            android:layout_alignParentLeft="true"
-            android:background="#fff" />
-
-        <ImageView
-            android:layout_width="1dp"
-            android:layout_height="15dp"
-            android:layout_above="@+id/bottomline"
-            android:layout_alignParentRight="true"
-            android:background="#fff" />
     </RelativeLayout>
 
     <RelativeLayout

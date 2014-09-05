@@ -26,17 +26,25 @@ public class SettingActivity extends Activity implements OnClickListener {
 	ImageView backView;
 	RelativeLayout exitCurrentUserView;
 
+	View about, disclaimer, opinion;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_setting);
 		backView = (ImageView) findViewById(R.id.iv_setttingBack);
 		exitCurrentUserView = (RelativeLayout) findViewById(R.id.rl_exitCurrentUser);
+		about = findViewById(R.id.about);
+		disclaimer = findViewById(R.id.disclaimer);
+		opinion = findViewById(R.id.opinion);
 		initEvent();
 	}
 
 	private void initEvent() {
 		exitCurrentUserView.setOnClickListener(this);
+		about.setOnClickListener(this);
+		disclaimer.setOnClickListener(this);
+		opinion.setOnClickListener(this);
 		setOnTouch(exitCurrentUserView);
 		backView.setOnClickListener(this);
 		backView.setOnTouchListener(new OnTouchListener() {
@@ -70,16 +78,22 @@ public class SettingActivity extends Activity implements OnClickListener {
 	}
 
 	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.iv_setttingBack:
+	public void onClick(View view) {
+		int id = view.getId();
+		if (id == R.id.iv_setttingBack) {
 			finish();
-			break;
-		case R.id.rl_exitCurrentUser:
+		} else if (id == R.id.rl_exitCurrentUser) {
 			logOut();
-			break;
-		default:
-			break;
+		} else if (id == R.id.about) {
+			Intent intent = new Intent(SettingActivity.this, StatementActivity.class);
+			intent.putExtra("type", "about");
+			startActivity(intent);
+		} else if (id == R.id.disclaimer) {
+			Intent intent = new Intent(SettingActivity.this, StatementActivity.class);
+			intent.putExtra("type", "disclaimer");
+			startActivity(intent);
+		} else if (id == R.id.opinion) {
+			startActivity(new Intent(SettingActivity.this, FeedBackActivity.class));
 		}
 	}
 

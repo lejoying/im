@@ -164,7 +164,6 @@
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-
         <activity
             android:name="com.open.welinks.BusinessCardActivity"
             android:screenOrientation="portrait"
@@ -179,6 +178,18 @@
         </activity>
         <activity
             android:name="com.open.welinks.ModifyInformationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name="com.open.welinks.StatementActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name="com.open.welinks.FeedBackActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CommonStyle"
             android:windowSoftInputMode="adjustPan" >
