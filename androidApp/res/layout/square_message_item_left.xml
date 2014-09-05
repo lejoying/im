@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="120dp" >
+    android:layout_height="115dp" >
 
     <ImageView
         android:id="@+id/messageImage"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="115dp"
         android:src="@drawable/square_temp" />
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="115dp"
         android:background="@drawable/square_message_background1" />
 
     <TextView
@@ -22,7 +22,7 @@
         android:layout_marginTop="15dp"
         android:lines="2"
         android:text="“停车做爱枫林晚 ， 霜叶红叶二月红”"
-        android:textColor="#000"
+        android:textColor="#99000000"
         android:textSize="16sp" />
 
     <TextView
@@ -33,7 +33,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:text="Lucy and Luly"
-        android:textColor="#000"
+        android:textColor="#99000000"
         android:textSize="18sp" />
 
 </RelativeLayout>
