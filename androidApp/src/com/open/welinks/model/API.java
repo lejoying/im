@@ -19,7 +19,10 @@ public class API {
 	 * http://www.we-links.com/api2/account/auth
 	 */
 	public static String ACCOUNT_AUTH = "http://www.we-links.com/api2/account/auth";
-
+	/**
+	 * http://www.we-links.com/api2/account/get
+	 */
+	public static String ACCOUNT_GET = "http://www.we-links.com/api2/account/get";
 	// group
 	/**
 	 * http://www.we-links.com/api2/group/getgroupmembers

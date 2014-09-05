@@ -53,7 +53,7 @@
             android:layout_alignParentRight="true"
             android:paddingLeft="10dp"
             android:paddingRight="30dp"
-            android:src="@drawable/chat_group_menu" />
+            android:src="@drawable/share_to_group_icon" />
     </RelativeLayout>
 
     <ListView

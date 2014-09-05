@@ -917,12 +917,9 @@ public class LoginController {
 		}.start();
 	}
 
-	public void loginSuccessful(final String phone, final String accessKey) {
+	public void loginSuccessful(final String phone) {
 		new Thread() {
 			public void run() {
-				data.userInformation.currentUser.phone = phone;
-				data.userInformation.currentUser.accessKey = accessKey;
-				data.localStatus.thisActivityName = "MainActivity";
 				Intent intent = new Intent(thisActivity, MainActivity.class);
 				intent.putExtra("phone", phone);
 				for (int i = 1; i <= 50; i++) {

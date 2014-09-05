@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.ChatActivity;
+import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
@@ -79,6 +80,8 @@ public class ChatController {
 
 	public User currentUser = data.userInformation.currentUser;
 
+	public File sdFile;
+
 	public ChatController(ChatActivity thisActivity) {
 		this.thisActivity = thisActivity;
 		context = thisActivity;
@@ -95,6 +98,7 @@ public class ChatController {
 			this.type = type;
 		}
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		sdFile = Environment.getExternalStorageDirectory();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		thisView.showChatViews();
 	}
@@ -133,10 +137,16 @@ public class ChatController {
 				} else if (view.equals(thisView.backview)) {
 					thisActivity.finish();
 				} else if (view.equals(thisView.infomation)) {
-					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
-					intent.putExtra("key", key);
-					intent.putExtra("type", type);
-					thisActivity.startActivity(intent);
+					if ("point".equals(type)) {
+						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+						intent.putExtra("key", key);
+						intent.putExtra("type", type);
+						thisActivity.startActivity(intent);
+					} else if ("group".equals(type)) {
+						Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+						intent.putExtra("gid", key);
+						thisActivity.startActivity(intent);
+					}
 				} else if (view.equals(thisView.send)) {
 					String text = thisView.input.getText().toString();
 					sendMessage(text, "text");
@@ -205,7 +215,7 @@ public class ChatController {
 			@Override
 			public void failure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 		mFocusChangeListener = new OnFocusChangeListener() {
@@ -242,7 +252,6 @@ public class ChatController {
 	}
 
 	public void setImageThumbnail(String fileName, ImageView view) {
-		File sdFile = Environment.getExternalStorageDirectory();
 		File file = new File(sdFile, "welinks/thumbnail/" + fileName);
 		final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName + "@" + (int) (178 * thisView.displayMetrics.density + 0.5f) / 2 + "w_" + (int) (106 * thisView.displayMetrics.density + 0.5f) / 2 + "h_1c_1e_100q";
 		final String path = file.getAbsolutePath();
@@ -402,6 +411,10 @@ public class ChatController {
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			}
 		}.start();
+	}
+
+	public void setHeadImage() {
+
 	}
 
 	public class SendMessage {

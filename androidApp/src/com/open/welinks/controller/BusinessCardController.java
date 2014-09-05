@@ -168,20 +168,7 @@ public class BusinessCardController {
 
 			@Override
 			public void success(DownloadFile instance, int status) {
-				imageLoader.displayImage("file://" + file.getAbsolutePath(), (ImageAware) downloadFile.view, options, new SimpleImageLoadingListener() {
-					@Override
-					public void onLoadingStarted(String imageUri, View view) {
-					}
-
-					@Override
-					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-					}
-
-					@Override
-					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-					}
-				});
+				//
 			}
 
 			@Override
@@ -269,10 +256,24 @@ public class BusinessCardController {
 		file = new File(sdFile, "welinks/heads/" + fileName);
 		final String url = API.DOMAIN_COMMONIMAGE + "heads/" + fileName;
 		final String path = file.getAbsolutePath();
-		downloadFile = new DownloadFile(url, path);
-		downloadFile.view = view;
-		downloadFile.setDownloadFileListener(thisController.downloadListener);
-		downloadFileList.addDownloadFile(downloadFile);
+		imageLoader.displayImage("file://" + file.getAbsolutePath(), view, options, new SimpleImageLoadingListener() {
+			@Override
+			public void onLoadingStarted(String imageUri, View view) {
+			}
+
+			@Override
+			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+				downloadFile = new DownloadFile(url, path);
+				downloadFile.view = view;
+				downloadFile.setDownloadFileListener(thisController.downloadListener);
+				downloadFileList.addDownloadFile(downloadFile);
+			}
+
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+			}
+		});
 	}
 
 	public void addFriend() {

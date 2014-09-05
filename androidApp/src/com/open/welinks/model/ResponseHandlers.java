@@ -8,8 +8,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.controller.Debug1Controller;
@@ -17,6 +20,7 @@ import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.RSAUtils;
 import com.open.welinks.view.ViewManage;
 
@@ -214,14 +218,54 @@ public class ResponseHandlers {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				viewManage.loginView.thisController.loginSuccessful(phone, accessKey);
+				data.userInformation.currentUser.phone = phone;
+				data.userInformation.currentUser.accessKey = accessKey;
+				HttpUtils httpUtils = new HttpUtils();
+				RequestParams params = new RequestParams();
+				params.addBodyParameter("phone", phone);
+				params.addBodyParameter("accessKey", accessKey);
+				params.addBodyParameter("target", "[\"" + phone + "\"]");
+				ResponseHandlers responseHandlers = getInstance();
+				httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, responseHandlers.account_get);
+				viewManage.loginView.thisController.loginSuccessful(phone);
 			} else {
 				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}
 		};
 
 	};
+	public ResponseHandler<String> account_get = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public List<Account> accounts;
+		}
 
+		class Account {
+			public int ID;
+			public String phone;
+			public String nickName;
+			public String mainBusiness;
+			public String head;
+			public String sex;
+			public String byPhone;
+			public String userBackground;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if ("获取用户信息成功".equals(response.提示信息)) {
+				User user = data.userInformation.currentUser;
+				Account account = response.accounts.get(0);
+				user.id = account.ID;
+				user.head = account.head;
+				user.mainBusiness = account.mainBusiness;
+				user.nickName = account.nickName;
+				user.sex = account.sex;
+				user.userBackground = account.userBackground;
+			}
+		};
+	};
 	public ResponseHandler<String> group_addmembers = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;

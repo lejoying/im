@@ -7,6 +7,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -103,6 +104,12 @@ public class ChatView {
 			if (messages == null) {
 				messages = new ArrayList<Data.Messages.Message>();
 				data.messages.friendMessageMap.put(key, messages);
+			}
+			Friend friend = data.relationship.friendsMap.get(key);
+			if (friend == null || friend.head.equals("")) {
+				infomation.setImageBitmap(bitmap);
+			} else {
+
 			}
 		}
 		mChatAdapter = new ChatAdapter(messages);
