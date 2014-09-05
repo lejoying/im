@@ -76,11 +76,11 @@ public class SquareSubView {
 			squareMessageBody.initialize(i);
 			squareMessageBody.setData(squareMessage);
 
-			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (120 * displayMetrics.density));
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (115 * displayMetrics.density));
 			squareMessageBody.y = this.squareListBody.height;
 			squareMessageBody.cardView.setY(squareMessageBody.y);
 			squareMessageBody.cardView.setX(0);
-			this.squareListBody.height = this.squareListBody.height + 130 * displayMetrics.density;
+			this.squareListBody.height = this.squareListBody.height + 120 * displayMetrics.density;
 			this.squareListBody.containerView.addView(squareMessageBody.cardView, layoutParams);
 		}
 		this.squareListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
@@ -98,11 +98,15 @@ public class SquareSubView {
 		public TextView messageContentView;
 		public TextView messageAuthorView;
 
+		public String option;
+
 		public View initialize(int i) {
 			if (i % 2 == 1) {
 				this.cardView = mInflater.inflate(R.layout.square_message_item_left, null);
+				option = "left";
 			} else {
 				this.cardView = mInflater.inflate(R.layout.square_message_item_right, null);
+				option = "right";
 			}
 
 			this.messageImageView = (ImageView) this.cardView.findViewById(R.id.messageImage);
@@ -114,7 +118,11 @@ public class SquareSubView {
 		}
 
 		public void setData(SquareMessage message) {
-			this.messageImageView.setImageResource(R.drawable.square_temp);
+			if ("left".equals(option)) {
+				this.messageImageView.setImageResource(R.drawable.square_temp);
+			} else {
+				this.messageImageView.setImageResource(R.drawable.square_temp1);
+			}
 			this.messageContentView.setText(message.content);
 			this.messageAuthorView.setText(message.phone);
 		}
