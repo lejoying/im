@@ -89,6 +89,7 @@ public class GroupMemberManageView {
 		public Map<String, Friend> friendsMap;
 
 		public GroupMembersAdapter() {
+			members.clear();
 			members.addAll(thisController.currentGroup.members);
 			friendsMap = data.relationship.friendsMap;
 			groupMemberCountView.setText("成员管理 ( " + members.size() + "人 )");
@@ -111,7 +112,7 @@ public class GroupMemberManageView {
 
 		@Override
 		public Object getItem(int position) {
-			return position;
+			return members.get(position);
 		}
 
 		@Override
@@ -161,7 +162,7 @@ public class GroupMemberManageView {
 						imageHolder0.imageContent.setOnClickListener(thisController.mOnClickListener);
 					} else {
 						imageHolder0.imageContent.setImageResource(R.drawable.add_icon);
-						imageHolder0.imageContent.setTag("invitafriendroup#");
+						imageHolder0.imageContent.setTag("invitafriendgroup#");
 						imageHolder0.imageContent.setOnClickListener(thisController.mOnClickListener);
 					}
 				}

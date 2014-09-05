@@ -173,6 +173,7 @@ public class ShareSubController {
 			public void onClick(View view) {
 				if (view.equals(thisView.leftImageButton)) {
 					Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.shareTopMenuGroupNameParent)) {
 					thisView.showGroupsDialog();
@@ -199,7 +200,11 @@ public class ShareSubController {
 						Group group = data.relationship.groupsMap.get(content);
 						TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
 						data.localStatus.localData.currentSelectedGroup = group.gid + "";
-						shareTopMenuGroupName.setText(group.name);
+						String name = group.name;
+						if (name.length() > 8) {
+							name = name.substring(0, 8);
+						}
+						shareTopMenuGroupName.setText(name);
 						thisView.modifyCurrentShowGroup();
 						getCurrentGroupShareMessages();
 						thisView.showGroupMembers();

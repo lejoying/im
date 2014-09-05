@@ -460,4 +460,30 @@ public class ResponseHandlers {
 			}
 		};
 	};
+
+	public RequestCallBack<String> addMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("加入群组成功")) {
+				Log.e(tag, "---------------------加入群组成功");
+			}
+		};
+	};
+
+	public RequestCallBack<String> removeMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("退出群组成功")) {
+				Log.e(tag, "---------------------退出群组成功");
+			}
+		};
+	};
 }

@@ -28,11 +28,11 @@ public class LaunchActivity extends Activity {
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);
 
-		// parser.parse();
+		parser.parse();
 		// parser.saveDataToLocal();
-		parser.readSdFileToData();
+		// parser.readSdFileToData();
 
-//		getLocalInformation();
+		// getLocalInformation();
 		if (isDebug) {
 			startActivity(new Intent(LaunchActivity.this, TestListActivity.class));
 		} else {
