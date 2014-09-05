@@ -213,6 +213,71 @@
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="25dp" />
+
+            <RelativeLayout
+                android:id="@+id/menuOptions"
+                android:layout_width="146dp"
+                android:layout_height="95dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="50dp"
+                android:background="#999999"
+                android:visibility="gone" >
+
+                <RelativeLayout
+                    android:id="@+id/stickOption"
+                    android:layout_width="146dp"
+                    android:layout_height="47dp"
+                    android:background="#b2000000" >
+
+                    <ImageView
+                        android:id="@+id/stickImageOption"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30dp"
+                        android:src="@drawable/confirm_stick" />
+
+                    <TextView
+                        android:id="@+id/stickTextOption"
+                        android:layout_width="116dp"
+                        android:layout_height="47dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginLeft="20dp"
+                        android:gravity="center"
+                        android:text="置顶"
+                        android:textColor="#fff" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="47dp"
+                    android:background="#000" />
+
+                <RelativeLayout
+                    android:id="@+id/deleteOption"
+                    android:layout_width="146dp"
+                    android:layout_height="47dp"
+                    android:layout_marginTop="48dp"
+                    android:background="#b2000000" >
+
+                    <ImageView
+                        android:id="@+id/deleteImageOption"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="30dp"
+                        android:src="@drawable/delete_message" />
+
+                    <TextView
+                        android:id="@+id/deleteTextOption"
+                        android:layout_width="116dp"
+                        android:layout_height="47dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginLeft="20dp"
+                        android:gravity="center"
+                        android:text="删除"
+                        android:textColor="#fff" />
+                </RelativeLayout>
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
@@ -297,4 +362,5 @@
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
+
 </RelativeLayout>

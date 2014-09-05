@@ -157,7 +157,7 @@ public class ShareMessageDetailController {
 			@Override
 			public void failure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 		mOnTouchListener = new OnTouchListener() {
@@ -210,6 +210,15 @@ public class ShareMessageDetailController {
 					Intent intent = new Intent(thisActivity, SharePraiseusersActivity.class);
 					data.tempData.praiseusersList = shareMessage.praiseusers;
 					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.shareMessageTimeView)) {
+					if (thisView.menuOptionsView.getVisibility() == View.GONE) {
+						thisView.menuOptionsView.setVisibility(View.VISIBLE);
+						thisView.dialogSpring.addListener(thisView.dialogSpringListener);
+						thisView.dialogSpring.setCurrentValue(0);
+						thisView.dialogSpring.setEndValue(1);
+					} else {
+						thisView.menuOptionsView.setVisibility(View.GONE);
+					}
 				} else if (view.equals(thisView.confirmSendCommentView)) {
 					String commentContent = thisView.commentEditTextView.getText().toString().trim();
 					thisView.commentEditTextView.setText("");
@@ -274,6 +283,7 @@ public class ShareMessageDetailController {
 	}
 
 	public void bindEvent() {
+		thisView.shareMessageTimeView.setOnClickListener(mOnClickListener);
 		thisView.backView.setOnClickListener(mOnClickListener);
 		thisView.praiseUserContentView.setOnClickListener(mOnClickListener);
 		thisView.praiseIconView.setOnClickListener(mOnClickListener);

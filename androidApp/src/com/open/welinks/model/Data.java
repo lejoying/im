@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.open.welinks.controller.DownloadFile;
-import com.open.welinks.controller.UploadMultipart;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Data {
