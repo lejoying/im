@@ -26,8 +26,8 @@ public class BusinessCardView {
 
 	public LayoutInflater mInflater;
 	public RelativeLayout backview;
-	public LinearLayout content, infomation_layout;
-	public TextView spacing_one, spacing_two, spacing_three, title, business_title, lable_title, creattime_title, nickname, id, business, lable, creattime;
+	public LinearLayout content, infomation_layout, sex_layout;
+	public TextView spacing_one, spacing_two, spacing_three, title, business_title, lable_title, creattime_title, nickname, id, business, lable, creattime, sex;
 	public ImageView head, tdcode;
 	public Button button_one, button_two, button_three;
 
@@ -51,6 +51,7 @@ public class BusinessCardView {
 		backview = (RelativeLayout) thisActivity.findViewById(R.id.backview);
 		content = (LinearLayout) thisActivity.findViewById(R.id.content);
 		infomation_layout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
+		sex_layout = (LinearLayout) thisActivity.findViewById(R.id.sex_layout);
 		spacing_one = (TextView) thisActivity.findViewById(R.id.spacing_one);
 		spacing_two = (TextView) thisActivity.findViewById(R.id.spacing_two);
 		spacing_three = (TextView) thisActivity.findViewById(R.id.spacing_three);
@@ -63,6 +64,7 @@ public class BusinessCardView {
 		business = (TextView) thisActivity.findViewById(R.id.business);
 		lable = (TextView) thisActivity.findViewById(R.id.lable);
 		creattime = (TextView) thisActivity.findViewById(R.id.creattime);
+		sex = (TextView) thisActivity.findViewById(R.id.sex);
 		head = (ImageView) thisActivity.findViewById(R.id.head);
 		tdcode = (ImageView) thisActivity.findViewById(R.id.tdcode);
 		button_one = (Button) thisActivity.findViewById(R.id.button_one);
@@ -77,6 +79,7 @@ public class BusinessCardView {
 			User user = thisController.data.userInformation.currentUser;
 			businessCard.id = user.id;
 			businessCard.icon = user.head;
+			businessCard.sex = user.sex;
 			businessCard.nickname = user.nickName;
 			businessCard.mainBusiness = user.mainBusiness;
 			businessCard.lable = "暂无标签";
@@ -84,6 +87,7 @@ public class BusinessCardView {
 			businessCard.button_one = "修改我的名片";
 			businessCard.button_two = "";
 			businessCard.button_three = "";
+			sex_layout.setVisibility(View.VISIBLE);
 			button_two.setVisibility(View.GONE);
 			button_three.setVisibility(View.GONE);
 		} else if (status.equals(Status.FRIEND)) {
@@ -176,25 +180,31 @@ public class BusinessCardView {
 	public void setData(BusinessCard businessCard) {
 		if (status.equals(Status.SELF)) {
 			title.setText("我的详情");
-			business_title.setText("个人宣言:");
-			lable_title.setText("爱好:");
-			creattime_title.setText("注册时间:");
+			business_title.setText("个人宣言：");
+			lable_title.setText("爱好：");
+			creattime_title.setText("注册时间：");
 		} else if (status.equals(Status.FRIEND) || status.equals(Status.TEMPFRIEND)) {
 			title.setText("个人详情");
-			business_title.setText("个人宣言:");
-			lable_title.setText("爱好:");
-			creattime_title.setText("注册时间:");
+			business_title.setText("个人宣言：");
+			lable_title.setText("爱好：");
+			creattime_title.setText("注册时间：");
 		} else if (status.equals(Status.JOINEDGROUP) || status.equals(Status.NOTJOINGROUP)) {
 			title.setText("群组详情");
-			business_title.setText("主要业务:");
-			lable_title.setText("标签:");
-			creattime_title.setText("创建时间:");
+			business_title.setText("主要业务：");
+			lable_title.setText("标签：");
+			creattime_title.setText("创建时间：");
 		} else if (status.equals(Status.SQUARE)) {
 			title.setText("广场详情");
-			business_title.setText("主要业务:");
-			lable_title.setText("标签:");
-			creattime_title.setText("创建时间:");
+			business_title.setText("主要业务：");
+			lable_title.setText("标签：");
+			creattime_title.setText("创建时间：");
 		}
+		if (!"".equals(businessCard.sex) && ("male".equals(businessCard.sex) || "男".equals(businessCard.sex))) {
+			sex.setText("男");
+		} else {
+			sex.setText("女");
+		}
+
 		nickname.setText(businessCard.nickname);
 		id.setText(String.valueOf(businessCard.id));
 		business.setText(businessCard.mainBusiness);
@@ -210,6 +220,7 @@ public class BusinessCardView {
 		public String icon = "";
 		public String nickname = "";
 		public String mainBusiness = "";
+		public String sex = "";
 		public String lable = "";
 		public String creattime = "";
 		public String button_one = "";

@@ -168,7 +168,7 @@ public class BusinessCardController {
 
 			@Override
 			public void success(DownloadFile instance, int status) {
-				//
+				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
 			}
 
 			@Override

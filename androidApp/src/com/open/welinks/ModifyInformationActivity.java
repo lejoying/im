@@ -199,6 +199,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public void fillData() {
 		if ("point".equals(type)) {
 			user = data.userInformation.currentUser;
+			headFileName = user.head;
 			location_layout.setVisibility(View.GONE);
 			modify_title.setText("编辑个人资料");
 			name_title.setText("昵称");
@@ -221,6 +222,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			}
 		} else if ("group".equals(type)) {
 			group = data.relationship.groupsMap.get(key);
+			headFileName = group.icon;
 			sex_layout.setVisibility(View.GONE);
 			location_layout.setVisibility(View.GONE);
 			modify_title.setText("修改群名片");
