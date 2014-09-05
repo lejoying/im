@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="360dp"
     android:layout_height="match_parent"
     android:background="#bf000000" >
 
     <RelativeLayout
         android:id="@+id/mainContent"
-        android:layout_width="match_parent"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
@@ -15,7 +15,7 @@
         tools:ignore="UselessParent" >
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="340dp"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
@@ -25,8 +25,10 @@
                 android:id="@+id/groupsContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:padding="25dp" >
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="30dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp" >
             </com.open.lib.TouchView>
         </RelativeLayout>
 

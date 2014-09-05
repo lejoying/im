@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -346,5 +347,19 @@ public class ShareSubController {
 				}
 			}
 		}
+	}
+
+	public void onBackPressed() {
+
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SHARE) {
+			if (thisView.isShowGroupDialog) {
+				thisView.dismissGroupDialog();
+				return false;
+			}
+		}
+		return true;
 	}
 }

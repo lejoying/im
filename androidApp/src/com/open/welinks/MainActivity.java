@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -166,6 +167,21 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		thisController.onPause();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		boolean flag = thisController.onKeyDown(keyCode, event);
+		if (!flag) {
+			return flag;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onBackPressed() {
+		thisController.onBackPressed();
+		super.onBackPressed();
 	}
 
 	@Override
