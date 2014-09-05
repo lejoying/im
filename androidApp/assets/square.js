@@ -1,8 +1,8 @@
 {
 	squareMap : {
 		"1001" : {
-			squaresOrder : ["1575", "1576", "1577", "1578", "1579", "1570"],
-			squaresMap : {
+			squareMessagesOrder : ["1575", "1576", "1577", "1578", "1579", "1570"],
+			squareMessagesMap : {
 				"1575" : {
 					mType : 1,
 					gsid : 1575,

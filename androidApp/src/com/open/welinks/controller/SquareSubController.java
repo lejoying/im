@@ -22,5 +22,4 @@ public class SquareSubController {
 	public void bindEvent() {
 
 	}
-
 }

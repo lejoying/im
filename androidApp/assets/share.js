@@ -1,8 +1,8 @@
 {
 	shareMap : {
 		"1001" : {
-			sharesOrder : ["1575", "1576", "1577", "1578", "1579", "1570"],
-			sharesMap : {
+			shareMessagesOrder : ["1575", "1576", "1577", "1578", "1579", "1570"],
+			shareMessagesMap : {
 				"1575" : {
 					mType : 1,
 					gsid : 1575,

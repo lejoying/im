@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp" >
+
+    <ImageView
+        android:id="@+id/messageImage"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:src="@drawable/square_temp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/square_message_background" />
+
+    <TextView
+        android:id="@+id/messageContent"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:lines="2"
+        android:text="“停车做爱枫林晚 ， 霜叶红叶二月红”"
+        android:textColor="#000"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/messageAuthor"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="20dp"
+        android:text="Lucy and Luly"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+</RelativeLayout>

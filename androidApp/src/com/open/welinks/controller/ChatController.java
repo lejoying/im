@@ -347,7 +347,7 @@ public class ChatController {
 		message.nickName = data.userInformation.currentUser.nickName;
 		message.time = String.valueOf(new Date().getTime());
 		message.status = "sending";
-		message.type = Message.MESSAGE_TYPE_SEND;
+		message.type = message.MESSAGE_TYPE_SEND;
 		if ("group".equals(type)) {
 			message.gid = key;
 			message.sendType = "group";

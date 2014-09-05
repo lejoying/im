@@ -171,8 +171,8 @@ public class Data {
 
 		public class Message {
 
-			public static final int MESSAGE_TYPE_SEND = 0x01;
-			public static final int MESSAGE_TYPE_RECEIVE = 0x02;
+			public int MESSAGE_TYPE_SEND = 0x01;
+			public int MESSAGE_TYPE_RECEIVE = 0x02;
 
 			public int type;
 			public String time;
@@ -193,9 +193,9 @@ public class Data {
 
 		public class Share {
 
-			public List<String> sharesOrder = new ArrayList<String>();
+			public List<String> shareMessagesOrder = new ArrayList<String>();
 
-			public Map<String, ShareMessage> sharesMap = new HashMap<String, ShareMessage>();
+			public Map<String, ShareMessage> shareMessagesMap = new HashMap<String, ShareMessage>();
 
 			public class ShareMessage {
 				public int MAXTYPE_COUNT = 3;
@@ -234,9 +234,9 @@ public class Data {
 
 		public class Square {
 
-			public List<String> squaresOrder = new ArrayList<String>();
+			public List<String> squareMessagesOrder = new ArrayList<String>();
 
-			public Map<String, Square> squaresMap = new HashMap<String, Square>();
+			public Map<String, SquareMessage> squareMessagesMap = new HashMap<String, SquareMessage>();
 
 			public class SquareMessage {
 				public int MAXTYPE_COUNT = 3;

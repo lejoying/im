@@ -129,7 +129,7 @@ public class ResponseEventHandlers {
 	public void updateLocalMessage(List<String> messages) {
 		for (String content : messages) {
 			Message message = gson.fromJson(content, Message.class);
-			message.type = Message.MESSAGE_TYPE_RECEIVE;
+			message.type = message.MESSAGE_TYPE_RECEIVE;
 			if ("point".equals(message.sendType)) {
 				ArrayList<Message> list = data.messages.friendMessageMap.get(message.phone);
 				if (list == null) {

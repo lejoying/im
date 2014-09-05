@@ -86,7 +86,7 @@ public class ShareMessageDetailController {
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
 			this.gsid = gsid;
-			shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup).sharesMap.get(gsid);
+			shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup).shareMessagesMap.get(gsid);
 		}
 	}
 

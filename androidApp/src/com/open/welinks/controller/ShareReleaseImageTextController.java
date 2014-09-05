@@ -259,8 +259,8 @@ public class ShareReleaseImageTextController {
 				shareMessage.content = content;
 
 				// To add data to the data
-				share.sharesOrder.add(0, shareMessage.gsid);
-				share.sharesMap.put(shareMessage.gsid, shareMessage);
+				share.shareMessagesOrder.add(0, shareMessage.gsid);
+				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				sendMessageToServer(content, shareMessage.gsid);
 
 				// Local data diaplay in MainHandler
