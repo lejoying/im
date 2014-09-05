@@ -41,9 +41,9 @@ public class Data {
 			public String contentType;
 			public long size = 0;
 
-			public UploadMultipart multipart;
-
-			public DownloadFile downloadFile;
+//			public UploadMultipart multipart;
+//
+//			public DownloadFile downloadFile;
 		}
 	}
 

@@ -104,13 +104,13 @@ public class DownloadOssFileView {
 
 				View transportingItemView = transportingItem.initialize(imageBean);
 				String path = imageBean.path;
-				if (imageBean.downloadFile == null) {
-					imageBean.downloadFile = thisController.downloadFile(path);
-				}
-
-				imageBean.downloadFile.transportingItem = transportingItem;
-				transportingItem.downloadFile = imageBean.downloadFile;
-				imageBean.downloadFile.imageBean = imageBean;
+//				if (imageBean.downloadFile == null) {
+//					imageBean.downloadFile = thisController.downloadFile(path);
+//				}
+//
+//				imageBean.downloadFile.transportingItem = transportingItem;
+//				transportingItem.downloadFile = imageBean.downloadFile;
+//				imageBean.downloadFile.imageBean = imageBean;
 				transportingItemView.setTag(path);
 				// controlProgress.setTag(uploadMultipart);
 				transportingList.addFooterView(transportingItemView);
@@ -161,22 +161,22 @@ public class DownloadOssFileView {
 				this.controlProgressView = transportingItemView.findViewById(R.id.list_item_progress_container);
 				this.controlProgress = new ControlProgress();
 				this.controlProgress.initialize(this.controlProgressView);
-				if (imageSource.downloadFile != null) {
-					long time = imageSource.downloadFile.time.received - imageSource.downloadFile.time.start;
-					if (time < 0) {
-						time = 0;
-					}
-					text_transport_time_view.setText(time + "ms");
-					long size = Long.valueOf(imageSource.size);
-					int currentUploadSize = (int) Math.floor(size * imageSource.downloadFile.uploadPrecent / 100f);
-					text_file_size_view.setText(currentUploadSize / 1000 + "/" + size / 1000 + "k");
-					if (imageSource.downloadFile.isDownloadStatus == DownloadFile.DOWNLOAD_SUCCESS) {
-						String fileName = thisController.urlToLocalFileName(path);
-						File file = new File(sdFile, "test0/" + fileName);
-						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, options, animateFirstListener);
-					}
-					this.controlProgress.moveTo(imageSource.downloadFile.uploadPrecent);
-				}
+//				if (imageSource.downloadFile != null) {
+//					long time = imageSource.downloadFile.time.received - imageSource.downloadFile.time.start;
+//					if (time < 0) {
+//						time = 0;
+//					}
+//					text_transport_time_view.setText(time + "ms");
+//					long size = Long.valueOf(imageSource.size);
+//					int currentUploadSize = (int) Math.floor(size * imageSource.downloadFile.uploadPrecent / 100f);
+//					text_file_size_view.setText(currentUploadSize / 1000 + "/" + size / 1000 + "k");
+//					if (imageSource.downloadFile.isDownloadStatus == DownloadFile.DOWNLOAD_SUCCESS) {
+//						String fileName = thisController.urlToLocalFileName(path);
+//						File file = new File(sdFile, "test0/" + fileName);
+//						imageLoader.displayImage("file://" + file.getAbsolutePath(), imageView, options, animateFirstListener);
+//					}
+//					this.controlProgress.moveTo(imageSource.downloadFile.uploadPrecent);
+//				}
 
 				LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 2);
 				this.controlProgress.progress_line1.setLayoutParams(params);

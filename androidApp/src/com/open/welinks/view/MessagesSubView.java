@@ -61,7 +61,9 @@ public class MessagesSubView {
 	}
 
 	public void showMessages() {
-
+		if (data.messages == null) {
+			return;
+		}
 		List<String> messagesOrder = data.messages.messagesOrder;
 		Map<String, ArrayList<Message>> friendMessageMap = data.messages.friendMessageMap;
 		Map<String, ArrayList<Message>> groupMessageMap = data.messages.groupMessageMap;
