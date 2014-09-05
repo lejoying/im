@@ -29,11 +29,13 @@ public class LaunchActivity extends Activity {
 		parser.initialize(context);
 
 		parser.parse();
+		// parser.saveDataToLocal();
+		// parser.readSdFileToData();
 
-		getLocalInformation();
-		if(isDebug){
+		// getLocalInformation();
+		if (isDebug) {
 			startActivity(new Intent(LaunchActivity.this, TestListActivity.class));
-		}else{
+		} else {
 			startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
 		}
 

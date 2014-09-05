@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,15 +39,13 @@ import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
 import com.open.welinks.R;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
-import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ChatView;
 
@@ -64,8 +61,8 @@ public class ChatController {
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchListener;
 	public OnFocusChangeListener mFocusChangeListener;
-	public UploadLoadingListener uploadLoadingListener;
-	public DownloadListener downloadListener, headDownloadListener;
+	public OnUploadLoadingListener uploadLoadingListener;
+	public OnDownloadListener downloadListener, headDownloadListener;
 
 	public Data data = Data.getInstance();
 	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
@@ -192,10 +189,10 @@ public class ChatController {
 
 			}
 		};
-		uploadLoadingListener = new UploadLoadingListener() {
+		uploadLoadingListener = new OnUploadLoadingListener() {
 
 			@Override
-			public void success(UploadMultipart instance, int time) {
+			public void onSuccess(UploadMultipart instance, int time) {
 				int total = (Integer) instance.view.getTag(R.id.tag_first);
 				int current = (Integer) instance.view.getTag(R.id.tag_second);
 				instance.view.setTag(R.id.tag_second, ++current);
@@ -208,13 +205,13 @@ public class ChatController {
 			}
 
 			@Override
-			public void loading(UploadMultipart instance, int precent, long time, int status) {
+			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
 			}
 		};
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options);
 			}
 
@@ -224,14 +221,14 @@ public class ChatController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 
 			}
 		};
-		headDownloadListener = new DownloadListener() {
+		headDownloadListener = new OnDownloadListener() {
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 				imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, headOptions);
 			}
 
@@ -241,7 +238,7 @@ public class ChatController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 				ImageView headView = (ImageView) instance.view;
 				headView.setImageBitmap(thisView.bitmap);
 			}

@@ -30,7 +30,6 @@ import com.lidroid.xutils.http.client.entity.InputStreamUploadEntity;
 import com.open.lib.TestHttp;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.R;
-import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.TempData.ImageBean;
 import com.open.welinks.model.ResponseHandlers;
@@ -56,7 +55,7 @@ public class Debug1Controller {
 
 	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
 
-	public UploadLoadingListener uploadLoadingListener;
+	public OnUploadLoadingListener uploadLoadingListener;
 
 	public OnLongClickListener onLongClickListener;
 
@@ -91,10 +90,10 @@ public class Debug1Controller {
 				}
 			}
 		};
-		uploadLoadingListener = new UploadLoadingListener() {
+		uploadLoadingListener = new OnUploadLoadingListener() {
 
 			@Override
-			public void loading(UploadMultipart instance, int precent, long time, int status) {
+			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
 				instance.transportingItem.controlProgress.moveTo(precent);
 				instance.transportingItem.text_transport_time_view.setText(time + "ms");
 				long size = Long.valueOf(instance.transportingItem.imageSource.size);
@@ -103,7 +102,7 @@ public class Debug1Controller {
 			}
 
 			@Override
-			public void success(UploadMultipart instance, int time) {
+			public void onSuccess(UploadMultipart instance, int time) {
 				// TODO Auto-generated method stub
 				
 			}

@@ -66,7 +66,7 @@ public class UploadMultipart {
 	public String OSS_HOST_URL = "http://images2.we-links.com/";// http://images5.we-links.com/
 	public static String OSS_DIRECTORY = "images/";// multipart
 
-	public UploadLoadingListener uploadLoadingListener;
+	public OnUploadLoadingListener uploadLoadingListener;
 
 	public UploadMultipart instance;
 
@@ -151,7 +151,7 @@ public class UploadMultipart {
 		}
 		if (this.bytes == null) {
 			isUploadStatus = UPLOAD_EMPTY;
-			uploadLoadingListener.loading(instance, 0, 0, UPLOAD_EMPTY);
+			uploadLoadingListener.onLoading(instance, 0, 0, UPLOAD_EMPTY);
 			return;
 		}
 
@@ -328,7 +328,7 @@ public class UploadMultipart {
 			partSuccessCount++;
 			part.setStatus(Part.PART_SUCCESS);
 			uploadPrecent = (int) ((((double) partSuccessCount / (double) partCount)) * 100);
-			uploadLoadingListener.loading(instance, uploadPrecent, (time.received - time.start), UPLOAD_SUCCESS);
+			uploadLoadingListener.onLoading(instance, uploadPrecent, (time.received - time.start), UPLOAD_SUCCESS);
 			// Log.e(tag, partSuccessCount + "-----" + partCount + "------" +
 			// part.eTag);
 			if (partSuccessCount == partCount) {
@@ -382,7 +382,7 @@ public class UploadMultipart {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
 			isUploadStatus = UPLOAD_SUCCESS;
-			uploadLoadingListener.success(instance, (int) (time.received - time.start));
+			uploadLoadingListener.onSuccess(instance, (int) (time.received - time.start));
 			// Log.e(tag, completeMultipartUploadResult.location + "---" +
 			// completeMultipartUploadResult.bucket + "---" +
 			// completeMultipartUploadResult.key + "---" +
@@ -402,13 +402,7 @@ public class UploadMultipart {
 		}
 	}
 
-	public interface UploadLoadingListener {
-		public void loading(UploadMultipart instance, int precent, long time, int status);
-
-		public void success(UploadMultipart instance, int time);
-	}
-
-	public void setUploadLoadingListener(UploadLoadingListener listener) {
+	public void setUploadLoadingListener(OnUploadLoadingListener listener) {
 		this.uploadLoadingListener = listener;
 	}
 

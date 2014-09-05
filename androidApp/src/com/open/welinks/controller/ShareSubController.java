@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,7 +34,6 @@ import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -59,7 +59,7 @@ public class ShareSubController {
 	public OnClickListener mOnClickListener;
 	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 	public BodyCallback bodyCallback;
 
 	public View onTouchDownView;
@@ -85,14 +85,14 @@ public class ShareSubController {
 
 	public void initializeListeners() {
 
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
 			public void loading(DownloadFile instance, int precent, int status) {
 			}
 
 			@Override
-			public void success(final DownloadFile instance, int status) {
+			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
 				if (instance.view.getTag() != null) {
 					options = thisView.displayImageOptions;
@@ -116,7 +116,7 @@ public class ShareSubController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 				if (instance.view.getTag() != null) {
 					if ("image".equals(instance.view.getTag().toString())) {
 						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
@@ -172,6 +172,7 @@ public class ShareSubController {
 			public void onClick(View view) {
 				if (view.equals(thisView.leftImageButton)) {
 					Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
+					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.shareTopMenuGroupNameParent)) {
 					thisView.showGroupsDialog();
@@ -198,7 +199,11 @@ public class ShareSubController {
 						Group group = data.relationship.groupsMap.get(content);
 						TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
 						data.localStatus.localData.currentSelectedGroup = group.gid + "";
-						shareTopMenuGroupName.setText(group.name);
+						String name = group.name;
+						if (name.length() > 8) {
+							name = name.substring(0, 8);
+						}
+						shareTopMenuGroupName.setText(name);
 						thisView.modifyCurrentShowGroup();
 						getCurrentGroupShareMessages();
 						thisView.showGroupMembers();
@@ -249,7 +254,8 @@ public class ShareSubController {
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
-		// thisView.groupDialogView.setOnClickListener(mOnClickListener);
+		thisView.groupDialogView.setOnClickListener(mOnClickListener);
+		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {
@@ -346,5 +352,19 @@ public class ShareSubController {
 				}
 			}
 		}
+	}
+
+	public void onBackPressed() {
+
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (mainController.thisView.activityStatus.state == mainController.thisView.activityStatus.SHARE) {
+			if (thisView.isShowGroupDialog) {
+				thisView.dismissGroupDialog();
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -3,28 +3,12 @@ package com.open.welinks;
 import java.io.File;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.open.welinks.controller.DownloadFile;
-import com.open.welinks.controller.DownloadFileList;
-import com.open.welinks.controller.UploadMultipart;
-import com.open.welinks.controller.UploadMultipartList;
-import com.open.welinks.controller.DownloadFile.DownloadListener;
-import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
-import com.open.welinks.model.API;
-import com.open.welinks.model.Data;
-import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.utils.MCImageUtils;
-
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,12 +20,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+
+import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.controller.DownloadFileList;
+import com.open.welinks.controller.OnDownloadListener;
+import com.open.welinks.controller.OnUploadLoadingListener;
+import com.open.welinks.controller.UploadMultipart;
+import com.open.welinks.controller.UploadMultipartList;
+import com.open.welinks.model.API;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.utils.MCImageUtils;
 
 public class ModifyInformationActivity extends Activity implements OnClickListener {
 	public Data data = Data.getInstance();
@@ -61,8 +61,8 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public DisplayImageOptions options;
 
 	public onDataChanged mOnDataChanged;
-	public UploadLoadingListener uploadLoadingListener;
-	public DownloadListener downloadListener;
+	public OnUploadLoadingListener uploadLoadingListener;
+	public OnDownloadListener downloadListener;
 
 	public File tempFile, sdFile;
 
@@ -165,22 +165,22 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	public void initializeListeners() {
-		uploadLoadingListener = new UploadLoadingListener() {
+		uploadLoadingListener = new OnUploadLoadingListener() {
 
 			@Override
-			public void success(UploadMultipart instance, int time) {
+			public void onSuccess(UploadMultipart instance, int time) {
 
 			}
 
 			@Override
-			public void loading(UploadMultipart instance, int precent, long time, int status) {
+			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
 
 			}
 		};
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 
 			}
 
@@ -190,7 +190,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 
 			}
 		};

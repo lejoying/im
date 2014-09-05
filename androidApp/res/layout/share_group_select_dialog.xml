@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="360dp"
+    android:layout_height="500dp"
     android:background="#bf000000" >
 
-    <RelativeLayout
+    <com.open.lib.TouchView
         android:id="@+id/mainContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="50dp"
+        android:layout_width="360dp"
+        android:layout_height="500dp"
+        android:layout_gravity="center"
         tools:ignore="UselessParent" >
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <com.open.lib.TouchView
+            android:layout_width="340dp"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:layout_margin="10dp"
             android:background="#fff" >
 
@@ -25,18 +23,19 @@
                 android:id="@+id/groupsContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:padding="25dp" >
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="30dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp" >
             </com.open.lib.TouchView>
-        </RelativeLayout>
+        </com.open.lib.TouchView>
 
         <ImageView
             android:id="@+id/iv_close"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:layout_gravity="right|top"
             android:src="@drawable/dialog_close" />
-    </RelativeLayout>
+    </com.open.lib.TouchView>
 
-</RelativeLayout>
+</com.open.lib.TouchView>

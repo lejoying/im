@@ -73,7 +73,7 @@ public class InviteFriendActivity extends Activity implements OnClickListener {
 		} else {
 			currentOperationType = type;
 		}
-		String gid = data.localStatus.localData.currentSelectedGroup;
+		String gid = this.getIntent().getStringExtra("gid");
 		if (gid != null && !"".equals(gid)) {
 			currentGroup = data.relationship.groupsMap.get(gid);
 			if (currentGroup == null) {
@@ -155,8 +155,8 @@ public class InviteFriendActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.confirmButton:
 			if (currentOperationType == INVITA_FRIEND_GROUP) {
-				Intent intent = new Intent(InviteFriendActivity.this, GroupMemberManageActivity.class);
-				intent.putStringArrayListExtra("invitafriends", invitaFriends);
+				Intent intent = new Intent();
+				intent.putStringArrayListExtra("invitaFriends", invitaFriends);
 				setResult(Activity.RESULT_OK, intent);
 			}
 			finish();

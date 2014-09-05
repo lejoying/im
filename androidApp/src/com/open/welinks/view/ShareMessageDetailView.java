@@ -27,6 +27,11 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -99,6 +104,15 @@ public class ShareMessageDetailView {
 
 	public InputMethodManager inputMethodManager;
 
+	// menu options
+	public RelativeLayout menuOptionsView;
+	public RelativeLayout stickOptionView;
+	public ImageView stickImageOptionView;
+	public TextView stickTextOptionView;
+	public RelativeLayout deleteOptionView;
+	public ImageView deleteImageOptionView;
+	public TextView deleteTextOptionView;
+
 	public ShareMessageDetailView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
@@ -150,6 +164,15 @@ public class ShareMessageDetailView {
 
 		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
 		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
+
+		// menu option
+		menuOptionsView = (RelativeLayout) thisActivity.findViewById(R.id.menuOptions);
+		stickOptionView = (RelativeLayout) thisActivity.findViewById(R.id.stickOption);
+		stickImageOptionView = (ImageView) thisActivity.findViewById(R.id.stickImageOption);
+		stickTextOptionView = (TextView) thisActivity.findViewById(R.id.stickTextOption);
+		deleteOptionView = (RelativeLayout) thisActivity.findViewById(R.id.deleteOption);
+		deleteImageOptionView = (ImageView) thisActivity.findViewById(R.id.deleteImageOption);
+		deleteTextOptionView = (TextView) thisActivity.findViewById(R.id.deleteTextOption);
 
 		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
 		detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
@@ -345,6 +368,20 @@ public class ShareMessageDetailView {
 				}
 			});
 			commentContentView.addView(view);
+		}
+	}
+
+	public BaseSpringSystem mSpringSystem = SpringSystem.create();
+	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 9);
+	public Spring dialogSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
+	public DialogShowSpringListener dialogSpringListener = new DialogShowSpringListener();
+
+	private class DialogShowSpringListener extends SimpleSpringListener {
+		@Override
+		public void onSpringUpdate(Spring spring) {
+			float mappedValue = (float) spring.getCurrentValue();
+			menuOptionsView.setScaleX(mappedValue);
+			menuOptionsView.setScaleY(mappedValue);
 		}
 	}
 

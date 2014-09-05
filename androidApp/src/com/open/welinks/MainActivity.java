@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.service.PushService;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
@@ -47,6 +49,8 @@ public class MainActivity extends Activity {
 	public LongConnectionReceiver mReceiver;
 
 	public ViewManage viewManager = ViewManage.getInstance();
+
+	public Parser parser = Parser.getInstance();
 
 	@SuppressWarnings("unused")
 	@Override
@@ -175,9 +179,30 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		boolean flag = thisController.onKeyDown(keyCode, event);
+		if (!flag) {
+			return flag;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onBackPressed() {
+		thisController.onBackPressed();
+		super.onBackPressed();
+	}
+
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		thisController.onActivityResult(requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void finish() {
+		parser.saveDataToLocal();
+		super.finish();
 	}
 
 	class LongConnectionReceiver extends BroadcastReceiver {

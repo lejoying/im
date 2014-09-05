@@ -2,10 +2,6 @@ package com.open.welinks.controller;
 
 import java.util.ArrayList;
 
-import com.open.welinks.controller.DownloadFile.DownloadListener;
-import com.open.welinks.model.Data;
-import com.open.welinks.view.PictureBrowseView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,6 +10,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.open.welinks.model.Data;
+import com.open.welinks.view.PictureBrowseView;
 
 public class PictureBrowseController {
 	public Data data = Data.getInstance();
@@ -31,7 +30,7 @@ public class PictureBrowseController {
 
 	public OnClickListener mOnClickListener;
 	public OnPageChangeListener mOnPageChangeListener;
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 
 	public PictureBrowseController(Activity thisActivity) {
 		this.context = thisActivity;
@@ -97,10 +96,10 @@ public class PictureBrowseController {
 				}
 			}
 		};
-		downloadListener = new DownloadListener() {
+		downloadListener = new OnDownloadListener() {
 
 			@Override
-			public void success(DownloadFile instance, int status) {
+			public void onSuccess(DownloadFile instance, int status) {
 				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, thisView.options);
 
 			}
@@ -112,7 +111,7 @@ public class PictureBrowseController {
 			}
 
 			@Override
-			public void failure(DownloadFile instance, int status) {
+			public void onFailure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
 				
 			}
