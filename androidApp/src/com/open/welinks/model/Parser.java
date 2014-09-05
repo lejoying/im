@@ -7,6 +7,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Shares;
@@ -15,6 +16,7 @@ import com.open.welinks.model.Data.UserInformation;
 
 public class Parser {
 	String tag = "Parser";
+	public MyLog log = new MyLog(tag, false);
 
 	public static Parser parser;
 
@@ -34,33 +36,33 @@ public class Parser {
 		i = i + 66;
 	}
 
-	public void parse() {
+	public Data parse() {
 		Data data = Data.getInstance();
 		Gson gson = new Gson();
+		try {
+			String userInformationStr = getFromAssets("userInformation.js");
+			data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
 
-		String userInformationStr = getFromAssets("userInformation.js");
-		data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
+			String userInformationStr_debug = gson.toJson(data.userInformation);
+			Log.d(tag, userInformationStr_debug);
 
-		String userInformationStr_debug = gson.toJson(data.userInformation);
-		Log.d(tag, userInformationStr_debug);
+			String relationshipStr = getFromAssets("relationship.js");
+			data.relationship = gson.fromJson(relationshipStr, Relationship.class);
 
-		String relationshipStr = getFromAssets("relationship.js");
-		data.relationship = gson.fromJson(relationshipStr, Relationship.class);
+			String messageContent = getFromAssets("message.js");
+			data.messages = gson.fromJson(messageContent, Messages.class);
 
-		String messageContent = getFromAssets("message.js");
-		Messages messages = gson.fromJson(messageContent, Messages.class);
-		data.messages = messages;
+			String shareContent = getFromAssets("share.js");
+			data.shares = gson.fromJson(shareContent, Shares.class);
 
-		String shareContent = getFromAssets("share.js");
-		Shares shares = gson.fromJson(shareContent, Shares.class);
-		data.shares = shares;
+			String squareContent = getFromAssets("square.js");
+			data.squares = gson.fromJson(squareContent, Squares.class);
+		} catch (Exception e) {
+			log.e(tag, "**************Gson parse error!**************");
+			data = null;
+		}
 
-		String squareContent = getFromAssets("square.js");
-		Squares squares = gson.fromJson(squareContent, Squares.class);
-		data.squares = squares;
-
-		int i = 1;
-		i = i + 68;
+		return data;
 	}
 
 	public String getFromAssets(String fileName) {
@@ -78,5 +80,38 @@ public class Parser {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public Data check() {
+		Data data = Data.getInstance();
+		Gson gson = new Gson();
+
+		try {
+			if (data.userInformation == null) {
+				String userInformationStr = getFromAssets("userInformation.js");
+				data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
+			}
+			if (data.relationship == null) {
+				String relationshipStr = getFromAssets("relationship.js");
+				data.relationship = gson.fromJson(relationshipStr, Relationship.class);
+			}
+			if (data.messages == null) {
+				String messageContent = getFromAssets("message.js");
+				data.messages = gson.fromJson(messageContent, Messages.class);
+			}
+			if (data.shares == null) {
+				String shareContent = getFromAssets("share.js");
+				data.shares = gson.fromJson(shareContent, Shares.class);
+			}
+			if (data.squares == null) {
+				String squareContent = getFromAssets("square.js");
+				data.squares = gson.fromJson(squareContent, Squares.class);
+			}
+		} catch (Exception e) {
+			log.e(tag, "**************Gson parse error!**************");
+			data = null;
+		}
+
+		return data;
 	}
 }

@@ -210,6 +210,7 @@ public class MainView {
 						thisView.messages_friends_me_PagerBody.active();
 						if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
 
+							thisView.squareSubView.squareListBody.inActive();
 							thisView.shareSubView.shareMessageListBody.inActive();
 							thisView.shareSubView.groupListBody.inActive();
 							thisView.messagesSubView.messageListBody.active();
@@ -217,6 +218,7 @@ public class MainView {
 
 						} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 
+							thisView.squareSubView.squareListBody.inActive();
 							thisView.shareSubView.shareMessageListBody.inActive();
 							thisView.shareSubView.groupListBody.inActive();
 							thisView.messagesSubView.messageListBody.inActive();
@@ -225,6 +227,7 @@ public class MainView {
 						} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 							thisView.meSubView.mMePageAppIconScaleSpring.setEndValue(0);
 
+							thisView.squareSubView.squareListBody.inActive();
 							thisView.shareSubView.shareMessageListBody.inActive();
 							thisView.shareSubView.groupListBody.inActive();
 							thisView.messagesSubView.messageListBody.inActive();
@@ -246,6 +249,7 @@ public class MainView {
 					thisView.activityStatus.state = thisView.activityStatus.MESSAGES;
 					thisView.activityStatus.subState = thisView.activityStatus.MESSAGES;
 
+					thisView.squareSubView.squareListBody.inActive();
 					thisView.shareSubView.shareMessageListBody.inActive();
 					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.active();
@@ -254,6 +258,7 @@ public class MainView {
 					thisView.activityStatus.state = thisView.activityStatus.FRIENDS;
 					thisView.activityStatus.subState = thisView.activityStatus.FRIENDS;
 
+					thisView.squareSubView.squareListBody.inActive();
 					thisView.shareSubView.shareMessageListBody.inActive();
 					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.inActive();
@@ -262,6 +267,7 @@ public class MainView {
 					thisView.activityStatus.state = thisView.activityStatus.ME;
 					thisView.activityStatus.subState = thisView.activityStatus.ME;
 
+					thisView.squareSubView.squareListBody.inActive();
 					thisView.shareSubView.shareMessageListBody.inActive();
 					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.inActive();
@@ -271,6 +277,7 @@ public class MainView {
 				if (variable == 0) {
 					thisView.activityStatus.state = thisView.activityStatus.SQUARE;
 
+					thisView.squareSubView.squareListBody.active();
 					thisView.shareSubView.shareMessageListBody.inActive();
 					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.inActive();
@@ -279,6 +286,7 @@ public class MainView {
 				} else if (variable == 1) {
 					thisView.activityStatus.state = thisView.activityStatus.SHARE;
 
+					thisView.squareSubView.squareListBody.inActive();
 					thisView.shareSubView.shareMessageListBody.active();
 					thisView.shareSubView.groupListBody.inActive();
 					thisView.messagesSubView.messageListBody.inActive();

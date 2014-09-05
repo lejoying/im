@@ -56,6 +56,7 @@ public class SquareSubView {
 
 		squareListBody = new ListBody1();
 		squareListBody.initialize(displayMetrics, squareContainerView);
+		squareListBody.active();
 
 		showSquareMessages();
 	}
@@ -76,11 +77,16 @@ public class SquareSubView {
 			squareMessageBody.initialize(i);
 			squareMessageBody.setData(squareMessage);
 
+			
+			this.squareListBody.listItemsSequence.add("square#" + squareMessage.gsid);
+			this.squareListBody.listItemBodiesMap.put("square#" + squareMessage.gsid, squareMessageBody);
+			
+			
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (115 * displayMetrics.density));
 			squareMessageBody.y = this.squareListBody.height;
 			squareMessageBody.cardView.setY(squareMessageBody.y);
 			squareMessageBody.cardView.setX(0);
-			this.squareListBody.height = this.squareListBody.height + 120 * displayMetrics.density;
+			this.squareListBody.height = this.squareListBody.height + 115 * displayMetrics.density;
 			this.squareListBody.containerView.addView(squareMessageBody.cardView, layoutParams);
 		}
 		this.squareListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 48);
@@ -113,6 +119,7 @@ public class SquareSubView {
 			this.messageContentView = (TextView) this.cardView.findViewById(R.id.messageContent);
 			this.messageAuthorView = (TextView) this.cardView.findViewById(R.id.messageAuthor);
 
+			this.itemHeight = 115 * displayMetrics.density;
 			super.initialize(cardView);
 			return cardView;
 		}

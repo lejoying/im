@@ -22,7 +22,7 @@
         android:layout_marginTop="15dp"
         android:lines="2"
         android:text="“停车做爱枫林晚 ， 霜叶红叶二月红”"
-        android:textColor="#000"
+        android:textColor="#99000000"
         android:textSize="16sp" />
 
     <TextView
@@ -33,7 +33,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:text="Lucy and Luly"
-        android:textColor="#000"
+        android:textColor="#99000000"
         android:textSize="18sp" />
 
 </RelativeLayout>
