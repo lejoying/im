@@ -87,6 +87,7 @@ public class MainController {
 	}
 
 	public void onResume() {
+		data.localStatus.thisActivityName = "MainActivity";
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 		thisView.shareSubView.onResume();
 	}
