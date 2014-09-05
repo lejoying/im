@@ -1,8 +1,11 @@
 package com.open.welinks.view;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import android.graphics.Bitmap;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +15,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
+import com.open.welinks.controller.DownloadFile;
+import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
@@ -44,7 +54,12 @@ public class SquareSubView {
 	public TextView squareNameView;
 	public RelativeLayout squareContainerView;
 
+	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
+
 	public Gson gson = new Gson();
+
+	public ImageLoader imageLoader = ImageLoader.getInstance();
+	public DisplayImageOptions options;
 
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -58,6 +73,8 @@ public class SquareSubView {
 		squareReleaseButtonView = (ImageView) squareView.findViewById(R.id.squareReleaseButton);
 		squareNameView = (TextView) squareView.findViewById(R.id.squareName);
 		squareContainerView = (RelativeLayout) squareView.findViewById(R.id.squareContainer);
+
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 
 		squareListBody = new ListBody1();
 		squareListBody.initialize(displayMetrics, squareContainerView);
@@ -109,6 +126,8 @@ public class SquareSubView {
 
 		public String option;
 
+		public DownloadFile downloadFile = null;
+
 		public View initialize(int i) {
 			if (i % 2 == 1) {
 				this.cardView = mInflater.inflate(R.layout.square_message_item_left, null);
@@ -151,6 +170,44 @@ public class SquareSubView {
 			}
 			this.messageContentView.setText(textContent);
 			this.messageAuthorView.setText(message.nickName);
+
+			File sdFile = Environment.getExternalStorageDirectory();
+			String fileName = "2092fb60dc1e6f1384ec3ac06012511e0a5e3d2f.jpg" + "@" + displayMetrics.widthPixels + "w_" + this.itemHeight + "h_1c_1e_100q";
+			File file = new File(sdFile, "welinks/thumbnail/" + fileName);
+
+			final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + fileName;
+			final String path = file.getAbsolutePath();
+			if (file.exists()) {
+				imageLoader.displayImage("file://" + path, messageImageView, options, new SimpleImageLoadingListener() {
+					@Override
+					public void onLoadingStarted(String imageUri, View view) {
+					}
+
+					@Override
+					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+						downloadFile = new DownloadFile(url, path);
+						downloadFile.view = messageImageView;
+						downloadFile.view.setTag("image");
+						downloadFile.setDownloadFileListener(thisController.downloadListener);
+						downloadFileList.addDownloadFile(downloadFile);
+					}
+
+					@Override
+					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+					}
+				});
+			} else {
+				File file2 = new File(sdFile, "welinks/images/" + imageContent);
+				final String path2 = file2.getAbsolutePath();
+				if (file2.exists()) {
+					imageLoader.displayImage("file://" + path2, messageImageView, options);
+				}
+				downloadFile = new DownloadFile(url, path);
+				downloadFile.view = messageImageView;
+				downloadFile.view.setTag("image");
+				downloadFile.setDownloadFileListener(thisController.downloadListener);
+				downloadFileList.addDownloadFile(downloadFile);
+			}
 		}
 	}
 }

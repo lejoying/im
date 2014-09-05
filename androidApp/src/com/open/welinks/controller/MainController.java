@@ -342,6 +342,9 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				listBody = thisView.squareSubView.squareListBody;
 			}
+			if (listBody == null) {
+				return true;
+			}
 
 			if (listBody.bodyStatus.state == listBody.bodyStatus.DRAGGING) {
 				listBody.onFling(velocityX, velocityY);
