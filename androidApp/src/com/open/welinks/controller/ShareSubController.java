@@ -250,7 +250,8 @@ public class ShareSubController {
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
-		// thisView.groupDialogView.setOnClickListener(mOnClickListener);
+		thisView.groupDialogView.setOnClickListener(mOnClickListener);
+		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {

@@ -458,13 +458,14 @@ public class ShareSubView {
 
 	public void initializationGroupsDialog() {
 		groupDialogView = mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
+		groupDialogView.setTag(R.id.tag_class, "group_view");
 		// groupPopWindow = new PopupWindow(groupDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		// groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		// groupPopWindow.setOutsideTouchable(true);
 
-		RelativeLayout mainContentView = (RelativeLayout) groupDialogView.findViewById(R.id.mainContent);
+		TouchView mainContentView = (TouchView) groupDialogView.findViewById(R.id.mainContent);
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
-		RelativeLayout.LayoutParams mainContentParams = (RelativeLayout.LayoutParams) mainContentView.getLayoutParams();
+		TouchView.LayoutParams mainContentParams = (TouchView.LayoutParams) mainContentView.getLayoutParams();
 		mainContentParams.height = (int) (displayMetrics.heightPixels * 0.7578125f);
 		mainContentParams.leftMargin = (int) (20 / displayMetrics.density + 0.5f);
 		mainContentParams.rightMargin = (int) (20 / displayMetrics.density + 0.5f);
