@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="30dp"
+    android:background="@drawable/threechoices_background"
+    android:orientation="horizontal"
+    android:padding="1dp" >
+
+    <Button
+        android:id="@+id/button_one"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:background="@drawable/threechoice_one"
+        android:text="广场" />
+
+    <Button
+        android:id="@+id/button_two"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:background="@drawable/threechoice_two"
+        android:text="群组" />
+
+    <Button
+        android:id="@+id/button_three"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:background="@drawable/threechoice_three"
+        android:text="好友" />
+
+</LinearLayout>
