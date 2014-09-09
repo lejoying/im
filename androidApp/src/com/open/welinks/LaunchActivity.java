@@ -32,7 +32,7 @@ public class LaunchActivity extends Activity {
 		// parser.saveDataToLocal();
 		parser.readSdFileToData();
 
-//		getLocalInformation();
+		// getLocalInformation();
 		if (isDebug) {
 			startActivity(new Intent(LaunchActivity.this, TestListActivity.class));
 		} else {
