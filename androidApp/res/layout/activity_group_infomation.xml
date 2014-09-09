@@ -8,11 +8,14 @@
     android:orientation="vertical"
     tools:context=".activity.GroupInformationActivity" >
 
+    <include layout="@layout/view_back_view" />
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="10dp"
-        android:background="#33000000" >
+        android:background="#33000000"
+        android:visibility="gone" >
 
         <LinearLayout
             android:id="@+id/backView"
@@ -44,6 +47,7 @@
         android:id="@+id/sv_groupInfomation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:scrollbars="none" >
 
         <LinearLayout

@@ -8,7 +8,10 @@
         android:id="@+id/mainPagerContent"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/rl_picandvoice_navigation" />
+        android:layout_below="@+id/rl_picandvoice_navigation"
+        android:layout_marginTop="50dp" />
+
+    <include layout="@layout/view_back_view" />
 
     <RelativeLayout
         android:id="@+id/rl_picandvoice_navigation"
@@ -17,7 +20,7 @@
         android:layout_alignParentTop="true"
         android:background="#38000000"
         android:orientation="horizontal"
-        android:visibility="visible" >
+        android:visibility="gone" >
 
         <ImageView
             android:id="@+id/PicAndVoiceDetailBack"

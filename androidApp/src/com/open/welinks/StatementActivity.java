@@ -3,6 +3,8 @@ package com.open.welinks;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import com.open.welinks.utils.ClickOperationSound;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 public class StatementActivity extends Activity implements OnClickListener {
+
 	public View backView;
 	public TextView title, content;
 
@@ -18,8 +21,9 @@ public class StatementActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_statement);
 		backView = findViewById(R.id.backView);
-		title = (TextView) findViewById(R.id.title);
+		title = (TextView) findViewById(R.id.backTitleView);
 		content = (TextView) findViewById(R.id.content);
+		ClickOperationSound.click(this, backView);
 		backView.setOnClickListener(this);
 		String type = getIntent().getStringExtra("type");
 		if ("disclaimer".equals(type)) {
@@ -49,7 +53,5 @@ public class StatementActivity extends Activity implements OnClickListener {
 		if (view.equals(backView)) {
 			finish();
 		}
-
 	}
-
 }

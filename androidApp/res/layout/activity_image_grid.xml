@@ -2,13 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="@drawable/main_background" >
+
+    <include layout="@layout/view_back_view" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="#38ffffff" >
+        android:background="#38ffffff"
+        android:visibility="gone" >
 
         <ImageView
             android:id="@+id/backImageDirectory"
@@ -54,6 +58,7 @@
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/relativeLayout1"
+        android:layout_marginTop="50dp"
         android:gravity="center"
         android:horizontalSpacing="4dip"
         android:numColumns="3"

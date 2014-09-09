@@ -150,6 +150,7 @@
                 android:src="@drawable/face_man" />
 
             <RelativeLayout
+                android:id="@+id/businesscard"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginLeft="80dp"
@@ -220,7 +221,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="我的名片"
+                android:text="动态列表"
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 
@@ -238,12 +239,42 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/mySetting"
+            android:id="@+id/morefriend"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/card_color"
             android:gravity="center_vertical"
             android:translationY="378dp"
+            android:visibility="visible" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="查找更多好友"
+                android:textColor="@color/text_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/noread_message"
+                android:padding="5dp"
+                android:text="2"
+                android:textColor="@color/text_color"
+                android:textSize="10sp"
+                android:visibility="gone" />
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:id="@+id/mySetting"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/card_color"
+            android:gravity="center_vertical"
+            android:translationY="435dp"
             android:visibility="visible" >
 
             <TextView

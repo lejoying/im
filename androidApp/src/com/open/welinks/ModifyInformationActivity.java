@@ -69,7 +69,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	public User user;
 	public Group group;
 
-	public View backview, head_layout, name_layout, sex_layout, location_layout, business_layout, lable_layout, pic_layout, inputDialogContent;
+	public View backView, head_layout, name_layout, sex_layout, location_layout, business_layout, lable_layout, pic_layout, inputDialogContent;
 	public TextView modify_title, name_title, name, sex_title, sex, location_title, location, business_title, business, lable_title, lable, modify, camera, album, input_title;
 	public ImageView head;
 	public EditText input;
@@ -120,7 +120,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	private void initView() {
-		backview = findViewById(R.id.backview);
+		backView = findViewById(R.id.backView);
 		head_layout = findViewById(R.id.head_layout);
 		name_layout = findViewById(R.id.name_layout);
 		sex_layout = findViewById(R.id.sex_layout);
@@ -128,7 +128,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		business_layout = findViewById(R.id.business_layout);
 		lable_layout = findViewById(R.id.lable_layout);
 		pic_layout = findViewById(R.id.pic_layout);
-		modify_title = (TextView) findViewById(R.id.modify_title);
+		modify_title = (TextView) findViewById(R.id.backTitleView);
 		name_title = (TextView) findViewById(R.id.name_title);
 		name = (TextView) findViewById(R.id.name);
 		sex_title = (TextView) findViewById(R.id.sex_title);
@@ -149,7 +149,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		confirm = (Button) findViewById(R.id.confirm);
 		cancel = (Button) findViewById(R.id.cancel);
 
-		backview.setOnClickListener(this);
+		backView.setOnClickListener(this);
 		head_layout.setOnClickListener(this);
 		name_layout.setOnClickListener(this);
 		sex_layout.setOnClickListener(this);
@@ -243,7 +243,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 
 	@Override
 	public void onClick(View view) {
-		if (view.equals(backview)) {
+		if (view.equals(backView)) {
 			mFinish();
 		} else if (view.equals(head_layout)) {
 			selectPicture(REQUESTCODE_SELECT);

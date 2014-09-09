@@ -15,7 +15,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.GroupInfomationController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.utils.ClickOperationSound;
 import com.open.welinks.utils.MCImageUtils;
 
 public class GroupInfomationView {
@@ -40,7 +40,7 @@ public class GroupInfomationView {
 	public float screenDensity;
 	int screenHeight, screenWidth, screenDip;
 
-	public LinearLayout backView;
+	public RelativeLayout backView;
 	public TextView groupCountView;
 	public RelativeLayout memberContainerView;
 	public TextView groupNameView;
@@ -65,8 +65,9 @@ public class GroupInfomationView {
 
 		mInflater = thisActivity.getLayoutInflater();
 
-		backView = (LinearLayout) thisActivity.findViewById(R.id.backView);
-		groupCountView = (TextView) thisActivity.findViewById(R.id.groupCount);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		ClickOperationSound.click(thisActivity, backView);
+		groupCountView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		groupNameView = (TextView) thisActivity.findViewById(R.id.groupName);
 		groupName2View = (TextView) thisActivity.findViewById(R.id.groupName2);
 		memberContainerView = (RelativeLayout) thisActivity.findViewById(R.id.memberContainer);

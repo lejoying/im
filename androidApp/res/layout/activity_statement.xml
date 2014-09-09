@@ -5,12 +5,15 @@
     android:background="@drawable/main_background"
     android:orientation="vertical" >
 
+    <include layout="@layout/view_back_view" />
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="10dp"
         android:background="#33000000"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:visibility="gone" >
 
         <ImageView
             android:id="@+id/backView"

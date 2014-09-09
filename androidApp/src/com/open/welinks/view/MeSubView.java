@@ -10,7 +10,6 @@ import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.open.welinks.R;
 import com.open.welinks.controller.MeSubController;
-import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.model.Data;
 
 public class MeSubView {
@@ -44,11 +43,10 @@ public class MeSubView {
 		userNickNameView = (TextView) mainView.meView.findViewById(R.id.tv_userNickname);
 		userBusinessView = (TextView) mainView.meView.findViewById(R.id.tv_userMainBusiness);
 
-		myBusiness = mainView.meView.findViewById(R.id.myBusiness);
+		myBusiness = mainView.meView.findViewById(R.id.businesscard);
 		mySetting = mainView.meView.findViewById(R.id.mySetting);
 
 		mAppIconToNameView = (ImageView) mainView.meView.findViewById(R.id.appIconToName);
 		mRootView = mAppIconToNameView;
 	}
-
 }
