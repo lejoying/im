@@ -33,7 +33,7 @@ public class SharePraiseusersView {
 	public SharePraiseusersController thisController;
 	public Activity thisActivity;
 
-	public ImageView backView;
+	public RelativeLayout backView;
 	public ListView listView;
 
 	public float screentHeight, screentWidth, screenDip, screenDensity;
@@ -52,7 +52,10 @@ public class SharePraiseusersView {
 	public void initView() {
 		thisActivity.setContentView(R.layout.share_message_praiseusers);
 
-		backView = (ImageView) thisActivity.findViewById(R.id.backview);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		TextView backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		backTitleView.setText("称赞者");
+
 		listView = (ListView) thisActivity.findViewById(R.id.praiseusersContent);
 
 		DisplayMetrics dm = new DisplayMetrics();

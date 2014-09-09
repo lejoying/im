@@ -1,5 +1,6 @@
 package com.open.welinks.view;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -44,18 +45,24 @@ public class BusinessCardView {
 		thisView = this;
 	}
 
+	public Bitmap bitmap;
+
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_businesscard);
 
-		backview = (RelativeLayout) thisActivity.findViewById(R.id.backview);
+		Resources resources = thisActivity.getResources();
+		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+
+		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		content = (LinearLayout) thisActivity.findViewById(R.id.content);
 		infomation_layout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
 		sex_layout = (LinearLayout) thisActivity.findViewById(R.id.sex_layout);
 		spacing_one = (TextView) thisActivity.findViewById(R.id.spacing_one);
 		spacing_two = (TextView) thisActivity.findViewById(R.id.spacing_two);
 		spacing_three = (TextView) thisActivity.findViewById(R.id.spacing_three);
-		title = (TextView) thisActivity.findViewById(R.id.title);
+		title = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		business_title = (TextView) thisActivity.findViewById(R.id.business_title);
 		lable_title = (TextView) thisActivity.findViewById(R.id.lable_title);
 		creattime_title = (TextView) thisActivity.findViewById(R.id.creattime_title);
@@ -66,6 +73,7 @@ public class BusinessCardView {
 		creattime = (TextView) thisActivity.findViewById(R.id.creattime);
 		sex = (TextView) thisActivity.findViewById(R.id.sex);
 		head = (ImageView) thisActivity.findViewById(R.id.head);
+		head.setImageBitmap(bitmap);
 		tdcode = (ImageView) thisActivity.findViewById(R.id.tdcode);
 		button_one = (Button) thisActivity.findViewById(R.id.button_one);
 		button_two = (Button) thisActivity.findViewById(R.id.button_two);

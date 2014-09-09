@@ -5,63 +5,7 @@
     android:background="@drawable/main_background"
     tools:context=".ChatActivity" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:background="#51000000"
-        android:clickable="true"
-        android:visibility="visible" >
-
-        <RelativeLayout
-            android:id="@+id/backview"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/backview_background"
-            android:paddingRight="20dp" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:src="@drawable/back" />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="50dp" >
-
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="2dp"
-                    android:textColor="#fff"
-                    android:textSize="17sp" />
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/infomation_layout"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/backview_background" >
-
-            <ImageView
-                android:id="@+id/infomation"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/share_to_group_icon" />
-        </RelativeLayout>
-    </RelativeLayout>
+    <include layout="@layout/view_back_view" />
 
     <ListView
         android:id="@+id/chat_content"

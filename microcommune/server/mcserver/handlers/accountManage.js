@@ -481,7 +481,7 @@ accountManage.get = function (data, response) {
                 for (var index in results) {
                     var accountData = results[index].account.data;
                     var account = {
-                        ID: accountData.ID,
+                        id: accountData.ID,
                         phone: accountData.phone,
                         nickName: accountData.nickName,
                         mainBusiness: accountData.mainBusiness,

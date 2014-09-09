@@ -54,7 +54,7 @@ public class ImagesGridController {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				if (view.equals(thisView.backImageDirectoryView)) {
+				if (view.equals(thisView.backView)) {
 					int motionEvent = event.getAction();
 					if (motionEvent == MotionEvent.ACTION_DOWN) {
 						view.setBackgroundColor(Color.argb(143, 0, 0, 0));
@@ -72,7 +72,7 @@ public class ImagesGridController {
 				if (view.equals(thisView.mConfirm)) {
 					thisActivity.setResult(Activity.RESULT_OK);
 					thisActivity.finish();
-				} else if (view.equals(thisView.backImageDirectoryView)) {
+				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				}
 			}
@@ -103,7 +103,7 @@ public class ImagesGridController {
 	public void bindEvent() {
 		thisView.mGridView.setOnItemClickListener(onItemClickListener);
 		thisView.mConfirm.setOnClickListener(onClickListener);
-		thisView.backImageDirectoryView.setOnClickListener(onClickListener);
-		thisView.backImageDirectoryView.setOnTouchListener(onTouchListener);
+		thisView.backView.setOnClickListener(onClickListener);
+		thisView.backView.setOnTouchListener(onTouchListener);
 	}
 }
