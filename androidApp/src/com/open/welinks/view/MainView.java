@@ -75,6 +75,8 @@ public class MainView {
 
 	public PagerBody mainPagerBody;
 
+	public ImageView scannerCodeView;
+
 	public class ActivityStatus {
 		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
 		public float subState = MESSAGES;
@@ -110,6 +112,8 @@ public class MainView {
 		title_square = (RelativeLayout) squareView.findViewById(R.id.title_square);
 		title_share = (RelativeLayout) shareView.findViewById(R.id.title_share);
 		title_messages_friends_me = (RelativeLayout) messages_friends_me_View.findViewById(R.id.title_messages_friends_me);
+		
+		scannerCodeView = (ImageView) title_messages_friends_me.findViewById(R.id.scanner_code);
 
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);
 		int main_pager_indicator_trip = (int) (44 * displayMetrics.density);
@@ -204,7 +208,7 @@ public class MainView {
 				} else if (variable == 2) {
 					if (lastOnFlipingIndex == 1) {
 						Log.d(tag, "bodyTag onFliping:" + variable + "  lastOnFlipingIndex: " + lastOnFlipingIndex);
-						
+
 						thisView.activityStatus.state = thisView.activityStatus.subState;
 						thisView.mainPagerBody.inActive();
 						thisView.messages_friends_me_PagerBody.active();
@@ -293,7 +297,6 @@ public class MainView {
 					thisView.friendsSubView.friendListBody.inActive();
 
 				} else if (variable == 2) {
-					
 
 				}
 			}
