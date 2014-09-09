@@ -46,7 +46,6 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share.Comment;
-import com.open.welinks.utils.ClickOperationSound;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -101,9 +100,9 @@ public class ShareMessageDetailView {
 
 	public TextView praiseusersNumView;
 
-	public TextView sendShareMessageUserNameView;
+	// public TextView sendShareMessageUserNameView;
 	public TextView shareMessageTimeView;
-	public ImageView shareMessageUserHeadView;
+	// public ImageView shareMessageUserHeadView;
 
 	public InputMethodManager inputMethodManager;
 
@@ -155,10 +154,6 @@ public class ShareMessageDetailView {
 		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitleView.setText("分享详情");
 
-		sendShareMessageUserNameView = (TextView) thisActivity.findViewById(R.id.titleContent);
-		RelativeLayout.LayoutParams sendShareMessageUserNameViewParams = (android.widget.RelativeLayout.LayoutParams) sendShareMessageUserNameView.getLayoutParams();
-		sendShareMessageUserNameViewParams.topMargin = (int) (5 * displayMetrics.density);
-		sendShareMessageUserNameViewParams.bottomMargin = (int) (25 * displayMetrics.density);
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		shareMessageTimeView = new TextView(context);
 		shareMessageTimeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
@@ -170,7 +165,7 @@ public class ShareMessageDetailView {
 		// layoutParams.leftMargin = (int) (5 * displayMetrics.density);
 		rightContainer.addView(shareMessageTimeView, layoutParams);
 		// shareMessageTimeView = (TextView) thisActivity.findViewById(R.id.shareMessageTime);
-		shareMessageUserHeadView = (ImageView) thisActivity.findViewById(R.id.shareMessageUserHead);
+		// shareMessageUserHeadView = (ImageView) thisActivity.findViewById(R.id.shareMessageUserHead);
 
 		sendCommentView = (TextView) thisActivity.findViewById(R.id.sendComment);
 		commentNumberView = (TextView) thisActivity.findViewById(R.id.checkCommentNumber);
@@ -185,7 +180,6 @@ public class ShareMessageDetailView {
 		confirmSendCommentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_sendComment);
 
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		ClickOperationSound.click(thisActivity, backView);
 
 		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
 		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
@@ -222,8 +216,7 @@ public class ShareMessageDetailView {
 	public void showShareMessageDetail() {
 		friend = data.relationship.friendsMap.get(thisController.shareMessage.phone);
 		if (friend != null) {
-			sendShareMessageUserNameView.setText(friend.nickName);
-			shareMessageUserHeadView.setImageBitmap(bitmap);
+			// shareMessageUserHeadView.setImageBitmap(bitmap);
 		}
 		shareMessageTimeView.setText(DateUtil.getTime(thisController.shareMessage.time));
 

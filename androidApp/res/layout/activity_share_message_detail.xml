@@ -17,73 +17,6 @@
 
             <include layout="@layout/view_back_view" />
 
-            <RelativeLayout
-                android:id="@+id/rl_topMenuBar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#51000000"
-                android:visibility="gone" >
-
-                <RelativeLayout
-                    android:id="@+id/backview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingRight="20dp" >
-
-                    <ImageView
-                        android:id="@+id/iv_squareMessageDetailBack"
-                        android:layout_width="wrap_content"
-                        android:layout_height="25dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="20dp"
-                        android:src="@drawable/back" />
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/sendShareMessageUserName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="25dp"
-                    android:layout_marginTop="5dp"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text=""
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:id="@+id/ll_rightTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" >
-
-                    <TextView
-                        android:id="@+id/shareMessageTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="10dp"
-                        android:lineSpacingMultiplier="1.2"
-                        android:singleLine="true"
-                        android:textColor="#fff"
-                        android:textSize="11sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_vertical|left"
-                        android:paddingBottom="12dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:paddingTop="12dp"
-                        android:src="@drawable/chat_more"
-                        android:visibility="gone" />
-                </LinearLayout>
-            </RelativeLayout>
-
             <ScrollView
                 android:id="@+id/mainScrollView"
                 android:layout_width="fill_parent"
@@ -215,7 +148,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="25dp" />
+                android:layout_marginTop="25dp"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/menuOptions"

@@ -26,7 +26,6 @@ import com.open.welinks.R;
 import com.open.welinks.controller.ImagesDirectoryController;
 import com.open.welinks.controller.ImagesGridController;
 import com.open.welinks.model.Data;
-import com.open.welinks.utils.ClickOperationSound;
 
 public class ImagesGridView {
 
@@ -63,7 +62,6 @@ public class ImagesGridView {
 
 		thisActivity.setContentView(R.layout.activity_image_grid);
 		mGridView = (GridView) thisActivity.findViewById(R.id.gridview);
-		mConfirm = (TextView) thisActivity.findViewById(R.id.tv_confirm);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 
 		directoryNameView = (TextView) thisActivity.findViewById(R.id.backTitleView);
@@ -80,7 +78,6 @@ public class ImagesGridView {
 		layoutParams.addRule(Gravity.CENTER);
 		rightContainerView.addView(mConfirm, layoutParams);
 
-		ClickOperationSound.click(thisActivity, backView);
 	}
 
 	public void initData() {

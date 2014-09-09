@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.open.welinks.service.PushService;
-import com.open.welinks.utils.ClickOperationSound;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
 
@@ -40,7 +39,6 @@ public class SettingActivity extends Activity implements OnClickListener {
 	}
 
 	private void initEvent() {
-		ClickOperationSound.click(this, backView);
 		exitCurrentUserView.setOnClickListener(this);
 		about.setOnClickListener(this);
 		disclaimer.setOnClickListener(this);

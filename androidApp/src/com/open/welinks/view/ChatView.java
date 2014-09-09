@@ -27,7 +27,6 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.utils.ClickOperationSound;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -77,7 +76,6 @@ public class ChatView {
 		thisActivity.setContentView(R.layout.activity_chat);
 
 		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		ClickOperationSound.click(thisActivity, backview);
 		name = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		// infomation = (ImageView) thisActivity.findViewById(R.id.infomation);

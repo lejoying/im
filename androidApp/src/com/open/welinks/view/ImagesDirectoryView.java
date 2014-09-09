@@ -27,7 +27,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
 import com.open.welinks.controller.ImagesDirectoryController;
-import com.open.welinks.utils.ClickOperationSound;
 
 public class ImagesDirectoryView {
 
@@ -60,7 +59,6 @@ public class ImagesDirectoryView {
 		backTitileView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		backTitileView.setText("相册");
 
-		ClickOperationSound.click(thisActivity, backView);
 	}
 
 	public class MyGridViewAdapter extends BaseAdapter {

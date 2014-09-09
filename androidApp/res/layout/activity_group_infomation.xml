@@ -10,39 +10,6 @@
 
     <include layout="@layout/view_back_view" />
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="10dp"
-        android:background="#33000000"
-        android:visibility="gone" >
-
-        <LinearLayout
-            android:id="@+id/backView"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingRight="10dp" >
-
-            <ImageView
-                android:id="@+id/iv_groupInfoBack"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_marginLeft="20dp"
-                android:src="@drawable/back" />
-
-            <TextView
-                android:id="@+id/groupCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:text="群组信息(6人)"
-                android:textColor="#fff"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </RelativeLayout>
-
     <ScrollView
         android:id="@+id/sv_groupInfomation"
         android:layout_width="match_parent"

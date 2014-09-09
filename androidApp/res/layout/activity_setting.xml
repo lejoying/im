@@ -2,38 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/main_background"
     android:orientation="vertical" >
 
     <include layout="@layout/view_back_view" />
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="10dp"
-        android:background="#33000000"
-        android:gravity="center_vertical"
-        android:visibility="gone" >
-
-        <ImageView
-            android:id="@+id/iv_setttingBack"
-            android:layout_width="65dp"
-            android:layout_height="50dp"
-            android:paddingBottom="13dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="13dp"
-            android:src="@drawable/back" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="设置"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -6,35 +6,6 @@
 
     <include layout="@layout/view_back_view" />
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:background="#38ffffff"
-        android:visibility="gone" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/selectAlbum_text"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tv_cancle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/textview_bg"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="取消"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
     <GridView
         android:id="@+id/main_grid"
         android:layout_width="match_parent"

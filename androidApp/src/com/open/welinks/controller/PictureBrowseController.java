@@ -81,8 +81,6 @@ public class PictureBrowseController {
 				if (view.equals(thisView.backView)) {
 					thisActivity.setResult(Activity.RESULT_CANCELED);
 					thisActivity.finish();
-				} else if (view.equals(thisView.choiceCoverView)) {
-					Toast.makeText(context, "choiceCoverView", Toast.LENGTH_SHORT).show();
 				} else if (view.equals(thisView.deleteButtonView)) {
 					imagesBrowseList.remove(currentPosition);
 					if (imagesBrowseList.size() == 0) {
@@ -113,14 +111,13 @@ public class PictureBrowseController {
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 	}
 
 	public void bindEvent() {
 		thisView.backView.setOnClickListener(mOnClickListener);
-		thisView.choiceCoverView.setOnClickListener(mOnClickListener);
 		thisView.deleteButtonView.setOnClickListener(mOnClickListener);
 		thisView.imageViewPageContent.setOnPageChangeListener(mOnPageChangeListener);
 	}

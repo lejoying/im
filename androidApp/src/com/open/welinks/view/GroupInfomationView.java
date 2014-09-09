@@ -23,7 +23,6 @@ import com.open.welinks.R;
 import com.open.welinks.controller.GroupInfomationController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.utils.ClickOperationSound;
 import com.open.welinks.utils.MCImageUtils;
 
 public class GroupInfomationView {
@@ -66,7 +65,6 @@ public class GroupInfomationView {
 		mInflater = thisActivity.getLayoutInflater();
 
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		ClickOperationSound.click(thisActivity, backView);
 		groupCountView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		groupNameView = (TextView) thisActivity.findViewById(R.id.groupName);
 		groupName2View = (TextView) thisActivity.findViewById(R.id.groupName2);

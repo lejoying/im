@@ -32,7 +32,6 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.PictureBrowseController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.utils.ClickOperationSound;
 
 public class PictureBrowseView {
 	public Data data = Data.getInstance();
@@ -52,7 +51,7 @@ public class PictureBrowseView {
 	public RelativeLayout backView;
 	public TextView imageNumberView;
 	public TextView titleView;
-	public ImageView choiceCoverView;
+	// public ImageView choiceCoverView;
 	public ImageView deleteButtonView;
 
 	public DisplayImageOptions options;
@@ -83,10 +82,9 @@ public class PictureBrowseView {
 		imageViewPageContent = (ViewPager) thisActivity.findViewById(R.id.mainPagerContent);
 
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		ClickOperationSound.click(thisActivity, backView);
 		imageNumberView = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		titleView = (TextView) thisActivity.findViewById(R.id.titleContent);
-		choiceCoverView = (ImageView) thisActivity.findViewById(R.id.choiceCoverView);
+		// choiceCoverView = (ImageView) thisActivity.findViewById(R.id.choiceCoverView);
 
 		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 		// deleteButtonView = (ImageView) thisActivity.findViewById(R.id.deleteImageView);
@@ -104,9 +102,9 @@ public class PictureBrowseView {
 		deleteButtonView.setPadding((int) (30 * displayMetrics.density), (int) (15 * displayMetrics.density), (int) (30 * displayMetrics.density), (int) (15 * displayMetrics.density));
 		rightContainer.addView(deleteButtonView);
 		if (thisController.currentType == IMAGEBROWSE_COMMON) {
-			 deleteButtonView.setVisibility(View.GONE);
+			deleteButtonView.setVisibility(View.GONE);
 		} else if (thisController.currentType == IMAGEBROWSE_OPTION) {
-			 deleteButtonView.setVisibility(View.VISIBLE);
+			deleteButtonView.setVisibility(View.VISIBLE);
 		}
 	}
 

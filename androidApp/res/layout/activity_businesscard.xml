@@ -6,47 +6,6 @@
 
     <include layout="@layout/view_back_view" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:visibility="gone"
-        android:background="#51000000" >
-
-        <RelativeLayout
-            android:id="@+id/backview"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/backview_background"
-            android:paddingRight="20dp" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:clickable="false"
-                android:src="@drawable/back" />
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="43dp"
-                android:clickable="false"
-                android:singleLine="true"
-                android:text="个人资料"
-                android:textColor="#fff"
-                android:textSize="18sp" />
-        </RelativeLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="#fff" />
-    </RelativeLayout>
-
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"

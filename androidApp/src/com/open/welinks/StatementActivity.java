@@ -3,8 +3,6 @@ package com.open.welinks;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import com.open.welinks.utils.ClickOperationSound;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,7 +21,6 @@ public class StatementActivity extends Activity implements OnClickListener {
 		backView = findViewById(R.id.backView);
 		title = (TextView) findViewById(R.id.backTitleView);
 		content = (TextView) findViewById(R.id.content);
-		ClickOperationSound.click(this, backView);
 		backView.setOnClickListener(this);
 		String type = getIntent().getStringExtra("type");
 		if ("disclaimer".equals(type)) {

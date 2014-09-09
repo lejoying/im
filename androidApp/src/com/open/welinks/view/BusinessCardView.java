@@ -18,7 +18,6 @@ import com.open.welinks.controller.BusinessCardController;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
-import com.open.welinks.utils.ClickOperationSound;
 import com.open.welinks.utils.MCImageUtils;
 
 public class BusinessCardView {
@@ -57,7 +56,6 @@ public class BusinessCardView {
 		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		ClickOperationSound.click(thisActivity, backview);
 		content = (LinearLayout) thisActivity.findViewById(R.id.content);
 		infomation_layout = (LinearLayout) thisActivity.findViewById(R.id.infomation_layout);
 		sex_layout = (LinearLayout) thisActivity.findViewById(R.id.sex_layout);
