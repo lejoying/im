@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Data {
@@ -30,6 +31,8 @@ public class Data {
 		public ArrayList<String> selectedImageList;
 
 		public List<String> praiseusersList;
+
+		public Friend tempFriend;
 
 		public class ImageBean {
 
@@ -271,5 +274,10 @@ public class Data {
 				public long time;
 			}
 		}
+	}
+
+	public class Event {
+		public List groupEvents = new ArrayList();
+		public List userEvents = new ArrayList();
 	}
 }

@@ -11,16 +11,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.BusinessCardController;
+import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.utils.MCImageUtils;
 
 public class BusinessCardView {
+
+	public Data data = Data.getInstance();
+
 	public BusinessCardController thisController;
 	public BusinessCardView thisView;
 	public BusinessCardActivity thisActivity;
@@ -81,6 +86,9 @@ public class BusinessCardView {
 
 	}
 
+	String GROUPCARDTYPE = "groupcard";
+	String USERCARDTYPE = "usercard";
+
 	public void fillData() {
 		businessCard = new BusinessCard();
 		if (status.equals(Status.SELF)) {
@@ -98,6 +106,7 @@ public class BusinessCardView {
 			sex_layout.setVisibility(View.VISIBLE);
 			button_two.setVisibility(View.GONE);
 			button_three.setVisibility(View.GONE);
+			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, user.phone));
 		} else if (status.equals(Status.FRIEND)) {
 			Friend friend = thisController.data.relationship.friendsMap.get(thisController.key);
 			businessCard.id = friend.id;
@@ -115,7 +124,7 @@ public class BusinessCardView {
 			businessCard.button_one = "发起聊天";
 			businessCard.button_two = "修改备注";
 			businessCard.button_three = "解除好友关系";
-
+			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, friend.phone));
 		} else if (status.equals(Status.JOINEDGROUP)) {
 			Group group = thisController.data.relationship.groupsMap.get(thisController.key);
 			businessCard.id = group.gid;
@@ -134,12 +143,12 @@ public class BusinessCardView {
 			businessCard.button_two = "修改群名片";
 			businessCard.button_three = "";
 			button_three.setVisibility(View.GONE);
-
+			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
 		} else if (status.equals(Status.TEMPFRIEND)) {
-			businessCard.id = 0;
-			businessCard.icon = "";
-			businessCard.nickname = "";
-			businessCard.mainBusiness = "";
+			businessCard.id = data.tempData.tempFriend.id;
+			businessCard.icon = data.tempData.tempFriend.head;
+			businessCard.nickname = data.tempData.tempFriend.nickName;
+			businessCard.mainBusiness = data.tempData.tempFriend.mainBusiness;
 			businessCard.lable = "暂无标签";
 			businessCard.creattime = "2014年 9月 1日";
 			businessCard.button_one = "加为好友";
@@ -147,7 +156,7 @@ public class BusinessCardView {
 			businessCard.button_three = "";
 			button_two.setVisibility(View.GONE);
 			button_three.setVisibility(View.GONE);
-
+			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempFriend.phone));
 		} else if (status.equals(Status.NOTJOINGROUP)) {
 			businessCard.id = 0;
 			businessCard.icon = "";
@@ -182,6 +191,7 @@ public class BusinessCardView {
 		} else {
 			thisController.setHeadImage(businessCard.icon, thisView.head);
 		}
+		tdcode.setScaleType(ScaleType.FIT_CENTER);
 		setData(businessCard);
 	}
 

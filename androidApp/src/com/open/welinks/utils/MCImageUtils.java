@@ -6,9 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 
@@ -19,16 +27,14 @@ public final class MCImageUtils {
 		return getCircleBitmap(source, false, null, null);
 	}
 
-	public static Bitmap getCircleBitmap(Bitmap source, boolean showBorder,
-			Integer borderWidth, Integer borderColor) {
+	public static Bitmap getCircleBitmap(Bitmap source, boolean showBorder, Integer borderWidth, Integer borderColor) {
 		int sourceWidth = source.getWidth();
 		int sourceHeight = source.getHeight();
 
 		if (!showBorder || borderWidth == null) {
 			borderWidth = 0;
 		}
-		Bitmap bitmap = Bitmap.createBitmap(sourceWidth + borderWidth * 2,
-				sourceHeight + borderWidth * 2, Config.ARGB_8888);
+		Bitmap bitmap = Bitmap.createBitmap(sourceWidth + borderWidth * 2, sourceHeight + borderWidth * 2, Config.ARGB_8888);
 
 		int bitmapWidth = bitmap.getWidth();
 		int bitmapHeight = bitmap.getHeight();
@@ -48,8 +54,7 @@ public final class MCImageUtils {
 						newColor = Color.argb(0, 0, 0, 0);
 
 					} else {
-						newColor = Color.argb(255, Color.red(color),
-								Color.green(color), Color.blue(color));
+						newColor = Color.argb(255, Color.red(color), Color.green(color), Color.blue(color));
 					}
 					bitmap.setPixel(i + borderWidth, j + borderWidth, newColor);
 				}
@@ -69,8 +74,7 @@ public final class MCImageUtils {
 		return bitmap;
 	}
 
-	public static Map<String, Object> processImagesInformation(String filePath,
-			File targetFolder) {
+	public static Map<String, Object> processImagesInformation(String filePath, File targetFolder) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String suffixName = filePath.substring(filePath.lastIndexOf("."));
 		if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
@@ -101,5 +105,41 @@ public final class MCImageUtils {
 			e.printStackTrace();
 		}
 		return map;
+	}
+
+	public static Bitmap createQEcodeImage(String type, String message) {
+		int width = 200;
+		int height = 200;
+		try {
+			QRCodeWriter writer = new QRCodeWriter();
+			String text = "mc:" + type + ":" + message;
+			if (text == null || "".equals(text) || text.length() < 1) {
+				return null;
+			}
+
+			Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
+			hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+			hints.put(EncodeHintType.MARGIN, 1);
+			BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
+			int[] pixels = new int[width * height];
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					if (bitMatrix.get(x, y)) {
+						pixels[y * width + x] = 0xff000000;
+					} else {
+						pixels[y * width + x] = 0xffffffff;
+					}
+				}
+			}
+
+			Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+			return bitmap;
+
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
