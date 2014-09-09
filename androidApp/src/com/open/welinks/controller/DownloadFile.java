@@ -29,7 +29,7 @@ public class DownloadFile {
 
 	public HttpHandler<File> httpHandler;
 
-	public DownloadListener downloadListener;
+	public OnDownloadListener downloadListener;
 
 	public static int DOWNLOAD_DEFAULT = 0x00;
 	public static int DOWNLOAD_PARAM_EMPTY = 0x01;
@@ -106,14 +106,14 @@ public class DownloadFile {
 		public void onSuccess(ResponseInfo<File> responseInfo) {
 			time.received = System.currentTimeMillis();
 			isDownloadStatus = DOWNLOAD_SUCCESS;
-			downloadListener.success(instance, isDownloadStatus);
+			downloadListener.onSuccess(instance, isDownloadStatus);
 			Log.e(tag, "-----success-----" + responseInfo.statusCode);
 		}
 
 		@Override
 		public void onFailure(HttpException error, String msg) {
 			isDownloadStatus = DOWNLOAD_FAILED;
-			downloadListener.failure(instance, isDownloadStatus);
+			downloadListener.onFailure(instance, isDownloadStatus);
 			Log.d(tag, "onFailure: -----" + msg);
 		}
 	};
@@ -130,15 +130,7 @@ public class DownloadFile {
 		public long received = 0; // 5
 	}
 
-	public interface DownloadListener {
-		public void loading(DownloadFile instance, int precent, int status);
-
-		public void success(DownloadFile instance, int status);
-
-		public void failure(DownloadFile instance, int status);
-	}
-
-	public void setDownloadFileListener(DownloadListener downloadListener) {
+	public void setDownloadFileListener(OnDownloadListener downloadListener) {
 		this.downloadListener = downloadListener;
 	}
 }

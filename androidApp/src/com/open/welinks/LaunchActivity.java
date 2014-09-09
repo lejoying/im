@@ -28,9 +28,9 @@ public class LaunchActivity extends Activity {
 		Parser parser = Parser.getInstance();
 		parser.initialize(context);
 
-		// parser.parse();
+		parser.parse();
 		// parser.saveDataToLocal();
-		parser.readSdFileToData();
+		// parser.readSdFileToData();
 
 		// getLocalInformation();
 		if (isDebug) {

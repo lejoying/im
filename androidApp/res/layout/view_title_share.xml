@@ -41,6 +41,8 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="一起嗨"
+                android:maxEms="7"
+                android:ellipsize="end"
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 

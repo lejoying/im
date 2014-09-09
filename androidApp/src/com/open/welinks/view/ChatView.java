@@ -5,9 +5,11 @@ import java.util.List;
 
 import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -50,6 +52,7 @@ public class ChatView {
 	public ImageView more;
 	public EditText input;
 	public RelativeLayout chat_bottom_bar_selected;
+	public RelativeLayout infomation_layout;
 	public RelativeLayout selectedface;
 	public RelativeLayout selectpicture;
 	public RelativeLayout makeaudio;
@@ -57,7 +60,7 @@ public class ChatView {
 
 	public ChatAdapter mChatAdapter;
 
-	Bitmap bitmap;
+	public Bitmap bitmap;
 
 	public ChatView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -85,6 +88,7 @@ public class ChatView {
 		selectpicture = (RelativeLayout) thisActivity.findViewById(R.id.selectpicture);
 		makeaudio = (RelativeLayout) thisActivity.findViewById(R.id.makeaudio);
 		more_selected = (ImageView) thisActivity.findViewById(R.id.more_selected);
+		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.infomation_layout);
 
 		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
 		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
@@ -94,22 +98,34 @@ public class ChatView {
 		String type = thisController.type, key = thisController.key;
 		ArrayList<Message> messages = null;
 		if ("group".equals(type)) {
-			messages = data.messages.groupMessageMap.get(key);
+			messages = data.messages.groupMessageMap.get("g" + key);
 			if (messages == null) {
 				messages = new ArrayList<Data.Messages.Message>();
-				data.messages.groupMessageMap.put(key, messages);
+				data.messages.groupMessageMap.put("g" + key, messages);
+			}
+			Group group = data.relationship.groupsMap.get(key);
+			if (group != null) {
+				name.setText(group.name + "(" + group.members.size() + ")");
+			} else {
+				name.setText("Group");
 			}
 		} else if ("point".equals(type)) {
-			messages = data.messages.friendMessageMap.get(key);
+			messages = data.messages.friendMessageMap.get("p" + key);
 			if (messages == null) {
 				messages = new ArrayList<Data.Messages.Message>();
-				data.messages.friendMessageMap.put(key, messages);
+				data.messages.friendMessageMap.put("p" + key, messages);
 			}
 			Friend friend = data.relationship.friendsMap.get(key);
-			if (friend == null || friend.head.equals("")) {
-				infomation.setImageBitmap(bitmap);
+			if (friend != null) {
+				if (friend.head.equals("Head") || friend.head.equals("")) {
+					infomation.setImageBitmap(bitmap);
+				} else {
+					thisController.setHeadImage(friend.head, infomation);
+				}
+				name.setText(friend.nickName);
 			} else {
-
+				name.setText("Name");
+				infomation.setImageBitmap(bitmap);
 			}
 		}
 		mChatAdapter = new ChatAdapter(messages);
@@ -153,14 +169,17 @@ public class ChatView {
 			int type = message.type;
 			// if (convertView == null) {
 			chatHolder = new ChatHolder();
-			if (type == message.MESSAGE_TYPE_SEND) {
+			if (type == Constant.MESSAGE_TYPE_SEND) {
 				convertView = mInflater.inflate(R.layout.f_chat_item_send, null);
-			} else if (type == message.MESSAGE_TYPE_RECEIVE) {
+			} else if (type == Constant.MESSAGE_TYPE_RECEIVE) {
 				convertView = mInflater.inflate(R.layout.f_chat_item_receive, null);
 			}
 			chatHolder.time = (TextView) convertView.findViewById(R.id.time);
 			chatHolder.character = (TextView) convertView.findViewById(R.id.character);
-			chatHolder.image = (RelativeLayout) convertView.findViewById(R.id.image);
+			chatHolder.image = (ImageView) convertView.findViewById(R.id.image);
+			chatHolder.images_layout = convertView.findViewById(R.id.images_layout);
+			chatHolder.images = (ImageView) convertView.findViewById(R.id.images);
+			chatHolder.images_count = (TextView) convertView.findViewById(R.id.images_count);
 			chatHolder.voice = (RelativeLayout) convertView.findViewById(R.id.voice);
 			chatHolder.voicetime = (TextView) convertView.findViewById(R.id.voicetime);
 			chatHolder.voice_icon = (ImageView) convertView.findViewById(R.id.voice_icon);
@@ -179,27 +198,45 @@ public class ChatView {
 				chatHolder.character.setVisibility(View.GONE);
 				chatHolder.image.setVisibility(View.VISIBLE);
 				chatHolder.voice.setVisibility(View.GONE);
-				chatHolder.image.removeAllViews();
 				List<String> images = thisController.getImageFromJson(message.content);
-				for (int i = 0; i < images.size(); i++) {
-					String image = images.get(i);
-					ImageView child = new ImageView(thisActivity);
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) (178 * displayMetrics.density + 0.5f), (int) (106 * displayMetrics.density + 0.5f));
-					if (i > 0) {
-						params.topMargin = i * (int) (116 * displayMetrics.density + 0.5f);
-					}
-					chatHolder.image.addView(child, params);
-					child.setTag(R.id.tag_first, i);
-					child.setTag(R.id.tag_second, images);
-					child.setOnClickListener(thisController.mOnClickListener);
-					thisController.setImageThumbnail(image, child);
+				String image = images.get(0);
+				if (images.size() == 1) {
+					chatHolder.images_layout.setVisibility(View.GONE);
+					chatHolder.image.setVisibility(View.VISIBLE);
+					chatHolder.image.setTag(R.id.tag_first, images);
+					thisController.setImageThumbnail(image, chatHolder.image);
+					chatHolder.image.setOnClickListener(thisController.mOnClickListener);
+				} else {
+					chatHolder.image.setVisibility(View.GONE);
+					chatHolder.images_layout.setVisibility(View.VISIBLE);
+					chatHolder.images_count.setText(String.valueOf(images.size()));
+					chatHolder.images_layout.setTag(R.id.tag_first, images);
+					thisController.setImageThumbnail(image, chatHolder.images);
+					chatHolder.images_layout.setOnClickListener(thisController.mOnClickListener);
 				}
+				// for (int i = 0; i < images.size(); i++) {
+				// String image = images.get(i);
+				// ImageView child = new ImageView(thisActivity);
+				// RelativeLayout.LayoutParams params = new
+				// RelativeLayout.LayoutParams((int) (178 *
+				// displayMetrics.density + 0.5f), (int) (106 *
+				// displayMetrics.density + 0.5f));
+				// if (i > 0) {
+				// params.topMargin = i * (int) (116 * displayMetrics.density +
+				// 0.5f);
+				// }
+				// chatHolder.image.addView(child, params);
+				// child.setTag(R.id.tag_first, i);
+				// child.setTag(R.id.tag_second, images);
+				// child.setOnClickListener(thisController.mOnClickListener);
+				//
+				// }
 			} else if ("voice".equals(contentType)) {
 				chatHolder.character.setVisibility(View.GONE);
 				chatHolder.image.setVisibility(View.GONE);
 				chatHolder.voice.setVisibility(View.VISIBLE);
 				Bitmap bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.chat_item_voice);
-				if (type == message.MESSAGE_TYPE_SEND) {
+				if (type == Constant.MESSAGE_TYPE_SEND) {
 					Matrix mMatrix = new Matrix();
 					mMatrix.setRotate(180);
 					bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, true);
@@ -213,9 +250,10 @@ public class ChatView {
 		}
 
 		class ChatHolder {
-			public RelativeLayout voice, image;
-			public TextView time, character, voicetime;
-			public ImageView voice_icon, head;
+			public View images_layout;
+			public RelativeLayout voice;
+			public TextView time, character, voicetime, images_count;
+			public ImageView voice_icon, head, image, images;
 		}
 
 	}

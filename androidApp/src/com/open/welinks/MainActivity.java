@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,14 +62,17 @@ public class MainActivity extends Activity {
 		}
 		initImageLoader(getApplicationContext());
 		linkViewController();
+		initReceiver();
 		startPushService();
 	}
 
-	public void startPushService() {
+	public void initReceiver() {
 		mReceiver = new LongConnectionReceiver();
 		IntentFilter filter = new IntentFilter(PushService.LONGPULL_STOP);
 		registerReceiver(mReceiver, filter);
+	}
 
+	public void startPushService() {
 		Intent service = new Intent(thisActivity, PushService.class);
 		service.putExtra("phone", data.userInformation.currentUser.phone);
 		service.putExtra("accessKey", data.userInformation.currentUser.accessKey);
@@ -166,6 +170,27 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		thisController.onPause();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		thisController.onDestroy();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		boolean flag = thisController.onKeyDown(keyCode, event);
+		if (!flag) {
+			return flag;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onBackPressed() {
+		thisController.onBackPressed();
+		super.onBackPressed();
 	}
 
 	@Override

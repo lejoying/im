@@ -37,7 +37,8 @@ public class GroupInfomationController {
 
 	public void onCreate() {
 
-		String gid = data.localStatus.localData.currentSelectedGroup;
+		// String currentSelectedGroup = data.localStatus.localData.currentSelectedGroup;
+		String gid = thisActivity.getIntent().getStringExtra("gid");
 		if (gid != null && !"".equals(gid)) {
 			currentGroup = data.relationship.groupsMap.get(gid);
 			if (currentGroup == null) {
@@ -84,6 +85,7 @@ public class GroupInfomationController {
 					thisActivity.finish();
 				} else if (view.equals(thisView.groupMemberControlView)) {
 					Intent intent = new Intent(thisActivity, GroupMemberManageActivity.class);
+					intent.putExtra("gid", currentGroup.gid + "");
 					thisActivity.startActivity(intent);
 				}
 			}

@@ -30,7 +30,7 @@
                 android:id="@+id/groupName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
                 android:paddingLeft="55dp"
                 android:singleLine="true"
                 android:text="亦庄文化园站"
@@ -53,7 +53,7 @@
             android:id="@+id/groupSelectedStatus"
             android:layout_width="15dp"
             android:layout_height="10dp"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="35dp"
             android:src="@drawable/dialog_selected"
             android:visibility="visible" />

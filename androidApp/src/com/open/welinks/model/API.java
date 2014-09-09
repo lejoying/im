@@ -33,6 +33,10 @@ public class API {
 	 */
 	public static String GROUP_ADDMEMBERS = "http://www.we-links.com/api2/group/addmembers";
 	/**
+	 * http://www.we-links.com/api2/group/removemembers
+	 */
+	public static String GROUP_REMOVEMEMBERS = "http://www.we-links.com/api2/group/removemembers";
+	/**
 	 * http://www.we-links.com/api2/group/modify
 	 */
 	public static String GROUP_MODIFY = "http://www.we-links.com/api2/group/modify";

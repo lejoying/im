@@ -33,7 +33,6 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
-import com.open.welinks.controller.UploadMultipart.UploadLoadingListener;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
@@ -59,7 +58,7 @@ public class ShareReleaseImageTextController {
 	public OnClickListener monClickListener;
 	public OnTouchListener monOnTouchListener;
 	public OnTouchListener onTouchListener;
-	public UploadLoadingListener uploadLoadingListener;
+	public OnUploadLoadingListener uploadLoadingListener;
 
 	public int RESULT_REQUESTCODE_SELECTIMAGE = 0x01;
 
@@ -130,14 +129,14 @@ public class ShareReleaseImageTextController {
 				return backviewDetector.onTouchEvent(event);
 			}
 		};
-		uploadLoadingListener = new UploadLoadingListener() {
+		uploadLoadingListener = new OnUploadLoadingListener() {
 
 			@Override
-			public void loading(UploadMultipart instance, int precent, long time, int status) {
+			public void onLoading(UploadMultipart instance, int precent, long time, int status) {
 			}
 
 			@Override
-			public void success(UploadMultipart instance, int time) {
+			public void onSuccess(UploadMultipart instance, int time) {
 				currentUploadCount++;
 				if (currentUploadCount == 1) {
 					viewManage.mainView.shareSubView.showShareMessages();
