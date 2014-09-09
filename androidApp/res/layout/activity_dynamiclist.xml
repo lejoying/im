@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <include layout="@layout/view_back_view" />
+
+    <ListView
+        android:id="@+id/eventContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="#0000"
+        android:divider="#c0c0c0"
+        android:dividerHeight="1dp"
+        android:listSelector="#0000"
+        android:scrollbars="none" >
+    </ListView>
+
+</LinearLayout>

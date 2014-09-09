@@ -271,6 +271,21 @@ public class Data {
 
 	public class Event {
 		public List groupEvents = new ArrayList();
+		
 		public List userEvents = new ArrayList();
+
+		public class EventMessage {
+			public int ADDFRIEND = 0x01;
+			public int ADDEDFRIEND = 0x02;
+			public int DATAUPDATE = 0x03;
+			public int type;// addfriend addedfriend dataupdate
+			public String status;// success waiting
+			public long time;
+			public String phone;
+			public String phoneTo;
+
+			public String gid;
+
+		}
 	}
 }
