@@ -74,9 +74,12 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取密友圈成功")) {
+
 				data.relationship.circles = response.relationship.circles;
 				data.relationship.circlesMap = response.relationship.circlesMap;
 				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+
+				data.relationship.isModified = true;
 			}
 			int i = 1;
 			i = i + 2;
@@ -167,7 +170,7 @@ public class ResponseHandlers {
 					data.relationship.groups = response.relationship.groups;
 					data.relationship.groupsMap = response.relationship.groupsMap;
 					data.relationship.friendsMap.putAll(response.relationship.friendsMap);
-
+					data.relationship.isModified = true;
 					// init current share
 					if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
 						if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
@@ -221,6 +224,7 @@ public class ResponseHandlers {
 				}
 				data.userInformation.currentUser.phone = phone;
 				data.userInformation.currentUser.accessKey = accessKey;
+				data.userInformation.isModified = true;
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();
 				params.addBodyParameter("phone", phone);
@@ -353,6 +357,7 @@ public class ResponseHandlers {
 						}
 					}
 					share.shareMessagesMap.putAll(response.shares.shareMessagesMap);
+					data.shares.isModified = true;
 					viewManage.mainView.shareSubView.showShareMessages();
 				}
 			} catch (JsonSyntaxException e) {

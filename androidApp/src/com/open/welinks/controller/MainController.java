@@ -85,13 +85,15 @@ public class MainController {
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
+		
+		getIntimatefriends();
 	}
 
 	public void onResume() {
 		data.localStatus.thisActivityName = "MainActivity";
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
-		thisView.shareSubView.onResume();
-		thisView.messagesSubView.onResume();
+		// thisView.shareSubView.onResume();
+		// thisView.messagesSubView.onResume();
 	}
 
 	public void onPause() {
@@ -112,7 +114,7 @@ public class MainController {
 		}
 	}
 
-	public void test() {
+	public void getIntimatefriends() {
 
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("accessKey", "lejoying");

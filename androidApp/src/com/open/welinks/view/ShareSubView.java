@@ -45,6 +45,7 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.ShareContent;
@@ -108,6 +109,7 @@ public class ShareSubView {
 	public DisplayImageOptions options;
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
 	public Gson gson = new Gson();
+	public Parser parser = Parser.getInstance();
 
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -183,6 +185,7 @@ public class ShareSubView {
 		this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
 		this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 
+		data = parser.check();
 		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
 		if (share == null)
 			return;
@@ -194,6 +197,9 @@ public class ShareSubView {
 			String key = sharesOrder.get(i);
 			ShareMessage shareMessage = null;
 			shareMessage = sharesMap.get(key);
+			if (!shareMessage.type.equals("imagetext")) {
+				continue;
+			}
 			SharesMessageBody sharesMessageBody = null;
 			// .........................
 			String lastTime;
@@ -314,6 +320,7 @@ public class ShareSubView {
 		}
 
 		public void setContent(ShareMessage shareMessage) {
+			data = parser.check();
 			if (i == -1) {
 				// showGroupMembers(groupMembersListContentView);
 				releaseShareView.setOnClickListener(thisController.mOnClickListener);
@@ -504,6 +511,7 @@ public class ShareSubView {
 	}
 
 	public void setGroupsDialogContent() {
+		data = parser.check();
 		List<String> groups = data.relationship.groups;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
 		groupsDialogContent.removeAllViews();
@@ -588,6 +596,7 @@ public class ShareSubView {
 		}
 
 		public void setContent(Group group) {
+			data = parser.check();
 			this.group = group;
 			Resources resources = mainView.thisActivity.getResources();
 			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
@@ -603,6 +612,7 @@ public class ShareSubView {
 		}
 
 		public void setViewLayout() {
+			data = parser.check();
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
 				this.groupNameView.setText(group.name);
@@ -619,6 +629,7 @@ public class ShareSubView {
 	public DisplayImageOptions displayImageOptions;
 
 	public void showGroupMembers() {
+		data = parser.check();
 		groupMembersListContentView.removeAllViews();
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
 		shareTopMenuGroupName.setText(group.name);

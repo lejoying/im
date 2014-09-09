@@ -109,15 +109,16 @@ public class FriendsSubController {
 			@Override
 			public void onStopOrdering(List<String> listItemsSequence) {
 				super.onStopOrdering(listItemsSequence);
-				List<String> rids = new ArrayList<String>();
+				List<String> circles = new ArrayList<String>();
 				for (int i = 0; i < listItemsSequence.size(); i++) {
 					String key = listItemsSequence.get(i);
-					rids.add(key.substring(key.indexOf("#") + 1));
+					circles.add(key.substring(key.indexOf("#") + 1));
 				}
 				// modify local data
-				data.relationship.circles = rids;
+				data.relationship.circles = circles;
+				data.relationship.isModified = true;
 				Gson gson = new Gson();
-				String ridSequence = gson.toJson(rids);
+				String ridSequence = gson.toJson(circles);
 				// modify server data
 				modifyGroupSequence(ridSequence);
 			}

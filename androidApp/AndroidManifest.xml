@@ -152,6 +152,13 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
+            android:name="com.open.welinks.LoadingActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/CommonStyle"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
             android:name="com.open.welinks.Debug1Activity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
