@@ -236,14 +236,17 @@ public class ShareSubController {
 			public void onStopOrdering(List<String> listItemsSequence) {
 				super.onStopOrdering(listItemsSequence);
 				log.e(tag, listItemsSequence.toString());
-				List<String> gidsList = new ArrayList<String>();
+				List<String> groups = new ArrayList<String>();
 				for (int i = 0; i < listItemsSequence.size(); i++) {
 					String key = listItemsSequence.get(i);
-					gidsList.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
+					groups.add(key.substring(key.indexOf("#") + 1, key.indexOf("_")));
 				}
 				// modify local data
-				data.relationship.groups = gidsList;
-				String sequenceListString = gson.toJson(gidsList);
+				data.relationship.groups = groups;
+				data.relationship.isModified = true;
+
+				String sequenceListString = gson.toJson(groups);
+
 				// modify server data
 				modifyGroupSequence(sequenceListString);
 			}

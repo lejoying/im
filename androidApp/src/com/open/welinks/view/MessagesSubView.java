@@ -18,10 +18,10 @@ import android.widget.TextView;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
-
 import com.open.welinks.R;
 import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -47,6 +47,7 @@ public class MessagesSubView {
 	public List<String> messagesKeepOnlyOne;
 
 	public boolean inited = false;
+	public Parser parser = Parser.getInstance();
 
 	public MessagesSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -79,6 +80,7 @@ public class MessagesSubView {
 	}
 
 	public void showMessages() {
+		data = parser.check();
 		if (data.messages == null) {
 			return;
 		}
@@ -164,6 +166,7 @@ public class MessagesSubView {
 		}
 
 		public void setContent(Message message) {
+			data = parser.check();
 			Resources resources = mainView.thisActivity.getResources();
 			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);

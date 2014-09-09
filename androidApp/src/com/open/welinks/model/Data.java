@@ -79,6 +79,8 @@ public class Data {
 	public Squares squares;
 
 	public class UserInformation {
+		public boolean isModified = false;
+
 		public User currentUser;
 
 		public class User {
@@ -111,6 +113,8 @@ public class Data {
 	}
 
 	public class Relationship {
+		public boolean isModified = false;
+
 		public List<String> friends = new ArrayList<String>();
 		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
 
@@ -160,6 +164,7 @@ public class Data {
 	}
 
 	public class Messages {
+		public boolean isModified = false;
 
 		public Map<String, ArrayList<Message>> friendMessageMap = new HashMap<String, ArrayList<Message>>();
 
@@ -183,6 +188,7 @@ public class Data {
 	}
 
 	public class Shares {
+		public boolean isModified = false;
 
 		public Map<String, Share> shareMap = new HashMap<String, Share>();
 
@@ -224,6 +230,7 @@ public class Data {
 	}
 
 	public class Squares {
+		public boolean isModified = false;
 
 		public Map<String, Square> squareMap = new HashMap<String, Square>();
 

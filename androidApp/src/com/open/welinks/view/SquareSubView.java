@@ -31,6 +31,7 @@ import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Squares.Square;
 import com.open.welinks.model.Data.Squares.Square.SquareMessage;
+import com.open.welinks.model.Parser;
 
 public class SquareSubView {
 
@@ -60,6 +61,7 @@ public class SquareSubView {
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DisplayImageOptions options;
+	public Parser parser = Parser.getInstance();
 
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
@@ -84,6 +86,8 @@ public class SquareSubView {
 	}
 
 	public void showSquareMessages() {
+		parser.initialize(mainView.thisActivity);
+		data = parser.check();
 		Square square = data.squares.squareMap.get("1001");
 		List<String> squareMessagesOrder = square.squareMessagesOrder;
 		Map<String, SquareMessage> squareMessagesMap = square.squareMessagesMap;
