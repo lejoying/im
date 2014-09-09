@@ -71,7 +71,7 @@ public class ImagesDirectoryController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.mCancle)) {
+				if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				}
 			}
@@ -91,7 +91,7 @@ public class ImagesDirectoryController {
 
 	public void bindEvent() {
 		thisView.mGridView.setOnItemClickListener(onItemClickListener);
-		thisView.mCancle.setOnClickListener(onClickListener);
+		thisView.backView.setOnClickListener(onClickListener);
 	}
 
 	public void setDate() {

@@ -3,16 +3,6 @@ package com.open.welinks.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.open.welinks.R;
-import com.open.welinks.controller.ChatController;
-import com.open.welinks.model.Constant;
-import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Messages.Message;
-import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MCImageUtils;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +19,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.open.welinks.R;
+import com.open.welinks.controller.ChatController;
+import com.open.welinks.model.Constant;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.utils.DateUtil;
+import com.open.welinks.utils.MCImageUtils;
 
 public class ChatView {
 	public Data data = Data.getInstance();
@@ -73,11 +72,19 @@ public class ChatView {
 		mInflater = thisActivity.getLayoutInflater();
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
 		thisActivity.setContentView(R.layout.activity_chat);
 
-		backview = (RelativeLayout) thisActivity.findViewById(R.id.backview);
-		name = (TextView) thisActivity.findViewById(R.id.name);
-		infomation = (ImageView) thisActivity.findViewById(R.id.infomation);
+		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		name = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		// infomation = (ImageView) thisActivity.findViewById(R.id.infomation);
+		infomation = new ImageView(context);
+		infomation.setBackgroundResource(R.drawable.share_to_group_icon);
+		RelativeLayout.LayoutParams infomationParams = new RelativeLayout.LayoutParams((int) (40 * displayMetrics.density), (int) (40 * displayMetrics.density));
+		infomationParams.addRule(RelativeLayout.CENTER_VERTICAL);
+		infomation_layout.addView(infomation, infomationParams);
+
 		chat_content = (ListView) thisActivity.findViewById(R.id.chat_content);
 		chat_bottom_bar = (RelativeLayout) thisActivity.findViewById(R.id.chat_bottom_bar);
 		send = (ImageView) thisActivity.findViewById(R.id.send);
@@ -88,7 +95,6 @@ public class ChatView {
 		selectpicture = (RelativeLayout) thisActivity.findViewById(R.id.selectpicture);
 		makeaudio = (RelativeLayout) thisActivity.findViewById(R.id.makeaudio);
 		more_selected = (ImageView) thisActivity.findViewById(R.id.more_selected);
-		infomation_layout = (RelativeLayout) thisActivity.findViewById(R.id.infomation_layout);
 
 		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
 		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);

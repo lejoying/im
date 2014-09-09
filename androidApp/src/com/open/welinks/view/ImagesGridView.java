@@ -3,6 +3,9 @@ package com.open.welinks.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,8 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -42,15 +47,37 @@ public class ImagesGridView {
 	public GridView mGridView;
 	public TextView mConfirm;
 
-	public ImageView backImageDirectoryView;
+	public RelativeLayout rightContainerView;
+
+	public RelativeLayout backView;
 	public TextView directoryNameView;
+	public TextView backTitleView;
+
+	public DisplayMetrics displayMetrics;
 
 	public void initViews() {
+		displayMetrics = new DisplayMetrics();
+
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
 		thisActivity.setContentView(R.layout.activity_image_grid);
 		mGridView = (GridView) thisActivity.findViewById(R.id.gridview);
-		mConfirm = (TextView) thisActivity.findViewById(R.id.tv_confirm);
-		backImageDirectoryView = (ImageView) thisActivity.findViewById(R.id.backImageDirectory);
-		directoryNameView = (TextView) thisActivity.findViewById(R.id.directoryName);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+
+		directoryNameView = (TextView) thisActivity.findViewById(R.id.backTitleView);
+
+		rightContainerView = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+
+		mConfirm = new TextView(context);
+		mConfirm.setPadding((int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density), (int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		mConfirm.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		mConfirm.setText("确定(0)");
+		mConfirm.setBackgroundResource(R.drawable.textview_bg);
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		layoutParams.setMargins(0, (int) (5 * displayMetrics.density), (int) (0 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		layoutParams.addRule(Gravity.CENTER);
+		rightContainerView.addView(mConfirm, layoutParams);
+
 	}
 
 	public void initData() {

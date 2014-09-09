@@ -10,11 +10,13 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,10 +48,10 @@ public class PictureBrowseView {
 	public ImagePagerAdapter imagePagerAdapter;
 
 	// top bar view
-	public ImageView backView;
+	public RelativeLayout backView;
 	public TextView imageNumberView;
 	public TextView titleView;
-	public ImageView choiceCoverView;
+	// public ImageView choiceCoverView;
 	public ImageView deleteButtonView;
 
 	public DisplayImageOptions options;
@@ -61,21 +63,31 @@ public class PictureBrowseView {
 	public static int IMAGEBROWSE_COMMON = 0x01;
 	public static int IMAGEBROWSE_OPTION = 0x02;
 
+	public RelativeLayout rightContainer;
+
 	public PictureBrowseView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 	}
 
+	DisplayMetrics displayMetrics;
+
 	public void initView() {
+		displayMetrics = new DisplayMetrics();
+
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_picture_browse);
 		imageViewPageContent = (ViewPager) thisActivity.findViewById(R.id.mainPagerContent);
 
-		backView = (ImageView) thisActivity.findViewById(R.id.PicAndVoiceDetailBack);
-		imageNumberView = (TextView) thisActivity.findViewById(R.id.imageTotalNumber);
-		titleView = (TextView) thisActivity.findViewById(R.id.centerTitle);
-		choiceCoverView = (ImageView) thisActivity.findViewById(R.id.choiceCoverView);
-		deleteButtonView = (ImageView) thisActivity.findViewById(R.id.deleteImageView);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
+		imageNumberView = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		titleView = (TextView) thisActivity.findViewById(R.id.titleContent);
+		// choiceCoverView = (ImageView) thisActivity.findViewById(R.id.choiceCoverView);
+
+		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		// deleteButtonView = (ImageView) thisActivity.findViewById(R.id.deleteImageView);
 
 		options = new DisplayImageOptions.Builder().showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).resetViewBeforeLoading(true).cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY).bitmapConfig(Bitmap.Config.RGB_565).considerExifParams(true).displayer(new FadeInBitmapDisplayer(300)).build();
 
@@ -85,7 +97,10 @@ public class PictureBrowseView {
 
 		imageNumberView.setText((thisController.currentPosition + 1) + "/" + thisController.imagesBrowseList.size());
 		titleView.setText("浏览");
-
+		deleteButtonView = new ImageView(context);
+		deleteButtonView.setImageResource(R.drawable.image_delete);
+		deleteButtonView.setPadding((int) (30 * displayMetrics.density), (int) (15 * displayMetrics.density), (int) (30 * displayMetrics.density), (int) (15 * displayMetrics.density));
+		rightContainer.addView(deleteButtonView);
 		if (thisController.currentType == IMAGEBROWSE_COMMON) {
 			deleteButtonView.setVisibility(View.GONE);
 		} else if (thisController.currentType == IMAGEBROWSE_OPTION) {

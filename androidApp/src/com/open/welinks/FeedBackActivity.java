@@ -5,14 +5,23 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 public class FeedBackActivity extends Activity implements OnClickListener, TextWatcher {
-	public View backView, send;
+
+	public View backView;
+	public ImageView send;
+	public TextView titleContentView;
+	public RelativeLayout rightContainer;
+
 	public TextView num;
 	public EditText opinion;
 
@@ -23,8 +32,20 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feedback);
+
+		DisplayMetrics dm = new DisplayMetrics();
+		this.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		backView = findViewById(R.id.backView);
-		send = findViewById(R.id.send);
+		titleContentView = (TextView) findViewById(R.id.titleContent);
+		titleContentView.setText("意见反馈");
+		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
+		send = new ImageView(this);
+		send.setImageResource(R.drawable.mark_stone);
+		send.setPadding((int) (20 * dm.density), (int) (13 * dm.density), (int) (20 * dm.density), (int) (13 * dm.density));
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+		rightContainer.addView(send, layoutParams);
+
 		num = (TextView) findViewById(R.id.num);
 		opinion = (EditText) findViewById(R.id.opinion);
 

@@ -12,10 +12,10 @@
         android:background="@color/card_color" >
 
         <RelativeLayout
-            android:layout_width="132dp"
+            android:layout_width="144dp"
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
-            android:translationX="-10dp" >
+            android:translationX="-6dp" >
 
             <ImageView
                 android:id="@+id/main_pager_indicator"
@@ -35,14 +35,14 @@
             android:translationX="-10dp" >
 
             <ImageView
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:clickable="false"
                 android:gravity="center"
                 android:padding="5dp"
-                android:src="@drawable/person_icon_selected" />
+                android:src="@drawable/me" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -50,17 +50,17 @@
             android:layout_width="44dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:translationX="-54dp" >
+            android:translationX="-58dp" >
 
             <ImageView
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:clickable="false"
                 android:gravity="center"
                 android:padding="5dp"
-                android:src="@drawable/group_icon" />
+                android:src="@drawable/group" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -68,17 +68,17 @@
             android:layout_width="44dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:translationX="-98dp" >
+            android:translationX="-106dp" >
 
             <ImageView
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:clickable="false"
                 android:gravity="center"
                 android:padding="5dp"
-                android:src="@drawable/square_icon" />
+                android:src="@drawable/square1" />
         </RelativeLayout>
     </RelativeLayout>
 

@@ -5,41 +5,7 @@
     android:background="@drawable/main_background"
     tools:context=".ModifyInformationActivity" >
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:background="#33000000" >
-
-        <LinearLayout
-            android:id="@+id/backview"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:background="@drawable/backview_background"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingRight="10dp" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_marginLeft="20dp"
-                android:src="@drawable/back" />
-
-            <TextView
-                android:id="@+id/modify_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:textColor="#fff"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="#fff" />
-    </RelativeLayout>
+    <include layout="@layout/view_back_view" />
 
     <LinearLayout
         android:layout_width="match_parent"

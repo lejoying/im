@@ -74,6 +74,8 @@ public class ShareMessageDetailView {
 	public Gson gson = new Gson();
 
 	public RelativeLayout backView;
+	public RelativeLayout rightContainer;
+	public TextView backTitleView;
 
 	public LinearLayout shareMessageDetailContentView;
 	public ScrollView mainScrollView;
@@ -98,9 +100,9 @@ public class ShareMessageDetailView {
 
 	public TextView praiseusersNumView;
 
-	public TextView sendShareMessageUserNameView;
+	// public TextView sendShareMessageUserNameView;
 	public TextView shareMessageTimeView;
-	public ImageView shareMessageUserHeadView;
+	// public ImageView shareMessageUserHeadView;
 
 	public InputMethodManager inputMethodManager;
 
@@ -125,6 +127,7 @@ public class ShareMessageDetailView {
 	}
 
 	public Bitmap bitmap;
+	public DisplayMetrics displayMetrics;
 
 	public void initView() {
 		initData();
@@ -132,6 +135,10 @@ public class ShareMessageDetailView {
 		Resources resources = thisActivity.getResources();
 		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+
+		displayMetrics = new DisplayMetrics();
+
+		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -144,9 +151,21 @@ public class ShareMessageDetailView {
 		mainScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		detailScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
-		sendShareMessageUserNameView = (TextView) thisActivity.findViewById(R.id.sendShareMessageUserName);
-		shareMessageTimeView = (TextView) thisActivity.findViewById(R.id.shareMessageTime);
-		shareMessageUserHeadView = (ImageView) thisActivity.findViewById(R.id.shareMessageUserHead);
+		backTitleView = (TextView) thisActivity.findViewById(R.id.backTitleView);
+		backTitleView.setText("分享详情");
+
+		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		shareMessageTimeView = new TextView(context);
+		shareMessageTimeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+		shareMessageTimeView.setTextColor(Color.WHITE);
+		shareMessageTimeView.setSingleLine();
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+		// layoutParams.rightMargin = (int) (20 * displayMetrics.density);
+		layoutParams.addRule(Gravity.CENTER_VERTICAL);
+		// layoutParams.leftMargin = (int) (5 * displayMetrics.density);
+		rightContainer.addView(shareMessageTimeView, layoutParams);
+		// shareMessageTimeView = (TextView) thisActivity.findViewById(R.id.shareMessageTime);
+		// shareMessageUserHeadView = (ImageView) thisActivity.findViewById(R.id.shareMessageUserHead);
 
 		sendCommentView = (TextView) thisActivity.findViewById(R.id.sendComment);
 		commentNumberView = (TextView) thisActivity.findViewById(R.id.checkCommentNumber);
@@ -160,7 +179,7 @@ public class ShareMessageDetailView {
 		commentEditTextView = (EditText) thisActivity.findViewById(R.id.commentEditTextView);
 		confirmSendCommentView = (RelativeLayout) thisActivity.findViewById(R.id.rl_sendComment);
 
-		backView = (RelativeLayout) thisActivity.findViewById(R.id.backview);
+		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 
 		commentIconView = (ImageView) thisActivity.findViewById(R.id.commentIcon);
 		praiseIconView = (ImageView) thisActivity.findViewById(R.id.praiseIconView);
@@ -197,8 +216,7 @@ public class ShareMessageDetailView {
 	public void showShareMessageDetail() {
 		friend = data.relationship.friendsMap.get(thisController.shareMessage.phone);
 		if (friend != null) {
-			sendShareMessageUserNameView.setText(friend.nickName);
-			shareMessageUserHeadView.setImageBitmap(bitmap);
+			// shareMessageUserHeadView.setImageBitmap(bitmap);
 		}
 		shareMessageTimeView.setText(DateUtil.getTime(thisController.shareMessage.time));
 
