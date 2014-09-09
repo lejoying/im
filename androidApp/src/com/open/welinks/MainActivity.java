@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -52,18 +54,21 @@ public class MainActivity extends Activity {
 
 	public Parser parser = Parser.getInstance();
 
+	public boolean islinked = false;
+
 	@SuppressWarnings("unused")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.thisActivity = this;
 		if (Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
 		}
 		initImageLoader(getApplicationContext());
-		linkViewController();
 		initReceiver();
 		startPushService();
+		thisActivity.setContentView(R.layout.activity_welinks);
 	}
 
 	public void initReceiver() {
@@ -74,6 +79,9 @@ public class MainActivity extends Activity {
 
 	public void startPushService() {
 		Intent service = new Intent(thisActivity, PushService.class);
+		Log.e(tag, "* startPushService *check data");
+		parser.initialize(thisActivity);
+		data = parser.check();
 		service.putExtra("phone", data.userInformation.currentUser.phone);
 		service.putExtra("accessKey", data.userInformation.currentUser.accessKey);
 		service.putExtra("operation", true);
@@ -90,7 +98,12 @@ public class MainActivity extends Activity {
 	}
 
 	void linkViewController() {
-		this.thisActivity = this;
+		if (this.islinked) {
+			return;
+		}
+		parser.initialize(context);
+		parser.check();
+		
 		this.context = this;
 		this.thisView = new MainView(thisActivity);
 		this.thisController = new MainController(thisActivity);
@@ -105,6 +118,8 @@ public class MainActivity extends Activity {
 		thisView.initViews();
 		thisController.oncreate();
 		thisController.bindEvent();
+
+		this.islinked = true;
 	}
 
 	void linkSubViewController() {
@@ -160,14 +175,41 @@ public class MainActivity extends Activity {
 		return thisController.onTouchEvent(event);
 	}
 
+	public Handler mHandler;
+	public Runnable runnable;
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		thisController.onResume();
+
+		
+		mHandler = new Handler();
+		runnable = new Runnable() {
+			@Override
+			public void run() {
+				linkViewController();
+				thisController.onResume();
+			}
+		};
+		mHandler.post(runnable);
+		// link();
+
+	}
+
+	public void link() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				linkViewController();
+				thisController.onResume();
+			}
+		}).start();
 	}
 
 	@Override
 	protected void onPause() {
+		parser = Parser.getInstance();
+		parser.save();
 		super.onPause();
 		thisController.onPause();
 	}
@@ -201,7 +243,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void finish() {
-		parser.saveDataToLocal();
+		// parser.saveDataToLocal();
 		super.finish();
 	}
 

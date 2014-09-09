@@ -1204,7 +1204,8 @@ lbsManage.modifyAccountLocation = function (data, response) {
                     sex: data.sex,
                     haed: data.head,
                     mainBusiness: data.mainBusiness,
-                    online: data.online
+                    online: data.online,
+                    recently: new Date().getTime()
                 })
             }, success: function (info) {
                 var info = JSON.parse(info);

@@ -27,6 +27,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.R;
+import com.open.welinks.ScanQRCodeActivity;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.ResponseHandlers;
@@ -84,13 +85,15 @@ public class MainController {
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
+		
+		getIntimatefriends();
 	}
 
 	public void onResume() {
 		data.localStatus.thisActivityName = "MainActivity";
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
-		thisView.shareSubView.onResume();
-		thisView.messagesSubView.onResume();
+		// thisView.shareSubView.onResume();
+		// thisView.messagesSubView.onResume();
 	}
 
 	public void onPause() {
@@ -111,7 +114,7 @@ public class MainController {
 		}
 	}
 
-	public void test() {
+	public void getIntimatefriends() {
 
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("accessKey", "lejoying");
@@ -200,9 +203,10 @@ public class MainController {
 					}
 
 					thisView.friendsSubView.dismissCircleSettingDialog();
-				}
-
-				else if (view.getTag() != null) {
+				} else if (view.equals(thisView.scannerCodeView)) {
+					Intent intent = new Intent(thisActivity, ScanQRCodeActivity.class);
+					thisActivity.startActivity(intent);
+				} else if (view.getTag() != null) {
 
 					Log.d(tag, (String) view.getTag());
 				}
@@ -218,6 +222,8 @@ public class MainController {
 	}
 
 	public void bindEvent() {
+
+		thisView.scannerCodeView.setOnClickListener(mOnClickListener);
 
 		thisView.friendsMenuView.setOnClickListener(mOnClickListener);
 		thisView.messagesMenuView.setOnClickListener(mOnClickListener);

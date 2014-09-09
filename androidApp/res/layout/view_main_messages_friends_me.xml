@@ -123,7 +123,7 @@
         android:id="@+id/meContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="00dp"
+        android:layout_marginTop="100dp"
         android:padding="10dp"
         android:visibility="visible" >
 
@@ -209,7 +209,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/myBusiness"
+            android:id="@+id/dynamicList"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/card_color"

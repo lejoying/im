@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Data {
@@ -30,6 +31,8 @@ public class Data {
 		public ArrayList<String> selectedImageList;
 
 		public List<String> praiseusersList;
+
+		public Friend tempFriend;
 
 		public class ImageBean {
 
@@ -79,6 +82,8 @@ public class Data {
 	public Squares squares;
 
 	public class UserInformation {
+		public boolean isModified = false;
+
 		public User currentUser;
 
 		public class User {
@@ -111,6 +116,8 @@ public class Data {
 	}
 
 	public class Relationship {
+		public boolean isModified = false;
+
 		public List<String> friends = new ArrayList<String>();
 		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
 
@@ -160,6 +167,7 @@ public class Data {
 	}
 
 	public class Messages {
+		public boolean isModified = false;
 
 		public Map<String, ArrayList<Message>> friendMessageMap = new HashMap<String, ArrayList<Message>>();
 
@@ -183,6 +191,7 @@ public class Data {
 	}
 
 	public class Shares {
+		public boolean isModified = false;
 
 		public Map<String, Share> shareMap = new HashMap<String, Share>();
 
@@ -224,6 +233,7 @@ public class Data {
 	}
 
 	public class Squares {
+		public boolean isModified = false;
 
 		public Map<String, Square> squareMap = new HashMap<String, Square>();
 
@@ -263,6 +273,26 @@ public class Data {
 				public String content;
 				public long time;
 			}
+		}
+	}
+
+	public class Event {
+		public List groupEvents = new ArrayList();
+		
+		public List userEvents = new ArrayList();
+
+		public class EventMessage {
+			public int ADDFRIEND = 0x01;
+			public int ADDEDFRIEND = 0x02;
+			public int DATAUPDATE = 0x03;
+			public int type;// addfriend addedfriend dataupdate
+			public String status;// success waiting
+			public long time;
+			public String phone;
+			public String phoneTo;
+
+			public String gid;
+
 		}
 	}
 }

@@ -33,6 +33,7 @@ import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.utils.MCImageUtils;
@@ -55,6 +56,8 @@ public class FriendsSubView {
 
 	public MainView mainView;
 
+	public Parser parser = Parser.getInstance();
+
 	public FriendsSubView(MainView mainView) {
 		this.mainView = mainView;
 	}
@@ -74,7 +77,7 @@ public class FriendsSubView {
 	}
 
 	public void showCircles() {
-
+		data = parser.check();
 		circles = data.relationship.circles;
 		circlesMap = data.relationship.circlesMap;
 		friendsMap = data.relationship.friendsMap;
