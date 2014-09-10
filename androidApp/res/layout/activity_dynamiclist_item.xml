@@ -38,8 +38,7 @@
                 android:layout_height="15dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="60dp"
-                android:background="#c0c0c0"
+                android:layout_marginRight="65dp"
                 android:src="@drawable/time_icon" />
 
             <TextView
