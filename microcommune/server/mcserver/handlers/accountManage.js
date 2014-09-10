@@ -653,7 +653,25 @@ accountManage.modify = function (data, response) {
                             "提示信息": "修改用户信息成功"
                         }));
                         response.end();
-                        push.inform(phone, phone, accessKey, "*", {"提示信息": "成功", event: "userinformationchanged", event_content: {phone: phone}});
+                        var event = JSON.stringify({
+                            sendType: "event",
+                            contentType: "account_dataupdate",
+                            content: JSON.stringify({
+                                type: "account_dataupdate",
+                                phone: phone,
+                                time: new Date().getTime(),
+                                status: "success",
+                                content: ""
+                            })
+                        });
+                        client.rpush(phone, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, phone, accessKey, "*", event);
                     }
                 });
             }

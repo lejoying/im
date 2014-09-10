@@ -26,6 +26,8 @@ public class ResponseEventHandlers {
 
 	public Gson gson = new Gson();
 
+	public Parser parser = Parser.getInstance();
+
 	public static ResponseEventHandlers getInstance() {
 		if (responseEventHandlers == null) {
 			responseEventHandlers = new ResponseEventHandlers();
@@ -34,8 +36,16 @@ public class ResponseEventHandlers {
 	}
 
 	public void handleEvent(Message message) {
+		parser.check();
 		if (message.sendType.equals("event")) {
-
+			String firstString = message.contentType.substring(0, message.contentType.indexOf("_"));
+			if (firstString.equals("account") || firstString.equals("relation")) {
+				data.event.userEvents.add(message);
+			} else if (firstString.equals("group")) {
+				data.event.groupEvents.add(message);
+			}
+		} else if (message.sendType.equals("point") || message.sendType.equals("group")) {
+			updateLocalMessage(message);
 		}
 	}
 
@@ -124,44 +134,40 @@ public class ResponseEventHandlers {
 		responseEventHandlers.handleEvent(message);
 	}
 
-	public void updateLocalMessage(List<String> messages) {
-		for (String content : messages) {
-			Message message = gson.fromJson(content, Message.class);
-			message.type = Constant.MESSAGE_TYPE_RECEIVE;
-			if ("point".equals(message.sendType)) {
-				ArrayList<Message> list = data.messages.friendMessageMap.get("p" + message.phone);
-				if (list == null) {
-					list = new ArrayList<Data.Messages.Message>();
-					data.messages.friendMessageMap.put("p" + message.phone, list);
-				}
-				list.add(message);
-			} else if ("group".equals(message.sendType)) {
-				ArrayList<Message> list = data.messages.groupMessageMap.get("g" + message.gid);
-				if (list == null) {
-					list = new ArrayList<Data.Messages.Message>();
-					data.messages.groupMessageMap.put("g" + message.gid, list);
-				}
-				list.add(message);
+	public void updateLocalMessage(Message message) {
+		message.type = Constant.MESSAGE_TYPE_RECEIVE;
+		if ("point".equals(message.sendType)) {
+			ArrayList<Message> list = data.messages.friendMessageMap.get("p" + message.phone);
+			if (list == null) {
+				list = new ArrayList<Data.Messages.Message>();
+				data.messages.friendMessageMap.put("p" + message.phone, list);
 			}
-			if (viewManage.chatView != null) {
-				String key = viewManage.chatView.thisController.key;
-				if (key.equals(message.phone) || key.equals(message.gid)) {
-					viewManage.chatView.thisController.handler.post(new Runnable() {
+			list.add(message);
+		} else if ("group".equals(message.sendType)) {
+			ArrayList<Message> list = data.messages.groupMessageMap.get("g" + message.gid);
+			if (list == null) {
+				list = new ArrayList<Data.Messages.Message>();
+				data.messages.groupMessageMap.put("g" + message.gid, list);
+			}
+			list.add(message);
+		}
+		data.messages.isModified = true;
+		if (viewManage.chatView != null) {
+			String key = viewManage.chatView.thisController.key;
+			if (key.equals(message.phone) || key.equals(message.gid)) {
+				viewManage.chatView.thisController.handler.post(new Runnable() {
 
-						@Override
-						public void run() {
-							viewManage.chatView.mChatAdapter.notifyDataSetChanged();
-						}
-					});
-				} else {
-					modifyMessagesSubView(message);
-				}
+					@Override
+					public void run() {
+						viewManage.chatView.mChatAdapter.notifyDataSetChanged();
+					}
+				});
 			} else {
 				modifyMessagesSubView(message);
 			}
-
+		} else {
+			modifyMessagesSubView(message);
 		}
-
 	}
 
 	public void modifyMessagesSubView(Message message) {

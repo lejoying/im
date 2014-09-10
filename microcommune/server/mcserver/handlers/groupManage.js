@@ -167,8 +167,28 @@ groupManage.create = function (data, response) {
                     group: group
                 }));
                 response.end();
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_addmembers",
+                    content: JSON.stringify({
+                        type: "group_addmembers",
+                        time: new Date().getTime(),
+                        phone: phone,
+                        gid: group.gid,
+                        members: members
+                    })
+                });
                 for (var index in members) {
-                    push.inform(phone, members[index], accessKey, "*", {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: group.gid, operation: true}});
+                    var phoneTo = members[index];
+                    //{"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: group.gid, operation: true}}
+                    client.rpush(phoneTo, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phoneTo, accessKey, "*", event);
                 }
 //                setGroupLBSLocation(phone, data.accessKey, location, group);
             }
@@ -330,11 +350,39 @@ groupManage.addmembers = function (data, response) {
                     "提示信息": "加入群组成功"
                 }))
                 response.end();
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_addmembers",
+                    content: JSON.stringify({
+                        type: "group_addmembers",
+                        time: new Date().getTime(),
+                        phone: phone,
+                        gid: gid,
+                        members: members
+                    })
+                });
                 for (var index in accounts) {
-                    push.inform(phone, index, accessKey, "*", {"提示信息": "成功", event: "groupmemberchanged", event_content: {gid: gid}});
+                    // {"提示信息": "成功", event: "groupmemberchanged", event_content: {gid: gid}}
+                    client.rpush(index, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, index, accessKey, "*", event);
                 }
                 for (var index in members) {
-                    push.inform(phone, members[index], accessKey, "*", {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: true}});
+                    //{"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: true}}
+                    var phoneTo = members[index];
+                    client.rpush(phoneTo, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phoneTo, accessKey, "*", event);
                 }
             } else {
                 response.write(JSON.stringify({
@@ -438,14 +486,41 @@ groupManage.removemembers = function (data, response) {
                 }))
                 response.end();
                 var removeMembers = {};
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_removemembers",
+                    content: JSON.stringify({
+                        type: "group_removemembers",
+                        time: new Date().getTime(),
+                        phone: phone,
+                        gid: gid,
+                        members: members
+                    })
+                });
                 for (var index in members) {
                     var removePhone = members[index];
                     removeMembers[removePhone] = removePhone;
-                    push.inform(phone, removePhone, accessKey, "*", {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: false}});
+                    // {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: false}}
+                    client.rpush(removePhone, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, removePhone, accessKey, "*", event);
                 }
                 for (var index in accounts) {
                     if (!removeMembers[index]) {
-                        push.inform(phone, index, accessKey, "*", {"提示信息": "成功", event: "groupmemberchanged", event_content: {gid: gid}});
+                        //{"提示信息": "成功", event: "groupmemberchanged", event_content: {gid: gid}}
+                        client.rpush(index, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, index, accessKey, "*", event);
                     }
                 }
             } else {
@@ -698,8 +773,26 @@ groupManage.modify = function (data, response) {
                     group: groupNode.data
                 }));
                 response.end();
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_dataupdate",
+                    content: JSON.stringify({
+                        type: "group_dataupdate",
+                        time: new Date().getTime(),
+                        phone: phone,
+                        gid: gid
+                    })
+                });
                 for (var index in accounts) {
-                    push.inform(phone, index, accessKey, "*", {"提示信息": "成功", event: "groupinformationchanged", event_content: {gid: gid}});
+                    //{"提示信息": "成功", event: "groupinformationchanged", event_content: {gid: gid}}
+                    client.rpush(index, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, index, accessKey, "*", event);
                 }
 //                setGroupLBSLocation(phone, accessKey, JSON.stringify(currentLocation), groupData);
             } else {

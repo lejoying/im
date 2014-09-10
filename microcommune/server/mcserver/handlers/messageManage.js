@@ -18,10 +18,10 @@ messageManage.send = function (data, response) {
     var gid = data.gid;
     var sendType = data.sendType;
     var phoneto = [];
-    var message = {};
+    var contentType = data.contentType;
+    var content = data.content;
     try {
         phoneto = JSON.parse(phoneToStr);
-        message = JSON.parse(data.message);
     } catch (e) {
         response.write(JSON.stringify({
             "提示信息": "发送失败",
@@ -33,10 +33,10 @@ messageManage.send = function (data, response) {
     }
     var time = new Date().getTime();
     var messageSelf = {
-        contentType: message.contentType,
+        contentType: contentType,
         sendType: sendType,
         phone: phone,
-        content: message.content,
+        content: content,
         time: time
     };
     if (sendType == "point") {
@@ -70,10 +70,10 @@ messageManage.send = function (data, response) {
                 continue;
             }
             var messageToOther = {
-                contentType: message.contentType,
+                contentType: contentType,
                 sendType: sendType,
                 phone: phone,
-                content: message.content,
+                content: content,
                 time: time
             };
             if (sendType == "point") {
@@ -96,7 +96,9 @@ messageManage.send = function (data, response) {
                 }
                 //通知
             });
-            push.inform(phone, friendPhone, accessKey, "*", {"提示信息": "成功", event: "message", event_content: {message: [messageOther]}});
+//            var event = JSON.stringify({"提示信息": "成功", event: "message", event_content: {message: [messageOther]}})
+            var event = JSON.stringify(messageOther);
+            push.inform(phone, friendPhone, accessKey, "*", event);
         }
         response.write(JSON.stringify({
             "提示信息": "发送成功",

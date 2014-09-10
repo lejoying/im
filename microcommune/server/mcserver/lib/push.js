@@ -8,7 +8,7 @@ push.inform = function (phone, phoneTo, accessKey, sessionID, event) {
             accessKey: accessKey,
             phoneTo: phoneTo,
             sessionID: sessionID,
-            event: JSON.stringify(event)
+            event: event
         },
         type: 'POST',
         url: "http://127.0.0.1:8077/api2/session/notify?",

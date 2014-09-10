@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
@@ -80,6 +81,7 @@ public class Data {
 	public Messages messages;
 	public Shares shares;
 	public Squares squares;
+	public Event event = new Event();
 
 	public class UserInformation {
 		public boolean isModified = false;
@@ -277,22 +279,11 @@ public class Data {
 	}
 
 	public class Event {
-		public List groupEvents = new ArrayList();
-		
-		public List userEvents = new ArrayList();
 
-		public class EventMessage {
-			public int ADDFRIEND = 0x01;
-			public int ADDEDFRIEND = 0x02;
-			public int DATAUPDATE = 0x03;
-			public int type;// addfriend addedfriend dataupdate
-			public String status;// success waiting
-			public long time;
-			public String phone;
-			public String phoneTo;
+		public boolean isModified = false;
 
-			public String gid;
+		public List<Message> groupEvents = new ArrayList<Message>();
 
-		}
+		public List<Message> userEvents = new ArrayList<Message>();
 	}
 }

@@ -5,6 +5,9 @@ var db = new neo4j.GraphDatabase(serverSetting.neo4jUrl);
 var push = require('../lib/push.js');
 var sha1 = require('../tools/sha1.js');
 var verifyEmpty = require("./../lib/verifyParams.js");
+
+var redis = require("redis");
+var client = redis.createClient(serverSetting.redisPort, serverSetting.redisIP);
 /***************************************
  *     URL：/api2/relation/addfriend
  ***************************************/
@@ -91,7 +94,19 @@ relationManage.addfriend = function (data, response) {
                             "提示信息": "添加成功"
                         }));
                         response.end();
-                        push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
+                        var event = JSON.stringify({
+                            sendType: "event",
+                            contentType: "relation_friendaccept",
+                            content: JSON.stringify({
+                                type: "relation_friendaccept",
+                                phone: phone,
+                                time: new Date().getTime(),
+                                status: "success",
+                                content: ""
+                            })
+                        });
+                        //{"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}}
+                        push.inform(phone, phoneTo, accessKey, "*", event);
                     }
                 } else {
                     //checked
@@ -107,7 +122,45 @@ relationManage.addfriend = function (data, response) {
                     }));
                     response.end();
                     console.log("发送请求FRIEND成功---");
-                    push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "newfriend", event_content: {phone: phone}});
+                    var event0 = JSON.stringify({
+                        sendType: "event",
+                        contentType: "relation_addfriend",
+                        content: JSON.stringify({
+                            type: "relation_addfriend",
+                            phone: phone,
+                            time: new Date().getTime(),
+                            status: "waiting",
+                            content: message
+                        })
+                    });
+                    //{"提示信息": "成功", event: "newfriend", event_content: {phone: phone}}
+                    client.rpush(phone, event0, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "relation_newfriend",
+                        content: JSON.stringify({
+                            type: "relation_newfriend",
+                            phone: phone,
+                            time: new Date().getTime(),
+                            status: "waiting",
+                            content: message
+                        })
+                    });
+                    //{"提示信息": "成功", event: "newfriend", event_content: {phone: phone}}
+                    client.rpush(phoneTo, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phoneTo, accessKey, "*", event);
                 }
             }
         });
@@ -140,7 +193,26 @@ relationManage.addfriend = function (data, response) {
                     "提示信息": "添加成功"
                 }));
                 response.end();
-                push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_friendaccept",
+                    content: JSON.stringify({
+                        type: "relation_friendaccept",
+                        phone: phone,
+                        time: new Date().getTime(),
+                        status: "success",
+                        content: ""
+                    })
+                });
+                client.rpush(phoneTo, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                //{"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}}
+                push.inform(phone, phoneTo, accessKey, "*", event);
             }
         });
     }
@@ -270,7 +342,26 @@ relationManage.deletefriend = function (data, response) {
                     "提示信息": "删除成功"
                 }));
                 response.end();
-                push.inform(phone, phoneTo, accessKey, "*", {"提示信息": "成功", event: "friendstatuschanged", event_content: {phone: phone, operation: "delete"}});
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_deletefriend",
+                    content: JSON.stringify({
+                        type: "relation_deletefriend",
+                        phone: phone,
+                        time: new Date().getTime(),
+                        status: "success",
+                        content: ""
+                    })
+                });
+                client.rpush(phoneTo, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                //{"提示信息": "成功", event: "friendstatuschanged", event_content: {phone: phone, operation: "delete"}}
+                push.inform(phone, phoneTo, accessKey, "*", event);
             }
         });
     }
@@ -387,8 +478,28 @@ relationManage.blacklist = function (data, response) {
                     "提示信息": "添加黑名单成功"
                 }));
                 response.end();
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_blacklist",
+                    content: JSON.stringify({
+                        type: "relation_blacklist",
+                        phone: phone,
+                        time: new Date().getTime(),
+                        status: "success",
+                        content: ""
+                    })
+                });
                 for (var index in phoneTo) {
-                    push.inform(phone, phoneTo[index], accessKey, "*", {"提示信息": "成功", event: "friendstatuschanged", event_content: {phone: phone, operation: "blacklist"}});
+                    var phoneto = phoneTo[index];
+                    client.rpush(phoneto, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    //{"提示信息": "成功", event: "friendstatuschanged", event_content: {phone: phone, operation: "blacklist"}}
+                    push.inform(phone, phoneto, accessKey, "*", event);
                 }
             } else {
                 response.write(JSON.stringify({
@@ -713,7 +824,26 @@ relationManage.addfriendagree = function (data, response) {
                                 "提示信息": "添加成功"
                             }));
                             response.end();
-                            push.inform(phone, phoneAsk, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
+                            var event = JSON.stringify({
+                                sendType: "event",
+                                contentType: "relation_friendaccept",
+                                content: JSON.stringify({
+                                    type: "relation_friendaccept",
+                                    phone: phone,
+                                    time: new Date().getTime(),
+                                    status: "success",
+                                    content: ""
+                                })
+                            });
+                            client.rpush(phoneAsk, event, function (err, reply) {
+                                if (err) {
+                                    console.error("保存Event失败");
+                                } else {
+                                    console.log("保存Event成功");
+                                }
+                            });
+                            //{"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}}
+                            push.inform(phone, phoneAsk, accessKey, "*", event);
                         }
                     }
                 }
@@ -756,7 +886,26 @@ relationManage.addfriendagree = function (data, response) {
                             "提示信息": "添加成功"
                         }));
                         response.end();
-                        push.inform(phone, phoneAsk, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
+                        var event = JSON.stringify({
+                            sendType: "event",
+                            contentType: "relation_friendaccept",
+                            content: JSON.stringify({
+                                type: "relation_friendaccept",
+                                phone: phone,
+                                time: new Date().getTime(),
+                                status: "success",
+                                content: ""
+                            })
+                        });
+                        client.rpush(phoneAsk, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        //{"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}}
+                        push.inform(phone, phoneAsk, accessKey, "*", event);
                     }
                     /*console.log("添加好友成功");
                      response.write(JSON.stringify({
@@ -800,7 +949,26 @@ relationManage.addfriendagree = function (data, response) {
                         "提示信息": "添加成功"
                     }));
                     response.end();
-                    push.inform(phone, phoneAsk, accessKey, "*", {"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}});
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "relation_friendaccept",
+                        content: JSON.stringify({
+                            type: "relation_friendaccept",
+                            phone: phone,
+                            time: new Date().getTime(),
+                            status: "success",
+                            content: ""
+                        })
+                    });
+                    client.rpush(phoneAsk, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    //{"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}}
+                    push.inform(phone, phoneAsk, accessKey, "*", event);
                 }
             });
         }
