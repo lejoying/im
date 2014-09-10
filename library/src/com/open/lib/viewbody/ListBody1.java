@@ -340,19 +340,27 @@ public class ListBody1 {
 			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
 			float positionY = this.y + myListItemBody.y - myListItemBody.offset_y;
 
-			// if (positionY > this.containerHeight + 50 || positionY + myListItemBody.itemHeight < -50) {
-			// if (myListItemBody.isVisible == true) {
-			// myListItemBody.isVisible = false;
-			// myListItemBody.myListItemView.setVisibility(View.GONE);
-			// }
-			//
-			// } else {
-			// if (myListItemBody.isVisible == false) {
-			// myListItemBody.isVisible = true;
-			// myListItemBody.myListItemView.setVisibility(View.VISIBLE);
-			// }
-			// myListItemBody.myListItemView.setY(positionY);
-			// }
+			if (myListItemBody.isVisible == false) {
+				myListItemBody.isVisible = true;
+				myListItemBody.myListItemView.setVisibility(View.VISIBLE);
+			}
+			myListItemBody.myListItemView.setY(positionY);
+		}
+	}
+
+	public void hideOverScreenViews() {
+		for (int i = 0; i < listItemsSequence.size(); i++) {
+			String key = listItemsSequence.get(i);
+			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
+			float positionY = this.y + myListItemBody.y - myListItemBody.offset_y;
+
+			if (positionY > this.containerHeight + 50 || positionY + myListItemBody.itemHeight < -50) {
+				if (myListItemBody.isVisible == true) {
+					myListItemBody.isVisible = false;
+					myListItemBody.myListItemView.setVisibility(View.GONE);
+				}
+
+			}
 		}
 	}
 
@@ -422,6 +430,7 @@ public class ListBody1 {
 				this.setDeltaXY(0, -this.bondary_offset);
 				this.bondary_offset = 0;
 				bodyStatus.state = bodyStatus.FIXED;
+				hideOverScreenViews();
 				this.openLooper.stop();
 			} else {
 				this.setDeltaXY(0, -delta * this.orderSpeed * this.boundarySpeedRatio);
@@ -434,6 +443,7 @@ public class ListBody1 {
 				this.setDeltaXY(0, -this.bondary_offset);
 				this.bondary_offset = 0;
 				bodyStatus.state = bodyStatus.FIXED;
+				hideOverScreenViews();
 				this.openLooper.stop();
 			} else {
 				this.setDeltaXY(0, delta * this.orderSpeed * this.boundarySpeedRatio);
@@ -490,6 +500,7 @@ public class ListBody1 {
 
 		if (ifStop) {
 			bodyStatus.state = bodyStatus.FIXED;
+			hideOverScreenViews();
 			this.openLooper.stop();
 
 			this.onStopOrdering();
@@ -606,6 +617,7 @@ public class ListBody1 {
 
 		if (this.dySpeed == 0) {
 			bodyStatus.state = bodyStatus.FIXED;
+			hideOverScreenViews();
 			this.openLooper.stop();
 		}
 	}

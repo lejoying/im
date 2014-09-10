@@ -11,6 +11,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
+import com.open.lib.MyLog;
+import com.open.welinks.DynamicListActivity.UserEvent;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.view.ViewManage;
 
@@ -19,6 +21,7 @@ public class ResponseEventHandlers {
 	public Data data = Data.getInstance();
 
 	public String tag = "ResponseEventHandlers";
+	public MyLog log = new MyLog(tag, true);
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -43,17 +46,93 @@ public class ResponseEventHandlers {
 			return;
 		}
 		if (message.sendType.equals("event")) {
-			String firstString = message.contentType.substring(0, message.contentType.indexOf("_"));
-			if (firstString.equals("account") || firstString.equals("relation")) {
-				data.event.userEvents.add(message);
-				viewManage.postNotifyView("DynamicListActivity");
-			} else if (firstString.equals("group")) {
-				data.event.groupEvents.add(message);
+			String contentType = message.contentType;
+			if ("account_dataupdate".equals(contentType)) {
+				handleAccountDataupdateEvent(message);
+			} else if ("relation_newfriend".equals(contentType)) {
+				handleRelationNewfriendEvent(message);
+			} else if ("relation_addfriend".equals(contentType)) {
+				handleRelationAddfriendEvent(message);
+			} else if ("relation_friendaccept".equals(contentType)) {
+				handleRelationFriendacceptEvent(message);
+			} else if ("relation_deletefriend".equals(contentType)) {
+				handleRelationDeletefriendEvent(message);
+			} else if ("relation_blacklist".equals(contentType)) {
+				handleRelationBlacklistEvent(message);
+			} else if ("group_addmembers".equals(contentType)) {
+				handleGroupAddmembersEvent(message);
+			} else if ("group_removemembers".equals(contentType)) {
+				handleGroupRemovemembersEvent(message);
+			} else if ("group_dataupdate".equals(contentType)) {
+				handleGroupDataupdateEvent(message);
 			}
 			data.event.isModified = true;
 		} else if (message.sendType.equals("point") || message.sendType.equals("group")) {
 			updateLocalMessage(message);
 		}
+	}
+
+	public void handleGroupDataupdateEvent(Message message) {
+		data.event.userEvents.add(message);
+	}
+
+	public void handleGroupRemovemembersEvent(Message message) {
+		data.event.userEvents.add(message);
+	}
+
+	public void handleGroupAddmembersEvent(Message message) {
+		data.event.userEvents.add(message);
+	}
+
+	public void handleRelationBlacklistEvent(Message message) {
+		data.event.userEvents.add(message);
+	}
+
+	public void handleRelationDeletefriendEvent(Message message) {
+		data.event.userEvents.add(message);
+	}
+
+	public void handleRelationFriendacceptEvent(Message message) {
+		Message message0 = data.event.userEventsMap.get(message.gid);
+		if (message != null) {
+			UserEvent event = gson.fromJson(message0.content, UserEvent.class);
+			event.status = "success";
+			message0.content = gson.toJson(event);
+		}
+		data.event.userEvents.add(message);
+		viewManage.postNotifyView("DynamicListActivity");
+		// data.event.userEventsMap.put(message.gid, message);
+	}
+
+	public void handleRelationNewfriendEvent(Message message) {
+		List<Message> userEvents = data.event.userEvents;
+		Message dealMessage = null;
+		for (int i = userEvents.size() - 1; i >= 0; i--) {
+			Message message0 = userEvents.get(i);
+			if ("relation_newfriend".equals(message0.contentType)) {
+				if (message.phone.equals(message0.phone) && message.phoneto.equals(message0.phoneto)) {
+					dealMessage = message0;
+					break;
+				}
+			}
+		}
+		if (dealMessage != null) {
+			data.event.userEvents.remove(dealMessage);
+		}
+		data.event.userEvents.add(message);
+		data.event.userEventsMap.put(message.gid, message);
+		viewManage.postNotifyView("DynamicListActivity");
+	}
+
+	private void handleRelationAddfriendEvent(Message message) {
+		data.event.userEvents.add(message);
+		data.event.userEventsMap.put(message.gid, message);
+		viewManage.postNotifyView("DynamicListActivity");
+	}
+
+	public void handleAccountDataupdateEvent(Message message) {
+		data.event.userEvents.add(message);
+		viewManage.postNotifyView("DynamicListActivity");
 	}
 
 	public static abstract class Response<T> {

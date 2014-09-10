@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 
 import android.content.Context;
 import android.os.Environment;
-import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
+import com.open.welinks.model.Data.Event;
 import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Shares;
@@ -213,6 +213,10 @@ public class Parser {
 				String squareContent = getFromUserForder(phone, "square.js");
 				data.squares = gson.fromJson(squareContent, Squares.class);
 			}
+			if (data.event == null) {
+				String eventContent = getFromUserForder(phone, "event.js");
+				data.event = gson.fromJson(eventContent, Event.class);
+			}
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");
 			e.printStackTrace();
@@ -266,6 +270,13 @@ public class Parser {
 
 			String messagesStr = gson.toJson(data.messages);
 			saveToUserForder(phone, "message.js", messagesStr);
+		}
+		
+		if (data.event.isModified) {
+			data.event.isModified=false;
+
+			String eventStr = gson.toJson(data.event);
+			saveToUserForder(phone, "event.js", eventStr);
 		}
 	}
 

@@ -20,6 +20,8 @@ relationManage.addfriend = function (data, response) {
     var message = data.message;
     var accessKey = data.accessKey;
     var arr = [phone, phoneTo, accessKey];
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         checkAccountBetweenRelation();
     }
@@ -83,6 +85,7 @@ relationManage.addfriend = function (data, response) {
                     var rNode = pop.r;
                     var rData = rNode.data;
                     rData.friendStatus = "success";
+                    rData.eid = eid;
 //                    rData.message = message;
 //                    rData.rid = rid;
                     rNode.save(function (error, node) {
@@ -97,10 +100,13 @@ relationManage.addfriend = function (data, response) {
                         var event = JSON.stringify({
                             sendType: "event",
                             contentType: "relation_friendaccept",
+                            phone: phone,
+                            phoneto: phoneTo,
+                            gid: eid,
                             content: JSON.stringify({
                                 type: "relation_friendaccept",
                                 phone: phone,
-                                time: new Date().getTime(),
+                                time: time,
                                 status: "success",
                                 content: ""
                             })
@@ -115,6 +121,7 @@ relationManage.addfriend = function (data, response) {
                     rData.friendStatus = "init";
                     rData.message = message;
                     rData.rid = rid;
+                    rData.eid = eid;
                     rNode.save(function (error, node) {
                     });
                     response.write(JSON.stringify({
@@ -125,11 +132,13 @@ relationManage.addfriend = function (data, response) {
                     var event0 = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_addfriend",
-                        
+                        phone: phone,
+                        phoneto: phoneTo,
+                        gid: eid,
                         content: JSON.stringify({
                             type: "relation_addfriend",
                             phone: phone,
-                            time: new Date().getTime(),
+                            time: time,
                             status: "waiting",
                             content: message
                         })
@@ -142,13 +151,17 @@ relationManage.addfriend = function (data, response) {
                             console.log("保存Event成功");
                         }
                     });
+                    push.inform(phone, phone, accessKey, "*", event0);
                     var event = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_newfriend",
+                        phone: phone,
+                        phoneto: phoneTo,
+                        gid: eid,
                         content: JSON.stringify({
                             type: "relation_newfriend",
                             phone: phone,
-                            time: new Date().getTime(),
+                            time: time,
                             status: "waiting",
                             content: message
                         })
@@ -197,6 +210,9 @@ relationManage.addfriend = function (data, response) {
                 var event = JSON.stringify({
                     sendType: "event",
                     contentType: "relation_friendaccept",
+                    phone: phone,
+                    phoneto: phoneTo,
+                    gid: eid,
                     content: JSON.stringify({
                         type: "relation_friendaccept",
                         phone: phone,
@@ -773,6 +789,8 @@ relationManage.addfriendagree = function (data, response) {
     var accessKey = data.accessKey;
 //    agreeAddFriendNode(phone, phoneAsk, rid);
     var arr = [phone, accessKey, phoneAsk, status];
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         if (status == "true") {
             agreeAddFriendNode(phone, phoneAsk, rid);
@@ -815,10 +833,10 @@ relationManage.addfriendagree = function (data, response) {
                     rNode.save(function (error, node) {
                     });
                     if (rid != null && rid != undefined && rid != "" && rid != "undefined") {
-                        addCircleAccountRelation(rid, phoneAsk, ridAsk);
+                        addCircleAccountRelation(rid, phoneAsk, ridAsk, rData.eid);
                     } else {
                         if (ridAsk != null && ridAsk != undefined && ridAsk != "" && ridAsk != "undefined") {
-                            addAskCircleAccountRelation(phone, ridAsk);
+                            addAskCircleAccountRelation(phone, ridAsk, rData.eid);
                         } else {
                             console.log("添加好友成功");
                             response.write(JSON.stringify({
@@ -828,10 +846,13 @@ relationManage.addfriendagree = function (data, response) {
                             var event = JSON.stringify({
                                 sendType: "event",
                                 contentType: "relation_friendaccept",
+                                phone: phone,
+                                phoneto: phoneAsk,
+                                gid: rData.eid,
                                 content: JSON.stringify({
                                     type: "relation_friendaccept",
                                     phone: phone,
-                                    time: new Date().getTime(),
+                                    time: time,
                                     status: "success",
                                     content: ""
                                 })
@@ -851,7 +872,7 @@ relationManage.addfriendagree = function (data, response) {
             });
         }
 
-        function addCircleAccountRelation(rid, phoneAsk, ridAsk) {
+        function addCircleAccountRelation(rid, phoneAsk, ridAsk, eid) {
             var query = [
                 'START circle=node({rid})',
                 'MATCH (account:Account)',
@@ -880,7 +901,7 @@ relationManage.addfriendagree = function (data, response) {
                     response.end();
                 } else {
                     if (ridAsk != null && ridAsk != undefined && ridAsk != "" && ridAsk != "undefined") {
-                        addAskCircleAccountRelation(phone, ridAsk);
+                        addAskCircleAccountRelation(phone, ridAsk, eid);
                     } else {
                         console.log("添加好友成功");
                         response.write(JSON.stringify({
@@ -890,10 +911,13 @@ relationManage.addfriendagree = function (data, response) {
                         var event = JSON.stringify({
                             sendType: "event",
                             contentType: "relation_friendaccept",
+                            phone: phone,
+                            phoneto: phoneAsk,
+                            gid: eid,
                             content: JSON.stringify({
                                 type: "relation_friendaccept",
                                 phone: phone,
-                                time: new Date().getTime(),
+                                time: time,
                                 status: "success",
                                 content: ""
                             })
@@ -917,7 +941,7 @@ relationManage.addfriendagree = function (data, response) {
             });
         }
 
-        function addAskCircleAccountRelation(phone, ridAsk) {
+        function addAskCircleAccountRelation(phone, ridAsk, eid) {
             var query = [
                 'START circle=node({rid})',
                 'MATCH (account:Account)',
@@ -953,6 +977,9 @@ relationManage.addfriendagree = function (data, response) {
                     var event = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_friendaccept",
+                        phone: phone,
+                        phoneto: phoneAsk,
+                        gid: eid,
                         content: JSON.stringify({
                             type: "relation_friendaccept",
                             phone: phone,
