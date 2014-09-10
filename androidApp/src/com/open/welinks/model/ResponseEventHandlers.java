@@ -33,11 +33,9 @@ public class ResponseEventHandlers {
 		return responseEventHandlers;
 	}
 
-	public void handleEvent(Event event) {
-		if ("成功".equals(event.提示信息)) {
-			if (event.event.equals("message")) {
-				updateLocalMessage(event.event_content.message);
-			}
+	public void handleEvent(Message message) {
+		if (message.sendType.equals("event")) {
+
 		}
 	}
 
@@ -122,8 +120,8 @@ public class ResponseEventHandlers {
 	}
 
 	public void parseEvent(ResponseInfo<String> responseInfo) {
-		Event event = gson.fromJson(responseInfo.result, Event.class);
-		responseEventHandlers.handleEvent(event);
+		Message message = gson.fromJson(responseInfo.result, Message.class);
+		responseEventHandlers.handleEvent(message);
 	}
 
 	public void updateLocalMessage(List<String> messages) {

@@ -407,14 +407,11 @@ public class ChatController {
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 
-		SendMessage sendMessage = new SendMessage();
-		sendMessage.contentType = contentType;
-		sendMessage.content = content;
-
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
 		params.addBodyParameter("sendType", type);
-		params.addBodyParameter("message", gson.toJson(sendMessage));
+		params.addBodyParameter("contentType", contentType);
+		params.addBodyParameter("content", content);
 		if ("group".equals(type)) {
 			Group group = data.relationship.groupsMap.get(key);
 			if (group == null) {
@@ -465,8 +462,4 @@ public class ChatController {
 		});
 	}
 
-	public class SendMessage {
-		public String contentType;// image voice text
-		public String content;
-	}
 }
