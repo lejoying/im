@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -18,6 +20,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.location.LocationManagerProxy;
+import com.amap.api.location.LocationProviderProxy;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringUtil;
@@ -25,6 +31,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.LoginActivity;
 import com.open.welinks.MainActivity;
@@ -52,6 +59,9 @@ public class MainController {
 
 	public GestureDetector mGesture;
 	public GestureDetector mListGesture;
+
+	public LocationManagerProxy mLocationManagerProxy;
+	public AMapLocationListener mAMapLocationListener;
 
 	public OnClickListener mOnClickListener;
 	public OnDownloadListener downloadListener;
@@ -221,6 +231,40 @@ public class MainController {
 				}
 			}
 		};
+
+		mAMapLocationListener = new AMapLocationListener() {
+
+			@Override
+			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+
+			}
+
+			@Override
+			public void onProviderEnabled(String arg0) {
+
+			}
+
+			@Override
+			public void onProviderDisabled(String arg0) {
+
+			}
+
+			@Override
+			public void onLocationChanged(Location arg0) {
+
+			}
+
+			@Override
+			public void onLocationChanged(AMapLocation aMapLocation) {
+				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
+				mLocationManagerProxy.destroy();
+				if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0) {
+					modifyLocation(aMapLocation);
+				}
+
+			}
+		};
+
 		listOnTouchListener = new ListOnTouchListener();
 
 		this.thisController.squareSubController.initializeListeners();
@@ -262,6 +306,24 @@ public class MainController {
 		this.thisController.messagesSubController.bindEvent();
 		this.thisController.friendsSubController.bindEvent();
 		this.thisController.meSubController.bindEvent();
+	}
+
+	public void requestLocation() {
+		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
+		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
+		mLocationManagerProxy.setGpsEnable(true);
+	}
+
+	public void modifyLocation(AMapLocation aMapLocation) {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("longitude", String.valueOf(aMapLocation.getLongitude()));
+		params.addBodyParameter("latitude", String.valueOf(aMapLocation.getLatitude()));
+		params.addBodyParameter("address", aMapLocation.getAddress());
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
 	}
 
 	public class TouchStatus {

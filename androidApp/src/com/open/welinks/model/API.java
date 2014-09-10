@@ -25,6 +25,10 @@ public class API {
 	 * http://www.we-links.com/api2/account/get
 	 */
 	public static String ACCOUNT_GET = API_DOMAIN + "api2/account/get";
+	/**
+	 * http://www.we-links.com/api2/account/modifylocation
+	 */
+	public static String ACCOUNT_MODIFYLOCATION = API_DOMAIN + "api2/account/modifylocation";
 	// group
 	/**
 	 * http://www.we-links.com/api2/group/getgroupmembers

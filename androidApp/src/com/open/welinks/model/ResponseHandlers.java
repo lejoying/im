@@ -226,12 +226,26 @@ public class ResponseHandlers {
 	public ResponseHandler<String> account_modify = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改用户位置信息成功")||response.提示信息.equals("创建用户位置信息成功")) {
+				Log.e(tag, "---------------------修改用户信息成功");
+			}
+		};
+
+	};
+	public ResponseHandler<String> account_modifylocation = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
-				Log.e(tag, "---------------------修改用户信息成功");
+
 			}
 		};
 

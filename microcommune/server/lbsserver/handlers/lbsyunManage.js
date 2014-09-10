@@ -1165,7 +1165,7 @@ lbsManage.modifyAccountLocation = function (data, response) {
                     haed: data.head,
                     mainBusiness: data.mainBusiness,
                     online: data.online,
-                    recently: new Date().getTime()
+                    lastlogintime: new Date().getTime()
                 })
             }, success: function (info) {
                 var info = JSON.parse(info);
@@ -1206,7 +1206,7 @@ lbsManage.modifyAccountLocation = function (data, response) {
                     haed: data.head,
                     mainBusiness: data.mainBusiness,
                     online: data.online,
-                    recently: new Date().getTime()
+                    lastlogintime: new Date().getTime()
                 })
             }, success: function (info) {
                 var info = JSON.parse(info);
