@@ -5,8 +5,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#38000000" >
+        android:layout_height="48dp"
+        android:background="@color/card_color" >
 
         <RelativeLayout
             android:id="@+id/backView"
@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/back" />
 
             <TextView
@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="43dp"
+                android:layout_marginLeft="39dp"
                 android:clickable="false"
                 android:singleLine="true"
                 android:textColor="#fff"
@@ -57,11 +57,16 @@
             android:gravity="center" >
         </RelativeLayout>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="#fff" />
+        <RelativeLayout
+            android:id="@+id/title_control_progress_container"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:translationY="46dp" >
+
+            <include
+                android:id="@+id/title_control_progress"
+                layout="@layout/view_element_debug1_control_progress" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </merge>

@@ -268,6 +268,7 @@ public class ResponseHandlers {
 				user.nickName = account.nickName;
 				user.sex = account.sex;
 				user.userBackground = account.userBackground;
+				data.userInformation.isModified = true;
 			}
 		};
 	};

@@ -78,6 +78,9 @@ public class MessagesSubController {
 
 	public void onSingleTapUp(MotionEvent event) {
 		Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
+		if (message == null) {
+			return;
+		}
 		String sendType = message.sendType;
 		if ("point".equals(sendType)) {
 			intent.putExtra("id", message.phone);

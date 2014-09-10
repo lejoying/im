@@ -34,6 +34,8 @@ public class ListBody1 {
 	}
 
 	public class MyListItemBody {
+
+		public boolean isVisible = true;
 		public View myListItemView = null;
 
 		public float x = 0;
@@ -336,7 +338,21 @@ public class ListBody1 {
 				continue;
 			}
 			MyListItemBody myListItemBody = listItemBodiesMap.get(key);
-			myListItemBody.myListItemView.setY(this.y + myListItemBody.y - myListItemBody.offset_y);
+			float positionY = this.y + myListItemBody.y - myListItemBody.offset_y;
+
+			// if (positionY > this.containerHeight + 50 || positionY + myListItemBody.itemHeight < -50) {
+			// if (myListItemBody.isVisible == true) {
+			// myListItemBody.isVisible = false;
+			// myListItemBody.myListItemView.setVisibility(View.GONE);
+			// }
+			//
+			// } else {
+			// if (myListItemBody.isVisible == false) {
+			// myListItemBody.isVisible = true;
+			// myListItemBody.myListItemView.setVisibility(View.VISIBLE);
+			// }
+			// myListItemBody.myListItemView.setY(positionY);
+			// }
 		}
 	}
 
