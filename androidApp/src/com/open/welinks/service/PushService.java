@@ -15,13 +15,20 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
+import com.open.lib.MyLog;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseEventHandlers.ResponseInfoHandler;
 
 public class PushService extends Service {
 
+	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 	public String tag = "PushService";
+
+	public MyLog log = new MyLog(tag, true);
 
 	public static final String LONGPULL_STOP = "com.open.welinks.service.longpull_stop";
 
@@ -37,7 +44,7 @@ public class PushService extends Service {
 	public Random random;
 	public int i;
 
-	Gson gson = new Gson();
+	public Gson gson = new Gson();
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -62,7 +69,7 @@ public class PushService extends Service {
 				i = Math.abs(random.nextInt()) % 1000;
 				String phone = intent.getStringExtra("phone");
 				String accessKey = intent.getStringExtra("accessKey");
-				// startIMLongPull(phone, accessKey);
+				startIMLongPull(phone, accessKey);
 			} else {
 				stopLongPull();
 			}
@@ -73,7 +80,8 @@ public class PushService extends Service {
 	@Override
 	public void onDestroy() {
 		operation = false;
-		// TODO Auto-generated method stub
+		parser.save();
+		log.e("push service destroy");
 		super.onDestroy();
 	}
 
@@ -112,7 +120,7 @@ public class PushService extends Service {
 			}
 			try {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
-				if ("失败".equals(response.提示信息.substring(response.提示信息.length() - 2))) {
+				if ("请求失败".equals(response.提示信息.substring(response.提示信息.length() - 2))) {
 					stopLongPull();
 				}
 			} catch (Exception e) {
