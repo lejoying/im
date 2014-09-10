@@ -226,6 +226,7 @@ public class Parser {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				log.e(tag, "**************saveDataToSD!**************");
 				saveDataToSD();
 			}
 		}).start();

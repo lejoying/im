@@ -28,8 +28,11 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.lib.viewbody.ListBody1;
 import com.open.welinks.R;
 import com.open.welinks.ScanQRCodeActivity;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Circle;
+import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
@@ -37,6 +40,8 @@ import com.open.welinks.view.MainView;
 public class MainController {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
+
 	public String tag = "MainController";
 	public MainView thisView;
 	public Context context;
@@ -85,7 +90,7 @@ public class MainController {
 		// thisView.showGroupMembers(thisView.groupMembersListContentView);
 
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
-		
+
 		getIntimatefriends();
 	}
 
@@ -115,16 +120,17 @@ public class MainController {
 	}
 
 	public void getIntimatefriends() {
-
+		Log.e(tag, "刷新好友分组getIntimatefriends");
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("accessKey", "lejoying");
-		params.addBodyParameter("phone", "15120088197");
+		data = parser.check();
+		User user = data.userInformation.currentUser;
+		params.addBodyParameter("accessKey", user.accessKey);
+		params.addBodyParameter("phone", user.phone);
 
 		HttpUtils http = new HttpUtils();
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-		String url2 = "http://192.168.1.91/api2/relation/intimatefriends";
-		http.send(HttpRequest.HttpMethod.POST, url2, params, responseHandlers.getIntimateFriends);
+		http.send(HttpRequest.HttpMethod.POST, API.RELATION_GETINTIMATEFRIENDS, params, responseHandlers.getIntimateFriends);
 	}
 
 	public MainController(Activity thisActivity) {

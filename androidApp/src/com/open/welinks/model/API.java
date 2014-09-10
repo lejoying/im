@@ -87,5 +87,8 @@ public class API {
 	 * http://www.we-links.com/api2/relation/modifysequence
 	 */
 	public static String RELATION_MODIFYCIRCLESEQUENCE = "http://www.we-links.com/api2/relation/modifysequence";
+	
+	
+	public static String RELATION_GETINTIMATEFRIENDS = "http://www.we-links.com/api2/relation/intimatefriends";
 
 }

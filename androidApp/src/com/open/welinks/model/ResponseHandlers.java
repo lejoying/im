@@ -73,17 +73,17 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取密友圈成功")) {
-
+				Log.e(tag, "获取密友圈成功");
 				data.relationship.circles = response.relationship.circles;
 				data.relationship.circlesMap = response.relationship.circlesMap;
 				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
 
 				data.relationship.isModified = true;
 			}
-			int i = 1;
-			i = i + 2;
 			if (data.localStatus.debugMode.equals("NONE")) {
-				viewManage.postNotifyView("UserIntimateView");
+				// viewManage.postNotifyView("UserIntimateView");
+				Log.e(tag, "刷新好友分组");
+				viewManage.mainView.friendsSubView.showCircles();
 			}
 		}
 	};

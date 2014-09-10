@@ -250,7 +250,8 @@ public class MainActivity extends Activity {
 	class LongConnectionReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			data.userInformation.currentUser.accessKey = "";
+			parser = Parser.getInstance();
+			parser.save();
 			startActivity(new Intent(MainActivity.this, LoginActivity.class));
 			finish();
 		}
