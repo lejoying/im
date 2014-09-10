@@ -5,44 +5,13 @@
     android:background="@drawable/main_background"
     tools:context=".NearbyActivity" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/backview_background"
-        android:clickable="true" >
-
-        <RelativeLayout
-            android:id="@+id/backView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/backview_background"
-            android:paddingRight="20dp" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:src="@drawable/back" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="#fff"
-            android:textSize="17sp" />
-    </RelativeLayout>
+    <include layout="@layout/view_back_view" />
 
     <ListView
         android:id="@+id/nearby"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
         android:cacheColorHint="#0000"
         android:divider="#0000"
         android:dividerHeight="20dp"

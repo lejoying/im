@@ -26,6 +26,8 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.open.lib.viewbody.ListBody1;
+import com.open.welinks.LoginActivity;
+import com.open.welinks.MainActivity;
 import com.open.welinks.R;
 import com.open.welinks.ScanQRCodeActivity;
 import com.open.welinks.model.API;
@@ -34,6 +36,7 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.service.PushService;
 import com.open.welinks.utils.NetworkHandler;
 import com.open.welinks.view.MainView;
 
@@ -433,7 +436,15 @@ public class MainController {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
-		shareSubController.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK) {
+			thisActivity.stopService(new Intent(thisActivity, PushService.class));
+			parser = Parser.getInstance();
+			parser.save();
+			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
+			thisActivity.finish();
+		} else {
+			shareSubController.onActivityResult(requestCode, resultCode, data);
+		}
 
 	}
 

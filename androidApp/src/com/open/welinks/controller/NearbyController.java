@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
+import android.sax.StartElementListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -33,6 +35,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.NearbyActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
@@ -75,6 +78,7 @@ public class NearbyController {
 	}
 
 	public NearbyController(NearbyActivity thisActivity) {
+		thisController = this;
 		this.thisActivity = thisActivity;
 	}
 
@@ -84,25 +88,29 @@ public class NearbyController {
 			status = Status.account;
 			mTableId = Constant.mAccountTableId;
 			thisView.NearbyLayoutID = R.layout.nearby_item_account;
-			thisView.title.setText("附近的人");
+			thisView.titleContent.setText("附近的人");
 		} else if ("group".equals(type)) {
 			status = Status.group;
 			mTableId = Constant.mGroupTableId;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
-			thisView.title.setText("附近的群组");
+			thisView.titleContent.setText("附近的群组");
 		} else if ("square".equals(type)) {
 			status = Status.square;
-			mTableId = Constant.mGroupTableId;
+			mTableId = Constant.mSquareTableId;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
-			thisView.title.setText("附近的广场");
+			thisView.titleContent.setText("附近的广场");
 		}
+
 		mInfomations = new ArrayList<Map<String, Object>>();
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
+		mCloudSearch = new CloudSearch(thisActivity);
+
+		initializeListeners();
+		bindEvent();
 
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
-		mLocationManagerProxy.setGpsEnable(true);
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
-
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
+		mLocationManagerProxy.setGpsEnable(true);
 	}
 
 	public void initializeListeners() {
@@ -111,7 +119,14 @@ public class NearbyController {
 
 			@Override
 			public void onClick(View view) {
-				if (view.equals(thisView.backView)) {
+				if (view.getTag(R.id.tag_first) != null) {
+					String type = (String) view.getTag(R.id.tag_first);
+					String key = (String) view.getTag(R.id.tag_second);
+					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
+					intent.putExtra("type", type);
+					intent.putExtra("key", key);
+					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				}
 
@@ -140,6 +155,7 @@ public class NearbyController {
 								}
 								mInfomations.add(map);
 							}
+							thisView.nearbyAdapter.notifyDataSetChanged();
 						}
 					}
 				}
@@ -148,7 +164,7 @@ public class NearbyController {
 
 			@Override
 			public void onCloudItemDetailSearched(CloudItemDetail detail, int rCode) {
-				// TODO Auto-generated method stub
+				// unused
 
 			}
 		};
@@ -156,25 +172,25 @@ public class NearbyController {
 
 			@Override
 			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-				// TODO Auto-generated method stub
+				// unused
 
 			}
 
 			@Override
 			public void onProviderEnabled(String arg0) {
-				// TODO Auto-generated method stub
+				// unused
 
 			}
 
 			@Override
 			public void onProviderDisabled(String arg0) {
-				// TODO Auto-generated method stub
+				// unused
 
 			}
 
 			@Override
 			public void onLocationChanged(Location location) {
-				// TODO Auto-generated method stub
+				// unused
 
 			}
 
@@ -184,6 +200,8 @@ public class NearbyController {
 				mLocationManagerProxy.destroy();
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
 					searchNearby(amapLocation);
+				} else {
+
 				}
 
 			}
@@ -194,7 +212,6 @@ public class NearbyController {
 				super.onFailure(instance, status);
 			}
 		};
-		bindEvent();
 	}
 
 	public void bindEvent() {
@@ -203,20 +220,21 @@ public class NearbyController {
 	}
 
 	public void searchNearby(AMapLocation amapLocation) {
-		bound = new SearchBound(new LatLonPoint(amapLocation.getLatitude(), amapLocation.getLongitude()), 5000);
+		bound = new SearchBound(new LatLonPoint(amapLocation.getLatitude(), amapLocation.getLongitude()), 50000);
 		try {
 			mQuery = new Query(mTableId, "", bound);
 		} catch (AMapCloudException e) {
 			e.printStackTrace();
 		}
-		mQuery.setPageSize(20);
+		// if (status == Status.group) {
+		// mQuery.addFilterString("gtype", "group");
+		// } else if (status == Status.square) {
+		// mQuery.addFilterString("gtype", "community");
+		// }
+		mQuery.setPageSize(50);
+		// mQuery.setPageNum(1);
 		mSortingrules = new Sortingrules(1);
 		mQuery.setSortingrules(mSortingrules);
-		if (status == Status.group) {
-			mQuery.addFilterString("gtype", "group");
-		} else if (status == Status.square) {
-			mQuery.addFilterString("gtype", "community");
-		}
 
 		mCloudSearch.searchCloudAsyn(mQuery);
 	}

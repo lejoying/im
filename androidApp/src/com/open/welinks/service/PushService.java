@@ -73,7 +73,7 @@ public class PushService extends Service {
 	@Override
 	public void onDestroy() {
 		operation = false;
-		// TODO Auto-generated method stub
+		System.out.println("service destroy");
 		super.onDestroy();
 	}
 
@@ -84,7 +84,7 @@ public class PushService extends Service {
 	}
 
 	public void stopLongPull() {
-		sendBroadcast(new Intent(LONGPULL_STOP));
+		// stopSelf();
 	}
 
 	HttpHandler<String> httpHandler;

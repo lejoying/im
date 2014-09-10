@@ -170,7 +170,13 @@ public class MessagesSubView {
 			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
 			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 			headView.setImageBitmap(bitmap);
-			lastChatMessageView.setText(message.content);
+			if ("text".equals(message.contentType)) {
+				lastChatMessageView.setText(message.content);
+			} else if ("image".equals(message.contentType)) {
+				lastChatMessageView.setText("图片");
+			} else if ("voice".equals(message.contentType)) {
+				lastChatMessageView.setText("声音");
+			}
 			lastChatTimeView.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
 			String sendType = message.sendType;
 			if ("point".equals(sendType)) {

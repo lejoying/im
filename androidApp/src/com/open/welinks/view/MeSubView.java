@@ -26,7 +26,7 @@ public class MeSubView {
 	public ImageView mAppIconToNameView;
 	public View mRootView, myBusiness, mySetting;
 
-	public RelativeLayout dynamicListView;
+	public RelativeLayout dynamicListView, moreFriendView;
 
 	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(100, 4);
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();
@@ -48,8 +48,9 @@ public class MeSubView {
 
 		myBusiness = mainView.meView.findViewById(R.id.businesscard);
 		mySetting = mainView.meView.findViewById(R.id.mySetting);
-		
+
 		dynamicListView = (RelativeLayout) mainView.meView.findViewById(R.id.dynamicList);
+		moreFriendView = (RelativeLayout) mainView.meView.findViewById(R.id.morefriend);
 
 		mAppIconToNameView = (ImageView) mainView.meView.findViewById(R.id.appIconToName);
 		mRootView = mAppIconToNameView;
