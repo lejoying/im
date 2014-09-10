@@ -191,7 +191,6 @@ public class NearbyController {
 			@Override
 			public void onLocationChanged(Location location) {
 				// unused
-
 			}
 
 			@Override
