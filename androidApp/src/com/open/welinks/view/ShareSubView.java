@@ -248,6 +248,7 @@ public class ShareSubView {
 			if (isExists) {
 				sharesMessageBody.cardView.setX(10 * displayMetrics.density);
 			}
+			sharesMessageBody.itemHeight = 350 * displayMetrics.density;
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
 			if (i == 0) {

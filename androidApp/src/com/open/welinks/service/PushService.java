@@ -62,7 +62,7 @@ public class PushService extends Service {
 				i = Math.abs(random.nextInt()) % 1000;
 				String phone = intent.getStringExtra("phone");
 				String accessKey = intent.getStringExtra("accessKey");
-				startIMLongPull(phone, accessKey);
+				// startIMLongPull(phone, accessKey);
 			} else {
 				stopLongPull();
 			}
