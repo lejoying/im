@@ -125,6 +125,7 @@ relationManage.addfriend = function (data, response) {
                     var event0 = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_addfriend",
+                        
                         content: JSON.stringify({
                             type: "relation_addfriend",
                             phone: phone,
@@ -1229,7 +1230,7 @@ relationManage.intimatefriends = function (data, response) {
                     circleData.friends = [];
                     circlesMap[circleData.rid] = circleData;
                     tempCircles.push(circleData.rid);
-                    circleOrder[circleData.rid ] = index;
+                    circleOrder[circleData.rid] = index;
                 }
                 accountData = accountNode.data;
                 var circlesOrdering = null;
@@ -1251,10 +1252,14 @@ relationManage.intimatefriends = function (data, response) {
                 } else {
                     newCirclesOrdering = [];
                     var isDataConsistentcy = true;
+                    var isAddDefaultCircle = false;
                     for (var index in circlesOrdering) {
                         var circleRid = circlesOrdering[index];
                         if (circleRid == defaultCircleData.rid) {
-                            newCirclesOrdering.push(circleRid);
+                            if (!isAddDefaultCircle) {
+                                newCirclesOrdering.push(circleRid);
+                                isAddDefaultCircle = true;
+                            }
                             continue;
                         }
                         if (circleOrder[circleRid]) {

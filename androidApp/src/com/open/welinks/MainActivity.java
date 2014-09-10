@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -103,7 +102,7 @@ public class MainActivity extends Activity {
 		}
 		parser.initialize(context);
 		parser.check();
-		
+
 		this.context = this;
 		this.thisView = new MainView(thisActivity);
 		this.thisController = new MainController(thisActivity);
@@ -182,7 +181,6 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		
 		mHandler = new Handler();
 		runnable = new Runnable() {
 			@Override
@@ -211,7 +209,9 @@ public class MainActivity extends Activity {
 		parser = Parser.getInstance();
 		parser.save();
 		super.onPause();
-		thisController.onPause();
+		if (thisController != null) {
+			thisController.onPause();
+		}
 	}
 
 	@Override

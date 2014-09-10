@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
@@ -35,6 +36,8 @@ public class PushService extends Service {
 
 	public Random random;
 	public int i;
+
+	Gson gson = new Gson();
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -96,6 +99,10 @@ public class PushService extends Service {
 	}
 
 	public ResponseHandler<String> longPull = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -103,8 +110,15 @@ public class PushService extends Service {
 			if (httpHandler != null) {
 				httpHandler.cancel(true);
 			}
-			connect();
-			mResponseInfoHandler.exclude(responseInfo);
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if ("失败".equals(response.提示信息.substring(response.提示信息.length() - 2))) {
+					stopLongPull();
+				}
+			} catch (Exception e) {
+				connect();
+				mResponseInfoHandler.exclude(responseInfo);
+			}
 		}
 
 		@Override

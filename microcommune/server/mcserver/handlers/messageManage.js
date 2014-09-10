@@ -97,8 +97,8 @@ messageManage.send = function (data, response) {
                 //通知
             });
 //            var event = JSON.stringify({"提示信息": "成功", event: "message", event_content: {message: [messageOther]}})
-            var event = JSON.stringify(messageOther);
-            push.inform(phone, friendPhone, accessKey, "*", event);
+//            var event = JSON.stringify(messageOther);
+            push.inform(phone, friendPhone, accessKey, "*", messageOther);
         }
         response.write(JSON.stringify({
             "提示信息": "发送成功",

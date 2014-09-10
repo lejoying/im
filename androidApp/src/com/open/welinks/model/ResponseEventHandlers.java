@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
@@ -37,13 +39,18 @@ public class ResponseEventHandlers {
 
 	public void handleEvent(Message message) {
 		parser.check();
+		if (message == null) {
+			return;
+		}
 		if (message.sendType.equals("event")) {
 			String firstString = message.contentType.substring(0, message.contentType.indexOf("_"));
 			if (firstString.equals("account") || firstString.equals("relation")) {
 				data.event.userEvents.add(message);
+				viewManage.postNotifyView("DynamicListActivity");
 			} else if (firstString.equals("group")) {
 				data.event.groupEvents.add(message);
 			}
+			data.event.isModified = true;
 		} else if (message.sendType.equals("point") || message.sendType.equals("group")) {
 			updateLocalMessage(message);
 		}
@@ -130,8 +137,11 @@ public class ResponseEventHandlers {
 	}
 
 	public void parseEvent(ResponseInfo<String> responseInfo) {
+		Log.e(tag, responseInfo.result);
 		Message message = gson.fromJson(responseInfo.result, Message.class);
-		responseEventHandlers.handleEvent(message);
+		if (message.sendType != null) {
+			responseEventHandlers.handleEvent(message);
+		}
 	}
 
 	public void updateLocalMessage(Message message) {

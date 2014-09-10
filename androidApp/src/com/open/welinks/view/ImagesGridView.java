@@ -75,7 +75,7 @@ public class ImagesGridView {
 		mConfirm.setBackgroundResource(R.drawable.textview_bg);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.setMargins(0, (int) (5 * displayMetrics.density), (int) (0 * displayMetrics.density), (int) (5 * displayMetrics.density));
-		layoutParams.addRule(Gravity.CENTER);
+		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainerView.addView(mConfirm, layoutParams);
 
 	}

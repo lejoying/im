@@ -1,5 +1,8 @@
 package com.open.welinks;
 
+import java.util.List;
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -17,11 +20,15 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ViewManage;
@@ -31,6 +38,7 @@ public class DynamicListActivity extends Activity {
 	public String tag = "DynamicListActivity";
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public RelativeLayout backView;
 	public TextView backTitleView;
@@ -45,6 +53,10 @@ public class DynamicListActivity extends Activity {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
+	public List<Message> userEventMessages;
+	public Map<String, Friend> friendsMap;
+	public Gson gson = new Gson();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,8 +64,15 @@ public class DynamicListActivity extends Activity {
 		initView();
 		initializeListeners();
 		bindEvent();
+		initData();
 		showEventList();
 		getRequareAddFriendList();
+	}
+
+	private void initData() {
+		parser.check();
+		userEventMessages = data.event.userEvents;
+		friendsMap = data.relationship.friendsMap;
 	}
 
 	private void showEventList() {
@@ -98,7 +117,7 @@ public class DynamicListActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return 10;
+			return userEventMessages.size();
 		}
 
 		@Override
@@ -128,19 +147,31 @@ public class DynamicListActivity extends Activity {
 			} else {
 				holder = (EventHolder) convertView.getTag();
 			}
-			holder.headView.setImageBitmap(bitmap);
-			if (position % 3 == 0) {
-				holder.eventOperationView.setVisibility(View.GONE);
-				holder.processedView.setVisibility(View.GONE);
-			} else if (position % 3 == 1) {
-				holder.eventOperationView.setVisibility(View.VISIBLE);
-				holder.processedView.setVisibility(View.GONE);
-			} else {
-				holder.eventOperationView.setVisibility(View.GONE);
-				holder.processedView.setVisibility(View.VISIBLE);
+			Friend friend;
+			Message message = userEventMessages.get(position);
+			UserEvent event;
+			if ("relation_newfriend".equals(message.contentType)) {
+				event = gson.fromJson(message.content, UserEvent.class);
+				friend = friendsMap.get(event.phone);
+				holder.eventContentView.setText(friend.nickName + "  请求加你为好友!");
+				if (event.status.equals("waiting")) {
+					holder.eventOperationView.setVisibility(View.VISIBLE);
+					holder.processedView.setVisibility(View.GONE);
+				} else if (event.status.equals("success")) {
+					holder.eventOperationView.setVisibility(View.GONE);
+					holder.processedView.setVisibility(View.VISIBLE);
+				}
 			}
+			holder.headView.setImageBitmap(bitmap);
 			return convertView;
 		}
+	}
+
+	public class UserEvent {
+		public String type;
+		public String phone;
+		public String time;
+		public String status;
 	}
 
 	public class EventHolder {
