@@ -76,7 +76,7 @@ public class ChatController {
 
 	public Handler handler = new Handler();
 
-	public Map<String, String> unsendMessage;
+	public Map<String, Map<String, String>> unsendMessageInfo;
 
 	public String type, key;
 
@@ -103,7 +103,7 @@ public class ChatController {
 		sdFile = Environment.getExternalStorageDirectory();
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(40)).build();
-		unsendMessage = new HashMap<String, String>();
+		unsendMessageInfo = new HashMap<String, Map<String, String>>();
 		thisView.showChatViews();
 	}
 
@@ -193,13 +193,11 @@ public class ChatController {
 
 			@Override
 			public void onSuccess(UploadMultipart instance, int time) {
-				int total = (Integer) instance.view.getTag(R.id.tag_first);
-				int current = (Integer) instance.view.getTag(R.id.tag_second);
-				instance.view.setTag(R.id.tag_second, ++current);
+				int total = Integer.valueOf(unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).get("total"));
+				int current = Integer.valueOf(unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).get("current"));
+				unsendMessageInfo.get((String) instance.view.getTag(R.id.tag_first)).put("current", String.valueOf(++current));
 				if (current == total) {
-					// sendMessageToServer("image",
-					// unsendMessage.remove((String)
-					// instance.view.getTag(R.id.tag_third)));
+					sendMessageToServer("image", unsendMessageInfo.remove((String) instance.view.getTag(R.id.tag_first)).get("content"));
 				}
 				thisView.mChatAdapter.notifyDataSetChanged();
 			}
@@ -364,16 +362,22 @@ public class ChatController {
 		data.tempData.selectedImageList = null;
 		File targetFolder = new File(Environment.getExternalStorageDirectory(), "welinks/images/");
 		ArrayList<String> content = new ArrayList<String>();
-		View view = new View(thisActivity);
 		long time = new Date().getTime();
-		view.setTag(R.id.tag_first, selectedImageList.size());
-		view.setTag(R.id.tag_second, 0);
-		view.setTag(R.id.tag_third, time);
+		View view = new View(thisActivity);
+		// view.setTag(R.id.tag_first, selectedImageList.size());
+		// view.setTag(R.id.tag_second, 0);
+		view.setTag(R.id.tag_first, String.valueOf(time));
 		for (String filePath : selectedImageList) {
 			Map<String, Object> map = MCImageUtils.processImagesInformation(filePath, targetFolder);
 			content.add((String) map.get("fileName"));
 			uploadFile(filePath, (String) map.get("fileName"), (byte[]) map.get("bytes"), view);
 		}
+		String messageContent = gson.toJson(content);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("content", messageContent);
+		map.put("total", String.valueOf(selectedImageList.size()));
+		map.put("current", String.valueOf(0));
+		unsendMessageInfo.put(String.valueOf(time), map);
 		sendMessageToLocal(gson.toJson(content), "image", time);
 	}
 
@@ -395,11 +399,8 @@ public class ChatController {
 			data.messages.friendMessageMap.get("p" + key).add(message);
 		}
 		thisView.mChatAdapter.notifyDataSetChanged();
-		// if ("text".equals(contentType)) {
-		sendMessageToServer(contentType, messageContent);
-		// } else {
-		// unsendMessage.put(String.valueOf(time), messageContent);
-		// }
+		if ("text".equals(contentType))
+			sendMessageToServer(contentType, messageContent);
 	}
 
 	public void sendMessageToServer(String contentType, String content) {

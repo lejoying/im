@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.rebound.BaseSpringSystem;
@@ -25,6 +26,8 @@ public class MeSubView {
 	public ImageView mAppIconToNameView;
 	public View mRootView, myBusiness, mySetting;
 
+	public RelativeLayout dynamicListView;
+
 	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(100, 4);
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	public Spring mMePageAppIconScaleSpring = mSpringSystem.createSpring().setSpringConfig(IMAGE_SPRING_CONFIG);
@@ -45,6 +48,8 @@ public class MeSubView {
 
 		myBusiness = mainView.meView.findViewById(R.id.businesscard);
 		mySetting = mainView.meView.findViewById(R.id.mySetting);
+		
+		dynamicListView = (RelativeLayout) mainView.meView.findViewById(R.id.dynamicList);
 
 		mAppIconToNameView = (ImageView) mainView.meView.findViewById(R.id.appIconToName);
 		mRootView = mAppIconToNameView;

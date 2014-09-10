@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
 import com.open.welinks.BusinessCardActivity;
+import com.open.welinks.DynamicListActivity;
 import com.open.welinks.SettingActivity;
 import com.open.welinks.model.Data;
 import com.open.welinks.view.MeSubView;
@@ -52,8 +53,10 @@ public class MeSubController {
 					mainController.thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.mySetting)) {
 					mainController.thisActivity.startActivity(new Intent(mainController.thisActivity, SettingActivity.class));
+				} else if (view.equals(thisView.dynamicListView)) {
+					Intent intent = new Intent(mainController.thisActivity, DynamicListActivity.class);
+					mainController.thisActivity.startActivity(intent);
 				}
-
 			}
 		};
 	}
@@ -62,6 +65,7 @@ public class MeSubController {
 		thisView.mRootView.setOnTouchListener(onTouchListener);
 		thisView.myBusiness.setOnClickListener(onClickListener);
 		thisView.mySetting.setOnClickListener(onClickListener);
+		thisView.dynamicListView.setOnClickListener(onClickListener);
 	}
 
 }

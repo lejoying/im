@@ -17,6 +17,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Relationship;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
@@ -405,6 +406,7 @@ public class ResponseHandlers {
 	public ResponseHandler<String> relation_modifyAlias = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -418,6 +420,7 @@ public class ResponseHandlers {
 	public ResponseHandler<String> relation_deletefriend = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -430,6 +433,7 @@ public class ResponseHandlers {
 	public ResponseHandler<String> relation_addfriend = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -443,6 +447,7 @@ public class ResponseHandlers {
 	public RequestCallBack<String> modifyCircleSequenceCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -456,6 +461,7 @@ public class ResponseHandlers {
 	public RequestCallBack<String> modifyGroupSequenceCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -469,6 +475,7 @@ public class ResponseHandlers {
 	public RequestCallBack<String> addMembersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -482,12 +489,31 @@ public class ResponseHandlers {
 	public RequestCallBack<String> removeMembersCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("退出群组成功")) {
 				Log.e(tag, "---------------------退出群组成功");
+			}
+		};
+	};
+
+	public RequestCallBack<String> getaskfriendsCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public List<Friend> accounts;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取好友请求成功")) {
+				if (response.accounts.size() > 0) {
+					viewManage.postNotifyView("DynamicListActivity");
+				}
+				Log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
 			}
 		};
 	};
