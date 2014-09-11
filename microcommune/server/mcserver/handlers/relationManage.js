@@ -1284,13 +1284,13 @@ relationManage.intimatefriends = function (data, response) {
                         var circleRid = circlesOrdering[index];
                         if (circleRid == defaultCircleData.rid) {
                             if (!isAddDefaultCircle) {
-                                newCirclesOrdering.push(circleRid);
+                                newCirclesOrdering.push(parseInt(circleRid));
                                 isAddDefaultCircle = true;
                             }
                             continue;
                         }
                         if (circleOrder[circleRid]) {
-                            newCirclesOrdering.push(circleRid);
+                            newCirclesOrdering.push(parseInt(circleRid));
                             circleOrder[circleRid] = "delete";
                         } else {
                             isDataConsistentcy = false;
@@ -1305,7 +1305,7 @@ relationManage.intimatefriends = function (data, response) {
                         }
                     }
                     if (!isDataConsistentcy) {
-                        newCirclesOrdering.push(defaultCircleData.rid);
+                        newCirclesOrdering.push(parseInt(defaultCircleData.rid));
                         accountData.circlesOrderString = JSON.stringify(newCirclesOrdering);
                         accountNode.save(function (err, node) {
                             console.log("初始化分组顺序数据成功");
@@ -1404,6 +1404,7 @@ relationManage.intimatefriends = function (data, response) {
                     for (var index in results) {
                         var circleData = results[index].circle.data;
                         var accountData = results[index].account.data;
+//                        console.log(circleData.rid+"---"+accountData.phone);
                         if (arr[circleData.rid] == null) {
                             accounts_if[accountData.phone] = "join";
                             circlesMap[circleData.rid].friends.push(accountData.phone);
