@@ -11,7 +11,7 @@
         android:layout_height="185dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:background="#fff" >
+        android:background="@drawable/card_login_background_white" >
 
         <TextView
             android:id="@+id/circleName"
@@ -92,7 +92,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#fff"
+        android:background="@drawable/card_login_background_white"
         android:visibility="gone" >
 
         <TextView

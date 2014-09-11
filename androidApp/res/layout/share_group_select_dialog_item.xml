@@ -1,70 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:id="@+id/mainContent"
+    android:layout_width="240dp"
     android:layout_height="60dp" >
 
     <com.open.lib.TouchImageView
         android:id="@+id/grip_card_background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
         android:background="@drawable/card_login_background_press"
         android:visibility="invisible" />
 
-    <com.open.lib.TouchView
+    <com.open.lib.TouchImageView
+        android:id="@+id/groupIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="8dp" />
+
+    <com.open.lib.TouchTextView
+        android:id="@+id/groupName"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:padding="7dp" >
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="55dp"
+        android:singleLine="true"
+        android:text="亦庄文化园站"
+        android:textColor="#99000000"
+        android:textSize="16dp" />
 
-        <com.open.lib.TouchView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <com.open.lib.TouchImageView
-                android:id="@+id/groupIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="8dp" />
-
-            <com.open.lib.TouchTextView
-                android:id="@+id/groupName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="55dp"
-                android:singleLine="true"
-                android:text="亦庄文化园站"
-                android:textColor="#000" />
-
-            <com.open.lib.TouchImageView
-                android:id="@+id/groupMonyInfomation"
-                android:layout_width="20dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginRight="8dp"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingTop="10dp"
-                android:src="@drawable/dialog_mach" />
-        </com.open.lib.TouchView>
-
-        <com.open.lib.TouchImageView
-            android:id="@+id/groupSelectedStatus"
-            android:layout_width="15dp"
-            android:layout_height="10dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="35dp"
-            android:src="@drawable/dialog_selected"
-            android:visibility="visible" />
-
-        <com.open.lib.TouchImageView
-            android:id="@+id/iv_line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginTop="43dp"
-            android:background="#878585" />
-    </com.open.lib.TouchView>
+    <com.open.lib.TouchImageView
+        android:id="@+id/groupSelectedStatus"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:background="@color/card_color"
+        android:visibility="invisible" />
 
 </com.open.lib.TouchView>
