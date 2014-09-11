@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -45,7 +44,6 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.ShareSubController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.ShareContent;
@@ -53,6 +51,8 @@ import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
+import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -63,6 +63,8 @@ public class ShareSubView {
 	public String tag = "ShareSubView";
 
 	public MyLog log = new MyLog(tag, true);
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public DisplayMetrics displayMetrics;
 
@@ -150,8 +152,7 @@ public class ShareSubView {
 		// groupMembersListContentView.setBackgroundColor(Color.RED);
 		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
-		mSdCardFile = Environment.getExternalStorageDirectory();
-		mImageFile = new File(mSdCardFile, "welinks/heads/");
+		mImageFile = fileHandlers.sdcardHeadImageFolder;
 		if (!mImageFile.exists())
 			mImageFile.mkdirs();
 
@@ -355,8 +356,7 @@ public class ShareSubView {
 				}
 
 				this.shareTextContentView.setText(textContent);
-				File sdFile = Environment.getExternalStorageDirectory();
-				File file = new File(sdFile, "welinks/thumbnail/" + imageContent);
+				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
 				final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
 				final int showImageHeight = shareImageHeight;// (int)
 																// (displayMetrics.density
@@ -390,7 +390,7 @@ public class ShareSubView {
 						}
 					});
 				} else {
-					File file2 = new File(sdFile, "welinks/images/" + imageContent);
+					File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
 					final String path2 = file2.getAbsolutePath();
 					if (file2.exists()) {
 						imageLoader.displayImage("file://" + path2, shareImageContentView, options);
@@ -628,7 +628,6 @@ public class ShareSubView {
 
 	public MyScrollImageBody myScrollImageBody;
 	public int width;
-	public File mSdCardFile;
 	public File mImageFile;
 	public DisplayImageOptions displayImageOptions;
 
@@ -659,7 +658,7 @@ public class ShareSubView {
 			if ("".equals(friend.head)) {
 				imageBody.imageView.setImageBitmap(bitmap);
 			} else {
-				File currentImageFile = new File(mImageFile, friend.head);
+				File currentImageFile = new File(fileHandlers.sdcardHeadImageFolder, friend.head);
 				String filepath = currentImageFile.getAbsolutePath();
 				boolean isFlag = false;
 				String path = "";

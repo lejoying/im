@@ -1,5 +1,6 @@
 package com.open.welinks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
@@ -30,6 +32,7 @@ import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ViewManage;
 
@@ -53,7 +56,7 @@ public class DynamicListActivity extends Activity {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
-	public List<Message> userEventMessages;
+	public List<Message> userEventMessages = new ArrayList<Message>();
 	public Map<String, Friend> friendsMap;
 	public Gson gson = new Gson();
 
@@ -61,6 +64,7 @@ public class DynamicListActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		viewManage.dynamicListActivity = this;
+		friendsMap = data.relationship.friendsMap;
 		initView();
 		initializeListeners();
 		bindEvent();
@@ -71,8 +75,18 @@ public class DynamicListActivity extends Activity {
 
 	private void initData() {
 		parser.check();
-		userEventMessages = data.event.userEvents;
-		friendsMap = data.relationship.friendsMap;
+		userEventMessages.clear();
+		List<Message> userEventMessages0 = data.event.userEvents;
+		for (int i = userEventMessages0.size() - 1; i >= 0; i--) {
+			Message message0 = userEventMessages0.get(i);
+			if ("account_dataupdate".equals(message0.contentType) || "relation_newfriend".equals(message0.contentType) || "relation_addfriend".equals(message0.contentType)) {
+				Message message2 = data.event.userEventsMap.get(message0.gid);
+				if (message2 != null) {
+					message0 = message2;
+				}
+				userEventMessages.add(message0);
+			}
+		}
 	}
 
 	private void showEventList() {
@@ -116,6 +130,12 @@ public class DynamicListActivity extends Activity {
 	public class EventListAdapter extends BaseAdapter {
 
 		@Override
+		public void notifyDataSetChanged() {
+			initData();
+			super.notifyDataSetChanged();
+		}
+
+		@Override
 		public int getCount() {
 			return userEventMessages.size();
 		}
@@ -147,20 +167,101 @@ public class DynamicListActivity extends Activity {
 			} else {
 				holder = (EventHolder) convertView.getTag();
 			}
+			final EventHolder holder0 = holder;
 			Friend friend;
-			Message message = userEventMessages.get(position);
+
+			String content = "";
+			String nickName = "";
 			UserEvent event;
-			if ("relation_newfriend".equals(message.contentType)) {
-				event = gson.fromJson(message.content, UserEvent.class);
-				friend = friendsMap.get(event.phone);
-				holder.eventContentView.setText(friend.nickName + "  请求加你为好友!");
-				if (event.status.equals("waiting")) {
-					holder.eventOperationView.setVisibility(View.VISIBLE);
-					holder.processedView.setVisibility(View.GONE);
-				} else if (event.status.equals("success")) {
+			try {
+				final Message message = userEventMessages.get(position);
+				if ("relation_newfriend".equals(message.contentType)) {
+					event = gson.fromJson(message.content, UserEvent.class);
+					friend = friendsMap.get(event.phone);
+					if (event.content != null) {
+						content = event.content;
+					}
+					if (friend != null) {
+						nickName = friend.nickName;
+					} else {
+						nickName = event.phone;
+					}
+					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
+					holder.eventContentView.setText(nickName + "  请求加你为好友!验证信息:" + content);
+					if (event.status.equals("waiting")) {
+						holder.eventOperationView.setVisibility(View.VISIBLE);
+						holder.processedView.setVisibility(View.GONE);
+						final UserEvent event0 = event;
+						holder.agreeButtonView.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								holder0.eventOperationView.setVisibility(View.GONE);
+								holder0.processedView.setVisibility(View.VISIBLE);
+								holder0.processedView.setText("已添加");
+								// modify local data
+								event0.status = "success";
+								Message messageLocal = data.event.userEventsMap.get(message.gid);
+								messageLocal.content = gson.toJson(event0);
+								agreeAddFriend(event0.phone);
+							}
+						});
+						holder.ignoreButtonView.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								holder0.eventOperationView.setVisibility(View.GONE);
+								holder0.processedView.setVisibility(View.VISIBLE);
+								holder0.processedView.setText("已处理");
+								// modify local data
+								event0.status = "ignore";
+								Message messageLocal = data.event.userEventsMap.get(message.gid);
+								messageLocal.content = gson.toJson(event0);
+							}
+						});
+					} else if (event.status.equals("success")) {
+						holder.eventOperationView.setVisibility(View.GONE);
+						holder.processedView.setVisibility(View.VISIBLE);
+						holder.processedView.setText("已添加");
+					} else if (event.status.equals("ignore")) {
+						holder.eventOperationView.setVisibility(View.GONE);
+						holder.processedView.setVisibility(View.VISIBLE);
+						holder.processedView.setText("已处理");
+					}
+				} else if ("relation_addfriend".equals(message.contentType)) {
+					Message message2 = null;
+					Message message0 = data.event.userEventsMap.get(message.gid);
+					if (message0 != null) {
+						message2 = message0;
+					}
+					event = gson.fromJson(message2.content, UserEvent.class);
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.VISIBLE);
+					friend = friendsMap.get(event.phone);
+					if (event.content != null) {
+						content = event.content;
+					}
+					if (friend != null) {
+						nickName = friend.nickName;
+					} else {
+						nickName = event.phone;
+					}
+					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
+					holder.eventContentView.setText("您请求加" + nickName + "为好友!验证信息:" + content);
+					if (event.status.equals("waiting")) {
+						holder.processedView.setText("等待验证");
+					} else if (event.status.equals("success")) {
+						holder.processedView.setText("已添加");
+					}
+				} else if ("account_dataupdate".equals(message.contentType)) {
+					event = gson.fromJson(message.content, UserEvent.class);
+					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
+					holder.eventContentView.setText("更新个人资料");
+					holder.eventOperationView.setVisibility(View.GONE);
+					holder.processedView.setVisibility(View.GONE);
 				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
 			}
 			holder.headView.setImageBitmap(bitmap);
 			return convertView;
@@ -172,6 +273,7 @@ public class DynamicListActivity extends Activity {
 		public String phone;
 		public String time;
 		public String status;
+		public String content;
 	}
 
 	public class EventHolder {
@@ -193,5 +295,16 @@ public class DynamicListActivity extends Activity {
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
 
 		httpUtils.send(HttpMethod.POST, API.RELATION_GETASKFRIENDS, params, responseHandlers.getaskfriendsCallBack);
+	}
+
+	public void agreeAddFriend(String phoneTo) {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("phoneask", phoneTo);
+		params.addBodyParameter("status", "true");
+
+		httpUtils.send(HttpMethod.POST, API.RELATION_ADDFRIENDAGREE, params, responseHandlers.addFriendAgreeCallBack);
 	}
 }

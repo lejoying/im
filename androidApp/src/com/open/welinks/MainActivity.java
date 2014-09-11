@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,8 +46,6 @@ public class MainActivity extends Activity {
 	public MainController thisController;
 	public Activity thisActivity;
 
-	public LongConnectionReceiver mReceiver;
-
 	public ViewManage viewManager = ViewManage.getInstance();
 
 	public Parser parser = Parser.getInstance();
@@ -65,15 +62,9 @@ public class MainActivity extends Activity {
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
 		}
 		initImageLoader(getApplicationContext());
-		initReceiver();
 		startPushService();
 		thisActivity.setContentView(R.layout.activity_welinks);
-	}
-
-	public void initReceiver() {
-		mReceiver = new LongConnectionReceiver();
-		IntentFilter filter = new IntentFilter(PushService.LONGPULL_STOP);
-		registerReceiver(mReceiver, filter);
+		thisController.requestLocation();
 	}
 
 	public void startPushService() {
@@ -247,13 +238,4 @@ public class MainActivity extends Activity {
 		super.finish();
 	}
 
-	class LongConnectionReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			parser = Parser.getInstance();
-			parser.save();
-			startActivity(new Intent(MainActivity.this, LoginActivity.class));
-			finish();
-		}
-	}
 }

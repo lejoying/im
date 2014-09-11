@@ -53,6 +53,10 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             accountManage.getuserinfomation(data, response);
         });
+    }else if(operation == "modifylocation"){
+        oauth6(data.phone, data.accessKey, response, function () {
+            accountManage.modifylocation(data, response);
+        });
     }
 }
 var communityManage = require("./handlers/communityManage.js");

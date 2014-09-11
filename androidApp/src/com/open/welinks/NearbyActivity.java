@@ -22,8 +22,9 @@ public class NearbyActivity extends Activity {
 		thisView.thisController = thisController;
 		thisController.thisView = thisView;
 
-		thisController.onCreate();
 		thisView.initView();
+		thisController.onCreate();
+		thisView.fillData();
 	}
 
 }

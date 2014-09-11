@@ -98,10 +98,7 @@ public class SettingActivity extends Activity implements OnClickListener {
 				data = parser.check();
 				data.userInformation.currentUser.accessKey = "";
 				data.userInformation.isModified = true;
-				
-				Intent service = new Intent(SettingActivity.this, PushService.class);
-				service.putExtra("operation", false);
-				startService(service);
+				setResult(Activity.RESULT_OK);
 				finish();
 			}
 		}).show();

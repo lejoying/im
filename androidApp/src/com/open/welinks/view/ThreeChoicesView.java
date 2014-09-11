@@ -53,6 +53,7 @@ public class ThreeChoicesView extends FrameLayout {
 		button_one = (Button) this.findViewById(R.id.button_one);
 		button_two = (Button) this.findViewById(R.id.button_two);
 		button_three = (Button) this.findViewById(R.id.button_three);
+		mOnItemClickListener = new OnItemClickListener();
 		setViewStyle(clickedItem);
 		mOnClickListener = new OnClickListener() {
 
@@ -60,13 +61,13 @@ public class ThreeChoicesView extends FrameLayout {
 			public void onClick(View view) {
 				if (view.equals(button_one)) {
 					setViewStyle(1);
-					mOnItemClickListener.onButtonOneCilck();
+					mOnItemClickListener.onButtonCilck(1);
 				} else if (view.equals(button_two)) {
 					setViewStyle(2);
-					mOnItemClickListener.onButtonTwoCilck();
+					mOnItemClickListener.onButtonCilck(2);
 				} else if (view.equals(button_three)) {
 					setViewStyle(3);
-					mOnItemClickListener.onButtonThreeCilck();
+					mOnItemClickListener.onButtonCilck(3);
 				}
 
 			}
@@ -88,13 +89,13 @@ public class ThreeChoicesView extends FrameLayout {
 				System.out.println("tapup");
 				if (currentButton.equals(button_one)) {
 					setViewStyle(1);
-					mOnItemClickListener.onButtonOneCilck();
+					mOnItemClickListener.onButtonCilck(1);
 				} else if (currentButton.equals(button_two)) {
 					setViewStyle(2);
-					mOnItemClickListener.onButtonTwoCilck();
+					mOnItemClickListener.onButtonCilck(2);
 				} else if (currentButton.equals(button_three)) {
 					setViewStyle(3);
-					mOnItemClickListener.onButtonThreeCilck();
+					mOnItemClickListener.onButtonCilck(3);
 				}
 				return true;
 			}
@@ -165,13 +166,7 @@ public class ThreeChoicesView extends FrameLayout {
 	}
 
 	public class OnItemClickListener {
-		public void onButtonOneCilck() {
-		};
-
-		public void onButtonTwoCilck() {
-		};
-
-		public void onButtonThreeCilck() {
+		public void onButtonCilck(int position) {
 		};
 	}
 

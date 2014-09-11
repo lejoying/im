@@ -3,6 +3,9 @@ package com.open.welinks.view;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +21,7 @@ import com.open.welinks.controller.NearbyController;
 import com.open.welinks.controller.NearbyController.Status;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.DistanceUtils;
-import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
+import com.open.welinks.utils.MCImageUtils;
 
 public class NearbyView {
 	public NearbyView thisView;
@@ -27,14 +30,17 @@ public class NearbyView {
 	public LayoutInflater mInflater;
 
 	public RelativeLayout backView;
-	public TextView title;
+	public TextView titleContent;
 	public ListView nearby;
 
 	public NearbyAdapter nearbyAdapter;
 
+	public Bitmap bitmap;
+
 	public int NearbyLayoutID;
 
 	public NearbyView(NearbyActivity thisActivity) {
+		thisView = this;
 		this.thisActivity = thisActivity;
 	}
 
@@ -42,9 +48,14 @@ public class NearbyView {
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_nearby);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		title = (TextView) thisActivity.findViewById(R.id.title);
+		titleContent = (TextView) thisActivity.findViewById(R.id.titleContent);
 		nearby = (ListView) thisActivity.findViewById(R.id.nearby);
 
+		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
+		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+	}
+
+	public void fillData() {
 		nearbyAdapter = new NearbyAdapter(thisController.mInfomations);
 		nearby.setAdapter(nearbyAdapter);
 	}
@@ -98,29 +109,58 @@ public class NearbyView {
 			}
 
 			if (thisController.status == Status.account) {
-				thisController.setImageOnView((String) infomation.get("head"), holder.head);
+				String head = (String) infomation.get("head");
+				if ("".equals(head) || "Head".equals(head)) {
+					holder.head.setImageBitmap(bitmap);
+				} else {
+					thisController.setImageOnView(head, holder.head);
+				}
 				String sex = (String) infomation.get("sex");
 				int sexImageResource = 0;
 				if ("男".equals(sex) || "male".equals(sex)) {
 					sexImageResource = R.drawable.personalinfo_male;
 				} else {
-					sexImageResource = R.drawable.personalinfo_male;
+					sexImageResource = R.drawable.personalinfo_female;
+				}
+				String mainBusiness = (String) infomation.get("mainBusiness");
+				if ("".equals(mainBusiness)) {
+					holder.mainBusiness.setText("此用户暂无签名");
+				} else {
+					holder.mainBusiness.setText(mainBusiness);
 				}
 				holder.sex.setImageResource(sexImageResource);
 				holder.name.setText((String) infomation.get("name"));
 				holder.distance.setText(DistanceUtils.getDistance((Integer) infomation.get("distance")));
-				holder.mainBusiness.setText((String) infomation.get("mainBusiness"));
-				holder.recently.setText(DateUtil.getChatMessageListTime((Long) infomation.get("recently")));
-				holder.age.setText("");
+				holder.recently.setText(DateUtil.getChatMessageListTime(Long.valueOf((String) infomation.get("recently"))));
+				holder.age.setText("20");
+				convertView.setTag(R.id.tag_first, "point");
+				convertView.setTag(R.id.tag_second, (String) infomation.get("phone"));
 			} else {
-				thisController.setImageOnView((String) infomation.get("icon"), holder.head);
+				String icon = (String) infomation.get("icon");
+				if ("".equals(icon)) {
+					holder.head.setImageBitmap(bitmap);
+				} else {
+					thisController.setImageOnView((String) infomation.get("icon"), holder.head);
+				}
+				String description = (String) infomation.get("description");
+				if ("".equals(description)) {
+					if (thisController.status == Status.group) {
+						holder.mainBusiness.setText("此群组暂无描述");
+					} else if (thisController.status == Status.square) {
+						holder.mainBusiness.setText("此广场暂无描述");
+					}
+				} else {
+					holder.mainBusiness.setText(description);
+				}
 				holder.name.setText((String) infomation.get("name"));
 				holder.distance.setText(DistanceUtils.getDistance((Integer) infomation.get("distance")));
-				holder.mainBusiness.setText((String) infomation.get("mainBusiness"));
 				holder.address.setText((String) infomation.get("address"));
-				holder.members.setText(thisController.data.relationship.groupsMap.get((String) infomation.get("gid")).members.size());
-				holder.chatNum.setText("");
+				holder.members.setText("10/100");
+				holder.chatNum.setText("10");
+				convertView.setTag(R.id.tag_first, "group");
+				convertView.setTag(R.id.tag_second, (String) infomation.get("gid"));
 			}
+			convertView.setOnClickListener(thisController.mOnClickListener);
 			return convertView;
 		}
 

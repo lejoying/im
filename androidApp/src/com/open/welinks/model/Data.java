@@ -81,7 +81,7 @@ public class Data {
 	public Messages messages;
 	public Shares shares;
 	public Squares squares;
-	public Event event = new Event();
+	public Event event;
 
 	public class UserInformation {
 		public boolean isModified = false;
@@ -120,7 +120,6 @@ public class Data {
 	public class Relationship {
 		public boolean isModified = false;
 
-		public List<String> friends = new ArrayList<String>();
 		public Map<String, Friend> friendsMap = new HashMap<String, Friend>();
 
 		public List<String> circles = new ArrayList<String>();
@@ -285,5 +284,7 @@ public class Data {
 		public List<Message> groupEvents = new ArrayList<Message>();
 
 		public List<Message> userEvents = new ArrayList<Message>();
+
+		public Map<String, Message> userEventsMap = new HashMap<String, Message>();
 	}
 }

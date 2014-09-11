@@ -787,4 +787,184 @@ function ResponseData(responseContent, response) {
     response.write(responseContent);
     response.end();
 }
+/***************************************
+ *     URL：/api2/account/modifylocation
+ ***************************************/
+accountManage.modifylocation= function (data, response) {
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var accessKey = data.accessKey;
+    var longitude=data.longitude;
+    var latitude=data.latitude;
+    var address=data.address;
+    var arr = [phone, accessKey, longitude,latitude,address];
+    if (verifyEmpty.verifyEmpty(data, arr, response)){
+        modifyAccountNode(phone,longitude,latitude);
+    }
+    function modifyAccountNode(phone,longitude,latitude) {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN account'
+        ].join('\n');
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "修改用户信息失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+            } else {
+                var accountNode = results.pop().account;
+                var accountData = accountNode.data;
+                var time = new Date().getTime();
+                if (longitude != undefined && longitude!= null && longitude != "") {
+                    accountData.longitude = longitude;
+                }
+                if (latitude!= undefined && latitude != null && latitude != "") {
+                    accountData.latitude =latitude;
+                }
+                if (time!= undefined && time != null && time != "") {
+                    accountData.lastlogintime =time;
+                }
+                accountNode.save(function (err, node) {
+                    if (err) {
+                        response.write(JSON.stringify({
+                            "提示信息": "修改用户信息失败",
+                            "失败原因": "数据异常"
+                        }));
+                        response.end();
+                        console.error(err);
+                        return;
+                    } else {
+                        response.write(JSON.stringify({
+                            "提示信息": "修改用户信息成功",
+                           account:accountData
+                        }));
+                        response.end();
+                    }
+
+                });
+
+            }
+        });
+    }
+
+    function checkLbsLocation(accountData,response) {
+        ajax.ajax({
+            type: "GET",
+            url: serverSetting.LBS.DATA_SEARCH,
+            data: {
+                tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                filter: "phone:" + accountData.phone,
+                key: serverSetting.LBS.KEY
+            },
+            success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    if (info.count == 0) {
+                        createaccountlocation(accountData,address,response);
+                    } else {
+                        var id = info.datas[0]._id;
+                        modifyaccountlocation(accountData, address,id,response);
+                    }
+                } else {
+                    response.write(JSON.stringify({
+                        "提示信息": "查找用户位置信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+    function createaccountlocation(accountData,address, response) {
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS.DATA_CREATE,
+            data: {
+                key: serverSetting.LBS.KEY,
+                tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                loctype: 2,
+                data: JSON.stringify({
+                    _name: accountData.nickName,
+                    _location: accountData.longitude + "," + accountData.latitude,
+                    _address:address,
+                    phone: accountData.phone,
+                    sex: accountData.sex,
+                    haed: accountData.head,
+                    mainBusiness: accountData.mainBusiness,
+                    online: 1,
+                    lastlogintime: accountData.lastlogintime
+                })
+            }, success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    response.write(JSON.stringify({
+                        "提示信息": "创建用户位置信息成功"
+                    }));
+                    response.end();
+                } else {
+                    console.log(info.info);
+                    response.write(JSON.stringify({
+                        "提示信息": "创建用户位置信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+
+    function modifyaccountlocation(accountData, address,id, response) {
+        ajax.ajax({
+            type: "POST",
+            url: serverSetting.LBS.DATA_UPDATA,
+            data: {
+                key: serverSetting.LBS.KEY,
+                tableid: serverSetting.LBS.ACCOUNTTABLEID,
+                loctype: 2,
+                data: JSON.stringify({
+                    _id: id,
+                    _name: accountData.nickName,
+                    _location: accountData.longitude + "," + accountData.latitude,
+                    _address: address,
+                    phone: accountData.phone,
+                    sex: accountData.sex,
+                    haed: accountData.head,
+                    mainBusiness: accountData.mainBusiness,
+                    online: 1,
+                    lastlogintime: accountData.lastlogintime
+                })
+            }, success: function (info) {
+                var info = JSON.parse(info);
+                if (info.status == 1) {
+                    response.write(JSON.stringify({
+                        "提示信息": "修改用户位置信息成功"
+                    }));
+                    response.end();
+                } else {
+                    console.log(info.info);
+                    response.write(JSON.stringify({
+                        "提示信息": "修改用户位置信息失败",
+                        "失败原因": "数据异常"
+                    }));
+                    response.end();
+                }
+            }
+        });
+    }
+}
+
 module.exports = accountManage;

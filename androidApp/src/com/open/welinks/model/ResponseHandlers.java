@@ -1,5 +1,6 @@
 package com.open.welinks.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -8,6 +9,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -16,6 +18,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.controller.Debug1Controller;
+import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -28,10 +31,13 @@ import com.open.welinks.view.ViewManage;
 public class ResponseHandlers {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public String tag = "ResponseHandlers";
 
 	public ViewManage viewManage = ViewManage.getInstance();
+
+	public ResponseEventHandlers responseEventHandlers = ResponseEventHandlers.getInstance();
 
 	public static ResponseHandlers responseHandlers;
 
@@ -58,6 +64,33 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 
 		}
+	};
+	public ResponseHandler<String> getUserInfomation = httpClient.new ResponseHandler<String>() {
+
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public List<Friend> accounts;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if ("获取用户信息成功".equals(response.提示信息)) {
+				Friend friend = response.accounts.get(0);
+				if (friend != null) {
+					parser.check();
+					User user = data.userInformation.currentUser;
+					user.userBackground = friend.userBackground;
+					user.sex = friend.sex;
+					user.id = friend.id;
+					user.phone = friend.phone;
+					user.nickName = friend.nickName;
+					user.mainBusiness = friend.mainBusiness;
+					user.head = friend.head;
+					data.userInformation.isModified = true;
+				}
+			}
+		};
 	};
 
 	Gson gson = new Gson();
@@ -193,12 +226,26 @@ public class ResponseHandlers {
 	public ResponseHandler<String> account_modify = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改用户位置信息成功")||response.提示信息.equals("创建用户位置信息成功")) {
+				Log.e(tag, "---------------------修改用户信息成功");
+			}
+		};
+
+	};
+	public ResponseHandler<String> account_modifylocation = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
-				Log.e(tag, "---------------------修改用户信息成功");
+
 			}
 		};
 
@@ -509,12 +556,92 @@ public class ResponseHandlers {
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("获取好友请求成功")) {
-				if (response.accounts.size() > 0) {
-					viewManage.postNotifyView("DynamicListActivity");
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取好友请求成功")) {
+					if (response.accounts.size() > 0) {
+						viewManage.postNotifyView("DynamicListActivity");
+					}
+					Log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
 				}
-				Log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
+			}
+		};
+	};
+	public RequestCallBack<String> addFriendAgreeCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("添加成功")) {
+				Log.e(tag, "---------------------添加好友成功");
+				DataUtil.getIntimateFriends();
+			}
+		};
+	};
+	public RequestCallBack<String> getGroupCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+		};
+	};
+
+	public RequestCallBack<String> getMessageCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String flag;
+			public List<Message> messages;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			try {
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.提示信息.equals("获取成功")) {
+					Log.e(tag, "---------------------获取消息成功");
+					List<Message> messages = response.messages;
+					parser.check();
+					data.messages.isModified = true;
+					for (int i = 0; i < messages.size(); i++) {
+						Message message = messages.get(i);
+						String sendType = message.sendType;
+						if ("event".equals(sendType)) {
+							if (!data.event.userEvents.contains(message)) {
+								responseEventHandlers.handleEvent(message);
+							}
+						} else if ("point".equals(sendType)) {
+							List<String> phones = gson.fromJson(message.phoneto, new TypeToken<List<String>>() {
+							}.getType());
+							ArrayList<Message> friendMessages = data.messages.friendMessageMap.get(phones.get(0));
+							if (friendMessages == null) {
+								friendMessages = new ArrayList<Message>();
+								data.messages.friendMessageMap.put(phones.get(0), friendMessages);
+							}
+							if (!friendMessages.contains(message)) {
+								friendMessages.add(message);
+							}
+						} else if ("group".equals(sendType)) {
+							ArrayList<Message> groupMessages = data.messages.friendMessageMap.get(message.gid);
+							if (groupMessages == null) {
+								groupMessages = new ArrayList<Message>();
+								data.messages.friendMessageMap.put(message.gid, groupMessages);
+							}
+							if (!groupMessages.contains(message)) {
+								groupMessages.add(message);
+							}
+						}
+					}
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
 			}
 		};
 	};

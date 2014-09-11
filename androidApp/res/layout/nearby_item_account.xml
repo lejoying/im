@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="10dp"
-    android:paddingTop="10dp" >
+    android:layout_height="wrap_content" >
 
     <ImageView
         android:layout_width="match_parent"
@@ -14,29 +12,33 @@
         android:id="@+id/head"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="10dp" />
+        android:layout_margin="5dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#000" />
+            android:layout_margin="2dp"
+            android:textColor="#fff"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
             android:orientation="horizontal" >
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="2dp" >
 
                 <ImageView
                     android:id="@+id/sex"
@@ -47,27 +49,35 @@
                     android:id="@+id/age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="25dp"
+                    android:gravity="center"
                     android:textColor="#fff" />
             </RelativeLayout>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="2dp"
                 android:src="@drawable/mark_location" />
 
             <TextView
                 android:id="@+id/distance"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="2dp"
+                android:textColor="#fff" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/mainBusiness"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:ellipsize="end"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textColor="#fff" />
     </LinearLayout>
 
     <TextView
@@ -76,6 +86,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="#fff" />
 
 </RelativeLayout>
