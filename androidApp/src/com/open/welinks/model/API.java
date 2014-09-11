@@ -54,6 +54,10 @@ public class API {
 	 * http://www.we-links.com/api2/group/get
 	 */
 	public static String GROUP_GET = API_DOMAIN + "api2/group/get";
+	/**
+	 * http://www.we-links.com/api2/group/getallmembers
+	 */
+	public static String GROUP_GETALLMEMBERS = API_DOMAIN + "api2/group/getallmembers";
 
 	// share
 	/**

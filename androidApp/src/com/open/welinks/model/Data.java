@@ -148,6 +148,7 @@ public class Data {
 			public String latitude;
 			public String userBackground = "Back";
 			public String alias = "";
+			public String lastlogintime;
 		}
 
 		public class Circle {

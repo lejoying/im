@@ -2,10 +2,9 @@ package com.open.welinks.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Header;
-
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -17,6 +16,7 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
+import com.open.lib.MyLog;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
@@ -34,6 +34,7 @@ public class ResponseHandlers {
 	public Parser parser = Parser.getInstance();
 
 	public String tag = "ResponseHandlers";
+	public MyLog log = new MyLog(tag, true);
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
@@ -108,7 +109,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取密友圈成功")) {
-				Log.e(tag, "获取密友圈成功");
+				log.e(tag, "获取密友圈成功");
 				data.relationship.circles = response.relationship.circles;
 				data.relationship.circlesMap = response.relationship.circlesMap;
 				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
@@ -117,7 +118,7 @@ public class ResponseHandlers {
 			}
 			if (data.localStatus.debugMode.equals("NONE")) {
 				// viewManage.postNotifyView("UserIntimateView");
-				Log.e(tag, "刷新好友分组");
+				log.e(tag, "刷新好友分组");
 				viewManage.mainView.friendsSubView.showCircles();
 			}
 		}
@@ -126,10 +127,10 @@ public class ResponseHandlers {
 	public ResponseHandler<String> upload = httpClient.new ResponseHandler<String>() {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Log.e(tag, responseInfo + "-------------");
+			log.e(tag, responseInfo + "-------------");
 			Header[] headers = responseInfo.getAllHeaders();
 			for (int i = 0; i < headers.length; i++) {
-				Log.e(tag, "reply upload: " + headers[i]);
+				log.e(tag, "reply upload: " + headers[i]);
 			}
 		}
 	};
@@ -149,12 +150,12 @@ public class ResponseHandlers {
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			Log.e(tag, responseInfo.result);
+			log.e(tag, responseInfo.result);
 			if (response.提示信息.equals("查找成功")) {
 				if (response.exists) {
 
 				} else if (!response.exists) {
-					Log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
+					log.e(tag, response.signature + "---" + response.filename + "---" + response.expires + "---" + response.OSSAccessKeyId);
 					Debug1Controller.uploadImageWithInputStreamUploadEntity(response.signature, response.filename, response.expires, response.OSSAccessKeyId);
 				}
 			}
@@ -214,7 +215,7 @@ public class ResponseHandlers {
 						data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
 					}
 					// Set the option group dialog content
-					Log.e(tag, data.relationship.groups.toString());
+					log.e(tag, data.relationship.groups.toString());
 					viewManage.mainView.shareSubView.setGroupsDialogContent();
 					viewManage.mainView.shareSubView.showShareMessages();
 					viewManage.mainView.shareSubView.showGroupMembers();
@@ -233,7 +234,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户位置信息成功") || response.提示信息.equals("创建用户位置信息成功")) {
-				Log.e(tag, "---------------------修改用户信息成功");
+				log.e(tag, "---------------------修改用户信息成功");
 			}
 		};
 
@@ -332,7 +333,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("加入群组成功")) {
-				Log.e(tag, "---------------------加入群组成功");
+				log.e(tag, "---------------------加入群组成功");
 			}
 		};
 
@@ -345,10 +346,11 @@ public class ResponseHandlers {
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
+			log.e(responseInfo.result);
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改群组信息成功")) {
 				data.relationship.groupsMap.put(String.valueOf(response.group.gid), response.group);
-				Log.e(tag, "---------------------修改群组信息成功");
+				log.e(tag, "---------------------修改群组信息成功");
 			}
 		};
 
@@ -379,7 +381,7 @@ public class ResponseHandlers {
 				share.shareMessagesMap.remove(response.ogsid);
 				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				viewManage.mainView.shareSubView.showShareMessages();
-				Log.e(tag, "---------------------发送成功");
+				log.e(tag, "---------------------发送成功");
 			}
 		};
 	};
@@ -393,7 +395,7 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			// Log.e(tag, responseInfo.result);
+			// log.e(tag, responseInfo.result);
 			try {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群分享成功")) {
@@ -430,7 +432,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("点赞群分享成功")) {
-				Log.e(tag, "---------------------点赞群分享成功");
+				log.e(tag, "---------------------点赞群分享成功");
 			} else if (response.提示信息.equals("点赞群分享失败")) {
 				Share share = data.shares.shareMap.get(response.gid);
 				ShareMessage shareMessage = share.shareMessagesMap.get(response.gsid);
@@ -450,7 +452,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("评论群分享成功")) {
-				Log.e(tag, "---------------------评论群分享成功");
+				log.e(tag, "---------------------评论群分享成功");
 			} else if (response.提示信息.equals("评论群分享失败")) {
 
 			}
@@ -465,7 +467,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改备注成功")) {
-				Log.e(tag, "---------------------修改备注成功");
+				log.e(tag, "---------------------修改备注成功");
 			}
 		};
 
@@ -479,7 +481,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("删除成功")) {
-				Log.e(tag, "---------------------删除成功");
+				log.e(tag, "---------------------删除成功");
 			}
 		};
 	};
@@ -492,7 +494,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发送请求成功")) {
-				Log.e(tag, "---------------------发送请求成功");
+				log.e(tag, "---------------------发送请求成功");
 			}
 		};
 	};
@@ -506,7 +508,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改分组顺序成功")) {
-				Log.e(tag, "---------------------修改分组顺序成功");
+				log.e(tag, "---------------------修改分组顺序成功");
 			}
 		};
 	};
@@ -520,7 +522,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改群组顺序成功")) {
-				Log.e(tag, "---------------------修改群组顺序成功");
+				log.e(tag, "---------------------修改群组顺序成功");
 			}
 		};
 	};
@@ -534,7 +536,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("加入群组成功")) {
-				Log.e(tag, "---------------------加入群组成功");
+				log.e(tag, "---------------------加入群组成功");
 			}
 		};
 	};
@@ -548,7 +550,7 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("退出群组成功")) {
-				Log.e(tag, "---------------------退出群组成功");
+				log.e(tag, "---------------------退出群组成功");
 			}
 		};
 	};
@@ -567,7 +569,7 @@ public class ResponseHandlers {
 					if (response.accounts.size() > 0) {
 						viewManage.postNotifyView("DynamicListActivity");
 					}
-					Log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
+					log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
@@ -583,19 +585,75 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("添加成功")) {
-				Log.e(tag, "---------------------添加好友成功");
+				log.e(tag, "---------------------添加好友成功");
 				DataUtil.getIntimateFriends();
 			}
 		};
 	};
-	public RequestCallBack<String> getGroupCallBack = httpClient.new ResponseHandler<String>() {
+	public RequestCallBack<String> getGroupInfomationCallBack = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
+			public Group group;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取群组信息成功")) {
+				Group group = response.group;
+				parser.check();
+				Group currentGroup = data.relationship.groupsMap.get(group.gid + "");
+				currentGroup.icon = group.icon;
+				currentGroup.name = group.name;
+				currentGroup.longitude = group.longitude;
+				currentGroup.latitude = group.latitude;
+				currentGroup.description = group.description;
+				currentGroup.background = group.background;
+				data.relationship.isModified = true;
+				log.e(tag, "---------------------获取群组信息成功");
+			}
+		};
+	};
+	public RequestCallBack<String> getCurrentGroupMembersCallBack = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String gid;
+			public List<String> members;
+			public Map<String, Friend> membersMap;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("获取群组成员成功")) {
+				parser.check();
+				Group group = data.relationship.groupsMap.get(response.gid);
+				List<String> members = response.members;
+				group.members = response.members;
+				Map<String, Friend> membersMap = response.membersMap;
+
+				for (int i = 0; i < members.size(); i++) {
+					String key = members.get(i);
+					Friend friend = data.relationship.friendsMap.get(key);
+					Friend serverFriend = membersMap.get(key);
+					if (friend == null) {
+						friend = serverFriend;
+						data.relationship.friendsMap.put(key, friend);
+					} else {
+						friend.sex = serverFriend.sex;
+						friend.nickName = serverFriend.nickName;
+						friend.mainBusiness = serverFriend.mainBusiness;
+						friend.head = serverFriend.head;
+						friend.longitude = serverFriend.longitude;
+						friend.latitude = serverFriend.latitude;
+						friend.userBackground = serverFriend.userBackground;
+						friend.lastlogintime = serverFriend.lastlogintime;
+					}
+				}
+				data.relationship.isModified = true;
+
+				log.e(tag, "---------------------获取群组成员成功");
+			}
 		};
 	};
 
@@ -611,7 +669,7 @@ public class ResponseHandlers {
 			try {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取成功")) {
-					Log.e(tag, "---------------------获取消息成功");
+					log.e(tag, "---------------------获取消息成功");
 					List<Message> messages = response.messages;
 					parser.check();
 					data.messages.isModified = true;
