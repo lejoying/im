@@ -1,41 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="360dp"
+    android:layout_width="320dp"
     android:layout_height="500dp"
     android:background="#bf000000" >
 
     <com.open.lib.TouchView
-        android:id="@+id/mainContent"
-        android:layout_width="360dp"
-        android:layout_height="500dp"
-        android:layout_gravity="center"
-        tools:ignore="UselessParent" >
+        android:id="@+id/card"
+        android:layout_width="300dp"
+        android:layout_height="470dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:background="@drawable/card_login_background_white"
+        android:translationY="-10dp" >
 
         <com.open.lib.TouchView
-            android:layout_width="340dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:background="#fff" >
+            android:id="@+id/groups_manage"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="bottom|right"
+            android:background="@drawable/card_login_background_white" >
 
-            <com.open.lib.TouchView
-                android:id="@+id/groupsContent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="30dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp" >
-            </com.open.lib.TouchView>
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="bottom|right"
+                android:src="@drawable/btn_setting"
+                android:translationX="-3dp"
+                android:translationY="-3dp" />
         </com.open.lib.TouchView>
 
-        <ImageView
-            android:id="@+id/iv_close"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="right|top"
-            android:src="@drawable/dialog_close" />
+        <com.open.lib.TouchView
+            android:id="@+id/groupsContent"
+            android:layout_width="300dp"
+            android:layout_height="430dp"
+            android:layout_gravity="top|left"
+            android:translationY="20dp" >
+        </com.open.lib.TouchView>
     </com.open.lib.TouchView>
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:src="@drawable/dialog_close"
+        android:translationX="150dp"
+        android:translationY="-240dp"
+        android:visibility="invisible" />
 
 </com.open.lib.TouchView>

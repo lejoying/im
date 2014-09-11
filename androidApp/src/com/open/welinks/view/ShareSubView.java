@@ -101,6 +101,7 @@ public class ShareSubView {
 	public float panelScale = 1.010845986984816f;
 
 	public int panelHeight;
+	public int panelWidth;
 
 	public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	public SpringConfig IMAGE_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 9);
@@ -471,12 +472,14 @@ public class ShareSubView {
 		// groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		// groupPopWindow.setOutsideTouchable(true);
 
-		TouchView mainContentView = (TouchView) groupDialogView.findViewById(R.id.mainContent);
+		TouchView mainContentView = (TouchView) groupDialogView;
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
-		TouchView.LayoutParams mainContentParams = (TouchView.LayoutParams) mainContentView.getLayoutParams();
-		mainContentParams.height = (int) (displayMetrics.heightPixels * 0.7578125f);
-		mainContentParams.leftMargin = (int) (20 / displayMetrics.density + 0.5f);
-		mainContentParams.rightMargin = (int) (20 / displayMetrics.density + 0.5f);
+
+		panelWidth= (int) (displayMetrics.widthPixels * 0.7578125f);
+		panelHeight = (int) (displayMetrics.heightPixels * 0.7578125f);
+		
+		TouchView.LayoutParams mainContentParams =  new TouchView.LayoutParams(panelWidth, panelHeight);
+		
 		mainContentView.setLayoutParams(mainContentParams);
 		groupListBody = new ListBody1();
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
