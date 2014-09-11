@@ -771,4 +771,28 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> group_create = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String tempGid;
+			public Group group;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("创建群组成功")) {
+				data = parser.check();
+				data.relationship.groups.remove(response.tempGid);
+				data.relationship.groupsMap.remove(response.tempGid);
+				data.relationship.groups.add(String.valueOf(response.group.gid));
+				data.relationship.groupsMap.put(String.valueOf(response.group.gid), response.group);
+				data.relationship.isModified = true;
+				log.d("创建群组成功===================");
+			} else {
+				log.d("创建群组失败===================" + response.失败原因);
+
+			}
+		};
+	};
 }
