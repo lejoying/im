@@ -47,7 +47,7 @@ public class ViewManage {
 			}
 		} else if (viewName.equals("DynamicListActivity")) {
 			if (dynamicListActivity != null) {
-				dynamicListActivity.eventListAdapter.notifyDataSetChanged();
+				dynamicListActivity.userEventListAdapter.notifyDataSetChanged();
 			}
 		} else if (viewName.equals("MeSubView")) {
 			if (meSubView != null) {

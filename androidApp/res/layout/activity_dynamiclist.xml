@@ -8,7 +8,29 @@
     <include layout="@layout/view_back_view" />
 
     <ListView
-        android:id="@+id/eventContainer"
+        android:id="@+id/squareEventContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="#0000"
+        android:divider="#c0c0c0"
+        android:dividerHeight="1dp"
+        android:listSelector="#0000"
+        android:scrollbars="none" >
+    </ListView>
+
+    <ListView
+        android:id="@+id/groupEventContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="#0000"
+        android:divider="#c0c0c0"
+        android:dividerHeight="1dp"
+        android:listSelector="#0000"
+        android:scrollbars="none" >
+    </ListView>
+
+    <ListView
+        android:id="@+id/userEventContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:cacheColorHint="#0000"
