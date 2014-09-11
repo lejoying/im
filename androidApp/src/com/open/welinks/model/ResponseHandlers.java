@@ -249,7 +249,10 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
 				data = parser.check();
-				data.userInformation.currentUser = response.account;
+				User user = data.userInformation.currentUser;
+				user.latitude = response.account.latitude;
+				user.longitude = response.account.longitude;
+				user.lastlogintime = response.account.lastlogintime;
 				data.userInformation.isModified = true;
 				viewManage.mainView.thisController.chackLBSAccount();
 			}

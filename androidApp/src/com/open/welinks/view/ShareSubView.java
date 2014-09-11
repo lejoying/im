@@ -468,18 +468,19 @@ public class ShareSubView {
 	public void initializationGroupsDialog() {
 		groupDialogView = mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
 		groupDialogView.setTag(R.id.tag_class, "group_view");
-		// groupPopWindow = new PopupWindow(groupDialogView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
+		// groupPopWindow = new PopupWindow(groupDialogView,
+		// LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		// groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		// groupPopWindow.setOutsideTouchable(true);
 
 		TouchView mainContentView = (TouchView) groupDialogView;
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
 
-		panelWidth= (int) (displayMetrics.widthPixels * 0.7578125f);
+		panelWidth = (int) (displayMetrics.widthPixels * 0.7578125f);
 		panelHeight = (int) (displayMetrics.heightPixels * 0.7578125f);
-		
-		TouchView.LayoutParams mainContentParams =  new TouchView.LayoutParams(panelWidth, panelHeight);
-		
+
+		TouchView.LayoutParams mainContentParams = new TouchView.LayoutParams(panelWidth, panelHeight);
+
 		mainContentView.setLayoutParams(mainContentParams);
 		groupListBody = new ListBody1();
 		groupListBody.initialize(displayMetrics, groupsDialogContent);
@@ -495,9 +496,10 @@ public class ShareSubView {
 			groupListBody.active();
 			shareMessageListBody.inActive();
 			mainView.mainPagerBody.inActive();
-			// groupPopWindow.showAtLocation(mainView.main_container, Gravity.CENTER, 0, 0);
+			// groupPopWindow.showAtLocation(mainView.main_container,
+			// Gravity.CENTER, 0, 0);
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-			layoutParams.addRule(Gravity.CENTER);
+			layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 			mainView.main_container.addView(this.groupDialogView, layoutParams);
 			isShowGroupDialog = true;
 		}
@@ -523,7 +525,8 @@ public class ShareSubView {
 		groupListBody.listItemsSequence.clear();
 		for (int i = 0; i < groups.size(); i++) {
 			// boolean a = groups.get(i) == "1765";
-			// log.e(a + "--------" + groups.get(i) + "---" + groupsMap.get("1765"));
+			// log.e(a + "--------" + groups.get(i) + "---" +
+			// groupsMap.get("1765"));
 			Group group = groupsMap.get(groups.get(i));
 			String key = "group#" + group.gid + "_" + group.name;
 			GroupDialogItem groupDialogItem;
