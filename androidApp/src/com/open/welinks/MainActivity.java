@@ -64,7 +64,6 @@ public class MainActivity extends Activity {
 		initImageLoader(getApplicationContext());
 		startPushService();
 		thisActivity.setContentView(R.layout.activity_welinks);
-		thisController.requestLocation();
 	}
 
 	public void startPushService() {

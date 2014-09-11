@@ -38,6 +38,7 @@ import com.open.welinks.MainActivity;
 import com.open.welinks.R;
 import com.open.welinks.ScanQRCodeActivity;
 import com.open.welinks.model.API;
+import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Circle;
@@ -82,6 +83,7 @@ public class MainController {
 	Gson gson = new Gson();
 
 	public String userPhone;
+	public String userAddress;
 
 	// public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	// public Spring mScaleSpring = mSpringSystem.createSpring();
@@ -104,6 +106,7 @@ public class MainController {
 
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
 
+		requestLocation();
 		getIntimatefriends();
 	}
 
@@ -324,6 +327,63 @@ public class MainController {
 		params.addBodyParameter("address", aMapLocation.getAddress());
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYLOCATION, params, responseHandlers.account_modifylocation);
+		userAddress = aMapLocation.getAddress();
+	}
+
+	public void chackLBSAccount() {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
+		params.addBodyParameter("filter", "phone:" + data.userInformation.currentUser.phone);
+		params.addBodyParameter("key", Constant.LBS_KSY);
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.GET, API.LBS_DATA_SEARCH, params, responseHandlers.lbsdata_search);
+	}
+
+	public void creataLBSAccount() {
+		final User user = data.userInformation.currentUser;
+		class LBSData {
+			public String _name = user.nickName;
+			public String _location = user.longitude + "," + user.latitude;
+			public String _address = userAddress;
+			public String phone = user.phone;
+			public String sex = user.sex;
+			public String haed = user.head;
+			public String mainBusiness = user.mainBusiness;
+			public String lastlogintime = user.lastlogintime;
+		}
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
+		params.addBodyParameter("loctype", "2");
+		params.addBodyParameter("data", gson.toJson(new LBSData()));
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.LBS_DATA_CREATE, params, responseHandlers.lbsdata_create);
+
+	}
+
+	public void modifyLBSAccount(final String id) {
+		final User user = data.userInformation.currentUser;
+		class LBSData {
+			public String _id = id;
+			public String _name = user.nickName;
+			public String _location = user.longitude + "," + user.latitude;
+			public String _address = userAddress;
+			public String phone = user.phone;
+			public String sex = user.sex;
+			public String haed = user.head;
+			public String mainBusiness = user.mainBusiness;
+			public String lastlogintime = user.lastlogintime;
+		}
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
+		params.addBodyParameter("loctype", "2");
+		params.addBodyParameter("data", gson.toJson(new LBSData()));
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.LBS_DATA_UPDATA, params, responseHandlers.lbsdata_updata);
 	}
 
 	public class TouchStatus {

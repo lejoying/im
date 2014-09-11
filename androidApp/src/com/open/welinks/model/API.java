@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://192.168.1.91/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://192.168.1.14/";// http://www.we-links.com/
 
 	/**
 	 * http://images2.we-links.com/
@@ -99,5 +99,11 @@ public class API {
 	 * http://www.we-links.com/api2/relation/getaskfriends 获取好友请求
 	 */
 	public static String RELATION_GETASKFRIENDS = API_DOMAIN + "api2/relation/getaskfriends";
+
+	// lbs
+	public static String LBS_DATA_CREATE = "http://yuntuapi.amap.com/datamanage/data/create";
+	public static String LBS_DATA_UPDATA = "http://yuntuapi.amap.com/datamanage/data/update";
+	public static String LBS_DATA_SEARCH = "http://yuntuapi.amap.com/datamanage/data/list";
+	public static String LBS_DATA_DELETE = "http://yuntuapi.amap.com/datamanage/data/delete";
 
 }

@@ -86,17 +86,17 @@ public class NearbyController {
 		type = thisActivity.getIntent().getStringExtra("type");
 		if ("account".equals(type)) {
 			status = Status.account;
-			mTableId = Constant.mAccountTableId;
+			mTableId = Constant.ACCOUNTTABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_account;
 			thisView.titleContent.setText("附近的人");
 		} else if ("group".equals(type)) {
 			status = Status.group;
-			mTableId = Constant.mGroupTableId;
+			mTableId = Constant.GROUPTABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
 			thisView.titleContent.setText("附近的群组");
 		} else if ("square".equals(type)) {
 			status = Status.square;
-			mTableId = Constant.mSquareTableId;
+			mTableId = Constant.SQUARETABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
 			thisView.titleContent.setText("附近的广场");
 		}

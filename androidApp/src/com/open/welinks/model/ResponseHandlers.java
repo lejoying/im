@@ -28,6 +28,7 @@ import com.open.welinks.view.ViewManage;
 public class ResponseHandlers {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public String tag = "ResponseHandlers";
 
@@ -198,7 +199,7 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("修改用户位置信息成功")||response.提示信息.equals("创建用户位置信息成功")) {
+			if (response.提示信息.equals("修改用户位置信息成功") || response.提示信息.equals("创建用户位置信息成功")) {
 				Log.e(tag, "---------------------修改用户信息成功");
 			}
 		};
@@ -207,12 +208,16 @@ public class ResponseHandlers {
 	public ResponseHandler<String> account_modifylocation = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public User account;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
-
+				data = parser.check();
+				data.userInformation.currentUser = response.account;
+				data.userInformation.isModified = true;
+				viewManage.mainView.thisController.chackLBSAccount();
 			}
 		};
 
@@ -529,6 +534,63 @@ public class ResponseHandlers {
 					viewManage.postNotifyView("DynamicListActivity");
 				}
 				Log.e(tag, response.accounts.size() + "---------------------获取好友请求成功");
+			}
+		};
+	};
+	public RequestCallBack<String> lbsdata_create = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public int status;
+			public String info;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.status == 1) {
+				Log.e(tag, "create lbs success");
+
+			} else {
+				Log.e(tag, "create======================" + response.info);
+			}
+		};
+	};
+	public RequestCallBack<String> lbsdata_updata = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public int status;
+			public String info;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.status == 1) {
+				Log.e(tag, "updata lbs success");
+
+			} else {
+				Log.e(tag, "updata======================" + response.info);
+			}
+		};
+	};
+	public RequestCallBack<String> lbsdata_search = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public int status;
+			public String info;
+			public int count;
+			public datas datas;
+
+			class datas {
+				public String _id;
+			}
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.status == 1) {
+				if (response.count == 0) {
+					viewManage.mainView.thisController.creataLBSAccount();
+				} else {
+					viewManage.mainView.thisController.modifyLBSAccount(response.datas._id);
+				}
+			} else {
+				Log.e(tag, "check======================" + response.info);
 			}
 		};
 	};

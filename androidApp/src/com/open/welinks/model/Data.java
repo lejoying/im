@@ -98,6 +98,10 @@ public class Data {
 			public String head = "Head";
 			public String accessKey = "";
 			public String flag = "none";
+
+			public String lastlogintime;
+			public String longitude;
+			public String latitude;
 		}
 
 		public LocalConfig localConfig;
