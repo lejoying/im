@@ -13,6 +13,13 @@
     <string name="selectAlbum_text">选择相册</string>
     <string name="action_settings">设置</string>
     <string name="praise_text">称赞者</string>
+    <string name="groupName_text">群组名称</string>
+    <string name="groupPosition_text">群组位置</string>
+    <string name="ok_text">完成</string>
+    <string name="createGroupOk_text">恭喜您, 您的群组已经创建成功, 赶快邀请更多的小伙伴来加入您的群组吧   !</string>
+    <string name="invitaMailFriend_text">邀请通讯录好友</string>
+    <string name="invitaLocalFriend_text">邀请本地好友</string>
+    <string name="searchNearFriend_text">搜索附近好友</string>
 
     <!-- alert message -->
     <string name="alert_text_phonenotnull">手机号不能为空</string>

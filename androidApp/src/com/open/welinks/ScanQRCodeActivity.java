@@ -303,7 +303,7 @@ public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callba
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						int index = ScanContent.indexOf(":", 3);
+						// int index = ScanContent.indexOf(":", 3);
 						// mMainModeManager.back();
 						destoryCamera();
 						// webScanQRCodelogin(ScanContent.substring(index + 1));
@@ -400,7 +400,6 @@ public class ScanQRCodeActivity extends Activity implements SurfaceHolder.Callba
 		httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, httpClient.new ResponseHandler<String>() {
 			class Response {
 				public String 提示信息;
-				public String 失败原因;
 				public List<Friend> accounts;
 			}
 
