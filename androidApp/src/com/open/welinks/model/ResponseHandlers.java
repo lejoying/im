@@ -717,10 +717,10 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.status == 1) {
-				Log.e(tag, "create lbs success");
+				log.e(tag, "create lbs success");
 
 			} else {
-				Log.e(tag, "create*" + response.info);
+				log.e(tag, "create*" + response.info);
 			}
 		};
 	};
@@ -733,10 +733,10 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.status == 1) {
-				Log.e(tag, "updata lbs success");
+				log.e(tag, "updata lbs success");
 
 			} else {
-				Log.e(tag, "updata*" + response.info);
+				log.e(tag, "updata*" + response.info);
 			}
 		};
 	};
