@@ -662,7 +662,7 @@ public class ResponseHandlers {
 				Log.e(tag, "create lbs success");
 
 			} else {
-				Log.e(tag, "create======================" + response.info);
+				Log.e(tag, "create*" + response.info);
 			}
 		};
 	};
@@ -678,7 +678,7 @@ public class ResponseHandlers {
 				Log.e(tag, "updata lbs success");
 
 			} else {
-				Log.e(tag, "updata======================" + response.info);
+				Log.e(tag, "updata*" + response.info);
 			}
 		};
 	};
@@ -687,23 +687,26 @@ public class ResponseHandlers {
 			public int status;
 			public String info;
 			public int count;
-			public datas datas;
+			public ArrayList<data> datas;
 
-			class datas {
+			class data {
 				public String _id;
 			}
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
-			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.status == 1) {
-				if (response.count == 0) {
-					viewManage.mainView.thisController.creataLBSAccount();
-				} else {
-					viewManage.mainView.thisController.modifyLBSAccount(response.datas._id);
+			try {
+
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.status == 1) {
+					if (response.count == 0) {
+						viewManage.mainView.thisController.creataLBSAccount();
+					} else {
+						viewManage.mainView.thisController.modifyLBSAccount(response.datas.get(0)._id);
+					}
 				}
-			} else {
-				Log.e(tag, "check======================" + response.info);
+			} catch (Exception e) {
+
 			}
 		};
 	};

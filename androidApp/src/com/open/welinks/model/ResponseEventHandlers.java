@@ -235,9 +235,13 @@ public class ResponseEventHandlers {
 
 	public void parseEvent(ResponseInfo<String> responseInfo) {
 		Log.e(tag, responseInfo.result);
-		Message message = gson.fromJson(responseInfo.result, Message.class);
-		if (message.sendType != null) {
-			responseEventHandlers.handleEvent(message);
+		Message message = null;
+		try {
+			message = gson.fromJson(responseInfo.result, Message.class);
+			if (message.sendType != null) {
+				responseEventHandlers.handleEvent(message);
+			}
+		} catch (Exception e) {
 		}
 	}
 

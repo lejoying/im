@@ -1128,12 +1128,13 @@ lbsManage.modifyAccountLocation = function (data, response) {
             },
             success: function (info) {
                 var info = JSON.parse(info);
+                console.log(info.info+info.count);
                 if (info.status == 1) {
                     if (info.count == 0) {
-                        createaccountlocation(data, response);
+//                        createaccountlocation(data, response);
                     } else {
                         var id = info.datas[0]._id;
-                        modifyaccountlocation(data, id, response);
+                       // modifyaccountlocation(data, id, response);
                     }
                 } else {
                     response.write(JSON.stringify({

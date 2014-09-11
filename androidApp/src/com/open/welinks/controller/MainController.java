@@ -106,8 +106,8 @@ public class MainController {
 
 		data.tempData.statusBarHeight = getStatusBarHeight(thisActivity);
 
-		requestLocation();
 		getIntimatefriends();
+		requestLocation();
 	}
 
 	public void onResume() {
@@ -318,6 +318,7 @@ public class MainController {
 	}
 
 	public void modifyLocation(AMapLocation aMapLocation) {
+		data = parser.check();
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
@@ -333,31 +334,30 @@ public class MainController {
 	public void chackLBSAccount() {
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
-		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
-		params.addBodyParameter("filter", "phone:" + data.userInformation.currentUser.phone);
-		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addQueryStringParameter("tableid", Constant.ACCOUNTTABLEID);
+		params.addQueryStringParameter("filter", "phone:" + data.userInformation.currentUser.phone);
+		params.addQueryStringParameter("key", Constant.LBS_KSY);
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.GET, API.LBS_DATA_SEARCH, params, responseHandlers.lbsdata_search);
 	}
 
 	public void creataLBSAccount() {
 		final User user = data.userInformation.currentUser;
-		class LBSData {
-			public String _name = user.nickName;
-			public String _location = user.longitude + "," + user.latitude;
-			public String _address = userAddress;
-			public String phone = user.phone;
-			public String sex = user.sex;
-			public String haed = user.head;
-			public String mainBusiness = user.mainBusiness;
-			public String lastlogintime = user.lastlogintime;
-		}
+		LBSData data = new LBSData();
+		data._name = user.nickName;
+		data._location = user.longitude + "," + user.latitude;
+		data._address = userAddress;
+		data.phone = user.phone;
+		data.sex = user.sex;
+		data.haed = user.head;
+		data.mainBusiness = user.mainBusiness;
+		data.lastlogintime = user.lastlogintime;
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("key", Constant.LBS_KSY);
 		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
 		params.addBodyParameter("loctype", "2");
-		params.addBodyParameter("data", gson.toJson(new LBSData()));
+		params.addBodyParameter("data", gson.toJson(data));
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.LBS_DATA_CREATE, params, responseHandlers.lbsdata_create);
 
@@ -365,25 +365,37 @@ public class MainController {
 
 	public void modifyLBSAccount(final String id) {
 		final User user = data.userInformation.currentUser;
-		class LBSData {
-			public String _id = id;
-			public String _name = user.nickName;
-			public String _location = user.longitude + "," + user.latitude;
-			public String _address = userAddress;
-			public String phone = user.phone;
-			public String sex = user.sex;
-			public String haed = user.head;
-			public String mainBusiness = user.mainBusiness;
-			public String lastlogintime = user.lastlogintime;
-		}
+		LBSData data = new LBSData();
+		data._id = id;
+		data._name = user.nickName;
+		data._location = user.longitude + "," + user.latitude;
+		data._address = userAddress;
+		data.phone = user.phone;
+		data.sex = user.sex;
+		data.haed = user.head;
+		data.mainBusiness = user.mainBusiness;
+		data.lastlogintime = user.lastlogintime;
+
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("key", Constant.LBS_KSY);
 		params.addBodyParameter("tableid", Constant.ACCOUNTTABLEID);
 		params.addBodyParameter("loctype", "2");
-		params.addBodyParameter("data", gson.toJson(new LBSData()));
+		params.addBodyParameter("data", gson.toJson(data));
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 		httpUtils.send(HttpMethod.POST, API.LBS_DATA_UPDATA, params, responseHandlers.lbsdata_updata);
+	}
+
+	public class LBSData {
+		public String _id;
+		public String _name;
+		public String _location;
+		public String _address;
+		public String phone;
+		public String sex;
+		public String haed;
+		public String mainBusiness;
+		public String lastlogintime;
 	}
 
 	public class TouchStatus {
