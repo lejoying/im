@@ -608,30 +608,40 @@ groupManage.getallmembers = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 var members = [];
+                var membersMap = {};
                 for (var i = 0; i < results.length; i++) {
                     var member = results[i].account.data;
                     var account = {
-                        ID: member.ID,
+                        id: member.ID,
                         phone: member.phone,
                         nickName: member.nickName,
-                        mainBusiness: member.mainBusiness,
-                        head: member.head,
+                        mainBusiness: member.mainBusiness || "",
+                        head: member.head || "Head",
                         sex: member.sex,
-                        byPhone: member.byPhone
+                        byPhone: member.byPhone,
+                        longitude: member.longitude || "",
+                        latitude: member.latitude || "",
+                        lastlogintime: member.lastlogintime || "",
+                        userBackground: member.userBackground || "Back"
                     };
-                    members.push(account);
+                    members.push(account.phone);
+                    membersMap[account.phone] = account;
                 }
                 console.log(gid + "群組好友个数：" + members.length);
                 response.write(JSON.stringify({
                     "提示信息": "获取群组成员成功",
-                    members: members
+                    gid: gid,
+                    members: members,
+                    membersMap: membersMap
                 }))
                 response.end();
             } else {
                 console.log(gid + "群組好友个数：" + results.length);
                 response.write(JSON.stringify({
                     "提示信息": "获取群组成员成功",
-                    members: []
+                    gid: gid,
+                    members: [],
+                    membersMap: {}
                 }));
                 response.end();
             }
@@ -671,11 +681,12 @@ groupManage.modify = function (data, response) {
             response.end();
             return;
         }
-        checkGroupNode(gid);
-        checkGroupLocation(gid);
+        checkGroupNode(parseInt(gid));
+//        checkGroupLocation(gid);
     }
 
     function checkGroupNode(gid) {
+        console.log(gid);
         var query = [
             'MATCH (group:Group)-[r:HAS_MEMBER]->(account:Account)',
             'WHERE group.gid={gid}',
@@ -698,6 +709,7 @@ groupManage.modify = function (data, response) {
                 for (var index in results) {
                     var accountData = results[index].account.data;
                     accounts[accountData.phone] = accountData;
+                    console.log(accountData.phone);
                 }
                 modifyGroupNode(results[0].group.data.gid, accounts);
             } else {
@@ -953,6 +965,7 @@ groupManage.getusergroups = function (data, response) {
  ***************************************/
 groupManage.get = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var maxPrime = 100000000000;
     var gid = data.gid;
     var type = data.type;
@@ -983,7 +996,7 @@ groupManage.get = function (data, response) {
                 if (isNaN(gid)) {
                     throw "gid不是数值";
                 } else {
-                    gid = maxPrime - gid;
+                    gid = gid;
                     getGroupNode(gid);
                 }
             } catch (e) {
@@ -1016,7 +1029,25 @@ groupManage.get = function (data, response) {
                 console.log(error);
                 return;
             } else if (results.length > 0) {
-                var group = results.pop().group.data;
+                var groupData = results.pop().group.data;
+                var location;
+                try {
+                    location = JSON.parse(groupData.location);
+                } catch (e) {
+                    location = {
+                        longitude: 0,
+                        latitude: 0
+                    }
+                }
+                var group = {
+                    gid: groupData.gid,
+                    icon: groupData.icon || "",
+                    name: groupData.name,
+                    longitude: location.longitude,
+                    latitude: location.latitude,
+                    description: groupData.description || "",
+                    background: groupData.background || ""
+                };
                 response.write(JSON.stringify({
                     "提示信息": "获取群组信息成功",
                     group: group

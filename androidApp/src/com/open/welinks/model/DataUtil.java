@@ -37,7 +37,19 @@ public class DataUtil {
 		http.send(HttpRequest.HttpMethod.POST, API.RELATION_GETINTIMATEFRIENDS, params, responseHandlers.getMessageCallBack);
 	}
 
-	public static void getUserCurrentGroup(String gid) {
+	public static void getUserCurrentGroupInfomation(String gid) {
+		parser.check();
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		User user = data.userInformation.currentUser;
+		params.addBodyParameter("phone", user.phone);
+		params.addBodyParameter("accessKey", user.accessKey);
+		params.addBodyParameter("gid", gid + "");
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, responseHandlers.getGroupInfomationCallBack);
+	}
+
+	public static void getUserCurrentGroupMembers(String gid) {
 		parser.check();
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -46,7 +58,7 @@ public class DataUtil {
 		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("gid", gid);
 
-		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, responseHandlers.getGroupCallBack);
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETALLMEMBERS, params, responseHandlers.getCurrentGroupMembersCallBack);
 	}
 
 	public static void getUserInfomation() {

@@ -329,7 +329,7 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			params.addBodyParameter("description", group.description);
 			params.addBodyParameter("name", group.name);
 			ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-			httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, responseHandlers.group_modify);
+			httpUtils.send(HttpMethod.POST, API.GROUP_MODIFY, params, responseHandlers.group_modify);
 		}
 		setResult(Activity.RESULT_OK);
 		finish();

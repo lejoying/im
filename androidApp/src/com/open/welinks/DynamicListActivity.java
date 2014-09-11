@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -34,7 +35,9 @@ import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.view.ThreeChoicesView;
 import com.open.welinks.view.ViewManage;
+import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
 
 public class DynamicListActivity extends Activity {
 
@@ -45,6 +48,7 @@ public class DynamicListActivity extends Activity {
 
 	public RelativeLayout backView;
 	public TextView backTitleView;
+	public RelativeLayout rightContainerView;
 
 	public ListView eventContainer;
 
@@ -59,6 +63,10 @@ public class DynamicListActivity extends Activity {
 	public List<Message> userEventMessages = new ArrayList<Message>();
 	public Map<String, Friend> friendsMap;
 	public Gson gson = new Gson();
+
+	public Bitmap bitmap;
+	public int selectType = 3;
+	public ThreeChoicesView threeChoicesView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -94,8 +102,6 @@ public class DynamicListActivity extends Activity {
 		eventContainer.setAdapter(eventListAdapter);
 	}
 
-	public Bitmap bitmap;
-
 	public void initView() {
 		mInflater = this.getLayoutInflater();
 
@@ -107,9 +113,17 @@ public class DynamicListActivity extends Activity {
 		backView = (RelativeLayout) findViewById(R.id.backView);
 		backTitleView = (TextView) findViewById(R.id.backTitleView);
 		backTitleView.setText("动态列表");
+		rightContainerView = (RelativeLayout) findViewById(R.id.rightContainer);
 
 		eventContainer = (ListView) findViewById(R.id.eventContainer);
+
+		threeChoicesView = new ThreeChoicesView(this, selectType);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.CENTER_IN_PARENT);
+		rightContainerView.addView(threeChoicesView, params);
 	}
+
+	public OnItemClickListener mOnItemClickListener;
 
 	public void initializeListeners() {
 		mOnClickListener = new OnClickListener() {
@@ -121,9 +135,28 @@ public class DynamicListActivity extends Activity {
 				}
 			}
 		};
+		mOnItemClickListener = threeChoicesView.new OnItemClickListener() {
+			@Override
+			public void onButtonCilck(int position) {
+				selectType = position;
+				changData(selectType);
+			}
+		};
+	}
+
+	private void changData(int selectType) {
+		if (selectType == 1) {
+			eventContainer.setVisibility(View.GONE);
+		} else if (selectType == 2) {
+			eventContainer.setVisibility(View.GONE);
+		} else if (selectType == 3) {
+			eventContainer.setVisibility(View.VISIBLE);
+		}
+
 	}
 
 	public void bindEvent() {
+		threeChoicesView.setOnItemClickListener(mOnItemClickListener);
 		this.backView.setOnClickListener(mOnClickListener);
 	}
 

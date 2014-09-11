@@ -83,19 +83,19 @@ public class ResponseEventHandlers {
 	public void handleGroupDataupdateEvent(Message message) {
 		data.event.groupEvents.add(message);
 		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
-		DataUtil.getUserCurrentGroup(event.gid);
+		DataUtil.getUserCurrentGroupInfomation(event.gid);
 	}
 
 	public void handleGroupRemovemembersEvent(Message message) {
 		data.event.groupEvents.add(message);
 		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
-		DataUtil.getUserCurrentGroup(event.gid);
+		DataUtil.getUserCurrentGroupMembers(event.gid);
 	}
 
 	public void handleGroupAddmembersEvent(Message message) {
 		data.event.groupEvents.add(message);
 		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
-		DataUtil.getUserCurrentGroup(event.gid);
+		DataUtil.getUserCurrentGroupMembers(event.gid);
 	}
 
 	public void handleRelationBlacklistEvent(Message message) {
