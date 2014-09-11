@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import android.content.Intent;
@@ -30,6 +31,8 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
+import com.amap.api.maps2d.AMapUtils;
+import com.amap.api.maps2d.model.LatLng;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -70,6 +73,7 @@ public class NearbyController {
 
 	public String mTableId;
 	public ArrayList<Map<String, Object>> mInfomations;
+	public AMapLocation mAmapLocation;
 
 	public Status status;
 
@@ -86,17 +90,17 @@ public class NearbyController {
 		type = thisActivity.getIntent().getStringExtra("type");
 		if ("account".equals(type)) {
 			status = Status.account;
-			mTableId = Constant.mAccountTableId;
+			mTableId = Constant.ACCOUNTTABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_account;
 			thisView.titleContent.setText("附近的人");
 		} else if ("group".equals(type)) {
 			status = Status.group;
-			mTableId = Constant.mGroupTableId;
+			mTableId = Constant.GROUPTABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
 			thisView.titleContent.setText("附近的群组");
 		} else if ("square".equals(type)) {
 			status = Status.square;
-			mTableId = Constant.mSquareTableId;
+			mTableId = Constant.SQUARETABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
 			thisView.titleContent.setText("附近的广场");
 		}
@@ -141,13 +145,15 @@ public class NearbyController {
 					if (result != null && result.getQuery() != null) {
 						if (result.getQuery().equals(mQuery)) {
 							mCloudItems = result.getClouds();
+							LatLng point = new LatLng(mAmapLocation.getLatitude(), mAmapLocation.getLongitude());
 							mInfomations.clear();
 							for (CloudItem item : mCloudItems) {
 								Map<String, Object> map = new HashMap<String, Object>();
+								LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
 								map.put("location", item.getLatLonPoint().toString());
 								map.put("name", item.getTitle());
 								map.put("address", item.getSnippet());
-								map.put("distance", item.getDistance());
+								map.put("distance", item.getDistance() == -1 ? (int) AMapUtils.calculateLineDistance(point, point2) : item.getDistance());
 								Iterator iter = item.getCustomfield().entrySet().iterator();
 								while (iter.hasNext()) {
 									Map.Entry entry = (Map.Entry) iter.next();
@@ -198,7 +204,9 @@ public class NearbyController {
 				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
 				mLocationManagerProxy.destroy();
 				if (amapLocation != null && amapLocation.getAMapException().getErrorCode() == 0) {
-					searchNearby(amapLocation);
+					mAmapLocation = amapLocation;
+					// searchNearby(amapLocation);
+					searchNearByPolygon();
 				} else {
 
 				}
@@ -236,6 +244,24 @@ public class NearbyController {
 		mQuery.setSortingrules(mSortingrules);
 
 		mCloudSearch.searchCloudAsyn(mQuery);
+	}
+
+	public void searchNearByPolygon() {
+		List<LatLonPoint> points = new ArrayList<LatLonPoint>();
+		points.add(new LatLonPoint(5.965754, 70.136719));
+		points.add(new LatLonPoint(56.170023, 140.097656));
+		try {
+			mQuery = new Query(mTableId, "", new SearchBound(points));
+		} catch (AMapCloudException e) {
+			e.printStackTrace();
+		}
+		mQuery.setPageSize(50);
+		// mQuery.setPageNum(1);
+		mSortingrules = new Sortingrules(1);
+		mQuery.setSortingrules(mSortingrules);
+		// mQuery.setBound(new SearchBound(points));
+		mCloudSearch.searchCloudAsyn(mQuery);
+
 	}
 
 	public void setImageOnView(String fileName, ImageView view) {

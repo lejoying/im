@@ -131,7 +131,7 @@ public class NearbyView {
 				holder.sex.setImageResource(sexImageResource);
 				holder.name.setText((String) infomation.get("name"));
 				holder.distance.setText(DistanceUtils.getDistance((Integer) infomation.get("distance")));
-				holder.recently.setText(DateUtil.getChatMessageListTime(Long.valueOf((String) infomation.get("recently"))));
+				holder.recently.setText(DateUtil.getChatMessageListTime(Long.valueOf((String) infomation.get("lastlogintime"))));
 				holder.age.setText("20");
 				convertView.setTag(R.id.tag_first, "point");
 				convertView.setTag(R.id.tag_second, (String) infomation.get("phone"));

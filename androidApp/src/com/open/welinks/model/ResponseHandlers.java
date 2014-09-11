@@ -242,12 +242,16 @@ public class ResponseHandlers {
 	public ResponseHandler<String> account_modifylocation = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
+			public User account;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改用户信息成功")) {
-
+				data = parser.check();
+				data.userInformation.currentUser = response.account;
+				data.userInformation.isModified = true;
+				viewManage.mainView.thisController.chackLBSAccount();
 			}
 		};
 
@@ -701,6 +705,66 @@ public class ResponseHandlers {
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();
+			}
+		};
+	};
+	public RequestCallBack<String> lbsdata_create = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public int status;
+			public String info;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.status == 1) {
+				log.e(tag, "create lbs success");
+
+			} else {
+				log.e(tag, "create*" + response.info);
+			}
+		};
+	};
+	public RequestCallBack<String> lbsdata_updata = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public int status;
+			public String info;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.status == 1) {
+				log.e(tag, "updata lbs success");
+
+			} else {
+				log.e(tag, "updata*" + response.info);
+			}
+		};
+	};
+	public RequestCallBack<String> lbsdata_search = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public int status;
+			public String info;
+			public int count;
+			public ArrayList<data> datas;
+
+			class data {
+				public String _id;
+			}
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			try {
+
+				Response response = gson.fromJson(responseInfo.result, Response.class);
+				if (response.status == 1) {
+					if (response.count == 0) {
+						viewManage.mainView.thisController.creataLBSAccount();
+					} else {
+						viewManage.mainView.thisController.modifyLBSAccount(response.datas.get(0)._id);
+					}
+				}
+			} catch (Exception e) {
+
 			}
 		};
 	};
