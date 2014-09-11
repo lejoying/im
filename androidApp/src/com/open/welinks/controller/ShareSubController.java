@@ -31,6 +31,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.GroupInfomationActivity;
+import com.open.welinks.GroupListActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -169,6 +170,9 @@ public class ShareSubController {
 						} else {
 							Log.d(tag, "onTouch: " + (String) viewTag);
 						}
+					} else if (view_class.equals("group_setting")) {
+						onTouchDownView = view;
+						isTouchDown = true;
 					}
 
 					Log.i(tag, "ACTION_DOWN---" + view_class);
@@ -193,6 +197,10 @@ public class ShareSubController {
 					thisView.showReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
+				} else if (view.equals(thisView.groupManageView)) {
+					Intent intent = new Intent(thisActivity, GroupListActivity.class);
+					thisActivity.startActivity(intent);
+					thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.releaseImageTextButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					mainController.thisActivity.startActivity(intent);
@@ -273,6 +281,8 @@ public class ShareSubController {
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnClickListener(mOnClickListener);
 		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
+		thisView.groupManageView.setOnClickListener(mOnClickListener);
+		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {
@@ -349,6 +359,8 @@ public class ShareSubController {
 			if (view_class.equals("share_view")) {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_view")) {
+				onTouchDownView.performClick();
+			} else if (view_class.equals("group_setting")) {
 				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;

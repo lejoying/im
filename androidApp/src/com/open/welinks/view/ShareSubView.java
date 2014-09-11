@@ -94,6 +94,8 @@ public class ShareSubView {
 	public RelativeLayout groupMembersListContentView;
 	public ImageView releaseShareView;
 
+	public View groupManageView;
+
 	public int shareImageHeight;
 
 	public float imageHeightScale = 0.5686505598114319f;
@@ -472,6 +474,9 @@ public class ShareSubView {
 		// LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		// groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		// groupPopWindow.setOutsideTouchable(true);
+
+		groupManageView = groupDialogView.findViewById(R.id.groups_manage);
+		groupManageView.setTag(R.id.tag_class, "group_setting");
 
 		TouchView mainContentView = (TouchView) groupDialogView;
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);

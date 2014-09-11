@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
-import com.open.welinks.service.PushService;
 import com.open.welinks.view.Alert;
 import com.open.welinks.view.Alert.AlertInputDialog;
 
@@ -32,6 +31,11 @@ public class SettingActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initView();
+		initEvent();
+	}
+
+	private void initView() {
 		setContentView(R.layout.activity_setting);
 		backView = (RelativeLayout) findViewById(R.id.backView);
 		exitCurrentUserView = (RelativeLayout) findViewById(R.id.rl_exitCurrentUser);
@@ -40,7 +44,6 @@ public class SettingActivity extends Activity implements OnClickListener {
 		about = findViewById(R.id.about);
 		disclaimer = findViewById(R.id.disclaimer);
 		opinion = findViewById(R.id.opinion);
-		initEvent();
 	}
 
 	private void initEvent() {
