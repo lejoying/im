@@ -62,7 +62,7 @@ public class ShareSubView {
 
 	public String tag = "ShareSubView";
 
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
@@ -222,9 +222,9 @@ public class ShareSubView {
 				sharesMessageBody0.cardView.setX(0);
 				this.shareMessageListBody.height = this.shareMessageListBody.height + 50 * displayMetrics.density;
 				this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams_2);
-				i--;
+				// i--;
 				lastShareMessage = shareMessage;
-				continue;
+				// continue;
 			}
 			// .........................
 			log.e("message#---" + shareMessage.gsid);
@@ -680,20 +680,25 @@ public class ShareSubView {
 					downloadFile.setDownloadFileListener(thisController.downloadListener);
 					downloadFileList.addDownloadFile(downloadFile);
 				} else {
-					imageLoader.displayImage(path, imageBody.imageView, displayImageOptions, new SimpleImageLoadingListener() {
-						@Override
-						public void onLoadingStarted(String imageUri, View view) {
-						}
+					Bitmap bitmap = thisController.fileHandlers.bitmaps.get(path);
+					if (bitmap != null) {
+						imageBody.imageView.setImageBitmap(bitmap);
+					} else {
+						imageLoader.displayImage(path, imageBody.imageView, displayImageOptions, new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingStarted(String imageUri, View view) {
+							}
 
-						@Override
-						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-						}
+							@Override
+							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+							}
 
-						@Override
-						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+							@Override
+							public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 
-						}
-					});
+							}
+						});
+					}
 				}
 			}
 

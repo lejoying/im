@@ -1004,7 +1004,7 @@ groupManage.get = function (data, response) {
             'RETURN group'
         ].join('\n');
         var params = {
-            gid: gid
+            gid: parseInt(gid)
         };
         db.query(query, params, function (error, results) {
             if (error) {

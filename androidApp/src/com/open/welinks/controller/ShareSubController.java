@@ -37,6 +37,8 @@ import com.open.welinks.ShareReleaseImageTextActivity;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
@@ -47,6 +49,9 @@ public class ShareSubController {
 	public Data data = Data.getInstance();
 	public String tag = "ShareSubController";
 	public MyLog log = new MyLog(tag, true);
+	public Parser parser = Parser.getInstance();
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public ShareSubView thisView;
 	public Context context;
@@ -95,7 +100,10 @@ public class ShareSubController {
 			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
 				if (instance.view.getTag() != null) {
-					options = thisView.displayImageOptions;
+					String tag = (String) instance.view.getTag();
+					if ("head".equals(tag)) {
+						options = thisView.displayImageOptions;
+					}
 				}
 				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
 					@Override
@@ -111,6 +119,9 @@ public class ShareSubController {
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+						if (instance.view.getTag() != null) {
+							fileHandlers.bitmaps.put(imageUri, loadedImage);
+						}
 					}
 				});
 			}
@@ -192,21 +203,24 @@ public class ShareSubController {
 					String type = tagContent.substring(0, index);
 					String content = tagContent.substring(index + 1);
 					if ("GroupDialogContentItem".equals(type)) {
+						parser.check();
 						// modify data
-						data.localStatus.localData.currentSelectedGroup = content;
-						// modify UI
 						thisView.dismissGroupDialog();
-						Group group = data.relationship.groupsMap.get(content);
-						TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
-						data.localStatus.localData.currentSelectedGroup = group.gid + "";
-						String name = group.name;
-						if (name.length() > 8) {
-							name = name.substring(0, 8);
+						if (!data.localStatus.localData.currentSelectedGroup.equals(content)) {
+							data.localStatus.localData.currentSelectedGroup = content;
+							// modify UI
+							Group group = data.relationship.groupsMap.get(content);
+							TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
+							data.localStatus.localData.currentSelectedGroup = group.gid + "";
+							String name = group.name;
+							if (name.length() > 8) {
+								name = name.substring(0, 8);
+							}
+							shareTopMenuGroupName.setText(name);
+							thisView.modifyCurrentShowGroup();
+							getCurrentGroupShareMessages();
+							thisView.showGroupMembers();
 						}
-						shareTopMenuGroupName.setText(name);
-						thisView.modifyCurrentShowGroup();
-						getCurrentGroupShareMessages();
-						thisView.showGroupMembers();
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
 						intent.putExtra("gsid", content);

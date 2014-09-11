@@ -88,6 +88,7 @@ public class ResponseHandlers {
 					user.mainBusiness = friend.mainBusiness;
 					user.head = friend.head;
 					data.userInformation.isModified = true;
+					viewManage.postNotifyView("MeSubView");
 				}
 			}
 		};
@@ -231,7 +232,7 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("修改用户位置信息成功")||response.提示信息.equals("创建用户位置信息成功")) {
+			if (response.提示信息.equals("修改用户位置信息成功") || response.提示信息.equals("创建用户位置信息成功")) {
 				Log.e(tag, "---------------------修改用户信息成功");
 			}
 		};

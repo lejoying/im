@@ -1,7 +1,6 @@
 package com.open.welinks;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -64,7 +63,6 @@ public class MainActivity extends Activity {
 		initImageLoader(getApplicationContext());
 		startPushService();
 		thisActivity.setContentView(R.layout.activity_welinks);
-		thisController.requestLocation();
 	}
 
 	public void startPushService() {

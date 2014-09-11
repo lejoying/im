@@ -1,7 +1,11 @@
 package com.open.welinks.model;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
+import java.util.Hashtable;
+import java.util.Map;
 
+import android.graphics.Bitmap;
 import android.os.Environment;
 
 public class FileHandlers {
@@ -15,6 +19,23 @@ public class FileHandlers {
 	public File sdcardHeadImageFolder;
 	public File sdcardBackImageFolder;
 	public File sdcardThumbnailFolder;
+
+	public class Bitmaps {
+		public Map<String, SoftReference<Bitmap>> softBitmaps = new Hashtable<String, SoftReference<Bitmap>>();
+
+		public void put(String key, Bitmap bitmap) {
+			softBitmaps.put(key, new SoftReference<Bitmap>(bitmap));
+		}
+
+		public Bitmap get(String key) {
+			if (softBitmaps.get(key) == null) {
+				return null;
+			}
+			return softBitmaps.get(key).get();
+		}
+	}
+
+	public Bitmaps bitmaps = new Bitmaps();
 
 	public static FileHandlers getInstance() {
 		if (fileHandlers == null) {

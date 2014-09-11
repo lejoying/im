@@ -1,5 +1,9 @@
 package com.open.welinks.view;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -12,10 +16,14 @@ import com.facebook.rebound.SpringSystem;
 import com.open.welinks.R;
 import com.open.welinks.controller.MeSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.Parser;
+import com.open.welinks.utils.MCImageUtils;
 
 public class MeSubView {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public String tag = "MeSubView";
 
@@ -36,11 +44,19 @@ public class MeSubView {
 
 	public MeSubController thisController;
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	public MeSubView(MainView mainView) {
 		this.mainView = mainView;
+		viewManage.meSubView = this;
 	}
 
+	public Bitmap bitmap;
+
 	public void initViews() {
+		Resources resources = mainView.thisActivity.getResources();
+		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 		userHeadImageView = (ImageView) mainView.meView.findViewById(R.id.iv_headImage);
 		userNickNameView = (TextView) mainView.meView.findViewById(R.id.tv_userNickname);
@@ -54,5 +70,16 @@ public class MeSubView {
 
 		mAppIconToNameView = (ImageView) mainView.meView.findViewById(R.id.appIconToName);
 		mRootView = mAppIconToNameView;
+		setUserData();
+	}
+
+	public void setUserData() {
+		parser.check();
+		User user = data.userInformation.currentUser;
+		if (user != null) {
+			this.userHeadImageView.setImageBitmap(bitmap);
+			this.userNickNameView.setText(user.nickName);
+			this.userBusinessView.setText(user.mainBusiness);
+		}
 	}
 }
