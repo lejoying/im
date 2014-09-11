@@ -12,6 +12,7 @@ public class ViewManage {
 	public Debug1View debug1View = null;
 	public LoginView loginView = null;
 	public MainView mainView = null;
+	public MeSubView meSubView;
 	public ChatView chatView = null;
 
 	public DynamicListActivity dynamicListActivity = null;
@@ -47,6 +48,10 @@ public class ViewManage {
 		} else if (viewName.equals("DynamicListActivity")) {
 			if (dynamicListActivity != null) {
 				dynamicListActivity.eventListAdapter.notifyDataSetChanged();
+			}
+		} else if (viewName.equals("MeSubView")) {
+			if (meSubView != null) {
+				meSubView.setUserData();
 			}
 		}
 	}

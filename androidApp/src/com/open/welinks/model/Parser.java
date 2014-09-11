@@ -67,6 +67,9 @@ public class Parser {
 
 			String squareContent = getFromAssets("square.js");
 			data.squares = gson.fromJson(squareContent, Squares.class);
+
+			String eventContent = getFromAssets("event.js");
+			data.event = gson.fromJson(eventContent, Event.class);
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");
 			data = null;
@@ -241,39 +244,39 @@ public class Parser {
 		String phone = data.userInformation.currentUser.phone;
 
 		if (data.userInformation.isModified) {
-			data.userInformation.isModified=false;
+			data.userInformation.isModified = false;
 			String userInformationStr = gson.toJson(data.userInformation);
 			saveToRootForder("userInformation.js", userInformationStr);
 		}
 
 		if (data.relationship.isModified) {
-			data.relationship.isModified=false;
+			data.relationship.isModified = false;
 
 			String relationshipStr = gson.toJson(data.relationship);
 			saveToUserForder(phone, "relationship.js", relationshipStr);
 		}
 
 		if (data.shares.isModified) {
-			data.shares.isModified=false;
+			data.shares.isModified = false;
 			String sharesStr = gson.toJson(data.shares);
 			saveToUserForder(phone, "share.js", sharesStr);
 		}
 
 		if (data.squares.isModified) {
-			data.squares.isModified=false;
+			data.squares.isModified = false;
 			String squaresStr = gson.toJson(data.squares);
 			saveToUserForder(phone, "square.js", squaresStr);
 		}
 
 		if (data.messages.isModified) {
-			data.messages.isModified=false;
+			data.messages.isModified = false;
 
 			String messagesStr = gson.toJson(data.messages);
 			saveToUserForder(phone, "message.js", messagesStr);
 		}
-		
+
 		if (data.event.isModified) {
-			data.event.isModified=false;
+			data.event.isModified = false;
 
 			String eventStr = gson.toJson(data.event);
 			saveToUserForder(phone, "event.js", eventStr);

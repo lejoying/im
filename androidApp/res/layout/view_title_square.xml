@@ -46,7 +46,7 @@
             <ImageView
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:layout_alignRight="@+id/tv_title"
+                android:layout_alignRight="@+id/squareName"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"

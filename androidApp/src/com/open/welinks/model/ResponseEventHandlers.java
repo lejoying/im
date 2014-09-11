@@ -72,24 +72,40 @@ public class ResponseEventHandlers {
 		}
 	}
 
+	public class GroupEvent {
+		public String type;
+		public String time;
+		public String gid;
+		public List<String> members;
+		public String phone;
+	}
+
 	public void handleGroupDataupdateEvent(Message message) {
-		data.event.userEvents.add(message);
+		data.event.groupEvents.add(message);
+		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+		DataUtil.getUserCurrentGroup(event.gid);
 	}
 
 	public void handleGroupRemovemembersEvent(Message message) {
-		data.event.userEvents.add(message);
+		data.event.groupEvents.add(message);
+		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+		DataUtil.getUserCurrentGroup(event.gid);
 	}
 
 	public void handleGroupAddmembersEvent(Message message) {
-		data.event.userEvents.add(message);
+		data.event.groupEvents.add(message);
+		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+		DataUtil.getUserCurrentGroup(event.gid);
 	}
 
 	public void handleRelationBlacklistEvent(Message message) {
 		data.event.userEvents.add(message);
+		DataUtil.getIntimateFriends();
 	}
 
 	public void handleRelationDeletefriendEvent(Message message) {
 		data.event.userEvents.add(message);
+		DataUtil.getIntimateFriends();
 	}
 
 	public void handleRelationFriendacceptEvent(Message message) {
@@ -101,6 +117,7 @@ public class ResponseEventHandlers {
 		}
 		data.event.userEvents.add(message);
 		viewManage.postNotifyView("DynamicListActivity");
+		DataUtil.getIntimateFriends();
 		// data.event.userEventsMap.put(message.gid, message);
 	}
 
@@ -133,6 +150,7 @@ public class ResponseEventHandlers {
 	public void handleAccountDataupdateEvent(Message message) {
 		data.event.userEvents.add(message);
 		viewManage.postNotifyView("DynamicListActivity");
+		DataUtil.getUserInfomation();
 	}
 
 	public static abstract class Response<T> {

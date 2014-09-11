@@ -1,0 +1,4 @@
+{
+	groupEvents : [],
+	userEvents : []
+}

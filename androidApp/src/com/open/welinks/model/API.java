@@ -50,6 +50,10 @@ public class API {
 	 * http://www.we-links.com/api2/group/modifysequence
 	 */
 	public static String GROUP_MODIFYGROUPSEQUENCE = API_DOMAIN + "api2/group/modifysequence";
+	/**
+	 * http://www.we-links.com/api2/group/get
+	 */
+	public static String GROUP_GET = API_DOMAIN + "api2/group/get";
 
 	// share
 	/**
@@ -96,9 +100,13 @@ public class API {
 
 	public static String RELATION_GETINTIMATEFRIENDS = API_DOMAIN + "api2/relation/intimatefriends";
 	/**
-	 * http://www.we-links.com/api2/relation/getaskfriends 获取好友请求
+	 * http://www.we-links.com/api2/relation/getaskfriends
 	 */
 	public static String RELATION_GETASKFRIENDS = API_DOMAIN + "api2/relation/getaskfriends";
+	/**
+	 * http://www.we-links.com/api2/relation/addfriendagree
+	 */
+	public static String RELATION_ADDFRIENDAGREE = API_DOMAIN + "api2/relation/addfriendagree";
 
 	// lbs
 	public static String LBS_DATA_CREATE = "http://yuntuapi.amap.com/datamanage/data/create";
