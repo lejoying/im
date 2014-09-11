@@ -19,8 +19,12 @@ import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch.OnGeocodeSearchListener;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -31,7 +35,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class CreateGroupLocation extends Activity {
+public class CreateGroupLocationActivity extends Activity {
 
 	public View backView;
 	public RelativeLayout rightContainer;
@@ -57,6 +61,8 @@ public class CreateGroupLocation extends Activity {
 
 	public String address;
 
+	public DisplayMetrics displayMetrics;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,12 +74,26 @@ public class CreateGroupLocation extends Activity {
 		requestMyLocation();
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mapView.onPause();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mapView.onDestroy();
+	}
+
 	public void initData() {
 		mLocationManagerProxy = LocationManagerProxy.getInstance(this);
 		mAMap = mapView.getMap();
 	}
 
 	public void initView() {
+		displayMetrics = new DisplayMetrics();
+		this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		backView = findViewById(R.id.backView);
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 		titleContent = (TextView) findViewById(R.id.backTitleView);
@@ -83,9 +103,13 @@ public class CreateGroupLocation extends Activity {
 		groupList = (ListView) findViewById(R.id.grouplist);
 
 		commit = new TextView(this);
+		commit.setTextColor(Color.WHITE);
+		commit.setPadding((int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density), (int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		commit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+		commit.setBackgroundResource(R.drawable.textview_bg);
+		commit.setText("完成");
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.CENTER_VERTICAL);
-		commit.setText("完成");
 		rightContainer.addView(commit, params);
 
 		titleContent.setText("创建群组");
@@ -100,7 +124,12 @@ public class CreateGroupLocation extends Activity {
 				if (view.equals(backView)) {
 					finish();
 				} else if (view.equals(commit)) {
-
+					Intent intent = new Intent();
+					intent.putExtra("address", address);
+					intent.putExtra("latitude", String.valueOf(mLatLng.latitude));
+					intent.putExtra("longitude", String.valueOf(mLatLng.longitude));
+					setResult(Activity.RESULT_OK, intent);
+					finish();
 				}
 
 			}

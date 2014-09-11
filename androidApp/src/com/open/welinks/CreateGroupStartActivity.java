@@ -31,12 +31,25 @@ public class CreateGroupStartActivity extends Activity {
 
 	public OnClickListener mOnClickListener;
 
+	public String address, latitude, longitude;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initView();
 		initializeListeners();
 		bindEvent();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == R.id.tag_first && resultCode == Activity.RESULT_OK && data != null) {
+			longitude = data.getStringExtra("longitude");
+			latitude = data.getStringExtra("latitude");
+			address = data.getStringExtra("address");
+			groupPositionView.setText(address);
+		}
 	}
 
 	private void initView() {
@@ -60,10 +73,11 @@ public class CreateGroupStartActivity extends Activity {
 				if (view.equals(backView)) {
 					finish();
 				} else if (view.equals(okButtonView)) {
-					finish();
-				} else if (view.equals(groupPositionView)) {
 					Intent intent = new Intent(CreateGroupStartActivity.this, CreateGroupOkActivity.class);
 					startActivity(intent);
+				} else if (view.equals(groupPositionView)) {
+					Intent intent = new Intent(CreateGroupStartActivity.this, CreateGroupLocationActivity.class);
+					startActivityForResult(intent, R.id.tag_first);
 				}
 			}
 		};
