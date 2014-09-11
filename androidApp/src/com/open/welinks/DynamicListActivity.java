@@ -13,8 +13,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,13 +31,15 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
+import com.open.welinks.model.ResponseEventHandlers.GroupEvent;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 import com.open.welinks.view.ThreeChoicesView;
-import com.open.welinks.view.ViewManage;
 import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
+import com.open.welinks.view.ViewManage;
 
 public class DynamicListActivity extends Activity {
 
@@ -50,16 +52,21 @@ public class DynamicListActivity extends Activity {
 	public TextView backTitleView;
 	public RelativeLayout rightContainerView;
 
-	public ListView eventContainer;
+	public ListView squareEventContainer;
+	public ListView groupEventContainer;
+	public ListView userEventContainer;
 
 	public OnClickListener mOnClickListener;
 
 	public LayoutInflater mInflater;
 
-	public EventListAdapter eventListAdapter;
+	// public UserEventListAdapter squareEventListAdapter;
+	public GroupEventListAdapter groupEventListAdapter;
+	public UserEventListAdapter userEventListAdapter;
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
+	public List<Message> groupEventMessages = new ArrayList<Message>();
 	public List<Message> userEventMessages = new ArrayList<Message>();
 	public Map<String, Friend> friendsMap;
 	public Gson gson = new Gson();
@@ -78,10 +85,11 @@ public class DynamicListActivity extends Activity {
 		bindEvent();
 		initData();
 		showEventList();
+		changData(selectType);
 		getRequareAddFriendList();
 	}
 
-	private void initData() {
+	public void initData() {
 		parser.check();
 		userEventMessages.clear();
 		List<Message> userEventMessages0 = data.event.userEvents;
@@ -95,11 +103,26 @@ public class DynamicListActivity extends Activity {
 				userEventMessages.add(message0);
 			}
 		}
+		List<Message> groupEventMessages0 = data.event.groupEvents;
+		for (int i = groupEventMessages0.size() - 1; i >= 0; i--) {
+			groupEventMessages.add(groupEventMessages0.get(i));
+		}
 	}
 
-	private void showEventList() {
-		eventListAdapter = new EventListAdapter();
-		eventContainer.setAdapter(eventListAdapter);
+	public void showEventList() {
+		if (selectType == 1) {
+
+		} else if (selectType == 2) {
+			if (groupEventListAdapter == null) {
+				groupEventListAdapter = new GroupEventListAdapter();
+				groupEventContainer.setAdapter(groupEventListAdapter);
+			}
+		} else if (selectType == 3) {
+			if (userEventListAdapter == null) {
+				userEventListAdapter = new UserEventListAdapter();
+				userEventContainer.setAdapter(userEventListAdapter);
+			}
+		}
 	}
 
 	public void initView() {
@@ -115,7 +138,9 @@ public class DynamicListActivity extends Activity {
 		backTitleView.setText("动态列表");
 		rightContainerView = (RelativeLayout) findViewById(R.id.rightContainer);
 
-		eventContainer = (ListView) findViewById(R.id.eventContainer);
+		squareEventContainer = (ListView) findViewById(R.id.squareEventContainer);
+		groupEventContainer = (ListView) findViewById(R.id.groupEventContainer);
+		userEventContainer = (ListView) findViewById(R.id.userEventContainer);
 
 		threeChoicesView = new ThreeChoicesView(this, selectType);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -140,17 +165,24 @@ public class DynamicListActivity extends Activity {
 			public void onButtonCilck(int position) {
 				selectType = position;
 				changData(selectType);
+				showEventList();
 			}
 		};
 	}
 
 	private void changData(int selectType) {
 		if (selectType == 1) {
-			eventContainer.setVisibility(View.GONE);
+			squareEventContainer.setVisibility(View.VISIBLE);
+			groupEventContainer.setVisibility(View.GONE);
+			userEventContainer.setVisibility(View.GONE);
 		} else if (selectType == 2) {
-			eventContainer.setVisibility(View.GONE);
+			squareEventContainer.setVisibility(View.GONE);
+			groupEventContainer.setVisibility(View.VISIBLE);
+			userEventContainer.setVisibility(View.GONE);
 		} else if (selectType == 3) {
-			eventContainer.setVisibility(View.VISIBLE);
+			squareEventContainer.setVisibility(View.GONE);
+			groupEventContainer.setVisibility(View.GONE);
+			userEventContainer.setVisibility(View.VISIBLE);
 		}
 
 	}
@@ -160,7 +192,72 @@ public class DynamicListActivity extends Activity {
 		this.backView.setOnClickListener(mOnClickListener);
 	}
 
-	public class EventListAdapter extends BaseAdapter {
+	public class GroupEventListAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			return groupEventMessages.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			EventHolder holder = null;
+			if (convertView == null) {
+				holder = new EventHolder();
+				convertView = mInflater.inflate(R.layout.activity_dynamiclist_item, null);
+				holder.headView = (ImageView) convertView.findViewById(R.id.headImage);
+				holder.eventContentView = (TextView) convertView.findViewById(R.id.eventContent);
+				holder.timeView = (TextView) convertView.findViewById(R.id.eventTime);
+				holder.eventOperationView = (LinearLayout) convertView.findViewById(R.id.eventOperation);
+				holder.agreeButtonView = (TextView) convertView.findViewById(R.id.agreeButton);
+				holder.ignoreButtonView = (TextView) convertView.findViewById(R.id.ignoreButton);
+				holder.processedView = (TextView) convertView.findViewById(R.id.processed);
+				convertView.setTag(holder);
+			} else {
+				holder = (EventHolder) convertView.getTag();
+			}
+			holder.eventOperationView.setVisibility(View.GONE);
+			holder.processedView.setVisibility(View.GONE);
+			String content = "";
+
+			holder.headView.setImageBitmap(bitmap);
+			Message message = groupEventMessages.get(position);
+			GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+			String nickName = event.phone;
+			Friend friend = data.relationship.friendsMap.get(nickName);
+			if (friend != null) {
+				nickName = friend.nickName;
+			}
+			Group group = data.relationship.groupsMap.get(event.gid + "");
+			String groupName = event.gid;
+			if (group != null) {
+				groupName = group.name;
+			}
+			String contentType = message.contentType;
+			holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
+			if ("group_addmembers".equals(contentType)) {
+				content = nickName + " 邀请了" + event.members.size() + "个好友到 " + groupName + " 群组中.";
+			} else if ("group_removemembers".equals(contentType)) {
+				content = nickName + " 从" + groupName + " 移除了" + event.members.size() + "个好友.";
+			} else if ("group_dataupdate".equals(contentType)) {
+				content = nickName + " 更新了 " + groupName + " 的资料信息.";
+			}
+			holder.eventContentView.setText(content);
+			return convertView;
+		}
+	}
+
+	public class UserEventListAdapter extends BaseAdapter {
 
 		@Override
 		public void notifyDataSetChanged() {
@@ -207,8 +304,12 @@ public class DynamicListActivity extends Activity {
 			String nickName = "";
 			UserEvent event;
 			try {
-				final Message message = userEventMessages.get(position);
+				Message message = userEventMessages.get(position);
 				if ("relation_newfriend".equals(message.contentType)) {
+					Message messageLocal = data.event.userEventsMap.get(message.gid);
+					if (messageLocal != null) {
+						message = messageLocal;
+					}
 					event = gson.fromJson(message.content, UserEvent.class);
 					friend = friendsMap.get(event.phone);
 					if (event.content != null) {
@@ -225,6 +326,7 @@ public class DynamicListActivity extends Activity {
 						holder.eventOperationView.setVisibility(View.VISIBLE);
 						holder.processedView.setVisibility(View.GONE);
 						final UserEvent event0 = event;
+						final Message message0 = message;
 						holder.agreeButtonView.setOnClickListener(new OnClickListener() {
 
 							@Override
@@ -233,10 +335,13 @@ public class DynamicListActivity extends Activity {
 								holder0.processedView.setVisibility(View.VISIBLE);
 								holder0.processedView.setText("已添加");
 								// modify local data
-								event0.status = "success";
-								Message messageLocal = data.event.userEventsMap.get(message.gid);
-								messageLocal.content = gson.toJson(event0);
-								agreeAddFriend(event0.phone);
+								parser.check();
+								Message messageLocal = data.event.userEventsMap.get(message0.gid);
+								UserEvent event = gson.fromJson(messageLocal.content, UserEvent.class);
+								event.status = "success";
+								messageLocal.content = gson.toJson(event);
+								agreeAddFriend(event.phone);
+								data.event.isModified = true;
 							}
 						});
 						holder.ignoreButtonView.setOnClickListener(new OnClickListener() {
@@ -248,8 +353,10 @@ public class DynamicListActivity extends Activity {
 								holder0.processedView.setText("已处理");
 								// modify local data
 								event0.status = "ignore";
-								Message messageLocal = data.event.userEventsMap.get(message.gid);
+								parser.check();
+								Message messageLocal = data.event.userEventsMap.get(message0.gid);
 								messageLocal.content = gson.toJson(event0);
+								data.event.isModified = true;
 							}
 						});
 					} else if (event.status.equals("success")) {

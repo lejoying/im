@@ -284,6 +284,8 @@ public class Data {
 
 		public List<Message> groupEvents = new ArrayList<Message>();
 
+		public Map<String, Message> groupEventsMap = new HashMap<String, Message>();
+
 		public List<Message> userEvents = new ArrayList<Message>();
 
 		public Map<String, Message> userEventsMap = new HashMap<String, Message>();
