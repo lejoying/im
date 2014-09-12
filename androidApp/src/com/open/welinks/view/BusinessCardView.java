@@ -158,10 +158,10 @@ public class BusinessCardView {
 			button_three.setVisibility(View.GONE);
 			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempFriend.phone));
 		} else if (status.equals(Status.NOTJOINGROUP)) {
-			businessCard.id = 0;
-			businessCard.icon = "";
-			businessCard.nickname = "";
-			businessCard.mainBusiness = "";
+			businessCard.id = data.tempData.tempGroup.gid;
+			businessCard.icon = data.tempData.tempGroup.icon;
+			businessCard.nickname = data.tempData.tempGroup.name;
+			businessCard.mainBusiness = data.tempData.tempGroup.description;
 			businessCard.lable = "暂无标签";
 			businessCard.creattime = "2014年 9月 1日";
 			businessCard.button_one = "加入群组";
@@ -169,7 +169,7 @@ public class BusinessCardView {
 			businessCard.button_three = "";
 			button_two.setVisibility(View.GONE);
 			button_three.setVisibility(View.GONE);
-
+			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(USERCARDTYPE, data.tempData.tempGroup.gid + ""));
 		} else if (status.equals(Status.SQUARE)) {
 			businessCard.id = Integer.valueOf(thisController.key);
 			businessCard.icon = "";
