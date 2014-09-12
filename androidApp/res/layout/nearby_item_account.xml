@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#000" />
+        android:background="#66ffffff" />
 
     <ImageView
         android:id="@+id/head"
