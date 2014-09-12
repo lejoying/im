@@ -1,13 +1,5 @@
 package com.open.welinks;
 
-import com.open.welinks.controller.LoginController;
-import com.open.welinks.controller.TestHttpLongPull;
-import com.open.welinks.controller.TestMultipartUpload;
-import com.open.welinks.model.Data;
-import com.open.welinks.view.LoginView;
-import com.open.welinks.view.LoginView.Status;
-import com.open.welinks.view.ViewManage;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +9,13 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.open.welinks.controller.LoginController;
+import com.open.welinks.controller.TestHttpLongPull;
+import com.open.welinks.controller.TestMultipartUpload;
+import com.open.welinks.model.Data;
+import com.open.welinks.view.LoginView;
+import com.open.welinks.view.ViewManage;
 
 public class LoadingActivity extends Activity {
 	public Data data = Data.getInstance();

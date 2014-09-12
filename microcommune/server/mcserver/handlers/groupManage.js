@@ -35,7 +35,8 @@ groupManage.create = function (data, response) {
             if (err != null) {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    tempGid: tempGid
                 }));
                 response.end();
                 console.log(err);
@@ -71,7 +72,8 @@ groupManage.create = function (data, response) {
                 console.log(e + "数据格式不正确");
                 response.write(JSON.stringify({
                     "提示信息": "创建群组失败",
-                    "失败原因": "数据格式不正确"
+                    "失败原因": "数据格式不正确",
+                    tempGid: tempGid
                 }));
                 response.end();
                 return;
@@ -109,7 +111,8 @@ groupManage.create = function (data, response) {
             if (error) {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    tempGid: tempGid
                 }));
                 response.end();
                 console.log(error);
@@ -124,7 +127,8 @@ groupManage.create = function (data, response) {
                     console.log("未初始化群组第一批用户");
                     response.write(JSON.stringify({
                         "提示信息": "创建群组成功",
-                        group: group
+                        group: group,
+                        tempGid: tempGid
                     }))
                     response.end();
 //                    setGroupLBSLocation(phone, data.accessKey, location, group);
@@ -132,7 +136,8 @@ groupManage.create = function (data, response) {
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组失败",
-                    "失败原因": "用户不存在"
+                    "失败原因": "用户不存在",
+                    tempGid: tempGid
                 }));
                 response.end();
             }
@@ -155,7 +160,8 @@ groupManage.create = function (data, response) {
             if (error) {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组失败",
-                    "失败原因": "数据异常"
+                    "失败原因": "数据异常",
+                    tempGid: tempGid
                 }));
                 response.end();
                 console.log(error);
@@ -164,7 +170,8 @@ groupManage.create = function (data, response) {
                 console.log("初始化的群组好友成功的个数:" + results.length);
                 response.write(JSON.stringify({
                     "提示信息": "创建群组成功",
-                    group: group
+                    group: group,
+                    tempGid: tempGid
                 }));
                 response.end();
                 var event = JSON.stringify({

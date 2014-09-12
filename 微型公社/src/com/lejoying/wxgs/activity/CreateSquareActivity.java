@@ -1,6 +1,5 @@
 package com.lejoying.wxgs.activity;
 
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import org.json.JSONObject;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.MapView;
 import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.R.layout;
 import com.lejoying.wxgs.activity.utils.CommonNetConnection;
 import com.lejoying.wxgs.activity.view.widget.Alert;
 import com.lejoying.wxgs.activity.view.widget.Alert.AlertInputDialog;

@@ -161,11 +161,13 @@ public class ShareMessageDetailView {
 		shareMessageTimeView.setSingleLine();
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 		// layoutParams.rightMargin = (int) (20 * displayMetrics.density);
-		layoutParams.addRule(Gravity.CENTER_VERTICAL);
+		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		// layoutParams.leftMargin = (int) (5 * displayMetrics.density);
 		rightContainer.addView(shareMessageTimeView, layoutParams);
-		// shareMessageTimeView = (TextView) thisActivity.findViewById(R.id.shareMessageTime);
-		// shareMessageUserHeadView = (ImageView) thisActivity.findViewById(R.id.shareMessageUserHead);
+		// shareMessageTimeView = (TextView)
+		// thisActivity.findViewById(R.id.shareMessageTime);
+		// shareMessageUserHeadView = (ImageView)
+		// thisActivity.findViewById(R.id.shareMessageUserHead);
 
 		sendCommentView = (TextView) thisActivity.findViewById(R.id.sendComment);
 		commentNumberView = (TextView) thisActivity.findViewById(R.id.checkCommentNumber);
