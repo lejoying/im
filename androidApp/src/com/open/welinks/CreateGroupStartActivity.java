@@ -42,7 +42,7 @@ public class CreateGroupStartActivity extends Activity {
 
 	public OnClickListener mOnClickListener;
 
-	public String address, latitude, longitude;
+	public String address = "", latitude = "", longitude = "";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +89,9 @@ public class CreateGroupStartActivity extends Activity {
 					startActivity(intent);
 				} else if (view.equals(groupPositionView)) {
 					Intent intent = new Intent(CreateGroupStartActivity.this, CreateGroupLocationActivity.class);
+					intent.putExtra("latitude", latitude);
+					intent.putExtra("longitude", longitude);
+					intent.putExtra("address", address);
 					startActivityForResult(intent, R.id.tag_first);
 				}
 			}
