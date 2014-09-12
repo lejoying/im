@@ -191,34 +191,62 @@ public class Parser {
 		String phone = "none";
 		try {
 			log.e(tag, "**check data");
-			if (data.userInformation == null) {
-				log.e(tag, "**data.userInformation is null");
-				String userInformationStr = getFromRootForder("userInformation.js");
-				data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
+			try {
+				if (data.userInformation == null) {
+					log.e(tag, "**data.userInformation is null");
+					String userInformationStr = getFromRootForder("userInformation.js");
+					data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
+				}
+			} catch (Exception e) {
+				throw e;
 			}
-			if (!"".equals(data.userInformation.currentUser.phone) && !"".equals(data.userInformation.currentUser.accessKey)) {
-				phone = data.userInformation.currentUser.phone;
+			try {
+				if (!"".equals(data.userInformation.currentUser.phone) && !"".equals(data.userInformation.currentUser.accessKey)) {
+					phone = data.userInformation.currentUser.phone;
+				}
+			} catch (Exception e) {
+				throw e;
 			}
-			if (data.relationship == null) {
-				log.e(tag, "**data.relationship is null");
-				String relationshipStr = getFromUserForder(phone, "relationship.js");
-				data.relationship = gson.fromJson(relationshipStr, Relationship.class);
+			try {
+				if (data.relationship == null) {
+					log.e(tag, "**data.relationship is null");
+					String relationshipStr = getFromUserForder(phone, "relationship.js");
+					data.relationship = gson.fromJson(relationshipStr, Relationship.class);
+				}
+			} catch (Exception e) {
+				throw e;
 			}
-			if (data.messages == null) {
-				String messageContent = getFromUserForder(phone, "message.js");
-				data.messages = gson.fromJson(messageContent, Messages.class);
+			try {
+				if (data.messages == null) {
+					String messageContent = getFromUserForder(phone, "message.js");
+					data.messages = gson.fromJson(messageContent, Messages.class);
+				}
+			} catch (Exception e) {
+				throw e;
 			}
-			if (data.shares == null) {
-				String shareContent = getFromUserForder(phone, "share.js");
-				data.shares = gson.fromJson(shareContent, Shares.class);
+			try {
+				if (data.shares == null) {
+					String shareContent = getFromUserForder(phone, "share.js");
+					data.shares = gson.fromJson(shareContent, Shares.class);
+				}
+			} catch (Exception e) {
+				throw e;
 			}
-			if (data.squares == null) {
-				String squareContent = getFromUserForder(phone, "square.js");
-				data.squares = gson.fromJson(squareContent, Squares.class);
+			try {
+				if (data.squares == null) {
+					String squareContent = getFromUserForder(phone, "square.js");
+					data.squares = gson.fromJson(squareContent, Squares.class);
+				}
+			} catch (Exception e) {
+				throw e;
 			}
-			if (data.event == null) {
-				String eventContent = getFromUserForder(phone, "event.js");
-				data.event = gson.fromJson(eventContent, Event.class);
+			try {
+				if (data.event == null) {
+					String eventContent = getFromUserForder(phone, "event.js");
+					data.event = gson.fromJson(eventContent, Event.class);
+				}
+			} catch (Exception e) {
+				throw e;
 			}
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");

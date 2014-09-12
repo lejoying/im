@@ -512,6 +512,8 @@ accountManage.modify = function (data, response) {
     var oldPassWord = data.oldpassword;
     var arr = [phone, accessKey, accountStr];
     var account = {};
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
             account = JSON.parse(accountStr);
@@ -661,7 +663,8 @@ accountManage.modify = function (data, response) {
                                 phone: phone,
                                 time: new Date().getTime(),
                                 status: "success",
-                                content: ""
+                                content: "",
+                                eid: eid
                             })
                         });
                         client.rpush(phone, event, function (err, reply) {
@@ -790,18 +793,18 @@ function ResponseData(responseContent, response) {
 /***************************************
  *     URL：/api2/account/modifylocation
  ***************************************/
-accountManage.modifylocation= function (data, response) {
+accountManage.modifylocation = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var accessKey = data.accessKey;
-    var longitude=data.longitude;
-    var latitude=data.latitude;
-    var address=data.address;
-    var arr = [phone, accessKey, longitude,latitude,address];
-    if (verifyEmpty.verifyEmpty(data, arr, response)){
-        modifyAccountNode(phone,longitude,latitude);
+    var longitude = data.longitude;
+    var latitude = data.latitude;
+    var address = data.address;
+    var arr = [phone, accessKey, longitude, latitude, address];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        modifyAccountNode(phone, longitude, latitude);
     }
-    function modifyAccountNode(phone,longitude,latitude) {
+    function modifyAccountNode(phone, longitude, latitude) {
         var query = [
             'MATCH (account:Account)',
             'WHERE account.phone={phone}',
@@ -829,14 +832,14 @@ accountManage.modifylocation= function (data, response) {
                 var accountNode = results.pop().account;
                 var accountData = accountNode.data;
                 var time = new Date().getTime();
-                if (longitude != undefined && longitude!= null && longitude != "") {
+                if (longitude != undefined && longitude != null && longitude != "") {
                     accountData.longitude = longitude;
                 }
-                if (latitude!= undefined && latitude != null && latitude != "") {
-                    accountData.latitude =latitude;
+                if (latitude != undefined && latitude != null && latitude != "") {
+                    accountData.latitude = latitude;
                 }
-                if (time!= undefined && time != null && time != "") {
-                    accountData.lastlogintime =time;
+                if (time != undefined && time != null && time != "") {
+                    accountData.lastlogintime = time;
                 }
                 accountNode.save(function (err, node) {
                     if (err) {
@@ -850,7 +853,7 @@ accountManage.modifylocation= function (data, response) {
                     } else {
                         response.write(JSON.stringify({
                             "提示信息": "修改用户信息成功",
-                           account:accountData
+                            account: accountData
                         }));
                         response.end();
                     }

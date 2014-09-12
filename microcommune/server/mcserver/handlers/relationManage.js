@@ -97,19 +97,63 @@ relationManage.addfriend = function (data, response) {
                             "提示信息": "添加成功"
                         }));
                         response.end();
-                        var event = JSON.stringify({
+                        var event0 = JSON.stringify({
                             sendType: "event",
-                            contentType: "relation_friendaccept",
-                            phone: phone,
-                            phoneto: phoneTo,
-                            gid: eid,
+                            contentType: "relation_addfriend",
                             content: JSON.stringify({
                                 type: "relation_friendaccept",
                                 phone: phone,
+                                phoneTo: phoneTo,
+                                eid: eid,
+                                time: time,
+                                status: "waiting",
+                                content: message || ""
+                            })
+                        });
+                        client.rpush(phone, event0, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, phone, accessKey, "*", event);
+                        client.rpush(phoneTo, event0, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, phoneTo, accessKey, "*", event);
+
+                        var event = JSON.stringify({
+                            sendType: "event",
+                            contentType: "relation_friendaccept",
+                            content: JSON.stringify({
+                                type: "relation_friendaccept",
+                                phone: phone,
+                                phoneTo: phoneTo,
+                                eid: eid,
                                 time: time,
                                 status: "success",
-                                content: ""
+                                content: message || ""
                             })
+                        });
+                        client.rpush(phone, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, phone, accessKey, "*", event);
+                        client.rpush(phoneTo, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
                         });
                         //{"提示信息": "成功", event: "friendaccept", event_content: {phone: phone}}
                         push.inform(phone, phoneTo, accessKey, "*", event);
@@ -132,15 +176,14 @@ relationManage.addfriend = function (data, response) {
                     var event0 = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_addfriend",
-                        phone: phone,
-                        phoneto: phoneTo,
-                        gid: eid,
                         content: JSON.stringify({
                             type: "relation_addfriend",
                             phone: phone,
                             time: time,
+                            phoneTo: phoneTo,
+                            eid: eid,
                             status: "waiting",
-                            content: message
+                            content: message || ""
                         })
                     });
                     //{"提示信息": "成功", event: "newfriend", event_content: {phone: phone}}
@@ -155,15 +198,14 @@ relationManage.addfriend = function (data, response) {
                     var event = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_newfriend",
-                        phone: phone,
-                        phoneto: phoneTo,
-                        gid: eid,
                         content: JSON.stringify({
                             type: "relation_newfriend",
                             phone: phone,
+                            phoneTo: phoneTo,
+                            eid: eid,
                             time: time,
                             status: "waiting",
-                            content: message
+                            content: message || ""
                         })
                     });
                     //{"提示信息": "成功", event: "newfriend", event_content: {phone: phone}}
@@ -210,15 +252,14 @@ relationManage.addfriend = function (data, response) {
                 var event = JSON.stringify({
                     sendType: "event",
                     contentType: "relation_friendaccept",
-                    phone: phone,
-                    phoneto: phoneTo,
-                    gid: eid,
                     content: JSON.stringify({
                         type: "relation_friendaccept",
                         phone: phone,
+                        phoneTo: phoneTo,
+                        eid: eid,
                         time: new Date().getTime(),
                         status: "success",
-                        content: ""
+                        content: message || ""
                     })
                 });
                 client.rpush(phoneTo, event, function (err, reply) {
@@ -365,6 +406,7 @@ relationManage.deletefriend = function (data, response) {
                     content: JSON.stringify({
                         type: "relation_deletefriend",
                         phone: phone,
+                        phoneTo: phoneTo,
                         time: new Date().getTime(),
                         status: "success",
                         content: ""
@@ -501,6 +543,7 @@ relationManage.blacklist = function (data, response) {
                     content: JSON.stringify({
                         type: "relation_blacklist",
                         phone: phone,
+                        phoneTo: phoneTo,
                         time: new Date().getTime(),
                         status: "success",
                         content: ""
@@ -787,8 +830,9 @@ relationManage.addfriendagree = function (data, response) {
     var rid = data.rid;
     var status = data.status;
     var accessKey = data.accessKey;
+    var eid = data.eid;
 //    agreeAddFriendNode(phone, phoneAsk, rid);
-    var arr = [phone, accessKey, phoneAsk, status];
+    var arr = [phone, accessKey, phoneAsk, status, eid];
     var time = new Date().getTime();
     var eid = phone + "" + time;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
@@ -846,17 +890,24 @@ relationManage.addfriendagree = function (data, response) {
                             var event = JSON.stringify({
                                 sendType: "event",
                                 contentType: "relation_friendaccept",
-                                phone: phone,
-                                phoneto: phoneAsk,
-                                gid: rData.eid,
                                 content: JSON.stringify({
                                     type: "relation_friendaccept",
                                     phone: phone,
                                     time: time,
+                                    phoneTo: phoneAsk,
+                                    eid: rData.eid,
                                     status: "success",
                                     content: ""
                                 })
                             });
+                            client.rpush(phone, event, function (err, reply) {
+                                if (err) {
+                                    console.error("保存Event失败");
+                                } else {
+                                    console.log("保存Event成功");
+                                }
+                            });
+                            push.inform(phone, phone, accessKey, "*", event);
                             client.rpush(phoneAsk, event, function (err, reply) {
                                 if (err) {
                                     console.error("保存Event失败");
@@ -911,17 +962,24 @@ relationManage.addfriendagree = function (data, response) {
                         var event = JSON.stringify({
                             sendType: "event",
                             contentType: "relation_friendaccept",
-                            phone: phone,
-                            phoneto: phoneAsk,
-                            gid: eid,
                             content: JSON.stringify({
                                 type: "relation_friendaccept",
                                 phone: phone,
+                                phoneTo: phoneAsk,
+                                eid: eid,
                                 time: time,
                                 status: "success",
                                 content: ""
                             })
                         });
+                        client.rpush(phone, event, function (err, reply) {
+                            if (err) {
+                                console.error("保存Event失败");
+                            } else {
+                                console.log("保存Event成功");
+                            }
+                        });
+                        push.inform(phone, phone, accessKey, "*", event);
                         client.rpush(phoneAsk, event, function (err, reply) {
                             if (err) {
                                 console.error("保存Event失败");
@@ -977,17 +1035,24 @@ relationManage.addfriendagree = function (data, response) {
                     var event = JSON.stringify({
                         sendType: "event",
                         contentType: "relation_friendaccept",
-                        phone: phone,
-                        phoneto: phoneAsk,
-                        gid: eid,
                         content: JSON.stringify({
                             type: "relation_friendaccept",
                             phone: phone,
+                            phoneTo: phoneAsk,
+                            eid: eid,
                             time: new Date().getTime(),
                             status: "success",
                             content: ""
                         })
                     });
+                    client.rpush(phone, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phone, accessKey, "*", event);
                     client.rpush(phoneAsk, event, function (err, reply) {
                         if (err) {
                             console.error("保存Event失败");
@@ -1457,6 +1522,9 @@ relationManage.modifysequence = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
     var circleSequence = data.sequence;
+    var accessKey = data.accessKey;
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     modifyAccountSeqence();
     function modifyAccountSeqence() {
         var query = [
@@ -1492,6 +1560,26 @@ relationManage.modifysequence = function (data, response) {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改分组顺序成功"
                 }), response);
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "account_dataupdate",
+                    content: JSON.stringify({
+                        type: "account_dataupdate",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: "",
+                        eid: eid
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
             }
         });
     }
