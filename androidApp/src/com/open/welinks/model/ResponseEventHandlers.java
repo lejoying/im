@@ -65,6 +65,8 @@ public class ResponseEventHandlers {
 				handleGroupRemovemembersEvent(message);
 			} else if ("group_dataupdate".equals(contentType)) {
 				handleGroupDataupdateEvent(message);
+			} else if ("group_create".equals(contentType)) {
+				handleGroupCreateEvent(message);
 			}
 			data.event.isModified = true;
 		} else if (message.sendType.equals("point") || message.sendType.equals("group")) {
@@ -80,22 +82,32 @@ public class ResponseEventHandlers {
 		public String phone;
 	}
 
+	public void handleGroupCreateEvent(Message message) {
+		data.event.groupEvents.add(message);
+		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+		viewManage.postNotifyView("DynamicListActivity");
+		DataUtil.getUserCurrentGroupMembers(event.gid, "create");
+	}
+
 	public void handleGroupDataupdateEvent(Message message) {
 		data.event.groupEvents.add(message);
 		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+		viewManage.postNotifyView("DynamicListActivity");
 		DataUtil.getUserCurrentGroupInfomation(event.gid);
 	}
 
 	public void handleGroupRemovemembersEvent(Message message) {
 		data.event.groupEvents.add(message);
 		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
-		DataUtil.getUserCurrentGroupMembers(event.gid);
+		viewManage.postNotifyView("DynamicListActivity");
+		DataUtil.getUserCurrentGroupMembers(event.gid, "removemembers");
 	}
 
 	public void handleGroupAddmembersEvent(Message message) {
 		data.event.groupEvents.add(message);
 		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
-		DataUtil.getUserCurrentGroupMembers(event.gid);
+		viewManage.postNotifyView("DynamicListActivity");
+		DataUtil.getUserCurrentGroupMembers(event.gid, "addmembers");
 	}
 
 	public void handleRelationBlacklistEvent(Message message) {

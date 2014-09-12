@@ -37,6 +37,8 @@ public class ShareReleaseImageTextView {
 	public TextView mCancleButtonView;
 	public TextView mConfirmButtonView;
 	public ImageView mSelectImageButtonView;
+	public ImageView mFaceView;
+	public ImageView mVoiceView;
 
 	public DisplayMetrics displayMetrics;
 	public ImageLoader imageLoader = ImageLoader.getInstance();
@@ -51,8 +53,8 @@ public class ShareReleaseImageTextView {
 
 	public void initView() {
 		displayMetrics = new DisplayMetrics();
-
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
 		thisActivity.setContentView(R.layout.share_release_imagetext);
 		mEditTextView = (EditText) thisActivity.findViewById(R.id.releaseTextContentView);
 		mImagesContentView = (RelativeLayout) thisActivity.findViewById(R.id.releaseImagesContent);
@@ -60,6 +62,29 @@ public class ShareReleaseImageTextView {
 		mCancleButtonView = (TextView) thisActivity.findViewById(R.id.releaseCancel);
 		mConfirmButtonView = (TextView) thisActivity.findViewById(R.id.releaseConfirm);
 		mSelectImageButtonView = (ImageView) thisActivity.findViewById(R.id.selectImageButton);
+		mFaceView = (ImageView) thisActivity.findViewById(R.id.releaseFace);
+		mVoiceView = (ImageView) thisActivity.findViewById(R.id.releaseVoice);
+
+		int widthItem = displayMetrics.widthPixels / 5;
+		RelativeLayout.LayoutParams cancleParams = (LayoutParams) mCancleButtonView.getLayoutParams();
+		cancleParams.leftMargin = 0;
+		cancleParams.width = widthItem;
+
+		RelativeLayout.LayoutParams mVoiceViewParams = (LayoutParams) mVoiceView.getLayoutParams();
+		mVoiceViewParams.leftMargin = widthItem * 1;
+		mVoiceViewParams.width = widthItem;
+
+		RelativeLayout.LayoutParams mFaceViewParams = (LayoutParams) mFaceView.getLayoutParams();
+		mFaceViewParams.leftMargin = widthItem * 2;
+		mFaceViewParams.width = widthItem;
+
+		RelativeLayout.LayoutParams mSelectImageButtonViewParams = (LayoutParams) mSelectImageButtonView.getLayoutParams();
+		mSelectImageButtonViewParams.leftMargin = widthItem * 3;
+		mSelectImageButtonViewParams.width = widthItem;
+
+		RelativeLayout.LayoutParams mConfirmButtonViewParams = (LayoutParams) mConfirmButtonView.getLayoutParams();
+		mConfirmButtonViewParams.leftMargin = widthItem * 4;
+		mConfirmButtonViewParams.width = widthItem;
 
 		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).considerExifParams(true).displayer(new RoundedBitmapDisplayer(0)).build();
 		myScrollImageBody = new MyScrollImageBody();

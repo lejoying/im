@@ -523,6 +523,12 @@ public class ShareSubView {
 
 	public void setGroupsDialogContent() {
 		data = parser.check();
+
+		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		if (group0 != null) {
+			this.shareTopMenuGroupName.setText(group0.name);
+		}
+
 		List<String> groups = data.relationship.groups;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
 		groupsDialogContent.removeAllViews();

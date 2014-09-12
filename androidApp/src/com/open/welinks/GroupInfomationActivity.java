@@ -17,7 +17,7 @@ public class GroupInfomationActivity extends Activity {
 	public GroupInfomationView thisView;
 	public GroupInfomationController thisController;
 	public Activity thisActivity;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,8 +34,14 @@ public class GroupInfomationActivity extends Activity {
 		this.thisController.thisView = this.thisView;
 
 		thisView.initView();
-		 thisController.onCreate();
+		thisController.onCreate();
 		thisController.initializeListeners();
 		thisController.bindEvent();
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		this.thisController.onBackPressed();
 	}
 }

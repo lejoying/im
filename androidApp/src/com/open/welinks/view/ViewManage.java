@@ -1,6 +1,7 @@
 package com.open.welinks.view;
 
 import com.open.welinks.DynamicListActivity;
+import com.open.welinks.GroupListActivity;
 
 import android.os.Handler;
 import android.util.Log;
@@ -13,9 +14,11 @@ public class ViewManage {
 	public LoginView loginView = null;
 	public MainView mainView = null;
 	public MeSubView meSubView;
+	public ShareSubView shareSubView;
 	public ChatView chatView = null;
 
 	public DynamicListActivity dynamicListActivity = null;
+	public GroupListActivity groupListActivity = null;
 
 	public DownloadOssFileView downloadOssFileView = null;
 
@@ -47,11 +50,24 @@ public class ViewManage {
 			}
 		} else if (viewName.equals("DynamicListActivity")) {
 			if (dynamicListActivity != null) {
-				dynamicListActivity.userEventListAdapter.notifyDataSetChanged();
+				if (dynamicListActivity.userEventListAdapter != null) {
+					dynamicListActivity.userEventListAdapter.notifyDataSetChanged();
+				}
+				if (dynamicListActivity.groupEventListAdapter != null) {
+					dynamicListActivity.groupEventListAdapter.notifyDataSetChanged();
+				}
 			}
 		} else if (viewName.equals("MeSubView")) {
 			if (meSubView != null) {
 				meSubView.setUserData();
+			}
+		} else if (viewName.equals("GroupListActivity")) {
+			if (groupListActivity != null) {
+				groupListActivity.groupListAdapter.notifyDataSetChanged();
+			}
+		} else if (viewName.equals("ShareSubView")) {
+			if (mainView.shareSubView != null) {
+				mainView.shareSubView.setGroupsDialogContent();
 			}
 		}
 	}

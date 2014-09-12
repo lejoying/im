@@ -41,6 +41,7 @@
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:background="@drawable/backview_background"
             android:gravity="center"
             android:padding="10dp"
             android:singleLine="true"
@@ -49,20 +50,22 @@
             android:textSize="20sp" />
 
         <ImageView
-            android:id="@+id/release_iv_voice"
+            android:id="@+id/releaseVoice"
             android:layout_width="73dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="70dp"
+            android:background="@drawable/backview_background"
             android:padding="10dp"
             android:src="@drawable/release_voice" />
 
         <ImageView
-            android:id="@+id/release_iv_voice1"
+            android:id="@+id/releaseFace"
             android:layout_width="73dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="143dp"
+            android:background="@drawable/backview_background"
             android:padding="10dp"
             android:src="@drawable/release_face" />
 
@@ -72,6 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="216dp"
+            android:background="@drawable/backview_background"
             android:padding="10dp"
             android:src="@drawable/release_pic" />
 
@@ -81,6 +85,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_gravity="center"
+            android:background="@drawable/backview_background"
             android:gravity="center"
             android:padding="10dp"
             android:singleLine="true"

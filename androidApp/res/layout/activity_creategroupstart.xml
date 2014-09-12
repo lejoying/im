@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/main_background"
-    android:orientation="vertical" >
+    android:background="@drawable/main_background" >
 
     <include layout="@layout/view_back_view" />
 
@@ -12,15 +11,15 @@
         android:layout_height="250dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="#c0c0c0" />
+        android:layout_marginTop="55dp"
+        android:src="@drawable/tempicon" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="335dp"
         android:orientation="horizontal" >
 
         <TextView
@@ -32,13 +31,64 @@
             android:textColor="#fff"
             android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/groupName"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
-            android:hint="2-15个字" />
+            android:layout_marginRight="10dp" >
+
+            <ImageView
+                android:id="@+id/groupNameWarn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
+                android:padding="5dp"
+                android:src="@drawable/release_face"
+                android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="#fff" />
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="#fff" />
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:background="#fff" />
+
+            <EditText
+                android:id="@+id/groupName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="#0000"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:hint="2-15个字"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#fff"
+                android:textCursorDrawable="@drawable/edit_cursor"
+                android:textSize="16sp" >
+
+                <requestFocus />
+            </EditText>
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -46,7 +96,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="395dp"
         android:orientation="horizontal" >
 
         <TextView
@@ -58,15 +108,58 @@
             android:textColor="#fff"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/groupPosition"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
-            android:text="提交后不可修改"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+            android:layout_marginRight="10dp" >
+
+            <TextView
+                android:id="@+id/groupPosition"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#0000"
+                android:gravity="center_vertical"
+                android:hint="提交后不可修改"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#fff"
+                android:textCursorDrawable="@drawable/edit_cursor"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/groupPositionWarn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
+                android:padding="5dp"
+                android:src="@drawable/release_face"
+                android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="#fff" />
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="#fff" />
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:background="#fff" />
+        </RelativeLayout>
     </LinearLayout>
 
     <TextView
@@ -75,7 +168,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="480dp"
         android:background="#38000000"
         android:gravity="center"
         android:text="@string/ok_text"
@@ -83,4 +176,4 @@
         android:textSize="18sp" >
     </TextView>
 
-</LinearLayout>
+</RelativeLayout>

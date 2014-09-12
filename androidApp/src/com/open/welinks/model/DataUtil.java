@@ -2,6 +2,7 @@ package com.open.welinks.model;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.model.Data.UserInformation.User;
@@ -49,7 +50,7 @@ public class DataUtil {
 		httpUtils.send(HttpMethod.POST, API.GROUP_GET, params, responseHandlers.getGroupInfomationCallBack);
 	}
 
-	public static void getUserCurrentGroupMembers(String gid) {
+	public static void getUserCurrentGroupMembers(String gid, String type) {
 		parser.check();
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
@@ -58,7 +59,14 @@ public class DataUtil {
 		params.addBodyParameter("accessKey", user.accessKey);
 		params.addBodyParameter("gid", gid);
 
-		httpUtils.send(HttpMethod.POST, API.GROUP_GETALLMEMBERS, params, responseHandlers.getCurrentGroupMembersCallBack);
+		RequestCallBack<String> callBack = responseHandlers.getCurrentNewGroupMembersCallBack;
+		if ("create".equals(type)) {
+			callBack = responseHandlers.getCurrentNewGroupMembersCallBack;
+		} else if ("removemembers".equals(type) || "addmembers".equals(type)) {
+			callBack = responseHandlers.getCurrentGroupMembersCallBack;
+		}
+
+		httpUtils.send(HttpMethod.POST, API.GROUP_GETALLMEMBERS, params, callBack);
 	}
 
 	public static void getUserInfomation() {
