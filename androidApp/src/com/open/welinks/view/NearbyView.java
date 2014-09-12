@@ -48,7 +48,7 @@ public class NearbyView {
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_nearby);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		titleContent = (TextView) thisActivity.findViewById(R.id.titleContent);
+		titleContent = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		nearby = (ListView) thisActivity.findViewById(R.id.nearby);
 
 		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
