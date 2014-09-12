@@ -14,6 +14,8 @@ import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -44,6 +46,7 @@ public class GroupInfomationView {
 	public RelativeLayout memberContainerView;
 	public TextView groupNameView;
 	public TextView groupName2View;
+	public RelativeLayout groupNameLayoutView;
 
 	public RelativeLayout groupBusinessCardView;
 	public SeekBar seekBar;
@@ -51,7 +54,15 @@ public class GroupInfomationView {
 	public RelativeLayout groupMemberControlView;
 	public RelativeLayout exit2DeleteGroupView;
 
+	// dialog
+	public RelativeLayout dialogContentView;
+	public TextView dialogTitleView;
+	public EditText dialogEditView;
+	public TextView dialogConfirmView;
+	public TextView dialogCancleView;
+
 	public Bitmap defaultBitmapHead;
+	public InputMethodManager inputMethodManager;
 
 	public GroupInfomationView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -60,6 +71,8 @@ public class GroupInfomationView {
 	}
 
 	public void initView() {
+
+		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		thisActivity.setContentView(R.layout.activity_group_infomation);
 
 		mInflater = thisActivity.getLayoutInflater();
@@ -69,6 +82,7 @@ public class GroupInfomationView {
 		groupNameView = (TextView) thisActivity.findViewById(R.id.groupName);
 		groupName2View = (TextView) thisActivity.findViewById(R.id.groupName2);
 		memberContainerView = (RelativeLayout) thisActivity.findViewById(R.id.memberContainer);
+		groupNameLayoutView = (RelativeLayout) thisActivity.findViewById(R.id.groupNameLayout);
 
 		groupBusinessCardView = (RelativeLayout) thisActivity.findViewById(R.id.groupBusinessCard);
 
@@ -91,6 +105,14 @@ public class GroupInfomationView {
 		vWidth = (int) (screenWidth - (dp2px(20) * 2));
 		headSpace = baseLeft * 2;
 		head = (int) dp2px(55f);
+
+		dialogContentView = (RelativeLayout) thisActivity.findViewById(R.id.inputDialogContent);
+		dialogTitleView = (TextView) thisActivity.findViewById(R.id.title);
+		dialogEditView = (EditText) thisActivity.findViewById(R.id.input);
+		dialogConfirmView = (TextView) thisActivity.findViewById(R.id.confirm);
+		dialogCancleView = (TextView) thisActivity.findViewById(R.id.cancel);
+
+		dialogContentView.setVisibility(View.GONE);
 	}
 
 	public void showGroupMembers() {

@@ -52,6 +52,7 @@ public class BusinessCardController {
 	public DisplayImageOptions options;
 
 	public String key, type;
+	public boolean isTemp;
 	public File file;
 
 	public OnClickListener mOnClickListener;
@@ -73,23 +74,22 @@ public class BusinessCardController {
 	public void onCreate() {
 		key = thisActivity.getIntent().getStringExtra("key");
 		type = thisActivity.getIntent().getStringExtra("type");
+		isTemp = thisActivity.getIntent().getBooleanExtra("isTemp", false);
 		if ("point".equals(type)) {
 			if (key.equals(data.userInformation.currentUser.phone)) {
 				thisView.status = Status.SELF;
 			} else {
-				thisView.status = Status.TEMPFRIEND;
-				for (String circles : data.relationship.circles) {
-					if (data.relationship.circlesMap.get(circles).friends.contains(key)) {
-						thisView.status = Status.FRIEND;
-						break;
-					}
+				if (isTemp) {
+					thisView.status = Status.TEMPFRIEND;
+				} else {
+					thisView.status = Status.FRIEND;
 				}
 			}
 		} else if ("group".equals(type)) {
-			if (data.relationship.groups.contains(key)) {
-				thisView.status = Status.JOINEDGROUP;
-			} else {
+			if (isTemp) {
 				thisView.status = Status.NOTJOINGROUP;
+			} else {
+				thisView.status = Status.JOINEDGROUP;
 			}
 		} else if ("square".equals(type)) {
 			thisView.status = Status.SQUARE;

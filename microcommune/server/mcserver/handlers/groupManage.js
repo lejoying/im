@@ -176,9 +176,9 @@ groupManage.create = function (data, response) {
                 response.end();
                 var event = JSON.stringify({
                     sendType: "event",
-                    contentType: "group_addmembers",
+                    contentType: "group_create",
                     content: JSON.stringify({
-                        type: "group_addmembers",
+                        type: "group_create",
                         time: new Date().getTime(),
                         phone: phone,
                         gid: group.gid,
@@ -584,7 +584,26 @@ groupManage.getallmembers = function (data, response) {
                 console.log("checkGroupNode" + error);
                 return;
             } else if (results.length > 0) {
-                getGroupMembers(gid);
+                var groupData = results.pop().group.data;
+                var location;
+                try {
+                    location = JSON.parse(groupData.location);
+                } catch (e) {
+                    location = {
+                        longitude: 0,
+                        latitude: 0
+                    }
+                }
+                var group = {
+                    gid: groupData.gid,
+                    icon: groupData.icon || "",
+                    name: groupData.name,
+                    longitude: location.longitude,
+                    latitude: location.latitude,
+                    description: groupData.description || "",
+                    background: groupData.background || ""
+                };
+                getGroupMembers(gid, group);
             } else {
                 response.write(JSON.stringify({
                     "提示信息": "获取群组成员失败",
@@ -595,7 +614,7 @@ groupManage.getallmembers = function (data, response) {
         });
     }
 
-    function getGroupMembers(gid) {
+    function getGroupMembers(gid, group) {
         var query = [
             'START group=node({gid})',
             'MATCH group-[r:HAS_MEMBER]->(account:Account)',
@@ -637,7 +656,7 @@ groupManage.getallmembers = function (data, response) {
                 console.log(gid + "群組好友个数：" + members.length);
                 response.write(JSON.stringify({
                     "提示信息": "获取群组成员成功",
-                    gid: gid,
+                    group: group,
                     members: members,
                     membersMap: membersMap
                 }))
@@ -646,7 +665,7 @@ groupManage.getallmembers = function (data, response) {
                 console.log(gid + "群組好友个数：" + results.length);
                 response.write(JSON.stringify({
                     "提示信息": "获取群组成员成功",
-                    gid: gid,
+                    group: group,
                     members: [],
                     membersMap: {}
                 }));
@@ -751,22 +770,20 @@ groupManage.modify = function (data, response) {
                 var groupNode = results.pop().group;
                 var groupData = groupNode.data;
                 var groupLocation = groupData.location || JSON.stringify({longitude: 116.422324, latitude: 39.906744});
-                groupLocation = JSON.parse(groupLocation);
-                groupData.name = name || groupData.name;
+                try {
+                    groupLocation = JSON.parse(groupLocation);
+                } catch (e) {
+                    groupLocation = {longitude: 0, latitude: 0};
+                }
+                if (name) {
+                    groupData.name = name || groupData.name;
+                }
                 if (icon) {
                     groupData.icon = icon;
                 }
-//                groupData.head = head || groupData.head;
-//                var head0 = "";
-//                if (groupData.head) {
-//                    head0 = groupData.head;
-//                }
-//                if(head){
-//                    head0 = head;
-//                    groupData.head = head0;
-//                }
-                groupData.description = description || groupData.description;
-//                groupData.description = groupData.description || "";
+                if (description) {
+                    groupData.description = description || groupData.description;
+                }
                 var background0 = "";
                 if (groupData.background) {
                     background0 = groupData.background;
@@ -781,9 +798,6 @@ groupManage.modify = function (data, response) {
                     currentLocation.latitude = location.latitude || groupLocation.latitude;
 
                     groupData.location = JSON.stringify(currentLocation);
-                } else {
-                    currentLocation.longitude = groupLocation.longitude;
-                    currentLocation.latitude = groupLocation.latitude;
                 }
                 groupNode.save(function (error) {
                 });

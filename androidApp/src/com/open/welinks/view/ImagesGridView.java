@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,13 +68,15 @@ public class ImagesGridView {
 
 		rightContainerView = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
 
+		int dp_5 = (int) (5 * displayMetrics.density);
 		mConfirm = new TextView(context);
-		mConfirm.setPadding((int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density), (int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		mConfirm.setGravity(Gravity.CENTER);
+		mConfirm.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
 		mConfirm.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		mConfirm.setText("确定(0)");
 		mConfirm.setBackgroundResource(R.drawable.textview_bg);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		layoutParams.setMargins(0, (int) (5 * displayMetrics.density), (int) (0 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		rightContainerView.addView(mConfirm, layoutParams);
 

@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="10dp" >
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

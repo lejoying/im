@@ -210,6 +210,8 @@ public class ShareReleaseImageTextController {
 		thisView.mCancleButtonView.setOnTouchListener(monOnTouchListener);
 		thisView.mConfirmButtonView.setOnTouchListener(monOnTouchListener);
 		thisView.mSelectImageButtonView.setOnTouchListener(monOnTouchListener);
+		thisView.mVoiceView.setOnTouchListener(monOnTouchListener);
+		thisView.mFaceView.setOnTouchListener(monOnTouchListener);
 
 	}
 

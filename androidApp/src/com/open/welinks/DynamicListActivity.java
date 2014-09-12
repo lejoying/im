@@ -83,29 +83,35 @@ public class DynamicListActivity extends Activity {
 		initView();
 		initializeListeners();
 		bindEvent();
-		initData();
+		initData("all");
 		showEventList();
 		changData(selectType);
 		getRequareAddFriendList();
 	}
 
-	public void initData() {
+	public void initData(String type) {
 		parser.check();
-		userEventMessages.clear();
-		List<Message> userEventMessages0 = data.event.userEvents;
-		for (int i = userEventMessages0.size() - 1; i >= 0; i--) {
-			Message message0 = userEventMessages0.get(i);
-			if ("account_dataupdate".equals(message0.contentType) || "relation_newfriend".equals(message0.contentType) || "relation_addfriend".equals(message0.contentType)) {
-				Message message2 = data.event.userEventsMap.get(message0.gid);
-				if (message2 != null) {
-					message0 = message2;
+		if ("user".equals(type) || "all".equals(type)) {
+			userEventMessages.clear();
+			List<Message> userEventMessages0 = data.event.userEvents;
+			for (int i = userEventMessages0.size() - 1; i >= 0; i--) {
+				Message message0 = userEventMessages0.get(i);
+				if ("account_dataupdate".equals(message0.contentType) || "relation_newfriend".equals(message0.contentType) || "relation_addfriend".equals(message0.contentType)) {
+					Message message2 = data.event.userEventsMap.get(message0.gid);
+					if (message2 != null) {
+						message0 = message2;
+					}
+					userEventMessages.add(message0);
 				}
-				userEventMessages.add(message0);
 			}
 		}
-		List<Message> groupEventMessages0 = data.event.groupEvents;
-		for (int i = groupEventMessages0.size() - 1; i >= 0; i--) {
-			groupEventMessages.add(groupEventMessages0.get(i));
+
+		if ("group".equals(type) || "all".equals(type)) {
+			groupEventMessages.clear();
+			List<Message> groupEventMessages0 = data.event.groupEvents;
+			for (int i = groupEventMessages0.size() - 1; i >= 0; i--) {
+				groupEventMessages.add(groupEventMessages0.get(i));
+			}
 		}
 	}
 
@@ -195,6 +201,12 @@ public class DynamicListActivity extends Activity {
 	public class GroupEventListAdapter extends BaseAdapter {
 
 		@Override
+		public void notifyDataSetChanged() {
+			initData("group");
+			super.notifyDataSetChanged();
+		}
+
+		@Override
 		public int getCount() {
 			return groupEventMessages.size();
 		}
@@ -237,6 +249,9 @@ public class DynamicListActivity extends Activity {
 			Friend friend = data.relationship.friendsMap.get(nickName);
 			if (friend != null) {
 				nickName = friend.nickName;
+				if (friend.phone.equals(data.userInformation.currentUser.phone)) {
+					nickName = "您";
+				}
 			}
 			Group group = data.relationship.groupsMap.get(event.gid + "");
 			String groupName = event.gid;
@@ -251,6 +266,8 @@ public class DynamicListActivity extends Activity {
 				content = nickName + " 从" + groupName + " 移除了" + event.members.size() + "个好友.";
 			} else if ("group_dataupdate".equals(contentType)) {
 				content = nickName + " 更新了 " + groupName + " 的资料信息.";
+			} else if ("group_create".equals(contentType)) {
+				content = nickName + "创建了新的群组:" + groupName + ".";
 			}
 			holder.eventContentView.setText(content);
 			return convertView;
@@ -261,7 +278,7 @@ public class DynamicListActivity extends Activity {
 
 		@Override
 		public void notifyDataSetChanged() {
-			initData();
+			initData("user");
 			super.notifyDataSetChanged();
 		}
 

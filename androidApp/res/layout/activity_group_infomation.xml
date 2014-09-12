@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_background"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
     tools:context=".activity.GroupInformationActivity" >
 
     <include layout="@layout/view_back_view" />
@@ -14,7 +13,7 @@
         android:id="@+id/sv_groupInfomation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="50dp"
         android:scrollbars="none" >
 
         <LinearLayout
@@ -174,6 +173,7 @@
                 android:background="#33ffffff" />
 
             <RelativeLayout
+                android:id="@+id/groupNameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:gravity="center_vertical" >
@@ -277,4 +277,6 @@
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+    <include layout="@layout/view_input_dialog" />
+
+</RelativeLayout>

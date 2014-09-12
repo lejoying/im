@@ -1,7 +1,5 @@
 package com.open.lib;
 
-import org.apache.http.Header;
-
 import android.util.Log;
 
 import com.lidroid.xutils.HttpUtils;

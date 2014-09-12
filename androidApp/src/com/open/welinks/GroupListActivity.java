@@ -12,10 +12,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -28,6 +31,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.view.ViewManage;
 
 public class GroupListActivity extends Activity {
 
@@ -50,6 +54,7 @@ public class GroupListActivity extends Activity {
 	public DisplayMetrics displayMetrics;
 
 	public OnClickListener mOnClickListener;
+	public OnItemClickListener mOnItemClickListener;
 
 	public List<String> groups;
 	public Map<String, Group> groupsMap;
@@ -57,10 +62,12 @@ public class GroupListActivity extends Activity {
 
 	public Bitmap bitmap;
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		viewManage.groupListActivity = this;
 		initView();
 		initializeListeners();
 		bindEvent();
@@ -95,14 +102,16 @@ public class GroupListActivity extends Activity {
 
 		this.groupListContainer = (ListView) findViewById(R.id.groupListContainer);
 
+		int dp_5 = (int) (5 * displayMetrics.density);
 		this.createGroupButton = new TextView(this);
+		this.createGroupButton.setGravity(Gravity.CENTER);
 		this.createGroupButton.setTextColor(Color.WHITE);
-		this.createGroupButton.setPadding((int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density), (int) (10 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		this.createGroupButton.setPadding(dp_5 * 2, dp_5, dp_5 * 2, dp_5);
 		this.createGroupButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		this.createGroupButton.setText("创建群组");
 		this.createGroupButton.setBackgroundResource(R.drawable.textview_bg);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		layoutParams.setMargins(0, (int) (5 * displayMetrics.density), (int) (0 * displayMetrics.density), (int) (5 * displayMetrics.density));
+		layoutParams.setMargins(0, dp_5, (int) 0, dp_5);
 		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 		this.rightContainer.addView(this.createGroupButton, layoutParams);
 	}
@@ -120,11 +129,22 @@ public class GroupListActivity extends Activity {
 				}
 			}
 		};
+		mOnItemClickListener = new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent intent = new Intent(GroupListActivity.this, BusinessCardActivity.class);
+				intent.putExtra("type", "group");
+				intent.putExtra("key", groups.get(position));
+				startActivity(intent);
+			}
+		};
 	}
 
 	private void bindEvent() {
 		this.createGroupButton.setOnClickListener(mOnClickListener);
 		this.backView.setOnClickListener(mOnClickListener);
+		this.groupListContainer.setOnItemClickListener(mOnItemClickListener);
 	}
 
 	public class GroupListAdapter extends BaseAdapter {
