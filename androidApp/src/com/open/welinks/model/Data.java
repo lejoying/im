@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.TempData.ImageBean;
@@ -289,12 +288,23 @@ public class Data {
 
 		public boolean isModified = false;
 
-		public List<Message> groupEvents = new ArrayList<Message>();
+		public List<String> groupEvents = new ArrayList<String>();
 
-		public Map<String, Message> groupEventsMap = new HashMap<String, Message>();
+		public Map<String, EventMessage> groupEventsMap = new HashMap<String, EventMessage>();
 
-		public List<Message> userEvents = new ArrayList<Message>();
+		public List<String> userEvents = new ArrayList<String>();
 
-		public Map<String, Message> userEventsMap = new HashMap<String, Message>();
+		public Map<String, EventMessage> userEventsMap = new HashMap<String, EventMessage>();
+
+		public class EventMessage {
+			public String eid;
+			public String gid;
+			public String type;
+			public String phone;
+			public String phoneTo;
+			public String time;
+			public String status;// waiting success
+			public String content;
+		}
 	}
 }
