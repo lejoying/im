@@ -20,6 +20,7 @@ groupManage.create = function (data, response) {
     var name = data.name;
     var members = data.members;
     var location = data.location;
+    var address=data.address;
     console.log("phone:" + phone + "tempGid:" + tempGid + ",name:" + name + ",members:" + members);
     if (type == "createTempGroup") {
         var timeGid = new Date().getTime() + "";
@@ -119,7 +120,7 @@ groupManage.create = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 var group = results.pop().group.data;
-                createGroupLocation(group);
+//                createGroupLocation(group);
                 if (members.length > 0) {
                     addMembersToGroup(group, members);
                     console.log("开始初始化群组第一批用户个数:" + members.length);
@@ -128,7 +129,8 @@ groupManage.create = function (data, response) {
                     response.write(JSON.stringify({
                         "提示信息": "创建群组成功",
                         group: group,
-                        tempGid: tempGid
+                        tempGid: tempGid,
+                        address:address
                     }))
                     response.end();
 //                    setGroupLBSLocation(phone, data.accessKey, location, group);
@@ -171,7 +173,8 @@ groupManage.create = function (data, response) {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组成功",
                     group: group,
-                    tempGid: tempGid
+                    tempGid: tempGid,
+                    address:address
                 }));
                 response.end();
                 var event = JSON.stringify({
