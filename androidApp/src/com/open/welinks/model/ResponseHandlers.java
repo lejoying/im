@@ -882,6 +882,7 @@ public class ResponseHandlers {
 			public String 提示信息;
 			public String 失败原因;
 			public String tempGid;
+			public String address;
 			public Group group;
 		}
 
@@ -893,8 +894,9 @@ public class ResponseHandlers {
 				Group tempGroup = data.relationship.groupsMap.remove(response.tempGid);
 				String key = String.valueOf(response.group.gid);
 				Group group = response.group;
+				Group currentGroup = null;
 				if (data.relationship.groups.contains(key)) {
-					Group currentGroup = data.relationship.groupsMap.get(key);
+					currentGroup = data.relationship.groupsMap.get(key);
 					currentGroup.icon = group.icon;
 					currentGroup.name = group.name;
 					currentGroup.longitude = group.longitude;
@@ -903,7 +905,7 @@ public class ResponseHandlers {
 					currentGroup.background = group.background;
 				} else {
 					data.relationship.groups.add(key);
-					Group currentGroup = null;
+					currentGroup = null;
 					if (tempGroup != null) {
 						currentGroup = tempGroup;
 					} else {
@@ -917,8 +919,8 @@ public class ResponseHandlers {
 					currentGroup.background = group.background;
 					data.relationship.groupsMap.put(key, currentGroup);
 				}
+				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
 				data.relationship.isModified = true;
-				log.d("创建群组成功===================");
 			} else {
 				log.d("创建群组失败===================" + response.失败原因);
 
