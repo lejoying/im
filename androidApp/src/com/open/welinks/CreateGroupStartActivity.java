@@ -115,6 +115,9 @@ public class CreateGroupStartActivity extends Activity {
 					finish();
 				} else if (view.equals(groupPositionView)) {
 					Intent intent = new Intent(CreateGroupStartActivity.this, CreateGroupLocationActivity.class);
+					intent.putExtra("latitude", latitude);
+					intent.putExtra("longitude", longitude);
+					intent.putExtra("address", address);
 					startActivityForResult(intent, R.id.tag_first);
 				}
 			}

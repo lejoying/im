@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.TempData.ImageBean;
 
 public class Data {
@@ -34,6 +35,8 @@ public class Data {
 		public List<String> praiseusersList;
 
 		public Friend tempFriend;
+
+		public Group tempGroup;
 
 		public class ImageBean {
 

@@ -44,6 +44,8 @@ import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.view.NearbyView;
 
 public class NearbyController {
@@ -121,20 +123,24 @@ public class NearbyController {
 
 		mOnClickListener = new OnClickListener() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(View view) {
 				if (view.getTag(R.id.tag_first) != null) {
+					boolean isTemp = judgeTempRelation((Map<String, Object>) view.getTag(R.id.tag_third));
 					String type = (String) view.getTag(R.id.tag_first);
 					String key = (String) view.getTag(R.id.tag_second);
 					Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
 					intent.putExtra("type", type);
 					intent.putExtra("key", key);
+					intent.putExtra("isTemp", isTemp);
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.backView)) {
 					thisActivity.finish();
 				}
 
 			}
+
 		};
 		mCloudSearchListener = new OnCloudSearchListener() {
 
@@ -262,6 +268,39 @@ public class NearbyController {
 		// mQuery.setBound(new SearchBound(points));
 		mCloudSearch.searchCloudAsyn(mQuery);
 
+	}
+
+	public boolean judgeTempRelation(Map<String, Object> infomation) {
+		boolean isTemp = true;
+		if (infomation.get("gid") == null) {
+			for (String circles : data.relationship.circles) {
+				if (data.relationship.circlesMap.get(circles).friends.contains(infomation.get("phone"))) {
+					isTemp = false;
+					break;
+				}
+			}
+			if (isTemp) {
+				Friend tempFriend = data.relationship.new Friend();
+				tempFriend.head = (String) infomation.get("head");
+				tempFriend.nickName = (String) infomation.get("name");
+				tempFriend.mainBusiness = (String) infomation.get("mainBusiness");
+				data.tempData.tempFriend = tempFriend;
+			}
+		} else {
+			if (data.relationship.groups.contains(infomation.get("gid"))) {
+				isTemp = false;
+			}
+			if (isTemp) {
+				Group tempGroup = data.relationship.new Group();
+				tempGroup.gid = Integer.valueOf((String) infomation.get("gid"));
+				tempGroup.icon = (String) infomation.get("icon");
+				tempGroup.name = (String) infomation.get("name");
+				tempGroup.description = (String) infomation.get("description");
+				data.tempData.tempGroup = tempGroup;
+			}
+
+		}
+		return isTemp;
 	}
 
 	public void setImageOnView(String fileName, ImageView view) {

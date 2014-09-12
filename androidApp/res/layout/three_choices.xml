@@ -3,8 +3,7 @@
     android:layout_width="180dp"
     android:layout_height="30dp"
     android:background="@drawable/threechoices_background"
-    android:orientation="horizontal"
-    android:padding="1dp" >
+    android:orientation="horizontal" >
 
     <Button
         android:id="@+id/button_one"
@@ -15,6 +14,11 @@
         android:background="@drawable/threechoice_one"
         android:text="广场" />
 
+    <ImageView
+        android:layout_width="1.5dp"
+        android:layout_height="30dp"
+        android:background="#eeffffff" />
+
     <Button
         android:id="@+id/button_two"
         style="?android:attr/buttonBarButtonStyle"
@@ -23,6 +27,11 @@
         android:layout_weight="1.0"
         android:background="@drawable/threechoice_two"
         android:text="群组" />
+
+    <ImageView
+        android:layout_width="1.5dp"
+        android:layout_height="30dp"
+        android:background="#eeffffff" />
 
     <Button
         android:id="@+id/button_three"

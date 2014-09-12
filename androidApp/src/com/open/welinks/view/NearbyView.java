@@ -48,7 +48,7 @@ public class NearbyView {
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_nearby);
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
-		titleContent = (TextView) thisActivity.findViewById(R.id.titleContent);
+		titleContent = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		nearby = (ListView) thisActivity.findViewById(R.id.nearby);
 
 		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
@@ -135,6 +135,7 @@ public class NearbyView {
 				holder.age.setText("20");
 				convertView.setTag(R.id.tag_first, "point");
 				convertView.setTag(R.id.tag_second, (String) infomation.get("phone"));
+				convertView.setTag(R.id.tag_third, infomation);
 			} else {
 				String icon = (String) infomation.get("icon");
 				if ("".equals(icon)) {
@@ -159,6 +160,7 @@ public class NearbyView {
 				holder.chatNum.setText("10");
 				convertView.setTag(R.id.tag_first, "group");
 				convertView.setTag(R.id.tag_second, (String) infomation.get("gid"));
+				convertView.setTag(R.id.tag_third, infomation);
 			}
 			convertView.setOnClickListener(thisController.mOnClickListener);
 			return convertView;
