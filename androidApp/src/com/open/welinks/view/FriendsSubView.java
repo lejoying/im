@@ -83,8 +83,8 @@ public class FriendsSubView {
 		friendsMap = data.relationship.friendsMap;
 
 		this.friendListBody.containerView.removeAllViews();
-		this.friendListBody.height=0;
-		
+		this.friendListBody.height = 0;
+
 		this.friendListBody.listItemsSequence.clear();
 
 		for (int i = 0; i < circles.size(); i++) {
@@ -112,7 +112,9 @@ public class FriendsSubView {
 
 		this.friendListBody.containerHeight = (int) (this.displayMetrics.heightPixels - 38 - displayMetrics.density * 88);
 	}
-	Bitmap bitmap=null;
+
+	Bitmap bitmap = null;
+
 	public class CircleBody extends MyListItemBody {
 
 		CircleBody(ListBody1 listBody) {
@@ -131,12 +133,10 @@ public class FriendsSubView {
 		int lineCount = 0;
 
 		public View initialize() {
-			
-			Resources resources = mainView.thisActivity.getResources();
-			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
-			
+			Resources resources = mainView.thisActivity.getResources();
+			bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
+			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 			this.cardView = (TouchView) mainView.mInflater.inflate(R.layout.view_control_circle_card, null);
 			this.leftTopText = (TextView) this.cardView.findViewById(R.id.leftTopText);
@@ -213,9 +213,8 @@ public class FriendsSubView {
 
 		public void setData(Friend friend) {
 
-
 			this.headImageView.setImageBitmap(bitmap);
-			
+
 			this.nickNameView.setText(friend.nickName);
 			this.friendView.setTag(R.id.friendsContainer, friend);
 			this.friendView.setTag(R.id.tag_class, "friend_view");

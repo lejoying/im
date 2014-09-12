@@ -83,7 +83,7 @@ public class ShareSubView {
 	// group
 	// public PopupWindow groupPopWindow;
 	// pop layout
-	public View groupDialogView;
+	public TouchView groupDialogView;
 
 	public TouchView groupsDialogContent;
 
@@ -430,9 +430,9 @@ public class ShareSubView {
 	public View releaseShareDialogView;
 	public RelativeLayout dialogMainContentView;
 
-	public RelativeLayout releaseImageTextButton;
-	public RelativeLayout releaseVoiceTextButton;
-	public RelativeLayout releaseVoteButton;
+	public TouchView releaseImageTextButton;
+	public TouchView releaseVoiceTextButton;
+	public TouchView releaseVoteButton;
 
 	public ShareSubController thisController;
 
@@ -440,9 +440,12 @@ public class ShareSubView {
 	public void initReleaseShareDialogView() {
 		releaseShareDialogView = mainView.mInflater.inflate(R.layout.share_release_type_dialog, null);
 		dialogMainContentView = (RelativeLayout) releaseShareDialogView.findViewById(R.id.dialogMainContent);
-		releaseImageTextButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseImageTextShareButton);
-		releaseVoiceTextButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoiceTextShareButton);
-		releaseVoteButton = (RelativeLayout) releaseShareDialogView.findViewById(R.id.releaseVoteShareButton);
+		releaseImageTextButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseImageTextShareButton);
+		releaseImageTextButton.isIntercept = true;
+		releaseVoiceTextButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseVoiceTextShareButton);
+		releaseVoiceTextButton.isIntercept = true;
+		releaseVoteButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseVoteShareButton);
+		releaseVoteButton.isIntercept = true;
 
 		releaseImageTextButton.setOnClickListener(thisController.mOnClickListener);
 		releaseImageTextButton.setOnTouchListener(thisController.onTouchBackColorListener);
@@ -468,7 +471,9 @@ public class ShareSubView {
 	}
 
 	public void initializationGroupsDialog() {
-		groupDialogView = mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
+		groupDialogView = (TouchView) mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
+		// groupDialogView.isIntercept = true;
+
 		groupDialogView.setTag(R.id.tag_class, "group_view");
 		// groupPopWindow = new PopupWindow(groupDialogView,
 		// LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);

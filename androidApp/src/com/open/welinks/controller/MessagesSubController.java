@@ -75,6 +75,10 @@ public class MessagesSubController {
 
 	}
 
+	public void onActivityResult(int requestCode, int resultCode, Data data) {
+
+	}
+
 	public void onSingleTapUp(MotionEvent event) {
 		Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
 		if (message == null) {

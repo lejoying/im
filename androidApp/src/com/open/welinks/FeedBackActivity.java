@@ -36,7 +36,7 @@ public class FeedBackActivity extends Activity implements OnClickListener, TextW
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		backView = findViewById(R.id.backView);
-		titleContentView = (TextView) findViewById(R.id.titleContent);
+		titleContentView = (TextView) findViewById(R.id.backTitleView);
 		titleContentView.setText("意见反馈");
 		rightContainer = (RelativeLayout) findViewById(R.id.rightContainer);
 		send = new ImageView(this);
