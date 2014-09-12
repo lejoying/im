@@ -41,6 +41,7 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.view.MainView;
 import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
@@ -174,6 +175,11 @@ public class ShareSubController {
 						onTouchDownView = view;
 						isTouchDown = true;
 					}
+					if (view.equals(thisView.groupDialogView)) {
+						Log.i(tag, "ACTION_DOWN---groupDialogView");
+						thisView.groupDialogView.isIntercept = true;
+						isTouchDown = true;
+					}
 
 					Log.i(tag, "ACTION_DOWN---" + view_class);
 					// thisView.mainView.main_container.playSoundEffect(SoundEffectConstants.CLICK);
@@ -192,8 +198,13 @@ public class ShareSubController {
 				} else if (view.equals(thisView.shareTopMenuGroupNameParent)) {
 					thisView.showGroupsDialog();
 				} else if (view.equals(thisView.groupDialogView)) {
+					thisView.groupDialogView.isIntercept = false;
 					thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.releaseShareView)) {
+					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
+					long[] pattern = { 30, 100, 30 };
+					vibrator.vibrate(pattern, -1);
+					
 					thisView.showReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();

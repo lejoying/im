@@ -7,95 +7,179 @@
 
     <RelativeLayout
         android:id="@+id/dialogMainContent"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:background="#eeffffff"
         android:gravity="center_vertical" >
 
-        <RelativeLayout
+        <com.open.lib.TouchView
             android:id="@+id/releaseImageTextShareButton"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:gravity="center_vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             tools:ignore="UselessParent" >
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:background="@drawable/reloption_bk_nor"
-                android:padding="15dp"
-                android:src="@drawable/reloption_camer" >
+                android:src="@drawable/comm_ico_menu_basic"
+                android:translationY="-10dp" >
             </ImageView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="65dp"
-                android:text="@string/image_text"
-                android:textColor="#fff"
-                android:textSize="16sp" />
-        </RelativeLayout>
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="文本"
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationY="34dp" />
+        </com.open.lib.TouchView>
 
-        <RelativeLayout
+        <com.open.lib.TouchView
             android:id="@+id/releaseVoiceTextShareButton"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_marginLeft="100dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:translationX="120dp"
             tools:ignore="UselessParent" >
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:background="@drawable/reloption_bk_nor"
-                android:padding="15dp"
-                android:src="@drawable/reloption_voice" >
+                android:src="@drawable/comm_ico_menu_photo"
+                android:translationY="-10dp" >
             </ImageView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="65dp"
-                android:text="@string/voice_text"
-                android:textColor="#fff"
-                android:textSize="16sp" />
-        </RelativeLayout>
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="相册"
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationY="34dp" />
+        </com.open.lib.TouchView>
 
-        <RelativeLayout
+        <com.open.lib.TouchView
             android:id="@+id/releaseVoteShareButton"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_marginLeft="200dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:translationX="240dp"
             android:gravity="center_vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
             tools:ignore="UselessParent" >
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:background="@drawable/reloption_bk_nor"
-                android:padding="15dp"
-                android:src="@drawable/reloption_vote" >
+                android:src="@drawable/comm_ico_menu_video"
+                android:translationY="-10dp" >
             </ImageView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="65dp"
-                android:text="@string/vote_text"
-                android:textColor="#fff"
-                android:textSize="16sp" />
-        </RelativeLayout>
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="图文"
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationY="34dp" />
+        </com.open.lib.TouchView>
+
+        <com.open.lib.TouchView
+            android:id="@+id/releaseVoteShareButton"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:translationX="360dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            tools:ignore="UselessParent" >
+
+            <ImageView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/reloption_bk_nor"
+                android:src="@drawable/comm_ico_menu_video"
+                android:translationY="-10dp" >
+            </ImageView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="投票"
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationY="34dp" />
+        </com.open.lib.TouchView>
+
+        <com.open.lib.TouchView
+            android:id="@+id/releaseVoteShareButton"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:translationX="480dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            tools:ignore="UselessParent" >
+
+            <ImageView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/reloption_bk_nor"
+                android:src="@drawable/comm_ico_menu_video"
+                android:translationY="-10dp" >
+            </ImageView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="海报"
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationY="34dp" />
+        </com.open.lib.TouchView>
+
+        <com.open.lib.TouchView
+            android:id="@+id/releaseVoteShareButton"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:translationX="600dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            tools:ignore="UselessParent" >
+
+            <ImageView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/reloption_bk_nor"
+                android:src="@drawable/comm_ico_menu_video"
+                android:translationY="-10dp" >
+            </ImageView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="活动"
+                android:textColor="#99000000"
+                android:textSize="16sp"
+                android:translationY="34dp" />
+        </com.open.lib.TouchView>
     </RelativeLayout>
 
 </RelativeLayout>
