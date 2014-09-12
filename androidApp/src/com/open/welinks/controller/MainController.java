@@ -40,6 +40,7 @@ import com.open.welinks.model.API;
 import com.open.welinks.model.Constant;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Circle;
+import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
@@ -342,7 +343,7 @@ public class MainController {
 
 	public void creataLBSAccount() {
 		final User user = data.userInformation.currentUser;
-		LBSData data = new LBSData();
+		LBSAccountData data = new LBSAccountData();
 		data._name = user.nickName;
 		data._location = user.longitude + "," + user.latitude;
 		data._address = userAddress;
@@ -364,7 +365,7 @@ public class MainController {
 
 	public void modifyLBSAccount(final String id) {
 		final User user = data.userInformation.currentUser;
-		LBSData data = new LBSData();
+		LBSAccountData data = new LBSAccountData();
 		data._id = id;
 		data._name = user.nickName;
 		data._location = user.longitude + "," + user.latitude;
@@ -385,7 +386,27 @@ public class MainController {
 		httpUtils.send(HttpMethod.POST, API.LBS_DATA_UPDATA, params, responseHandlers.lbsdata_updata);
 	}
 
-	public class LBSData {
+	public void creataLBSGroup(Group group, String address) {
+		LBSGroupData data = new LBSGroupData();
+		data._name = group.name;
+		data._location = group.longitude + "," + group.latitude;
+		data._address = address;
+		data.icon = group.icon;
+		data.gid = String.valueOf(group.gid);
+		data.description = group.description;
+		data.background = group.background;
+		data.gtype = "group";
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("key", Constant.LBS_KSY);
+		params.addBodyParameter("tableid", Constant.GROUPTABLEID);
+		params.addBodyParameter("loctype", "2");
+		params.addBodyParameter("data", gson.toJson(data));
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.LBS_DATA_CREATE, params, responseHandlers.lbsdata_create);
+	}
+
+	public class LBSAccountData {
 		public String _id;
 		public String _name;
 		public String _location;
@@ -395,6 +416,18 @@ public class MainController {
 		public String haed;
 		public String mainBusiness;
 		public String lastlogintime;
+	}
+
+	public class LBSGroupData {
+		public String _name;
+		public String _location;
+		public String _address;
+		public String icon;
+		public String gid;
+		public String description;
+		public String gtype;
+		public String background;
+
 	}
 
 	public class TouchStatus {
@@ -577,6 +610,7 @@ public class MainController {
 			thisActivity.finish();
 		} else {
 			shareSubController.onActivityResult(requestCode, resultCode, data);
+			messagesSubController.onActivityResult(requestCode, resultCode, data);
 		}
 
 	}

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,11 +30,10 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Parser;
-import com.open.welinks.model.ResponseEventHandlers.GroupEvent;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
@@ -66,8 +66,8 @@ public class DynamicListActivity extends Activity {
 
 	public ViewManage viewManage = ViewManage.getInstance();
 
-	public List<Message> groupEventMessages = new ArrayList<Message>();
-	public List<Message> userEventMessages = new ArrayList<Message>();
+	public List<String> groupEventMessages = new ArrayList<String>();
+	public List<String> userEventMessages = new ArrayList<String>();
 	public Map<String, Friend> friendsMap;
 	public Gson gson = new Gson();
 
@@ -78,6 +78,9 @@ public class DynamicListActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		selectType = getIntent().getIntExtra("type", 3);
+
 		viewManage.dynamicListActivity = this;
 		friendsMap = data.relationship.friendsMap;
 		initView();
@@ -93,22 +96,23 @@ public class DynamicListActivity extends Activity {
 		parser.check();
 		if ("user".equals(type) || "all".equals(type)) {
 			userEventMessages.clear();
-			List<Message> userEventMessages0 = data.event.userEvents;
-			for (int i = userEventMessages0.size() - 1; i >= 0; i--) {
-				Message message0 = userEventMessages0.get(i);
-				if ("account_dataupdate".equals(message0.contentType) || "relation_newfriend".equals(message0.contentType) || "relation_addfriend".equals(message0.contentType)) {
-					Message message2 = data.event.userEventsMap.get(message0.gid);
-					if (message2 != null) {
-						message0 = message2;
+			List<String> userEventMessages0 = data.event.userEvents;
+			if (userEventMessages0 != null && data.event.userEventsMap != null) {
+				for (int i = userEventMessages0.size() - 1; i >= 0; i--) {
+					String key = userEventMessages0.get(i);
+					EventMessage message0 = data.event.userEventsMap.get(key);
+					if ("account_dataupdate".equals(message0.type) || "relation_newfriend".equals(message0.type) || "relation_addfriend".equals(message0.type)) {
+						userEventMessages.add(message0.eid);
 					}
-					userEventMessages.add(message0);
 				}
+			} else {
+				Log.e(tag, userEventMessages0 + "--00000000000000000-" + data.event.userEventsMap);
 			}
 		}
 
 		if ("group".equals(type) || "all".equals(type)) {
 			groupEventMessages.clear();
-			List<Message> groupEventMessages0 = data.event.groupEvents;
+			List<String> groupEventMessages0 = data.event.groupEvents;
 			for (int i = groupEventMessages0.size() - 1; i >= 0; i--) {
 				groupEventMessages.add(groupEventMessages0.get(i));
 			}
@@ -117,7 +121,7 @@ public class DynamicListActivity extends Activity {
 
 	public void showEventList() {
 		if (selectType == 1) {
-
+			// TODO square event
 		} else if (selectType == 2) {
 			if (groupEventListAdapter == null) {
 				groupEventListAdapter = new GroupEventListAdapter();
@@ -243,8 +247,8 @@ public class DynamicListActivity extends Activity {
 			String content = "";
 
 			holder.headView.setImageBitmap(bitmap);
-			Message message = groupEventMessages.get(position);
-			GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+			String key = groupEventMessages.get(position);
+			EventMessage event = data.event.groupEventsMap.get(key);
 			String nickName = event.phone;
 			Friend friend = data.relationship.friendsMap.get(nickName);
 			if (friend != null) {
@@ -258,12 +262,12 @@ public class DynamicListActivity extends Activity {
 			if (group != null) {
 				groupName = group.name;
 			}
-			String contentType = message.contentType;
+			String contentType = event.type;
 			holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 			if ("group_addmembers".equals(contentType)) {
-				content = nickName + " 邀请了" + event.members.size() + "个好友到 " + groupName + " 群组中.";
+				content = nickName + " 邀请了" + event.content + "个好友到 " + groupName + " 群组中.";
 			} else if ("group_removemembers".equals(contentType)) {
-				content = nickName + " 从" + groupName + " 移除了" + event.members.size() + "个好友.";
+				content = nickName + " 从" + groupName + " 移除了" + event.content + "个好友.";
 			} else if ("group_dataupdate".equals(contentType)) {
 				content = nickName + " 更新了 " + groupName + " 的资料信息.";
 			} else if ("group_create".equals(contentType)) {
@@ -319,15 +323,10 @@ public class DynamicListActivity extends Activity {
 
 			String content = "";
 			String nickName = "";
-			UserEvent event;
 			try {
-				Message message = userEventMessages.get(position);
-				if ("relation_newfriend".equals(message.contentType)) {
-					Message messageLocal = data.event.userEventsMap.get(message.gid);
-					if (messageLocal != null) {
-						message = messageLocal;
-					}
-					event = gson.fromJson(message.content, UserEvent.class);
+				String key = userEventMessages.get(position);
+				EventMessage event = data.event.userEventsMap.get(key);
+				if ("relation_newfriend".equals(event.type)) {
 					friend = friendsMap.get(event.phone);
 					if (event.content != null) {
 						content = event.content;
@@ -342,8 +341,7 @@ public class DynamicListActivity extends Activity {
 					if (event.status.equals("waiting")) {
 						holder.eventOperationView.setVisibility(View.VISIBLE);
 						holder.processedView.setVisibility(View.GONE);
-						final UserEvent event0 = event;
-						final Message message0 = message;
+						final EventMessage event0 = event;
 						holder.agreeButtonView.setOnClickListener(new OnClickListener() {
 
 							@Override
@@ -353,11 +351,8 @@ public class DynamicListActivity extends Activity {
 								holder0.processedView.setText("已添加");
 								// modify local data
 								parser.check();
-								Message messageLocal = data.event.userEventsMap.get(message0.gid);
-								UserEvent event = gson.fromJson(messageLocal.content, UserEvent.class);
-								event.status = "success";
-								messageLocal.content = gson.toJson(event);
-								agreeAddFriend(event.phone);
+								event0.status = "status";
+								agreeAddFriend(event0.phone);
 								data.event.isModified = true;
 							}
 						});
@@ -369,10 +364,8 @@ public class DynamicListActivity extends Activity {
 								holder0.processedView.setVisibility(View.VISIBLE);
 								holder0.processedView.setText("已处理");
 								// modify local data
-								event0.status = "ignore";
 								parser.check();
-								Message messageLocal = data.event.userEventsMap.get(message0.gid);
-								messageLocal.content = gson.toJson(event0);
+								event0.status = "ignore";
 								data.event.isModified = true;
 							}
 						});
@@ -385,13 +378,7 @@ public class DynamicListActivity extends Activity {
 						holder.processedView.setVisibility(View.VISIBLE);
 						holder.processedView.setText("已处理");
 					}
-				} else if ("relation_addfriend".equals(message.contentType)) {
-					Message message2 = null;
-					Message message0 = data.event.userEventsMap.get(message.gid);
-					if (message0 != null) {
-						message2 = message0;
-					}
-					event = gson.fromJson(message2.content, UserEvent.class);
+				} else if ("relation_addfriend".equals(event.type)) {
 					holder.eventOperationView.setVisibility(View.GONE);
 					holder.processedView.setVisibility(View.VISIBLE);
 					friend = friendsMap.get(event.phone);
@@ -410,8 +397,7 @@ public class DynamicListActivity extends Activity {
 					} else if (event.status.equals("success")) {
 						holder.processedView.setText("已添加");
 					}
-				} else if ("account_dataupdate".equals(message.contentType)) {
-					event = gson.fromJson(message.content, UserEvent.class);
+				} else if ("account_dataupdate".equals(event.type)) {
 					holder.timeView.setText(DateUtil.getTime(Long.valueOf(event.time)));
 					holder.eventContentView.setText("更新个人资料");
 					holder.eventOperationView.setVisibility(View.GONE);

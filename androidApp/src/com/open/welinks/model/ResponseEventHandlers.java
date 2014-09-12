@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
-import com.open.welinks.DynamicListActivity.UserEvent;
+import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.view.ViewManage;
 
@@ -45,122 +45,157 @@ public class ResponseEventHandlers {
 		if (message == null) {
 			return;
 		}
+
 		if (message.sendType.equals("event")) {
 			String contentType = message.contentType;
-			if ("account_dataupdate".equals(contentType)) {
-				handleAccountDataupdateEvent(message);
-			} else if ("relation_newfriend".equals(contentType)) {
-				handleRelationNewfriendEvent(message);
-			} else if ("relation_addfriend".equals(contentType)) {
-				handleRelationAddfriendEvent(message);
-			} else if ("relation_friendaccept".equals(contentType)) {
-				handleRelationFriendacceptEvent(message);
-			} else if ("relation_deletefriend".equals(contentType)) {
-				handleRelationDeletefriendEvent(message);
-			} else if ("relation_blacklist".equals(contentType)) {
-				handleRelationBlacklistEvent(message);
-			} else if ("group_addmembers".equals(contentType)) {
-				handleGroupAddmembersEvent(message);
-			} else if ("group_removemembers".equals(contentType)) {
-				handleGroupRemovemembersEvent(message);
-			} else if ("group_dataupdate".equals(contentType)) {
-				handleGroupDataupdateEvent(message);
-			} else if ("group_create".equals(contentType)) {
-				handleGroupCreateEvent(message);
+			if ("message".equals(contentType)) {
+				updateLocalMessage(message);
+			} else {
+				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
+				if ("account_dataupdate".equals(contentType)) {
+					handleAccountDataupdateEvent(eventMessage);
+				} else if ("relation_newfriend".equals(contentType)) {
+					handleRelationNewfriendEvent(eventMessage);
+				} else if ("relation_addfriend".equals(contentType)) {
+					handleRelationAddfriendEvent(eventMessage);
+				} else if ("relation_friendaccept".equals(contentType)) {
+					handleRelationFriendacceptEvent(eventMessage);
+				} else if ("relation_deletefriend".equals(contentType)) {
+					handleRelationDeletefriendEvent(eventMessage);
+				} else if ("relation_blacklist".equals(contentType)) {
+					handleRelationBlacklistEvent(eventMessage);
+				} else if ("group_addmembers".equals(contentType)) {
+					handleGroupAddmembersEvent(eventMessage);
+				} else if ("group_removemembers".equals(contentType)) {
+					handleGroupRemovemembersEvent(eventMessage);
+				} else if ("group_dataupdate".equals(contentType)) {
+					handleGroupDataupdateEvent(eventMessage);
+				} else if ("group_create".equals(contentType)) {
+					handleGroupCreateEvent(eventMessage);
+				} else if ("group_addme".equals(contentType)) {
+					handleGroupAddMeEvent(eventMessage);
+				} else if ("group_removeme".equals(contentType)) {
+					handleGroupRemoveMeEvent(eventMessage);
+				}
+				data.event.isModified = true;
 			}
-			data.event.isModified = true;
-		} else if (message.sendType.equals("point") || message.sendType.equals("group")) {
-			updateLocalMessage(message);
 		}
 	}
 
-	public class GroupEvent {
-		public String type;
-		public String time;
-		public String gid;
-		public List<String> members;
-		public String phone;
-	}
-
-	public void handleGroupCreateEvent(Message message) {
-		data.event.groupEvents.add(message);
-		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+	private void handleGroupRemoveMeEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.groupEvents.add(key);
+		data.event.groupEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(event.gid, "create");
+		DataUtil.getUserCurrentGroupMembers(message.gid, "addmembers");
 	}
 
-	public void handleGroupDataupdateEvent(Message message) {
-		data.event.groupEvents.add(message);
-		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+	private void handleGroupAddMeEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.groupEvents.add(key);
+		data.event.groupEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupInfomation(event.gid);
+		DataUtil.getUserCurrentGroupMembers(message.gid, "addmembers");
 	}
 
-	public void handleGroupRemovemembersEvent(Message message) {
-		data.event.groupEvents.add(message);
-		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+	public void handleGroupCreateEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.groupEvents.add(key);
+		data.event.groupEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(event.gid, "removemembers");
+		DataUtil.getUserCurrentGroupMembers(message.gid, "create");
 	}
 
-	public void handleGroupAddmembersEvent(Message message) {
-		data.event.groupEvents.add(message);
-		GroupEvent event = gson.fromJson(message.content, GroupEvent.class);
+	// OK
+	public void handleGroupDataupdateEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.groupEvents.add(key);
+		data.event.groupEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(event.gid, "addmembers");
+		DataUtil.getUserCurrentGroupInfomation(message.gid);
 	}
 
-	public void handleRelationBlacklistEvent(Message message) {
-		data.event.userEvents.add(message);
+	// OK
+	public void handleGroupRemovemembersEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.groupEvents.add(key);
+		data.event.groupEventsMap.put(key, message);
+		viewManage.postNotifyView("DynamicListActivity");
+		DataUtil.getUserCurrentGroupMembers(message.gid, "removemembers");
+	}
+
+	// OK
+	public void handleGroupAddmembersEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.groupEvents.add(key);
+		data.event.groupEventsMap.put(key, message);
+		viewManage.postNotifyView("DynamicListActivity");
+		DataUtil.getUserCurrentGroupMembers(message.gid, "addmembers");
+	}
+
+	public void handleRelationBlacklistEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.userEvents.add(key);
+		data.event.userEventsMap.put(key, message);
 		DataUtil.getIntimateFriends();
 	}
 
-	public void handleRelationDeletefriendEvent(Message message) {
-		data.event.userEvents.add(message);
+	public void handleRelationDeletefriendEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.userEvents.add(key);
+		data.event.userEventsMap.put(key, message);
 		DataUtil.getIntimateFriends();
 	}
 
-	public void handleRelationFriendacceptEvent(Message message) {
-		Message message0 = data.event.userEventsMap.get(message.gid);
+	public void handleRelationFriendacceptEvent(EventMessage message) {
+		String key = message.eid;
+		parser.check();
+		EventMessage event = data.event.userEventsMap.get(key);
 		if (message != null) {
-			UserEvent event = gson.fromJson(message0.content, UserEvent.class);
 			event.status = "success";
-			message0.content = gson.toJson(event);
+			data.event.isModified = true;
 		}
-		data.event.userEvents.add(message);
 		viewManage.postNotifyView("DynamicListActivity");
 		DataUtil.getIntimateFriends();
 		// data.event.userEventsMap.put(message.gid, message);
 	}
 
-	public void handleRelationNewfriendEvent(Message message) {
-		List<Message> userEvents = data.event.userEvents;
-		Message dealMessage = null;
+	public void handleRelationNewfriendEvent(EventMessage message) {
+		List<String> userEvents = data.event.userEvents;
+		EventMessage dealMessage = null;
 		for (int i = userEvents.size() - 1; i >= 0; i--) {
-			Message message0 = userEvents.get(i);
-			if ("relation_newfriend".equals(message0.contentType)) {
-				if (message.phone.equals(message0.phone) && message.phoneto.equals(message0.phoneto)) {
+			String key = userEvents.get(i);
+			EventMessage message0 = data.event.userEventsMap.get(key);
+			if ("relation_newfriend".equals(message0.type)) {
+				if (message.phone.equals(message0.phone) && message.phoneTo.equals(message0.phoneTo)) {
 					dealMessage = message0;
 					break;
 				}
 			}
 		}
 		if (dealMessage != null) {
-			data.event.userEvents.remove(dealMessage);
+			data.event.userEvents.remove(dealMessage.eid);
+			data.event.userEventsMap.remove(dealMessage.eid);
 		}
-		data.event.userEvents.add(message);
-		data.event.userEventsMap.put(message.gid, message);
+		String key = message.eid;
+		data.event.userEvents.add(key);
+		data.event.userEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
 	}
 
-	private void handleRelationAddfriendEvent(Message message) {
-		data.event.userEvents.add(message);
-		data.event.userEventsMap.put(message.gid, message);
+	private void handleRelationAddfriendEvent(EventMessage message) {
+		String key = message.eid;
+		data.event.userEvents.add(key);
+		data.event.userEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
 	}
 
-	public void handleAccountDataupdateEvent(Message message) {
-		data.event.userEvents.add(message);
+	// OK
+	public void handleAccountDataupdateEvent(EventMessage message) {
+		String key = message.eid;
+		parser.check();
+		data.event.userEvents.add(key);
+		data.event.userEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
 		DataUtil.getUserInfomation();
 	}
@@ -235,16 +270,6 @@ public class ResponseEventHandlers {
 		}
 	}
 
-	public class Event {
-		public String 提示信息;
-		public String event;
-		public EventContent event_content;
-	}
-
-	public class EventContent {
-		public List<String> message;
-	}
-
 	public void parseEvent(ResponseInfo<String> responseInfo) {
 		Log.e(tag, responseInfo.result);
 		Message message = null;
@@ -254,6 +279,7 @@ public class ResponseEventHandlers {
 				responseEventHandlers.handleEvent(message);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

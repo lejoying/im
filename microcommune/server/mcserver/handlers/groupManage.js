@@ -20,6 +20,9 @@ groupManage.create = function (data, response) {
     var name = data.name;
     var members = data.members;
     var location = data.location;
+    var address=data.address;
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     console.log("phone:" + phone + "tempGid:" + tempGid + ",name:" + name + ",members:" + members);
     if (type == "createTempGroup") {
         var timeGid = new Date().getTime() + "";
@@ -119,7 +122,7 @@ groupManage.create = function (data, response) {
                 return;
             } else if (results.length > 0) {
                 var group = results.pop().group.data;
-                createGroupLocation(group);
+//                createGroupLocation(group);
                 if (members.length > 0) {
                     addMembersToGroup(group, members);
                     console.log("开始初始化群组第一批用户个数:" + members.length);
@@ -128,9 +131,31 @@ groupManage.create = function (data, response) {
                     response.write(JSON.stringify({
                         "提示信息": "创建群组成功",
                         group: group,
-                        tempGid: tempGid
+                        tempGid: tempGid,
+                        address:address
                     }))
                     response.end();
+                    var event = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_create",
+                        content: JSON.stringify({
+                            type: "group_create",
+                            time: new Date().getTime(),
+                            phone: phone,
+                            gid: group.gid,
+                            eid: eid,
+                            group: group,
+                            content: 1
+                        })
+                    });
+                    client.rpush(phone, event, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, phone, accessKey, "*", event);
 //                    setGroupLBSLocation(phone, data.accessKey, location, group);
                 }
             } else {
@@ -171,10 +196,11 @@ groupManage.create = function (data, response) {
                 response.write(JSON.stringify({
                     "提示信息": "创建群组成功",
                     group: group,
-                    tempGid: tempGid
+                    tempGid: tempGid,
+                    address:address
                 }));
                 response.end();
-                var event = JSON.stringify({
+                var event1 = JSON.stringify({
                     sendType: "event",
                     contentType: "group_create",
                     content: JSON.stringify({
@@ -182,11 +208,28 @@ groupManage.create = function (data, response) {
                         time: new Date().getTime(),
                         phone: phone,
                         gid: group.gid,
-                        members: members
+                        eid: eid,
+                        content: members.length
+                    })
+                });
+                var event2 = JSON.stringify({
+                    sendType: "event",
+                    contentType: "group_addme",
+                    content: JSON.stringify({
+                        type: "group_addme",
+                        time: new Date().getTime(),
+                        phone: phone,
+                        gid: group.gid,
+                        eid: eid,
+                        content: members.length
                     })
                 });
                 for (var index in members) {
                     var phoneTo = members[index];
+                    var event = event2;
+                    if (phoneTo == phone) {
+                        event = event1;
+                    }
                     //{"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: group.gid, operation: true}}
                     client.rpush(phoneTo, event, function (err, reply) {
                         if (err) {
@@ -275,6 +318,8 @@ groupManage.addmembers = function (data, response) {
     var accessKey = data.accessKey;
     var gid = data.gid;
     var members = data.members;
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     console.log("phone:" + phone + "gid:" + gid + ",members:" + members);
     var list = [phone, gid, members];
     if (verifyEmpty.verifyEmpty(data, list, response)) {
@@ -365,7 +410,8 @@ groupManage.addmembers = function (data, response) {
                         time: new Date().getTime(),
                         phone: phone,
                         gid: gid,
-                        members: members
+                        eid: eid,
+                        content: members.length
                     })
                 });
                 for (var index in accounts) {
@@ -382,14 +428,27 @@ groupManage.addmembers = function (data, response) {
                 for (var index in members) {
                     //{"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: true}}
                     var phoneTo = members[index];
-                    client.rpush(phoneTo, event, function (err, reply) {
+                    var event2 = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_addme",
+                        content: JSON.stringify({
+                            type: "group_addme",
+                            time: new Date().getTime(),
+                            phone: phone,
+                            phoneTo: phoneTo,
+                            gid: gid,
+                            eid: eid,
+                            content: members.length
+                        })
+                    });
+                    client.rpush(phoneTo, event2, function (err, reply) {
                         if (err) {
                             console.error("保存Event失败");
                         } else {
                             console.log("保存Event成功");
                         }
                     });
-                    push.inform(phone, phoneTo, accessKey, "*", event);
+                    push.inform(phone, phoneTo, accessKey, "*", event2);
                 }
             } else {
                 response.write(JSON.stringify({
@@ -410,6 +469,8 @@ groupManage.removemembers = function (data, response) {
     var accessKey = data.accessKey;
     var gid = data.gid;
     var members = data.members;
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     console.log("phone:" + phone + "gid:" + gid + ",members:" + members);
     var list = [phone, gid, members];
     if (verifyEmpty.verifyEmpty(data, list, response)) {
@@ -493,7 +554,32 @@ groupManage.removemembers = function (data, response) {
                 }))
                 response.end();
                 var removeMembers = {};
-                var event = JSON.stringify({
+                for (var index in members) {
+                    var removePhone = members[index];
+                    removeMembers[removePhone] = removePhone;
+                    var event1 = JSON.stringify({
+                        sendType: "event",
+                        contentType: "group_removeme",
+                        content: JSON.stringify({
+                            type: "group_removeme",
+                            time: new Date().getTime(),
+                            phone: phone,
+                            phoneTo: removePhone,
+                            gid: gid,
+                            content: members.length
+                        })
+                    });
+                    // {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: false}}
+                    client.rpush(removePhone, event1, function (err, reply) {
+                        if (err) {
+                            console.error("保存Event失败");
+                        } else {
+                            console.log("保存Event成功");
+                        }
+                    });
+                    push.inform(phone, removePhone, accessKey, "*", event1);
+                }
+                var event2 = JSON.stringify({
                     sendType: "event",
                     contentType: "group_removemembers",
                     content: JSON.stringify({
@@ -501,33 +587,20 @@ groupManage.removemembers = function (data, response) {
                         time: new Date().getTime(),
                         phone: phone,
                         gid: gid,
-                        members: members
+                        content: members.length
                     })
                 });
-                for (var index in members) {
-                    var removePhone = members[index];
-                    removeMembers[removePhone] = removePhone;
-                    // {"提示信息": "成功", event: "groupstatuschanged", event_content: {gid: gid, operation: false}}
-                    client.rpush(removePhone, event, function (err, reply) {
-                        if (err) {
-                            console.error("保存Event失败");
-                        } else {
-                            console.log("保存Event成功");
-                        }
-                    });
-                    push.inform(phone, removePhone, accessKey, "*", event);
-                }
                 for (var index in accounts) {
                     if (!removeMembers[index]) {
                         //{"提示信息": "成功", event: "groupmemberchanged", event_content: {gid: gid}}
-                        client.rpush(index, event, function (err, reply) {
+                        client.rpush(index, event2, function (err, reply) {
                             if (err) {
                                 console.error("保存Event失败");
                             } else {
                                 console.log("保存Event成功");
                             }
                         });
-                        push.inform(phone, index, accessKey, "*", event);
+                        push.inform(phone, index, accessKey, "*", event2);
                     }
                 }
             } else {
@@ -688,6 +761,8 @@ groupManage.modify = function (data, response) {
     var description = data.description;
     var address = data.address;
     var location = data.location;
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     console.log("phone:" + phone + ",gid:" + gid + ",name:" + name);
     var list = [phone, gid];
     if (verifyEmpty.verifyEmpty(data, list, response)) {
@@ -811,9 +886,10 @@ groupManage.modify = function (data, response) {
                     contentType: "group_dataupdate",
                     content: JSON.stringify({
                         type: "group_dataupdate",
-                        time: new Date().getTime(),
+                        time: time,
                         phone: phone,
-                        gid: gid
+                        gid: gid,
+                        eid: eid
                     })
                 });
                 for (var index in accounts) {
@@ -1390,7 +1466,10 @@ groupManage.getgroupmembers = function (data, response) {
 groupManage.modifysequence = function (data, response) {
     response.asynchronous = 1;
     var phone = data.phone;
+    var accessKey = data.accessKey;
     var groupSequence = data.sequence;
+    var time = new Date().getTime();
+    var eid = phone + "" + time;
     modifyGroupSeqence();
     function modifyGroupSeqence() {
         var query = [
@@ -1426,6 +1505,26 @@ groupManage.modifysequence = function (data, response) {
                 ResponseData(JSON.stringify({
                     "提示信息": "修改群组顺序成功"
                 }), response);
+                var event = JSON.stringify({
+                    sendType: "event",
+                    contentType: "account_dataupdate",
+                    content: JSON.stringify({
+                        type: "account_dataupdate",
+                        phone: phone,
+                        time: time,
+                        status: "success",
+                        content: "",
+                        eid: eid
+                    })
+                });
+                client.rpush(phone, event, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event);
             }
         });
     }

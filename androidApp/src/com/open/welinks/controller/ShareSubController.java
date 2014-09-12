@@ -102,9 +102,12 @@ public class ShareSubController {
 			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
 				if (instance.view.getTag() != null) {
-					String tag = (String) instance.view.getTag();
-					if ("head".equals(tag)) {
-						options = thisView.displayImageOptions;
+					try {
+						String tag = (String) instance.view.getTag();
+						if ("head".equals(tag)) {
+							options = thisView.displayImageOptions;
+						}
+					} catch (Exception e) {
 					}
 				}
 				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
