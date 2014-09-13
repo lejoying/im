@@ -21,7 +21,7 @@ relationManage.addfriend = function (data, response) {
     var accessKey = data.accessKey;
     var arr = [phone, phoneTo, accessKey];
     var time = new Date().getTime();
-    var eid = phone + "" + time;
+    var eid = phone + "_" + time;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         checkAccountBetweenRelation();
     }
@@ -101,7 +101,7 @@ relationManage.addfriend = function (data, response) {
                             sendType: "event",
                             contentType: "relation_addfriend",
                             content: JSON.stringify({
-                                type: "relation_friendaccept",
+                                type: "relation_addfriend",
                                 phone: phone,
                                 phoneTo: phoneTo,
                                 eid: eid,
@@ -249,6 +249,28 @@ relationManage.addfriend = function (data, response) {
                     "提示信息": "添加成功"
                 }));
                 response.end();
+                var event0 = JSON.stringify({
+                    sendType: "event",
+                    contentType: "relation_addfriend",
+                    content: JSON.stringify({
+                        type: "relation_addfriend",
+                        phone: phone,
+                        time: time,
+                        phoneTo: phoneTo,
+                        eid: eid,
+                        status: "waiting",
+                        content: message || ""
+                    })
+                });
+                //{"提示信息": "成功", event: "newfriend", event_content: {phone: phone}}
+                client.rpush(phone, event0, function (err, reply) {
+                    if (err) {
+                        console.error("保存Event失败");
+                    } else {
+                        console.log("保存Event成功");
+                    }
+                });
+                push.inform(phone, phone, accessKey, "*", event0);
                 var event = JSON.stringify({
                     sendType: "event",
                     contentType: "relation_friendaccept",
@@ -285,6 +307,8 @@ relationManage.deletefriend = function (data, response) {
     var accessKey = data.accessKey;
     var phoneToStr = data.phoneto;
     var phoneTo = [];
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
     var arr = [phone, phoneToStr, accessKey];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
@@ -407,6 +431,7 @@ relationManage.deletefriend = function (data, response) {
                         type: "relation_deletefriend",
                         phone: phone,
                         phoneTo: phoneTo,
+                        eid: eid,
                         time: new Date().getTime(),
                         status: "success",
                         content: ""
@@ -435,6 +460,8 @@ relationManage.blacklist = function (data, response) {
     var phoneToStr = data.phoneto;
     var phoneTo = [];
     var arr = [phoneToStr];
+    var time = new Date().getTime();
+    var eid = phone + "_" + time;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         try {
             phoneTo = JSON.parse(phoneToStr);
@@ -544,6 +571,7 @@ relationManage.blacklist = function (data, response) {
                         type: "relation_blacklist",
                         phone: phone,
                         phoneTo: phoneTo,
+                        eid: eid,
                         time: new Date().getTime(),
                         status: "success",
                         content: ""
@@ -832,7 +860,7 @@ relationManage.addfriendagree = function (data, response) {
     var accessKey = data.accessKey;
     var eid = data.eid;
 //    agreeAddFriendNode(phone, phoneAsk, rid);
-    var arr = [phone, accessKey, phoneAsk, status, eid];
+    var arr = [phone, accessKey, phoneAsk, status];
     var time = new Date().getTime();
     var eid = phone + "" + time;
     if (verifyEmpty.verifyEmpty(data, arr, response)) {

@@ -123,8 +123,8 @@
         android:id="@+id/meContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
         android:padding="10dp"
+        android:translationY="-50dp"
         android:visibility="visible" >
 
         <ImageView
@@ -267,7 +267,7 @@
                 android:textSize="10sp"
                 android:visibility="gone" />
         </RelativeLayout>
-        
+
         <RelativeLayout
             android:id="@+id/mySetting"
             android:layout_width="match_parent"

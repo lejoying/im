@@ -246,7 +246,8 @@ public class Parser {
 					data.event = gson.fromJson(eventContent, Event.class);
 				}
 			} catch (Exception e) {
-				throw e;
+				// throw e;
+
 			}
 		} catch (Exception e) {
 			log.e(tag, "**************Gson parse error!**************");

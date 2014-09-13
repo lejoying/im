@@ -104,7 +104,7 @@ public class Debug1Controller {
 			@Override
 			public void onSuccess(UploadMultipart instance, int time) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 		onLongClickListener = new OnLongClickListener() {
@@ -189,7 +189,7 @@ public class Debug1Controller {
 	}
 
 	public UploadMultipart uploadFile(String path) {
-		UploadMultipart uploadMultipart = new UploadMultipart(path);
+		UploadMultipart uploadMultipart = new UploadMultipart(path, UploadMultipart.UPLOAD_TYPE_IMAGE);
 		uploadMultipartList.addMultipart(uploadMultipart);
 		// uploadMultipart.setUploadLoadingListener(uploadLoadingListener);
 		return uploadMultipart;

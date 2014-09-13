@@ -11,6 +11,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
 import com.lidroid.xutils.http.ResponseInfo;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.open.lib.HttpClient;
 import com.open.lib.HttpClient.ResponseHandler;
 import com.open.welinks.model.Data.TempData.ImageBean;
@@ -45,6 +46,7 @@ public class DownloadFile {
 	public ImageBean imageBean;
 
 	public View view;
+	public DisplayImageOptions options;
 
 	public TimeLine time = new TimeLine();
 

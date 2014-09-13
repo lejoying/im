@@ -106,7 +106,7 @@ public class DynamicListActivity extends Activity {
 					}
 				}
 			} else {
-				Log.e(tag, userEventMessages0 + "--00000000000000000-" + data.event.userEventsMap);
+				Log.e(tag, userEventMessages0 + "---" + data.event.userEventsMap);
 			}
 		}
 
@@ -114,7 +114,11 @@ public class DynamicListActivity extends Activity {
 			groupEventMessages.clear();
 			List<String> groupEventMessages0 = data.event.groupEvents;
 			for (int i = groupEventMessages0.size() - 1; i >= 0; i--) {
-				groupEventMessages.add(groupEventMessages0.get(i));
+				String key = groupEventMessages0.get(i);
+				EventMessage event = data.event.groupEventsMap.get(key);
+				if (event != null) {
+					groupEventMessages.add(key);
+				}
 			}
 		}
 	}
@@ -249,6 +253,11 @@ public class DynamicListActivity extends Activity {
 			holder.headView.setImageBitmap(bitmap);
 			String key = groupEventMessages.get(position);
 			EventMessage event = data.event.groupEventsMap.get(key);
+			if (event == null) {
+				holder.timeView.setText("");
+				holder.eventContentView.setText("");
+				return convertView;
+			}
 			String nickName = event.phone;
 			Friend friend = data.relationship.friendsMap.get(nickName);
 			if (friend != null) {
@@ -272,6 +281,10 @@ public class DynamicListActivity extends Activity {
 				content = nickName + " 更新了 " + groupName + " 的资料信息.";
 			} else if ("group_create".equals(contentType)) {
 				content = nickName + "创建了新的群组:" + groupName + ".";
+			} else if ("group_addme".equals(contentType)) {
+				content = nickName + "把你从添加到群组：" + groupName + ".";
+			} else if ("group_removeme".equals(contentType)) {
+				content = nickName + "把你从" + groupName + "群组移除.";
 			}
 			holder.eventContentView.setText(content);
 			return convertView;

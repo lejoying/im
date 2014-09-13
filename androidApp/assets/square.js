@@ -1,4 +1,5 @@
 {
+	squares : [],
 	squareMap : {
 		"1001" : {
 			squareMessagesOrder : ["1575", "1576", "1577", "1578", "1579", "1570"],

@@ -186,6 +186,8 @@ shareManage.getshares = function (data, response) {
             } else if (results.length == 0) {
                 response.write(JSON.stringify({
                     "提示信息": "获取群分享成功",
+                    gid: gid,
+                    nowpage: nowpage,
                     shares: []
                 }));
                 response.end();
@@ -202,6 +204,8 @@ shareManage.getshares = function (data, response) {
                 }
                 response.write(JSON.stringify({
                     "提示信息": "获取群分享成功",
+                    gid: gid,
+                    nowpage: nowpage,
                     shares: shares
                 }));
                 response.end();
@@ -315,7 +319,7 @@ shareManage.addcomment = function (data, response) {
     var nickName = data.nickName;
     var nickNameTo = data.nickNameTo;
     var head = data.head;
-	var headTo = data.headTo;
+    var headTo = data.headTo;
     var contentType = data.contentType;
     var content = data.content;
     var arr = [gid, gsid, nickName, contentType, content];
@@ -365,7 +369,7 @@ shareManage.addcomment = function (data, response) {
                         nickName: nickName,
                         nickNameTo: nickNameTo,
                         head: head,
-						headTo:headTo||"",
+                        headTo: headTo || "",
                         contentType: contentType,
                         content: content,
                         time: new Date().getTime()
@@ -695,6 +699,7 @@ shareManage.getgroupshares = function (data, response) {
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群分享成功",
                     gid: gid,
+                    nowpage: nowpage,
                     shares: {
                         shareMessagesOrder: [],
                         shareMessagesMap: {}
@@ -721,6 +726,7 @@ shareManage.getgroupshares = function (data, response) {
                 ResponseData(JSON.stringify({
                     "提示信息": "获取群分享成功",
                     gid: gid,
+                    nowpage: nowpage,
                     shares: {
                         shareMessagesOrder: sharesOrder,
                         shareMessagesMap: sharesMap

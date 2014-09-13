@@ -8,7 +8,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -41,7 +40,6 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.view.MainView;
 import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
@@ -64,7 +62,6 @@ public class ShareSubController {
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public OnClickListener mOnClickListener;
-	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
 	public OnDownloadListener downloadListener;
 	public BodyCallback bodyCallback;
@@ -80,9 +77,11 @@ public class ShareSubController {
 	public String currentScanMessageKey;
 
 	public int nowpage = 0;
-	public int pagesize = 20;
+	public int pagesize = 10;
 
 	public Gson gson = new Gson();
+
+	public BodyCallback shareBodyCallback;
 
 	public ShareSubController(MainController mainController) {
 		thisActivity = mainController.thisActivity;
@@ -91,6 +90,19 @@ public class ShareSubController {
 	}
 
 	public void initializeListeners() {
+		shareBodyCallback = new BodyCallback() {
+			@Override
+			public void onRefresh(int direction) {
+				super.onRefresh(direction);
+				if (direction == 1) {
+					nowpage = 0;
+					getCurrentGroupShareMessages();
+				} else if (direction == -1) {
+					nowpage++;
+					getCurrentGroupShareMessages();
+				}
+			}
+		};
 
 		downloadListener = new OnDownloadListener() {
 
@@ -105,7 +117,7 @@ public class ShareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.displayImageOptions;
+							options = thisView.headOptions;
 						}
 					} catch (Exception e) {
 					}
@@ -216,8 +228,19 @@ public class ShareSubController {
 					Intent intent = new Intent(thisActivity, GroupListActivity.class);
 					thisActivity.startActivity(intent);
 					thisView.dismissGroupDialog();
-				} else if (view.equals(thisView.releaseImageTextButton)) {
+				} else if (view.equals(thisView.releaseTextButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("type", "text");
+					mainController.thisActivity.startActivity(intent);
+					thisView.dismissReleaseShareDialogView();
+				} else if (view.equals(thisView.releaseAlbumButton)) {
+					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("type", "album");
+					mainController.thisActivity.startActivity(intent);
+					thisView.dismissReleaseShareDialogView();
+				} else if (view.equals(thisView.releaseImageViewButton)) {
+					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("type", "imagetext");
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.getTag() != null) {
@@ -241,6 +264,9 @@ public class ShareSubController {
 							}
 							shareTopMenuGroupName.setText(name);
 							thisView.modifyCurrentShowGroup();
+							// display local data
+							nowpage = 0;
+							thisView.showShareMessages();
 							getCurrentGroupShareMessages();
 							thisView.showGroupMembers();
 						}
@@ -249,23 +275,9 @@ public class ShareSubController {
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
+						// thisActivity.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
 					}
 				}
-			}
-		};
-		onTouchBackColorListener = new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-				if (view == thisView.releaseImageTextButton) {
-					int motionEvent = event.getAction();
-					if (motionEvent == MotionEvent.ACTION_DOWN) {
-						view.setBackgroundColor(Color.argb(143, 0, 0, 0));
-					} else if (motionEvent == MotionEvent.ACTION_UP) {
-						view.setBackgroundColor(Color.parseColor("#00000000"));
-					}
-				}
-				return false;
 			}
 		};
 		bodyCallback = new BodyCallback() {
@@ -291,6 +303,7 @@ public class ShareSubController {
 	}
 
 	public void bindEvent() {
+		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);
@@ -390,7 +403,7 @@ public class ShareSubController {
 					if (currentScanMessageKey != null) {
 						SharesMessageBody body = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
 						if (body != null) {
-							body.setContent(body.message);
+							body.setContent(body.message, body.fileName);
 						}
 					}
 					thisView.showShareMessages();

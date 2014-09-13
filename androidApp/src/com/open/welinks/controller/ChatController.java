@@ -431,7 +431,7 @@ public class ChatController {
 	}
 
 	public void uploadFile(final String filePath, final String fileName, final byte[] bytes, final View view) {
-		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes);
+		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
 		multipart.view = view;
 		uploadMultipartList.addMultipart(multipart);
 		multipart.setUploadLoadingListener(uploadLoadingListener);

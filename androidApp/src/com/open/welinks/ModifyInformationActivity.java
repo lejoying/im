@@ -400,14 +400,9 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	public void uploadFile(final String filePath, final String fileName, final byte[] bytes) {
-		new Thread() {
-			@Override
-			public void run() {
-				UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes);
-				uploadMultipartList.addMultipart(multipart);
-				multipart.setUploadLoadingListener(uploadLoadingListener);
-			}
-		}.start();
+		UploadMultipart multipart = new UploadMultipart(filePath, fileName, bytes, UploadMultipart.UPLOAD_TYPE_HEAD);
+		uploadMultipartList.addMultipart(multipart);
+		multipart.setUploadLoadingListener(uploadLoadingListener);
 	}
 
 	public void mFinish() {

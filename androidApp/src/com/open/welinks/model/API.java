@@ -77,6 +77,10 @@ public class API {
 
 	// share
 	/**
+	 * http://www.we-links.com/api2/share/sendshare
+	 */
+	public static String SHARE_SENDSHARE = API_DOMAIN + "api2/share/sendshare";
+	/**
 	 * http://www.we-links.com/api2/share/getgroupshares
 	 */
 	public static String SHARE_GETSHARES = API_DOMAIN + "api2/share/getgroupshares";

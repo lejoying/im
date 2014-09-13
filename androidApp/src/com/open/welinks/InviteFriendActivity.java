@@ -14,10 +14,6 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,10 +28,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
-import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.model.FileHandlers;
 
 public class InviteFriendActivity extends Activity implements OnClickListener {
 
@@ -62,7 +60,9 @@ public class InviteFriendActivity extends Activity implements OnClickListener {
 
 	public Group currentGroup;
 
-	public Bitmap defaultBitmapHead;
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public DisplayImageOptions options;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,8 @@ public class InviteFriendActivity extends Activity implements OnClickListener {
 		} else {
 			finish();
 		}
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
+
 		setContentView(R.layout.activity_group_invite_selected_friend);
 		mInflater = this.getLayoutInflater();
 		findFriendView = (EditText) findViewById(R.id.et_findfriend);
@@ -169,10 +171,6 @@ public class InviteFriendActivity extends Activity implements OnClickListener {
 	}
 
 	private void initData() {
-		// default head
-		Resources resources = getResources();
-		defaultBitmapHead = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		defaultBitmapHead = MCImageUtils.getCircleBitmap(defaultBitmapHead, true, 5, Color.WHITE);
 
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < data.relationship.circles.size(); i++) {
@@ -287,7 +285,7 @@ public class InviteFriendActivity extends Activity implements OnClickListener {
 			} else {
 				friendHolder.friendNickName.setText(friend.nickName);
 			}
-			friendHolder0.friendHead.setImageBitmap(defaultBitmapHead);
+			fileHandlers.getHeadImage(friend.head, friendHolder0.friendHead, options);
 
 			if (invitaFriends.contains(friend.phone)) {
 				friendHolder.friendHeadStatus.setVisibility(View.VISIBLE);

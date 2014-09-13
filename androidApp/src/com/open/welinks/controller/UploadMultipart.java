@@ -34,6 +34,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
+import android.util.Log;
 import android.view.View;
 
 import com.aliyun.android.oss.Base64;
@@ -64,7 +65,7 @@ public class UploadMultipart {
 	public String ACCESSKEYSECRET = "UOUAYzQUyvjUezdhZDAmX1aK6VZ5aG";
 
 	public String OSS_HOST_URL = "http://images2.we-links.com/";// http://images5.we-links.com/
-	public static String OSS_DIRECTORY = "images/";// multipart
+	public String OSS_DIRECTORY = "temp/";// multipart
 
 	public OnUploadLoadingListener uploadLoadingListener;
 
@@ -74,6 +75,11 @@ public class UploadMultipart {
 
 	public String path; // example:"/sdcard/test/test001.jpg"
 	public String contentType = null;// example: "image/jpg" "image/png"
+
+	public static int UPLOAD_TYPE_IMAGE = 0x01;
+	public static int UPLOAD_TYPE_VOICE = 0x02;
+	public static int UPLOAD_TYPE_HEAD = 0x03;
+	public static int UPLOAD_TYPE_BACKGROUND = 0x04;
 
 	public static int UPLOAD_DEFAULT = 0x00;
 	public static int UPLOAD_EMPTY = 0x01;
@@ -103,19 +109,41 @@ public class UploadMultipart {
 
 	public TransportingItem transportingItem;
 
-	public UploadMultipart(String path) {
+	public int currentUploadType = 0;
+
+	public UploadMultipart(String path, int type) {
+		this.currentUploadType = type;
+		checkOSSFile();
 		this.path = path;
 	}
 
-	public UploadMultipart(String path, String contentType) {
+	public UploadMultipart(String path, String contentType, int type) {
+		this.currentUploadType = type;
+		checkOSSFile();
 		this.path = path;
 		this.contentType = contentType;
 	}
 
-	public UploadMultipart(String path, String fileName, byte[] bytes) {
+	public UploadMultipart(String path, String fileName, byte[] bytes, int type) {
+		this.currentUploadType = type;
+		checkOSSFile();
 		this.path = path;
 		this.fileName = OSS_DIRECTORY + fileName;
 		this.bytes = bytes;
+	}
+
+	public void checkOSSFile() {
+		if (currentUploadType == UPLOAD_TYPE_BACKGROUND) {
+			OSS_DIRECTORY = "backgrounds/";
+		} else if (currentUploadType == UPLOAD_TYPE_HEAD) {
+			OSS_DIRECTORY = "heads/";
+		} else if (currentUploadType == UPLOAD_TYPE_IMAGE) {
+			OSS_DIRECTORY = "images/";
+		} else if (currentUploadType == UPLOAD_TYPE_VOICE) {
+			OSS_DIRECTORY = "voices/";
+		} else if (currentUploadType == 0) {
+			OSS_DIRECTORY = "temp/";
+		}
 	}
 
 	public void startUpload() {
@@ -131,7 +159,7 @@ public class UploadMultipart {
 		SHA1 sha1 = new SHA1();
 		String sha1FileName = "";
 		String suffixName = path.substring(path.lastIndexOf("."));
-		suffixName = suffixName.toLowerCase(Locale.getDefault());
+		// suffixName = suffixName.toLowerCase(Locale.getDefault());
 
 		if (suffixName.equals(".jpg") || suffixName.equals(".jpeg")) {
 			suffixName = ".osj";
@@ -383,6 +411,7 @@ public class UploadMultipart {
 			completeMultipartUploadResult = parseXmlCompleteResult(responseInfo.result);
 			isUploadStatus = UPLOAD_SUCCESS;
 			uploadLoadingListener.onSuccess(instance, (int) (time.received - time.start));
+			Log.e("Coolspan", "上传成功**********************");
 			// Log.e(tag, completeMultipartUploadResult.location + "---" +
 			// completeMultipartUploadResult.bucket + "---" +
 			// completeMultipartUploadResult.key + "---" +

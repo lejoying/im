@@ -90,22 +90,25 @@ public class ResponseEventHandlers {
 		}
 	}
 
+	// OK
 	private void handleGroupRemoveMeEvent(EventMessage message) {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "addmembers");
+		DataUtil.getUserCurrentAllGroup();
 	}
 
+	// OK
 	private void handleGroupAddMeEvent(EventMessage message) {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
 		data.event.groupEventsMap.put(key, message);
 		viewManage.postNotifyView("DynamicListActivity");
-		DataUtil.getUserCurrentGroupMembers(message.gid, "addmembers");
+		DataUtil.getUserCurrentGroupMembers(message.gid, "create");
 	}
 
+	// OK
 	public void handleGroupCreateEvent(EventMessage message) {
 		String key = message.eid;
 		data.event.groupEvents.add(key);
@@ -155,6 +158,7 @@ public class ResponseEventHandlers {
 		DataUtil.getIntimateFriends();
 	}
 
+	// OK
 	public void handleRelationFriendacceptEvent(EventMessage message) {
 		String key = message.eid;
 		parser.check();
@@ -168,6 +172,7 @@ public class ResponseEventHandlers {
 		// data.event.userEventsMap.put(message.gid, message);
 	}
 
+	// OK
 	public void handleRelationNewfriendEvent(EventMessage message) {
 		List<String> userEvents = data.event.userEvents;
 		EventMessage dealMessage = null;
@@ -191,7 +196,24 @@ public class ResponseEventHandlers {
 		viewManage.postNotifyView("DynamicListActivity");
 	}
 
+	// OK
 	private void handleRelationAddfriendEvent(EventMessage message) {
+		List<String> userEvents = data.event.userEvents;
+		EventMessage dealMessage = null;
+		for (int i = userEvents.size() - 1; i >= 0; i--) {
+			String key = userEvents.get(i);
+			EventMessage message0 = data.event.userEventsMap.get(key);
+			if ("relation_addfriend".equals(message0.type)) {
+				if (message.phone.equals(message0.phone) && message.phoneTo.equals(message0.phoneTo)) {
+					dealMessage = message0;
+					break;
+				}
+			}
+		}
+		if (dealMessage != null) {
+			data.event.userEvents.remove(dealMessage.eid);
+			data.event.userEventsMap.remove(dealMessage.eid);
+		}
 		String key = message.eid;
 		data.event.userEvents.add(key);
 		data.event.userEventsMap.put(key, message);

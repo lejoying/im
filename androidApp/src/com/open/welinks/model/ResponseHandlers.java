@@ -89,6 +89,63 @@ public class ResponseHandlers {
 					user.nickName = friend.nickName;
 					user.mainBusiness = friend.mainBusiness;
 					user.head = friend.head;
+					if (user.circlesOrderString != null && friend.circlesOrderString != null) {
+
+						if (!user.circlesOrderString.equals(friend.circlesOrderString)) {
+							user.circlesOrderString = friend.circlesOrderString;
+							try {
+								data.relationship.circles = gson.fromJson(user.circlesOrderString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							if (data.localStatus.debugMode.equals("NONE")) {
+								// viewManage.postNotifyView("UserIntimateView");
+								log.e(tag, "刷新好友分组");
+								viewManage.mainView.friendsSubView.showCircles();
+							}
+						}
+					} else {
+						if (user.circlesOrderString == null && friend.circlesOrderString != null) {
+							user.circlesOrderString = friend.circlesOrderString;
+							try {
+								data.relationship.circles = gson.fromJson(user.circlesOrderString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							if (data.localStatus.debugMode.equals("NONE")) {
+								// viewManage.postNotifyView("UserIntimateView");
+								log.e(tag, "刷新好友分组");
+								viewManage.mainView.friendsSubView.showCircles();
+							}
+						}
+					}
+					if (user.groupsSequenceString != null && friend.groupsSequenceString != null) {
+						if (!user.groupsSequenceString.equals(friend.groupsSequenceString)) {
+							user.groupsSequenceString = friend.groupsSequenceString;
+							try {
+								data.relationship.groups = gson.fromJson(user.groupsSequenceString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							viewManage.mainView.shareSubView.setGroupsDialogContent();
+							viewManage.postNotifyView("GroupListActivity");
+						}
+					} else {
+						if (user.groupsSequenceString == null && friend.groupsSequenceString != null) {
+							user.groupsSequenceString = friend.groupsSequenceString;
+							try {
+								data.relationship.groups = gson.fromJson(user.groupsSequenceString, new TypeToken<List<String>>() {
+								}.getType());
+							} catch (JsonSyntaxException e) {
+								e.printStackTrace();
+							}
+							viewManage.mainView.shareSubView.setGroupsDialogContent();
+							viewManage.postNotifyView("GroupListActivity");
+						}
+					}
 					data.userInformation.isModified = true;
 					viewManage.postNotifyView("MeSubView");
 				}
@@ -202,27 +259,33 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取群组成员成功")) {
+				data.relationship.groups = response.relationship.groups;
+				data.relationship.groupsMap = response.relationship.groupsMap;
+				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
+				data.relationship.isModified = true;
+				// init current share
+				String gid = "";
 				if (response.relationship.groups.size() != 0) {
-					data.relationship.groups = response.relationship.groups;
-					data.relationship.groupsMap = response.relationship.groupsMap;
-					data.relationship.friendsMap.putAll(response.relationship.friendsMap);
-					data.relationship.isModified = true;
-					// init current share
-					if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
-						if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
-							data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
-						}
-					} else {
-						data.localStatus.localData.currentSelectedGroup = response.relationship.groups.get(0);
+					gid = response.relationship.groups.get(0);
+				} else {
+					gid = "";
+				}
+				if (!data.localStatus.localData.currentSelectedGroup.equals("")) {
+					if (data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup) == null) {
+						data.localStatus.localData.currentSelectedGroup = gid;
 					}
-					// Set the option group dialog content
-					log.e(tag, data.relationship.groups.toString());
-					viewManage.mainView.shareSubView.setGroupsDialogContent();
+				} else {
+					data.localStatus.localData.currentSelectedGroup = gid;
+				}
+				// Set the option group dialog content
+				log.e(tag, data.relationship.groups.toString());
+				if (!gid.equals("")) {
 					viewManage.mainView.shareSubView.showShareMessages();
 					viewManage.mainView.shareSubView.showGroupMembers();
 					viewManage.mainView.shareSubView.getCurrentGroupShareMessages();
-					viewManage.postNotifyView("GroupListActivity");
 				}
+				viewManage.mainView.shareSubView.setGroupsDialogContent();
+				viewManage.postNotifyView("GroupListActivity");
 			}
 		};
 	};
@@ -478,6 +541,7 @@ public class ResponseHandlers {
 			public String 提示信息;
 			public String 失败原因;
 			public String gid;
+			public int nowpage;
 			public Share shares;
 		}
 
@@ -493,12 +557,22 @@ public class ResponseHandlers {
 						data.shares.shareMap.put(response.gid, share);
 					}
 					List<String> sharesOrder = response.shares.shareMessagesOrder;
-					for (int i = sharesOrder.size() - 1; i >= 0; i--) {
-						String key = sharesOrder.get(i);
-						if (!share.shareMessagesOrder.contains(key)) {
-							share.shareMessagesOrder.add(0, key);
+					if (response.nowpage == 0) {
+						for (int i = sharesOrder.size() - 1; i >= 0; i--) {
+							String key = sharesOrder.get(i);
+							if (!share.shareMessagesOrder.contains(key)) {
+								share.shareMessagesOrder.add(0, key);
+							}
+						}
+					} else {
+						for (int i = 0; i < sharesOrder.size(); i++) {
+							String key = sharesOrder.get(i);
+							if (!share.shareMessagesOrder.contains(key)) {
+								share.shareMessagesOrder.add(key);
+							}
 						}
 					}
+
 					share.shareMessagesMap.putAll(response.shares.shareMessagesMap);
 					data.shares.isModified = true;
 					viewManage.mainView.shareSubView.showShareMessages();

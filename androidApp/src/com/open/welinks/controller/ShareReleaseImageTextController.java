@@ -1,5 +1,6 @@
 package com.open.welinks.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,8 +16,9 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -33,12 +35,14 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.open.welinks.ImagesDirectoryActivity;
 import com.open.welinks.PictureBrowseActivity;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
@@ -62,9 +66,11 @@ public class ShareReleaseImageTextController {
 
 	public int RESULT_REQUESTCODE_SELECTIMAGE = 0x01;
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public SHA1 sha1 = new SHA1();
-	public File mSdCardFile;
-	public File mImageFile;
+	public File sdcardFolder;
+	public File sdcardImageFolder;
+	public File sdcardThumbnailFolder;
 
 	public UploadMultipartList uploadMultipartList = UploadMultipartList.getInstance();
 
@@ -82,16 +88,17 @@ public class ShareReleaseImageTextController {
 
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
+	public String type;
+
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 
-		// Initialize the image directory
-		mSdCardFile = Environment.getExternalStorageDirectory();
-		mImageFile = new File(mSdCardFile, "welinks/images/");
-		if (!mImageFile.exists())
-			mImageFile.mkdirs();
+		type = thisActivity.getIntent().getStringExtra("type");
 
+		// Initialize the image directory
+		sdcardImageFolder = fileHandlers.sdcardImageFolder;
+		sdcardThumbnailFolder = fileHandlers.sdcardThumbnailFolder;
 		data.tempData.selectedImageList = null;
 	}
 
@@ -216,6 +223,7 @@ public class ShareReleaseImageTextController {
 	}
 
 	public void sendImageTextShare() {
+		viewManage.shareSubView.isShowFirstMessageAnimation = true;
 		final String sendContent = thisView.mEditTextView.getText().toString().trim();
 		if ("".equals(sendContent))
 			return;
@@ -298,8 +306,78 @@ public class ShareReleaseImageTextController {
 
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
-		httpUtils.send(HttpMethod.POST, "http://www.we-links.com/api2/share/sendshare", params, responseHandlers.share_sendShareCallBack);
+		httpUtils.send(HttpMethod.POST, API.SHARE_SENDSHARE, params, responseHandlers.share_sendShareCallBack);
 	}
+
+	public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+			if (width > height) {
+				inSampleSize = Math.round((float) height / (float) reqHeight);
+			} else {
+				inSampleSize = Math.round((float) width / (float) reqWidth);
+			}
+		}
+		return inSampleSize;
+	}
+
+	public ByteArrayOutputStream decodeSampledBitmapFromFileInputStream(File file, int reqWidth, int reqHeight) throws FileNotFoundException {
+		FileInputStream fileInputStream = new FileInputStream(file);
+
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(fileInputStream, null, options);
+
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		options.inJustDecodeBounds = false;
+		FileInputStream fileInputStream1 = new FileInputStream(file);
+		Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+		bitmap.recycle();
+		return byteArrayOutputStream;
+	}
+
+	public ByteArrayOutputStream decodeSnapBitmapFromFileInputStream(File file, float reqWidth, float reqHeight) throws FileNotFoundException {
+		FileInputStream fileInputStream = new FileInputStream(file);
+
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(fileInputStream, null, options);
+
+		options.inSampleSize = calculateInSampleSize(options, (int) reqWidth, (int) reqHeight);
+
+		options.inJustDecodeBounds = false;
+		FileInputStream fileInputStream1 = new FileInputStream(file);
+		Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream1, null, options);
+		float ratio = reqWidth / reqHeight;
+		if (options.outHeight < reqHeight) {
+			reqHeight = options.outHeight;
+			if (reqHeight * ratio < reqWidth) {
+				reqWidth = reqHeight * ratio;
+			}
+		}
+		if (options.outWidth < reqWidth) {
+			reqWidth = options.outWidth;
+			if (reqWidth / ratio < reqHeight) {
+				reqHeight = reqWidth / ratio;
+			}
+		}
+
+		Bitmap snapbitmap = Bitmap.createBitmap(bitmap, 0, 0, (int) reqWidth, (int) reqHeight);
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		snapbitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+		bitmap.recycle();
+		snapbitmap.recycle();
+		return byteArrayOutputStream;
+	}
+
+	public float imageHeightScale = 0.5686505598114319f;
 
 	public void copyFileToSprecifiedDirecytory(ShareContent shareContent, List<ShareContentItem> shareContentItems) {
 		// The current selected pictures gallery
@@ -316,14 +394,35 @@ public class ShareReleaseImageTextController {
 			try {
 				String fileName = "";
 				File fromFile = new File(key);
-				FileInputStream fileInputStream = new FileInputStream(fromFile);
-				byte[] bytes = StreamParser.parseToByteArray(fileInputStream);
+				byte[] bytes = null;
+				long fileLength = fromFile.length();
+
+				if (fileLength > 400 * 1024) {
+					ByteArrayOutputStream byteArrayOutputStream = decodeSampledBitmapFromFileInputStream(fromFile, thisView.displayMetrics.heightPixels, thisView.displayMetrics.heightPixels);
+					bytes = byteArrayOutputStream.toByteArray();
+				} else {
+					FileInputStream fileInputStream = new FileInputStream(fromFile);
+					bytes = StreamParser.parseToByteArray(fileInputStream);
+					fileInputStream.close();
+				}
+
 				String sha1FileName = sha1.getDigestOfString(bytes);
 				fileName = sha1FileName + suffixName;
-				File toFile = new File(mImageFile, fileName);
+				File toFile = new File(sdcardImageFolder, fileName);
 				FileOutputStream fileOutputStream = new FileOutputStream(toFile);
 				StreamParser.parseToFile(bytes, fileOutputStream);
-				fileInputStream.close();
+
+				if (i == 0) {
+					int showImageWidth = thisView.displayMetrics.widthPixels - (int) (22 * thisView.displayMetrics.density + 0.5f);
+					int showImageHeight = (int) (thisView.displayMetrics.widthPixels * imageHeightScale);
+
+					ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, showImageHeight);
+					byte[] snapBytes = snapByteStream.toByteArray();
+					File toSnapFile = new File(sdcardThumbnailFolder, fileName);
+					FileOutputStream toSnapFileOutputStream = new FileOutputStream(toSnapFile);
+					Log.d(tag, "file saved to " + fileName);
+					StreamParser.parseToFile(snapBytes, toSnapFileOutputStream);
+				}
 
 				ShareContentItem shareContentItem = shareContent.new ShareContentItem();
 				shareContentItem.type = "image";
@@ -332,7 +431,7 @@ public class ShareReleaseImageTextController {
 
 				// upload file to oss server
 				uploadFileNameMap.put(key, fileName);
-				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes);
+				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
 				uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			} catch (FileNotFoundException e) {

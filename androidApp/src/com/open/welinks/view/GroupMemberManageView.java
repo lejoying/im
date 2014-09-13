@@ -6,10 +6,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +15,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.GroupMemberManageController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.model.FileHandlers;
 
 public class GroupMemberManageView {
 
@@ -45,14 +43,16 @@ public class GroupMemberManageView {
 	// main content
 	public GridView groupMemberGridView;
 
-	public Bitmap defaultBitmapHead;
-
 	public int MANAGE_COMMON = 0x00;
 	public int MANAGE_SUBTRACT = 0x01;
 
 	public int isSubtract = MANAGE_COMMON;
 
 	public GroupMembersAdapter groupMembersAdapter;
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public DisplayImageOptions options;
 
 	public GroupMemberManageView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -70,10 +70,8 @@ public class GroupMemberManageView {
 		groupMemberGridView = (GridView) thisActivity.findViewById(R.id.gridView_groupmembers);
 
 		mInflater = thisActivity.getLayoutInflater();
-		// default head
-		Resources resources = thisActivity.getResources();
-		defaultBitmapHead = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		defaultBitmapHead = MCImageUtils.getCircleBitmap(defaultBitmapHead, true, 5, Color.WHITE);
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(60)).build();
+
 	}
 
 	public void showCurrentGroupMembers() {
@@ -149,7 +147,7 @@ public class GroupMemberManageView {
 					nickName = friend.nickName;
 				}
 				imageHolder.nickNameView.setText(nickName);
-				imageHolder0.imageContent.setImageBitmap(defaultBitmapHead);
+				fileHandlers.getHeadImage(friend.head, imageHolder0.imageContent, options);
 
 				convertView.setTag(R.id.iv_image, "subtractonclick#" + friend.phone);
 				convertView.setOnClickListener(thisController.mOnClickListener);
