@@ -31,6 +31,7 @@ public class FileHandlers {
 	public File sdcardHeadImageFolder;
 	public File sdcardBackImageFolder;
 	public File sdcardThumbnailFolder;
+	public File sdcardSquareThumbnailFolder;
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -106,6 +107,10 @@ public class FileHandlers {
 		sdcardThumbnailFolder = new File(sdcardFolder, "thumbnails");
 		if (!sdcardThumbnailFolder.exists()) {
 			sdcardThumbnailFolder.mkdirs();
+		}
+		sdcardSquareThumbnailFolder = new File(sdcardFolder, "squarethumbnails");
+		if (!sdcardSquareThumbnailFolder.exists()) {
+			sdcardSquareThumbnailFolder.mkdirs();
 		}
 	}
 

@@ -21,6 +21,9 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -30,6 +33,7 @@ import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
@@ -91,8 +95,10 @@ public class SquareSubController {
 				super.onRefresh(direction);
 				if (direction == 1) {
 					nowpage = 0;
+					getCurrentGroupShareMessages();
 				} else if (direction == -1) {
 					nowpage++;
+					getCurrentGroupShareMessages();
 				}
 			}
 		};
@@ -204,16 +210,19 @@ public class SquareSubController {
 				} else if (view.equals(thisView.releaseTextButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("type", "text");
+					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseAlbumButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("type", "album");
+					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseImageViewButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("type", "imagetext");
+					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.squareDialogView)) {
@@ -228,21 +237,26 @@ public class SquareSubController {
 						parser.check();
 						// modify data
 						thisView.dismissGroupDialog();
-						if (!data.localStatus.localData.currentSelectedGroup.equals(content)) {
-							data.localStatus.localData.currentSelectedGroup = content;
-							// modify UI
-							Group group = data.relationship.groupsMap.get(content);
-							TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
-							data.localStatus.localData.currentSelectedGroup = group.gid + "";
-							String name = group.name;
-							if (name.length() > 8) {
-								name = name.substring(0, 8);
+						if (!data.localStatus.localData.currentSelectedSquare.equals(content)) {
+							try {
+								data.localStatus.localData.currentSelectedSquare = content;
+								// modify UI
+								Group group = data.relationship.groupsMap.get(content);
+								TextView shareTopMenuGroupName = (TextView) view.getTag(R.id.shareTopMenuGroupName);
+								data.localStatus.localData.currentSelectedSquare = group.gid + "";
+								String name = group.name;
+								if (name.length() > 8) {
+									name = name.substring(0, 8);
+								}
+								shareTopMenuGroupName.setText(name);
+								thisView.modifyCurrentShowGroup();
+								// display local data
+								nowpage = 0;
+								thisView.showShareMessages();
+								getCurrentGroupShareMessages();
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-							shareTopMenuGroupName.setText(name);
-							thisView.modifyCurrentShowGroup();
-							// display local data
-							nowpage = 0;
-							thisView.showShareMessages();
 						}
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
@@ -283,17 +297,29 @@ public class SquareSubController {
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
 	}
 
+	public void getCurrentGroupShareMessages() {
+		RequestParams params = new RequestParams();
+		HttpUtils httpUtils = new HttpUtils();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedSquare);
+		params.addBodyParameter("nowpage", nowpage + "");
+		params.addBodyParameter("pagesize", pagesize + "");
+
+		httpUtils.send(HttpMethod.POST, API.SHARE_GETSHARES, params, responseHandlers.share_getSharesCallBack);
+	}
+
 	public void setCurrentSquare() {
 		String currentSid = data.relationship.squares.get(0);
 		List<String> squares = data.relationship.squares;
 		Map<String, Group> groups = data.relationship.groupsMap;
 		for (int i = 1; i < squares.size(); i++) {
-			if ((groups.get(squares.get(i)).distance) > (groups.get(currentSid).distance)) {
+			if ((groups.get(squares.get(i)).distance) < (groups.get(currentSid).distance)) {
 				currentSid = squares.get(i);
 			}
 		}
 		data.localStatus.localData.currentSelectedSquare = currentSid;
-
+		getCurrentGroupShareMessages();
 		thisView.setGroupsDialogContent();
 	}
 
@@ -337,8 +363,10 @@ public class SquareSubController {
 		if (onLongPressView != null) {
 			if (onTouchDownGroup != null) {
 				Group group = data.relationship.groupsMap.get("" + onTouchDownGroup.gid);
-				GroupDialogItem groupDialogItem = (GroupDialogItem) thisView.squaresListBody.listItemBodiesMap.get("group#" + group.gid + "_" + group.name);
-				groupDialogItem.gripCardBackground.setVisibility(View.INVISIBLE);
+				if (group != null) {
+					GroupDialogItem groupDialogItem = (GroupDialogItem) thisView.squaresListBody.listItemBodiesMap.get("group#" + group.gid + "_" + group.name);
+					groupDialogItem.gripCardBackground.setVisibility(View.INVISIBLE);
+				}
 
 				onLongPressView = null;
 				onTouchDownGroup = null;

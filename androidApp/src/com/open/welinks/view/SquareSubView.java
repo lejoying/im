@@ -150,7 +150,7 @@ public class SquareSubView {
 		this.squareMessageListBody.height = 0;
 
 		data = parser.check();
-		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
+		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedSquare);
 		if (share == null)
 			return;
 		List<String> sharesOrder = share.shareMessagesOrder;
@@ -174,9 +174,10 @@ public class SquareSubView {
 				sharesMessageBody.initialize(i);
 				this.squareMessageListBody.listItemBodiesMap.put(keyName, sharesMessageBody);
 			}
-			Friend friend = data.relationship.friendsMap.get(shareMessage.phone);
+			// Friend friend =
+			// data.relationship.friendsMap.get(shareMessage.phone);
 			this.squareMessageListBody.listItemsSequence.add(keyName);
-			sharesMessageBody.setContent(shareMessage, friend.head);
+			sharesMessageBody.setContent(shareMessage, "");
 
 			TouchView.LayoutParams layoutParams = new TouchView.LayoutParams(LayoutParams.MATCH_PARENT, (int) (115 * displayMetrics.density));
 			sharesMessageBody.y = this.squareMessageListBody.height;
@@ -261,9 +262,9 @@ public class SquareSubView {
 			}
 
 			this.messageContentView.setText(textContent);
-			File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
+			File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
 			final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
-			final int showImageHeight = shareImageHeight;
+			final int showImageHeight = (int) (115 * displayMetrics.density + 0.5f);
 			TouchView.LayoutParams shareImageParams = new TouchView.LayoutParams(showImageWidth, showImageHeight);
 			messageImageView.setLayoutParams(shareImageParams);
 			if ("left".equals(option)) {
@@ -417,6 +418,7 @@ public class SquareSubView {
 
 		List<String> squares = data.relationship.squares;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
+		this.squaresListBody.containerView.removeAllViews();
 		groupsDialogContent.removeAllViews();
 		this.squaresListBody.height = 0;
 		squaresListBody.listItemsSequence.clear();
@@ -445,7 +447,7 @@ public class SquareSubView {
 			groupDialogItem.cardView.setY(groupDialogItem.y);
 			groupDialogItem.cardView.setX(0);
 			this.squaresListBody.height = this.squaresListBody.height + 60 * displayMetrics.density;
-			this.squaresListBody.containerView.addView(groupDialogItem.cardView, layoutParams);
+			this.squaresListBody.containerView.addView(view, layoutParams);
 
 			// onclick
 			view.setTag("GroupDialogContentItem#" + group.gid);

@@ -308,6 +308,9 @@ public class MainController {
 					if (result != null && result.getQuery() != null) {
 						if (result.getQuery().equals(mQuery)) {
 							mCloudItems = result.getClouds();
+							if (data.relationship.squares == null) {
+								data.relationship.squares = new ArrayList<String>();
+							}
 							for (CloudItem item : mCloudItems) {
 								Map<String, Object> map = new HashMap<String, Object>();
 								LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
@@ -412,8 +415,11 @@ public class MainController {
 		group.description = (String) map.get("description");
 		group.distance = (Integer) map.get("distance");
 
+		if (!data.relationship.squares.contains(String.valueOf(group.gid))) {
+			data.relationship.squares.add(String.valueOf(group.gid));
+		}
 		data.relationship.groupsMap.put(String.valueOf(group.gid), group);
-		data.relationship.squares.add(String.valueOf(group.gid));
+
 		data.relationship.isModified = true;
 	}
 

@@ -79,7 +79,7 @@ public class ShareReleaseImageTextController {
 	public int currentUploadCount = 0;
 	public Map<String, String> uploadFileNameMap = new HashMap<String, String>();
 
-	public String currentSelectedGroup = data.localStatus.localData.currentSelectedGroup;
+	public String currentSelectedGroup = "";
 	public User currentUser = data.userInformation.currentUser;
 
 	public Gson gson = new Gson();
@@ -88,14 +88,15 @@ public class ShareReleaseImageTextController {
 
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
-	public String type;
+	public String type, gid;
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 
 		type = thisActivity.getIntent().getStringExtra("type");
-
+		gid = thisActivity.getIntent().getStringExtra("gid");
+		currentSelectedGroup = gid;
 		// Initialize the image directory
 		sdcardImageFolder = fileHandlers.sdcardImageFolder;
 		sdcardThumbnailFolder = fileHandlers.sdcardThumbnailFolder;
