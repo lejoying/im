@@ -2,6 +2,7 @@ package com.open.welinks.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Service;
@@ -146,7 +147,8 @@ public class SquareSubController {
 						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
 						ImageView imageView = ((ImageView) (instance.view));
 						imageView.setImageResource(R.drawable.ic_error);
-						// RelativeLayout.LayoutParams params = (LayoutParams) imageView.getLayoutParams();
+						// RelativeLayout.LayoutParams params = (LayoutParams)
+						// imageView.getLayoutParams();
 						// params.height = 10;
 						// imageView.setLayoutParams(params);
 						// imageView.setBackgroundColor(Color.RED);
@@ -259,7 +261,8 @@ public class SquareSubController {
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
-						// thisActivity.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
+						// thisActivity.overridePendingTransition(R.anim.zoomin,
+						// R.anim.zoomout);
 					}
 				}
 			}
@@ -295,6 +298,20 @@ public class SquareSubController {
 		thisView.squareDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
+	}
+
+	public void setCurrentSquare() {
+		String currentSid = data.relationship.squares.get(0);
+		List<String> squares = data.relationship.squares;
+		Map<String, Group> groups = data.relationship.groupsMap;
+		for (int i = 1; i < squares.size(); i++) {
+			if ((groups.get(squares.get(i)).distance) > (groups.get(currentSid).distance)) {
+				currentSid = squares.get(i);
+			}
+		}
+		data.localStatus.localData.currentSelectedSquare = currentSid;
+
+		thisView.setGroupsDialogContent();
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {

@@ -269,16 +269,20 @@ public class SquareSubView {
 				this.messageImageView.setImageResource(R.drawable.square_temp1);
 			}
 			// if (!imageContent.equals("")) {
-			// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+			// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" +
+			// imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight
+			// / 2 + "h_1c_1e_100q";
 			// final String path = file.getAbsolutePath();
 			// if (file.exists()) {
-			// imageLoader.displayImage("file://" + path, messageImageView, options, new SimpleImageLoadingListener() {
+			// imageLoader.displayImage("file://" + path, messageImageView,
+			// options, new SimpleImageLoadingListener() {
 			// @Override
 			// public void onLoadingStarted(String imageUri, View view) {
 			// }
 			//
 			// @Override
-			// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+			// public void onLoadingFailed(String imageUri, View view,
+			// FailReason failReason) {
 			// downloadFile = new DownloadFile(url, path);
 			// downloadFile.view = messageImageView;
 			// downloadFile.view.setTag("image");
@@ -287,17 +291,21 @@ public class SquareSubView {
 			// }
 			//
 			// @Override
-			// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+			// public void onLoadingComplete(String imageUri, View view, Bitmap
+			// loadedImage) {
 			// int height = showImageHeight;
-			// RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(showImageWidth, height);
+			// RelativeLayout.LayoutParams params = new
+			// RelativeLayout.LayoutParams(showImageWidth, height);
 			// messageImageView.setLayoutParams(params);
 			// }
 			// });
 			// } else {
-			// File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
+			// File file2 = new File(fileHandlers.sdcardImageFolder,
+			// imageContent);
 			// final String path2 = file2.getAbsolutePath();
 			// if (file2.exists()) {
-			// imageLoader.displayImage("file://" + path2, messageImageView, options);
+			// imageLoader.displayImage("file://" + path2, messageImageView,
+			// options);
 			// }
 			// downloadFile = new DownloadFile(url, path);
 			// downloadFile.view = messageImageView;
@@ -328,7 +336,7 @@ public class SquareSubView {
 		mainContentView.setLayoutParams(mainContentParams);
 		squaresListBody = new ListBody1();
 		squaresListBody.initialize(displayMetrics, groupsDialogContent);
-		setGroupsDialogContent();
+		// setGroupsDialogContent();
 	}
 
 	public boolean isShowGroupDialog = false;
@@ -361,21 +369,21 @@ public class SquareSubView {
 	public void setGroupsDialogContent() {
 		data = parser.check();
 
-		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
+		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
 		if (group0 != null) {
 			this.squareTopMenuGroupName.setText(group0.name);
 		}
 
-		List<String> groups = data.relationship.groups;
+		List<String> squares = data.relationship.squares;
 		Map<String, Group> groupsMap = data.relationship.groupsMap;
 		groupsDialogContent.removeAllViews();
 		this.squaresListBody.height = 0;
 		squaresListBody.listItemsSequence.clear();
-		for (int i = 0; i < groups.size(); i++) {
+		for (int i = 0; i < squares.size(); i++) {
 			// boolean a = groups.get(i) == "1765";
 			// log.e(a + "--------" + groups.get(i) + "---" +
 			// groupsMap.get("1765"));
-			Group group = groupsMap.get(groups.get(i));
+			Group group = groupsMap.get(squares.get(i));
 			String key = "group#" + group.gid + "_" + group.name;
 			GroupDialogItem groupDialogItem;
 			View view = null;

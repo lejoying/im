@@ -1,6 +1,11 @@
 package com.open.welinks.controller;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import android.R.integer;
 import android.app.Activity;
@@ -21,10 +26,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.amap.api.cloud.model.AMapCloudException;
+import com.amap.api.cloud.model.CloudItem;
+import com.amap.api.cloud.model.CloudItemDetail;
+import com.amap.api.cloud.search.CloudResult;
+import com.amap.api.cloud.search.CloudSearch;
+import com.amap.api.cloud.search.CloudSearch.OnCloudSearchListener;
+import com.amap.api.cloud.search.CloudSearch.Query;
+import com.amap.api.cloud.search.CloudSearch.SearchBound;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
 import com.amap.api.location.LocationProviderProxy;
+import com.amap.api.maps2d.AMapUtils;
+import com.amap.api.maps2d.model.LatLng;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringUtil;
@@ -64,7 +79,12 @@ public class MainController {
 
 	public LocationManagerProxy mLocationManagerProxy;
 	public AMapLocationListener mAMapLocationListener;
+	public CloudSearch mCloudSearch;
+	public ArrayList<CloudItem> mCloudItems;
+	public Query mQuery;
+	public LatLng mLatLng;
 
+	public OnCloudSearchListener mCloudSearchListener;
 	public OnClickListener mOnClickListener;
 	public OnDownloadListener downloadListener;
 
@@ -274,8 +294,45 @@ public class MainController {
 				mLocationManagerProxy.removeUpdates(mAMapLocationListener);
 				mLocationManagerProxy.destroy();
 				if (aMapLocation != null && aMapLocation.getAMapException().getErrorCode() == 0) {
+					mLatLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+					searchNearBySquare();
 					modifyLocation(aMapLocation);
 				}
+
+			}
+		};
+		mCloudSearchListener = new OnCloudSearchListener() {
+
+			@Override
+			public void onCloudSearched(CloudResult result, int rCode) {
+				if (rCode == 0) {
+					if (result != null && result.getQuery() != null) {
+						if (result.getQuery().equals(mQuery)) {
+							mCloudItems = result.getClouds();
+							for (CloudItem item : mCloudItems) {
+								Map<String, Object> map = new HashMap<String, Object>();
+								LatLng point2 = new LatLng(item.getLatLonPoint().getLatitude(), item.getLatLonPoint().getLongitude());
+								map.put("location", item.getLatLonPoint());
+								map.put("name", item.getTitle());
+								map.put("address", item.getSnippet());
+								map.put("distance", (int) AMapUtils.calculateLineDistance(mLatLng, point2));
+								Iterator iter = item.getCustomfield().entrySet().iterator();
+								while (iter.hasNext()) {
+									Map.Entry entry = (Map.Entry) iter.next();
+									map.put(entry.getKey().toString(), entry.getValue());
+								}
+								addSquare(map);
+							}
+							thisView.squareSubView.thisController.setCurrentSquare();
+						}
+					}
+				}
+
+			}
+
+			@Override
+			public void onCloudItemDetailSearched(CloudItemDetail detail, int rCode) {
+				// TODO Auto-generated method stub
 
 			}
 		};
@@ -327,6 +384,38 @@ public class MainController {
 		mLocationManagerProxy = LocationManagerProxy.getInstance(thisActivity);
 		mLocationManagerProxy.requestLocationData(LocationProviderProxy.AMapNetwork, -1, 15, mAMapLocationListener);
 		mLocationManagerProxy.setGpsEnable(true);
+	}
+
+	public void searchNearBySquare() {
+		mCloudSearch = new CloudSearch(thisActivity);
+		mCloudSearch.setOnCloudSearchListener(mCloudSearchListener);
+
+		List<com.amap.api.cloud.model.LatLonPoint> points = new ArrayList<com.amap.api.cloud.model.LatLonPoint>();
+		points.add(new com.amap.api.cloud.model.LatLonPoint(5.965754, 70.136719));
+		points.add(new com.amap.api.cloud.model.LatLonPoint(56.170023, 140.097656));
+		try {
+			mQuery = new Query(Constant.SQUARETABLEID, "", new SearchBound(points));
+		} catch (AMapCloudException e) {
+			e.printStackTrace();
+		}
+		mQuery.setPageSize(20);
+		mCloudSearch.searchCloudAsyn(mQuery);
+
+	}
+
+	public void addSquare(Map<String, Object> map) {
+		data = parser.check();
+		Group group = data.relationship.new Group();
+
+		group.gid = Integer.valueOf((String) map.get("gid"));
+		group.name = (String) map.get("name");
+		group.icon = (String) map.get("icon");
+		group.description = (String) map.get("description");
+		group.distance = (Integer) map.get("distance");
+
+		data.relationship.groupsMap.put(String.valueOf(group.gid), group);
+		data.relationship.squares.add(String.valueOf(group.gid));
+		data.relationship.isModified = true;
 	}
 
 	public void modifyLocation(AMapLocation aMapLocation) {
