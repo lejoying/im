@@ -1,6 +1,5 @@
 package com.open.welinks.view;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -8,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.BusinessCardActivity;
 import com.open.welinks.R;
 import com.open.welinks.controller.BusinessCardController;
@@ -20,6 +21,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.MCImageUtils;
 
 public class BusinessCardView {
@@ -41,6 +43,9 @@ public class BusinessCardView {
 
 	public Status status = Status.SELF;
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public DisplayImageOptions options;
+
 	public enum Status {
 		SELF, FRIEND, TEMPFRIEND, JOINEDGROUP, NOTJOINGROUP, SQUARE
 	}
@@ -50,15 +55,9 @@ public class BusinessCardView {
 		thisView = this;
 	}
 
-	public Bitmap bitmap;
-
 	public void initView() {
 		mInflater = thisActivity.getLayoutInflater();
 		thisActivity.setContentView(R.layout.activity_businesscard);
-
-		Resources resources = thisActivity.getResources();
-		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		content = (LinearLayout) thisActivity.findViewById(R.id.content);
@@ -78,11 +77,12 @@ public class BusinessCardView {
 		creattime = (TextView) thisActivity.findViewById(R.id.creattime);
 		sex = (TextView) thisActivity.findViewById(R.id.sex);
 		head = (ImageView) thisActivity.findViewById(R.id.head);
-		head.setImageBitmap(bitmap);
+
 		tdcode = (ImageView) thisActivity.findViewById(R.id.tdcode);
 		button_one = (Button) thisActivity.findViewById(R.id.button_one);
 		button_two = (Button) thisActivity.findViewById(R.id.button_two);
 		button_three = (Button) thisActivity.findViewById(R.id.button_three);
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(45)).build();
 
 	}
 
@@ -189,7 +189,8 @@ public class BusinessCardView {
 			Bitmap bitmap = MCImageUtils.getCircleBitmap(BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man), true, 5, Color.WHITE);
 			thisView.head.setImageBitmap(bitmap);
 		} else {
-			thisController.setHeadImage(businessCard.icon, thisView.head);
+			fileHandlers.getHeadImage(businessCard.icon, this.head, options);
+			// thisController.setHeadImage(businessCard.icon, thisView.head);
 		}
 		tdcode.setScaleType(ScaleType.FIT_CENTER);
 		setData(businessCard);

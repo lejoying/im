@@ -35,10 +35,10 @@ import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.FileHandlers;
-import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.Parser;
 import com.open.welinks.utils.MCImageUtils;
 
 public class FriendsSubView {

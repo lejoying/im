@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -55,7 +53,6 @@ import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MCImageUtils;
 
 public class ShareSubView {
 
@@ -126,19 +123,12 @@ public class ShareSubView {
 		viewManage.shareSubView = this;
 	}
 
-	public Bitmap bitmap;
-
 	public void initViews() {
 		this.shareView = mainView.shareView;
 		this.displayMetrics = mainView.displayMetrics;
 
-		Resources resources = mainView.thisActivity.getResources();
-		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
-
 		shareImageHeight = (int) (this.displayMetrics.widthPixels * imageHeightScale);
 		panelHeight = (int) (this.displayMetrics.widthPixels * panelScale);
-		// Log.e(tag, "height--------------" + shareImageHeight);
 
 		shareMessageView = (ViewGroup) shareView.findViewById(R.id.groupShareMessageContent);
 
@@ -153,12 +143,11 @@ public class ShareSubView {
 		groupMembersListContentView = (RelativeLayout) this.groupMembersView.findViewById(R.id.groupMembersListContent);
 		releaseShareView = (ImageView) this.groupMembersView.findViewById(R.id.releaseShare);
 
-		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
+		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		myScrollImageBody = new MyScrollImageBody();
 		myScrollImageBody.initialize(groupMembersListContentView);
-		// groupMembersListContentView.setBackgroundColor(Color.RED);
-		displayImageOptions = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		mImageFile = fileHandlers.sdcardHeadImageFolder;
 		if (!mImageFile.exists())
@@ -185,7 +174,7 @@ public class ShareSubView {
 		SharesMessageBody sharesMessageBody0 = null;
 		sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
 		sharesMessageBody0.initialize(-1);
-		sharesMessageBody0.setContent(null);
+		sharesMessageBody0.setContent(null, "");
 		this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
 		this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
 		RelativeLayout.LayoutParams layoutParams0 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (50 * displayMetrics.density));
@@ -222,7 +211,7 @@ public class ShareSubView {
 			if (!nowTime.equals(lastTime)) {
 				sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
 				sharesMessageBody0.initialize(-2);
-				sharesMessageBody0.setContent(shareMessage);
+				sharesMessageBody0.setContent(shareMessage, "");
 				this.shareMessageListBody.listItemsSequence.add("message#" + "timeBar" + shareMessage.time);
 				this.shareMessageListBody.listItemBodiesMap.put("message#" + "timeBar" + shareMessage.time, sharesMessageBody0);
 				RelativeLayout.LayoutParams layoutParams_2 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, (int) (40 * displayMetrics.density));
@@ -247,8 +236,9 @@ public class ShareSubView {
 				sharesMessageBody.initialize(i);
 				this.shareMessageListBody.listItemBodiesMap.put(keyName, sharesMessageBody);
 			}
+			Friend friend = data.relationship.friendsMap.get(shareMessage.phone);
 			this.shareMessageListBody.listItemsSequence.add(keyName);
-			sharesMessageBody.setContent(shareMessage);
+			sharesMessageBody.setContent(shareMessage, friend.head);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
 			sharesMessageBody.y = this.shareMessageListBody.height;
@@ -302,6 +292,8 @@ public class ShareSubView {
 
 		public ShareMessage message;
 
+		public String fileName;
+
 		public int i;
 
 		public View initialize(int i) {
@@ -331,7 +323,7 @@ public class ShareSubView {
 			return cardView;
 		}
 
-		public void setContent(ShareMessage shareMessage) {
+		public void setContent(ShareMessage shareMessage, String fileName) {
 			data = parser.check();
 			if (i == -1) {
 				// showGroupMembers(groupMembersListContentView);
@@ -340,7 +332,8 @@ public class ShareSubView {
 				this.messageTimeView.setText(DateUtil.formatYearMonthDay(shareMessage.time));
 			} else {
 				this.message = shareMessage;
-				this.headView.setImageBitmap(bitmap);
+				this.fileName = fileName;
+				fileHandlers.getHeadImage(fileName, this.headView, headOptions);
 				if (data.relationship.friendsMap.get(shareMessage.phone) == null) {
 					this.nickNameView.setText(shareMessage.phone);
 				} else {
@@ -374,41 +367,43 @@ public class ShareSubView {
 				RelativeLayout.LayoutParams shareImageParams = new RelativeLayout.LayoutParams(showImageWidth, showImageHeight);
 				// int margin = (int) ((int) displayMetrics.density * 1 + 0.5f);
 				shareImageContentView.setLayoutParams(shareImageParams);
-				final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
-				final String path = file.getAbsolutePath();
-				if (file.exists()) {
-					imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
-						@Override
-						public void onLoadingStarted(String imageUri, View view) {
-						}
+				if (!imageContent.equals("")) {
+					final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+					final String path = file.getAbsolutePath();
+					if (file.exists()) {
+						imageLoader.displayImage("file://" + path, shareImageContentView, options, new SimpleImageLoadingListener() {
+							@Override
+							public void onLoadingStarted(String imageUri, View view) {
+							}
 
-						@Override
-						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-							downloadFile = new DownloadFile(url, path);
-							downloadFile.view = shareImageContentView;
-							downloadFile.view.setTag("image");
-							downloadFile.setDownloadFileListener(thisController.downloadListener);
-							downloadFileList.addDownloadFile(downloadFile);
-						}
+							@Override
+							public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+								downloadFile = new DownloadFile(url, path);
+								downloadFile.view = shareImageContentView;
+								downloadFile.view.setTag("image");
+								downloadFile.setDownloadFileListener(thisController.downloadListener);
+								downloadFileList.addDownloadFile(downloadFile);
+							}
 
-						@Override
-						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-							int height = showImageHeight;
-							RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(showImageWidth, height);
-							shareImageContentView.setLayoutParams(params);
+							@Override
+							public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+								int height = showImageHeight;
+								RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(showImageWidth, height);
+								shareImageContentView.setLayoutParams(params);
+							}
+						});
+					} else {
+						File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
+						final String path2 = file2.getAbsolutePath();
+						if (file2.exists()) {
+							imageLoader.displayImage("file://" + path2, shareImageContentView, options);
 						}
-					});
-				} else {
-					File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
-					final String path2 = file2.getAbsolutePath();
-					if (file2.exists()) {
-						imageLoader.displayImage("file://" + path2, shareImageContentView, options);
+						downloadFile = new DownloadFile(url, path);
+						downloadFile.view = shareImageContentView;
+						downloadFile.view.setTag("image");
+						downloadFile.setDownloadFileListener(thisController.downloadListener);
+						downloadFileList.addDownloadFile(downloadFile);
 					}
-					downloadFile = new DownloadFile(url, path);
-					downloadFile.view = shareImageContentView;
-					downloadFile.view.setTag("image");
-					downloadFile.setDownloadFileListener(thisController.downloadListener);
-					downloadFileList.addDownloadFile(downloadFile);
 				}
 
 				this.sharePraiseNumberView.setText(shareMessage.praiseusers.size() + "");
@@ -455,7 +450,8 @@ public class ShareSubView {
 		releaseImageViewButton.isIntercept = true;
 
 		releaseTextButton.setOnClickListener(thisController.mOnClickListener);
-		releaseTextButton.setOnTouchListener(thisController.onTouchBackColorListener);
+		releaseAlbumButton.setOnClickListener(thisController.mOnClickListener);
+		releaseImageViewButton.setOnClickListener(thisController.mOnClickListener);
 		dialogMainContentView.setOnClickListener(thisController.mOnClickListener);
 		releaseShareDialogView.setOnClickListener(thisController.mOnClickListener);
 		// releaseVoiceTextButton.setOnClickListener(thisController.mOnClickListener);
@@ -628,10 +624,7 @@ public class ShareSubView {
 		public void setContent(Group group) {
 			data = parser.check();
 			this.group = group;
-			Resources resources = mainView.thisActivity.getResources();
-			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
-			this.groupIconView.setImageBitmap(bitmap);
+			fileHandlers.getHeadImage(group.icon, this.groupIconView, headOptions);
 			this.groupNameView.setText(group.name);
 			if (data.localStatus.localData.currentSelectedGroup.equals(group.gid + "")) {
 				this.groupSelectedStatusView.setVisibility(View.VISIBLE);
@@ -655,7 +648,7 @@ public class ShareSubView {
 	public MyScrollImageBody myScrollImageBody;
 	public int width;
 	public File mImageFile;
-	public DisplayImageOptions displayImageOptions;
+	public DisplayImageOptions headOptions;
 
 	public void showGroupMembers() {
 		data = parser.check();
@@ -685,10 +678,8 @@ public class ShareSubView {
 				x = 5 * displayMetrics.density;
 			}
 			imageBody.imageView.setX(x);// Translation
-			imageBody.imageView.setImageBitmap(bitmap);
-			if ("".equals(friend.head)) {
-				imageBody.imageView.setImageBitmap(bitmap);
-			} else {
+			imageLoader.displayImage("drawable://" + R.drawable.face_man, imageBody.imageView, headOptions);
+			if (!"".equals(friend.head)) {
 				File currentImageFile = new File(fileHandlers.sdcardHeadImageFolder, friend.head);
 				String filepath = currentImageFile.getAbsolutePath();
 				boolean isFlag = false;
@@ -718,7 +709,7 @@ public class ShareSubView {
 					if (bitmap != null) {
 						imageBody.imageView.setImageBitmap(bitmap);
 					} else {
-						imageLoader.displayImage(path, imageBody.imageView, displayImageOptions, new SimpleImageLoadingListener() {
+						imageLoader.displayImage(path, imageBody.imageView, headOptions, new SimpleImageLoadingListener() {
 							@Override
 							public void onLoadingStarted(String imageUri, View view) {
 							}
@@ -740,7 +731,7 @@ public class ShareSubView {
 			// options);
 			myScrollImageBody.selectedImagesSequence.add(key);
 			myScrollImageBody.selectedImagesSequenceMap.put(key, imageBody);
-			imageBody.imageView.setTag(i);
+			imageBody.imageView.setTag("head");
 			// imageBody.imageView.setOnClickListener(thisController.monClickListener);
 		}
 	}

@@ -8,7 +8,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -63,7 +62,6 @@ public class ShareSubController {
 	public ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
 
 	public OnClickListener mOnClickListener;
-	public OnTouchListener onTouchBackColorListener;
 	public OnTouchListener mOnTouchListener;
 	public OnDownloadListener downloadListener;
 	public BodyCallback bodyCallback;
@@ -119,7 +117,7 @@ public class ShareSubController {
 					try {
 						String tag = (String) instance.view.getTag();
 						if ("head".equals(tag)) {
-							options = thisView.displayImageOptions;
+							options = thisView.headOptions;
 						}
 					} catch (Exception e) {
 					}
@@ -281,21 +279,6 @@ public class ShareSubController {
 				}
 			}
 		};
-		onTouchBackColorListener = new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-				if (view == thisView.releaseTextButton) {
-					int motionEvent = event.getAction();
-					if (motionEvent == MotionEvent.ACTION_DOWN) {
-						view.setBackgroundColor(Color.argb(143, 0, 0, 0));
-					} else if (motionEvent == MotionEvent.ACTION_UP) {
-						view.setBackgroundColor(Color.parseColor("#00000000"));
-					}
-				}
-				return false;
-			}
-		};
 		bodyCallback = new BodyCallback() {
 			@Override
 			public void onStopOrdering(List<String> listItemsSequence) {
@@ -419,7 +402,7 @@ public class ShareSubController {
 					if (currentScanMessageKey != null) {
 						SharesMessageBody body = (SharesMessageBody) thisView.shareMessageListBody.listItemBodiesMap.get("message#" + currentScanMessageKey);
 						if (body != null) {
-							body.setContent(body.message);
+							body.setContent(body.message, body.fileName);
 						}
 					}
 				}

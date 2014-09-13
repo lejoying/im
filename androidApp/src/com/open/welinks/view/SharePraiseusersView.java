@@ -2,9 +2,6 @@ package com.open.welinks.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -17,11 +14,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.SharePraiseusersController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.model.FileHandlers;
 
 public class SharePraiseusersView {
 
@@ -39,9 +38,11 @@ public class SharePraiseusersView {
 	public float screentHeight, screentWidth, screenDip, screenDensity;
 	public LayoutInflater mInflater;
 
-	public Bitmap bitmap;
-
 	public PraiseUsersAdapter praiseUsersAdapter;
+
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public DisplayImageOptions options;
 
 	public SharePraiseusersView(Activity thisActivity) {
 		this.context = thisActivity;
@@ -58,6 +59,8 @@ public class SharePraiseusersView {
 
 		listView = (ListView) thisActivity.findViewById(R.id.praiseusersContent);
 
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
+
 		DisplayMetrics dm = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		screenDensity = dm.density;
@@ -66,10 +69,6 @@ public class SharePraiseusersView {
 		screentWidth = dm.widthPixels;
 
 		mInflater = thisActivity.getLayoutInflater();
-
-		Resources resources = thisActivity.getResources();
-		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 
 		praiseUsersAdapter = new PraiseUsersAdapter();
 		listView.setAdapter(praiseUsersAdapter);
@@ -122,7 +121,7 @@ public class SharePraiseusersView {
 			headparams.width = (int) (40 * screenDensity + 0.5f);
 			headparams.height = (int) (40 * screenDensity + 0.5f);
 
-			holder.head.setImageBitmap(bitmap);
+			fileHandlers.getHeadImage(friend.head, holder.head, options);
 
 			holder.name.setText(friend.nickName);
 

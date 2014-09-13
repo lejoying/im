@@ -7,10 +7,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +17,13 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.GroupInfomationController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
-import com.open.welinks.utils.MCImageUtils;
+import com.open.welinks.model.FileHandlers;
 
 public class GroupInfomationView {
 
@@ -61,7 +59,10 @@ public class GroupInfomationView {
 	public TextView dialogConfirmView;
 	public TextView dialogCancleView;
 
-	public Bitmap defaultBitmapHead;
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public DisplayImageOptions options;
+
 	public InputMethodManager inputMethodManager;
 
 	public GroupInfomationView(Activity thisActivity) {
@@ -71,6 +72,7 @@ public class GroupInfomationView {
 	}
 
 	public void initView() {
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
 		inputMethodManager = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		thisActivity.setContentView(R.layout.activity_group_infomation);
@@ -90,10 +92,6 @@ public class GroupInfomationView {
 
 		groupMemberControlView = (RelativeLayout) thisActivity.findViewById(R.id.groupMemberControl);
 		exit2DeleteGroupView = (RelativeLayout) thisActivity.findViewById(R.id.exit2DeleteGroup);
-
-		Resources resources = thisActivity.getResources();
-		defaultBitmapHead = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-		defaultBitmapHead = MCImageUtils.getCircleBitmap(defaultBitmapHead, true, 5, Color.WHITE);
 
 		DisplayMetrics dm = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -184,7 +182,7 @@ public class GroupInfomationView {
 		}
 
 		public void setData(Friend friend) {
-			this.headImageView.setImageBitmap(defaultBitmapHead);
+			fileHandlers.getHeadImage(friend.head, this.headImageView, options);
 			this.nickNameView.setText(friend.nickName);
 		}
 	}

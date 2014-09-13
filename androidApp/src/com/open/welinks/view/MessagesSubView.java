@@ -4,26 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.MessagesSubController;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.Parser;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MCImageUtils;
 
 public class MessagesSubView {
 
@@ -48,6 +46,9 @@ public class MessagesSubView {
 	public boolean inited = false;
 	public Parser parser = Parser.getInstance();
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public DisplayImageOptions options;
+
 	public MessagesSubView(MainView mainView) {
 		this.mainView = mainView;
 
@@ -63,6 +64,7 @@ public class MessagesSubView {
 		messagesKeepOnlyOne = new ArrayList<String>();
 
 		noMessagesStatusView = (RelativeLayout) messagesView.findViewById(R.id.NoMessagesStatus);
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(50)).build();
 
 	}
 
@@ -100,10 +102,21 @@ public class MessagesSubView {
 		for (int i = 0; i < messagesOrder.size(); i++) {
 			String key = messagesOrder.get(i);
 			Message message = null;
+			String fileName = "";
 			if (key.indexOf("p") == 0) {
 				message = friendMessageMap.get(key).get(friendMessageMap.get(key).size() - 1);
+				try {
+					fileName = data.relationship.friendsMap.get(message.phone).head;
+				} catch (Exception e) {
+					fileName = "";
+				}
 			} else if (key.indexOf("g") == 0) {
 				message = groupMessageMap.get(key).get(groupMessageMap.get(key).size() - 1);
+				try {
+					fileName = data.relationship.groupsMap.get(message.gid).icon;
+				} catch (Exception e) {
+					fileName = "";
+				}
 			}
 
 			if (messagesKeepOnlyOne.contains(key)) {
@@ -111,14 +124,14 @@ public class MessagesSubView {
 				this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
 
 				MessageBody messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.phone + "_" + message.time);
-				messageBody.setContent(message);
+				messageBody.setContent(message, fileName);
 			} else {
 				messagesKeepOnlyOne.add(key);
 
 				MessageBody messageBody = null;
 				messageBody = new MessageBody(this.messageListBody);
 				messageBody.initialize();
-				messageBody.setContent(message);
+				messageBody.setContent(message, fileName);
 
 				this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
 				this.messageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
@@ -164,12 +177,9 @@ public class MessagesSubView {
 			return cardView;
 		}
 
-		public void setContent(Message message) {
+		public void setContent(Message message, String fileName) {
 			data = parser.check();
-			Resources resources = mainView.thisActivity.getResources();
-			Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
-			bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
-			headView.setImageBitmap(bitmap);
+			fileHandlers.getHeadImage(fileName, headView, options);
 			if ("text".equals(message.contentType)) {
 				lastChatMessageView.setText(message.content);
 			} else if ("image".equals(message.contentType)) {
