@@ -2,7 +2,6 @@ package com.open.welinks.controller;
 
 import java.lang.reflect.Field;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -571,6 +570,9 @@ public class MainController {
 			}
 			if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onLongPress(event);
+			}
+			if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
+				squareSubController.onLongPress(event);
 			}
 
 		}

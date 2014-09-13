@@ -24,7 +24,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.TouchImageView;
 import com.open.lib.TouchView;
@@ -34,6 +36,7 @@ import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
 import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
+import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
@@ -268,44 +271,44 @@ public class SquareSubView {
 			} else {
 				this.messageImageView.setImageResource(R.drawable.square_temp1);
 			}
-			// if (!imageContent.equals("")) {
-			// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
-			// final String path = file.getAbsolutePath();
-			// if (file.exists()) {
-			// imageLoader.displayImage("file://" + path, messageImageView, options, new SimpleImageLoadingListener() {
-			// @Override
-			// public void onLoadingStarted(String imageUri, View view) {
-			// }
-			//
-			// @Override
-			// public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-			// downloadFile = new DownloadFile(url, path);
-			// downloadFile.view = messageImageView;
-			// downloadFile.view.setTag("image");
-			// downloadFile.setDownloadFileListener(thisController.downloadListener);
-			// downloadFileList.addDownloadFile(downloadFile);
-			// }
-			//
-			// @Override
-			// public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-			// int height = showImageHeight;
-			// RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(showImageWidth, height);
-			// messageImageView.setLayoutParams(params);
-			// }
-			// });
-			// } else {
-			// File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
-			// final String path2 = file2.getAbsolutePath();
-			// if (file2.exists()) {
-			// imageLoader.displayImage("file://" + path2, messageImageView, options);
-			// }
-			// downloadFile = new DownloadFile(url, path);
-			// downloadFile.view = messageImageView;
-			// downloadFile.view.setTag("image");
-			// downloadFile.setDownloadFileListener(thisController.downloadListener);
-			// downloadFileList.addDownloadFile(downloadFile);
-			// }
-			// }
+			if (!imageContent.equals("")) {
+				final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" + imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight / 2 + "h_1c_1e_100q";
+				final String path = file.getAbsolutePath();
+				if (file.exists()) {
+					imageLoader.displayImage("file://" + path, messageImageView, options, new SimpleImageLoadingListener() {
+						@Override
+						public void onLoadingStarted(String imageUri, View view) {
+						}
+
+						@Override
+						public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+							downloadFile = new DownloadFile(url, path);
+							downloadFile.view = messageImageView;
+							downloadFile.view.setTag("image");
+							downloadFile.setDownloadFileListener(thisController.downloadListener);
+							downloadFileList.addDownloadFile(downloadFile);
+						}
+
+						@Override
+						public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+							int height = showImageHeight;
+							TouchView.LayoutParams params = new TouchView.LayoutParams(showImageWidth, height);
+							messageImageView.setLayoutParams(params);
+						}
+					});
+				} else {
+					File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
+					final String path2 = file2.getAbsolutePath();
+					if (file2.exists()) {
+						imageLoader.displayImage("file://" + path2, messageImageView, options);
+					}
+					downloadFile = new DownloadFile(url, path);
+					downloadFile.view = messageImageView;
+					downloadFile.view.setTag("image");
+					downloadFile.setDownloadFileListener(thisController.downloadListener);
+					downloadFileList.addDownloadFile(downloadFile);
+				}
+			}
 		}
 	}
 
