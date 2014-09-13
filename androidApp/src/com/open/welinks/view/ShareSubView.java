@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -434,27 +435,27 @@ public class ShareSubView {
 	public PopupWindow releaseSharePopWindow;
 
 	public View releaseShareDialogView;
-	public RelativeLayout dialogMainContentView;
+	public HorizontalScrollView dialogMainContentView;
 
-	public TouchView releaseImageTextButton;
-	public TouchView releaseVoiceTextButton;
-	public TouchView releaseVoteButton;
+	public TouchView releaseTextButton;
+	public TouchView releaseAlbumButton;
+	public TouchView releaseImageViewButton;
 
 	public ShareSubController thisController;
 
 	@SuppressWarnings("deprecation")
 	public void initReleaseShareDialogView() {
 		releaseShareDialogView = mainView.mInflater.inflate(R.layout.share_release_type_dialog, null);
-		dialogMainContentView = (RelativeLayout) releaseShareDialogView.findViewById(R.id.dialogMainContent);
-		releaseImageTextButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseImageTextShareButton);
-		releaseImageTextButton.isIntercept = true;
-		releaseVoiceTextButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseVoiceTextShareButton);
-		releaseVoiceTextButton.isIntercept = true;
-		releaseVoteButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseVoteShareButton);
-		releaseVoteButton.isIntercept = true;
+		dialogMainContentView = (HorizontalScrollView) releaseShareDialogView.findViewById(R.id.dialogMainContent);
+		releaseTextButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseTextShareButton);
+		releaseTextButton.isIntercept = true;
+		releaseAlbumButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseAlbumShareButton);
+		releaseAlbumButton.isIntercept = true;
+		releaseImageViewButton = (TouchView) releaseShareDialogView.findViewById(R.id.releaseImageTextShareButton);
+		releaseImageViewButton.isIntercept = true;
 
-		releaseImageTextButton.setOnClickListener(thisController.mOnClickListener);
-		releaseImageTextButton.setOnTouchListener(thisController.onTouchBackColorListener);
+		releaseTextButton.setOnClickListener(thisController.mOnClickListener);
+		releaseTextButton.setOnTouchListener(thisController.onTouchBackColorListener);
 		dialogMainContentView.setOnClickListener(thisController.mOnClickListener);
 		releaseShareDialogView.setOnClickListener(thisController.mOnClickListener);
 		// releaseVoiceTextButton.setOnClickListener(thisController.mOnClickListener);

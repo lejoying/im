@@ -79,7 +79,7 @@ public class ShareSubController {
 	public String currentScanMessageKey;
 
 	public int nowpage = 0;
-	public int pagesize = 20;
+	public int pagesize = 10;
 
 	public Gson gson = new Gson();
 
@@ -229,8 +229,19 @@ public class ShareSubController {
 					Intent intent = new Intent(thisActivity, GroupListActivity.class);
 					thisActivity.startActivity(intent);
 					thisView.dismissGroupDialog();
-				} else if (view.equals(thisView.releaseImageTextButton)) {
+				} else if (view.equals(thisView.releaseTextButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("type", "text");
+					mainController.thisActivity.startActivity(intent);
+					thisView.dismissReleaseShareDialogView();
+				} else if (view.equals(thisView.releaseAlbumButton)) {
+					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("type", "album");
+					mainController.thisActivity.startActivity(intent);
+					thisView.dismissReleaseShareDialogView();
+				} else if (view.equals(thisView.releaseImageViewButton)) {
+					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("type", "imagetext");
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.getTag() != null) {
@@ -274,7 +285,7 @@ public class ShareSubController {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
-				if (view == thisView.releaseImageTextButton) {
+				if (view == thisView.releaseTextButton) {
 					int motionEvent = event.getAction();
 					if (motionEvent == MotionEvent.ACTION_DOWN) {
 						view.setBackgroundColor(Color.argb(143, 0, 0, 0));

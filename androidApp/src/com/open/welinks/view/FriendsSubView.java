@@ -27,12 +27,15 @@ import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.ListBody1;
 import com.open.lib.viewbody.ListBody1.MyListItemBody;
 import com.open.welinks.R;
 import com.open.welinks.controller.FriendsSubController;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
@@ -58,6 +61,10 @@ public class FriendsSubView {
 
 	public Parser parser = Parser.getInstance();
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+
+	public DisplayImageOptions options;
+
 	public FriendsSubView(MainView mainView) {
 		this.mainView = mainView;
 	}
@@ -73,6 +80,7 @@ public class FriendsSubView {
 		friendsView = (TouchView) mainView.friendsView.findViewById(R.id.friendsContainer);
 		friendListBody = new ListBody1();
 		friendListBody.initialize(displayMetrics, friendsView);
+		options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(52)).build();
 
 	}
 
@@ -213,7 +221,8 @@ public class FriendsSubView {
 
 		public void setData(Friend friend) {
 
-			this.headImageView.setImageBitmap(bitmap);
+			fileHandlers.getHeadImage(friend.head, this.headImageView, options);
+			// this.headImageView.setImageBitmap(bitmap);
 
 			this.nickNameView.setText(friend.nickName);
 			this.friendView.setTag(R.id.friendsContainer, friend);

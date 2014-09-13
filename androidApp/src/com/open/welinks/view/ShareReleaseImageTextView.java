@@ -65,6 +65,14 @@ public class ShareReleaseImageTextView {
 		mFaceView = (ImageView) thisActivity.findViewById(R.id.releaseFace);
 		mVoiceView = (ImageView) thisActivity.findViewById(R.id.releaseVoice);
 
+		if (thisController.type.equals("text")) {
+			mEditTextView.setHint("请输入文本");
+		} else if (thisController.type.equals("album")) {
+			mEditTextView.setHint("请输入描述");
+		} else if (thisController.type.equals("imagetext")) {
+			mEditTextView.setHint("请输入内容");
+		}
+
 		int widthItem = displayMetrics.widthPixels / 5;
 		RelativeLayout.LayoutParams cancleParams = (LayoutParams) mCancleButtonView.getLayoutParams();
 		cancleParams.leftMargin = 0;

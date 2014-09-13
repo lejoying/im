@@ -88,9 +88,13 @@ public class ShareReleaseImageTextController {
 
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
+	public String type;
+
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
+
+		type = thisActivity.getIntent().getStringExtra("type");
 
 		// Initialize the image directory
 		sdcardImageFolder = fileHandlers.sdcardImageFolder;
@@ -427,7 +431,7 @@ public class ShareReleaseImageTextController {
 
 				// upload file to oss server
 				uploadFileNameMap.put(key, fileName);
-				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes);
+				UploadMultipart multipart = new UploadMultipart(key, fileName, bytes, UploadMultipart.UPLOAD_TYPE_IMAGE);
 				uploadMultipartList.addMultipart(multipart);
 				multipart.setUploadLoadingListener(uploadLoadingListener);
 			} catch (FileNotFoundException e) {
