@@ -15,7 +15,7 @@
             android:layout_alignParentLeft="true" >
 
             <ImageView
-                android:id="@+id/squareReleaseButton"
+                android:id="@+id/leftImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:layout_centerHorizontal="true"
@@ -27,13 +27,14 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/shareTopMenuGroupNameParent"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="60dp" >
 
             <TextView
-                android:id="@+id/squareName"
+                android:id="@+id/shareTopMenuGroupName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
@@ -46,7 +47,7 @@
             <ImageView
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:layout_alignRight="@+id/squareName"
+                android:layout_alignRight="@+id/shareTopMenuGroupName"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="-10dp"
                 android:layout_marginTop="30dp"
