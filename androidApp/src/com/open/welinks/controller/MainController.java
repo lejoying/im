@@ -2,6 +2,7 @@ package com.open.welinks.controller;
 
 import java.lang.reflect.Field;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -84,6 +85,8 @@ public class MainController {
 
 	public String userPhone;
 	public String userAddress;
+
+	public boolean isExit = false;
 
 	// public BaseSpringSystem mSpringSystem = SpringSystem.create();
 	// public Spring mScaleSpring = mSpringSystem.createSpring();
@@ -214,6 +217,12 @@ public class MainController {
 						thisView.friendsSubView.dialogInSpring.setCurrentValue(1);
 						thisView.friendsSubView.dialogInSpring.setEndValue(0);
 					}
+				} else if (view.equals(thisView.friendsSubView.deleteCircleView)) {
+					thisView.friendsSubView.thisController.deleteCircle(String.valueOf((Integer) (view.getTag(R.id.tag_first))));
+					thisView.friendsSubView.dismissCircleSettingDialog();
+				} else if (view.equals(thisView.friendsSubView.createCircleView)) {
+					thisView.friendsSubView.thisController.createCircle();
+					thisView.friendsSubView.dismissCircleSettingDialog();
 				} else if (view.equals(thisView.friendsSubView.cancleButton)) {
 					thisView.friendsSubView.dismissCircleSettingDialog();
 				} else if (view.equals(thisView.friendsSubView.confirmButton)) {
@@ -233,6 +242,7 @@ public class MainController {
 					Log.d(tag, (String) view.getTag());
 				}
 			}
+
 		};
 
 		mAMapLocationListener = new AMapLocationListener() {
@@ -638,8 +648,28 @@ public class MainController {
 		return statusBarHeight;
 	}
 
-	public void onBackPressed() {
-		shareSubController.onBackPressed();
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (isExit) {
+				thisActivity.finish();
+			} else {
+				Toast.makeText(thisActivity, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+				isExit = true;
+				new Thread() {
+					@Override
+					public void run() {
+						try {
+							sleep(2000);
+							isExit = false;
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						super.run();
+					}
+				}.start();
+			}
+		}
+		return true;
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

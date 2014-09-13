@@ -1,6 +1,7 @@
 package com.open.welinks.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Service;
@@ -23,15 +24,20 @@ import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.FriendsSubView;
+import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.FriendsSubView.CircleBody;
 
 public class FriendsSubController {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 
 	public String tag = "UserIntimateActivity";
 
@@ -196,13 +202,23 @@ public class FriendsSubController {
 		if ("".equals(inputContent)) {
 			return;
 		}
+		data = parser.check();
 		Circle circle = data.relationship.circlesMap.get("" + inputCircle.rid);
 		circle.name = inputContent;
+		data.relationship.isModified = true;
 
 		CircleBody circleBody = (CircleBody) thisView.friendListBody.listItemBodiesMap.get("circle#" + circle.rid);
 
 		circleBody.leftTopText.setText(inputContent);
 
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		params.addBodyParameter("name", inputContent);
+		params.addBodyParameter("rid", String.valueOf(circle.rid));
+
+		httpUtils.send(HttpMethod.POST, API.CIRCLE_MODIFY, params, responseHandlers.circle_modify);
 	}
 
 	public void onScroll() {
@@ -217,5 +233,71 @@ public class FriendsSubController {
 		params.addBodyParameter("sequence", circleSequence);
 
 		httpUtils.send(HttpMethod.POST, API.RELATION_MODIFYCIRCLESEQUENCE, params, responseHandlers.modifyCircleSequenceCallBack);
+	}
+
+	public void deleteCircle(final String rid) {
+		if (!rid.equals("8888888")) {
+			data = parser.check();
+			final Circle defaultCircle = data.relationship.circlesMap.get("8888888");
+			final Circle deleteCircle = data.relationship.circlesMap.get(rid);
+			Alert.createDialog(thisView.mainView.context).setTitle("是否删除该分组（" + deleteCircle.name + "）").setOnConfirmClickListener(new OnDialogClickListener() {
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					for (String firend : deleteCircle.friends) {
+						defaultCircle.friends.add(firend);
+					}
+					data.relationship.circles.remove(rid);
+					data.relationship.circlesMap.remove(rid);
+					data.relationship.isModified = true;
+
+					HttpUtils httpUtils = new HttpUtils();
+					RequestParams params = new RequestParams();
+					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					params.addBodyParameter("rid", rid);
+
+					httpUtils.send(HttpMethod.POST, API.CIRCLE_DELETE, params, responseHandlers.circle_delete);
+
+					thisView.showCircles();
+
+				}
+			}).show();
+
+		}
+
+	}
+
+	public void createCircle() {
+		data = parser.check();
+		Alert.createInputDialog(thisView.mainView.context).setTitle("请输入分组名").setOnConfirmClickListener(new OnDialogClickListener() {
+
+			@Override
+			public void onClick(AlertInputDialog dialog) {
+				String circleName = dialog.getInputText().trim();
+				if (!circleName.equals("")) {
+					Circle circle = data.relationship.new Circle();
+					circle.name = circleName;
+					int rid = (int) new Date().getTime();
+					circle.rid = rid;
+
+					data.relationship.circles.add(String.valueOf(rid));
+					data.relationship.circlesMap.put(String.valueOf(rid), circle);
+					data.relationship.isModified = true;
+
+					HttpUtils httpUtils = new HttpUtils();
+					RequestParams params = new RequestParams();
+					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					params.addBodyParameter("name", circleName);
+					params.addBodyParameter("rid", String.valueOf(rid));
+
+					httpUtils.send(HttpMethod.POST, API.CIRCLE_ADDCIRCLE, params, responseHandlers.circle_addcircle);
+
+				} else {
+
+				}
+			}
+		}).show();
+
 	}
 }

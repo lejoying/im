@@ -111,10 +111,11 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 			Uri uri = Uri.fromFile(tempFile);
 			startPhotoZoom(uri);
 		} else if (requestCode == REQUESTCODE_CAT && resultCode == Activity.RESULT_OK) {
-			Map<String, Object> map = MCImageUtils.processImagesInformation(this.data.tempData.selectedImageList.get(0), sdFile);
+			Map<String, Object> map = MCImageUtils.processImagesInformation(tempFile.getAbsolutePath(), sdFile);
 			headFileName = (String) map.get("fileName");
 			initHeadImage(headFileName, head);
-			uploadFile("file://" + this.data.tempData.selectedImageList.get(0), (String) map.get("fileName"), (byte[]) map.get("bytes"));
+			System.out.println((String) map.get("fileName"));
+			uploadFile(tempFile.getAbsolutePath(), (String) map.get("fileName"), (byte[]) map.get("bytes"));
 			pic_layout.setVisibility(View.GONE);
 		}
 	}
@@ -381,6 +382,11 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 	}
 
 	public void startPhotoZoom(Uri uri) {
+		tempFile = new File(sdFile, "tempimage.png");
+		int i = 1;
+		while (tempFile.exists()) {
+			tempFile = new File(sdFile, "tempimage" + (i++) + ".png");
+		}
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");
 		intent.putExtra("crop", "true");
@@ -388,8 +394,8 @@ public class ModifyInformationActivity extends Activity implements OnClickListen
 		intent.putExtra("aspectY", 1);
 		intent.putExtra("outputX", 100);
 		intent.putExtra("outputY", 100);
-		intent.putExtra("return-data", true);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		intent.putExtra("return-data", false);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
 		startActivityForResult(intent, REQUESTCODE_CAT);
 	}
 

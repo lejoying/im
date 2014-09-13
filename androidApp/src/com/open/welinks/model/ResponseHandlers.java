@@ -20,6 +20,7 @@ import com.open.lib.MyLog;
 import com.open.welinks.controller.Debug1Controller;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship;
+import com.open.welinks.model.Data.Relationship.Circle;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.Shares.Share;
@@ -297,8 +298,48 @@ public class ResponseHandlers {
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("修改用户位置信息成功") || response.提示信息.equals("创建用户位置信息成功")) {
-				log.e(tag, "---------------------修改用户信息成功");
+			if (response.提示信息.equals("修改用户信息成功")) {
+				if (viewManage.loginView != null) {
+					viewManage.loginView.thisController.modifyUserPasswordCallBack();
+				}
+			} else {
+				viewManage.loginView.thisController.loginFail(response.失败原因);
+			}
+		};
+
+	};
+	public ResponseHandler<String> account_modifypassword = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public String uid;
+			public String accessKey;
+			public String PbKey;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改用户密码成功")) {
+				String accessKey = "", phone = "";
+				try {
+					accessKey = RSAUtils.decrypt(response.PbKey, response.accessKey);
+					phone = RSAUtils.decrypt(response.PbKey, response.uid);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				data.userInformation.currentUser.phone = phone;
+				data.userInformation.currentUser.accessKey = accessKey;
+				data.userInformation.isModified = true;
+				HttpUtils httpUtils = new HttpUtils();
+				RequestParams params = new RequestParams();
+				params.addBodyParameter("phone", phone);
+				params.addBodyParameter("accessKey", accessKey);
+				params.addBodyParameter("target", "[\"" + phone + "\"]");
+				ResponseHandlers responseHandlers = getInstance();
+				httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, responseHandlers.account_get);
+				viewManage.loginView.thisController.loginSuccessful(phone);
+			} else {
+				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}
 		};
 
@@ -319,6 +360,38 @@ public class ResponseHandlers {
 				user.lastlogintime = response.account.lastlogintime;
 				data.userInformation.isModified = true;
 				viewManage.mainView.thisController.chackLBSAccount();
+			}
+		};
+
+	};
+	public ResponseHandler<String> account_verifycode = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("验证成功")) {
+				viewManage.loginView.thisController.requestUserAuthWithVerifyCodeCallBack();
+			} else {
+				viewManage.loginView.thisController.loginFail(response.失败原因);
+			}
+		};
+
+	};
+	public ResponseHandler<String> account_verifyphone = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.substring(response.提示信息.length()).equals("功")) {
+				viewManage.loginView.thisController.requestUserVerifyCodeCallBack();
+			} else {
+				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}
 		};
 
@@ -549,6 +622,24 @@ public class ResponseHandlers {
 			}
 		};
 	};
+
+	public ResponseHandler<String> share_delete = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		@Override
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("删除群分享成功")) {
+				log.e("---------------------删除群分享成功");
+			} else {
+				log.e(tag, "---------------------" + response.失败原因);
+			}
+		};
+	};
+
 	public ResponseHandler<String> relation_modifyAlias = httpClient.new ResponseHandler<String>() {
 		class Response {
 			public String 提示信息;
@@ -606,6 +697,7 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("修改分组顺序成功")) {
 				log.e(tag, "---------------------修改分组顺序成功");
+				viewManage.mainView.friendsSubView.showCircles();
 			} else {
 				log.e(tag, "---------------------" + response.失败原因);
 			}
@@ -1002,4 +1094,63 @@ public class ResponseHandlers {
 			}
 		};
 	};
+	public RequestCallBack<String> circle_modify = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("修改成功")) {
+
+			} else {
+				log.d("修改失败===================" + response.失败原因);
+
+			}
+		};
+	};
+	public RequestCallBack<String> circle_delete = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("删除成功")) {
+				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
+			} else {
+				log.d("删除失败===================" + response.失败原因);
+
+			}
+		};
+	};
+	public RequestCallBack<String> circle_addcircle = httpClient.new ResponseHandler<String>() {
+		class Response {
+			public String 提示信息;
+			public String 失败原因;
+			public Circle circle;
+			public String rid;
+		}
+
+		public void onSuccess(ResponseInfo<String> responseInfo) {
+			Response response = gson.fromJson(responseInfo.result, Response.class);
+			if (response.提示信息.equals("添加成功")) {
+				data = parser.check();
+				data.relationship.circles.remove(response.rid);
+				data.relationship.circles.add(String.valueOf(response.circle.rid));
+				data.relationship.circlesMap.remove(response.rid);
+				data.relationship.circlesMap.put(String.valueOf(response.circle.rid), response.circle);
+				data.relationship.isModified = true;
+
+				viewManage.mainView.friendsSubView.thisController.modifyGroupSequence(gson.toJson(data.relationship.circles));
+
+			} else {
+				log.d("添加失败===================" + response.失败原因);
+
+			}
+		};
+	};
+
 }

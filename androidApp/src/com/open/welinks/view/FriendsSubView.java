@@ -92,6 +92,7 @@ public class FriendsSubView {
 
 		this.friendListBody.containerView.removeAllViews();
 		this.friendListBody.height = 0;
+		this.friendListBody.y = 0;
 
 		this.friendListBody.listItemsSequence.clear();
 
@@ -267,7 +268,7 @@ public class FriendsSubView {
 	public int DIALOG_SWITCH = 0x02;
 	public int currentStatus = SHOW_DIALOG;
 
-	public TextView modifyCircleNameView;
+	public TextView modifyCircleNameView, deleteCircleView, createCircleView;
 	public TextView cancleButton;
 	public TextView confirmButton;
 	public EditText inputEditView;
@@ -296,6 +297,14 @@ public class FriendsSubView {
 
 		modifyCircleNameView = (TextView) circleDialogView.findViewById(R.id.modifyCircleName);
 		modifyCircleNameView.setOnClickListener(mainView.thisController.mOnClickListener);
+
+		deleteCircleView = (TextView) circleDialogView.findViewById(R.id.deleteCircle);
+		deleteCircleView.setOnClickListener(mainView.thisController.mOnClickListener);
+		deleteCircleView.setTag(R.id.tag_first, circle.rid);
+
+		createCircleView = (TextView) circleDialogView.findViewById(R.id.createCircle);
+		createCircleView.setOnClickListener(mainView.thisController.mOnClickListener);
+
 		circleName = (TextView) circleDialogView.findViewById(R.id.circleName);
 
 		cancleButton = (TextView) circleDialogView.findViewById(R.id.cancel);

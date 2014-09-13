@@ -19,8 +19,7 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
     var operation = pathObject["operation"];
     if (operation == "verifyphone") {
         accountManage.verifyphone(data, response);
-    }
-    else if (operation == "verifycode") {
+    }else if (operation == "verifycode") {
         accountManage.verifycode(data, response, setOauthAccessKey);
     }
     else if (operation == "auth") {
@@ -57,6 +56,8 @@ requestHandlers.accountManage = function (request, response, pathObject, data) {
         oauth6(data.phone, data.accessKey, response, function () {
             accountManage.modifylocation(data, response);
         });
+    }else if (operation == "modifypassword") {
+        accountManage.modifypassword(data, response, setOauthAccessKey);
     }
 }
 var communityManage = require("./handlers/communityManage.js");
@@ -333,6 +334,10 @@ requestHandlers.shareManage = function (request, response, pathObject, data) {
             shareManage.getgroupshares(data, response);
         });
     }
+    /***************************************************
+     * * * * * * * *New Api* * * * * * * * * * * * * * *
+     ***************************************************/
+
 }
 function setOauthAccessKey(phone, accessKey, next) {
     client.rpush(phone + "_accessKey", accessKey, function (err, reply) {

@@ -325,6 +325,85 @@ accountManage.verifycode = function (data, response, next) {
     }
 }
 /***************************************
+ *     URL：/api2/account/modifypassword
+ ***************************************/
+accountManage.modifypassword=function(data, response, next){
+    response.asynchronous = 1;
+    var phone = data.phone;
+    var password = data.password;
+    var arr = [phone, password];
+    if (verifyEmpty.verifyEmpty(data, arr, response)) {
+        checkAccountNode(phone, password.toLowerCase());
+    }
+    function checkAccountNode(phone, password) {
+        var query = [
+            'MATCH (account:Account)',
+            'WHERE account.phone={phone}',
+            'RETURN  account'
+        ].join('\n');
+
+        var params = {
+            phone: phone
+        };
+        db.query(query, params, function (error, results) {
+            if (error) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息失败",
+                    "失败原因": "数据异常"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else if (results.length == 0) {
+                response.write(JSON.stringify({
+                    "提示信息": "获取用户信息失败",
+                    "失败原因": "用户不存在"
+                }));
+                response.end();
+                console.error(error);
+                return;
+            } else {
+                var accountNode=results.pop().account;
+                var accountData = accountNode.data;
+                if (password != undefined && password != null && password != "") {
+                    accountData.password = password.toLowerCase();
+                }
+                accountNode.save(function (err, node) {
+                    if (err) {
+                        response.write(JSON.stringify({
+                            "提示信息": "修改用户密码失败",
+                            "失败原因": "数据异常"
+                        }));
+                        response.end();
+                        console.error(err);
+                        return;
+                    } else {
+                        var accessKey = sha1.hex_sha1(phone + new Date().getTime());
+                        next(phone, accessKey, function (flag) {
+                            if (flag) {
+                                response.write(JSON.stringify({
+                                    "提示信息": "修改用户密码成功",
+                                    "uid": RSA.encryptedString(pvkey0, accountData.phone),
+                                    "accessKey": RSA.encryptedString(pvkey0, accessKey),
+                                    "PbKey": pbkeyStr0
+                                }));
+                                response.end();
+                            } else {
+                                response.write(JSON.stringify({
+                                    "提示信息": "修改用户密码失败",
+                                    "失败原因": "数据异常"
+                                }));
+                                response.end();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+    }
+}
+/***************************************
  *     URL：/api2/account/auth
  ***************************************/
 accountManage.auth = function (data, response, next) {

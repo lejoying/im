@@ -150,7 +150,8 @@ public class ShareSubController {
 						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
 						ImageView imageView = ((ImageView) (instance.view));
 						imageView.setImageResource(R.drawable.ic_error);
-						// RelativeLayout.LayoutParams params = (LayoutParams) imageView.getLayoutParams();
+						// RelativeLayout.LayoutParams params = (LayoutParams)
+						// imageView.getLayoutParams();
 						// params.height = 10;
 						// imageView.setLayoutParams(params);
 						// imageView.setBackgroundColor(Color.RED);
@@ -274,7 +275,8 @@ public class ShareSubController {
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
-						// thisActivity.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
+						// thisActivity.overridePendingTransition(R.anim.zoomin,
+						// R.anim.zoomout);
 					}
 				}
 			}
@@ -405,13 +407,10 @@ public class ShareSubController {
 							body.setContent(body.message, body.fileName);
 						}
 					}
+					thisView.showShareMessages();
 				}
 			}
 		}
-	}
-
-	public void onBackPressed() {
-
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

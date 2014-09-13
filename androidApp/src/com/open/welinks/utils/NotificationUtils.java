@@ -1,8 +1,12 @@
-package com.lejoying.wxgs.activity.utils;
+package com.open.welinks.utils;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.open.welinks.MainActivity;
+import com.open.welinks.R;
+import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Messages.Message;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
@@ -10,20 +14,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.os.Vibrator;
-import android.view.View;
-import android.widget.RemoteViews;
-
-import com.lejoying.wxgs.R;
-import com.lejoying.wxgs.activity.MainActivity;
-import com.lejoying.wxgs.app.MainApplication;
-import com.lejoying.wxgs.app.data.entity.Message;
 
 public final class NotificationUtils {
 	public static final int DEFAULT_ALL = Notification.DEFAULT_ALL;
@@ -34,7 +29,7 @@ public final class NotificationUtils {
 	public static final long[] VIBRATE_COMMON = new long[] { 0, 115, 55, 115 };
 	private static NotificationManager mNotificationManager;
 	private static Vibrator mVibrator;
-	private static MainApplication mApp;
+	private static Data data;
 	private static ActivityManager mActivityManager;
 
 	private static List<Message> showMessages = new ArrayList<Message>();
@@ -65,11 +60,11 @@ public final class NotificationUtils {
 		return mActivityManager;
 	}
 
-	private static MainApplication getMainApplication() {
-		if (mApp == null) {
-			mApp = MainApplication.getMainApplication();
+	private static Data getData() {
+		if (data == null) {
+			data = Data.getInstance();
 		}
-		return mApp;
+		return data;
 	}
 
 	public static void vibrate(Context context, long milliseconds) {
@@ -95,40 +90,6 @@ public final class NotificationUtils {
 		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 		getNotificationManager(context).notify(notificationId, notification);
 	}
-
-	// public void setLatestEventInfo(Context context, CharSequence
-	// contentTitle,
-	// CharSequence contentText, PendingIntent contentIntent) {
-	// // TODO: rewrite this to use Builder
-	// RemoteViews contentView = new RemoteViews(context.getPackageName(),
-	// R.layout.notification_template_base);
-	// if (this.icon != 0) {
-	// contentView.setImageViewResource(R.id.icon, this.icon);
-	// }
-	// if (priority < PRIORITY_LOW) {
-	// contentView.setInt(R.id.icon, "setBackgroundResource",
-	// R.drawable.notification_template_icon_low_bg);
-	// contentView.setInt(R.id.status_bar_latest_event_content,
-	// "setBackgroundResource", R.drawable.notification_bg_low);
-	// }
-	// if (contentTitle != null) {
-	// contentView.setTextViewText(R.id.title, contentTitle);
-	// }
-	// if (contentText != null) {
-	// contentView.setTextViewText(R.id.text, contentText);
-	// }
-	// if (this.when != 0) {
-	// contentView.setViewVisibility(R.id.time, View.VISIBLE);
-	// contentView.setLong(R.id.time, "setTime", when);
-	// }
-	// if (this.number != 0) {
-	// NumberFormat f = NumberFormat.getIntegerInstance();
-	// contentView.setTextViewText(R.id.info, f.format(this.number));
-	// }
-	//
-	// this.contentView = contentView;
-	// this.contentIntent = contentIntent;
-	// }
 
 	public static void cancelNotification(Context context, int notification) {
 		getNotificationManager(context).cancel(notification);
@@ -159,8 +120,6 @@ public final class NotificationUtils {
 		return flag;
 	}
 
-	// Only applies to MicroCommune
-
 	public static final int NOTIFICATION_NEWMESSAGE = 1;
 
 	private static void recordCount(Message message) {
@@ -188,22 +147,18 @@ public final class NotificationUtils {
 		String tickerText = "";
 		String contentTitle = "";
 		String contentText;
-		try {
-			contentText = message.content.get(0);
-		} catch (Exception e) {
-			contentText = message.content.toString();
-		}
+		contentText = message.content.toString();
 		if (message.contentType.equals("image")) {
 			contentText = "[图片]";
 		} else if (message.contentType.equals("voice")) {
 			contentText = "[声音]";
 		}
 		if (message.sendType.equals("point")) {
-			String nickName = getMainApplication().data.friends.get(message.phone).nickName;
+			String nickName = getData().relationship.friendsMap.get(message.phone).nickName;
 			tickerText = nickName + ":" + contentText;
 			contentTitle = nickName;
 		} else if (message.sendType.equals("group") || message.sendType.equals("tempGroup")) {
-			String groupName = getMainApplication().data.groupsMap.get(message.gid).name;
+			String groupName = getData().relationship.groupsMap.get(message.gid).name;
 			tickerText = groupName + ":" + contentText;
 			contentTitle = groupName;
 		}
@@ -212,7 +167,7 @@ public final class NotificationUtils {
 		if (friendCount == 1 && messageCount == 1) {
 			if (message.sendType.equals("point")) {
 				showFragment = "chatFriend";
-			} else if (message.sendType.equals("group") || message.sendType.equals("tempGroup")) {
+			} else if (message.sendType.equals("group")) {
 				showFragment = "chatGroup";
 			}
 		} else if (friendCount == 1 && messageCount > 1) {

@@ -1,9 +1,12 @@
 package com.open.welinks.view;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;

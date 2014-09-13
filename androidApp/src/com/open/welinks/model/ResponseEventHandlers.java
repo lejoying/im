@@ -14,6 +14,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.ViewManage;
 
 public class ResponseEventHandlers {
@@ -49,7 +50,12 @@ public class ResponseEventHandlers {
 		if (message.sendType.equals("event")) {
 			String contentType = message.contentType;
 			if ("message".equals(contentType)) {
-				updateLocalMessage(message);
+				updateLocalMessage(gson.fromJson(message.content, Message.class));
+				if (NotificationUtils.isLeave(viewManage.mainView.context)) {
+					NotificationUtils.showMessageNotification(viewManage.mainView.context, gson.fromJson(message.content, Message.class));
+				} else {
+					NotificationUtils.commonVibrate(viewManage.mainView.context);
+				}
 			} else {
 				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
 				if ("account_dataupdate".equals(contentType)) {

@@ -53,6 +53,7 @@
             android:background="#22000000" />
 
         <TextView
+            android:id="@+id/deleteCircle"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="102dp"
@@ -73,6 +74,7 @@
             android:background="#22000000" />
 
         <TextView
+            android:id="@+id/createCircle"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="143dp"
