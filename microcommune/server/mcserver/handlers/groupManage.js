@@ -20,9 +20,9 @@ groupManage.create = function (data, response) {
     var name = data.name;
     var members = data.members;
     var location = data.location;
-    var address=data.address;
+    var address = data.address;
     var time = new Date().getTime();
-    var eid = phone + "" + time;
+    var eid = phone + "_" + time;
     console.log("phone:" + phone + "tempGid:" + tempGid + ",name:" + name + ",members:" + members);
     if (type == "createTempGroup") {
         var timeGid = new Date().getTime() + "";
@@ -132,7 +132,7 @@ groupManage.create = function (data, response) {
                         "提示信息": "创建群组成功",
                         group: group,
                         tempGid: tempGid,
-                        address:address
+                        address: address
                     }))
                     response.end();
                     var event = JSON.stringify({
@@ -197,7 +197,7 @@ groupManage.create = function (data, response) {
                     "提示信息": "创建群组成功",
                     group: group,
                     tempGid: tempGid,
-                    address:address
+                    address: address
                 }));
                 response.end();
                 var event1 = JSON.stringify({
@@ -470,7 +470,7 @@ groupManage.removemembers = function (data, response) {
     var gid = data.gid;
     var members = data.members;
     var time = new Date().getTime();
-    var eid = phone + "" + time;
+    var eid = phone + "_" + time;
     console.log("phone:" + phone + "gid:" + gid + ",members:" + members);
     var list = [phone, gid, members];
     if (verifyEmpty.verifyEmpty(data, list, response)) {
@@ -566,6 +566,7 @@ groupManage.removemembers = function (data, response) {
                             phone: phone,
                             phoneTo: removePhone,
                             gid: gid,
+                            eid: eid,
                             content: members.length
                         })
                     });
@@ -587,6 +588,7 @@ groupManage.removemembers = function (data, response) {
                         time: new Date().getTime(),
                         phone: phone,
                         gid: gid,
+                        eid: eid,
                         content: members.length
                     })
                 });

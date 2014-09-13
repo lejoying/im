@@ -654,7 +654,12 @@ public class ShareSubView {
 		data = parser.check();
 		groupMembersListContentView.removeAllViews();
 		Group group = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedGroup);
-		shareTopMenuGroupName.setText(group.name);
+		if (group != null) {
+			shareTopMenuGroupName.setText(group.name);
+		} else {
+			shareTopMenuGroupName.setText("暂无群组");
+			return;
+		}
 		List<String> groupMembers = group.members;
 		Map<String, Friend> friendsMap = data.relationship.friendsMap;
 

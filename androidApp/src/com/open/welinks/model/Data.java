@@ -104,6 +104,9 @@ public class Data {
 			public String lastlogintime;
 			public String longitude;
 			public String latitude;
+
+			public String groupsSequenceString;
+			public String circlesOrderString;
 		}
 
 		public LocalConfig localConfig;
@@ -151,6 +154,9 @@ public class Data {
 			public String userBackground = "Back";
 			public String alias = "";
 			public String lastlogintime;
+
+			public String groupsSequenceString;
+			public String circlesOrderString;
 		}
 
 		public class Circle {
@@ -242,6 +248,8 @@ public class Data {
 
 	public class Squares {
 		public boolean isModified = false;
+
+		public List<String> squares = new ArrayList<String>();
 
 		public Map<String, Square> squareMap = new HashMap<String, Square>();
 

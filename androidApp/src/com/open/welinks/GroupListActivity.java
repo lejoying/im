@@ -150,13 +150,20 @@ public class GroupListActivity extends Activity {
 	public class GroupListAdapter extends BaseAdapter {
 
 		@Override
+		public void notifyDataSetChanged() {
+			super.notifyDataSetChanged();
+			groups = data.relationship.groups;
+			groupsMap = data.relationship.groupsMap;
+		}
+
+		@Override
 		public int getCount() {
 			return groups.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return position;
+			return groups.get(position);
 		}
 
 		@Override

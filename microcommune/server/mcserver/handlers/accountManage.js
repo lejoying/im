@@ -489,7 +489,9 @@ accountManage.get = function (data, response) {
                         head: accountData.head,
                         sex: accountData.sex,
                         byPhone: accountData.byPhone,
-                        userBackground: accountData.userBackground
+                        userBackground: accountData.userBackground,
+                        circlesOrderString: accountData.circlesOrderString,
+                        groupsSequenceString: accountData.groupsSequenceString
                     };
                     accounts.push(account);
                 }
