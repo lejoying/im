@@ -16,7 +16,6 @@ import com.open.welinks.model.Data.Event;
 import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Shares;
-import com.open.welinks.model.Data.Squares;
 import com.open.welinks.model.Data.UserInformation;
 import com.open.welinks.utils.StreamParser;
 
@@ -64,9 +63,6 @@ public class Parser {
 
 			String shareContent = getFromAssets("share.js");
 			data.shares = gson.fromJson(shareContent, Shares.class);
-
-			String squareContent = getFromAssets("square.js");
-			data.squares = gson.fromJson(squareContent, Squares.class);
 
 			String eventContent = getFromAssets("event.js");
 			data.event = gson.fromJson(eventContent, Event.class);
@@ -233,14 +229,6 @@ public class Parser {
 				throw e;
 			}
 			try {
-				if (data.squares == null) {
-					String squareContent = getFromUserForder(phone, "square.js");
-					data.squares = gson.fromJson(squareContent, Squares.class);
-				}
-			} catch (Exception e) {
-				throw e;
-			}
-			try {
 				if (data.event == null) {
 					String eventContent = getFromUserForder(phone, "event.js");
 					data.event = gson.fromJson(eventContent, Event.class);
@@ -289,12 +277,6 @@ public class Parser {
 			data.shares.isModified = false;
 			String sharesStr = gson.toJson(data.shares);
 			saveToUserForder(phone, "share.js", sharesStr);
-		}
-
-		if (data.squares.isModified) {
-			data.squares.isModified = false;
-			String squaresStr = gson.toJson(data.squares);
-			saveToUserForder(phone, "square.js", squaresStr);
 		}
 
 		if (data.messages.isModified) {

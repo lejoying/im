@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="115dp" >
 
-    <ImageView
+    <com.open.lib.TouchImageView
         android:id="@+id/messageImage"
         android:layout_width="match_parent"
         android:layout_height="115dp"
         android:src="@drawable/square_temp" />
 
-    <ImageView
+    <com.open.lib.TouchImageView
         android:layout_width="match_parent"
         android:layout_height="115dp"
         android:background="@drawable/square_message_background1" />
 
-    <TextView
+    <com.open.lib.TouchTextView
         android:id="@+id/messageContent"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
@@ -25,15 +25,15 @@
         android:textColor="#99000000"
         android:textSize="16sp" />
 
-    <TextView
+    <com.open.lib.TouchTextView
         android:id="@+id/messageAuthor"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:text="Lucy and Luly"
         android:textColor="#99000000"
         android:textSize="18sp" />
 
-</RelativeLayout>
+</com.open.lib.TouchView>

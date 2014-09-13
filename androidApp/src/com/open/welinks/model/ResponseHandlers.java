@@ -503,6 +503,7 @@ public class ResponseHandlers {
 					share.shareMessagesMap.putAll(response.shares.shareMessagesMap);
 					data.shares.isModified = true;
 					viewManage.mainView.shareSubView.showShareMessages();
+					viewManage.mainView.squareSubView.showShareMessages();
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();

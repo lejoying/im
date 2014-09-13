@@ -452,7 +452,8 @@ public class MainController {
 				thisView.shareSubView.shareMessageListBody.onTouchDown(event);
 				thisView.shareSubView.groupListBody.onTouchDown(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.squareListBody.onTouchDown(event);
+				thisView.squareSubView.squareMessageListBody.onTouchDown(event);
+				thisView.squareSubView.squaresListBody.onTouchDown(event);
 			}
 
 		} else if (motionEvent == MotionEvent.ACTION_MOVE) {
@@ -467,7 +468,8 @@ public class MainController {
 				thisView.shareSubView.shareMessageListBody.onTouchMove(event);
 				thisView.shareSubView.groupListBody.onTouchMove(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.squareListBody.onTouchMove(event);
+				thisView.squareSubView.squareMessageListBody.onTouchMove(event);
+				thisView.squareSubView.squaresListBody.onTouchMove(event);
 			}
 		} else if (motionEvent == MotionEvent.ACTION_UP) {
 			thisView.messages_friends_me_PagerBody.onTouchUp(event);
@@ -483,7 +485,9 @@ public class MainController {
 				thisView.shareSubView.shareMessageListBody.onTouchUp(event);
 				thisView.shareSubView.groupListBody.onTouchUp(event);
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				thisView.squareSubView.squareListBody.onTouchUp(event);
+				squareSubController.onSingleTapUp(event);
+				thisView.squareSubView.squareMessageListBody.onTouchUp(event);
+				thisView.squareSubView.squaresListBody.onTouchUp(event);
 			}
 		}
 		mGesture.onTouchEvent(event);
@@ -527,7 +531,7 @@ public class MainController {
 				listBody = thisView.shareSubView.shareMessageListBody;
 				// listBody = thisView.shareSubView.shareMessageListBody;
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
-				listBody = thisView.squareSubView.squareListBody;
+				listBody = thisView.squareSubView.squareMessageListBody;
 			}
 			if (listBody == null) {
 				return true;
@@ -585,6 +589,8 @@ public class MainController {
 				friendsSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onScroll();
+			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
+				squareSubController.onScroll();
 			}
 
 			return false;
