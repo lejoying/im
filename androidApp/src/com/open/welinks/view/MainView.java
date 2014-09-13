@@ -1,9 +1,12 @@
 package com.open.welinks.view;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -115,7 +118,7 @@ public class MainView {
 		title_square = (RelativeLayout) squareView.findViewById(R.id.title_square);
 		title_share = (RelativeLayout) shareView.findViewById(R.id.title_share);
 		title_messages_friends_me = (RelativeLayout) messages_friends_me_View.findViewById(R.id.title_messages_friends_me);
-		
+
 		scannerCodeView = (ImageView) title_messages_friends_me.findViewById(R.id.scanner_code);
 
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);

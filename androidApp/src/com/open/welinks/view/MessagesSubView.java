@@ -102,7 +102,6 @@ public class MessagesSubView {
 		for (int i = 0; i < messagesOrder.size(); i++) {
 			String key = messagesOrder.get(i);
 			Message message = null;
-			System.out.println(key + "-----------");
 			String fileName = "";
 			if (key.indexOf("p") == 0) {
 				message = friendMessageMap.get(key).get(friendMessageMap.get(key).size() - 1);

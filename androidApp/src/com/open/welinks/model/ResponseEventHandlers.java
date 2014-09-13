@@ -50,12 +50,10 @@ public class ResponseEventHandlers {
 		if (message.sendType.equals("event")) {
 			String contentType = message.contentType;
 			if ("message".equals(contentType)) {
-				updateLocalMessage(message);
+				updateLocalMessage(gson.fromJson(message.content, Message.class));
 				if (NotificationUtils.isLeave(viewManage.mainView.context)) {
-					System.out.println("is leave=====================================");
-					NotificationUtils.showMessageNotification(viewManage.mainView.context, message);
+					NotificationUtils.showMessageNotification(viewManage.mainView.context, gson.fromJson(message.content, Message.class));
 				} else {
-					System.out.println("not leave=====================================");
 					NotificationUtils.commonVibrate(viewManage.mainView.context);
 				}
 			} else {
@@ -320,7 +318,6 @@ public class ResponseEventHandlers {
 			if (list == null) {
 				list = new ArrayList<Data.Messages.Message>();
 				data.messages.friendMessageMap.put("p" + message.phone, list);
-				System.out.println("*************p" + message.phone);
 			}
 			list.add(message);
 		} else if ("group".equals(message.sendType)) {
@@ -328,7 +325,6 @@ public class ResponseEventHandlers {
 			if (list == null) {
 				list = new ArrayList<Data.Messages.Message>();
 				data.messages.groupMessageMap.put("g" + message.gid, list);
-				System.out.println("************g" + message.gid);
 			}
 			list.add(message);
 		}

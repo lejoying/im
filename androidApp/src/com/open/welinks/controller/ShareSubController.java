@@ -275,7 +275,8 @@ public class ShareSubController {
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
-						// thisActivity.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
+						// thisActivity.overridePendingTransition(R.anim.zoomin,
+						// R.anim.zoomout);
 					}
 				}
 			}
