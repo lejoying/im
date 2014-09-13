@@ -33,7 +33,11 @@ import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.Comment;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.InnerScrollView.OnScrollChangedListener;
 import com.open.welinks.view.PictureBrowseView;
 import com.open.welinks.view.ShareMessageDetailView;
@@ -41,6 +45,7 @@ import com.open.welinks.view.ShareMessageDetailView;
 public class ShareMessageDetailController {
 
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 	public String tag = "ShareMessageDetailController";
 
 	public Context context;
@@ -102,9 +107,13 @@ public class ShareMessageDetailController {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				LayoutParams commentLayoutParams = thisView.commentInputView.getLayoutParams();
-				// Log.e(content, (45 * thisView.screenDensity + 0.5f) + "--------------height--" + thisView.commentEditTextView.getHeight() + "--------" + initialHeight);
+				// Log.e(content, (45 * thisView.screenDensity + 0.5f) +
+				// "--------------height--" +
+				// thisView.commentEditTextView.getHeight() + "--------" +
+				// initialHeight);
 				commentLayoutParams.height = (int) ((45 * thisView.screenDensity + 0.5f) + thisView.commentEditTextView.getHeight() - 40);
-				// Log.e(content, commentLayoutParams.height + "--------------height");
+				// Log.e(content, commentLayoutParams.height +
+				// "--------------height");
 				// thisView.commentInputView.setLayoutParams(commentLayoutParams);
 			}
 
@@ -163,7 +172,8 @@ public class ShareMessageDetailController {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// if (thisView.commentInputView.getVisibility() == View.VISIBLE) {
+				// if (thisView.commentInputView.getVisibility() ==
+				// View.VISIBLE) {
 				// thisView.commentInputView.setVisibility(View.GONE);
 				// }
 				return false;
@@ -205,7 +215,8 @@ public class ShareMessageDetailController {
 						thisView.commentInputView.setVisibility(View.GONE);
 					}
 				} else if (view.equals(thisView.praiseUserContentView)) {
-					// Toast.makeText(thisActivity, "praiseUserContentView", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(thisActivity, "praiseUserContentView",
+					// Toast.LENGTH_SHORT).show();
 					Intent intent = new Intent(thisActivity, SharePraiseusersActivity.class);
 					data.tempData.praiseusersList = shareMessage.praiseusers;
 					thisActivity.startActivity(intent);
@@ -248,6 +259,8 @@ public class ShareMessageDetailController {
 					thisView.mainScrollView.fullScroll(ScrollView.FOCUS_DOWN);
 
 					addCommentToMessage("text", commentContent);
+				} else if (view.equals(thisView.deleteOptionView)) {
+					deleteGroupShare();
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
@@ -278,6 +291,7 @@ public class ShareMessageDetailController {
 					}
 				}
 			}
+
 		};
 	}
 
@@ -288,11 +302,36 @@ public class ShareMessageDetailController {
 		thisView.praiseIconView.setOnClickListener(mOnClickListener);
 		thisView.commentIconView.setOnClickListener(mOnClickListener);
 		thisView.confirmSendCommentView.setOnClickListener(mOnClickListener);
+		thisView.deleteOptionView.setOnClickListener(mOnClickListener);
 
 		thisView.mainScrollView.setOnTouchListener(mOnTouchListener);
 		thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
 
 		thisView.commentEditTextView.addTextChangedListener(textWatcher);
+	}
+
+	public void deleteGroupShare() {
+		if (shareMessage.phone.equals(data.userInformation.currentUser.phone)) {
+			Alert.createDialog(thisActivity).setTitle("是否删除这条分享？").setOnConfirmClickListener(new OnDialogClickListener() {
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					RequestParams params = new RequestParams();
+					HttpUtils httpUtils = new HttpUtils();
+					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+					params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+					params.addBodyParameter("gsid", gsid);
+
+					data = parser.check();
+					Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
+					share.shareMessagesOrder.remove(gsid);
+					share.shareMessagesMap.remove(gsid);
+					data.shares.isModified = true;
+					httpUtils.send(HttpMethod.POST, API.SHARE_DELETE, params, responseHandlers.share_delete);
+					thisActivity.finish();
+				}
+			}).show();
+		}
 	}
 
 	public void modifyPraiseusersToMessage(boolean option) {

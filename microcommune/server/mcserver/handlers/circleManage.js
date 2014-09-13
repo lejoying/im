@@ -290,6 +290,7 @@ circleManage.addcircle = function (data, response) {
     var phone = data.phone;
     var accessKey = data.accessKey;
     var name = data.name;
+    var oldRid=data.rid;
     var circle = {
         name: name
     };
@@ -317,10 +318,11 @@ circleManage.addcircle = function (data, response) {
             console.log("创建密友圈成功---");
             var circleData = results.pop().circle.data;
             var accounts = [];
-            circleData.accounts = accounts;
+            circleData.friends = accounts;
             response.write(JSON.stringify({
                 "提示信息": "添加成功",
-                "circle": circleData
+                "circle": circleData,
+                "rid":oldRid
             }));
             response.end();
         } else {

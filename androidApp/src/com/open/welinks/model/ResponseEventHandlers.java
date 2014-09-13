@@ -14,6 +14,7 @@ import com.open.lib.HttpClient;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Event.EventMessage;
 import com.open.welinks.model.Data.Messages.Message;
+import com.open.welinks.utils.NotificationUtils;
 import com.open.welinks.view.ViewManage;
 
 public class ResponseEventHandlers {
@@ -50,6 +51,13 @@ public class ResponseEventHandlers {
 			String contentType = message.contentType;
 			if ("message".equals(contentType)) {
 				updateLocalMessage(message);
+				if (NotificationUtils.isLeave(viewManage.mainView.context)) {
+					System.out.println("is leave=====================================");
+					NotificationUtils.showMessageNotification(viewManage.mainView.context, message);
+				} else {
+					System.out.println("not leave=====================================");
+					NotificationUtils.commonVibrate(viewManage.mainView.context);
+				}
 			} else {
 				EventMessage eventMessage = gson.fromJson(message.content, EventMessage.class);
 				if ("account_dataupdate".equals(contentType)) {
@@ -290,6 +298,7 @@ public class ResponseEventHandlers {
 			if (list == null) {
 				list = new ArrayList<Data.Messages.Message>();
 				data.messages.friendMessageMap.put("p" + message.phone, list);
+				System.out.println("*************p" + message.phone);
 			}
 			list.add(message);
 		} else if ("group".equals(message.sendType)) {
@@ -297,6 +306,7 @@ public class ResponseEventHandlers {
 			if (list == null) {
 				list = new ArrayList<Data.Messages.Message>();
 				data.messages.groupMessageMap.put("g" + message.gid, list);
+				System.out.println("************g" + message.gid);
 			}
 			list.add(message);
 		}

@@ -67,7 +67,7 @@
 
     <style name="AlertInputDialog" parent="android:Theme.Dialog">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@null</item>
+        <item name="android:windowBackground">@color/Transparent</item>
         <item name="android:windowIsFloating">true</item>
     </style>
 

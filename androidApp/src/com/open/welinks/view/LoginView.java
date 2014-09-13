@@ -173,8 +173,7 @@ public class LoginView {
 			rightTopTextButton.setText("取消");
 			input1.setHint("请输入手机号");
 			input2.setHint("请输入验证码");
-			leftBottomTextButton.setVisibility(View.VISIBLE);
-			leftBottomTextButton.setText("忘记密码?");
+			leftBottomTextButton.setVisibility(View.GONE);
 			rightBottomTextButton.setVisibility(View.VISIBLE);
 			if (remainRegister != 0) {
 				rightBottomTextButton.setText("重新发送(" + remainRegister + ")");

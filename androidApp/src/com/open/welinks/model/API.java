@@ -2,7 +2,7 @@ package com.open.welinks.model;
 
 public class API {
 
-	public static String API_DOMAIN = "http://192.168.1.91/";// http://www.we-links.com/
+	public static String API_DOMAIN = "http://192.168.1.14/";// http://www.we-links.com/
 
 	/**
 	 * http://images2.we-links.com/
@@ -18,9 +18,21 @@ public class API {
 	 */
 	public static String ACCOUNT_MODIFY = API_DOMAIN + "api2/account/modify";
 	/**
+	 * http://www.we-links.com/api2/account/modifypassword
+	 */
+	public static String ACCOUNT_MODIFYPASSWORD = API_DOMAIN + "api2/account/modifypassword";
+	/**
 	 * http://www.we-links.com/api2/account/auth
 	 */
 	public static String ACCOUNT_AUTH = API_DOMAIN + "api2/account/auth";
+	/**
+	 * http://www.we-links.com/api2/account/verifycode
+	 */
+	public static String ACCOUNT_VERIFYCODE = API_DOMAIN + "api2/account/verifycode";
+	/**
+	 * http://www.we-links.com/api2/account/verifyphone
+	 */
+	public static String ACCOUNT_VERIFYPHONE = API_DOMAIN + "api2/account/verifyphone";
 	/**
 	 * http://www.we-links.com/api2/account/get
 	 */
@@ -76,6 +88,10 @@ public class API {
 	 * http://www.we-links.com/api2/share/addcomment
 	 */
 	public static String SHARE_ADDCOMMENT = API_DOMAIN + "api2/share/addcomment";
+	/**
+	 * http://www.we-links.com/api2/share/delete
+	 */
+	public static String SHARE_DELETE = API_DOMAIN + "api2/share/delete";
 	// message
 	/**
 	 * http://www.we-links.com/api2/message/send
@@ -115,6 +131,20 @@ public class API {
 	 * http://www.we-links.com/api2/relation/addfriendagree
 	 */
 	public static String RELATION_ADDFRIENDAGREE = API_DOMAIN + "api2/relation/addfriendagree";
+
+	// circle
+	/**
+	 * http://www.we-links.com/api2/circle/modify
+	 */
+	public static String CIRCLE_MODIFY = API_DOMAIN + "api2/circle/modify";
+	/**
+	 * http://www.we-links.com/api2/circle/delete
+	 */
+	public static String CIRCLE_DELETE = API_DOMAIN + "api2/circle/delete";
+	/**
+	 * http://www.we-links.com/api2/circle/addcircle
+	 */
+	public static String CIRCLE_ADDCIRCLE = API_DOMAIN + "api2/circle/addcircle";
 
 	// lbs
 	public static String LBS_DATA_CREATE = "http://yuntuapi.amap.com/datamanage/data/create";

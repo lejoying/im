@@ -141,26 +141,24 @@ public class LoginController {
 				} else {
 					if (thisView.status == Status.loginUsePassword) {
 						if (view.equals(thisView.rightTopTextButton)) {
-							backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
 							hideSoftInput();
+							backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
 						} else if (view.equals(thisView.mainButton)) {
 							if (thisView.status == Status.loginUsePassword) {
 								String loginPhone = thisView.input1.getText().toString().trim();
 								String loginPass = thisView.input2.getText().toString().trim();
 								if (loginPhone.equals("")) {
-									Alert.showMessage(thisActivity.getString(R.string.alert_text_phonenotnull));
+									loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 									showSoftInput(thisView.input1);
 									return;
 								} else if (loginPass.equals("")) {
-									Alert.showMessage(thisActivity.getString(R.string.alert_text_passnotnull));
+									loginFail(thisActivity.getString(R.string.alert_text_passnotnull));
 									showSoftInput(thisView.input2);
 									return;
 								} else {
 									hideSoftInput();
+									requestUserAuth(loginPhone, loginPass);
 								}
-								requestUserAuth(loginPhone, loginPass);
-							} else {
-								Toast.makeText(context, "尚未处理", Toast.LENGTH_LONG).show();
 							}
 						} else if (view.equals(thisView.leftBottomTextButton)) {
 							nextAnimation(Status.verifyPhoneForResetPassword, thisView.card, thisView.card);
@@ -184,27 +182,21 @@ public class LoginController {
 							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 							Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phonenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (!m.matches()) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phoneformaterror));
+								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (code.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_codenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_codenotnull));
 								showSoftInput(thisView.input2);
 								return;
 							} else {
 								hideSoftInput();
+								requestUserAuthWithVerifyCode(phone, code);
 							}
-							requestUserAuthWithVerifyCode(phone, code);
-							Alert.showLoading(new OnLoadingCancelListener() {
-								@Override
-								public void loadingCancel() {
-
-								}
-							});
 
 						} else if (view.equals(thisView.rightBottomTextButton)) {
 							final String phone = thisView.input1.getText().toString();
@@ -214,27 +206,22 @@ public class LoginController {
 							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 							Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phonenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (!m.matches()) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phoneformaterror));
+								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
 							} else {
 								hideSoftInput();
+								requestUserVerifyCode(phone);
 							}
 							loginPhone = phone;
-							requestUserVerifyCode(phone);
-							Alert.showLoading(new OnLoadingCancelListener() {
-								@Override
-								public void loadingCancel() {
-									cancelRemain(Status.verifyPhoneForLogin);
-								}
-							});
 						}
 					} else if (thisView.status == Status.verifyPhoneForRegister) {
 						if (view.equals(thisView.rightTopTextButton)) {
+							hideSoftInput();
 							backAnimation(Status.loginOrRegister, thisView.loginOrRegister, thisView.card);
 						} else if (view.equals(thisView.mainButton)) {
 							final String phone = thisView.input1.getText().toString();
@@ -242,29 +229,22 @@ public class LoginController {
 							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 							Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phonenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (!m.matches()) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phoneformaterror));
+								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (code.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_codenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_codenotnull));
 								showSoftInput(thisView.input2);
 								return;
 							} else {
 								hideSoftInput();
+								requestUserAuthWithVerifyCode(phone, code);
 							}
-							requestUserAuthWithVerifyCode(phone, code);
 
-							Alert.showLoading(new OnLoadingCancelListener() {
-
-								@Override
-								public void loadingCancel() {
-
-								}
-							});
 						} else if (view.equals(thisView.rightBottomTextButton)) {
 							final String phone = thisView.input1.getText().toString();
 							if (remainRegister != 0) {
@@ -273,24 +253,18 @@ public class LoginController {
 							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 							Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phonenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (!m.matches()) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phoneformaterror));
+								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
 							} else {
-								hideSoftInput();
+								showSoftInput(thisView.input2);
+								requestUserVerifyCode(phone);
 							}
 							registerPhone = phone;
-							requestUserVerifyCode(phone);
-							Alert.showLoading(new OnLoadingCancelListener() {
-								@Override
-								public void loadingCancel() {
-									cancelRemain(Status.verifyPhoneForRegister);
-								}
-							});
 						}
 					} else if (thisView.status == Status.verifyPhoneForResetPassword) {
 						if (view.equals(thisView.rightTopTextButton)) {
@@ -303,28 +277,21 @@ public class LoginController {
 							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 							Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phonenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (!m.matches()) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phoneformaterror));
+								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (code.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_codenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_codenotnull));
 								showSoftInput(thisView.input2);
 								return;
 							} else {
 								hideSoftInput();
+								requestUserAuthWithVerifyCode(phone, code);
 							}
-							requestUserAuthWithVerifyCode(phone, code);
-							Alert.showLoading(new OnLoadingCancelListener() {
-
-								@Override
-								public void loadingCancel() {
-
-								}
-							});
 						} else if (view.equals(thisView.rightBottomTextButton)) {
 							final String phone = thisView.input1.getText().toString();
 							if (remainResetPassword != 0) {
@@ -333,24 +300,21 @@ public class LoginController {
 							Pattern p = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9]))\\d{8}$");
 							Matcher m = p.matcher(phone);
 							if (phone.equals("")) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phonenotnull));
+								loginFail(thisActivity.getString(R.string.alert_text_phonenotnull));
 								showSoftInput(thisView.input1);
 								return;
 							} else if (!m.matches()) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_phoneformaterror));
+								loginFail(thisActivity.getString(R.string.alert_text_phoneformaterror));
 								showSoftInput(thisView.input1);
 								return;
 							} else {
-								hideSoftInput();
+								showSoftInput(thisView.input2);
+								requestUserVerifyCode(phone);
 							}
 							resetPasswordPhone = phone;
-							requestUserVerifyCode(phone);
-							Alert.showLoading(new OnLoadingCancelListener() {
-								@Override
-								public void loadingCancel() {
-									cancelRemain(Status.verifyPhoneForResetPassword);
-								}
-							});
+						} else if (view.equals(thisView.leftBottomTextButton)) {
+							nextAnimation(Status.verifyPhoneForResetPassword, thisView.card, thisView.card);
+							showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
 						}
 					} else if (thisView.status == Status.setPassword) {
 						if (view.equals(thisView.rightTopTextButton)) {
@@ -369,28 +333,20 @@ public class LoginController {
 							final String password = thisView.input1.getText().toString();
 							String password2 = thisView.input2.getText().toString();
 							if (password.equals("")) {
-								Alert.showMessage("请输入密码");
+								loginFail("请输入密码");
 								showSoftInput(thisView.input1);
 							} else if (password.length() < 6) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_passlength));
+								loginFail(thisActivity.getString(R.string.alert_text_passlength));
 								showSoftInput(thisView.input1);
 							} else if (password2.equals("")) {
-								Alert.showMessage("请确认密码");
+								loginFail("请确认密码");
 								showSoftInput(thisView.input2);
 							} else if (!password.equals(password2)) {
-								Alert.showMessage("两次输入的密码不一致");
+								loginFail("两次输入的密码不一致");
 								showSoftInput(thisView.input2);
 							} else {
 								hideSoftInput();
-								modifyUserPassword(data.userInformation.currentUser.phone, data.userInformation.currentUser.accessKey, password);
-								Alert.showLoading(new OnLoadingCancelListener() {
-
-									@Override
-									public void loadingCancel() {
-
-									}
-								});
-
+								modifyUserPassword(resetPasswordPhone, password);
 							}
 						}
 					} else if (thisView.status == Status.resetPassword) {
@@ -408,29 +364,20 @@ public class LoginController {
 							final String password = thisView.input1.getText().toString();
 							String password2 = thisView.input2.getText().toString();
 							if (password.equals("")) {
-								Alert.showMessage("请输入密码");
+								loginFail("请输入密码");
 								showSoftInput(thisView.input1);
 							} else if (password.length() < 6) {
-								Alert.showMessage(thisActivity.getString(R.string.alert_text_passlength));
+								loginFail(thisActivity.getString(R.string.alert_text_passlength));
 								showSoftInput(thisView.input1);
 							} else if (password2.equals("")) {
-								Alert.showMessage("请确认密码");
+								loginFail("请确认密码");
 								showSoftInput(thisView.input2);
 							} else if (!password.equals(password2)) {
-								Alert.showMessage("两次输入的密码不一致");
+								loginFail("两次输入的密码不一致");
 								showSoftInput(thisView.input2);
 							} else {
 								hideSoftInput();
-								modifyUserPassword(data.userInformation.currentUser.phone, data.userInformation.currentUser.accessKey, password);
-
-								Alert.showLoading(new OnLoadingCancelListener() {
-
-									@Override
-									public void loadingCancel() {
-
-									}
-								});
-
+								modifyUserPassword(resetPasswordPhone, password);
 							}
 						}
 					}
@@ -519,6 +466,10 @@ public class LoginController {
 
 	public void onPause() {
 		thisView.mScaleSpring.removeListener(mSpringListener);
+	}
+
+	public void onDestroy() {
+
 	}
 
 	private class MySpringListener extends SimpleSpringListener {
@@ -755,146 +706,95 @@ public class LoginController {
 	}
 
 	public void requestUserAuthWithVerifyCode(final String loginPhone, final String loginCode) {
-		mNetworkHandler.connection(new CommonNetConnection() {
+		if (thisView.status != Status.verifyPhoneForResetPassword && thisView.status != Status.setPassword) {
+			growProgressBar(30, 30);
+		}
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", loginPhone);
+		params.addBodyParameter("code", loginCode);
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_VERIFYCODE, params, responseHandlers.account_verifycode);
 
-			@Override
-			public void success(JSONObject jData) {
-				if (thisView.status == Status.verifyPhoneForLogin) {
-					Intent intent = new Intent(thisActivity, MainActivity.class);
-					intent.putExtra("phone", loginPhone);
-					thisActivity.startActivity(intent);
-					Alert.removeLoading();
-				} else if (thisView.status == Status.verifyPhoneForRegister) {
-					cancelRemain(Status.verifyPhoneForRegister);
-					Alert.removeLoading();
-					nextAnimation(Status.setPassword, thisView.card, thisView.card);
-					showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
-				} else if (thisView.status == Status.verifyPhoneForResetPassword) {
-					cancelRemain(Status.verifyPhoneForResetPassword);
-					Alert.removeLoading();
-					nextAnimation(Status.resetPassword, thisView.card, thisView.card);
-					showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
-				}
-			}
+	}
 
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = "http://www.we-links.com/api2/account/verifycode";
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", loginPhone);
-				params.put("code", loginCode);
-				settings.params = params;
+	public void requestUserAuthWithVerifyCodeCallBack() {
+		if (thisView.status == Status.verifyPhoneForLogin) {
+			loginSuccessful(loginPhone);
+		} else if (thisView.status == Status.verifyPhoneForRegister) {
+			cancelRemain(Status.verifyPhoneForRegister);
+			Alert.removeLoading();
+			nextAnimation(Status.setPassword, thisView.card, thisView.card);
+			showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
+		} else if (thisView.status == Status.verifyPhoneForResetPassword) {
+			cancelRemain(Status.verifyPhoneForResetPassword);
+			Alert.removeLoading();
+			nextAnimation(Status.resetPassword, thisView.card, thisView.card);
+			showSoftInputDelay(thisView.input1, thisView.animationNextIn.getDuration() + thisView.animationNextOut.getDuration() + 20);
+		}
 
-			}
-
-			@Override
-			protected void unSuccess(JSONObject jData) {
-				Alert.removeLoading();
-				super.unSuccess(jData);
-			}
-
-		});
 	}
 
 	public void requestUserVerifyCode(final String phone) {
-		mNetworkHandler.connection(new CommonNetConnection() {
 
-			@Override
-			public void success(JSONObject jData) {
-				if (thisView.status == Status.verifyPhoneForLogin) {
-					startRemain(Status.verifyPhoneForLogin);
-					Alert.removeLoading();
-					handler.post(new Runnable() {
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", phone);
+		if (thisView.status == Status.verifyPhoneForResetPassword || thisView.status == Status.verifyPhoneForLogin) {
+			params.addBodyParameter("usage", "login");
+		} else if (thisView.status == Status.verifyPhoneForRegister) {
+			params.addBodyParameter("usage", "register");
+		}
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_VERIFYPHONE, params, responseHandlers.account_verifyphone);
 
-						@Override
-						public void run() {
-							thisView.input2.requestFocus();
-						}
-					});
-				} else if (thisView.status == Status.verifyPhoneForRegister) {
-					startRemain(Status.verifyPhoneForRegister);
-					Alert.removeLoading();
-					handler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							thisView.input2.requestFocus();
-						}
-					});
-				} else if (thisView.status == Status.verifyPhoneForResetPassword) {
-					startRemain(Status.verifyPhoneForResetPassword);
-					Alert.removeLoading();
-					handler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							thisView.input2.requestFocus();
-						}
-					});
-				}
-			}
-
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = "http://www.we-links.com/api2/account/verifyphone";
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", phone);
-				if (thisView.status == Status.verifyPhoneForResetPassword || thisView.status == Status.verifyPhoneForLogin) {
-					params.put("usage", "login");
-				} else if (thisView.status == Status.verifyPhoneForRegister) {
-					params.put("usage", "register");
-				}
-				settings.params = params;
-			}
-
-			@Override
-			protected void unSuccess(JSONObject jData) {
-				cancelRemain(Status.verifyPhoneForLogin);
-				Alert.removeLoading();
-				super.unSuccess(jData);
-			}
-
-		});
 	}
 
-	public void modifyUserPassword(final String phone, final String accessKey, final String passWord) {
-		mNetworkHandler.connection(new CommonNetConnection() {
+	public void requestUserVerifyCodeCallBack() {
+		if (thisView.status == Status.verifyPhoneForLogin) {
+			startRemain(Status.verifyPhoneForLogin);
+			handler.post(new Runnable() {
 
-			@Override
-			public void success(JSONObject jData) {
-				handler.post(new Runnable() {
+				@Override
+				public void run() {
+					thisView.input2.requestFocus();
+				}
+			});
+		} else if (thisView.status == Status.verifyPhoneForRegister) {
+			startRemain(Status.verifyPhoneForRegister);
+			handler.post(new Runnable() {
 
-					@Override
-					public void run() {
-						Intent intent = new Intent(thisActivity, MainActivity.class);
-						intent.putExtra("phone", loginPhone);
-						thisActivity.startActivity(intent);
-						Alert.removeLoading();
-						thisActivity.finish();
-					}
-				});
-				Alert.removeLoading();
+				@Override
+				public void run() {
+					thisView.input2.requestFocus();
+				}
+			});
+		} else if (thisView.status == Status.verifyPhoneForResetPassword) {
+			startRemain(Status.verifyPhoneForResetPassword);
+			handler.post(new Runnable() {
 
-			}
+				@Override
+				public void run() {
+					thisView.input2.requestFocus();
+				}
+			});
+		}
 
-			@Override
-			protected void settings(Settings settings) {
-				settings.url = "http://www.we-links.com/api2/account/modify";
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("phone", phone);
-				params.put("accessKey", accessKey);
-				params.put("account", "{\"password\":\"" + msSha1.getDigestOfString(passWord.getBytes()) + "\"}");
-				settings.params = params;
+	}
 
-			}
+	public void modifyUserPassword(final String phone, final String passWord) {
+		growProgressBar(30, 30);
+		HttpUtils httpUtils = new HttpUtils();
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("phone", phone);
+		params.addBodyParameter("password", msSha1.getDigestOfString(passWord.getBytes()));
+		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYPASSWORD, params, responseHandlers.account_modifypassword);
 
-			@Override
-			protected void unSuccess(JSONObject jData) {
-				Alert.removeLoading();
-				super.unSuccess(jData);
-			}
+	}
 
-		});
+	public void modifyUserPasswordCallBack() {
+		loginSuccessful(resetPasswordPhone);
 	}
 
 	public void growProgressBar(final int progress, final int max) {
@@ -957,4 +857,5 @@ public class LoginController {
 		}.start();
 		thisView.progressBar.setProgress(0);
 	}
+
 }

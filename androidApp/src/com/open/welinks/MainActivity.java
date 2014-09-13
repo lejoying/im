@@ -219,9 +219,8 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public void onBackPressed() {
-		thisController.onBackPressed();
-		super.onBackPressed();
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		return thisController.onKeyUp(keyCode, event);
 	}
 
 	@Override

@@ -138,7 +138,8 @@ public class ShareSubController {
 						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
 						ImageView imageView = ((ImageView) (instance.view));
 						imageView.setImageResource(R.drawable.ic_error);
-						// RelativeLayout.LayoutParams params = (LayoutParams) imageView.getLayoutParams();
+						// RelativeLayout.LayoutParams params = (LayoutParams)
+						// imageView.getLayoutParams();
 						// params.height = 10;
 						// imageView.setLayoutParams(params);
 						// imageView.setBackgroundColor(Color.RED);
@@ -207,7 +208,7 @@ public class ShareSubController {
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };
 					vibrator.vibrate(pattern, -1);
-					
+
 					thisView.showReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
@@ -392,13 +393,10 @@ public class ShareSubController {
 							body.setContent(body.message);
 						}
 					}
+					thisView.showShareMessages();
 				}
 			}
 		}
-	}
-
-	public void onBackPressed() {
-
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
