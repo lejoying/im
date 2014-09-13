@@ -29,6 +29,8 @@ public class ListBody1 {
 		loopCallback = new ListLoopCallback(openLooper);
 		openLooper.loopCallback = loopCallback;
 
+		refreshBaseHeight = displayMetrics.heightPixels / 8;
+
 		return containerView;
 
 	}
@@ -424,17 +426,28 @@ public class ListBody1 {
 	int OrderingMoveUp = 1;
 	int OrderingMoveDown = -1;
 
+	int refreshBaseHeight;
+	boolean isRefresh = false;
+
 	public void boundaryHoming(int direction, float delta) {
 		if (this.bondary_offset > 0) {
+
 			if (delta * this.orderSpeed * this.boundarySpeedRatio > this.bondary_offset) {
 				this.setDeltaXY(0, -this.bondary_offset);
 				this.bondary_offset = 0;
 				bodyStatus.state = bodyStatus.FIXED;
 				hideOverScreenViews();
 				this.openLooper.stop();
+				if (isRefresh) {
+					isRefresh = false;
+					bodyCallback.onRefresh(1);
+				}
 			} else {
 				this.setDeltaXY(0, -delta * this.orderSpeed * this.boundarySpeedRatio);
 				this.bondary_offset = this.bondary_offset - delta * this.orderSpeed * this.boundarySpeedRatio;
+				if (bondary_offset > refreshBaseHeight) {
+					isRefresh = true;
+				}
 			}
 		}
 
@@ -445,9 +458,16 @@ public class ListBody1 {
 				bodyStatus.state = bodyStatus.FIXED;
 				hideOverScreenViews();
 				this.openLooper.stop();
+				if (isRefresh) {
+					isRefresh = false;
+					bodyCallback.onRefresh(-1);
+				}
 			} else {
 				this.setDeltaXY(0, delta * this.orderSpeed * this.boundarySpeedRatio);
 				this.bondary_offset = this.bondary_offset + delta * this.orderSpeed * this.boundarySpeedRatio;
+				if (bondary_offset < -refreshBaseHeight) {
+					isRefresh = true;
+				}
 			}
 		}
 		this.setChildrenPosition();

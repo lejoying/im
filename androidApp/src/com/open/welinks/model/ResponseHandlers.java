@@ -468,6 +468,7 @@ public class ResponseHandlers {
 			public String 提示信息;
 			public String 失败原因;
 			public String gid;
+			public int nowpage;
 			public Share shares;
 		}
 
@@ -483,12 +484,22 @@ public class ResponseHandlers {
 						data.shares.shareMap.put(response.gid, share);
 					}
 					List<String> sharesOrder = response.shares.shareMessagesOrder;
-					for (int i = sharesOrder.size() - 1; i >= 0; i--) {
-						String key = sharesOrder.get(i);
-						if (!share.shareMessagesOrder.contains(key)) {
-							share.shareMessagesOrder.add(0, key);
+					if (response.nowpage == 0) {
+						for (int i = sharesOrder.size() - 1; i >= 0; i--) {
+							String key = sharesOrder.get(i);
+							if (!share.shareMessagesOrder.contains(key)) {
+								share.shareMessagesOrder.add(0, key);
+							}
+						}
+					} else {
+						for (int i = 0; i < sharesOrder.size(); i++) {
+							String key = sharesOrder.get(i);
+							if (!share.shareMessagesOrder.contains(key)) {
+								share.shareMessagesOrder.add(key);
+							}
 						}
 					}
+
 					share.shareMessagesMap.putAll(response.shares.shareMessagesMap);
 					data.shares.isModified = true;
 					viewManage.mainView.shareSubView.showShareMessages();

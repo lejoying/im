@@ -41,7 +41,6 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
-import com.open.welinks.view.MainView;
 import com.open.welinks.view.ShareSubView;
 import com.open.welinks.view.ShareSubView.GroupDialogItem;
 import com.open.welinks.view.ShareSubView.SharesMessageBody;
@@ -84,6 +83,8 @@ public class ShareSubController {
 
 	public Gson gson = new Gson();
 
+	public BodyCallback shareBodyCallback;
+
 	public ShareSubController(MainController mainController) {
 		thisActivity = mainController.thisActivity;
 
@@ -91,6 +92,19 @@ public class ShareSubController {
 	}
 
 	public void initializeListeners() {
+		shareBodyCallback = new BodyCallback() {
+			@Override
+			public void onRefresh(int direction) {
+				super.onRefresh(direction);
+				if (direction == 1) {
+					nowpage = 0;
+					getCurrentGroupShareMessages();
+				} else if (direction == -1) {
+					nowpage++;
+					getCurrentGroupShareMessages();
+				}
+			}
+		};
 
 		downloadListener = new OnDownloadListener() {
 
@@ -207,7 +221,7 @@ public class ShareSubController {
 					Vibrator vibrator = (Vibrator) thisActivity.getSystemService(Service.VIBRATOR_SERVICE);
 					long[] pattern = { 30, 100, 30 };
 					vibrator.vibrate(pattern, -1);
-					
+
 					thisView.showReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
@@ -240,6 +254,9 @@ public class ShareSubController {
 							}
 							shareTopMenuGroupName.setText(name);
 							thisView.modifyCurrentShowGroup();
+							// display local data
+							nowpage = 0;
+							thisView.showShareMessages();
 							getCurrentGroupShareMessages();
 							thisView.showGroupMembers();
 						}
@@ -248,6 +265,7 @@ public class ShareSubController {
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
+						// thisActivity.overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
 					}
 				}
 			}
@@ -290,6 +308,7 @@ public class ShareSubController {
 	}
 
 	public void bindEvent() {
+		thisView.shareMessageListBody.bodyCallback = this.shareBodyCallback;
 		thisView.groupListBody.bodyCallback = this.bodyCallback;
 		thisView.leftImageButton.setOnClickListener(mOnClickListener);
 		thisView.shareTopMenuGroupNameParent.setOnClickListener(mOnClickListener);

@@ -11,7 +11,7 @@ public class BodyCallback {
 	public void onFlipping(String bodyTag, float variable) {
 
 	}
-	
+
 	public void onFixed(String bodyTag, float variable) {
 
 	}
@@ -19,9 +19,11 @@ public class BodyCallback {
 	public boolean onOverRange(String bodyTag, float variable) {
 		return false;
 	}
-	
 
 	public void onStopOrdering(List<String> listItemsSequence) {
-		
+
+	}
+
+	public void onRefresh(int direction) {
 	}
 }

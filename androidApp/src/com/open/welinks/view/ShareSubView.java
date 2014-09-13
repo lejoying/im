@@ -116,8 +116,13 @@ public class ShareSubView {
 	public Gson gson = new Gson();
 	public Parser parser = Parser.getInstance();
 
+	public ViewManage viewManage = ViewManage.getInstance();
+
+	public boolean isShowFirstMessageAnimation = false;
+
 	public ShareSubView(MainView mainView) {
 		this.mainView = mainView;
+		viewManage.shareSubView = this;
 	}
 
 	public Bitmap bitmap;
@@ -255,7 +260,8 @@ public class ShareSubView {
 			sharesMessageBody.itemHeight = 350 * displayMetrics.density;
 			this.shareMessageListBody.height = this.shareMessageListBody.height + 350 * displayMetrics.density;
 			this.shareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
-			if (i == 0) {
+			if (i == 0 && isShowFirstMessageAnimation) {
+				isShowFirstMessageAnimation = false;
 				shareMessageRootView = sharesMessageBody.cardView;
 				dialogSpring.addListener(dialogSpringListener);
 				dialogSpring.setCurrentValue(0);

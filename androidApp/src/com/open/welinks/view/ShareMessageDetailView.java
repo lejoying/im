@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -46,6 +45,7 @@ import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
 import com.open.welinks.model.Data.Shares.Share.Comment;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.DateUtil;
 import com.open.welinks.utils.MCImageUtils;
 
@@ -68,8 +68,6 @@ public class ShareMessageDetailView {
 	public float screenWidth;
 	public float screenDip;
 	public float screenDensity;
-	public File mSdCardFile;
-	public File mImageFile;
 
 	public Gson gson = new Gson();
 
@@ -106,6 +104,9 @@ public class ShareMessageDetailView {
 
 	public InputMethodManager inputMethodManager;
 
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
+	public File mImageFile;
+
 	// menu options
 	public RelativeLayout menuOptionsView;
 	public RelativeLayout stickOptionView;
@@ -120,10 +121,7 @@ public class ShareMessageDetailView {
 		this.context = thisActivity;
 		thisView = this;
 
-		mSdCardFile = Environment.getExternalStorageDirectory();
-		mImageFile = new File(mSdCardFile, "welinks/images/");
-		if (!mImageFile.exists())
-			mImageFile.mkdirs();
+		mImageFile = fileHandlers.sdcardImageFolder;
 	}
 
 	public Bitmap bitmap;
