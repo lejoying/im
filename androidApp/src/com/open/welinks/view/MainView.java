@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -82,6 +83,7 @@ public class MainView {
 	public PagerBody mainPagerBody;
 
 	public ImageView scannerCodeView;
+	public TextView title_messages;
 
 	public class ActivityStatus {
 		public float SQUARE = 0, SHARE = 1, MESSAGES = 2.0f, FRIENDS = 2.1f, ME = 2.2f;
@@ -120,7 +122,8 @@ public class MainView {
 		title_messages_friends_me = (RelativeLayout) messages_friends_me_View.findViewById(R.id.title_messages_friends_me);
 
 		scannerCodeView = (ImageView) title_messages_friends_me.findViewById(R.id.scanner_code);
-
+		title_messages = (TextView) title_messages_friends_me.findViewById(R.id.title_messages);
+		
 		main_pager_indicator = (ImageView) thisActivity.findViewById(R.id.main_pager_indicator);
 		int main_pager_indicator_trip = (int) (48 * displayMetrics.density);
 

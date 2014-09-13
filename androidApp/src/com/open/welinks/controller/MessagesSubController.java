@@ -76,7 +76,9 @@ public class MessagesSubController {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Data data) {
-
+		if (requestCode == R.id.tag_first) {
+			thisView.showMessages();
+		}
 	}
 
 	public void onSingleTapUp(MotionEvent event) {
@@ -93,6 +95,6 @@ public class MessagesSubController {
 			data.relationship.groupsMap.get(message.gid).notReadMessagesCount = 0;
 		}
 		intent.putExtra("type", sendType);
-		thisView.mainView.thisActivity.startActivity(intent);
+		thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_first);
 	}
 }

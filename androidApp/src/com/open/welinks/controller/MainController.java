@@ -116,6 +116,8 @@ public class MainController {
 	public void onResume() {
 		data.localStatus.thisActivityName = "MainActivity";
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
+		data = parser.check();
+		thisView.title_messages.setText(data.userInformation.currentUser.nickName);
 		// thisView.shareSubView.onResume();
 		// thisView.messagesSubView.onResume();
 	}

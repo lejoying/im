@@ -98,7 +98,8 @@ public class ListBody1 {
 	float touch_pre_y = 0;
 
 	public void onTouchDown(MotionEvent event) {
-		// log.i(tag, "bodyStatus:  " + this.bodyStatus.state + "     touchStatus:  " + this.touchStatus.state);
+		// log.i(tag, "bodyStatus:  " + this.bodyStatus.state +
+		// "     touchStatus:  " + this.touchStatus.state);
 		if (isActive == false) {
 			return;
 		}
@@ -440,7 +441,9 @@ public class ListBody1 {
 				this.openLooper.stop();
 				if (isRefresh) {
 					isRefresh = false;
-					bodyCallback.onRefresh(1);
+					if (bodyCallback != null) {
+						bodyCallback.onRefresh(1);
+					}
 				}
 			} else {
 				this.setDeltaXY(0, -delta * this.orderSpeed * this.boundarySpeedRatio);
@@ -460,7 +463,9 @@ public class ListBody1 {
 				this.openLooper.stop();
 				if (isRefresh) {
 					isRefresh = false;
-					bodyCallback.onRefresh(-1);
+					if (bodyCallback != null) {
+						bodyCallback.onRefresh(1);
+					}
 				}
 			} else {
 				this.setDeltaXY(0, delta * this.orderSpeed * this.boundarySpeedRatio);
