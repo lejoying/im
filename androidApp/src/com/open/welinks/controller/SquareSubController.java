@@ -17,23 +17,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
+import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
-import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
@@ -110,15 +106,6 @@ public class SquareSubController {
 			@Override
 			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
-				if (instance.view.getTag() != null) {
-					try {
-						String tag = (String) instance.view.getTag();
-						if ("head".equals(tag)) {
-							options = thisView.headOptions;
-						}
-					} catch (Exception e) {
-					}
-				}
 				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
@@ -127,7 +114,7 @@ public class SquareSubController {
 					@Override
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 						Log.e(tag, "---------------failed");
-						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+						TouchView.LayoutParams params = new TouchView.LayoutParams(LayoutParams.MATCH_PARENT, 0);
 						instance.view.setLayoutParams(params);
 					}
 
@@ -174,6 +161,7 @@ public class SquareSubController {
 					} else if (view_class.equals("group_view")) {
 						// group dialog item onTouch
 						onTouchDownView = view;
+						onLongPressView = view;
 						isTouchDown = true;
 						Object viewTag = view.getTag(R.id.tag_first);
 						if (Group.class.isInstance(viewTag) == true) {
@@ -280,11 +268,6 @@ public class SquareSubController {
 				// modify local data
 				data.relationship.groups = groups;
 				data.relationship.isModified = true;
-
-				String sequenceListString = gson.toJson(groups);
-
-				// modify server data
-				modifyGroupSequence(sequenceListString);
 			}
 		};
 	}

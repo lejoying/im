@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -662,6 +661,9 @@ public class MainController {
 			}
 			if (thisView.activityStatus.state == thisView.activityStatus.SHARE) {
 				shareSubController.onLongPress(event);
+			}
+			if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
+				squareSubController.onLongPress(event);
 			}
 
 		}
