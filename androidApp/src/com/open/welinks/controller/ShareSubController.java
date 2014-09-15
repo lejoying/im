@@ -225,9 +225,15 @@ public class ShareSubController {
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.groupManageView)) {
-					Intent intent = new Intent(thisActivity, GroupListActivity.class);
-					thisActivity.startActivity(intent);
-					thisView.dismissGroupDialog();
+					
+					if(thisView.groupsManageButtons.getVisibility()==View.VISIBLE){
+						thisView.groupsManageButtons.setVisibility(View.GONE);
+					}else{
+						thisView.groupsManageButtons.setVisibility(View.VISIBLE);
+					}
+					// Intent intent = new Intent(thisActivity, GroupListActivity.class);
+					// thisActivity.startActivity(intent);
+					// thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.releaseTextButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
@@ -319,6 +325,10 @@ public class ShareSubController {
 		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
+		
+		thisView.groupListButtonView.setOnClickListener(mOnClickListener);
+		thisView.createGroupButtonView.setOnClickListener(mOnClickListener);
+		thisView.findMoreGroupButtonView.setOnClickListener(mOnClickListener);
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {

@@ -85,8 +85,8 @@
     <RelativeLayout
         android:id="@+id/title_control_progress_container"
         android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:translationY="46dp" >
+        android:layout_height="1.5dp"
+        android:translationY="47dp" >
 
         <include
             android:id="@+id/title_control_progress"

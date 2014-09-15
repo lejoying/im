@@ -93,6 +93,10 @@ public class ShareSubView {
 	public ImageView releaseShareView;
 
 	public View groupManageView;
+	public View groupsManageButtons;
+	public View groupListButtonView;
+	public View createGroupButtonView;
+	public View findMoreGroupButtonView;
 
 	public int shareImageHeight;
 
@@ -359,7 +363,7 @@ public class ShareSubView {
 
 				this.shareTextContentView.setText(textContent);
 				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
-				final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
+				final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
 				final int showImageHeight = shareImageHeight;// (int)
 																// (displayMetrics.density
 																// * 200 +
@@ -485,6 +489,10 @@ public class ShareSubView {
 
 		groupManageView = groupDialogView.findViewById(R.id.groups_manage);
 		groupManageView.setTag(R.id.tag_class, "group_setting");
+		groupListButtonView = groupDialogView.findViewById(R.id.groupListButton);
+		createGroupButtonView = groupDialogView.findViewById(R.id.createGroupButton);
+		findMoreGroupButtonView = groupDialogView.findViewById(R.id.findMoreButton);
+		groupsManageButtons = groupDialogView.findViewById(R.id.groups_manage_buttons);
 
 		TouchView mainContentView = (TouchView) groupDialogView;
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
