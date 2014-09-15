@@ -330,8 +330,8 @@ public class ShareMessageDetailView {
 			params.gravity = Gravity.CENTER;
 			view.setPadding(padding, 0, padding, 0);
 			view.setLayoutParams(params);
-			view.setImageBitmap(bitmap);
-			// fileHandlers.getHeadImage("", view, headOptions);
+			// view.setImageBitmap(bitmap);
+			fileHandlers.getHeadImage("", view, headOptions);
 			// view.setBackgroundColor(Color.GREEN);
 			praiseUserContentView.addView(view);
 			if (i == 5)

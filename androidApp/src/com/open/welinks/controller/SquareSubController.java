@@ -30,6 +30,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
+import com.open.welinks.FindMoreActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -122,6 +123,7 @@ public class SquareSubController {
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 						Log.e(tag, "---------------failed");
 						TouchView.LayoutParams params = new TouchView.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+						imageView.setImageBitmap(null);
 						instance.view.setLayoutParams(params);
 					}
 
@@ -138,9 +140,15 @@ public class SquareSubController {
 			public void onFailure(DownloadFile instance, int status) {
 				if (instance.view.getTag() != null) {
 					if ("image".equals(instance.view.getTag().toString())) {
-						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
+						String tag = instance.view.getTag().toString();
+						Log.e(tag, "---------------failure:" + tag);
 						ImageView imageView = ((ImageView) (instance.view));
-						imageView.setImageResource(R.drawable.ic_error);
+						if (tag.equals("left")) {
+							imageView.setImageResource(R.drawable.square_temp);
+						} else {
+							imageView.setImageResource(R.drawable.square_temp1);
+						}
+						// imageView.setImageResource(R.drawable.ic_error);
 						// RelativeLayout.LayoutParams params = (LayoutParams)
 						// imageView.getLayoutParams();
 						// params.height = 10;
@@ -204,6 +212,18 @@ public class SquareSubController {
 					long[] pattern = { 30, 100, 30 };
 					vibrator.vibrate(pattern, -1);
 					thisView.showReleaseShareDialogView();
+				} else if (view.equals(thisView.groupManageView)) {
+
+					if (thisView.groupsManageButtons.getVisibility() == View.VISIBLE) {
+						thisView.groupsManageButtons.setVisibility(View.GONE);
+					} else {
+						thisView.groupsManageButtons.setVisibility(View.VISIBLE);
+					}
+				} else if (view.equals(thisView.findMoreGroupButtonView)) {
+					Intent intent = new Intent(thisActivity, FindMoreActivity.class);
+					intent.putExtra("type", 1);
+					thisActivity.startActivity(intent);
+					thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.squareTopMenuGroupNameParent)) {
 					thisView.showGroupsDialog();
 				} else if (view.equals(thisView.releaseShareDialogView)) {
@@ -300,6 +320,8 @@ public class SquareSubController {
 		thisView.squareDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
+
+		thisView.findMoreGroupButtonView.setOnClickListener(mOnClickListener);
 	}
 
 	public void getCurrentSquareShareMessages() {

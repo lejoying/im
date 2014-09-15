@@ -137,6 +137,8 @@ public class MainController {
 		thisView.meSubView.mMePageAppIconScaleSpring.addListener(mSpringListener);
 		data = parser.check();
 		thisView.title_messages.setText(data.userInformation.currentUser.nickName);
+		thisView.shareSubView.dismissGroupDialog();
+		thisView.shareSubView.dismissReleaseShareDialogView();
 		// thisView.shareSubView.onResume();
 		// thisView.messagesSubView.onResume();
 	}
@@ -213,17 +215,29 @@ public class MainController {
 				}
 
 				else if (view.equals(thisView.squareMenuView)) {
+					// if (thisView.shareSubView.isShowGroupDialog) {
+					// thisView.shareSubView.dismissGroupDialog();
+					// } else {
 					thisView.mainPagerBody.active();
 					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(0);
+					// }
 				} else if (view.equals(thisView.shareMenuView)) {
+					// if (thisView.shareSubView.isShowGroupDialog) {
+					// thisView.shareSubView.dismissGroupDialog();
+					// } else {
 					thisView.mainPagerBody.active();
 					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(1);
+					// }
 				} else if (view.equals(thisView.messages_friends_me_menuView)) {
+					// if (thisView.shareSubView.isShowGroupDialog) {
+					// thisView.shareSubView.dismissGroupDialog();
+					// } else {
 					thisView.mainPagerBody.active();
 					thisView.messages_friends_me_PagerBody.inActive();
 					thisView.mainPagerBody.flipTo(2);
+					// }
 				}
 
 				else if (view.equals(thisView.friendsSubView.modifyCircleNameView)) {
@@ -630,7 +644,6 @@ public class MainController {
 			ListBody1 listBody = null;
 
 			if (thisView.activityStatus.state == thisView.activityStatus.MESSAGES) {
-
 				listBody = thisView.messagesSubView.messageListBody;
 			} else if (thisView.activityStatus.state == thisView.activityStatus.FRIENDS) {
 				listBody = thisView.friendsSubView.friendListBody;
@@ -640,16 +653,14 @@ public class MainController {
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				listBody = thisView.squareSubView.squareMessageListBody;
 			}
-			if (listBody == null) {
-				return true;
-			}
-
-			if (listBody.bodyStatus.state == listBody.bodyStatus.DRAGGING) {
-				listBody.onFling(velocityX, velocityY);
-			} else if (listBody.bodyStatus.state == listBody.bodyStatus.FIXED) {
-				listBody.onFling(velocityX, velocityY);
-			} else {
-				Log.i(tag, "bodyStatus error:" + listBody.bodyStatus.state);
+			if (listBody != null) {
+				if (listBody.bodyStatus.state == listBody.bodyStatus.DRAGGING) {
+					listBody.onFling(velocityX, velocityY);
+				} else if (listBody.bodyStatus.state == listBody.bodyStatus.FIXED) {
+					listBody.onFling(velocityX, velocityY);
+				} else {
+					Log.i(tag, "bodyStatus error:" + listBody.bodyStatus.state);
+				}
 			}
 
 			if (thisView.messages_friends_me_PagerBody.bodyStatus.state == thisView.messages_friends_me_PagerBody.bodyStatus.HOMING) {

@@ -22,7 +22,7 @@ import com.open.welinks.utils.StreamParser;
 
 public class Parser {
 	String tag = "Parser";
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public static Parser parser;
 

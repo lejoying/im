@@ -1,12 +1,9 @@
 package com.open.welinks.view;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -66,7 +63,7 @@ public class MainView {
 
 	public TouchView friendsView;
 	public TouchView messagesView;
-	public RelativeLayout meView;
+	public TouchView meView;
 
 	public RelativeLayout messages_friends_me_View;
 	public RelativeLayout shareView;
@@ -161,7 +158,7 @@ public class MainView {
 
 		friendsView = (TouchView) messages_friends_me_View.findViewById(R.id.friendsContainer);
 
-		meView = (RelativeLayout) messages_friends_me_View.findViewById(R.id.meContainer);
+		meView = (TouchView) messages_friends_me_View.findViewById(R.id.meContainer);
 
 		messages_friends_me_pager_indicator = (ImageView) messages_friends_me_View.findViewById(R.id.messages_friends_me_pager_indicator);
 		int messages_friends_me_pager_indicator_trip = (int) (displayMetrics.widthPixels - (20 * displayMetrics.density)) / 3;
