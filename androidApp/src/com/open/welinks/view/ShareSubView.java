@@ -93,6 +93,10 @@ public class ShareSubView {
 	public ImageView releaseShareView;
 
 	public View groupManageView;
+	public View groupsManageButtons;
+	public View groupListButtonView;
+	public View createGroupButtonView;
+	public View findMoreGroupButtonView;
 
 	public int shareImageHeight;
 
@@ -485,6 +489,10 @@ public class ShareSubView {
 
 		groupManageView = groupDialogView.findViewById(R.id.groups_manage);
 		groupManageView.setTag(R.id.tag_class, "group_setting");
+		groupListButtonView = groupDialogView.findViewById(R.id.groupListButton);
+		createGroupButtonView = groupDialogView.findViewById(R.id.createGroupButton);
+		findMoreGroupButtonView = groupDialogView.findViewById(R.id.findMoreButton);
+		groupsManageButtons = groupDialogView.findViewById(R.id.groups_manage_buttons);
 
 		TouchView mainContentView = (TouchView) groupDialogView;
 		groupsDialogContent = (TouchView) groupDialogView.findViewById(R.id.groupsContent);
