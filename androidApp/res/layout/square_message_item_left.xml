@@ -5,12 +5,12 @@
 
     <com.open.lib.TouchImageView
         android:id="@+id/messageImage"
-        android:layout_width="match_parent"
+        android:layout_width="360dp"
         android:layout_height="115dp"
         android:src="@drawable/square_temp" />
 
     <com.open.lib.TouchImageView
-        android:layout_width="match_parent"
+        android:layout_width="360dp"
         android:layout_height="115dp"
         android:background="@drawable/square_message_background1" />
 

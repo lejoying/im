@@ -7,7 +7,6 @@ import java.util.Map;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -52,7 +51,7 @@ public class FileHandlers {
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
 				super.onFailure(instance, status);
-				Log.e("FileHandlers", instance.path + "----" + instance.url);
+				// Log.e("FileHandlers", instance.path + "----" + instance.url);
 				imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
 			}
 		};
@@ -156,11 +155,11 @@ public class FileHandlers {
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
 				super.onFailure(instance, status);
-				Log.e("FileHandlers", instance.path + "----" + instance.url);
+				// Log.e("FileHandlers", instance.path + "----" + instance.url);
 				imageLoader.displayImage("drawable://" + R.drawable.face_man, (ImageView) instance.view, instance.options);
 			}
 		});
-		System.out.println("--------------000------" + onDownloadListener);
+		// System.out.println("--------------000------" + onDownloadListener);
 		downloadFileList.addDownloadFile(downloadFile);
 	}
 }

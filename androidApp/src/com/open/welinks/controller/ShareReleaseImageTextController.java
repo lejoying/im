@@ -43,6 +43,7 @@ import com.open.welinks.model.Data.Shares.Share;
 import com.open.welinks.model.Data.Shares.Share.ShareMessage;
 import com.open.welinks.model.Data.UserInformation.User;
 import com.open.welinks.model.FileHandlers;
+import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
 import com.open.welinks.utils.SHA1;
 import com.open.welinks.utils.StreamParser;
@@ -52,6 +53,7 @@ import com.open.welinks.view.ViewManage;
 
 public class ShareReleaseImageTextController {
 	public Data data = Data.getInstance();
+	public Parser parser = Parser.getInstance();
 	public String tag = "ShareReleaseImageTextController";
 
 	public Context context;
@@ -88,18 +90,24 @@ public class ShareReleaseImageTextController {
 
 	public int IMAGEBROWSE_REQUESTCODE_OPTION = 0x01;
 
-	public String type, gid;
+	public String type, gid, gtype;
 
 	public ShareReleaseImageTextController(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
 
+		gtype = thisActivity.getIntent().getStringExtra("gtype");
 		type = thisActivity.getIntent().getStringExtra("type");
 		gid = thisActivity.getIntent().getStringExtra("gid");
 		currentSelectedGroup = gid;
 		// Initialize the image directory
 		sdcardImageFolder = fileHandlers.sdcardImageFolder;
-		sdcardThumbnailFolder = fileHandlers.sdcardThumbnailFolder;
+		if (gtype.equals("square")) {
+			sdcardThumbnailFolder = fileHandlers.sdcardSquareThumbnailFolder;
+		} else {
+			sdcardThumbnailFolder = fileHandlers.sdcardThumbnailFolder;
+			// showImageHeight = (int) (thisView.displayMetrics.widthPixels * imageHeightScale);
+		}
 		data.tempData.selectedImageList = null;
 	}
 
@@ -237,6 +245,7 @@ public class ShareReleaseImageTextController {
 				//
 				// }
 				// Package structure to share news
+				parser.check();
 				if (data.shares == null) {
 					data.shares = data.new Shares();
 				}
@@ -271,16 +280,19 @@ public class ShareReleaseImageTextController {
 				// To add data to the data
 				share.shareMessagesOrder.add(0, shareMessage.gsid);
 				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
-				sendMessageToServer(content, shareMessage.gsid);
-
+				data.shares.isModified = true;
+				
 				// Local data diaplay in MainHandler
 				handler.post(new Runnable() {
 
 					@Override
 					public void run() {
-						viewManage.mainView.shareSubView.showShareMessages();
+						viewManage.mainView.squareSubView.showSquareMessages();
 					}
 				});
+				// server
+				sendMessageToServer(content, shareMessage.gsid);
+
 				// init tempData data
 				data.tempData.selectedImageList = null;
 			}
@@ -415,9 +427,8 @@ public class ShareReleaseImageTextController {
 
 				if (i == 0) {
 					int showImageWidth = thisView.displayMetrics.widthPixels - (int) (22 * thisView.displayMetrics.density + 0.5f);
-					int showImageHeight = (int) (thisView.displayMetrics.widthPixels * imageHeightScale);
 
-					ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, showImageHeight);
+					ByteArrayOutputStream snapByteStream = decodeSnapBitmapFromFileInputStream(fromFile, showImageWidth, thisView.showImageHeight);
 					byte[] snapBytes = snapByteStream.toByteArray();
 					File toSnapFile = new File(sdcardThumbnailFolder, fileName);
 					FileOutputStream toSnapFileOutputStream = new FileOutputStream(toSnapFile);

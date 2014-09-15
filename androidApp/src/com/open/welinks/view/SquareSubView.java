@@ -38,7 +38,6 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
-import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
@@ -110,6 +109,9 @@ public class SquareSubView {
 
 	public LayoutInflater mInflater;
 
+	public int showImageWidth;
+	public int showImageHeight;
+
 	public SquareSubView(MainView mainView) {
 		this.mainView = mainView;
 		viewManage.squareSubView = this;
@@ -119,6 +121,9 @@ public class SquareSubView {
 
 		this.squareView = mainView.squareView;
 		this.displayMetrics = mainView.displayMetrics;
+
+		this.showImageWidth = displayMetrics.widthPixels;
+		this.showImageHeight = (int) (115 * displayMetrics.density + 0.5f);
 
 		this.mInflater = mainView.mInflater;
 
@@ -139,12 +144,12 @@ public class SquareSubView {
 
 		mImageFile = fileHandlers.sdcardHeadImageFolder;
 
-		showShareMessages();
+		showSquareMessages();
 		initReleaseShareDialogView();
 		initializationGroupsDialog();
 	}
 
-	public void showShareMessages() {
+	public void showSquareMessages() {
 		this.squareMessageListBody.listItemsSequence.clear();
 		this.squareMessageListBody.containerView.removeAllViews();
 		this.squareMessageListBody.height = 0;
@@ -165,10 +170,8 @@ public class SquareSubView {
 			SharesMessageBody sharesMessageBody = null;
 
 			String keyName = "message#" + shareMessage.gsid;
-			boolean isExists = false;
 			if (this.squareMessageListBody.listItemBodiesMap.get(keyName) != null) {
 				sharesMessageBody = (SharesMessageBody) this.squareMessageListBody.listItemBodiesMap.get(keyName);
-				isExists = true;
 			} else {
 				sharesMessageBody = new SharesMessageBody(this.squareMessageListBody);
 				sharesMessageBody.initialize(i);
@@ -183,10 +186,6 @@ public class SquareSubView {
 			sharesMessageBody.y = this.squareMessageListBody.height;
 			sharesMessageBody.cardView.setY(sharesMessageBody.y);
 			sharesMessageBody.cardView.setX(0);
-			// Why the object cache access to cheap 10dp view position
-			if (isExists) {
-				sharesMessageBody.cardView.setX(10 * displayMetrics.density);
-			}
 			sharesMessageBody.itemHeight = 115 * displayMetrics.density;
 			this.squareMessageListBody.height = this.squareMessageListBody.height + 115 * displayMetrics.density;
 			this.squareMessageListBody.containerView.addView(sharesMessageBody.cardView, layoutParams);
@@ -263,8 +262,6 @@ public class SquareSubView {
 
 			this.messageContentView.setText(textContent);
 			File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
-			final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
-			final int showImageHeight = (int) (115 * displayMetrics.density + 0.5f);
 			TouchView.LayoutParams shareImageParams = new TouchView.LayoutParams(showImageWidth, showImageHeight);
 			messageImageView.setLayoutParams(shareImageParams);
 			if ("left".equals(option)) {
@@ -298,11 +295,11 @@ public class SquareSubView {
 						}
 					});
 				} else {
-					File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
-					final String path2 = file2.getAbsolutePath();
-					if (file2.exists()) {
-						imageLoader.displayImage("file://" + path2, messageImageView, options);
-					}
+					// File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
+					// final String path2 = file2.getAbsolutePath();
+					// if (file2.exists()) {
+					// imageLoader.displayImage("file://" + path2, messageImageView, options);
+					// }
 					downloadFile = new DownloadFile(url, path);
 					downloadFile.view = messageImageView;
 					downloadFile.view.setTag("image");
@@ -310,52 +307,7 @@ public class SquareSubView {
 					downloadFileList.addDownloadFile(downloadFile);
 				}
 			}
-			// if (!imageContent.equals("")) {
-			// final String url = API.DOMAIN_OSS_THUMBNAIL + "images/" +
-			// imageContent + "@" + showImageWidth / 2 + "w_" + showImageHeight
-			// / 2 + "h_1c_1e_100q";
-			// final String path = file.getAbsolutePath();
-			// if (file.exists()) {
-			// imageLoader.displayImage("file://" + path, messageImageView,
-			// options, new SimpleImageLoadingListener() {
-			// @Override
-			// public void onLoadingStarted(String imageUri, View view) {
-			// }
-			//
-			// @Override
-			// public void onLoadingFailed(String imageUri, View view,
-			// FailReason failReason) {
-			// downloadFile = new DownloadFile(url, path);
-			// downloadFile.view = messageImageView;
-			// downloadFile.view.setTag("image");
-			// downloadFile.setDownloadFileListener(thisController.downloadListener);
-			// downloadFileList.addDownloadFile(downloadFile);
-			// }
-			//
-			// @Override
-			// public void onLoadingComplete(String imageUri, View view, Bitmap
-			// loadedImage) {
-			// int height = showImageHeight;
-			// RelativeLayout.LayoutParams params = new
-			// RelativeLayout.LayoutParams(showImageWidth, height);
-			// messageImageView.setLayoutParams(params);
-			// }
-			// });
-			// } else {
-			// File file2 = new File(fileHandlers.sdcardImageFolder,
-			// imageContent);
-			// final String path2 = file2.getAbsolutePath();
-			// if (file2.exists()) {
-			// imageLoader.displayImage("file://" + path2, messageImageView,
-			// options);
-			// }
-			// downloadFile = new DownloadFile(url, path);
-			// downloadFile.view = messageImageView;
-			// downloadFile.view.setTag("image");
-			// downloadFile.setDownloadFileListener(thisController.downloadListener);
-			// downloadFileList.addDownloadFile(downloadFile);
-			// }
-			// }
+
 		}
 	}
 

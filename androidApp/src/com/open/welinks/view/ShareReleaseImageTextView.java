@@ -46,6 +46,8 @@ public class ShareReleaseImageTextView {
 
 	public MyScrollImageBody myScrollImageBody;
 
+	public int showImageHeight;
+
 	public ShareReleaseImageTextView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
@@ -54,6 +56,11 @@ public class ShareReleaseImageTextView {
 	public void initView() {
 		displayMetrics = new DisplayMetrics();
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		if (thisController.gtype.equals("square")) {
+			showImageHeight = (int) (displayMetrics.density * 115 + 0.5f);
+		} else {
+			showImageHeight = (int) (thisView.displayMetrics.widthPixels * thisController.imageHeightScale);
+		}
 
 		thisActivity.setContentView(R.layout.share_release_imagetext);
 		mEditTextView = (EditText) thisActivity.findViewById(R.id.releaseTextContentView);

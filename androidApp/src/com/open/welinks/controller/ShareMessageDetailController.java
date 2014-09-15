@@ -75,7 +75,9 @@ public class ShareMessageDetailController {
 	public String nickNameTo = "";
 	public String headTo;
 
-	int initialHeight;
+	public int initialHeight;
+
+	public String gid;
 
 	public ShareMessageDetailController(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -86,11 +88,13 @@ public class ShareMessageDetailController {
 	}
 
 	public void initData() {
-		share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
+		parser.check();
+		gid = thisActivity.getIntent().getStringExtra("gid");
 		String gsid = thisActivity.getIntent().getStringExtra("gsid");
 		if (gsid != null) {
 			this.gsid = gsid;
-			shareMessage = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup).shareMessagesMap.get(gsid);
+			share = data.shares.shareMap.get(gid);
+			shareMessage = share.shareMessagesMap.get(gsid);
 		}
 	}
 
