@@ -359,7 +359,7 @@ public class ShareSubView {
 
 				this.shareTextContentView.setText(textContent);
 				File file = new File(fileHandlers.sdcardThumbnailFolder, imageContent);
-				final int showImageWidth = displayMetrics.widthPixels - (int) (22 * displayMetrics.density + 0.5f);
+				final int showImageWidth = (int) (displayMetrics.widthPixels - 20 * displayMetrics.density + 120);
 				final int showImageHeight = shareImageHeight;// (int)
 																// (displayMetrics.density
 																// * 200 +

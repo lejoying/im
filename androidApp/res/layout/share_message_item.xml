@@ -2,8 +2,13 @@
 <com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:background="@drawable/background_group_share_item" >
+    android:layout_margin="10dp" >
+
+    <com.open.lib.TouchView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="336dp"
+        android:background="@drawable/background_group_share_item" />
 
     <RelativeLayout
         android:id="@+id/gshare_title"
@@ -53,7 +58,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp" >
+        android:layout_margin="1dp"
+        android:translationY="50dp" >
 
         <ImageView
             android:id="@+id/share_imageContent"

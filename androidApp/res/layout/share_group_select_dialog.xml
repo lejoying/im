@@ -10,15 +10,25 @@
         android:layout_width="300dp"
         android:layout_height="470dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:background="@drawable/card_login_background_white"
+        android:background="@drawable/card_draw_background"
         android:translationY="-10dp" >
+
+        <com.open.lib.TouchView
+            android:id="@+id/groupsContent"
+            android:layout_width="300dp"
+            android:layout_height="430dp"
+            android:layout_gravity="top|left"
+            android:translationY="20dp" >
+        </com.open.lib.TouchView>
 
         <com.open.lib.TouchView
             android:id="@+id/groups_manage"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_gravity="bottom|right"
-            android:background="@drawable/card_login_background_white" >
+            android:background="#0099cd"
+            android:translationX="-10dp"
+            android:translationY="-2dp" >
 
             <ImageView
                 android:layout_width="32dp"
@@ -28,24 +38,6 @@
                 android:translationX="-3dp"
                 android:translationY="-3dp" />
         </com.open.lib.TouchView>
-
-        <com.open.lib.TouchView
-            android:id="@+id/groupsContent"
-            android:layout_width="300dp"
-            android:layout_height="430dp"
-            android:layout_gravity="top|left"
-            android:translationY="20dp" >
-        </com.open.lib.TouchView>
     </com.open.lib.TouchView>
-
-    <ImageView
-        android:id="@+id/iv_close"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:src="@drawable/dialog_close"
-        android:translationX="150dp"
-        android:translationY="-240dp"
-        android:visibility="invisible" />
 
 </com.open.lib.TouchView>
