@@ -83,6 +83,9 @@ public class FileHandlers {
 
 	public FileHandlers() {
 		sdcard = Environment.getExternalStorageDirectory();
+		if (!sdcard.exists()) {
+			// TODO
+		}
 		sdcardFolder = new File(sdcard, "welinks");
 		if (!sdcardFolder.exists()) {
 			sdcardFolder.mkdirs();

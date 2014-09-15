@@ -236,9 +236,6 @@ public class ShareMessageDetailController {
 				} else if (view.equals(thisView.confirmSendCommentView)) {
 					String commentContent = thisView.commentEditTextView.getText().toString().trim();
 					thisView.commentEditTextView.setText("");
-					phoneTo = "";
-					nickNameTo = "";
-					headTo = "";
 					thisView.commentEditTextView.setHint("添加评论 ... ...");
 					if (thisView.commentInputView.getVisibility() == View.VISIBLE) {
 						thisView.commentInputView.setVisibility(View.GONE);
@@ -323,11 +320,11 @@ public class ShareMessageDetailController {
 					HttpUtils httpUtils = new HttpUtils();
 					params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 					params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-					params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+					params.addBodyParameter("gid", gid);
 					params.addBodyParameter("gsid", gsid);
 
 					data = parser.check();
-					Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
+					Share share = data.shares.shareMap.get(gid);
 					share.shareMessagesOrder.remove(gsid);
 					share.shareMessagesMap.remove(gsid);
 					data.shares.isModified = true;
@@ -343,7 +340,7 @@ public class ShareMessageDetailController {
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
 		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
-		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("gsid", shareMessage.gsid);
 		params.addBodyParameter("option", option + "");
 
@@ -355,7 +352,7 @@ public class ShareMessageDetailController {
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", currentUser.phone);
 		params.addBodyParameter("accessKey", currentUser.accessKey);
-		params.addBodyParameter("gid", data.localStatus.localData.currentSelectedGroup);
+		params.addBodyParameter("gid", gid);
 		params.addBodyParameter("gsid", shareMessage.gsid);
 		params.addBodyParameter("nickName", currentUser.nickName);
 		params.addBodyParameter("head", currentUser.head);
@@ -364,7 +361,9 @@ public class ShareMessageDetailController {
 		params.addBodyParameter("headTo", headTo);
 		params.addBodyParameter("contentType", contentType);
 		params.addBodyParameter("content", content);
-
+		phoneTo = "";
+		nickNameTo = "";
+		headTo = "";
 		httpUtils.send(HttpMethod.POST, API.SHARE_ADDCOMMENT, params, responseHandlers.share_addCommentCallBack);
 	}
 
