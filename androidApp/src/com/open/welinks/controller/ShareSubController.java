@@ -230,18 +230,21 @@ public class ShareSubController {
 					thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.releaseTextButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "text");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseAlbumButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "album");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseImageViewButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "imagetext");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
@@ -275,6 +278,7 @@ public class ShareSubController {
 						}
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+						intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);

@@ -464,7 +464,7 @@ public class ListBody1 {
 				if (isRefresh) {
 					isRefresh = false;
 					if (bodyCallback != null) {
-						bodyCallback.onRefresh(1);
+						bodyCallback.onRefresh(-1);
 					}
 				}
 			} else {

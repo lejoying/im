@@ -98,10 +98,10 @@ public class SquareSubController {
 				super.onRefresh(direction);
 				if (direction == 1) {
 					nowpage = 0;
-					getCurrentGroupShareMessages();
+					getCurrentSquareShareMessages();
 				} else if (direction == -1) {
 					nowpage++;
-					getCurrentGroupShareMessages();
+					getCurrentSquareShareMessages();
 				}
 			}
 		};
@@ -115,7 +115,8 @@ public class SquareSubController {
 			@Override
 			public void onSuccess(final DownloadFile instance, int status) {
 				DisplayImageOptions options = thisView.options;
-				thisView.imageLoader.displayImage("file://" + instance.path, (ImageView) instance.view, options, new SimpleImageLoadingListener() {
+				final ImageView imageView = (ImageView) instance.view;
+				thisView.imageLoader.displayImage("file://" + instance.path, imageView, options, new SimpleImageLoadingListener() {
 					@Override
 					public void onLoadingStarted(String imageUri, View view) {
 					}
@@ -129,9 +130,9 @@ public class SquareSubController {
 
 					@Override
 					public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-						if (instance.view.getTag() != null) {
-							fileHandlers.bitmaps.put(imageUri, loadedImage);
-						}
+						int height = thisView.showImageHeight;
+						TouchView.LayoutParams params = new TouchView.LayoutParams(thisView.showImageWidth, height);
+						imageView.setLayoutParams(params);
 					}
 				});
 			}
@@ -170,7 +171,7 @@ public class SquareSubController {
 					} else if (view_class.equals("group_view")) {
 						// group dialog item onTouch
 						onTouchDownView = view;
-						onLongPressView = view;
+						// onLongPressView = view;
 						isTouchDown = true;
 						Object viewTag = view.getTag(R.id.tag_first);
 						if (Group.class.isInstance(viewTag) == true) {
@@ -212,18 +213,21 @@ public class SquareSubController {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseTextButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("gtype", "square");
 					intent.putExtra("type", "text");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseAlbumButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("gtype", "square");
 					intent.putExtra("type", "album");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseImageViewButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
+					intent.putExtra("gtype", "square");
 					intent.putExtra("type", "imagetext");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 					mainController.thisActivity.startActivity(intent);
@@ -255,14 +259,15 @@ public class SquareSubController {
 								thisView.modifyCurrentShowGroup();
 								// display local data
 								nowpage = 0;
-								thisView.showShareMessages();
-								getCurrentGroupShareMessages();
+								thisView.showSquareMessages();
+								getCurrentSquareShareMessages();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
 					} else if ("ShareMessageDetail".equals(type)) {
 						Intent intent = new Intent(thisActivity, ShareMessageDetailActivity.class);
+						intent.putExtra("gid", data.localStatus.localData.currentSelectedSquare);
 						intent.putExtra("gsid", content);
 						currentScanMessageKey = content;
 						thisActivity.startActivityForResult(intent, SCAN_MESSAGEDETAIL);
@@ -300,7 +305,7 @@ public class SquareSubController {
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
 	}
 
-	public void getCurrentGroupShareMessages() {
+	public void getCurrentSquareShareMessages() {
 		RequestParams params = new RequestParams();
 		HttpUtils httpUtils = new HttpUtils();
 		params.addBodyParameter("phone", data.userInformation.currentUser.phone);
@@ -323,19 +328,19 @@ public class SquareSubController {
 		}
 		final String currentSid = gid;
 		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid)) {
-			Alert.createDialog(thisActivity).setTitle("您已进入到" + groups.get(currentSid).description + "广场，是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
+			Alert.createDialog(thisActivity).setTitle("���ѽ��뵽" + groups.get(currentSid).description + "").setOnConfirmClickListener(new OnDialogClickListener() {
 
 				@Override
 				public void onClick(AlertInputDialog dialog) {
 					data.localStatus.localData.currentSelectedSquare = currentSid;
-					getCurrentGroupShareMessages();
+					getCurrentSquareShareMessages();
 					thisView.setGroupsDialogContent();
 				}
 			}).setOnCancelClickListener(new OnDialogClickListener() {
 
 				@Override
 				public void onClick(AlertInputDialog dialog) {
-					getCurrentGroupShareMessages();
+					getCurrentSquareShareMessages();
 					thisView.setGroupsDialogContent();
 				}
 			}).show();
