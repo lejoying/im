@@ -73,5 +73,9 @@ public class ChatActivity extends Activity {
 	public boolean onTouchEvent(MotionEvent event) {
 		return chatController.onTouchEvent(event);
 	}
-	
+	@Override
+	public void onBackPressed() {
+		chatController.onBackPressed();
+		super.onBackPressed();
+	}
 }

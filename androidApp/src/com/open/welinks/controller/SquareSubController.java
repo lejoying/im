@@ -368,6 +368,7 @@ public class SquareSubController {
 				}
 			}).show();
 		} else {
+			data.localStatus.localData.currentSelectedSquare = currentSid;
 			getCurrentSquareShareMessages();
 			thisView.setSquaresDialogContent();
 		}

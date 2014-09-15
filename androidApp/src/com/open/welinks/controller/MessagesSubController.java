@@ -79,8 +79,8 @@ public class MessagesSubController {
 
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Data data) {
-		if (requestCode == R.id.tag_first) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+		if (requestCode == R.id.tag_second) {
 			thisView.showMessages();
 		}
 	}
@@ -105,6 +105,6 @@ public class MessagesSubController {
 			data.relationship.groupsMap.get(message.gid).notReadMessagesCount = 0;
 		}
 		intent.putExtra("type", sendType);
-		thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_first);
+		thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
 	}
 }

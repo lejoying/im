@@ -107,7 +107,13 @@ public class MessagesSubView {
 			Message message = null;
 			String fileName = "";
 			if (key.indexOf("p") == 0) {
-				message = friendMessageMap.get(key).get(friendMessageMap.get(key).size() - 1);
+				int size = friendMessageMap.get(key).size();
+				if (size != 0) {
+					size--;
+				} else {
+					return;
+				}
+				message = friendMessageMap.get(key).get(size);
 				try {
 					String phone = "";
 					if (message.phone.equals(data.userInformation.currentUser.phone)) {
@@ -120,7 +126,13 @@ public class MessagesSubView {
 					fileName = "";
 				}
 			} else if (key.indexOf("g") == 0) {
-				message = groupMessageMap.get(key).get(groupMessageMap.get(key).size() - 1);
+				int size = groupMessageMap.get(key).size();
+				if (size != 0) {
+					size--;
+				} else {
+					return;
+				}
+				message = groupMessageMap.get(key).get(size);
 				try {
 					fileName = data.relationship.groupsMap.get(message.gid).icon;
 				} catch (Exception e) {
@@ -129,10 +141,19 @@ public class MessagesSubView {
 			}
 
 			if (messagesKeepOnlyOne.contains(key)) {
-				this.messageListBody.listItemsSequence.remove("message#" + message.phone + "_" + message.time);
-				this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
+				MessageBody messageBody;
+				if (key.indexOf("p") == 0) {
+					this.messageListBody.listItemsSequence.remove("message#" + message.phone + "_" + message.time);
+					this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
 
-				MessageBody messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.phone + "_" + message.time);
+					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.phone + "_" + message.time);
+
+				} else {
+					this.messageListBody.listItemsSequence.remove("message#" + message.gid + "_" + message.time);
+					this.messageListBody.listItemsSequence.add("message#" + message.gid + "_" + message.time);
+
+					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.gid + "_" + message.time);
+				}
 				messageBody.setContent(message, fileName);
 			} else {
 				messagesKeepOnlyOne.add(key);
@@ -141,9 +162,13 @@ public class MessagesSubView {
 				messageBody = new MessageBody(this.messageListBody);
 				messageBody.initialize();
 				messageBody.setContent(message, fileName);
-
-				this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
-				this.messageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
+				if (key.indexOf("p") == 0) {
+					this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
+					this.messageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
+				} else {
+					this.messageListBody.listItemsSequence.add("message#" + message.gid + "_" + message.time);
+					this.messageListBody.listItemBodiesMap.put("message#" + message.gid + "_" + message.time, messageBody);
+				}
 
 				TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (70 * displayMetrics.density));
 				messageBody.y = this.messageListBody.height;

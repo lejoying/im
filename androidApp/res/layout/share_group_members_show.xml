@@ -13,7 +13,7 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:layout_gravity="left"
-            android:layout_marginRight="60dp"
+            android:layout_marginRight="70dp"
             android:padding="5dp" >
         </com.open.lib.TouchView>
 

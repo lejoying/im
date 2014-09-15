@@ -715,7 +715,7 @@ public class MainController {
 				shareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				squareSubController.onScroll();
-			}else if(thisView.activityStatus.state == thisView.activityStatus.ME){
+			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
 				meSubController.onScroll();
 			}
 
@@ -740,9 +740,10 @@ public class MainController {
 			parser.save();
 			thisActivity.startActivity(new Intent(thisActivity, LoginActivity.class));
 			thisActivity.finish();
+		} else if (requestCode == R.id.tag_second) {
+			messagesSubController.onActivityResult(requestCode, resultCode, data2);
 		} else {
-			shareSubController.onActivityResult(requestCode, resultCode, data);
-			messagesSubController.onActivityResult(requestCode, resultCode, data);
+			shareSubController.onActivityResult(requestCode, resultCode, data2);
 		}
 
 	}

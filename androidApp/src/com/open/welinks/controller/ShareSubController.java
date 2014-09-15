@@ -252,7 +252,7 @@ public class ShareSubController {
 					Intent intent = new Intent(thisActivity, ChatActivity.class);
 					intent.putExtra("type", "group");
 					intent.putExtra("id", data.localStatus.localData.currentSelectedGroup);
-					thisActivity.startActivity(intent);
+					thisActivity.startActivityForResult(intent, R.id.tag_second);
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.groupManageView)) {
@@ -452,7 +452,7 @@ public class ShareSubController {
 		isTouchDown = false;
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Data data2) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == SCAN_MESSAGEDETAIL) {
 			if (thisView.shareMessageListBody != null) {
 				if (thisView.shareMessageListBody.listItemsSequence.size() > 0) {
@@ -462,7 +462,6 @@ public class ShareSubController {
 							body.setContent(body.message, body.fileName);
 						}
 					}
-					thisView.showShareMessages();
 				}
 			}
 		}

@@ -123,13 +123,18 @@ public class ChatController {
 	}
 
 	public void onDestroy() {
+
+	}
+
+	public void mFinish() {
 		List<String> messagesOrder = data.messages.messagesOrder;
 		if ("point".equals(type)) {
 			messagesOrder.add(0, "p" + key);
 		} else if ("group".equals(type)) {
 			messagesOrder.add(0, "g" + key);
 		}
-		thisActivity.viewManage.chatView = null;
+		data.messages.isModified = true;
+		thisActivity.finish();
 	}
 
 	public void initializeListeners() {
@@ -144,7 +149,7 @@ public class ChatController {
 					intent.putExtra("position", String.valueOf(0));
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.backview)) {
-					thisActivity.finish();
+					mFinish();
 				} else if (view.equals(thisView.infomation_layout)) {
 					if ("point".equals(type)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
@@ -408,7 +413,7 @@ public class ChatController {
 		message.sendType = "point";
 		message.phone = data.userInformation.currentUser.phone;
 		message.nickName = data.userInformation.currentUser.nickName;
-		message.phoneto="[\""+key+"\"]";
+		message.phoneto = "[\"" + key + "\"]";
 		message.time = String.valueOf(time);
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;
@@ -481,6 +486,11 @@ public class ChatController {
 
 			}
 		});
+	}
+
+	public void onBackPressed() {
+		mFinish();
+
 	}
 
 }
