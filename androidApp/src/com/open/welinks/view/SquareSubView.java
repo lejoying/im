@@ -38,6 +38,7 @@ import com.open.welinks.controller.DownloadFileList;
 import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.API;
 import com.open.welinks.model.Data;
+import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.Data.ShareContent;
 import com.open.welinks.model.Data.ShareContent.ShareContentItem;
@@ -77,7 +78,7 @@ public class SquareSubView {
 	// pop layout
 	public TouchView squareDialogView;
 
-	public TouchView groupsDialogContent;
+	public ViewGroup groupsDialogContent;
 
 	public ListBody1 squaresListBody;
 
@@ -87,6 +88,10 @@ public class SquareSubView {
 	// public ImageView releaseShareView;
 
 	public View groupManageView;
+	public View groupsManageButtons;
+	public View groupListButtonView;
+	public View createGroupButtonView;
+	public View findMoreGroupButtonView;
 
 	public int shareImageHeight;
 
@@ -249,6 +254,14 @@ public class SquareSubView {
 			data = parser.check();
 
 			this.message = shareMessage;
+			String authorStr = shareMessage.nickName;
+			Friend friend = data.relationship.friendsMap.get(shareMessage.phone);
+			if (friend != null) {
+				authorStr = friend.nickName;
+			} else {
+				authorStr = shareMessage.phone;
+			}
+			this.messageAuthorView.setText(authorStr);
 			this.fileName = fileName;
 			ShareContent shareContent = gson.fromJson("{shareContentItems:" + shareMessage.content + "}", ShareContent.class);
 			String textContent = "";
@@ -271,9 +284,12 @@ public class SquareSubView {
 			File file = new File(fileHandlers.sdcardSquareThumbnailFolder, imageContent);
 			TouchView.LayoutParams shareImageParams = new TouchView.LayoutParams(showImageWidth, showImageHeight);
 			messageImageView.setLayoutParams(shareImageParams);
+			messageImageView.setTag(option);
 			if ("left".equals(option)) {
+				// this.messageImageView.setBackgroundColor(Color.parseColor("#c60m45"));
 				this.messageImageView.setImageResource(R.drawable.square_temp);
 			} else {
+				// this.messageImageView.setBackgroundColor(Color.parseColor("#c60m15"));
 				this.messageImageView.setImageResource(R.drawable.square_temp1);
 			}
 			if (!imageContent.equals("")) {
@@ -327,9 +343,15 @@ public class SquareSubView {
 
 		groupManageView = squareDialogView.findViewById(R.id.groups_manage);
 		groupManageView.setTag(R.id.tag_class, "group_setting");
+		groupListButtonView = squareDialogView.findViewById(R.id.groupListButton);
+		groupListButtonView.setVisibility(View.GONE);
+		createGroupButtonView = squareDialogView.findViewById(R.id.createGroupButton);
+		createGroupButtonView.setVisibility(View.GONE);
+		findMoreGroupButtonView = squareDialogView.findViewById(R.id.findMoreButton);
+		groupsManageButtons = squareDialogView.findViewById(R.id.groups_manage_buttons);
 
 		TouchView mainContentView = (TouchView) squareDialogView;
-		groupsDialogContent = (TouchView) squareDialogView.findViewById(R.id.groupsContent);
+		groupsDialogContent = (ViewGroup) squareDialogView.findViewById(R.id.groupsContent);
 
 		panelWidth = (int) (displayMetrics.widthPixels * 0.7578125f);
 		panelHeight = (int) (displayMetrics.heightPixels * 0.7578125f);
@@ -346,6 +368,15 @@ public class SquareSubView {
 
 	public void showGroupsDialog() {
 		if (!isShowGroupDialog) {
+			if (data.relationship.squares.size() == 0) {
+				if (groupsManageButtons.getVisibility() == View.GONE) {
+					groupsManageButtons.setVisibility(View.VISIBLE);
+				}
+			} else {
+				if (groupsManageButtons.getVisibility() == View.VISIBLE) {
+					groupsManageButtons.setVisibility(View.GONE);
+				}
+			}
 			squaresListBody.active();
 			squareMessageListBody.inActive();
 			mainView.mainPagerBody.inActive();

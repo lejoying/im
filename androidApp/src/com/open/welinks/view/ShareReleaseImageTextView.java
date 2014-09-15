@@ -51,6 +51,7 @@ public class ShareReleaseImageTextView {
 	public ShareReleaseImageTextView(Activity thisActivity) {
 		this.context = thisActivity;
 		this.thisActivity = thisActivity;
+		this.thisView = this;
 	}
 
 	public void initView() {
@@ -59,7 +60,7 @@ public class ShareReleaseImageTextView {
 		if (thisController.gtype.equals("square")) {
 			showImageHeight = (int) (displayMetrics.density * 115 + 0.5f);
 		} else {
-			showImageHeight = (int) (thisView.displayMetrics.widthPixels * thisController.imageHeightScale);
+			showImageHeight = (int) (displayMetrics.widthPixels * thisController.imageHeightScale);
 		}
 
 		thisActivity.setContentView(R.layout.share_release_imagetext);
@@ -73,11 +74,11 @@ public class ShareReleaseImageTextView {
 		mVoiceView = (ImageView) thisActivity.findViewById(R.id.releaseVoice);
 
 		if (thisController.type.equals("text")) {
-			mEditTextView.setHint("请输入文本");
+			mEditTextView.setHint("请输入文本内容");
 		} else if (thisController.type.equals("album")) {
-			mEditTextView.setHint("请输入描述");
+			mEditTextView.setHint("请输入相册描述");
 		} else if (thisController.type.equals("imagetext")) {
-			mEditTextView.setHint("请输入内容");
+			mEditTextView.setHint("请输入图文内容");
 		}
 
 		int widthItem = displayMetrics.widthPixels / 5;
