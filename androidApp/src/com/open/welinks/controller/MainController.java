@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Context;
@@ -609,6 +610,8 @@ public class MainController {
 				squareSubController.onSingleTapUp(event);
 				thisView.squareSubView.squareMessageListBody.onTouchUp(event);
 				thisView.squareSubView.squaresListBody.onTouchUp(event);
+			} else if (thisView.activityStatus.state == thisView.activityStatus.ME) {
+				meSubController.onSingleTapUp(event);
 			}
 		}
 		mGesture.onTouchEvent(event);
@@ -712,6 +715,8 @@ public class MainController {
 				shareSubController.onScroll();
 			} else if (thisView.activityStatus.state == thisView.activityStatus.SQUARE) {
 				squareSubController.onScroll();
+			}else if(thisView.activityStatus.state == thisView.activityStatus.ME){
+				meSubController.onScroll();
 			}
 
 			return false;

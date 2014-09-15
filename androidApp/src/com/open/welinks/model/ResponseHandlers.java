@@ -1117,6 +1117,7 @@ public class ResponseHandlers {
 					} else {
 						currentGroup = data.relationship.new Group();
 					}
+					currentGroup.gid = response.group.gid;
 					currentGroup.icon = group.icon;
 					currentGroup.name = group.name;
 					currentGroup.longitude = group.longitude;
@@ -1127,6 +1128,7 @@ public class ResponseHandlers {
 				}
 				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
 				data.relationship.isModified = true;
+				viewManage.shareSubView.setGroupsDialogContent();
 			} else {
 				log.d("创建群组失败===================" + response.失败原因);
 
