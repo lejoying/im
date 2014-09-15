@@ -250,7 +250,8 @@ public class ChatController {
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
 				ImageView headView = (ImageView) instance.view;
-				headView.setImageBitmap(thisView.bitmap);
+				// headView.setImageBitmap(thisView.bitmap);
+				thisView.fileHandlers.getHeadImage("", headView, headOptions);
 			}
 		};
 		mFocusChangeListener = new OnFocusChangeListener() {
