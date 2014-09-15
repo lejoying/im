@@ -13,6 +13,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.open.lib.MyLog;
 import com.open.welinks.model.Data.Event;
+import com.open.welinks.model.Data.LocalStatus.LocalData;
 import com.open.welinks.model.Data.Messages;
 import com.open.welinks.model.Data.Relationship;
 import com.open.welinks.model.Data.Shares;
@@ -49,6 +50,9 @@ public class Parser {
 			this.gson = new Gson();
 		}
 		try {
+			String localDataStr = getFromAssets("localData.js");
+			data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
+
 			String userInformationStr = getFromAssets("userInformation.js");
 			data.userInformation = gson.fromJson(userInformationStr, UserInformation.class);
 
@@ -188,6 +192,14 @@ public class Parser {
 		try {
 			log.e(tag, "**check data");
 			try {
+				if (data.localStatus.localData == null) {
+					String localDataStr = getFromRootForder("localData.js");
+					data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
+				}
+			} catch (Exception e) {
+				throw e;
+			}
+			try {
 				if (data.userInformation == null) {
 					log.e(tag, "**data.userInformation is null");
 					String userInformationStr = getFromRootForder("userInformation.js");
@@ -259,6 +271,9 @@ public class Parser {
 	public void saveDataToSD() {
 		Data data = Data.getInstance();
 		String phone = data.userInformation.currentUser.phone;
+
+		String localDataStr = gson.toJson(data.localStatus.localData);
+		saveToRootForder("localData.js", localDataStr);
 
 		if (data.userInformation.isModified) {
 			data.userInformation.isModified = false;

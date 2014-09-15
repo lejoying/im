@@ -614,15 +614,33 @@ public class ResponseHandlers {
 
 		@Override
 		public void onSuccess(ResponseInfo<String> responseInfo) {
+			parser.check();
 			Response response = gson.fromJson(responseInfo.result, Response.class);
+			// String phone = data.userInformation.currentUser.phone;
 			if (response.提示信息.equals("点赞群分享成功")) {
+				// Share share = data.shares.shareMap.get(response.gid);
+				// ShareMessage shareMessage = share.shareMessagesMap.get(response.gsid);
+				// if (shareMessage != null) {
+				// if (shareMessage.praiseusers.contains(phone)) {
+				// shareMessage.praiseusers.remove(phone);
+				// } else {
+				// shareMessage.praiseusers.add(phone);
+				// }
+				// }
 				log.e(tag, "---------------------点赞群分享成功");
 			} else if (response.提示信息.equals("点赞群分享失败")) {
-				Share share = data.shares.shareMap.get(response.gid);
-				ShareMessage shareMessage = share.shareMessagesMap.get(response.gsid);
-				shareMessage.praiseusers.remove(data.userInformation.currentUser.phone);
-				log.e(tag, "---------------------" + response.失败原因);
+				// Share share = data.shares.shareMap.get(response.gid);
+				// ShareMessage shareMessage = share.shareMessagesMap.get(response.gsid);
+				// if (shareMessage != null) {
+				// if (shareMessage.praiseusers.contains(phone)) {
+				// shareMessage.praiseusers.remove(phone);
+				// } else {
+				// shareMessage.praiseusers.add(phone);
+				// }
+				// }
+				log.e(tag, "点赞群分享失败---------------------" + response.失败原因);
 			}
+			// data.shares.isModified = true;
 		};
 	};
 	public ResponseHandler<String> share_addCommentCallBack = httpClient.new ResponseHandler<String>() {

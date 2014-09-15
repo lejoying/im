@@ -218,6 +218,7 @@ shareManage.getshares = function (data, response) {
  ***************************************/
 shareManage.addpraise = function (data, response) {
     response.asynchronous = 1;
+    console.log(data);
     var phone = data.phone;
     var gid = data.gid;
     var gsid = data.gsid;
@@ -225,6 +226,18 @@ shareManage.addpraise = function (data, response) {
     var arr = [gid, gsid, option];
     if (verifyEmpty.verifyEmpty(data, arr, response)) {
         if (option == "true" || option == "false") {
+            try {
+                parseInt(gid);
+                parseInt(gsid);
+            } catch (e) {
+                ResponseData(JSON.stringify({
+                    "提示信息": "点赞群分享失败",
+                    "失败原因": "数据格式不正确",
+                    gid: gid,
+                    gsid: gsid
+                }), response);
+                return;
+            }
             modifySharePraise();
         } else {
             ResponseData(JSON.stringify({

@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.welinks.R;
 import com.open.welinks.controller.DownloadFile;
@@ -116,6 +117,8 @@ public class ShareMessageDetailView {
 	public ImageView deleteImageOptionView;
 	public TextView deleteTextOptionView;
 
+	public DisplayImageOptions headOptions;
+
 	public ShareMessageDetailView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
 		this.context = thisActivity;
@@ -129,6 +132,7 @@ public class ShareMessageDetailView {
 
 	public void initView() {
 		initData();
+		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		Resources resources = thisActivity.getResources();
 		bitmap = BitmapFactory.decodeResource(resources, R.drawable.face_man);
@@ -308,6 +312,8 @@ public class ShareMessageDetailView {
 	public void showPraiseUsersContent() {
 		// TODO
 		praiseUserContentView.removeAllViews();
+
+		// praiseUserContentView.setBackgroundColor(Color.RED);
 		List<String> praiseUsers = thisController.shareMessage.praiseusers;
 
 		int headWidth = praiseUserContentView.getWidth() / 5 - 5;
@@ -325,7 +331,8 @@ public class ShareMessageDetailView {
 			view.setPadding(padding, 0, padding, 0);
 			view.setLayoutParams(params);
 			view.setImageBitmap(bitmap);
-
+			// fileHandlers.getHeadImage("", view, headOptions);
+			// view.setBackgroundColor(Color.GREEN);
 			praiseUserContentView.addView(view);
 			if (i == 5)
 				break;
@@ -367,22 +374,29 @@ public class ShareMessageDetailView {
 			head.setImageBitmap(bitmap);
 			view.setTag("ShareComment#" + comment.phone);
 			view.setTag(R.id.commentEditTextView, comment);
+
 			view.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					// if (rl_comment.getVisibility() == View.GONE) {
-					// rl_comment.setVisibility(View.VISIBLE);
-					// }
-					// if (!comment.phone.equals(app.data.user.phone)) {
-					// phoneTo = comment.phone;
-					// nickNameTo = comment.nickName;
-					// et_comment.setHint("回复" + nickNameTo);
-					// } else {
-					// phoneTo = "";
-					// nickNameTo = "";
-					// et_comment.setHint("添加评论 ... ...");
-					// }
+					if (commentInputView.getVisibility() == View.GONE) {
+						commentInputView.setVisibility(View.VISIBLE);
+					}
+					if (!comment.phone.equals(data.userInformation.currentUser.phone)) {
+						thisController.phoneTo = comment.phone;
+						if (!comment.nickName.equals("")) {
+							thisController.nickNameTo = comment.nickName;
+						} else {
+							thisController.nickNameTo = thisController.phoneTo;
+						}
+						thisController.headTo = comment.head;
+						commentEditTextView.setHint("回复" + thisController.nickNameTo);
+					} else {
+						thisController.phoneTo = "";
+						thisController.nickNameTo = "";
+						thisController.headTo = "";
+						commentEditTextView.setHint("添加评论 ... ...");
+					}
 				}
 			});
 			commentContentView.addView(view);
