@@ -39,7 +39,10 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.SquareSubView;
+import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.SquareSubView.GroupDialogItem;
 import com.open.welinks.view.SquareSubView.SharesMessageBody;
 
@@ -310,17 +313,33 @@ public class SquareSubController {
 	}
 
 	public void setCurrentSquare() {
-		String currentSid = data.relationship.squares.get(0);
+		String gid = data.relationship.squares.get(0);
 		List<String> squares = data.relationship.squares;
 		Map<String, Group> groups = data.relationship.groupsMap;
 		for (int i = 1; i < squares.size(); i++) {
-			if ((groups.get(squares.get(i)).distance) < (groups.get(currentSid).distance)) {
-				currentSid = squares.get(i);
+			if ((groups.get(squares.get(i)).distance) < (groups.get(gid).distance)) {
+				gid = squares.get(i);
 			}
 		}
-		data.localStatus.localData.currentSelectedSquare = currentSid;
-		getCurrentGroupShareMessages();
-		thisView.setGroupsDialogContent();
+		final String currentSid = gid;
+		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid)) {
+			Alert.createDialog(thisActivity).setTitle("您已进入到" + groups.get(currentSid).description + "广场，是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					data.localStatus.localData.currentSelectedSquare = currentSid;
+					getCurrentGroupShareMessages();
+					thisView.setGroupsDialogContent();
+				}
+			}).setOnCancelClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					getCurrentGroupShareMessages();
+					thisView.setGroupsDialogContent();
+				}
+			}).show();
+		}
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {
