@@ -273,7 +273,7 @@ public class Parser {
 		String phone = data.userInformation.currentUser.phone;
 
 		String localDataStr = gson.toJson(data.localStatus.localData);
-		saveToRootForder("localData.js", localDataStr);
+		saveToUserForder(phone, "localData.js", localDataStr);
 
 		if (data.userInformation.isModified) {
 			data.userInformation.isModified = false;
@@ -283,7 +283,6 @@ public class Parser {
 
 		if (data.relationship.isModified) {
 			data.relationship.isModified = false;
-
 			String relationshipStr = gson.toJson(data.relationship);
 			saveToUserForder(phone, "relationship.js", relationshipStr);
 		}
