@@ -27,7 +27,8 @@
             android:layout_height="50dp"
             android:layout_gravity="bottom|right"
             android:background="@drawable/card_draw_background"
-            android:translationY="0dp" >
+            android:translationY="0dp" 
+            android:visibility="gone">
 
             <FrameLayout
                 android:layout_width="240dp"
