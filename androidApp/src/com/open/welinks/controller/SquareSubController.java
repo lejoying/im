@@ -350,7 +350,7 @@ public class SquareSubController {
 			}
 		}
 		final String currentSid = gid;
-		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid)) {
+		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid) && !data.localStatus.localData.currentSelectedSquare.equals("")) {
 			Alert.createDialog(thisActivity).setTitle("您已进入" + groups.get(currentSid).description + "广场，是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
 
 				@Override
