@@ -5,6 +5,8 @@
     android:background="@drawable/login_background_1"
     android:orientation="vertical" >
 
+    <include layout="@layout/view_back_view" />
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="172dp"

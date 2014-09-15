@@ -123,6 +123,12 @@ public class ChatController {
 	}
 
 	public void onDestroy() {
+		List<String> messagesOrder = data.messages.messagesOrder;
+		if ("point".equals(type)) {
+			messagesOrder.add(0, "p" + key);
+		} else if ("group".equals(type)) {
+			messagesOrder.add(0, "g" + key);
+		}
 		thisActivity.viewManage.chatView = null;
 	}
 
@@ -401,6 +407,7 @@ public class ChatController {
 		message.sendType = "point";
 		message.phone = data.userInformation.currentUser.phone;
 		message.nickName = data.userInformation.currentUser.nickName;
+		message.phoneto="[\""+key+"\"]";
 		message.time = String.valueOf(time);
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;

@@ -494,6 +494,8 @@ public class LoginController {
 
 			} else if (thisView.status == Status.verifyPhoneForResetPassword) {
 				backAnimation(Status.loginUsePassword, thisView.card, thisView.card);
+			} else {
+				thisActivity.finish();
 			}
 		} else {
 		}

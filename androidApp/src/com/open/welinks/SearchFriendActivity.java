@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.app.Activity;
 import android.content.Intent;
@@ -28,6 +29,8 @@ public class SearchFriendActivity extends Activity {
 	public Button scanBusinessCard, search;
 	public EditText phoneText;
 	public TextView errorText;
+	public RelativeLayout backview;
+	public TextView name;
 
 	public OnClickListener mOnClickListener;
 
@@ -52,22 +55,27 @@ public class SearchFriendActivity extends Activity {
 
 			@Override
 			public void onClick(View view) {
-				String phone = phoneText.getText().toString().trim();
-				if ("".equals(phone)) {
-					showError("请输入手机号");
-				} else if (data.userInformation.currentUser.phone.equals(phone)) {
-					Intent intent = new Intent(SearchFriendActivity.this, BusinessCardActivity.class);
-					intent.putExtra("key", data.userInformation.currentUser.phone);
-					intent.putExtra("type", "point");
-					intent.putExtra("isTemp", false);
-					startActivity(intent);
-				} else {
-					searchFriend(phone);
+				if (view.equals(search)) {
+					String phone = phoneText.getText().toString().trim();
+					if ("".equals(phone)) {
+						showError("请输入手机号");
+					} else if (data.userInformation.currentUser.phone.equals(phone)) {
+						Intent intent = new Intent(SearchFriendActivity.this, BusinessCardActivity.class);
+						intent.putExtra("key", data.userInformation.currentUser.phone);
+						intent.putExtra("type", "point");
+						intent.putExtra("isTemp", false);
+						startActivity(intent);
+					} else {
+						searchFriend(phone);
+					}
+				} else if (view.equals(backview)) {
+					finish();
 				}
 			}
 
 		};
 		search.setOnClickListener(mOnClickListener);
+		backview.setOnClickListener(mOnClickListener);
 	}
 
 	private void initView() {
@@ -75,6 +83,10 @@ public class SearchFriendActivity extends Activity {
 		search = (Button) findViewById(R.id.search);
 		phoneText = (EditText) findViewById(R.id.phone);
 		errorText = (TextView) findViewById(R.id.error);
+		backview = (RelativeLayout) findViewById(R.id.backView);
+		name = (TextView) findViewById(R.id.backTitleView);
+
+		name.setText("查找好友");
 	}
 
 	private void searchFriend(String phone) {
@@ -96,6 +108,7 @@ public class SearchFriendActivity extends Activity {
 			intent.putExtra("type", "point");
 			intent.putExtra("isTemp", isTemp);
 			startActivity(intent);
+			finish();
 		}
 
 	}

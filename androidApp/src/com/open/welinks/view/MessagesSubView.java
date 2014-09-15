@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TouchView;
@@ -26,6 +27,8 @@ import com.open.welinks.utils.DateUtil;
 public class MessagesSubView {
 
 	public Data data = Data.getInstance();
+
+	public Gson gson = new Gson();
 
 	public String tag = "MessagesSubView";
 
@@ -106,7 +109,13 @@ public class MessagesSubView {
 			if (key.indexOf("p") == 0) {
 				message = friendMessageMap.get(key).get(friendMessageMap.get(key).size() - 1);
 				try {
-					fileName = data.relationship.friendsMap.get(message.phone).head;
+					String phone = "";
+					if (message.phone.equals(data.userInformation.currentUser.phone)) {
+						phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
+					} else {
+						phone = message.phone;
+					}
+					fileName = data.relationship.friendsMap.get(phone).head;
 				} catch (Exception e) {
 					fileName = "";
 				}
@@ -194,7 +203,13 @@ public class MessagesSubView {
 					nickNameView.setText(message.nickName);
 					notReadNumberView.setVisibility(View.GONE);
 				} else {
-					nickNameView.setText(data.relationship.friendsMap.get(message.phone).nickName);
+					String phone = "";
+					if (message.phone.equals(data.userInformation.currentUser.phone)) {
+						phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
+					} else {
+						phone = message.phone;
+					}
+					nickNameView.setText(data.relationship.friendsMap.get(phone).nickName);
 					int notReadMessagesCount;
 					if ((notReadMessagesCount = data.relationship.friendsMap.get(message.phone).notReadMessagesCount) == 0) {
 						notReadNumberView.setVisibility(View.GONE);
