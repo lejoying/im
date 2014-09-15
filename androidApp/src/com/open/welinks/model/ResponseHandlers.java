@@ -260,7 +260,7 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("获取群组成员成功")) {
 				data.relationship.groups = response.relationship.groups;
-				data.relationship.groupsMap = response.relationship.groupsMap;
+				data.relationship.groupsMap.putAll(response.relationship.groupsMap);
 				data.relationship.friendsMap.putAll(response.relationship.friendsMap);
 				data.relationship.isModified = true;
 				// init current share
@@ -521,17 +521,26 @@ public class ResponseHandlers {
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("发布群分享成功")) {
-				Share share = data.shares.shareMap.get(response.gid);
-				ShareMessage shareMessage = share.shareMessagesMap.get(response.ogsid);
+				parser.check();
+				String gid = response.gid;
+				String gsid = response.gsid;
+				String ogsid = response.ogsid;
+				Share share = data.shares.shareMap.get(gid);
+				ShareMessage shareMessage = share.shareMessagesMap.get(ogsid);
 				shareMessage.gsid = response.gsid;
 				shareMessage.time = response.time;
 				shareMessage.status = "sent";
-				int index = share.shareMessagesOrder.indexOf(response.ogsid);
+				int index = share.shareMessagesOrder.indexOf(ogsid);
 				share.shareMessagesOrder.remove(index);
-				share.shareMessagesOrder.add(0, response.gsid);
-				share.shareMessagesMap.remove(response.ogsid);
+				share.shareMessagesOrder.add(index, gsid);
+				share.shareMessagesMap.remove(ogsid);
 				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
-				viewManage.mainView.shareSubView.showShareMessages();
+				data.shares.isModified = true;
+				if (data.relationship.squares.contains(gid)) {
+					viewManage.mainView.squareSubView.showSquareMessages();
+				} else {
+					viewManage.mainView.shareSubView.showShareMessages();
+				}
 				log.e(tag, "---------------------发送成功");
 			}
 		};
@@ -551,12 +560,15 @@ public class ResponseHandlers {
 			try {
 				Response response = gson.fromJson(responseInfo.result, Response.class);
 				if (response.提示信息.equals("获取群分享成功")) {
-					Share share = data.shares.shareMap.get(response.gid);
+					Share responsesShare = response.shares;
+					parser.check();
+					String gid = response.gid;
+					Share share = data.shares.shareMap.get(gid);
 					if (share == null) {
 						share = data.shares.new Share();
-						data.shares.shareMap.put(response.gid, share);
+						data.shares.shareMap.put(gid, share);
 					}
-					List<String> sharesOrder = response.shares.shareMessagesOrder;
+					List<String> sharesOrder = responsesShare.shareMessagesOrder;
 					if (response.nowpage == 0) {
 						for (int i = sharesOrder.size() - 1; i >= 0; i--) {
 							String key = sharesOrder.get(i);
@@ -573,10 +585,19 @@ public class ResponseHandlers {
 						}
 					}
 
-					share.shareMessagesMap.putAll(response.shares.shareMessagesMap);
+					share.shareMessagesMap.putAll(responsesShare.shareMessagesMap);
 					data.shares.isModified = true;
-					viewManage.mainView.shareSubView.showShareMessages();
-					viewManage.mainView.squareSubView.showShareMessages();
+					if (data.relationship.groups.contains(gid)) {
+						if (responsesShare.shareMessagesOrder.size() == 0) {
+							viewManage.shareSubView.thisController.nowpage--;
+						}
+						viewManage.mainView.shareSubView.showShareMessages();
+					} else {
+						if (responsesShare.shareMessagesOrder.size() == 0) {
+							viewManage.squareSubView.thisController.nowpage--;
+						}
+						viewManage.mainView.squareSubView.showSquareMessages();
+					}
 				}
 			} catch (JsonSyntaxException e) {
 				e.printStackTrace();

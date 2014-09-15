@@ -308,6 +308,7 @@ public class MainController {
 					if (result != null && result.getQuery() != null) {
 						if (result.getQuery().equals(mQuery)) {
 							mCloudItems = result.getClouds();
+							parser.check();
 							if (data.relationship.squares == null) {
 								data.relationship.squares = new ArrayList<String>();
 							}
