@@ -59,7 +59,7 @@ public class Data {
 
 		public String debugMode = "NONE";// NONE
 
-		public LocalData localData = new LocalData();
+		public LocalData localData;
 
 		public class LocalData {
 			public ArrayList<ImageBean> prepareUploadImagesList = new ArrayList<ImageBean>();

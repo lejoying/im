@@ -70,7 +70,7 @@ public class SquareSubView {
 
 	public ImageView leftImageButton;
 	public RelativeLayout squareTopMenuGroupNameParent;
-	public TextView squareTopMenuGroupName;
+	public TextView squareTopMenuSquareName;
 
 	// group
 	// public PopupWindow groupPopWindow;
@@ -137,12 +137,19 @@ public class SquareSubView {
 
 		leftImageButton = (ImageView) squareView.findViewById(R.id.leftImageButton);
 		squareTopMenuGroupNameParent = (RelativeLayout) squareView.findViewById(R.id.shareTopMenuGroupNameParent);
-		squareTopMenuGroupName = (TextView) squareView.findViewById(R.id.shareTopMenuGroupName);
+		squareTopMenuSquareName = (TextView) squareView.findViewById(R.id.shareTopMenuSquareName);
 
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		mImageFile = fileHandlers.sdcardHeadImageFolder;
+
+		data = parser.check();
+
+		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
+		if (group0 != null) {
+			this.squareTopMenuSquareName.setText(group0.name);
+		}
 
 		showSquareMessages();
 		initReleaseShareDialogView();
@@ -295,10 +302,12 @@ public class SquareSubView {
 						}
 					});
 				} else {
-					// File file2 = new File(fileHandlers.sdcardImageFolder, imageContent);
+					// File file2 = new File(fileHandlers.sdcardImageFolder,
+					// imageContent);
 					// final String path2 = file2.getAbsolutePath();
 					// if (file2.exists()) {
-					// imageLoader.displayImage("file://" + path2, messageImageView, options);
+					// imageLoader.displayImage("file://" + path2,
+					// messageImageView, options);
 					// }
 					downloadFile = new DownloadFile(url, path);
 					downloadFile.view = messageImageView;
@@ -360,12 +369,12 @@ public class SquareSubView {
 		}
 	}
 
-	public void setGroupsDialogContent() {
+	public void setSquaresDialogContent() {
 		data = parser.check();
 
 		Group group0 = data.relationship.groupsMap.get(data.localStatus.localData.currentSelectedSquare);
 		if (group0 != null) {
-			this.squareTopMenuGroupName.setText(group0.name);
+			this.squareTopMenuSquareName.setText(group0.name);
 		}
 
 		List<String> squares = data.relationship.squares;
@@ -403,7 +412,7 @@ public class SquareSubView {
 
 			// onclick
 			view.setTag("GroupDialogContentItem#" + group.gid);
-			view.setTag(R.id.shareTopMenuGroupName, squareTopMenuGroupName);
+			view.setTag(R.id.shareTopMenuGroupName, squareTopMenuSquareName);
 			// listener
 			view.setTag(R.id.tag_class, "group_view");
 			view.setTag(R.id.tag_first, group);

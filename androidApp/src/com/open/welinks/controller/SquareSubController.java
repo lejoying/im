@@ -318,6 +318,7 @@ public class SquareSubController {
 	}
 
 	public void setCurrentSquare() {
+
 		String gid = data.relationship.squares.get(0);
 		List<String> squares = data.relationship.squares;
 		Map<String, Group> groups = data.relationship.groupsMap;
@@ -328,22 +329,25 @@ public class SquareSubController {
 		}
 		final String currentSid = gid;
 		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid)) {
-			Alert.createDialog(thisActivity).setTitle("���ѽ��뵽" + groups.get(currentSid).description + "").setOnConfirmClickListener(new OnDialogClickListener() {
+			Alert.createDialog(thisActivity).setTitle("您已进入" + groups.get(currentSid).description + "广场，是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
 
 				@Override
 				public void onClick(AlertInputDialog dialog) {
 					data.localStatus.localData.currentSelectedSquare = currentSid;
 					getCurrentSquareShareMessages();
-					thisView.setGroupsDialogContent();
+					thisView.setSquaresDialogContent();
 				}
 			}).setOnCancelClickListener(new OnDialogClickListener() {
 
 				@Override
 				public void onClick(AlertInputDialog dialog) {
 					getCurrentSquareShareMessages();
-					thisView.setGroupsDialogContent();
+					thisView.setSquaresDialogContent();
 				}
 			}).show();
+		} else {
+			getCurrentSquareShareMessages();
+			thisView.setSquaresDialogContent();
 		}
 	}
 

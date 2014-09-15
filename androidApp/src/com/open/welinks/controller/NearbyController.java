@@ -47,6 +47,7 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.view.NearbyView;
+import com.open.welinks.view.ThreeChoicesView.OnItemClickListener;
 
 public class NearbyController {
 	public Data data = Data.getInstance();
@@ -66,6 +67,7 @@ public class NearbyController {
 	public OnClickListener mOnClickListener;
 	public OnCloudSearchListener mCloudSearchListener;
 	public AMapLocationListener mAMapLocationListener;
+	public OnItemClickListener mOnItemClickListener;
 
 	public ImageLoader imageLoader = ImageLoader.getInstance();
 	public DownloadFileList downloadFileList = DownloadFileList.getInstance();
@@ -94,17 +96,17 @@ public class NearbyController {
 			status = Status.account;
 			mTableId = Constant.ACCOUNTTABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_account;
-			thisView.titleContent.setText("附近的人");
+			thisView.threeChoicesView.setDefaultItem(3);
 		} else if ("group".equals(type)) {
 			status = Status.group;
 			mTableId = Constant.GROUPTABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
-			thisView.titleContent.setText("附近的群组");
+			thisView.threeChoicesView.setDefaultItem(2);
 		} else if ("square".equals(type)) {
 			status = Status.square;
 			mTableId = Constant.SQUARETABLEID;
 			thisView.NearbyLayoutID = R.layout.nearby_item_group;
-			thisView.titleContent.setText("附近的广场");
+			thisView.threeChoicesView.setDefaultItem(1);
 		}
 
 		mInfomations = new ArrayList<Map<String, Object>>();
@@ -141,6 +143,28 @@ public class NearbyController {
 
 			}
 
+		};
+
+		mOnItemClickListener = thisView.threeChoicesView.new OnItemClickListener() {
+			@Override
+			public void onButtonCilck(int position) {
+				if (position == 3) {
+					status = Status.account;
+					mTableId = Constant.ACCOUNTTABLEID;
+					thisView.NearbyLayoutID = R.layout.nearby_item_account;
+					searchNearByPolygon();
+				} else if (position == 2) {
+					status = Status.group;
+					mTableId = Constant.GROUPTABLEID;
+					thisView.NearbyLayoutID = R.layout.nearby_item_group;
+					searchNearByPolygon();
+				} else if (position == 1) {
+					status = Status.square;
+					mTableId = Constant.SQUARETABLEID;
+					thisView.NearbyLayoutID = R.layout.nearby_item_group;
+					searchNearByPolygon();
+				}
+			}
 		};
 		mCloudSearchListener = new OnCloudSearchListener() {
 
@@ -228,6 +252,7 @@ public class NearbyController {
 	}
 
 	public void bindEvent() {
+		thisView.threeChoicesView.setOnItemClickListener(mOnItemClickListener);
 		mCloudSearch.setOnCloudSearchListener(mCloudSearchListener);
 		thisView.backView.setOnClickListener(mOnClickListener);
 	}

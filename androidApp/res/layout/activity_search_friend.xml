@@ -1,0 +1,93 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background_1"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="172dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/card_background_normal"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/panel_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/text_search"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/panel_name"
+            android:layout_below="@+id/panel_name"
+            android:layout_marginTop="8dp"
+            android:background="#9fff" />
+
+        <EditText
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/line"
+            android:layout_alignRight="@+id/line"
+            android:layout_below="@+id/line"
+            android:layout_marginTop="20dp"
+            android:background="#0999"
+            android:ems="10"
+            android:hint="@string/hint_enterphone"
+            android:inputType="number"
+            android:textColor="#fff"
+            android:textColorHint="#ddd" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/phone"
+            android:layout_centerHorizontal="true"
+            android:textColor="#FF0000" />
+
+        <Button
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/phone"
+            android:layout_alignRight="@+id/phone"
+            android:layout_below="@+id/phone"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_background"
+            android:text="@string/button_search"
+            android:textColor="#fff"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/scanBusinessCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/card_background"
+        android:clickable="true"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="扫描名片"
+        android:textColor="#fff"
+        android:textSize="19sp" >
+    </Button>
+
+</LinearLayout>

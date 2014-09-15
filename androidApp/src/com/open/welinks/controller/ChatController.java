@@ -189,6 +189,18 @@ public class ChatController {
 
 			}
 		};
+		onTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				if (view.equals(thisView.chat_content) && event.getAction() == MotionEvent.ACTION_DOWN) {
+					if (inputMethodManager.isActive()) {
+						inputMethodManager.hideSoftInputFromWindow(thisView.input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					}
+				}
+				return false;
+			}
+		};
 		uploadLoadingListener = new OnUploadLoadingListener() {
 
 			@Override
@@ -266,6 +278,7 @@ public class ChatController {
 		thisView.makeaudio.setOnClickListener(mOnClickListener);
 		thisView.more_selected.setOnClickListener(mOnClickListener);
 		thisView.input.setOnClickListener(mOnClickListener);
+		thisView.chat_content.setOnTouchListener(onTouchListener);
 
 	}
 

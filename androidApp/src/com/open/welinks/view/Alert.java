@@ -148,6 +148,7 @@ public class Alert {
 	public static void showMessage(String message) {
 		if (mAlert != null) {
 			mAlert.showMessageText(message, 1200);
+		} else {
 		}
 	}
 

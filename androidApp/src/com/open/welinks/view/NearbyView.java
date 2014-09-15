@@ -30,8 +30,10 @@ public class NearbyView {
 	public LayoutInflater mInflater;
 
 	public RelativeLayout backView;
+	public RelativeLayout rightContainer;
 	public TextView titleContent;
 	public ListView nearby;
+	public ThreeChoicesView threeChoicesView;
 
 	public NearbyAdapter nearbyAdapter;
 
@@ -50,6 +52,11 @@ public class NearbyView {
 		backView = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		titleContent = (TextView) thisActivity.findViewById(R.id.backTitleView);
 		nearby = (ListView) thisActivity.findViewById(R.id.nearby);
+		rightContainer = (RelativeLayout) thisActivity.findViewById(R.id.rightContainer);
+		threeChoicesView = new ThreeChoicesView(thisActivity, 0);
+		rightContainer.addView(threeChoicesView);
+
+		titleContent.setText("附近");
 
 		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
 		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
@@ -86,27 +93,23 @@ public class NearbyView {
 		public View getView(int posotion, View convertView, ViewGroup parent) {
 			Map<String, Object> infomation = mInfomations.get(posotion);
 			NearbuHolder holder;
-			if (convertView == null) {
-				convertView = mInflater.inflate(NearbyLayoutID, null);
-				holder = new NearbuHolder();
-				holder.head = (ImageView) convertView.findViewById(R.id.head);
-				holder.name = (TextView) convertView.findViewById(R.id.name);
-				holder.distance = (TextView) convertView.findViewById(R.id.distance);
-				holder.mainBusiness = (TextView) convertView.findViewById(R.id.mainBusiness);
+			convertView = mInflater.inflate(NearbyLayoutID, null);
+			holder = new NearbuHolder();
+			holder.head = (ImageView) convertView.findViewById(R.id.head);
+			holder.name = (TextView) convertView.findViewById(R.id.name);
+			holder.distance = (TextView) convertView.findViewById(R.id.distance);
+			holder.mainBusiness = (TextView) convertView.findViewById(R.id.mainBusiness);
 
-				if (thisController.status == Status.account) {
-					holder.sex = (ImageView) convertView.findViewById(R.id.sex);
-					holder.age = (TextView) convertView.findViewById(R.id.age);
-					holder.recently = (TextView) convertView.findViewById(R.id.recently);
-				} else {
-					holder.address = (TextView) convertView.findViewById(R.id.address);
-					holder.chatNum = (TextView) convertView.findViewById(R.id.chatNum);
-					holder.members = (TextView) convertView.findViewById(R.id.members);
-				}
-				convertView.setTag(holder);
+			if (thisController.status == Status.account) {
+				holder.sex = (ImageView) convertView.findViewById(R.id.sex);
+				holder.age = (TextView) convertView.findViewById(R.id.age);
+				holder.recently = (TextView) convertView.findViewById(R.id.recently);
 			} else {
-				holder = (NearbuHolder) convertView.getTag();
+				holder.address = (TextView) convertView.findViewById(R.id.address);
+				holder.chatNum = (TextView) convertView.findViewById(R.id.chatNum);
+				holder.members = (TextView) convertView.findViewById(R.id.members);
 			}
+			convertView.setTag(holder);
 
 			if (thisController.status == Status.account) {
 				String head = (String) infomation.get("head");

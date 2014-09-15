@@ -145,10 +145,11 @@ public class BusinessCardView {
 			button_three.setVisibility(View.GONE);
 			tdcode.setImageBitmap(MCImageUtils.createQEcodeImage(GROUPCARDTYPE, group.gid + ""));
 		} else if (status.equals(Status.TEMPFRIEND)) {
-			businessCard.id = data.tempData.tempFriend.id;
-			businessCard.icon = data.tempData.tempFriend.head;
-			businessCard.nickname = data.tempData.tempFriend.nickName;
-			businessCard.mainBusiness = data.tempData.tempFriend.mainBusiness;
+			Friend friend = data.tempData.tempFriend;
+			businessCard.id = friend.id;
+			businessCard.icon = friend.head;
+			businessCard.nickname = friend.nickName;
+			businessCard.mainBusiness = friend.mainBusiness;
 			businessCard.lable = "暂无标签";
 			businessCard.creattime = "2014年 9月 1日";
 			businessCard.button_one = "加为好友";

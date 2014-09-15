@@ -128,7 +128,11 @@ public class ChatView {
 				} else {
 					thisController.setHeadImage(friend.head, infomation);
 				}
-				name.setText(friend.nickName);
+				if ("".equals(friend.alias)) {
+					name.setText(friend.nickName);
+				} else {
+					name.setText(friend.alias);
+				}
 			} else {
 				name.setText("Name");
 				infomation.setImageBitmap(bitmap);
