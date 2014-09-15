@@ -22,7 +22,7 @@ import com.open.welinks.utils.StreamParser;
 
 public class Parser {
 	String tag = "Parser";
-	public MyLog log = new MyLog(tag, true);
+	public MyLog log = new MyLog(tag, false);
 
 	public static Parser parser;
 
@@ -192,14 +192,6 @@ public class Parser {
 		try {
 			log.e(tag, "**check data");
 			try {
-				if (data.localStatus.localData == null) {
-					String localDataStr = getFromRootForder("localData.js");
-					data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
-				}
-			} catch (Exception e) {
-				throw e;
-			}
-			try {
 				if (data.userInformation == null) {
 					log.e(tag, "**data.userInformation is null");
 					String userInformationStr = getFromRootForder("userInformation.js");
@@ -211,6 +203,14 @@ public class Parser {
 			try {
 				if (!"".equals(data.userInformation.currentUser.phone) && !"".equals(data.userInformation.currentUser.accessKey)) {
 					phone = data.userInformation.currentUser.phone;
+				}
+			} catch (Exception e) {
+				throw e;
+			}
+			try {
+				if (data.localStatus.localData == null) {
+					String localDataStr = getFromUserForder(phone, "localData.js");
+					data.localStatus.localData = gson.fromJson(localDataStr, LocalData.class);
 				}
 			} catch (Exception e) {
 				throw e;

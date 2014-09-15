@@ -72,7 +72,7 @@ public class FriendsSubController {
 					Intent intent = new Intent(thisView.mainView.thisActivity, ChatActivity.class);
 					intent.putExtra("id", friend.phone);
 					intent.putExtra("type", "point");
-					thisView.mainView.thisActivity.startActivity(intent);
+					thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
 				}
 			}
 		};

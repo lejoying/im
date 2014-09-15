@@ -364,7 +364,7 @@ public class DynamicListActivity extends Activity {
 								holder0.processedView.setText("已添加");
 								// modify local data
 								parser.check();
-								event0.status = "status";
+								event0.status = "success";
 								agreeAddFriend(event0.phone);
 								data.event.isModified = true;
 							}
@@ -390,6 +390,9 @@ public class DynamicListActivity extends Activity {
 						holder.eventOperationView.setVisibility(View.GONE);
 						holder.processedView.setVisibility(View.VISIBLE);
 						holder.processedView.setText("已处理");
+					} else {
+						holder0.eventOperationView.setVisibility(View.GONE);
+						holder0.processedView.setVisibility(View.GONE);
 					}
 				} else if ("relation_addfriend".equals(event.type)) {
 					holder.eventOperationView.setVisibility(View.GONE);

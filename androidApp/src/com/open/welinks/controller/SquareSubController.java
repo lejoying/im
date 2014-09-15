@@ -30,6 +30,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.open.lib.MyLog;
 import com.open.lib.TouchView;
 import com.open.lib.viewbody.BodyCallback;
+import com.open.welinks.FindMoreActivity;
 import com.open.welinks.R;
 import com.open.welinks.ShareMessageDetailActivity;
 import com.open.welinks.ShareReleaseImageTextActivity;
@@ -39,7 +40,10 @@ import com.open.welinks.model.Data.Relationship.Group;
 import com.open.welinks.model.FileHandlers;
 import com.open.welinks.model.Parser;
 import com.open.welinks.model.ResponseHandlers;
+import com.open.welinks.view.Alert;
+import com.open.welinks.view.Alert.AlertInputDialog.OnDialogClickListener;
 import com.open.welinks.view.SquareSubView;
+import com.open.welinks.view.Alert.AlertInputDialog;
 import com.open.welinks.view.SquareSubView.GroupDialogItem;
 import com.open.welinks.view.SquareSubView.SharesMessageBody;
 
@@ -122,6 +126,7 @@ public class SquareSubController {
 					public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 						Log.e(tag, "---------------failed");
 						TouchView.LayoutParams params = new TouchView.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+						imageView.setImageBitmap(null);
 						instance.view.setLayoutParams(params);
 					}
 
@@ -138,9 +143,15 @@ public class SquareSubController {
 			public void onFailure(DownloadFile instance, int status) {
 				if (instance.view.getTag() != null) {
 					if ("image".equals(instance.view.getTag().toString())) {
-						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
+						String tag = instance.view.getTag().toString();
+						Log.e(tag, "---------------failure:" + tag);
 						ImageView imageView = ((ImageView) (instance.view));
-						imageView.setImageResource(R.drawable.ic_error);
+						if (tag.equals("left")) {
+							imageView.setImageResource(R.drawable.square_temp);
+						} else {
+							imageView.setImageResource(R.drawable.square_temp1);
+						}
+						// imageView.setImageResource(R.drawable.ic_error);
 						// RelativeLayout.LayoutParams params = (LayoutParams)
 						// imageView.getLayoutParams();
 						// params.height = 10;
@@ -204,6 +215,18 @@ public class SquareSubController {
 					long[] pattern = { 30, 100, 30 };
 					vibrator.vibrate(pattern, -1);
 					thisView.showReleaseShareDialogView();
+				} else if (view.equals(thisView.groupManageView)) {
+
+					if (thisView.groupsManageButtons.getVisibility() == View.VISIBLE) {
+						thisView.groupsManageButtons.setVisibility(View.GONE);
+					} else {
+						thisView.groupsManageButtons.setVisibility(View.VISIBLE);
+					}
+				} else if (view.equals(thisView.findMoreGroupButtonView)) {
+					Intent intent = new Intent(thisActivity, FindMoreActivity.class);
+					intent.putExtra("type", 1);
+					thisActivity.startActivity(intent);
+					thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.squareTopMenuGroupNameParent)) {
 					thisView.showGroupsDialog();
 				} else if (view.equals(thisView.releaseShareDialogView)) {
@@ -300,6 +323,8 @@ public class SquareSubController {
 		thisView.squareDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
+
+		thisView.findMoreGroupButtonView.setOnClickListener(mOnClickListener);
 	}
 
 	public void getCurrentSquareShareMessages() {
@@ -315,17 +340,38 @@ public class SquareSubController {
 	}
 
 	public void setCurrentSquare() {
-		String currentSid = data.relationship.squares.get(0);
+
+		String gid = data.relationship.squares.get(0);
 		List<String> squares = data.relationship.squares;
 		Map<String, Group> groups = data.relationship.groupsMap;
 		for (int i = 1; i < squares.size(); i++) {
-			if ((groups.get(squares.get(i)).distance) < (groups.get(currentSid).distance)) {
-				currentSid = squares.get(i);
+			if ((groups.get(squares.get(i)).distance) < (groups.get(gid).distance)) {
+				gid = squares.get(i);
 			}
 		}
-		data.localStatus.localData.currentSelectedSquare = currentSid;
-		thisView.setGroupsDialogContent();
-		this.getCurrentSquareShareMessages();
+		final String currentSid = gid;
+		if (!data.localStatus.localData.currentSelectedSquare.equals(currentSid) && !data.localStatus.localData.currentSelectedSquare.equals("")) {
+			Alert.createDialog(thisActivity).setTitle("您已进入" + groups.get(currentSid).description + "广场，是否切换？").setOnConfirmClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					data.localStatus.localData.currentSelectedSquare = currentSid;
+					getCurrentSquareShareMessages();
+					thisView.setSquaresDialogContent();
+				}
+			}).setOnCancelClickListener(new OnDialogClickListener() {
+
+				@Override
+				public void onClick(AlertInputDialog dialog) {
+					getCurrentSquareShareMessages();
+					thisView.setSquaresDialogContent();
+				}
+			}).show();
+		} else {
+			data.localStatus.localData.currentSelectedSquare = currentSid;
+			getCurrentSquareShareMessages();
+			thisView.setSquaresDialogContent();
+		}
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {

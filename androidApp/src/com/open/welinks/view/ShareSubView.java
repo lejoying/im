@@ -89,7 +89,7 @@ public class ShareSubView {
 
 	// share top Bar child view
 	public View groupMembersView;
-	public RelativeLayout groupMembersListContentView;
+	public ViewGroup groupMembersListContentView;
 	public ImageView releaseShareView;
 
 	public View groupManageView;
@@ -144,8 +144,10 @@ public class ShareSubView {
 		shareTopMenuGroupName = (TextView) shareView.findViewById(R.id.shareTopMenuGroupName);
 
 		this.groupMembersView = mainView.mInflater.inflate(R.layout.share_group_members_show, null);
-		groupMembersListContentView = (RelativeLayout) this.groupMembersView.findViewById(R.id.groupMembersListContent);
-		releaseShareView = (ImageView) this.groupMembersView.findViewById(R.id.releaseShare);
+		groupMembersListContentView = (ViewGroup) this.groupMembersView.findViewById(R.id.groupMembersListContent);
+		groupMembersListContentView.setTag(R.id.tag_class, "group_members");
+		releaseShareView = (TouchImageView) this.groupMembersView.findViewById(R.id.releaseShare);
+		releaseShareView.setTag(R.id.tag_class, "share_release");
 
 		options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565).build();
 		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
@@ -172,12 +174,15 @@ public class ShareSubView {
 	}
 
 	public void showShareMessages() {
+		SharesMessageBody sharesMessageBody0 = null;
+		sharesMessageBody0 = (SharesMessageBody) shareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
 		this.shareMessageListBody.listItemsSequence.clear();
 		this.shareMessageListBody.containerView.removeAllViews();
 		this.shareMessageListBody.height = 0;
-		SharesMessageBody sharesMessageBody0 = null;
-		sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
-		sharesMessageBody0.initialize(-1);
+		if (sharesMessageBody0 == null) {
+			sharesMessageBody0 = new SharesMessageBody(this.shareMessageListBody);
+			sharesMessageBody0.initialize(-1);
+		}
 		sharesMessageBody0.setContent(null, "");
 		this.shareMessageListBody.listItemsSequence.add("message#" + "topBar");
 		this.shareMessageListBody.listItemBodiesMap.put("message#" + "topBar", sharesMessageBody0);
@@ -331,7 +336,10 @@ public class ShareSubView {
 			data = parser.check();
 			if (i == -1) {
 				// showGroupMembers(groupMembersListContentView);
+				groupMembersListContentView.setOnClickListener(thisController.mOnClickListener);
+				groupMembersListContentView.setOnTouchListener(thisController.mOnTouchListener);
 				releaseShareView.setOnClickListener(thisController.mOnClickListener);
+				releaseShareView.setOnTouchListener(thisController.mOnTouchListener);
 			} else if (i == -2) {
 				this.messageTimeView.setText(DateUtil.formatYearMonthDay(shareMessage.time));
 			} else {
@@ -477,6 +485,9 @@ public class ShareSubView {
 		}
 	}
 
+	public ViewGroup pop_out_background1;
+	public ViewGroup pop_out_background2;
+
 	public void initializationGroupsDialog() {
 		groupDialogView = (TouchView) mainView.mInflater.inflate(R.layout.share_group_select_dialog, null, false);
 		// groupDialogView.isIntercept = true;
@@ -486,6 +497,9 @@ public class ShareSubView {
 		// LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true);
 		// groupPopWindow.setBackgroundDrawable(new BitmapDrawable());
 		// groupPopWindow.setOutsideTouchable(true);
+
+		pop_out_background1 = (ViewGroup) groupDialogView.findViewById(R.id.pop_out_background1);
+		pop_out_background2 = (ViewGroup) groupDialogView.findViewById(R.id.pop_out_background2);
 
 		groupManageView = groupDialogView.findViewById(R.id.groups_manage);
 		groupManageView.setTag(R.id.tag_class, "group_setting");
@@ -514,6 +528,15 @@ public class ShareSubView {
 
 	public void showGroupsDialog() {
 		if (!isShowGroupDialog) {
+			if (data.relationship.groups.size() == 0) {
+				if (groupsManageButtons.getVisibility() == View.GONE) {
+					groupsManageButtons.setVisibility(View.VISIBLE);
+				}
+			} else {
+				if (groupsManageButtons.getVisibility() == View.VISIBLE) {
+					groupsManageButtons.setVisibility(View.GONE);
+				}
+			}
 			groupListBody.active();
 			shareMessageListBody.inActive();
 			mainView.mainPagerBody.inActive();
@@ -748,9 +771,9 @@ public class ShareSubView {
 		public ArrayList<String> selectedImagesSequence = new ArrayList<String>();
 		public HashMap<String, ImageBody> selectedImagesSequenceMap = new HashMap<String, ImageBody>();
 
-		public RelativeLayout contentView;
+		public ViewGroup contentView;
 
-		public RelativeLayout initialize(RelativeLayout view) {
+		public ViewGroup initialize(ViewGroup view) {
 			this.contentView = view;
 			return view;
 		}

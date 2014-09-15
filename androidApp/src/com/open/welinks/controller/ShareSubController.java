@@ -29,6 +29,9 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.open.lib.MyLog;
 import com.open.lib.viewbody.BodyCallback;
+import com.open.welinks.ChatActivity;
+import com.open.welinks.CreateGroupStartActivity;
+import com.open.welinks.FindMoreActivity;
 import com.open.welinks.GroupInfomationActivity;
 import com.open.welinks.GroupListActivity;
 import com.open.welinks.R;
@@ -147,9 +150,9 @@ public class ShareSubController {
 			public void onFailure(DownloadFile instance, int status) {
 				if (instance.view.getTag() != null) {
 					if ("image".equals(instance.view.getTag().toString())) {
-						Log.e(tag, "---------------failure" + instance.view.getTag().toString());
-						ImageView imageView = ((ImageView) (instance.view));
-						imageView.setImageResource(R.drawable.ic_error);
+						Log.e(tag, "---------------failure:" + instance.view.getTag().toString());
+						// ImageView imageView = ((ImageView) (instance.view));
+						// imageView.setImageResource(R.drawable.ic_error);
 						// RelativeLayout.LayoutParams params = (LayoutParams)
 						// imageView.getLayoutParams();
 						// params.height = 10;
@@ -175,6 +178,7 @@ public class ShareSubController {
 						onLongPressView = view;
 						isTouchDown = true;
 					} else if (view_class.equals("group_view")) {
+						// log.e("---------------ondow view_class");
 						// group dialog item onTouch
 						onTouchDownView = view;
 						isTouchDown = true;
@@ -185,15 +189,23 @@ public class ShareSubController {
 
 							onTouchDownGroup = group;
 						} else {
+							thisView.dismissGroupDialog();
 							Log.d(tag, "onTouch: " + (String) viewTag);
 						}
 					} else if (view_class.equals("group_setting")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+					} else if (view_class.equals("group_members")) {
+						onTouchDownView = view;
+						isTouchDown = true;
+					} else if (view_class.equals("share_release")) {
 						onTouchDownView = view;
 						isTouchDown = true;
 					}
 					if (view.equals(thisView.groupDialogView)) {
 						Log.i(tag, "ACTION_DOWN---groupDialogView");
 						thisView.groupDialogView.isIntercept = true;
+						// onTouchDownView = view;
 						isTouchDown = true;
 					}
 
@@ -211,6 +223,20 @@ public class ShareSubController {
 					Intent intent = new Intent(thisActivity, GroupInfomationActivity.class);
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.groupListButtonView)) {
+					Intent intent = new Intent(thisActivity, GroupListActivity.class);
+					thisActivity.startActivity(intent);
+				} else if (view.equals(thisView.createGroupButtonView)) {
+					Intent intent = new Intent(thisActivity, CreateGroupStartActivity.class);
+					thisActivity.startActivity(intent);
+					// thisView.dismissGroupDialog();
+				} else if (view.equals(thisView.pop_out_background1) || view.equals(thisView.pop_out_background2)) {
+					thisView.dismissGroupDialog();
+				} else if (view.equals(thisView.findMoreGroupButtonView)) {
+					Intent intent = new Intent(thisActivity, FindMoreActivity.class);
+					intent.putExtra("type", 2);
+					thisActivity.startActivity(intent);
+					// thisView.dismissGroupDialog();
 				} else if (view.equals(thisView.shareTopMenuGroupNameParent)) {
 					thisView.showGroupsDialog();
 				} else if (view.equals(thisView.groupDialogView)) {
@@ -222,13 +248,18 @@ public class ShareSubController {
 					vibrator.vibrate(pattern, -1);
 
 					thisView.showReleaseShareDialogView();
+				} else if (view.equals(thisView.groupMembersListContentView)) {
+					Intent intent = new Intent(thisActivity, ChatActivity.class);
+					intent.putExtra("type", "group");
+					intent.putExtra("id", data.localStatus.localData.currentSelectedGroup);
+					thisActivity.startActivityForResult(intent, R.id.tag_second);
 				} else if (view.equals(thisView.releaseShareDialogView)) {
 					thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.groupManageView)) {
-					
-					if(thisView.groupsManageButtons.getVisibility()==View.VISIBLE){
+
+					if (thisView.groupsManageButtons.getVisibility() == View.VISIBLE) {
 						thisView.groupsManageButtons.setVisibility(View.GONE);
-					}else{
+					} else {
 						thisView.groupsManageButtons.setVisibility(View.VISIBLE);
 					}
 					// Intent intent = new Intent(thisActivity, GroupListActivity.class);
@@ -240,21 +271,21 @@ public class ShareSubController {
 					intent.putExtra("type", "text");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
-					thisView.dismissReleaseShareDialogView();
+					// thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseAlbumButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "album");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
-					thisView.dismissReleaseShareDialogView();
+					// thisView.dismissReleaseShareDialogView();
 				} else if (view.equals(thisView.releaseImageViewButton)) {
 					Intent intent = new Intent(mainController.thisActivity, ShareReleaseImageTextActivity.class);
 					intent.putExtra("gtype", "share");
 					intent.putExtra("type", "imagetext");
 					intent.putExtra("gid", data.localStatus.localData.currentSelectedGroup);
 					mainController.thisActivity.startActivity(intent);
-					thisView.dismissReleaseShareDialogView();
+					// thisView.dismissReleaseShareDialogView();
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
@@ -325,10 +356,13 @@ public class ShareSubController {
 		thisView.groupDialogView.setOnTouchListener(mOnTouchListener);
 		thisView.groupManageView.setOnClickListener(mOnClickListener);
 		thisView.groupManageView.setOnTouchListener(mOnTouchListener);
-		
+
 		thisView.groupListButtonView.setOnClickListener(mOnClickListener);
 		thisView.createGroupButtonView.setOnClickListener(mOnClickListener);
 		thisView.findMoreGroupButtonView.setOnClickListener(mOnClickListener);
+
+		thisView.pop_out_background1.setOnClickListener(mOnClickListener);
+		thisView.pop_out_background2.setOnClickListener(mOnClickListener);
 	}
 
 	public void modifyGroupSequence(String sequenceListString) {
@@ -408,13 +442,17 @@ public class ShareSubController {
 				onTouchDownView.performClick();
 			} else if (view_class.equals("group_setting")) {
 				onTouchDownView.performClick();
+			} else if (view_class.equals("group_members")) {
+				onTouchDownView.performClick();
+			} else if (view_class.equals("share_release")) {
+				onTouchDownView.performClick();
 			}
 			onTouchDownView = null;
 		}
 		isTouchDown = false;
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Data data2) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
 		if (requestCode == SCAN_MESSAGEDETAIL) {
 			if (thisView.shareMessageListBody != null) {
 				if (thisView.shareMessageListBody.listItemsSequence.size() > 0) {
@@ -424,7 +462,6 @@ public class ShareSubController {
 							body.setContent(body.message, body.fileName);
 						}
 					}
-					thisView.showShareMessages();
 				}
 			}
 		}

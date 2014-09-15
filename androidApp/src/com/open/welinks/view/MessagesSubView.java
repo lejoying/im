@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.lib.TouchView;
@@ -26,6 +27,8 @@ import com.open.welinks.utils.DateUtil;
 public class MessagesSubView {
 
 	public Data data = Data.getInstance();
+
+	public Gson gson = new Gson();
 
 	public String tag = "MessagesSubView";
 
@@ -104,14 +107,32 @@ public class MessagesSubView {
 			Message message = null;
 			String fileName = "";
 			if (key.indexOf("p") == 0) {
-				message = friendMessageMap.get(key).get(friendMessageMap.get(key).size() - 1);
+				int size = friendMessageMap.get(key).size();
+				if (size != 0) {
+					size--;
+				} else {
+					return;
+				}
+				message = friendMessageMap.get(key).get(size);
 				try {
-					fileName = data.relationship.friendsMap.get(message.phone).head;
+					String phone = "";
+					if (message.phone.equals(data.userInformation.currentUser.phone)) {
+						phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
+					} else {
+						phone = message.phone;
+					}
+					fileName = data.relationship.friendsMap.get(phone).head;
 				} catch (Exception e) {
 					fileName = "";
 				}
 			} else if (key.indexOf("g") == 0) {
-				message = groupMessageMap.get(key).get(groupMessageMap.get(key).size() - 1);
+				int size = groupMessageMap.get(key).size();
+				if (size != 0) {
+					size--;
+				} else {
+					return;
+				}
+				message = groupMessageMap.get(key).get(size);
 				try {
 					fileName = data.relationship.groupsMap.get(message.gid).icon;
 				} catch (Exception e) {
@@ -120,10 +141,19 @@ public class MessagesSubView {
 			}
 
 			if (messagesKeepOnlyOne.contains(key)) {
-				this.messageListBody.listItemsSequence.remove("message#" + message.phone + "_" + message.time);
-				this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
+				MessageBody messageBody;
+				if (key.indexOf("p") == 0) {
+					this.messageListBody.listItemsSequence.remove("message#" + message.phone + "_" + message.time);
+					this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
 
-				MessageBody messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.phone + "_" + message.time);
+					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.phone + "_" + message.time);
+
+				} else {
+					this.messageListBody.listItemsSequence.remove("message#" + message.gid + "_" + message.time);
+					this.messageListBody.listItemsSequence.add("message#" + message.gid + "_" + message.time);
+
+					messageBody = (MessageBody) this.messageListBody.listItemBodiesMap.get("message#" + message.gid + "_" + message.time);
+				}
 				messageBody.setContent(message, fileName);
 			} else {
 				messagesKeepOnlyOne.add(key);
@@ -132,9 +162,13 @@ public class MessagesSubView {
 				messageBody = new MessageBody(this.messageListBody);
 				messageBody.initialize();
 				messageBody.setContent(message, fileName);
-
-				this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
-				this.messageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
+				if (key.indexOf("p") == 0) {
+					this.messageListBody.listItemsSequence.add("message#" + message.phone + "_" + message.time);
+					this.messageListBody.listItemBodiesMap.put("message#" + message.phone + "_" + message.time, messageBody);
+				} else {
+					this.messageListBody.listItemsSequence.add("message#" + message.gid + "_" + message.time);
+					this.messageListBody.listItemBodiesMap.put("message#" + message.gid + "_" + message.time, messageBody);
+				}
 
 				TouchView.LayoutParams layoutParams = new TouchView.LayoutParams((int) (displayMetrics.widthPixels - displayMetrics.density * 20), (int) (70 * displayMetrics.density));
 				messageBody.y = this.messageListBody.height;
@@ -194,7 +228,13 @@ public class MessagesSubView {
 					nickNameView.setText(message.nickName);
 					notReadNumberView.setVisibility(View.GONE);
 				} else {
-					nickNameView.setText(data.relationship.friendsMap.get(message.phone).nickName);
+					String phone = "";
+					if (message.phone.equals(data.userInformation.currentUser.phone)) {
+						phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
+					} else {
+						phone = message.phone;
+					}
+					nickNameView.setText(data.relationship.friendsMap.get(phone).nickName);
 					int notReadMessagesCount;
 					if ((notReadMessagesCount = data.relationship.friendsMap.get(message.phone).notReadMessagesCount) == 0) {
 						notReadNumberView.setVisibility(View.GONE);

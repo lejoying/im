@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.open.lib.TouchView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="320dp"
+    android:layout_width="fill_parent"
     android:layout_height="500dp"
     android:background="#bf000000" >
 
@@ -9,7 +9,7 @@
         android:id="@+id/card"
         android:layout_width="300dp"
         android:layout_height="470dp"
-        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_gravity="center"
         android:background="@drawable/card_draw_background"
         android:translationY="-10dp" >
 
@@ -27,8 +27,8 @@
             android:layout_height="50dp"
             android:layout_gravity="bottom|right"
             android:background="@drawable/card_draw_background"
-            android:translationY="0dp" 
-            android:visibility="gone">
+            android:translationY="0dp"
+            android:visibility="gone" >
 
             <FrameLayout
                 android:layout_width="240dp"
@@ -100,5 +100,19 @@
                 android:src="@drawable/btn_setting" />
         </FrameLayout>
     </com.open.lib.TouchView>
+
+    <FrameLayout
+        android:id="@+id/pop_out_background1"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:translationY="-345dp" />
+
+    <FrameLayout
+        android:id="@+id/pop_out_background2"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:translationY="325dp" />
 
 </com.open.lib.TouchView>

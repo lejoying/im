@@ -234,7 +234,7 @@ public class ShareReleaseImageTextController {
 	public void sendImageTextShare() {
 		viewManage.shareSubView.isShowFirstMessageAnimation = true;
 		final String sendContent = thisView.mEditTextView.getText().toString().trim();
-		if ("".equals(sendContent))
+		if ("".equals(sendContent) && data.tempData.selectedImageList.size() == 0)
 			return;
 		thisActivity.finish();
 		new Thread(new Runnable() {
@@ -281,7 +281,7 @@ public class ShareReleaseImageTextController {
 				share.shareMessagesOrder.add(0, shareMessage.gsid);
 				share.shareMessagesMap.put(shareMessage.gsid, shareMessage);
 				data.shares.isModified = true;
-				
+
 				// Local data diaplay in MainHandler
 				handler.post(new Runnable() {
 

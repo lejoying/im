@@ -8,6 +8,7 @@
     <include layout="@layout/view_back_view" />
 
     <TextView
+        android:id="@+id/createGroupOK"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginLeft="10dp"
@@ -26,7 +27,8 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:background="#38ffffff"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone" >
 
         <ImageView
             android:layout_width="70dp"
@@ -51,7 +53,8 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="3dp"
         android:background="#38ffffff"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone" >
 
         <ImageView
             android:layout_width="70dp"
@@ -76,7 +79,8 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="3dp"
         android:background="#38ffffff"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone" >
 
         <ImageView
             android:layout_width="70dp"

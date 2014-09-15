@@ -454,14 +454,45 @@ public class ResponseHandlers {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if ("获取用户信息成功".equals(response.提示信息)) {
 				User user = data.userInformation.currentUser;
-				Account account = response.accounts.get(0);
-				user.id = account.ID;
-				user.head = account.head;
-				user.mainBusiness = account.mainBusiness;
-				user.nickName = account.nickName;
-				user.sex = account.sex;
-				user.userBackground = account.userBackground;
-				data.userInformation.isModified = true;
+				if (response.accounts.size() > 0) {
+					Account account = response.accounts.get(0);
+					if (user.phone.equals(account.phone)) {
+						user.id = account.ID;
+						user.head = account.head;
+						user.mainBusiness = account.mainBusiness;
+						user.nickName = account.nickName;
+						user.sex = account.sex;
+						user.userBackground = account.userBackground;
+						data.userInformation.isModified = true;
+					} else {
+						boolean isTemp = true;
+						List<String> circles = data.relationship.circles;
+						for (String circle : circles) {
+							List<String> friends = data.relationship.circlesMap.get(circle).friends;
+							if (friends.contains(account.phone)) {
+								isTemp = false;
+								break;
+							}
+						}
+						if (isTemp) {
+							Friend friend = data.relationship.new Friend();
+							friend.phone = account.phone;
+							friend.head = account.head;
+							friend.nickName = account.nickName;
+							friend.mainBusiness = account.mainBusiness;
+							friend.sex = account.sex;
+							friend.userBackground = account.userBackground;
+							friend.id = account.ID;
+
+							data.tempData.tempFriend = friend;
+						}
+						viewManage.searchFriendActivity.searchCallBack(account.phone, isTemp);
+					}
+				}
+			} else {
+				if ("获取用户信息失败".equals(response.提示信息) && "用户不存在".equals(response.失败原因)) {
+					viewManage.searchFriendActivity.searchCallBack("", false);
+				}
 			}
 		};
 	};
@@ -619,7 +650,8 @@ public class ResponseHandlers {
 			// String phone = data.userInformation.currentUser.phone;
 			if (response.提示信息.equals("点赞群分享成功")) {
 				// Share share = data.shares.shareMap.get(response.gid);
-				// ShareMessage shareMessage = share.shareMessagesMap.get(response.gsid);
+				// ShareMessage shareMessage =
+				// share.shareMessagesMap.get(response.gsid);
 				// if (shareMessage != null) {
 				// if (shareMessage.praiseusers.contains(phone)) {
 				// shareMessage.praiseusers.remove(phone);
@@ -630,7 +662,8 @@ public class ResponseHandlers {
 				log.e(tag, "---------------------点赞群分享成功");
 			} else if (response.提示信息.equals("点赞群分享失败")) {
 				// Share share = data.shares.shareMap.get(response.gid);
-				// ShareMessage shareMessage = share.shareMessagesMap.get(response.gsid);
+				// ShareMessage shareMessage =
+				// share.shareMessagesMap.get(response.gsid);
 				// if (shareMessage != null) {
 				// if (shareMessage.praiseusers.contains(phone)) {
 				// shareMessage.praiseusers.remove(phone);
@@ -1117,6 +1150,7 @@ public class ResponseHandlers {
 					} else {
 						currentGroup = data.relationship.new Group();
 					}
+					currentGroup.gid = response.group.gid;
 					currentGroup.icon = group.icon;
 					currentGroup.name = group.name;
 					currentGroup.longitude = group.longitude;
@@ -1127,6 +1161,7 @@ public class ResponseHandlers {
 				}
 				viewManage.mainView.thisController.creataLBSGroup(currentGroup, response.address);
 				data.relationship.isModified = true;
+				viewManage.shareSubView.setGroupsDialogContent();
 			} else {
 				log.d("创建群组失败===================" + response.失败原因);
 

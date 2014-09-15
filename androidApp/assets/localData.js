@@ -1,0 +1,6 @@
+{
+prepareUploadImagesList:[],
+prepareDownloadImagesList:[],
+currentSelectedGroup:"",
+currentSelectedSquare:""
+}

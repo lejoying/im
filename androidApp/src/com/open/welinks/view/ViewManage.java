@@ -2,6 +2,7 @@ package com.open.welinks.view;
 
 import com.open.welinks.DynamicListActivity;
 import com.open.welinks.GroupListActivity;
+import com.open.welinks.SearchFriendActivity;
 
 import android.os.Handler;
 import android.util.Log;
@@ -20,6 +21,7 @@ public class ViewManage {
 
 	public DynamicListActivity dynamicListActivity = null;
 	public GroupListActivity groupListActivity = null;
+	public SearchFriendActivity searchFriendActivity = null;
 
 	public DownloadOssFileView downloadOssFileView = null;
 

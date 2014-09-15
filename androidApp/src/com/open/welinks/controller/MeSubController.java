@@ -1,6 +1,7 @@
 package com.open.welinks.controller;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,8 +23,13 @@ public class MeSubController {
 
 	public MainController mainController;
 
-	public OnTouchListener onTouchListener;
+	public OnTouchListener onTouchListener1;
 	public OnClickListener onClickListener;
+	public OnTouchListener onTouchListener;
+
+	public View onTouchDownView;
+
+	public boolean isTouchDown = false;
 
 	public MeSubController(MainController mainController) {
 		this.mainController = mainController;
@@ -32,6 +38,22 @@ public class MeSubController {
 	public void initializeListeners() {
 
 		onTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				int action = event.getAction();
+				if (action == MotionEvent.ACTION_DOWN) {
+					String view_class = (String) view.getTag(R.id.tag_class);
+					// if (view_class.equals("share_view")) {
+					onTouchDownView = view;
+					isTouchDown = true;
+					// }
+					Log.i(tag, "ACTION_DOWN---" + view_class);
+				}
+				return false;
+			}
+		};
+		onTouchListener1 = new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
@@ -67,11 +89,29 @@ public class MeSubController {
 	}
 
 	public void bindEvent() {
-		thisView.mRootView.setOnTouchListener(onTouchListener);
+		thisView.mRootView.setOnTouchListener(onTouchListener1);
 		thisView.myBusiness.setOnClickListener(onClickListener);
 		thisView.mySetting.setOnClickListener(onClickListener);
 		thisView.dynamicListView.setOnClickListener(onClickListener);
 		thisView.moreFriendView.setOnClickListener(onClickListener);
+		thisView.myBusiness.setOnTouchListener(onTouchListener);
+		thisView.mySetting.setOnTouchListener(onTouchListener);
+		thisView.dynamicListView.setOnTouchListener(onTouchListener);
+		thisView.moreFriendView.setOnTouchListener(onTouchListener);
 	}
 
+	public void onSingleTapUp(MotionEvent event) {
+		if (onTouchDownView != null) {
+			String view_class = (String) onTouchDownView.getTag(R.id.tag_class);
+			// if (view_class.equals("share_view")) {
+			onTouchDownView.performClick();
+			// }
+			onTouchDownView = null;
+		}
+		isTouchDown = false;
+	}
+
+	public void onScroll() {
+		onTouchDownView = null;
+	}
 }

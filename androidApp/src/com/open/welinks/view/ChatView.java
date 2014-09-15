@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -20,6 +19,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.open.welinks.R;
 import com.open.welinks.controller.ChatController;
 import com.open.welinks.model.Constant;
@@ -27,8 +28,9 @@ import com.open.welinks.model.Data;
 import com.open.welinks.model.Data.Messages.Message;
 import com.open.welinks.model.Data.Relationship.Friend;
 import com.open.welinks.model.Data.Relationship.Group;
+import com.open.welinks.model.Data.UserInformation.User;
+import com.open.welinks.model.FileHandlers;
 import com.open.welinks.utils.DateUtil;
-import com.open.welinks.utils.MCImageUtils;
 
 public class ChatView {
 	public Data data = Data.getInstance();
@@ -59,7 +61,10 @@ public class ChatView {
 
 	public ChatAdapter mChatAdapter;
 
-	public Bitmap bitmap;
+	// public Bitmap bitmap;
+
+	public DisplayImageOptions headOptions;
+	public FileHandlers fileHandlers = FileHandlers.getInstance();
 
 	public ChatView(Activity thisActivity) {
 		this.thisActivity = thisActivity;
@@ -74,6 +79,8 @@ public class ChatView {
 		thisActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 		thisActivity.setContentView(R.layout.activity_chat);
+
+		headOptions = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).considerExifParams(true).displayer(new RoundedBitmapDisplayer(40)).build();
 
 		backview = (RelativeLayout) thisActivity.findViewById(R.id.backView);
 		name = (TextView) thisActivity.findViewById(R.id.backTitleView);
@@ -96,8 +103,8 @@ public class ChatView {
 		makeaudio = (RelativeLayout) thisActivity.findViewById(R.id.makeaudio);
 		more_selected = (ImageView) thisActivity.findViewById(R.id.more_selected);
 
-		bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
-		bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
+		// bitmap = BitmapFactory.decodeResource(thisActivity.getResources(), R.drawable.face_man);
+		// bitmap = MCImageUtils.getCircleBitmap(bitmap, true, 5, Color.WHITE);
 	}
 
 	public void showChatViews() {
@@ -123,15 +130,21 @@ public class ChatView {
 			}
 			Friend friend = data.relationship.friendsMap.get(key);
 			if (friend != null) {
-				if (friend.head.equals("Head") || friend.head.equals("")) {
-					infomation.setImageBitmap(bitmap);
+				fileHandlers.getHeadImage(friend.head, infomation, headOptions);
+				// if (friend.head.equals("Head") || friend.head.equals("")) {
+				// infomation.setImageBitmap(bitmap);
+				// } else {
+				// thisController.setHeadImage(friend.head, infomation);
+				// }
+				if ("".equals(friend.alias)) {
+					name.setText(friend.nickName);
 				} else {
-					thisController.setHeadImage(friend.head, infomation);
+					name.setText(friend.alias);
 				}
-				name.setText(friend.nickName);
 			} else {
 				name.setText("Name");
-				infomation.setImageBitmap(bitmap);
+				fileHandlers.getHeadImage("", infomation, headOptions);
+				// infomation.setImageBitmap(bitmap);
 			}
 		}
 		mChatAdapter = new ChatAdapter(messages);
@@ -251,7 +264,19 @@ public class ChatView {
 				chatHolder.voicetime.setText("");
 			}
 			chatHolder.time.setText(DateUtil.getChatMessageListTime(Long.valueOf(message.time)));
-			chatHolder.head.setImageBitmap(bitmap);
+			String fileName = "";
+			User user = data.userInformation.currentUser;
+			if (message.phone.equals(user.phone)) {
+				fileName = user.head;
+			} else {
+				Friend friend = data.relationship.friendsMap.get(message.phone);
+				if (friend != null) {
+					fileName = friend.head;
+				}
+			}
+			fileHandlers.getHeadImage(fileName, chatHolder.head, headOptions);
+
+			// chatHolder.head.setImageBitmap(bitmap);
 			return convertView;
 		}
 

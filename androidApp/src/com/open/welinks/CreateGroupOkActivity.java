@@ -22,6 +22,8 @@ public class CreateGroupOkActivity extends Activity {
 	public TextView backTitileView;
 	public TextView titleView;
 
+	public TextView createGroupOKView;
+
 	public OnClickListener mOnClickListener;
 
 	@Override
@@ -34,6 +36,7 @@ public class CreateGroupOkActivity extends Activity {
 
 	private void bindEvent() {
 		this.backView.setOnClickListener(mOnClickListener);
+		this.createGroupOKView.setOnClickListener(mOnClickListener);
 
 	}
 
@@ -43,6 +46,8 @@ public class CreateGroupOkActivity extends Activity {
 			@Override
 			public void onClick(View view) {
 				if (view.equals(backView)) {
+					finish();
+				} else if (view.equals(createGroupOKView)) {
 					finish();
 				}
 			}
@@ -55,5 +60,6 @@ public class CreateGroupOkActivity extends Activity {
 		this.backTitileView = (TextView) findViewById(R.id.backTitleView);
 		this.backTitileView.setText("邀请好友");
 		this.titleView = (TextView) findViewById(R.id.titleContent);
+		this.createGroupOKView = (TextView) findViewById(R.id.createGroupOK);
 	}
 }

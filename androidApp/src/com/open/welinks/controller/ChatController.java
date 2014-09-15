@@ -123,7 +123,18 @@ public class ChatController {
 	}
 
 	public void onDestroy() {
-		thisActivity.viewManage.chatView = null;
+
+	}
+
+	public void mFinish() {
+		List<String> messagesOrder = data.messages.messagesOrder;
+		if ("point".equals(type)) {
+			messagesOrder.add(0, "p" + key);
+		} else if ("group".equals(type)) {
+			messagesOrder.add(0, "g" + key);
+		}
+		data.messages.isModified = true;
+		thisActivity.finish();
 	}
 
 	public void initializeListeners() {
@@ -138,7 +149,7 @@ public class ChatController {
 					intent.putExtra("position", String.valueOf(0));
 					thisActivity.startActivity(intent);
 				} else if (view.equals(thisView.backview)) {
-					thisActivity.finish();
+					mFinish();
 				} else if (view.equals(thisView.infomation_layout)) {
 					if ("point".equals(type)) {
 						Intent intent = new Intent(thisActivity, BusinessCardActivity.class);
@@ -187,6 +198,18 @@ public class ChatController {
 					}
 				}
 
+			}
+		};
+		onTouchListener = new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				if (view.equals(thisView.chat_content) && event.getAction() == MotionEvent.ACTION_DOWN) {
+					if (inputMethodManager.isActive()) {
+						inputMethodManager.hideSoftInputFromWindow(thisView.input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					}
+				}
+				return false;
 			}
 		};
 		uploadLoadingListener = new OnUploadLoadingListener() {
@@ -238,7 +261,8 @@ public class ChatController {
 			@Override
 			public void onFailure(DownloadFile instance, int status) {
 				ImageView headView = (ImageView) instance.view;
-				headView.setImageBitmap(thisView.bitmap);
+				// headView.setImageBitmap(thisView.bitmap);
+				thisView.fileHandlers.getHeadImage("", headView, headOptions);
 			}
 		};
 		mFocusChangeListener = new OnFocusChangeListener() {
@@ -266,6 +290,7 @@ public class ChatController {
 		thisView.makeaudio.setOnClickListener(mOnClickListener);
 		thisView.more_selected.setOnClickListener(mOnClickListener);
 		thisView.input.setOnClickListener(mOnClickListener);
+		thisView.chat_content.setOnTouchListener(onTouchListener);
 
 	}
 
@@ -388,6 +413,7 @@ public class ChatController {
 		message.sendType = "point";
 		message.phone = data.userInformation.currentUser.phone;
 		message.nickName = data.userInformation.currentUser.nickName;
+		message.phoneto = "[\"" + key + "\"]";
 		message.time = String.valueOf(time);
 		message.status = "sending";
 		message.type = Constant.MESSAGE_TYPE_SEND;
@@ -460,6 +486,11 @@ public class ChatController {
 
 			}
 		});
+	}
+
+	public void onBackPressed() {
+		mFinish();
+
 	}
 
 }

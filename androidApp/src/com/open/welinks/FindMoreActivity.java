@@ -102,16 +102,19 @@ public class FindMoreActivity extends Activity {
 		if (selectType == 1) {
 			text_one.setText("附近的广场");
 			text_two.setText("查找广场");
+			layout_two.setVisibility(View.GONE);
 			layout_three.setVisibility(View.GONE);
 		} else if (selectType == 2) {
 			text_one.setText("附近的群组");
 			text_two.setText("查找群组");
+			layout_two.setVisibility(View.GONE);
 			layout_three.setVisibility(View.GONE);
 		} else if (selectType == 3) {
 			text_one.setText("附近的人");
 			text_two.setText("查找好友");
 			text_three.setText("推荐好友");
-			layout_three.setVisibility(View.VISIBLE);
+			layout_three.setVisibility(View.GONE);
+			layout_two.setVisibility(View.VISIBLE);
 		}
 
 	}
@@ -129,6 +132,8 @@ public class FindMoreActivity extends Activity {
 			Intent intent = new Intent(FindMoreActivity.this, NearbyActivity.class);
 			intent.putExtra("type", type);
 			startActivity(intent);
+		} else if (selectItem == 2) {
+			startActivity(new Intent(FindMoreActivity.this, SearchFriendActivity.class));
 		}
 
 	}

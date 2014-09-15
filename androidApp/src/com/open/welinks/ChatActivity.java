@@ -65,13 +65,17 @@ public class ChatActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
 		chatController.onDestroy();
+		super.onDestroy();
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return chatController.onTouchEvent(event);
 	}
-	
+	@Override
+	public void onBackPressed() {
+		chatController.onBackPressed();
+		super.onBackPressed();
+	}
 }

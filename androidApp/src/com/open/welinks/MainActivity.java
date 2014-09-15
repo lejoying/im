@@ -3,10 +3,8 @@ package com.open.welinks;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -27,6 +25,7 @@ import com.open.welinks.controller.SquareSubController;
 import com.open.welinks.model.Data;
 import com.open.welinks.model.Parser;
 import com.open.welinks.service.PushService;
+import com.open.welinks.view.Alert;
 import com.open.welinks.view.FriendsSubView;
 import com.open.welinks.view.MainView;
 import com.open.welinks.view.MeSubView;
@@ -51,15 +50,10 @@ public class MainActivity extends Activity {
 
 	public boolean islinked = false;
 
-	@SuppressWarnings("unused")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.thisActivity = this;
-		if (Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
-			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
-		}
 		initImageLoader(getApplicationContext());
 		startPushService();
 		thisActivity.setContentView(R.layout.activity_welinks);

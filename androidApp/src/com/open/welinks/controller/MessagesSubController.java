@@ -1,5 +1,7 @@
 package com.open.welinks.controller;
 
+import java.util.List;
+
 import android.content.Intent;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
+import com.google.gson.Gson;
 import com.open.welinks.ChatActivity;
 import com.open.welinks.R;
 import com.open.welinks.model.Data;
@@ -16,6 +19,7 @@ import com.open.welinks.view.MessagesSubView;
 public class MessagesSubController {
 
 	public Data data = Data.getInstance();
+	public Gson gson = new Gson();
 	public String tag = "MessagesSubController";
 	public MessagesSubView thisView;
 	public MessagesSubController thisconController;
@@ -75,8 +79,8 @@ public class MessagesSubController {
 
 	}
 
-	public void onActivityResult(int requestCode, int resultCode, Data data) {
-		if (requestCode == R.id.tag_first) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data2) {
+		if (requestCode == R.id.tag_second) {
 			thisView.showMessages();
 		}
 	}
@@ -88,13 +92,19 @@ public class MessagesSubController {
 		}
 		String sendType = message.sendType;
 		if ("point".equals(sendType)) {
-			intent.putExtra("id", message.phone);
-			data.relationship.friendsMap.get(message.phone).notReadMessagesCount = 0;
+			String phone = "";
+			if (message.phone.equals(data.userInformation.currentUser.phone)) {
+				phone = (String) gson.fromJson(message.phoneto, List.class).get(0);
+			} else {
+				phone = message.phone;
+			}
+			intent.putExtra("id", phone);
+			data.relationship.friendsMap.get(phone).notReadMessagesCount = 0;
 		} else if ("group".equals(sendType)) {
 			intent.putExtra("id", message.gid);
 			data.relationship.groupsMap.get(message.gid).notReadMessagesCount = 0;
 		}
 		intent.putExtra("type", sendType);
-		thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_first);
+		thisView.mainView.thisActivity.startActivityForResult(intent, R.id.tag_second);
 	}
 }

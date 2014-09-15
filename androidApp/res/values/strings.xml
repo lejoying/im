@@ -31,8 +31,12 @@
     <string name="alert_text_nettimeout">网络连接超时</string>
     <string name="alert_text_neterror">网络错误</string>
     <!-- button text -->
+    <string name="button_search">查  找</string>
     <string name="button_send">发送</string>
+    <!-- text -->
+    <string name="text_search">精确查找</string>
     <!-- hint text -->
+    <string name="hint_enterphone">请输入手机号</string>
     <string name="hint_verify">请输入验证消息</string>
     <!-- common textview -->
     <string name="text_verify">对方启用了朋友验证</string>
