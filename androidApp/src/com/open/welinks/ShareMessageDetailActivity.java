@@ -2,6 +2,7 @@ package com.open.welinks;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.open.welinks.controller.ShareMessageDetailController;
@@ -38,12 +39,18 @@ public class ShareMessageDetailActivity extends Activity {
 		thisView.initView();
 		thisController.bindEvent();
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		thisController.onWindwoFocusChanged();
 		super.onWindowFocusChanged(hasFocus);
 	}
-	
+
 	@Override
 	public void finish() {
 		thisController.finish();
