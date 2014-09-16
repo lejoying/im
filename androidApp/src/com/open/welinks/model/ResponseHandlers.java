@@ -312,32 +312,19 @@ public class ResponseHandlers {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
-			public String uid;
-			public String accessKey;
-			public String PbKey;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
-			if (response.提示信息.equals("修改用户密码成功")) {
-				String accessKey = "", phone = "";
-				try {
-					accessKey = RSAUtils.decrypt(response.PbKey, response.accessKey);
-					phone = RSAUtils.decrypt(response.PbKey, response.uid);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				data.userInformation.currentUser.phone = phone;
-				data.userInformation.currentUser.accessKey = accessKey;
-				data.userInformation.isModified = true;
+			if (response.提示信息.equals("修改用户信息成功")) {
 				HttpUtils httpUtils = new HttpUtils();
 				RequestParams params = new RequestParams();
-				params.addBodyParameter("phone", phone);
-				params.addBodyParameter("accessKey", accessKey);
-				params.addBodyParameter("target", "[\"" + phone + "\"]");
+				params.addBodyParameter("phone", data.userInformation.currentUser.phone);
+				params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+				params.addBodyParameter("target", "[\"" + data.userInformation.currentUser.phone + "\"]");
 				ResponseHandlers responseHandlers = getInstance();
 				httpUtils.send(HttpMethod.POST, API.ACCOUNT_GET, params, responseHandlers.account_get);
-				viewManage.loginView.thisController.loginSuccessful(phone);
+				viewManage.loginView.thisController.loginSuccessful(data.userInformation.currentUser.phone);
 			} else {
 				viewManage.loginView.thisController.loginFail(response.失败原因);
 			}
@@ -368,11 +355,24 @@ public class ResponseHandlers {
 		class Response {
 			public String 提示信息;
 			public String 失败原因;
+			public String uid;
+			public String accessKey;
+			public String PbKey;
 		}
 
 		public void onSuccess(ResponseInfo<String> responseInfo) {
 			Response response = gson.fromJson(responseInfo.result, Response.class);
 			if (response.提示信息.equals("验证成功")) {
+				String accessKey = "", phone = "";
+				try {
+					accessKey = RSAUtils.decrypt(response.PbKey, response.accessKey);
+					phone = RSAUtils.decrypt(response.PbKey, response.uid);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				data.userInformation.currentUser.phone = phone;
+				data.userInformation.currentUser.accessKey = accessKey;
+				data.userInformation.isModified = true;
 				viewManage.loginView.thisController.requestUserAuthWithVerifyCodeCallBack();
 			} else {
 				viewManage.loginView.thisController.loginFail(response.失败原因);

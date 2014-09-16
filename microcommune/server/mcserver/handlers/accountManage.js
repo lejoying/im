@@ -745,6 +745,7 @@ accountManage.modify = function (data, response) {
                                 time: new Date().getTime(),
                                 status: "success",
                                 content: "",
+                                content: "",
                                 eid: eid
                             })
                         });

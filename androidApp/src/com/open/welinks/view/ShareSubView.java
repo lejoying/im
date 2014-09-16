@@ -174,6 +174,10 @@ public class ShareSubView {
 	}
 
 	public void showShareMessages() {
+		data = parser.check();
+		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
+		if (share == null)
+			return;
 		SharesMessageBody sharesMessageBody0 = null;
 		sharesMessageBody0 = (SharesMessageBody) shareMessageListBody.listItemBodiesMap.get("message#" + "topBar");
 		this.shareMessageListBody.listItemsSequence.clear();
@@ -193,10 +197,6 @@ public class ShareSubView {
 		this.shareMessageListBody.height = this.shareMessageListBody.height + 60 * displayMetrics.density;
 		this.shareMessageListBody.containerView.addView(sharesMessageBody0.cardView, layoutParams0);
 
-		data = parser.check();
-		Share share = data.shares.shareMap.get(data.localStatus.localData.currentSelectedGroup);
-		if (share == null)
-			return;
 		List<String> sharesOrder = share.shareMessagesOrder;
 		Map<String, ShareMessage> sharesMap = share.shareMessagesMap;
 		ShareMessage lastShareMessage = null;
@@ -247,7 +247,11 @@ public class ShareSubView {
 			}
 			Friend friend = data.relationship.friendsMap.get(shareMessage.phone);
 			this.shareMessageListBody.listItemsSequence.add(keyName);
-			sharesMessageBody.setContent(shareMessage, friend.head);
+			String fileName = "";
+			if(friend!=null){
+				fileName =friend.head;
+			}
+			sharesMessageBody.setContent(shareMessage, fileName);
 
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, (int) (340 * displayMetrics.density));
 			sharesMessageBody.y = this.shareMessageListBody.height;

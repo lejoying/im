@@ -346,7 +346,7 @@ public class LoginController {
 								showSoftInput(thisView.input2);
 							} else {
 								hideSoftInput();
-								modifyUserPassword(resetPasswordPhone, password);
+								modifyUserPassword(registerPhone, password);
 							}
 						}
 					} else if (thisView.status == Status.resetPassword) {
@@ -789,10 +789,17 @@ public class LoginController {
 		HttpUtils httpUtils = new HttpUtils();
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("phone", phone);
-		params.addBodyParameter("password", msSha1.getDigestOfString(passWord.getBytes()));
+		params.addBodyParameter("accessKey", data.userInformation.currentUser.accessKey);
+		Account account = new Account();
+		account.password = msSha1.getDigestOfString(passWord.getBytes());
+		params.addBodyParameter("account", gson.toJson(account));
 		ResponseHandlers responseHandlers = ResponseHandlers.getInstance();
-		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFYPASSWORD, params, responseHandlers.account_modifypassword);
+		httpUtils.send(HttpMethod.POST, API.ACCOUNT_MODIFY, params, responseHandlers.account_modifypassword);
 
+	}
+
+	class Account {
+		String password;
 	}
 
 	public void modifyUserPasswordCallBack() {
