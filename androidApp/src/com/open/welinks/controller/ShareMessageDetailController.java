@@ -262,6 +262,8 @@ public class ShareMessageDetailController {
 					addCommentToMessage("text", commentContent);
 				} else if (view.equals(thisView.deleteOptionView)) {
 					deleteGroupShare();
+				} else if (view.equals(thisView.shareOptionView)) {
+					showShareView();
 				} else if (view.getTag() != null) {
 					String tagContent = (String) view.getTag();
 					int index = tagContent.lastIndexOf("#");
@@ -304,6 +306,7 @@ public class ShareMessageDetailController {
 		thisView.commentIconView.setOnClickListener(mOnClickListener);
 		thisView.confirmSendCommentView.setOnClickListener(mOnClickListener);
 		thisView.deleteOptionView.setOnClickListener(mOnClickListener);
+		thisView.shareOptionView.setOnClickListener(mOnClickListener);
 
 		thisView.mainScrollView.setOnTouchListener(mOnTouchListener);
 		thisView.detailScrollView.setOnScrollChangedListener(mOnScrollChangedListener);
@@ -333,6 +336,10 @@ public class ShareMessageDetailController {
 				}
 			}).show();
 		}
+	}
+
+	public void showShareView() {
+		thisView.shareView.show();
 	}
 
 	public void modifyPraiseusersToMessage(boolean option) {

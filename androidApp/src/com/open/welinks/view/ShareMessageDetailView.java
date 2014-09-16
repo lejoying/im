@@ -105,12 +105,14 @@ public class ShareMessageDetailView {
 
 	public InputMethodManager inputMethodManager;
 
+	public ShareView shareView;
+
 	public FileHandlers fileHandlers = FileHandlers.getInstance();
 	public File mImageFile;
 
 	// menu options
 	public RelativeLayout menuOptionsView;
-	public RelativeLayout stickOptionView;
+	public RelativeLayout shareOptionView;
 	public ImageView stickImageOptionView;
 	public TextView stickTextOptionView;
 	public RelativeLayout deleteOptionView;
@@ -190,12 +192,14 @@ public class ShareMessageDetailView {
 
 		// menu option
 		menuOptionsView = (RelativeLayout) thisActivity.findViewById(R.id.menuOptions);
-		stickOptionView = (RelativeLayout) thisActivity.findViewById(R.id.stickOption);
+		shareOptionView = (RelativeLayout) thisActivity.findViewById(R.id.shareOption);
 		stickImageOptionView = (ImageView) thisActivity.findViewById(R.id.stickImageOption);
 		stickTextOptionView = (TextView) thisActivity.findViewById(R.id.stickTextOption);
 		deleteOptionView = (RelativeLayout) thisActivity.findViewById(R.id.deleteOption);
 		deleteImageOptionView = (ImageView) thisActivity.findViewById(R.id.deleteImageOption);
 		deleteTextOptionView = (TextView) thisActivity.findViewById(R.id.deleteTextOption);
+
+		// shareView = new ShareView(thisActivity);
 
 		android.view.ViewGroup.LayoutParams detailScrollViewParams = detailScrollView.getLayoutParams();
 		detailScrollViewParams.height = (int) (screenHeight - getStatusBarHeight(thisActivity) - 150 * screenDensity + 0.5f);
